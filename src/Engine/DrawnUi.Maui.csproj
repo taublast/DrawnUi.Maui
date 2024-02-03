@@ -1,0 +1,103 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net7.0;net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
+	</PropertyGroup>
+
+  <PropertyGroup>
+    <PackageReleaseNotes>Pre-Alpha</PackageReleaseNotes>
+    <Version>1.0.8.0-pre</Version>
+    <Title>DrawnUi for .NET MAUI</Title>
+    <Description>Cross-platform rendering engine for .NET MAUI to draw your UI with SkiaSharp</Description>
+    <PackageTags>maui drawnui skia skiasharp draw ui</PackageTags>
+    <Authors>Nick Kovalsky aka AppoMobi</Authors>
+    <Copyright>(c) AppoMobi, 2022 - present day</Copyright>
+    <PackageIcon>icon128.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/taublast/DrawnUi.Maui</PackageProjectUrl>
+    <!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
+    <RepositoryUrl>https://github.com/taublast/DrawnUi.Maui</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <Packable>true</Packable>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;XLS0505</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1605;CS0108</WarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;XLS0505</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1605;CS0108</WarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
+    <CreatePackage>false</CreatePackage>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Draw\SkiaControl.Legacy.cs" />
+    <Compile Remove="Draw\SkiaControl.States.cs" />
+    <Compile Remove="Draw\SkiaControlVisual.cs" />
+    <Compile Remove="Draw\SkiaGif.cs" />
+    <Compile Remove="Internals\ConditionalStyle.cs" />
+    <Compile Remove="Internals\Models\ConditionalStyle.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="..\..\icon128.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+    <None Include="..\..\README.md" Link="README.md">
+      <PackagePath>\</PackagePath>
+      <Pack>True</Pack>
+    </None>
+	</ItemGroup>
+
+	<ItemGroup>
+    <None Include="Controls\AnimateFrames\SkiaRive.cs" />
+	  <None Include="Platforms\Android\SkiaRive.Android.cs" />
+	  <None Include="Platforms\iOS\SkiaRive.Apple.cs" />
+	  <None Include="Platforms\MacCatalyst\SkiaRive.Apple.cs" />
+	  <None Include="Platforms\Windows\SkiaRive.Windows.cs" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <!--for parsing markdown text-->
+    <PackageReference Include="Markdig" Version="0.34.0" />
+    <!--for caching images-->
+    <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
+    <!--beloved skiasharp-->
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.6" />
+    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.6" />
+    <PackageReference Include="Svg.Skia" Version="1.0.0.9" />
+  </ItemGroup>
+ 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0-windows10.0.19041.0'">
+    <PackageReference Include="AppoMobi.Maui.Rive" Version="1.0.1.2-pre">
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0-android'">
+    <PackageReference Include="AppoMobi.Maui.Native" Version="1.0.1.0-pre" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.5.3" />
+    <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
+  </ItemGroup>
+
+</Project>

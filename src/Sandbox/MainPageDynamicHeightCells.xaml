@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<draw:DrawnUiBasePage
+    x:Class="Sandbox.MainPageDynamicHeightCells"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel"
+    BackgroundColor="#333333">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style
+                x:Key="TestStyle"
+                TargetType="draw:SkiaLabel">
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <draw:Canvas
+        Margin="0,50,0,50"
+        x:DataType="demo:MockChatViewModel"
+        Gestures="Enabled"
+        HorizontalOptions="Fill"
+        HeightRequest="300"
+        VerticalOptions="Fill">
+
+        <draw:SkiaScroll
+                Bounces="False"
+                BackgroundColor="Black"
+                x:Name="MainScroll"
+                Scrolled="OnScrolled"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
+                <!--for dynamic height cells: ItemSizingStrategy="MeasureAllItems"-->
+
+
+                <!--idea is to have a maximum number of non recycled cells, like 100.
+                so the cells pool size is 100. when we reach some border, before loadMore or start of page
+                be return 50 cells from the other direction to pool and reuse them all 50 for the up coming page
+                this way we have a lag spike on borders only but smooth scrolling through the existing content-->
+
+                <draw:SkiaLayout
+                    ItemSizingStrategy="MeasureAllItems"
+                    BackgroundColor="White"
+                    HorizontalOptions="Fill"
+                    ItemsSource="{Binding Items}"
+                    RecyclingTemplate="Disabled"
+                    Type="Column">
+
+                    <draw:SkiaLayout.ItemTemplate>
+                        <DataTemplate x:DataType="demo:ChatMessage">
+
+                                <draw:SkiaLabel
+                                    UseCache="Operations"
+                                    BackgroundColor="#8D5BBC"
+                                    Margin="8"
+                                    Padding="8,4"
+                                    FontSize="14"
+                                    Tag="LabelText"
+                                    Text="{Binding Text}"
+                                    TextColor="White" />
+
+                        </DataTemplate>
+
+                    </draw:SkiaLayout.ItemTemplate>
+
+                </draw:SkiaLayout>
+
+            </draw:SkiaScroll>
+
+
+
+
+            <!--<draw:SkiaLabel
+                BackgroundColor="White"
+                FontSize="18"
+                HorizontalOptions="Center"
+                Text="{Binding Source={x:Reference ThisPage}, Path=ShowPosition, StringFormat='{0:0}'}"
+                UseCache="ImageDoubleBuffered"
+                VerticalOptions="Center" />-->
+
+   
+
+
+    </draw:Canvas>
+
+</draw:DrawnUiBasePage>

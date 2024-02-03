@@ -1,0 +1,162 @@
+﻿namespace DrawnUi.Maui.Draw;
+
+/// <summary>
+/// Base control for toggling between 2 states
+/// </summary>
+public class SkiaToggle : SkiaLayout
+{
+    protected override void OnLayoutChanged()
+    {
+        base.OnLayoutChanged();
+
+        ApplyProperties();
+    }
+
+    /// <summary>
+    /// Base calls ApplyProperties()
+    /// </summary>
+    protected virtual void OnToggledChanged()
+    {
+        ApplyProperties();
+    }
+
+    protected virtual void OnAppearenceChanged()
+    {
+        ApplyProperties();
+    }
+
+    /// <summary>
+    /// Base call Update()
+    /// </summary>
+    public virtual void ApplyProperties()
+    {
+        Update();
+    }
+
+    #region PROPERTIES
+
+    public static readonly BindableProperty IsToggledProperty = BindableProperty.Create(
+        nameof(IsToggled),
+        typeof(bool),
+        typeof(SkiaToggle),
+        false, propertyChanged: WasToggled, defaultBindingMode: BindingMode.TwoWay);
+
+    private static void WasToggled(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        var control = bindable as SkiaToggle;
+        control?.OnToggledChanged();
+    }
+
+    public bool IsToggled
+    {
+        get { return (bool)GetValue(IsToggledProperty); }
+        set { SetValue(IsToggledProperty, value); }
+    }
+
+    public static readonly BindableProperty RespondsToGesturesProperty = BindableProperty.Create(
+        nameof(RespondsToGestures),
+        typeof(bool),
+        typeof(SkiaToggle),
+        true);
+
+    public bool RespondsToGestures
+    {
+        get { return (bool)GetValue(RespondsToGesturesProperty); }
+        set { SetValue(RespondsToGesturesProperty, value); }
+    }
+
+    public static readonly BindableProperty CommandTappedProperty = BindableProperty.Create(
+        nameof(CommandTapped),
+        typeof(bool),
+        typeof(SkiaToggle),
+        false);
+
+    public bool CommandTapped
+    {
+        get { return (bool)GetValue(CommandTappedProperty); }
+        set { SetValue(CommandTappedProperty, value); }
+    }
+
+    public static readonly BindableProperty CommandTappedParameterProperty = BindableProperty.Create(
+        nameof(CommandTappedParameter),
+        typeof(bool),
+        typeof(SkiaToggle),
+        false);
+
+    public bool CommandTappedParameter
+    {
+        get { return (bool)GetValue(CommandTappedParameterProperty); }
+        set { SetValue(CommandTappedParameterProperty, value); }
+    }
+
+    private static void AppearenceChanged(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        var control = bindable as SkiaToggle;
+        control?.OnAppearenceChanged();
+    }
+
+
+    public static readonly BindableProperty ColorThumbOnProperty = BindableProperty.Create(
+        nameof(ColorThumbOn),
+        typeof(Color),
+        typeof(SkiaSwitch),
+        Colors.Red, propertyChanged: AppearenceChanged);
+
+    public Color ColorThumbOn
+    {
+        get { return (Color)GetValue(ColorThumbOnProperty); }
+        set { SetValue(ColorThumbOnProperty, value); }
+    }
+
+    public static readonly BindableProperty ColorFrameOnProperty = BindableProperty.Create(
+        nameof(ColorFrameOn),
+        typeof(Color),
+        typeof(SkiaSwitch),
+        Colors.White, propertyChanged: AppearenceChanged);
+
+    public Color ColorFrameOn
+    {
+        get { return (Color)GetValue(ColorFrameOnProperty); }
+        set { SetValue(ColorFrameOnProperty, value); }
+    }
+
+    public static readonly BindableProperty ColorThumbOffProperty = BindableProperty.Create(
+        nameof(ColorThumbOff),
+        typeof(Color),
+        typeof(SkiaSwitch),
+        Colors.White, propertyChanged: AppearenceChanged);
+
+    public Color ColorThumbOff
+    {
+        get { return (Color)GetValue(ColorThumbOffProperty); }
+        set { SetValue(ColorThumbOffProperty, value); }
+    }
+
+    public static readonly BindableProperty ColorFrameOffProperty = BindableProperty.Create(
+        nameof(ColorFrameOff),
+        typeof(Color),
+        typeof(SkiaSwitch),
+        Colors.DarkGray, propertyChanged: AppearenceChanged);
+
+    public Color ColorFrameOff
+    {
+        get { return (Color)GetValue(ColorFrameOffProperty); }
+        set { SetValue(ColorFrameOffProperty, value); }
+    }
+
+    public static readonly BindableProperty IsAnimatedProperty = BindableProperty.Create(
+        nameof(IsAnimated),
+        typeof(bool),
+        typeof(SkiaSwitch),
+        true);
+
+    public bool IsAnimated
+    {
+        get { return (bool)GetValue(IsAnimatedProperty); }
+        set { SetValue(IsAnimatedProperty, value); }
+    }
+
+
+
+    #endregion
+}

@@ -1,0 +1,239 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Sandbox.Drawers"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel">
+
+    <draw:Canvas
+        HardwareAcceleration="Enabled"
+        gestures:TouchEffect.ForceAttach="True"
+        Tag="MainPage">
+
+ 
+
+        <draw:SkiaLayout
+            Tag="DrawerInside"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+            <!--<draw:SkiaLayout BackgroundColor="Pink"
+                             Spacing="0"
+                             Type="Column"
+                             VerticalOptions="Fill" HorizontalOptions="Fill">
+
+
+            <draw:SkiaShape
+                Tag="DarkRed"
+                HorizontalOptions="Fill" HeightRequest="50" BackgroundColor="DarkRed"/>
+
+
+
+                <draw:SkiaLayout BackgroundColor="BlueViolet" HorizontalOptions="Fill" VerticalOptions="Fill">
+
+                    <draw:SkiaShape
+                        VerticalOptions="End"
+                        HorizontalOptions="Center"
+                        BackgroundColor="Red"
+                        Margin="0,0,0,0"
+                        HeightRequest="50"
+                        LockRatio="1"
+                        Type="Circle"/>
+
+                </draw:SkiaLayout>
+
+            </draw:SkiaLayout>-->
+
+            <!--  VERTICAL  -->
+            <draw:SkiaDrawer
+                x:Name="Drawer"
+                BackgroundColor="Red"
+                Direction="FromBottom"
+                HeaderSize="50"
+                HeightRequest="350"
+                HorizontalOptions="Fill"
+                IsOpen="{Binding IsOpen}"
+                Tag="Drawer"
+                VerticalOptions="End">
+
+                <draw:SkiaLayout
+                    Tag="ScrollInside"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+
+                    <!--  HEADER  -->
+                    <draw:SkiaLayout
+                        HeightRequest="50"
+                        HorizontalOptions="Fill">
+
+                        <draw:SkiaLabel
+                            Margin="16,0"
+                            FontSize="14"
+                            Text="Enjoy SkiaShape!"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+
+                    </draw:SkiaLayout>
+
+                    <draw:SkiaScroll
+                        Margin="0,50,0,0"
+                        BackgroundColor="Gainsboro"
+                        Bounces="False"
+                        HorizontalOptions="Fill"
+                        Tag="InsideDrawer"
+                        VerticalOptions="Fill">
+
+                        <draw:SkiaLayout
+                            Padding="0,0,0,0"
+                            HorizontalOptions="Fill"
+                            Type="Column"
+                            Spacing="24">
+
+                            <draw:SkiaShape
+                                BackgroundColor="DimGray"
+                                HeightRequest="80"
+                                HorizontalOptions="Center"
+                                LockRatio="1"
+                                Type="Circle" />
+
+                            <draw:SkiaShape
+                                BackgroundColor="Aquamarine"
+                                HeightRequest="300"
+                                HorizontalOptions="Center"
+                                WidthRequest="50" />
+
+                            <draw:SkiaShape
+                                BackgroundColor="Goldenrod"
+                                HeightRequest="80"
+                                HorizontalOptions="Center"
+                                LockRatio="1"
+                                Type="Circle" />
+
+                            <draw:SkiaShape
+                                BackgroundColor="PeachPuff"
+                                HeightRequest="300"
+                                HorizontalOptions="Center"
+                                WidthRequest="50" />
+
+                            <draw:SkiaShape
+                                BackgroundColor="PaleGreen"
+                                HeightRequest="80"
+                                HorizontalOptions="Center"
+                                LockRatio="1"
+                                Type="Circle" />
+
+
+                        </draw:SkiaLayout>
+
+                    </draw:SkiaScroll>
+
+                </draw:SkiaLayout>
+
+            </draw:SkiaDrawer>
+
+
+            <!--  HORIZONTAL  -->
+            <!--<draw:SkiaDrawer
+                Tag="Drawer"
+                HeaderSize="40"
+                Direction="FromLeft"
+                IsOpen="{Binding IsOpen}"
+                VerticalOptions="End"
+                HorizontalOptions="Start"
+                BackgroundColor="Pink"
+                HeightRequest="300">
+
+                <draw:SkiaScroll
+                    Orientation="Horizontal"
+                    Bounces="False"
+                    BackgroundColor="Gainsboro"
+                    VerticalOptions="Fill"
+                    Margin="0, 0,40,0">
+
+                    <draw:SkiaLayout
+                        Padding="16"
+                        Spacing="24"
+                        VerticalOptions="Fill"
+                        Type="Row">
+
+                        <draw:SkiaShape
+                            VerticalOptions="Center"
+                            BackgroundColor="DimGray"
+                            LockRatio="1"
+                            HeightRequest="80"
+                            Type="Circle"/>
+
+                        <draw:SkiaShape
+                            BackgroundColor="Aquamarine"
+                            WidthRequest="300"
+                            VerticalOptions="Center"
+                            HeightRequest="50"/>
+
+                        <draw:SkiaShape
+                            VerticalOptions="Center"
+                            BackgroundColor="Goldenrod"
+                            LockRatio="1"
+                            HeightRequest="80"
+                            Type="Circle"/>
+
+                        <draw:SkiaShape
+                            BackgroundColor="PeachPuff"
+                            WidthRequest="300"
+                            VerticalOptions="Center"
+                            HeightRequest="50"/>
+
+                        <draw:SkiaShape
+                            VerticalOptions="Center"
+                            BackgroundColor="PaleGreen"
+                            LockRatio="1"
+                            HeightRequest="80"
+                            Type="Circle"/>
+
+
+                    </draw:SkiaLayout>
+                </draw:SkiaScroll>
+
+            </draw:SkiaDrawer>-->
+
+            <!--  software button  -->
+            <draw:SkiaButton
+                Margin="10"
+                CommandTapped="{Binding CommandTest}"
+                HorizontalOptions="End"
+                Text="Toggle"
+                TranslationY="50"
+                VerticalOptions="Start" />
+
+            <draw:SkiaButton
+                Margin="10"
+                CommandTapped="{Binding CommandTest}"
+                HorizontalOptions="End"
+                Text="Toggle"
+                TranslationY="50"
+                VerticalOptions="Start" />
+
+            <draw:SkiaButton
+                Margin="10"
+                HorizontalOptions="End"
+                Tapped="SkiaButton_Tapped"
+                Text="Kill"
+                TranslationY="100"
+                VerticalOptions="Start" />
+
+            <draw:SkiaLabel
+                Margin="16"
+                BackgroundColor="Black"
+                FontSize="20"
+                Text="{Binding IsOpen}"
+                TextColor="Red" />
+
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
+
+</ContentPage>

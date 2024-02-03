@@ -1,0 +1,15 @@
+﻿using Microsoft.Maui.Handlers;
+using Microsoft.Maui.Platform;
+using UIKit;
+
+namespace DrawnUi.Maui.Controls;
+
+public partial class MauiEntryHandler : EntryHandler
+{
+    protected override void ConnectHandler(MauiTextField platformView)
+    {
+        base.ConnectHandler(platformView);
+
+        platformView.BorderStyle = UITextBorderStyle.None;
+    }
+}

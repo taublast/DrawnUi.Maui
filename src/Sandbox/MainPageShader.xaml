@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Sandbox.MainPageShader"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:drawnUi="clr-namespace:DrawnUi.Maui;assembly=DrawnUi.Maui"
+    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:draw1="clr-namespace:DrawnUi.Maui"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel"
+    BackgroundColor="White">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style
+                x:Key="SkiaLabelDefaultStyle2"
+                Class="SkiaLabelDefaultStyle2"
+                TargetType="draw:SkiaLabel">
+                <Setter Property="TextColor" Value="#FFFFFF" />
+                <Setter Property="FontSize" Value="30" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+ 
+
+  
+
+        <draw:Canvas
+            x:Name="MainCanvas"
+            gestures:TouchEffect.ForceAttach="True"
+            BackgroundColor="Black"
+            HardwareAcceleration="Enabled"
+            HorizontalOptions="Fill"
+            Tag="MainPage"
+            VerticalOptions="Fill">
+
+
+            <draw:SkiaLayout
+                BackgroundColor="Pink"
+                HorizontalOptions="Fill"
+                Spacing="0"
+                Tag="SkiaContainer"
+                Type="Column"
+                VerticalOptions="Fill">
+
+
+                <draw:SkiaLayout
+                    x:Name="StackContainer"
+                    Padding="24"
+                    BackgroundColor="Green"
+                    HorizontalOptions="Fill"
+                    Spacing="24"
+                    Type="Column"
+                    VerticalOptions="Start"
+                    WidthRequest="200">
+
+                    <!--shader blur-->
+                <draw1:TestShader BackgroundColor="Black">
+
+                    <draw:SkiaImage
+                        Margin="0,20"
+                        Aspect="AspectCover"
+                        HeightRequest="150"
+                        HorizontalOptions="Center"
+                        Source="Images/nico.jpg"
+                        WidthRequest="250" />
+
+                </draw1:TestShader>
+
+
+
+                    <!--shader curl-->
+                    <draw:SkiaLayout>
+
+                        <draw:SkiaLabel
+                            FontSize="12"
+                            Text="When a texture is in an altas, it's not addressed by coordinates from (0,0) to (1,1) anymore. The atlas is really one large texture that has been assembled behind the scenes."
+                            TextColor="White"
+                            VerticalOptions="Center"
+                            ZIndex="-1" />
+
+                        <!--  this will work on accelerated canvas only in skiasharp 2.88  -->
+                        <!--  use 3.0 for cpu support  -->
+                        <demo:ContentFolder
+                            BacksideSource="Images/leather.jpg"
+                            VerticalMargin="{Binding Source={x:Reference Texture}, Path=Margins.Top}">
+
+                            <draw:SkiaLayout UseCache="Image">
+
+                                <draw:SkiaImage
+                                    x:Name="Texture"
+                                    Margin="0,20"
+                                    Aspect="AspectCover"
+                                    HeightRequest="150"
+                                    HorizontalOptions="Center"
+                                    Source="Images/nico.jpg"
+                                    WidthRequest="250" />
+
+                            </draw:SkiaLayout>
+
+                        </demo:ContentFolder>
+                    </draw:SkiaLayout>
+
+                </draw:SkiaLayout>
+
+
+                <!--<demo:CacheConsumer
+                    BackgroundColor="Yellow"
+                    HeightRequest="200"
+                    HorizontalOptions="Fill"
+                    Source="{x:Reference Button}" />-->
+
+
+                <!--<draw:SkiaLabel
+                    Margin="44"
+                    HorizontalOptions="Center"
+                    Style="{StaticResource SkiaLabelDefaultStyle2}"
+                    Text="Hello World!"
+                    VerticalOptions="End" />
+
+
+        <draw:SkiaLottie
+                AutoPlay="True"
+                ColorTint="Red"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                LockRatio="1"
+                Repeat="-1"
+                Source="Lottie/Loader.json"
+                Tag="Loader"
+                WidthRequest="60" />
+
+        <demo:TestImage
+                Aspect="AspectCover"
+                BackgroundColor="Black"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill" />-->
+
+
+                <!--  todo fix infinity from maui  -->
+                <draw:SkiaLabelFps
+                    Margin="24"
+                    BackgroundColor="DarkRed"
+                    ForceRefresh="False"
+                    HorizontalOptions="End"
+                    Rotation="-45"
+                    TextColor="White"
+                    VerticalOptions="Start"
+                    ZIndex="100" />
+
+            </draw:SkiaLayout>
+
+        </draw:Canvas>
+
+ 
+
+</ContentPage>

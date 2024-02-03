@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<draw:SkiaSlider
+    x:Class="Sandbox.SkiaSliderRanged"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    x:Name="ThisSlider"
+    HorizontalOptions="Fill"
+    UseCache="Operations"
+    Type="Column">
+
+    <draw:SkiaSlider.Resources>
+        <ResourceDictionary>
+
+            <x:String x:Key="SvgThumb">
+                <![CDATA[ 
+                                     
+ <?xml version="1.0" encoding="utf-8"?>
+<svg width="11px" height="11px" viewBox="0 0 11 11" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <desc>Created with Lunacy</desc>
+  <g id="thumb" transform="translate(0.5 0.5)">
+    <g id="thumb">
+      <g id="thumb">
+        <g id="g12">
+          <g id="g10" transform="matrix(1.333333 0 0 -1.333333 0 9.220332)">
+            <path d="M0 3.45763C0 1.54803 1.54803 0 3.45763 0C5.36722 0 6.91525 1.54803 6.91525 3.45763C6.91525 5.36722 5.36722 6.91525 3.45763 6.91525C1.54803 6.91525 0 5.36722 0 3.45763L0 3.45763Z" transform="matrix(1 0 0 -1 0 6.91525)" id="path824" fill="#F740A0" stroke="#26003D" stroke-width="1.0" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+                                
+                ]]>
+
+            </x:String>
+
+            <Color x:Key="ColorMixedLight">#976ea0</Color>
+
+        </ResourceDictionary>
+    </draw:SkiaSlider.Resources>
+
+    <!--  VALUE LABELS  -->
+    <draw:SkiaLayout HorizontalOptions="Fill">
+
+        <!--  START DESC  -->
+        <draw:SliderValueDesc
+            IsVisible="{Binding Source={x:Reference ThisSlider}, Path=EnableRange}"
+            x:Name="StartDesc"
+            Padding="0"
+            BackgroundColor="Red"
+            CornerRadius="0"
+            HorizontalOptions="Start"
+            StrokeColor="Black"
+            StrokeWidth="1"
+            Text="{Binding Source={x:Reference ThisSlider}, Path=StartDesc}"
+            VerticalOptions="Start"
+            XCenter="{Binding Source={x:Reference StartThumb}, Path=XCenter}"
+            XMaxLimit="{Binding Source={x:Reference EndDesc}, Path=TranslationX}"
+            XMinLimit="0">
+
+            <draw:SkiaLabel
+                Margin="4,2"
+                HorizontalOptions="Start"
+                Text="{Binding Source={x:Reference StartDesc}, Path=Text}"
+                TextColor="{StaticResource ColorPaper}"
+                VerticalOptions="Center" />
+
+        </draw:SliderValueDesc>
+
+        <!--  END DESC  -->
+        <draw:SliderValueDesc
+            x:Name="EndDesc"
+            Padding="0"
+            BackgroundColor="Red"
+            CornerRadius="0"
+            HorizontalOptions="Start"
+            StrokeColor="Black"
+            StrokeWidth="1"
+            Text="{Binding Source={x:Reference ThisSlider}, Path=EndDesc}"
+            VerticalOptions="Start"
+            XCenter="{Binding Source={x:Reference EndThumb}, Path=XCenter}"
+            XMaxLimit="{Binding Source={x:Reference ThisSlider}, Path=Width}"
+            XMinLimit="{Binding Source={x:Reference StartDesc}, Path=RightX}">
+
+            <draw:SkiaLabel
+                Margin="4,2"
+                HorizontalOptions="Start"
+                Text="{Binding Source={x:Reference EndDesc}, Path=Text}"
+                TextColor="{StaticResource ColorPaper}"
+                VerticalOptions="Center" />
+
+        </draw:SliderValueDesc>
+
+    </draw:SkiaLayout>
+
+    <!--  MAIN GRID  -->
+    <draw:SkiaLayout
+        x:Name="ThisSliderGrid"
+        Margin="0,8,0,0"
+        HeightRequest="{Binding Source={x:Reference ThisSlider}, Path=SliderHeight}"
+        HorizontalOptions="Fill"
+        VerticalOptions="Start">
+
+        <!--  TRAIL  -->
+        <draw:SkiaShape
+            BackgroundColor="Gray"
+            HeightRequest="2"
+            HorizontalOptions="Fill"
+            VerticalOptions="Center" />
+
+        <!--  SELECTED TRAIL  -->
+        <draw:SliderTrail
+            BackgroundColor="Red"
+            HeightRequest="2"
+            HorizontalOptions="Start"
+            VerticalOptions="Center"
+            XPos="{Binding Source={x:Reference StartThumb}, Path=TranslationX}"
+            XPosEnd="{Binding Source={x:Reference EndThumb}, Path=TranslationX}" />
+
+        <!--  START POINT  -->
+        <draw:SkiaShape
+            Type="Circle"
+            HeightRequest="10"
+            HorizontalOptions="Start"
+            BackgroundColor="Gray"
+            VerticalOptions="Center"
+            WidthRequest="10" >
+            <draw:SkiaShape.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference ThisSlider}, Path=EnableRange}"
+                    TargetType="draw:SkiaShape"
+                    Value="True">
+                    <Setter Property="BackgroundColor" Value="Gray" />
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference ThisSlider}, Path=EnableRange}"
+                    TargetType="draw:SkiaShape"
+                    Value="False">
+                    <Setter Property="BackgroundColor" Value="Red" />
+                </DataTrigger>
+            </draw:SkiaShape.Triggers>
+        </draw:SkiaShape>
+
+        <!--  END POINT  -->
+        <draw:SkiaShape
+            Type="Circle"
+            HeightRequest="10"
+            HorizontalOptions="End"
+            BackgroundColor="Gray"
+            VerticalOptions="Center"
+            WidthRequest="10" />
+
+        <!--  START THUMB - RANGED ONLY  -->
+        <draw:SliderThumb
+            IsVisible="{Binding Source={x:Reference ThisSlider}, Path=EnableRange}"
+            x:Name="StartThumb"
+            HeightRequest="{Binding Source={x:Reference ThisSliderGrid}, Path=Height}"
+            HorizontalOptions="Start"
+            TranslationX="{Binding Source={x:Reference ThisSlider}, Path=StartThumbX}"
+            VerticalOptions="Start"
+            WidthRequest="{Binding Source={x:Reference ThisSliderGrid}, Path=Height}">
+          
+            <draw:SkiaShape
+                BackgroundColor="Red"
+                HorizontalOptions="Fill"
+                Type="Circle"
+                VerticalOptions="Fill">
+                <draw:SkiaShape.Shadows>
+
+                    <draw:SkiaShadow
+                        Blur="2"
+                        Opacity="0.5"
+                        X="1"
+                        Y="1"
+                        Color="Black" />
+
+                </draw:SkiaShape.Shadows>
+            </draw:SkiaShape>
+
+        </draw:SliderThumb>
+
+        <!--  END THUMB  -->
+        <draw:SliderThumb
+            x:Name="EndThumb"
+            HeightRequest="{Binding Source={x:Reference ThisSliderGrid}, Path=Height}"
+            HorizontalOptions="Start"
+            TranslationX="{Binding Source={x:Reference ThisSlider}, Path=EndThumbX}"
+            VerticalOptions="Start"
+            WidthRequest="{Binding Source={x:Reference ThisSliderGrid}, Path=Height}">
+            <draw:SkiaShape
+                BackgroundColor="Red"
+                HorizontalOptions="Fill"
+                Type="Circle"
+                VerticalOptions="Fill">
+                <draw:SkiaShape.Shadows>
+
+                    <draw:SkiaShadow
+                        Blur="2"
+                        Opacity="0.5"
+                        X="1"
+                        Y="1"
+                        Color="Black" />
+
+                </draw:SkiaShape.Shadows>
+            </draw:SkiaShape>
+        </draw:SliderThumb>
+
+    </draw:SkiaLayout>
+
+    <!--  BOTTOM INFO  -->
+    <draw:SkiaLayout
+        Margin="0,2,0,0"
+        HorizontalOptions="Fill"
+        VerticalOptions="Start">
+
+        <draw:SkiaLabel
+            FontSize="13"
+            HorizontalOptions="Start"
+            Text="{Binding Source={x:Reference ThisSlider}, Path=MinDesc}"
+            TextColor="Black" />
+
+        <draw:SkiaLabel
+            FontSize="13"
+            HorizontalOptions="End"
+            Text="{Binding Source={x:Reference ThisSlider}, Path=MaxDesc}"
+            TextColor="Black" />
+
+    </draw:SkiaLayout>
+
+</draw:SkiaSlider>

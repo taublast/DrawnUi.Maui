@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<draw:DrawnUiBasePage
+    x:Class="Sandbox.MainPageBackdrop"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel"
+    BackgroundColor="#000000">
+
+    <!--<ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style
+                x:Key="TestStyle"
+                TargetType="draw:SkiaLabel">
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>-->
+
+    <Grid
+        BackgroundColor="Blue"
+        HorizontalOptions="Fill"
+        VerticalOptions="Fill">
+
+ 
+        <draw:Canvas
+            BackgroundColor="Green"
+            Gestures="Enabled"
+            HardwareAcceleration="Enabled"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+            <draw:SkiaLayout
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
+                <draw:SkiaScroll
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+
+                    <draw:SkiaLayout
+                        Padding="24"
+                        BackgroundColor="WhiteSmoke"
+                        HeightRequest="2000">
+
+                        <draw:SkiaImage
+                            Aspect="AspectFill"
+                            BackgroundColor="Green"
+                            HeightRequest="500"
+                            HorizontalOptions="Fill"
+                            Source="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Olive_baboon_Ngorongoro.jpg/1024px-Olive_baboon_Ngorongoro.jpg" />
+
+
+
+                        <!--  wrapper for composition  -->
+                        <draw:SkiaLayout
+                            Margin="64,32,64,0"
+                            HeightRequest="200"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Start"
+                            WidthRequest="200">
+
+                            <!--  static shadow+texture  -->
+                            <!--  cached GPU  -->
+                            <draw:SkiaLayout
+                                Padding="16"
+                                HorizontalOptions="Fill"
+                                UseCache="GPU"
+                                VerticalOptions="Fill"
+                                ZIndex="-1">
+
+                                <draw:SkiaShape
+                                    BackgroundColor="#22dddddd"
+                                    CornerRadius="16"
+                                    HorizontalOptions="Fill"
+                                    StrokeColor="Red"
+                                    StrokeWidth="2"
+                                    VerticalOptions="Fill">
+
+                                    <!--  texture  to mix with  -->
+                                    <draw:SkiaImage
+                                        Aspect="AspectCover"
+                                        HorizontalOptions="Fill"
+                                        Opacity="0.15"
+                                        Source="Images/glass2.jpg"
+                                        VerticalOptions="Fill" />
+
+                                    <draw:SkiaShape.StrokeGradient>
+
+                                        <draw:SkiaGradient
+                                            EndXRatio="1"
+                                            EndYRatio="1"
+                                            StartXRatio="0"
+                                            StartYRatio="0"
+                                            Type="Linear">
+                                            <draw:SkiaGradient.Colors>
+                                                <Color>#66ffffff</Color>
+                                                <Color>#66999999</Color>
+                                            </draw:SkiaGradient.Colors>
+                                        </draw:SkiaGradient>
+
+                                    </draw:SkiaShape.StrokeGradient>
+
+                                </draw:SkiaShape>
+
+                            </draw:SkiaLayout>
+
+
+                            <draw:SkiaShape
+                                Margin="16"
+                                BackgroundColor="#66ffffff"
+                                ClipBackgroundColor="True"
+                                CornerRadius="19"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Fill">
+
+                                <draw:SkiaLayout>
+
+                                    <draw:SkiaBackdrop
+                                        Blur="10"
+                                        HorizontalOptions="Fill"
+                                        Tag="Blur"
+                                        VerticalOptions="Fill"
+                                        ZIndex="-1">
+
+                                    </draw:SkiaBackdrop>
+
+                                    <draw:SkiaLayout
+                                        Padding="8"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill">
+
+                                        <draw:SkiaLabel
+                                            FontSize="20"
+                                            HorizontalOptions="Center"
+                                            HorizontalTextAlignment="Center"
+                                            Text="Wonnabe Frosted Glass"
+                                            TextColor="#efefef"
+                                            VerticalOptions="Center" />
+
+                                    </draw:SkiaLayout>
+
+                                </draw:SkiaLayout>
+
+                                <draw:SkiaControl.Shadows>
+                                    <draw:SkiaShadow
+                                        Blur="3"
+                                        Opacity="1"
+                                        X="4"
+                                        Y="4"
+                                        Color="#44000000" />
+
+                                </draw:SkiaControl.Shadows>
+
+                            </draw:SkiaShape>
+
+
+                        </draw:SkiaLayout>
+
+
+                    </draw:SkiaLayout>
+
+
+                </draw:SkiaScroll>
+
+                <draw:SkiaLabelFps
+                    Margin="0,0,4,24"
+                    BackgroundColor="DarkRed"
+                    ForceRefresh="False"
+                    HorizontalOptions="End"
+                    Rotation="-45"
+                    TextColor="White"
+                    VerticalOptions="End"
+                    ZIndex="100" />
+
+            </draw:SkiaLayout>
+
+        </draw:Canvas>
+
+
+
+    </Grid>
+
+
+
+</draw:DrawnUiBasePage>

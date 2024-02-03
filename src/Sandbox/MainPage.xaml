@@ -1,0 +1,301 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<draw:DrawnUiBasePage
+    x:Class="Sandbox.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:game="clr-namespace:SpaceShooter.Game"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel"
+    BackgroundColor="#fefefe">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <x:String x:Key="SvgThumb">
+                <![CDATA[ 
+                                     
+ <?xml version="1.0" encoding="utf-8"?>
+<svg width="11px" height="11px" viewBox="0 0 11 11" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <desc>Created with Lunacy</desc>
+  <g id="thumb" transform="translate(0.5 0.5)">
+    <g id="thumb">
+      <g id="thumb">
+        <g id="g12">
+          <g id="g10" transform="matrix(1.333333 0 0 -1.333333 0 9.220332)">
+            <path d="M0 3.45763C0 1.54803 1.54803 0 3.45763 0C5.36722 0 6.91525 1.54803 6.91525 3.45763C6.91525 5.36722 5.36722 6.91525 3.45763 6.91525C1.54803 6.91525 0 5.36722 0 3.45763L0 3.45763Z" transform="matrix(1 0 0 -1 0 6.91525)" id="path824" fill="#F740A0" stroke="#26003D" stroke-width="1.0" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+                                
+                ]]>
+
+            </x:String>
+
+            <Color x:Key="ColorMixedLight">#976ea0</Color>
+
+            <Style
+                x:Key="PlayBorderStyle"
+                TargetType="draw:SkiaShape">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="StrokeWidth" Value="0" />
+                <Setter Property="HeightRequest" Value="44" />
+                <Setter Property="WidthRequest" Value="44" />
+                <Setter Property="Margin" Value="12" />
+            </Style>
+
+            <Style
+                x:Key="PlayIconStyle"
+                TargetType="draw:SkiaShape">
+                <Setter Property="HeightRequest" Value="16" />
+                <Setter Property="WidthRequest" Value="16" />
+                <Setter Property="BackgroundColor" Value="Black" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid
+        HorizontalOptions="Fill"
+        VerticalOptions="Fill">
+
+        <draw:Canvas
+            Gestures="Enabled"
+            HardwareAcceleration="Enabled"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+            <!--<draw:SkiaLayout
+                Tag="Wrapper"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
+                <draw:SkiaScroll
+                    BackgroundColor="#000033"
+                    HorizontalOptions="Fill"
+                    IgnoreWrongDirection="True"
+                    VerticalOptions="Fill">
+
+                    <draw:SkiaLayout
+                        BackgroundColor="#fefefe"
+                        Padding="50,24"
+                        HorizontalOptions="Fill"
+                        Type="Column">
+
+                        <draw:SkiaLabel
+                            Margin="0,16"
+                            Padding="2"
+                            BackgroundColor="#11000000"
+                            HorizontalOptions="Fill"
+                            HorizontalTextAlignment="Center"
+                            Text="Fun Slider" />
+
+                        <demo:SkiaSliderFun
+                            HorizontalOptions="Fill"
+                            Max="1"
+                            Min="0"
+                            MinMaxStringFormat="P0"
+                            SliderHeight="46"
+                            Step="0.01" />
+
+                        <draw:SkiaLabel
+                            Margin="0,16"
+                            Padding="2"
+                            BackgroundColor="#11000000"
+                            HorizontalOptions="Fill"
+                            HorizontalTextAlignment="Center"
+                            Text="Tech Slider" />
+
+                        <demo:SkiaSliderTech
+                            HorizontalOptions="Fill"
+                            Max="1"
+                            Min="0"
+                            MinMaxStringFormat="P0"
+                            SliderHeight="40"
+                            Step="0.01" />
+
+                        <draw:SkiaLabel
+                            Margin="0,16"
+                            Padding="2"
+                            BackgroundColor="#11000000"
+                            HorizontalOptions="Fill"
+                            HorizontalTextAlignment="Center"
+                            Text="Simple Slider" />
+
+                        <demo:SkiaSliderRanged
+                            End="10"
+                            HorizontalOptions="Fill"
+                            Max="5000"
+                            Min="10"
+                            MinMaxStringFormat="C"
+                            RangeMin="5"
+                            SliderHeight="20"
+                            Start="10"
+                            Step="5"
+                            ValueStringFormat="C" />
+
+                        <draw:SkiaLabel
+                            Margin="0,16"
+                            Padding="2"
+                            BackgroundColor="#11000000"
+                            HorizontalOptions="Fill"
+                            HorizontalTextAlignment="Center"
+                            Text="Range Slider" />
+
+                        <demo:SkiaSliderRanged
+                            EnableRange="True"
+                            End="10000"
+                            Max="10000"
+                            Min="10"
+                            MinMaxStringFormat="C"
+                            RangeMin="5"
+                            SliderHeight="20"
+                            Start="10"
+                            Step="5"
+                            ValueStringFormat="C" />
+
+                        <controls:SkiaSwitchCupertino
+                            ColorFrameOn="Blue"
+                            ColorThumbOn="White"
+                            HorizontalOptions="Center" />
+
+                        <draw:SkiaButton Text="Base" />
+
+                        <draw:SkiaSwitch />
+
+                    </draw:SkiaLayout>
+
+                </draw:SkiaScroll>
+
+                <draw:SkiaLabelFps
+                    Margin="0,0,4,24"
+                    BackgroundColor="DarkRed"
+                    ForceRefresh="False"
+                    HorizontalOptions="End"
+                    Rotation="-45"
+                    TextColor="White"
+                    VerticalOptions="End"
+                    ZIndex="100" />
+
+            </draw:SkiaLayout>-->
+
+            <draw:SkiaLayout
+                BackgroundColor="Gray"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
+                <!--<draw:SkiaShape
+                    BackgroundColor="WhiteSmoke"
+                    HeightRequest="200"
+                    PathData="M8.5319849,0C11.560988,7.3866431E-08 14.464015,1.6680007 15.99997,4.5209999 18.139016,0.55099538 22.921994,-1.1230173 27.008008,0.7949839 31.297024,2.8069787 33.185032,8.0069957 31.22604,12.411997 29.27303,16.804 15.998994,30.380001 15.998994,30.380001 15.915985,30.327022 2.7269701,16.804 0.77395964,12.411997 -1.1850933,8.0069957 0.70291448,2.8069787 4.9929701,0.7949839 6.1419612,0.25497467 7.3469826,7.3866431E-08 8.5319849,0z"
+                    StrokeColor="Red"
+                    StrokeWidth="8"
+                    Type="Path"
+                    WidthRequest="200" />-->
+
+                <!--<draw:SkiaLayout
+                    BackgroundColor="Red"
+                    HeightRequest="80"
+                    HorizontalOptions="Fill"
+                    Spacing="24"
+                    Type="Row"
+                    VerticalOptions="Center">
+
+                    <draw:SkiaShape
+                        Margin="12"
+                        BackgroundColor="Yellow"
+                        HeightRequest="44"
+                        Tag="Btn"
+                        Type="Circle"
+                        WidthRequest="44">
+                        <draw:SkiaControl.Shadows>
+
+                            <draw:SkiaShadow
+                                Blur="3"
+                                Opacity="0.33"
+                                X="4"
+                                Y="4"
+                                Color="Black" />
+
+                        </draw:SkiaControl.Shadows>
+
+                        <draw:SkiaShape
+                            BackgroundColor="Black"
+                            HeightRequest="16"
+                            HorizontalOptions="Center"
+                            PathData="M0,0L15.825011,8.0009766 31.650999,15.997986 15.825011,23.998993 0,32 0,15.997986z"
+                            Tag="Play"
+                            Type="Path"
+                            VerticalOptions="Center"
+                            WidthRequest="16" />
+
+                    </draw:SkiaShape>
+
+                    <draw:SkiaShape
+                        BackgroundColor="Black"
+                        HeightRequest="16"
+                        PathData="M0,0L15.825011,8.0009766 31.650999,15.997986 15.825011,23.998993 0,32 0,15.997986z"
+                        Tag="Play"
+                        Type="Path"
+                        VerticalOptions="Center"
+                        WidthRequest="16" />
+
+                    <draw:SkiaShape
+                        BackgroundColor="Black"
+                        HeightRequest="16"
+                        PathData="M0,0L15.825011,8.0009766 31.650999,15.997986 15.825011,23.998993 0,32 0,15.997986z"
+                        Tag="Play"
+                        Type="Path"
+                        VerticalOptions="Center"
+                        WidthRequest="16" />
+
+                    <draw:SkiaLabel 
+                        VerticalOptions="Center"
+                        Text="END" />
+
+                </draw:SkiaLayout>-->
+
+                <!--<draw:SkiaShape
+                    BackgroundColor="Pink"
+                    HeightRequest="200"
+                    HorizontalOptions="Center"
+                    StrokeColor="Red"
+                    StrokeWidth="8"
+                    Type="Ellipse"
+                    WidthRequest="50" />-->
+
+                <game:SpaceShooter />
+
+                <!--<draw:SkiaImage
+                    x:Name="Player"
+                    Aspect="AspectFitFill"
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    Source="Space/Sprites/player.png"
+                    UseCache="GPU"
+                    WidthRequest="60"
+                    ZIndex="5" />-->
+
+                <draw:SkiaLabelFps
+                    Margin="0,0,4,24"
+                    BackgroundColor="DarkRed"
+                    HorizontalOptions="End"
+                    Rotation="-45"
+                    TextColor="White"
+                    VerticalOptions="End"
+                    ZIndex="100" />
+
+            </draw:SkiaLayout>
+
+        </draw:Canvas>
+    </Grid>
+
+
+
+</draw:DrawnUiBasePage>

@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Sandbox.MainPageScroll"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel">
+
+    <draw:Canvas
+        gestures:TouchEffect.ForceAttach="True"
+        HardwareAcceleration="Enabled"
+        HorizontalOptions="Fill"
+        Tag="MainPage"
+        UpdateMode="Constant"
+        VerticalOptions="Fill">
+
+
+
+        <draw:SkiaLayout
+            BackgroundColor="Black"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+            <draw:SkiaScroll
+                BackgroundColor="Black"
+                Bounces="True"
+                FluidPan="False"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
+                <!--  background is colored to avoid antialiasing transparency when scrolling !  -->
+                <draw:SkiaLayout
+                    Margin="20,19,20,20"
+                    BackgroundColor="Black"
+                    HorizontalOptions="Fill"
+                    Spacing="20"
+                    Tag="Content"
+                    Type="Column"
+                    UseCache="Image">
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Start"
+                        Text="HorizontalTextAlignment Start - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillCharacters"
+                        Text="HorizontalTextAlignment FillCharacters - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillCharactersFull"
+                        Text="HorizontalTextAlignment FillCharactersFull - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillWords"
+                        Text="HorizontalTextAlignment FillWords - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center"
+                        Text="HorizontalTextAlignment Center - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="End"
+                        Text="HorizontalTextAlignment End - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Start"
+                        Text="HorizontalTextAlignment Start - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillCharacters"
+                        Text="HorizontalTextAlignment FillCharacters - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillCharactersFull"
+                        Text="HorizontalTextAlignment FillCharactersFull - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillWords"
+                        Text="HorizontalTextAlignment FillWords - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center"
+                        Text="HorizontalTextAlignment Center - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="End"
+                        Text="HorizontalTextAlignment End - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Start"
+                        Text="HorizontalTextAlignment Start - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillCharacters"
+                        Text="HorizontalTextAlignment FillCharacters - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillCharactersFull"
+                        Text="HorizontalTextAlignment FillCharactersFull - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillWords"
+                        Text="HorizontalTextAlignment FillWords - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center"
+                        Text="HorizontalTextAlignment Center - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="End"
+                        Text="HorizontalTextAlignment End - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Start"
+                        Text="HorizontalTextAlignment Start - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillCharacters"
+                        Text="HorizontalTextAlignment FillCharacters - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillCharactersFull"
+                        Text="HorizontalTextAlignment FillCharactersFull - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="FillWords"
+                        Text="HorizontalTextAlignment FillWords - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center"
+                        Text="HorizontalTextAlignment Center - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+                    <draw:SkiaLabel
+                        FontSize="18"
+                        FontWeight="600"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="End"
+                        Text="HorizontalTextAlignment End - Promociones especiales y productos exclusivos. Envíos y devoluciones gratis y 60 dias de devoluciones en portátiles Surface."
+                        UseCache="None" />
+
+
+
+
+                </draw:SkiaLayout>
+
+            </draw:SkiaScroll>
+
+
+
+
+            <!--  FPS  -->
+            <draw:SkiaLabelFps
+                Margin="0,0,4,84"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End" />
+
+
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
+
+</ContentPage>
