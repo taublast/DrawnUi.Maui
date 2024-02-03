@@ -216,20 +216,25 @@ public partial class Super
     /// <param name="isFixed"></param>
     public static void ResizeWindow(Window window, int width, int height, bool isFixed)
     {
-        void Resize(Window window)
+        void Resize()
         {
             window.Width = width;
             window.Height = height;
 
             // move to screen center
             var disp = DeviceDisplay.Current.MainDisplayInfo;
-            window.X = (disp.Width / disp.Density - window.Width) / 2;
-            window.Y = (disp.Height / disp.Density - window.Height) / 2;
+       
+            var newX =(disp.Width / disp.Density - window.Width) / 2f; 
+            var newY = (disp.Height / disp.Density - window.Height) / 2f;
+            
+            //bug this crashes in NET8 !!!
+            //window.X = newX;
+            //window.Y = newY;
         }
 
 #if WINDOWS
 
-        Resize(window);
+        Resize();
 
         if (isFixed)
         {
@@ -240,7 +245,7 @@ public partial class Super
 
 #elif MACCATALYST
 
-        Resize(window);
+        Resize();
 
         foreach (var scene in UIKit.UIApplication.SharedApplication.ConnectedScenes)
         {
@@ -256,16 +261,18 @@ public partial class Super
             }
         }
 
-
-#endif
+#else
 
         //center window
-        //todo add code for Catalyst
 
         var disp = DeviceDisplay.Current.MainDisplayInfo;
         // move to screen center
         window.X = (disp.Width / disp.Density - window.Width) / 2;
         window.Y = (disp.Height / disp.Density - window.Height) / 2;
+
+#endif
+
+        
     }
 
     public static void OnCreated()

@@ -186,7 +186,7 @@
             </draw:SkiaLayout>-->
 
             <draw:SkiaLayout
-                BackgroundColor="Gray"
+                BackgroundColor="Red"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill">
 
@@ -272,15 +272,16 @@
 
                 <game:SpaceShooter />
 
-                <!--<draw:SkiaImage
-                    x:Name="Player"
-                    Aspect="AspectFitFill"
-                    HeightRequest="50"
-                    HorizontalOptions="Center"
-                    Source="Space/Sprites/player.png"
-                    UseCache="GPU"
-                    WidthRequest="60"
-                    ZIndex="5" />-->
+                <!-- <draw:SkiaImage -->
+                <!--     x:Name="Player" -->
+                <!--     Aspect="AspectFitFill" -->
+                <!--     HeightRequest="150" -->
+                <!--     VerticalOptions="Center" -->
+                <!--     HorizontalOptions="Center" -->
+                <!--     Source="Space/Sprites/player.png" -->
+                <!--     UseCache="GPU" -->
+                <!--     WidthRequest="160" -->
+                <!--     ZIndex="5" /> -->
 
                 <draw:SkiaLabelFps
                     Margin="0,0,4,24"
