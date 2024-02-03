@@ -48,8 +48,10 @@ public class SkiaDrawnCell : SkiaLayout, ISkiaCell
 		}
 	}
 
-	public void ApplyBindingContext()
+	public override void ApplyBindingContext()
 	{
+		base.ApplyBindingContext();
+		
 		if (BindingContext != _lastContext && !_isAttaching)
 		{
 			_isAttaching = true;
@@ -72,10 +74,6 @@ public class SkiaDrawnCell : SkiaLayout, ISkiaCell
 		ApplyBindingContext();
 	}
 
-	public virtual void OnDisappeared()
-	{
-
-	}
 
 
 

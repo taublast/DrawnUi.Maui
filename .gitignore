@@ -193,3 +193,5 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 .vscode/settings.json
+
+.idea/

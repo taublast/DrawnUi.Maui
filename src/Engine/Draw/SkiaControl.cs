@@ -3169,7 +3169,7 @@ namespace DrawnUi.Maui.Draw
             return ScaledSize.FromPixels(maxWidth, maxHeight, scale);
         }
 
-        protected virtual void ApplyBindingContext()
+        public virtual void ApplyBindingContext()
         {
             foreach (var shade in Shadows)
             {
