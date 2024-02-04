@@ -137,9 +137,9 @@ public partial class Super
     }
 
     /// <summary>
-    /// Capping FPS, default is 8333.33 (1 / FPS * 1000_000) for 120 FPS
+    /// Capping FPS, default is 8333.3333 (1 / FPS * 1000_000) for 120 FPS
     /// </summary>
-    public static float CapMicroSecs = 8333.33f;
+    public static float CapMicroSecs = 8333.3333f;
 
     public static long GetNanoseconds()
     {
@@ -221,27 +221,19 @@ public partial class Super
     /// <param name="isFixed"></param>
     public static void ResizeWindow(Window window, int width, int height, bool isFixed)
     {
-        void Resize()
-        {
-            window.Width = width;
-            window.Height = height;
-
-            // move to screen center
-            var disp = DeviceDisplay.Current.MainDisplayInfo;
-
-            var newX = (disp.Width / disp.Density - window.Width) / 2f;
-            var newY = (disp.Height / disp.Density - window.Height) / 2f;
-
-            //bug this crashes in NET8 for CATALYST !!!
+        
+        window.Width = width;
+        window.Height = height;
+            
+        //this crashes in NET8 for CATALYST so..
 #if !MACCATALYST
-            window.X = newX;
-            window.Y = newY;
+        var disp = DeviceDisplay.Current.MainDisplayInfo;
+        // move to screen center
+        window.X = (disp.Width / disp.Density - window.Width) / 2;
+        window.Y = (disp.Height / disp.Density - window.Height) / 2;
 #endif
-        }
 
 #if WINDOWS
-
-        Resize();
 
         if (isFixed)
         {
@@ -251,8 +243,6 @@ public partial class Super
         }
 
 #elif MACCATALYST
-
-        Resize();
 
         foreach (var scene in UIKit.UIApplication.SharedApplication.ConnectedScenes)
         {
@@ -268,17 +258,7 @@ public partial class Super
             }
         }
 
-#else
-
-        //center window
-
-        var disp = DeviceDisplay.Current.MainDisplayInfo;
-        // move to screen center
-        window.X = (disp.Width / disp.Density - window.Width) / 2;
-        window.Y = (disp.Height / disp.Density - window.Height) / 2;
-
 #endif
-
 
     }
 
@@ -327,7 +307,7 @@ public partial class Super
         NeedGlobalRefresh?.Invoke(null, null);
     }
 
-    static RestartingTimer<object> TimerStopRenderingInBackground;
+    static RestartingTimer<object> _timerStopRenderingInBackground;
 
     private static bool _inBackground;
     public static bool InBackground
@@ -355,18 +335,18 @@ public partial class Super
 
     static void SetStopRenderingInBackgroundWithDelay(int ms)
     {
-        if (TimerStopRenderingInBackground == null)
+        if (_timerStopRenderingInBackground == null)
         {
-            TimerStopRenderingInBackground = new(TimeSpan.FromMilliseconds(ms), (arg) =>
+            _timerStopRenderingInBackground = new(TimeSpan.FromMilliseconds(ms), (arg) =>
             {
                 if (InBackground)
                     StopRenderingInBackground = true;
             });
-            TimerStopRenderingInBackground.Start(null);
+            _timerStopRenderingInBackground.Start(null);
         }
         else
         {
-            TimerStopRenderingInBackground.Restart(null);
+            _timerStopRenderingInBackground.Restart(null);
         }
     }
 

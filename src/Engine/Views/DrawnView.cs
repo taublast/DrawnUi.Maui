@@ -568,30 +568,30 @@ namespace DrawnUi.Maui.Views
             var heightPixels = (int)CanvasView.CanvasSize.Height;
             if (widthPixels > 0 && heightPixels > 0)
             {
-
-                //optimization check
-                if (NeedCheckParentVisibility)
-                {
+         
 #if ANDROID || WINDOWS
 
-                    CheckElementVisibility(this);
+                    if (NeedCheckParentVisibility)
+                        CheckElementVisibility(this);
                     Continue();
 
 #else
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
-
-                        CheckElementVisibility(this); //need ui thread for visibility check for apple
-                        Continue();
-
+                        try
+                        {
+                            if (NeedCheckParentVisibility)
+                                CheckElementVisibility(this);  
+                            Continue();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                        
                     });
 #endif
-                }
-                else
-                {
-                    Continue();
-                }
-
+                
                 void Continue()
                 {
                     if (CanvasView != null)
@@ -607,10 +607,29 @@ namespace DrawnUi.Maui.Views
                             var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
                             _lastUpdateTimeNanos = nowNanos;
 
-                            var needWait = Super.CapMicroSecs - elapsedMicros;
+                            var needWait = 
+                                Super.CapMicroSecs 
+#if IOS || MACCATALYST 
+                                * 2 //double buffered                                
+#endif
+                                - elapsedMicros;
                             if (needWait < 1)
                                 needWait = 1;
-
+       
+#if IOS 
+                            
+                            MainThread.BeginInvokeOnMainThread(async () =>
+                                //if we don't use main thread maui bindings will just stop updating at some point
+                            {
+                                var ms = (int)(needWait / 1000);
+                                if (ms < 1)
+                                    ms = 1;
+                                await Task.Delay(ms);
+                                CanvasView?.InvalidateSurface();
+                                _isWaiting = false;
+                            });
+                            
+#else
                             Tasks.StartDelayed(TimeSpan.FromMicroseconds(1), async () =>
                             {
                                 MainThread.BeginInvokeOnMainThread(async () =>
@@ -624,6 +643,12 @@ namespace DrawnUi.Maui.Views
                                     _isWaiting = false;
                                 });
                             });
+                            
+#endif
+                            
+                            
+ 
+                            
 
                         }
                         else
@@ -1434,8 +1459,16 @@ namespace DrawnUi.Maui.Views
         private int _fpsCount;
         protected double _fps;
 
-        protected long FrameTime { get; set; }
+        /// <summary>
+        /// Frame started rendering nanoseconds
+        /// </summary>
+        public long FrameTime { get; protected set; }
 
+        /// <summary>
+        /// Frame finished rendering nanoseconds
+        /// </summary>
+        public long FrameFinishedTime { get; protected set; }
+        
         /// <summary>
         /// Actual FPS
         /// </summary>
@@ -1482,6 +1515,7 @@ namespace DrawnUi.Maui.Views
         /// For debugging purposes check if dont have concurrent threads
         /// </summary>
         public int DrawingThreads { get; protected set; }
+        
         protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
             ++renderedFrames;
@@ -1523,12 +1557,7 @@ namespace DrawnUi.Maui.Views
                 try
                 {
                     DrawingThreads++;
-
-                    if (DrawingThreads > 1)
-                    {
-                        var stop = 1;
-                    }
-
+                    
                     FrameTime = GetNanoseconds();
                     context.FrameTimeNanos = FrameTime;
 
@@ -1642,6 +1671,7 @@ namespace DrawnUi.Maui.Views
                 }
                 finally
                 {
+                    FrameFinishedTime = GetNanoseconds();
                     DrawingThreads--;
                 }
             }
