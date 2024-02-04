@@ -644,7 +644,7 @@ namespace DrawnUi.Maui.Draw
                             cell.LastDrawnSize = new(cell.Drawn.Width, cell.Drawn.Height);
                             cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
 
-                            if (RenderVisibleAreaOnly)
+                            if (Virtualisation != VirtualisationType.Disabled)
                             {
                                 if (needrebuild && UsingCacheType == SkiaCacheType.None &&
                                     PrerenderHiddenContent && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
@@ -1509,18 +1509,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(PrerenderHiddenContentProperty, value); }
         }
 
-        public static readonly BindableProperty RenderVisibleAreaOnlyProperty = BindableProperty.Create(nameof(RenderVisibleAreaOnly), typeof(bool), typeof(SkiaLayout),
-            true,
-            propertyChanged: NeedInvalidateMeasure);
-        /// <summary>
-        /// Whether we shold render content that is within visible control bounds only, default is True. Can tune more using HiddenAmountToRender property.
-        /// </summary>
-        public bool RenderVisibleAreaOnly
-        {
-            get { return (bool)GetValue(RenderVisibleAreaOnlyProperty); }
-            set { SetValue(RenderVisibleAreaOnlyProperty, value); }
-        }
-
         public static readonly BindableProperty HiddenAmountToRenderProperty = BindableProperty.Create(nameof(HiddenAmountToRender), typeof(double), typeof(SkiaLayout),
             0.0,
             propertyChanged: NeedInvalidateMeasure);
@@ -1528,7 +1516,7 @@ namespace DrawnUi.Maui.Draw
         /// How much of the hidden content out of visible bounds should be considered visible for rendering,
         /// default is 0.
         /// Basically how much should be expand in every direction of the visible area prior to checking if content falls
-        /// into its bounds for rendering controlled with RenderVisibleAreaOnly.
+        /// into its bounds for rendering controlled with Virtualisation.
         /// </summary>
         public double HiddenAmountToRender
         {

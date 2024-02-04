@@ -25,46 +25,56 @@
         Margin="0,50,0,50"
         x:DataType="demo:MockChatViewModel"
         Gestures="Enabled"
-        HorizontalOptions="Fill"
         HeightRequest="300"
+        HorizontalOptions="Fill"
         VerticalOptions="Fill">
 
-        <draw:SkiaScroll
-                Bounces="False"
-                BackgroundColor="Black"
+        <draw:SkiaLayout
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+            <draw:SkiaScroll
                 x:Name="MainScroll"
-                Scrolled="OnScrolled"
+                BackgroundColor="Black"
+                Bounces="False"
+                ChangeVelocityPanned="1.75"
+                FrictionScrolled="0.4"
                 HorizontalOptions="Fill"
+                Scrolled="OnScrolled"
                 VerticalOptions="Fill">
 
-                <!--for dynamic height cells: ItemSizingStrategy="MeasureAllItems"-->
+                <!--  for dynamic height cells: ItemSizingStrategy="MeasureAllItems"  -->
 
 
-                <!--idea is to have a maximum number of non recycled cells, like 100.
-                so the cells pool size is 100. when we reach some border, before loadMore or start of page
-                be return 50 cells from the other direction to pool and reuse them all 50 for the up coming page
-                this way we have a lag spike on borders only but smooth scrolling through the existing content-->
+                <!--
+                    idea is to have a maximum number of non recycled cells, like 100.
+                    so the cells pool size is 100. when we reach some border, before loadMore or start of page
+                    be return 50 cells from the other direction to pool and reuse them all 50 for the up coming page
+                    this way we have a lag spike on borders only but smooth scrolling through the existing content
+                -->
 
                 <draw:SkiaLayout
-                    ItemSizingStrategy="MeasureAllItems"
+                    x:Name="StackCells"
                     BackgroundColor="White"
+                    HiddenAmountToRender="50"
                     HorizontalOptions="Fill"
+                    ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding Items}"
-                    RecyclingTemplate="Disabled"
+                    RecyclingTemplate="Enabled"
                     Type="Column">
 
                     <draw:SkiaLayout.ItemTemplate>
                         <DataTemplate x:DataType="demo:ChatMessage">
 
-                                <draw:SkiaLabel
-                                    UseCache="Operations"
-                                    BackgroundColor="#8D5BBC"
-                                    Margin="8"
-                                    Padding="8,4"
-                                    FontSize="14"
-                                    Tag="LabelText"
-                                    Text="{Binding Text}"
-                                    TextColor="White" />
+                            <draw:SkiaLabel
+                                Margin="8"
+                                Padding="8,4"
+                                BackgroundColor="#8D5BBC"
+                                FontSize="14"
+                                Tag="LabelText"
+                                Text="{Binding Text}"
+                                TextColor="White"
+                                UseCache="Operations" />
 
                         </DataTemplate>
 
@@ -74,18 +84,22 @@
 
             </draw:SkiaScroll>
 
+            <draw:SkiaLabel
+                Margin="8"
+                BackgroundColor="Black"
+                HorizontalOptions="Start"
+                InputTransparent="True"
+               
+                TextColor="Lime"
+                Text="{Binding Source={x:Reference StackCells}, Path=DebugString}"
+                VerticalOptions="End" />
+
+        </draw:SkiaLayout>
 
 
 
-            <!--<draw:SkiaLabel
-                BackgroundColor="White"
-                FontSize="18"
-                HorizontalOptions="Center"
-                Text="{Binding Source={x:Reference ThisPage}, Path=ShowPosition, StringFormat='{0:0}'}"
-                UseCache="ImageDoubleBuffered"
-                VerticalOptions="Center" />-->
 
-   
+
 
 
     </draw:Canvas>

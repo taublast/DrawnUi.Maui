@@ -303,7 +303,8 @@ namespace DrawnUi.Maui.Draw
                 var stackWidth = 0.0f;
 
                 var rows = BuildStackStructure(scale);
-                bool useOneTemplate = ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
+                bool useOneTemplate =
+                                       //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
                                        RecyclingTemplate == RecyclingTemplate.Enabled;
 
                 if (IsTemplated && useOneTemplate)
