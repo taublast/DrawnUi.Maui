@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Sandbox</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -74,6 +74,13 @@
     <MtouchLink>None</MtouchLink>
   </PropertyGroup>-->
 
+  <!--HOTRELOAD WORKAROUND-->
+  <PropertyGroup>  
+    <EnableSourceControlManagerQueries>true</EnableSourceControlManagerQueries>  
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+  </PropertyGroup>  
 
   <ItemGroup>
 

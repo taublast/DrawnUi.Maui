@@ -504,7 +504,7 @@
 
         #endregion
 
-#if (NET7_0 && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
         protected virtual void LayoutMauiElementUnsafe(VisualElement element)
         {
             throw new NotImplementedException();

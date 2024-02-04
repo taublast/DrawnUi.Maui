@@ -471,7 +471,7 @@ public partial class SkiaImageManager : IDisposable
 
 
 
-#if (NET7_0 && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
     public static async Task<SKBitmap> LoadSKBitmapAsync(ImageSource source, CancellationToken cancel)
     {

@@ -14,7 +14,7 @@ public partial class KeyboardManager
     {
         CheckAndApplyModifiers(key, true);
 
-        Debug.WriteLine($"[KEY UP] {key}");
+        //Debug.WriteLine($"[KEY UP] {key}");
 
         KeyDown?.Invoke(null, key);
     }

@@ -136,6 +136,11 @@ public partial class Super
         }
     }
 
+    /// <summary>
+    /// Capping FPS, default is 8333.33 (1 / FPS * 1000_000) for 120 FPS
+    /// </summary>
+    public static float CapMicroSecs = 8333.33f;
+
     public static long GetNanoseconds()
     {
         double timestamp = Stopwatch.GetTimestamp();
@@ -223,13 +228,15 @@ public partial class Super
 
             // move to screen center
             var disp = DeviceDisplay.Current.MainDisplayInfo;
-       
-            var newX =(disp.Width / disp.Density - window.Width) / 2f; 
+
+            var newX = (disp.Width / disp.Density - window.Width) / 2f;
             var newY = (disp.Height / disp.Density - window.Height) / 2f;
-            
-            //bug this crashes in NET8 !!!
-            //window.X = newX;
-            //window.Y = newY;
+
+            //bug this crashes in NET8 for CATALYST !!!
+#if !MACCATALYST
+            window.X = newX;
+            window.Y = newY;
+#endif
         }
 
 #if WINDOWS
@@ -272,7 +279,7 @@ public partial class Super
 
 #endif
 
-        
+
     }
 
     public static void OnCreated()

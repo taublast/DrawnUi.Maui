@@ -1,7 +1,3 @@
-using DrawnUi.Maui;
-using DrawnUi.Maui;
-using DrawnUi.Maui;
-
 namespace SpaceShooter.Game;
 
 /// <summary>
@@ -25,6 +21,13 @@ public class MauiGame : SkiaLayout
         KeyboardManager.KeyDown -= OnKeyboardDownEvent;
     }
 
+    protected virtual void OnResumed()
+    {
+    }
+
+    protected virtual void OnPaused()
+    {
+    }
 
     /// <summary>
     /// Override this for your game. `deltaMs` is time elapsed between the previous frame and this one 
@@ -51,12 +54,10 @@ public class MauiGame : SkiaLayout
     {
         if (_appLoop == null)
         {
-            _appLoop = new(this, (t) => Task.Run(() => GameTick(t)).ConfigureAwait(false));
+            _appLoop = new(this, GameTick);
         }
         _appLoop.Start(delayMs);
     }
-
-    object lockTick = new();
 
     /// <summary>
     /// Internal, use override GameLoop for your game.
@@ -64,15 +65,42 @@ public class MauiGame : SkiaLayout
     /// <param name="frameTime"></param>
     protected virtual void GameTick(long frameTime)
     {
-        lock (lockTick)
-        {
-            // Incoming frameTime is in nanoseconds
-            // Calculate delta time in seconds for later use
-            float deltaTime = (frameTime - LastFrameTimeNanos) / 1_000_000_000.0f;
-            LastFrameTimeNanos = frameTime;
+        // Incoming frameTime is in nanoseconds
+        // Calculate delta time in seconds for later use
+        float deltaTime = (frameTime - LastFrameTimeNanos) / 1_000_000_000.0f;
+        LastFrameTimeNanos = frameTime;
 
-            GameLoop(deltaTime);
+        GameLoop(deltaTime);
+    }
+
+    private bool _IsPaused;
+    public bool IsPaused
+    {
+        get
+        {
+            return _IsPaused;
         }
+        set
+        {
+            if (_IsPaused != value)
+            {
+                _IsPaused = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public void Pause()
+    {
+        IsPaused = true;
+        OnPaused();
+    }
+
+    public void Resume()
+    {
+        LastFrameTimeNanos = SkiaControl.GetNanoseconds();
+        IsPaused = false;
+        OnResumed();
     }
 
     #region KEYS

@@ -10,7 +10,7 @@ namespace DrawnUi.Maui.Controls;
 public partial class SkiaCamera : SkiaControl
 {
 
-#if (NET7_0 && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
     public virtual void SetZoom(double value)
     {
@@ -575,7 +575,7 @@ public partial class SkiaCamera : SkiaControl
 
     #endregion
 
-#if (NET7_0 && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
 
     public SKBitmap GetPreviewBitmap()

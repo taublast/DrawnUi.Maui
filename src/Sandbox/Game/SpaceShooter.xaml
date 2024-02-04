@@ -39,22 +39,15 @@
     </draw:SkiaLayout>
 
     <!--  STARS PARALLAX  -->
-    <!--<draw:SkiaScrollLooped
-        InputTransparent="True"
+    <draw:SkiaImageTiles
+        x:Name="ParallaxLayer"
+        VerticalOptions="Fill"
         HorizontalOptions="Fill"
-        VerticalOptions="Fill">-->
-
-        <draw:SkiaImageTiles
-            x:Name="ParallaxLayer"
-            VerticalOptions="Fill"
-            HorizontalOptions="Fill"
-            Source="Space/Sprites/stars.png"
-            TileAspect="Cover"
-            TileHeight="600"
-            TileWidth="600"
-            TileCacheType="GPU" />
-
-    <!--</draw:SkiaScrollLooped>-->
+        Source="Space/Sprites/stars.png"
+        TileAspect="Cover"
+        TileHeight="600"
+        TileWidth="600"
+        TileCacheType="GPU" />
 
     <!--  SCORE  -->
     <draw:SkiaLabel
@@ -195,7 +188,7 @@
         HorizontalOptions="Center"
         Tag="Health"
         TranslationY="-28"
-        UseCache="GPU"
+        UseCache="ImageDoubleBuffered"
         VerticalOptions="End"
         WidthRequest="40"
         ZIndex="6"
@@ -222,7 +215,6 @@
         IsVisible="{Binding ShowDialog}"
         MinimumHeightRequest="50"
         MinimumWidthRequest="300"
-        UseCache="Image"
         VerticalOptions="Center"
         ZIndex="200">
 
@@ -230,6 +222,7 @@
         <draw:SkiaLayout
             Padding="16"
             HorizontalOptions="Fill"
+            UseCache="GPU"
             VerticalOptions="Fill"
             ZIndex="-1">
 
@@ -253,7 +246,8 @@
         <!--  front layer cached  -->
         <draw:SkiaLayout
             Padding="17"
-            HorizontalOptions="Fill">
+            HorizontalOptions="Fill"
+            UseCache="GPU">
 
             <draw:SkiaShape
                 Margin="0"

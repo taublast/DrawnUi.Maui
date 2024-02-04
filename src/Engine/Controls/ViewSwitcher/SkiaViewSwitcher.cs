@@ -690,7 +690,6 @@ namespace DrawnUi.Maui.Controls
 
             try
             {
-
                 while (NavigationBusy)
                 {
                     await Task.Delay(20);
@@ -699,6 +698,7 @@ namespace DrawnUi.Maui.Controls
                 NavigationBusy = true;
 
                 _isApplyingIdex = true;
+                OrderedIndex applyMe = null;
                 var index = new OrderedIndex(-1, false);
                 while (index != null)
                 {
@@ -708,7 +708,7 @@ namespace DrawnUi.Maui.Controls
 
                         if (index != null && index.Index >= 0)
                         {
-                            await ApplySelectedIndex(index);
+                            applyMe = index;
                             //await Dispatcher.DispatchAsync(() => ApplySelectedIndex(index));
                             //    .WithCancellation(cancel.Token);
                         }
@@ -723,8 +723,11 @@ namespace DrawnUi.Maui.Controls
                         _isApplyingIdex = false;
                     }
                 }
-
-
+                if (applyMe != null)
+                {
+                    await ApplySelectedIndex(applyMe);
+                }
+                applyMe = null;
             }
             catch (Exception e)
             {

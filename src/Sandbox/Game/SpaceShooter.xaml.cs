@@ -1,9 +1,8 @@
 // NOTE: Parts of the code below are based on
 // https://www.mooict.com/wpf-c-tutorial-create-a-space-battle-shooter-game-in-visual-studio/7/
 
-global using DrawnUi.Maui;
 global using DrawnUi.Maui.Controls;
-
+global using SkiaSharp;
 using AppoMobi.Maui.Gestures;
 using AppoMobi.Specials;
 using System.Diagnostics;
@@ -11,18 +10,6 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace SpaceShooter.Game;
-
-public class SkiaClone : ContentLayout
-{
-    public SkiaControl Source { get; set; }
-
-
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
-    {
-
-
-    }
-}
 
 public partial class SpaceShooter : MauiGame
 {
@@ -65,14 +52,17 @@ public partial class SpaceShooter : MauiGame
 
     public SpaceShooter()
     {
-        // suitable for games
-        SkiaImageManager.ReuseBitmaps = true;
-        //SkiaImageManager.LogEnabled = true;
-
         InitializeComponent();
 
         BindingContext = this;
+
+        Instance = this;
     }
+
+    /// <summary>
+    /// So it can get paused/resumed from anywhere in the app
+    /// </summary>
+    public static SpaceShooter Instance { get; set; }
 
     protected override void OnBindingContextChanged()
     {
@@ -98,6 +88,23 @@ public partial class SpaceShooter : MauiGame
         }).ConfigureAwait(false);
     }
 
+    public override void OnAppeared()
+    {
+        base.OnAppeared();
+
+        Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
+        {
+
+            //our dialog has a transparent background that is blurring pixels under
+            //so we have 2 options:
+            //A - do not cache the backdrop and blur underground pixels in realtime
+            //B - cache the backdrop but blur after the content below was rendered, so we implement the hack below, knowing our blurred background will be static as we show it only during pauses.
+
+            _appeared = true;
+            OnPropertyChanged(nameof(ShowDialog));
+        });
+    }
+
     void Initialize()
     {
         if (!Superview.HasHandler || _initialized)
@@ -109,23 +116,6 @@ public partial class SpaceShooter : MauiGame
 
         // in case we implement key press for desktop
         Focus();
-
-        //#if WINDOWS || MACCATALYST
-        //        //trying to avoid wierd bug when deployed for the first time on win/catalyst
-        //        //images in xaml not loaded from resources. todo investigate
-        //        if (Player.LoadedSource == null)
-        //        {
-        //            var source = Player.Source;
-        //            Player.Source = null;
-        //            Player.Source = source;
-        //        }
-        //        if (ImagePlanet.LoadedSource == null)
-        //        {
-        //            var source = ImagePlanet.Source;
-        //            ImagePlanet.Source = null;
-        //            ImagePlanet.Source = source;
-        //        }
-        //#endif
 
         //prebuilt reusable sprites pools
         Parallel.Invoke(
@@ -224,7 +214,7 @@ public partial class SpaceShooter : MauiGame
     protected override void OnChildAdded(SkiaControl child)
     {
         if (_initialized)
-            return; //do not care 
+            return; //do not care
 
         base.OnChildAdded(child);
     }
@@ -237,20 +227,9 @@ public partial class SpaceShooter : MauiGame
         base.OnChildRemoved(child);
     }
 
-    public override void OnAppeared()
-    {
-        base.OnAppeared();
-
-        Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
-        {
-            _appeared = true;
-            OnPropertyChanged(nameof(ShowDialog));
-        });
-    }
-
     #endregion
 
-    #region GAME LOGIC
+    #region GAME LOOP
 
     public override void GameLoop(float deltaMs)
     {
@@ -268,19 +247,16 @@ public partial class SpaceShooter : MauiGame
                 (float)(playerPosition.X + Player.Width), (float)(playerPosition.Y + Player.Height));
 
 
-            // search for bullets, enemies and collision begins
+            // collision detection
             foreach (var x in this.Views)
             {
                 if (x is EnemySprite enemySprite && enemySprite.IsActive)
                 {
                     //calculate hitbox once, we read it several times later
                     enemySprite.UpdateState(LastFrameTimeNanos);
-
-                    // make a new enemy rect for enemy hit box
+                
                     var enemy = enemySprite.HitBox;
 
-                    // first check if the enemy object has gone passed the player meaning
-                    // its gone passed 700 pixels from the top
                     if (enemySprite.TranslationY > this.Height)
                     {
                         CollideEnemyAndEarth(enemySprite);
@@ -301,7 +277,6 @@ public partial class SpaceShooter : MauiGame
                                 //calculate hitbox once, we read it several times later
                                 bulletSprite.UpdateState(LastFrameTimeNanos);
 
-                                // make a rect class with the bullet rectangles properties
                                 var bullet = bulletSprite.HitBox;
 
                                 if (bullet.IntersectsWith(enemy))
@@ -365,21 +340,17 @@ public partial class SpaceShooter : MauiGame
                 }
             }
 
-            // player movement begins
-            if (moveLeft)
+            // player movement
+            if (_moveLeft)
             {
-                // if move left is true AND player is inside the boundary then move player to the left
                 UpdatePlayerPosition(Player.TranslationX - PLAYER_SPEED * deltaMs);
             }
 
-            if (moveRight)
+            if (_moveRight)
             {
-                // if move right is true AND player left + 90 is less than the width of the form
-                // then move the player to the right
                 UpdatePlayerPosition(Player.TranslationX + PLAYER_SPEED * deltaMs);
             }
 
-            // if the damage integer is greater than 99
             if (Health < 1)
             {
                 EndGameLost();
@@ -417,28 +388,7 @@ public partial class SpaceShooter : MauiGame
 
     }
 
-    private GameState _gameState;
-    public GameState State
-    {
-        get
-        {
-            return _gameState;
-        }
-        set
-        {
-            if (_gameState != value)
-            {
-                _gameState = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    #endregion
-
-    #region ACTIONS
-
-    public void Pause()
+    protected override void OnPaused()
     {
         if (State == GameState.Playing)
         {
@@ -448,7 +398,7 @@ public partial class SpaceShooter : MauiGame
         }
     }
 
-    public void Resume()
+    protected override void OnResumed()
     {
         if (State == GameState.Paused)
         {
@@ -459,6 +409,10 @@ public partial class SpaceShooter : MauiGame
             }
         }
     }
+
+    #endregion
+
+    #region ACTIONS
 
     void Fire()
     {
@@ -648,7 +602,7 @@ public partial class SpaceShooter : MauiGame
     private void RemoveReusable(IReusableSprite sprite)
     {
         sprite.IsActive = false;
-        sprite.AnimateDisappearing().ContinueWith(async (s) =>
+        sprite.AnimateDisappearing().ContinueWith((s) =>
         {
             _spritesToBeRemovedLater.Enqueue(sprite as SkiaControl);
         }).ConfigureAwait(false);
@@ -667,10 +621,7 @@ public partial class SpaceShooter : MauiGame
         }
         else if (sprite is EnemySprite enemy)
         {
-            if (!EnemiesPool.TryAdd(enemy.Uid, enemy))
-            {
-                Trace.WriteLine($"[ADD] FAILED enemy");
-            }
+            EnemiesPool.TryAdd(enemy.Uid, enemy);
         }
         else
         if (sprite is ExplosionSprite explosion)
@@ -714,7 +665,7 @@ public partial class SpaceShooter : MauiGame
     {
         get
         {
-            return new Command(async (context) =>
+            return new Command((context) =>
             {
                 if (TouchEffect.CheckLockAndSet())
                     return;
@@ -767,12 +718,12 @@ public partial class SpaceShooter : MauiGame
 
         if (key == GameKey.Left)
         {
-            moveLeft = false;
+            _moveLeft = false;
         }
         else
         if (key == GameKey.Right)
         {
-            moveRight = false;
+            _moveRight = false;
         }
     }
 
@@ -790,18 +741,18 @@ public partial class SpaceShooter : MauiGame
         else
         if (key == GameKey.Left)
         {
-            moveLeft = true;
-            moveRight = false;
+            _moveLeft = true;
+            _moveRight = false;
         }
         else
         if (key == GameKey.Right)
         {
-            moveLeft = false;
-            moveRight = true;
+            _moveLeft = false;
+            _moveRight = true;
         }
     }
 
-    volatile bool moveLeft, moveRight;
+    volatile bool _moveLeft, _moveRight;
 
     bool _wasPanning;
     bool _isPressed;
@@ -823,10 +774,8 @@ public partial class SpaceShooter : MauiGame
 
             if (touchAction == TouchActionResult.Up)
             {
-                moveLeft = false;
-                moveRight = false;
-
-                Debug.WriteLine($"[TOUCH] UP {args.NumberOfTouches}");
+                _moveLeft = false;
+                _moveRight = false;
 
                 // custom tapped event
                 // we are not using TouchActionResult.Tapped here because it has some UI related
@@ -846,14 +795,14 @@ public partial class SpaceShooter : MauiGame
                 _wasPanning = true;
                 if (velocityX < 0)
                 {
-                    moveLeft = true;
-                    moveRight = false;
+                    _moveLeft = true;
+                    _moveRight = false;
                 }
                 else
                 if (velocityX > 0)
                 {
-                    moveRight = true;
-                    moveLeft = false;
+                    _moveRight = true;
+                    _moveLeft = false;
                 }
 
 
@@ -866,7 +815,7 @@ public partial class SpaceShooter : MauiGame
 
     #endregion
 
-    #region HUD
+    #region UI
 
     /// <summary>
     /// Score can change several times per frame
@@ -1030,6 +979,23 @@ public partial class SpaceShooter : MauiGame
     private bool _needPrerender;
     private bool _initialized;
     private GameState _lastState;
+
+    private GameState _gameState;
+    public GameState State
+    {
+        get
+        {
+            return _gameState;
+        }
+        set
+        {
+            if (_gameState != value)
+            {
+                _gameState = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
     #endregion
 }

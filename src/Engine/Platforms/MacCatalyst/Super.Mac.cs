@@ -22,7 +22,8 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public static void AttackKeysLayer()
+        /*
+        public static void AttachKeysLayer()
         {
             var root = UIKit.UIApplication.SharedApplication.KeyWindow.RootViewController as Microsoft.Maui.Platform.ContainerViewController;
             var mainPage = root?.CurrentView;
@@ -41,6 +42,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         static KeysInputCatchetLayer _layerCatchInput;
+        */
 
         public static void TrackKeyboardKeys()
         {

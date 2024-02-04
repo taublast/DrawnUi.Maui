@@ -41,7 +41,7 @@ public partial class SkiaFontManager
         return codePoints;
     }
 
-#if (NET7_0 && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
     public async Task<SKTypeface> GetFont(string alias)
     {

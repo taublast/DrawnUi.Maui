@@ -144,8 +144,12 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         }
     }
 
+    public bool IsDrawing { get; protected set; }
+
     private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
     {
+        IsDrawing = true;
+
         _fps = 1.0 / (DateTime.Now - _lastFrame).TotalSeconds;
         _lastFrame = DateTime.Now;
 
@@ -161,8 +165,9 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
             {
                 InvalidateSurface();
             }
+            else
 #endif
-
+            IsDrawing = false;
         }
 
     }

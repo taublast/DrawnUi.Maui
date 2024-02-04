@@ -32,7 +32,11 @@ public class SkiaTabsSelector : SkiaLayout
         {
             if (_needReApplyiIndex && !_isBusyApplyingIndex)
             {
-                await Task.Run(ApplySelectedIndexInternal).ConfigureAwait(false);
+                _needReApplyiIndex = false;
+                Tasks.StartDelayed(TimeSpan.FromMicroseconds(1), async () =>
+                {
+                    await Task.Run(ApplySelectedIndexInternal);
+                });
             }
         }
     }

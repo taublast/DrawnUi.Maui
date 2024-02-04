@@ -1,6 +1,3 @@
-using DrawnUi.Maui;
-using DrawnUi.Maui.Controls;
-
 namespace SpaceShooter.Game;
 
 public partial class SpaceShooter
@@ -27,6 +24,7 @@ public partial class SpaceShooter
 
         public void ResetAnimationState()
         {
+            Seek(0);
             Opacity = 0.75;
             Scale = 1;
         }

@@ -1,4 +1,3 @@
-using DrawnUi.Maui;
 using System.Runtime.CompilerServices;
 
 namespace SpaceShooter.Game;

@@ -594,24 +594,48 @@ namespace DrawnUi.Maui.Views
 
                 void Continue()
                 {
-                    if (CanDraw && !_isWaiting)  //passed checks
+                    if (CanvasView != null)
                     {
-                        _isWaiting = true;
-
-                        InvalidatedCanvas++;
-
-                        MainThread.BeginInvokeOnMainThread(async () =>
-                        //if we don't use main thread maui bindings will just stop updating at some point
+                        if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
                         {
-                            CanvasView?.InvalidateSurface();
+                            _isWaiting = true;
 
-                            _isWaiting = false;
-                        });
+                            InvalidatedCanvas++;
+
+                            //cap fps around 120fps
+                            var nowNanos = Super.GetCurrentTimeNanos();
+                            var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
+                            _lastUpdateTimeNanos = nowNanos;
+
+                            var needWait = Super.CapMicroSecs - elapsedMicros;
+                            if (needWait < 1)
+                                needWait = 1;
+
+                            Tasks.StartDelayed(TimeSpan.FromMicroseconds(1), async () =>
+                            {
+                                MainThread.BeginInvokeOnMainThread(async () =>
+                                //if we don't use main thread maui bindings will just stop updating at some point
+                                {
+                                    var ms = (int)(needWait / 1000);
+                                    if (ms < 1)
+                                        ms = 1;
+                                    await Task.Delay(ms);
+                                    CanvasView?.InvalidateSurface();
+                                    _isWaiting = false;
+                                });
+                            });
+
+                        }
+                        else
+                        {
+                            OrderedDraw = false;
+                        }
                     }
                     else
                     {
                         OrderedDraw = false;
                     }
+
                 }
             }
             else

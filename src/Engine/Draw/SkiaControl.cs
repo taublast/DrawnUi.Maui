@@ -2184,12 +2184,7 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        //-------------------------------------------------------------
-        // RenderingScale
-        //-------------------------------------------------------------
-        private const string nameRenderingScale = "RenderingScale";
-
-        public static readonly BindableProperty RenderingScaleProperty = BindableProperty.Create(nameRenderingScale,
+        public static readonly BindableProperty RenderingScaleProperty = BindableProperty.Create(nameof(RenderingScale),
             typeof(float), typeof(SkiaControl),
             -1.0f, propertyChanged: NeedUpdateScale);
 
@@ -2205,7 +2200,15 @@ namespace DrawnUi.Maui.Draw
         {
             get
             {
-                var value = (float)GetValue(RenderingScaleProperty);
+                var value = -1f;
+                try
+                {
+                    value = (float)GetValue(RenderingScaleProperty);
+                }
+                catch (Exception e)
+                {
+                    Log(e); //catching Nullable object must have a value, is this because of NET8?
+                }
                 if (value <= 0)
                 {
                     return GetDensity();
@@ -4146,7 +4149,7 @@ namespace DrawnUi.Maui.Draw
                     }
 
 #else
-                    lock (LockDraw)
+                    //  lock (LockDraw)
                     {
                         if (UseCache == SkiaCacheType.ImageDoubleBuffered && _renderObject != null)
                         {

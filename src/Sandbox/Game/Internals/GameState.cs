@@ -14,9 +14,6 @@ public enum GameState
     /// </summary>
     Playing,
 
-    /// <summary>
-    /// TODO
-    /// </summary>
     Paused,
 
     /// <summary>
