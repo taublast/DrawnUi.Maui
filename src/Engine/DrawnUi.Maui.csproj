@@ -15,13 +15,14 @@
 	</PropertyGroup>
 
   <PropertyGroup>
-    <PackageReleaseNotes>Pre-Alpha</PackageReleaseNotes>
-    <Version>1.0.8.0-pre</Version>
+    <PackageReleaseNotes>Alpha</PackageReleaseNotes>
+    <Version>1.0.8.0</Version>
     <Title>DrawnUi for .NET MAUI</Title>
+    <PackageId>AppoMobi.Maui.DrawnUi</PackageId>
     <Description>Cross-platform rendering engine for .NET MAUI to draw your UI with SkiaSharp</Description>
     <PackageTags>maui drawnui skia skiasharp draw ui</PackageTags>
     <Authors>Nick Kovalsky aka AppoMobi</Authors>
-    <Copyright>(c) AppoMobi, 2022 - present day</Copyright>
+    <Copyright>(c) AppoMobi, 2023 - present day</Copyright>
     <PackageIcon>icon128.png</PackageIcon>
     <PackageProjectUrl>https://github.com/taublast/DrawnUi.Maui</PackageProjectUrl>
     <!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
