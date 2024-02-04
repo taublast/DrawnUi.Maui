@@ -8,6 +8,10 @@ public interface INativeCamera : IDisposable
     void TurnOnFlash();
     void TurnOffFlash();
 
+    /// <summary>
+    /// If you get the preview via this method you are now responsible to dispose it yourself to avoid memory leaks.
+    /// </summary>
+    /// <returns></returns>
     CapturedImage GetPreviewImage();
 
     void ApplyDeviceOrientation(int orientation);

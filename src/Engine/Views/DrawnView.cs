@@ -12,11 +12,8 @@ using System.Text;
 
 namespace DrawnUi.Maui.Views
 {
-    /// <summary>
-    /// TODO Disable concurrent garbage 
-    /// </summary>
+ 
     [ContentProperty("Children")]
-
     public partial class DrawnView : ContentView, IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
         public Queue<IDisposable> ToBeDisposed { get; } = new();
@@ -560,38 +557,43 @@ namespace DrawnUi.Maui.Views
 
         protected void InvalidateCanvas()
         {
+            IsDirty = true;
+
             if (CanvasView == null)
+            {
+                OrderedDraw = false;
                 return;
+            }
 
             //sanity check
             var widthPixels = (int)CanvasView.CanvasSize.Width;
             var heightPixels = (int)CanvasView.CanvasSize.Height;
             if (widthPixels > 0 && heightPixels > 0)
             {
-         
+
 #if ANDROID || WINDOWS
 
-                    if (NeedCheckParentVisibility)
-                        CheckElementVisibility(this);
-                    Continue();
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+                Continue();
 
 #else
-                    MainThread.BeginInvokeOnMainThread(() =>
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    try
                     {
-                        try
-                        {
-                            if (NeedCheckParentVisibility)
-                                CheckElementVisibility(this);  
-                            Continue();
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                        }
-                        
-                    });
+                        if (NeedCheckParentVisibility)
+                            CheckElementVisibility(this);
+                        Continue();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+
+                });
 #endif
-                
+
                 void Continue()
                 {
                     if (CanvasView != null)
@@ -599,28 +601,23 @@ namespace DrawnUi.Maui.Views
                         if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
                         {
                             _isWaiting = true;
-
                             InvalidatedCanvas++;
-
-                            //cap fps around 120fps
-                            var nowNanos = Super.GetCurrentTimeNanos();
-                            var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
-                            _lastUpdateTimeNanos = nowNanos;
-
-                            var needWait = 
-                                Super.CapMicroSecs 
-#if IOS || MACCATALYST 
-                                * 2 //double buffered                                
-#endif
-                                - elapsedMicros;
-                            if (needWait < 1)
-                                needWait = 1;
-       
-#if IOS 
-                            
                             MainThread.BeginInvokeOnMainThread(async () =>
-                                //if we don't use main thread maui bindings will just stop updating at some point
                             {
+                                //cap fps around 120fps
+                                var nowNanos = Super.GetCurrentTimeNanos();
+                                var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
+                                _lastUpdateTimeNanos = nowNanos;
+
+                                var needWait =
+                                    Super.CapMicroSecs
+#if IOS || MACCATALYST  
+                                * 2 // apple is double buffered                             
+#endif
+                                    - elapsedMicros;
+                                if (needWait < 1)
+                                    needWait = 1;
+
                                 var ms = (int)(needWait / 1000);
                                 if (ms < 1)
                                     ms = 1;
@@ -628,39 +625,10 @@ namespace DrawnUi.Maui.Views
                                 CanvasView?.InvalidateSurface();
                                 _isWaiting = false;
                             });
-                            
-#else
-                            Tasks.StartDelayed(TimeSpan.FromMicroseconds(1), async () =>
-                            {
-                                MainThread.BeginInvokeOnMainThread(async () =>
-                                //if we don't use main thread maui bindings will just stop updating at some point
-                                {
-                                    var ms = (int)(needWait / 1000);
-                                    if (ms < 1)
-                                        ms = 1;
-                                    await Task.Delay(ms);
-                                    CanvasView?.InvalidateSurface();
-                                    _isWaiting = false;
-                                });
-                            });
-                            
-#endif
-                            
-                            
- 
-                            
-
-                        }
-                        else
-                        {
-                            OrderedDraw = false;
+                            return;
                         }
                     }
-                    else
-                    {
-                        OrderedDraw = false;
-                    }
-
+                    OrderedDraw = false;
                 }
             }
             else
@@ -692,16 +660,13 @@ namespace DrawnUi.Maui.Views
         public virtual void Update()
         {
             IsDirty = true;
-            //if (UpdateMode == UpdateMode.Dynamic)
+            if (!OrderedDraw && CheckCanDraw())
             {
-                if (!OrderedDraw && CheckCanDraw())
+                OrderedDraw = true;
+                Task.Run(() => //do not ever try to remove this
                 {
-                    OrderedDraw = true;
-                    Task.Run(() => //do not block current thread
-                    {
-                        InvalidateCanvas();
-                    });
-                }
+                    InvalidateCanvas();
+                });
             }
         }
 
@@ -1468,7 +1433,7 @@ namespace DrawnUi.Maui.Views
         /// Frame finished rendering nanoseconds
         /// </summary>
         public long FrameFinishedTime { get; protected set; }
-        
+
         /// <summary>
         /// Actual FPS
         /// </summary>
@@ -1515,7 +1480,7 @@ namespace DrawnUi.Maui.Views
         /// For debugging purposes check if dont have concurrent threads
         /// </summary>
         public int DrawingThreads { get; protected set; }
-        
+
         protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
             ++renderedFrames;
@@ -1557,7 +1522,7 @@ namespace DrawnUi.Maui.Views
                 try
                 {
                     DrawingThreads++;
-                    
+
                     FrameTime = GetNanoseconds();
                     context.FrameTimeNanos = FrameTime;
 

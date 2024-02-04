@@ -284,22 +284,35 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     //    return skImage;
     //}
 
+    object lockPreview = new();
+
+
     public CapturedImage Preview
     {
         get => _preview;
         protected set
         {
-            var kill = _preview;
-            _preview = value;
-            kill?.Dispose();
+            lock (lockPreview)
+            {
+                var kill = _preview;
+                _preview = value;
+                kill?.Dispose();
+            }
         }
     }
 
+    /// <summary>
+    /// This is a one-timer, to get value from `public CapturedImage Preview` in a way that it would be set to null after that, so if you get the preview you are now responsible to dispose it yourself. 
+    /// </summary>
+    /// <returns></returns>
     public CapturedImage GetPreviewImage()
     {
-        var get = _preview;
-        _preview = null;
-        return get;
+        lock (lockPreview)
+        {
+            var get = _preview;
+            _preview = null;
+            return get;
+        }
 
         //if (Output == null)
         //    return null;

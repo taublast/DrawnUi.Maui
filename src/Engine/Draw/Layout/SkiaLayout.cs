@@ -647,7 +647,8 @@ namespace DrawnUi.Maui.Draw
                             if (Virtualisation != VirtualisationType.Disabled)
                             {
                                 if (needrebuild && UsingCacheType == SkiaCacheType.None &&
-                                    PrerenderHiddenContent && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
+                                    Virtualisation == VirtualisationType.Smart 
+                                    && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
                                 {
                                     cell.IsVisible = true;
                                 }
@@ -1496,19 +1497,7 @@ namespace DrawnUi.Maui.Draw
             get { return (LayoutType)GetValue(TypeProperty); }
             set { SetValue(TypeProperty, value); }
         }
-
-        public static readonly BindableProperty PrerenderHiddenContentProperty = BindableProperty.Create(nameof(PrerenderHiddenContent), typeof(bool), typeof(SkiaLayout),
-            false,
-            propertyChanged: NeedInvalidateMeasure);
-        /// <summary>
-        /// Whether should prerender content that is off control bounds on first draw. Will not work ifor recycled cells, set RecyclingTemplate="Disabled" if you need to prerender cells.
-        /// </summary>
-        public bool PrerenderHiddenContent
-        {
-            get { return (bool)GetValue(PrerenderHiddenContentProperty); }
-            set { SetValue(PrerenderHiddenContentProperty, value); }
-        }
-
+        
         public static readonly BindableProperty HiddenAmountToRenderProperty = BindableProperty.Create(nameof(HiddenAmountToRender), typeof(double), typeof(SkiaLayout),
             0.0,
             propertyChanged: NeedInvalidateMeasure);

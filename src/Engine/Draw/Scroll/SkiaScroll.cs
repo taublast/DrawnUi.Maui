@@ -927,30 +927,22 @@ namespace DrawnUi.Maui.Draw
 
         void UpdateLoadingLock(Vector2 velocity)
         {
-            if (Orientation == ScrollOrientation.Vertical)
+            bool shouldLock;
+
+            switch (Orientation)
             {
-                if (Math.Abs(velocity.Y) < VelocityImageLoaderLock)
-                {
-                    UpdateLoadingLock(false);
-                }
+            case ScrollOrientation.Vertical:
+            shouldLock = Math.Abs(velocity.Y) >= VelocityImageLoaderLock;
+            break;
+            case ScrollOrientation.Horizontal:
+            shouldLock = Math.Abs(velocity.X) >= VelocityImageLoaderLock;
+            break;
+            default:
+            shouldLock = Math.Abs(velocity.Y) >= VelocityImageLoaderLock || Math.Abs(velocity.X) >= VelocityImageLoaderLock;
+            break;
             }
-            else
-            if (Orientation == ScrollOrientation.Horizontal)
-            {
-                if (Math.Abs(velocity.X) < VelocityImageLoaderLock)
-                {
-                    UpdateLoadingLock(false);
-                }
-            }
-            else
-            if (Math.Abs(velocity.X) < VelocityImageLoaderLock && Math.Abs(velocity.Y) < VelocityImageLoaderLock)
-            {
-                UpdateLoadingLock(false);
-            }
-            else
-            {
-                UpdateLoadingLock(true);
-            }
+
+            UpdateLoadingLock(shouldLock);
         }
 
         float _minVelocitySnap = 15f;
@@ -2056,11 +2048,8 @@ namespace DrawnUi.Maui.Draw
         protected ScaledSize HeaderSize;
         protected ScaledSize FooterSize;
 
-
-
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
-            //background measuring or invisible or self measure from draw because layout will never pass -1
             if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
             {
                 return MeasuredSize;
@@ -2081,23 +2070,20 @@ namespace DrawnUi.Maui.Draw
                 if (Content != null && Content.IsVisible)
                 {
                     var viewport = GetContentAvailableRect(constraints.Content);
-                    //viewport.Offset((float)constraints.Margins.Left, (float)constraints.Margins.Top);
 
                     Viewport = ScaledRect.FromPixels(constraints.Content, request.Scale);
 
                     var zoomedScale = (float)(request.Scale * ViewportZoom);
 
-                    //if (Content.VerticalOptions.Alignment == LayoutAlignment.Fill
-                    //    && Orientation == ScrollOrientation.Vertical)
-                    //{
-
-                    //}
-                    //else
-                    //{
                     heightConstraint = viewport.Height;
-                    //}
 
                     var measuredContent = Content.Measure(viewport.Width, heightConstraint, zoomedScale);
+
+                    if (ResetScrollPositionOnContentSizeChanged && (ContentSize.Pixels.Height != measuredContent.Pixels.Height || ContentSize.Pixels.Width != measuredContent.Pixels.Width))
+                    {
+                        if (ViewportOffsetX != 0 || ViewportOffsetY != 0)
+                            ScrollTo(0, 0, 0);
+                    }
 
                     ContentSize = ScaledSize.FromPixels(measuredContent.Pixels.Width, measuredContent.Pixels.Height, scale);
                 }
@@ -2108,7 +2094,6 @@ namespace DrawnUi.Maui.Draw
 
                 var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
                 var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-
 
                 if (Header != null)
                     HeaderSize = Header.Measure(request.WidthRequest, request.HeightRequest, request.Scale);
@@ -2168,7 +2153,6 @@ namespace DrawnUi.Maui.Draw
 
             return childRect;
         }
-
 
 
 
@@ -2383,10 +2367,6 @@ namespace DrawnUi.Maui.Draw
                     SetIsRefreshing(true);
                     RefreshCommand.Execute(this);
                 }
-                else
-                {
-                    HideRefreshIndicator();
-                }
             }
             else
             {
@@ -2403,15 +2383,9 @@ namespace DrawnUi.Maui.Draw
 
             if (RefreshEnabled && RefreshIndicator != null)
             {
-                if (OverScrolled || RefreshIndicator.IsVisible)
+                if (OverScrolled)
                 {
-                    var canUpdateIndicator = (IsUserPanning || ScrollLocked) || RefreshIndicator.IsVisible;
-
-                    //avoid showing indicator if we are auto scrolling
-                    if (canUpdateIndicator)
-                    {
-                        ApplyScrollPositionToRefreshViewUnsafe();
-                    }
+                    ApplyScrollPositionToRefreshViewUnsafe();
                 }
                 else
                 if (RefreshIndicator.IsVisible)
@@ -2581,7 +2555,7 @@ namespace DrawnUi.Maui.Draw
                         }
 
                         // Adjust the header hitbox for parallax
-                        var headerTop = destination.Top + Header.UseTranslationY;
+                        var headerTop = destination.Top - Header.UseTranslationY;
                         var headerBottom = headerTop + Header.MeasuredSize.Pixels.Height;
                         var hitboxHeader = new SKRect(destination.Left, (float)headerTop, destination.Right, (float)headerBottom);
 
@@ -3157,21 +3131,6 @@ namespace DrawnUi.Maui.Draw
 
         public override bool IsClippedToBounds => true;
 
-        public override void Invalidate()
-        {
-            //so here most probably our content below invalidated us
-            //if (ViewportReady)
-            //    InitializeViewport(RenderingScale);
-
-            base.Invalidate();
-
-            if (ResetScrollPositionOnContentSizeChanged)
-            {
-                ScrollTo(0, 0, 0);
-            }
-
-            //Update();
-        }
 
         bool isDrawing;
         private SKRect _destination;

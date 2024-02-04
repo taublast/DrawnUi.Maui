@@ -167,7 +167,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
             }
             else
 #endif
-            IsDrawing = false;
+                IsDrawing = false;
         }
 
     }

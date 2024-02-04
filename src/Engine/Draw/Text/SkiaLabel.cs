@@ -45,7 +45,8 @@ namespace DrawnUi.Maui.Draw
 
             UpdateFont();
         }
-
+        
+        
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
@@ -432,6 +433,7 @@ namespace DrawnUi.Maui.Draw
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
+            ReplaceFont();
 
             //background measuring or invisible or self measure from draw because layout will never pass -1
             if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
@@ -816,6 +818,7 @@ namespace DrawnUi.Maui.Draw
         //        canvas.DrawRect(destination, PaintDeco);
         //    }
         //}
+        
 
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
@@ -1310,32 +1313,39 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected virtual void OnFontUpdated()
         {
-
+            NeedMeasure = true;
         }
 
-        protected async void UpdateFont()
+        protected bool ShouldUpdateFont { get; set; }
+        
+        protected virtual async void UpdateFont()
         {
             if (
                 (TypeFace == null && !string.IsNullOrEmpty(_fontFamily)) ||
                 _fontFamily != FontFamily || _fontWeight != FontWeight
-                                          || (_fontFamily == null && TypeFace == null))
+                || (_fontFamily == null && TypeFace == null))
             {
                 _fontFamily = FontFamily;
                 _fontWeight = FontWeight;
 
-                var font = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
+                _replaceFont  = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
 
-                //since we reuse fonts from cached dictionnary never dispose previous font
-                TypeFace = font;
-
-                OnFontUpdated();
+                InvalidateMeasure();
             }
 
-            InvalidateMeasure();
+        }
+        
+        protected void ReplaceFont()
+        {
+            if (_replaceFont != null)
+            {
+                TypeFace = _replaceFont;
+                _replaceFont = null;
+                  OnFontUpdated();
+            }          
         }
 
         protected float _fontUnderline;
-
 
         public bool IsCut { get; protected set; }
 
@@ -3046,6 +3056,9 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor), typeof(Color),
             typeof(SkiaLabel),
             Colors.White);
+
+        private SKTypeface _replaceFont;
+
         public Color TouchEffectColor
         {
             get { return (Color)GetValue(TouchEffectColorProperty); }

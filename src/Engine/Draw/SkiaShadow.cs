@@ -17,11 +17,8 @@ public class SkiaShadow : BindableObject, ICloneable
         }
     }
 
-    //-------------------------------------------------------------
-    // Opacity 
-    //-------------------------------------------------------------
-    private const string nameOpacity = "Opacity";
-    public static readonly BindableProperty OpacityProperty = BindableProperty.Create(nameOpacity,
+ 
+    public static readonly BindableProperty OpacityProperty = BindableProperty.Create(nameof(Opacity),
         typeof(double),
         typeof(SkiaShadow),
         0.5,
@@ -34,11 +31,8 @@ public class SkiaShadow : BindableObject, ICloneable
         set { SetValue(OpacityProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // Color
-    //-------------------------------------------------------------
-    private const string nameColor = "Color";
-    public static readonly BindableProperty ColorProperty = BindableProperty.Create(nameColor, typeof(Color), typeof(SkiaShadow),
+ 
+    public static readonly BindableProperty ColorProperty = BindableProperty.Create(nameof(Color), typeof(Color), typeof(SkiaShadow),
         Colors.Transparent,
         propertyChanged: RedrawCanvas);
     public Color Color
@@ -47,11 +41,7 @@ public class SkiaShadow : BindableObject, ICloneable
         set { SetValue(ColorProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // X
-    //-------------------------------------------------------------
-    private const string nameX = "X";
-    public static readonly BindableProperty XProperty = BindableProperty.Create(nameX, typeof(double), typeof(SkiaShadow),
+    public static readonly BindableProperty XProperty = BindableProperty.Create(nameof(X), typeof(double), typeof(SkiaShadow),
         2.0,
         propertyChanged: RedrawCanvas);
     public double X
@@ -60,11 +50,7 @@ public class SkiaShadow : BindableObject, ICloneable
         set { SetValue(XProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // Y
-    //-------------------------------------------------------------
-    private const string nameY = "Y";
-    public static readonly BindableProperty YProperty = BindableProperty.Create(nameY, typeof(double), typeof(SkiaShadow),
+    public static readonly BindableProperty YProperty = BindableProperty.Create(nameof(Y), typeof(double), typeof(SkiaShadow),
         2.0,
         propertyChanged: RedrawCanvas);
     public double Y
@@ -73,11 +59,7 @@ public class SkiaShadow : BindableObject, ICloneable
         set { SetValue(YProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // Blur
-    //-------------------------------------------------------------
-    private const string nameBlur = "Blur";
-    public static readonly BindableProperty BlurProperty = BindableProperty.Create(nameBlur, typeof(double), typeof(SkiaShadow),
+    public static readonly BindableProperty BlurProperty = BindableProperty.Create(nameof(Blur), typeof(double), typeof(SkiaShadow),
         5.0,
         propertyChanged: RedrawCanvas);
     public double Blur

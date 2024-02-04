@@ -139,8 +139,12 @@ namespace DrawnUi.Maui.Controls
             var stack = new List<NavigationStackEntry>();
             try
             {
-                var maybe = NavigationStacks[index];
-                return maybe;
+                if (NavigationStacks.TryGetValue(index, out var getStack))
+                {
+                    return getStack;
+                }
+                NavigationStacks[index] = stack;
+                return stack;
             }
             catch (Exception e)
             {
@@ -683,10 +687,12 @@ namespace DrawnUi.Maui.Controls
 
         public async Task ProcessIndexBufferAsync()
         {
+            await SemaphoreNavigationStack.WaitAsync();
+
             if (_isApplyingIdex)
                 return;
 
-            await SemaphoreNavigationStack.WaitAsync();
+            _isApplyingIdex = true;
 
             try
             {
@@ -697,7 +703,6 @@ namespace DrawnUi.Maui.Controls
 
                 NavigationBusy = true;
 
-                _isApplyingIdex = true;
                 OrderedIndex applyMe = null;
                 var index = new OrderedIndex(-1, false);
                 while (index != null)
