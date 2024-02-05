@@ -17,8 +17,10 @@ public class SkiaSwitch : SkiaToggle
             {
                 DefaultChildrenCreated = true;
 
-                this.WidthRequest = 50;
-                this.HeightRequest = 32;
+                if (this.WidthRequest < 0)
+                    this.WidthRequest = 50;
+                if (this.HeightRequest < 0)
+                    this.HeightRequest = 32;
 
                 var shape = new SkiaShape
                 {

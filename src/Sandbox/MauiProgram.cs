@@ -16,6 +16,7 @@ namespace Sandbox
         public static MauiApp CreateMauiApp()
         {
             //SkiaImageManager.CacheLongevitySecs = 10;
+            //SkiaImageManager.LogEnabled = true;
 
             Super.NavBarHeight = 47;
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<draw:SkiaSwitch
+    x:Class="Sandbox.Views.Controls.SkiaSwitchCupertino"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    x:Name="ThisControl"
+    HeightRequest="32"
+    UseCache="Image"
+    WidthRequest="50">
+
+    <draw:SkiaShape
+        CornerRadius="20"
+        HorizontalOptions="Fill"
+        Tag="Frame"
+        Type="Rectangle"
+        VerticalOptions="Fill" />
+
+    <draw:SkiaShape
+        x:Name="ThumbRef"
+        Margin="2"
+        HorizontalOptions="Start"
+        LockRatio="-1"
+        Tag="Thumb"
+        Type="Circle"
+        VerticalOptions="Fill" />
+
+    <draw:SkiaHotspot
+        Tapped="OnTapped"
+        TransformView="{x:Reference ThumbRef}" />
+
+</draw:SkiaSwitch>

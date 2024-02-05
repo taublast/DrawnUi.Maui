@@ -3,14 +3,20 @@
 namespace DrawnUi.Maui.Draw;
 
 /// <summary>
-/// Button-like control, can include any content inside. It's aither you use default content (todo templates?..)
+/// Button-like control, can include any content inside. It's either you use default content (todo templates?..)
 /// or can include any content inside, and properties will by applied by convention to a SkiaLabel with Tag `MainLabel`, SkiaShape with Tag `MainFrame`. At the same time you can override ApplyProperties() and apply them to your content yourself.
 /// </summary>
 public class SkiaButton : SkiaLayout, ISkiaGestureListener
 {
     public SkiaButton()
     {
-        BackgroundColor = Colors.Transparent;
+    }
+
+    public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+    {
+        var measured = base.Measure(widthConstraint, heightConstraint, scale);
+        var test = this.WidthRequest;
+        return measured;
     }
 
     #region DEFAULT CONTENT
@@ -23,8 +29,10 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             {
                 DefaultChildrenCreated = true;
 
-                this.WidthRequest = 100;
-                this.HeightRequest = 32;
+                if (this.WidthRequest < 0)
+                    this.WidthRequest = 100;
+                if (this.HeightRequest < 0)
+                    this.HeightRequest = 32;
 
                 var shape = new SkiaShape
                 {
@@ -58,6 +66,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     #endregion
 
     protected SkiaLabel MainLabel;
+
     protected SkiaShape MainFrame;
 
     public virtual void FindViews()

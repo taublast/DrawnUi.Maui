@@ -5588,8 +5588,11 @@ namespace DrawnUi.Maui.Draw
 
         protected override void InvalidateMeasure()
         {
+            if (WidthRequest == 150)
+            {
+                var stop = 1;
+            }
             InvalidateMeasureInternal();
-            //            WillInvalidateMeasure = true;
             Update();
         }
 
@@ -5604,8 +5607,6 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
-
-
 
         public virtual bool IsTemplated
         {

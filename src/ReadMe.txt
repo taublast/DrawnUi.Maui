@@ -18,6 +18,7 @@ add base scroll bar control as optional to attached to skiaScroll whatever
 
 Tactical Low-priority:
 
+add ChatList demo case
 add default content for appropriate controls (SkiaButton etc) with optional type like enum values Platform (different upon platform), Material etc..
 add SkiaLayout Flex-like, Masonry, think about porting StackPanel
 

@@ -124,11 +124,6 @@ namespace DrawnUi.Maui.Draw
                 ScaledSize measured = new();
                 SKRect rectForChild = rectForChildrenPixels;//.Clone();
 
-                if (Tag == "Form")
-                {
-                    var stop = 1;
-                }
-
                 SkiaControl[] nonTemplated = null;
                 if (!IsTemplated)
                 {
@@ -153,10 +148,6 @@ namespace DrawnUi.Maui.Draw
 
                 if (smartMeasuring && WasMeasured && dirty != null)
                 {
-                    if (Tag == "HomeNavBar")
-                    {
-                        var stop = 1;
-                    }
 
                     //measure only changed child
                     var viewIndex = -1;
@@ -220,7 +211,7 @@ namespace DrawnUi.Maui.Draw
                         }
                     }
                     else
-                    if (false)
+                    if (false) //todo for non templated too!
                     {
                         viewIndex = nonTemplated.FindIndex(dirty);
                         if (viewIndex >= 0)

@@ -67,8 +67,7 @@ half4 main(float2 fragCoord) {
     float2 renderingScale = iImageResolution.xy / iResolution.xy;
 	 float2 inputCoord = (fragCoord - iOffset) * renderingScale;
 
-    float origin = iOrigin.x;          
-    float pointer = iMouse.x;  // Animation parameter
+    float offsetX = iMouse.x;  // Animation parameter
 
 	vec4 container = vec4(0.0, 0.0, iResolution.x, iResolution.y); // Creates a rectangle covering the entire viewport
     vec2 center = iResolution.xy * 0.5;
@@ -76,7 +75,7 @@ half4 main(float2 fragCoord) {
     half4 fragColor = backgroundColor;
                
     vec2 xy = inputCoord;//fragCoord.xy;             
-    float dx = origin - pointer;
+    float dx = offsetX;
     float x = container.z - dx;
     float d = xy.x - x;
    

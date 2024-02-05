@@ -1,6 +1,8 @@
 ﻿using DrawnUi.Maui;
 using Microsoft.Maui.Platform;
+using Sandbox.Views;
 using System.Globalization;
+using System.Reflection;
 
 namespace Sandbox
 {
@@ -12,17 +14,29 @@ namespace Sandbox
 
             InitializeComponent();
 
-            MainPage = new MainPage();
-            //MainPage = new MainPageGame();
-            //MainPage = new MainPageBackdrop();
-            //MainPage = new MainPageDynamicHeightCells();
-            //MainPage = new MainPageIOS17Tabs();
-            //MainPage = new MainPageLabels();
-            //MainPage = new MainGC();
-            //MainPage = new MainPageShader(); //needs HW accel, NO WINDOWS!!!!!, wait for skia sharp 3.0
+            MainPage = new AppShell();
+
+            var mask = "MainPage";
+
+            var xamlResources = this.GetType().Assembly.GetCustomAttributes<XamlResourceIdAttribute>();
+
+            MainPages = xamlResources
+                .Where(x => x.Type.Name.Contains(mask) && x.Type.Name != mask)
+                .Select(s => new MainPageVariant()
+                {
+                    Name = s.Type.Name.Replace(mask, string.Empty),
+                    Type = s.Type
+                }).ToList();
         }
 
-
+        public static List<MainPageVariant> MainPages { get; protected set; }
 
     }
+
+    public record MainPageVariant()
+    {
+        public Type Type { get; set; }
+        public string Name { get; set; }
+    }
+
 }

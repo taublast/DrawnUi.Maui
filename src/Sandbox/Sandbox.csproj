@@ -98,6 +98,10 @@
 
     <None Remove="Resources\Images\" />
 
+    <None Remove="Resources\Raw\baboon.jpg" />
+
+    <None Remove="Resources\Raw\dotnet_bot.png" />
+
     <None Remove="Resources\Raw\Images\8.jpg" />
 
     <None Remove="Resources\Raw\Images\glass2.jpg" />
@@ -157,7 +161,13 @@
  
 
 	<ItemGroup>
-	  <Compile Update="MainPageGame.xaml.cs">
+	  <Compile Update="Views\MainPageCarousels.xaml.cs">
+	    <DependentUpon>MainPageCarousels.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\MainPageDrawers.xaml.cs">
+	    <DependentUpon>MainPageDrawers.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\MainPageGame.xaml.cs">
 	    <DependentUpon>MainPageGame.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
@@ -217,9 +227,17 @@
 
 
   <ItemGroup>
-    <MauiXaml Update="MainPageGame.xaml">
+    <MauiXaml Update="AppShell.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\MainPageGame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
    

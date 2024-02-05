@@ -1,12 +1,7 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-using Microsoft.Maui.Layouts;
-
+﻿using Microsoft.Maui.Layouts;
 using System.Collections;
 using System.Collections.Immutable;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
 
 namespace DrawnUi.Maui.Draw
 {
@@ -647,7 +642,7 @@ namespace DrawnUi.Maui.Draw
                             if (Virtualisation != VirtualisationType.Disabled)
                             {
                                 if (needrebuild && UsingCacheType == SkiaCacheType.None &&
-                                    Virtualisation == VirtualisationType.Smart 
+                                    Virtualisation == VirtualisationType.Smart
                                     && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
                                 {
                                     cell.IsVisible = true;
@@ -1183,10 +1178,6 @@ namespace DrawnUi.Maui.Draw
 
         public override ScaledSize MeasureAbsolute(SKRect rectForChildrenPixels, float scale)
         {
-            if (Tag == "Container")
-            {
-                var check = rectForChildrenPixels.Height;
-            }
 
             var count = ChildrenFactory.GetChildrenCount();
             if (count > 0)
@@ -1497,7 +1488,7 @@ namespace DrawnUi.Maui.Draw
             get { return (LayoutType)GetValue(TypeProperty); }
             set { SetValue(TypeProperty, value); }
         }
-        
+
         public static readonly BindableProperty HiddenAmountToRenderProperty = BindableProperty.Create(nameof(HiddenAmountToRender), typeof(double), typeof(SkiaLayout),
             0.0,
             propertyChanged: NeedInvalidateMeasure);
