@@ -17,7 +17,7 @@ __1.0.8.1-pre__
 * WIndows platform FPS stabilized.
 * .NET 8 support.
 * Many fixes and improvements.
-* 
+
 ## Demo
 
 * This repo includes a Sandbox project with playground examples
