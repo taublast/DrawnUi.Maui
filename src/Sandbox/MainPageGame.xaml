@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <draw:DrawnUiBasePage
-    x:Class="Sandbox.MainPage"
+    x:Class="Sandbox.MainPageGame"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:demo="clr-namespace:Sandbox"
@@ -13,7 +13,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
 
-
+      
 
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -28,35 +28,13 @@
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
+     
             <draw:SkiaLayout
                 HorizontalOptions="Fill"
-                Tag="Wrapper"
                 VerticalOptions="Fill">
-
-
-                <draw:SkiaLayout
-                    BackgroundColor="Green"
-                    ColumnDefinitions="*,*"
-                    ColumnSpacing="0"
-                    HeightRequest="80"
-                    HorizontalOptions="Fill"
-                    Type="Grid"
-                    VerticalOptions="End">
-
-                    <draw:SkiaLabel
-                        HorizontalOptions="Center"
-                        Text="COLUMN0"
-                        VerticalOptions="Center" />
-
-                    <draw:SkiaLabel
-                        Grid.Column="1"
-                        HorizontalOptions="Center"
-                        Text="COLUMN1"
-                        VerticalOptions="Center" />
-
-                </draw:SkiaLayout>
-
-
+ 
+                <game:SpaceShooter />
+       
                 <draw:SkiaLabelFps
                     Margin="0,0,4,24"
                     BackgroundColor="DarkRed"

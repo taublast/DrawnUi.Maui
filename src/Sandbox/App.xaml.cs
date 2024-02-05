@@ -13,6 +13,7 @@ namespace Sandbox
             InitializeComponent();
 
             MainPage = new MainPage();
+            //MainPage = new MainPageGame();
             //MainPage = new MainPageBackdrop();
             //MainPage = new MainPageDynamicHeightCells();
             //MainPage = new MainPageIOS17Tabs();

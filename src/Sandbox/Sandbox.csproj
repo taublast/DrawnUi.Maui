@@ -154,6 +154,13 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Engine\DrawnUi.Maui.csproj" />
 	</ItemGroup>
+ 
+
+	<ItemGroup>
+	  <Compile Update="MainPageGame.xaml.cs">
+	    <DependentUpon>MainPageGame.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
 
  
 
@@ -206,6 +213,13 @@
     <MauiAsset Update="Resources\Raw\Svg\dotnet_bot.svg">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <MauiXaml Update="MainPageGame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
    
