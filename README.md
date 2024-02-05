@@ -25,11 +25,6 @@ __1.0.8.1-pre__
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/bd5ae8ef-2796-401e-8f40-a9c41f6ba8f9
 
-## Development Notes
-
-* All files to be consumed (images etc) must be placed inside the maui app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
-* Accessibility support is compatible and is on the roadmap.
-
 ## Features
 
 * __Draw your UI using SkiaSharp with hardware acceleration__
@@ -92,7 +87,12 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/bd5ae8ef-2796-401e-8f40
 	* SkewY
 	* Perspective1
 	* Perspective2
-	
+
+ ## Development Notes
+
+* All files to be consumed (images etc) must be placed inside the maui app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
+* Accessibility support is compatible and is on the roadmap.
+
 ## Installation
 
 Install the package __AppoMobi.Maui.DrawnUi__ from NuGet. Check the pre-release option if you don't see the package.
