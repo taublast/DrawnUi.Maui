@@ -1,6 +1,8 @@
-# DrawnUI for .NET MAUI
+﻿# DrawnUI for .NET MAUI
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones. 
+
+___Please star ⭐ if you like it helps very much!___
 
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
@@ -13,7 +15,8 @@ _The current development state is __ALPHA__, many features remain to be implemen
 
 ## Demo
 
-This repo includes a Sandbox project with playground examples, there is also [a stand-alone Demo repository](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) available.
+* This repo includes a Sandbox project with playground examples
+* There is also a [Demo Repository](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩.
 
 ## What's new
 
