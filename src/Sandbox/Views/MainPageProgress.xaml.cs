@@ -1,9 +1,9 @@
 ﻿namespace Sandbox.Views.Controls
 {
-    public partial class ScreenProgress : ContentPage
+    public partial class MainPageProgress : ContentPage
     {
 
-        public ScreenProgress()
+        public MainPageProgress()
         {
             try
             {
@@ -16,7 +16,6 @@
             catch (Exception e)
             {
                 Super.DisplayException(this, e);
-                Console.WriteLine(e);
             }
         }
 

@@ -170,6 +170,9 @@
 	  <Compile Update="Views\MainPageGame.xaml.cs">
 	    <DependentUpon>MainPageGame.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\MainPageProgress.xaml.cs">
+	    <DependentUpon>MainPageProgress.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
  
