@@ -2,8 +2,6 @@
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones. 
 
-___Please star ⭐ if you like it helps very much!___
-
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 * To use inside a usual Maui app, consume drawn controls here and there inside `Canvas` views.
@@ -162,7 +160,7 @@ Use a simple `SkiaControl` with height and background color set. For complex sha
 
 `SkiaScroll` with `Virtualisation`=`Disabled` + `SkiaLayout` (`ItemTemplate`=...) do not forget to cache your cell template. 
 
-
+___Please star ⭐ if you like it!___
 
 ## Images
 
