@@ -11,19 +11,19 @@ Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 _The current development state is __ALPHA__, many features remain to be implemented, documentation incoming._
 
-## Demo
-
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/bd5ae8ef-2796-401e-8f40-a9c41f6ba8f9
-
-* This repo includes a Sandbox project with playground examples
-* There is also a [Demo Repository](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩.
-
 ## What's new
 
 __1.0.8.1-pre__
 * WIndows platform FPS stabilized.
 * .NET 8 support.
 * Many fixes and improvements.
+* 
+## Demo
+
+* This repo includes a Sandbox project with playground examples
+* There is also a [Demo Repository](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩.
+
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/bd5ae8ef-2796-401e-8f40-a9c41f6ba8f9
 
 ## Development Notes
 
