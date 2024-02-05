@@ -558,8 +558,10 @@ public partial class SkiaCamera : SkiaControl
                     else
                     {
                         Debug.WriteLine("[SkiaCamera] No image");
-                        if (Display.LoadedSource != null)
-                            Display.SetImageInternal(null);
+                        // just display the previous frame if any
+                        // commented out below, left for reference
+                        //if (Display.LoadedSource != null)
+                        //    Display.SetImageInternal(null);
                     }
                 }
 
