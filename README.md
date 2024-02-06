@@ -23,8 +23,9 @@ __1.0.8.1 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
 * This repo includes a Sandbox project with playground examples
 * There is also a [Demo Repository](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩
 * An [arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine
-* A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list to a drawn one
+* A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
 
+The video below is from the Sandbox project:
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/bd5ae8ef-2796-401e-8f40-a9c41f6ba8f9
 
 ## Features
