@@ -13,7 +13,7 @@ _The current development state is __ALPHA__, many features remain to be implemen
 
 ## What's new
 
-__1.0.8.1__
+__1.0.8.1 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
 * WIndows platform FPS stabilized.
 * .NET 8 support.
 * Many fixes and improvements.
