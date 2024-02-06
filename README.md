@@ -21,7 +21,8 @@ __1.0.8.1 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
 ## Demo
 
 * This repo includes a Sandbox project with playground examples
-* There is also a [Demo Repository](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩.
+* There is also a [Demo Repository](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩
+* And a [an arcade game etude](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/bd5ae8ef-2796-401e-8f40-a9c41f6ba8f9
 
