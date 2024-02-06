@@ -151,16 +151,16 @@ Use a simple `SkiaControl` with height and background color set. For complex sha
 
 #### Simulate MAUI StackLayout inside a ScrollView
 
-`SkiaScroll` + `SkiaLayout`. Its up to you to decide whether to cache the layout or its children only. It's best not to cache the layout for large stacks and the virtialisation will enter the game.
+`SkiaScroll` + `SkiaLayout` of type 'Column'/'Row'. Its up to you to decide whether to cache the layout or its children only. It's best not to cache the layout for large stacks and the virtialisation will enter the game.
 
 #### Simulate MAUI CollectionView
 
-`SkiaScroll` + `SkiaLayout` (`ItemTemplate`=...). Set cache of the cell to `ImageDoubleBuffered` or other appropriate. You might also what to order to create `ItemTemplate` in background not to freeze the UI by using `InitializeTemplatesInBackgroundDelay` property.
+`SkiaScroll` + `SkiaLayout` of type 'Column'/'Row' (`ItemTemplate`=...). Set cache of the cell to `ImageDoubleBuffered` or other appropriate. You might also what to order to create `ItemTemplate` in background not to freeze the UI by using `InitializeTemplatesInBackgroundDelay` property.
 
 
 #### Simulate MAUI StackLayout with a BidableLayout.ItemTemplate 
 
-`SkiaScroll` with `Virtualisation`=`Disabled` + `SkiaLayout` (`ItemTemplate`=...) do not forget to cache your cell template. 
+`SkiaScroll` with `Virtualisation`=`Disabled` + `SkiaLayout` of type 'Column'/'Row' (`ItemTemplate`=...) do not forget to cache your cell template. 
 
 ___Please star ⭐ if you like it!___
 
