@@ -658,11 +658,14 @@ public class ViewsAdapter : IDisposable
                 {
                     foreach (var viewModel in _pool)
                     {
-                        viewModel.ContextIndex = -1;
-                        viewModel.BindingContext = null;
-                        if (viewModel is IDisposable disposableViewModel)
+                        if (viewModel != null)
                         {
-                            disposableViewModel.Dispose();
+                            viewModel.ContextIndex = -1;
+                            viewModel.BindingContext = null;
+                            if (viewModel is IDisposable disposableViewModel)
+                            {
+                                disposableViewModel.Dispose();
+                            }
                         }
                     }
                 }
