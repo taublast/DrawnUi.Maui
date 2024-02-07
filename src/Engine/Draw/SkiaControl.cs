@@ -3088,7 +3088,9 @@ namespace DrawnUi.Maui.Draw
 
                 if (autosize &&
                     (child.HorizontalOptions.Alignment == LayoutAlignment.Fill
-                     && child.VerticalOptions.Alignment == LayoutAlignment.Fill))
+                     && child.VerticalOptions.Alignment == LayoutAlignment.Fill)
+                    || (!autosize && (child.HorizontalOptions.Alignment == LayoutAlignment.Fill || child.VerticalOptions.Alignment == LayoutAlignment.Fill))
+                    )
                 {
                     fill.Add(child); //todo not very correct for the case just 1 dimension is Fill and other one may by bigger that other children!
                     continue;
@@ -3212,6 +3214,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (!this.CanDraw || request.WidthRequest == 0 || request.HeightRequest == 0)
                 {
+                    RenderObjectNeedsUpdate = true;
                     return SetMeasured(0, 0, request.Scale);
                 }
 
@@ -3229,6 +3232,8 @@ namespace DrawnUi.Maui.Draw
 
                 var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.HorizontalThickness);
                 var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.VerticalThickness);
+
+                RenderObjectNeedsUpdate = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
 
                 return SetMeasured(width, height, scale);
             }

@@ -1316,6 +1316,8 @@ namespace DrawnUi.Maui.Draw
 
                 //Debug.WriteLine($"[Remeasured] {this.Tag} {this.Uid}");
 
+                RenderObjectNeedsUpdate = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
+
                 return SetMeasured(width, height, request.Scale);
             }
 
@@ -1336,7 +1338,6 @@ namespace DrawnUi.Maui.Draw
             if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0)
                 || (IsTemplated && ChildrenFactory.TemplatesBusy))
             {
-
                 return MeasuredSize;
             }
 
@@ -1357,6 +1358,7 @@ namespace DrawnUi.Maui.Draw
 
                     if (request.WidthRequest == 0 || request.HeightRequest == 0)
                     {
+                        RenderObjectNeedsUpdate = true;
                         return SetMeasured(0, 0, request.Scale);
                     }
 
@@ -1380,7 +1382,6 @@ namespace DrawnUi.Maui.Draw
                     }
 
                     return MeasureLayout(request, false);
-
                 } //end lock
 
             }
