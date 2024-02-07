@@ -1045,6 +1045,8 @@ namespace DrawnUi.Maui.Draw
 
             DirtyChild = child;
 
+            RenderObjectNeedsUpdate = true;
+
             if (Type == LayoutType.Absolute)
             {
                 //check if this child changed your size, if not exit
