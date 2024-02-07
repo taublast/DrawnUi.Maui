@@ -405,7 +405,7 @@ namespace DrawnUi.Maui.Draw
                         }
                         catch (Exception e)
                         {
-                            Trace.WriteLine(e);
+                            Super.Log(e);
                             break;
                         }
 
@@ -424,6 +424,15 @@ namespace DrawnUi.Maui.Draw
                 if (IsTemplated && useOneTemplate)
                 {
                     ChildrenFactory.ReleaseView(template);
+                }
+
+                if (HorizontalOptions.Alignment == LayoutAlignment.Fill)
+                {
+                    stackWidth = rectForChildrenPixels.Width;
+                }
+                if (VerticalOptions.Alignment == LayoutAlignment.Fill)
+                {
+                    stackHeight = rectForChildrenPixels.Height;
                 }
 
                 return ScaledSize.FromPixels(stackWidth, stackHeight, scale);

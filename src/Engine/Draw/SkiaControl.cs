@@ -3027,6 +3027,7 @@ namespace DrawnUi.Maui.Draw
             SKRect rectForChildrenPixels,
             float scale)
         {
+
             var maxHeight = 0.0f;
             var maxWidth = 0.0f;
 
@@ -3127,6 +3128,14 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
+            if (HorizontalOptions.Alignment == LayoutAlignment.Fill)
+            {
+                maxWidth = rectForChildrenPixels.Width;
+            }
+            if (VerticalOptions.Alignment == LayoutAlignment.Fill)
+            {
+                maxHeight = rectForChildrenPixels.Height;
+            }
 
             return ScaledSize.FromPixels(maxWidth, maxHeight, scale);
         }
