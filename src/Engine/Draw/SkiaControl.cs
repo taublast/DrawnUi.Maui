@@ -3027,9 +3027,8 @@ namespace DrawnUi.Maui.Draw
             SKRect rectForChildrenPixels,
             float scale)
         {
-
-            var maxHeight = 0.0f;
-            var maxWidth = 0.0f;
+            var maxHeight = -1.0f;
+            var maxWidth = -1.0f;
 
             List<SkiaControl> fill = new();
             var autosize = this.NeedAutoSize;
@@ -3111,12 +3110,12 @@ namespace DrawnUi.Maui.Draw
                 else
                 {
                     var provideWidth = rectForChildrenPixels.Width;
-                    if (NeedAutoWidth && maxWidth > 0) //silly hack, todo change this
+                    if (NeedAutoWidth && maxWidth >= 0)
                     {
                         provideWidth = maxWidth;
                     }
                     var provideHeight = rectForChildrenPixels.Height;
-                    if (NeedAutoHeight && maxHeight > 0)// need to react if other children were eligible to set maxheight
+                    if (NeedAutoHeight && maxHeight >= 0)
                     {
                         provideHeight = maxHeight;
                     }
