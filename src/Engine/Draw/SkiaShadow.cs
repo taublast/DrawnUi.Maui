@@ -1,14 +1,10 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public class SkiaShadow : BindableObject, ICloneable
+public class SkiaShadow : BindableObject
 {
 
     public IDrawnBase Parent { get; set; }
 
-    public object Clone()
-    {
-        return new SkiaShadow { Blur = Blur, Color = Color, X = X, Y = Y, Opacity = Opacity };
-    }
     private static void RedrawCanvas(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is SkiaShadow shadow)
@@ -17,7 +13,6 @@ public class SkiaShadow : BindableObject, ICloneable
         }
     }
 
- 
     public static readonly BindableProperty OpacityProperty = BindableProperty.Create(nameof(Opacity),
         typeof(double),
         typeof(SkiaShadow),
@@ -31,7 +26,7 @@ public class SkiaShadow : BindableObject, ICloneable
         set { SetValue(OpacityProperty, value); }
     }
 
- 
+
     public static readonly BindableProperty ColorProperty = BindableProperty.Create(nameof(Color), typeof(Color), typeof(SkiaShadow),
         Colors.Transparent,
         propertyChanged: RedrawCanvas);

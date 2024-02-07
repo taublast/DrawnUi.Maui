@@ -1332,32 +1332,11 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty FillGradientProperty = BindableProperty.Create(nameof(FillGradient),
             typeof(SkiaGradient), typeof(SkiaControl),
             null,
-            propertyChanged: FillGradientPropertyChanged);
+            propertyChanged: NeedDraw);
         public SkiaGradient FillGradient
         {
             get { return (SkiaGradient)GetValue(FillGradientProperty); }
             set { SetValue(FillGradientProperty, value); }
-        }
-
-        private static void FillGradientPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
-        {
-            if (bindable is SkiaControl skiaControl)
-            {
-                if (oldvalue is SkiaGradient skiaGradientOld)
-                {
-                    skiaGradientOld.Parent = null;
-                    skiaGradientOld.BindingContext = null;
-                }
-
-                if (newvalue is SkiaGradient skiaGradient)
-                {
-                    skiaGradient.Parent = skiaControl;
-                    skiaGradient.BindingContext = skiaControl.BindingContext;
-                }
-
-                skiaControl.Update();
-            }
-
         }
 
         public bool HasFillGradient
@@ -5673,11 +5652,10 @@ namespace DrawnUi.Maui.Draw
             defaultValueCreator: (instance) =>
             {
                 var created = new ObservableCollection<SkiaShadow>();
-                ShadowsPropertyChanged(instance, null, created);
                 return created;
             },
             validateValue: (bo, v) => v is IList<SkiaShadow>,
-            propertyChanged: ShadowsPropertyChanged,
+            propertyChanged: NeedDraw,
             coerceValue: CoerceShadows);
 
         private static int instanceCount = 0;
@@ -5697,71 +5675,8 @@ namespace DrawnUi.Maui.Draw
 
             return new ReadOnlyCollection<SkiaShadow>(
                 readonlyCollection.ToList());
-
-            //return new ReadOnlyCollection<SkiaShadow>(
-            //    readonlyCollection.Select(s => s.Clone() as SkiaShadow)
-            //        .ToList());
         }
 
-        private static void ShadowsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
-        {
-            var skiaControl = (SkiaControl)bindable;
-            var enumerableShadows = (IEnumerable<SkiaShadow>)newvalue;
-
-            if (oldvalue != null)
-            {
-                if (oldvalue is INotifyCollectionChanged oldCollection)
-                {
-                    oldCollection.CollectionChanged -= skiaControl.OnSkiaPropertyShadowCollectionChanged;
-                }
-
-                if (oldvalue is IEnumerable<SkiaShadow> oldList)
-                {
-                    foreach (var shade in oldList)
-                    {
-                        shade.Parent = null;
-                        shade.BindingContext = null;
-                    }
-                }
-            }
-
-            foreach (var shade in enumerableShadows)
-            {
-                shade.Parent = skiaControl;
-                shade.BindingContext = skiaControl.BindingContext;
-            }
-
-            if (newvalue is INotifyCollectionChanged newCollection)
-            {
-                newCollection.CollectionChanged -= skiaControl.OnSkiaPropertyShadowCollectionChanged;
-                newCollection.CollectionChanged += skiaControl.OnSkiaPropertyShadowCollectionChanged;
-            }
-        }
-
-        private void OnSkiaPropertyShadowCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-            case NotifyCollectionChangedAction.Add:
-            foreach (SkiaShadow newSkiaPropertyShadow in e.NewItems)
-            {
-                newSkiaPropertyShadow.Parent = this;
-                newSkiaPropertyShadow.BindingContext = BindingContext;
-            }
-
-            break;
-
-            case NotifyCollectionChangedAction.Reset:
-            case NotifyCollectionChangedAction.Remove:
-            foreach (SkiaShadow oldSkiaPropertyShadow in e.OldItems ?? new SkiaShadow[0])
-            {
-                oldSkiaPropertyShadow.Parent = null;
-                oldSkiaPropertyShadow.BindingContext = null;
-            }
-
-            break;
-            }
-        }
 
         #endregion
 

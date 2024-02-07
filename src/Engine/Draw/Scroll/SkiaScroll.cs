@@ -302,6 +302,9 @@ namespace DrawnUi.Maui.Draw
         typeof(float),
         typeof(SkiaScroll),
         150f);
+        /// <summary>
+        /// Applyed to RefreshView
+        /// </summary>
         public float RefreshDistanceLimit
         {
             get { return (float)GetValue(RefreshDistanceLimitProperty); }
@@ -314,6 +317,9 @@ namespace DrawnUi.Maui.Draw
             typeof(SkiaScroll),
             50f);
 
+        /// <summary>
+        /// Applyed to RefreshView
+        /// </summary>
         public float RefreshShowDistance
         {
             get { return (float)GetValue(RefreshShowDistanceProperty); }

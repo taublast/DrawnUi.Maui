@@ -358,11 +358,14 @@ public class ViewsAdapter : IDisposable
             {
                 //lock (_lockTemplates)
                 {
+                    var kill = _templatedViewsPool;
+
                     _dicoCellsInUse.Clear();
-                    _templatedViewsPool?.Dispose();
                     _templatedViewsPool = new TemplatedViewsPool(template, poolSize);
 
                     FillPool(reserve, dataContexts);
+
+                    kill?.Dispose();
                 }
 
                 if (measure)
