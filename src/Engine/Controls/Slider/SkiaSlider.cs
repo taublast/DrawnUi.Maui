@@ -120,11 +120,16 @@ public class SkiaSlider : SkiaLayout
         }
 
         if (touchArea == RangeZone.Start)
+        {
+            consumed = this;
             lastTouchX = StartThumbX;
+        }
         else
         if (touchArea == RangeZone.End)
+        {
+            consumed = this;
             lastTouchX = EndThumbX;
-
+        }
 
         break;
 
