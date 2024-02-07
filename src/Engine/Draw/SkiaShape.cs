@@ -233,10 +233,17 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void SetupType()
         {
-            if (!string.IsNullOrEmpty(PathData) && Type == ShapeType.Path)
+            if (Type == ShapeType.Path)
             {
                 var kill = DrawPath;
-                DrawPath = SKPath.ParseSvgPathData(this.PathData);
+                if (!string.IsNullOrEmpty(PathData))
+                {
+                    DrawPath = SKPath.ParseSvgPathData(this.PathData);
+                }
+                else
+                {
+                    DrawPath = null;
+                }
                 if (kill != null)
                 {
                     Tasks.StartDelayed(TimeSpan.FromSeconds(3), () =>
