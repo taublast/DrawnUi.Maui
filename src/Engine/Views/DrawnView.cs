@@ -12,7 +12,7 @@ using System.Text;
 
 namespace DrawnUi.Maui.Views
 {
- 
+
     [ContentProperty("Children")]
     public partial class DrawnView : ContentView, IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
@@ -604,26 +604,37 @@ namespace DrawnUi.Maui.Views
                             InvalidatedCanvas++;
                             MainThread.BeginInvokeOnMainThread(async () =>
                             {
-                                //cap fps around 120fps
-                                var nowNanos = Super.GetCurrentTimeNanos();
-                                var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
-                                _lastUpdateTimeNanos = nowNanos;
+                                try
+                                {
+                                    //cap fps around 120fps
+                                    var nowNanos = Super.GetCurrentTimeNanos();
+                                    var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
+                                    _lastUpdateTimeNanos = nowNanos;
 
-                                var needWait =
-                                    Super.CapMicroSecs
+                                    var needWait =
+                                        Super.CapMicroSecs
 #if IOS || MACCATALYST  
                                 * 2 // apple is double buffered                             
 #endif
-                                    - elapsedMicros;
-                                if (needWait < 1)
-                                    needWait = 1;
+                                        - elapsedMicros;
+                                    if (needWait < 1)
+                                        needWait = 1;
 
-                                var ms = (int)(needWait / 1000);
-                                if (ms < 1)
-                                    ms = 1;
-                                await Task.Delay(ms);
-                                CanvasView?.InvalidateSurface();
-                                _isWaiting = false;
+                                    var ms = (int)(needWait / 1000);
+                                    if (ms < 1)
+                                        ms = 1;
+                                    await Task.Delay(ms);
+                                    CanvasView?.InvalidateSurface(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
+                                }
+                                catch (Exception e)
+                                {
+                                    Super.Log(e);
+                                }
+                                finally
+                                {
+                                    _isWaiting = false;
+                                }
+
                             });
                             return;
                         }
@@ -1470,7 +1481,7 @@ namespace DrawnUi.Maui.Views
             catch (Exception e)
             {
                 Console.WriteLine("****************************************************");
-                SkiaControl.Log(e);
+                Super.Log(e);
                 Console.WriteLine("****************************************************");
                 throw e;
             }
@@ -1615,7 +1626,7 @@ namespace DrawnUi.Maui.Views
                         }
                         catch (Exception e)
                         {
-                            SkiaControl.Log($"[DrawnView] Handled ExecuteAfterDraw: {e}");
+                            Super.Log($"[DrawnView] Handled ExecuteAfterDraw: {e}");
                         }
                     }
 

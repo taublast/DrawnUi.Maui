@@ -449,7 +449,7 @@ public class ViewsAdapter : IDisposable
                             }
                             catch (Exception e)
                             {
-                                SkiaControl.Log(e);
+                                Super.Log(e);
                             }
 
                         }).ConfigureAwait(false);

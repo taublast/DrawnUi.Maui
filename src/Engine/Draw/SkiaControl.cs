@@ -24,26 +24,6 @@ namespace DrawnUi.Maui.Draw
             Init();
         }
 
-        public static void Log(Exception e)
-        {
-            //TODO use ILogger with levels
-#if WINDOWS
-            Trace.WriteLine(e);
-#else
-            Console.WriteLine(e);
-#endif
-        }
-
-        public static void Log(string message)
-        {
-            //TODO use ILogger with levels
-#if WINDOWS
-            Trace.WriteLine(message);
-#else
-            Console.WriteLine(message);
-#endif
-        }
-
         public virtual bool IsVisibleInViewTree()
         {
             var isVisible = IsVisible && LastParentVisible;
@@ -305,7 +285,7 @@ namespace DrawnUi.Maui.Draw
                     }
                     catch (Exception e)
                     {
-                        Log(e);
+                        Super.Log(e);
                     }
                 }
 
@@ -594,7 +574,7 @@ namespace DrawnUi.Maui.Draw
 
         public void PrintDebug(string indent = "     ")
         {
-            Log($"{indent}└─ {GetType().Name} {Width:0.0}x{Height:0.0} pts ({MeasuredSize.Pixels.Width:0.0}x{MeasuredSize.Pixels.Height:0.0} px)");
+            Super.Log($"{indent}└─ {GetType().Name} {Width:0.0}x{Height:0.0} pts ({MeasuredSize.Pixels.Width:0.0}x{MeasuredSize.Pixels.Height:0.0} px)");
             OnPrintDebug();
             foreach (var view in Views)
             {
@@ -1021,13 +1001,13 @@ namespace DrawnUi.Maui.Draw
             if (Superview == null)
             {
                 //shit happened. we are capturing input but we are not supposed to be on the screen!
-                Log($"[OnGestureEvent] base captured by unassigned view {this.GetType()} {this.Tag}");
+                Super.Log($"[OnGestureEvent] base captured by unassigned view {this.GetType()} {this.Tag}");
                 return null;
             }
 
             if (TouchEffect.LogEnabled)
             {
-                Log($"[BASE] {this.Tag} Got {touchAction}.. {Uid}");
+                Super.Log($"[BASE] {this.Tag} Got {touchAction}.. {Uid}");
             }
 
             lock (LockIterateListeners)
@@ -1150,7 +1130,7 @@ namespace DrawnUi.Maui.Draw
                 }
                 catch (Exception e)
                 {
-                    Log(e);
+                    Super.Log(e);
                 }
 
                 return consumed;
@@ -1261,7 +1241,7 @@ namespace DrawnUi.Maui.Draw
             }
             catch (Exception e)
             {
-                Log(e);
+                Super.Log(e);
             }
 
         }
@@ -2186,7 +2166,7 @@ namespace DrawnUi.Maui.Draw
                 }
                 catch (Exception e)
                 {
-                    Log(e); //catching Nullable object must have a value, is this because of NET8?
+                    Super.Log(e); //catching Nullable object must have a value, is this because of NET8?
                 }
                 if (value <= 0)
                 {
@@ -3185,7 +3165,7 @@ namespace DrawnUi.Maui.Draw
             }
             catch (Exception e)
             {
-                Log(e);
+                Super.Log(e);
             }
         }
 
@@ -4020,7 +4000,7 @@ namespace DrawnUi.Maui.Draw
             }
             catch (Exception e)
             {
-                Log(e);
+                Super.Log(e);
             }
 
         }
@@ -4634,7 +4614,7 @@ namespace DrawnUi.Maui.Draw
                     }
                     catch (Exception e)
                     {
-                        Log(e);
+                        Super.Log(e);
                     }
                 }
 
@@ -4893,7 +4873,7 @@ namespace DrawnUi.Maui.Draw
             {
                 //this will save a lot of trouble debugging unknown native crashes
                 var message = $"[SkiaControl] Attempting to Paint a disposed control: {this}";
-                Log(message);
+                Super.Log(message);
                 throw new Exception(message);
             }
 
@@ -5394,7 +5374,7 @@ namespace DrawnUi.Maui.Draw
             }
             catch (Exception e)
             {
-                Log(e);
+                Super.Log(e);
             }
 
         }

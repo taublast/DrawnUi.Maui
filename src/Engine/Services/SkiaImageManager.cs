@@ -290,7 +290,7 @@ public partial class SkiaImageManager : IDisposable
             }
             catch (Exception ex)
             {
-                SkiaControl.Log($"ImageLoadManager: Exception {ex}");
+                Super.Log($"ImageLoadManager: Exception {ex}");
 
                 if (ex is OperationCanceledException)
                 {
@@ -376,7 +376,7 @@ public partial class SkiaImageManager : IDisposable
             }
             catch (Exception e)
             {
-                SkiaControl.Log(e);
+                Super.Log(e);
             }
             finally
             {
@@ -561,7 +561,7 @@ public partial class SkiaImageManager : IDisposable
         }
         catch (Exception e)
         {
-            SkiaControl.Log(e);
+            Super.Log(e);
         }
 
         return null;

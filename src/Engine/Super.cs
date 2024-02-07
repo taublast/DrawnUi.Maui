@@ -11,6 +11,7 @@ global using SkiaSharp.Views.Maui;
 global using SkiaSharp.Views.Maui.Controls;
 global using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: Microsoft.Maui.Controls.XmlnsPrefix("http://schemas.appomobi.com/drawnUi/2023/draw", "draw")]
@@ -77,6 +78,28 @@ public partial class Super
         {
             throw e;
         }
+    }
+
+    public static void Log(Exception e, [CallerMemberName] string caller = null)
+    {
+        //TODO use ILogger with levels etc
+
+#if WINDOWS
+        Trace.WriteLine(e);
+#else
+        Console.WriteLine(e);
+#endif
+    }
+
+    public static void Log(string message, [CallerMemberName] string caller = null)
+    {
+        //TODO use ILogger with levels etc
+
+#if WINDOWS
+        Trace.WriteLine(message);
+#else
+        Console.WriteLine(message);
+#endif
     }
 
     public static void SetLocale(string lang)
@@ -221,10 +244,10 @@ public partial class Super
     /// <param name="isFixed"></param>
     public static void ResizeWindow(Window window, int width, int height, bool isFixed)
     {
-        
+
         window.Width = width;
         window.Height = height;
-            
+
         //this crashes in NET8 for CATALYST so..
 #if !MACCATALYST
         var disp = DeviceDisplay.Current.MainDisplayInfo;
