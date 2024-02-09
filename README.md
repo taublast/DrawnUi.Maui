@@ -319,7 +319,7 @@ of different `LayoutType` : `Grid`, `Colum`, `Row` and others.
 
 Layout supports `ItemTemplate` for most of layout types.
 
-For grid we have so useful feats like, intead of using `RowDefinitions="32,32,32,32"` you can just do i nice `DefaultRowDefinition="32"`.
+For grid we have so useful feats like, instead of using `RowDefinitions="32,32,32,32"` you can just do i nice `DefaultRowDefinition="32"`.
 
 Some differences from Xamarin.Forms/Maui to notice:
 
