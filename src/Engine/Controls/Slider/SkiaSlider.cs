@@ -30,6 +30,18 @@ public class SkiaSlider : SkiaLayout
 
     protected Vector2 _panningStartOffsetPts;
 
+    protected override void OnLayoutChanged()
+    {
+        base.OnLayoutChanged();
+
+        if (Trail == null)
+        {
+            Trail = FindViewByTag("Trail");
+        }
+    }
+
+    public SkiaControl Trail { get; set; }
+
     public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
         SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
     {
@@ -79,7 +91,10 @@ public class SkiaSlider : SkiaLayout
 
         var thisOffset = TranslateInputCoords(childOffset);
         var x = args.Location.X + thisOffset.X - DrawingRect.Left; //inside this control
-        var locationX = x / RenderingScale;
+        var locationX = x / RenderingScale; //from pix to pts
+
+        var y = args.Location.Y + thisOffset.Y - DrawingRect.Top; //inside this control
+        var locationY = y / RenderingScale; //from pix to pts
 
         if (EnableRange && locationX >= StartThumbX - moreHotspotSize &&
             locationX <= StartThumbX + SliderHeight + moreHotspotSize)
@@ -99,24 +114,40 @@ public class SkiaSlider : SkiaLayout
 
         if (touchArea == RangeZone.Unknown && ClickOnTrailEnabled)
         {
-            if (EnableRange)
+            //clicked on trail maybe
+            bool onTrail = false;
+            if (Trail != null)
             {
-                var half = (Width + AvailableWidthAdjustment) / 2.0;
-
-                if (locationX > half)
-                {
-                    MoveEndThumbHere(locationX);
-                }
-                else
-                if (locationX <= half)
-                {
-                    MoveStartThumbHere(locationX);
-                }
+                var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+                onTrail = Trail.HitIsInside(point.X, point.Y);
             }
             else
             {
-                MoveEndThumbHere(locationX);
+                onTrail = true;
             }
+
+            if (onTrail)
+            {
+                if (EnableRange)
+                {
+                    var half = (Width + AvailableWidthAdjustment) / 2.0;
+
+                    if (locationX > half)
+                    {
+                        MoveEndThumbHere(locationX);
+                    }
+                    else
+                    if (locationX <= half)
+                    {
+                        MoveStartThumbHere(locationX);
+                    }
+                }
+                else
+                {
+                    MoveEndThumbHere(locationX);
+                }
+            }
+
         }
 
         if (touchArea == RangeZone.Start)
@@ -170,43 +201,13 @@ public class SkiaSlider : SkiaLayout
             if (touchArea == RangeZone.Start)
             {
                 var maybe = lastTouchX + args.Distance.Delta.X / RenderingScale;//args.TotalDistance.X;
-                if (maybe < -AvailableWidthAdjustment)
-                {
-                    StartThumbX = -AvailableWidthAdjustment;
-                }
-                else
-                if (EnableRange && maybe > (EndThumbX - RangeMin / StepValue))
-                {
-                    StartThumbX = EndThumbX - RangeMin / StepValue;
-                }
-                else
-                {
-                    StartThumbX = maybe;
-                }
+                SetStartOffsetClamped(maybe);
             }
             else
             if (touchArea == RangeZone.End)
             {
                 var maybe = lastTouchX + args.Distance.Delta.X / RenderingScale;
-                if (maybe < -AvailableWidthAdjustment)
-                {
-                    EndThumbX = -AvailableWidthAdjustment;
-                }
-                else
-                if (maybe > (Width + AvailableWidthAdjustment) - SliderHeight)
-                {
-                    EndThumbX = (Width + AvailableWidthAdjustment) - SliderHeight;
-                }
-                else
-                if (EnableRange && maybe < (StartThumbX + RangeMin / StepValue))
-                {
-                    EndThumbX = StartThumbX + RangeMin / StepValue;
-
-                }
-                else
-                {
-                    EndThumbX = maybe;
-                }
+                SetEndOffsetClamped(maybe);
             }
 
             RecalculateValues();
@@ -431,17 +432,24 @@ public class SkiaSlider : SkiaLayout
                 Start = Math.Clamp(Start, Min, Max);
                 End = Math.Clamp(End, Min, Max);
 
-                StepValue = (Max - Min) / (Width + AvailableWidthAdjustment - SliderHeight);
+                if (EnableRange)
+                {
+                    StepValue = (Max - Min) / (Width + AvailableWidthAdjustment - SliderHeight);
+                }
+                else
+                {
+                    StepValue = (Max - Min) / (Width + AvailableWidthAdjustment * 2 - SliderHeight);
+                }
 
                 if (!TouchBusy)
                 {
                     var mask = "{0:" + ValueStringFormat + "}";
                     if (EnableRange)
                     {
-                        StartThumbX = (Start - Min) / StepValue - AvailableWidthAdjustment;
+                        SetStartOffsetClamped((Start - Min) / StepValue - AvailableWidthAdjustment);
                         StartDesc = string.Format(mask, Start).Trim();
                     }
-                    EndThumbX = (End - Min) / StepValue;
+                    SetEndOffsetClamped((End - Min) / StepValue);
                     EndDesc = string.Format(mask, End).Trim();
                 }
             }
@@ -449,7 +457,10 @@ public class SkiaSlider : SkiaLayout
 
     }
 
-    private double AdjustToStepValue(double value, double minValue, double stepValue)
+
+
+
+    protected double AdjustToStepValue(double value, double minValue, double stepValue)
     {
         if (stepValue <= 0) return value;
 
@@ -458,15 +469,28 @@ public class SkiaSlider : SkiaLayout
         return adjustedStep + minValue;
     }
 
+    protected virtual void ConvertOffsetsToValues()
+    {
+        if (EnableRange)
+        {
+            Start = StepValue * (this.StartThumbX + AvailableWidthAdjustment) + Min;
+            End = StepValue * (this.EndThumbX - AvailableWidthAdjustment) + Min;
+        }
+        else
+        {
+            End = StepValue * (this.EndThumbX + AvailableWidthAdjustment) + Min;
+        }
+    }
+
     protected virtual void RecalculateValues()
     {
         var mask = "{0:" + ValueStringFormat + "}";
-
-        Start = StepValue * this.StartThumbX + Min;
-        End = StepValue * this.EndThumbX + Min;
-
+        ConvertOffsetsToValues();
+        if (EnableRange)
+        {
+            StartDesc = string.Format(mask, Start).Trim();
+        }
         EndDesc = string.Format(mask, End).Trim();
-        StartDesc = string.Format(mask, Start).Trim();
     }
 
     protected void MoveEndThumbHere(double x)
@@ -477,7 +501,7 @@ public class SkiaSlider : SkiaLayout
         touchArea = RangeZone.End;
 
         lockInternal = true;
-        EndThumbX = x;
+        SetEndOffsetClamped(x);
         lockInternal = false;
 
         RecalculateValues();
@@ -491,10 +515,51 @@ public class SkiaSlider : SkiaLayout
         touchArea = RangeZone.Start;
 
         lockInternal = true;
-        StartThumbX = x;
+
+        SetStartOffsetClamped(x);
+
         lockInternal = false;
 
         RecalculateValues();
+    }
+
+    void SetStartOffsetClamped(double maybe)
+    {
+        if (maybe < -AvailableWidthAdjustment)
+        {
+            StartThumbX = -AvailableWidthAdjustment;
+        }
+        else
+        if (EnableRange && maybe > (EndThumbX - RangeMin / StepValue))
+        {
+            StartThumbX = EndThumbX - RangeMin / StepValue;
+        }
+        else
+        {
+            StartThumbX = maybe;
+        }
+    }
+
+    void SetEndOffsetClamped(double maybe)
+    {
+        if (maybe < -AvailableWidthAdjustment)
+        {
+            EndThumbX = -AvailableWidthAdjustment;
+        }
+        else
+        if (maybe > (Width + AvailableWidthAdjustment) - SliderHeight)
+        {
+            EndThumbX = (Width + AvailableWidthAdjustment) - SliderHeight;
+        }
+        else
+        if (EnableRange && maybe < (StartThumbX + RangeMin / StepValue))
+        {
+            EndThumbX = StartThumbX + RangeMin / StepValue;
+        }
+        else
+        {
+            EndThumbX = maybe;
+        }
     }
 
     private bool lockInternal;
