@@ -170,9 +170,9 @@ public class SkiaSlider : SkiaLayout
             if (touchArea == RangeZone.Start)
             {
                 var maybe = lastTouchX + args.Distance.Delta.X / RenderingScale;//args.TotalDistance.X;
-                if (maybe < 0)
+                if (maybe < -AvailableWidthAdjustment)
                 {
-                    StartThumbX = 0;
+                    StartThumbX = -AvailableWidthAdjustment;
                 }
                 else
                 if (EnableRange && maybe > (EndThumbX - RangeMin / StepValue))
@@ -188,9 +188,9 @@ public class SkiaSlider : SkiaLayout
             if (touchArea == RangeZone.End)
             {
                 var maybe = lastTouchX + args.Distance.Delta.X / RenderingScale;
-                if (maybe < 0)
+                if (maybe < -AvailableWidthAdjustment)
                 {
-                    EndThumbX = 0;
+                    EndThumbX = -AvailableWidthAdjustment;
                 }
                 else
                 if (maybe > (Width + AvailableWidthAdjustment) - SliderHeight)
@@ -438,7 +438,7 @@ public class SkiaSlider : SkiaLayout
                     var mask = "{0:" + ValueStringFormat + "}";
                     if (EnableRange)
                     {
-                        StartThumbX = (Start - Min) / StepValue;
+                        StartThumbX = (Start - Min) / StepValue - AvailableWidthAdjustment;
                         StartDesc = string.Format(mask, Start).Trim();
                     }
                     EndThumbX = (End - Min) / StepValue;

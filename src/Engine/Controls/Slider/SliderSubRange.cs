@@ -32,6 +32,7 @@ public class SliderTrail : SkiaShape
     }
 
 
+
     public static readonly BindableProperty ModifyXPosEndProperty = BindableProperty.Create(nameof(ModifyXPosEnd), typeof(double), typeof(SliderTrail), 0.0); //, BindingMode.TwoWay
     public double ModifyXPosEnd
     {
