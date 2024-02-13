@@ -372,17 +372,18 @@ namespace DrawnUi.Maui.Views
                     {
                         var skiaAnimation = AnimatingControls[key];
 
-                        if (skiaAnimation.IsDeactivated || skiaAnimation.Parent == null || skiaAnimation.Parent.IsDisposed)
+                        if (skiaAnimation.IsDeactivated
+                            || skiaAnimation.Parent == null
+                            || skiaAnimation.Parent.IsDisposed)
                         {
                             listRemoveAnimators.Add(key);
                             continue;
                         }
 
                         if (skiaAnimation.IsRunning
-                            && !skiaAnimation.IsPaused)
+                            && !skiaAnimation.IsPaused && skiaAnimation.Parent.IsVisibleInViewTree())
                         {
-                            var finished = skiaAnimation.TickFrame(time);
-
+                            skiaAnimation.TickFrame(time);
                             executed++;
                         }
                     }
