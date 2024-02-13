@@ -27,7 +27,11 @@ __1.0.8.1 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
 
 The video below is from the Sandbox project:
 
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/bd5ae8ef-2796-401e-8f40-a9c41f6ba8f9
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/68c39573-cb3f-4538-987f-9e13f6cdc543
+
+Totally drawn MAUI app (releasing soon):
+
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/fdaabc7a-29f1-43d9-8104-b0e9056bb917
 
 ## Features
 
@@ -315,7 +319,7 @@ of different `LayoutType` : `Grid`, `Colum`, `Row` and others.
 
 Layout supports `ItemTemplate` for most of layout types.
 
-For grid we have so useful feats like, intead of using `RowDefinitions="32,32,32,32"` you can just do i nice `DefaultRowDefinition="32"`.
+For grid we have so useful feats like, instead of using `RowDefinitions="32,32,32,32"` you can just do i nice `DefaultRowDefinition="32"`.
 
 Some differences from Xamarin.Forms/Maui to notice:
 
