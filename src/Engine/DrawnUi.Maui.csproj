@@ -16,7 +16,7 @@
 
   <PropertyGroup>
     <PackageReleaseNotes>Alpha</PackageReleaseNotes>
-    <Version>1.0.8.1</Version>
+    <Version>1.0.8.2</Version>
     <Title>DrawnUi for .NET MAUI</Title>
     <PackageId>AppoMobi.Maui.DrawnUi</PackageId>
     <Description>Cross-platform rendering engine for .NET MAUI to draw your UI with SkiaSharp</Description>

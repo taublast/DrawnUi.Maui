@@ -2,16 +2,8 @@
 
 namespace DrawnUi.Maui.Draw;
 
-public class SliderValueDesc : SkiaShape
+public class SliderValueDesc : SkiaLayout
 {
-
-    public static readonly BindableProperty TextProperty = BindableProperty.Create(nameof(Text), typeof(string), typeof(SliderValueDesc), string.Empty); //, BindingMode.TwoWay
-    public string Text
-    {
-        get { return (string)GetValue(TextProperty); }
-        set { SetValue(TextProperty, value); }
-    }
-
 
     public static readonly BindableProperty XCenterProperty = BindableProperty.Create(nameof(XCenter), typeof(double), typeof(SliderValueDesc), 0.0); //, BindingMode.TwoWay
     public double XCenter
@@ -19,7 +11,6 @@ public class SliderValueDesc : SkiaShape
         get { return (double)GetValue(XCenterProperty); }
         set { SetValue(XCenterProperty, value); }
     }
-
 
 
     public static readonly BindableProperty XMaxLimitProperty = BindableProperty.Create(nameof(XMaxLimit), typeof(double), typeof(SliderValueDesc), 0.0); //, BindingMode.TwoWay
@@ -51,31 +42,36 @@ public class SliderValueDesc : SkiaShape
     {
         base.OnPropertyChanged(propertyName);
 
-        if (propertyName == nameof(TranslationX))
+        if (propertyName.IsEither(nameof(TranslationX), nameof(Width)))
         {
             RightX = TranslationX + Width;
         }
-        else
+
         if (propertyName == nameof(XCenter) ||
             propertyName == nameof(XMinLimit) ||
             propertyName == nameof(XMaxLimit) ||
             propertyName == nameof(Width))
         {
-            var width = this.Width;
-            var maybe = XCenter - width / 2;
 
-            if (maybe < XMinLimit)
+            var width = this.Width;
+            var xc = XCenter;
+            var maybe = xc - width / 2;
+            var xm = XMinLimit;
+            var xmx = XMaxLimit;
+
+            if (maybe < xm)
             {
-                maybe = XMinLimit;
+                maybe = xm;
             }
             else
-            if (maybe >= XMaxLimit - Width)
+            if (maybe >= xmx - width)
             {
-                maybe = XMaxLimit - Width;
+                maybe = xmx - width;
             }
 
             this.TranslationX = maybe;
         }
     }
+
 
 }
