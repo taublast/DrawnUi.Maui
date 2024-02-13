@@ -26,7 +26,8 @@ namespace DrawnUi.Maui.Draw
 
         public virtual bool IsVisibleInViewTree()
         {
-            var isVisible = IsVisible && LastParentVisible;
+            var isVisible = IsVisible;
+
             var parent = this.Parent as SkiaControl;
 
             if (parent == null)
@@ -1196,18 +1197,9 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(HorizontalOptionsProperty, value); }
         }
 
-        public bool LastParentVisible { get; set; } = true;
-
         protected virtual void OnParentVisibilityChanged(bool newvalue)
         {
-            LastParentVisible = newvalue;
 
-            if (!IsVisible && !newvalue)
-            {
-                return;
-            }
-
-            OnVisibilityChanged(newvalue);
         }
 
         /// <summary>
@@ -1216,21 +1208,19 @@ namespace DrawnUi.Maui.Draw
         /// <param name="newvalue"></param>
         public virtual void OnVisibilityChanged(bool newvalue)
         {
-            LastParentVisible = newvalue;
-
             // need to this to:
             // disable child gesture listeners
             // pause hidden animations
             try
             {
-                if (!newvalue)
-                {
-                    PauseAllAnimators();
-                }
-                else
-                {
-                    ResumePausedAnimators();
-                }
+                //if (!newvalue)
+                //{
+                //    PauseAllAnimators();
+                //}
+                //else
+                //{
+                //    ResumePausedAnimators();
+                //}
 
                 var pass = IsVisible && newvalue;
                 foreach (var child in Views)
@@ -4440,6 +4430,8 @@ namespace DrawnUi.Maui.Draw
 #else
             if (UseCache == SkiaCacheType.ImageDoubleBuffered)
             {
+                NeedUpdateCache = false;
+
                 //push task to create new cache, will always try to take last from stack:
                 var args = CreatePaintArguments();
                 _offscreenCacheRenderingQueue.Push(() =>
@@ -4451,8 +4443,6 @@ namespace DrawnUi.Maui.Draw
                     });
                 });
 
-                NeedUpdateCache = false;
-
                 if (!_processingOffscrenRendering)
                 {
                     _processingOffscrenRendering = true;
@@ -4463,7 +4453,7 @@ namespace DrawnUi.Maui.Draw
                     }).ConfigureAwait(false);
                 }
 
-                return true;
+                return !NeedUpdateCache;
             }
 #endif
 
@@ -4505,7 +4495,11 @@ namespace DrawnUi.Maui.Draw
 
         protected SemaphoreSlim semaphoreOffsecreenProcess = new(1);
 
-        protected bool NeedUpdateCache { get; set; }
+        protected bool NeedUpdateCache
+        {
+            get => _needUpdateCache;
+            set => _needUpdateCache = value;
+        }
 
         /// <summary>
         /// If attached to a SuperView and rendering is in progress will run after it. Run now otherwise.
@@ -5148,6 +5142,7 @@ namespace DrawnUi.Maui.Draw
 
             NeedUpdate = true;
             NeedUpdateCache = true;
+            RenderObjectNeedsUpdate = true;
 
             if (UpdateLocked)
                 return;
@@ -6023,8 +6018,6 @@ namespace DrawnUi.Maui.Draw
                 if (parent == null)
                 {
                     Parent = null;
-
-                    LastParentVisible = false;
                     //BindingContext = null;
 
                     this.SizeChanged -= OnFormsSizeChanged;
@@ -6400,6 +6393,7 @@ namespace DrawnUi.Maui.Draw
         private Thickness _margins;
         private SKRect _lastArrangedInside;
         private double _lastArrangedForScale;
+        private bool _needUpdateCache;
 
         public static Color GetRandomColor()
         {
