@@ -1462,6 +1462,32 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(VerticalFillRatioProperty, value); }
         }
 
+        public static readonly BindableProperty HorizontalPositionOffsetRatioProperty = BindableProperty.Create(
+            nameof(HorizontalPositionOffsetRatio),
+            typeof(double),
+            typeof(SkiaControl),
+            0.0,
+            propertyChanged: NeedDraw);
+
+        public double HorizontalPositionOffsetRatio
+        {
+            get { return (double)GetValue(HorizontalPositionOffsetRatioProperty); }
+            set { SetValue(HorizontalPositionOffsetRatioProperty, value); }
+        }
+
+        public static readonly BindableProperty VerticalPositionOffsetRatioProperty = BindableProperty.Create(
+            nameof(VerticalPositionOffsetRatio),
+            typeof(double),
+            typeof(SkiaControl),
+            0.0,
+            propertyChanged: NeedDraw);
+
+        public double VerticalPositionOffsetRatio
+        {
+            get { return (double)GetValue(VerticalPositionOffsetRatioProperty); }
+            set { SetValue(VerticalPositionOffsetRatioProperty, value); }
+        }
+
         public static readonly BindableProperty FillBlendModeProperty = BindableProperty.Create(nameof(FillBlendMode),
             typeof(SKBlendMode), typeof(SkiaControl),
             SKBlendMode.SrcOver,
@@ -2543,7 +2569,14 @@ namespace DrawnUi.Maui.Draw
 
             }
 
-            return new SKRect(left, top, right, bottom);
+            var layout = new SKRect(left, top, right, bottom);
+
+            var offsetX = (float)HorizontalPositionOffsetRatio * layout.Width;
+            var offsetY = (float)VerticalPositionOffsetRatio * layout.Height;
+
+            layout.Offset(offsetX, offsetY);
+
+            return layout;
         }
 
         /*
