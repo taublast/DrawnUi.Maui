@@ -311,6 +311,7 @@ and additional `MaximumWidthRequest`,  `MaximumHeightRequest`, `HorizontalFillRa
 
 * `LockRatio`will be used to calculate the width when the height is set or vice versa. If it's above 0 the max value will be applied, if it's below 0 the min value will be applied. If it's 0 then the ratio will be ignored.
 * `HorizontalFillRatio`, `VerticalFillRatio` will let you take a percent and the available size if you don't set a numeric request. For example if `HorizontalFillRatio` is set to 0.5 you will take 50% of the available width, at the same time being able to align the control at start, center or at the and in a usual way.
+* `HorizontalPositionOffsetRatio` and `VerticalPositionOffsetRatio` let you offset the item after it was aligned by applying a ratio to its computed size. Defaults are 0.0. For example, HorizontalPositionOffsetRatio of -0.5 will offset the item by -Width/2, practically centering it horizontally along the current x-position. Works almost like translation but relatively to the current size.
 
 For dynamic positioning or other precise cases use `TranslationX` and `TranslationY`.
 
