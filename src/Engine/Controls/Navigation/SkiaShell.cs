@@ -72,11 +72,8 @@ namespace DrawnUi.Maui.Controls
         public static int ToastTextFontWeight = 0;
         public static double ToastTextSize = 16.0;
         public static double ToastTextMargins = 24.0;
-
         public static float PopupsAnimationSpeed = 150;
-
         public static bool LogEnabled = false;
-
         public static int ZIndexModals = 1000;
         public static int ZIndexPopups = 2000;
         public static int ZIndexToasts = 3000;
@@ -882,6 +879,8 @@ namespace DrawnUi.Maui.Controls
                     NavigationStackModals.Remove(inStack);
                 }
 
+                RootLayout?.Update();
+
                 return removed;
             }
             finally
@@ -1124,6 +1123,8 @@ namespace DrawnUi.Maui.Controls
                 {
                     SetupDisappeared(dissapeared);
                 }
+
+                RootLayout?.Update();
             }
         }
 
