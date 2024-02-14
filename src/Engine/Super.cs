@@ -109,19 +109,6 @@ public partial class Super
         Thread.CurrentThread.CurrentUICulture = culture;
     }
 
-    public static long GetCurrentTimeMs()
-    {
-        double timestamp = Stopwatch.GetTimestamp();
-        double nanoseconds = 1_000.0 * timestamp / Stopwatch.Frequency;
-        return (long)nanoseconds;
-    }
-
-    public static long GetCurrentTimeNanos()
-    {
-        double timestamp = Stopwatch.GetTimestamp();
-        double nanoseconds = 1_000_000_000.0 * timestamp / Stopwatch.Frequency;
-        return (long)nanoseconds;
-    }
 
     public static bool Initialized { get; set; }
 
@@ -164,11 +151,17 @@ public partial class Super
     /// </summary>
     public static float CapMicroSecs = 8333.3333f;
 
-    public static long GetNanoseconds()
+    public static long GetCurrentTimeMs()
+    {
+        double timestamp = Stopwatch.GetTimestamp();
+        double nanoseconds = 1_000.0 * timestamp / Stopwatch.Frequency;
+        return (long)nanoseconds;
+    }
+
+    public static long GetCurrentTimeNanos()
     {
         double timestamp = Stopwatch.GetTimestamp();
         double nanoseconds = 1_000_000_000.0 * timestamp / Stopwatch.Frequency;
-
         return (long)nanoseconds;
     }
 

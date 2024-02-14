@@ -384,12 +384,16 @@ namespace DrawnUi.Maui.Views
 
                         if (canPlay)
                         {
+                            if (skiaAnimation.IsPaused)
+                                skiaAnimation.Resume(); //continue anim from current time instead of the old one
+
                             skiaAnimation.TickFrame(time);
                             executed++;
                         }
                         else
                         {
-                            var skipped = true;
+                            if (!skiaAnimation.IsPaused)
+                                skiaAnimation.Pause();
                         }
                     }
 

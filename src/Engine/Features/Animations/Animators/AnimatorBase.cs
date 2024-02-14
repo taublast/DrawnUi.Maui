@@ -128,11 +128,12 @@ public class AnimatorBase : ISkiaAnimator
 
     public virtual void Pause()
     {
-        IsPaused = true; 
+        IsPaused = true;
     }
 
     public virtual void Resume()
     {
+        mLastFrameTime = Super.GetCurrentTimeNanos();
         IsPaused = false;
     }
 
