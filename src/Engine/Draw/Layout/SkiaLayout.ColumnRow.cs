@@ -140,13 +140,15 @@ namespace DrawnUi.Maui.Draw
                 {
                     //enable measuring one changed item in foreground only,
                     //for background thread need full measurement
-                    smartMeasuring = Superview.DrawingThreadId == Thread.CurrentThread.ManagedThreadId
+                    smartMeasuring =
+                        WasMeasured
+                        && Superview.DrawingThreadId == Thread.CurrentThread.ManagedThreadId
                                      && UsingCacheType != SkiaCacheType.ImageDoubleBuffered;
                 }
 
                 //smartMeasuring = false;
 
-                if (smartMeasuring && WasMeasured && dirty != null)
+                if (smartMeasuring && dirty != null)
                 {
 
                     //measure only changed child

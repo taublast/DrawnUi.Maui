@@ -3797,8 +3797,6 @@ namespace DrawnUi.Maui.Draw
                 InvalidateMeasureInternal();
             }
 
-
-
             if (RenderObjectNeedsUpdate)
             {
                 //disposal etc inside setter
@@ -4426,7 +4424,7 @@ namespace DrawnUi.Maui.Draw
 
                 DrawRenderObjectInternal(cache, context, recordArea);
 
-                if (UsingCacheType != SkiaCacheType.ImageDoubleBuffered || !NeedUpdateCache)
+                if (UsingCacheType != SkiaCacheType.ImageDoubleBuffered || !NeedUpdateFrontCache)
                     return true;
             }
             else
@@ -4470,7 +4468,7 @@ namespace DrawnUi.Maui.Draw
 #else
             if (UseCache == SkiaCacheType.ImageDoubleBuffered)
             {
-                NeedUpdateCache = false;
+                NeedUpdateFrontCache = false;
 
                 //push task to create new cache, will always try to take last from stack:
                 var args = CreatePaintArguments();
@@ -4493,7 +4491,7 @@ namespace DrawnUi.Maui.Draw
                     }).ConfigureAwait(false);
                 }
 
-                return !NeedUpdateCache;
+                return !NeedUpdateFrontCache;
             }
 #endif
 
@@ -4535,10 +4533,13 @@ namespace DrawnUi.Maui.Draw
 
         protected SemaphoreSlim semaphoreOffsecreenProcess = new(1);
 
-        protected bool NeedUpdateCache
+        /// <summary>
+        /// Used by ImageDoubleBuffering cache
+        /// </summary>
+        protected bool NeedUpdateFrontCache
         {
-            get => _needUpdateCache;
-            set => _needUpdateCache = value;
+            get => _needUpdateFrontCache;
+            set => _needUpdateFrontCache = value;
         }
 
         /// <summary>
@@ -4900,7 +4901,11 @@ namespace DrawnUi.Maui.Draw
                 throw new Exception("IsClippedToBounds is required to be TRUE for caching as image.");
             }
 
-            RenderObject = CreateRenderingObject(context, recordingArea, null, action);
+            RenderObjectNeedsUpdate = false;
+            var created = CreateRenderingObject(context, recordingArea, null, action);
+            var notValid = RenderObjectNeedsUpdate;
+            RenderObject = created;
+            RenderObjectNeedsUpdate = notValid; //was invalidated by some child etc while drawing
 
             DrawRenderObjectInternal(RenderObject, context, RenderObject.Bounds);
 
@@ -5185,7 +5190,7 @@ namespace DrawnUi.Maui.Draw
                 IsClippedToBounds = true;
 
             NeedUpdate = true;
-            NeedUpdateCache = true;
+            NeedUpdateFrontCache = true;
             RenderObjectNeedsUpdate = true;
 
             if (UpdateLocked)
@@ -6437,7 +6442,7 @@ namespace DrawnUi.Maui.Draw
         private Thickness _margins;
         private SKRect _lastArrangedInside;
         private double _lastArrangedForScale;
-        private bool _needUpdateCache;
+        private bool _needUpdateFrontCache;
 
         public static Color GetRandomColor()
         {
