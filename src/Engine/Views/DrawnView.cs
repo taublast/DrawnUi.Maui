@@ -208,6 +208,7 @@ namespace DrawnUi.Maui.Views
                     AnimatingControls.TryAdd(animator.Uid, animator);
                 }
             });
+
             Update();
         }
 
@@ -385,6 +386,10 @@ namespace DrawnUi.Maui.Views
                         {
                             skiaAnimation.TickFrame(time);
                             executed++;
+                        }
+                        else
+                        {
+                            var skipped = true;
                         }
                     }
 
@@ -678,7 +683,7 @@ namespace DrawnUi.Maui.Views
                 Task.Run(() => //do not ever try to remove this
                 {
                     InvalidateCanvas();
-                });
+                }).ConfigureAwait(false);
             }
         }
 

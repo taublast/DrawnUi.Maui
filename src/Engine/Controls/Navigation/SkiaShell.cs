@@ -879,7 +879,7 @@ namespace DrawnUi.Maui.Controls
                     NavigationStackModals.Remove(inStack);
                 }
 
-                RootLayout?.Update();
+                //RootLayout?.Update();
 
                 return removed;
             }
@@ -1124,7 +1124,7 @@ namespace DrawnUi.Maui.Controls
                     SetupDisappeared(dissapeared);
                 }
 
-                RootLayout?.Update();
+                //RootLayout?.Update();
             }
         }
 

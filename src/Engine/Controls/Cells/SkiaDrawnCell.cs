@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Maui.Draw;
+using System.ComponentModel;
 
 namespace DrawnUi.Maui.Controls;
 
@@ -8,71 +8,71 @@ namespace DrawnUi.Maui.Controls;
 /// </summary>
 public class SkiaDrawnCell : SkiaLayout, ISkiaCell
 {
-	protected virtual void SetContent()
-	{
+    protected virtual void SetContent()
+    {
 
-	}
+    }
 
-	public virtual void OnScrolled()
-	{
+    public virtual void OnScrolled()
+    {
 
-	}
+    }
 
-	public virtual TouchActionEventHandler LongPressingHandler => (sender, args) =>
-	{
-		args.PreventDefault = true;
-	};
+    public virtual TouchActionEventHandler LongPressingHandler => (sender, args) =>
+    {
+        args.PreventDefault = true;
+    };
 
-	private bool _isAttaching;
+    private bool _isAttaching;
 
 
-	protected INotifyPropertyChanged _lastContext;
+    protected INotifyPropertyChanged _lastContext;
 
-	public override void OnDisposing()
-	{
-		base.OnDisposing();
+    public override void OnDisposing()
+    {
+        base.OnDisposing();
 
-		FreeContext();
-	}
+        FreeContext();
+    }
 
-	protected virtual void FreeContext()
-	{
-		_lastContext = null;
-	}
+    protected virtual void FreeContext()
+    {
+        _lastContext = null;
+    }
 
-	protected virtual void AttachContext()
-	{
-		if (BindingContext != null)
-		{
-			_lastContext = BindingContext as INotifyPropertyChanged;
-		}
-	}
+    protected virtual void AttachContext()
+    {
+        if (BindingContext != null)
+        {
+            _lastContext = BindingContext as INotifyPropertyChanged;
+        }
+    }
 
-	public override void ApplyBindingContext()
-	{
-		base.ApplyBindingContext();
-		
-		if (BindingContext != _lastContext && !_isAttaching)
-		{
-			_isAttaching = true;
+    public override void ApplyBindingContext()
+    {
+        base.ApplyBindingContext();
 
-			FreeContext();
+        if (BindingContext != _lastContext && !_isAttaching)
+        {
+            _isAttaching = true;
 
-			if (_lastContext == null)
-			{
-				SetContent();
-				AttachContext();
-			}
-			_isAttaching = false;
-		}
-	}
+            FreeContext();
 
-	protected override void OnBindingContextChanged()
-	{
-		base.OnBindingContextChanged();
+            if (_lastContext == null)
+            {
+                SetContent();
+                AttachContext();
+            }
+            _isAttaching = false;
+        }
+    }
 
-		ApplyBindingContext();
-	}
+    protected override void OnBindingContextChanged()
+    {
+        base.OnBindingContextChanged();
+
+        ApplyBindingContext();
+    }
 
 
 

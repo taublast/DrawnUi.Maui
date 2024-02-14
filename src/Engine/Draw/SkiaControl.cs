@@ -2263,13 +2263,22 @@ namespace DrawnUi.Maui.Draw
             {
                 if (parent is SkiaControl skia)
                 {
-                    if (skia.IgnoreChildrenInvalidations)
+
+                    if (skia.IgnoreChildrenInvalidations && skia.UseCache == SkiaCacheType.None)
                     {
                         return;
                     }
-                }
 
-                if (parent.ShouldInvalidateByChildren)
+                    if (skia.ShouldInvalidateByChildren || skia.UseCache != SkiaCacheType.None)
+                    {
+                        parent.InvalidateByChild(this);
+                    }
+                    else
+                    {
+                        parent.Repaint();
+                    }
+                }
+                else
                 {
                     parent.InvalidateByChild(this);
                 }
@@ -3262,7 +3271,11 @@ namespace DrawnUi.Maui.Draw
                 var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.HorizontalThickness);
                 var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.VerticalThickness);
 
-                RenderObjectNeedsUpdate = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
+                var invalid = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
+                if (invalid)
+                {
+                    RenderObjectNeedsUpdate = true;
+                }
 
                 return SetMeasured(width, height, scale);
             }
@@ -3765,10 +3778,11 @@ namespace DrawnUi.Maui.Draw
                 InvalidateMeasureInternal();
             }
 
-
             if (NeedMeasure)
             {
                 var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
+                ArrangedDestination = adjustedDestination;
+
                 Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
                 ApplyMeasureResult();
             }
@@ -4653,14 +4667,10 @@ namespace DrawnUi.Maui.Draw
                         Repaint();
 
                         if (kill != null)
-                            Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
-                            {
-                                SafePostAction(() =>
-                                {
-                                    kill.Surface = null; //do not dispose surface we are reusing it
-                                    DisposeObject(kill);
-                                });
-                            });
+                        {
+                            kill.Surface = null; //do not dispose surface we are reusing it
+                            DisposeObject(kill);
+                        }
 
                         action = _offscreenCacheRenderingQueue.Pop();
                     }
@@ -4670,7 +4680,7 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                //Repaint();
+                Repaint();
 
             }
             finally
@@ -4905,13 +4915,13 @@ namespace DrawnUi.Maui.Draw
             var created = CreateRenderingObject(context, recordingArea, null, action);
             var notValid = RenderObjectNeedsUpdate;
             RenderObject = created;
-            RenderObjectNeedsUpdate = notValid; //was invalidated by some child etc while drawing
 
             DrawRenderObjectInternal(RenderObject, context, RenderObject.Bounds);
 
-            if (NeedUpdate) //someone changed us while rendering inner content
+            if (NeedUpdate || notValid) //someone changed us while rendering inner content
             {
                 RenderObjectNeedsUpdate = true;
+                //Update();
             }
         }
 
@@ -5604,10 +5614,6 @@ namespace DrawnUi.Maui.Draw
 
         protected override void InvalidateMeasure()
         {
-            if (WidthRequest == 150)
-            {
-                var stop = 1;
-            }
             InvalidateMeasureInternal();
             Update();
         }
