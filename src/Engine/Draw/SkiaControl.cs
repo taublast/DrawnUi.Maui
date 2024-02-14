@@ -2571,8 +2571,16 @@ namespace DrawnUi.Maui.Draw
 
             var layout = new SKRect(left, top, right, bottom);
 
-            var offsetX = (float)HorizontalPositionOffsetRatio * layout.Width;
-            var offsetY = (float)VerticalPositionOffsetRatio * layout.Height;
+            var offsetX = 0f;
+            var offsetY = 0f;
+            if (float.IsFinite(availableHeight))
+            {
+                offsetY = (float)VerticalPositionOffsetRatio * layout.Height;
+            }
+            if (float.IsFinite(availableWidth))
+            {
+                offsetX = (float)HorizontalPositionOffsetRatio * layout.Width;
+            }
 
             layout.Offset(offsetX, offsetY);
 
@@ -3183,8 +3191,6 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected override void OnBindingContextChanged()
         {
-            base.OnBindingContextChanged();
-
             BindingContextWasSet = true;
 
             try
@@ -3285,6 +3291,7 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual MeasureRequest CreateMeasureRequest(float widthConstraint, float heightConstraint, float scale)
         {
+
             RenderingScale = scale;
 
             //LastMeasureRequest = new()
@@ -4645,10 +4652,14 @@ namespace DrawnUi.Maui.Draw
                         Repaint();
 
                         if (kill != null)
-                        {
-                            kill.Surface = null; //do not dispose surface we are reusing it
-                            DisposeObject(kill);
-                        }
+                            Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
+                            {
+                                SafePostAction(() =>
+                                {
+                                    kill.Surface = null; //do not dispose surface we are reusing it
+                                    DisposeObject(kill);
+                                });
+                            });
 
                         action = _offscreenCacheRenderingQueue.Pop();
                     }
@@ -4658,7 +4669,7 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                Repaint();
+                //Repaint();
 
             }
             finally
