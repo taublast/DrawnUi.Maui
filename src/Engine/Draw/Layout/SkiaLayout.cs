@@ -1314,7 +1314,9 @@ namespace DrawnUi.Maui.Draw
 
                 //Debug.WriteLine($"[Remeasured] {this.Tag} {this.Uid}");
 
-                RenderObjectNeedsUpdate = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
+                var invalidated = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
+                if (invalidated)
+                    RenderObjectNeedsUpdate = invalidated;
 
                 return SetMeasured(width, height, request.Scale);
             }
