@@ -216,16 +216,8 @@ public class SkiaImage : SkiaControl
         nameof(LoadSourceOnFirstDraw),
         typeof(bool),
         typeof(SkiaImage),
-        false,
+        true,
         propertyChanged: OnLoadSourceChanged);
-
-    private static void OnLoadSourceChanged(BindableObject bindable, object oldvalue, object newvalue)
-    {
-        if (bindable is SkiaImage control)
-        {
-            control.LoadSourceIfNeeded();
-        }
-    }
 
     /// <summary>
     /// Should the source be loaded on the first draw, useful for the first fast rendering of the screen and loading images after,
@@ -238,6 +230,14 @@ public class SkiaImage : SkiaControl
     {
         get { return (bool)GetValue(LoadSourceOnFirstDrawProperty); }
         set { SetValue(LoadSourceOnFirstDrawProperty, value); }
+    }
+
+    private static void OnLoadSourceChanged(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaImage control)
+        {
+            control.LoadSourceIfNeeded();
+        }
     }
 
     public static readonly BindableProperty PreviewBase64Property = BindableProperty.Create(nameof(PreviewBase64), typeof(string), typeof(SkiaImage), defaultValue: string.Empty
@@ -1047,6 +1047,12 @@ propertyChanged: NeedChangeColorFIlter);
         }
     }
 
+    public override void Invalidate()
+    {
+        base.Invalidate();
+
+        Update();
+    }
 
     protected override void Draw(SkiaDrawingContext context,
         SKRect destination, float scale)
@@ -1071,8 +1077,7 @@ propertyChanged: NeedChangeColorFIlter);
 
                 if (NeedAutoSize)
                 {
-                    Invalidate();
-                    Update(); //resize on next frame
+                    Invalidate(); //resize on next frame
                     return;
                 }
 
