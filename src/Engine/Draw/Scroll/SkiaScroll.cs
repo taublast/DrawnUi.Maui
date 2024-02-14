@@ -547,7 +547,6 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 ISkiaGestureListener consumed = null;
-
                 if (Orientation == ScrollOrientation.Vertical || Orientation == ScrollOrientation.Both)
                 {
                     VelocityY = (float)(args.Distance.Velocity.Y / RenderingScale) * ChangeVelocityPanned;
@@ -1287,7 +1286,7 @@ namespace DrawnUi.Maui.Draw
 
 
         /// <summary>
-        /// Use this to control how fast the scroll will decelerate. Values 0.1 - 0.9 are the best, default is 0.5. Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
+        /// Use this to control how fast the scroll will decelerate. Values 0.1 - 0.9 are the best, default is 0.45. Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
         /// </summary>
         public float FrictionScrolled
         {
@@ -1298,7 +1297,7 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty FrictionScrolledProperty = BindableProperty.Create(nameof(FrictionScrolled),
         typeof(float),
         typeof(SkiaScroll),
-        .5f,
+        .45f,
         propertyChanged: FrictionValueChanged);
 
 

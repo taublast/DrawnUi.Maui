@@ -11,7 +11,8 @@ public class DecelerationTimingParameters : ITimingParameters
 
     public Vector2 InitialValue { get; set; }
     public Vector2 InitialVelocity { get; set; }
-    public float DecelerationRate { get; set; }
+    public float DecelerationRate { get; protected set; }
+    public float DecelerationK { get; protected set; }
     public float Threshold { get; set; }
 
     public DecelerationTimingParameters(Vector2 initialValue, Vector2 initialVelocity, float decelerationRate, float threshold)
@@ -24,16 +25,16 @@ public class DecelerationTimingParameters : ITimingParameters
 
         InitialValue = initialValue;
         InitialVelocity = initialVelocity;
-        DecelerationRate = decelerationRate;
         Threshold = threshold;
+        DecelerationRate = decelerationRate;
+        DecelerationK = 1000 * (float)Math.Log(DecelerationRate);
     }
 
     public Vector2 Destination
     {
         get
         {
-            float dCoeff = 1000 * (float)Math.Log(DecelerationRate);
-            return InitialValue - InitialVelocity / dCoeff;
+            return InitialValue - InitialVelocity / DecelerationK;
         }
     }
 
@@ -44,8 +45,7 @@ public class DecelerationTimingParameters : ITimingParameters
             if (InitialVelocity.Length() == 0)
                 return 0;
 
-            float dCoeff = 1000 * (float)Math.Log(DecelerationRate);
-            return (float)Math.Log(-dCoeff * Threshold / InitialVelocity.Length()) / dCoeff;
+            return (float)Math.Log(-DecelerationK * Threshold / InitialVelocity.Length()) / DecelerationK;
         }
     }
 
@@ -60,8 +60,7 @@ public class DecelerationTimingParameters : ITimingParameters
     {
         float time = offsetSecs;
 
-        float dCoeff = 1000 * (float)Math.Log(DecelerationRate);
-        float factor = (float)((Math.Pow(DecelerationRate, (float)(1000 * time)) - 1) / dCoeff);
+        float factor = (float)((Math.Pow(DecelerationRate, (float)(1000 * time)) - 1) / DecelerationK);
         return InitialValue + InitialVelocity * factor;
     }
 
@@ -78,17 +77,15 @@ public class DecelerationTimingParameters : ITimingParameters
         if (DistanceToSegment(value, InitialValue, Destination) >= Threshold)
             return null;
 
-        float dCoeff = 1000 * (float)Math.Log(DecelerationRate);
-        return Math.Log(1 + dCoeff * (value - InitialValue).Length() / InitialVelocity.Length()) / dCoeff;
+        return Math.Log(1 + DecelerationK * (value - InitialValue).Length() / InitialVelocity.Length()) / DecelerationK;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Vector2 VelocityTo(Vector2 startingPoint, Vector2 targetPoint, double time)
     {
-        float dCoeff = 1000 * (float)Math.Log(DecelerationRate);
         float factor = (float)(Math.Pow(DecelerationRate, 1000 * time) - 1);
 
-        return (targetPoint - startingPoint) * dCoeff / factor;
+        return (targetPoint - startingPoint) * DecelerationK / factor;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -98,7 +95,7 @@ public class DecelerationTimingParameters : ITimingParameters
         float distanceMagnitude = distance.Length();
 
         // Calculate the time at which the velocity will be epsilon
-        float optimalTime = (float)(Math.Log(epsilon) - Math.Log(distanceMagnitude)) / (1000 * (float)Math.Log(DecelerationRate));
+        float optimalTime = (float)(Math.Log(epsilon) - Math.Log(distanceMagnitude)) / DecelerationK;
 
         if (maxTimeSecs > 0 && optimalTime > maxTimeSecs)
             optimalTime = maxTimeSecs;
