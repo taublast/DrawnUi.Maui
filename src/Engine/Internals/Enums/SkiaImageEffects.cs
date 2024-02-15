@@ -258,13 +258,23 @@ public static class SkiaImageEffects
 
 
     /// <summary>
-    /// This effect applies gamma correction to an image. gamma must be greater than 0. A value greater than 1 darkens the image, while a gamma value less than 1 brightens the image.
+    /// This effect applies gamma correction to an image. gamma must be greater than 0. A .
     /// </summary>
     /// <param name="gamma"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static SKColorFilter Gamma(float gamma)
     {
+        //value greater than 1 darkens the image, while a gamma value less than 1 brightens the image
+        if (gamma < 1)
+        {
+            gamma += 1;
+        }
+        else
+        {
+            gamma -= 1;
+        }
+
         if (gamma <= 0) throw new ArgumentOutOfRangeException(nameof(gamma));
 
         byte[] gammaCurve = new byte[256];
