@@ -4,6 +4,7 @@ using DrawnUi.Maui.Draw;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Controls
 {
@@ -327,7 +328,7 @@ namespace DrawnUi.Maui.Controls
         /// <returns></returns>
         public virtual async Task PushAsync(BindableObject page, bool animated = true)
         {
-            await LockNavigation.WaitAsync();
+            await AwaitNavigationLock();
 
             try
             {
@@ -340,7 +341,7 @@ namespace DrawnUi.Maui.Controls
             }
             finally
             {
-                LockNavigation.Release();
+                UnlockNavigation();
             }
         }
         /// <summary>
@@ -445,7 +446,7 @@ namespace DrawnUi.Maui.Controls
         /// <returns></returns>
         public virtual async Task<BindableObject> PopAsync(bool animated = true)
         {
-            await LockNavigation.WaitAsync();
+            await AwaitNavigationLock();
             try
             {
                 var inStack = NavigationStackScreens.LastOrDefault();
@@ -463,7 +464,7 @@ namespace DrawnUi.Maui.Controls
             }
             finally
             {
-                LockNavigation.Release();
+                UnlockNavigation();
             }
         }
 
@@ -493,6 +494,7 @@ namespace DrawnUi.Maui.Controls
             var background = new SkiaImage()
             {
                 UseCache = SkiaCacheType.Image,
+                BackgroundColor = Colors.Black, // corners will be blurred vs this color
                 Tag = "RootLayoutSnapshot",
                 ZIndex = RootLayout.ZIndex + 1,
                 IsClippedToBounds = true,
@@ -556,7 +558,7 @@ namespace DrawnUi.Maui.Controls
             VisibilityParameters? frozenLayerBackgroundParameters = null,
             IDictionary<string, object> arguments = null)
         {
-            await LockNavigation.WaitAsync();
+            await AwaitNavigationLock();
 
             try
             {
@@ -635,7 +637,7 @@ namespace DrawnUi.Maui.Controls
             }
             finally
             {
-                LockNavigation.Release();
+                UnlockNavigation();
             }
 
         }
@@ -789,7 +791,7 @@ namespace DrawnUi.Maui.Controls
 
             if (modal != null)
             {
-                if (!modal.IsDisposed)
+                if (modal.IsVisibleInViewTree())
                 {
                     if (modal is SkiaDrawer drawer)
                     {
@@ -858,38 +860,43 @@ namespace DrawnUi.Maui.Controls
         public virtual async Task<BindableObject> PopModalAsync(PageInStack inStack,
             bool animated)
         {
-            await LockNavigation.WaitAsync();
+            await AwaitNavigationLock();
 
             try
             {
                 var modal = inStack.Page as SkiaControl; //GetTopModal();
 
-                //will close drawer..
-                SkiaControl removed = await PopModalAsync(modal, animated);
-
-                //if wasnt animater drawer will not scroll
-                //so kill it manually
-                if (removed != null && !animated)
+                if (modal.IsVisibleInViewTree())
                 {
-                    await RemoveModal(modal, animated);
-                    return modal;
+                    //will close drawer..
+                    SkiaControl removed = await PopModalAsync(modal, animated);
+
+                    //if wasnt animater drawer will not scroll
+                    //so kill it manually
+                    if (removed != null && !animated)
+                    {
+                        await RemoveModal(modal, animated);
+                        return modal;
+                    }
+                    else
+                    {
+                        NavigationStackModals.Remove(inStack);
+                    }
+
+                    //RootLayout?.Update();
+
+                    return removed;
                 }
                 else
                 {
-                    NavigationStackModals.Remove(inStack);
+                    return null;
                 }
-
-                //RootLayout?.Update();
-
-                return removed;
             }
             finally
             {
-                LockNavigation.Release();
+                UnlockNavigation();
             }
         }
-
-
 
         #endregion
 
@@ -940,7 +947,7 @@ namespace DrawnUi.Maui.Controls
         /// <returns></returns>
         protected async Task SetFrozenLayerVisibility(SkiaControl control, VisibilityParameters parameters)
         {
-            await LockLayers.WaitAsync();
+            await AwaitLayersLock();
             try
             {
                 FrozenLayers.TryGetValue(control, out var screenshot);
@@ -952,7 +959,7 @@ namespace DrawnUi.Maui.Controls
             }
             finally
             {
-                LockLayers.Release();
+                UnlockLayers();
             }
         }
 
@@ -964,7 +971,8 @@ namespace DrawnUi.Maui.Controls
         /// <returns></returns>
         public virtual async Task UnfreezeRootLayout(SkiaControl control, bool animated)
         {
-            await LockLayers.WaitAsync();
+            await AwaitLayersLock();
+
             try
             {
                 FrozenLayers.Remove(control, out var screenshot);
@@ -981,12 +989,12 @@ namespace DrawnUi.Maui.Controls
                         {
                             SetupFrozenLayersVisibility(frozen);
                             if (LogEnabled)
-                                Trace.WriteLine("[SHELL] Unfrozen layout");
+                                Super.Log("[SHELL] Unfrozen layout");
                         }
                         else
                         {
                             if (LogEnabled)
-                                Trace.WriteLine($"[SHELL] FrozenLayer not found for {topmost}!");
+                                Super.Log(($"[SHELL] FrozenLayer not found for {topmost}!"));
                         }
                     }
                 }
@@ -996,8 +1004,9 @@ namespace DrawnUi.Maui.Controls
 
                 if (screenshot != null)
                 {
-                    if (animated)
+                    if (animated && screenshot.IsVisibleInViewTree())
                         await screenshot.FadeToAsync(0, 250);
+
                     RootLayout.RemoveSubView(screenshot);
 
                     //GC.Collect(0, GCCollectionMode.Optimized);
@@ -1005,7 +1014,7 @@ namespace DrawnUi.Maui.Controls
             }
             finally
             {
-                LockLayers.Release();
+                UnlockLayers();
             }
 
         }
@@ -1016,7 +1025,7 @@ namespace DrawnUi.Maui.Controls
         public virtual async Task FreezeRootLayout(SkiaControl control, bool animated)
         {
             //System.Diagnostics.Debug.WriteLine("[LockLayers] lock FreezeRootLayout");
-            await LockLayers.WaitAsync();
+            await AwaitLayersLock();
 
             FreezingModals.Add(control);
 
@@ -1032,13 +1041,14 @@ namespace DrawnUi.Maui.Controls
                 }
 
                 //System.Diagnostics.Debug.WriteLine("[LockLayers] unlock FreezeRootLayout");
-                LockLayers.Release();
+                UnlockLayers();
             });
         }
 
         public virtual async Task FreezeRootLayoutInternal(SkiaControl control, SkiaControl screenshot, bool animated)
         {
-            await LockLayers.WaitAsync();
+            await AwaitLayersLock();
+
             try
             {
                 if (FreezingModals.Contains(control))
@@ -1052,13 +1062,13 @@ namespace DrawnUi.Maui.Controls
                     SetupFrozenLayersVisibility(screenshot);
                     await SetupModalsVisibility(control);
                     if (LogEnabled)
-                        Trace.WriteLine("[SHELL] Frozen layout");
+                        Super.Log("[SHELL] Frozen layout");
                 }
 
             }
             finally
             {
-                LockLayers.Release();
+                UnlockLayers();
             }
         }
 
@@ -1162,7 +1172,6 @@ namespace DrawnUi.Maui.Controls
 
         public Controls.SkiaShell.NavigationLayer<SkiaControl> Popups { get; }
 
-        bool isBusyClosingPopup;
 
         /// <summary>
         /// Close topmost popup
@@ -1180,14 +1189,13 @@ namespace DrawnUi.Maui.Controls
 
         public async Task ClosePopupAsync(SkiaControl popup, bool animated)
         {
-            if (popup != null && !isBusyClosingPopup)
+            if (popup != null)
             {
-                isBusyClosingPopup = true;
+                await AwaitNavigationLock();
 
-                await LockNavigation.WaitAsync();
                 try
                 {
-                    if (animated)
+                    if (animated && popup.IsVisibleInViewTree())
                     {
                         await Task.WhenAll(
                             popup.FadeToAsync(0, PopupsAnimationSpeed),
@@ -1200,8 +1208,7 @@ namespace DrawnUi.Maui.Controls
                 }
                 finally
                 {
-                    LockNavigation.Release();
-                    isBusyClosingPopup = false;
+                    UnlockNavigation();
                 }
             }
         }
@@ -1221,7 +1228,7 @@ namespace DrawnUi.Maui.Controls
             SKPoint? pixelsScaleInFrom = null,
             Func<SkiaControl, Task> taskAnimateAppearence = null)
         {
-            await LockNavigation.WaitAsync();
+            await AwaitNavigationLock();
 
             try
             {
@@ -1329,7 +1336,7 @@ namespace DrawnUi.Maui.Controls
             }
             finally
             {
-                LockNavigation.Release();
+                UnlockNavigation();
             }
 
         }
@@ -1360,7 +1367,7 @@ namespace DrawnUi.Maui.Controls
             Task.Run(async () =>
             {
 
-                await LockNavigation.WaitAsync();
+                await AwaitNavigationLock();
 
                 try
                 {
@@ -1408,10 +1415,38 @@ namespace DrawnUi.Maui.Controls
                 }
                 finally
                 {
-                    LockNavigation.Release();
+                    UnlockNavigation();
                 }
 
             });
+        }
+
+        protected virtual void UnlockNavigation([CallerMemberName] string caller = null)
+        {
+            //if (LogEnabled)
+            Super.Log($"[Shell] Navigation UNlocked by {caller}");
+            LockNavigation.Release();
+        }
+
+        protected virtual async Task AwaitNavigationLock([CallerMemberName] string caller = null)
+        {
+            // if (LogEnabled)
+            Super.Log($"[Shell] Navigation LOCKED by {caller}");
+            await LockNavigation.WaitAsync();
+        }
+
+        protected virtual void UnlockLayers([CallerMemberName] string caller = null)
+        {
+            //if (LogEnabled)
+            Super.Log($"[Shell] Layers UNlocked by {caller}");
+            LockLayers.Release();
+        }
+
+        protected virtual async Task AwaitLayersLock([CallerMemberName] string caller = null)
+        {
+            // if (LogEnabled)
+            Super.Log($"[Shell] Layers LOCKED by {caller}");
+            await LockLayers.WaitAsync();
         }
 
         public virtual void ShowToast(string text,
@@ -2052,149 +2087,152 @@ namespace DrawnUi.Maui.Controls
                 bool replaceChain = false;
                 if (parsed != null)
                 {
-                    IDictionary<string, object> passArguments = null;
-                    if (arguments != null)
+
+                    try
                     {
-                        passArguments = arguments;
-                    }
-
-                    var index = 0;
-                    var existingIndex = 0; //for CurrentRoute
-
-                    var lastIndex = parsed.Parts.Length;
-
-                    List<ShellStackChild> children = new();
-
-                    foreach (var part in parsed.Parts)
-                    {
-                        index++;
-                        existingIndex++;
-
-                        //set args to last page only
-                        if (index == lastIndex && parsed.Arguments.Count > 0)
+                        IDictionary<string, object> passArguments = null;
+                        if (arguments != null)
                         {
-                            passArguments = parsed.Arguments;
+                            passArguments = arguments;
                         }
 
-                        //go back
-                        if (part == "..")
-                        {
-                            if (index == 1)
-                            {
-                                var useAnimate = animate.GetValueOrDefault();
-                                if (animate == null)
-                                    useAnimate = true;
+                        var index = 0;
+                        var existingIndex = 0; //for CurrentRoute
 
-                                var removed = await GoBackInRoute(useAnimate);
-                                if (removed != null)
-                                {
-                                    existingIndex--;
-                                }
+                        var lastIndex = parsed.Parts.Length;
+
+                        List<ShellStackChild> children = new();
+
+                        foreach (var part in parsed.Parts)
+                        {
+                            index++;
+                            existingIndex++;
+
+                            //set args to last page only
+                            if (index == lastIndex && parsed.Arguments.Count > 0)
+                            {
+                                passArguments = parsed.Arguments;
                             }
 
-                            children.Add(new()
+                            //go back
+                            if (part == "..")
                             {
-                                Part = part,
-                                Control = null
-                            });
+                                if (index == 1)
+                                {
+                                    var useAnimate = animate.GetValueOrDefault();
+                                    if (animate == null)
+                                        useAnimate = true;
 
-                            //todo go up the tree as ..\something
-                            break;
-                        }
+                                    var removed = await GoBackInRoute(useAnimate);
+                                    if (removed != null)
+                                    {
+                                        existingIndex--;
+                                    }
+                                }
 
-                        async Task AddRoutePart()
-                        {
-                            if (!ExecuteActionRoute(part))
-                            {
-                                var created = await PresentAsync(part, animate, passArguments);
                                 children.Add(new()
                                 {
                                     Part = part,
-                                    Control = created
+                                    Control = null
                                 });
-                            }
-                        }
 
-                        //set root
-                        if (index == 1)
-                        {
-                            if (route.Left(2) == "//" || CurrentRoute.Nodes.Count == 0) //root specified or no root yet
+                                //todo go up the tree as ..\something
+                                break;
+                            }
+
+                            async Task AddRoutePart()
                             {
-                                var created = SetRoot(part, false, passArguments);
-                                if (created != null)
+                                if (!ExecuteActionRoute(part))
                                 {
+                                    var created = await PresentAsync(part, animate, passArguments);
                                     children.Add(new()
                                     {
                                         Part = part,
                                         Control = created
                                     });
                                 }
+                            }
+
+                            //set root
+                            if (index == 1)
+                            {
+                                if (route.Left(2) == "//" || CurrentRoute.Nodes.Count == 0) //root specified or no root yet
+                                {
+                                    var created = SetRoot(part, false, passArguments);
+                                    if (created != null)
+                                    {
+                                        children.Add(new()
+                                        {
+                                            Part = part,
+                                            Control = created
+                                        });
+                                    }
+                                    else
+                                    {
+                                        children.Add(CurrentRoute.Nodes[existingIndex - 1]);
+                                    }
+
+                                    continue;
+                                }
                                 else
+                                {
+
+                                    if (parsed.Parts.Length == 1)
+                                    {
+                                        //just add to current route
+                                        children.AddRange(CurrentRoute.Nodes);
+                                        await AddRoutePart();
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        //otherwise navigate from root
+                                        children.Add(CurrentRoute.Nodes[0]);
+                                        existingIndex++;
+                                    }
+                                }
+                            }
+
+                            //check if part is same as existing at this level 
+
+                            if (CurrentRoute.Nodes.Count >= existingIndex)
+                            {
+                                if (CurrentRoute.Nodes[existingIndex - 1].Part == part)
                                 {
                                     children.Add(CurrentRoute.Nodes[existingIndex - 1]);
+                                    continue;
                                 }
 
-                                continue;
-                            }
-                            else
-                            {
+                                //todo remove all existing pages from this level
+                                List<ShellStackChild> remove = new();
+                                for (int i = existingIndex - 1; i < CurrentRoute.Nodes.Count; i++)
+                                {
+                                    remove.Add(CurrentRoute.Nodes[i]);
+                                }
 
-                                if (parsed.Parts.Length == 1)
+                                await AddRoutePart();
+
+
+                                foreach (var removeNode in remove)
                                 {
-                                    //just add to current route
-                                    children.AddRange(CurrentRoute.Nodes);
-                                    await AddRoutePart();
-                                    break;
-                                }
-                                else
-                                {
-                                    //otherwise navigate from root
-                                    children.Add(CurrentRoute.Nodes[0]);
-                                    existingIndex++;
+                                    var removed = await RemoveAsync(removeNode.Control, false);
+                                    if (removed != null)
+                                    {
+                                        existingIndex--;
+                                    }
                                 }
                             }
+
+
                         }
 
-                        //check if part is same as existing at this level 
+                        var backup = OrderedRoute;
 
-                        if (CurrentRoute.Nodes.Count >= existingIndex)
-                        {
-                            if (CurrentRoute.Nodes[existingIndex - 1].Part == part)
-                            {
-                                children.Add(CurrentRoute.Nodes[existingIndex - 1]);
-                                continue;
-                            }
-
-                            //todo remove all existing pages from this level
-                            List<ShellStackChild> remove = new();
-                            for (int i = existingIndex - 1; i < CurrentRoute.Nodes.Count; i++)
-                            {
-                                remove.Add(CurrentRoute.Nodes[i]);
-                            }
-
-                            await AddRoutePart();
+                        OrderedRoute = route;
+                        SetCurrentRouteNodes(children);
 
 
-                            foreach (var removeNode in remove)
-                            {
-                                var removed = await RemoveAsync(removeNode.Control, false);
-                                if (removed != null)
-                                {
-                                    existingIndex--;
-                                }
-                            }
-                        }
 
-
-                    }
-
-                    var backup = OrderedRoute;
-
-                    OrderedRoute = route;
-                    SetCurrentRouteNodes(children);
-
-                    try
-                    {
                         var args = new ShellNavigatedEventArgs(
                             previous: backup,
                             OrderedRoute,

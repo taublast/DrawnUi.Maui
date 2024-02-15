@@ -1517,7 +1517,9 @@ namespace DrawnUi.Maui.Views
 
             //Trace.WriteLine($"[1] {destination.Width}x{destination.Height} at {scale}");
 
-            if (IsDisposed || UpdateLocked || Super.StopRenderingInBackground)
+            if (IsDisposed || UpdateLocked
+                           //|| Super.StopRenderingInBackground
+                           )
             {
                 return;
             }

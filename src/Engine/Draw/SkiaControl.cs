@@ -26,7 +26,7 @@ namespace DrawnUi.Maui.Draw
 
         public virtual bool IsVisibleInViewTree()
         {
-            var isVisible = IsVisible;
+            var isVisible = IsVisible && !IsDisposed;
 
             var parent = this.Parent as SkiaControl;
 
@@ -2405,7 +2405,15 @@ namespace DrawnUi.Maui.Draw
 
         public Action<SKPath, SKRect> Clipping { get; set; }
 
+        /// <summary>
+        /// Optional control identifier
+        /// </summary>
         public string Tag { get; set; }
+
+        /// <summary>
+        /// Optional scene hero control identifier
+        /// </summary>
+        public string Hero { get; set; }
 
         public int ContextIndex { get; set; } = -1;
 
