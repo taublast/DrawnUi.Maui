@@ -75,6 +75,7 @@ namespace DrawnUi.Maui.Controls
         public static double ToastTextMargins = 24.0;
         public static float PopupsAnimationSpeed = 150;
         public static bool LogEnabled = false;
+
         public static int ZIndexModals = 1000;
         public static int ZIndexPopups = 2000;
         public static int ZIndexToasts = 3000;
@@ -82,15 +83,6 @@ namespace DrawnUi.Maui.Controls
         public SkiaShell()
         {
             Services = Super.Services;
-
-            //Flyout.Title = "...";
-            //if (Flyout is ContentPage drawer)
-            //{
-            //    drawer.Content = new ContentView();
-            //}
-
-            //FlyoutEnabled = false;
-            //FlyoutLayoutBehavior = FlyoutLayoutBehavior.Popover;
 
             Popups = new(this, true);
             Toasts = new(this, false);

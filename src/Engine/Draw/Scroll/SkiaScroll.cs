@@ -457,8 +457,8 @@ namespace DrawnUi.Maui.Draw
             return ClampOffsetWithRubberBand(x, y);
         }
 
-        public static readonly BindableProperty ManualScrollingEnabledProperty = BindableProperty.Create(
-            nameof(ManualScrollingEnabled),
+        public static readonly BindableProperty RespondsToGesturesProperty = BindableProperty.Create(
+            nameof(RespondsToGestures),
             typeof(bool),
             typeof(SkiaScroll),
             true);
@@ -466,10 +466,10 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// If disabled will not scroll using gestures. Scrolling will still be possible by code.
         /// </summary>
-        public bool ManualScrollingEnabled
+        public bool RespondsToGestures
         {
-            get { return (bool)GetValue(ManualScrollingEnabledProperty); }
-            set { SetValue(ManualScrollingEnabledProperty, value); }
+            get { return (bool)GetValue(RespondsToGesturesProperty); }
+            set { SetValue(RespondsToGesturesProperty, value); }
         }
 
         protected bool ContentGesturesHit;
@@ -619,13 +619,13 @@ namespace DrawnUi.Maui.Draw
                     break;
 
                     //----------------------------------------------------------------------
-                    case TouchActionResult.Down when ManualScrollingEnabled:
+                    case TouchActionResult.Down when RespondsToGestures:
                     //----------------------------------------------------------------------
                     ResetPan();
                     break;
 
                     //----------------------------------------------------------------------
-                    case TouchActionResult.Panning when ManualScrollingEnabled:
+                    case TouchActionResult.Panning when RespondsToGestures:
                     //----------------------------------------------------------------------
                     if (!ScrollLocked)
                     {
@@ -646,10 +646,9 @@ namespace DrawnUi.Maui.Draw
                         }
                         else
                         {
-                            var reduce = 1; //todo can adapt to content/viewport ratio
                             moveTo = new Vector2(
-                                _panningCurrentOffsetPts.X + args.Distance.Total.X * reduce / RenderingScale,
-                                _panningCurrentOffsetPts.Y + args.Distance.Total.Y * reduce / RenderingScale);
+                                _panningCurrentOffsetPts.X + args.Distance.Total.X / RenderingScale,
+                                _panningCurrentOffsetPts.Y + args.Distance.Total.Y / RenderingScale);
                         }
 
                         //if the panning is not in the same direction as the scroll and we havn't started panning yet,
@@ -711,7 +710,7 @@ namespace DrawnUi.Maui.Draw
                     break;
 
                     //---------------------------------------------------------------------------------------------------------
-                    case TouchActionResult.Up when ManualScrollingEnabled:
+                    case TouchActionResult.Up when RespondsToGestures:
                     //---------------------------------------------------------------------------------------------------------
 
                     if (!ChildWasPanning) //should we swipe?

@@ -77,7 +77,7 @@ public partial class NativeCamera
                 owner.mPreviewRequestBuilder.AddTarget(owner.mImageReaderPreview.Surface);
 
                 // Flash is automatically enabled when necessary.
-                owner.SetAutoFlash(owner.mPreviewRequestBuilder);
+                owner.SetCapturingStillOptions(owner.mPreviewRequestBuilder);
 
                 // Finally, we start displaying the camera preview.
                 owner.mPreviewRequest = owner.mPreviewRequestBuilder.Build();

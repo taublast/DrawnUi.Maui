@@ -344,15 +344,15 @@ namespace DrawnUi.Maui.Views
         /// <summary>
         /// Executed after the rendering
         /// </summary>
-        public List<IOverlayEffect> PostAnimators { get; } = new(16);
+        public List<IOverlayEffect> PostAnimators { get; } = new(128);
 
-        List<Guid> listRemoveAnimators = new(64);
+        List<Guid> _listRemoveAnimators = new(512);
 
         /// <summary>
         /// Tracking controls that what to be animated right now so we constantly refresh
         /// canvas until there is none left
         /// </summary>
-        public Dictionary<Guid, ISkiaAnimator> AnimatingControls { get; } = new(128);
+        public Dictionary<Guid, ISkiaAnimator> AnimatingControls { get; } = new(512);
 
         protected int ExecuteAnimators(long time)
         {
@@ -367,7 +367,7 @@ namespace DrawnUi.Maui.Views
                     if (AnimatingControls.Count == 0)
                         return executed;
 
-                    listRemoveAnimators.Clear();
+                    _listRemoveAnimators.Clear();
 
                     foreach (var key in AnimatingControls.Keys)
                     {
@@ -376,7 +376,7 @@ namespace DrawnUi.Maui.Views
                         if (skiaAnimation.IsDeactivated
                             || skiaAnimation.Parent != null && skiaAnimation.Parent.IsDisposed)
                         {
-                            listRemoveAnimators.Add(key);
+                            _listRemoveAnimators.Add(key);
                             continue;
                         }
 
@@ -397,7 +397,7 @@ namespace DrawnUi.Maui.Views
                         }
                     }
 
-                    foreach (var key in listRemoveAnimators)
+                    foreach (var key in _listRemoveAnimators)
                     {
                         AnimatingControls.Remove(key);
                     }
