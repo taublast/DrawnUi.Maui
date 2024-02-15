@@ -1126,7 +1126,7 @@ namespace DrawnUi.Maui.Controls
                     SetupDisappeared(dissapeared);
                 }
 
-                //RootLayout?.Update();
+                RootLayout?.Update();
             }
         }
 
@@ -1205,6 +1205,37 @@ namespace DrawnUi.Maui.Controls
             }
         }
 
+        public class PopupWrapper : ContentLayout
+        {
+            private readonly bool _closeWhenBackgroundTapped;
+            private readonly bool _animated;
+            private readonly SkiaShell _shell;
+
+            public PopupWrapper(bool closeWhenBackgroundTapped, bool animated, SkiaShell shell)
+            {
+                _closeWhenBackgroundTapped = closeWhenBackgroundTapped;
+                _animated = animated;
+                _shell = shell;
+            }
+
+            public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
+                SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+            {
+                if (_closeWhenBackgroundTapped
+                    && Content != null
+                    && touchAction == TouchActionResult.Tapped)
+                {
+                    var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+                    if (!Content.HitIsInside(point.X, point.Y))
+                    {
+                        _shell.ClosePopupAsync(this, _animated).ConfigureAwait(false);
+                    }
+                }
+
+                return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            }
+        }
+
         /// <summary>
         /// Pass pixelsScaleInFrom you you want popup to scale in not from the center of the screen but from that point. Can override appearig animation with taskAnimateAppearence parameter.
         /// </summary>
@@ -1227,7 +1258,9 @@ namespace DrawnUi.Maui.Controls
                 TaskCompletionSource<SkiaControl> taskCompletionSource = new TaskCompletionSource<SkiaControl>();
 
                 SkiaControl popup = null;
-                var control = new ContentLayout()
+                SkiaControl control = null;
+
+                control = new PopupWrapper(closeWhenBackgroundTapped, animated, this)
                 {
                     BindingContext = content.BindingContext,
                     ZIndex = ZIndexPopups + Popups.NavigationStack.Count,
@@ -1276,23 +1309,10 @@ namespace DrawnUi.Maui.Controls
                     },
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill,
-                    //CreateChildren = () => new()
-                    //{
-                    //    new SkiaHotspot()
-                    //    {
-                    //        ZIndex = -1,
-                    //        CommandTapped = new Command(async () =>
-                    //        {
-                    //            if (closeWhenBackgroundTapped)
-                    //            {
-
-                    //                await ClosePopupAsync(popup, animated);
-                    //            }
-                    //        }),
-                    //    },
-                    //    //content
-                    //}
+                    Content = content
                 };
+
+                popup = control;
 
                 if (pixelsScaleInFrom != null)
                 {
@@ -1300,7 +1320,6 @@ namespace DrawnUi.Maui.Controls
                     control.TransformPivotPointY = pixelsScaleInFrom.Value.Y / RootLayout.MeasuredSize.Pixels.Height;
                 }
 
-                control.Content = content; //apart, to preserve control BindingContext
                 await Popups.Open(control, animated);
 
                 if (animated)
@@ -1332,8 +1351,6 @@ namespace DrawnUi.Maui.Controls
             }
 
         }
-
-
 
         #endregion
 
