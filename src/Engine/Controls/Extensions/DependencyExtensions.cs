@@ -263,25 +263,35 @@ public static class DependencyExtensions
                     Super.OnCreated();
                 });
 
-                android.OnPause((activity) =>
-                {
-                    //this is called multiple times looks like a bug
-                    //if (activity == Super.MainActivity)
-                    //    Super.OnPaused();
-                });
 
-                android.OnResume((activity) =>
-                {
-                    //if (activity == Super.MainActivity)
-                    //    Super.OnResumed();
-                });
+                ActivityState activityState = ActivityState.Destroyed;
 
+                Platform.ActivityStateChanged += (o, args) =>
+                {
+                    if (args.Activity == Super.MainActivity && activityState != args.State)
+                    {
+                        if ((args.State == ActivityState.Resumed || args.State == ActivityState.Started)
+                            && activityState != ActivityState.Resumed && activityState != ActivityState.Started)
+                        {
+                            //Console.WriteLine("[APP] OnResumed");
+                            Super.OnWentForeground();
+                        }
+                        else
+                        if ((args.State == ActivityState.Paused || args.State == ActivityState.Stopped)
+                            && activityState != ActivityState.Paused && args.State != ActivityState.Stopped)
+                        {
+                            //Console.WriteLine("[APP] OnPause");
+                            Super.OnWentBackground();
+                        }
+                        activityState = args.State;
+                    }
+                };
 
                 //android.OnBackPressed((activity) =>
                 //{
                 //    //todo use settings?
-
                 //});
+
                 android.OnNewIntent((activity, intent) =>
                 {
                     if (StartupSettings != null)
@@ -302,12 +312,12 @@ public static class DependencyExtensions
 
                 apple.DidEnterBackground((app) =>
                 {
-                    Super.OnPaused();
+                    Super.OnWentBackground();
                 });
 
                 apple.WillEnterForeground((app) =>
                 {
-                    Super.OnResumed();
+                    Super.OnWentForeground();
                 });
 
                 apple.FinishedLaunching((application, launchOptions) =>

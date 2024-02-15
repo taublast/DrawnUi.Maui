@@ -292,22 +292,17 @@ public partial class Super
         OnNativeAppCreated?.Invoke(null, EventArgs.Empty);
     }
 
-    public static void OnPaused()
+    public static void OnWentBackground()
     {
         InBackground = true;
         OnNativeAppPaused?.Invoke(null, EventArgs.Empty);
     }
 
-    public static void OnResumed()
+    public static void OnWentForeground()
     {
         InBackground = false;
         NeedGlocalUpdate();
         OnNativeAppResumed?.Invoke(null, EventArgs.Empty);
-    }
-
-    public static void RaiseOnDestroyed()
-    {
-        OnNativeAppDestroyed?.Invoke(null, EventArgs.Empty);
     }
 
     /// <summary>
