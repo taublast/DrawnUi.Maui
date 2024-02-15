@@ -7,6 +7,12 @@ namespace DrawnUi.Maui.Draw;
 /// </summary>
 public class SkiaBackdrop : ContentLayout
 {
+    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
+        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    {
+        //consume everything
+        return this;
+    }
 
     /// <summary>
     /// Reusing this
@@ -24,10 +30,16 @@ public class SkiaBackdrop : ContentLayout
     protected SKColorFilter PaintColorFilter;
 
     protected bool NeedInvalidateImageFilter { get; set; }
+    protected bool NeedInvalidateColorFilter { get; set; }
 
     public virtual void InvalidateImageFilter()
     {
         NeedInvalidateImageFilter = true;
+    }
+
+    public virtual void InvalidateColorFilter()
+    {
+        NeedInvalidateColorFilter = true;
     }
 
     private static void NeedChangeImageFilter(BindableObject bindable, object oldvalue, object newvalue)
@@ -35,6 +47,15 @@ public class SkiaBackdrop : ContentLayout
         if (bindable is SkiaBackdrop control)
         {
             control.InvalidateImageFilter();
+            NeedDraw(bindable, oldvalue, newvalue);
+        }
+    }
+
+    private static void NeedChangeColorFilter(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaBackdrop control)
+        {
+            control.InvalidateColorFilter();
             NeedDraw(bindable, oldvalue, newvalue);
         }
     }
@@ -53,11 +74,25 @@ public class SkiaBackdrop : ContentLayout
         set { SetValue(BlurProperty, value); }
     }
 
+    public static readonly BindableProperty BrightnessProperty = BindableProperty.Create(
+        nameof(Brightness),
+        typeof(double),
+        typeof(SkiaBackdrop),
+        1.0,
+        propertyChanged: NeedChangeImageFilter);
+
+
+    public double Brightness
+    {
+        get { return (double)GetValue(BrightnessProperty); }
+        set { SetValue(BrightnessProperty, value); }
+    }
+
     public bool HasEffects
     {
         get
         {
-            return Blur != 0;
+            return Blur != 0 || Brightness != 1;
         }
     }
 
@@ -67,6 +102,9 @@ public class SkiaBackdrop : ContentLayout
 
         PaintImageFilter?.Dispose();
         PaintImageFilter = null;
+
+        PaintColorFilter?.Dispose();
+        PaintColorFilter = null;
 
         ImagePaint?.Dispose();
         ImagePaint = null;
@@ -89,6 +127,13 @@ public class SkiaBackdrop : ContentLayout
             PaintImageFilter = null;
         }
 
+        if (NeedInvalidateColorFilter)
+        {
+            NeedInvalidateColorFilter = false;
+            // PaintColorFilter?.Dispose(); //might be used in double buffered!
+            PaintColorFilter = null;
+        }
+
         if (destination.Width > 0 && destination.Height > 0)
         {
             DrawViews(ctx, destination, scale);
@@ -97,19 +142,10 @@ public class SkiaBackdrop : ContentLayout
 
             if (HasEffects)
             {
-                if (PaintImageFilter == null)
-                {
-                    PaintImageFilter = SKImageFilter.CreateBlur((float)Blur, (float)Blur, SKShaderTileMode.Mirror);
-                }
-
-                if (ImagePaint == null)
-                {
-                    ImagePaint = new()
-                    {
-                    };
-                }
+                BuildPaint();
 
                 ImagePaint.ImageFilter = PaintImageFilter;
+                ImagePaint.ColorFilter = PaintColorFilter;
 
                 //notice we read from the real canvas and we write to ctx.Canvas which can be cache
                 ctx.Superview.CanvasView.Surface.Canvas.Flush();
@@ -132,6 +168,26 @@ public class SkiaBackdrop : ContentLayout
             }
         }
 
+    }
+
+    protected virtual void BuildPaint()
+    {
+        if (PaintColorFilter == null)
+        {
+            PaintColorFilter = SkiaImageEffects.Gamma((float)this.Brightness);
+        }
+
+        if (PaintImageFilter == null)
+        {
+            PaintImageFilter = SKImageFilter.CreateBlur((float)Blur, (float)Blur, SKShaderTileMode.Mirror);
+        }
+
+        if (ImagePaint == null)
+        {
+            ImagePaint = new()
+            {
+            };
+        }
     }
 
 
