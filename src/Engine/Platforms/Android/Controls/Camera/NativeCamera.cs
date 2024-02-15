@@ -1259,6 +1259,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
+    bool _isTorchOn;
+
     public void TurnOnFlash()
     {
         if (mCameraDevice == null || CaptureSession == null)
@@ -1277,6 +1279,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 // Apply this updated request to the session
                 mPreviewRequest = mPreviewRequestBuilder.Build();
                 CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+
+                _isTorchOn = true;
             }
         }
         catch (Exception e)
@@ -1303,6 +1307,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 // Apply this updated request to the session
                 mPreviewRequest = mPreviewRequestBuilder.Build();
                 CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+
+                _isTorchOn = false;
             }
         }
         catch (Exception e)
@@ -1311,14 +1317,76 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
-    public void SetAutoFlash(CaptureRequest.Builder requestBuilder)
+    public void SetCapturingStillOptions(CaptureRequest.Builder requestBuilder)
     {
+        requestBuilder.Set(CaptureRequest.ControlAfMode, (int)ControlAFMode.ContinuousPicture);
+
         if (mFlashSupported)
         {
-            requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
+            if (_isTorchOn)
+            {
+                requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.On);
+                requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Torch);
+            }
+            else
+            {
+                requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
+                requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Off);
+            }
         }
     }
 
+    // Capture a still picture. This method should be called when we get a response in
+    // {@link #mCaptureCallback} from both {@link #lockFocus()}.
+    public void StartCapturingStill()
+    {
+        if (CapturingStill)
+            return;
+
+        try
+        {
+
+            CapturingStill = true;
+
+            PlaySound();
+
+            var activity = Platform.AppContext;
+            if (null == activity || null == mCameraDevice)
+            {
+                OnImageTakingFailed?.Invoke(this, null);
+                CapturingStill = false;
+                return;
+            }
+
+            // This is the CaptureRequest.Builder that we use to take a picture.
+            //if (stillCaptureBuilder == null)
+            var stillCaptureBuilder = mCameraDevice.CreateCaptureRequest(CameraTemplate.StillCapture);
+            stillCaptureBuilder.AddTarget(mImageReaderPhoto.Surface);
+
+            // Use the same AE and AF modes as the preview.
+            SetCapturingStillOptions(stillCaptureBuilder);
+
+            // Orientation
+            int rotation = 0; //int)activity.WindowManager.DefaultDisplay.Rotation;
+            stillCaptureBuilder.Set(CaptureRequest.JpegOrientation, SensorOrientation);
+
+            CaptureSession.StopRepeating();
+
+            CaptureSession
+                .Capture(stillCaptureBuilder.Build(), new CameraCaptureStillPictureSessionCallback(this),
+                    mBackgroundHandler);
+
+        }
+        catch (Exception e)
+        {
+            Trace.WriteLine(e);
+            OnCaptureError(e);
+        }
+        finally
+        {
+
+        }
+    }
 
     // Creates a new {@link CameraCaptureSession} for camera preview.
     public void CreateCameraPreviewSession()
@@ -1366,6 +1434,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         {
             // This is how to tell the camera to lock focus.
             mPreviewRequestBuilder.Set(CaptureRequest.ControlAfTrigger, (int)ControlAFTrigger.Start);
+
             // Tell #mCaptureCallback to wait for the lock.
             mState = STATE_WAITING_LOCK;
             CaptureSession.Capture(mPreviewRequestBuilder.Build(), mCaptureCallback,
@@ -1456,58 +1525,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         PreviewCaptureSuccess?.Invoke(result);
     }
 
-    // Capture a still picture. This method should be called when we get a response in
-    // {@link #mCaptureCallback} from both {@link #lockFocus()}.
-    public void StartCapturingStill()
-    {
-        if (CapturingStill)
-            return;
 
-        try
-        {
-
-            CapturingStill = true;
-
-            PlaySound();
-
-            var activity = Platform.AppContext;
-            if (null == activity || null == mCameraDevice)
-            {
-                OnImageTakingFailed?.Invoke(this, null);
-                CapturingStill = false;
-                return;
-            }
-
-            // This is the CaptureRequest.Builder that we use to take a picture.
-            //if (stillCaptureBuilder == null)
-            var stillCaptureBuilder = mCameraDevice.CreateCaptureRequest(CameraTemplate.StillCapture);
-            stillCaptureBuilder.AddTarget(mImageReaderPhoto.Surface);
-
-            // Use the same AE and AF modes as the preview.
-            stillCaptureBuilder.Set(CaptureRequest.ControlAfMode, (int)ControlAFMode.ContinuousPicture);
-            SetAutoFlash(stillCaptureBuilder);
-
-            // Orientation
-            int rotation = 0; //int)activity.WindowManager.DefaultDisplay.Rotation;
-            stillCaptureBuilder.Set(CaptureRequest.JpegOrientation, SensorOrientation);
-
-            CaptureSession.StopRepeating();
-
-            CaptureSession
-                .Capture(stillCaptureBuilder.Build(), new CameraCaptureStillPictureSessionCallback(this),
-                    mBackgroundHandler);
-
-        }
-        catch (Exception e)
-        {
-            Trace.WriteLine(e);
-            OnCaptureError(e);
-        }
-        finally
-        {
-
-        }
-    }
 
 
     /*
@@ -1541,7 +1559,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         {
             // Reset the auto-focus trigger
             mPreviewRequestBuilder.Set(CaptureRequest.ControlAfTrigger, (int)ControlAFTrigger.Cancel);
-            SetAutoFlash(mPreviewRequestBuilder);
+            SetCapturingStillOptions(mPreviewRequestBuilder);
             CaptureSession.Capture(mPreviewRequestBuilder.Build(), mCaptureCallback,
                 mBackgroundHandler);
             // After this, the camera will go back to the normal state of preview.
