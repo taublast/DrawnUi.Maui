@@ -108,6 +108,9 @@ public class SkiaBackdrop : ContentLayout
 
         ImagePaint?.Dispose();
         ImagePaint = null;
+
+        Snapshot?.Dispose();
+        Snapshot = null;
     }
 
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
@@ -150,7 +153,8 @@ public class SkiaBackdrop : ContentLayout
                 //notice we read from the real canvas and we write to ctx.Canvas which can be cache
                 ctx.Superview.CanvasView.Surface.Canvas.Flush();
 
-                using var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
+
+                var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
 
 #if IOS
             //cannot really blur in realtime on GL simulator would be like 2 fps
@@ -161,13 +165,33 @@ public class SkiaBackdrop : ContentLayout
                     if (snapshot != null)
                     {
                         ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
+                        Snapshot?.Dispose();
+                        Snapshot = snapshot;
                     }
 
                 }
 
             }
         }
+    }
 
+    protected SKImage Snapshot { get; set; }
+
+    /// <summary>
+    /// Returns the snapshot that was used for drawing the backdrop.
+    /// If we have no effects or the control has not yet been drawn the return value will be null.
+    /// You are responsible to dispose the returned image yourself.
+    /// </summary>
+    /// <returns></returns>
+    public virtual SKImage GetImage()
+    {
+        var image = Snapshot;
+        if (image != null)
+        {
+            Snapshot = null; //save it from being disposed by our Paint method
+            return image;
+        }
+        return null;
     }
 
     protected virtual void BuildPaint()
