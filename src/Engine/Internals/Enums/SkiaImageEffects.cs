@@ -271,6 +271,7 @@ public static class SkiaImageEffects
             gamma += 1;
         }
         else
+        if (gamma > 1)
         {
             gamma -= 1;
         }
