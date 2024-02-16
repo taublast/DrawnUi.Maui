@@ -3,6 +3,7 @@ using DrawnUi.Maui.Draw;
 using DrawnUi.Maui.Infrastructure.Helpers;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -289,10 +290,20 @@ public class SnappingLayout : SkiaLayout
 
     }
 
+
+    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        base.OnPropertyChanged(propertyName);
+
+        if (propertyName.IsEither(nameof(TranslationX), nameof(TranslationY)))
+        {
+            CurrentPosition = new((float)TranslationX, (float)TranslationY);
+            InTransition = !CheckTransitionEnded();
+        }
+    }
+
     public virtual void ApplyPosition(Vector2 position)
     {
-        CurrentPosition = position;
-
         TranslationX = position.X;
         TranslationY = position.Y;
 

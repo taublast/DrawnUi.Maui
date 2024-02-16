@@ -28,7 +28,9 @@ public partial class SkiaShell
         {
             if (_freezeLayout)
             {
-                await _shell.FreezeRootLayout(control, animated);
+                await _shell.FreezeRootLayout(control,
+                    animated,
+                    SkiaShell.PopupBackgroundColor, SkiaShell.PopupsBackgroundBlur);
             }
             try
             {
@@ -38,7 +40,6 @@ public partial class SkiaShell
                 }
 
                 _shell.ShellLayout.AddSubView(control);
-                //control.SetParent(_shell.ShellLayout);
 
                 NavigationStack.Add(control);
             }
@@ -51,7 +52,6 @@ public partial class SkiaShell
 
         public virtual void OnOpened(T control)
         {
-            //popup.SetRendered(true);
             if (control is IVisibilityAware aware)
             {
                 aware.OnAppearing();
@@ -69,10 +69,7 @@ public partial class SkiaShell
 
                 NavigationStack.Remove(control);
 
-                //todo dispose?..
-                //App.Current.Layout.Update();
-
-                if (_freezeLayout)
+                if (_freezeLayout || _shell.FrozenLayers.ContainsKey(control))
                 {
                     await _shell.UnfreezeRootLayout(control, animated);
                 }
@@ -83,8 +80,7 @@ public partial class SkiaShell
             }
             catch (Exception e)
             {
-                Trace.WriteLine(e);
-                //App.Current.ToastShortMessage(ResStrings.Error);
+                Super.Log(e);
             }
         }
 
