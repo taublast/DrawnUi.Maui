@@ -529,7 +529,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (TouchEffect.LogEnabled)
                 {
-                    Trace.WriteLine($"[SCROLL] {this.Tag} Got {touchAction} touches {args.NumberOfTouches}..");
+                    Super.Log($"[SCROLL] {this.Tag} Got {touchAction} touches {args.NumberOfTouches}..");
                 }
 
                 if (!IsUserPanning && touchAction != TouchActionResult.Tapped && touchAction != TouchActionResult.LongPressing)

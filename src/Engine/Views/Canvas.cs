@@ -420,11 +420,11 @@ public class Canvas : DrawnView, IGestureListener
             {
                 if (consumed == null)
                 {
-                    Debug.WriteLine($"[Touch] {touchAction} ({args.NumberOfTouches}) not consumed");
+                    Super.Log($"[Touch] {touchAction} ({args.NumberOfTouches}) not consumed");
                 }
                 else
                 {
-                    Debug.WriteLine($"[Touch] {touchAction} ({args.NumberOfTouches}) consumed by {consumed} {consumed.Tag}");
+                    Super.Log($"[Touch] {touchAction} ({args.NumberOfTouches}) consumed by {consumed} {consumed.Tag}");
                 }
             }
 

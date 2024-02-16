@@ -166,6 +166,7 @@ namespace DrawnUi.Maui.Controls
             {
                 if (b is SkiaDrawer control)
                 {
+                    control.InTransition = true;
                     control.IsOpenChanged?.Invoke(control, (bool)n);
                     control.ApplyOptions();
                     //Trace.WriteLine($"Drawer {(bool)n}");
@@ -200,9 +201,8 @@ namespace DrawnUi.Maui.Controls
 
         #endregion
 
-        protected virtual void SetContent(ISkiaAttachable attachable)
+        protected virtual void SetContent(SkiaControl view)
         {
-            var view = attachable.AttachControl;
             var oldContent = Views.FirstOrDefault(x => x == Content);
             if (view != oldContent)
             {
@@ -544,6 +544,9 @@ namespace DrawnUi.Maui.Controls
 
                 return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
             }
+
+            if (TouchEffect.LogEnabled)
+                Super.Log($"[DRAWER] {this.Tag} Got {touchAction} touches {args.NumberOfTouches}..");
 
             ISkiaGestureListener consumed = null;
 

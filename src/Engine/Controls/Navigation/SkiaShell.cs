@@ -73,7 +73,19 @@ namespace DrawnUi.Maui.Controls
         public static int ToastTextFontWeight = 0;
         public static double ToastTextSize = 16.0;
         public static double ToastTextMargins = 24.0;
+
+        /// <summary>
+        /// Default background tint for freezing popups/modals etc
+        /// </summary>
+        public static Color PopupBackgroundColor = Color.Parse("#99000000");
+
+        /// <summary>
+        /// Default background blur amount for freezing popups/modals etc
+        /// </summary>
+        public static float PopupsBackgroundBlur = 8;
+
         public static float PopupsAnimationSpeed = 150;
+
         public static bool LogEnabled = false;
 
         public static int ZIndexModals = 1000;
@@ -84,7 +96,7 @@ namespace DrawnUi.Maui.Controls
         {
             Services = Super.Services;
 
-            Popups = new(this, true);
+            Popups = new(this, false);
             Toasts = new(this, false);
 
             //close jeyboard on app startup
@@ -103,7 +115,7 @@ namespace DrawnUi.Maui.Controls
         /// </summary>
         public SkiaControl RootLayout { get; set; }
 
-        private SkiaDrawer _drawer;
+        private ModalWrapper _drawer;
 
         public SkiaControl GetTopPopup()
         {
@@ -472,42 +484,46 @@ namespace DrawnUi.Maui.Controls
             return color;
         }
 
-        public float FrozenBackgroundBlur = 3;
-        public float FrozenBackgroundDim = 0.25f;
-
         /// <summary>
         /// Override this to create your own image with your own effect of the screenshot to be placed under modal controls. Default is image with Darken Effect.
         /// </summary>
         /// <param name="screenshot"></param>
         /// <returns></returns>
-        public virtual SkiaImage WrapScreenshot(SkiaControl control, SKImage screenshot, bool animated)
+        public virtual SkiaImage WrapScreenshot(
+            SkiaControl control,
+            SKImage screenshot,
+            Color tint,
+            float blur,
+            bool animated)
         {
             //blur will create alpha on borders, so we need a background color
             var background = new SkiaImage()
             {
                 UseCache = SkiaCacheType.Image,
-                BackgroundColor = Colors.Black, // corners will be blurred vs this color
                 Tag = "RootLayoutSnapshot",
                 ZIndex = RootLayout.ZIndex + 1,
                 IsClippedToBounds = true,
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
                 Aspect = TransformAspect.AspectCover,
-                Effect = SkiaImageEffect.Darken,
-                Darken = FrozenBackgroundDim,
+                Effect = SkiaImageEffect.Tint,
+                ColorTint = tint,
+                Blur = blur,
+                EffectBlendMode = SKBlendMode.SrcATop,
+                //Darken = FrozenBackgroundDim,
                 Opacity = 0,
+                BackgroundColor = Colors.Black,
                 WhenLayoutIsReady = async (sender) =>
                 {
                     await FreezeRootLayoutInternal(control, sender, animated);
                 },
             };
 
-            if (FrozenBackgroundBlur > 0)
-            {
-                var color = GetAverageColor(screenshot);
-                background.BackgroundColor = color.ToMauiColor();
-                background.Blur = FrozenBackgroundBlur;
-            }
+            //if (blur > 0)
+            //{
+            //    //var color = GetAverageColor(screenshot);
+            //    //background.BackgroundColor = color.ToMauiColor();
+            //}
 
             background.SetImageInternal(screenshot);
 
@@ -516,22 +532,22 @@ namespace DrawnUi.Maui.Controls
 
 
 
-
         #endregion
 
         #region MODALS
 
-        protected virtual SkiaDrawer CreateModalDrawer()
+        protected virtual ModalWrapper CreateModalDrawer(
+            bool useGestures,
+            bool animated,
+            bool willFreeze,
+            Color backgroundColor)
         {
-            _drawer = new SkiaDrawer()
+            _drawer = new ModalWrapper(useGestures, animated, willFreeze, backgroundColor, this)
             {
                 Tag = "Modal",
-                Bounces = false,
                 ZIndex = ZIndexModals + ModalStack.Count,
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
-                Direction = DrawerDirection.FromBottom,
-                HeaderSize = 0,
             };
 
             return _drawer;
@@ -547,47 +563,42 @@ namespace DrawnUi.Maui.Controls
         public virtual async Task<SkiaControl> PushModalAsync(BindableObject page,
             bool useGestures,
             bool animated = true,
-            VisibilityParameters? frozenLayerBackgroundParameters = null,
+            bool freezeBackground = true,
             IDictionary<string, object> arguments = null)
         {
             await AwaitNavigationLock();
 
             try
             {
-                if (frozenLayerBackgroundParameters == null)
-                {
-                    frozenLayerBackgroundParameters = VisibilityParameters.Visible;
-                }
-
                 if (arguments != null)
                 {
                     SetArguments(page, arguments);
                 }
 
-                var drawer = CreateModalDrawer();
+                bool willFreeze = CanFreezeLayout() && freezeBackground;
+
+                var modalWrapper = CreateModalDrawer(true, animated,
+                    willFreeze, SkiaShell.PopupBackgroundColor);
 
                 NavigationStackModals.AddLast(new PageInStack
                 {
-                    Page = drawer
+                    Page = modalWrapper
                 });
 
-                if (CanFreezeLayout() && frozenLayerBackgroundParameters.Value.IsVisible)
-                    await FreezeRootLayout(drawer, animated);
-
-                drawer.RespondsToGestures = useGestures;
+                //if (CanFreezeLayout() && frozenLayerBackgroundParameters.Value.IsVisible)
+                //    await FreezeRootLayout(drawer, animated, SkiaShell.PopupBackgroundColor, SkiaShell.PopupsBackgroundBlur);
 
                 try
                 {
                     var content = (page as ISkiaAttachable).AttachControl;
-                    drawer.BindingContext = content.BindingContext;
+                    modalWrapper.BindingContext = content.BindingContext;
+                    modalWrapper.WrapContent(content);
 
-                    drawer.Content = content;
-                    drawer.Animated = animated;
-
-                    drawer.Tag = $"ModalDrawer_{content.GetType().Name}";
-
-                    drawer.OnViewportReady += ViewportReadyHandler;
-                    drawer.OnTransitionChanged += OnModalDrawerScrolled;
+                    if (modalWrapper.Content is SkiaDrawer drawer)
+                    {
+                        drawer.OnViewportReady += ViewportReadyHandler;
+                        drawer.OnTransitionChanged += OnModalDrawerScrolled;
+                    }
 
                     _pushModalWaitingAnimatedOpen = false;
 
@@ -608,14 +619,14 @@ namespace DrawnUi.Maui.Controls
                         }
                     }
 
-                    drawer.SetParent(ShellLayout);
+                    modalWrapper.SetParent(ShellLayout);
 
                     while (!_pushModalWaitingAnimatedOpen)
                     {
                         await Task.Delay(20); //switch thread, wait until drawer animation completes
                     }
 
-                    return drawer.Content;
+                    return modalWrapper.Drawer.Content;
                 }
                 catch (Exception e)
                 {
@@ -645,7 +656,7 @@ namespace DrawnUi.Maui.Controls
                     //animated to open, display frozen layer if any
                     if (CanUnfreezeLayout())
                     {
-                        await SetFrozenLayerVisibility(control, VisibilityParameters.Visible);
+                        await SetFrozenLayerVisibility(control, true);
                     }
 
                     OnLayersChanged();
@@ -655,7 +666,7 @@ namespace DrawnUi.Maui.Controls
                 else
                 {
                     //animated to closed
-                    await RemoveModal(control, true);
+                    await RemoveModal(control.Parent as SkiaControl, true);
                 }
             }
         }
@@ -725,7 +736,7 @@ namespace DrawnUi.Maui.Controls
         public virtual async Task PushModalAsync(string registered,
             bool useGestures,
             bool animated = true,
-            VisibilityParameters? frozenLayerBackgroundParameters = null,
+            bool freezeBackground = true,
             IDictionary<string, object> arguments = null)
         {
             var page = GetOrCreateContentSetArguments<BindableObject>(registered, arguments);
@@ -735,7 +746,7 @@ namespace DrawnUi.Maui.Controls
                 throw new Exception($"Failed to create modal for route {registered}");
             }
 
-            var created = await PushModalAsync(page, useGestures, animated, frozenLayerBackgroundParameters);
+            var created = await PushModalAsync(page, useGestures, animated, freezeBackground);
 
             AddToCurrentRouteNodes(registered, created);
         }
@@ -785,14 +796,18 @@ namespace DrawnUi.Maui.Controls
             {
                 if (modal.IsVisibleInViewTree())
                 {
-                    if (modal is SkiaDrawer drawer)
+
+                    if (modal is ModalWrapper modalWrapper)
                     {
-                        drawer.Animated = animated;
-                        if (animated)
+                        if (modalWrapper.Content is SkiaDrawer drawer)
                         {
-                            drawer.IsOpen = false; //gonna kill manually upstairs
+                            drawer.Animated = animated;
+                            if (animated)
+                            {
+                                drawer.IsOpen = false; //gonna kill manually upstairs
+                            }
+                            removed = drawer.Content;
                         }
-                        removed = drawer.Content;
                     }
                     else
                     {
@@ -815,20 +830,23 @@ namespace DrawnUi.Maui.Controls
             {
                 control.IsVisible = false;
 
-                if (control is SkiaDrawer drawer && drawer.Content is SkiaControl removed)
+                if (control is ModalWrapper modalWrapper)
                 {
-                    RemoveFromCurrentRouteNodes(removed);
-
-                    var inStack = NavigationStackModals.FirstOrDefault(x => x.Page == drawer);
-                    if (inStack != null)
+                    if (modalWrapper.Drawer != null && modalWrapper.Drawer.Content is SkiaControl removed)
                     {
-                        NavigationStackModals.Remove(inStack);
-                    }
+                        RemoveFromCurrentRouteNodes(removed);
 
-                    drawer.OnTransitionChanged -= OnModalDrawerScrolled;
-                    if (removed is IVisibilityAware aware)
-                    {
-                        aware.OnDisappearing();
+                        var inStack = NavigationStackModals.FirstOrDefault(x => x.Page == modalWrapper);
+                        if (inStack != null)
+                        {
+                            NavigationStackModals.Remove(inStack);
+                        }
+
+                        modalWrapper.Drawer.OnTransitionChanged -= OnModalDrawerScrolled;
+                        if (removed is IVisibilityAware aware)
+                        {
+                            aware.OnDisappearing();
+                        }
                     }
                 }
                 else
@@ -845,7 +863,6 @@ namespace DrawnUi.Maui.Controls
                 control.Dispose();
             }
         }
-
 
         bool isBusyClosingModal;
 
@@ -937,16 +954,17 @@ namespace DrawnUi.Maui.Controls
         /// <param name="control"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        protected async Task SetFrozenLayerVisibility(SkiaControl control, VisibilityParameters parameters)
+        protected async Task SetFrozenLayerVisibility(SkiaControl control, bool isVisible)
         {
             await AwaitLayersLock();
+
             try
             {
                 FrozenLayers.TryGetValue(control, out var screenshot);
                 if (screenshot != null)
                 {
                     screenshot.IsClippedToBounds = true;
-                    screenshot.IsVisible = parameters.IsVisible;
+                    screenshot.IsVisible = isVisible;
                 }
             }
             finally
@@ -1014,7 +1032,8 @@ namespace DrawnUi.Maui.Controls
         /// <summary>
         /// Freezes layout below the overlay: takes screenshot of RootLayout, places it over, then hides RootLayout to avoid rendering it. Can override
         /// </summary>
-        public virtual async Task FreezeRootLayout(SkiaControl control, bool animated)
+        public virtual async Task FreezeRootLayout(SkiaControl control,
+            bool animated, Color tintScreenshot, float blurScreenshot)
         {
             //System.Diagnostics.Debug.WriteLine("[LockLayers] lock FreezeRootLayout");
             await AwaitLayersLock();
@@ -1025,7 +1044,7 @@ namespace DrawnUi.Maui.Controls
             {
                 if (screenshot != null)
                 {
-                    var background = WrapScreenshot(control, screenshot, animated);
+                    var background = WrapScreenshot(control, screenshot, tintScreenshot, blurScreenshot, animated);
                     //background.ZIndex = int.MinValue;
                     ShellLayout.AddSubView(background);
                     FrozenLayers.TryAdd(control, background);
@@ -1035,6 +1054,29 @@ namespace DrawnUi.Maui.Controls
                 //System.Diagnostics.Debug.WriteLine("[LockLayers] unlock FreezeRootLayout");
                 UnlockLayers();
             });
+        }
+
+
+        public virtual async Task FreezeRootLayout(
+            SkiaControl control,
+            SKImage screenshot,
+            bool animated, Color tintScreenshot, float blurScreenshot)
+        {
+            await AwaitLayersLock();
+
+            FreezingModals.Add(control);
+
+            if (screenshot != null)
+            {
+                var background = WrapScreenshot(control, screenshot, tintScreenshot, blurScreenshot, animated);
+
+                //background.ZIndex = int.MinValue;
+                ShellLayout.AddSubView(background);
+                FrozenLayers.TryAdd(control, background);
+                //will use FreezeRootLayoutInternal to hide views below when screenshot is drawn 
+            }
+
+            UnlockLayers();
         }
 
         public virtual async Task FreezeRootLayoutInternal(SkiaControl control, SkiaControl screenshot, bool animated)
@@ -1068,6 +1110,8 @@ namespace DrawnUi.Maui.Controls
         {
             bool wasSet = false; //handle the cas when control was removed from stack just before this executed..
 
+            bool found = false;
+
             foreach (var modal in NavigationStackModals)
             {
                 if (modal.Page is SkiaControl skia)
@@ -1079,17 +1123,19 @@ namespace DrawnUi.Maui.Controls
                 }
             }
 
-            foreach (var popup in Popups.NavigationStack)
+            if (!wasSet) //do not hide popups if was called for modal below
             {
-                if (popup is SkiaControl skia)
+                foreach (var popup in Popups.NavigationStack)
                 {
-                    skia.IsVisible = skia == control;
-                    skia.InputTransparent = !skia.IsVisible;
-                    if (skia.IsVisible)
-                        wasSet = true;
+                    if (popup is SkiaControl skia)
+                    {
+                        skia.IsVisible = skia == control;
+                        skia.InputTransparent = !skia.IsVisible;
+                        if (skia.IsVisible)
+                            wasSet = true;
+                    }
                 }
             }
-
 
             return wasSet;
         }
@@ -1187,15 +1233,15 @@ namespace DrawnUi.Maui.Controls
 
                 try
                 {
-                    if (animated && popup.IsVisibleInViewTree())
+                    if (popup is PopupWrapper wrapper)
                     {
-                        await Task.WhenAll(
-                            popup.FadeToAsync(0, PopupsAnimationSpeed),
-                            popup.ScaleToAsync(0, 0, PopupsAnimationSpeed));
+                        await wrapper.CloseAsync();
                     }
-
-                    //popup disposed inside
-                    await Popups.Close(popup, animated);
+                    else
+                    {
+                        //popup disposed inside
+                        await Popups.Close(popup, animated);
+                    }
                     OnLayersChanged();
                 }
                 finally
@@ -1205,39 +1251,10 @@ namespace DrawnUi.Maui.Controls
             }
         }
 
-        public class PopupWrapper : ContentLayout
-        {
-            private readonly bool _closeWhenBackgroundTapped;
-            private readonly bool _animated;
-            private readonly SkiaShell _shell;
-
-            public PopupWrapper(bool closeWhenBackgroundTapped, bool animated, SkiaShell shell)
-            {
-                _closeWhenBackgroundTapped = closeWhenBackgroundTapped;
-                _animated = animated;
-                _shell = shell;
-            }
-
-            public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-                SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
-            {
-                if (_closeWhenBackgroundTapped
-                    && Content != null
-                    && touchAction == TouchActionResult.Tapped)
-                {
-                    var point = TranslateInputOffsetToPixels(args.Location, childOffset);
-                    if (!Content.HitIsInside(point.X, point.Y))
-                    {
-                        _shell.ClosePopupAsync(this, _animated).ConfigureAwait(false);
-                    }
-                }
-
-                return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
-            }
-        }
 
         /// <summary>
-        /// Pass pixelsScaleInFrom you you want popup to scale in not from the center of the screen but from that point. Can override appearig animation with taskAnimateAppearence parameter.
+        /// Pass pixelsScaleInFrom you you want popup to animate appearing from a specific point instead of screen center.
+        /// Set freezeBackground to False to keep animations running below popup, default is True for performance reasons.
         /// </summary>
         /// <param name="content"></param>
         /// <param name="animated"></param>
@@ -1248,10 +1265,14 @@ namespace DrawnUi.Maui.Controls
             SkiaControl content,
             bool animated = true,
             bool closeWhenBackgroundTapped = true,
-            SKPoint? pixelsScaleInFrom = null,
-            Func<SkiaControl, Task> taskAnimateAppearence = null)
+            bool freezeBackground = true,
+            Color backgroundColor = null,
+            SKPoint? pixelsScaleInFrom = null)
         {
             await AwaitNavigationLock();
+
+            if (backgroundColor == null)
+                backgroundColor = SkiaShell.PopupBackgroundColor;
 
             try
             {
@@ -1260,19 +1281,25 @@ namespace DrawnUi.Maui.Controls
                 SkiaControl popup = null;
                 SkiaControl control = null;
 
-                control = new PopupWrapper(closeWhenBackgroundTapped, animated, this)
+                bool willFreeze = CanFreezeLayout() && freezeBackground;
+
+                control = new PopupWrapper(closeWhenBackgroundTapped,
+                    animated,
+                    willFreeze,
+                    backgroundColor,
+                    this)
                 {
                     BindingContext = content.BindingContext,
                     ZIndex = ZIndexPopups + Popups.NavigationStack.Count,
-                    Opacity = 0,
-                    ScaleX = 0.1,
-                    ScaleY = 0.1,
+                    //Opacity = 0,
+                    //ScaleX = 0.1,
+                    //ScaleY = 0.1,
                     WhenLayoutIsReady = async (sender) =>
                     {
                         try
                         {
                             popup = sender;
-
+                            /*
                             if (taskAnimateAppearence != null)
                             {
                                 await taskAnimateAppearence(sender);
@@ -1291,12 +1318,12 @@ namespace DrawnUi.Maui.Controls
                                     sender.Opacity = 1;
                                 }
                             }
-
+                            */
                             taskCompletionSource.SetResult(popup);
                         }
                         catch (Exception e)
                         {
-                            Trace.WriteLine(e);
+                            Super.Log(e);
                         }
                         finally
                         {
@@ -1316,8 +1343,8 @@ namespace DrawnUi.Maui.Controls
 
                 if (pixelsScaleInFrom != null)
                 {
-                    control.TransformPivotPointX = pixelsScaleInFrom.Value.X / RootLayout.MeasuredSize.Pixels.Width;
-                    control.TransformPivotPointY = pixelsScaleInFrom.Value.Y / RootLayout.MeasuredSize.Pixels.Height;
+                    content.TransformPivotPointX = pixelsScaleInFrom.Value.X / RootLayout.MeasuredSize.Pixels.Width;
+                    content.TransformPivotPointY = pixelsScaleInFrom.Value.Y / RootLayout.MeasuredSize.Pixels.Height;
                 }
 
                 await Popups.Open(control, animated);
@@ -1341,6 +1368,7 @@ namespace DrawnUi.Maui.Controls
                 {
                     // If not animated, set the result immediately.
                     taskCompletionSource.SetResult(popup);
+
                     return await taskCompletionSource.Task;
                 }
 
@@ -1439,22 +1467,22 @@ namespace DrawnUi.Maui.Controls
 
         protected virtual async Task AwaitNavigationLock([CallerMemberName] string caller = null)
         {
-            // if (LogEnabled)
-            Super.Log($"[Shell] Navigation LOCKED by {caller}");
+            if (LogEnabled)
+                Super.Log($"[Shell] Navigation LOCKED by {caller}");
             await LockNavigation.WaitAsync();
         }
 
         protected virtual void UnlockLayers([CallerMemberName] string caller = null)
         {
-            //if (LogEnabled)
-            Super.Log($"[Shell] Layers UNlocked by {caller}");
+            if (LogEnabled)
+                Super.Log($"[Shell] Layers UNlocked by {caller}");
             LockLayers.Release();
         }
 
         protected virtual async Task AwaitLayersLock([CallerMemberName] string caller = null)
         {
-            // if (LogEnabled)
-            Super.Log($"[Shell] Layers LOCKED by {caller}");
+            if (LogEnabled)
+                Super.Log($"[Shell] Layers LOCKED by {caller}");
             await LockLayers.WaitAsync();
         }
 

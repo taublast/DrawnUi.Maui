@@ -2,6 +2,7 @@
 
 namespace DrawnUi.Maui.Draw;
 
+
 /// <summary>
 /// Warning with CPU-rendering edges will not be blurred: https://issues.skia.org/issues/40036320
 /// </summary>
@@ -143,39 +144,41 @@ public class SkiaBackdrop : ContentLayout
 
             PaintTintBackground(ctx.Canvas, destination);
 
-            if (HasEffects)
-            {
-                BuildPaint();
+            BuildPaint();
 
-                ImagePaint.ImageFilter = PaintImageFilter;
-                ImagePaint.ColorFilter = PaintColorFilter;
+            ImagePaint.ImageFilter = PaintImageFilter;
+            ImagePaint.ColorFilter = PaintColorFilter;
 
-                //notice we read from the real canvas and we write to ctx.Canvas which can be cache
-                ctx.Superview.CanvasView.Surface.Canvas.Flush();
+            //notice we read from the real canvas and we write to ctx.Canvas which can be cache
+            ctx.Superview.CanvasView.Surface.Canvas.Flush();
 
 
-                var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
+            var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
 
 #if IOS
             //cannot really blur in realtime on GL simulator would be like 2 fps
             //while on Metal and M1 the blur will just not work
             if (DeviceInfo.Current.DeviceType != DeviceType.Virtual )
 #endif
+            {
+                if (snapshot != null)
                 {
-                    if (snapshot != null)
-                    {
+                    if (!IsGhost && HasEffects)
                         ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
-                        Snapshot?.Dispose();
-                        Snapshot = snapshot;
-                    }
 
+                    Snapshot?.Dispose();
+                    Snapshot = snapshot;
                 }
 
             }
+
         }
+
     }
 
     protected SKImage Snapshot { get; set; }
+
+
 
     /// <summary>
     /// Returns the snapshot that was used for drawing the backdrop.

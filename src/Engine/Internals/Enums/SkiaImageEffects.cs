@@ -25,10 +25,7 @@ public static class SkiaImageEffects
     public static SKColorFilter Tint(Color color, SKBlendMode mode)
     {
         return SKColorFilter.CreateBlendMode(
-            new SKColor((byte)(color.Red * 255),
-                (byte)(color.Green * 255),
-                (byte)(color.Blue * 255),
-                (byte)(color.Alpha * 255)),
+            new SKColor((byte)(color.Red * 255), (byte)(color.Green * 255), (byte)(color.Blue * 255), (byte)(color.Alpha * 255)),
             mode);
     }
 
