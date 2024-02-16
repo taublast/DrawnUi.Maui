@@ -182,8 +182,6 @@ namespace DrawnUi.Maui.Controls
             return topmost;
         }
 
-
-
         #region SCREENS
 
         public virtual async Task<SkiaControl> RemoveAsync(SkiaControl modal, bool? animate, IDictionary<string, object> arguments = null)
