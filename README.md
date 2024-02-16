@@ -19,6 +19,7 @@ __1.0.8.2 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
 * Enhanced `SkiaBackdrop`, `SkiaSlider` and some others.
 * Animations coming from background resume from current time.
 * Many fixes and improvements.
+* [Demo app](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) is updated with new nuget and new features.
 
 ## Demo
 
