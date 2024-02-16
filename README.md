@@ -13,9 +13,11 @@ _The current development state is __ALPHA__, many features remain to be implemen
 
 ## What's new
 
-__1.0.8.1 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
-* WIndows platform FPS stabilized.
-* .NET 8 support.
+__1.0.8.2 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
+* `SkiaShell` breaking: modals/popups redesigned, can have dynamic or frozen background below.
+* New layout properties `HorizontalPositionOffsetRatio` and `VerticalPositionOffsetRatio`, docs below.
+* Enhanced `SkiaBackdrop`, `SkiaSlider` and some others.
+* Animations coming from background resume from current time.
 * Many fixes and improvements.
 
 ## Demo
@@ -561,6 +563,12 @@ It will render a mask over its children when hovered, think of it as an inverted
 ## MAUI Compatibility Limitations
 
 * Binding RelativeSource with FindAncestorBindingContext not working yet.
+
+## Previously
+
+__1.0.8.1 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
+* WIndows platform FPS stabilized.
+* .NET 8 support.
 
 * ### Docs under construction
  
