@@ -83,10 +83,18 @@ public class SkiaSlider : SkiaLayout
         {
         case TouchActionResult.Down:
 
+        bool onTrail = true;
+        if (Trail != null)
+        {
+            var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+            onTrail = Trail.HitIsInside(point.X, point.Y);
+        }
+
         if (args.NumberOfTouches < 2)
         {
             ResetPan();
-            IsPressed = true;
+            if (onTrail)
+                IsPressed = true;
         }
 
         var thisOffset = TranslateInputCoords(childOffset);
@@ -115,16 +123,7 @@ public class SkiaSlider : SkiaLayout
         if (touchArea == RangeZone.Unknown && ClickOnTrailEnabled)
         {
             //clicked on trail maybe
-            bool onTrail = false;
-            if (Trail != null)
-            {
-                var point = TranslateInputOffsetToPixels(args.Location, childOffset);
-                onTrail = Trail.HitIsInside(point.X, point.Y);
-            }
-            else
-            {
-                onTrail = true;
-            }
+
 
             if (onTrail)
             {
