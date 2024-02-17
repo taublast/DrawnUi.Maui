@@ -13,7 +13,8 @@ _The current development state is __ALPHA__, many features remain to be implemen
 
 ## What's new
 
-__1.0.8.2 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
+__1.0.8.3 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
+* MacCatalyst net8 crash fix
 * `SkiaShell` breaking: modals/popups redesigned, can have dynamic or frozen background below.
 * New layout properties `HorizontalPositionOffsetRatio` and `VerticalPositionOffsetRatio`, docs below.
 * Enhanced `SkiaBackdrop`, `SkiaSlider` and some others.
