@@ -141,6 +141,8 @@ public partial class SkiaShell
         private readonly bool _willFreeze;
         private readonly bool _useGestures;
 
+        public bool IsFrozen { get; set; }
+
         protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
             base.Draw(context, destination, scale);
@@ -150,6 +152,7 @@ public partial class SkiaShell
                 var screenshot = Backdrop.GetImage();
                 if (screenshot != null)
                 {
+                    IsFrozen = true;
                     frozen = true;
                     _shell.FreezeRootLayout(this, screenshot, _animated, _color, (float)SkiaShell.PopupsBackgroundBlur).ConfigureAwait(true);
                     Backdrop.IsVisible = false;
