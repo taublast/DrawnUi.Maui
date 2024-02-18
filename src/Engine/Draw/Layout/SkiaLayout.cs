@@ -1426,7 +1426,7 @@ namespace DrawnUi.Maui.Draw
             ViewportWasChanged = false;
         }
 
-
+        bool _trackWasDrawn;
 
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
@@ -1457,6 +1457,12 @@ namespace DrawnUi.Maui.Draw
             }
 
             ApplyIsEmpty(drawnChildrenCount == 0);
+
+            if (!_trackWasDrawn && LayoutReady)
+            {
+                _trackWasDrawn = true;
+                OnAppeared();
+            }
         }
 
         protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
@@ -1827,7 +1833,7 @@ namespace DrawnUi.Maui.Draw
         {
             base.OnLayoutReady();
 
-            OnAppeared();
+
         }
 
         public virtual void OnAppearing()

@@ -1,11 +1,12 @@
-﻿using DrawnUi.Maui.Draw;
-using SkiaSharp.HarfBuzz;
+﻿using SkiaSharp.HarfBuzz;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using Color = Microsoft.Maui.Graphics.Color;
 using PropertyChangingEventArgs = Microsoft.Maui.Controls.PropertyChangingEventArgs;
 
 namespace DrawnUi.Maui.Draw
@@ -45,8 +46,8 @@ namespace DrawnUi.Maui.Draw
 
             UpdateFont();
         }
-        
-        
+
+
         protected override void OnBindingContextChanged()
         {
             base.OnBindingContextChanged();
@@ -338,7 +339,7 @@ namespace DrawnUi.Maui.Draw
 
             if (!string.IsNullOrEmpty(this.MonoForDigits))
             {
-                _charMonoWidthPixels = MeasureTextWidthWithAdvance(paint, this.MonoForDigits);
+                _charMonoWidthPixels = MeasureTextWidthWithAdvance(paint, this.MonoForDigits, true);
             }
             else
             {
@@ -818,7 +819,7 @@ namespace DrawnUi.Maui.Draw
         //        canvas.DrawRect(destination, PaintDeco);
         //    }
         //}
-        
+
 
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
@@ -1317,7 +1318,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         protected bool ShouldUpdateFont { get; set; }
-        
+
         protected virtual async void UpdateFont()
         {
             if (
@@ -1328,21 +1329,21 @@ namespace DrawnUi.Maui.Draw
                 _fontFamily = FontFamily;
                 _fontWeight = FontWeight;
 
-                _replaceFont  = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
+                _replaceFont = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
 
                 InvalidateMeasure();
             }
 
         }
-        
+
         protected void ReplaceFont()
         {
             if (_replaceFont != null)
             {
                 TypeFace = _replaceFont;
                 _replaceFont = null;
-                  OnFontUpdated();
-            }          
+                OnFontUpdated();
+            }
         }
 
         protected float _fontUnderline;
@@ -1485,10 +1486,31 @@ namespace DrawnUi.Maui.Draw
         public double UsingFontSize { get; set; }
 
 
-
-        public static float MeasureTextWidthWithAdvance(SKPaint paint, string text)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MeasureTextWidthWithAdvance(SKPaint paint, string text, bool useCache)
         {
-            float width = paint.MeasureText(text);
+            return paint.MeasureText(text);
+
+            /*
+            ConcurrentDictionary<string, float> typefaceCache = null;
+            var thisFont = new GlyphSizeDefinition
+            {
+                Typeface = paint.Typeface,
+                FontSize = paint.TextSize
+            };
+
+            if (!MeasuredGlyphsWidthWithAdvance.TryGetValue(thisFont, out typefaceCache))
+            {
+                typefaceCache = new();
+                MeasuredGlyphsWidthWithAdvance.TryAdd(thisFont, typefaceCache);
+            }
+
+            float width = 0f;
+            if (!typefaceCache.TryGetValue(text, out width))
+            {
+                width = paint.MeasureText(text);
+            }
+            */
 
             //if (paint.TextSkewX != 0)
             //{
@@ -1498,7 +1520,6 @@ namespace DrawnUi.Maui.Draw
             //    width += additionalWidth;
             //}
 
-            return width;
         }
 
         //static float GetTextTransformsWidthCorrection(SKPaint paint, string text)
@@ -1530,6 +1551,7 @@ namespace DrawnUi.Maui.Draw
         //    return width;
         //}
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float MeasureTextWidth(SKPaint paint, string text)
         {
             var rect = SKRect.Empty;
@@ -1543,6 +1565,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="paint"></param>
         /// <param name="text"></param>
         /// <param name="bounds"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MeasureText(SKPaint paint, string text, ref SKRect bounds)
         {
             paint.MeasureText(text, ref bounds);
@@ -1554,6 +1577,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int LastNonSpaceIndex(string text)
         {
             for (int i = text.Length - 1; i >= 0; i--)
@@ -1782,7 +1806,7 @@ namespace DrawnUi.Maui.Draw
 
                     bool mono = glyph.IsNumber();
 
-                    var thisWidth = MeasureTextWidthWithAdvance(paint, print);
+                    var thisWidth = MeasureTextWidthWithAdvance(paint, print, true);
 
                     if (mono)
                     {
@@ -1827,7 +1851,7 @@ namespace DrawnUi.Maui.Draw
 
                 foreach (var glyph in glyphs)
                 {
-                    var thisWidth = MeasureTextWidthWithAdvance(paint, glyph.Text);
+                    var thisWidth = MeasureTextWidthWithAdvance(paint, glyph.Text, true);
                     {
                         if (pos == addAtIndex)
                         {
@@ -1849,7 +1873,7 @@ namespace DrawnUi.Maui.Draw
                 return (value - spacingModifier, positions.ToArray());
             }
 
-            var simpleValue = MeasureTextWidthWithAdvance(paint, text);
+            var simpleValue = MeasureTextWidthWithAdvance(paint, text, false);
 
             //System.Diagnostics.Debug.WriteLine($"[LINE S] {simpleValue:0.0}");
             return (simpleValue, null);
@@ -3064,6 +3088,29 @@ namespace DrawnUi.Maui.Draw
             get { return (Color)GetValue(TouchEffectColorProperty); }
             set { SetValue(TouchEffectColorProperty, value); }
         }
+
+        #region CACHE
+
+        public static ConcurrentDictionary<GlyphSizeDefinition, ConcurrentDictionary<string, float>> MeasuredGlyphsWidthWithAdvance { get; } = new();
+
+
+        public struct GlyphSizeDefinition
+        {
+            public SKTypeface Typeface { get; set; }
+            public float FontSize { get; set; }
+
+            public static bool operator ==(GlyphSizeDefinition a, GlyphSizeDefinition b)
+            {
+                return a.FontSize == b.FontSize && a.Typeface == b.Typeface;
+            }
+
+            public static bool operator !=(GlyphSizeDefinition a, GlyphSizeDefinition b)
+            {
+                return a.FontSize != b.FontSize || a.Typeface != b.Typeface;
+            }
+        }
+
+        #endregion
     }
 
 

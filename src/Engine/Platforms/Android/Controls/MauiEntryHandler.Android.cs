@@ -15,19 +15,28 @@ public partial class MauiEntryHandler : EntryHandler
     {
         base.ConnectHandler(platformView);
 
-
         _control = platformView;
 
         platformView.EditorAction += OnEditorAction;
         platformView.TextChanged += OnTextChanged;
+
+        ApplySettings();
+    }
+
+    void ApplySettings()
+    {
+        if (_control != null)
+        {
+            _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+            _control.SetPadding(0, 0, 0, 0);
+        }
     }
 
     public override void PlatformArrange(Rect frame)
     {
         base.PlatformArrange(frame);
 
-        _control.SetPadding(0, 0, 0, 0);
-        _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        ApplySettings();
     }
 
     protected override void DisconnectHandler(AppCompatEditText platformView)
@@ -39,8 +48,6 @@ public partial class MauiEntryHandler : EntryHandler
         platformView.EditorAction -= OnEditorAction;
         platformView.TextChanged -= OnTextChanged;
     }
-
-
 
     private void OnEditorAction(object sender, Android.Widget.TextView.EditorActionEventArgs e)
     {

@@ -329,7 +329,7 @@ public class SkiaScrollLooped : SkiaScroll
     }
 
     //Using this to draw a second fake copy of content to loop the cycle
-    protected override void WasDrawn(SkiaDrawingContext context,
+    protected override void OnDrawn(SkiaDrawingContext context,
         SKRect destination,
         float zoomedScale,
         double scale = 1)
@@ -434,7 +434,7 @@ public class SkiaScrollLooped : SkiaScroll
 
         //ScrollOrientation.Both unsupported
 
-        base.WasDrawn(context, destination, zoomedScale, scale);
+        base.OnDrawn(context, destination, zoomedScale, scale);
     }
 
 

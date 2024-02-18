@@ -736,7 +736,7 @@ namespace DrawnUi.Maui.Controls
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Super.Log(e);
 
             }
             finally
