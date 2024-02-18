@@ -552,12 +552,20 @@ namespace DrawnUi.Maui.Views
             }
         }
 
+        /// <summary>
+        /// Set this to true if you do not want the canvas to be redrawn as transparent and showing content below the canvas (splash?..) when UpdateLocked is True
+        /// </summary>
+        public bool StopDrawingWhenUpdateIsLocked { get; set; }
 
         public bool CheckCanDraw()
         {
+            if (UpdateLocked && StopDrawingWhenUpdateIsLocked)
+                return false;
+
             return CanvasView != null
                    //&& InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
-                   && !IsRendering && IsDirty && !UpdateLocked && IsVisible;
+                   && !IsRendering && IsDirty
+                   && IsVisible;
         }
 
         public DateTime TimeDrawingStarted { get; protected set; }
@@ -1311,6 +1319,11 @@ namespace DrawnUi.Maui.Views
         {
             lock (LockDraw)
             {
+                if (UpdateMode != UpdateMode.Constant)
+                {
+                    IsDirty = false; //any control can set to true after that
+                }
+
                 if (!OnStartRendering(canvas))
                     return UpdateMode == UpdateMode.Constant;
 
@@ -1526,10 +1539,7 @@ namespace DrawnUi.Maui.Views
 
 
             {
-                if (UpdateMode != UpdateMode.Constant)
-                {
-                    IsDirty = false; //any control can set to true after that
-                }
+
 
                 if (NeedGlobalRefreshCount != _globalRefresh)
                 {
