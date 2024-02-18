@@ -77,14 +77,13 @@ namespace DrawnUi.Maui.Controls
         /// <summary>
         /// Default background tint for freezing popups/modals etc
         /// </summary>
-        public static Color PopupBackgroundColor = Color.Parse("#99000000");
+        public static Color PopupBackgroundColor = Color.Parse("#66000000");
 
         /// <summary>
         /// Default background blur amount for freezing popups/modals etc
         /// </summary>
-        public static float PopupsBackgroundBlur = 8;
-
-        public static float PopupsAnimationSpeed = 150;
+        public static float PopupsBackgroundBlur = 6;
+        public static float PopupsAnimationSpeed = 250;
 
         public static bool LogEnabled = false;
 
@@ -575,7 +574,7 @@ namespace DrawnUi.Maui.Controls
 
                 bool willFreeze = CanFreezeLayout() && freezeBackground;
 
-                var modalWrapper = CreateModalDrawer(true, animated,
+                var modalWrapper = CreateModalDrawer(useGestures, animated,
                     willFreeze, SkiaShell.PopupBackgroundColor);
 
                 NavigationStackModals.AddLast(new PageInStack

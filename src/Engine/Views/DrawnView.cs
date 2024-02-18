@@ -1,12 +1,7 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Infrastructure.Enums;
+﻿using DrawnUi.Maui.Infrastructure.Enums;
 using DrawnUi.Maui.Infrastructure.Extensions;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -16,6 +11,14 @@ namespace DrawnUi.Maui.Views
     [ContentProperty("Children")]
     public partial class DrawnView : ContentView, IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
+        public bool IsUsingHardwareAcceleration
+        {
+            get
+            {
+                return HardwareAcceleration != HardwareAccelerationMode.Disabled && DeviceInfo.Platform != DevicePlatform.WinUI && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
+            }
+        }
+
         public Queue<IDisposable> ToBeDisposed { get; } = new();
 
         public virtual bool IsVisibleInViewTree()
@@ -254,7 +257,7 @@ namespace DrawnUi.Maui.Views
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Super.Log(e);
                     }
                 }
                 return ret;
@@ -274,7 +277,7 @@ namespace DrawnUi.Maui.Views
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Super.Log(e);
                     }
                 }
                 return ret;
@@ -297,7 +300,7 @@ namespace DrawnUi.Maui.Views
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Super.Log(e);
                     }
                 }
                 return ret;
@@ -333,7 +336,7 @@ namespace DrawnUi.Maui.Views
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Super.Log(e);
             }
 
             return executed;
@@ -405,7 +408,7 @@ namespace DrawnUi.Maui.Views
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Super.Log(e);
                 }
 
                 return executed;
@@ -506,14 +509,6 @@ namespace DrawnUi.Maui.Views
         //    VerticalOptions = LayoutOptions.Fill
         //};
 
-        public bool IsUsingHardwareAcceleration
-        {
-            get
-            {
-                return HardwareAcceleration != HardwareAccelerationMode.Disabled && DeviceInfo.Platform != DevicePlatform.WinUI && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
-            }
-        }
-
         public bool HasHandler { get; set; }
 
         public virtual void DisconnectedHandler()
@@ -564,7 +559,9 @@ namespace DrawnUi.Maui.Views
 
             return CanvasView != null
                    //&& InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
-                   && !IsRendering && IsDirty
+                   && !IsRendering
+                   && !_isWaiting
+                   && IsDirty
                    && IsVisible;
         }
 
@@ -589,7 +586,7 @@ namespace DrawnUi.Maui.Views
             if (widthPixels > 0 && heightPixels > 0)
             {
 
-#if ANDROID || WINDOWS
+#if ANDROID 
 
                 if (NeedCheckParentVisibility)
                     CheckElementVisibility(this);
@@ -602,11 +599,12 @@ namespace DrawnUi.Maui.Views
                     {
                         if (NeedCheckParentVisibility)
                             CheckElementVisibility(this);
+
                         Continue();
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Super.Log(e);
                     }
 
                 });
@@ -614,48 +612,55 @@ namespace DrawnUi.Maui.Views
 
                 void Continue()
                 {
-                    if (CanvasView != null)
-                    {
-                        if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
-                        {
-                            _isWaiting = true;
-                            InvalidatedCanvas++;
-                            MainThread.BeginInvokeOnMainThread(async () =>
-                            {
-                                try
-                                {
-                                    //cap fps around 120fps
-                                    var nowNanos = Super.GetCurrentTimeNanos();
-                                    var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
-                                    _lastUpdateTimeNanos = nowNanos;
 
-                                    var needWait =
-                                        Super.CapMicroSecs
-#if IOS || MACCATALYST  
+                    if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
+                    {
+                        _isWaiting = true;
+                        InvalidatedCanvas++;
+                        MainThread.BeginInvokeOnMainThread(async () =>
+                        {
+                            try
+                            {
+                                //cap fps around 120fps
+                                var nowNanos = Super.GetCurrentTimeNanos();
+                                var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
+                                _lastUpdateTimeNanos = nowNanos;
+
+                                var needWait =
+                                    Super.CapMicroSecs
+#if IOS || MACCATALYST
                                 * 2 // apple is double buffered                             
 #endif
-                                        - elapsedMicros;
-                                    if (needWait < 1)
-                                        needWait = 1;
+                                    - elapsedMicros;
+                                if (needWait < 1)
+                                    needWait = 1;
 
-                                    var ms = (int)(needWait / 1000);
-                                    if (ms < 1)
-                                        ms = 1;
-                                    await Task.Delay(ms);
-                                    CanvasView?.InvalidateSurface(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
-                                }
-                                catch (Exception e)
-                                {
-                                    Super.Log(e);
-                                }
-                                finally
-                                {
-                                    _isWaiting = false;
-                                }
+                                var ms = (int)(needWait / 1000);
+                                if (ms < 1)
+                                    ms = 1;
+                                await Task.Delay(ms);
+                                CanvasView?.InvalidateSurface(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
+                            }
+                            catch (Exception e)
+                            {
+                                Super.Log(e);
+                            }
+                            finally
+                            {
+                                _isWaiting = false;
+                            }
 
-                            });
-                            return;
-                        }
+                        });
+                        return;
+                    }
+                    else
+                    {
+                        //if (!CanvasView.IsDrawing)
+                        //{
+                        //    OrderedDraw = false;
+                        //    Update();
+                        //    return;
+                        //}
                     }
                     OrderedDraw = false;
                 }
@@ -665,6 +670,7 @@ namespace DrawnUi.Maui.Views
                 OrderedDraw = false;
             }
         }
+
 
         double _lastUpdateTimeNanos;
 
@@ -810,12 +816,11 @@ namespace DrawnUi.Maui.Views
 
             Content = null;
 
-            ClearChildren();
-
             DisposeDisposables();
 
             this.Handler?.DisconnectHandler();
 
+            ClearChildren();
         }
         /// <summary>
         /// Makes the control dirty, in need to be remeasured and rendered but this doesn't call Update, it's up yo you
@@ -1319,6 +1324,7 @@ namespace DrawnUi.Maui.Views
         {
             lock (LockDraw)
             {
+
                 if (UpdateMode != UpdateMode.Constant)
                 {
                     IsDirty = false; //any control can set to true after that
@@ -1503,9 +1509,9 @@ namespace DrawnUi.Maui.Views
             }
             catch (Exception e)
             {
-                Console.WriteLine("****************************************************");
+                Super.Log("****************************************************");
                 Super.Log(e);
-                Console.WriteLine("****************************************************");
+                Super.Log("****************************************************");
                 throw e;
             }
         }
@@ -1590,7 +1596,7 @@ namespace DrawnUi.Maui.Views
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e);
+                            Super.Log(e);
                         }
                     }
 
@@ -1662,7 +1668,7 @@ namespace DrawnUi.Maui.Views
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e); //most probably data was modified while drawing
+                    Super.Log(e); //most probably data was modified while drawing
 
                     NeedMeasure = true;
                     IsDirty = true;
@@ -1955,7 +1961,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual void ClearChildren()
         {
-            foreach (var child in Views)
+            foreach (var child in Views.ToList())
             {
                 RemoveSubView(child);
                 //child.Dispose();

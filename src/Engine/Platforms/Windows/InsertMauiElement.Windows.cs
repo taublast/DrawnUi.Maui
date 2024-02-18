@@ -132,9 +132,9 @@ public partial class SkiaMauiElement
         }
     }
 
-    void SetupMauiElement(Element element)
+    protected virtual void SetupMauiElement(VisualElement element)
     {
-        if (element == null)
+        if (element == null || element.Handler == null)
             return;
 
         IViewHandler handler = Superview.Handler;

@@ -4952,6 +4952,26 @@ namespace DrawnUi.Maui.Draw
             }
 
             PaintTintBackground(ctx.Canvas, destination);
+
+            WasDrawn = true;
+        }
+
+        private bool _wasDrawn;
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool WasDrawn
+        {
+            get
+            {
+                return _wasDrawn;
+            }
+            set
+            {
+                if (_wasDrawn != value)
+                {
+                    _wasDrawn = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         /// <summary>

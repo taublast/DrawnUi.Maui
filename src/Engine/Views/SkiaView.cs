@@ -1,5 +1,7 @@
 ﻿namespace DrawnUi.Maui.Views;
 
+
+
 public partial class SkiaView : SKCanvasView, ISkiaDrawable
 {
     public bool IsHardwareAccelerated => false;
@@ -11,18 +13,18 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
     public Func<SKCanvas, SKRect, bool> OnDraw { get; set; }
 
-    private DrawnView _parent;
+    public DrawnView Superview { get; protected set; }
 
     public void Dispose()
     {
         _surface = null;
         PaintSurface -= OnPaintingSurface;
-        _parent = null;
+        Superview = null;
     }
 
-    public SkiaView(DrawnView parent)
+    public SkiaView(DrawnView superview)
     {
-        _parent = parent;
+        Superview = superview;
         EnableTouchEvents = false;
     }
 
@@ -39,14 +41,14 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         {
             PaintSurface -= OnPaintingSurface;
 
-            _parent?.DisconnectedHandler();
+            Superview?.DisconnectedHandler();
         }
         else
         {
             PaintSurface -= OnPaintingSurface;
             PaintSurface += OnPaintingSurface;
 
-            _parent?.ConnectedHandler();
+            Superview?.ConnectedHandler();
         }
     }
 

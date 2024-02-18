@@ -462,7 +462,7 @@ public class SkiaImage : SkiaControl
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Super.Log(e);
 
                         OnError?.Invoke(this, new ContentLoadedEventArgs(url));
                         OnSourceError();

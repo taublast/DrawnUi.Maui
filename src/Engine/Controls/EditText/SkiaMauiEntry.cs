@@ -1,9 +1,12 @@
-﻿using DrawnUi.Maui.Draw;
-using AppoMobi.Specials;
+﻿using AppoMobi.Specials;
+using DrawnUi.Maui.Draw;
 using System.Windows.Input;
 
 namespace DrawnUi.Maui.Controls;
 
+/// <summary>
+/// Used to draw maui element over a skia canvas. Positions elelement using drawnUi layout and sometimes just renders element bitmap snapshot instead of displaying the real element, for example, when scrolling/animating.
+/// </summary>
 public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 {
 
@@ -155,7 +158,6 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
             }
         }
     }
-
 
     private void OnControlCompleted(object sender, EventArgs e)
     {

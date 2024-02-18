@@ -2503,10 +2503,9 @@ namespace DrawnUi.Maui.Draw
 
             FinalizeDraw(context, scale);
 
-            WasDrawn(context, DrawingRect, _zoomedScale, scale);
+            OnDrawn(context, DrawingRect, _zoomedScale, scale);
 
             isDrawing = false;
-
         }
 
         public double ParallaxComputedValue
@@ -3148,7 +3147,7 @@ namespace DrawnUi.Maui.Draw
         private double _parallaxComputedValue;
 
 
-        protected virtual void WasDrawn(SkiaDrawingContext context, SKRect destination,
+        protected virtual void OnDrawn(SkiaDrawingContext context, SKRect destination,
             float zoomedScale,
             double scale = 1.0)
         {

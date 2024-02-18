@@ -22,7 +22,7 @@ public partial class MauiEditorHandler : EditorHandler
 
         platformView.TextChanged += OnTextChanged;
 
-        platformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        ApplySettings();
     }
 
     private void OnTextChanged(object sender, TextChangedEventArgs e)
@@ -41,13 +41,21 @@ public partial class MauiEditorHandler : EditorHandler
         }
     }
 
+    void ApplySettings()
+    {
+        if (_control != null)
+        {
+            _control.SetPadding(0, 0, 0, 0);
+            _control.VerticalScrollBarEnabled = true;
+            _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        }
+    }
+
     public override void PlatformArrange(Rect frame)
     {
         base.PlatformArrange(frame);
 
-        _control.SetPadding(0, 0, 0, 0);
-        _control.VerticalScrollBarEnabled = true;
-        _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        ApplySettings();
     }
 
     protected override void DisconnectHandler(AppCompatEditText platformView)

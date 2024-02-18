@@ -268,7 +268,7 @@ public static class DependencyExtensions
 
                 Platform.ActivityStateChanged += (o, args) =>
                 {
-                    if (args.Activity == Super.MainActivity && activityState != args.State)
+                    if (activityState != args.State)
                     {
                         if ((args.State == ActivityState.Resumed || args.State == ActivityState.Started)
                             && activityState != ActivityState.Resumed && activityState != ActivityState.Started)

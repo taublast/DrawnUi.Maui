@@ -1,5 +1,8 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
+/// <summary>
+/// This was used to include skiacontrols being bindableobjects inside maui xaml, not really used anymore now that skiacontrol is derived from visualelement and goes okay with maui xaml out of the box..
+/// </summary>
 [ContentProperty("Content")]
 public class ElementAdapter : View, ISkiaAttachable, IVisualTreeElement
 {
