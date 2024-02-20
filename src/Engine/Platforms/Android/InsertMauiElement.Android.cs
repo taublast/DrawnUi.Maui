@@ -103,7 +103,7 @@ public partial class SkiaMauiElement
     {
         if (element == null)
         {
-            //Super.Log($"[ELEM] SetupMauiElement exit");
+            Super.Log($"[ELEM] SetupMauiElement exit");
             return;
         }
 
@@ -113,13 +113,23 @@ public partial class SkiaMauiElement
         {
             element.BindingContext = this.BindingContext;
 
-            lock (lockLayout)
+            //lock (lockLayout)
             {
                 if (element.Handler == null)
                 {
                     //create handler
                     //Super.Log($"[ELEM] creating handler..");
                     var childHandler = element.ToHandler(handler.MauiContext);
+                    NeedsLayoutNative = true;
+
+                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(50), () =>
+                    {
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                        });
+                    });
+
                 }
 
                 //add native view to canvas
@@ -134,7 +144,6 @@ public partial class SkiaMauiElement
                     layout.AddView(view);
             }
 
-            Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
 
 
         }

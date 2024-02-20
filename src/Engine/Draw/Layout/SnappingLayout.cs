@@ -298,16 +298,21 @@ public class SnappingLayout : SkiaLayout
         if (propertyName.IsEither(nameof(TranslationX), nameof(TranslationY)))
         {
             CurrentPosition = new((float)TranslationX, (float)TranslationY);
-            InTransition = !CheckTransitionEnded();
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                InTransition = !CheckTransitionEnded();
+            });
         }
     }
 
     public virtual void ApplyPosition(Vector2 position)
     {
-        TranslationX = position.X;
-        TranslationY = position.Y;
-
-        InTransition = !CheckTransitionEnded();
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            TranslationX = position.X;
+            TranslationY = position.Y;
+            InTransition = !CheckTransitionEnded();
+        });
     }
 
     public virtual bool CheckTransitionEnded()

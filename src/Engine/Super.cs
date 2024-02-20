@@ -14,10 +14,6 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: Microsoft.Maui.Controls.XmlnsPrefix("http://schemas.appomobi.com/drawnUi/2023/draw", "draw")]
-
-[assembly: Microsoft.Maui.Graphics.XmlnsPrefix("http://schemas.appomobi.com/drawnUi/2023/draw", "draw")]
-
 [assembly: XmlnsDefinition("http://schemas.appomobi.com/drawnUi/2023/draw",
     "DrawnUi.Maui.Draw")]
 
@@ -110,7 +106,26 @@ public partial class Super
     }
 
 
-    public static bool Initialized { get; set; }
+    public static bool Initialized
+    {
+        get => initialized;
+        set
+        {
+            initialized = value;
+            EnableRendering = value;
+        }
+    }
+
+    public static bool EnableRendering
+    {
+        get => enableRendering;
+        set
+        {
+            enableRendering = value;
+            if (value)
+                NeedGlocalUpdate();
+        }
+    }
 
     public static IApplication App { get; set; }
 
@@ -238,11 +253,11 @@ public partial class Super
     public static void ResizeWindow(Window window, int width, int height, bool isFixed)
     {
 
-        //this crashes in NET8 for CATALYST so..
-#if !MACCATALYST
         window.Width = width;
         window.Height = height;
 
+        //this crashes in NET8 for CATALYST so..
+#if !MACCATALYST
         var disp = DeviceDisplay.Current.MainDisplayInfo;
         // move to screen center
         window.X = (disp.Width / disp.Density - window.Width) / 2;
@@ -321,6 +336,9 @@ public partial class Super
     static RestartingTimer<object> _timerStopRenderingInBackground;
 
     private static bool _inBackground;
+    private static bool initialized;
+    private static bool enableRendering;
+
     public static bool InBackground
     {
         get

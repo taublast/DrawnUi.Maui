@@ -42,13 +42,28 @@
         {
             //if you pass 0 to initial measure whatever you pass later will not fix the broken maui control afterwards
             //so never pass 0
-            if (Element is IView view && Element.Handler != null && ptsWidth > 0 && ptsHeight > 0)
+            try
             {
-                var measured = view.Measure(ptsWidth, ptsHeight);
-                var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
-                return measured;
+                if (Element is IView view && Element.Handler != null && ptsWidth > 0 && ptsHeight > 0)
+                {
+                    var measured = view.Measure(ptsWidth, ptsHeight);
+                    var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
+                    return measured;
+                }
             }
+            catch (Exception e)
+            {
+                //Super.Log(e);
+                Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        //Super.Log($"[ELEM] invalidated");
 
+                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                    });
+                });
+            }
             return Size.Zero;
         }
 
@@ -56,7 +71,7 @@
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
-            lock (lockLayout)
+            //lock (lockLayout)
             {
                 var bounds = base.Measure(widthConstraint, heightConstraint, scale);
 
@@ -68,15 +83,14 @@
                     var arranged = view.Arrange(new Rect(0, 0, bounds.Units.Width, bounds.Units.Height));
 
                     ContentSizeUnits = arranged;
-                }
-                else
-                {
 
+                    //Super.Log($"[ELEM] measured => {ContentSizeUnits}");
                 }
 
                 return bounds;
             }
         }
+
 
         protected Size ContentSizeUnits;
 
@@ -393,10 +407,18 @@
         {
             if (Element == null || Element.Handler == null || !NeedsLayoutNative)
             {
-                //Super.Log($"[ELEM] LayoutMauiElement exit {NeedsLayoutNative},  {Element.Handler} ");
-
+                Super.Log($"[ELEM] LayoutMauiElement exit {NeedsLayoutNative},  {Element.Handler} ");
+                Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                    });
+                });
                 return;
             }
+
+            Super.Log($"[ELEM] LayoutMauiElement ENTERED {NeedsLayoutNative},  {Element.Handler} ");
 
             NeedsLayoutNative = false;
 

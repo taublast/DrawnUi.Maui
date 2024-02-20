@@ -343,11 +343,6 @@ public class Canvas : DrawnView, IGestureListener
 
     protected virtual void ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
     {
-        if (touchAction == TouchActionResult.Up)
-        {
-            var stop = 1;
-        }
-
         lock (LockIterateListeners)
         {
             ISkiaGestureListener consumed = null;
@@ -356,20 +351,20 @@ public class Canvas : DrawnView, IGestureListener
             IsHiddenInViewTree = false; //if we get a gesture, we are visible by design
             bool manageChildFocus = false;
 
-            if (DebugGesturesColor != Colors.Transparent && touchAction == TouchActionResult.Down)
-            {
-                PostponeExecutionAfterDraw(() =>
-                {
-                    using (SKPaint paint = new SKPaint
-                    {
-                        Style = SKPaintStyle.StrokeAndFill,
-                        Color = DebugGesturesColor.ToSKColor()
-                    })
-                    {
-                        this.CanvasView.Surface.Canvas.DrawCircle((float)(args.Location.X), (float)(args.Location.Y), (float)(20 * RenderingScale), paint);
-                    }
-                });
-            }
+            //if (DebugGesturesColor != Colors.Transparent && touchAction == TouchActionResult.Down)
+            //{
+            //    PostponeExecutionAfterDraw(() =>
+            //    {
+            //        using (SKPaint paint = new SKPaint
+            //        {
+            //            Style = SKPaintStyle.StrokeAndFill,
+            //            Color = DebugGesturesColor.ToSKColor()
+            //        })
+            //        {
+            //            this.CanvasView.Surface.Canvas.DrawCircle((float)(args.Location.X), (float)(args.Location.Y), (float)(20 * RenderingScale), paint);
+            //        }
+            //    });
+            //}
 
             foreach (var listener in GestureListeners.Where(listener => listener.CanDraw && !listener.InputTransparent))
             {
@@ -452,8 +447,9 @@ public class Canvas : DrawnView, IGestureListener
 
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
     {
-        //Debug.WriteLine($"[IN] {type} {tag}");
-        PostponeExecutionAfterDraw(() =>
+
+
+        PostponeExecutionBeforeDraw(() =>
         {
             try
             {
@@ -464,7 +460,9 @@ public class Canvas : DrawnView, IGestureListener
                 Trace.WriteLine(e);
             }
         });
+
         Repaint();
+
     }
 
     #endregion

@@ -159,22 +159,6 @@
 	  <ProjectReference Include="..\Engine\DrawnUi.Maui.csproj" />
 	</ItemGroup>
  
-
-	<ItemGroup>
-	  <Compile Update="Views\MainPageCarousels.xaml.cs">
-	    <DependentUpon>MainPageCarousels.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\MainPageDrawers.xaml.cs">
-	    <DependentUpon>MainPageDrawers.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\MainPageGame.xaml.cs">
-	    <DependentUpon>MainPageGame.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\MainPageProgress.xaml.cs">
-	    <DependentUpon>MainPageProgress.xaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
  
 
 <!--  <ItemGroup Condition="'$(Configuration)'=='Debug'">-->
@@ -228,15 +212,6 @@
     </MauiAsset>
   </ItemGroup>
 
-
-  <ItemGroup>
-    <MauiXaml Update="AppShell.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Views\MainPageGame.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-  </ItemGroup>
 
 
   <ItemGroup>
