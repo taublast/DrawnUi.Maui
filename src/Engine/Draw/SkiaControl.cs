@@ -3813,6 +3813,8 @@ namespace DrawnUi.Maui.Draw
 
             RenderingScale = scale;
 
+            NeedUpdate = false;
+
             if (WillInvalidateMeasure)
             {
                 WillInvalidateMeasure = false;
@@ -4176,13 +4178,12 @@ namespace DrawnUi.Maui.Draw
                         if (UseCache == SkiaCacheType.ImageDoubleBuffered && _renderObject != null)
                         {
                             RenderObjectPrevious = _renderObject;
-                            _renderObject = value;
                         }
                         else
                         {
                             DisposeObject(_renderObject);
-                            _renderObject = value;
                         }
+                        _renderObject = value;
                         OnPropertyChanged();
                         if (value != null)
                             CreatedCache?.Invoke(this, value);
@@ -4200,7 +4201,10 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual void Repaint()
         {
-            if (Superview == null || IsParentIndependent || IsDisposed || Parent == null)
+            if (NeedUpdate ||
+                Superview == null
+                || IsParentIndependent
+                || IsDisposed || Parent == null)
                 return;
 
             if (!Parent.UpdateLocked)
@@ -4943,6 +4947,9 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         protected virtual void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
+            if (destination.Width == 0 || destination.Height == 0)
+                return;
+
             if (IsDisposed)
             {
                 //this will save a lot of trouble debugging unknown native crashes
@@ -5224,15 +5231,15 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed)
                 return;
 
-            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
-                IsClippedToBounds = true;
-
-            NeedUpdate = true;
             NeedUpdateFrontCache = true;
             RenderObjectNeedsUpdate = true;
+            NeedUpdate = true;
 
             if (UpdateLocked)
                 return;
+
+            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
+                IsClippedToBounds = true;
 
             if (_lastUpdatedVisibility != IsVisible)
             {

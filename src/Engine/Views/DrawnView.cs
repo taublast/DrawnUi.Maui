@@ -94,8 +94,6 @@ namespace DrawnUi.Maui.Views
             ExecuteAfterDraw.Enqueue(action);
         }
 
-
-
         public Queue<Action> ExecuteBeforeDraw { get; } = new();
         public Queue<Action> ExecuteAfterDraw { get; } = new();
 
@@ -560,7 +558,6 @@ namespace DrawnUi.Maui.Views
             return CanvasView != null
                    //&& InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
                    && !IsRendering
-                   && !_isWaiting
                    && IsDirty
                    && IsVisible;
         }
@@ -569,117 +566,6 @@ namespace DrawnUi.Maui.Views
         public DateTime TimeDrawingComplete { get; protected set; }
 
         volatile bool _isWaiting = false;
-
-        protected void InvalidateCanvas()
-        {
-            IsDirty = true;
-
-            if (CanvasView == null)
-            {
-                OrderedDraw = false;
-                return;
-            }
-
-            //sanity check
-            var widthPixels = (int)CanvasView.CanvasSize.Width;
-            var heightPixels = (int)CanvasView.CanvasSize.Height;
-            if (widthPixels > 0 && heightPixels > 0)
-            {
-
-#if ANDROID 
-
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
-                Continue();
-
-#else
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    try
-                    {
-                        if (NeedCheckParentVisibility)
-                            CheckElementVisibility(this);
-
-                        Continue();
-                    }
-                    catch (Exception e)
-                    {
-                        Super.Log(e);
-                    }
-
-                });
-#endif
-
-                void Continue()
-                {
-
-                    if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
-                    {
-                        _isWaiting = true;
-                        InvalidatedCanvas++;
-                        MainThread.BeginInvokeOnMainThread(async () =>
-                        {
-                            try
-                            {
-                                //cap fps around 120fps
-                                var nowNanos = Super.GetCurrentTimeNanos();
-                                var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
-                                _lastUpdateTimeNanos = nowNanos;
-
-                                var needWait =
-                                    Super.CapMicroSecs
-#if IOS || MACCATALYST
-                                * 2 // apple is double buffered                             
-#endif
-                                    - elapsedMicros;
-                                if (needWait < 1)
-                                    needWait = 1;
-
-                                var ms = (int)(needWait / 1000);
-                                if (ms < 1)
-                                    ms = 1;
-                                await Task.Delay(ms);
-                                CanvasView?.InvalidateSurface(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
-                            }
-                            catch (Exception e)
-                            {
-                                Super.Log(e);
-                            }
-                            finally
-                            {
-                                _isWaiting = false;
-                            }
-
-                        });
-                        return;
-                    }
-                    else
-                    {
-                        //if (!CanvasView.IsDrawing)
-                        //{
-                        //    OrderedDraw = false;
-                        //    Update();
-                        //    return;
-                        //}
-                    }
-                    OrderedDraw = false;
-                }
-            }
-            else
-            {
-                OrderedDraw = false;
-            }
-        }
-
-
-        double _lastUpdateTimeNanos;
-
-        public void ResetUpdate()
-        {
-            NeedCheckParentVisibility = true;
-            OrderedDraw = false;
-            InvalidatedCanvas = 0;
-        }
 
         public virtual void InvalidateViewport()
         {
@@ -692,20 +578,108 @@ namespace DrawnUi.Maui.Views
         }
 
 
+        public bool OrderedDraw { get; protected set; }
+
+
+
+
         public virtual void Update()
         {
             IsDirty = true;
-            if (!OrderedDraw && CheckCanDraw())
+            if (UpdateMode == UpdateMode.Dynamic)
             {
-                OrderedDraw = true;
-                Task.Run(() => //do not ever try to remove this
+                if (!OrderedDraw && CheckCanDraw())
                 {
+                    OrderedDraw = true;
                     InvalidateCanvas();
-                }).ConfigureAwait(false);
+                }
             }
         }
 
-        protected bool OrderedDraw { get; set; }
+        protected void InvalidateCanvas()
+        {
+            if (CanvasView == null)
+            {
+                OrderedDraw = false;
+                return;
+            }
+
+            var widthPixels = (int)CanvasView.CanvasSize.Width;
+            var heightPixels = (int)CanvasView.CanvasSize.Height;
+            if (widthPixels > 0 && heightPixels > 0)
+            {
+                //optimization check
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    if (NeedCheckParentVisibility)
+                        CheckElementVisibility(this); //need ui thread for visibility check for apple
+                    if (CanDraw) //passed checks
+                    {
+                        InvalidatedCanvas++;
+
+                        //pls wait we are already rendering..
+                        while (IsRendering)
+                        {
+                            await Task.Delay(5);
+                        }
+
+                        //we can't cap android with task.delay and get a smooth perf
+                        //while other platforms look okay with that approach
+#if !ANDROID
+                        var nowNanos = Super.GetCurrentTimeNanos();
+                        var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
+                        _lastUpdateTimeNanos = nowNanos;
+
+                        var needWait =
+                            Super.CapMicroSecs
+#if IOS || MACCATALYST
+                                    * 2 // apple is double buffered                             
+#endif
+                            - elapsedMicros;
+                        if (needWait < 1)
+                            needWait = 1;
+
+                        var ms = (int)(needWait / 1000);
+                        if (ms < 1)
+                            ms = 1;
+                        await Task.Delay(ms);
+#endif
+
+                        if (!Super.EnableRendering)
+                        {
+                            OrderedDraw = false;
+                            return;
+                        }
+
+                        try
+                        {
+                            CanvasView?.InvalidateSurface();
+                        }
+                        catch (Exception e)
+                        {
+                            Super.Log(e);
+                        }
+                    }
+                    else
+                    {
+                        OrderedDraw = false;
+                    }
+                });
+            }
+            else
+            {
+                OrderedDraw = false;
+            }
+        }
+
+        double _lastUpdateTimeNanos;
+
+        public void ResetUpdate()
+        {
+            NeedCheckParentVisibility = true;
+            OrderedDraw = false;
+            InvalidatedCanvas = 0;
+        }
 
         /// <summary>
         /// A very important tracking prop to avoid saturating main thread with too many updates
@@ -730,12 +704,7 @@ namespace DrawnUi.Maui.Views
                 CanvasView = accel;
                 Delayed = null;
 
-                normal.Disconnect();
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    //                    normal.IsVisible = false;
-                });
-
+                normal?.Disconnect();
             }
         }
 
@@ -1322,7 +1291,7 @@ namespace DrawnUi.Maui.Views
 
         private bool OnDrawSurface(SKCanvas canvas, SKRect rect)
         {
-            lock (LockDraw)
+            //lock (LockDraw)
             {
 
                 if (UpdateMode != UpdateMode.Constant)

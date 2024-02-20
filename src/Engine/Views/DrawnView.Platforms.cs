@@ -17,9 +17,8 @@ namespace DrawnUi.Maui.Views
                 layout.SetClipChildren(true);
                 layout.ClipBounds = new Android.Graphics.Rect(0, 0, (int)(Width * RenderingScale), (int)(Height * RenderingScale));
             }
+
 #elif WINDOWS
-
-
             if (Handler != null) //this is basically for clipping SkiaMauiElement
             {
                 var layout = Handler.PlatformView as ContentPanel;
@@ -34,7 +33,6 @@ namespace DrawnUi.Maui.Views
 			if (Handler?.PlatformView is UIKit.UIView nativeView)
 			{
 				nativeView.ClipsToBounds = true;
-
 			}
 
 #endif

@@ -1,6 +1,6 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public struct ScaledPoint
+public class ScaledPoint
 {
     public ScaledPoint()
     {

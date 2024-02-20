@@ -605,6 +605,8 @@ namespace DrawnUi.Maui.Controls
             var direction = DirectionType.None;
             bool lockBounce = false;
 
+
+
             // Determine if the gesture is panning towards an existing snap point
             if (Direction == DrawerDirection.FromLeft)
             {
@@ -638,16 +640,25 @@ namespace DrawnUi.Maui.Controls
             var x = _panningOffset.X + args.Distance.Delta.X / RenderingScale;
             var y = _panningOffset.Y + args.Distance.Delta.Y / RenderingScale;
 
-            var mainDirection = GetDirectionType(_panningOffset, new Vector2(x, y), 0.9f);
-
-            if (direction != DirectionType.None && mainDirection == direction || !IgnoreWrongDirection)
+            if (!IsUserFocused)
             {
-                if (!IsUserFocused)
+                ResetPan();
+            }
+
+            if (!IsUserPanning) //for the first panning move only
+            {
+                var mainDirection = GetDirectionType(_panningOffset, new Vector2(x, y), 0.9f);
+
+                if (direction == DirectionType.None || mainDirection != direction && IgnoreWrongDirection)
                 {
-                    ResetPan();
+                    break; //ignore this gesture
                 }
 
                 IsUserPanning = true;
+            }
+
+            if (IsUserPanning)
+            {
 
                 //saving non clamped
                 _panningOffset.X = x;
@@ -680,16 +691,12 @@ namespace DrawnUi.Maui.Controls
                     }
                 }
 
-                if (IsUserPanning)
-                {
-                    ApplyPosition(clamped);
-                    consumed = this;
-                }
+                ApplyPosition(clamped);
+                consumed = this;
                 //var clamped = ClampOffset((float)x, (float)y, Bounces);                   
 
             }
             else
-            if (!IsUserPanning)
             {
                 return null;
             }

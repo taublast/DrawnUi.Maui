@@ -396,4 +396,5 @@ public partial class SkiaScroll
 
     Vector2 _axis;
     double? _changeSpeed = null;
+    private Vector2 _lastVelocity;
 }

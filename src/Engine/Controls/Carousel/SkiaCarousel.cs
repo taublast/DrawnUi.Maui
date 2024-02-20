@@ -440,7 +440,12 @@ public class SkiaCarousel : SnappingLayout
     public override void ApplyPosition(Vector2 currentPosition)
     {
         CurrentPosition = currentPosition;
-        InTransition = !CheckTransitionEnded();
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            InTransition = !CheckTransitionEnded();
+        });
+
         Update();
     }
 

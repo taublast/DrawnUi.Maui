@@ -549,11 +549,11 @@ namespace DrawnUi.Maui.Draw
                 ISkiaGestureListener consumed = null;
                 if (Orientation == ScrollOrientation.Vertical || Orientation == ScrollOrientation.Both)
                 {
-                    VelocityY = (float)(args.Distance.Velocity.Y / RenderingScale) * ChangeVelocityPanned;
+                    VelocityY = (float)(args.Distance.Velocity.Y / RenderingScale);
                 }
                 if (Orientation == ScrollOrientation.Horizontal || Orientation == ScrollOrientation.Both)
                 {
-                    VelocityX = (float)(args.Distance.Velocity.X / RenderingScale) * ChangeVelocityPanned;
+                    VelocityX = (float)(args.Distance.Velocity.X / RenderingScale);
                 }
 
 
@@ -601,13 +601,10 @@ namespace DrawnUi.Maui.Draw
                     case TouchActionResult.LongPressing:
                     //----------------------------------------------------------------------
 
-                    if (IsUserPanning)
+                    if (IsUserPanning || passedToChildren)
                     {
                         consumed = this;
                     }
-                    else
-                    if (passedToChildren)
-                        consumed = this;
                     else
                     {
                         _panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
@@ -639,17 +636,27 @@ namespace DrawnUi.Maui.Draw
                             checkOverscroll = false; //do not check overscroll if we just got focus
                         }
 
+                        //var movedY = (float)Math.Round(args.Distance.Total.Y * ChangeDIstancePanned);
+                        //var movedX = (float)Math.Round(args.Distance.Total.X * ChangeDIstancePanned);
+
+                        var movedPtsY = (float)Math.Round((args.Distance.Total.Y / RenderingScale) * ChangeDIstancePanned);
+                        var movedPtsX = (float)Math.Round((args.Distance.Total.X / RenderingScale) * ChangeDIstancePanned);
+
                         Vector2 moveTo;
-                        if (smooth)
-                        {
-                            moveTo = new Vector2(_panningCurrentOffsetPts.X + args.Distance.Delta.X / RenderingScale, _panningCurrentOffsetPts.Y + args.Distance.Delta.Y / RenderingScale);
-                        }
-                        else
-                        {
-                            moveTo = new Vector2(
-                                _panningCurrentOffsetPts.X + args.Distance.Total.X / RenderingScale,
-                                _panningCurrentOffsetPts.Y + args.Distance.Total.Y / RenderingScale);
-                        }
+                        moveTo = new Vector2(
+                            _panningCurrentOffsetPts.X + movedPtsX, _panningCurrentOffsetPts.Y + movedPtsY);
+
+                        //if (smooth)
+                        //{
+                        //    moveTo = new Vector2(_panningCurrentOffsetPts.X + args.Distance.Delta.X / RenderingScale, _panningCurrentOffsetPts.Y + args.Distance.Delta.Y / RenderingScale);
+                        //}
+                        //else
+                        //{
+                        //    moveTo = new Vector2(
+                        //        _panningCurrentOffsetPts.X + movedX / RenderingScale,
+                        //        _panningCurrentOffsetPts.Y + movedY / RenderingScale);
+                        //}
+
 
                         //if the panning is not in the same direction as the scroll and we havn't started panning yet,
                         //do not consume gesture and return
@@ -680,11 +687,13 @@ namespace DrawnUi.Maui.Draw
                         }
 
                         //update current panning offset
-                        if (smooth)
-                        {
-                            _panningCurrentOffsetPts.X = moveTo.X;
-                            _panningCurrentOffsetPts.Y = moveTo.Y;
-                        }
+                        //if (smooth)
+                        //{
+                        //    _panningCurrentOffsetPts.X = moveTo.X;
+                        //    _panningCurrentOffsetPts.Y = moveTo.Y;
+                        //}
+                        //_panningCurrentOffsetPts = clamped;
+
 
                         if (Orientation == ScrollOrientation.Vertical)
                         {
@@ -697,14 +706,13 @@ namespace DrawnUi.Maui.Draw
                         }
                         else
                         {
-                            //both
                             ViewportOffsetY = clamped.Y;
                             ViewportOffsetX = clamped.X;
                         }
 
                         IsUserPanning = true;
+                        _lastVelocity = new Vector2(VelocityX, VelocityY);
                         consumed = this;
-
                     }
 
                     break;
@@ -729,11 +737,7 @@ namespace DrawnUi.Maui.Draw
                             bool fling = false;
                             bool swipe = false;
 
-                            if (OverScrolled)
-                            {
-                                swipe = true;
-                            }
-                            else
+                            if (!OverScrolled)
                             {
                                 if (!IsUserPanning)
                                 {
@@ -783,8 +787,17 @@ namespace DrawnUi.Maui.Draw
                                 }
                             }
 
-                            if (swipe)
+                            if (swipe || OverScrolled)
                             {
+                                //if (Math.Sign(VelocityY) != Math.Sign(_lastVelocity.Y))
+                                //{
+                                //    VelocityY = _lastVelocity.Y;
+                                //}
+                                //if (Math.Sign(VelocityX) != Math.Sign(_lastVelocity.X))
+                                //{
+                                //    VelocityX = _lastVelocity.X;
+                                //}
+
                                 IsUserPanning = false;
 
                                 if (CalculateOverscrollDistance(ViewportOffsetX, ViewportOffsetY) != Vector2.Zero) //OverScrolled
@@ -1285,7 +1298,7 @@ namespace DrawnUi.Maui.Draw
 
 
         /// <summary>
-        /// Use this to control how fast the scroll will decelerate. Values 0.1 - 0.9 are the best, default is 0.45. Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
+        /// Use this to control how fast the scroll will decelerate. Values 0.1 - 0.9 are the best, default is 0.3. Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
         /// </summary>
         public float FrictionScrolled
         {
@@ -1296,7 +1309,7 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty FrictionScrolledProperty = BindableProperty.Create(nameof(FrictionScrolled),
         typeof(float),
         typeof(SkiaScroll),
-        .45f,
+        .3f,
         propertyChanged: FrictionValueChanged);
 
 
@@ -1360,7 +1373,7 @@ namespace DrawnUi.Maui.Draw
             nameof(MaxBounceVelocity),
             typeof(float),
             typeof(SkiaScroll),
-            2500f);
+            500f);
 
         /// <summary>
         /// Limit bounce velocity
@@ -1374,17 +1387,17 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// For when the finger is down and panning
         /// </summary>
-        public float ChangeVelocityPanned
+        public float ChangeDIstancePanned
         {
-            get { return (float)GetValue(ChangeVelocityPannedProperty); }
-            set { SetValue(ChangeVelocityPannedProperty, value); }
+            get { return (float)GetValue(ChangeDIstancePannedProperty); }
+            set { SetValue(ChangeDIstancePannedProperty, value); }
         }
 
 
-        public static readonly BindableProperty ChangeVelocityPannedProperty = BindableProperty.Create(nameof(ChangeVelocityPanned),
+        public static readonly BindableProperty ChangeDIstancePannedProperty = BindableProperty.Create(nameof(ChangeDIstancePanned),
             typeof(float),
             typeof(SkiaScroll),
-            1.0f);
+            0.975f);
 
 
 
@@ -2163,13 +2176,13 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// This is where the view port is actually is after being scrolled. We used this value to offset viewport on drawing the last frame
         /// </summary>
-        protected ScaledPoint InternalViewportOffset { get; set; }
+        protected ScaledPoint InternalViewportOffset { get; set; } = ScaledPoint.FromPixels(0, 0, 1);
 
         protected ScaledRect ContentViewport { get; set; } = new();
 
-        protected virtual void SetInternalOffset(ScaledPoint position)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected virtual void AdjustHeaderParallax()
         {
-            InternalViewportOffset = position;
             if (HeaderParallaxRatio == 1)
             {
                 ParallaxComputedValue = 0;
@@ -2178,52 +2191,56 @@ namespace DrawnUi.Maui.Draw
             {
                 if (this.Orientation == ScrollOrientation.Vertical)
                 {
-                    var m = position.Units.Y * this.HeaderParallaxRatio;
+                    var m = InternalViewportOffset.Units.Y * this.HeaderParallaxRatio;
                     ParallaxComputedValue = m;
                 }
                 else
                 if (this.Orientation == ScrollOrientation.Horizontal)
                 {
-                    var m = position.Units.X * this.HeaderParallaxRatio;
+                    var m = InternalViewportOffset.Units.X * this.HeaderParallaxRatio;
                     ParallaxComputedValue = m;
                 }
             }
 
         }
 
+
+
+
         /// <summary>
         /// Creates a valid ViewportRect, sets ViewportOffsetX and ViewportOffsetY,
         /// Input offset parameters in UNITS
         /// </summary>
         /// <param name="destination"></param>
-        /// <param name="offsetX"></param>
-        /// <param name="offsetY"></param>
+        /// <param name="offsetPtsX"></param>
+        /// <param name="offsetPtsY"></param>
         /// <param name="viewportScale"></param>
         /// <param name="scale"></param>
-        protected virtual void PositionViewport(SKRect destination, float offsetX, float offsetY, float viewportScale, float scale)
+        protected virtual void PositionViewport(SKRect destination, float offsetPtsX, float offsetPtsY, float viewportScale, float scale)
         {
             if (!IsContentActive)
                 return;
 
             ContentAvailableSpace = GetContentAvailableRect(destination);
 
-            //pixel snapping 
-            var newOffsetPixelsX = (float)Math.Round(offsetX * scale);
-            var newOffsetPixelsY = (float)Math.Round(offsetY * scale);
+            var newOffsetPixelsX = (int)Math.Round(offsetPtsX * scale);
+            var newOffsetPixelsY = (int)Math.Round(offsetPtsY * scale);
+
+            //Super.Log($"[SCROLL] pixels moveY {newOffsetPixelsY}");
 
             var childRect = ContentAvailableSpace;
             childRect.Offset(newOffsetPixelsX, newOffsetPixelsY);
             ContentRectWithOffset = ScaledRect.FromPixels(childRect, scale);
 
-            SetInternalOffset(ScaledPoint.FromPixels(newOffsetPixelsX, newOffsetPixelsY, scale));
+            InternalViewportOffset = ScaledPoint.FromPixels(newOffsetPixelsX, newOffsetPixelsY, scale);
+            AdjustHeaderParallax();
 
             //content size changed?.. maybe need to set offsets to a valid position then
             if (onceAfterInitializeViewport)
             {
                 onceAfterInitializeViewport = false;
                 var clamped = ClampOffset(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y, true);
-
-                SetInternalOffset(ScaledPoint.FromUnits(clamped.X, clamped.Y, scale));
+                //AdjustHeaderParallax(ScaledPoint.FromUnits(clamped.X, clamped.Y, scale));
 
                 ViewportOffsetX = clamped.X;
                 ViewportOffsetY = clamped.Y;
@@ -2246,14 +2263,19 @@ namespace DrawnUi.Maui.Draw
                 {
                     if (this.Orientation == ScrollOrientation.Vertical)
                     {
-                        absoluteViewPort = new SKRect(absoluteViewPort.Left, absoluteViewPort.Top - Header.MeasuredSize.Pixels.Height, absoluteViewPort.Right, absoluteViewPort.Bottom - Header.MeasuredSize.Pixels.Height);
-                        absoluteViewPort.Offset(0, (float)(-ContentOffset * scale));
+                        absoluteViewPort = new SKRect(
+                            absoluteViewPort.Left,
+                            absoluteViewPort.Top - Header.MeasuredSize.Pixels.Height, 
+                            absoluteViewPort.Right,
+                            absoluteViewPort.Bottom - Header.MeasuredSize.Pixels.Height
+                            );
+                        absoluteViewPort.Offset(0, (float)Math.Round(-ContentOffset * scale));
                     }
                     else
                     if (this.Orientation == ScrollOrientation.Horizontal)
                     {
                         absoluteViewPort = new SKRect(absoluteViewPort.Left - Header.MeasuredSize.Pixels.Width, absoluteViewPort.Top, absoluteViewPort.Right - Header.MeasuredSize.Pixels.Width, absoluteViewPort.Bottom);
-                        absoluteViewPort.Offset((float)(-ContentOffset * scale), 0);
+                        absoluteViewPort.Offset((float)Math.Round(-ContentOffset * scale), 0);
                     }
                 }
 
@@ -2277,11 +2299,10 @@ namespace DrawnUi.Maui.Draw
 
                 if (HasContentToScroll && _loadMoreTriggeredAt == 0)
                 {
-
                     var threshold = LoadMoreOffset * scale;
 
-                    if ((Orientation == ScrollOrientation.Vertical && offsetY <= _scrollMinY + threshold)
-                        || (Orientation == ScrollOrientation.Horizontal && offsetX <= _scrollMinX + threshold))
+                    if ((Orientation == ScrollOrientation.Vertical && offsetPtsY <= _scrollMinY + threshold)
+                        || (Orientation == ScrollOrientation.Horizontal && offsetPtsX <= _scrollMinX + threshold))
                     {
                         _loadMoreTriggeredTime = DateTime.Now;
                         _loadMoreTriggeredAt = InternalViewportOffset.Units.Y;
@@ -2293,11 +2314,15 @@ namespace DrawnUi.Maui.Draw
             }
 
             //POST EVENTS
-            OnScrolled();
             Scrolled?.Invoke(this, InternalViewportOffset);
+            OnScrolled();
 
-            ExecuteDelayedScrollOrders();
+            //ExecuteDelayedScrollOrders(); //todo move toonscrolled?
         }
+
+
+
+
 
         public override ScaledRect GetOnScreenVisibleArea()
         {
@@ -2437,6 +2462,9 @@ namespace DrawnUi.Maui.Draw
 
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
+            if (destination.Width == 0 || destination.Height == 0)
+                return;
+
             base.Paint(ctx, destination, scale, arguments);
 
             DrawViews(ctx, ContentRectWithOffset.Pixels, _zoomedScale);
@@ -2470,25 +2498,24 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                var forX = (float)ViewportOffsetX;
-                var forY = (float)ViewportOffsetY;
+                var ptsX = (float)ViewportOffsetX;
+                var ptsY = (float)ViewportOffsetY;
 
                 //comparing floats on purpose
-                //we need the smallest scroll changes to be reflected
                 var needReposition = _lastPosViewportScale != _zoomedScale
-                                 || _updatedViewportX != forX
-                                 || _updatedViewportY != forY
+                                 || _updatedViewportForPtsX != ptsX
+                                 || _updatedViewportForPtsY != ptsY
                                  || _destination != Destination;
 
                 if (needReposition) //reposition viewport (scroll)
                 {
                     _lastPosViewportScale = _zoomedScale;
-                    _updatedViewportX = forX;
-                    _updatedViewportY = forY;
+                    _updatedViewportForPtsX = ptsX;
+                    _updatedViewportForPtsY = ptsY;
 
                     _destination = Destination;
 
-                    PositionViewport(DrawingRect, (float)forX, (float)forY, _zoomedScale, (float)scale);
+                    PositionViewport(DrawingRect, (float)ptsX, (float)ptsY, _zoomedScale, (float)scale);
 
                     RenderObject = null;
                 }
@@ -2710,8 +2737,8 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        float _updatedViewportX;
-        float _updatedViewportY;
+        float _updatedViewportForPtsX;
+        float _updatedViewportForPtsY;
         float _lastPosViewportScale;
 
         public SKRect ContentAvailableSpace { get; protected set; }
@@ -2989,7 +3016,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     _orderedOffsetY = value;
 
-                    Update();
+                    Repaint();
                     OnPropertyChanged();
                 }
             }
@@ -3010,7 +3037,7 @@ namespace DrawnUi.Maui.Draw
                 if (_viewportOffsetX != value)
                 {
                     _viewportOffsetX = value;
-                    Update();
+                    Repaint();
                     OnPropertyChanged();
                 }
             }

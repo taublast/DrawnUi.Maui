@@ -1,4 +1,5 @@
 ﻿using DrawnUi.Maui.Draw;
+using System.Collections.Immutable;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -64,10 +65,220 @@ namespace DrawnUi.Maui.Draw
             {
                 if (StackStructure != null)
                     return StackStructure;
+
                 return StackStructureMeasured;
             }
         }
 
+        /// <summary>
+        /// Renders stack layout.
+        /// Returns number of drawn children.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="destination"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
+        protected virtual int DrawChildrenStack(SkiaDrawingContext context, SKRect destination, float scale)
+        {
+            var drawn = 0;
+            //StackStructure was creating inside Measure.
+            //While scrolling templated its not called again (checked).
+
+            List<SkiaControlWithRect> tree = new();
+
+            var needrebuild = templatesInvalidated;
+            List<ControlInStack> visibleElements = new();
+
+            var structure = LatestStackStructure;
+            if (structure != null)
+            {
+                //draw children manually
+                int row;
+                int col;
+
+                var visibleArea = GetOnScreenVisibleArea();
+
+                //PASS 1 - VISIBILITY
+                //we need this pass before drawing to recycle views that became hidden
+                var viewsTotal = 0;
+
+                for (row = 0; row < structure.Count; row++)
+                {
+                    var rowContent = structure[row];
+                    for (col = 0; col < rowContent.Count; col++)
+                    {
+                        viewsTotal++;
+                        var cell = rowContent[col];
+                        if (cell.Destination == SKRect.Empty)
+                        {
+                            cell.IsVisible = false;
+                        }
+                        else
+                        {
+                            var x = destination.Left + cell.Destination.Left;
+                            var y = destination.Top + cell.Destination.Top;
+
+                            cell.LastDrawnSize = new(cell.Drawn.Width, cell.Drawn.Height);
+                            cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
+
+                            if (Virtualisation != VirtualisationType.Disabled)
+                            {
+                                if (needrebuild && UsingCacheType == SkiaCacheType.None &&
+                                    Virtualisation == VirtualisationType.Smart
+                                    && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
+                                {
+                                    cell.IsVisible = true;
+                                }
+                                else
+                                {
+                                    cell.IsVisible = cell.Drawn.IntersectsWith(visibleArea.Pixels);
+                                }
+                            }
+                            else
+                            {
+                                cell.IsVisible = true;
+                            }
+                        }
+
+                        if (!cell.IsVisible)
+                        {
+                            ChildrenFactory.MarkViewAsHidden(cell.ControlIndex);
+                        }
+                        else
+                        {
+                            visibleElements.Add(cell);
+                        }
+                    }
+                }
+
+                //PASS 2 DRAW VISIBLE
+                //using precalculated rects
+                bool wasVisible = false;
+                var index = -1;
+                SkiaControl[] nonTemplated = null;
+
+                //precalculate stuff
+                if (!IsTemplated)
+                {
+                    //..because we didnt store invisible stuff in structure!
+                    nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
+                }
+
+                foreach (var cell in visibleElements.OrderBy(x => x.ZIndex))
+                {
+                    index++;
+
+                    SkiaControl child = null;
+                    if (IsTemplated)
+                    {
+                        if (!ChildrenFactory.TemplatesAvailable && InitializeTemplatesInBackgroundDelay > 0)
+                        {
+                            break; //itemssource was changed by other thread
+                        }
+                        child = ChildrenFactory.GetChildAt(cell.ControlIndex, null);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            //..because we didnt store invisible stuff in structure!
+                            child = nonTemplated[cell.ControlIndex];
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[HANDLED] {ex}");
+                            child = null;
+                        }
+
+                    }
+
+                    if (child == null) //ChildrenFactory.GetChildAt was unable to return child?..
+                    {
+                        //NeedMeasure = true;
+                        return drawn;
+                    }
+
+                    if (child is SkiaControl control && child.IsVisible)
+                    {
+                        SKRect destinationRect;
+                        if (IsTemplated && ItemSizingStrategy == ItemSizingStrategy.MeasureAllItems)
+                        {
+                            //when context changes we need all available space for remeasuring cell
+                            destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Left + cell.Area.Width, cell.Drawn.Top + cell.Area.Bottom);
+                        }
+                        else
+                        {
+                            destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right, cell.Drawn.Bottom);
+                        }
+
+                        //fixes case we changed size of columns/cells and there where already measured..
+                        if (IsTemplated
+                            && (DynamicColumns || ItemSizingStrategy == Microsoft.Maui.Controls.ItemSizingStrategy.MeasureAllItems)
+                            && RecyclingTemplate == RecyclingTemplate.Enabled
+                            && child.RenderedAtDestination != SKRect.Empty
+                            && (destinationRect.Width != child.RenderedAtDestination.Width
+                                || destinationRect.Height != child.RenderedAtDestination.Height))
+                        {
+                            //size is different but template is the same - need to invalidate!
+                            //for example same template rendering on 2 columns in one row and 1 column on the last one
+                            InvalidateChildrenTree(control);
+                        }
+
+                        DrawChild(context, destinationRect, child, scale);
+                        drawn++;
+
+                        //gonna use that for gestures and for item inside viewport detection and for hotreload children tree
+                        tree.Add(new SkiaControlWithRect(control, destinationRect, index));
+                    }
+                }
+            }
+
+            //_stopwatchRender.Restart();
+
+            if (needrebuild && visibleElements.Count > 0)
+            {
+                //reserve for one row above and one row below
+                var row = MaxColumns;
+                if (row < 1)
+                    row = 1;
+                var reserve = row * 3;
+                if (IsTemplated
+                    && RecyclingTemplate == RecyclingTemplate.Enabled
+                    && ChildrenFactory.AddedMore < reserve)
+                {
+                    //basically we have to do this here becase now we know the quantity
+                    //of visible cells onscreen. so we can oversize the pool a bit to avoid
+                    //a lag spike when scrolling would start.
+                    Task.Run(async () =>
+                    {
+
+                        ChildrenFactory.AddMoreToPool(reserve);
+
+                    }).ConfigureAwait(false);
+                }
+
+                templatesInvalidated = false;
+            }
+
+
+            RenderTree = tree.ToImmutableArray();
+            _builtRenderTreeStamp = _measuredStamp;
+
+            if (Parent is IDefinesViewport viewport &&
+                viewport.TrackIndexPosition != RelativePositionType.None)
+            {
+                viewport.UpdateVisibleIndex();
+            }
+
+            OnPropertyChanged(nameof(DebugString));
+
+            //if (IsTemplated)
+            //{
+            //    Trace.WriteLine(ChildrenFactory.GetDebugInfo());
+            //}
+
+            return drawn;
+        }
 
 
         protected ScaledSize MeasureAndArrangeCell(SKRect destination, ControlInStack cell, SkiaControl child, float scale)

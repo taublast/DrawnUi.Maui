@@ -155,19 +155,20 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
         if (OnDraw != null)
         {
+
+
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
 
             _surface = paintArgs.Surface;
             var invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
 
-#if ANDROID
-            if (invalidate && _fps < 120)
+            if (invalidate && !Superview.OrderedDraw && _fps < 120)
             {
                 InvalidateSurface();
+                return;
             }
-            else
-#endif
-                IsDrawing = false;
+
+            IsDrawing = false;
         }
 
     }

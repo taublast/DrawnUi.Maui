@@ -965,7 +965,7 @@ propertyChanged: NeedChangeColorFIlter);
             //ImageFilter
             if (PaintImageFilter == null && Blur > 0)
             {
-                PaintImageFilter = SKImageFilter.CreateBlur((float)Blur, (float)Blur);
+                PaintImageFilter = SKImageFilter.CreateBlur((float)Blur, (float)Blur, SKShaderTileMode.Mirror);
             }
 
             ImagePaint.ImageFilter = PaintImageFilter;
