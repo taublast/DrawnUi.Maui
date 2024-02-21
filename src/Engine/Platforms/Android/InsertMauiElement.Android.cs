@@ -50,16 +50,10 @@ public partial class SkiaMauiElement
         }
     }
 
-    protected virtual void LayoutMauiElementUnsafe(VisualElement element)
+    protected virtual void LayoutNativeView(VisualElement element)
     {
-        LayoutMauiElement(VisualTransformNative.Rect.Width / RenderingScale, VisualTransformNative.Rect.Height / RenderingScale);
-
-        Super.Log($"[ELEM] {VisualTransformNative.Rect}");
-
         if (element.Handler?.PlatformView is View nativeView)
         {
-            Super.Log($"[ELEM] has View, tY: {VisualTransformNative.Translation.Y}");
-
             nativeView.TranslationX = VisualTransformNative.Translation.X;
             nativeView.TranslationY = VisualTransformNative.Translation.Y;
             nativeView.Rotation = VisualTransformNative.Rotation;
@@ -98,56 +92,33 @@ public partial class SkiaMauiElement
         }
     }
 
-
     protected virtual void SetupMauiElement(VisualElement element)
     {
         if (element == null)
-        {
-            Super.Log($"[ELEM] SetupMauiElement exit");
             return;
-        }
 
         IViewHandler handler = Superview.Handler;
 
         if (handler != null)
         {
-            element.BindingContext = this.BindingContext;
-
-            //lock (lockLayout)
+            MainThread.BeginInvokeOnMainThread(() =>
             {
                 if (element.Handler == null)
                 {
                     //create handler
-                    //Super.Log($"[ELEM] creating handler..");
                     var childHandler = element.ToHandler(handler.MauiContext);
-                    NeedsLayoutNative = true;
-
-                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(50), () =>
-                    {
-                        MainThread.BeginInvokeOnMainThread(() =>
-                        {
-                            Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
-                        });
-                    });
-
+                    LayoutNativeView(Element);
                 }
 
                 //add native view to canvas
                 var view = element.Handler?.PlatformView as Android.Views.View;
-
-                //Super.Log($"[ELEM] 2 {view} => {Element.Handler}");
-
-                LayoutMauiElement(false); //apply transforms etc before showing for the first time
-
                 var layout = Superview.Handler?.PlatformView as ViewGroup;
                 if (layout != null)
                     layout.AddView(view);
-            }
 
-
-
+                LayoutNativeView(Element);
+            });
         }
-
     }
 
 }

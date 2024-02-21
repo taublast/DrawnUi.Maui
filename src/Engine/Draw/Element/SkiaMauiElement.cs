@@ -38,7 +38,7 @@
         /// <param name="ptsWidth"></param>
         /// <param name="ptsHeight"></param>
         /// <returns></returns>
-        public virtual Size LayoutMauiElement(double ptsWidth, double ptsHeight)
+        public virtual Size MeasureAndArrangeMauiElement(double ptsWidth, double ptsHeight)
         {
             //if you pass 0 to initial measure whatever you pass later will not fix the broken maui control afterwards
             //so never pass 0
@@ -47,27 +47,20 @@
                 if (Element is IView view && Element.Handler != null && ptsWidth > 0 && ptsHeight > 0)
                 {
                     var measured = view.Measure(ptsWidth, ptsHeight);
-                    var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
+                    //var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
                     return measured;
                 }
             }
             catch (Exception e)
             {
-                //Super.Log(e);
-                Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
-                {
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        //Super.Log($"[ELEM] invalidated");
-
-                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
-                    });
-                });
+                Super.Log(e);
+                return new(VisualTransformNative.Rect.Size.Width, VisualTransformNative.Rect.Size.Height);
             }
             return Size.Zero;
         }
 
         private object lockLayout = new();
+
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
@@ -77,14 +70,7 @@
 
                 if (Element is IView view && Element.Handler != null)
                 {
-                    ContentSizeUnits = LayoutMauiElement(bounds.Units.Width, bounds.Units.Height);
-
-                    var measured = view.Measure(bounds.Units.Width, bounds.Units.Height);
-                    var arranged = view.Arrange(new Rect(0, 0, bounds.Units.Width, bounds.Units.Height));
-
-                    ContentSizeUnits = arranged;
-
-                    //Super.Log($"[ELEM] measured => {ContentSizeUnits}");
+                    ContentSizeUnits = MeasureAndArrangeMauiElement(bounds.Units.Width, bounds.Units.Height);
                 }
 
                 return bounds;
@@ -407,7 +393,6 @@
         {
             if (Element == null || Element.Handler == null || !NeedsLayoutNative)
             {
-                Super.Log($"[ELEM] LayoutMauiElement exit {NeedsLayoutNative},  {Element.Handler} ");
                 Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
@@ -418,13 +403,11 @@
                 return;
             }
 
-            Super.Log($"[ELEM] LayoutMauiElement ENTERED {NeedsLayoutNative},  {Element.Handler} ");
-
             NeedsLayoutNative = false;
 
             void Act()
             {
-                LayoutMauiElementUnsafe(Element);
+                LayoutNativeView(Element);
 
 #if ANDROID || WINDOWS
                 if (AnimateSnapshot && VisualTransformNative.IsVisible)
@@ -550,7 +533,7 @@
         #endregion
 
 #if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
-        protected virtual void LayoutMauiElementUnsafe(VisualElement element)
+        protected virtual void LayoutNativeView(VisualElement element)
         {
             throw new NotImplementedException();
         }

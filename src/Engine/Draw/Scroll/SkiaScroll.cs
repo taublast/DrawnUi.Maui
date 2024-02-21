@@ -1073,6 +1073,11 @@ namespace DrawnUi.Maui.Draw
                 //};
             }
 
+            if (_animatorBounce.IsRunning)
+            {
+                _animatorBounce.Stop();
+            }
+
             SetDetectIndexChildPoint(TrackIndexPosition);
 
             this.UpdateVisibleIndex();
@@ -2265,7 +2270,7 @@ namespace DrawnUi.Maui.Draw
                     {
                         absoluteViewPort = new SKRect(
                             absoluteViewPort.Left,
-                            absoluteViewPort.Top - Header.MeasuredSize.Pixels.Height, 
+                            absoluteViewPort.Top - Header.MeasuredSize.Pixels.Height,
                             absoluteViewPort.Right,
                             absoluteViewPort.Bottom - Header.MeasuredSize.Pixels.Height
                             );

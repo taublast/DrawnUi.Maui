@@ -110,9 +110,9 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     object lockAccess = new();
     public virtual void UpdateControl()
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        if (Control != null && Control.Handler != null && Control.Handler.PlatformView != null)
         {
-            if (Control != null)
+            MainThread.BeginInvokeOnMainThread(() =>
             {
                 lock (lockAccess)
                 {
@@ -125,10 +125,10 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
                     Update();
                 }
-            }
 
-            AdaptControlSize();
-        });
+                AdaptControlSize();
+            });
+        }
     }
 
     protected override void OnLayoutChanged()
