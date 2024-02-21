@@ -252,12 +252,12 @@ public partial class Super
     /// <param name="isFixed"></param>
     public static void ResizeWindow(Window window, int width, int height, bool isFixed)
     {
-
-        window.Width = width;
-        window.Height = height;
-
+        
         //this crashes in NET8 for CATALYST so..
 #if !MACCATALYST
+        window.Width = width;
+        window.Height = height;
+        
         var disp = DeviceDisplay.Current.MainDisplayInfo;
         // move to screen center
         window.X = (disp.Width / disp.Density - window.Width) / 2;
