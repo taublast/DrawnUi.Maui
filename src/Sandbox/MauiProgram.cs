@@ -39,7 +39,7 @@ namespace Sandbox
 
             builder.UseDrawnUi(new()
             {
-                UseDesktopKeyboard = true,
+                //UseDesktopKeyboard = true, will not work with maui shell
                 DesktopWindow = new()
                 {
                     Width = 500,
