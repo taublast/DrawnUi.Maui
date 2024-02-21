@@ -15,8 +15,8 @@ namespace DrawnUi.Maui.Views
         {
             get
             {
-                return HardwareAcceleration != HardwareAccelerationMode.Disabled 
-                       && DeviceInfo.Platform != DevicePlatform.WinUI 
+                return HardwareAcceleration != HardwareAccelerationMode.Disabled
+                       && DeviceInfo.Platform != DevicePlatform.WinUI
                        && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
             }
         }
@@ -598,82 +598,6 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-        protected void InvalidateCanvas()
-        {
-            if (CanvasView == null)
-            {
-                OrderedDraw = false;
-                return;
-            }
-
-            var widthPixels = (int)CanvasView.CanvasSize.Width;
-            var heightPixels = (int)CanvasView.CanvasSize.Height;
-            if (widthPixels > 0 && heightPixels > 0)
-            {
-                //optimization check
-                MainThread.BeginInvokeOnMainThread(async () =>
-                {
-                    if (NeedCheckParentVisibility)
-                        CheckElementVisibility(this); //need ui thread for visibility check for apple
-                    if (CanDraw) //passed checks
-                    {
-                        InvalidatedCanvas++;
-
-                        //pls wait we are already rendering..
-                        while (IsRendering)
-                        {
-                            await Task.Delay(5);
-                        }
-
-                        //we can't cap android with task.delay and get a smooth perf
-                        //while other platforms look okay with that approach
-#if !ANDROID
-                        var nowNanos = Super.GetCurrentTimeNanos();
-                        var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
-                        _lastUpdateTimeNanos = nowNanos;
-
-                        var needWait =
-                            Super.CapMicroSecs
-#if IOS || MACCATALYST
-                                    * 2 // apple is double buffered                             
-#endif
-                            - elapsedMicros;
-                        if (needWait < 1)
-                            needWait = 1;
-
-                        var ms = (int)(needWait / 1000);
-                        if (ms < 1)
-                            ms = 1;
-                        await Task.Delay(ms);
-#endif
-
-                        if (!Super.EnableRendering)
-                        {
-                            OrderedDraw = false;
-                            return;
-                        }
-
-                        try
-                        {
-                            CanvasView?.InvalidateSurface();
-                        }
-                        catch (Exception e)
-                        {
-                            Super.Log(e);
-                        }
-                    }
-                    else
-                    {
-                        OrderedDraw = false;
-                    }
-                });
-            }
-            else
-            {
-                OrderedDraw = false;
-            }
-        }
-
         double _lastUpdateTimeNanos;
 
         public void ResetUpdate()
@@ -692,7 +616,10 @@ namespace DrawnUi.Maui.Views
 
         protected Grid Delayed { get; set; }
 
-
+        public static double GetDensity()
+        {
+            return Super.Screen.Density;
+        }
 
         protected void SwapToDelayed()
         {
