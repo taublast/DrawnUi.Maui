@@ -13,14 +13,14 @@ _The current development state is __ALPHA__, many features remain to be implemen
 
 ## What's new
 
-__1.0.8.3 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
-* MacCatalyst net8 crash fix
-* `SkiaShell` breaking: modals/popups redesigned, can have dynamic or frozen background below.
-* New layout properties `HorizontalPositionOffsetRatio` and `VerticalPositionOffsetRatio`, docs below.
-* Enhanced `SkiaBackdrop`, `SkiaSlider` and some others.
-* Animations coming from background resume from current time.
-* Many fixes and improvements.
-* [Demo app](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) is updated with new nuget and new features.
+__This would be the last version using SkiaSharp 2.xx, the next one will adopt SkiaSharp 3.0 which would start the era of MAUI shaders, with the latest SKSL syntax, Windows+MacCatalyst hardware acceleration and more!__
+
+__1.0.8.4 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
+* Smooth scrolling is back from when it became broken few months ago 😇.
+* `MauiElement` layout fix, `SkiaCarousel` gestures fix mainly affecting the Apple platform.
+* MacCatalyst fixes for the `Sandbox` project.
+* Other fixes and improvements.
+* [Demo app](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) is updated with new nuget.
 
 ## Demo
 
