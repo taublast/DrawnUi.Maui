@@ -1086,7 +1086,7 @@ public class SkiaCarousel : SnappingLayout
     {
         bool passedToChildren = false;
 
-        //Debug.WriteLine($"[CAROUSEL] {this.Tag} Got {touchAction}..");
+        //Super.Log($"[CAROUSEL] {this.Tag} Got {touchAction}..");
 
         //var thisOffset = TranslateInputCoords(childOffset);
 
@@ -1128,8 +1128,6 @@ public class SkiaCarousel : SnappingLayout
 
             _panningOffset = CurrentPosition;
             _panningStartOffset = CurrentPosition;
-
-            //Debug.WriteLine($"ResetPan: {_panningOffset}");
         }
 
         switch (touchAction)
@@ -1148,11 +1146,23 @@ public class SkiaCarousel : SnappingLayout
 
         case TouchActionResult.Panning when args.NumberOfTouches == 1:
 
+        if (!IsUserPanning)
+        {
+            //first pan
+            if (args.Distance.Total.X == 0 || Math.Abs(args.Distance.Total.Y)>Math.Abs(args.Distance.Total.X) || Math.Abs(args.Distance.Total.X) < 2 )  
+            {
+                return null;
+            }
+        }
+        
         if (!IsUserFocused)
         {
             ResetPan();
         }
-
+            
+        //todo add direction
+        //this.IgnoreWrongDirection
+        
         IsUserPanning = true;
 
         var x = _panningOffset.X + args.Distance.Delta.X / RenderingScale;
