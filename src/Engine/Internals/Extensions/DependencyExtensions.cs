@@ -332,14 +332,23 @@ public static class DependencyExtensions
                     Foundation.NSNotificationCenter.DefaultCenter.AddObserver("NSWindowDidBecomeMainNotification", null, null,
                               (h) =>
                               {
-                                  var root = UIKit.UIApplication.SharedApplication.KeyWindow.RootViewController as Microsoft.Maui.Platform.ContainerViewController;
-                                  if (root.CurrentView is DrawnUiBasePage page)
+                                  if (UIKit.UIApplication.SharedApplication.KeyWindow.RootViewController is Microsoft.Maui.Platform.ContainerViewController container)
                                   {
-                                      if (page.Handler is DrawnUiBasePageHandler handler)
+                                      if (container.CurrentView is DrawnUiBasePage page)
                                       {
-                                          Super.RequestMainResponder(handler.PlatformView);
+                                          if (page.Handler is DrawnUiBasePageHandler handler)
+                                          {
+                                              Super.RequestMainResponder(handler.PlatformView);
+                                          }
                                       }
                                   }
+                                  // else if (UIKit.UIApplication.SharedApplication.KeyWindow.RootViewController is
+                                  //          Microsoft.Maui.Controls.Platform.Compatibility.ShellFlyoutRenderer shell)
+                                  // {
+                                  //     //unsupported
+                                  // }
+                                  
+                                  
                               });
 
 #endif

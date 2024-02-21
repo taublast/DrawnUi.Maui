@@ -54,6 +54,7 @@
     <Compile Remove="Draw\SkiaGif.cs" />
     <Compile Remove="Internals\ConditionalStyle.cs" />
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
+    <Compile Remove="Controls\Extensions\**" />
   </ItemGroup>
 
 
@@ -66,6 +67,7 @@
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
     </None>
+    <None Remove="Controls\Extensions\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -99,6 +101,22 @@
   <ItemGroup>
     <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.5.3" />
     <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Controls\Extensions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MauiXaml Remove="Controls\Extensions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MauiCss Remove="Controls\Extensions\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AndroidAarLibrary Remove="Controls\Extensions\**" />
   </ItemGroup>
 
 </Project>

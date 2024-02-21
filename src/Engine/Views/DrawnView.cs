@@ -15,7 +15,9 @@ namespace DrawnUi.Maui.Views
         {
             get
             {
-                return HardwareAcceleration != HardwareAccelerationMode.Disabled && DeviceInfo.Platform != DevicePlatform.WinUI && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
+                return HardwareAcceleration != HardwareAccelerationMode.Disabled 
+                       && DeviceInfo.Platform != DevicePlatform.WinUI 
+                       && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
             }
         }
 
