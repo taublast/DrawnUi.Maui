@@ -10,10 +10,8 @@ public partial class SkiaMauiElement
 
 
 
-    protected virtual void LayoutMauiElementUnsafe(VisualElement element)
+    protected virtual void LayoutNativeView(VisualElement element)
     {
-        LayoutMauiElement(ContentSizeUnits.Width, ContentSizeUnits.Height);
-
         if (element.Handler?.PlatformView is UIView nativeView)
         {
             nativeView.ClipsToBounds = true;
@@ -67,7 +65,7 @@ public partial class SkiaMauiElement
 
     protected virtual void SetupMauiElement(VisualElement element)
     {
-        if (element == null || element.Handler == null)
+        if (element == null)
             return;
 
         IViewHandler handler = Superview.Handler;
@@ -87,7 +85,7 @@ public partial class SkiaMauiElement
                 if (layout != null)
                     layout.AddSubview(view);
 
-                LayoutMauiElementUnsafe(Element);
+                LayoutNativeView(Element);
             });
 
         }
