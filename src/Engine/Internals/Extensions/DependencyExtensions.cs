@@ -47,24 +47,34 @@ public static class DependencyExtensions
 
         builder.ConfigureMauiHandlers(handlers =>
         {
+            //handlers.AddHandler(typeof(Canvas), typeof(DrawnUiCanvasHandler));
+
 #if ANDROID
             handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
+
 #elif IOS
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 
             //if (DeviceInfo.Current.DeviceType != DeviceType.Virtual)
-            {
-                handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
-            }
+
+            //{
+            //    handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
+            //}
+
 #elif MACCATALYST
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
             handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
-            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
+
+            //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
+
             //handlers.AddHandler(typeof(Window), typeof(CustomizedWindowHandler));
+#elif WINDOWS
+                            //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewRenderer));
+
 #endif
         });
 
@@ -73,7 +83,7 @@ public static class DependencyExtensions
             .ConfigureAnimations();
 
         builder
-            .UseSkiaSharp(true);
+            .UseSkiaSharp();
 
         builder.UseGestures();
 
@@ -347,8 +357,8 @@ public static class DependencyExtensions
                                   // {
                                   //     //unsupported
                                   // }
-                                  
-                                  
+
+
                               });
 
 #endif

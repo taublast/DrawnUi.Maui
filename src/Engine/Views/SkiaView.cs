@@ -87,12 +87,19 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
             _surface = paintArgs.Surface;
             bool invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
 
-            if (invalidate && !Superview.OrderedDraw && _fps < 120)
+            if (invalidate && !Superview.OrderedDraw)
             {
                 InvalidateSurface();
                 return;
             }
 
+#if ANDROID
+            if (invalidate && _fps < 120)
+            {
+                InvalidateSurface();
+            }
+            else
+#endif
             IsDrawing = false;
         }
 

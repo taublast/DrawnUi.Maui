@@ -24,6 +24,8 @@ namespace DrawnUi.Maui.Draw
             Init();
         }
 
+        public HelperSK3dView Helper3d { get; } = new();
+
         public virtual bool IsVisibleInViewTree()
         {
             var isVisible = IsVisible && !IsDisposed;
@@ -3813,8 +3815,6 @@ namespace DrawnUi.Maui.Draw
 
             RenderingScale = scale;
 
-            NeedUpdate = false;
-
             if (WillInvalidateMeasure)
             {
                 WillInvalidateMeasure = false;
@@ -4178,12 +4178,13 @@ namespace DrawnUi.Maui.Draw
                         if (UseCache == SkiaCacheType.ImageDoubleBuffered && _renderObject != null)
                         {
                             RenderObjectPrevious = _renderObject;
+                            _renderObject = value;
                         }
                         else
                         {
                             DisposeObject(_renderObject);
+                            _renderObject = value;
                         }
-                        _renderObject = value;
                         OnPropertyChanged();
                         if (value != null)
                             CreatedCache?.Invoke(this, value);
@@ -4201,10 +4202,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual void Repaint()
         {
-            if (NeedUpdate ||
-                Superview == null
-                || IsParentIndependent
-                || IsDisposed || Parent == null)
+            if (Superview == null || IsParentIndependent || IsDisposed || Parent == null)
                 return;
 
             if (!Parent.UpdateLocked)
@@ -4333,6 +4331,8 @@ namespace DrawnUi.Maui.Draw
                     //apply stuff
                     DrawingMatrix = DrawingMatrix.PostConcat(matrixTransforms);
 
+                    //this was using SK3dView Helper3d property:
+                    /*
                     if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
                     {
                         Helper3d.Save();
@@ -4343,6 +4343,21 @@ namespace DrawnUi.Maui.Draw
                             Helper3d.TranslateZ(CameraTranslationZ);
                         DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.Matrix);
                         Helper3d.Restore();
+                    }
+                    */
+
+                    if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
+                    {
+                        Helper3d.Reset();
+                        Helper3d.RotateXDegrees(CameraAngleX);
+                        Helper3d.RotateYDegrees(CameraAngleY);
+                        Helper3d.RotateZDegrees(CameraAngleZ);
+                        if (CameraTranslationZ != 0)
+                        {
+                            Helper3d.TranslateZ(CameraTranslationZ);
+                        }
+                        // Combine 3D transformations with the drawing matrix
+                        DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.Matrix);
                     }
 
                     //restore coordinates back
@@ -4947,9 +4962,6 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         protected virtual void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
-            if (destination.Width == 0 || destination.Height == 0)
-                return;
-
             if (IsDisposed)
             {
                 //this will save a lot of trouble debugging unknown native crashes
@@ -4959,26 +4971,6 @@ namespace DrawnUi.Maui.Draw
             }
 
             PaintTintBackground(ctx.Canvas, destination);
-
-            WasDrawn = true;
-        }
-
-        private bool _wasDrawn;
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool WasDrawn
-        {
-            get
-            {
-                return _wasDrawn;
-            }
-            set
-            {
-                if (_wasDrawn != value)
-                {
-                    _wasDrawn = value;
-                    OnPropertyChanged();
-                }
-            }
         }
 
         /// <summary>
@@ -5231,15 +5223,15 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed)
                 return;
 
+            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
+                IsClippedToBounds = true;
+
+            NeedUpdate = true;
             NeedUpdateFrontCache = true;
             RenderObjectNeedsUpdate = true;
-            NeedUpdate = true;
 
             if (UpdateLocked)
                 return;
-
-            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
-                IsClippedToBounds = true;
 
             if (_lastUpdatedVisibility != IsVisible)
             {
@@ -5327,125 +5319,6 @@ namespace DrawnUi.Maui.Draw
 
             canvas.Restore();
         }
-
-        #region TAPER
-
-        enum TaperSide { Left, Top, Right, Bottom }
-
-        enum TaperCorner { LeftOrTop, RightOrBottom, Both }
-
-        static class TaperTransform
-        {
-            public static SKMatrix Make(SKSize size, TaperSide taperSide, TaperCorner taperCorner, float taperFraction)
-            {
-                SKMatrix matrix = SKMatrix.MakeIdentity();
-
-                switch (taperSide)
-                {
-                case TaperSide.Left:
-                matrix.ScaleX = taperFraction;
-                matrix.ScaleY = taperFraction;
-                matrix.Persp0 = (taperFraction - 1) / size.Width;
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewY = size.Height * matrix.Persp0;
-                matrix.TransY = size.Height * (1 - taperFraction);
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewY = (size.Height / 2) * matrix.Persp0;
-                matrix.TransY = size.Height * (1 - taperFraction) / 2;
-                break;
-                }
-                break;
-
-                case TaperSide.Top:
-                matrix.ScaleX = taperFraction;
-                matrix.ScaleY = taperFraction;
-                matrix.Persp1 = (taperFraction - 1) / size.Height;
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewX = size.Width * matrix.Persp1;
-                matrix.TransX = size.Width * (1 - taperFraction);
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewX = (size.Width / 2) * matrix.Persp1;
-                matrix.TransX = size.Width * (1 - taperFraction) / 2;
-                break;
-                }
-                break;
-
-                case TaperSide.Right:
-                matrix.ScaleX = 1 / taperFraction;
-                matrix.Persp0 = (1 - taperFraction) / (size.Width * taperFraction);
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewY = size.Height * matrix.Persp0;
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewY = (size.Height / 2) * matrix.Persp0;
-                break;
-                }
-                break;
-
-                case TaperSide.Bottom:
-                matrix.ScaleY = 1 / taperFraction;
-                matrix.Persp1 = (1 - taperFraction) / (size.Height * taperFraction);
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewX = size.Width * matrix.Persp1;
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewX = (size.Width / 2) * matrix.Persp1;
-                break;
-                }
-                break;
-                }
-                return matrix;
-            }
-        }
-
-        #endregion
-
-
-        SK3dView _SK3dView;
-
-        public SK3dView Helper3d
-        {
-            get
-            {
-                if (_SK3dView == null)
-                {
-                    _SK3dView = new SK3dView();
-                }
-                return _SK3dView;
-            }
-        }
-
-
 
 
         //public void PaintClearBackground(SKCanvas canvas)

@@ -26,9 +26,47 @@ public partial class MainPage : ContentPage
             Super.DisplayException(this, e);
         }
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
     
+        DoTest();
+    }
     
-  
+    void DoTest()
+    {
+
+        // using Skia's SkSL
+        string shaderCode = @"
+
+            uniform float iTime;  // Manually updated time variable
+            uniform float2 iResolution; // Screen iResolution
+
+            float f(vec3 p) {
+            p.z -= iTime * 10.;
+            float a = p.z * .1;
+            p.xy *= mat2(cos(a), sin(a), -sin(a), cos(a));
+            return .1 - length(cos(p.xy) + sin(p.yz));
+            }
+
+            half4 main(vec2 fragcoord) { 
+            vec3 d = .5 - fragcoord.xy1 / iResolution.y;
+            vec3 p=vec3(0);
+            for (int i = 0; i < 32; i++) {
+              p += f(p) * d;
+            }
+            return ((sin(p) + vec3(2, 5, 9)) / length(p)).xyz1;
+            }
+
+                ";
+
+
+        var effect = SkSl.Compile(shaderCode);
+
+    }
+
+    
     private void TappedSelectPage(object sender, TouchActionEventArgs e)
     {
         if (sender is SkiaButton btn)

@@ -1,6 +1,4 @@
-﻿using SkiaSharp.Views.Maui.Controls.Compatibility;
-
-namespace DrawnUi.Maui.Views;
+﻿namespace DrawnUi.Maui.Views;
 
 public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 {
@@ -19,10 +17,10 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     }
 
 
+
 #if ANDROID
 
     private MyOrientationListener _orientationListener;
-
 
     public class MyOrientationListener : Android.Views.OrientationEventListener
     {
@@ -36,7 +34,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         {
         }
 
-        public MyOrientationListener(SkiaViewAccelerated parent, SKGLViewRenderer renderer, Android.Hardware.SensorDelay rate) : base(renderer.Context, rate)
+        public MyOrientationListener(SkiaViewAccelerated parent, SkiaSharp.Views.Maui.Handlers.SKGLViewHandler renderer, Android.Hardware.SensorDelay rate) : base(renderer.Context, rate)
         {
             _owner = parent;
         }
@@ -78,8 +76,10 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
 #if ANDROID
 
-            var renderer = Handler as SkiaSharp.Views.Maui.Controls.Compatibility.SKGLViewRenderer;
-            var nativeView = renderer.Control as SkiaSharp.Views.Android.SKGLTextureView;
+            var stop = Handler;
+
+            var renderer = Handler as SkiaSharp.Views.Maui.Handlers.SKGLViewHandler;
+            var nativeView = renderer.PlatformView as SkiaSharp.Views.Android.SKGLTextureView;
             _orientationListener = new MyOrientationListener(this, renderer, Android.Hardware.SensorDelay.Normal);
             if (_orientationListener.CanDetectOrientation())
                 _orientationListener.Enable();
@@ -155,19 +155,24 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
         if (OnDraw != null)
         {
-
-
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
 
             _surface = paintArgs.Surface;
             var invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
 
-            if (invalidate && !Superview.OrderedDraw && _fps < 120)
+            if (invalidate && !Superview.OrderedDraw)
             {
                 InvalidateSurface();
                 return;
             }
 
+#if ANDROID
+            if (invalidate && _fps < 120)
+            {
+                InvalidateSurface();
+            }
+            else
+#endif
             IsDrawing = false;
         }
 

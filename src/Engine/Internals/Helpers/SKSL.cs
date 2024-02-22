@@ -25,7 +25,7 @@ public static class SkSl
     public static SKRuntimeEffect Compile(string shaderCode)
     {
         string errors;
-        var effect = SKRuntimeEffect.Create(shaderCode, out errors);
+        var effect = SKRuntimeEffect.CreateShader(shaderCode, out errors);
         if (!string.IsNullOrEmpty(errors))
         {
             ThrowCompilationError(shaderCode, errors);
@@ -72,6 +72,6 @@ public static class SkSl
             children.Add(texture.Key, texture.Value);
         }
 
-        return compiled.ToShader(true, uniforms, children); ;
+        return compiled.ToShader(uniforms, children); ;
     }
 }

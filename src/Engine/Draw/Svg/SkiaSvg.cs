@@ -1090,14 +1090,14 @@ namespace DrawnUi.Maui.Draw
                         paint.IsAntialias = true;
                         paint.ColorFilter = SKColorFilter.CreateBlendMode(TintColor.ToSKColor(), SKBlendMode.SrcIn);
 
-                        ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
+                        ctx.Canvas.DrawPicture(Svg.Picture, in matrix, paint);
                     }
 
                 }
                 else
                 if (UseGradient) //todo use standart gradient property instead
                 {
-                    ctx.Canvas.DrawPicture(Svg.Picture, ref matrix);
+                    ctx.Canvas.DrawPicture(Svg.Picture, in matrix);
 
                     //draw gradient rectangle above
                     using (var paint = new SKPaint())
@@ -1142,7 +1142,7 @@ namespace DrawnUi.Maui.Draw
                             ctx.Canvas.Save();
                             ctx.Canvas.ClipPath(clipPath, SKClipOperation.Intersect, true);
 
-                            ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
+                            ctx.Canvas.DrawPicture(Svg.Picture, in matrix, paint);
 
                             ctx.Canvas.Restore();
 
@@ -1150,7 +1150,7 @@ namespace DrawnUi.Maui.Draw
                         }
                         else
                         {
-                            ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
+                            ctx.Canvas.DrawPicture(Svg.Picture, in matrix, paint);
                         }
                     }
                 }

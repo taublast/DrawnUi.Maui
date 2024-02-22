@@ -16,10 +16,10 @@
 
   <PropertyGroup>
     <PackageReleaseNotes>Alpha</PackageReleaseNotes>
-    <Version>1.0.8.5</Version>
+    <Version>1.3.0.1</Version>
     <Title>DrawnUi for .NET MAUI</Title>
     <PackageId>AppoMobi.Maui.DrawnUi</PackageId>
-    <Description>Cross-platform rendering engine for .NET MAUI to draw your UI with SkiaSharp</Description>
+    <Description>Cross-platform rendering engine for .NET MAUI to draw your UI with SkiaSharp v3</Description>
     <PackageTags>maui drawnui skia skiasharp draw ui</PackageTags>
     <Authors>Nick Kovalsky aka AppoMobi</Authors>
     <Copyright>(c) AppoMobi, 2023 - present day</Copyright>
@@ -54,7 +54,8 @@
     <Compile Remove="Draw\SkiaGif.cs" />
     <Compile Remove="Internals\ConditionalStyle.cs" />
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
-    <Compile Remove="Controls\Extensions\**" />
+    <Compile Remove="Platforms\iOS\SKMetalViewRenderer.cs" />
+    <Compile Remove="Platforms\MacCatalyst\SKMetalViewRenderer.cs" />
   </ItemGroup>
 
 
@@ -67,7 +68,6 @@
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
     </None>
-    <None Remove="Controls\Extensions\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -80,13 +80,14 @@
 
   <ItemGroup>
     <!--for parsing markdown text-->
-    <PackageReference Include="Markdig" Version="0.34.0" />
+    <PackageReference Include="Markdig" Version="0.35.0" />
     <!--for caching images-->
     <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
+    
     <!--beloved skiasharp-->
-    <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.7" />
-    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.7" />
-    <PackageReference Include="Svg.Skia" Version="1.0.0.9" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.0.0-preview.2.1" />
+    <PackageReference Include="SkiaSharp.Skottie" Version="3.0.0-preview.2.1" />
+    <PackageReference Include="Svg.Skia" Version="1.0.0.13" />
   </ItemGroup>
  
   <ItemGroup Condition="$(TargetFramework.Contains('windows')) == true">
@@ -101,22 +102,6 @@
   <ItemGroup>
     <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.5.3" />
     <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Controls\Extensions\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <MauiXaml Remove="Controls\Extensions\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <MauiCss Remove="Controls\Extensions\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <AndroidAarLibrary Remove="Controls\Extensions\**" />
   </ItemGroup>
 
 </Project>

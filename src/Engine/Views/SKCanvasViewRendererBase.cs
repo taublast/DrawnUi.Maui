@@ -35,6 +35,20 @@ using SKNativePaintSurfaceEventArgs = SkiaSharp.Views.Tizen.SKPaintSurfaceEventA
 
 namespace DrawnUi.Maui.Views.Compatibility;
 
+public interface ISKCanvasViewController : Microsoft.Maui.Controls.IElementController, Microsoft.Maui.Controls.IViewController, Microsoft.Maui.Controls.IVisualElementController
+{
+
+    // the native listens to this event
+    event EventHandler SurfaceInvalidated;
+    event EventHandler<GetPropertyValueEventArgs<SKSize>> GetCanvasSize;
+
+    // the native view tells the user to repaint
+    void OnPaintSurface(SKPaintSurfaceEventArgs e);
+
+    // the native view responds to a touch
+    void OnTouch(SKTouchEventArgs e);
+}
+
 /// <summary>
 /// This is the original SKiaSharp compatibility code without touch support.
 /// Using it to create custom legacy renderers to compare behaivour with latest skiasharp handlers.
@@ -53,10 +67,10 @@ public abstract class SKCanvasViewRendererBase<TFormsView, TNativeView> : ViewRe
         Initialize();
     }
 #else
-		protected SKCanvasViewRendererBase()
-		{
-			Initialize();
-		}
+    protected SKCanvasViewRendererBase()
+    {
+        Initialize();
+    }
 #endif
 
     private void Initialize()
@@ -67,10 +81,10 @@ public abstract class SKCanvasViewRendererBase<TFormsView, TNativeView> : ViewRe
     }
 
 #if __IOS__
-		protected void SetDisablesUserInteraction(bool disablesUserInteraction)
-		{
-			//touchHandler.DisablesUserInteraction = disablesUserInteraction;
-		}
+    protected void SetDisablesUserInteraction(bool disablesUserInteraction)
+    {
+        //touchHandler.DisablesUserInteraction = disablesUserInteraction;
+    }
 #endif
 
     protected override void OnElementChanged(ElementChangedEventArgs<TFormsView> e)
@@ -127,10 +141,10 @@ public abstract class SKCanvasViewRendererBase<TFormsView, TNativeView> : ViewRe
 			return ret;
 		}
 #elif __IOS__ || __MACOS__
-		protected override TNativeView CreateNativeControl()
-		{
-			return (TNativeView)Activator.CreateInstance(typeof(TNativeView));
-		}
+    protected override TNativeView CreateNativeControl()
+    {
+        return (TNativeView)Activator.CreateInstance(typeof(TNativeView));
+    }
 #else
 		protected virtual TNativeView CreateNativeControl()
 		{
@@ -198,7 +212,7 @@ public abstract class SKCanvasViewRendererBase<TFormsView, TNativeView> : ViewRe
     {
         // repaint the native control
 #if __IOS__
-			Control.SetNeedsDisplay();
+        Control.SetNeedsDisplay();
 #elif __MACOS__
 			Control.NeedsDisplay = true;
 #elif __WPF__

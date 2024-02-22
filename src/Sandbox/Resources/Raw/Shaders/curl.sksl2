@@ -104,11 +104,11 @@ half4 main(float2 fragCoord) {
 
         if (inRect(p2, container)!= 0) {
 
-            fragColor = iImage2.eval(p2); //backside
+            fragColor = sample(iImage2, p2); //backside
 
         } else if (inRect(p1, container)!= 0) { //folded part
 
-            fragColor = iImage1.eval(p1);
+            fragColor = sample(iImage1, p1);
             fragColor.rgb *= pow(clamp((r - d) / r, 0.0, 1.0), 0.2);
         } 
         else if (inRect(xy, container)!= 0) {   //shadow
@@ -125,10 +125,11 @@ half4 main(float2 fragCoord) {
         vec2 p = vec2(x + abs(d) + PI * r, uv.y);
 
         if (inRect(p, container)!= 0) {
-            fragColor = iImage2.eval(p); //continue backside
+            fragColor = sample(iImage2, p); //continue backside
         } else {
-            fragColor = iImage1.eval(xy);
+            fragColor = sample(iImage1, xy);
         }
+
     }
            
     return fragColor;

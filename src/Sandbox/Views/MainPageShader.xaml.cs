@@ -149,7 +149,7 @@ namespace Sandbox.Views
             SKRuntimeEffectChildren children = new SKRuntimeEffectChildren(effect);
             children.Add("iImage1", textureShader);
 
-            SKShader shader = effect.ToShader(true, uniforms, children);
+            SKShader shader = effect.ToShader(uniforms, children);
         }
 
         public MainPageShader()

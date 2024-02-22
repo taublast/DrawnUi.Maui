@@ -13,7 +13,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
 
-      
+
 
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -26,15 +26,16 @@
             Gestures="Enabled"
             HardwareAcceleration="Enabled"
             HorizontalOptions="Fill"
+            Tag="Game"
             VerticalOptions="Fill">
 
-     
+
             <draw:SkiaLayout
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill">
- 
+
                 <game:SpaceShooter />
-       
+
                 <draw:SkiaLabelFps
                     Margin="0,0,4,24"
                     BackgroundColor="DarkRed"

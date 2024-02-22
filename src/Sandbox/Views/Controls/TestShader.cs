@@ -107,7 +107,7 @@ public class TestShader : ContentLayout
                 _uniforms = BuildUniforms(snapshot);
             }
 
-            PaintShader = _compiledShader.ToShader(false, _uniforms, _passTextures);
+            PaintShader = _compiledShader.ToShader(_uniforms, _passTextures);
 
             ImagePaint.Shader = PaintShader;
 

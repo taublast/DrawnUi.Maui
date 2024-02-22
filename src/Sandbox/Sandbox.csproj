@@ -34,12 +34,6 @@
 	  <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
 	</PropertyGroup>
 
-  <ItemGroup>
-	  <MauiImage Include="Resources\Raw\Svg\dotnet_bot.svg">
-	    <BaseSize>168,208</BaseSize>
-	  </MauiImage>
-	</ItemGroup>
-
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <!--<EnableLLVM>True</EnableLLVM>-->
     <Optimize>True</Optimize>
@@ -126,6 +120,8 @@
 
     <None Remove="Resources\Raw\Shaders\curl.sksl" />
 
+    <None Remove="Resources\Raw\Shaders\curl.sksl2" />
+
     <None Remove="Resources\Raw\Shaders\glowblur.glsl" />
 
     <None Remove="Resources\Raw\Shaders\glowblur.sksl" />
@@ -158,7 +154,8 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Engine\DrawnUi.Maui.csproj" />
 	</ItemGroup>
- 
+    
+
  
 
 <!--  <ItemGroup Condition="'$(Configuration)'=='Debug'">-->
@@ -192,6 +189,9 @@
     <MauiAsset Update="Resources\Raw\Shaders\blurmasked.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\curl.sksl2">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\curl.glsl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
@@ -212,10 +212,33 @@
     </MauiAsset>
   </ItemGroup>
 
-
+    
 
   <ItemGroup>
     <Folder Include="Models\" />
+  </ItemGroup>
+
+    
+
+  <ItemGroup>
+    <MauiXaml Update="MainPage.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
+    <MauiXaml Update="Views\MainPageScroll.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+  </ItemGroup>
+
+    
+
+  <ItemGroup>
+    <Compile Update="MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\MainPageScroll.xaml.cs">
+      <DependentUpon>MainPageScroll.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
    

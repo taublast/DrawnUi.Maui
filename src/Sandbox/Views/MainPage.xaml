@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<draw:DrawnUiBasePage
+    x:Class="Sandbox.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel"
+    BackgroundColor="#000000">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid
+        HorizontalOptions="Fill"
+        VerticalOptions="Fill">
+
+        <draw:Canvas
+            Gestures="Enabled"
+            HardwareAcceleration="Enabled"
+            HorizontalOptions="Fill"
+            Tag="Main"
+            VerticalOptions="Fill">
+
+            <draw:SkiaLayout
+                HorizontalOptions="Fill"
+                Tag="Wrapper"
+                VerticalOptions="Fill">
+
+                <draw:SkiaScroll
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+
+                    <draw:SkiaLayout
+                        HorizontalOptions="Fill"
+                        Spacing="0"
+                        Type="Column"
+                        UseCache="Operations"
+                        VerticalOptions="End">
+
+                        <draw:SkiaImage
+                            Aspect="AspectFit"
+                            HeightRequest="185"
+                            HorizontalOptions="Center"
+                            SemanticProperties.Description="dot net bot in a race car number eight"
+                            Source="dotnet_bot.png" />
+
+                        <draw:SkiaLabel
+                            Margin="0,0,0,24"
+                            HorizontalOptions="Center"
+                            Text="SELECT PAGE"
+                            TextColor="White"
+                            VerticalOptions="Center" />
+
+                        <draw:SkiaLayout
+                            x:Name="Buttons"
+                            HorizontalOptions="Fill"
+                            Spacing="16"
+                            Type="Column"
+                            UseCache="Operations">
+
+                            <draw:SkiaLayout.ItemTemplate>
+                                <DataTemplate x:DataType="demo:MainPageVariant">
+
+                                    <draw:SkiaButton
+                                        HorizontalOptions="Center"
+                                        Tapped="TappedSelectPage"
+                                        Text="{Binding Name}"
+                                        WidthRequest="150" />
+
+                                </DataTemplate>
+                            </draw:SkiaLayout.ItemTemplate>
+
+                        </draw:SkiaLayout>
+                    </draw:SkiaLayout>
+
+                </draw:SkiaScroll>
+
+                <draw:SkiaLabelFps
+                    Margin="0,0,4,24"
+                    BackgroundColor="DarkRed"
+                    HorizontalOptions="End"
+                    Rotation="-45"
+                    TextColor="White"
+                    VerticalOptions="End"
+                    ZIndex="100" />
+
+            </draw:SkiaLayout>
+
+        </draw:Canvas>
+    </Grid>
+
+
+
+</draw:DrawnUiBasePage>

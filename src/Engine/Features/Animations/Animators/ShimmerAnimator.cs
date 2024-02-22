@@ -87,7 +87,7 @@ public class ShimmerAnimator : RenderingAnimator
                     var rotationY = rect.Top + rect.Height / 2f;
                     canvas.Translate(rotationX, rotationY);
                     var m = SKMatrix.CreateRotationDegrees((float)ShimmerAngle);
-                    canvas.Concat(ref m);
+                    canvas.Concat(in m);
                     canvas.Translate(-rotationX, -rotationY);
 
                     canvas.DrawRect(rect, Paint);

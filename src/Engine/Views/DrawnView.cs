@@ -15,10 +15,13 @@ namespace DrawnUi.Maui.Views
         {
             get
             {
-                return HardwareAcceleration != HardwareAccelerationMode.Disabled
-                       && DeviceInfo.Platform != DevicePlatform.WinUI
-                       && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
+                return HardwareAcceleration != HardwareAccelerationMode.Disabled;
             }
+        }
+
+        public static double GetDensity()
+        {
+            return Super.Screen.Density;
         }
 
         public Queue<IDisposable> ToBeDisposed { get; } = new();
@@ -95,6 +98,8 @@ namespace DrawnUi.Maui.Views
         {
             ExecuteAfterDraw.Enqueue(action);
         }
+
+
 
         public Queue<Action> ExecuteBeforeDraw { get; } = new();
         public Queue<Action> ExecuteAfterDraw { get; } = new();
@@ -552,22 +557,24 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public bool StopDrawingWhenUpdateIsLocked { get; set; }
 
-        public bool CheckCanDraw()
-        {
-            if (UpdateLocked && StopDrawingWhenUpdateIsLocked)
-                return false;
 
-            return CanvasView != null
-                   //&& InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
-                   && !IsRendering
-                   && IsDirty
-                   && IsVisible;
-        }
 
         public DateTime TimeDrawingStarted { get; protected set; }
         public DateTime TimeDrawingComplete { get; protected set; }
 
         volatile bool _isWaiting = false;
+
+
+        object lockIsWaiting = new();
+
+        double _lastUpdateTimeNanos;
+
+        public void ResetUpdate()
+        {
+            NeedCheckParentVisibility = true;
+            OrderedDraw = false;
+            InvalidatedCanvas = 0;
+        }
 
         public virtual void InvalidateViewport()
         {
@@ -580,32 +587,8 @@ namespace DrawnUi.Maui.Views
         }
 
 
+
         public bool OrderedDraw { get; protected set; }
-
-
-
-
-        public virtual void Update()
-        {
-            IsDirty = true;
-            if (UpdateMode == UpdateMode.Dynamic)
-            {
-                if (!OrderedDraw && CheckCanDraw())
-                {
-                    OrderedDraw = true;
-                    InvalidateCanvas();
-                }
-            }
-        }
-
-        double _lastUpdateTimeNanos;
-
-        public void ResetUpdate()
-        {
-            NeedCheckParentVisibility = true;
-            OrderedDraw = false;
-            InvalidatedCanvas = 0;
-        }
 
         /// <summary>
         /// A very important tracking prop to avoid saturating main thread with too many updates
@@ -616,10 +599,7 @@ namespace DrawnUi.Maui.Views
 
         protected Grid Delayed { get; set; }
 
-        public static double GetDensity()
-        {
-            return Super.Screen.Density;
-        }
+
 
         protected void SwapToDelayed()
         {
@@ -633,7 +613,12 @@ namespace DrawnUi.Maui.Views
                 CanvasView = accel;
                 Delayed = null;
 
-                normal?.Disconnect();
+                normal.Disconnect();
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    //                    normal.IsVisible = false;
+                });
+
             }
         }
 
@@ -1695,27 +1680,6 @@ namespace DrawnUi.Maui.Views
         }
         bool _needCheckParentVisibility;
         private long _globalRefresh;
-
-        public bool IsDirty
-        {
-            get
-            {
-                return _isDirty;
-            }
-
-            set
-            {
-                if (_isDirty != value)
-                {
-                    _isDirty = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _isDirty;
-
-
-
 
 
 

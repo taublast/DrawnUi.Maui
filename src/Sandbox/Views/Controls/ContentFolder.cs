@@ -273,11 +273,10 @@ public class ContentFolder : ContentLayout
 
             using var paintWithShader = new SKPaint()
             {
-                Shader = _compiledShader.ToShader(false, uniforms, _passTextures),
+                Shader = _compiledShader.ToShader(uniforms, _passTextures),
             };
-#if !WINDOWS && !MACCATALYST
+
             ctx.Canvas.DrawRect(destination, paintWithShader);
-#endif
         }
     }
 
