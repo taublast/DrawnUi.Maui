@@ -13,7 +13,7 @@ _The current development state is __ALPHA__, many features remain to be implemen
 
 ## What's new
 
-__This would be the last version using SkiaSharp 2.xx, the next one will adopt SkiaSharp 3.0 which would start the era of MAUI shaders, with the latest SKSL syntax, Windows+MacCatalyst hardware acceleration and more!__
+__This would be the last version using SkiaSharp 2.xx, the next one will adopt SkiaSharp 3.0 which would start the era of MAUI shaders, with the latest SKSL syntax, Windows+MacCatalyst hardware acceleration, FPS rate, and scroll smoothness improved, and much more! Stay tuned!__
 
 __1.0.8.5 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
 * Smooth scrolling is back from when it became broken few months ago 😇.
