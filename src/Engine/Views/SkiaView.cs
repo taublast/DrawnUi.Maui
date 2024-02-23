@@ -90,20 +90,17 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         _fps = 1.0 / (DateTime.Now - _lastFrame).TotalSeconds;
         _lastFrame = DateTime.Now;
 
-        if (OnDraw != null)
+        FrameTime = Super.GetCurrentTimeNanos();
+
+        if (OnDraw != null && Super.EnableRendering)
         {
-
-            FrameTime = Super.GetCurrentTimeNanos();
-
-            if (OnDraw != null && Super.EnableRendering)
-            {
-                _surface = paintArgs.Surface;
-                bool invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
-            }
-
-            NeedRedraw = false;
-            IsDrawing = false;
+            _surface = paintArgs.Surface;
+            bool invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
         }
 
+        NeedRedraw = false;
+        IsDrawing = false;
+
     }
+
 }

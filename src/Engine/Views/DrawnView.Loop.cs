@@ -170,7 +170,9 @@ public partial class DrawnView
                             var needWait =
                                 Super.CapMicroSecs
 #if IOS || MACCATALYST
-                                * 2 // apple is double buffered                             
+                                * 2 // apple is double buffered
+#elif WINDOWS
+                                / 2f //todo check impact of this
 #endif
                                 - elapsedMicros;
                             if (needWait >= 1)

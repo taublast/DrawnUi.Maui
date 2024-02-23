@@ -4291,11 +4291,12 @@ namespace DrawnUi.Maui.Draw
 
                 if (needTransform)
                 {
-                    var moveX = (float)(UseTranslationX * RenderingScale);
-                    moveX = Snapping.SnapPixelsToPixel(0, moveX);
+                    //todo check impact of using SnapPixelsToPixel on Android Demo with Header
+                    var moveX = (float)Math.Round(UseTranslationX * RenderingScale);
+                    //moveX = Snapping.SnapPixelsToPixel(0, moveX);
 
-                    var moveY = (float)(UseTranslationY * RenderingScale);
-                    moveY = Snapping.SnapPixelsToPixel(0, moveY);
+                    var moveY = (float)Math.Round(UseTranslationY * RenderingScale);
+                    //moveY = Snapping.SnapPixelsToPixel(0, moveY);
 
                     var centerX = (float)Math.Round(destination.Left + destination.Width * (float)TransformPivotPointX + moveX);
                     var centerY = (float)Math.Round(destination.Top + destination.Height * (float)TransformPivotPointY + moveY);
