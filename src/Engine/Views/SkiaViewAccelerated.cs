@@ -144,8 +144,6 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         }
     }
 
-    protected bool NeedRedraw { get; set; }
-
     public bool IsDrawing { get; set; }
 
     public double FrameTime { get; protected set; }
@@ -157,12 +155,6 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     /// <param name="paintArgs"></param>
     private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
     {
-        if (IsDrawing)
-        {
-            NeedRedraw = true;
-            return;
-        }
-
         IsDrawing = true;
 
         _fps = 1.0 / (DateTime.Now - _lastFrame).TotalSeconds;
@@ -191,7 +183,6 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
         }
 
-        NeedRedraw = false;
         IsDrawing = false;
     }
 
