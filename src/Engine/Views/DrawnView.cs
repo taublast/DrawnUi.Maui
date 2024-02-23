@@ -567,8 +567,6 @@ namespace DrawnUi.Maui.Views
 
         object lockIsWaiting = new();
 
-        double _lastUpdateTimeNanos;
-
         public void ResetUpdate()
         {
             NeedCheckParentVisibility = true;
@@ -806,7 +804,6 @@ namespace DrawnUi.Maui.Views
         {
             base.OnPropertyChanged(propertyName);
 
-
             if (propertyName == nameof(HeightRequest)
                 || propertyName == nameof(WidthRequest)
                 || propertyName == nameof(Padding)
@@ -816,6 +813,13 @@ namespace DrawnUi.Maui.Views
                 )
             {
                 Invalidate();
+            }
+            else
+            if (propertyName == nameof(Height)
+                || propertyName == nameof(Width)
+               )
+            {
+                Update();
             }
         }
 

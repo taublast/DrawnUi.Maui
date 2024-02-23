@@ -10,6 +10,7 @@ uniform float4 iMargins;
 
 const float cornerRadius = 0;
 
+const float so = 0.25; //shadow opacity
 const float r = 150.0; //150
 const float scaleFactor = 0.2; //0.2
 
@@ -80,12 +81,12 @@ half4 main(float2 fragCoord) {
     float d = xy.x - x;
    
     if (d > r) {
+        //default empty background.. 
         fragColor = backgroundColor;
-        if (inRect(xy, container) != 0) {
-            fragColor.a = mix(0.5, 0.0, (d-r)/r);
+        if (inRect(xy, container) != 0) { //use margins
+            fragColor.a = mix(so, 0.0, (d-r)/r); //drop shadow
         }
     }
-
     else
     if (d > 0.0) {
         float theta = asin(d / r);
@@ -107,15 +108,17 @@ half4 main(float2 fragCoord) {
             fragColor = iImage2.eval(p2); //backside
 
         } else if (inRect(p1, container)!= 0) { //folded part
-
+            //todo antialias borders!
             fragColor = iImage1.eval(p1);
             fragColor.rgb *= pow(clamp((r - d) / r, 0.0, 1.0), 0.2);
         } 
-        else if (inRect(xy, container)!= 0) {   //shadow
-            
-            float adjustedY = xy.y - topMargin;  
-            float shadowHeight = max(0.0, min(1.0, (iResolution.y - bottomMargin - adjustedY) / (iResolution.y - topMargin - bottomMargin)));
-            fragColor = vec4(0.0, 0.0, 0.0, 0.5 * shadowHeight);  
+        else if (inRect(xy, container)!= 0) {   
+            //folded part drops its own shadow         
+            fragColor.a = mix(so, 0.0, (d-r)/r); //use default as for empty background
+            //code below is for case when we do not use shadow for empty background
+            //float adjustedY = xy.y - topMargin;  
+            //float shadowHeight = max(0.0, min(1.0, (iResolution.y - bottomMargin - adjustedY) / (iResolution.y - topMargin - bottomMargin)));
+            //fragColor = vec4(0.0, 0.0, 0.0, 0.5 * shadowHeight);  
         }    
     }
     else {
@@ -127,6 +130,7 @@ half4 main(float2 fragCoord) {
         if (inRect(p, container)!= 0) {
             fragColor = iImage2.eval(p); //continue backside
         } else {
+            //default not folded
             fragColor = iImage1.eval(xy);
         }
     }

@@ -32,11 +32,14 @@ public partial class DrawnView
             return false;
 
         return CanvasView != null
-               && InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
+               //&& InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
                && !IsRendering
                && IsDirty
                && IsVisible;
     }
+
+
+    public bool NeedRedraw { get; set; }
 
     public virtual void Update()
     {
@@ -44,25 +47,25 @@ public partial class DrawnView
         if (!OrderedDraw && CheckCanDraw())
         {
             OrderedDraw = true;
-            Task.Run(() => //do not ever try to change this! i know you want to remove it or add a ConfigureAwait but just don't :)
-            {
-                InvalidateCanvas();
-            });
+            InvalidateCanvas();
         }
     }
 
 #if ANDROID
 
-    protected void InvalidateCanvas()
+    protected async void InvalidateCanvas()
     {
         if (CanvasView == null)
             return;
 
         //sanity check
-        var widthPixels = (int)CanvasView.CanvasSize.Width;
-        var heightPixels = (int)CanvasView.CanvasSize.Height;
-        if (widthPixels > 0 && heightPixels > 0)
+        if (CanvasView.CanvasSize is { Width: > 0, Height: > 0 })
         {
+            if (NeedCheckParentVisibility)
+            {
+                CheckElementVisibility(this);
+            }
+
             if (UpdateMode == UpdateMode.Constant)
             {
                 InvalidatedCanvas++;
@@ -70,52 +73,65 @@ public partial class DrawnView
                 return;
             }
 
-            //optimization check
-            if (NeedCheckParentVisibility)
+            if (CanDraw) //passed checks
             {
-#if ANDROID || WINDOWS
+                _isWaiting = true;
+                InvalidatedCanvas++;
 
-                CheckElementVisibility(this);
-                PassedChecks();
+                //cap fps around 120fps
+                var nowNanos = Super.GetCurrentTimeNanos();
+                var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
 
+                var needWait =
+                    Super.CapMicroSecs / 2f //do not ask why
+                    - elapsedMicros;
+                if (needWait >= 1)
+                {
+                    var ms = (int)(needWait / 1000);
+                    if (ms < 1)
+                        ms = 1;
+                    await Task.Delay(ms);
+                }
+                _isWaiting = false;
+
+                if (!Super.EnableRendering)
+                {
+                    OrderedDraw = false;
+                    return;
+                }
+
+#if WINDOWS
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    // Update the UI
+                    CanvasView?.InvalidateSurface();
+
+                });
 #else
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        CheckElementVisibility(this); //need ui thread for visibility check for apple
-                        PassedChecks();
-                    });
+                CanvasView?.InvalidateSurface();
 #endif
+
             }
             else
             {
-                PassedChecks();
+                OrderedDraw = false;
             }
 
-            void PassedChecks()
-            {
-                if (CanDraw) //passed checks
-                {
-                    InvalidatedCanvas++;
-                    MainThread.BeginInvokeOnMainThread(async () => //if we don't use main thread on android maui bindings just die
-                    {
-                        CanvasView?.InvalidateSurface();
-                    });
-                }
-                else
-                {
-                    OrderedDraw = false;
-                }
-            }
         }
         else
         {
             OrderedDraw = false;
+            await Task.Delay(30);
+            await Task.Run(() =>
+            {
+                Update();
+            }).ConfigureAwait(false);
         }
     }
 
 #else
 
-    protected void InvalidateCanvas()
+    protected async void InvalidateCanvas()
     {
         IsDirty = true;
 
@@ -125,89 +141,86 @@ public partial class DrawnView
             return;
         }
 
-        //sanity check
-        var widthPixels = (int)CanvasView.CanvasSize.Width;
-        var heightPixels = (int)CanvasView.CanvasSize.Height;
-        if (widthPixels > 0 && heightPixels > 0)
+        if (CanvasView.CanvasSize is { Width: > 0, Height: > 0 })
         {
-
-            MainThread.BeginInvokeOnMainThread(() =>
+            if (_isWaiting)  //busy
             {
-                try
-                {
-                    if (NeedCheckParentVisibility)
-                        CheckElementVisibility(this);
-
-                    Continue();
-                }
-                catch (Exception e)
-                {
-                    Super.Log(e);
-                }
-
-            });
-
-
-            void Continue()
+                NeedRedraw = true;
+                OrderedDraw = false;
+            }
+            else
             {
-
-                lock (lockIsWaiting)
+                NeedRedraw = false;
+                MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
+                    _isWaiting = true;
+                    try
                     {
-                        _isWaiting = true;
-                        InvalidatedCanvas++;
-                        MainThread.BeginInvokeOnMainThread(async () =>
-                        {
-                            try
-                            {
-                                //cap fps around 120fps
-                                var nowNanos = Super.GetCurrentTimeNanos();
-                                var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
-                                _lastUpdateTimeNanos = nowNanos;
+                        if (NeedCheckParentVisibility)
+                            CheckElementVisibility(this);
 
-                                var needWait =
-                                    Super.CapMicroSecs
+                        if (!CanvasView.IsDrawing && CanDraw)  //passed checks
+                        {
+                            InvalidatedCanvas++;
+
+                            //cap fps around 120fps
+                            var nowNanos = Super.GetCurrentTimeNanos();
+                            var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
+
+                            var needWait =
+                                Super.CapMicroSecs
 #if IOS || MACCATALYST
                                 * 2 // apple is double buffered                             
 #endif
-                                    - elapsedMicros;
-                                if (needWait < 1)
-                                    needWait = 1;
-
+                                - elapsedMicros;
+                            if (needWait >= 1)
+                            {
                                 var ms = (int)(needWait / 1000);
                                 if (ms < 1)
                                     ms = 1;
                                 await Task.Delay(ms);
-                                if (!Super.EnableRendering)
-                                {
-                                    OrderedDraw = false;
-                                    return;
-                                }
-                                CanvasView?.InvalidateSurface(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
-                            }
-                            catch (Exception e)
-                            {
-                                Super.Log(e);
-                            }
-                            finally
-                            {
-                                _isWaiting = false;
                             }
 
-                        });
-                        return;
+                            if (!Super.EnableRendering)
+                            {
+                                OrderedDraw = false;
+                                return;
+                            }
+                            CanvasView?.InvalidateSurface(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
+
+                            return;
+                        }
+
+                        OrderedDraw = false;
+
                     }
-
-                    OrderedDraw = false;
-                }
-
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+                    finally
+                    {
+                        _isWaiting = false;
+                        if (NeedRedraw) //if we missed previous update
+                        {
+                            NeedRedraw = false;
+                            Task.Run(() =>
+                            {
+                                Update();
+                            }).ConfigureAwait(false);
+                        }
+                    }
+                });
             }
-
         }
         else
         {
             OrderedDraw = false; //canvas not created yet
+            await Task.Delay(30);
+            await Task.Run(() =>
+            {
+                Update();
+            }).ConfigureAwait(false);
         }
     }
 

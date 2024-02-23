@@ -144,38 +144,55 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         }
     }
 
-    public bool IsDrawing { get; protected set; }
+    protected bool NeedRedraw { get; set; }
 
+    public bool IsDrawing { get; set; }
+
+    public double FrameTime { get; protected set; }
+
+    /// <summary>
+    /// We are drawing the frame
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="paintArgs"></param>
     private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
     {
+        if (IsDrawing)
+        {
+            NeedRedraw = true;
+            return;
+        }
+
         IsDrawing = true;
 
         _fps = 1.0 / (DateTime.Now - _lastFrame).TotalSeconds;
         _lastFrame = DateTime.Now;
 
-        if (OnDraw != null)
+        FrameTime = Super.GetCurrentTimeNanos();
+
+        if (OnDraw != null && Super.EnableRendering)
         {
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
-
             _surface = paintArgs.Surface;
             var invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
+            //            if ((invalidate || NeedRedraw)
+            //                && Super.EnableRendering
+            //                && _fps < 120)
+            //            {
+            //                NeedRedraw = false;
+            //                IsDrawing = false;
+            //#if ANDROID
+            //                InvalidateSurface();
+            //#else
+            //                Superview.Update();
+            //#endif
+            //                return;
+            //            }
 
-            if (invalidate && !Superview.OrderedDraw)
-            {
-                InvalidateSurface();
-                return;
-            }
-
-#if ANDROID
-            if (invalidate && _fps < 120)
-            {
-                InvalidateSurface();
-            }
-            else
-#endif
-            IsDrawing = false;
         }
 
+        NeedRedraw = false;
+        IsDrawing = false;
     }
 
 }

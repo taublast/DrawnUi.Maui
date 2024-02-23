@@ -73,7 +73,7 @@ public static class DependencyExtensions
 
             //handlers.AddHandler(typeof(Window), typeof(CustomizedWindowHandler));
 #elif WINDOWS
-                            //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewRenderer));
+            //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewRenderer));
 
 #endif
         });
@@ -450,14 +450,12 @@ public static class DependencyExtensions
 
         });
 
-        Microsoft.Maui.Handlers.ViewHandler.ViewMapper.AppendToMapping(nameof(Application.Resources), (handler, view) =>
+        Microsoft.Maui.Handlers.ViewHandler.ViewMapper.AppendToMapping(nameof(Application.Handler), (handler, view) =>
         {
             if (!mauiCreated)
             {
                 mauiCreated = true;
                 Super.OnMauiAppCreated?.Invoke();
-
-
             }
         });
 

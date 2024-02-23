@@ -23,7 +23,7 @@
 
 
 
-    <draw:Canvas                
+    <draw:Canvas
         x:Name="MainCanvas"
         gestures:TouchEffect.ForceAttach="True"
         BackgroundColor="Black"

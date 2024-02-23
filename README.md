@@ -11,21 +11,20 @@ Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 _The current development state is __ALPHA__, many features remain to be implemented, documentation incoming._
 
+__[1.3.0.1 nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi) Try it today!__
+
 ## What's new
 
-__This would be the last version using SkiaSharp 2.xx, the next one will adopt SkiaSharp 3.0 which would start the era of MAUI shaders, with the latest SKSL syntax, Windows+MacCatalyst hardware acceleration and more!__
-
-__1.0.8.5 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
-* Smooth scrolling is back from when it became broken few months ago 😇.
-* `MauiElement` layout fix, `SkiaCarousel` gestures fix mainly affecting the Apple platform.
-* MacCatalyst fixes for the `Sandbox` project.
-* Other fixes and improvements.
-* [Demo app](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) is updated with new nuget.
+* This new release add support for SkaSharp 3!
+* SkaSharp 3 adds hardware acceleration for Windows and MacCatalyst, now covering all our supported platforms!
+* SkaSharp 3 starts the era of MAUI shaders, with the latest SKSL syntax and compiling shaders even on CPU when GPU is not available. DrawnUI provides you with an `SKSL` helper and introduces a new `SkiaShader` control!
+* Check out the new DrawnUI rendering loop with higher and smoother fps!
+* [Demo app](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 is updated with new nuget and adds a shaders example.
 
 ## Demo
 
 * This repo includes a Sandbox project with some playground examples
-* Creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩
+* Creating custom controls examples inside our [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo)
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
 
