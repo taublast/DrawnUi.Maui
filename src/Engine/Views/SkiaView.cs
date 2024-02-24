@@ -84,7 +84,7 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         _lastFrame = DateTime.Now;
 
         FrameTime = Super.GetCurrentTimeNanos();
-
+        
         if (OnDraw != null && Super.EnableRendering)
         {
             _surface = paintArgs.Surface;

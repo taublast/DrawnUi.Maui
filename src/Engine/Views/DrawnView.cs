@@ -15,7 +15,11 @@ namespace DrawnUi.Maui.Views
         {
             get
             {
-                return HardwareAcceleration != HardwareAccelerationMode.Disabled;
+                return HardwareAcceleration != HardwareAccelerationMode.Disabled
+        #if IOS 
+                       && DeviceInfo.Current.DeviceType != DeviceType.Virtual //HWA disabled for ios simulator at the moment
+        #endif
+                        ;
             }
         }
 

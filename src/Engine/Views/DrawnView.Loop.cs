@@ -169,11 +169,6 @@ public partial class DrawnView
 
                             var needWait =
                                 Super.CapMicroSecs
-#if IOS || MACCATALYST
-                                * 2 // apple is double buffered
-#elif WINDOWS
-                             
-#endif
                                 - elapsedMicros;
                             if (needWait >= 1)
                             {
@@ -181,6 +176,10 @@ public partial class DrawnView
                                 if (ms < 1)
                                     ms = 1;
                                 await Task.Delay(ms);
+                            }
+                            else
+                            {
+                                await Task.Delay(1); //unlock threads
                             }
 
                             if (!Super.EnableRendering)

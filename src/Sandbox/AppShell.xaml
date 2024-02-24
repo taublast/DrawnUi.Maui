@@ -11,7 +11,7 @@
 
     <ShellContent
         Title="Sandbox"
-        ContentTemplate="{DataTemplate views:MainPageScroll}"
+        ContentTemplate="{DataTemplate mauiNet8:MainPage}"
         Route="MainPage" />
 
 </Shell>

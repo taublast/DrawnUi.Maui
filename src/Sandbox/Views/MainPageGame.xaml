@@ -28,8 +28,7 @@
             HorizontalOptions="Fill"
             Tag="Game"
             VerticalOptions="Fill">
-
-
+            
             <draw:SkiaLayout
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill">

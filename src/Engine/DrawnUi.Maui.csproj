@@ -54,8 +54,8 @@
     <Compile Remove="Draw\SkiaGif.cs" />
     <Compile Remove="Internals\ConditionalStyle.cs" />
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
-    <Compile Remove="Platforms\iOS\SKMetalViewRenderer.cs" />
     <Compile Remove="Platforms\MacCatalyst\SKMetalViewRenderer.cs" />
+    <Compile Remove="Platforms\iOS\SKMetalViewRenderer.cs" />
   </ItemGroup>
 
 

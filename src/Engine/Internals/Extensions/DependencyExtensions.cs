@@ -61,7 +61,7 @@ public static class DependencyExtensions
             //if (DeviceInfo.Current.DeviceType != DeviceType.Virtual)
 
             //{
-            //    handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
+            //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(DrawnUi.Maui.Views.SKMetalViewRenderer));
             //}
 
 #elif MACCATALYST
@@ -375,7 +375,7 @@ public static class DependencyExtensions
                                     {
                                         //not working with several displays never ever
                                         //var test = DeviceDisplay.Current.MainDisplayInfo.Density;                                      
-                                        Super.Screen.Density = windowScene.Screen.Scale;
+                                        //Super.Screen.Density = windowScene.Screen.Scale;
                                         Super.NeedGlocalUpdate();
                                     }
                                 }
@@ -406,7 +406,7 @@ public static class DependencyExtensions
 
                                             if (Super.Screen.Density != windowScene.Screen.Scale)
                                             {
-                                                Super.Screen.Density = windowScene.Screen.Scale;
+                                                //Super.Screen.Density = windowScene.Screen.Scale;
                                                 Super.NeedGlocalUpdate();
                                             }
                                         }
