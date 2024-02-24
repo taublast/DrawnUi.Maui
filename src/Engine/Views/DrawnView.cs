@@ -552,17 +552,6 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public bool StopDrawingWhenUpdateIsLocked { get; set; }
 
-        public bool CheckCanDraw()
-        {
-            if (UpdateLocked && StopDrawingWhenUpdateIsLocked)
-                return false;
-
-            return CanvasView != null
-                   //&& InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
-                   && !IsRendering
-                   && IsDirty
-                   && IsVisible;
-        }
 
         public DateTime TimeDrawingStarted { get; protected set; }
         public DateTime TimeDrawingComplete { get; protected set; }
@@ -582,21 +571,6 @@ namespace DrawnUi.Maui.Views
 
         public bool OrderedDraw { get; protected set; }
 
-
-
-
-        public virtual void Update()
-        {
-            IsDirty = true;
-            if (UpdateMode == UpdateMode.Dynamic)
-            {
-                if (!OrderedDraw && CheckCanDraw())
-                {
-                    OrderedDraw = true;
-                    InvalidateCanvas();
-                }
-            }
-        }
 
         double _lastUpdateTimeNanos;
 
@@ -1223,11 +1197,6 @@ namespace DrawnUi.Maui.Views
             //lock (LockDraw)
             {
 
-                if (UpdateMode != UpdateMode.Constant)
-                {
-                    IsDirty = false; //any control can set to true after that
-                }
-
                 if (!OnStartRendering(canvas))
                     return UpdateMode == UpdateMode.Constant;
 
@@ -1281,6 +1250,11 @@ namespace DrawnUi.Maui.Views
 
             TimeDrawingStarted = DateTime.Now;
             IsRendering = true;
+
+            if (UpdateMode != UpdateMode.Constant)
+            {
+                IsDirty = false; //any control can set to true after that
+            }
 
             return true;
         }
@@ -1695,27 +1669,6 @@ namespace DrawnUi.Maui.Views
         }
         bool _needCheckParentVisibility;
         private long _globalRefresh;
-
-        public bool IsDirty
-        {
-            get
-            {
-                return _isDirty;
-            }
-
-            set
-            {
-                if (_isDirty != value)
-                {
-                    _isDirty = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _isDirty;
-
-
-
 
 
 
