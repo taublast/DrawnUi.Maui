@@ -72,29 +72,39 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         }
     }
 
+    public double FrameTime { get; protected set; }
+
     public bool IsDrawing { get; protected set; }
 
     private void OnPaintingSurface(object sender, SKPaintSurfaceEventArgs paintArgs)
     {
-        //IsDrawing = true;
+        IsDrawing = true;
 
-        //todo calculate fps for this code:
         _fps = 1.0 / (DateTime.Now - _lastFrame).TotalSeconds;
         _lastFrame = DateTime.Now;
 
-        if (OnDraw != null)
+        FrameTime = Super.GetCurrentTimeNanos();
+        
+        if (OnDraw != null && Super.EnableRendering)
         {
             _surface = paintArgs.Surface;
             bool invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
-
-            if (invalidate && !Superview.OrderedDraw && _fps < 120)
+            if (invalidate && Super.EnableRendering) //if we didnt call update because IsDrawing was true need to kick here
             {
-                InvalidateSurface();
+                IsDrawing = false;
+#if ANDROID
+                if (_fps<120)
+                    InvalidateSurface();
+                else
+#else
+                Superview.Update();
+#endif
                 return;
             }
-
-            IsDrawing = false;
         }
 
+        IsDrawing = false;
+
     }
+
 }

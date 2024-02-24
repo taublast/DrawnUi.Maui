@@ -19,10 +19,10 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     }
 
 
+
 #if ANDROID
 
     private MyOrientationListener _orientationListener;
-
 
     public class MyOrientationListener : Android.Views.OrientationEventListener
     {
@@ -37,6 +37,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         }
 
         public MyOrientationListener(SkiaViewAccelerated parent, SKGLViewRenderer renderer, Android.Hardware.SensorDelay rate) : base(renderer.Context, rate)
+        //public MyOrientationListener(SkiaViewAccelerated parent, SkiaSharp.Views.Maui.Handlers.SKGLViewHandler renderer, Android.Hardware.SensorDelay rate) : base(renderer.Context, rate)
         {
             _owner = parent;
         }
@@ -80,6 +81,8 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
             var renderer = Handler as SkiaSharp.Views.Maui.Controls.Compatibility.SKGLViewRenderer;
             var nativeView = renderer.Control as SkiaSharp.Views.Android.SKGLTextureView;
+            //var renderer = Handler as SkiaSharp.Views.Maui.Handlers.SKGLViewHandler;
+            //var nativeView = renderer.PlatformView as SkiaSharp.Views.Android.SKGLTextureView;
             _orientationListener = new MyOrientationListener(this, renderer, Android.Hardware.SensorDelay.Normal);
             if (_orientationListener.CanDetectOrientation())
                 _orientationListener.Enable();
@@ -144,8 +147,15 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         }
     }
 
-    public bool IsDrawing { get; protected set; }
+    public bool IsDrawing { get; set; }
 
+    public double FrameTime { get; protected set; }
+
+    /// <summary>
+    /// We are drawing the frame
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="paintArgs"></param>
     private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
     {
         IsDrawing = true;
@@ -153,24 +163,28 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         _fps = 1.0 / (DateTime.Now - _lastFrame).TotalSeconds;
         _lastFrame = DateTime.Now;
 
-        if (OnDraw != null)
+        FrameTime = Super.GetCurrentTimeNanos();
+
+        if (OnDraw != null && Super.EnableRendering)
         {
-
-
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
-
             _surface = paintArgs.Surface;
             var invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
-
-            if (invalidate && !Superview.OrderedDraw && _fps < 120)
+            if (invalidate && Super.EnableRendering) //if we didnt call update because IsDrawing was true need to kick here
             {
-                InvalidateSurface();
-                return;
+                IsDrawing = false;
+#if ANDROID
+                if (_fps < 120)
+                    InvalidateSurface();
+                else
+#else
+                Superview.Update();
+#endif
+                    return;
             }
-
-            IsDrawing = false;
         }
 
+        IsDrawing = false;
     }
 
 }
