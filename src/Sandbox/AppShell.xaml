@@ -11,7 +11,7 @@
 
     <ShellContent
         Title="Sandbox"
-        ContentTemplate="{DataTemplate views:MainPage}"
+        ContentTemplate="{DataTemplate views:MainPageScroll}"
         Route="MainPage" />
 
 </Shell>

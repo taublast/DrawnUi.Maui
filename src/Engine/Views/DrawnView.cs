@@ -1212,11 +1212,6 @@ namespace DrawnUi.Maui.Views
             //lock (LockDraw)
             {
 
-                if (UpdateMode != UpdateMode.Constant)
-                {
-                    IsDirty = false; //any control can set to true after that
-                }
-
                 if (!OnStartRendering(canvas))
                     return UpdateMode == UpdateMode.Constant;
 
@@ -1270,13 +1265,16 @@ namespace DrawnUi.Maui.Views
 
             TimeDrawingStarted = DateTime.Now;
             IsRendering = true;
+            if (UpdateMode != UpdateMode.Constant)
+            {
+                IsDirty = false; //any control can set to true after that
+            }
 
             return true;
         }
 
         protected virtual void OnFinalizeRendering()
         {
-
             TimeDrawingComplete = DateTime.Now;
 
             IsRendering = false;
