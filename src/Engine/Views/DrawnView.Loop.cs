@@ -25,14 +25,12 @@ public partial class DrawnView
     }
     bool _isDirty;
 
-
     public bool CheckCanDraw()
     {
         if (UpdateLocked && StopDrawingWhenUpdateIsLocked)
             return false;
 
         return CanvasView != null
-               //&& InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
                && !IsRendering
                && IsDirty
                && IsVisible;
@@ -91,6 +89,10 @@ public partial class DrawnView
                     if (ms < 1)
                         ms = 1;
                     await Task.Delay(ms);
+                }
+                else
+                {
+                    await Task.Delay(1);
                 }
                 _isWaiting = false;
 

@@ -933,7 +933,7 @@ namespace DrawnUi.Maui.Draw
             VelocityTrackerPan.Clear();
             VelocityTrackerScale.Clear();
 
-            ViewportOffsetY = InternalViewportOffset.Units.Y;
+            ViewportOffsetY = InternalViewportOffset.Units.Y
             ViewportOffsetX = InternalViewportOffset.Units.X;
         }
 

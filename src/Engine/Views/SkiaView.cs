@@ -72,7 +72,7 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         }
     }
 
-    public double FrameTime { get; protected set; }
+    public long FrameTime { get; protected set; }
 
     public bool IsDrawing { get; protected set; }
 
@@ -84,7 +84,7 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         _lastFrame = DateTime.Now;
 
         FrameTime = Super.GetCurrentTimeNanos();
-        
+
         if (OnDraw != null && Super.EnableRendering)
         {
             _surface = paintArgs.Surface;
