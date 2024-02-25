@@ -1,6 +1,7 @@
 ﻿using DrawnUi.Maui.Draw;
 using DrawnUi.Maui.Infrastructure.Xaml;
 using Microsoft.Maui.Controls.Shapes;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Color = Microsoft.Maui.Graphics.Color;
 using Path = Microsoft.Maui.Controls.Shapes.Path;
@@ -195,6 +196,54 @@ namespace DrawnUi.Maui.Draw
         {
             get { return (SKBlendMode)GetValue(StrokeBlendModeProperty); }
             set { SetValue(StrokeBlendModeProperty, value); }
+        }
+
+
+        #endregion
+
+        public override void ApplyBindingContext()
+        {
+            foreach (var shade in Shadows)
+            {
+                shade.BindingContext = BindingContext;
+            }
+
+            base.ApplyBindingContext();
+        }
+
+        #region SHADOWS
+
+
+        public static readonly BindableProperty ShadowsProperty = BindableProperty.Create(
+            nameof(Shadows),
+            typeof(IList<SkiaShadow>),
+            typeof(SkiaShape),
+            defaultValueCreator: (instance) =>
+            {
+                var created = new ObservableCollection<SkiaShadow>();
+                return created;
+            },
+            validateValue: (bo, v) => v is IList<SkiaShadow>,
+            propertyChanged: NeedDraw,
+            coerceValue: CoerceShadows);
+
+        private static int instanceCount = 0;
+
+        public IList<SkiaShadow> Shadows
+        {
+            get => (IList<SkiaShadow>)GetValue(ShadowsProperty);
+            set => SetValue(ShadowsProperty, value);
+        }
+
+        private static object CoerceShadows(BindableObject bindable, object value)
+        {
+            if (!(value is ReadOnlyCollection<SkiaShadow> readonlyCollection))
+            {
+                return value;
+            }
+
+            return new ReadOnlyCollection<SkiaShadow>(
+                readonlyCollection.ToList());
         }
 
 
@@ -634,7 +683,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     for (int index = 0; index < Shadows.Count(); index++)
                     {
-                        AddShadowFilter(RenderingPaint, Shadows[index]);
+                        AddShadowFilter(RenderingPaint, Shadows[index], RenderingScale);
 
                         if (ClipBackgroundColor)
                         {

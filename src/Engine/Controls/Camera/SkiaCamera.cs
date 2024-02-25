@@ -75,7 +75,7 @@ public partial class SkiaCamera : SkiaControl
                 HeightRequest = info.Height,
                 VerticalOptions = LayoutOptions.Fill,
                 IsClippedToBounds = false, //do not clip sides after rotation if any
-                Effect = this.Effect,
+                BitmapEffect = this.PreviewEffect,
                 Aspect = TransformAspect.None,
                 ZoomX = zoomCapturedPhotoX,
                 ZoomY = zoomCapturedPhotoY,
@@ -202,7 +202,7 @@ public partial class SkiaCamera : SkiaControl
     {
         if (Display != null)
         {
-            Display.Effect = Effect;
+            Display.BitmapEffect = PreviewEffect;
         }
     }
 
@@ -1775,10 +1775,8 @@ public partial class SkiaCamera : SkiaControl
     #region PROPERTIES
 
 
-
-
-    public static readonly BindableProperty EffectProperty = BindableProperty.Create(
-        nameof(Effect),
+    public static readonly BindableProperty PreviewEffectProperty = BindableProperty.Create(
+        nameof(PreviewEffect),
         typeof(SkiaImageEffect),
         typeof(SkiaCamera),
         SkiaImageEffect.None,
@@ -1792,10 +1790,10 @@ public partial class SkiaCamera : SkiaControl
         }
     }
 
-    public SkiaImageEffect Effect
+    public SkiaImageEffect PreviewEffect
     {
-        get { return (SkiaImageEffect)GetValue(EffectProperty); }
-        set { SetValue(EffectProperty, value); }
+        get { return (SkiaImageEffect)GetValue(PreviewEffectProperty); }
+        set { SetValue(PreviewEffectProperty, value); }
     }
 
     #endregion

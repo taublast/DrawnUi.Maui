@@ -26,7 +26,7 @@ public partial class SpaceShooter
                 UseCache = SkiaCacheType.GPU,
                 WidthRequest = 50,
                 HeightRequest = 44,
-                Effect = SkiaImageEffect.Tint,
+                BitmapEffect = SkiaImageEffect.Tint,
                 EffectBlendMode = SKBlendMode.SrcATop,
             };
 

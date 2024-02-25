@@ -123,7 +123,7 @@ public class ContentFolder : ContentLayout
         }
         catch (Exception e)
         {
-            Console.WriteLine($"[SkiaLottie] LoadSource failed to load animation {fileName}");
+            Console.WriteLine($"[SkiaControl] LoadSource failed to load animation {fileName}");
             Console.WriteLine(e);
             return null;
         }

@@ -503,7 +503,7 @@ namespace DrawnUi.Maui.Controls
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
                 Aspect = TransformAspect.AspectCover,
-                Effect = SkiaImageEffect.Tint,
+                BitmapEffect = SkiaImageEffect.Tint,
                 ColorTint = tint,
                 Blur = blur,
                 EffectBlendMode = SKBlendMode.SrcATop,

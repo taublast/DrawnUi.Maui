@@ -12,6 +12,13 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
     }
 
+    public override void InvalidateMeasureInternal()
+    {
+        ApplyProperties();
+
+        base.InvalidateMeasureInternal();
+    }
+
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
         var measured = base.Measure(widthConstraint, heightConstraint, scale);
@@ -88,7 +95,15 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         if (MainLabel != null)
         {
             MainLabel.Text = this.Text;
+            MainLabel.TextColor = this.TextColor;
         }
+
+        if (MainFrame != null)
+        {
+            MainFrame.BackgroundColor = this.TintColor;
+            MainFrame.CornerRadius = this.CornerRadius;
+        }
+
     }
 
     public virtual bool OnDown(TouchActionEventArgs args, SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
@@ -256,6 +271,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     }
 
 
+    protected SKPoint _lastDownPts;
 
 
     #region STATIC PROPERTIES
@@ -264,9 +280,9 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         nameof(IsDisabled),
         typeof(bool),
         typeof(SkiaButton),
-        false, propertyChanged: OnLookChanged);
+        false, propertyChanged: NeedApplyProperties);
 
-    private static void OnLookChanged(BindableObject bindable, object oldvalue, object newvalue)
+    private static void NeedApplyProperties(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is SkiaButton control)
         {
@@ -285,7 +301,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         nameof(Text),
         typeof(string),
         typeof(SkiaButton),
-        string.Empty, propertyChanged: OnLookChanged);
+        string.Empty, propertyChanged: NeedApplyProperties);
 
     /// <summary>
     /// Bind to your own content!
@@ -417,9 +433,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         nameof(TintColor),
         typeof(Color),
         typeof(SkiaButton),
-        Colors.Red);
-
-    protected SKPoint _lastDownPts;
+        Colors.Red, propertyChanged: NeedApplyProperties);
 
     public Color TintColor
     {
@@ -427,6 +441,17 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(TintColorProperty, value); }
     }
 
+    public static readonly BindableProperty TextColorProperty = BindableProperty.Create(
+        nameof(TextColor),
+        typeof(Color),
+        typeof(SkiaButton),
+        Colors.White, propertyChanged: NeedApplyProperties);
+
+    public Color TextColor
+    {
+        get { return (Color)GetValue(TextColorProperty); }
+        set { SetValue(TextColorProperty, value); }
+    }
 
     #endregion
 

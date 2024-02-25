@@ -48,12 +48,20 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     {
         if (Control == null)
         {
+            var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
             Control = new MauiEditor()
             {
                 //BackgroundColor = Colors.Red
+                Text = this.Text,
+                FontFamily = alias,
+                FontSize = FontSize,
+                TextColor = this.TextColor,
+                //ReturnType = this.ReturnType
             };
+            AdaptControlSize();
+
             SubscribeToControl(true);
-            UpdateControl();
+
             Content = Control;
 
             if (IsFocused)

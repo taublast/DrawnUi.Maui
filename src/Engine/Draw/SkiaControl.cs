@@ -3193,9 +3193,9 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void ApplyBindingContext()
         {
-            foreach (var shade in Shadows)
+            foreach (var effect in this.VisualEffects)
             {
-                shade.BindingContext = BindingContext;
+                effect.BindingContext = BindingContext;
             }
 
             foreach (var view in this.Views)
@@ -5263,7 +5263,7 @@ namespace DrawnUi.Maui.Draw
 
         public SKRect Destination { get; protected set; }
 
-        protected SKPaint PaintSystem { get; set; }
+        public SKPaint PaintSystem { get; set; }
 
 
         /// <summary>
@@ -5322,22 +5322,11 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        //public void PaintClearBackground(SKCanvas canvas)
-        //{
-        //    if (ClearColor != Colors.Transparent)
-        //    {
-        //        using (var paint = new SKPaint
-        //        {
-        //            Color = ClearColor.ToSKColor(),
-        //            Style = SKPaintStyle.StrokeAndFill,
-        //        })
-        //        {
-        //            canvas.DrawRect(Destination, paint);
-        //        }
-        //    }
-        //}
+        protected virtual void SetEffect(SkiaEffect effect)
+        {
+            effect.Attach(this);
+        }
 
-        //static int countRedraws = 0;
         protected static void NeedDraw(BindableObject bindable, object oldvalue, object newvalue)
         {
 
@@ -5572,66 +5561,102 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         static object lockViews = new();
 
+        //public static readonly BindableProperty EffectProperty = BindableProperty.Create(
+        //    nameof(Effect),
+        //    typeof(SkiaEffect),
+        //    typeof(SkiaControl),
+        //    null,
+        //    propertyChanged: NeedChangeEffect);
 
+        //private static void NeedChangeEffect(BindableObject bindable, object oldvalue, object newvalue)
+        //{
+        //    if (bindable is SkiaControl control)
+        //    {
+        //        control.SetEffect(newvalue as SkiaEffect);
+        //    }
+        //}
 
-        #region SHADOWS
+        //public SkiaEffect Effect
+        //{
+        //    get { return (SkiaEffect)GetValue(EffectProperty); }
+        //    set { SetValue(EffectProperty, value); }
+        //}
 
-        /// <summary>
-        /// Creates and sets an ImageFilter for SKPaint
-        /// </summary>
-        /// <param name="paintShadow"></param>
-        /// <param name="shadow"></param>
-        protected void AddShadowFilter(SKPaint paintShadow, SkiaShadow shadow)
+        #region EFFECTS
+
+        private static void EffectsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
-            var colorShadow = shadow.Color;
-            if (colorShadow.Alpha == 1.0)
+            if (bindable is SkiaControl control)
             {
-                colorShadow = shadow.Color.WithAlpha((float)shadow.Opacity);
-            }
+                if (oldvalue is INotifyCollectionChanged oldCollection)
+                {
+                    oldCollection.CollectionChanged -= control.EffectsCollectionChanged;
+                }
+                if (newvalue is INotifyCollectionChanged newCollection)
+                {
+                    newCollection.CollectionChanged += control.EffectsCollectionChanged;
+                }
 
-            paintShadow.ImageFilter = SKImageFilter.CreateDropShadow(
-                (float)(shadow.X * RenderingScale), (float)(shadow.Y * RenderingScale),
-                (float)(shadow.Blur * RenderingScale), (float)(shadow.Blur * RenderingScale),
-                colorShadow.ToSKColor());
+                if (newvalue is IEnumerable<SkiaEffect> list)
+                    control.UpdateVisualEffects(list);
+            }
         }
 
-        public static readonly BindableProperty ShadowsProperty = BindableProperty.Create(
-            nameof(Shadows),
-            typeof(IList<SkiaShadow>),
+        void UpdateVisualEffects(IEnumerable<SkiaEffect> effects)
+        {
+            if (effects != null)
+            {
+                var effect = effects.FirstOrDefault();
+                if (effect != null)
+                {
+                    SetEffect(effect);
+                }
+                Update();
+            }
+        }
+
+        private void EffectsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateVisualEffects(this.VisualEffects);
+        }
+
+        public static readonly BindableProperty VisualEffectsProperty = BindableProperty.Create(
+            nameof(VisualEffects),
+            typeof(IList<SkiaEffect>),
             typeof(SkiaControl),
             defaultValueCreator: (instance) =>
             {
-                var created = new ObservableCollection<SkiaShadow>();
+                var created = new ObservableCollection<SkiaEffect>();
+                EffectsPropertyChanged(instance, null, created);
                 return created;
             },
-            validateValue: (bo, v) => v is IList<SkiaShadow>,
-            propertyChanged: NeedDraw,
-            coerceValue: CoerceShadows);
+            validateValue: (bo, v) => v is IList<SkiaEffect>,
+            propertyChanged: EffectsPropertyChanged,
+            coerceValue: CoerceVisualEffects);
 
         private static int instanceCount = 0;
 
-        public IList<SkiaShadow> Shadows
+        public IList<SkiaEffect> VisualEffects
         {
-            get => (IList<SkiaShadow>)GetValue(ShadowsProperty);
-            set => SetValue(ShadowsProperty, value);
+            get => (IList<SkiaEffect>)GetValue(VisualEffectsProperty);
+            set => SetValue(VisualEffectsProperty, value);
         }
 
-        private static object CoerceShadows(BindableObject bindable, object value)
+        private static object CoerceVisualEffects(BindableObject bindable, object value)
         {
-            if (!(value is ReadOnlyCollection<SkiaShadow> readonlyCollection))
+            if (!(value is ReadOnlyCollection<SkiaEffect> readonlyCollection))
             {
                 return value;
             }
-
-            return new ReadOnlyCollection<SkiaShadow>(
+            return new ReadOnlyCollection<SkiaEffect>(
                 readonlyCollection.ToList());
         }
 
 
         #endregion
-
 
         #region Animation 
 
@@ -6348,6 +6373,25 @@ namespace DrawnUi.Maui.Draw
         }
 
         #region HELPERS
+
+        /// <summary>
+        /// Creates and sets an ImageFilter for SKPaint
+        /// </summary>
+        /// <param name="paintShadow"></param>
+        /// <param name="shadow"></param>
+        public static void AddShadowFilter(SKPaint paintShadow, SkiaShadow shadow, float scale)
+        {
+            var colorShadow = shadow.Color;
+            if (colorShadow.Alpha == 1.0)
+            {
+                colorShadow = shadow.Color.WithAlpha((float)shadow.Opacity);
+            }
+
+            paintShadow.ImageFilter = SKImageFilter.CreateDropShadow(
+                (float)(shadow.X * scale), (float)(shadow.Y * scale),
+                (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
+                colorShadow.ToSKColor());
+        }
 
         public static Random Random = new Random();
         protected double _arrangedViewportHeightLimit;
