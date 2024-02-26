@@ -26,9 +26,18 @@ public partial class MainPage : ContentPage
             Super.DisplayException(this, e);
         }
     }
-    
-    
-  
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        
+#if ANDROID
+
+        App.TestLink();
+        
+#endif
+    }
+
     private void TappedSelectPage(object sender, TouchActionEventArgs e)
     {
         if (sender is SkiaButton btn)

@@ -698,13 +698,13 @@ namespace DrawnUi.Maui.Draw
         public virtual MeasuringConstraints GetMeasuringConstraints(MeasureRequest request)
         {
             var withLock = GetSizeRequest(request.WidthRequest, request.HeightRequest, true);
-
             var margins = GetAllMarginsInPixels(request.Scale);
 
             var adaptedWidthConstraint = AdaptWidthConstraintToRequest(withLock.Width, margins, request.Scale);
             var adaptedHeightConstraint = AdaptHeightContraintToRequest(withLock.Height, margins, request.Scale);
 
             var rectForChildrenPixels = GetMeasuringRectForChildren(adaptedWidthConstraint, adaptedHeightConstraint, request.Scale);
+
             return new MeasuringConstraints
             {
                 Margins = margins,
@@ -1320,12 +1320,15 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-        public SKSize GetSizeRequest(float widthConstraint, float heightConstraint, bool insideLayout)
+        public virtual SKSize GetSizeRequest(float widthConstraint, float heightConstraint, bool insideLayout)
         {
             if (insideLayout)
             {
-
+                //todo
             }
+
+            widthConstraint *= (float)this.WidthRequestRatio;
+            heightConstraint *= (float)this.HeightRequestRatio;
 
             if (LockRatio > 0)
             {
@@ -1434,6 +1437,38 @@ namespace DrawnUi.Maui.Draw
         {
             get { return (double)GetValue(LockRatioProperty); }
             set { SetValue(LockRatioProperty, value); }
+        }
+
+        public static readonly BindableProperty HeightRequestRatioProperty = BindableProperty.Create(
+            nameof(HeightRequestRatio),
+            typeof(double),
+            typeof(SkiaControl),
+            1.0,
+            propertyChanged: NeedInvalidateMeasure);
+
+        /// <summary>
+        /// HeightRequest Multiplier, default is 1.0
+        /// </summary>
+        public double HeightRequestRatio
+        {
+            get { return (double)GetValue(HeightRequestRatioProperty); }
+            set { SetValue(HeightRequestRatioProperty, value); }
+        }
+
+        public static readonly BindableProperty WidthRequestRatioProperty = BindableProperty.Create(
+            nameof(WidthRequestRatio),
+            typeof(double),
+            typeof(SkiaControl),
+            1.0,
+            propertyChanged: NeedInvalidateMeasure);
+
+        /// <summary>
+        /// WidthRequest Multiplier, default is 1.0
+        /// </summary>
+        public double WidthRequestRatio
+        {
+            get { return (double)GetValue(WidthRequestRatioProperty); }
+            set { SetValue(WidthRequestRatioProperty, value); }
         }
 
         public static readonly BindableProperty HorizontalFillRatioProperty = BindableProperty.Create(
