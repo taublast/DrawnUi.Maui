@@ -157,7 +157,7 @@ namespace DrawnUi.Maui.Draw
         public override void OnDisposing()
         {
             ClearChildren();
-            
+
             ChildrenFactory?.Dispose();
 
             DirtyChild = null;
@@ -420,7 +420,7 @@ namespace DrawnUi.Maui.Draw
             OnItemSourceChanged();
         }
 
- 
+
 
         #region PROPERTIES
 
@@ -1071,7 +1071,10 @@ namespace DrawnUi.Maui.Draw
                         if (!canMeasureTemplates)
                             return ScaledSize.CreateEmpty(request.Scale);
                     }
-
+                    if (Tag == "ValidationStack")
+                    {
+                        var stop = 1;
+                    }
                     ContentSize = MeasureStack(constraints.Content, request.Scale);
                     break;
 

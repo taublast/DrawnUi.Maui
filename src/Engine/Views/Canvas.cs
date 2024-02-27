@@ -18,6 +18,7 @@ public class Canvas : DrawnView, IGestureListener
 {
 
 
+
     public override void SetChildren(IEnumerable<ISkiaAttachable> views)
     {
         //do not use subviews as we are using Content property for this control
@@ -63,11 +64,9 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override void OnSizeChanged()
     {
-
         base.OnSizeChanged();
 
         InvalidateChildren();
-
     }
 
     protected override void InvalidateMeasure()
