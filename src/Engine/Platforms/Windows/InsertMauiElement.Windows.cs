@@ -104,6 +104,8 @@ public partial class SkiaMauiElement
             nativeView.UpdateLayout(); //required. in maui this is also needed to be called as fix for after IsVisible is set to true sometimes the view just doesn't show up.
 
             //Trace.WriteLine($"Layout Maui : {VisualTransformNative.Rect} {VisualTransformNative.Translation} {VisualTransformNative.IsVisible} {VisualTransformNative.Opacity} {VisualTransformNative.Rotation} {VisualTransformNative.Scale}");
+
+            Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}");
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using DrawnUi.Maui.Infrastructure.Enums;
 using DrawnUi.Maui.Infrastructure.Extensions;
+using Microsoft.Maui.Controls.Internals;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
@@ -63,8 +64,11 @@ namespace DrawnUi.Maui.Views
                 CreateSkiaView();
             }
 
+            HandlerWasSet?.Invoke(this, Handler != null);
             //InvalidateChildren(); //need clear gfx cache
         }
+
+        public event EventHandler<bool> HandlerWasSet;
 
         protected virtual void TakeScreenShotInternal(SKSurface surface)
         {

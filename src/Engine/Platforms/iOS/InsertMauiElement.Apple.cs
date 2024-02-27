@@ -8,7 +8,7 @@ namespace DrawnUi.Maui.Draw;
 public partial class SkiaMauiElement
 {
 
-
+    public bool ShowSnapshot => false;
 
     protected virtual void LayoutNativeView(VisualElement element)
     {

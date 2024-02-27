@@ -3605,15 +3605,6 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-
-        private void OnFormsSizeChanged(object sender, EventArgs e)
-        {
-            //todo layout not updating!!!!
-
-            Update();
-        }
-
-
         public bool IsDisposed { get; protected set; }
 
         /// <summary>
@@ -3692,7 +3683,7 @@ namespace DrawnUi.Maui.Draw
 
             IsDisposed = true;
 
-            this.SizeChanged -= OnFormsSizeChanged;
+            //this.SizeChanged -= OnFormsSizeChanged;
             DisposeChildren();
             Parent = null;
             Superview = null;
@@ -6145,7 +6136,7 @@ namespace DrawnUi.Maui.Draw
                     Parent = null;
                     //BindingContext = null;
 
-                    this.SizeChanged -= OnFormsSizeChanged;
+                    //this.SizeChanged -= OnFormsSizeChanged;
                     return;
                 }
 
@@ -6165,7 +6156,7 @@ namespace DrawnUi.Maui.Draw
                     parent.RegisterGestureListener(iAmGestureListener);
                 }
 
-                if (parent is SkiaControl control)
+                if (parent is IDrawnBase control)
                 {
                     //control.InvalidateViewsList();
                     if (BindingContext == null)
@@ -6177,7 +6168,7 @@ namespace DrawnUi.Maui.Draw
                 //    ((ISkiaHasChildren)this).LayoutInvalidated = true;
                 //}
 
-                this.SizeChanged += OnFormsSizeChanged;
+                //this.SizeChanged += OnFormsSizeChanged;
 
                 InvalidateInternal();
             }

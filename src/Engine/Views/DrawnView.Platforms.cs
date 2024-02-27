@@ -119,7 +119,7 @@ namespace DrawnUi.Maui.Views
             IsHiddenInViewTree = false;
         }
 
-   
+
 
     }
 }

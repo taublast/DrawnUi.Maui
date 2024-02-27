@@ -223,6 +223,16 @@
             base.OnChildAdded(child);
         }
 
+        public override void SuperViewChanged()
+        {
+            base.SuperViewChanged();
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                SetContent(Content);
+            });
+
+        }
 
         /// <summary>
         /// Use Content property for direct access
@@ -260,6 +270,8 @@
 
         public void ApplyTransform(VisualTransform transform)
         {
+            _transform = transform;
+
             if (Element == null || Element.Handler == null)
                 return;
 
@@ -269,7 +281,7 @@
 
             //Debug.WriteLine($"[ME] {native.IsVisible}");
 
-            if (native != VisualTransformNative)
+            if (native != VisualTransformNative)// && !ShowSnapshot)
             {
                 UpdateElementSize();
                 VisualTransformNative = native;
@@ -410,6 +422,7 @@
                 LayoutNativeView(Element);
 
 #if ANDROID || WINDOWS
+
                 if (AnimateSnapshot && VisualTransformNative.IsVisible)
                 {
                     if (!ShowSnapshot)
@@ -452,7 +465,7 @@
 
         public override void SetVisualTransform(VisualTransform transform)
         {
-            //Debug.WriteLine($"SetVisualTransform {transform.Translation.X},{transform.Translation.Y} Tree: " + transform.Logs);
+            //Super.Log($"SetVisualTransform {transform.Translation.X},{transform.Translation.Y} Tree: " + transform.Logs);
 
             ApplyTransform(transform);
 
@@ -509,6 +522,8 @@
             null,
             propertyChanged: OnReplaceContent);
 
+        private VisualTransform _transform;
+
         private static void OnReplaceContent(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is SkiaMauiElement control)
@@ -533,7 +548,8 @@
         #endregion
 
 #if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
-        protected virtual void LayoutNativeView(VisualElement element)
+        
+protected virtual void LayoutNativeView(VisualElement element)
         {
             throw new NotImplementedException();
         }
@@ -541,6 +557,9 @@
         {
             throw new NotImplementedException();
         }
+
+        public bool ShowSnapshot => false;
+
 #endif
     }
 }
