@@ -156,9 +156,9 @@ namespace DrawnUi.Maui.Draw
 
         public override void OnDisposing()
         {
-            ClearChildren();
-            
             ChildrenFactory?.Dispose();
+
+            ClearChildren();
 
             DirtyChild = null;
 
@@ -420,7 +420,7 @@ namespace DrawnUi.Maui.Draw
             OnItemSourceChanged();
         }
 
- 
+
 
         #region PROPERTIES
 
