@@ -53,7 +53,11 @@
                             TextColor="White"
                             VerticalOptions="Center">
                             <draw:SkiaControl.VisualEffects>
-                                <draw:BlurEffect Amount="2" />
+                                <draw:DropShadowEffect
+                                    Blur="8"
+                                    X="1"
+                                    Y="2"
+                                    Color="#FF2222" />
                             </draw:SkiaControl.VisualEffects>
                         </draw:SkiaLabel>
 
@@ -77,6 +81,7 @@
                                         TintColor="{StaticResource ColorPrimary}"
                                         WidthRequest="150">
                                         <draw:SkiaControl.VisualEffects>
+                                            <draw:BlurEffect Amount="2" />
                                             <draw:DropShadowEffect
                                                 Blur="4"
                                                 X="0"

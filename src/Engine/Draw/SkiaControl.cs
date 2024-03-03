@@ -4258,7 +4258,7 @@ namespace DrawnUi.Maui.Draw
             bool applyOpacity = useOpacity && Opacity < 1;
             bool needTransform = HasTransform;
 
-            if (applyOpacity || isClipping || needTransform || CustomizeLayerPaint != null)
+            if (applyOpacity || isClipping || needTransform || VisualEffects?.Count > 0 || CustomizeLayerPaint != null)
             {
                 ctx.Canvas.Save();
                 var restore = 0;
@@ -4276,6 +4276,11 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
 
+                if (VisualEffects?.Count > 0)
+                {
+                    CustomizeLayerPaint = VisualEffects.First().Attach()
+                }
+
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {
                     var alpha = (byte)(0xFF / 1.0 * Opacity);
@@ -4288,6 +4293,8 @@ namespace DrawnUi.Maui.Draw
 
                     restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
+
+
 
                 if (needTransform)
                 {
