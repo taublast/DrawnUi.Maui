@@ -156,9 +156,9 @@ namespace DrawnUi.Maui.Draw
 
         public override void OnDisposing()
         {
-            ClearChildren();
-
             ChildrenFactory?.Dispose();
+
+            ClearChildren();
 
             DirtyChild = null;
 
