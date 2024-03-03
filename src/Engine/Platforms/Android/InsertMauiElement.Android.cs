@@ -54,18 +54,27 @@ public partial class SkiaMauiElement
     {
         if (element.Handler?.PlatformView is View nativeView)
         {
-            nativeView.TranslationX = VisualTransformNative.Translation.X;
-            nativeView.TranslationY = VisualTransformNative.Translation.Y;
-            nativeView.Rotation = VisualTransformNative.Rotation;
-            nativeView.ScaleX = VisualTransformNative.Scale.X;
-            nativeView.ScaleY = VisualTransformNative.Scale.Y;
-            nativeView.Alpha = VisualTransformNative.Opacity;
+            nativeView.Visibility = VisualTransformNative.IsVisible ? ViewStates.Visible : ViewStates.Invisible;
 
-            //int widthMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Width, MeasureSpecMode.Exactly);
-            //int heightMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Height, MeasureSpecMode.Exactly);
-            //nativeView.Measure(widthMeasureSpec, heightMeasureSpec);
+            if (nativeView.Visibility == ViewStates.Visible)
+            {
+                nativeView.TranslationX = VisualTransformNative.Translation.X;
+                nativeView.TranslationY = VisualTransformNative.Translation.Y;
+                nativeView.Rotation = VisualTransformNative.Rotation;
+                nativeView.ScaleX = VisualTransformNative.Scale.X;
+                nativeView.ScaleY = VisualTransformNative.Scale.Y;
+                nativeView.Alpha = VisualTransformNative.Opacity;
 
-            nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
+                //int widthMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Width, MeasureSpecMode.Exactly);
+                //int heightMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Height, MeasureSpecMode.Exactly);
+                //nativeView.Measure(widthMeasureSpec, heightMeasureSpec);
+
+                nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
+
+                if (!WasRendered)
+                    WasRendered = nativeView.Width > 0;
+            }
+
         }
     }
 
@@ -116,7 +125,8 @@ public partial class SkiaMauiElement
                 if (layout != null)
                     layout.AddView(view);
 
-                LayoutNativeView(Element);
+                if (VisualTransformNative.IsVisible)
+                    LayoutNativeView(Element);
             });
         }
     }

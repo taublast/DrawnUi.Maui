@@ -80,32 +80,49 @@ public partial class SkiaMauiElement
     {
         if (element.Handler?.PlatformView is FrameworkElement nativeView)
         {
-            //UIElement
-            nativeView.Width = VisualTransformNative.Rect.Width;
-            nativeView.Height = VisualTransformNative.Rect.Height;
-            nativeView.Opacity = VisualTransformNative.Opacity;
+            nativeView.Visibility = !VisualTransformNative.IsVisible ? Visibility.Collapsed : Visibility.Visible;
 
-            // Creating a new CompositeTransform to handle the transforms
-            var transform = new CompositeTransform
+            if (nativeView.Visibility == Visibility.Visible)
             {
-                TranslateX = VisualTransformNative.Translation.X,
-                TranslateY = VisualTransformNative.Translation.Y,
-                Rotation = VisualTransformNative.Rotation, // Assuming rotation is in degrees
-                ScaleX = VisualTransformNative.Scale.X,
-                ScaleY = VisualTransformNative.Scale.Y
-            };
+                //UIElement
+                nativeView.Width = VisualTransformNative.Rect.Width;
+                nativeView.Height = VisualTransformNative.Rect.Height;
+                nativeView.Opacity = VisualTransformNative.Opacity;
 
-            nativeView.RenderTransform = transform;
+                // Creating a new CompositeTransform to handle the transforms
+                var transform = new CompositeTransform
+                {
+                    TranslateX = VisualTransformNative.Translation.X,
+                    TranslateY = VisualTransformNative.Translation.Y,
+                    Rotation = VisualTransformNative.Rotation, // Assuming rotation is in degrees
+                    ScaleX = VisualTransformNative.Scale.X,
+                    ScaleY = VisualTransformNative.Scale.Y
+                };
 
-            Windows.Foundation.Size availableSize = new(VisualTransformNative.Rect.Width, VisualTransformNative.Rect.Height);
-            nativeView.Measure(availableSize);
-            nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left, VisualTransformNative.Rect.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+                nativeView.RenderTransform = transform;
+
+
+                nativeView.UpdateLayout();
+
+                Windows.Foundation.Size availableSize = new(VisualTransformNative.Rect.Width, VisualTransformNative.Rect.Height);
+                nativeView.Measure(availableSize);
+                nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left, VisualTransformNative.Rect.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+
+                if (!WasRendered)
+                    WasRendered = nativeView.RenderSize.Width > 0;
+            }
 
             nativeView.UpdateLayout(); //required. in maui this is also needed to be called as fix for after IsVisible is set to true sometimes the view just doesn't show up.
 
-            //Trace.WriteLine($"Layout Maui : {VisualTransformNative.Rect} {VisualTransformNative.Translation} {VisualTransformNative.IsVisible} {VisualTransformNative.Opacity} {VisualTransformNative.Rotation} {VisualTransformNative.Scale}");
+            // Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {nativeView.Opacity} wid {nativeView.RenderSize.Width}");
+        }
+    }
 
-            Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}");
+    public void UpdateNativeLayout()
+    {
+        if (Element != null && Element.Handler?.PlatformView is FrameworkElement nativeView)
+        {
+            nativeView.UpdateLayout();
         }
     }
 

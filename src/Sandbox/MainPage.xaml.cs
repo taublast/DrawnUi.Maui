@@ -30,11 +30,11 @@ public partial class MainPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        
+
 #if ANDROID
 
-        App.TestLink();
-        
+        //App.TestLink();
+
 #endif
     }
 
@@ -62,8 +62,8 @@ public partial class MainPage : ContentPage
             }
         }
     }
-    
-    
 
-    
+
+
+
 }
