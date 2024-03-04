@@ -1,5 +1,5 @@
-﻿using DrawnUi.Maui.Draw;
-using AppoMobi.Specials;
+﻿using AppoMobi.Specials;
+using DrawnUi.Maui.Draw;
 using System.Windows.Input;
 using Color = Microsoft.Maui.Graphics.Color;
 using Colors = Microsoft.Maui.Graphics.Colors;
@@ -107,6 +107,11 @@ namespace DrawnUi.Maui.Draw
                 return consumed ? this : null;
             }
             //do not need to call base we have no children
+
+            if (Tapped != null || CommandTapped != null)
+            {
+                return this;
+            }
 
             return null;
         }
