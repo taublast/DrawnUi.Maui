@@ -1464,8 +1464,8 @@ namespace DrawnUi.Maui.Controls
 
         protected virtual void UnlockNavigation([CallerMemberName] string caller = null)
         {
-            //if (LogEnabled)
-            Super.Log($"[Shell] Navigation UNlocked by {caller}");
+            if (LogEnabled)
+                Super.Log($"[Shell] Navigation UNlocked by {caller}");
             LockNavigation.Release();
         }
 

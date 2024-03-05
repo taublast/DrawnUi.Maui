@@ -16,7 +16,7 @@
 
   <PropertyGroup>
     <PackageReleaseNotes>Alpha</PackageReleaseNotes>
-    <Version>1.0.8.6</Version>
+    <Version>1.0.8.7</Version>
     <Title>DrawnUi for .NET MAUI</Title>
     <PackageId>AppoMobi.Maui.DrawnUi</PackageId>
     <Description>Cross-platform rendering engine for .NET MAUI to draw your UI with SkiaSharp</Description>
@@ -99,7 +99,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.5.3" />
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.8.2" />
     <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
   </ItemGroup>
 
@@ -122,5 +122,9 @@
   <ItemGroup>
     <Folder Include="Platforms\Windows\Controls\" />
   </ItemGroup>
+
+  <!--<ItemGroup>
+    <ProjectReference Include="..\..\..\AppoMobi.Maui.DrawnUi\src\Refs\AppoMobi.Maui.Gestures\src\AppoMobi.Maui.Gestures.csproj" />
+  </ItemGroup>-->
 
 </Project>

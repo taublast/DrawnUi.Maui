@@ -93,13 +93,13 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
             {
                 IsDrawing = false;
 #if ANDROID
-                if (_fps<120)
+                if (_fps < 70)
                     InvalidateSurface();
                 else
 #else
                 Superview.Update();
 #endif
-                return;
+                    return;
             }
         }
 

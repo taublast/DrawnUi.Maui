@@ -21,7 +21,7 @@ public static class RubberBandUtils
         float x = RubberBandClamp(point.X, dims.X, new RangeF(track.Left, track.Right), coeff);
         float y = RubberBandClamp(point.Y, dims.Y, new RangeF(track.Top, track.Bottom), coeff);
 
-        Super.Log($"CLAMPED {point.Y} for {track} to {y}");
+        //Super.Log($"CLAMPED {point.Y} for {track} to {y}");
 
         return new Vector2(x, y);
     }
