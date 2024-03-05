@@ -174,13 +174,13 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
             {
                 IsDrawing = false;
 #if ANDROID
-                if (_fps < 120)
+                if (_fps < 70)
                     InvalidateSurface();
                 else
-#endif
+#else
                 Superview.Update();
-
-                return;
+#endif
+                    return;
             }
         }
 

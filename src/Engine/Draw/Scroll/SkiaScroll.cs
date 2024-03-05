@@ -1103,7 +1103,7 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void OnScrollerStopped()
         {
-            Super.Log("OnScrollerStopped..");
+            //Super.Log("OnScrollerStopped..");
 
             UpdateLoadingLock(false);
 
@@ -1131,9 +1131,10 @@ namespace DrawnUi.Maui.Draw
                             velocityY = Math.Sign(remainingVelocity.Y) * MaxBounceVelocity;
                         }
 
-                        Super.Log("OnScrollerStopped Bouncing..");
+                        //Super.Log("OnScrollerStopped Bouncing..");
                         Bounce(new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY), _axis, new Vector2(velocityX, velocityY));
-                        //todo can just clamp instead if Bouce is disabled..
+
+
                     }
                     else
                     {

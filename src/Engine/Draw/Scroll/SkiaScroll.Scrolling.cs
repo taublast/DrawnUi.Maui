@@ -149,7 +149,7 @@ public partial class SkiaScroll
 
     void Bounce(Vector2 offsetFrom, Vector2 offsetTo, Vector2 velocity)
     {
-        Super.Log($"[SCROLL] {this.Tag} *BOUNCE* to {offsetTo.Y} v {velocity.Y}..");
+        //Super.Log($"[SCROLL] {this.Tag} *BOUNCE* to {offsetTo.Y} v {velocity.Y}..");
 
         var displacement = offsetFrom - offsetTo;
 

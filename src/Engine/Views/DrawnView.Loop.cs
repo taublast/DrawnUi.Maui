@@ -81,7 +81,7 @@ public partial class DrawnView
                 var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
 
                 var needWait =
-                    Super.CapMicroSecs / 2f //do not ask why
+                    Super.CapMicroSecs
                     - elapsedMicros;
                 if (needWait >= 1)
                 {
@@ -94,6 +94,7 @@ public partial class DrawnView
                 {
                     await Task.Delay(1);
                 }
+
                 _isWaiting = false;
 
                 if (!Super.EnableRendering)
@@ -102,16 +103,7 @@ public partial class DrawnView
                     return;
                 }
 
-#if WINDOWS
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    // Update the UI
-                    CanvasView?.InvalidateSurface();
-
-                });
-#else
                 CanvasView?.InvalidateSurface();
-#endif
 
             }
             else
@@ -181,7 +173,7 @@ public partial class DrawnView
                             }
                             else
                             {
-                                await Task.Delay(1); //unlock threads
+                                await Task.Delay(1);
                             }
 
                             if (!Super.EnableRendering)
