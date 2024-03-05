@@ -427,7 +427,6 @@ namespace DrawnUi.Maui.Draw
         {
             var clampedElastic = RubberBandUtils.ClampOnTrack(new Vector2(x, y), ContentOffsetBounds, (float)RubberEffect);
 
-
             if (Orientation == ScrollOrientation.Vertical)
             {
                 var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
@@ -487,6 +486,8 @@ namespace DrawnUi.Maui.Draw
 
         protected bool ChildWasPanning { get; set; }
 
+        protected bool ChildWasTapped { get; set; }
+
 
         protected bool IsContentActive
         {
@@ -496,31 +497,8 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        private List<(Vector2 velocity, DateTime time)> velocities = new List<(Vector2 velocity, DateTime time)>();
-        private const double Threshold = 10.0; // Minimum significant movement
-        private const int MaxSampleSize = 5; // Number of samples for weighted average
-        private const int ConsiderationTimeframeMs = 150; // Timeframe in ms for velocity consideration
 
-        private void CaptureVelocity(Vector2 velocity)
-        {
-            var now = DateTime.UtcNow;
-            if (velocities.Count == MaxSampleSize) velocities.RemoveAt(0);
-            velocities.Add((velocity, now));
-        }
-
-        private Vector2 CalculateFinalVelocity()
-        {
-            var now = DateTime.UtcNow;
-            var relevantVelocities = velocities.Where(v => (now - v.time).TotalMilliseconds <= ConsiderationTimeframeMs).ToList();
-            if (!relevantVelocities.Any()) return Vector2.Zero;
-
-            // Calculate weighted average for both X and Y components
-            float weightedSumX = relevantVelocities.Select((v, i) => v.velocity.X * (i + 1)).Sum();
-            float weightedSumY = relevantVelocities.Select((v, i) => v.velocity.Y * (i + 1)).Sum();
-            var weightSum = Enumerable.Range(1, relevantVelocities.Count).Sum();
-
-            return new Vector2(weightedSumX / weightSum, weightedSumY / weightSum);
-        }
+        protected VelocityAccumulator VelocityAccumulator { get; } = new();
 
         int lastNumberOfTouches;
 
@@ -555,7 +533,8 @@ namespace DrawnUi.Maui.Draw
 
 
 
-                if (!IsUserPanning && touchAction != TouchActionResult.Tapped && touchAction != TouchActionResult.LongPressing)
+                if (!IsUserPanning || touchAction == TouchActionResult.Up || touchAction == TouchActionResult.Tapped || !RespondsToGestures)
+                //&& touchAction != TouchActionResult.Tapped && touchAction != TouchActionResult.LongPressing)
                 {
                     var childConsumed = PassToChildren();
                     if (childConsumed != null)
@@ -564,6 +543,12 @@ namespace DrawnUi.Maui.Draw
                         {
                             ChildWasPanning = true;
                         }
+                        else
+                        if (touchAction == TouchActionResult.Tapped)
+                        {
+                            ChildWasTapped = true;
+                        }
+
                         if (touchAction != TouchActionResult.Up)
                             return childConsumed;
                     }
@@ -598,8 +583,11 @@ namespace DrawnUi.Maui.Draw
                     IsUserFocused = true;
                     IsUserPanning = false;
                     ChildWasPanning = false;
+                    ChildWasTapped = false;
 
                     StopScrolling();
+
+                    VelocityAccumulator.Clear();
 
                     _panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
                     _panningCurrentOffsetPts = _panningStartOffsetPts;
@@ -690,7 +678,7 @@ namespace DrawnUi.Maui.Draw
                         if (!wasPanning && IgnoreWrongDirection)
                         {
                             //first panning gesture..
-                            var panDirection = GetDirectionType(_panningStartOffsetPts, moveTo, 0.9f);
+                            var panDirection = GetDirectionType(_panningStartOffsetPts, moveTo, 0.15f);
 
                             if (Orientation == ScrollOrientation.Vertical && panDirection != DirectionType.Vertical)
                             {
@@ -702,9 +690,8 @@ namespace DrawnUi.Maui.Draw
                             }
                         }
 
-
                         //record velocity
-                        CaptureVelocity(new(VelocityX, VelocityY));
+                        VelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY));
 
                         var clamped = ClampOffset(moveTo.X, moveTo.Y);
 
@@ -752,7 +739,9 @@ namespace DrawnUi.Maui.Draw
                     case TouchActionResult.Up when RespondsToGestures:
                     //---------------------------------------------------------------------------------------------------------
 
-                    if (!ChildWasPanning) //should we swipe?
+                    //Super.Log($"[SCROLL] {this.Tag} UP?. {ChildWasPanning}  {ScrollLocked}..");
+
+                    if ((!ChildWasTapped || OverScrolled) && (!ChildWasPanning || IsUserPanning)) //should we swipe?
                     {
                         if (alreadyConsumed != null)
                         {
@@ -763,13 +752,14 @@ namespace DrawnUi.Maui.Draw
 
                         if (!ScrollLocked)
                         {
-                            var finalVelocity = CalculateFinalVelocity();
-
+                            var finalVelocity = VelocityAccumulator.CalculateFinalVelocity();
 
                             //beware every control received UP even out of bounds
                             //so we track if its ours
                             bool fling = false;
                             bool swipe = false;
+
+                            //Super.Log($"[SCROLL] {this.Tag} *UP* over {OverScrolled} IsUserPanning {IsUserPanning} {VelocityY}..");
 
                             if (!OverScrolled)
                             {
@@ -809,20 +799,22 @@ namespace DrawnUi.Maui.Draw
                                 }
                             }
 
-                            if (swipe || OverScrolled)
+                            if (OverScrolled || swipe)
                             {
+                                //Super.Log("UP swiping..");
                                 IsUserPanning = false;
 
-                                if (CalculateOverscrollDistance(ViewportOffsetX, ViewportOffsetY) != Vector2.Zero) //OverScrolled
+                                if (OverScrolled)// && CalculateOverscrollDistance(ViewportOffsetX, ViewportOffsetY) != Vector2.Zero) 
                                 {
 
                                     //go back to bounds
                                     var contentRect = new SKRect(0, 0, ptsContentWidth, ptsContentHeight);
                                     var closestPoint = GetClosestSidePoint(new SKPoint((float)InternalViewportOffset.Units.X, (float)InternalViewportOffset.Units.Y), contentRect, Viewport.Units.Size);
-                                    var axis = new Vector2(closestPoint.X, closestPoint.Y);
 
-                                    var velocityY = finalVelocity.Y * ChangeVelocityScrolled;// * _velocityKY;
-                                    var velocityX = finalVelocity.X * ChangeVelocityScrolled;// * _velocityKX;
+                                    var axis = new Vector2(closestPoint.X, closestPoint.Y); //bug is here, incorrect axis !
+
+                                    var velocityY = finalVelocity.Y * ChangeVelocityScrolled;
+                                    var velocityX = finalVelocity.X * ChangeVelocityScrolled;
 
                                     if (Math.Abs(velocityX) > MaxBounceVelocity)
                                     {
@@ -834,7 +826,9 @@ namespace DrawnUi.Maui.Draw
                                         velocityY = Math.Sign(velocityY) * MaxBounceVelocity;
                                     }
 
-                                    Bounce(new Vector2((float)InternalViewportOffset.Units.X, (float)InternalViewportOffset.Units.Y), axis, new(velocityX, velocityY));
+
+                                    Bounce(new Vector2((float)InternalViewportOffset.Units.X, (float)InternalViewportOffset.Units.Y),
+                                    axis, new(velocityX, velocityY));
 
                                     fling = true;
                                 }
@@ -858,15 +852,14 @@ namespace DrawnUi.Maui.Draw
                                         }
                                     }
 
-                                    var velocityY = finalVelocity.Y * ChangeVelocityScrolled;// * _velocityKY;
-                                    var velocityX = finalVelocity.X * ChangeVelocityScrolled;// * _velocityKX;
+                                    var velocityY = finalVelocity.Y * ChangeVelocityScrolled;
+                                    var velocityX = finalVelocity.X * ChangeVelocityScrolled;
 
                                     if (Math.Abs(velocityY) > _minVelocity || Math.Abs(velocityX) > _minVelocity)
                                     {
                                         IsUserFocused = false; //need set this for snap to work if fling would not last due to low speed
-
+                                        // SCROLL !!!!!
                                         fling = StartToFlingFrom(new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY), new(velocityX, velocityY));
-
                                     }
                                 }
 
@@ -1110,6 +1103,8 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void OnScrollerStopped()
         {
+            Super.Log("OnScrollerStopped..");
+
             UpdateLoadingLock(false);
 
             if (CheckNeedToSnap())
@@ -1136,10 +1131,14 @@ namespace DrawnUi.Maui.Draw
                             velocityY = Math.Sign(remainingVelocity.Y) * MaxBounceVelocity;
                         }
 
+                        Super.Log("OnScrollerStopped Bouncing..");
                         Bounce(new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY), _axis, new Vector2(velocityX, velocityY));
                         //todo can just clamp instead if Bouce is disabled..
                     }
-
+                    else
+                    {
+                        var whut = 1;
+                    }
                 }
             }
         }
