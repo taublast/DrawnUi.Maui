@@ -72,10 +72,10 @@ public class DecelerationTimingParameters : ITimingParameters
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public double? DurationToValue(Vector2 value)
+    public double DurationToValue(Vector2 value)
     {
-        if (DistanceToSegment(value, InitialValue, Destination) >= Threshold)
-            return null;
+        //if (DistanceToSegment(value, InitialValue, Destination) >= Threshold)
+        //    return null;
 
         return Math.Log(1 + DecelerationK * (value - InitialValue).Length() / InitialVelocity.Length()) / DecelerationK;
     }
