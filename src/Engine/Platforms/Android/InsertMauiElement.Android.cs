@@ -46,7 +46,9 @@ public partial class SkiaMauiElement
     {
         if (Element.Handler?.PlatformView is View nativeView)
         {
+            Super.Log($"SetNativeVisibility] {state} while ShowSnapshot is {ShowSnapshot}");
             nativeView.Visibility = state ? ViewStates.Visible : ViewStates.Invisible;
+            IsNativeVisible = state;
         }
     }
 
@@ -55,6 +57,8 @@ public partial class SkiaMauiElement
         if (element.Handler?.PlatformView is View nativeView)
         {
             nativeView.Visibility = VisualTransformNative.IsVisible ? ViewStates.Visible : ViewStates.Invisible;
+
+            IsNativeVisible = nativeView.Visibility == ViewStates.Visible;
 
             if (nativeView.Visibility == ViewStates.Visible)
             {
@@ -75,6 +79,7 @@ public partial class SkiaMauiElement
                     WasRendered = nativeView.Width > 0;
             }
 
+            //Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} width {nativeView.Width}");
         }
     }
 

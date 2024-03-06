@@ -44,7 +44,7 @@
             //so never pass 0
             try
             {
-                if (Element is IView view && Element.Handler != null && ptsWidth > 0 && ptsHeight > 0)
+                if (Element is IView view && Element.Handler != null && ptsWidth > 0 && ptsHeight > 0 && LayoutReady)
                 {
                     var measured = view.Measure(ptsWidth, ptsHeight);
                     //var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
@@ -56,6 +56,7 @@
                 Super.Log(e);
                 return new(VisualTransformNative.Rect.Size.Width, VisualTransformNative.Rect.Size.Height);
             }
+
             return Size.Zero;
         }
 
@@ -71,6 +72,8 @@
                 if (Element is IView view && Element.Handler != null)
                 {
                     ContentSizeUnits = MeasureAndArrangeMauiElement(bounds.Units.Width, bounds.Units.Height);
+
+                    //Super.Log($"[Measure] ContentSizeUnits {ContentSizeUnits}");
                 }
 
                 return bounds;
@@ -105,6 +108,7 @@
                 {
                     _showSnapshot = value;
                     OnPropertyChanged();
+                    //Super.Log($"ShowSnapshot] {value}");
                     Update();
                 }
             }
@@ -166,7 +170,7 @@
             if (!ShowSnapshot)
                 return;
 
-            if (TimerShowMauiView == null)
+            if (Element != null && Element.Handler != null && TimerShowMauiView == null)
             {
                 TimerShowMauiView = new(TimeSpan.FromMilliseconds(ms), (arg) =>
                 {
@@ -176,6 +180,11 @@
                         MainThread.BeginInvokeOnMainThread(() =>
                         {
                             ShowSnapshot = false;
+                            if (ContentSizeUnits == Size.Zero)
+                            {
+                                Invalidate();
+                            }
+
                             LayoutNativeView(Element);
                         });
 #else
@@ -190,9 +199,6 @@
                 TimerShowMauiView.Restart(null);
             }
         }
-
-
-
 
         /// <summary>
         /// For HotReload
@@ -253,10 +259,17 @@
 
             Element = null;
 
-            if (Superview != null && view != null)
+            if (Superview != null && view != null && LayoutReady)
             {
                 CreateMauiElement(view);
             }
+        }
+
+        protected override void OnLayoutReady()
+        {
+            base.OnLayoutReady();
+
+            SetContent(this.Content);
         }
 
         public void CreateMauiElement(VisualElement element)
@@ -385,25 +398,21 @@
 
         protected virtual void DrawSnapshot(SKCanvas canvas, SKRect destination)
         {
-
             var point = new SKPoint(destination.Left, destination.Top);
             canvas.DrawSurface(CachedBitmap, point);
 
-            if (SnapshotReady)
+            if (SnapshotReady && IsNativeVisible)
             {
-#if ANDROID || WINDOWS
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     SetNativeVisibility(false);
                 });
-#else
-                SetNativeVisibility(false);  
-#endif
             }
         }
 
 #endif
 
+        public bool IsNativeVisible { get; protected set; }
 
         public bool WasRendered { get; protected set; }
 
@@ -411,6 +420,10 @@
         {
             if (Element == null || Element.Handler == null || !NeedsLayoutNative)
             {
+                if (ShowSnapshot)
+                {
+                    PostponeShowingNativeView(FreezeTimeMs);
+                }
                 //Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
                 //{
                 //    MainThread.BeginInvokeOnMainThread(() =>

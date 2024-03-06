@@ -73,6 +73,7 @@ public partial class SkiaMauiElement
         {
             nativeView.Visibility = !state ? Visibility.Collapsed : Visibility.Visible;
             //Trace.WriteLine($"Layout Maui SetNativeVisibility : {nativeView.Visibility}");
+            IsNativeVisible = nativeView.Visibility == Visibility.Visible;
         }
     }
 
@@ -81,6 +82,8 @@ public partial class SkiaMauiElement
         if (element.Handler?.PlatformView is FrameworkElement nativeView)
         {
             nativeView.Visibility = !VisualTransformNative.IsVisible ? Visibility.Collapsed : Visibility.Visible;
+
+            IsNativeVisible = nativeView.Visibility == Visibility.Visible;
 
             if (nativeView.Visibility == Visibility.Visible)
             {

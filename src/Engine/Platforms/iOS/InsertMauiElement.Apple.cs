@@ -32,10 +32,8 @@ public partial class SkiaMauiElement
         if (Element.Handler?.PlatformView is UIView nativeView)
         {
             var visibility = state ? Visibility.Visible : Visibility.Hidden;
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                nativeView.UpdateVisibility(visibility);
-            });
+            IsNativeVisible = state;
+            nativeView.UpdateVisibility(visibility);
         }
     }
 
