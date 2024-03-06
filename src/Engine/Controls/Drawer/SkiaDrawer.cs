@@ -427,8 +427,20 @@ namespace DrawnUi.Maui.Controls
 
             snap = IsOpen ? SnapPoints[0] : SnapPoints[1];
 
-            ScrollToOffset(snap, Vector2.Zero, ViewportReady && Animated);
+            ScrollToOffset(snap, Vector2.Zero, Animated && ViewportReady);
         }
+
+
+
+
+        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        {
+            if (IsOpen && !ViewportReady)
+                return;
+
+            base.Paint(ctx, destination, scale, arguments);
+        }
+
 
         protected override bool ScrollToOffset(Vector2 targetOffset, Vector2 velocity, bool animate)
         {
