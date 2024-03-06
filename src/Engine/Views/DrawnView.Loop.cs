@@ -153,6 +153,13 @@ public partial class DrawnView
                         if (NeedCheckParentVisibility)
                             CheckElementVisibility(this);
 
+                        if (UpdateMode == UpdateMode.Constant)
+                        {
+                            InvalidatedCanvas++;
+                            CanvasView?.InvalidateSurface();
+                            return;
+                        }
+
                         if (!CanvasView.IsDrawing && CanDraw)  //passed checks
                         {
                             InvalidatedCanvas++;
