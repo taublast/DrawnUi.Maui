@@ -181,6 +181,11 @@ public class SnappingLayout : SkiaLayout
         }
     }
 
+    protected virtual void OnViewportIsReady()
+    {
+
+    }
+
     public bool ViewportReady
     {
         get
@@ -195,6 +200,8 @@ public class SnappingLayout : SkiaLayout
                 _viewportReady = value;
                 OnPropertyChanged();
                 OnViewportReady?.Invoke(this, null);
+                if (value)
+                    OnViewportIsReady();
             }
         }
     }
@@ -307,10 +314,10 @@ public class SnappingLayout : SkiaLayout
 
     public virtual void ApplyPosition(Vector2 position)
     {
+        TranslationX = position.X;
+        TranslationY = position.Y;
         MainThread.BeginInvokeOnMainThread(() =>
         {
-            TranslationX = position.X;
-            TranslationY = position.Y;
             InTransition = !CheckTransitionEnded();
         });
     }
