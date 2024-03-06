@@ -521,7 +521,7 @@ namespace DrawnUi.Maui.Draw
                 ContentGesturesHit = Content.HitIsInside(x, y);
             }
 
-            lock (LockIterateListeners)
+            //lock (LockIterateListeners)
             {
                 bool passedToChildren = false;
                 ISkiaGestureListener PassToChildren()
@@ -531,9 +531,30 @@ namespace DrawnUi.Maui.Draw
                     return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
                 }
 
+                bool wrongDirection = false;
+                if (IgnoreWrongDirection && touchAction == TouchActionResult.Panning)
+                {
+                    //first panning gesture..
+                    var panDirection = DirectionType.Vertical;
+                    if (Math.Abs(args.Distance.Delta.X) > Math.Abs(args.Distance.Delta.Y))
+                    {
+                        panDirection = DirectionType.Horizontal;
+                    }
+                    //var panDirection = GetDirectionType(_panningStartOffsetPts, moveTo, 0.9f);
+                    if (Orientation == ScrollOrientation.Vertical && panDirection != DirectionType.Vertical)
+                    {
+                        wrongDirection = true;
+                    }
+                    if (Orientation == ScrollOrientation.Horizontal && panDirection != DirectionType.Horizontal)
+                    {
+                        wrongDirection = true;
+                    }
+                }
 
-
-                if (!IsUserPanning || touchAction == TouchActionResult.Up || touchAction == TouchActionResult.Tapped || !RespondsToGestures)
+                if (!IsUserPanning || wrongDirection ||
+                    touchAction == TouchActionResult.Up
+                    || touchAction == TouchActionResult.Tapped
+                    || !RespondsToGestures)
                 //&& touchAction != TouchActionResult.Tapped && touchAction != TouchActionResult.LongPressing)
                 {
                     var childConsumed = PassToChildren();
@@ -551,6 +572,10 @@ namespace DrawnUi.Maui.Draw
 
                         if (touchAction != TouchActionResult.Up)
                             return childConsumed;
+                    }
+                    else
+                    {
+                        ChildWasPanning = false;
                     }
                 }
 
@@ -642,7 +667,6 @@ namespace DrawnUi.Maui.Draw
                     if (!ScrollLocked)
                     {
                         bool checkOverscroll = true;
-                        bool wasPanning = IsUserPanning;
 
                         if (!IsUserFocused)
                         {
@@ -654,12 +678,14 @@ namespace DrawnUi.Maui.Draw
                         //var movedY = (float)Math.Round(args.Distance.Total.Y * ChangeDIstancePanned);
                         //var movedX = (float)Math.Round(args.Distance.Total.X * ChangeDIstancePanned);
 
-                        var movedPtsY = (float)Math.Round((args.Distance.Total.Y / RenderingScale) * ChangeDIstancePanned);
-                        var movedPtsX = (float)Math.Round((args.Distance.Total.X / RenderingScale) * ChangeDIstancePanned);
+                        var movedPtsY = (float)Math.Round((args.Distance.Delta.Y / RenderingScale) * ChangeDIstancePanned);
+                        var movedPtsX = (float)Math.Round((args.Distance.Delta.X / RenderingScale) * ChangeDIstancePanned);
 
                         Vector2 moveTo;
                         moveTo = new Vector2(
                             _panningCurrentOffsetPts.X + movedPtsX, _panningCurrentOffsetPts.Y + movedPtsY);
+
+                        _panningCurrentOffsetPts = moveTo;
 
                         //if (smooth)
                         //{
@@ -675,19 +701,11 @@ namespace DrawnUi.Maui.Draw
 
                         //if the panning is not in the same direction as the scroll and we havn't started panning yet,
                         //do not consume gesture and return
-                        if (!wasPanning && IgnoreWrongDirection)
+                        if (IgnoreWrongDirection && wrongDirection)// && !wasPanning)
                         {
-                            //first panning gesture..
-                            var panDirection = GetDirectionType(_panningStartOffsetPts, moveTo, 0.15f);
-
-                            if (Orientation == ScrollOrientation.Vertical && panDirection != DirectionType.Vertical)
-                            {
-                                return null;
-                            }
-                            if (Orientation == ScrollOrientation.Horizontal && panDirection != DirectionType.Horizontal)
-                            {
-                                return null;
-                            }
+                            IsUserPanning = false;
+                            IsUserFocused = false;
+                            return null;
                         }
 
                         //record velocity
@@ -730,6 +748,7 @@ namespace DrawnUi.Maui.Draw
 
                         IsUserPanning = true;
                         _lastVelocity = new Vector2(VelocityX, VelocityY);
+
                         consumed = this;
                     }
 
@@ -1340,12 +1359,27 @@ namespace DrawnUi.Maui.Draw
             false);
 
         /// <summary>
-        /// Will ignore gestures of the wrong direction, like if this Orientation is Horizontal will ignore gestures with vertical direction velocity
+        /// Will ignore gestures of the wrong direction, like if this Orientation is Horizontal will ignore gestures with vertical direction velocity. Default is False.
         /// </summary>
         public bool IgnoreWrongDirection
         {
             get { return (bool)GetValue(IgnoreWrongDirectionProperty); }
             set { SetValue(IgnoreWrongDirectionProperty, value); }
+        }
+
+        public static readonly BindableProperty IgnoreWrongDirectionLockProperty = BindableProperty.Create(
+            nameof(IgnoreWrongDirectionLock),
+            typeof(bool),
+            typeof(SkiaScroll),
+            false);
+
+        /// <summary>
+        /// In case if will ignore gestures of the wrong direction, should we lock this direction or multi-directional scrolling (True) is still allowed (False). Default is False.
+        /// </summary>
+        public bool IgnoreWrongDirectionLock
+        {
+            get { return (bool)GetValue(IgnoreWrongDirectionLockProperty); }
+            set { SetValue(IgnoreWrongDirectionLockProperty, value); }
         }
 
         public static readonly BindableProperty ResetScrollPositionOnContentSizeChangedProperty = BindableProperty.Create(
