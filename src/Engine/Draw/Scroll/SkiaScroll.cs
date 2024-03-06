@@ -1367,6 +1367,7 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(IgnoreWrongDirectionProperty, value); }
         }
 
+        /*
         public static readonly BindableProperty IgnoreWrongDirectionLockProperty = BindableProperty.Create(
             nameof(IgnoreWrongDirectionLock),
             typeof(bool),
@@ -1381,6 +1382,7 @@ namespace DrawnUi.Maui.Draw
             get { return (bool)GetValue(IgnoreWrongDirectionLockProperty); }
             set { SetValue(IgnoreWrongDirectionLockProperty, value); }
         }
+        */
 
         public static readonly BindableProperty ResetScrollPositionOnContentSizeChangedProperty = BindableProperty.Create(
             nameof(ResetScrollPositionOnContentSizeChanged),
