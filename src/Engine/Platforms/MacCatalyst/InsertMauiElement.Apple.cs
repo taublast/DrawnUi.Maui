@@ -8,7 +8,7 @@ namespace DrawnUi.Maui.Draw;
 public partial class SkiaMauiElement
 {
 
-
+    public bool ShowSnapshot => false;
 
     protected virtual void LayoutNativeView(VisualElement element)
     {
@@ -32,10 +32,8 @@ public partial class SkiaMauiElement
         if (Element.Handler?.PlatformView is UIView nativeView)
         {
             var visibility = state ? Visibility.Visible : Visibility.Hidden;
-            MainThread.BeginInvokeOnMainThread(async () =>
-            {
-                nativeView.UpdateVisibility(visibility);
-            });
+            IsNativeVisible = state;
+            nativeView.UpdateVisibility(visibility);
         }
     }
 

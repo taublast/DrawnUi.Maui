@@ -48,6 +48,18 @@ public static class InternalExtensions
     {
         if (view == null) return;
 
+        if (view.Handler is IElementHandler nativeViewHandler)
+        {
+            try
+            {
+                nativeViewHandler.DisconnectHandler();
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
+        }
+
         if (view is Layout layout)
         {
             foreach (var child in layout.Children)
@@ -78,10 +90,6 @@ public static class InternalExtensions
             disposable.Dispose();
         }
 
-        if (view.Handler is IElementHandler nativeViewHandler)
-        {
-            nativeViewHandler.DisconnectHandler();
-        }
     }
 
     public static async Task WithCancellation(this Task task, CancellationToken cancellationToken)
