@@ -55,7 +55,7 @@ public class VisualTransform
             Scale = Scale
         };
 
-#elif MACCATALYST || IOS || WINDOWS
+#else
 
         //need points 
         return new VisualTransformNative

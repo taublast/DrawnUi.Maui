@@ -32,11 +32,13 @@
                 return false;
             }
             var native = (VisualTransformNative)obj;
+
             return IsVisible == native.IsVisible &&
-                Rect == native.Rect &&
-                Translation == native.Translation &&
-                Rotation == native.Rotation &&
-                Scale == native.Scale;
+                   Opacity == native.Opacity &&
+                   Rect == native.Rect &&
+                   Translation == native.Translation &&
+                   Rotation == native.Rotation &&
+                   Scale == native.Scale;
         }
 
         public override int GetHashCode()

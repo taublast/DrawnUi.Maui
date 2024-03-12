@@ -124,8 +124,7 @@ public partial class SkiaImageManager : IDisposable
 
     private readonly ConcurrentDictionary<string, Task<SKBitmap>> _trackLoadingBitmapsUris = new();
 
-    private readonly Dictionary<string, Stack<QueueItem>> pendingLoads = new();
-
+    private readonly ConcurrentDictionary<string, Stack<QueueItem>> pendingLoads = new(); //todo check if concurrent is okay here not loosing data!!!
 
 
     public Task<SKBitmap> Enqueue(ImageSource source, CancellationTokenSource token)
@@ -206,7 +205,10 @@ public partial class SkiaImageManager : IDisposable
                 {
                     // We're about to load this image, so add its Task to the loadingBitmaps dictionary
                     _trackLoadingBitmapsUris[uri] = tcs.Task;
-                    _queue.Enqueue(tuple);
+                    lock (lockObject)
+                    {
+                        _queue.Enqueue(tuple);
+                    }
 
                     TraceLog($"ImageLoadManager: Enqueued {uri} (queue {_queue.Count})");
                 }
@@ -356,9 +358,12 @@ public partial class SkiaImageManager : IDisposable
                 }
 
                 // If we didn't find a task in pendingLoads, try the main queue.
-                if (queueItem == null && _queue.TryDequeue(out queueItem))
+                lock (lockObject)
                 {
-                    TraceLog($"[DEQUEUE]: {queueItem.Source} (queue {_queue.Count})");
+                    if (queueItem == null && _queue.TryDequeue(out queueItem))
+                    {
+                        TraceLog($"[DEQUEUE]: {queueItem.Source} (queue {_queue.Count})");
+                    }
                 }
 
                 if (queueItem != null)
