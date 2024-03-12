@@ -4277,10 +4277,10 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
 
-                if (VisualEffects?.Count > 0)
-                {
-                    CustomizeLayerPaint = VisualEffects.First().Attach()
-                }
+                //if (VisualEffects?.Count > 0)
+                //{
+                //    CustomizeLayerPaint = VisualEffects.First().Attach(this);
+                //}
 
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {

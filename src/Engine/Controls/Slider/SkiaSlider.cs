@@ -169,7 +169,7 @@ public class SkiaSlider : SkiaLayout
         if (!IsUserPanning && IgnoreWrongDirection)
         {
             //first panning gesture..
-            var panDirection = GetDirectionType(_panningStartOffsetPts, new Vector2(_panningStartOffsetPts.X + args.Distance.Total.X, _panningStartOffsetPts.Y + args.Distance.Total.Y), 0.9f);
+            var panDirection = GetDirectionType(_panningStartOffsetPts, new Vector2(_panningStartOffsetPts.X + args.Distance.Total.X, _panningStartOffsetPts.Y + args.Distance.Total.Y), 0.8f);
 
             if (Orientation == OrientationType.Vertical && panDirection != DirectionType.Vertical)
             {

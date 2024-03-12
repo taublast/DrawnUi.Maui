@@ -5,6 +5,40 @@ using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Draw;
 
+public class VelocityAccumulator
+{
+    private List<(Vector2 velocity, DateTime time)> velocities = new List<(Vector2 velocity, DateTime time)>();
+    private const double Threshold = 10.0; // Minimum significant movement
+    private const int MaxSampleSize = 5; // Number of samples for weighted average
+    private const int ConsiderationTimeframeMs = 150; // Timeframe in ms for velocity consideration
+
+    public void Clear()
+    {
+        velocities.Clear();
+    }
+
+    public void CaptureVelocity(Vector2 velocity)
+    {
+        var now = DateTime.UtcNow;
+        if (velocities.Count == MaxSampleSize) velocities.RemoveAt(0);
+        velocities.Add((velocity, now));
+    }
+
+    public Vector2 CalculateFinalVelocity()
+    {
+        var now = DateTime.UtcNow;
+        var relevantVelocities = velocities.Where(v => (now - v.time).TotalMilliseconds <= ConsiderationTimeframeMs).ToList();
+        if (!relevantVelocities.Any()) return Vector2.Zero;
+
+        // Calculate weighted average for both X and Y components
+        float weightedSumX = relevantVelocities.Select((v, i) => v.velocity.X * (i + 1)).Sum();
+        float weightedSumY = relevantVelocities.Select((v, i) => v.velocity.Y * (i + 1)).Sum();
+        var weightSum = Enumerable.Range(1, relevantVelocities.Count).Sum();
+
+        return new Vector2(weightedSumX / weightSum, weightedSumY / weightSum);
+    }
+}
+
 public struct ScrollToIndexOrder
 {
     public static ScrollToIndexOrder Default => new()
@@ -115,6 +149,8 @@ public partial class SkiaScroll
 
     void Bounce(Vector2 offsetFrom, Vector2 offsetTo, Vector2 velocity)
     {
+        //Super.Log($"[SCROLL] {this.Tag} *BOUNCE* to {offsetTo.Y} v {velocity.Y}..");
+
         var displacement = offsetFrom - offsetTo;
 
         //Debug.WriteLine($"[BOUNCE] {offsetFrom} - {offsetTo} with {velocity}");
@@ -307,7 +343,7 @@ public partial class SkiaScroll
 
     public bool StartToFlingFrom(Vector2 from, Vector2 velocity)
     {
-        var contentOffset = from;// new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY);
+        var contentOffset = from;
 
         _animatorFling.Initialize(contentOffset, velocity, 1f - DecelerationRatio);
 
@@ -365,19 +401,14 @@ public partial class SkiaScroll
         _isSnapping = false;
         _changeSpeed = null;
 
-        if (!OffsetOk(destination)) //we detected that scroll will end past the bounds
+        if (!OffsetOk(destination)) //detected that scroll will end past the bounds
         {
             var contentRect = new SKRect(0, 0, ptsContentWidth, ptsContentHeight);
             var closestPoint = GetClosestSidePoint(destinationPoint, contentRect, Viewport.Units.Size);
             _axis = new(closestPoint.X, closestPoint.Y);
 
-            //Trace.WriteLine($"[INTERSECTION] GetClosestSidePoint point {destination} content {contentRect} viewport {Viewport.Units.Size} => {closestPoint}");
             _changeSpeed = _animatorFling.Parameters.DurationToValue(new Vector2(closestPoint.X, closestPoint.Y));
-            if (_changeSpeed != null)
-            {
-                _animatorFling.Speed = _changeSpeed.Value;
-                //Trace.WriteLine($"[Fling] going to SIDE {closestPoint}");
-            }
+            _animatorFling.Speed = _changeSpeed.Value;
         }
 
         return _animatorFling.Speed > 0;
@@ -385,6 +416,7 @@ public partial class SkiaScroll
 
     protected async Task<bool> FlingAfterInitialized()
     {
+
         if (PrepareToFlingAfterInitialized())
         {
             await _animatorFling.RunAsync(null);

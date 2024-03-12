@@ -427,8 +427,20 @@ namespace DrawnUi.Maui.Controls
 
             snap = IsOpen ? SnapPoints[0] : SnapPoints[1];
 
-            ScrollToOffset(snap, Vector2.Zero, ViewportReady && Animated);
+            ScrollToOffset(snap, Vector2.Zero, Animated && ViewportReady);
         }
+
+
+
+
+        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        {
+            if (IsOpen && !ViewportReady)
+                return;
+
+            base.Paint(ctx, destination, scale, arguments);
+        }
+
 
         protected override bool ScrollToOffset(Vector2 targetOffset, Vector2 velocity, bool animate)
         {
@@ -533,6 +545,8 @@ namespace DrawnUi.Maui.Controls
         protected Vector2 _panningOffset;
         private SKRect _lastViewport;
 
+        protected VelocityAccumulator VelocityAccumulator { get; } = new();
+
         public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
             SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
         {
@@ -551,7 +565,7 @@ namespace DrawnUi.Maui.Controls
             ISkiaGestureListener consumed = null;
 
             //pass Released always to children first
-            if (touchAction == TouchActionResult.Up || !IsUserPanning || !RespondsToGestures)
+            if (touchAction == TouchActionResult.Up || touchAction == TouchActionResult.Tapped || !IsUserPanning || !RespondsToGestures)
             {
                 consumed = PassToChildren();
                 if (consumed != null && touchAction != TouchActionResult.Up)
@@ -575,6 +589,7 @@ namespace DrawnUi.Maui.Controls
                 IsUserPanning = false;
 
                 _animatorSpring.Stop();
+                VelocityAccumulator.Clear();
 
                 _panningOffset = new((float)TranslationX, (float)TranslationY);
             }
@@ -604,8 +619,6 @@ namespace DrawnUi.Maui.Controls
 
             var direction = DirectionType.None;
             bool lockBounce = false;
-
-
 
             // Determine if the gesture is panning towards an existing snap point
             if (Direction == DrawerDirection.FromLeft)
@@ -660,6 +673,21 @@ namespace DrawnUi.Maui.Controls
             if (IsUserPanning)
             {
 
+                Vector2 velocity;
+                float useVelocity = 0;
+                if (direction == DirectionType.Horizontal)
+                {
+                    useVelocity = (float)(args.Distance.Velocity.X / RenderingScale);
+                    velocity = new(useVelocity, 0);
+                }
+                else
+                {
+                    useVelocity = (float)(args.Distance.Velocity.Y / RenderingScale);
+                    velocity = new(0, useVelocity);
+                }
+                //record velocity
+                VelocityAccumulator.CaptureVelocity(velocity);
+
                 //saving non clamped
                 _panningOffset.X = x;
                 _panningOffset.Y = y;
@@ -709,7 +737,9 @@ namespace DrawnUi.Maui.Controls
 
             direction = DirectionType.None;
             var Velocity = Vector2.Zero;
-            Velocity = new((float)(args.Distance.Velocity.X / RenderingScale), (float)(args.Distance.Velocity.Y / RenderingScale));
+
+            Velocity = VelocityAccumulator.CalculateFinalVelocity();
+            //Velocity = new((float)(args.Distance.Velocity.X / RenderingScale), (float)(args.Distance.Velocity.Y / RenderingScale));
 
             if (IsUserPanning)
             {
