@@ -1324,10 +1324,13 @@ namespace DrawnUi.Maui.Draw
 
         public SKSize GetSizeRequest(float widthConstraint, float heightConstraint, bool insideLayout)
         {
-            if (insideLayout)
-            {
+            //if (insideLayout)
+            //{
 
-            }
+            //}
+
+            widthConstraint *= (float)this.WidthRequestRatio;
+            heightConstraint *= (float)this.HeightRequestRatio;
 
             if (LockRatio > 0)
             {
@@ -1425,12 +1428,44 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        public static readonly BindableProperty HeightRequestRatioProperty = BindableProperty.Create(
+            nameof(HeightRequestRatio),
+            typeof(double),
+            typeof(SkiaControl),
+            1.0,
+            propertyChanged: NeedInvalidateMeasure);
+
+        /// <summary>
+        /// HeightRequest Multiplier, default is 1.0
+        /// </summary>
+        public double HeightRequestRatio
+        {
+            get { return (double)GetValue(HeightRequestRatioProperty); }
+            set { SetValue(HeightRequestRatioProperty, value); }
+        }
+
+        public static readonly BindableProperty WidthRequestRatioProperty = BindableProperty.Create(
+            nameof(WidthRequestRatio),
+            typeof(double),
+            typeof(SkiaControl),
+            1.0,
+            propertyChanged: NeedInvalidateMeasure);
+
+        /// <summary>
+        /// WidthRequest Multiplier, default is 1.0
+        /// </summary>
+        public double WidthRequestRatio
+        {
+            get { return (double)GetValue(WidthRequestRatioProperty); }
+            set { SetValue(WidthRequestRatioProperty, value); }
+        }
+
         public static readonly BindableProperty LockRatioProperty = BindableProperty.Create(nameof(LockRatio),
             typeof(double), typeof(SkiaControl),
             0.0,
             propertyChanged: NeedInvalidateMeasure);
         /// <summary>
-        /// Locks the final size to the min (-1.0 <-> 0.0) or max (0.0 <-> 1.0) of the provided size.
+        /// Locks the final size to the min (-1.0 - 0.0) or max (0.0 - 1.0) of the provided size.
         /// </summary>
         public double LockRatio
         {
@@ -3816,6 +3851,8 @@ namespace DrawnUi.Maui.Draw
 
             RenderingScale = scale;
 
+            NeedUpdate = false; //todo r????
+
             if (WillInvalidateMeasure)
             {
                 WillInvalidateMeasure = false;
@@ -4203,7 +4240,10 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual void Repaint()
         {
-            if (Superview == null || IsParentIndependent || IsDisposed || Parent == null)
+            if (NeedUpdate ||
+                Superview == null
+                || IsParentIndependent
+                || IsDisposed || Parent == null)
                 return;
 
             if (!Parent.UpdateLocked)
@@ -4971,6 +5011,9 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         protected virtual void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
+            if (destination.Width == 0 || destination.Height == 0) //todo ???
+                return;
+
             if (IsDisposed)
             {
                 //this will save a lot of trouble debugging unknown native crashes
@@ -4980,6 +5023,26 @@ namespace DrawnUi.Maui.Draw
             }
 
             PaintTintBackground(ctx.Canvas, destination);
+
+            WasDrawn = true;
+        }
+
+        private bool _wasDrawn;
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool WasDrawn
+        {
+            get
+            {
+                return _wasDrawn;
+            }
+            set
+            {
+                if (_wasDrawn != value)
+                {
+                    _wasDrawn = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -5232,12 +5295,16 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed)
                 return;
 
-            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
-                IsClippedToBounds = true;
 
-            NeedUpdate = true;
             NeedUpdateFrontCache = true;
             RenderObjectNeedsUpdate = true;
+            NeedUpdate = true;
+
+            if (UpdateLocked)
+                return;
+
+            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
+                IsClippedToBounds = true;
 
             if (UpdateLocked)
                 return;
