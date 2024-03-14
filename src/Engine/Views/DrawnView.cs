@@ -16,9 +16,9 @@ namespace DrawnUi.Maui.Views
             get
             {
                 return HardwareAcceleration != HardwareAccelerationMode.Disabled
-        #if IOS 
+#if IOS
                        && DeviceInfo.Current.DeviceType != DeviceType.Virtual //HWA disabled for ios simulator at the moment
-        #endif
+#endif
                         ;
             }
         }
@@ -1193,7 +1193,7 @@ namespace DrawnUi.Maui.Views
             return new SkiaDrawingContext()
             {
                 Superview = this,
-                FrameTimeNanos = GetNanoseconds(),
+                FrameTimeNanos = CanvasView.FrameTime,//GetNanoseconds(),
                 Canvas = canvas,
                 Width = canvas.DeviceClipBounds.Width,
                 Height = canvas.DeviceClipBounds.Height
@@ -1451,7 +1451,7 @@ namespace DrawnUi.Maui.Views
                 {
                     DrawingThreads++;
 
-                    FrameTime = GetNanoseconds();
+                    FrameTime = CanvasView.FrameTime;//GetNanoseconds();
                     context.FrameTimeNanos = FrameTime;
 
                     #region Calculate average fps
