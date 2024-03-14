@@ -11,6 +11,11 @@ namespace DrawnUi.Maui.Draw
     {
 
         /// <summary>
+        /// To filter micro-gestures while manually panning
+        /// </summary>
+        public static float ScrollVelocityThreshold = 20;
+
+        /// <summary>
         /// Time for the snapping animations as well as the scroll to top etc animations..
         /// </summary>
         public static float SystemAnimationTimeSecs = 0.2f;
@@ -589,10 +594,10 @@ namespace DrawnUi.Maui.Draw
                     VelocityX = (float)(args.Distance.Velocity.X / RenderingScale);
                 }
 
-                if (TouchEffect.LogEnabled)
-                {
-                    Super.Log($"[SCROLL] {this.Tag} Got {touchAction} touches {args.NumberOfTouches} {VelocityY}..");
-                }
+                //if (TouchEffect.LogEnabled)
+                //{
+                //    Super.Log($"[SCROLL] {this.Tag} Got {touchAction} touches {args.NumberOfTouches} {VelocityY}..");
+                //}
 
                 if (TouchEffect.LogEnabled)
                 {
@@ -664,8 +669,27 @@ namespace DrawnUi.Maui.Draw
                     //----------------------------------------------------------------------
                     case TouchActionResult.Panning when RespondsToGestures:
                     //----------------------------------------------------------------------
-                    if (!ScrollLocked)
+
+                    bool canPan = !ScrollLocked;
+                    if (Orientation == ScrollOrientation.Vertical)
                     {
+                        canPan &= Math.Abs(VelocityY) > ScrollVelocityThreshold;
+                    }
+                    else
+                    if (Orientation == ScrollOrientation.Horizontal)
+                    {
+                        canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold;
+                    }
+                    else
+                    if (Orientation == ScrollOrientation.Both)
+                    {
+                        canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold || Math.Abs(VelocityY) > ScrollVelocityThreshold;
+                    }
+
+                    if (canPan)
+                    {
+                        //Trace.WriteLine($"[PAN] {Tag} VY:{VelocityY:0.00}");
+
                         bool checkOverscroll = true;
 
                         if (!IsUserFocused)
@@ -2272,23 +2296,21 @@ namespace DrawnUi.Maui.Draw
         /// <param name="offsetPtsY"></param>
         /// <param name="viewportScale"></param>
         /// <param name="scale"></param>
-        protected virtual void PositionViewport(SKRect destination, float offsetPtsX, float offsetPtsY, float viewportScale, float scale)
+        protected virtual void PositionViewport(SKRect destination, ScaledPoint offset, float viewportScale, float scale)
         {
             if (!IsContentActive)
                 return;
 
             ContentAvailableSpace = GetContentAvailableRect(destination);
 
-            var newOffsetPixelsX = (float)Math.Round(offsetPtsX * scale);
-            var newOffsetPixelsY = (float)Math.Round(offsetPtsY * scale);
+            InternalViewportOffset = offset;
 
-            //Super.Log($"[SCROLL] pixels moveY {newOffsetPixelsY}");
+            //Debug.WriteLine($"[PAN] {InternalViewportOffset.Units.Y} => {InternalViewportOffset.Pixels.Y}");
 
             var childRect = ContentAvailableSpace;
-            childRect.Offset(newOffsetPixelsX, newOffsetPixelsY);
+            childRect.Offset(InternalViewportOffset.Pixels.X, InternalViewportOffset.Pixels.Y);
             ContentRectWithOffset = ScaledRect.FromPixels(childRect, scale);
 
-            InternalViewportOffset = ScaledPoint.FromPixels(newOffsetPixelsX, newOffsetPixelsY, scale);
             AdjustHeaderParallax();
 
             //content size changed?.. maybe need to set offsets to a valid position then
@@ -2357,8 +2379,8 @@ namespace DrawnUi.Maui.Draw
                 {
                     var threshold = LoadMoreOffset * scale;
 
-                    if ((Orientation == ScrollOrientation.Vertical && offsetPtsY <= _scrollMinY + threshold)
-                        || (Orientation == ScrollOrientation.Horizontal && offsetPtsX <= _scrollMinX + threshold))
+                    if ((Orientation == ScrollOrientation.Vertical && offset.Units.Y <= _scrollMinY + threshold)
+                        || (Orientation == ScrollOrientation.Horizontal && offset.Units.X <= _scrollMinX + threshold))
                     {
                         _loadMoreTriggeredTime = DateTime.Now;
                         _loadMoreTriggeredAt = InternalViewportOffset.Units.Y;
@@ -2554,24 +2576,24 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                var ptsX = (float)ViewportOffsetX;
-                var ptsY = (float)ViewportOffsetY;
+
+                var newOffset = ScaledPoint.FromUnits(ViewportOffsetX, ViewportOffsetY, scale);
 
                 //comparing floats on purpose
                 var needReposition = _lastPosViewportScale != _zoomedScale
-                                 || _updatedViewportForPtsX != ptsX
-                                 || _updatedViewportForPtsY != ptsY
+                                 || _updatedViewportForPtsX != newOffset.Pixels.X
+                                 || _updatedViewportForPtsY != newOffset.Pixels.Y
                                  || _destination != Destination;
 
                 if (needReposition) //reposition viewport (scroll)
                 {
                     _lastPosViewportScale = _zoomedScale;
-                    _updatedViewportForPtsX = ptsX;
-                    _updatedViewportForPtsY = ptsY;
+                    _updatedViewportForPtsX = newOffset.Pixels.X;
+                    _updatedViewportForPtsY = newOffset.Pixels.Y;
 
                     _destination = Destination;
 
-                    PositionViewport(DrawingRect, (float)ptsX, (float)ptsY, _zoomedScale, (float)scale);
+                    PositionViewport(DrawingRect, newOffset, _zoomedScale, (float)scale);
 
                     RenderObject = null;
                 }

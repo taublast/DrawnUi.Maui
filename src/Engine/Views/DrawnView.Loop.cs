@@ -81,7 +81,7 @@ public partial class DrawnView
                 var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
 
                 var needWait =
-                    Super.CapMicroSecs
+                    Super.CapMicroSecs / 2f // because.
                     - elapsedMicros;
                 if (needWait >= 1)
                 {
@@ -92,7 +92,7 @@ public partial class DrawnView
                 }
                 else
                 {
-                    await Task.Delay(1);
+                    //await Task.Delay(1);
                 }
 
                 _isWaiting = false;
@@ -169,14 +169,11 @@ public partial class DrawnView
                             var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
 
                             var needWait =
-                                Super.CapMicroSecs
+                                Super.CapMicroSecs 
                                 - elapsedMicros;
                             if (needWait >= 1)
                             {
-                                var ms = (int)(needWait / 1000);
-                                if (ms < 1)
-                                    ms = 1;
-                                await Task.Delay(ms);
+                                await Task.Delay(TimeSpan.FromMicroseconds(needWait));
                             }
                             else
                             {

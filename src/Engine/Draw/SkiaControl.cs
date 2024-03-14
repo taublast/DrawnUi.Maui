@@ -1431,7 +1431,7 @@ namespace DrawnUi.Maui.Draw
             0.0,
             propertyChanged: NeedInvalidateMeasure);
         /// <summary>
-        /// Locks the final size to the min (-1.0 <-> 0.0) or max (0.0 <-> 1.0) of the provided size.
+        /// Locks the final size to the min (-1.0 -> 0.0) or max (0.0 -> 1.0) of the provided size.
         /// </summary>
         public double LockRatio
         {
@@ -4320,14 +4320,11 @@ namespace DrawnUi.Maui.Draw
 
                 if (needTransform)
                 {
-                    var moveX = (float)(UseTranslationX * RenderingScale);
-                    moveX = Snapping.SnapPixelsToPixel(0, moveX);
+                    var moveX = (float)Math.Round(UseTranslationX * RenderingScale);
+                    var moveY = (float)Math.Round(UseTranslationY * RenderingScale);
 
-                    var moveY = (float)(UseTranslationY * RenderingScale);
-                    moveY = Snapping.SnapPixelsToPixel(0, moveY);
-
-                    var centerX = (float)Math.Round(destination.Left + destination.Width * (float)TransformPivotPointX + moveX);
-                    var centerY = (float)Math.Round(destination.Top + destination.Height * (float)TransformPivotPointY + moveY);
+                    var centerX = moveX + (float)Math.Round(destination.Left + destination.Width * (float)TransformPivotPointX);
+                    var centerY = moveY + (float)Math.Round(destination.Top + destination.Height * (float)TransformPivotPointY);
 
                     var skewX = 0f;
                     if (SkewX > 0)
