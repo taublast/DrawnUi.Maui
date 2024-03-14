@@ -25,14 +25,12 @@ public partial class DrawnView
     }
     bool _isDirty;
 
-
     public bool CheckCanDraw()
     {
         if (UpdateLocked && StopDrawingWhenUpdateIsLocked)
             return false;
 
         return CanvasView != null
-               //&& InvalidatedCanvas < 2 //this can go more with cache doublebufering - background rendering.. todo redesign
                && !IsRendering
                && IsDirty
                && IsVisible;
@@ -83,15 +81,13 @@ public partial class DrawnView
                 var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
 
                 var needWait =
-                    Super.CapMicroSecs / 2f //do not ask why
-                    - elapsedMicros;
+                      Super.CapMicroSecs
+                      - elapsedMicros;
                 if (needWait >= 1)
                 {
-                    var ms = (int)(needWait / 1000);
-                    if (ms < 1)
-                        ms = 1;
-                    await Task.Delay(ms);
+                    await Task.Delay(TimeSpan.FromMicroseconds(needWait));
                 }
+
                 _isWaiting = false;
 
                 if (!Super.EnableRendering)
@@ -100,16 +96,7 @@ public partial class DrawnView
                     return;
                 }
 
-#if WINDOWS
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    // Update the UI
-                    CanvasView?.InvalidateSurface();
-
-                });
-#else
                 CanvasView?.InvalidateSurface();
-#endif
 
             }
             else
@@ -159,6 +146,13 @@ public partial class DrawnView
                         if (NeedCheckParentVisibility)
                             CheckElementVisibility(this);
 
+                        if (UpdateMode == UpdateMode.Constant)
+                        {
+                            InvalidatedCanvas++;
+                            CanvasView?.InvalidateSurface();
+                            return;
+                        }
+
                         if (!CanvasView.IsDrawing && CanDraw)  //passed checks
                         {
                             InvalidatedCanvas++;
@@ -172,14 +166,11 @@ public partial class DrawnView
                                 - elapsedMicros;
                             if (needWait >= 1)
                             {
-                                var ms = (int)(needWait / 1000);
-                                if (ms < 1)
-                                    ms = 1;
-                                await Task.Delay(ms);
+                                await Task.Delay(TimeSpan.FromMicroseconds(needWait));
                             }
                             else
                             {
-                                await Task.Delay(1); //unlock threads
+                                await Task.Delay(1); //unblock ui thread
                             }
 
                             if (!Super.EnableRendering)

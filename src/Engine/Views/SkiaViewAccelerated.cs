@@ -146,7 +146,8 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
     public bool IsDrawing { get; set; }
 
-    public double FrameTime { get; protected set; }
+    public long FrameTime { get; protected set; }
+
 
     /// <summary>
     /// We are drawing the frame
@@ -185,7 +186,3 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     }
 
 }
-
-
-
-
