@@ -366,7 +366,7 @@ namespace DrawnUi.Maui.Views
 
             var executed = 0;
 
-            lock (LockAnimatingControls)
+            //lock (LockAnimatingControls)
             {
                 try
                 {
@@ -1438,7 +1438,7 @@ namespace DrawnUi.Maui.Views
                 {
                     DrawingThreads++;
 
-                    FrameTime = GetNanoseconds();
+                    FrameTime = CanvasView.FrameTime;
                     context.FrameTimeNanos = FrameTime;
 
                     #region Calculate average fps

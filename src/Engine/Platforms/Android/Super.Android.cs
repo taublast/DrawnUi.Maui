@@ -88,7 +88,7 @@ public partial class Super
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
             {
-https://stackoverflow.com/a/33355089/7149454
+                // https://stackoverflow.com/a/33355089/7149454
                 var uiOptions = (int)activity.Window.DecorView.SystemUiVisibility;
                 uiOptions |= (int)SystemUiFlags.LayoutStable;
                 uiOptions |= (int)SystemUiFlags.LayoutFullscreen;
