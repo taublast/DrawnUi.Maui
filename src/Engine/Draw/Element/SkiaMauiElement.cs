@@ -206,7 +206,12 @@
         /// <returns></returns>
         public override IReadOnlyList<IVisualTreeElement> GetVisualChildren()
         {
-            return new List<IVisualTreeElement> { Content };
+            var ret = new List<IVisualTreeElement>();
+            if (Content != null)
+            {
+                ret.Add(Content);
+            }
+            return ret.AsReadOnly(); ;
         }
 
         /// <summary>
