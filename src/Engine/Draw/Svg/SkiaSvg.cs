@@ -595,7 +595,7 @@ namespace DrawnUi.Maui.Draw
         /// This is not replacing current animation, use SetAnimation for that.
         /// </summary>
         /// <param name="fileName"></param>
-        /// <returns>
+        /// <returns></returns>
         public async Task LoadSource(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
