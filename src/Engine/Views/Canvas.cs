@@ -355,16 +355,25 @@ public class Canvas : DrawnView, IGestureListener
             isPanning = false;
         }
 
-        var threshold = FirstPanThreshold * RenderingScale;
-        if (touchAction == TouchActionResult.Panning && !isPanning)
+        if (touchAction == TouchActionResult.Panning)
         {
-            //filter first panning movement on super sensitive screens
-            if (Math.Abs(args.Distance.Total.X) < threshold && Math.Abs(args.Distance.Total.Y) < threshold)
+            //filter micro-gestures
+            if (Math.Abs(args.Distance.Delta.X) < 1 || Math.Abs(args.Distance.Velocity.X / RenderingScale) < 1)
             {
                 return;
             }
 
-            isPanning = true;
+            var threshold = FirstPanThreshold * RenderingScale;
+            if (!isPanning)
+            {
+                //filter first panning movement on super sensitive screens
+                if (Math.Abs(args.Distance.Total.X) < threshold && Math.Abs(args.Distance.Total.Y) < threshold)
+                {
+                    return;
+                }
+
+                isPanning = true;
+            }
         }
 
         lock (LockIterateListeners)
