@@ -340,8 +340,33 @@ public class Canvas : DrawnView, IGestureListener
 
     public static Color DebugGesturesColor { get; set; } = Colors.Transparent;// Color.Parse("#ff0000");
 
+    /// <summary>
+    /// To filter micro-gestures on super sensitive screens, start passing panning only when threshold is once overpassed
+    /// </summary>
+    public static float FirstPanThreshold = 5;
+
+    bool isPanning;
+
     protected virtual void ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
     {
+
+        if (touchAction == TouchActionResult.Down)
+        {
+            isPanning = false;
+        }
+
+        var threshold = FirstPanThreshold * RenderingScale;
+        if (touchAction == TouchActionResult.Panning && !isPanning)
+        {
+            //filter first panning movement on super sensitive screens
+            if (Math.Abs(args.Distance.Total.X) < threshold && Math.Abs(args.Distance.Total.Y) < threshold)
+            {
+                return;
+            }
+
+            isPanning = true;
+        }
+
         lock (LockIterateListeners)
         {
             ISkiaGestureListener consumed = null;
@@ -428,20 +453,6 @@ public class Canvas : DrawnView, IGestureListener
             }
         }
 
-
-        /*
-        foreach (var child in Views.Where(child => child.IsVisible && !child.InputTransparent)
-                     .OfType<ISkiaGestureListener>())
-        {
-            bool forChild = ((SkiaControl)child).DrawingRect.ContainsInclusive(args.StartingLocation.X, args.StartingLocation.Y);
-            if (forChild)
-            {
-                var consumed = child.OnGestureEvent(type, args, tag, 0, 0);
-                if (consumed)
-                    break;
-            }
-        }
-        */
     }
 
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
