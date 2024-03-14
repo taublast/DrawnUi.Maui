@@ -458,16 +458,17 @@ public class SkiaScrollLooped : SkiaScroll
         return new Vector2((float)Math.Round(x), (float)Math.Round(y));
     }
 
-    protected override void PositionViewport(SKRect destination, float offsetPtsX, float offsetPtsY, float viewportScale, float scale)
+    protected override void PositionViewport(SKRect destination, ScaledPoint offset, float viewportScale, float scale)
     {
         if (!IsBanner)
         {
-            var clampedOffset = ModifyViewportOffset(destination, offsetPtsX, offsetPtsY, scale);
-            base.PositionViewport(destination, clampedOffset.X, clampedOffset.Y, viewportScale, scale);
+            var clampedOffset = ModifyViewportOffset(destination, offset.Units.X, offset.Units.Y, scale);
+            var newOffset = ScaledPoint.FromUnits(clampedOffset.X, clampedOffset.Y, scale);
+            base.PositionViewport(destination, newOffset, viewportScale, scale);
         }
         else
         {
-            base.PositionViewport(destination, offsetPtsX, offsetPtsY, viewportScale, scale);
+            base.PositionViewport(destination, offset, viewportScale, scale);
         }
     }
 

@@ -36,6 +36,8 @@
                         VerticalOptions="End">
 
                         <draw:SkiaImage
+                            LoadSourceOnFirstDraw="False"
+                            UseCache="Image"
                             Aspect="AspectFit"
                             HeightRequest="185"
                             HorizontalOptions="Center"
@@ -47,6 +49,7 @@
                         </draw:SkiaImage>
 
                         <draw:SkiaLabel
+                            UseCache="Operations"
                             Margin="0,0,0,24"
                             HorizontalOptions="Center"
                             Text="SELECT PAGE"
@@ -66,7 +69,7 @@
                             HorizontalOptions="Fill"
                             Spacing="8"
                             Type="Column"
-                            UseCache="Operations">
+                            UseCache="Image">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">

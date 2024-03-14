@@ -1,5 +1,6 @@
 ﻿global using DrawnUi.Maui.Draw;
 global using SkiaSharp;
+using AppoMobi.Maui.Gestures;
 using Microsoft.Extensions.Logging;
 
 
@@ -47,6 +48,7 @@ namespace Sandbox
                     IsFixedSize = true //user cannot resize window
                 }
             });
+
 
 #if DEBUG
             builder.Logging.AddDebug();

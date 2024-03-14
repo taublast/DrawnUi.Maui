@@ -175,7 +175,8 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
     SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
     {
-        //Trace.WriteLine($"SkiaButton. {type} {touchAction} {args.Location.X} {args.Location.Y}");
+        Trace.WriteLine($"SkiaButton. {type} {touchAction} {args.Location.X} {args.Location.Y}");
+
         var point = TranslateInputOffsetToPixels(args.Location, childOffset);
 
         var ret = false;

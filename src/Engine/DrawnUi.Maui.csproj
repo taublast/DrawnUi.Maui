@@ -102,13 +102,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.5.3" />
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.8.2" />
     <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Svg.Skia-for3\src\ShimSkiaSharp\ShimSkiaSharp.csproj" />
     <ProjectReference Include="..\..\..\Svg.Skia-for3\src\Svg.Skia\Svg.Skia.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Maui.Controls" Version="8.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.Maui.Controls.Compatibility" Version="8.0.7" />
   </ItemGroup>
 
 </Project>

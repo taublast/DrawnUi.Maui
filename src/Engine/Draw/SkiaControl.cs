@@ -3713,7 +3713,7 @@ namespace DrawnUi.Maui.Draw
         {
             return new SkiaDrawingContext()
             {
-                FrameTimeNanos = GetNanoseconds(),
+                FrameTimeNanos = Superview.CanvasView.FrameTime,//GetNanoseconds(),
                 Canvas = canvas,
                 Width = canvas.DeviceClipBounds.Width,
                 Height = canvas.DeviceClipBounds.Height,

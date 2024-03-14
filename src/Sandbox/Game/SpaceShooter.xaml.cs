@@ -254,7 +254,7 @@ public partial class SpaceShooter : MauiGame
                 {
                     //calculate hitbox once, we read it several times later
                     enemySprite.UpdateState(LastFrameTimeNanos);
-                
+
                     var enemy = enemySprite.HitBox;
 
                     if (enemySprite.TranslationY > this.Height)
@@ -757,42 +757,20 @@ public partial class SpaceShooter : MauiGame
     bool _wasPanning;
     bool _isPressed;
 
+    const double thresholdNotPanning = 20.0;
+
     public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
         SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
     {
-
         if (State == GameState.Playing)
         {
             var velocityX = (float)(args.Distance.Velocity.X / RenderingScale);
             //var velocityY = (float)(args.Distance.Velocity.Y / RenderingScale);
 
-            if (touchAction == TouchActionResult.Down)
-            {
-                _wasPanning = false;
-                _isPressed = true;
-            }
-
-            if (touchAction == TouchActionResult.Up)
-            {
-                _moveLeft = false;
-                _moveRight = false;
-
-                // custom tapped event
-                // we are not using TouchActionResult.Tapped here because it has some UI related
-                // logic and might sometimes not trigger if we move the finger too much
-                // while we need just spamming taps.
-                // also we let it fire when you are pannign and tapping at the same 
-                if ((!_wasPanning || args.NumberOfTouches > 1) && _isPressed)
-                {
-                    Fire();
-                }
-
-                _isPressed = false;
-            }
-
             if (touchAction == TouchActionResult.Panning)
             {
                 _wasPanning = true;
+                _lastPan = args.Location;
                 if (velocityX < 0)
                 {
                     _moveLeft = true;
@@ -805,9 +783,35 @@ public partial class SpaceShooter : MauiGame
                     _moveLeft = false;
                 }
 
+                return this;
+            }
 
+            if (touchAction == TouchActionResult.Down)
+            {
+                _lastDown = args.Location;
+                _wasPanning = false;
+                _isPressed = true;
+            }
+
+            if (touchAction == TouchActionResult.Tapped
+                || (touchAction == TouchActionResult.Up && Math.Abs(args.Distance.Total.X) < thresholdNotPanning * RenderingScale))
+            {
+                // custom tapped event
+                // we are not using TouchActionResult.Tapped here because it has some UI related
+                // logic and might sometimes not trigger if we move the finger too much
+                // while we need just spamming taps.
+                // also we let it fire when you are pannign and tapping at the same 
+                //  if ((!_wasPanning || args.NumberOfTouches > 1) && _isPressed)
+                {
+                    Fire();
+                }
+
+                _isPressed = false;
             }
         }
+
+        _moveRight = false;
+        _moveLeft = false;
 
         return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
     }
@@ -981,6 +985,9 @@ public partial class SpaceShooter : MauiGame
     private GameState _lastState;
 
     private GameState _gameState;
+    private PointF _lastPan;
+    private PointF _lastDown;
+
     public GameState State
     {
         get
