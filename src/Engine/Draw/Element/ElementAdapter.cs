@@ -62,10 +62,12 @@ public class ElementAdapter : View, ISkiaAttachable, IVisualTreeElement
 
     public virtual IReadOnlyList<IVisualTreeElement> GetVisualChildren()
     {
-        return new List<IVisualTreeElement>()
+        var ret = new List<IVisualTreeElement>();
+        if (Content != null)
         {
-            Content
-        };
+            ret.Add(Content);
+        }
+        return ret.AsReadOnly(); ;
     }
 
     public IVisualTreeElement GetVisualParent()
