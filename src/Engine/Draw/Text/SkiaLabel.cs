@@ -1330,10 +1330,9 @@ namespace DrawnUi.Maui.Draw
                 _fontWeight = FontWeight;
 
                 _replaceFont = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
-
-                InvalidateMeasure();
             }
 
+            InvalidateMeasure();
         }
 
         protected void ReplaceFont()
