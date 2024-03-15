@@ -1,9 +1,9 @@
 ﻿using DrawnUi.Maui.Infrastructure.Xaml;
+using Microsoft.Maui;
 using System.ComponentModel;
 
 
 namespace DrawnUi.Maui.Draw;
-
 
 /// <summary>
 /// This control has IsClippedToBounds set to true by default
@@ -77,21 +77,6 @@ public class SkiaImage : SkiaControl
     public int RetriesOnError { get; set; } = 3;
 
     protected int RetriesLeft { get; set; }
-
-    public override void OnDisposing()
-    {
-        LastSource = null;
-        CancelLoading?.Cancel();
-        ClearBitmap();
-        ImagePaint?.Dispose();
-        PaintColorFilter?.Dispose();
-        PaintImageFilter?.Dispose();
-        LoadedSource?.Dispose();
-        ImagePaint = null;
-        PaintColorFilter = null;
-        PaintImageFilter = null;
-        LoadedSource = null;
-    }
 
 
     public static bool LogEnabled = false;
@@ -230,6 +215,23 @@ public class SkiaImage : SkiaControl
     {
         get { return (bool)GetValue(LoadSourceOnFirstDrawProperty); }
         set { SetValue(LoadSourceOnFirstDrawProperty, value); }
+    }
+
+    public static readonly BindableProperty RescalingQualityProperty = BindableProperty.Create(
+        nameof(RescalingQuality),
+        typeof(SKFilterQuality),
+        typeof(SkiaImage),
+        SKFilterQuality.Medium,
+        propertyChanged: NeedInvalidateMeasure);
+
+    /// <summary>
+    /// Default value is Medium.
+    /// You might want to set this to None for large a quick changing images like camera preview etc.
+    /// </summary>
+    public SKFilterQuality RescalingQuality
+    {
+        get { return (SKFilterQuality)GetValue(RescalingQualityProperty); }
+        set { SetValue(RescalingQualityProperty, value); }
     }
 
     private static void OnLoadSourceChanged(BindableObject bindable, object oldvalue, object newvalue)
@@ -526,18 +528,18 @@ public class SkiaImage : SkiaControl
         }
     }
 
-    public static readonly BindableProperty EffectProperty = BindableProperty.Create(
-nameof(Effect),
+    public static readonly BindableProperty BitmapEffectProperty = BindableProperty.Create(
+nameof(BitmapEffect),
 typeof(SkiaImageEffect),
 typeof(SkiaImage),
 SkiaImageEffect.None,
 propertyChanged: NeedChangeColorFIlter);
 
 
-    public SkiaImageEffect Effect
+    public SkiaImageEffect BitmapEffect
     {
-        get { return (SkiaImageEffect)GetValue(EffectProperty); }
-        set { SetValue(EffectProperty, value); }
+        get { return (SkiaImageEffect)GetValue(BitmapEffectProperty); }
+        set { SetValue(BitmapEffectProperty, value); }
     }
 
     public static readonly BindableProperty ColorTintProperty = BindableProperty.Create(
@@ -952,7 +954,7 @@ propertyChanged: NeedChangeColorFIlter);
                 ImagePaint = new()
                 {
                     IsAntialias = true,
-                    FilterQuality = SKFilterQuality.Medium
+                    FilterQuality = SKFilterQuality.High
                 };
             }
             else
@@ -973,7 +975,7 @@ propertyChanged: NeedChangeColorFIlter);
             //ColorFilter
             if (PaintColorFilter == null)
             {
-                PaintColorFilter = Effect switch
+                PaintColorFilter = BitmapEffect switch
                 {
                     SkiaImageEffect.Tint when ColorTint != Colors.Transparent
                         => SkiaImageEffects.Tint(ColorTint, EffectBlendMode),
@@ -1104,7 +1106,40 @@ propertyChanged: NeedChangeColorFIlter);
             destination, scale);
     }
 
+    public override void OnDisposing()
+    {
+        LastSource = null;
+        CancelLoading?.Cancel();
+        ClearBitmap();
+        ImagePaint?.Dispose();
+        PaintColorFilter?.Dispose();
+        PaintImageFilter?.Dispose();
+        LoadedSource?.Dispose();
+        ImagePaint = null;
+        PaintColorFilter = null;
+        PaintImageFilter = null;
+        LoadedSource = null;
+        ScaledSource?.Dispose();
+        ScaledSource = null;
+
+        base.OnDisposing();
+    }
+
     public SKPoint AspectScale { get; protected set; }
+
+    public RescaledBitmap ScaledSource { get; protected set; }
+
+    public class RescaledBitmap : IDisposable
+    {
+        public SKBitmap Bitmap { get; set; }
+        public SKFilterQuality Quality { get; set; }
+        public Guid Source { get; set; }
+
+        public void Dispose()
+        {
+            Bitmap?.Dispose();
+        }
+    }
 
     protected virtual void DrawSource(
         SkiaDrawingContext ctx,
@@ -1139,7 +1174,36 @@ propertyChanged: NeedChangeColorFIlter);
             TextureScale = new(dest.Width / display.Width, dest.Height / display.Height);
 
             if (source.Bitmap != null)
-                ctx.Canvas.DrawBitmap(source.Bitmap, display, paint);
+            {
+                if (this.RescalingQuality != SKFilterQuality.None)
+                {
+                    if (ScaledSource == null
+                        || ScaledSource.Source != source.Id
+                        || ScaledSource.Quality != this.RescalingQuality
+                         || ScaledSource.Bitmap.Width != (int)display.Width
+                         || ScaledSource.Bitmap.Height != (int)display.Height)
+                    {
+                        var bmp = source.Bitmap.Resize(new SKSizeI((int)display.Width, (int)display.Height), RescalingQuality);
+                        var kill = ScaledSource;
+                        ScaledSource = new()
+                        {
+                            Source = source.Id,
+                            Bitmap = bmp,
+                            Quality = RescalingQuality
+                        };
+                        kill?.Dispose(); //todo with delay?
+                    }
+
+                    if (ScaledSource != null)
+                    {
+                        ctx.Canvas.DrawBitmap(ScaledSource.Bitmap, display, paint);
+                    }
+                }
+                else
+                {
+                    ctx.Canvas.DrawBitmap(source.Bitmap, display, paint);
+                }
+            }
             else
             if (source.Image != null)
                 ctx.Canvas.DrawImage(source.Image, display, paint);
