@@ -29,6 +29,8 @@ public class LoadedImageSource : IDisposable
         }
     }
 
+    public Guid Id { get; } = Guid.NewGuid();
+
     public void Dispose()
     {
         if (!IsDisposed)
