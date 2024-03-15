@@ -75,7 +75,7 @@ public partial class SkiaCamera : SkiaControl
                 HeightRequest = info.Height,
                 VerticalOptions = LayoutOptions.Fill,
                 IsClippedToBounds = false, //do not clip sides after rotation if any
-                Effect = this.Effect,
+                AddEffect = this.Effect,
                 Aspect = TransformAspect.None,
                 ZoomX = zoomCapturedPhotoX,
                 ZoomY = zoomCapturedPhotoY,
@@ -202,7 +202,7 @@ public partial class SkiaCamera : SkiaControl
     {
         if (Display != null)
         {
-            Display.Effect = Effect;
+            Display.AddEffect = Effect;
         }
     }
 

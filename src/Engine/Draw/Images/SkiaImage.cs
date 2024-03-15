@@ -528,18 +528,18 @@ public class SkiaImage : SkiaControl
         }
     }
 
-    public static readonly BindableProperty BitmapEffectProperty = BindableProperty.Create(
-nameof(BitmapEffect),
+    public static readonly BindableProperty AddEffectProperty = BindableProperty.Create(
+nameof(AddEffect),
 typeof(SkiaImageEffect),
 typeof(SkiaImage),
 SkiaImageEffect.None,
 propertyChanged: NeedChangeColorFIlter);
 
 
-    public SkiaImageEffect BitmapEffect
+    public SkiaImageEffect AddEffect
     {
-        get { return (SkiaImageEffect)GetValue(BitmapEffectProperty); }
-        set { SetValue(BitmapEffectProperty, value); }
+        get { return (SkiaImageEffect)GetValue(AddEffectProperty); }
+        set { SetValue(AddEffectProperty, value); }
     }
 
     public static readonly BindableProperty ColorTintProperty = BindableProperty.Create(
@@ -975,7 +975,7 @@ propertyChanged: NeedChangeColorFIlter);
             //ColorFilter
             if (PaintColorFilter == null)
             {
-                PaintColorFilter = BitmapEffect switch
+                PaintColorFilter = AddEffect switch
                 {
                     SkiaImageEffect.Tint when ColorTint != Colors.Transparent
                         => SkiaImageEffects.Tint(ColorTint, EffectBlendMode),
