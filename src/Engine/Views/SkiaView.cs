@@ -92,14 +92,8 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
             if (invalidate && Super.EnableRendering) //if we didnt call update because IsDrawing was true need to kick here
             {
                 IsDrawing = false;
-#if ANDROID
-                if (_fps < 70)
-                    InvalidateSurface();
-                else
-#else
                 Superview.Update();
-#endif
-                    return;
+                return;
             }
         }
 

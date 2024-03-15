@@ -81,7 +81,7 @@ public partial class DrawnView
                 var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
 
                 var needWait =
-                    Super.CapMicroSecs /// 2f // because.
+                    Super.CapMicroSecs
                     - elapsedMicros;
                 if (needWait >= 1)
                 {
