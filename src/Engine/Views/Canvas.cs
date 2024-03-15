@@ -345,26 +345,27 @@ public class Canvas : DrawnView, IGestureListener
     /// </summary>
     public static float FirstPanThreshold = 5;
 
-    bool isPanning;
+    bool _isPanning;
 
     protected virtual void ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
     {
 
         if (touchAction == TouchActionResult.Down)
         {
-            isPanning = false;
+            _isPanning = false;
         }
 
         if (touchAction == TouchActionResult.Panning)
         {
             //filter micro-gestures
-            if (Math.Abs(args.Distance.Delta.X) < 1 || Math.Abs(args.Distance.Velocity.X / RenderingScale) < 1)
+            if ((Math.Abs(args.Distance.Delta.X) < 1 && Math.Abs(args.Distance.Delta.Y) < 1)
+                || (Math.Abs(args.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args.Distance.Velocity.Y / RenderingScale) < 1))
             {
                 return;
             }
 
             var threshold = FirstPanThreshold * RenderingScale;
-            if (!isPanning)
+            if (!_isPanning)
             {
                 //filter first panning movement on super sensitive screens
                 if (Math.Abs(args.Distance.Total.X) < threshold && Math.Abs(args.Distance.Total.Y) < threshold)
@@ -372,7 +373,7 @@ public class Canvas : DrawnView, IGestureListener
                     return;
                 }
 
-                isPanning = true;
+                _isPanning = true;
             }
         }
 
