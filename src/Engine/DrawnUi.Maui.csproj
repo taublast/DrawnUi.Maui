@@ -52,6 +52,9 @@
     <Compile Remove="Internals\ConditionalStyle.cs" />
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
     <Compile Remove="Controls\Extensions\**" />
+    <Compile Update="Platforms\iOS\DrawnView.Apple.cs">
+      <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+    </Compile>
   </ItemGroup>
 
 

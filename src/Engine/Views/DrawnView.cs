@@ -12,6 +12,35 @@ namespace DrawnUi.Maui.Views
     [ContentProperty("Children")]
     public partial class DrawnView : ContentView, IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
+        public virtual void Update()
+        {
+            IsDirty = true;
+        }
+        
+        public bool NeedRedraw { get; set; }
+
+        public bool IsDirty
+        {
+            get
+            {
+                return _isDirty;
+            }
+
+            set
+            {
+                if (_isDirty != value)
+                {
+                    if (!value && UpdateMode == UpdateMode.Constant)
+                    {
+                        value = true;
+                    }
+                    _isDirty = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        bool _isDirty;
         public bool IsUsingHardwareAcceleration
         {
             get
@@ -446,9 +475,7 @@ namespace DrawnUi.Maui.Views
             if (!_initialized)
             {
                 _initialized = true;
-
-
-
+                
                 HorizontalOptions = LayoutOptions.Start;
                 VerticalOptions = LayoutOptions.Start;
                 Padding = new Thickness(0);
@@ -458,7 +485,7 @@ namespace DrawnUi.Maui.Views
                 //bug this creates garbage on aandroid on every frame
                 // DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
 
-#if ANDROID || WINDOWS
+#if ANDROID || WINDOWS || IOS || MACCATALYST
                 Super.OnFrame += OnFrame;
 #endif
             }
@@ -2017,23 +2044,10 @@ namespace DrawnUi.Maui.Views
         {
             if (bindable is DrawnView control)
             {
-                Super.OnFrame -= control.OnFrame;
-                var value = (UpdateMode)newvalue;
-                if (value == UpdateMode.Constant)
-                {
-                    Super.OnFrame += control.OnFrame;
-                }
-                else
-                {
-#if ANDROID || WINDOWS
-                    Super.OnFrame += control.OnFrame;
-#endif
-                }
                 control.Update();
             }
         }
-
-
+        
         public UpdateMode UpdateMode
         {
             get { return (UpdateMode)GetValue(UpdateModeProperty); }

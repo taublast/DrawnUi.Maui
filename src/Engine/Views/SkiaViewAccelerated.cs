@@ -185,15 +185,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
             _surface = paintArgs.Surface;
             var isDirty = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
-
-#if !ANDROID && !WINDOWS
-            if (isDirty && Super.EnableRendering) //if we didnt call update because IsDrawing was true need to kick here
-            {
-                IsDrawing = false;
-                Superview.Update();
-                return;
-            }
-#else
+#if ANDROID
             if (_needUpdate && Super.EnableRendering)
             {
                 _needUpdate = false;

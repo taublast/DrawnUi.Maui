@@ -7,11 +7,6 @@ namespace DrawnUi.Maui.Views
     public partial class DrawnView
     {
 
-        public virtual void Update()
-        {
-            IsDirty = true;
-        }
-
         private void OnFrame(long nanoseconds)
         {
             if (CheckCanDraw() && IsDirty)

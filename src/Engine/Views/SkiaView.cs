@@ -95,12 +95,12 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         {
             _surface = paintArgs.Surface;
             bool invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
-            if (invalidate && Super.EnableRendering) //if we didnt call update because IsDrawing was true need to kick here
-            {
-                IsDrawing = false;
-                Superview.Update();
-                return;
-            }
+            // if (invalidate && Super.EnableRendering) //if we didnt call update because IsDrawing was true need to kick here
+            // {
+            //     IsDrawing = false;
+            //     Superview.Update();
+            //     return;
+            // }
         }
 
         IsDrawing = false;

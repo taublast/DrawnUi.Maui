@@ -150,6 +150,7 @@ public class SkiaBackdrop : ContentLayout
             ImagePaint.ColorFilter = PaintColorFilter;
 
             //notice we read from the real canvas and we write to ctx.Canvas which can be cache
+
             ctx.Superview.CanvasView.Surface.Canvas.Flush();
             var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
 
@@ -169,7 +170,6 @@ public class SkiaBackdrop : ContentLayout
                 }
 
             }
-
         }
 
     }

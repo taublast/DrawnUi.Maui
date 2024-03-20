@@ -5,19 +5,25 @@ namespace DrawnUi.Maui.Views
 
     public partial class DrawnView
     {
-        
+
         /// <summary>
         /// Will be called on ui thread on windows
         /// </summary>
         /// <param name="nanoseconds"></param>
         private void OnFrame(long nanoseconds)
         {
-            if (CheckCanDraw() && IsDirty)
+            // interestingly at app startup there can be
+            // a case when even using MainThread.BeginInvokeOnMainThread
+            // we get no main thread yet so we avoid crash with a check:
+            if (MainThread.IsMainThread)
             {
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
+                if (CheckCanDraw() && IsDirty)
+                {
+                    if (NeedCheckParentVisibility)
+                        CheckElementVisibility(this);
 
-                CanvasView?.Update();
+                    CanvasView?.Update();
+                }
             }
         }
 

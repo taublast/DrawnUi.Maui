@@ -54,13 +54,13 @@ namespace DrawnUi.Maui.Views
         {
             NeedCheckParentVisibility = false;
 
-            while (element != null)
+            if (element != null)
             {
 
 #if IOS || MACCATALYST
 
 				//WARNING this must be called form UI thread only!
-
+				
 				if (element.Handler != null)
 				{
 					if (element.Handler.PlatformView is UIKit.UIView iosView)
