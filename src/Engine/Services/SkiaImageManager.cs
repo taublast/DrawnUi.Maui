@@ -110,7 +110,7 @@ public partial class SkiaImageManager : IDisposable
 
     public void CancelAll()
     {
-        lock (lockObject)
+        //lock (lockObject)
         {
             while (_queue.Count > 0)
             {
@@ -125,7 +125,7 @@ public partial class SkiaImageManager : IDisposable
     private readonly ConcurrentDictionary<string, Task<SKBitmap>> _trackLoadingBitmapsUris = new();
 
     //todo avoid conflicts, cannot use concurrent otherwise will loose data
-    private readonly Dictionary<string, Stack<QueueItem>> pendingLoads = new();
+    private readonly Dictionary<string, Stack<QueueItem>> _pendingLoads = new();
 
 
     public Task<SKBitmap> Enqueue(ImageSource source, CancellationTokenSource token)
@@ -191,7 +191,7 @@ public partial class SkiaImageManager : IDisposable
                 {
                     // we're currently loading the same image, save the task to pendingLoads
                     TraceLog($"ImageLoadManager: Same image already loading, pausing task for UriImageSource {uri}");
-                    if (pendingLoads.TryGetValue(uri, out var stack))
+                    if (_pendingLoads.TryGetValue(uri, out var stack))
                     {
                         stack.Push(tuple);
                     }
@@ -199,7 +199,7 @@ public partial class SkiaImageManager : IDisposable
                     {
                         var pendingStack = new Stack<QueueItem>();
                         pendingStack.Push(tuple);
-                        pendingLoads[uri] = pendingStack;
+                        _pendingLoads[uri] = pendingStack;
                     }
                 }
                 else
@@ -342,7 +342,7 @@ public partial class SkiaImageManager : IDisposable
                     continue;
                 }
 
-                foreach (var pendingPair in pendingLoads)
+                foreach (var pendingPair in _pendingLoads)
                 {
                     if (pendingPair.Value.Count != 0 && pendingPair.Value.TryPop(out var nextTcs))
                     {
@@ -359,7 +359,7 @@ public partial class SkiaImageManager : IDisposable
                 }
 
                 // If we didn't find a task in pendingLoads, try the main queue.
-                lock (lockObject)
+                //lock (lockObject)
                 {
                     if (queueItem == null && _queue.TryDequeue(out queueItem))
                     {
@@ -447,7 +447,7 @@ public partial class SkiaImageManager : IDisposable
 
         var tuple = new QueueItem(source, cts, tcs);
 
-        lock (lockObject)
+        //lock (lockObject)
         {
             _queue.Enqueue(tuple);
         }

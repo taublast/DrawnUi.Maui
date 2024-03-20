@@ -11,27 +11,26 @@ namespace DrawnUi.Maui.Draw;
 
 public partial class Super
 {
-    protected static void AndroidAppCreated()
+
+    protected static void SetupChoreographer()
     {
-        /*
-            OnNativeAppDestroyed += (s, a) =>
-            {
-                // Remove callback when the activity is destroyed to prevent memory leaks
-                Choreographer.Instance.RemoveFrameCallback(_frameCallback);
-            };
+        OnNativeAppDestroyed += (s, a) =>
+        {
+            // Remove callback when the activity is destroyed to prevent memory leaks
+            Choreographer.Instance.RemoveFrameCallback(_frameCallback);
+        };
 
-            _frameCallback = new FrameCallback((nanos) =>
-            {
-                OnFrame?.Invoke(nanos);
-
-                // kick the next frame
-                Choreographer.Instance.PostFrameCallback(_frameCallback);
-            });
-
+        _frameCallback = new FrameCallback((nanos) =>
+        {
+            // kick the next frame
             Choreographer.Instance.PostFrameCallback(_frameCallback);
-            */
 
+            OnFrame?.Invoke(nanos);
+        });
+
+        Choreographer.Instance.PostFrameCallback(_frameCallback);
     }
+
 
     public static Android.App.Activity MainActivity { get; set; }
 

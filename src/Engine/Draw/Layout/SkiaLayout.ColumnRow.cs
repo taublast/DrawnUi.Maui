@@ -212,6 +212,7 @@ namespace DrawnUi.Maui.Draw
                         }
 
                         //fixes case we changed size of columns/cells and there where already measured..
+                        /*
                         if (IsTemplated
                             && (DynamicColumns || ItemSizingStrategy == Microsoft.Maui.Controls.ItemSizingStrategy.MeasureAllItems)
                             && RecyclingTemplate == RecyclingTemplate.Enabled
@@ -223,6 +224,7 @@ namespace DrawnUi.Maui.Draw
                             //for example same template rendering on 2 columns in one row and 1 column on the last one
                             InvalidateChildrenTree(control);
                         }
+                        */
 
                         DrawChild(context, destinationRect, child, scale);
                         drawn++;

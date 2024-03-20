@@ -350,32 +350,6 @@ public class Canvas : DrawnView, IGestureListener
     protected virtual void ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
     {
 
-        if (touchAction == TouchActionResult.Down)
-        {
-            _isPanning = false;
-        }
-
-        if (touchAction == TouchActionResult.Panning)
-        {
-            //filter micro-gestures
-            if ((Math.Abs(args.Distance.Delta.X) < 1 && Math.Abs(args.Distance.Delta.Y) < 1)
-                || (Math.Abs(args.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args.Distance.Velocity.Y / RenderingScale) < 1))
-            {
-                return;
-            }
-
-            var threshold = FirstPanThreshold * RenderingScale;
-            if (!_isPanning)
-            {
-                //filter first panning movement on super sensitive screens
-                if (Math.Abs(args.Distance.Total.X) < threshold && Math.Abs(args.Distance.Total.Y) < threshold)
-                {
-                    return;
-                }
-
-                _isPanning = true;
-            }
-        }
 
         lock (LockIterateListeners)
         {
@@ -445,7 +419,7 @@ public class Canvas : DrawnView, IGestureListener
                 }
             }
 
-            if (false)
+            if (TouchEffect.LogEnabled)
             {
                 if (consumed == null)
                 {
@@ -467,6 +441,35 @@ public class Canvas : DrawnView, IGestureListener
 
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
     {
+
+        //ProcessGestures(type, args, touchAction);
+
+        if (touchAction == TouchActionResult.Panning)
+        {
+            //filter micro-gestures
+            if ((Math.Abs(args.Distance.Delta.X) < 1 && Math.Abs(args.Distance.Delta.Y) < 1)
+                || (Math.Abs(args.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args.Distance.Velocity.Y / RenderingScale) < 1))
+            {
+                return;
+            }
+
+            var threshold = FirstPanThreshold * RenderingScale;
+            if (!_isPanning)
+            {
+                //filter first panning movement on super sensitive screens
+                if (Math.Abs(args.Distance.Total.X) < threshold && Math.Abs(args.Distance.Total.Y) < threshold)
+                {
+                    return;
+                }
+
+                _isPanning = true;
+            }
+        }
+
+        if (touchAction == TouchActionResult.Down)
+        {
+            _isPanning = false;
+        }
 
 
         PostponeExecutionBeforeDraw(() =>

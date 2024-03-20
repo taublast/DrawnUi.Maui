@@ -83,15 +83,22 @@ namespace DrawnUi.Maui.Draw
             }
             catch (Exception e)
             {
-                Trace.WriteLine("-------------------------------------------------");
-                Trace.WriteLine($"[HOTRELOAD] Exception GetVisualChildren {Tag} {e}");
-                Trace.WriteLine("-------------------------------------------------");
+                Super.Log("-------------------------------------------------");
+                Super.Log($"[HOTRELOAD] Exception GetVisualChildren {Tag} {e}");
+                Super.Log("-------------------------------------------------");
                 return base.GetVisualChildren();
             }
 
         }
 
         #endregion
+
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+
+            UpdateRowColumnBindingContexts();
+        }
 
         //todo use rendering tree for templated!!
         //protected override void OnParentVisibilityChanged(bool newvalue)
@@ -332,9 +339,11 @@ namespace DrawnUi.Maui.Draw
                     bool manageChildFocus = false;
 
                     //using RenderTree
-                    if ((Type == LayoutType.Column || Type == LayoutType.Row) //normal stacklayout or..
+                    if ((RenderTree != null && (
+                            Type == LayoutType.Grid ||
+                            Type == LayoutType.Column || Type == LayoutType.Row) //normal stacklayout or..
                         || (IsTemplated && Type == LayoutType.Absolute) //templated carousel etc
-                        )
+                        ))
                     {
                         var thisOffset = TranslateInputCoords(childOffset);
                         var x = args.Location.X + thisOffset.X;
@@ -1071,10 +1080,7 @@ namespace DrawnUi.Maui.Draw
                         if (!canMeasureTemplates)
                             return ScaledSize.CreateEmpty(request.Scale);
                     }
-                    if (Tag == "ValidationStack")
-                    {
-                        var stop = 1;
-                    }
+
                     ContentSize = MeasureStack(constraints.Content, request.Scale);
                     break;
 
@@ -1103,7 +1109,7 @@ namespace DrawnUi.Maui.Draw
 
                 var invalidated = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
                 if (invalidated)
-                    RenderObjectNeedsUpdate = invalidated;
+                    RenderObjectNeedsUpdate = true;
 
                 return SetMeasured(width, height, request.Scale);
             }
@@ -1257,25 +1263,34 @@ namespace DrawnUi.Maui.Draw
 
         protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
         {
-            if (_emptyView != null && _emptyView.IsVisible)
-            {
-                var drawViews = new List<SkiaControl> { _emptyView };
-                return RenderViewsList(drawViews, context, destination, scale);
-            }
-
+            var drawn = 0;
+            
             if (IsTemplated)
             {
                 if (ChildrenFactory.TemplatesAvailable)
                 {
                     using var children = ChildrenFactory.GetViewsIterator();
-                    return RenderViewsList(children, context, destination, scale, debug);
+                    drawn = RenderViewsList(children, context, destination, scale, debug);
                 }
-                return 0;
+                if (drawn == 0 && _emptyView != null && _emptyView.IsVisible)
+                {
+                    var drawViews = new List<SkiaControl> { _emptyView };
+                    RenderViewsList(drawViews, context, destination, scale);
+                    return 0;
+                }
             }
-
-            return base.DrawViews(context, destination, scale, debug);
+            else
+            {
+                drawn = base.DrawViews(context, destination, scale, debug);
+                if (drawn == 0 && _emptyView != null && _emptyView.IsVisible)
+                {
+                    var drawViews = new List<SkiaControl> { _emptyView };
+                    RenderViewsList(drawViews, context, destination, scale);
+                    return 0;
+                }
+            }
+            return drawn;
         }
-
 
         public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type), typeof(LayoutType), typeof(SkiaLayout),
             LayoutType.Absolute,
@@ -1438,6 +1453,7 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void OnItemSourceChanged()
         {
+
             if (!BindingContextWasSet && ItemsSource == null) //do not create items from templates until the context was changed properly to avoid bugs
             {
                 return;
@@ -1445,11 +1461,21 @@ namespace DrawnUi.Maui.Draw
 
             if (IsTemplated && !IsMeasuring)
             {
-                this.ChildrenFactory.TemplatesInvalidated = true;
+                void Apply()
+                {
+                    this.ChildrenFactory.TemplatesInvalidated = true;
+                    ApplyNewItemsSource = true;
+                    Invalidate();
+                }
 
-                ApplyNewItemsSource = true;
-
-                Invalidate();
+                if (IsMeasuring)
+                {
+                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(500), Apply);
+                }
+                else
+                {
+                    Apply();
+                }
             }
 
         }
@@ -1476,6 +1502,7 @@ namespace DrawnUi.Maui.Draw
 
             switch (args.Action)
             {
+
             //case NotifyCollectionChangedAction.Add:
             //{
             //    int index = args.NewStartingIndex;
@@ -1512,85 +1539,108 @@ namespace DrawnUi.Maui.Draw
             //}
             //break;
             //case NotifyCollectionChangedAction.Add:
-            //	{
-            //		int index = args.NewStartingIndex;
-            //		if (args.NewItems != null)
-            //		{
-            //			if (Views.Count > 0)
-            //			{
-            //				//insert somewhere
-            //				foreach (var newItem in args.NewItems)
-            //				{
-            //					SkiaControl view = CreateControl(ItemTemplate);
-            //					if (view != null)
-            //					{
-            //						view.Parent = this;
-            //						view.BindingContext = newItem;
-            //						Views.Insert(index++, view);
-            //					}
-            //				}
-            //				Invalidate();
-            //			}
-            //			else
-            //			{
-            //				OnItemSourceChanged();
-            //			}
-            //		}
-            //	}
-            //	break;
+            //{
+            //    int index = args.NewStartingIndex;
+            //    if (args.NewItems != null)
+            //    {
+            //        if (Views.Count > 0)
+            //        {
+            //            //insert somewhere
+            //            foreach (var newItem in args.NewItems)
+            //            {
+            //                SkiaControl view = CreateControl(ItemTemplate);
+            //                if (view != null)
+            //                {
+            //                    view.Parent = this;
+            //                    view.BindingContext = newItem;
+            //                    Views.Insert(index++, view);
+            //                }
+            //            }
+            //            Invalidate();
+            //        }
+            //        else
+            //        {
+            //            OnItemSourceChanged();
+            //        }
+            //    }
+            //}
+            //break;
             //case NotifyCollectionChangedAction.Move:
-            //	{
-            //		try
-            //		{
-            //			var view = Views[args.OldStartingIndex];
-            //			Views.RemoveAt(args.OldStartingIndex);
-            //			Views.Insert(args.NewStartingIndex, view);
-            //		}
-            //		catch (Exception e)
-            //		{
-            //			Trace.WriteLine($"[SkiaLayout] {e}");
-            //		}
-            //	}
-            //	Invalidate();
-            //	break;
+            //{
+            //    try
+            //    {
+            //        var view = Views[args.OldStartingIndex];
+            //        Views.RemoveAt(args.OldStartingIndex);
+            //        Views.Insert(args.NewStartingIndex, view);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Trace.WriteLine($"[SkiaLayout] {e}");
+            //    }
+            //}
+            //Invalidate();
+            //break;
             //case NotifyCollectionChangedAction.Remove:
-            //	{
-            //		if (args.NewItems.Count > 1)
-            //		{
-            //			throw new NotImplementedException("ToDo Remove more than 1");
-            //		}
-            //		try
-            //		{
-            //			var remove = Views[args.OldStartingIndex];
-            //			Views.RemoveAt(args.OldStartingIndex);
-            //			remove.Dispose();
-            //		}
-            //		catch (Exception e)
-            //		{
-            //			Trace.WriteLine($"[SkiaLayout] {e}");
-            //		}
-            //	}
-            //	Invalidate();
-            //	break;
+            //{
+            //    if (args.NewItems.Count > 1)
+            //    {
+            //        throw new NotImplementedException("ToDo Remove more than 1");
+            //    }
+            //    try
+            //    {
+            //        var remove = Views[args.OldStartingIndex];
+            //        Views.RemoveAt(args.OldStartingIndex);
+            //        remove.Dispose();
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Trace.WriteLine($"[SkiaLayout] {e}");
+            //    }
+            //}
+            //Invalidate();
+            //break;
+
             //case NotifyCollectionChangedAction.Replace: //todo for more than 1
-            //	{
-            //		if (args.NewItems.Count > 1)
-            //		{
-            //			throw new NotImplementedException("ToDo Replace more than 1");
-            //		}
-            //		var view = CreateControl(ItemTemplate);
-            //		if (view != null)
-            //		{
-            //			view.Parent = this;
-            //			view.BindingContext = args.NewItems[0]; ;
-            //			var remove = Views[args.OldStartingIndex];
-            //			Views.RemoveAt(args.OldStartingIndex);
-            //			Views.Insert(args.NewStartingIndex, view);
-            //			remove.Dispose();
-            //		}
-            //	}
-            //	Invalidate();
-            //	break;
+            //{
+            //    if (args.NewItems.Count > 1)
+            //    {
+            //        throw new NotImplementedException("ToDo Replace more than 1");
+            //    }
+            //    var view = CreateControl(ItemTemplate);
+            //    if (view != null)
+            //    {
+            //        view.Parent = this;
+            //        view.BindingContext = args.NewItems[0]; ;
+            //        var remove = Views[args.OldStartingIndex];
+            //        Views.RemoveAt(args.OldStartingIndex);
+            //        Views.Insert(args.NewStartingIndex, view);
+            //        remove.Dispose();
+            //    }
+            //}
+            //Invalidate();
+            //break;
+
+
+            case NotifyCollectionChangedAction.Add:
+            case NotifyCollectionChangedAction.Move:
+            case NotifyCollectionChangedAction.Remove:
+            case NotifyCollectionChangedAction.Replace:
+
+            if (IsTemplated && !IsMeasuring)
+            {
+
+                ApplyNewItemsSource = false;
+                ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
+                    GetTemplatesPoolLimit(),
+                    GetTemplatesPoolPrefill());
+
+                Invalidate();
+
+                return;
+            }
+
+            break;
+
             case NotifyCollectionChangedAction.Reset:
             ResetScroll();
             //ClearChildren();

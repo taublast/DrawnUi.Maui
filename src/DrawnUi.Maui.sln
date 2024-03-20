@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "Sandbox\Sandbox.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui", "Engine\DrawnUi.Maui.csproj", "{D76B6239-94A0-482C-A0FF-A764017B7393}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppoMobi.Maui.DrawnUi.Demo.Refs", "..\..\AppoMobi.Maui.DrawnUi.Demo\src\AllDrawn\AppoMobi.Maui.DrawnUi.Demo.Refs.csproj", "{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,12 @@ Global
 		{D76B6239-94A0-482C-A0FF-A764017B7393}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D76B6239-94A0-482C-A0FF-A764017B7393}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D76B6239-94A0-482C-A0FF-A764017B7393}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

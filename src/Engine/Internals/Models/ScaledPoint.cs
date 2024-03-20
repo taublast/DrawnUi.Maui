@@ -1,6 +1,6 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public class ScaledPoint
+public struct ScaledPoint
 {
     public ScaledPoint()
     {
@@ -12,23 +12,29 @@ public class ScaledPoint
     public SKPoint Units { get; set; }
     public SKPoint Pixels { get; set; }
 
-    public static ScaledPoint FromUnits(float width, float height, float scale)
+    public static ScaledPoint FromUnits(float width, float height, float scale, bool roundPixels = true)
     {
         if (double.IsNaN(width))
             width = -1;
         if (double.IsNaN(height))
             height = -1;
 
-        var nWidth = (float)Math.Round(width * scale);
-        if (float.IsInfinity(width))
+        var nWidth = float.PositiveInfinity;
+        if (!float.IsInfinity(width))
         {
-            nWidth = float.PositiveInfinity;
+            if (roundPixels)
+                nWidth = (float)Math.Round(width * scale);
+            else
+                nWidth = width * scale;
         }
 
-        var nHeight = (float)Math.Round(height * scale);
-        if (float.IsInfinity(height))
+        var nHeight = float.PositiveInfinity;
+        if (!float.IsInfinity(height))
         {
-            nHeight = float.PositiveInfinity;
+            if (roundPixels)
+                nHeight = (float)Math.Round(height * scale);
+            else
+                nHeight = height * scale;
         }
 
         return new ScaledPoint()
@@ -38,7 +44,6 @@ public class ScaledPoint
             Pixels = new SKPoint(nWidth, nHeight)
         };
     }
-
 
     public static ScaledPoint FromPixels(SKPoint size, float scale)
     {

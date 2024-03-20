@@ -663,10 +663,15 @@ namespace DrawnUi.Maui.Controls
             if (!_processing)
             {
                 _processing = true;
-                Tasks.StartDelayedAsync(TimeSpan.FromMicroseconds(1), async () =>
-                {
-                    await ProcessIndexBufferAsync().ConfigureAwait(false);
-                });
+                // Tasks.StartDelayedAsync(TimeSpan.FromMicroseconds(1), async () =>
+                // {
+                //     await ProcessIndexBufferAsync().ConfigureAwait(false);
+                // });
+                // MainThread.BeginInvokeOnMainThread(async  () =>
+                // {
+                //     await ProcessIndexBufferAsync();
+                // });
+                ProcessIndexBufferAsync().ConfigureAwait(false);
             }
         }
 

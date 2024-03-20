@@ -1,6 +1,7 @@
 ﻿//Adapted code from the Xamarin.Forms Grid implementation
 
 using DrawnUi.Maui.Infrastructure.Xaml;
+using System.Collections.Immutable;
 using System.ComponentModel;
 
 namespace DrawnUi.Maui.Draw;
@@ -24,7 +25,11 @@ public partial class SkiaLayout
             //var visibleArea = RenderingViewport;
 
             using var cells = ChildrenFactory.GetViewsIterator();
+
             //todo optimize this so we do not call GetCellBoundsFor every redraw but use RenderTree like in column/row stack
+
+            List<SkiaControlWithRect> tree = new();
+
             foreach (var child in cells)
             {
                 if (!child.CanDraw)
@@ -36,9 +41,15 @@ public partial class SkiaLayout
                 SKRect cellRect = new((float)Math.Round(cell.Left * scale), (float)Math.Round(cell.Top * scale),
                     (float)Math.Round(cell.Right * scale), (float)Math.Round(cell.Bottom * scale));
 
+                tree.Add(new SkiaControlWithRect(child, cellRect, drawn));
+
                 DrawChild(context, cellRect, child, scale);
                 drawn++;
             }
+
+            RenderTree = tree.ToImmutableArray();
+            _builtRenderTreeStamp = _measuredStamp;
+
         }
         return drawn;
     }
@@ -240,7 +251,7 @@ public partial class SkiaLayout
         Invalidate();
     }
 
-    void UpdateRowColumnBindingContexts()
+    protected void UpdateRowColumnBindingContexts()
     {
         var bindingContext = BindingContext;
 

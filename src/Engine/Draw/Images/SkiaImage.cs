@@ -415,47 +415,63 @@ public class SkiaImage : SkiaControl
                                 return;
                             }
 
-                            //bitmap = await Super.LoadSKBitmapAsync(source, cancel.Token);
+                            //bitmap = await SkiaImageManager.LoadSKBitmapAsync(source, cancel.Token);
 
-                            bitmap = await SkiaImageManager.Instance.Enqueue(source, cancel);
-
-                            //Console.WriteLine($"[SKIAIMAGE] *** Loaded {source} = {bitmap}");
-
-                            IsLoading = false;
-
-                            if (cancel.Token.IsCancellationRequested)
+                            async Task LoadAction()
                             {
-                                //Debug.WriteLine($"[SkiaImage] {Id} loading canceled for {url}");
-                                cancel?.Cancel();
-                                IsLoading = false;
-                                TraceLog($"[SkiaImage] Canceled already loaded {source}");
-                                if (bitmap != null && !SkiaImageManager.ReuseBitmaps)
-                                    SafeAction(() =>
+                                try
+                                {
+                                    bitmap = await SkiaImageManager.Instance.Enqueue(source, cancel);
+
+                                    if (cancel.Token.IsCancellationRequested)
                                     {
-                                        bitmap.Dispose();
-                                    });
-                                return;
+                                        //Debug.WriteLine($"[SkiaImage] {Id} loading canceled for {url}");
+                                        cancel?.Cancel();
+                                        IsLoading = false;
+                                        TraceLog($"[SkiaImage] Canceled already loaded {source}");
+                                        if (bitmap != null && !SkiaImageManager.ReuseBitmaps)
+                                            SafeAction(() =>
+                                            {
+                                                bitmap.Dispose();
+                                            });
+                                        return;
+                                    }
+
+                                    if (bitmap != null)
+                                    {
+                                        CancelLoading?.Cancel();
+                                        ImageBitmap = new LoadedImageSource(bitmap); //at the end will use SetImage(new InstancedBitmap(bitmap));
+                                        TraceLog($"[SkiaImage] Loaded {source}");
+                                        OnSuccess?.Invoke(this, new ContentLoadedEventArgs(url));
+                                        OnSourceSuccess();
+                                        return;
+                                    }
+
+                                    TraceLog($"[SkiaImage] Error loading {url} as {source} for tag {Tag} try {RetriesOnError - RetriesLeft + 1}");
+
+                                    //ClearBitmap(); //erase old image anyway even if EraseChangedContent is false
+
+                                    if (RetriesLeft > 0)
+                                    {
+                                        await Task.Delay(1000);
+                                        RetriesLeft--;
+                                        await LoadAction();
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Super.Log(e);
+                                }
+                                finally
+                                {
+                                    IsLoading = false;
+                                }
+
                             }
 
-                            if (bitmap != null)
-                            {
-                                CancelLoading?.Cancel();
-                                ImageBitmap = new LoadedImageSource(bitmap); //at the end will use SetImage(new InstancedBitmap(bitmap));
-                                TraceLog($"[SkiaImage] Loaded {source}");
-                                OnSuccess?.Invoke(this, new ContentLoadedEventArgs(url));
-                                OnSourceSuccess();
-                                return;
-                            }
 
-                            TraceLog($"[SkiaImage] Error loading {url} as {source} for tag {Tag} try {RetriesOnError - RetriesLeft + 1}");
+                            await LoadAction();
 
-                            //ClearBitmap(); //erase old image anyway even if EraseChangedContent is false
-
-                            if (RetriesLeft > 0)
-                            {
-                                await Task.Delay(1000);
-                                RetriesLeft--;
-                            }
                         }
 
                         OnError?.Invoke(this, new ContentLoadedEventArgs(url));

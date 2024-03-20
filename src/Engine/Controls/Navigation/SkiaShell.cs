@@ -2263,8 +2263,10 @@ namespace DrawnUi.Maui.Controls
                                     }
                                 }
                             }
-
-
+                            else
+                            {
+                                await AddRoutePart();
+                            }
                         }
 
                         var backup = OrderedRoute;

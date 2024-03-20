@@ -12,6 +12,35 @@ namespace DrawnUi.Maui.Views
     [ContentProperty("Children")]
     public partial class DrawnView : ContentView, IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
+        public virtual void Update()
+        {
+            IsDirty = true;
+        }
+        
+        public bool NeedRedraw { get; set; }
+
+        public bool IsDirty
+        {
+            get
+            {
+                return _isDirty;
+            }
+
+            set
+            {
+                if (_isDirty != value)
+                {
+                    if (!value && UpdateMode == UpdateMode.Constant)
+                    {
+                        value = true;
+                    }
+                    _isDirty = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        bool _isDirty;
         public bool IsUsingHardwareAcceleration
         {
             get
@@ -361,7 +390,7 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public Dictionary<Guid, ISkiaAnimator> AnimatingControls { get; } = new(512);
 
-        protected int ExecuteAnimators(long time)
+        protected int ExecuteAnimators()
         {
 
             var executed = 0;
@@ -394,7 +423,7 @@ namespace DrawnUi.Maui.Views
                             if (skiaAnimation.IsPaused)
                                 skiaAnimation.Resume(); //continue anim from current time instead of the old one
 
-                            skiaAnimation.TickFrame(time);
+                            skiaAnimation.TickFrame(CanvasView.FrameTime);
                             executed++;
                         }
                         else
@@ -446,6 +475,7 @@ namespace DrawnUi.Maui.Views
             if (!_initialized)
             {
                 _initialized = true;
+                
                 HorizontalOptions = LayoutOptions.Start;
                 VerticalOptions = LayoutOptions.Start;
                 Padding = new Thickness(0);
@@ -454,6 +484,10 @@ namespace DrawnUi.Maui.Views
 
                 //bug this creates garbage on aandroid on every frame
                 // DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
+
+#if ANDROID || WINDOWS || IOS || MACCATALYST
+                Super.OnFrame += OnFrame;
+#endif
             }
         }
 
@@ -1198,7 +1232,7 @@ namespace DrawnUi.Maui.Views
 
         private bool OnDrawSurface(SKCanvas canvas, SKRect rect)
         {
-            //lock (LockDraw)
+            lock (LockDraw)
             {
 
                 if (!OnStartRendering(canvas))
@@ -1231,7 +1265,7 @@ namespace DrawnUi.Maui.Views
                     WasRendered = true;
                 }
 
-                return IsDirty || UpdateMode == UpdateMode.Constant;
+                return IsDirty;
             }
 
         }
@@ -1255,10 +1289,7 @@ namespace DrawnUi.Maui.Views
             TimeDrawingStarted = DateTime.Now;
             IsRendering = true;
 
-            if (UpdateMode != UpdateMode.Constant)
-            {
-                IsDirty = false; //any control can set to true after that
-            }
+            IsDirty = false; //any control can set to true after that
 
             return true;
         }
@@ -1476,7 +1507,7 @@ namespace DrawnUi.Maui.Views
                         }
                     }
 
-                    var executed = ExecuteAnimators(context.FrameTimeNanos);
+                    var executed = ExecuteAnimators();
 
                     if (this.Width > 0 && this.Height > 0)
                     {
@@ -2006,36 +2037,17 @@ namespace DrawnUi.Maui.Views
             nameof(UpdateMode),
             typeof(UpdateMode),
             typeof(DrawnView),
-            UpdateMode.Dynamic, propertyChanged: ChangeUpdateMode);
+            UpdateMode.Dynamic,
+            propertyChanged: ChangeUpdateMode);
 
         private static void ChangeUpdateMode(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is DrawnView control)
             {
-                Super.OnFrame -= control.OnFrame;
-
-                var value = (UpdateMode)newvalue;
-                if (value == UpdateMode.Constant)
-                {
-                    Super.OnFrame += control.OnFrame;
-                }
                 control.Update();
             }
         }
-
-        /// <summary>
-        /// UpdateMode.Constant callback
-        /// </summary>
-        /// <param name="nanoseconds"></param>
-        private void OnFrame(long nanoseconds)
-        {
-            if (CheckCanDraw())
-            {
-                OrderedDraw = true;
-                InvalidateCanvas();
-            }
-        }
-
+        
         public UpdateMode UpdateMode
         {
             get { return (UpdateMode)GetValue(UpdateModeProperty); }

@@ -458,21 +458,20 @@ public class SkiaScrollLooped : SkiaScroll
         return new Vector2((float)Math.Round(x), (float)Math.Round(y));
     }
 
-    protected override void PositionViewport(SKRect destination, ScaledPoint offset, float viewportScale, float scale)
+    protected override void PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale, float scale)
     {
         if (!IsBanner)
         {
-            var clampedOffset = ModifyViewportOffset(destination, offset.Units.X, offset.Units.Y, scale);
-            var newOffset = ScaledPoint.FromUnits(clampedOffset.X, clampedOffset.Y, scale);
-            base.PositionViewport(destination, newOffset, viewportScale, scale);
+            var clampedOffsetPixels = ModifyViewportOffset(destination, offsetPixels, scale);
+            base.PositionViewport(destination, clampedOffsetPixels, viewportScale, scale);
         }
         else
         {
-            base.PositionViewport(destination, offset, viewportScale, scale);
+            base.PositionViewport(destination, offsetPixels, viewportScale, scale);
         }
     }
 
-    protected virtual PointF ModifyViewportOffset(SKRect destination, float offsetX, float offsetY, float scale)
+    protected virtual SKPoint ModifyViewportOffset(SKRect destination, SKPoint offsetPixels, float scale)
     {
         float ClampOffset(float offset, float limitPositive, float limitNegative)
         {
@@ -510,11 +509,12 @@ public class SkiaScrollLooped : SkiaScroll
         {
             //sticky
             //need draw duplicate
-            offsetY = ClampOffset(offsetY, Content.MeasuredSize.Units.Height, Content.MeasuredSize.Units.Height);
-            offsetX = ClampOffset(offsetX, Content.MeasuredSize.Units.Width, Content.MeasuredSize.Units.Width);
+            var offsetY = ClampOffset(offsetPixels.Y, Content.MeasuredSize.Pixels.Height, Content.MeasuredSize.Units.Height);
+            var offsetX = ClampOffset(offsetPixels.X, Content.MeasuredSize.Pixels.Width, Content.MeasuredSize.Units.Width);
+            return new((float)Math.Round(offsetX), (float)Math.Round(offsetY));
         }
 
-        return new PointF((float)Math.Round(offsetX), (float)Math.Round(offsetY));
+        return offsetPixels;
     }
 
     public static readonly BindableProperty CycleSpaceProperty

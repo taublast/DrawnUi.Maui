@@ -24,7 +24,7 @@ public class VelocityAccumulator
         velocities.Add((velocity, now));
     }
 
-    public Vector2 CalculateFinalVelocity()
+    public Vector2 CalculateFinalVelocity(float clampAbsolute=0)
     {
         var now = DateTime.UtcNow;
         var relevantVelocities = velocities.Where(v => (now - v.time).TotalMilliseconds <= ConsiderationTimeframeMs).ToList();
@@ -35,6 +35,12 @@ public class VelocityAccumulator
         float weightedSumY = relevantVelocities.Select((v, i) => v.velocity.Y * (i + 1)).Sum();
         var weightSum = Enumerable.Range(1, relevantVelocities.Count).Sum();
 
+        if (clampAbsolute != 0)
+        {
+            return new Vector2( Math.Clamp(weightedSumX / weightSum, -clampAbsolute, clampAbsolute), 
+                Math.Clamp(weightedSumY / weightSum, -clampAbsolute, clampAbsolute));
+        }
+        
         return new Vector2(weightedSumX / weightSum, weightedSumY / weightSum);
     }
 }
@@ -110,6 +116,239 @@ public struct ScrollToPointOrder
 
 public partial class SkiaScroll
 {
+
+    public float ViewportOffsetY
+    {
+        get
+        {
+            return _orderedOffsetY;
+        }
+
+        set
+        {
+            if (_orderedOffsetY != value)
+            {
+                _orderedOffsetY = value;
+                //Debug.WriteLine($"[ViewportOffsetY] {value}");
+                Update();
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    protected float _orderedOffsetY;
+
+
+    public float ViewportOffsetX
+    {
+        get
+        {
+            return _viewportOffsetX;
+        }
+
+        set
+        {
+            if (_viewportOffsetX != value)
+            {
+                _viewportOffsetX = value;
+                Update();
+                OnPropertyChanged();
+            }
+        }
+    }
+    float _viewportOffsetX;
+
+    public event EventHandler<ScaledPoint> Scrolled;
+
+    protected virtual void InitializeViewport(float scale)
+    {
+        _loadMoreTriggeredAt = 0;
+
+        _lastPosViewportScale = -1;
+
+        ContentOffsetBounds = GetContentOffsetBounds();
+
+        HasContentToScroll = ptsContentHeight > Viewport.Units.Height || ptsContentWidth > Viewport.Units.Width;
+
+        _scrollMinX = ContentOffsetBounds.Left;
+        if (_scrollMinX >= 0)
+        {
+            ViewportOffsetX = 0;
+        }
+        _scrollMaxX = 0;
+
+        _scrollMinY = ContentOffsetBounds.Top;
+        if (_scrollMinY >= 0)
+        {
+            ViewportOffsetY = 0;
+        }
+        _scrollMaxY = 0;
+
+        ViewportReady = true;
+        onceAfterInitializeViewport = true;
+    }
+
+    bool onceAfterInitializeViewport;
+
+    public bool ViewportReady { get; protected set; }
+
+    protected virtual void InitializeScroller(float scale)
+    {
+        if (_animatorBounce == null)
+        {
+            _animatorBounce = new(this)
+            {
+                OnStart = () =>
+                {
+
+                },
+                OnStop = () =>
+                {
+                    UpdateLoadingLock(false);
+                    _isSnapping = false;
+                },
+                OnVectorUpdated = (value) =>
+                {
+                    if (Orientation == ScrollOrientation.Vertical)
+                    {
+                        ViewportOffsetY = value.Y; //not clamped
+                    }
+                    else
+                    if (Orientation == ScrollOrientation.Horizontal)
+                    {
+                        ViewportOffsetX = value.X;
+                    }
+                    else
+                    {
+                        ViewportOffsetX = value.X;
+                        ViewportOffsetY = value.Y;
+                    }
+                }
+            };
+
+            _animatorFling = new(this)
+            {
+                //					Friction = FrictionScrolled,
+                //					Scale = scale,
+                OnStart = () =>
+                {
+                    //_isSnapping = false;
+                    OnScrollerStarted();
+                },
+                OnStop = () =>
+                {
+                    //_isSnapping = false;
+                    OnScrollerStopped();
+                },
+                OnVectorUpdated = (value) =>
+                {
+                    var clamped = ClampOffset(value.X, value.Y);
+                    ViewportOffsetX = clamped.X;
+                    ViewportOffsetY = clamped.Y;
+
+                    OnScrollerUpdated();
+                }
+            };
+
+            //_scrollerX = new(this)
+            //{
+            //    OnStop = () =>
+            //    {
+            //        _isSnapping = false;
+            //        SkiaImageLoadingManager.Instance.IsLoadingLocked = false;
+            //    }
+            //};
+
+            //_scrollerY = new(this)
+            //{
+            //    OnStop = () =>
+            //    {
+            //        _isSnapping = false;
+            //        SkiaImageLoadingManager.Instance.IsLoadingLocked = false;
+            //    }
+            //};
+        }
+
+        if (_animatorBounce.IsRunning)
+        {
+            _animatorBounce.Stop();
+        }
+
+        SetDetectIndexChildPoint(TrackIndexPosition);
+
+        this.UpdateVisibleIndex();
+
+        ExecuteDelayedScrollOrders();
+
+        if (CheckNeedToSnap())
+            Snap(0);
+    }
+
+    protected virtual void OnScrollerStarted()
+    {
+        UpdateLoadingLock(_animatorFling.Parameters.InitialVelocity);
+    }
+
+    protected virtual void OnScrollerStopped()
+    {
+        //Super.Log("OnScrollerStopped..");
+
+        UpdateLoadingLock(false);
+
+        if (CheckNeedToSnap())
+        {
+            Snap(SystemAnimationTimeSecs);
+        }
+        else
+        {
+            //scroll ended prematurely by our intent because it would end past the bounds
+            if (Bounces)
+            {
+                if (_animatorFling.SelfFinished && _changeSpeed != null)
+                {
+                    var remainingVelocity = _animatorFling.Parameters.VelocityAt(_animatorFling.Speed);
+                    var velocityX = remainingVelocity.X;
+                    if (Math.Abs(remainingVelocity.X) > MaxBounceVelocity)
+                    {
+                        velocityX = Math.Sign(remainingVelocity.X) * MaxBounceVelocity;
+                    }
+
+                    var velocityY = remainingVelocity.Y;
+                    if (Math.Abs(remainingVelocity.Y) > MaxBounceVelocity)
+                    {
+                        velocityY = Math.Sign(remainingVelocity.Y) * MaxBounceVelocity;
+                    }
+
+                    //Super.Log("OnScrollerStopped Bouncing..");
+                    Bounce(new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY), _axis, new Vector2(velocityX, velocityY));
+
+
+                }
+                else
+                {
+                    var whut = 1;
+                }
+            }
+        }
+    }
+
+    protected virtual void OnScrollerUpdated()
+    {
+        UpdateLoadingLock(_animatorFling.CurrentVelocity);
+    }
+
+
+    public virtual void ExecuteDelayedScrollOrders()
+    {
+        if (OrderedScrollToIndex.IsSet)
+        {
+            ExecuteScrollToIndexOrder();
+        }
+        else
+        {
+            ExecuteScrollToOrder();
+        }
+    }
 
 
     /*

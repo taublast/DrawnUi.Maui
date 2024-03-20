@@ -29,7 +29,7 @@ public class ViewsAdapter : IDisposable
 
     protected void UpdateVisibleViews()
     {
-        lock (lockVisible)
+        //lock (lockVisible)
         {
             foreach (var view in _dicoCellsInUse.Values)
             {
@@ -41,7 +41,7 @@ public class ViewsAdapter : IDisposable
 
     protected void DisposeVisibleViews()
     {
-        lock (lockVisible)
+        //lock (lockVisible)
         {
             foreach (var view in _dicoCellsInUse.Values)
             {
@@ -68,7 +68,7 @@ public class ViewsAdapter : IDisposable
 
     public void MarkAllViewsAsHidden()
     {
-        lock (lockVisible)
+        //lock (lockVisible)
         {
             // Add all visible views back to the recycling pool (e.g., _viewModelPool.Return(hiddenView))
             foreach (var hiddenView in _dicoCellsInUse.Values)
@@ -81,7 +81,7 @@ public class ViewsAdapter : IDisposable
 
     public void MarkViewAsHidden(int index)
     {
-        lock (lockVisible)
+        //lock (lockVisible)
         {
             if (_parent.IsTemplated && _parent.RecyclingTemplate == RecyclingTemplate.Enabled)
             {
@@ -197,7 +197,7 @@ public class ViewsAdapter : IDisposable
     {
         if (index >= 0)
         {
-            lock (lockVisible)
+            //lock (lockVisible)
             {
                 if (_parent.IsTemplated)
                 {
@@ -418,8 +418,8 @@ public class ViewsAdapter : IDisposable
                 return ret;
             }
 
-            var layoutChanged =
-                _parent.RenderingScale != _forScale;// || _parent.MaxColumns != _forColumns || _parent.MaxRows != _forRows;
+            var layoutChanged = true //todo cannot really optimize as can have same nb of cells, same references for  _dataContexts != dataContexts but different contexts
+             || _parent.RenderingScale != _forScale || _parent.MaxColumns != _forColumns || _parent.MaxRows != _forRows;
 
             if (layoutChanged || _templatedViewsPool == null || _dataContexts != dataContexts || CheckTemplateChanged())
             {
@@ -465,7 +465,24 @@ public class ViewsAdapter : IDisposable
                 //looks like only itemssource has changed, resize pool, keep old templates, be fast
                 InitializeSoft(layoutChanged);
             }
+        }
+    }
 
+    public void ContextCollectionChanged(Func<object> template, IList dataContexts, int poolSize, int reserve = 0)
+    {
+        if (_templatedViewsPool == null)
+        {
+            InitializeTemplates(template, dataContexts, poolSize, reserve);
+            return;
+        }
+
+        _templatedViewsPool.MaxSize = poolSize;
+        //        if (layoutChanged)
+        {
+            foreach (var view in _dicoCellsInUse.Values)
+            {
+                view.InvalidateChildrenTree();
+            }
         }
     }
 
@@ -594,7 +611,7 @@ public class ViewsAdapter : IDisposable
 
     public void PrintDebugVisible()
     {
-        lock (lockVisible)
+        //lock (lockVisible)
         {
             Trace.WriteLine($"Visible views {_dicoCellsInUse.Count}:");
             foreach (var view in _dicoCellsInUse.Values)

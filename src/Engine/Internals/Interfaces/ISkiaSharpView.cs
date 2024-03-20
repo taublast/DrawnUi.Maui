@@ -2,7 +2,12 @@
 
 public interface ISkiaSharpView
 {
-    public void InvalidateSurface();
+    /// <summary>
+    /// Safe InvalidateSurface() call
+    /// </summary>
+    public void Update();
+
+    public void PostponeInvalidation();
 
     public SKSize CanvasSize { get; }
 

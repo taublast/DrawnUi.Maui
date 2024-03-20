@@ -1,4 +1,5 @@
-﻿using Foundation;
+﻿using CoreAnimation;
+using Foundation;
 using Microsoft.Maui.Controls;
 using UIKit;
 
@@ -6,7 +7,21 @@ namespace DrawnUi.Maui.Draw
 {
     public partial class Super
     {
+        static CADisplayLink _displayLink;
+        protected static void SetupChoreographer()
+        {
+            _displayLink = CADisplayLink.Create(UpdateFrame);  
+            _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
+        }
 
+        static void UpdateFrame()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                OnFrame?.Invoke(0);
+            });        
+        }
+        
         private static UIResponder mainResponder;
 
         public static void RequestMainResponder(UIResponder responder, bool force = false)

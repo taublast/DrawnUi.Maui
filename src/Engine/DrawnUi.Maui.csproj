@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
   <PropertyGroup>
-    <PackageReleaseNotes>Alpha</PackageReleaseNotes>
+    <PackageReleaseNotes>Alpha for SkiaSharp 2.xx</PackageReleaseNotes>
     <Version>1.0.8.8</Version>
     <Title>DrawnUi for .NET MAUI</Title>
     <PackageId>AppoMobi.Maui.DrawnUi</PackageId>
@@ -52,6 +52,9 @@
     <Compile Remove="Internals\ConditionalStyle.cs" />
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
     <Compile Remove="Controls\Extensions\**" />
+    <Compile Update="Platforms\iOS\DrawnView.Apple.cs">
+      <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+    </Compile>
   </ItemGroup>
 
 

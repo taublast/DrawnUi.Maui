@@ -112,6 +112,12 @@ public class SkiaBackdrop : ContentLayout
 
         Snapshot?.Dispose();
         Snapshot = null;
+        
+        if (CacheSource != null)
+        {
+            CacheSource.CreatedCache -= OnSourceCacheChanged;
+            CacheSource = null;
+        }
     }
 
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
@@ -150,33 +156,82 @@ public class SkiaBackdrop : ContentLayout
             ImagePaint.ColorFilter = PaintColorFilter;
 
             //notice we read from the real canvas and we write to ctx.Canvas which can be cache
-            ctx.Superview.CanvasView.Surface.Canvas.Flush();
-            var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
 
-#if IOS
-            //cannot really blur in realtime on GL simulator would be like 2 fps
-            //while on Metal and M1 the blur will just not work
-            if (DeviceInfo.Current.DeviceType != DeviceType.Virtual )
-#endif
-            {
-                if (snapshot != null)
+            //if (ctx.Superview.HardwareAcceleration != HardwareAccelerationMode.Disabled)
+            
+                if (CacheSource != null)
                 {
-                    if (!IsGhost && HasEffects)
-                        ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
-
-                    Snapshot?.Dispose();
-                    Snapshot = snapshot;
+                    var cache = CacheSource.RenderObject;
+                    if (cache != null && !IsGhost && HasEffects)
+                    {
+                        var offsetX = CacheSource.DrawingRect.Left - this.DrawingRect.Left;
+                        var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
+                        destination.Offset(offsetX, offsetY);
+                        
+                        cache.Draw(ctx.Superview.CanvasView.Surface.Canvas, destination, ImagePaint);
+                    }
                 }
+                else
+                {
+                    ctx.Superview.CanvasView.Surface.Canvas.Flush();
+                    var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
+ 
+                    if (snapshot != null)
+                    {
+                        if (!IsGhost && HasEffects)
+                            ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
 
+                        Snapshot?.Dispose();
+                        Snapshot = snapshot;
+                    }
+                    
+                }
+            
             }
-
-        }
 
     }
 
     protected SKImage Snapshot { get; set; }
 
+    //for some platforms like iOS Metal we cannot get the snapshot
+    // of not yet rendered content below
+    // so we will use the cache
+    public static readonly BindableProperty CacheSourceProperty = BindableProperty.Create(
+        nameof(SkiaBackdrop),
+        typeof(SkiaControl),
+        typeof(SkiaBackdrop),
+        null,
+        propertyChanged: WhenSourceChanged,
+        defaultBindingMode: BindingMode.OneTime);
+    public SkiaControl CacheSource
+    {
+        get { return (SkiaControl)GetValue(CacheSourceProperty); }
+        set { SetValue(CacheSourceProperty, value); }
+    }
+    private static void WhenSourceChanged(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaBackdrop control)
+        {
+            control.AttachSource();
+        }
+    }
 
+    /// <summary>
+    /// Designed to be just one-time set
+    /// </summary>
+    protected void AttachSource()
+    {
+        if (CacheSource != null)
+        {
+            CacheSource.CreatedCache += OnSourceCacheChanged;
+        }
+    }
+
+    private void OnSourceCacheChanged(object sender, CachedObject e)
+    {
+        Update();
+    }
+    
 
     /// <summary>
     /// Returns the snapshot that was used for drawing the backdrop.
