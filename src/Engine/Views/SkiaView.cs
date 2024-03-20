@@ -4,7 +4,13 @@
 
 public partial class SkiaView : SKCanvasView, ISkiaDrawable
 {
+
+
+
     public bool IsHardwareAccelerated => false;
+
+    public void PostponeInvalidation()
+    { }
 
     public SKSurface CreateStandaloneSurface(int width, int height)
     {
@@ -99,6 +105,14 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
         IsDrawing = false;
 
+    }
+
+    public void Update()
+    {
+        if (this.Handler != null && this.Handler.PlatformView != null)
+        {
+            InvalidateSurface();
+        }
     }
 
 }

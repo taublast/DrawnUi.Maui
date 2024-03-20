@@ -19,6 +19,10 @@ public class CachedObject : IDisposable
         var offsetCacheX = drawingRect.X - Bounds.Left;
         var offsetCacheY = drawingRect.Y - Bounds.Top;
 
+        //var offsetCacheX = (float)Math.Round(drawingRect.X - Bounds.Left);
+        //var offsetCacheY = (float)Math.Round(drawingRect.Y - Bounds.Top);
+
+
         return new SKPoint(offsetCacheX, offsetCacheY);
     }
 
@@ -37,17 +41,24 @@ public class CachedObject : IDisposable
         {
             if (Picture != null)
             {
-                var x = destination.Left - Bounds.Left;
-                var y = destination.Top - Bounds.Top;
-                canvas.DrawPicture(Picture, (float)Math.Round(x), (float)Math.Round(y), paint);
+                //var x = destination.Left - Bounds.Left;
+                //var y = destination.Top - Bounds.Top;
+
+                var x = (float)Math.Round(destination.Left - Bounds.Left);
+                var y = (float)Math.Round(destination.Top - Bounds.Top);
+
+                canvas.DrawPicture(Picture, x, y, paint);
             }
             else
             if (Image != null)
             {
-                var x = destination.Left;
-                var y = destination.Top;
+                //var x = destination.Left;
+                //var y = destination.Top;
 
-                canvas.DrawImage(Image, (int)Math.Round(x), (int)Math.Round(y), paint);
+                var x = (float)Math.Round(destination.Left);
+                var y = (float)Math.Round(destination.Top);
+
+                canvas.DrawImage(Image, x, y, paint);
             }
         }
         catch (Exception e)

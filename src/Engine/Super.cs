@@ -29,6 +29,15 @@ namespace DrawnUi.Maui.Draw;
 public partial class Super
 {
 
+#if (!ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+
+    protected static void SetupChoreographer()
+    {
+        throw new NotImplementedException();
+    }
+
+#endif
+
     /// <summary>
     /// Display xaml page creation exception
     /// </summary>
@@ -162,9 +171,9 @@ public partial class Super
     }
 
     /// <summary>
-    /// Capping FPS, default is 8333.3333 (1 / FPS * 1000_000) for 120 FPS
+    /// Capping FPS, (1 / FPS * 1000_000) 
     /// </summary>
-    public static float CapMicroSecs = 8333.3333f;
+    public static float CapMicroSecs = 5000;
 
     public static long GetCurrentTimeMs()
     {
@@ -252,12 +261,12 @@ public partial class Super
     /// <param name="isFixed"></param>
     public static void ResizeWindow(Window window, int width, int height, bool isFixed)
     {
-        
+
         //this crashes in NET8 for CATALYST so..
 #if !MACCATALYST
         window.Width = width;
         window.Height = height;
-        
+
         var disp = DeviceDisplay.Current.MainDisplayInfo;
         // move to screen center
         window.X = (disp.Width / disp.Density - window.Width) / 2;
@@ -297,12 +306,7 @@ public partial class Super
     {
         InBackground = false;
 
-#if ANDROID
-
-        var check = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
-        Super.AndroidAppCreated();
-
-#endif
+        SetupChoreographer();
 
         OnNativeAppCreated?.Invoke(null, EventArgs.Empty);
     }

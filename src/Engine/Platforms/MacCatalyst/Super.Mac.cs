@@ -6,6 +6,10 @@ namespace DrawnUi.Maui.Draw
 {
     public partial class Super
     {
+        protected static void SetupChoreographer()
+        {
+            //todo
+        }
 
         private static UIResponder mainResponder;
 

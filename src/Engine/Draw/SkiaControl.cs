@@ -1302,7 +1302,20 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty FillGradientProperty = BindableProperty.Create(nameof(FillGradient),
             typeof(SkiaGradient), typeof(SkiaControl),
             null,
-            propertyChanged: NeedDraw);
+            propertyChanged: SetupFillGradient);
+
+        private static void SetupFillGradient(BindableObject bindable, object oldvalue, object newvalue)
+        {
+            if (bindable is SkiaControl control)
+            {
+                if (newvalue is SkiaGradient gradient)
+                {
+                    gradient.BindingContext = control.BindingContext;
+                }
+                control.Update();
+            }
+        }
+
         public SkiaGradient FillGradient
         {
             get { return (SkiaGradient)GetValue(FillGradientProperty); }
@@ -3235,6 +3248,9 @@ namespace DrawnUi.Maui.Draw
             {
                 view.BindingContext = BindingContext;
             }
+
+            if (FillGradient != null)
+                FillGradient.BindingContext = BindingContext;
         }
 
         protected bool BindingContextWasSet { get; set; }
@@ -3247,6 +3263,8 @@ namespace DrawnUi.Maui.Draw
 
             try
             {
+                RenderObjectNeedsUpdate = true;
+
                 InvalidateViewsList(); //we might get different ZIndex which is bindable..
 
                 ApplyBindingContext();
@@ -4202,16 +4220,20 @@ namespace DrawnUi.Maui.Draw
 #else
                     //  lock (LockDraw)
                     {
-                        if (UseCache == SkiaCacheType.ImageDoubleBuffered && _renderObject != null)
+                        if (_renderObject != null)
                         {
-                            RenderObjectPrevious = _renderObject;
-                        }
-                        else
-                        {
-                            DisposeObject(_renderObject);
+                            if (UseCache == SkiaCacheType.ImageDoubleBuffered)
+                            {
+                                RenderObjectPrevious = _renderObject;
+                            }
+                            else
+                            {
+                                DisposeObject(_renderObject);
+                            }
                         }
                         _renderObject = value;
                         OnPropertyChanged();
+
                         if (value != null)
                             CreatedCache?.Invoke(this, value);
                     }
@@ -4323,8 +4345,8 @@ namespace DrawnUi.Maui.Draw
                     var moveX = (float)Math.Round(UseTranslationX * RenderingScale);
                     var moveY = (float)Math.Round(UseTranslationY * RenderingScale);
 
-                    var centerX = moveX + (float)Math.Round(destination.Left + destination.Width * (float)TransformPivotPointX);
-                    var centerY = moveY + (float)Math.Round(destination.Top + destination.Height * (float)TransformPivotPointY);
+                    var centerX = (float)(moveX + destination.Left + destination.Width * TransformPivotPointX);
+                    var centerY = (float)(moveY + destination.Top + destination.Height * TransformPivotPointY);
 
                     var skewX = 0f;
                     if (SkewX > 0)

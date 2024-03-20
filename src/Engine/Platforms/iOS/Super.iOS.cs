@@ -10,6 +10,11 @@ namespace DrawnUi.Maui.Draw
     public partial class Super
     {
 
+        protected static void SetupChoreographer()
+        {
+            //todo
+        }
+
         #region Thread
         static bool PlatformIsMainThread
         {

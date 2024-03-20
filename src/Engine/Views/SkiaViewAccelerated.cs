@@ -128,6 +128,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     SKSurface _surface;
     private DateTime _lastFrame;
     private double _fps;
+    private bool _needUpdate;
 
     public SKSurface Surface
     {
@@ -151,6 +152,19 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
     public long FrameTime { get; protected set; }
 
+    public void PostponeInvalidation()
+    {
+        _needUpdate = true;
+    }
+
+    public void Update()
+    {
+        if (this.Handler != null && this.Handler.PlatformView != null)
+        {
+            InvalidateSurface();
+        }
+    }
+
     /// <summary>
     /// We are drawing the frame
     /// </summary>
@@ -167,17 +181,29 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
         if (OnDraw != null && Super.EnableRendering)
         {
+            _needUpdate = false;
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
             _surface = paintArgs.Surface;
-            var invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
-            if (invalidate && Super.EnableRendering) //if we didnt call update because IsDrawing was true need to kick here
+            var isDirty = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
+
+#if !ANDROID && !WINDOWS
+            if (isDirty && Super.EnableRendering) //if we didnt call update because IsDrawing was true need to kick here
             {
                 IsDrawing = false;
                 Superview.Update();
                 return;
             }
+#else
+            if (_needUpdate && Super.EnableRendering)
+            {
+                _needUpdate = false;
+                this.InvalidateSurface();
+                return;
+            }
+#endif
         }
 
+        _needUpdate = false;
         IsDrawing = false;
     }
 

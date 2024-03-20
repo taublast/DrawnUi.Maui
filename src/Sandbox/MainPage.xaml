@@ -31,8 +31,7 @@
                         HorizontalOptions="Fill"
                         Spacing="0"
                         Type="Column"
-                        UseCache="Operations"
-                        VerticalOptions="End">
+                        UseCache="Operations">
 
                         <draw:SkiaImage
                             Aspect="AspectFit"

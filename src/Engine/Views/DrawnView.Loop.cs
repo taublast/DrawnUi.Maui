@@ -3,27 +3,30 @@ using Microsoft.Maui.Platform;
 
 namespace DrawnUi.Maui.Views;
 
-
 public partial class DrawnView
 {
 
-    public bool IsDirty
+#if !ANDROID && !WINDOWS
+
+    SemaphoreSlim _semaphoreOnFrame = new(1, 1);
+    long _onFrameTime;
+
+    /// <summary>
+    /// UpdateMode.Constant callback
+    /// </summary>
+    /// <param name="nanoseconds"></param>
+    private void OnFrame(long nanoseconds)
     {
-        get
+        if (!CheckCanDraw() || CanvasView.IsDrawing)
         {
-            return _isDirty;
+            CanvasView?.PostponeInvalidation();
+            return;
         }
 
-        set
-        {
-            if (_isDirty != value)
-            {
-                _isDirty = value;
-                OnPropertyChanged();
-            }
-        }
+        OrderedDraw = true;
+
+        InvalidateCanvas();
     }
-    bool _isDirty;
 
     public bool CheckCanDraw()
     {
@@ -33,98 +36,27 @@ public partial class DrawnView
         return CanvasView != null
                && !IsRendering
                && IsDirty
-               && IsVisible;
+               && IsVisible && Super.EnableRendering;
     }
 
-
-    public bool NeedRedraw { get; set; }
 
     public virtual void Update()
     {
         IsDirty = true;
-        if (!OrderedDraw && CheckCanDraw())
+        if (!OrderedDraw && !IsDirty && CheckCanDraw())
         {
             OrderedDraw = true;
             InvalidateCanvas();
         }
     }
 
-#if ANDROID
-
-    protected async void InvalidateCanvas()
-    {
-        if (CanvasView == null)
-            return;
-
-        //sanity check
-        if (CanvasView.CanvasSize is { Width: > 0, Height: > 0 })
-        {
-            if (NeedCheckParentVisibility)
-            {
-                CheckElementVisibility(this);
-            }
-
-            if (UpdateMode == UpdateMode.Constant)
-            {
-                InvalidatedCanvas++;
-                CanvasView?.InvalidateSurface();
-                return;
-            }
-
-            if (CanDraw) //passed checks
-            {
-                _isWaiting = true;
-                InvalidatedCanvas++;
-
-                //cap fps around 120fps
-                var nowNanos = Super.GetCurrentTimeNanos();
-                var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
-
-                var needWait =
-                    Super.CapMicroSecs
-                    - elapsedMicros;
-                if (needWait >= 1)
-                {
-                    await Task.Delay(TimeSpan.FromMicroseconds(needWait));
-                }
-
-                _isWaiting = false;
-
-                if (!Super.EnableRendering)
-                {
-                    OrderedDraw = false;
-                    return;
-                }
-
-                CanvasView?.InvalidateSurface();
-
-            }
-            else
-            {
-                OrderedDraw = false;
-            }
-
-        }
-        else
-        {
-            OrderedDraw = false;
-            await Task.Delay(30);
-            await Task.Run(() =>
-            {
-                Update();
-            }).ConfigureAwait(false);
-        }
-    }
-
-#else
-
     protected async void InvalidateCanvas()
     {
         IsDirty = true;
 
         if (CanvasView == null)
         {
-            OrderedDraw = false;
+            OrderedDraw = false; //todo could never update after
             return;
         }
 
@@ -149,7 +81,7 @@ public partial class DrawnView
                         if (UpdateMode == UpdateMode.Constant)
                         {
                             InvalidatedCanvas++;
-                            CanvasView?.InvalidateSurface();
+                            CanvasView?.Update();
                             return;
                         }
 
@@ -164,7 +96,7 @@ public partial class DrawnView
                             var needWait =
                                 Super.CapMicroSecs
                                 - elapsedMicros;
-                            if (needWait >= 1)
+                            if (needWait >= 1000)
                             {
                                 await Task.Delay(TimeSpan.FromMicroseconds(needWait));
                             }
@@ -178,13 +110,12 @@ public partial class DrawnView
                                 OrderedDraw = false;
                                 return;
                             }
-                            CanvasView?.InvalidateSurface(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
 
+                            CanvasView?.Update();
                             return;
                         }
 
                         OrderedDraw = false;
-
                     }
                     catch (Exception e)
                     {
@@ -203,6 +134,8 @@ public partial class DrawnView
                         }
                     }
                 });
+
+
             }
         }
         else
@@ -216,5 +149,29 @@ public partial class DrawnView
         }
     }
 
+
 #endif
+
+    public bool NeedRedraw { get; set; }
+
+    public bool IsDirty
+    {
+        get
+        {
+            return _isDirty;// || UpdateMode == UpdateMode.Constant;
+        }
+
+        set
+        {
+            if (_isDirty != value)
+            {
+                _isDirty = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    bool _isDirty;
+
+
 }

@@ -4,9 +4,33 @@ using Microsoft.Maui.Handlers;
 namespace DrawnUi.Maui.Views
 {
 
-
     public partial class DrawnView
     {
+
+        public virtual void Update()
+        {
+            IsDirty = true;
+        }
+
+        private void OnFrame(long nanoseconds)
+        {
+            if (CheckCanDraw() && IsDirty)
+            {
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+
+                CanvasView?.Update();
+            }
+        }
+
+        public bool CheckCanDraw()
+        {
+            return CanvasView != null
+                   && IsDirty
+                   && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
+                   && IsVisible && Super.EnableRendering;
+        }
+
         protected void OnHandlerChangedInternal()
         {
             if (this.Handler != null)
@@ -20,11 +44,8 @@ namespace DrawnUi.Maui.Views
                     {
                         group.DescendantFocusability = DescendantFocusability.BeforeDescendants;
                     }
-
                 }
-
             }
-
         }
     }
 }

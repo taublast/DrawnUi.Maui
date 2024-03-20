@@ -596,10 +596,6 @@ namespace DrawnUi.Maui.Draw
                             MergeSpansForLines(span, firstLine, previousSpanLastLine);
                         }
 
-                        //todo
-                        //if (!string.IsNullOrEmpty(line.Value))
-                        //    line ApplySpans.Add(ApplySpan.Create(span, 0, line.Glyphs.Length - 1));
-
                         previousSpanLastLine = lastLine;
                         offset = new(lastLine.Width, 0);
 
@@ -2359,18 +2355,19 @@ namespace DrawnUi.Maui.Draw
                         int lenInsideWord = 0;
                         int posInsideWord = 0;
                         bool needBreak = false;
-                        for (int pos = 0; pos < textLine.Length; pos++) //todo replace this with glyphs!!!
+                        for (int pos = 0; pos < textLine.Length; pos++)
                         {
                             lenInsideWord++;
-                            cycle = textLine.Substring(posInsideWord, lenInsideWord);// + Trail; todo
+                            cycle = textLine.Substring(posInsideWord, lenInsideWord);
                             MeasureText(paint, cycle, ref bounds);
-                            //posInsideWord = pos;
-                            //posInsideWord = pos;
-                            //lenInsideWord = 0;
-                            if (bounds.Width > limitWidth)
-                            {
-                                //isCut = true;
 
+                            if (textLine == "orange")
+                            {
+                                var stop = 1;
+                            }
+
+                            if (Math.Round(bounds.Width) > limitWidth)
+                            {
                                 //remove one last character to maybe fit?
                                 var chunk = textLine.Substring(posInsideWord, lenInsideWord - 1);
 
@@ -2401,7 +2398,6 @@ namespace DrawnUi.Maui.Draw
                                     needBreak = true;
                                 }
 
-
                                 break;
                             }
                             else
@@ -2409,7 +2405,7 @@ namespace DrawnUi.Maui.Draw
                                 if (pos == textLine.Length - 1)
                                 {
                                     //last character, add everything
-                                    AddLine(textLine, textLine);
+                                    AddLine(textLine, null);
                                 }
                             }
 

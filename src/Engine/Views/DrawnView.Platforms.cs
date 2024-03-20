@@ -80,9 +80,11 @@ namespace DrawnUi.Maui.Views
 						return;
 					}
 				}
-#endif
 
-#if ANDROID
+#elif WINDOWS
+                //todo
+
+#elif ANDROID
                 if (element.Handler != null)
                 {
                     if (element.Handler.PlatformView is Android.Views.View nativeView)
