@@ -24,7 +24,7 @@ public class VelocityAccumulator
         velocities.Add((velocity, now));
     }
 
-    public Vector2 CalculateFinalVelocity()
+    public Vector2 CalculateFinalVelocity(float clampAbsolute=0)
     {
         var now = DateTime.UtcNow;
         var relevantVelocities = velocities.Where(v => (now - v.time).TotalMilliseconds <= ConsiderationTimeframeMs).ToList();
@@ -35,6 +35,12 @@ public class VelocityAccumulator
         float weightedSumY = relevantVelocities.Select((v, i) => v.velocity.Y * (i + 1)).Sum();
         var weightSum = Enumerable.Range(1, relevantVelocities.Count).Sum();
 
+        if (clampAbsolute != 0)
+        {
+            return new Vector2( Math.Clamp(weightedSumX / weightSum, -clampAbsolute, clampAbsolute), 
+                Math.Clamp(weightedSumY / weightSum, -clampAbsolute, clampAbsolute));
+        }
+        
         return new Vector2(weightedSumX / weightSum, weightedSumY / weightSum);
     }
 }

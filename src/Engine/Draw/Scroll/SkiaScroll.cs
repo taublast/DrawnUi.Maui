@@ -799,7 +799,7 @@ namespace DrawnUi.Maui.Draw
 
                         if (!ScrollLocked)
                         {
-                            var finalVelocity = VelocityAccumulator.CalculateFinalVelocity();
+                            var finalVelocity = VelocityAccumulator.CalculateFinalVelocity(this.MaxVelocity);
 
                             //beware every control received UP even out of bounds
                             //so we track if its ours

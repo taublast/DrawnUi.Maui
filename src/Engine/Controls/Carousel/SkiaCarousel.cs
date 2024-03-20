@@ -1184,7 +1184,7 @@ public class SkiaCarousel : SnappingLayout
             useVelocity = (float)(args.Distance.Velocity.Y / RenderingScale);
             velocity = new(0, useVelocity);
         }
-
+        
         //record velocity
         VelocityAccumulator.CaptureVelocity(velocity);
 
@@ -1210,7 +1210,7 @@ public class SkiaCarousel : SnappingLayout
             {
                 consumed = this;
 
-                var final = VelocityAccumulator.CalculateFinalVelocity();
+                var final = VelocityAccumulator.CalculateFinalVelocity(500);
 
                 //animate
                 CurrentSnap = CurrentPosition;

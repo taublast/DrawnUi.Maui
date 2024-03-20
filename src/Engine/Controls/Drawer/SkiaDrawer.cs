@@ -738,7 +738,7 @@ namespace DrawnUi.Maui.Controls
             direction = DirectionType.None;
             var Velocity = Vector2.Zero;
 
-            Velocity = VelocityAccumulator.CalculateFinalVelocity();
+            Velocity = VelocityAccumulator.CalculateFinalVelocity(500);
             //Velocity = new((float)(args.Distance.Velocity.X / RenderingScale), (float)(args.Distance.Velocity.Y / RenderingScale));
 
             if (IsUserPanning)
