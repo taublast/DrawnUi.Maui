@@ -324,6 +324,16 @@ public static class DependencyExtensions
                     Super.OnWentForeground();
                 });
 
+                bool onceApple = false;
+                apple.OnActivated((del) =>
+                {
+                    if (!onceApple)
+                    {
+                        onceApple = true;
+                        Super.Init();
+                    }
+                });
+                
                 apple.FinishedLaunching((application, launchOptions) =>
                 {
                     Super.App = Super.Services.GetRequiredService<IApplication>();
@@ -444,16 +454,16 @@ public static class DependencyExtensions
 
         });
 
-        Microsoft.Maui.Handlers.ViewHandler.ViewMapper.AppendToMapping(nameof(Application.Resources), (handler, view) =>
-        {
-            if (!mauiCreated)
-            {
-                mauiCreated = true;
-                Super.OnMauiAppCreated?.Invoke();
-
-
-            }
-        });
+        // Microsoft.Maui.Handlers.ViewHandler.ViewMapper.AppendToMapping(nameof(Application.Resources), (handler, view) =>
+        // {
+        //     if (!mauiCreated)
+        //     {
+        //         mauiCreated = true;
+        //         Super.OnMauiAppCreated?.Invoke();
+        //
+        //
+        //     }
+        // });
 
         return builder;
     }

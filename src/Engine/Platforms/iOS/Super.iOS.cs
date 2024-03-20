@@ -72,6 +72,7 @@ namespace DrawnUi.Maui.Draw
 
                 Super.NavBarHeight = 47; //manual
 
+            InsetsChanged?.Invoke(null, null);
         }
 
         public static UINavigationController NavigationController { get; set; } = null;

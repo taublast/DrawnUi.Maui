@@ -146,7 +146,6 @@ public partial class Super
     private static IServiceProvider _services;
     private static bool _servicesFromHandler;
 
-
     public static IServiceProvider Services
         =>
 #if WINDOWS10_0_17763_0_OR_GREATER
