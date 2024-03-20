@@ -83,15 +83,22 @@ namespace DrawnUi.Maui.Draw
             }
             catch (Exception e)
             {
-                Trace.WriteLine("-------------------------------------------------");
-                Trace.WriteLine($"[HOTRELOAD] Exception GetVisualChildren {Tag} {e}");
-                Trace.WriteLine("-------------------------------------------------");
+                Super.Log("-------------------------------------------------");
+                Super.Log($"[HOTRELOAD] Exception GetVisualChildren {Tag} {e}");
+                Super.Log("-------------------------------------------------");
                 return base.GetVisualChildren();
             }
 
         }
 
         #endregion
+
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+
+            UpdateRowColumnBindingContexts();
+        }
 
         //todo use rendering tree for templated!!
         //protected override void OnParentVisibilityChanged(bool newvalue)
@@ -1256,23 +1263,33 @@ namespace DrawnUi.Maui.Draw
 
         protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
         {
-            if (_emptyView != null && _emptyView.IsVisible)
-            {
-                var drawViews = new List<SkiaControl> { _emptyView };
-                return RenderViewsList(drawViews, context, destination, scale);
-            }
-
+            var drawn = 0;
+            
             if (IsTemplated)
             {
                 if (ChildrenFactory.TemplatesAvailable)
                 {
                     using var children = ChildrenFactory.GetViewsIterator();
-                    return RenderViewsList(children, context, destination, scale, debug);
+                    drawn = RenderViewsList(children, context, destination, scale, debug);
                 }
-                return 0;
+                if (drawn == 0 && _emptyView != null && _emptyView.IsVisible)
+                {
+                    var drawViews = new List<SkiaControl> { _emptyView };
+                    RenderViewsList(drawViews, context, destination, scale);
+                    return 0;
+                }
             }
-
-            return base.DrawViews(context, destination, scale, debug);
+            else
+            {
+                drawn = base.DrawViews(context, destination, scale, debug);
+                if (drawn == 0 && _emptyView != null && _emptyView.IsVisible)
+                {
+                    var drawViews = new List<SkiaControl> { _emptyView };
+                    RenderViewsList(drawViews, context, destination, scale);
+                    return 0;
+                }
+            }
+            return drawn;
         }
 
         public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type), typeof(LayoutType), typeof(SkiaLayout),

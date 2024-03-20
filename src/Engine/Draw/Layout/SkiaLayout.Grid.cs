@@ -251,7 +251,7 @@ public partial class SkiaLayout
         Invalidate();
     }
 
-    void UpdateRowColumnBindingContexts()
+    protected void UpdateRowColumnBindingContexts()
     {
         var bindingContext = BindingContext;
 

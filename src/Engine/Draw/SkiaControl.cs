@@ -3246,7 +3246,8 @@ namespace DrawnUi.Maui.Draw
 
             foreach (var view in this.Views)
             {
-                view.BindingContext = BindingContext;
+                if (view.BindingContext==null)
+                    view.BindingContext = BindingContext;
             }
 
             if (FillGradient != null)
