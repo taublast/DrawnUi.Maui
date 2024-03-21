@@ -11,6 +11,12 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     {
 
     }
+    
+    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
+        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    {
+        return this;
+    }
 
     public override void SetNativeVisibility(bool state)
     {
@@ -81,8 +87,10 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     protected void UnfocusNative()
     {
         //Debug.WriteLine($"[SKiaMauiEntry] Unfocusing native control..");
+#if IOS || MACCATALYST //dealing with maui differences
+        Control?.Unfocus();
+#endif
         IsFocused = false;
-        //Control.Unfocus();
     }
 
     public void SetFocus(bool focus)

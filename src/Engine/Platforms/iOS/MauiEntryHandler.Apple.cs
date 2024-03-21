@@ -13,9 +13,10 @@ public partial class MauiEntryHandler : EntryHandler
         base.ConnectHandler(platformView);
 
         platformView.BorderStyle = UITextBorderStyle.None;
+        
+        platformView.BackgroundColor = UIColor.FromRGBA(0,0,0,0);
     }
-
-
+    
 
 }
 
