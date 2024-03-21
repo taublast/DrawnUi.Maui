@@ -3339,11 +3339,7 @@ namespace DrawnUi.Maui.Draw
                 ApplyBindingContext();
 
                 //will apply to maui prps like styles, triggers etc
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    base.OnBindingContextChanged();
-                });
+                base.OnBindingContextChanged();
 
             }
             catch (Exception e)
