@@ -431,10 +431,11 @@ public class Canvas : DrawnView, IGestureListener
                 }
             }
 
-            if (manageChildFocus || FocusedChild != null && consumed == null)
-            {
-                FocusedChild = null;
-            }
+            if (touchAction == TouchActionResult.Up)
+                if (manageChildFocus || FocusedChild != null && consumed == null)
+                {
+                    FocusedChild = null;
+                }
         }
 
     }
