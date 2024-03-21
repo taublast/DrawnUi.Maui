@@ -50,14 +50,23 @@ public static class InternalExtensions
 
         if (view.Handler is IElementHandler nativeViewHandler)
         {
-            try
+            
+            MainThread.InvokeOnMainThreadAsync(() =>
             {
-                nativeViewHandler.DisconnectHandler();
-            }
-            catch (Exception e)
-            {
-                Super.Log(e);
-            }
+                try
+                {
+                    if (MainThread.IsMainThread)
+                        nativeViewHandler.DisconnectHandler();
+                    else
+                    {
+                        Super.Log($"Failed to disconnect handler for {nativeViewHandler}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Super.Log(e);
+                }
+            });
         }
 
         if (view is Layout layout)

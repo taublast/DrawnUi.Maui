@@ -728,8 +728,18 @@ namespace DrawnUi.Maui.Views
 
             DisposeDisposables();
 
-            this.Handler?.DisconnectHandler();
-
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                try
+                {
+                    this.Handler?.DisconnectHandler();
+                }
+                catch (Exception e)
+                {
+                    Super.Log(e);
+                }
+            });
+            
             ClearChildren();
         }
         /// <summary>
