@@ -293,9 +293,9 @@ public partial class SkiaImageManager : IDisposable
             }
             catch (Exception ex)
             {
-                Super.Log($"ImageLoadManager: Exception {ex}");
+                TraceLog($"ImageLoadManager: Exception {ex}");
 
-                if (ex is OperationCanceledException)
+                if (ex is OperationCanceledException || ex is System.Threading.Tasks.TaskCanceledException)
                 {
                     queueItem.Task.TrySetCanceled();
                 }
