@@ -33,7 +33,7 @@
             {
                 _animatorWatch = new SkiaValueAnimator(MainLayout)
                 {
-                    Speed = 1000, 
+                    Speed = 1000,
                     OnUpdated = (v) =>
                     {
                         //do not need 
@@ -54,14 +54,11 @@
         }
     }
 
-
     /// <summary>
     /// Example taken from https://www.youtube.com/watch?v=SH8oQZp0oF0&ab_channel=ProgrammingWithChris
     /// </summary>
     public class ClockDrawable : IDrawable
     {
-
-
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
