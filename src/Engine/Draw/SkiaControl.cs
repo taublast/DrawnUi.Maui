@@ -1,6 +1,7 @@
 ﻿//#define DOUBLE
 
 using DrawnUi.Maui.Infrastructure.Extensions;
+using Microsoft.Maui.Graphics.Text;
 using Microsoft.Maui.HotReload;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,7 +9,6 @@ using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Microsoft.Maui.Graphics.Text;
 using Color = Microsoft.Maui.Graphics.Color;
 using IImage = Microsoft.Maui.Graphics.IImage;
 
@@ -26,7 +26,7 @@ namespace DrawnUi.Maui.Draw
     
     }
     */
-    
+
     public static class MauiGraphicsExtensions
     {
         public static SKTypeface ToSKTypeface(this IFont font)
@@ -80,7 +80,7 @@ namespace DrawnUi.Maui.Draw
             return copy;
         }
     }
-    
+
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]
     public partial class SkiaControl : VisualElement,
@@ -3314,7 +3314,7 @@ namespace DrawnUi.Maui.Draw
 
             foreach (var view in this.Views)
             {
-                if (view.BindingContext==null)
+                if (view.BindingContext == null)
                     view.BindingContext = BindingContext;
             }
 
@@ -3339,7 +3339,12 @@ namespace DrawnUi.Maui.Draw
                 ApplyBindingContext();
 
                 //will apply to maui prps like styles, triggers etc
-                base.OnBindingContextChanged();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    base.OnBindingContextChanged();
+                });
+
             }
             catch (Exception e)
             {
@@ -3709,7 +3714,7 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
-        
+
         private bool _isDisposing;
 
         public bool IsDisposing
@@ -3736,7 +3741,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected virtual void OnWillBeDisposed()
         {
-            
+
         }
 
         /// <summary>
@@ -3814,7 +3819,7 @@ namespace DrawnUi.Maui.Draw
                 return;
 
             SetWillDisposeWithChildren();
-            
+
             IsDisposed = true;
 
             //for the double buffering case it's safer to delay
@@ -6157,11 +6162,11 @@ namespace DrawnUi.Maui.Draw
             Views.Clear();
             Invalidate();
         }
-        
+
         public virtual void SetWillDisposeWithChildren()
         {
             IsDisposing = true;
-            
+
             foreach (var child in Views.ToList())
             {
                 child.SetWillDisposeWithChildren();
