@@ -3,8 +3,18 @@ using System.Net;
 
 namespace DrawnUi.Maui.Controls;
 
+/// <summary>
+/// todo subclass AnimatedFramesRenderer
+/// </summary>
 public partial class SkiaRive : SkiaControl
 {
+    protected override void OnWillBeDisposed()
+    {
+        base.OnWillBeDisposed();
+
+        Stop();
+    }
+
     // Source actions originating from other threads must be funneled through this queue.
     private readonly ConcurrentQueue<Action> sceneActionsQueue = new();
     private string _animationName;

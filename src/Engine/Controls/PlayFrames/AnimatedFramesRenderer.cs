@@ -5,6 +5,13 @@
 /// </summary>
 public class AnimatedFramesRenderer : SkiaControl
 {
+    protected override void OnWillBeDisposed()
+    {
+        base.OnWillBeDisposed();
+
+        Stop();
+    }
+
     protected RangeAnimator Animator;
 
     protected bool PlayWhenAvailable;

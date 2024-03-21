@@ -41,14 +41,13 @@ public class ViewsAdapter : IDisposable
 
     protected void DisposeVisibleViews()
     {
-        //lock (lockVisible)
+        lock (lockVisible)
         {
             foreach (var view in _dicoCellsInUse.Values)
             {
                 view.Dispose();
             }
             _dicoCellsInUse.Clear();
-
         }
     }
 

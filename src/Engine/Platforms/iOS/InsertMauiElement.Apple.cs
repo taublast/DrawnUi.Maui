@@ -56,6 +56,17 @@ public partial class SkiaMauiElement
                     }
                     //todo destroy child handler?
                 }
+                else
+                if (NativeView != null)
+                {
+                    NativeView.RemoveFromSuperview();
+                    if (NativeView is IDisposable disposable)
+                    {
+                        NativeView.Dispose();
+                    }
+                    NativeView = null;
+                    //todo destroy child handler?
+                }
             });
         }
     }
@@ -81,8 +92,11 @@ public partial class SkiaMauiElement
                 var view = element.Handler?.PlatformView as UIView;
                 var layout = Superview.Handler?.PlatformView as UIView;
                 if (layout != null)
+                {
+                    this.NativeView = view;
                     layout.AddSubview(view);
-
+                }
+                
                 LayoutNativeView(Element);
             });
 
@@ -90,4 +104,5 @@ public partial class SkiaMauiElement
 
     }
 
+    public UIView NativeView { get; set; }
 }

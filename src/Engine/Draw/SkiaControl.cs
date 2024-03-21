@@ -1,6 +1,7 @@
 ﻿//#define DOUBLE
 
 using DrawnUi.Maui.Infrastructure.Extensions;
+using Microsoft.Maui.Graphics.Text;
 using Microsoft.Maui.HotReload;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -9,10 +10,77 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Color = Microsoft.Maui.Graphics.Color;
+using IImage = Microsoft.Maui.Graphics.IImage;
 
 
 namespace DrawnUi.Maui.Draw
 {
+
+    /*
+    public class SkiaGraphics : ContentLayout//Control, Microsoft.Maui.Graphics.ICanvas
+    {
+
+        public IDrawable Drawable { get; set; }
+        
+        public SkiaCanvas Canvas { get; set; }
+    
+    }
+    */
+
+    public static class MauiGraphicsExtensions
+    {
+        public static SKTypeface ToSKTypeface(this IFont font)
+        {
+            if (string.IsNullOrEmpty(font?.Name))
+                return SKTypeface.Default;
+
+            try
+            {
+                return SKTypeface.FromFamilyName(font.Name, font.Weight, (int)SKFontStyleWidth.Normal,
+                    font.StyleType switch
+                    {
+                        FontStyleType.Normal => SKFontStyleSlant.Upright,
+                        FontStyleType.Italic => SKFontStyleSlant.Italic,
+                        FontStyleType.Oblique => SKFontStyleSlant.Oblique,
+                        _ => SKFontStyleSlant.Upright,
+                    });
+            }
+            catch
+            {
+                return SKTypeface.FromFile(font.Name);
+            }
+        }
+        public static SKPaint CreateCopy(this SKPaint paint)
+        {
+            if (paint == null)
+                return null;
+
+            var copy = new SKPaint
+            {
+                BlendMode = paint.BlendMode,
+                Color = paint.Color,
+                ColorFilter = paint.ColorFilter,
+                ImageFilter = paint.ImageFilter,
+                IsAntialias = paint.IsAntialias,
+                IsStroke = paint.IsStroke,
+                MaskFilter = paint.MaskFilter,
+                Shader = paint.Shader,
+                StrokeCap = paint.StrokeCap,
+                StrokeJoin = paint.StrokeJoin,
+                StrokeMiter = paint.StrokeMiter,
+                StrokeWidth = paint.StrokeWidth,
+                TextAlign = paint.TextAlign,
+                TextEncoding = paint.TextEncoding,
+                TextScaleX = paint.TextScaleX,
+                TextSize = paint.TextSize,
+                TextSkewX = paint.TextSkewX,
+                Typeface = paint.Typeface,
+            };
+
+            return copy;
+        }
+    }
+
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]
     public partial class SkiaControl : VisualElement,
@@ -3246,7 +3314,7 @@ namespace DrawnUi.Maui.Draw
 
             foreach (var view in this.Views)
             {
-                if (view.BindingContext==null)
+                if (view.BindingContext == null)
                     view.BindingContext = BindingContext;
             }
 
@@ -3272,6 +3340,7 @@ namespace DrawnUi.Maui.Draw
 
                 //will apply to maui prps like styles, triggers etc
                 base.OnBindingContextChanged();
+
             }
             catch (Exception e)
             {
@@ -3624,7 +3693,52 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        public bool IsDisposed { get; protected set; }
+        private bool _isDisposed;
+
+        public bool IsDisposed
+        {
+            get
+            {
+                return _isDisposed;
+            }
+            protected set
+            {
+                if (value != _isDisposed)
+                {
+                    _isDisposed = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _isDisposing;
+
+        public bool IsDisposing
+        {
+            get
+            {
+                return _isDisposing;
+            }
+            protected set
+            {
+                if (value != _isDisposing)
+                {
+                    _isDisposing = value;
+                    OnPropertyChanged();
+                    if (value)
+                        OnWillBeDisposed();
+                }
+            }
+        }
+
+        /// <summary>
+        /// The OnDisposing might come with a delay to avoid disposing resources at use.
+        /// This method will be called without delay when IsDisposed is set to True.
+        /// </summary>
+        protected virtual void OnWillBeDisposed()
+        {
+
+        }
 
         /// <summary>
         /// Developer can use this to mark control as to be disposed by parent custom controls
@@ -3699,6 +3813,8 @@ namespace DrawnUi.Maui.Draw
         {
             if (IsDisposed)
                 return;
+
+            SetWillDisposeWithChildren();
 
             IsDisposed = true;
 
@@ -6041,6 +6157,16 @@ namespace DrawnUi.Maui.Draw
             }
             Views.Clear();
             Invalidate();
+        }
+
+        public virtual void SetWillDisposeWithChildren()
+        {
+            IsDisposing = true;
+
+            foreach (var child in Views.ToList())
+            {
+                child.SetWillDisposeWithChildren();
+            }
         }
 
         public virtual void ClearChildren()

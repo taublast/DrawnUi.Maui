@@ -415,12 +415,13 @@ public class SkiaImage : SkiaControl
                                 return;
                             }
 
-                            //bitmap = await SkiaImageManager.LoadSKBitmapAsync(source, cancel.Token);
 
                             async Task LoadAction()
                             {
                                 try
                                 {
+                                    //bitmap = await SkiaImageManager.LoadSKBitmapAsync(source, cancel.Token);
+
                                     bitmap = await SkiaImageManager.Instance.Enqueue(source, cancel);
 
                                     if (cancel.Token.IsCancellationRequested)

@@ -12,6 +12,8 @@ public class SkiaScrollLooped : SkiaScroll
         Bounces = false;
     }
 
+    public static bool Debug = false;
+
     public override bool IsClippedToBounds => true;
 
     public override bool ShouldInvalidateByChildren => false;
@@ -379,9 +381,23 @@ public class SkiaScrollLooped : SkiaScroll
                     DrawWithClipAndTransforms(context, DrawingRect, true,
                         true, (ctx) =>
                         {
-                            DrawViews(context, childRect, zoomedScale, debug);
-                        });
+                            if (Debug)
+                            {
+                                using var paint = new SKPaint()
+                                {
+                                    ColorFilter = SkiaImageEffects.Tint(Colors.Red, SKBlendMode.SrcIn)
+                                };
+                                var count = context.Canvas.SaveLayer(paint);
 
+                                DrawViews(context, childRect, zoomedScale, debug);
+
+                                context.Canvas.RestoreToCount(count);
+                            }
+                            else
+                            {
+                                DrawViews(context, childRect, zoomedScale, debug);
+                            }
+                        });
                 }
             }
             else
@@ -473,7 +489,7 @@ public class SkiaScrollLooped : SkiaScroll
 
     protected virtual SKPoint ModifyViewportOffset(SKRect destination, SKPoint offsetPixels, float scale)
     {
-        float ClampOffset(float offset, float limitPositive, float limitNegative)
+        float ClampOffsetForDuplicate(float offset, float limitPositive, float limitNegative)
         {
             int parts;
             if (offset > 0)
@@ -501,17 +517,23 @@ public class SkiaScrollLooped : SkiaScroll
         //banner-like
         if (IsBanner)
         {
-            //do not draw duplicate
+            //infinite, but do not draw duplicate like for scrolling banner
+
             //offsetY = ClampOffset(offsetY, destination.Height / scale, Content.MeasuredSize.Units.Height);
             //offsetX = ClampOffset(offsetX, destination.Width / scale, Content.MeasuredSize.Units.Width);
         }
         else
         {
-            //sticky
             //need draw duplicate
-            var offsetY = ClampOffset(offsetPixels.Y, Content.MeasuredSize.Pixels.Height, Content.MeasuredSize.Units.Height);
-            var offsetX = ClampOffset(offsetPixels.X, Content.MeasuredSize.Pixels.Width, Content.MeasuredSize.Units.Width);
-            return new((float)Math.Round(offsetX), (float)Math.Round(offsetY));
+            var offsetY = ClampOffsetForDuplicate(
+                offsetPixels.Y,
+                Content.MeasuredSize.Pixels.Height, Content.MeasuredSize.Pixels.Height);
+
+            var offsetX = ClampOffsetForDuplicate(
+                offsetPixels.X,
+                Content.MeasuredSize.Pixels.Width, Content.MeasuredSize.Pixels.Width);
+
+            return new(offsetX, offsetY);
         }
 
         return offsetPixels;

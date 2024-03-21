@@ -148,13 +148,20 @@
 
         public SKImageInfo CacheSurfaceInfo { get; set; }
 
-        public override void OnDisposing()
+        protected override void OnWillBeDisposed()
         {
+            base.OnWillBeDisposed();
+            
             SubscribeToRenderingChain(false);
 
 #if ANDROID || IOS || WINDOWS || MACCATALYST
             RemoveMauiElement(Element);
 #endif
+
+        }
+
+        public override void OnDisposing()
+        {
 
             CachedBitmap?.Dispose();
 

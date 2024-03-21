@@ -111,7 +111,14 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
     {
         if (this.Handler != null && this.Handler.PlatformView != null)
         {
-            InvalidateSurface();
+            try
+            {
+                InvalidateSurface();
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
         }
     }
 
