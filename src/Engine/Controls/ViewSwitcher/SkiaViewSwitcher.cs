@@ -735,25 +735,19 @@ namespace DrawnUi.Maui.Controls
                 }
                 if (applyMe != null)
                 {
-                    MainThread.BeginInvokeOnMainThread(async () =>
-                    {
-                        await ApplySelectedIndex(applyMe);
-                        SemaphoreNavigationStack.Release();
-                    });
-
+                    await ApplySelectedIndex(applyMe);
                 }
                 applyMe = null;
             }
             catch (Exception e)
             {
                 Super.Log(e);
-                SemaphoreNavigationStack.Release();
             }
             finally
             {
                 NavigationBusy = false;
                 _processing = false;
-
+                SemaphoreNavigationStack.Release();
             }
 
         }
