@@ -138,21 +138,6 @@ public static class DependencyExtensions
                 //close keyboard if any
                 TouchEffect.CloseKeyboard();
             });
-
-#if WINDOWS
-
-            Super.Init();
-
-#elif ANDROID
-
-
-
-#elif IOS || MACCATALYST
-
-            Super.Init();
-
-#endif
-
         };
 
         void InvokeLifecycleEvents<TDelegate>(Action<TDelegate> action)
@@ -193,8 +178,8 @@ public static class DependencyExtensions
             AppLifecycle.AddEvent<WindowsLifecycle.OnWindowCreated>("OnWindowCreated",
                 (window) =>
                 {
-
-
+                    Super.Init();
+                    Super.OnMauiAppCreated?.Invoke();
                 });
 
             AppLifecycle.AddEvent<WindowsLifecycle.OnLaunched>("OnLaunched",
@@ -259,7 +244,7 @@ public static class DependencyExtensions
                             Super.SetFullScreen(activity);
                         }
                     }
-
+                    Super.OnMauiAppCreated?.Invoke();
                 });
 
                 android.OnApplicationCreate((app) =>
@@ -331,6 +316,7 @@ public static class DependencyExtensions
                     {
                         onceApple = true;
                         Super.Init();
+                        Super.OnMauiAppCreated?.Invoke();
                     }
                 });
                 
