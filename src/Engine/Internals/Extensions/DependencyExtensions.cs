@@ -315,7 +315,6 @@ public static class DependencyExtensions
                     if (!onceApple)
                     {
                         onceApple = true;
-                        Super.Init();
                         Super.OnMauiAppCreated?.Invoke();
                     }
                 });
@@ -326,6 +325,8 @@ public static class DependencyExtensions
                     var appWindow = Super.App.Windows.First() as Microsoft.Maui.Controls.Window;
                     var view = appWindow.Handler?.PlatformView as UIKit.UIView;
                     //var check = UIKit.UIApplication.SharedApplication.KeyWindow;
+                    
+                    Super.Init();
 
 #if MACCATALYST
 
