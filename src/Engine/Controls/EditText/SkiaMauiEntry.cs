@@ -387,7 +387,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         Keyboard.Default,
         propertyChanged: OnNeedUpdateText);
 
-
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.KeyboardTypeConverter))]
     public Keyboard KeyboardType
     {
         get { return (Keyboard)GetValue(KeyboardTypeProperty); }
