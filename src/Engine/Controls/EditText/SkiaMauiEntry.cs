@@ -137,6 +137,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
                     Control.FontSize = FontSize;
                     Control.TextColor = this.TextColor;
                     Control.ReturnType = this.ReturnType;
+                    Control.Keyboard = this.KeyboardType;
                     Control.Text = Text;
 
                     Update();
@@ -370,12 +371,27 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         nameof(ReturnType),
         typeof(ReturnType),
         typeof(SkiaMauiEntry),
-        ReturnType.Done);
+        ReturnType.Done,
+        propertyChanged: OnNeedUpdateText);
 
     public ReturnType ReturnType
     {
         get { return (ReturnType)GetValue(ReturnTypeProperty); }
         set { SetValue(ReturnTypeProperty, value); }
+    }
+    
+    public static readonly BindableProperty KeyboardTypeProperty = BindableProperty.Create(
+        nameof(KeyboardType),
+        typeof(Keyboard),
+        typeof(SkiaMauiEntry),
+        Keyboard.Default,
+        propertyChanged: OnNeedUpdateText);
+
+
+    public Keyboard KeyboardType
+    {
+        get { return (Keyboard)GetValue(KeyboardTypeProperty); }
+        set { SetValue(KeyboardTypeProperty, value); }
     }
 
     public static readonly BindableProperty CommandOnSubmitProperty = BindableProperty.Create(
