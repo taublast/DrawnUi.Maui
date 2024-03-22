@@ -46,7 +46,10 @@
             {
                 if (Element is IView view && Element.Handler != null && ptsWidth > 0 && ptsHeight > 0 && LayoutReady)
                 {
-                    var measured = view.Measure(ptsWidth, ptsHeight);
+                    var measured = view.Measure(
+                        ptsWidth - (this.Padding.Left + this.Padding.Right),
+                        ptsHeight - (this.Padding.Top + this.Padding.Bottom)
+                        );
                     //var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
                     return measured;
                 }
@@ -54,7 +57,19 @@
             catch (Exception e)
             {
                 Super.Log(e);
-                return new(VisualTransformNative.Rect.Size.Width, VisualTransformNative.Rect.Size.Height);
+            }
+
+            try
+            {
+#if ANDROID
+                return new(VisualTransformNative.Rect.Size.Width - (this.Padding.Left + this.Padding.Right) * RenderingScale, VisualTransformNative.Rect.Size.Height - (this.Padding.Top + this.Padding.Bottom) * RenderingScale);
+#else
+                return new(VisualTransformNative.Rect.Size.Width - (this.Padding.Left + this.Padding.Right), VisualTransformNative.Rect.Size.Height - (this.Padding.Top + this.Padding.Bottom));
+#endif
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
             }
 
             return Size.Zero;
@@ -151,7 +166,7 @@
         protected override void OnWillBeDisposed()
         {
             base.OnWillBeDisposed();
-            
+
             SubscribeToRenderingChain(false);
 
 #if ANDROID || IOS || WINDOWS || MACCATALYST
@@ -261,6 +276,26 @@
         /// </summary>
         protected virtual void SetContent(VisualElement view)
         {
+            if (Element == view)
+            {
+                //better update layout
+#if ANDROID || WINDOWS
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    ShowSnapshot = false;
+                    if (ContentSizeUnits == Size.Zero)
+                    {
+                        Invalidate();
+                    }
+
+                    LayoutNativeView(Element);
+                });
+#else
+                LayoutNativeView(Element);
+#endif
+                return;
+            }
+
             if (Superview != null && Element != null)
             {
 

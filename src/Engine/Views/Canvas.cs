@@ -432,9 +432,9 @@ public class Canvas : DrawnView, IGestureListener
             }
 
             if (touchAction == TouchActionResult.Up)
-                if (manageChildFocus || FocusedChild != null && consumed == null)
+                if (manageChildFocus || FocusedChild != null && consumed != FocusedChild)
                 {
-                    FocusedChild = null;
+                    FocusedChild = consumed;
                 }
         }
 

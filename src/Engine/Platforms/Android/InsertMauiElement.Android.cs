@@ -73,7 +73,14 @@ public partial class SkiaMauiElement
                 //int heightMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Height, MeasureSpecMode.Exactly);
                 //nativeView.Measure(widthMeasureSpec, heightMeasureSpec);
 
-                nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
+                //apply Padding:
+                nativeView.Layout(
+                    (int)(VisualTransformNative.Rect.Left + this.Padding.Left * RenderingScale),
+                    (int)(VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale),
+                    (int)(VisualTransformNative.Rect.Right + this.Padding.Right * RenderingScale),
+                    (int)(VisualTransformNative.Rect.Bottom + this.Padding.Bottom * RenderingScale));
+
+                //nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
 
                 if (!WasRendered)
                     WasRendered = nativeView.Width > 0;
