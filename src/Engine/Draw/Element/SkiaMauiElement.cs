@@ -276,6 +276,9 @@
         /// </summary>
         protected virtual void SetContent(VisualElement view)
         {
+            if (view == null)
+                return;
+
             if (Element == view)
             {
                 //better update layout

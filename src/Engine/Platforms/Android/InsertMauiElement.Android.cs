@@ -46,7 +46,7 @@ public partial class SkiaMauiElement
     {
         if (Element.Handler?.PlatformView is View nativeView)
         {
-            Super.Log($"SetNativeVisibility] {state} while ShowSnapshot is {ShowSnapshot}");
+            //Super.Log($"SetNativeVisibility] {state} while ShowSnapshot is {ShowSnapshot}");
             nativeView.Visibility = state ? ViewStates.Visible : ViewStates.Invisible;
             IsNativeVisible = state;
         }
