@@ -88,8 +88,9 @@ public partial class SkiaMauiElement
             if (nativeView.Visibility == Visibility.Visible)
             {
                 //UIElement
-                nativeView.Width = VisualTransformNative.Rect.Width;
-                nativeView.Height = VisualTransformNative.Rect.Height;
+                nativeView.Width = VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right);
+                nativeView.Height = VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom);
+
                 nativeView.Opacity = VisualTransformNative.Opacity;
 
                 // Creating a new CompositeTransform to handle the transforms
@@ -104,12 +105,14 @@ public partial class SkiaMauiElement
 
                 nativeView.RenderTransform = transform;
 
-
                 nativeView.UpdateLayout();
 
-                Windows.Foundation.Size availableSize = new(VisualTransformNative.Rect.Width, VisualTransformNative.Rect.Height);
+                Windows.Foundation.Size availableSize = new(
+                    VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
+                    VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom));
                 nativeView.Measure(availableSize);
-                nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left, VisualTransformNative.Rect.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+
+                nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
 
                 if (!WasRendered)
                     WasRendered = nativeView.RenderSize.Width > 0;

@@ -138,21 +138,6 @@ public static class DependencyExtensions
                 //close keyboard if any
                 TouchEffect.CloseKeyboard();
             });
-
-#if WINDOWS
-
-            Super.Init();
-
-#elif ANDROID
-
-
-
-#elif IOS || MACCATALYST
-
-            Super.Init();
-
-#endif
-
         };
 
         void InvokeLifecycleEvents<TDelegate>(Action<TDelegate> action)
@@ -193,8 +178,8 @@ public static class DependencyExtensions
             AppLifecycle.AddEvent<WindowsLifecycle.OnWindowCreated>("OnWindowCreated",
                 (window) =>
                 {
-
-
+                    Super.Init();
+                    Super.OnMauiAppCreated?.Invoke();
                 });
 
             AppLifecycle.AddEvent<WindowsLifecycle.OnLaunched>("OnLaunched",
@@ -259,7 +244,7 @@ public static class DependencyExtensions
                             Super.SetFullScreen(activity);
                         }
                     }
-
+                    Super.OnMauiAppCreated?.Invoke();
                 });
 
                 android.OnApplicationCreate((app) =>
@@ -330,7 +315,7 @@ public static class DependencyExtensions
                     if (!onceApple)
                     {
                         onceApple = true;
-                        Super.Init();
+                        Super.OnMauiAppCreated?.Invoke();
                     }
                 });
                 
@@ -340,6 +325,8 @@ public static class DependencyExtensions
                     var appWindow = Super.App.Windows.First() as Microsoft.Maui.Controls.Window;
                     var view = appWindow.Handler?.PlatformView as UIKit.UIView;
                     //var check = UIKit.UIApplication.SharedApplication.KeyWindow;
+                    
+                    Super.Init();
 
 #if MACCATALYST
 

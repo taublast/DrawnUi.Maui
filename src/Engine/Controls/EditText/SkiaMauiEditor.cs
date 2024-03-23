@@ -11,10 +11,20 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     {
 
     }
-    
+
     public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
         SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
     {
+        if (touchAction == TouchActionResult.Up)
+        {
+            var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+            if (!DrawingRect.Contains(point))
+            {
+                //we got this gesture because we were focused, but it's now outside our bounds, can unfocus
+                return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            }
+        }
+
         return this;
     }
 
@@ -50,20 +60,26 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     public override bool IsClippedToBounds => true;
 
+    protected virtual void MapProps(Editor control)
+    {
+        var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
+        control.FontFamily = alias;
+        control.FontSize = FontSize;
+        control.TextColor = this.TextColor;
+        //control.ReturnType = this.ReturnType;
+        control.Keyboard = this.KeyboardType;
+        control.Text = Text;
+        //todo customize
+        control.Placeholder = this.Placeholder;
+    }
+
     protected virtual Editor GetOrCreateControl()
     {
         if (Control == null)
         {
             var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
-            Control = new MauiEditor()
-            {
-                //BackgroundColor = Colors.Red
-                Text = this.Text,
-                FontFamily = alias,
-                FontSize = FontSize,
-                TextColor = this.TextColor,
-                //ReturnType = this.ReturnType
-            };
+            Control = new MauiEditor();
+            MapProps(Control);
             AdaptControlSize();
 
             SubscribeToControl(true);
@@ -126,14 +142,8 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         {
             if (Control != null)
             {
-                var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
-                Control.FontFamily = alias;
-                Control.FontSize = FontSize;
-                Control.TextColor = this.TextColor;
-                //Control.ReturnType = this.ReturnType;
-                Control.Text = Text;
-
-                Update(); //todo postpone!
+                MapProps(Control);
+                Update();
             }
 
             AdaptControlSize();
@@ -276,10 +286,20 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         }
     }
 
-    private static void OnNeedUpdateText(BindableObject bindable, object oldvalue, object newvalue)
+    private static void NeedUpdateControl(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is SkiaMauiEditor control)
         {
+            control.UpdateControl();
+        }
+    }
+
+    private static void OnControlTextChanged(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaMauiEditor control)
+        {
+            control.TextChanged?.Invoke(control, (string)newvalue);
+            control.CommandOnTextChanged?.Execute((string)newvalue);
             control.UpdateControl();
         }
     }
@@ -292,20 +312,22 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     #region   PROPERTIES
 
+    public static readonly BindableProperty KeyboardTypeProperty = BindableProperty.Create(
+        nameof(KeyboardType),
+        typeof(Keyboard),
+        typeof(SkiaMauiEditor),
+        Keyboard.Default,
+        propertyChanged: NeedUpdateControl);
 
-    private static void OnControlTextChanged(BindableObject bindable, object oldvalue, object newvalue)
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.KeyboardTypeConverter))]
+    public Keyboard KeyboardType
     {
-        //Debug.WriteLine($"[ENTRY] OnControlTextChanged!");
-        if (bindable is SkiaMauiEditor control)
-        {
-            control.TextChanged?.Invoke(control, (string)newvalue);
-            control.CommandOnTextChanged?.Execute((string)newvalue);
-            OnNeedUpdateText(bindable, oldvalue, newvalue);
-        }
+        get { return (Keyboard)GetValue(KeyboardTypeProperty); }
+        set { SetValue(KeyboardTypeProperty, value); }
     }
 
     public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily),
-       typeof(string), typeof(SkiaMauiEditor), string.Empty, propertyChanged: OnNeedUpdateText);
+       typeof(string), typeof(SkiaMauiEditor), string.Empty, propertyChanged: NeedUpdateControl);
     public string FontFamily
     {
         get { return (string)GetValue(FontFamilyProperty); }
@@ -315,7 +337,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     public static readonly BindableProperty TextColorProperty = BindableProperty.Create(
         nameof(TextColor), typeof(Color), typeof(SkiaMauiEditor),
         Colors.GreenYellow,
-        propertyChanged: OnNeedUpdateText);
+        propertyChanged: NeedUpdateControl);
     public Color TextColor
     {
         get { return (Color)GetValue(TextColorProperty); }
@@ -327,7 +349,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         typeof(int),
         typeof(SkiaMauiEditor),
         0,
-        propertyChanged: OnNeedUpdateText);
+        propertyChanged: NeedUpdateControl);
 
     public int FontWeight
     {
@@ -337,7 +359,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize),
         typeof(double), typeof(SkiaMauiEditor), 12.0,
-        propertyChanged: OnNeedUpdateText);
+        propertyChanged: NeedUpdateControl);
 
     public double FontSize
     {
@@ -358,6 +380,20 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     {
         get { return (string)GetValue(TextProperty); }
         set { SetValue(TextProperty, value); }
+    }
+
+    public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(
+        nameof(Placeholder),
+        typeof(string),
+        typeof(SkiaMauiEditor),
+        default(string),
+        propertyChanged: NeedUpdateControl);
+
+
+    public string Placeholder
+    {
+        get { return (string)GetValue(PlaceholderProperty); }
+        set { SetValue(PlaceholderProperty, value); }
     }
 
     public static readonly BindableProperty ReturnTypeProperty = BindableProperty.Create(

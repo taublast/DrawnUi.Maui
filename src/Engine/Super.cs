@@ -340,7 +340,7 @@ public partial class Super
 
     private static bool _inBackground;
     private static bool initialized;
-    private static bool enableRendering = true;
+    private static bool enableRendering;
 
     public static bool InBackground
     {
