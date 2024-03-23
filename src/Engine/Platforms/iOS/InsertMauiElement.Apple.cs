@@ -12,25 +12,45 @@ public partial class SkiaMauiElement
 
     protected virtual void LayoutNativeView(VisualElement element)
     {
+        bool layout = false;
+        
+        IsNativeVisible = VisualTransformNative.IsVisible;
+        var visibility = VisualTransformNative.IsVisible ? Visibility.Visible : Visibility.Hidden;
+
+        
         if (element.Handler?.PlatformView is UIView nativeView)
         {
-            nativeView.ClipsToBounds = true;
+            layout = true;
+                
+            nativeView.UpdateVisibility(visibility);
 
-            nativeView.Transform = CGAffineTransform.MakeIdentity();
-            nativeView.Frame = new CGRect(
-                VisualTransformNative.Rect.Left + this.Padding.Left,
-                VisualTransformNative.Rect.Top + this.Padding.Top,
-                VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
-                VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
+            if (visibility == Visibility.Visible)
+            {
+                nativeView.ClipsToBounds = true;
+
+                nativeView.Transform = CGAffineTransform.MakeIdentity();
+                nativeView.Frame = new CGRect(
+                    VisualTransformNative.Rect.Left + this.Padding.Left,
+                    VisualTransformNative.Rect.Top + this.Padding.Top,
+                    VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
+                    VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
                 );
 
-            nativeView.Transform = CGAffineTransform.MakeTranslation(VisualTransformNative.Translation.X, VisualTransformNative.Translation.Y);
-            nativeView.Transform = CGAffineTransform.Rotate(nativeView.Transform, VisualTransformNative.Rotation); // Assuming rotation in radians
-            nativeView.Transform = CGAffineTransform.Scale(nativeView.Transform, VisualTransformNative.Scale.X, VisualTransformNative.Scale.Y);
-            nativeView.Alpha = VisualTransformNative.Opacity;
+                nativeView.Transform = CGAffineTransform.MakeTranslation(VisualTransformNative.Translation.X, VisualTransformNative.Translation.Y);
+                nativeView.Transform = CGAffineTransform.Rotate(nativeView.Transform, VisualTransformNative.Rotation); // Assuming rotation in radians
+                nativeView.Transform = CGAffineTransform.Scale(nativeView.Transform, VisualTransformNative.Scale.X, VisualTransformNative.Scale.Y);
+                nativeView.Alpha = VisualTransformNative.Opacity;
+            }
 
-            //Debug.WriteLine($"Layout Maui : {VisualTransformNative.Opacity} {VisualTransformNative.Translation} {VisualTransformNative.IsVisible}");
+           
         }
+        else
+        if (NativeView != null)
+        {
+            NativeView.UpdateVisibility(visibility);
+        }
+        
+        //Debug.WriteLine($"Layout Maui :{layout}, {VisualTransformNative.Opacity} {VisualTransformNative.Translation} {VisualTransformNative.IsVisible}");
     }
 
     public virtual void SetNativeVisibility(bool state)
