@@ -31,7 +31,7 @@ public partial class Super
 
 #if (!ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
-    protected static void SetupChoreographer()
+    protected static void SetupFrameLooper()
     {
         throw new NotImplementedException();
     }
@@ -172,7 +172,7 @@ public partial class Super
     /// <summary>
     /// Capping FPS, (1 / FPS * 1000_000) 
     /// </summary>
-    public static float CapMicroSecs = 5000;
+    public static float CapMicroSecs = 8333.333333f;
 
     public static long GetCurrentTimeMs()
     {
@@ -305,7 +305,7 @@ public partial class Super
     {
         InBackground = false;
 
-        SetupChoreographer();
+        SetupFrameLooper();
 
         OnNativeAppCreated?.Invoke(null, EventArgs.Empty);
     }

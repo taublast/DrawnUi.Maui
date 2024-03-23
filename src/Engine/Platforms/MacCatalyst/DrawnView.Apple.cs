@@ -1,10 +1,21 @@
 ﻿using Microsoft.Maui.Handlers;
+using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Views
 {
 
     public partial class DrawnView
     {
+        public virtual void SetupRenderingLoop()
+        {
+            Super.OnFrame += OnFrame;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void UpdatePlatform()
+        {
+            IsDirty = true;
+        }
 
         /// <summary>
         /// Will be called on ui thread on windows
@@ -35,6 +46,10 @@ namespace DrawnUi.Maui.Views
                    && IsVisible && Super.EnableRendering;
         }
 
+        protected virtual void DisposePlatform()
+        {
+
+        }
 
     }
 }

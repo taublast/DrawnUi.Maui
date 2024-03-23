@@ -39,7 +39,7 @@ public partial class SkiaImageManager
         }
         catch (Exception e)
         {
-            SkiaImageManager.TraceLog($"[LoadSKBitmapAsync] {e}");
+            SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync] {e}");
         }
 
         return null;
@@ -90,7 +90,7 @@ public partial class SkiaImageManager
     }
     */
 
-    public static async Task<SKBitmap> LoadSKBitmapAsync(ImageSource source, CancellationToken cancel)
+    public static async Task<SKBitmap> LoadImageOnPlatformAsync(ImageSource source, CancellationToken cancel)
     {
         if (source == null)
             return null;
@@ -160,7 +160,7 @@ public partial class SkiaImageManager
         }
         catch (Exception e)
         {
-            SkiaImageManager.TraceLog($"[LoadSKBitmapAsync] {e}");
+            SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync] {e}");
         }
 
         return null;

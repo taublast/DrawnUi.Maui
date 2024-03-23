@@ -11,26 +11,40 @@ namespace DrawnUi.Maui.Draw;
 
 public partial class Super
 {
-
-    protected static void SetupChoreographer()
+    protected static void SetupFrameLooper()
     {
-        OnNativeAppDestroyed += (s, a) =>
+        Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), async () =>
         {
-            // Remove callback when the activity is destroyed to prevent memory leaks
-            Choreographer.Instance.RemoveFrameCallback(_frameCallback);
-        };
-
-        _frameCallback = new FrameCallback((nanos) =>
-        {
-            // kick the next frame
-            Choreographer.Instance.PostFrameCallback(_frameCallback);
-
-            OnFrame?.Invoke(nanos);
+            await StartFrameLooperAsync(CancellationToken.None);
         });
-
-        Choreographer.Instance.PostFrameCallback(_frameCallback);
     }
 
+    protected static async Task StartFrameLooperAsync(CancellationToken cancellationToken)
+    {
+        var frameStopwatch = new Stopwatch();
+        var loopStopwatch = Stopwatch.StartNew();
+        long lastFrameEnd = loopStopwatch.ElapsedMilliseconds;
+        var targetIntervalMs = 1000.0 / 120.0; // target fps
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            frameStopwatch.Restart();
+
+            // Render DrawnView
+            OnFrame?.Invoke(0);
+
+            frameStopwatch.Stop();  
+
+            var frameExecutionTimeMs = frameStopwatch.Elapsed.TotalMilliseconds;
+            var elapsedTimeSinceLastFrame = loopStopwatch.ElapsedMilliseconds - lastFrameEnd;
+            var timeToWait = targetIntervalMs - elapsedTimeSinceLastFrame - frameExecutionTimeMs;
+
+            if (timeToWait > 0)
+                Thread.Sleep(TimeSpan.FromMilliseconds(timeToWait));
+
+            lastFrameEnd = loopStopwatch.ElapsedMilliseconds;
+        }
+    }
 
     public static Android.App.Activity MainActivity { get; set; }
 
@@ -62,18 +76,8 @@ public partial class Super
             Super.StatusBarHeight = 0;
         }
 
-        //transparent status bar
-        //if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-        //{
-        //    Activity.Window.SetFlags(WindowManagerFlags.LayoutNoLimits, WindowManagerFlags.LayoutNoLimits);
-        //    var parentView = Activity.FindViewById(2131230767);
-        //    insetsListener = new InsetsListener();
-        //    parentView.SetOnApplyWindowInsetsListener(insetsListener);
-        //}
-
         VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
     }
-
 
     /// <summary>
     /// ToDo resolve obsolete for android api 30 and later
@@ -139,7 +143,6 @@ public partial class Super
             return _returnInsets;
         }
     }
-
 
     public static int GetStatusBarHeight(Context context)
     {

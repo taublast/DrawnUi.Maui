@@ -14,20 +14,24 @@ public partial class SkiaMauiElement
     {
         if (element.Handler?.PlatformView is UIView nativeView)
         {
-            nativeView.ClipsToBounds = true;
+            if (VisualTransformNative.IsVisible)
+            {
+                nativeView.ClipsToBounds = true;
 
-            nativeView.Transform = CGAffineTransform.MakeIdentity();
-            nativeView.Frame = new CGRect(
-                VisualTransformNative.Rect.Left + this.Padding.Left,
-                VisualTransformNative.Rect.Top + this.Padding.Top,
-                VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
-                VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
-            );
+                nativeView.Transform = CGAffineTransform.MakeIdentity();
+                nativeView.Frame = new CGRect(
+                    VisualTransformNative.Rect.Left + this.Padding.Left,
+                    VisualTransformNative.Rect.Top + this.Padding.Top,
+                    VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
+                    VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
+                );
 
-            nativeView.Transform = CGAffineTransform.MakeTranslation(VisualTransformNative.Translation.X, VisualTransformNative.Translation.Y);
-            nativeView.Transform = CGAffineTransform.Rotate(nativeView.Transform, VisualTransformNative.Rotation); // Assuming rotation in radians
-            nativeView.Transform = CGAffineTransform.Scale(nativeView.Transform, VisualTransformNative.Scale.X, VisualTransformNative.Scale.Y);
-            nativeView.Alpha = VisualTransformNative.Opacity;
+                nativeView.Transform = CGAffineTransform.MakeTranslation(VisualTransformNative.Translation.X, VisualTransformNative.Translation.Y);
+                nativeView.Transform = CGAffineTransform.Rotate(nativeView.Transform, VisualTransformNative.Rotation); // Assuming rotation in radians
+                nativeView.Transform = CGAffineTransform.Scale(nativeView.Transform, VisualTransformNative.Scale.X, VisualTransformNative.Scale.Y);
+                nativeView.Alpha = VisualTransformNative.Opacity;
+            }
+            
 
             //Debug.WriteLine($"Layout Maui : {VisualTransformNative.Opacity} {VisualTransformNative.Translation} {VisualTransformNative.IsVisible}");
         }
@@ -62,6 +66,17 @@ public partial class SkiaMauiElement
                     }
                     //todo destroy child handler?
                 }
+                else
+                if (NativeView != null)
+                {
+                    NativeView.RemoveFromSuperview();
+                    if (NativeView is IDisposable disposable)
+                    {
+                        NativeView.Dispose();
+                    }
+                    NativeView = null;
+                    //todo destroy child handler?
+                }
             });
         }
     }
@@ -73,7 +88,6 @@ public partial class SkiaMauiElement
             return;
 
         IViewHandler handler = Superview.Handler;
-
         if (handler != null)
         {
 
@@ -88,7 +102,10 @@ public partial class SkiaMauiElement
                 var view = element.Handler?.PlatformView as UIView;
                 var layout = Superview.Handler?.PlatformView as UIView;
                 if (layout != null)
+                {
+                    this.NativeView = view;
                     layout.AddSubview(view);
+                }
 
                 LayoutNativeView(Element);
             });
@@ -97,4 +114,5 @@ public partial class SkiaMauiElement
 
     }
 
+    public UIView NativeView { get; set; }
 }
