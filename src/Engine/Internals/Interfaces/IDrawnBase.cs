@@ -3,7 +3,7 @@ using DrawnUi.Maui.Draw;
 
 namespace DrawnUi.Maui.Draw;
 
-public interface IDrawnBase : IDisposable
+public interface IDrawnBase : IDisposable, ICanBeUpdated
 {
     SKRect DrawingRect { get; }
 
@@ -22,12 +22,6 @@ public interface IDrawnBase : IDisposable
     /// </summary>
     /// <returns></returns>
     public ScaledRect GetOnScreenVisibleArea();
-
-    /// <summary>
-    /// Force redrawing, without invalidating the measured size
-    /// </summary>
-    /// <returns></returns>
-    void Update();
 
     /// <summary>
     /// Invalidates the measured size. May or may not call Update() inside, depends on control

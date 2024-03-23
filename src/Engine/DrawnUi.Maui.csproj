@@ -124,6 +124,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Effects\" />
     <Folder Include="Platforms\Windows\Controls\" />
   </ItemGroup>
 

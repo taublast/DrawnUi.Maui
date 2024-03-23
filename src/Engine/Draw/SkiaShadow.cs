@@ -3,7 +3,7 @@
 public class SkiaShadow : BindableObject
 {
 
-    public IDrawnBase Parent { get; set; }
+    public ICanBeUpdated Parent { get; set; }
 
     private static void RedrawCanvas(BindableObject bindable, object oldvalue, object newvalue)
     {
