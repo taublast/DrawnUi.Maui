@@ -3,12 +3,14 @@ using Foundation;
 using Microsoft.Maui.Controls.Compatibility;
 using Microsoft.Maui.Controls.Platform;
 using UIKit;
+using SKGLView = SkiaSharp.Views.Maui.Controls.SKGLView;
+using SKPaintGLSurfaceEventArgs = SkiaSharp.Views.Maui.SKPaintGLSurfaceEventArgs;
 
 
 //[assembly: ExportRenderer(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer))]
 namespace DrawnUi.Maui.Views;
 
-public class SKMetalViewRenderer : Microsoft.Maui.Controls.Handlers.Compatibility.ViewRenderer<SkiaViewAccelerated, SkiaSharp.Views.iOS.SKMetalView>
+public class SKMetalViewRenderer : Microsoft.Maui.Controls.Handlers.Compatibility.ViewRenderer<SkiaViewAccelerated, SKMetalViewFixed>
 {
     private SKTouchHandlerPublic touchHandler;
 
@@ -21,9 +23,9 @@ public class SKMetalViewRenderer : Microsoft.Maui.Controls.Handlers.Compatibilit
 
     private CoreAnimation.CADisplayLink displayLink;
 
-    protected override SkiaSharp.Views.iOS.SKMetalView CreateNativeControl()
+    protected override SKMetalViewFixed CreateNativeControl()
     {
-        var view = new SkiaSharp.Views.iOS.SKMetalView();
+        var view = new SKMetalViewFixed();
 
         // Force the opacity to false for consistency with the other platforms
         view.Opaque = false;
@@ -332,6 +334,3 @@ public class SKTouchHandlerPublic : UIKit.UIGestureRecognizer
         return args.Handled;
     }
 }
-
-
-
