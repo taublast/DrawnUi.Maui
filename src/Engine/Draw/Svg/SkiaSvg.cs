@@ -569,10 +569,17 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaSvg control)
             {
-                Task.Run(async () =>
+                if (newvalue == null)
                 {
-                    await control.LoadSource(control.Source);
-                });
+                    control.SvgString = null;
+                    control.Update();
+
+                }
+                else
+                    Task.Run(async () =>
+                    {
+                        await control.LoadSource(control.Source);
+                    });
             }
         }
 
