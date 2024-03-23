@@ -1,12 +1,167 @@
-﻿using EasyCaching.Core;
+﻿using DrawnUi.Maui.Infrastructure.Xaml;
+using EasyCaching.Core;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace DrawnUi.Maui.Draw;
 
+public interface IHasBanner
+{
+    /// <summary>
+    /// Main image
+    /// </summary>
+    public string Banner { get; set; }
+
+    /// <summary>
+    /// Indicates that it's already preloading
+    /// </summary>
+    public bool BannerPreloadOrdered { get; set; }
+}
 
 public partial class SkiaImageManager : IDisposable
 {
+
+    #region HELPERS
+
+    public virtual void PreloadImage(ImageSource source, CancellationTokenSource cancel = default)
+    {
+        try
+        {
+            if (cancel == null)
+            {
+                cancel = new();
+            }
+
+            if (source != null && !cancel.IsCancellationRequested)
+            {
+                Preload(source, cancel).ConfigureAwait(false);
+            }
+        }
+        catch (Exception e)
+        {
+            Super.Log(e);
+        }
+    }
+
+    public virtual void PreloadImage(string source, CancellationTokenSource cancel = default)
+    {
+        try
+        {
+            if (cancel == null)
+            {
+                cancel = new();
+            }
+
+            if (!string.IsNullOrEmpty(source) && !cancel.IsCancellationRequested)
+            {
+                Preload(FrameworkImageSourceConverter.FromInvariantString(source), cancel).ConfigureAwait(false);
+            }
+        }
+        catch (Exception e)
+        {
+            Super.Log(e);
+        }
+    }
+
+    public virtual void PreloadImages(IList<string> list, CancellationTokenSource cancel = default)
+    {
+        try
+        {
+            if (cancel == null)
+            {
+                cancel = new();
+            }
+
+            if (list.Count > 0 && !cancel.IsCancellationRequested)
+            {
+                var index = 0;
+                var item = list[index];
+                while (!cancel.IsCancellationRequested)
+                {
+                    Preload(FrameworkImageSourceConverter.FromInvariantString(item), cancel).ConfigureAwait(false);
+                    index++;
+                    if (index > list.Count - 1)
+                    {
+                        break;
+                    }
+                    item = list[index];
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Super.Log(e);
+        }
+    }
+
+    public virtual void PreloadImages(IList<ImageSource> list, CancellationTokenSource cancel = default)
+    {
+        try
+        {
+            if (cancel == null)
+            {
+                cancel = new();
+            }
+
+            if (list.Count > 0 && !cancel.IsCancellationRequested)
+            {
+                var index = 0;
+                var item = list[index];
+                while (!cancel.IsCancellationRequested)
+                {
+                    Preload(item, cancel).ConfigureAwait(false);
+                    index++;
+                    if (index > list.Count - 1)
+                    {
+                        break;
+                    }
+                    item = list[index];
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Super.Log(e);
+        }
+    }
+
+    public virtual void PreloadBanners<T>(IList<T> list, CancellationTokenSource cancel = default) where T : IHasBanner
+    {
+        try
+        {
+            if (cancel == null)
+            {
+                cancel = new();
+            }
+
+            if (list.Count > 0 && !cancel.IsCancellationRequested)
+            {
+                var index = 0;
+                var item = list[index];
+                while (!cancel.IsCancellationRequested)
+                {
+                    if (!item.BannerPreloadOrdered)
+                    {
+                        item.BannerPreloadOrdered = true;
+                        Preload(item.Banner, cancel).ConfigureAwait(false);
+                    }
+                    index++;
+                    if (index > list.Count - 1)
+                    {
+                        break;
+                    }
+                    item = list[index];
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Super.Log(e);
+        }
+
+    }
+
+    #endregion
 
     public record QueueItem
     {
@@ -128,7 +283,24 @@ public partial class SkiaImageManager : IDisposable
     private readonly Dictionary<string, Stack<QueueItem>> _pendingLoads = new();
 
 
-    public Task<SKBitmap> Enqueue(ImageSource source, CancellationTokenSource token)
+    /// <summary>
+    /// Direct load, without any queue or manager cache, for internal use. Please use LoadImageManagedAsync instead.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    public virtual Task<SKBitmap> LoadImageAsync(ImageSource source, CancellationToken token)
+    {
+        return LoadImageOnPlatformAsync(source, token);
+    }
+
+    /// <summary>
+    /// Uses queue and manager cache
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    public virtual Task<SKBitmap> LoadImageManagedAsync(ImageSource source, CancellationTokenSource token)
     {
 
         var tcs = new TaskCompletionSource<SKBitmap>();
@@ -245,9 +417,9 @@ public partial class SkiaImageManager : IDisposable
                 if (useSemaphore)
                     await semaphoreLoad.WaitAsync();
 
-                TraceLog($"ImageLoadManager: LoadSKBitmapAsync {queueItem.Source}");
+                TraceLog($"ImageLoadManager: LoadImageOnPlatformAsync {queueItem.Source}");
 
-                SKBitmap bitmap = await LoadSKBitmapAsync(queueItem.Source, queueItem.Cancel.Token);
+                SKBitmap bitmap = await LoadImageOnPlatformAsync(queueItem.Source, queueItem.Cancel.Token);
 
 
                 // Add the loaded bitmap to the context cache
@@ -421,18 +593,28 @@ public partial class SkiaImageManager : IDisposable
         return _cachingProvider.Get<SKBitmap>(url)?.Value;
     }
 
-    public async Task Preload(string uri, CancellationTokenSource cts)
+    public async Task Preload(ImageSource source, CancellationTokenSource cts)
     {
-        if (string.IsNullOrEmpty(uri))
+        if (source.IsEmpty)
         {
-            TraceLog($"Preload: Invalid Uri {uri}");
+            TraceLog($"Preload: Empty source");
             return;
         }
-
-        ImageSource source = new UriImageSource()
+        string uri = null;
+        if (source is UriImageSource sourceUri)
         {
-            Uri = new Uri(uri)
-        };
+            uri = sourceUri.Uri.ToString();
+        }
+        else
+        if (source is FileImageSource sourceFile)
+        {
+            uri = sourceFile.File;
+        }
+        if (string.IsNullOrEmpty(uri))
+        {
+            TraceLog($"Preload: Invalid source {uri}");
+            return;
+        }
 
         var cacheKey = uri;
 
@@ -444,16 +626,12 @@ public partial class SkiaImageManager : IDisposable
         }
 
         var tcs = new TaskCompletionSource<SKBitmap>();
-
         var tuple = new QueueItem(source, cts, tcs);
-
-        //lock (lockObject)
-        {
-            _queue.Enqueue(tuple);
-        }
 
         try
         {
+            _queue.Enqueue(tuple);
+
             // Await the loading to ensure it's completed before returning
             await tcs.Task;
         }
@@ -479,7 +657,7 @@ public partial class SkiaImageManager : IDisposable
 
 #if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
-    public static async Task<SKBitmap> LoadSKBitmapAsync(ImageSource source, CancellationToken cancel)
+    public static async Task<SKBitmap> LoadImageOnPlatformAsync(ImageSource source, CancellationToken cancel)
     {
         throw new NotImplementedException();
     }
