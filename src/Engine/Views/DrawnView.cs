@@ -14,9 +14,11 @@ namespace DrawnUi.Maui.Views
     {
         public virtual void Update()
         {
-            IsDirty = true;
+#if ANDROID || WINDOWS || IOS || MACCATALYST
+            UpdatePlatform();
+#endif
         }
-        
+
         public bool NeedRedraw { get; set; }
 
         public bool IsDirty
@@ -475,7 +477,7 @@ namespace DrawnUi.Maui.Views
             if (!_initialized)
             {
                 _initialized = true;
-                
+
                 HorizontalOptions = LayoutOptions.Start;
                 VerticalOptions = LayoutOptions.Start;
                 Padding = new Thickness(0);
@@ -486,7 +488,7 @@ namespace DrawnUi.Maui.Views
                 // DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
 
 #if ANDROID || WINDOWS || IOS || MACCATALYST
-                Super.OnFrame += OnFrame;
+                SetupRenderingLoop();
 #endif
             }
         }
@@ -739,7 +741,7 @@ namespace DrawnUi.Maui.Views
                     Super.Log(e);
                 }
             });
-            
+
             ClearChildren();
         }
         /// <summary>
@@ -1335,6 +1337,10 @@ namespace DrawnUi.Maui.Views
 
         public virtual void OnDisposing()
         {
+#if ANDROID || WINDOWS || IOS || MACCATALYST
+            DisposePlatform();
+#endif
+
             DeviceDisplay.Current.MainDisplayInfoChanged -= OnMainDisplayInfoChanged;
         }
 
@@ -2057,7 +2063,7 @@ namespace DrawnUi.Maui.Views
                 control.Update();
             }
         }
-        
+
         public UpdateMode UpdateMode
         {
             get { return (UpdateMode)GetValue(UpdateModeProperty); }

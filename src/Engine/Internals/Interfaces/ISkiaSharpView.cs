@@ -7,7 +7,7 @@ public interface ISkiaSharpView
     /// </summary>
     public void Update();
 
-    public void PostponeInvalidation();
+    public void SignalFrame(long nanoseconds);
 
     public SKSize CanvasSize { get; }
 

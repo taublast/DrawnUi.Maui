@@ -12,7 +12,7 @@ namespace DrawnUi.Maui.Draw
     public partial class Super
     {
         static CADisplayLink _displayLink;
-        protected static void SetupChoreographer()
+        protected static void SetupFrameLooper()
         {
             _displayLink = CADisplayLink.Create(UpdateFrame);  
             _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
