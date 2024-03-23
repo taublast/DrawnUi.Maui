@@ -1,6 +1,4 @@
-﻿using SkiaSharp.Views.Maui.Controls.Compatibility;
-
-namespace DrawnUi.Maui.Views;
+﻿namespace DrawnUi.Maui.Views;
 
 public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 {
@@ -36,8 +34,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         {
         }
 
-        public MyOrientationListener(SkiaViewAccelerated parent, SKGLViewRenderer renderer, Android.Hardware.SensorDelay rate) : base(renderer.Context, rate)
-        //public MyOrientationListener(SkiaViewAccelerated parent, SkiaSharp.Views.Maui.Handlers.SKGLViewHandler renderer, Android.Hardware.SensorDelay rate) : base(renderer.Context, rate)
+        public MyOrientationListener(SkiaViewAccelerated parent, Android.Hardware.SensorDelay rate) : base(Platform.AppContext, rate)
         {
             _owner = parent;
         }
@@ -79,11 +76,12 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
 #if ANDROID
 
-            var renderer = Handler as SkiaSharp.Views.Maui.Controls.Compatibility.SKGLViewRenderer;
-            var nativeView = renderer.Control as SkiaSharp.Views.Android.SKGLTextureView;
+            var renderer = Handler;// as SkiaSharp.Views.Maui.Controls.Compatibility.SKGLViewRenderer;
+            //var nativeView = renderer.Control as SkiaSharp.Views.Android.SKGLTextureView;
             //var renderer = Handler as SkiaSharp.Views.Maui.Handlers.SKGLViewHandler;
             //var nativeView = renderer.PlatformView as SkiaSharp.Views.Android.SKGLTextureView;
-            _orientationListener = new MyOrientationListener(this, renderer, Android.Hardware.SensorDelay.Normal);
+            
+            _orientationListener = new MyOrientationListener(this, Android.Hardware.SensorDelay.Normal);
             if (_orientationListener.CanDetectOrientation())
                 _orientationListener.Enable();
 

@@ -1,18 +1,16 @@
 ﻿using System.ComponentModel;
-using CoreGraphics;
 using Foundation;
-using Metal;
-using MetalKit;
 using Microsoft.Maui.Controls.Compatibility;
 using Microsoft.Maui.Controls.Platform;
-using SkiaSharp.Views.iOS;
 using UIKit;
+using SKGLView = SkiaSharp.Views.Maui.Controls.SKGLView;
+using SKPaintGLSurfaceEventArgs = SkiaSharp.Views.Maui.SKPaintGLSurfaceEventArgs;
 
 
 //[assembly: ExportRenderer(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer))]
 namespace DrawnUi.Maui.Views;
 
-public class SKMetalViewRenderer : Microsoft.Maui.Controls.Handlers.Compatibility.ViewRenderer<SkiaViewAccelerated, SKMetalView2>
+public class SKMetalViewRenderer : Microsoft.Maui.Controls.Handlers.Compatibility.ViewRenderer<SkiaViewAccelerated, SKMetalViewFixed>
 {
     private SKTouchHandlerPublic touchHandler;
 
@@ -25,9 +23,9 @@ public class SKMetalViewRenderer : Microsoft.Maui.Controls.Handlers.Compatibilit
 
     private CoreAnimation.CADisplayLink displayLink;
 
-    protected override SKMetalView2 CreateNativeControl()
+    protected override SKMetalViewFixed CreateNativeControl()
     {
-        var view = new SKMetalView2();
+        var view = new SKMetalViewFixed();
 
         // Force the opacity to false for consistency with the other platforms
         view.Opaque = false;
@@ -48,6 +46,7 @@ public class SKMetalViewRenderer : Microsoft.Maui.Controls.Handlers.Compatibilit
     public GRContext GRContext => Control.GRContext;
 
   
+
     protected virtual void SetupRenderLoop(bool oneShot)
     {
         // only start if we haven't already
@@ -229,7 +228,7 @@ public class SKMetalViewRenderer : Microsoft.Maui.Controls.Handlers.Compatibilit
         var controller = Element as ISKGLViewController;
 
         // the control is being repainted, let the user know
-        controller?.OnPaintSurface(new SkiaSharp.Views.Maui.SKPaintGLSurfaceEventArgs(e.Surface, e.BackendRenderTarget));
+        controller?.OnPaintSurface(new SKPaintGLSurfaceEventArgs(e.Surface, e.BackendRenderTarget));
     }
 }
 
@@ -335,154 +334,3 @@ public class SKTouchHandlerPublic : UIKit.UIGestureRecognizer
         return args.Handled;
     }
 }
-
-public class SKMetalView2 : MTKView, IMTKViewDelegate, IComponent
-{
-    // for IComponent
-#pragma warning disable 67
-    private event EventHandler DisposedInternal;
-#pragma warning restore 67
-    ISite IComponent.Site { get; set; }
-    event EventHandler IComponent.Disposed
-    {
-        add { DisposedInternal += value; }
-        remove { DisposedInternal -= value; }
-    }
-
-    private bool designMode;
-
-    private GRMtlBackendContext backendContext;
-    private GRContext context;
-
-    // created in code
-    public SKMetalView2()
-        : this(CGRect.Empty)
-    {
-        Initialize();
-    }
-
-    // created in code
-    public SKMetalView2(CGRect frame)
-        : base(frame, null)
-    {
-        Initialize();
-    }
-
-    // created in code
-    public SKMetalView2(CGRect frame, IMTLDevice device)
-        : base(frame, device)
-    {
-        Initialize();
-    }
-
-    // created via designer
-    public SKMetalView2(IntPtr p)
-        : base(p)
-    {
-    }
-
-    // created via designer
-    public override void AwakeFromNib()
-    {
-        Initialize();
-    }
-
-    private void Initialize()
-    {
-        designMode = ((IComponent)this).Site?.DesignMode == true;
-
-        if (designMode)
-            return;
-
-        var device = MTLDevice.SystemDefault;
-        if (device == null)
-        {
-            Trace.WriteLine("Metal is not supported on this device.");
-            return;
-        }
-
-        ColorPixelFormat = MTLPixelFormat.BGRA8Unorm;
-        DepthStencilPixelFormat = MTLPixelFormat.Depth32Float_Stencil8;
-        SampleCount = 1;
-        Device = device;
-        backendContext = new GRMtlBackendContext
-        {
-            Device = device,
-            Queue = device.CreateCommandQueue(),
-        };
-
-        // hook up the drawing
-        Delegate = this;
-    }
-
-    public SKSize CanvasSize { get; private set; }
-
-    public GRContext GRContext => context;
-
-    void IMTKViewDelegate.DrawableSizeWillChange(MTKView view, CGSize size)
-    {
-        CanvasSize = size.ToSKSize();
-
-        if (Paused && EnableSetNeedsDisplay)
-
-        SetNeedsDisplay();
-    }
-
-    void IMTKViewDelegate.Draw(MTKView view)
-    {
-        if (designMode)
-            return;
-
-        if (backendContext.Device == null || backendContext.Queue == null || CurrentDrawable?.Texture == null)
-            return;
-
-        CanvasSize = DrawableSize.ToSKSize();
-
-        if (CanvasSize.Width <= 0 || CanvasSize.Height <= 0)
-            return;
-
-        // create the contexts if not done already
-        context ??= GRContext.CreateMetal(backendContext); //always returns null
-
-        if (context == null)
-        {
-            return;
-        }
-
-        const SKColorType colorType = SKColorType.Bgra8888;
-        const GRSurfaceOrigin surfaceOrigin = GRSurfaceOrigin.TopLeft;
-
-        // create the render target
-        var metalInfo = new GRMtlTextureInfo(CurrentDrawable.Texture);
-        using var renderTarget = new GRBackendRenderTarget((int)CanvasSize.Width, (int)CanvasSize.Height, (int)SampleCount, metalInfo);
-
-        // create the surface
-        using var surface = SKSurface.Create(context, renderTarget, surfaceOrigin, colorType);
-        using var canvas = surface.Canvas;
-
-        // start drawing
-        var e = new SKPaintMetalSurfaceEventArgs(surface, renderTarget, surfaceOrigin, colorType);
-        OnPaintSurface(e);
-
-        // flush the SkiaSharp contents
-        canvas.Flush();
-        surface.Flush();
-        context.Flush();
-
-        // present
-        using var commandBuffer = backendContext.Queue.CommandBuffer();
-        commandBuffer.PresentDrawable(CurrentDrawable);
-        commandBuffer.Commit();
-    }
-
-    public event EventHandler<SKPaintMetalSurfaceEventArgs> PaintSurface;
-
-    protected virtual void OnPaintSurface(SKPaintMetalSurfaceEventArgs e)
-    {
-        PaintSurface?.Invoke(this, e);
-    }
-}
-
-
-
-

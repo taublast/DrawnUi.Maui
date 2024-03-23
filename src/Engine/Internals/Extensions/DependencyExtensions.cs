@@ -55,15 +55,16 @@ public static class DependencyExtensions
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 
-            //if (DeviceInfo.Current.DeviceType != DeviceType.Virtual)
-            {
-                handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
-            }
+            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
+
 #elif MACCATALYST
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
-            handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
+
             handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
+
+            handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
+
             //handlers.AddHandler(typeof(Window), typeof(CustomizedWindowHandler));
             
 #elif WINDOWS

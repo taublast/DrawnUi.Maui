@@ -55,6 +55,9 @@
     <Compile Update="Platforms\iOS\DrawnView.Apple.cs">
       <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
     </Compile>
+    <Compile Update="Platforms\MacCatalyst\SKMetalViewRenderer.cs">
+      <ExcludeFromCurrentConfiguration>true</ExcludeFromCurrentConfiguration>
+    </Compile>
   </ItemGroup>
 
 
