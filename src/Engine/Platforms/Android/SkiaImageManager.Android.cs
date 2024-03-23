@@ -8,7 +8,7 @@ public partial class SkiaImageManager
 {
     public static bool UseGlide = true;
 
-    public static async Task<SKBitmap> LoadSKBitmapAsync(ImageSource source, CancellationToken cancel)
+    public static async Task<SKBitmap> LoadImageOnPlatformAsync(ImageSource source, CancellationToken cancel)
     {
         if (source == null)
             return null;
@@ -25,7 +25,7 @@ public partial class SkiaImageManager
                 var androidBitmap = await source.LoadOriginalViaGlide(Platform.CurrentActivity, cancel);
                 if (androidBitmap != null)
                 {
-                    SkiaImageManager.TraceLog($"[LoadSKBitmapAsync-GLIDE] loaded {source} ToSKBitmap");
+                    SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync-GLIDE] loaded {source} ToSKBitmap");
                     return androidBitmap.ToSKBitmap();
                 }
             }
@@ -36,7 +36,7 @@ public partial class SkiaImageManager
 
                 if (androidBitmap != null)
                 {
-                    SkiaImageManager.TraceLog($"[LoadSKBitmapAsync] loaded {source} ToSKBitmap");
+                    SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync] loaded {source} ToSKBitmap");
                     return androidBitmap.ToSKBitmap();
                 }
             }
@@ -47,7 +47,7 @@ public partial class SkiaImageManager
         }
         catch (System.Exception e)
         {
-            SkiaImageManager.TraceLog($"[LoadSKBitmapAsync] {e}");
+            SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync] {e}");
         }
 
         return null;
