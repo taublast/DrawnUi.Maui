@@ -116,13 +116,10 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
 
             var centerViewportY = scroll.Destination.Top + scroll.Viewport.Pixels.MidY;
 
-
-            control.Helper3d.Save();
-
-
-
+            control.Helper3d.Reset();
             control.Helper3d.RotateXDegrees(childViewAngle);
             control.Helper3d.TranslateZ(z);
+
             context.Canvas.Save();
 
             //set pivot point
@@ -161,8 +158,6 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
             var ret = base.DrawChild(context, dest, child, scale);
 
             context.Canvas.Restore();
-
-            control.Helper3d.Restore();
 
             return true;
         }

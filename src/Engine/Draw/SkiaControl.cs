@@ -15,7 +15,6 @@ using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace DrawnUi.Maui.Draw
 {
-
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]
     public partial class SkiaControl : VisualElement,
@@ -4326,6 +4325,8 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public Action<SKPaint, SKRect> CustomizeLayerPaint { get; set; }
 
+        public HelperSk3dView Helper3d { get; } = new();
+
         protected void DrawWithClipAndTransforms(
             SkiaDrawingContext ctx,
             SKRect destination,
@@ -4433,14 +4434,16 @@ namespace DrawnUi.Maui.Draw
 
                     if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
                     {
-                        Helper3d.Save();
+                        Helper3d.Reset();
                         Helper3d.RotateXDegrees(CameraAngleX);
                         Helper3d.RotateYDegrees(CameraAngleY);
                         Helper3d.RotateZDegrees(CameraAngleZ);
                         if (CameraTranslationZ != 0)
+                        {
                             Helper3d.TranslateZ(CameraTranslationZ);
+                        }
+                        // Combine 3D transformations with the drawing matrix
                         DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.Matrix);
-                        Helper3d.Restore();
                     }
 
                     //restore coordinates back
@@ -5426,142 +5429,7 @@ namespace DrawnUi.Maui.Draw
             canvas.Restore();
         }
 
-        #region TAPER
 
-        enum TaperSide { Left, Top, Right, Bottom }
-
-        enum TaperCorner { LeftOrTop, RightOrBottom, Both }
-
-        static class TaperTransform
-        {
-            public static SKMatrix Make(SKSize size, TaperSide taperSide, TaperCorner taperCorner, float taperFraction)
-            {
-                SKMatrix matrix = SKMatrix.MakeIdentity();
-
-                switch (taperSide)
-                {
-                case TaperSide.Left:
-                matrix.ScaleX = taperFraction;
-                matrix.ScaleY = taperFraction;
-                matrix.Persp0 = (taperFraction - 1) / size.Width;
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewY = size.Height * matrix.Persp0;
-                matrix.TransY = size.Height * (1 - taperFraction);
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewY = (size.Height / 2) * matrix.Persp0;
-                matrix.TransY = size.Height * (1 - taperFraction) / 2;
-                break;
-                }
-                break;
-
-                case TaperSide.Top:
-                matrix.ScaleX = taperFraction;
-                matrix.ScaleY = taperFraction;
-                matrix.Persp1 = (taperFraction - 1) / size.Height;
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewX = size.Width * matrix.Persp1;
-                matrix.TransX = size.Width * (1 - taperFraction);
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewX = (size.Width / 2) * matrix.Persp1;
-                matrix.TransX = size.Width * (1 - taperFraction) / 2;
-                break;
-                }
-                break;
-
-                case TaperSide.Right:
-                matrix.ScaleX = 1 / taperFraction;
-                matrix.Persp0 = (1 - taperFraction) / (size.Width * taperFraction);
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewY = size.Height * matrix.Persp0;
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewY = (size.Height / 2) * matrix.Persp0;
-                break;
-                }
-                break;
-
-                case TaperSide.Bottom:
-                matrix.ScaleY = 1 / taperFraction;
-                matrix.Persp1 = (1 - taperFraction) / (size.Height * taperFraction);
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewX = size.Width * matrix.Persp1;
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewX = (size.Width / 2) * matrix.Persp1;
-                break;
-                }
-                break;
-                }
-                return matrix;
-            }
-        }
-
-        #endregion
-
-
-        SK3dView _SK3dView;
-
-        public SK3dView Helper3d
-        {
-            get
-            {
-                if (_SK3dView == null)
-                {
-                    _SK3dView = new SK3dView();
-                }
-                return _SK3dView;
-            }
-        }
-
-
-
-
-        //public void PaintClearBackground(SKCanvas canvas)
-        //{
-        //    if (ClearColor != Colors.Transparent)
-        //    {
-        //        using (var paint = new SKPaint
-        //        {
-        //            Color = ClearColor.ToSKColor(),
-        //            Style = SKPaintStyle.StrokeAndFill,
-        //        })
-        //        {
-        //            canvas.DrawRect(Destination, paint);
-        //        }
-        //    }
-        //}
-
-        //static int countRedraws = 0;
         protected static void NeedDraw(BindableObject bindable, object oldvalue, object newvalue)
         {
 
