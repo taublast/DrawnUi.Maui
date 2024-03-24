@@ -71,6 +71,7 @@
                                         Color="#0000FF" />
                                 </draw:DropShadowsEffect>
 
+                                <draw:IsolatedColorPresetEffect Preset="Sepia"/>
 
                             </draw:SkiaControl.VisualEffects>
                         </draw:SkiaImage>
@@ -96,7 +97,8 @@
 
                         <draw:SkiaLayout
                             x:Name="Buttons"
-                            HorizontalOptions="Fill"
+                            HorizontalOptions="Center"
+                            MaxColumns="2"
                             Spacing="10"
                             Type="Column"
                             UseCache="Operations">
@@ -107,7 +109,7 @@
                                     <!--  caching area with shadow  -->
                                     <draw:SkiaLayout
                                         Padding="8"
-                                        HorizontalOptions="Center"
+                                        HorizontalOptions="Start"
                                         UseCache="Image">
 
                                         <draw:SkiaButton

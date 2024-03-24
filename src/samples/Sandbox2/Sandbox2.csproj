@@ -220,6 +220,9 @@
 
 
   <ItemGroup>
+    <Compile Update="Views\MainPageAlohaGraphics.xaml.cs">
+      <DependentUpon>MainPageAlohaGraphics.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\MainPageMauiGraphics.xaml.cs">
       <DependentUpon>MainPageMauiGraphics.xaml</DependentUpon>
     </Compile>
@@ -228,6 +231,9 @@
 
 
   <ItemGroup>
+    <MauiXaml Update="Views\MainPageAlohaGraphics.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\MainPageMauiGraphics.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

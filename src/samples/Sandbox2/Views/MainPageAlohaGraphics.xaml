@@ -1,20 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="Sandbox.Views.MainPageMauiGraphics"
+    x:Class="Sandbox.Views.MainPageAlohaGraphics"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:aloha="clr-namespace:Sandbox.Views.Aloha"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
-    xmlns:aloha="clr-namespace:Sandbox.Views.Aloha"
-    x:Name="ThisPage"
+    x:Name="thisView"
     x:DataType="demo:MainPageViewModel">
 
-    <ContentPage.Resources>
-        <views:ClockDrawable x:Key="clockDrawable" />
-    </ContentPage.Resources>
+
 
     <draw:Canvas
         Gestures="Enabled"
@@ -28,13 +26,32 @@
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
-            <draw:SkiaMauiGraphics
-                BackgroundColor="Black"
-                Drawable="{StaticResource clockDrawable}"
+            <!--  https://github.com/jsuarezruiz/AlohaKit.Controls  -->
+
+            <aloha:SkiaMultiBarChart
+                Margin="24,50,24,0"
+                AxisLinesColor="LightGray"
+                AxisLinesFontSize="11"
+                AxisLinesStrokeSize="0.9"
+                BackgroundColor="Gainsboro"
+                ChartMargin="0"
+                ColumnNames="{Binding Source={x:Reference thisView}, Path=ColumnNames}"
+                DisplayHorizontalAxisLines="True"
+                DisplayVerticalAxisLines="True"
+                EnableEntryAnimations="True"
+                Entries="{Binding Source={x:Reference thisView}, Path=MultiSeriesChartCollection}"
+                FooterLabelsMargin="8"
+                FooterLabelsTextSize="10"
+                GroupStyles="{Binding Source={x:Reference thisView}, Path=MultiSeriesChartStyles}"
+                HeaderValuesMargin="20"
+                HeightRequest="200"
                 HorizontalOptions="Fill"
-                Tag="Content"
-                VerticalOptions="Fill" />
-           
+                IsLabelTextTruncationEnabled="True"
+                PathsColorOpacity="0.6"
+                ReanimateOnPropertyChanged="True"
+                VerticalOptions="Start" />
+
+
             <draw:SkiaLabelFps
                 Margin="0,0,4,24"
                 BackgroundColor="DarkRed"
