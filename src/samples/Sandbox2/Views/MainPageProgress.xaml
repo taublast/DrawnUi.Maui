@@ -10,6 +10,8 @@
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     x:Name="ThisPage"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
     x:DataType="demo:MainPageViewModel">
 
     <draw:Canvas

@@ -6,6 +6,8 @@
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     x:Name="ThisPage"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
     x:DataType="demo:MainPageViewModel"
     BackgroundColor="#000000">
 
