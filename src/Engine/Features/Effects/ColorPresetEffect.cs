@@ -15,7 +15,7 @@ public class ColorPresetEffect : BaseColorFilterEffect
         set { SetValue(PresetProperty, value); }
     }
 
-    public override SKColorFilter CreateFilter(SkiaControl parent, SKRect destination)
+    public override SKColorFilter CreateFilter(SKRect destination)
     {
         if (NeedApply)
         {

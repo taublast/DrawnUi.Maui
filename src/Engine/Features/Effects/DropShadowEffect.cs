@@ -40,7 +40,7 @@ public class DropShadowEffect : BaseImageFilterEffect
         set { SetValue(YProperty, value); }
     }
 
-    public override SKImageFilter CreateFilter(SkiaControl parent, SKRect destination)
+    public override SKImageFilter CreateFilter(SKRect destination)
     {
         if (NeedApply)
         {

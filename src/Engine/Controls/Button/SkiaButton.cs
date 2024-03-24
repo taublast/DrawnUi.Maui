@@ -174,6 +174,10 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         void SetUp()
         {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                IsPressed = false;
+            });
             hadDown = false; //todo track multifingers
             Up?.Invoke(this, args);
             OnUp();
@@ -181,6 +185,10 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         if (touchAction == TouchActionResult.Down)
         {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                IsPressed = true;
+            });
             _lastDownPts = point;
             hadDown = true;
             TotalDown++;
@@ -194,16 +202,21 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             if (Math.Abs(current.X - _lastDownPts.X) > PanThreshold
                 || Math.Abs(current.Y - _lastDownPts.Y) > PanThreshold)
             {
-                SetUp();
+                if (hadDown)
+                    SetUp();
+                hadDown = false;
+
                 return null;
             }
         }
         else
         if (touchAction == TouchActionResult.Up)
         {
-            hadDown = false; //todo track multifingers
-            Up?.Invoke(this, args);
-            OnUp();
+            //todo track multifingers?
+            SetUp();
+            //hadDown = false; 
+            //Up?.Invoke(this, args);
+            //OnUp();
         }
         else
         if (touchAction == TouchActionResult.Tapped)
@@ -267,12 +280,6 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     #region STATIC PROPERTIES
 
-    public static readonly BindableProperty IsDisabledProperty = BindableProperty.Create(
-        nameof(IsDisabled),
-        typeof(bool),
-        typeof(SkiaButton),
-        false, propertyChanged: OnLookChanged);
-
     private static void OnLookChanged(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is SkiaButton control)
@@ -281,10 +288,29 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         }
     }
 
+    public static readonly BindableProperty IsDisabledProperty = BindableProperty.Create(
+        nameof(IsDisabled),
+        typeof(bool),
+        typeof(SkiaButton),
+        false, propertyChanged: OnLookChanged);
+
     public bool IsDisabled
     {
         get { return (bool)GetValue(IsDisabledProperty); }
         set { SetValue(IsDisabledProperty, value); }
+    }
+
+    public static readonly BindableProperty IsPressedProperty = BindableProperty.Create(
+        nameof(IsPressed),
+        typeof(bool),
+        typeof(SkiaButton),
+        false,
+        BindingMode.OneWayToSource);
+
+    public bool IsPressed
+    {
+        get { return (bool)GetValue(IsPressedProperty); }
+        set { SetValue(IsPressedProperty, value); }
     }
 
 

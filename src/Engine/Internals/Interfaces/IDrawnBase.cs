@@ -3,13 +3,11 @@ using DrawnUi.Maui.Draw;
 
 namespace DrawnUi.Maui.Draw;
 
-public interface IDrawnBase : IDisposable, ICanBeUpdated
+public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
 {
     SKRect DrawingRect { get; }
 
     string Tag { get; }
-
-    object BindingContext { get; set; }
 
     bool IsVisible { get; set; }
 

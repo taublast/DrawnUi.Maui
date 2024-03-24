@@ -120,7 +120,6 @@
     <AndroidAarLibrary Remove="Controls\Extensions\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Features\Effects\" />
     <Folder Include="Platforms\Windows\Controls\" />
     <Folder Include="Shared\" />
     <Folder Include="Views\Compat\" />

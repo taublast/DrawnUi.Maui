@@ -1,10 +1,10 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public class BaseRenderEffect : SkiaEffect
+public class BaseRenderEffect : SkiaEffect, IRenderEffect
 {
-    public virtual void Draw(SkiaControl parent, SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public virtual bool Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
     {
-
+        return false;
     }
 
 }
