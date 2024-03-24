@@ -3,7 +3,7 @@
 namespace DrawnUi.Maui.Draw;
 
 [ContentProperty("Drawable")]
-public class SkiaMauiGraphics : ContentLayout 
+public class SkiaMauiGraphics : ContentLayout
 {
 
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
@@ -14,7 +14,14 @@ public class SkiaMauiGraphics : ContentLayout
         {
             Canvas.Canvas = ctx.Canvas;
 
-            Drawable.Draw(Canvas, new RectF(destination.Left, destination.Top, destination.Width, destination.Height));
+            var viewport = new RectF(0, 0, destination.Width, destination.Height);
+
+            ctx.Canvas.Save();
+            ctx.Canvas.Translate(destination.Left, destination.Top);
+
+            Drawable.Draw(Canvas, viewport);
+
+            ctx.Canvas.Restore();
         }
     }
 
