@@ -14,9 +14,23 @@ namespace DrawnUi.Maui.Views
     {
         public virtual void Update()
         {
-#if ANDROID || WINDOWS || IOS || MACCATALYST
+#if ONPLATFORM
             UpdatePlatform();
 #endif
+        }
+
+        public bool IsUsingHardwareAcceleration
+        {
+            get
+            {
+#if SKIA3
+                return HardwareAcceleration != HardwareAccelerationMode.Disabled;
+#else
+                return HardwareAcceleration != HardwareAccelerationMode.Disabled
+                       && DeviceInfo.Platform != DevicePlatform.WinUI
+                       && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
+#endif
+            }
         }
 
         public bool NeedRedraw { get; set; }
@@ -43,15 +57,7 @@ namespace DrawnUi.Maui.Views
         }
 
         bool _isDirty;
-        public bool IsUsingHardwareAcceleration
-        {
-            get
-            {
-                return HardwareAcceleration != HardwareAccelerationMode.Disabled
-                       && DeviceInfo.Platform != DevicePlatform.WinUI
-                       && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
-            }
-        }
+
 
         public Queue<IDisposable> ToBeDisposed { get; } = new();
 
@@ -487,7 +493,7 @@ namespace DrawnUi.Maui.Views
                 //bug this creates garbage on aandroid on every frame
                 // DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
 
-#if ANDROID || WINDOWS || IOS || MACCATALYST
+#if ONPLATFORM
                 SetupRenderingLoop();
 #endif
             }
@@ -657,6 +663,10 @@ namespace DrawnUi.Maui.Views
         protected void CreateSkiaView()
         {
             DestroySkiaView();
+
+#if ONPLATFORM
+            PlatformHardwareAccelerationChanged();
+#endif
 
             if (IsUsingHardwareAcceleration)
             {
@@ -950,7 +960,6 @@ namespace DrawnUi.Maui.Views
         {
             //xamarin forms changed our size if used inside xamarin layout
             OnSizeChanged();
-
         }
 
         public DrawnView()
@@ -1337,7 +1346,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual void OnDisposing()
         {
-#if ANDROID || WINDOWS || IOS || MACCATALYST
+#if ONPLATFORM
             DisposePlatform();
 #endif
 
@@ -1659,7 +1668,8 @@ namespace DrawnUi.Maui.Views
         public static readonly BindableProperty HardwareAccelerationProperty = BindableProperty.Create(nameof(HardwareAcceleration),
         typeof(HardwareAccelerationMode),
         typeof(DrawnView),
-        HardwareAccelerationMode.Disabled, propertyChanged: OnHardwareModeChanged);
+        HardwareAccelerationMode.Disabled,
+        propertyChanged: OnHardwareModeChanged);
 
         public HardwareAccelerationMode HardwareAcceleration
         {
@@ -2205,5 +2215,21 @@ namespace DrawnUi.Maui.Views
         }
         ISkiaGestureListener _focusedChild;
         private ISkiaDrawable _canvasView;
+
+#if !ONPLATFORM
+
+        public void CheckElementVisibility(Element element)
+        {
+            NeedCheckParentVisibility = false;
+        }
+
+        protected virtual void OnSizeChanged()
+        {
+        }
+
+#endif
+
     }
+
+
 }

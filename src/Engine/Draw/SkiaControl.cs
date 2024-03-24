@@ -5697,15 +5697,17 @@ namespace DrawnUi.Maui.Draw
 
         private void EffectsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (var eOldItem in e.OldItems)
-            {
-                ((SkiaEffect)eOldItem).BindingContext = null;
-            }
+            if (e.OldItems != null)
+                foreach (var eOldItem in e.OldItems)
+                {
+                    ((SkiaEffect)eOldItem).BindingContext = null;
+                }
 
-            foreach (var eNewItem in e.NewItems)
-            {
-                ((SkiaEffect)eNewItem).BindingContext = this.BindingContext;
-            }
+            if (e.NewItems != null)
+                foreach (var eNewItem in e.NewItems)
+                {
+                    ((SkiaEffect)eNewItem).BindingContext = this.BindingContext;
+                }
 
             Update();
         }

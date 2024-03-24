@@ -318,8 +318,13 @@ namespace DrawnUi.Maui.Draw
                 float translateX = (strokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 - bounds.Left * scaleX;
                 float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 - bounds.Top * scaleY;
                 SKMatrix matrix = SKMatrix.CreateIdentity();
+#if SKIA3
+                matrix.PreConcat(SKMatrix.CreateScale(scaleX, scaleY));
+                matrix.PreConcat(SKMatrix.CreateTranslation(translateX, translateY));
+#else
                 SKMatrix.PreConcat(ref matrix, SKMatrix.CreateScale(scaleX, scaleY));
                 SKMatrix.PreConcat(ref matrix, SKMatrix.CreateTranslation(translateX, translateY));
+#endif
                 stretched.Transform(matrix);
                 stretched.Offset(halfStroke, halfStroke);
 
@@ -749,15 +754,17 @@ namespace DrawnUi.Maui.Draw
 
         private void ShadowsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            foreach (var eOldItem in e.OldItems)
-            {
-                ((SkiaShadow)eOldItem).BindingContext = null;
-            }
+            if (e.OldItems != null)
+                foreach (var eOldItem in e.OldItems)
+                {
+                    ((SkiaShadow)eOldItem).BindingContext = null;
+                }
 
-            foreach (var eNewItem in e.NewItems)
-            {
-                ((SkiaShadow)eNewItem).BindingContext = this.BindingContext;
-            }
+            if (e.NewItems != null)
+                foreach (var eNewItem in e.NewItems)
+                {
+                    ((SkiaShadow)eNewItem).BindingContext = this.BindingContext;
+                }
 
             Update();
         }

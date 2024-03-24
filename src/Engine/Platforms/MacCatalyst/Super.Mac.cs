@@ -7,21 +7,7 @@ namespace DrawnUi.Maui.Draw
 {
     public partial class Super
     {
-        static CADisplayLink _displayLink;
-        protected static void SetupFrameLooper()
-        {
-            _displayLink = CADisplayLink.Create(UpdateFrame);  
-            _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
-        }
 
-        static void UpdateFrame()
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                OnFrame?.Invoke(0);
-            });        
-        }
-        
         private static UIResponder mainResponder;
 
         public static void RequestMainResponder(UIResponder responder, bool force = false)

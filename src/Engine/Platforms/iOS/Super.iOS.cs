@@ -1,8 +1,8 @@
-﻿using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
+﻿using CoreAnimation;
+using Foundation;
+using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
 using SkiaSharp.Views.iOS;
 using System.Diagnostics;
-using CoreAnimation;
-using Foundation;
 using UIKit;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
@@ -11,20 +11,6 @@ namespace DrawnUi.Maui.Draw
 
     public partial class Super
     {
-        static CADisplayLink _displayLink;
-        protected static void SetupFrameLooper()
-        {
-            _displayLink = CADisplayLink.Create(UpdateFrame);  
-            _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
-        }
-
-        static void UpdateFrame()
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                OnFrame?.Invoke(0);
-            });        
-        }
 
         #region Thread
         static bool PlatformIsMainThread

@@ -31,6 +31,8 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         return this;
     }
 
+#if ONPLATFORM
+
     public override void SetNativeVisibility(bool state)
     {
         base.SetNativeVisibility(state);
@@ -40,6 +42,8 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
             SetFocusInternal(true);
         }
     }
+
+#endif
 
     #region CAN LOCALIZE
 

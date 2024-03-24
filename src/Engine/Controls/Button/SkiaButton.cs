@@ -88,6 +88,13 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         if (MainLabel != null)
         {
             MainLabel.Text = this.Text;
+            MainLabel.TextColor = this.TextColor;
+        }
+
+        if (MainFrame != null)
+        {
+            MainFrame.BackgroundColor = this.TintColor;
+            MainFrame.CornerRadius = this.CornerRadius;
         }
     }
 
@@ -405,7 +412,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         typeof(Thickness),
         typeof(SkiaButton),
         new Thickness(8),
-        propertyChanged: NeedInvalidateMeasure);
+        propertyChanged: NeedApplyProperties);
 
     public Thickness CornerRadius
     {
@@ -417,7 +424,9 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         nameof(TintColor),
         typeof(Color),
         typeof(SkiaButton),
-        Colors.Red);
+        Colors.Red,
+        propertyChanged: NeedApplyProperties);
+
 
     protected SKPoint _lastDownPts;
 
@@ -427,6 +436,26 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(TintColorProperty, value); }
     }
 
+    public static readonly BindableProperty TextColorProperty = BindableProperty.Create(
+        nameof(TextColor),
+        typeof(Color),
+        typeof(SkiaButton),
+        Colors.White,
+        propertyChanged: NeedApplyProperties);
+
+    public Color TextColor
+    {
+        get { return (Color)GetValue(TextColorProperty); }
+        set { SetValue(TextColorProperty, value); }
+    }
+
+    private static void NeedApplyProperties(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaButton control)
+        {
+            control.ApplyProperties();
+        }
+    }
 
     #endregion
 
