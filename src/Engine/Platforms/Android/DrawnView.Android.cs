@@ -1,5 +1,8 @@
-﻿using Android.Views;
+﻿#define CHOREOGRAPHER
+
+using Android.Views;
 using DrawnUi.Maui.Infrastructure.Enums;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Handlers;
 using System.Runtime.CompilerServices;
@@ -10,20 +13,146 @@ namespace DrawnUi.Maui.Views
     public partial class DrawnView
     {
 
-        public virtual void SetupRenderingLoop()
+        protected virtual void OnSizeChanged()
         {
-            Super.OnFrame += OnFrame;
+            if (Handler != null) //this is basically for clipping SkiaMauiElement
+            {
+                var layout = this.Handler.PlatformView as Android.Views.ViewGroup;
+                layout.SetClipChildren(true);
+                layout.ClipBounds = new Android.Graphics.Rect(0, 0, (int)(Width * RenderingScale), (int)(Height * RenderingScale));
+            }
+
+
+            Update();
         }
+
+        /// <summary>
+        /// To optimize rendering and not update controls that are inside storyboard that is offscreen or hidden
+        /// Apple - UI thread only !!!
+        /// If you set 
+        /// </summary>
+        /// <param name="element"></param>
+        public void CheckElementVisibility(Element element)
+        {
+            NeedCheckParentVisibility = false;
+
+            if (element != null)
+            {
+
+
+                if (element.Handler != null)
+                {
+                    if (element.Handler.PlatformView is Android.Views.View nativeView)
+                    {
+                        if (nativeView.Visibility != Android.Views.ViewStates.Visible)
+                        {
+                            IsHiddenInViewTree = true;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    if (element.GetVisualElementWindow() == null)
+                    {
+                        IsHiddenInViewTree = true;
+                        return;
+                    }
+                }
+
+                element = element.Parent;
+            }
+
+
+            IsHiddenInViewTree = false;
+        }
+
+#if CHOREOGRAPHER
+
+        private static Super.FrameCallback _frameCallback;
 
         protected virtual void DisposePlatform()
         {
+            Choreographer.Instance.RemoveFrameCallback(_frameCallback);
+        }
+
+        bool _loopStarting = false;
+        bool _loopStarted = false;
+
+        public virtual void SetupRenderingLoop()
+        {
+            _loopStarting = false;
+            _loopStarted = false;
+
+            _frameCallback = new Super.FrameCallback((nanos) =>
+            {
+                OnFrame();
+
+                Choreographer.Instance.PostFrameCallback(_frameCallback);
+            });
+
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), async () =>
+            {
+                while (!_loopStarted)
+                {
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                    {
+                        if (_loopStarting)
+                            return;
+                        _loopStarting = true;
+
+                        if (MainThread.IsMainThread)
+                        {
+                            _loopStarted = true;
+                            Choreographer.Instance.PostFrameCallback(_frameCallback);
+                        }
+
+                        _loopStarting = false;
+                    });
+                    await Task.Delay(100);
+                }
+
+            });
 
         }
 
-        private void OnFrame(long nanoseconds)
+        protected virtual void PlatformHardwareAccelerationChanged()
         {
-            if (CheckCanDraw())
+
+        }
+
+#else
+
+        protected virtual void DisposePlatform()
+        {
+            Looper?.Dispose();
+        }
+
+        Looper Looper { get; set; }
+
+        public virtual void SetupRenderingLoop()
+        {
+            Looper = new(OnFrame);
+            Looper.Start(GetTargetFps());
+        }
+
+        protected virtual void PlatformHardwareAccelerationChanged()
+        {
+            Looper?.SetTargetFps(GetTargetFps());
+        }
+
+        int GetTargetFps()
+        {
+            return 120;
+        }
+
+#endif
+
+        private void OnFrame()
+        {
+            if (CheckCanDraw() && !OrderedDraw)
             {
+                OrderedDraw = true;
                 if (NeedCheckParentVisibility)
                     CheckElementVisibility(this);
 
@@ -31,77 +160,11 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void UpdatePlatform()
         {
             IsDirty = true;
         }
-
-        /*
-        protected async Task InvalidateCanvas()
-        {
-            if (CanvasView == null)
-                return;
-
-            //sanity check
-            if (CanvasView.CanvasSize is { Width: > 0, Height: > 0 })
-            {
-                if (NeedCheckParentVisibility)
-                {
-                    CheckElementVisibility(this);
-                }
-
-                if (UpdateMode == UpdateMode.Constant)
-                {
-                    InvalidatedCanvas++;
-                    CanvasView?.Update();
-                    return;
-                }
-
-                if (CanDraw) //passed checks
-                {
-                    _isWaiting = true;
-                    InvalidatedCanvas++;
-
-                    //cap fps around 120fps
-                    var nowNanos = Super.GetCurrentTimeNanos();
-                    var elapsedMicros = (nowNanos - CanvasView.FrameTime) / 1_000.0;
-
-                    var needWait =
-                        Super.CapMicroSecs
-                        - elapsedMicros;
-                    if (needWait >= 1)
-                    {
-                        var ms = (int)(needWait / 1000);
-                        if (ms < 1)
-                            ms = 1;
-                        await Task.Delay(ms);
-                    }
-                    else
-                    {
-                        //await Task.Delay(1);
-                    }
-
-                    _isWaiting = false;
-
-                    if (!Super.EnableRendering)
-                    {
-                        OrderedDraw = false;
-                        return;
-                    }
-
-                    CanvasView?.Update();
-
-                }
-                else
-                {
-                    OrderedDraw = false;
-                }
-
-            }
-        }
-        */
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
@@ -128,5 +191,8 @@ namespace DrawnUi.Maui.Views
                 }
             }
         }
+
+
+
     }
 }

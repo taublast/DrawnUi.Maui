@@ -1,0 +1,12 @@
+<Project>
+  <!-- Conditional for SkiaSharp 2 -->
+  <PropertyGroup>
+    <PackageReleaseNotes>Alpha for SkiaSharp 2.xx</PackageReleaseNotes>
+    <Version>1.2.0.1-pre</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.7" />
+    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.7" />
+    <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="8.0.14" />
+  </ItemGroup>
+</Project>

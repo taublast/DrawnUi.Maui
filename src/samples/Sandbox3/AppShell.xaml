@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Sandbox.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sandbox="using:Sandbox"
+    xmlns:views="clr-namespace:Sandbox.Views"
+    xmlns:mauiNet8="clr-namespace:MauiNet8"
+    Shell.FlyoutBehavior="Disabled"
+    Title="MauiApp1">
+
+    <ShellContent
+        Title="Sandbox"
+        ContentTemplate="{DataTemplate mauiNet8:MainPage}"
+        Route="MainPage" />
+
+</Shell>

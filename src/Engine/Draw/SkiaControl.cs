@@ -15,7 +15,6 @@ using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace DrawnUi.Maui.Draw
 {
-
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]
     public partial class SkiaControl : VisualElement,
@@ -3242,10 +3241,6 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void ApplyBindingContext()
         {
-            foreach (var shade in Shadows)
-            {
-                shade.BindingContext = BindingContext;
-            }
 
             foreach (var view in this.Views)
             {
@@ -3255,6 +3250,7 @@ namespace DrawnUi.Maui.Draw
 
             if (FillGradient != null)
                 FillGradient.BindingContext = BindingContext;
+
         }
 
         protected bool BindingContextWasSet { get; set; }
@@ -4326,6 +4322,8 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public Action<SKPaint, SKRect> CustomizeLayerPaint { get; set; }
 
+        public HelperSk3dView Helper3d { get; } = new();
+
         protected void DrawWithClipAndTransforms(
             SkiaDrawingContext ctx,
             SKRect destination,
@@ -4433,14 +4431,16 @@ namespace DrawnUi.Maui.Draw
 
                     if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
                     {
-                        Helper3d.Save();
+                        Helper3d.Reset();
                         Helper3d.RotateXDegrees(CameraAngleX);
                         Helper3d.RotateYDegrees(CameraAngleY);
                         Helper3d.RotateZDegrees(CameraAngleZ);
                         if (CameraTranslationZ != 0)
+                        {
                             Helper3d.TranslateZ(CameraTranslationZ);
+                        }
+                        // Combine 3D transformations with the drawing matrix
                         DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.Matrix);
-                        Helper3d.Restore();
                     }
 
                     //restore coordinates back
@@ -5426,142 +5426,7 @@ namespace DrawnUi.Maui.Draw
             canvas.Restore();
         }
 
-        #region TAPER
 
-        enum TaperSide { Left, Top, Right, Bottom }
-
-        enum TaperCorner { LeftOrTop, RightOrBottom, Both }
-
-        static class TaperTransform
-        {
-            public static SKMatrix Make(SKSize size, TaperSide taperSide, TaperCorner taperCorner, float taperFraction)
-            {
-                SKMatrix matrix = SKMatrix.MakeIdentity();
-
-                switch (taperSide)
-                {
-                case TaperSide.Left:
-                matrix.ScaleX = taperFraction;
-                matrix.ScaleY = taperFraction;
-                matrix.Persp0 = (taperFraction - 1) / size.Width;
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewY = size.Height * matrix.Persp0;
-                matrix.TransY = size.Height * (1 - taperFraction);
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewY = (size.Height / 2) * matrix.Persp0;
-                matrix.TransY = size.Height * (1 - taperFraction) / 2;
-                break;
-                }
-                break;
-
-                case TaperSide.Top:
-                matrix.ScaleX = taperFraction;
-                matrix.ScaleY = taperFraction;
-                matrix.Persp1 = (taperFraction - 1) / size.Height;
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewX = size.Width * matrix.Persp1;
-                matrix.TransX = size.Width * (1 - taperFraction);
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewX = (size.Width / 2) * matrix.Persp1;
-                matrix.TransX = size.Width * (1 - taperFraction) / 2;
-                break;
-                }
-                break;
-
-                case TaperSide.Right:
-                matrix.ScaleX = 1 / taperFraction;
-                matrix.Persp0 = (1 - taperFraction) / (size.Width * taperFraction);
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewY = size.Height * matrix.Persp0;
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewY = (size.Height / 2) * matrix.Persp0;
-                break;
-                }
-                break;
-
-                case TaperSide.Bottom:
-                matrix.ScaleY = 1 / taperFraction;
-                matrix.Persp1 = (1 - taperFraction) / (size.Height * taperFraction);
-
-                switch (taperCorner)
-                {
-                case TaperCorner.RightOrBottom:
-                break;
-
-                case TaperCorner.LeftOrTop:
-                matrix.SkewX = size.Width * matrix.Persp1;
-                break;
-
-                case TaperCorner.Both:
-                matrix.SkewX = (size.Width / 2) * matrix.Persp1;
-                break;
-                }
-                break;
-                }
-                return matrix;
-            }
-        }
-
-        #endregion
-
-
-        SK3dView _SK3dView;
-
-        public SK3dView Helper3d
-        {
-            get
-            {
-                if (_SK3dView == null)
-                {
-                    _SK3dView = new SK3dView();
-                }
-                return _SK3dView;
-            }
-        }
-
-
-
-
-        //public void PaintClearBackground(SKCanvas canvas)
-        //{
-        //    if (ClearColor != Colors.Transparent)
-        //    {
-        //        using (var paint = new SKPaint
-        //        {
-        //            Color = ClearColor.ToSKColor(),
-        //            Style = SKPaintStyle.StrokeAndFill,
-        //        })
-        //        {
-        //            canvas.DrawRect(Destination, paint);
-        //        }
-        //    }
-        //}
-
-        //static int countRedraws = 0;
         protected static void NeedDraw(BindableObject bindable, object oldvalue, object newvalue)
         {
 
@@ -5798,58 +5663,84 @@ namespace DrawnUi.Maui.Draw
         }
         static object lockViews = new();
 
+        #region EFFECTS
 
-
-        #region SHADOWS
-
-        /// <summary>
-        /// Creates and sets an ImageFilter for SKPaint
-        /// </summary>
-        /// <param name="paintShadow"></param>
-        /// <param name="shadow"></param>
-        protected void AddShadowFilter(SKPaint paintShadow, SkiaShadow shadow)
+        private static void EffectsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
-            var colorShadow = shadow.Color;
-            if (colorShadow.Alpha == 1.0)
+            if (bindable is SkiaControl control)
             {
-                colorShadow = shadow.Color.WithAlpha((float)shadow.Opacity);
-            }
+                if (oldvalue is INotifyCollectionChanged oldCollection)
+                {
+                    oldCollection.CollectionChanged -= control.EffectsCollectionChanged;
+                }
+                if (newvalue is INotifyCollectionChanged newCollection)
+                {
+                    newCollection.CollectionChanged += control.EffectsCollectionChanged;
+                }
 
-            paintShadow.ImageFilter = SKImageFilter.CreateDropShadow(
-                (float)(shadow.X * RenderingScale), (float)(shadow.Y * RenderingScale),
-                (float)(shadow.Blur * RenderingScale), (float)(shadow.Blur * RenderingScale),
-                colorShadow.ToSKColor());
+                if (newvalue is IEnumerable<SkiaEffect> list)
+                    control.UpdateVisualEffects(list);
+            }
         }
 
-        public static readonly BindableProperty ShadowsProperty = BindableProperty.Create(
-            nameof(Shadows),
-            typeof(IList<SkiaShadow>),
+        void UpdateVisualEffects(IEnumerable<SkiaEffect> list)
+        {
+            if (list != null)
+            {
+                foreach (var item in list.ToList())
+                {
+                    item.BindingContext = this.BindingContext;
+                }
+                Update();
+            }
+        }
+
+        private void EffectsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+                foreach (var eOldItem in e.OldItems)
+                {
+                    ((SkiaEffect)eOldItem).BindingContext = null;
+                }
+
+            if (e.NewItems != null)
+                foreach (var eNewItem in e.NewItems)
+                {
+                    ((SkiaEffect)eNewItem).BindingContext = this.BindingContext;
+                }
+
+            Update();
+        }
+
+        public static readonly BindableProperty VisualEffectsProperty = BindableProperty.Create(
+            nameof(VisualEffects),
+            typeof(IList<SkiaEffect>),
             typeof(SkiaControl),
             defaultValueCreator: (instance) =>
             {
-                var created = new ObservableCollection<SkiaShadow>();
+                var created = new ObservableCollection<SkiaEffect>();
+                EffectsPropertyChanged(instance, null, created);
                 return created;
             },
-            validateValue: (bo, v) => v is IList<SkiaShadow>,
-            propertyChanged: NeedDraw,
-            coerceValue: CoerceShadows);
+            validateValue: (bo, v) => v is IList<SkiaEffect>,
+            propertyChanged: EffectsPropertyChanged,
+            coerceValue: CoerceVisualEffects);
 
         private static int instanceCount = 0;
 
-        public IList<SkiaShadow> Shadows
+        public IList<SkiaEffect> VisualEffects
         {
-            get => (IList<SkiaShadow>)GetValue(ShadowsProperty);
-            set => SetValue(ShadowsProperty, value);
+            get => (IList<SkiaEffect>)GetValue(VisualEffectsProperty);
+            set => SetValue(VisualEffectsProperty, value);
         }
 
-        private static object CoerceShadows(BindableObject bindable, object value)
+        private static object CoerceVisualEffects(BindableObject bindable, object value)
         {
-            if (!(value is ReadOnlyCollection<SkiaShadow> readonlyCollection))
+            if (!(value is ReadOnlyCollection<SkiaEffect> readonlyCollection))
             {
                 return value;
             }
-
-            return new ReadOnlyCollection<SkiaShadow>(
+            return new ReadOnlyCollection<SkiaEffect>(
                 readonlyCollection.ToList());
         }
 
@@ -6582,6 +6473,25 @@ namespace DrawnUi.Maui.Draw
         }
 
         #region HELPERS
+
+        /// <summary>
+        /// Creates and sets an ImageFilter for SKPaint
+        /// </summary>
+        /// <param name="paintShadow"></param>
+        /// <param name="shadow"></param>
+        public static void AddShadowFilter(SKPaint paintShadow, SkiaShadow shadow, float scale)
+        {
+            var colorShadow = shadow.Color;
+            if (colorShadow.Alpha == 1.0)
+            {
+                colorShadow = shadow.Color.WithAlpha((float)shadow.Opacity);
+            }
+
+            paintShadow.ImageFilter = SKImageFilter.CreateDropShadow(
+                (float)(shadow.X * scale), (float)(shadow.Y * scale),
+                (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
+                colorShadow.ToSKColor());
+        }
 
         public static Random Random = new Random();
         protected double _arrangedViewportHeightLimit;

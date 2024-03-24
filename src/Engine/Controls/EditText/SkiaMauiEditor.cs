@@ -28,6 +28,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         return this;
     }
 
+#if ONPLATFORM
     public override void SetNativeVisibility(bool state)
     {
         base.SetNativeVisibility(state);
@@ -37,6 +38,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             SetFocusInternal(true);
         }
     }
+#endif
 
     #region CAN LOCALIZE
 

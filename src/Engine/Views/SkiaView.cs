@@ -103,7 +103,7 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
     public void Update()
     {
-        if (this.Handler != null && this.Handler.PlatformView != null)
+        if (this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
         {
             try
             {
@@ -115,5 +115,6 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
             }
         }
     }
+
 
 }

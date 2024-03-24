@@ -169,7 +169,7 @@
 
             SubscribeToRenderingChain(false);
 
-#if ANDROID || IOS || WINDOWS || MACCATALYST
+#if ONPLATFORM
             RemoveMauiElement(Element);
 #endif
 
@@ -302,7 +302,7 @@
             if (Superview != null && Element != null)
             {
 
-#if ANDROID || IOS || WINDOWS || MACCATALYST
+#if ONPLATFORM
                 RemoveMauiElement(Element);
 #endif
             }
@@ -328,7 +328,7 @@
 
             Element.BindingContext = this.BindingContext;
 
-#if ANDROID || IOS || WINDOWS || MACCATALYST
+#if ONPLATFORM
             SetupMauiElement(Element);
 #endif
         }
@@ -359,7 +359,7 @@
 
         public void Refresh()
         {
-#if ANDROID || IOS || WINDOWS || MACCATALYST
+#if ONPLATFORM
             LayoutMauiElement();
 #endif
             Update();
@@ -539,7 +539,7 @@
 
             ApplyTransform(transform);
 
-#if ANDROID || IOS || WINDOWS || MACCATALYST
+#if ONPLATFORM
             LayoutMauiElement();
 #endif
         }
@@ -617,12 +617,13 @@
 
         #endregion
 
-#if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if !ONPLATFORM
 
         protected virtual void LayoutNativeView(VisualElement element)
         {
             throw new NotImplementedException();
         }
+
         public virtual void SetNativeVisibility(bool state)
         {
             throw new NotImplementedException();

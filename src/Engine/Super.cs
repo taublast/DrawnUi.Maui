@@ -188,8 +188,6 @@ public partial class Super
         return (long)nanoseconds;
     }
 
-    public static event Action<long> OnFrame;
-
     /// <summary>
     /// In DP
     /// </summary>
@@ -305,8 +303,6 @@ public partial class Super
     {
         InBackground = false;
 
-        SetupFrameLooper();
-
         OnNativeAppCreated?.Invoke(null, EventArgs.Empty);
     }
 
@@ -404,4 +400,55 @@ public partial class Super
         //    Trace.WriteLine($"[VisualTreeChanged] failures: {failures}");
 
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void RunOnMainThreadAndWait(Action action)
+    {
+        var tcs = new TaskCompletionSource();
+        MainThread.InvokeOnMainThreadAsync(() =>
+        {
+            action();
+            tcs.SetResult();
+        });
+        tcs.Task.Wait();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static async Task RunOnMainThreadAndWaitAsync(Func<Task> asyncAction, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (MainThread.IsMainThread)
+        {
+            await asyncAction();
+        }
+        else
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            // Register a callback to handle cancellation
+            using (cancellationToken.Register(() => tcs.TrySetCanceled(cancellationToken)))
+            {
+                MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    try
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        await asyncAction();
+                        tcs.TrySetResult(true);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        tcs.TrySetCanceled(cancellationToken);
+                    }
+                    catch (Exception e)
+                    {
+                        tcs.TrySetException(e);
+                    }
+                });
+
+                await tcs.Task.ConfigureAwait(false);
+            }
+        }
+    }
+
 }

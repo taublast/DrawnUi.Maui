@@ -1,6 +1,8 @@
 ﻿using DrawnUi.Maui.Draw;
 using DrawnUi.Maui.Infrastructure.Xaml;
 using Microsoft.Maui.Controls.Shapes;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using Color = Microsoft.Maui.Graphics.Color;
 using Path = Microsoft.Maui.Controls.Shapes.Path;
@@ -12,6 +14,15 @@ namespace DrawnUi.Maui.Draw
     /// </summary>
     public class SkiaShape : SkiaControl, ISkiaGestureListener
     {
+        public override void ApplyBindingContext()
+        {
+            foreach (var shade in Shadows)
+            {
+                shade.BindingContext = BindingContext;
+            }
+
+            base.ApplyBindingContext();
+        }
 
         #region PROPERTIES
 
@@ -307,8 +318,13 @@ namespace DrawnUi.Maui.Draw
                 float translateX = (strokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 - bounds.Left * scaleX;
                 float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 - bounds.Top * scaleY;
                 SKMatrix matrix = SKMatrix.CreateIdentity();
+#if SKIA3
+                matrix.PreConcat(SKMatrix.CreateScale(scaleX, scaleY));
+                matrix.PreConcat(SKMatrix.CreateTranslation(translateX, translateY));
+#else
                 SKMatrix.PreConcat(ref matrix, SKMatrix.CreateScale(scaleX, scaleY));
                 SKMatrix.PreConcat(ref matrix, SKMatrix.CreateTranslation(translateX, translateY));
+#endif
                 stretched.Transform(matrix);
                 stretched.Offset(halfStroke, halfStroke);
 
@@ -634,7 +650,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     for (int index = 0; index < Shadows.Count(); index++)
                     {
-                        AddShadowFilter(RenderingPaint, Shadows[index]);
+                        AddShadowFilter(RenderingPaint, Shadows[index], RenderingScale);
 
                         if (ClipBackgroundColor)
                         {
@@ -699,6 +715,91 @@ namespace DrawnUi.Maui.Draw
                 PaintStroke(RenderingPaint);
             }
 
+        }
+
+
+        #endregion
+
+        #region SHADOWS
+
+        private static void ShadowsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
+        {
+            if (bindable is SkiaShape control)
+            {
+                if (oldvalue is INotifyCollectionChanged oldCollection)
+                {
+                    oldCollection.CollectionChanged -= control.ShadowsCollectionChanged;
+                }
+                if (newvalue is INotifyCollectionChanged newCollection)
+                {
+                    newCollection.CollectionChanged += control.ShadowsCollectionChanged;
+                }
+
+                if (newvalue is IEnumerable<SkiaShadow> list)
+                    control.UpdateShadows(list);
+            }
+        }
+
+        void UpdateShadows(IEnumerable<SkiaShadow> list)
+        {
+            if (list != null)
+            {
+                foreach (var item in list.ToList())
+                {
+                    item.BindingContext = this.BindingContext;
+                }
+                Update();
+            }
+        }
+
+        private void ShadowsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+                foreach (var eOldItem in e.OldItems)
+                {
+                    ((SkiaShadow)eOldItem).BindingContext = null;
+                }
+
+            if (e.NewItems != null)
+                foreach (var eNewItem in e.NewItems)
+                {
+                    ((SkiaShadow)eNewItem).BindingContext = this.BindingContext;
+                }
+
+            Update();
+        }
+
+        public static readonly BindableProperty ShadowsProperty = BindableProperty.Create(
+            nameof(Shadows),
+            typeof(IList<SkiaShadow>),
+            typeof(SkiaShape),
+            defaultValueCreator: (instance) =>
+            {
+                var created = new ObservableCollection<SkiaShadow>();
+                ShadowsPropertyChanged(instance, null, created);
+                return created;
+            },
+            validateValue: (bo, v) => v is IList<SkiaShadow>,
+            propertyChanged: NeedDraw,
+            coerceValue: CoerceShadows);
+
+        private static int instanceCount = 0;
+
+        public IList<SkiaShadow> Shadows
+        {
+            get => (IList<SkiaShadow>)GetValue(ShadowsProperty);
+            set => SetValue(ShadowsProperty, value);
+        }
+
+        private static object CoerceShadows(BindableObject bindable, object value)
+        {
+            if (!(value is ReadOnlyCollection<SkiaShadow> readonlyCollection))
+            {
+                return value;
+            }
+
+            return new ReadOnlyCollection<SkiaShadow>(
+                readonlyCollection.ToList());
         }
 
 
