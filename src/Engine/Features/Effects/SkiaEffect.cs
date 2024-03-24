@@ -1,17 +1,27 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public class SkiaEffect : BindableObject, IDisposable, ICanBeUpdated
+public class SkiaEffect : BindableObject, IDisposable, ICanBeUpdatedWithContext
 {
-    protected SkiaControl Parent { get; set; }
-
-    public virtual void Attach(SkiaControl parent)
-    {
-        Parent = parent;
-    }
+    /// <summary>
+    /// For public set use Attach/Detach
+    /// </summary>
+    public SkiaControl Parent { get; protected set; }
 
     protected virtual void OnDisposing()
     {
 
+    }
+
+    public void Attach(SkiaControl parent)
+    {
+        this.Parent = parent;
+        this.BindingContext = parent.BindingContext;
+    }
+
+    public void Dettach()
+    {
+        this.BindingContext = null;
+        this.Parent = null;
     }
 
     public void Dispose()
@@ -20,7 +30,7 @@ public class SkiaEffect : BindableObject, IDisposable, ICanBeUpdated
         Parent = null;
     }
 
-    public void Update()
+    public virtual void Update()
     {
         Parent?.Update();
     }
@@ -37,7 +47,7 @@ public class SkiaEffect : BindableObject, IDisposable, ICanBeUpdated
     {
         get
         {
-            return true;
+            return Parent != null;
         }
     }
 

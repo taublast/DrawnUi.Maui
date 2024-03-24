@@ -9,3 +9,9 @@ public interface ICanBeUpdated
     void Update();
 
 }
+
+public interface ICanBeUpdatedWithContext : ICanBeUpdated
+{
+    object BindingContext { get; set; }
+
+}

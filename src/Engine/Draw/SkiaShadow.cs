@@ -3,7 +3,19 @@
 public class SkiaShadow : BindableObject
 {
 
-    public ICanBeUpdated Parent { get; set; }
+    public ICanBeUpdatedWithContext Parent { get; set; }
+
+    public void Attach(ICanBeUpdatedWithContext parent)
+    {
+        this.Parent = parent;
+        this.BindingContext = parent.BindingContext;
+    }
+
+    public void Dettach()
+    {
+        this.BindingContext = null;
+        this.Parent = null;
+    }
 
     private static void RedrawCanvas(BindableObject bindable, object oldvalue, object newvalue)
     {
@@ -61,6 +73,15 @@ public class SkiaShadow : BindableObject
     {
         get { return (double)GetValue(BlurProperty); }
         set { SetValue(BlurProperty, value); }
+    }
+
+    public static readonly BindableProperty ShadowOnlyProperty = BindableProperty.Create(nameof(ShadowOnly), typeof(bool), typeof(SkiaShadow),
+        false,
+        propertyChanged: RedrawCanvas);
+    public bool ShadowOnly
+    {
+        get { return (bool)GetValue(ShadowOnlyProperty); }
+        set { SetValue(ShadowOnlyProperty, value); }
     }
 
 

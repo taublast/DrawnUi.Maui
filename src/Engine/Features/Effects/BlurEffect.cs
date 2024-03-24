@@ -1,6 +1,6 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public class BlurEffect : SkiaEffect
+public class BlurEffect : BaseImageFilterEffect
 {
     public static readonly BindableProperty AmountProperty = BindableProperty.Create(
         nameof(Amount),
@@ -15,24 +15,23 @@ public class BlurEffect : SkiaEffect
         set { SetValue(AmountProperty, value); }
     }
 
-    public override void Attach(SkiaControl parent)
+    public override SKImageFilter CreateFilter(SKRect destination)
     {
-        base.Attach(parent);
-
-        parent.CustomizeLayerPaint = (paint, rect) =>
+        if (NeedApply)
         {
-            if (paint != null)
+            if (Filter == null)
             {
-                if (Amount > 0)
-                {
-                    paint.ImageFilter = SKImageFilter.CreateBlur((float)Amount, (float)Amount, SKShaderTileMode.Mirror);
-                }
-                else
-                {
-                    paint.ImageFilter = null;
-
-                }
+                Filter = SKImageFilter.CreateBlur((float)Amount, (float)Amount, SKShaderTileMode.Mirror);
             }
-        };
+        }
+        return Filter;
+    }
+
+    public override bool NeedApply
+    {
+        get
+        {
+            return base.NeedApply && (this.Amount > 0);
+        }
     }
 }

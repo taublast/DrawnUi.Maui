@@ -56,17 +56,14 @@ public class DropShadowsEffect : BaseRenderEffect
             {
                 foreach (var shade in oldList)
                 {
-                    shade.Parent = null;
-                    shade.BindingContext = null;
+                    shade.Dettach();
                 }
             }
         }
 
         foreach (var shade in enumerableShadows)
         {
-            shade.Parent = effect;
-
-            shade.BindingContext = effect.BindingContext;
+            shade.Attach(effect);
         }
 
         if (newvalue is INotifyCollectionChanged newCollection)
@@ -85,8 +82,7 @@ public class DropShadowsEffect : BaseRenderEffect
         case NotifyCollectionChangedAction.Add:
         foreach (SkiaShadow newSkiaPropertyShadow in e.NewItems)
         {
-            newSkiaPropertyShadow.Parent = this;
-            newSkiaPropertyShadow.BindingContext = BindingContext;
+            newSkiaPropertyShadow.Attach(this);
         }
 
         break;
@@ -95,17 +91,18 @@ public class DropShadowsEffect : BaseRenderEffect
         case NotifyCollectionChangedAction.Remove:
         foreach (SkiaShadow oldSkiaPropertyShadow in e.OldItems ?? new SkiaShadow[0])
         {
-            oldSkiaPropertyShadow.Parent = null;
-            oldSkiaPropertyShadow.BindingContext = null;
+            oldSkiaPropertyShadow.Dettach();
         }
 
         break;
         }
+
+        Update();
     }
 
     #endregion
 
-    public override void Draw(SkiaControl parent, SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public override bool Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
     {
         if (NeedApply)
         {
@@ -114,11 +111,13 @@ public class DropShadowsEffect : BaseRenderEffect
             //draw every shadow without the controls itsselfs
             foreach (var shadow in Shadows)
             {
+                //SkiaControl.AddShadowFilter(paint, shadow, Parent.RenderingScale);
+
                 paint.ImageFilter = SKImageFilter.CreateDropShadowOnly(
-                    (float)Math.Round(shadow.X * Parent.RenderingScale),
-                    (float)Math.Round(shadow.Y * Parent.RenderingScale),
-                    (float)shadow.Blur, (float)shadow.Blur,
-                    shadow.Color.ToSKColor());
+                (float)Math.Round(shadow.X * Parent.RenderingScale),
+                (float)Math.Round(shadow.Y * Parent.RenderingScale),
+                (float)shadow.Blur, (float)shadow.Blur,
+                shadow.Color.ToSKColor());
 
                 var restore = ctx.Canvas.SaveLayer(paint);
 
@@ -127,10 +126,11 @@ public class DropShadowsEffect : BaseRenderEffect
                 if (restore != 0)
                     ctx.Canvas.RestoreToCount(restore);
             }
+
+            return false;
         }
 
-        //draw as usual
-        base.Draw(parent, destination, ctx, drawControl);
+        return base.Draw(destination, ctx, drawControl);
     }
 
     public override bool NeedApply

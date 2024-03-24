@@ -19,7 +19,7 @@ public class IsolatedColorPresetEffect : BaseRenderEffect
 
     #endregion
 
-    public override void Draw(SkiaControl parent, SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public override bool Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
     {
         if (NeedApply)
         {
@@ -51,7 +51,11 @@ public class IsolatedColorPresetEffect : BaseRenderEffect
 
             if (restore != 0)
                 ctx.Canvas.RestoreToCount(restore);
+
+            return true;
         }
+
+        return base.Draw(destination, ctx, drawControl);
     }
 
     public override bool NeedApply

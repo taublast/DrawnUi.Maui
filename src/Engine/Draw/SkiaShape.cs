@@ -726,45 +726,62 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaShape control)
             {
-                if (oldvalue is INotifyCollectionChanged oldCollection)
+
+                var enumerableShadows = (IEnumerable<SkiaShadow>)newvalue;
+
+                if (oldvalue != null)
                 {
-                    oldCollection.CollectionChanged -= control.ShadowsCollectionChanged;
+                    if (oldvalue is INotifyCollectionChanged oldCollection)
+                    {
+                        oldCollection.CollectionChanged -= control.OnShadowCollectionChanged;
+                    }
+
+                    if (oldvalue is IEnumerable<SkiaShadow> oldList)
+                    {
+                        foreach (var shade in oldList)
+                        {
+                            shade.Dettach();
+                        }
+                    }
                 }
+
+                foreach (var shade in enumerableShadows)
+                {
+                    shade.Attach(control);
+                }
+
                 if (newvalue is INotifyCollectionChanged newCollection)
                 {
-                    newCollection.CollectionChanged += control.ShadowsCollectionChanged;
+                    newCollection.CollectionChanged -= control.OnShadowCollectionChanged;
+                    newCollection.CollectionChanged += control.OnShadowCollectionChanged;
                 }
 
-                if (newvalue is IEnumerable<SkiaShadow> list)
-                    control.UpdateShadows(list);
+                control.Update();
             }
+
         }
 
-        void UpdateShadows(IEnumerable<SkiaShadow> list)
+        private void OnShadowCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (list != null)
+            switch (e.Action)
             {
-                foreach (var item in list.ToList())
-                {
-                    item.BindingContext = this.BindingContext;
-                }
-                Update();
+            case NotifyCollectionChangedAction.Add:
+            foreach (SkiaShadow newSkiaPropertyShadow in e.NewItems)
+            {
+                newSkiaPropertyShadow.Attach(this);
             }
-        }
 
-        private void ShadowsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.OldItems != null)
-                foreach (var eOldItem in e.OldItems)
-                {
-                    ((SkiaShadow)eOldItem).BindingContext = null;
-                }
+            break;
 
-            if (e.NewItems != null)
-                foreach (var eNewItem in e.NewItems)
-                {
-                    ((SkiaShadow)eNewItem).BindingContext = this.BindingContext;
-                }
+            case NotifyCollectionChangedAction.Reset:
+            case NotifyCollectionChangedAction.Remove:
+            foreach (SkiaShadow oldSkiaPropertyShadow in e.OldItems ?? new SkiaShadow[0])
+            {
+                oldSkiaPropertyShadow.Dettach();
+            }
+
+            break;
+            }
 
             Update();
         }

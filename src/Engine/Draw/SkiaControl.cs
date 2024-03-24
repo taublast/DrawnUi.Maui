@@ -3,6 +3,8 @@
 using DrawnUi.Maui.Infrastructure.Extensions;
 using Microsoft.Maui.Graphics.Text;
 using Microsoft.Maui.HotReload;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -1441,6 +1443,19 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+
+        public static readonly BindableProperty TagProperty = BindableProperty.Create(nameof(Tag),
+        typeof(string),
+        typeof(SkiaControl),
+        string.Empty,
+        propertyChanged: NeedDraw);
+        public string Tag
+        {
+            get { return (string)GetValue(TagProperty); }
+            set { SetValue(TagProperty, value); }
+        }
+
+
         public static readonly BindableProperty LockRatioProperty = BindableProperty.Create(nameof(LockRatio),
             typeof(double), typeof(SkiaControl),
             0.0,
@@ -2455,10 +2470,7 @@ namespace DrawnUi.Maui.Draw
 
         public Action<SKPath, SKRect> Clipping { get; set; }
 
-        /// <summary>
-        /// Optional control identifier
-        /// </summary>
-        public string Tag { get; set; }
+
 
         /// <summary>
         /// Optional scene hero control identifier
@@ -4359,7 +4371,9 @@ namespace DrawnUi.Maui.Draw
             bool applyOpacity = useOpacity && Opacity < 1;
             bool needTransform = HasTransform;
 
-            if (applyOpacity || isClipping || needTransform || CustomizeLayerPaint != null)
+            if (applyOpacity || isClipping || needTransform
+                || CustomizeLayerPaint != null
+                || VisualEffects?.Count > 0)
             {
                 ctx.Canvas.Save();
                 var restore = 0;
@@ -4377,8 +4391,12 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
 
-                if (applyOpacity || CustomizeLayerPaint != null)
+                if (applyOpacity || CustomizeLayerPaint != null || VisualEffects?.Count > 0)
                 {
+
+                    var effectColor = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
+                    var effectImage = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
+
                     var alpha = (byte)(0xFF / 1.0 * Opacity);
                     _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
 
@@ -4386,6 +4404,12 @@ namespace DrawnUi.Maui.Draw
                     {
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
                     }
+
+                    if (effectImage != null)
+                        _paintWithOpacity.ImageFilter = effectImage.CreateFilter(destination);
+
+                    if (effectColor != null)
+                        _paintWithOpacity.ColorFilter = effectColor.CreateFilter(destination);
 
                     restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
@@ -4458,7 +4482,20 @@ namespace DrawnUi.Maui.Draw
                     ctx.Canvas.ClipPath(_clipBounds, SKClipOperation.Intersect, true);
                 }
 
-                draw(ctx);
+                bool hasDrawnControl = false;
+                var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
+                if (renderers.Count > 0)
+                {
+                    foreach (var effect in renderers)
+                    {
+                        hasDrawnControl = effect.Draw(destination, ctx, draw);
+                    }
+                }
+
+                if (!hasDrawnControl)
+                {
+                    draw(ctx);
+                }
 
                 if (restore != 0)
                     ctx.Canvas.RestoreToCount(restore);
@@ -5669,45 +5706,61 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaControl control)
             {
-                if (oldvalue is INotifyCollectionChanged oldCollection)
+
+                var enumerableShadows = (IEnumerable<SkiaEffect>)newvalue;
+
+                if (oldvalue != null)
                 {
-                    oldCollection.CollectionChanged -= control.EffectsCollectionChanged;
+                    if (oldvalue is INotifyCollectionChanged oldCollection)
+                    {
+                        oldCollection.CollectionChanged -= control.EffectsCollectionChanged;
+                    }
+
+                    if (oldvalue is IEnumerable<SkiaEffect> oldList)
+                    {
+                        foreach (var shade in oldList)
+                        {
+                            shade.Dettach();
+                        }
+                    }
                 }
+
+                foreach (var shade in enumerableShadows)
+                {
+                    shade.Attach(control);
+                }
+
                 if (newvalue is INotifyCollectionChanged newCollection)
                 {
+                    newCollection.CollectionChanged -= control.EffectsCollectionChanged;
                     newCollection.CollectionChanged += control.EffectsCollectionChanged;
                 }
 
-                if (newvalue is IEnumerable<SkiaEffect> list)
-                    control.UpdateVisualEffects(list);
-            }
-        }
-
-        void UpdateVisualEffects(IEnumerable<SkiaEffect> list)
-        {
-            if (list != null)
-            {
-                foreach (var item in list.ToList())
-                {
-                    item.BindingContext = this.BindingContext;
-                }
-                Update();
+                control.Update();
             }
         }
 
         private void EffectsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.OldItems != null)
-                foreach (var eOldItem in e.OldItems)
-                {
-                    ((SkiaEffect)eOldItem).BindingContext = null;
-                }
+            switch (e.Action)
+            {
+            case NotifyCollectionChangedAction.Add:
+            foreach (SkiaEffect newItem in e.NewItems)
+            {
+                newItem.Attach(this);
+            }
 
-            if (e.NewItems != null)
-                foreach (var eNewItem in e.NewItems)
-                {
-                    ((SkiaEffect)eNewItem).BindingContext = this.BindingContext;
-                }
+            break;
+
+            case NotifyCollectionChangedAction.Reset:
+            case NotifyCollectionChangedAction.Remove:
+            foreach (SkiaEffect oldItem in e.OldItems ?? new SkiaEffect[0])
+            {
+                oldItem.Dettach();
+            }
+
+            break;
+            }
 
             Update();
         }
@@ -6486,11 +6539,20 @@ namespace DrawnUi.Maui.Draw
             {
                 colorShadow = shadow.Color.WithAlpha((float)shadow.Opacity);
             }
-
-            paintShadow.ImageFilter = SKImageFilter.CreateDropShadow(
-                (float)(shadow.X * scale), (float)(shadow.Y * scale),
-                (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
-                colorShadow.ToSKColor());
+            if (shadow.ShadowOnly)
+            {
+                paintShadow.ImageFilter = SKImageFilter.CreateDropShadowOnly(
+                    (float)(shadow.X * scale), (float)(shadow.Y * scale),
+                    (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
+                    colorShadow.ToSKColor());
+            }
+            else
+            {
+                paintShadow.ImageFilter = SKImageFilter.CreateDropShadow(
+                    (float)(shadow.X * scale), (float)(shadow.Y * scale),
+                    (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
+                    colorShadow.ToSKColor());
+            }
         }
 
         public static Random Random = new Random();

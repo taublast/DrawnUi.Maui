@@ -1,10 +1,11 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public interface ISkiaEffect : ICanBeUpdated
+public interface ISkiaEffect : ICanBeUpdatedWithContext
 {
-    public void SetParent(SkiaControl parent);
+    public void Attach(SkiaControl parent);
+
+    public void Dettach();
 
     public bool NeedApply { get; }
 
-    public object BindingContext { get; set; }
 }
