@@ -42,7 +42,7 @@
                             HorizontalOptions="Center"
                             LoadSourceOnFirstDraw="False"
                             SemanticProperties.Description="dot net bot in a race car number eight"
-                            Source="dotnet_bot.png"
+                            Source="car.png"
                             UseCache="Image">
                             <draw:SkiaControl.VisualEffects>
 
@@ -113,6 +113,8 @@
                                         UseCache="Image">
 
                                         <draw:SkiaButton
+                                            FontFamily="FontGame"
+                                            FontSize="11"
                                             CornerRadius="6"
                                             Tapped="TappedSelectPage"
                                             Text="{Binding Name}"

@@ -89,6 +89,9 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         {
             MainLabel.Text = this.Text;
             MainLabel.TextColor = this.TextColor;
+
+            MainLabel.FontFamily = this.FontFamily;
+            MainLabel.FontSize = this.FontSize;
         }
 
         if (MainFrame != null)
@@ -278,7 +281,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
 
 
-    #region STATIC PROPERTIES
+    #region PROPERTIES
 
     private static void OnLookChanged(BindableObject bindable, object oldvalue, object newvalue)
     {
@@ -288,6 +291,32 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         }
     }
 
+    public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(
+        nameof(FontSize),
+        typeof(double),
+        typeof(SkiaButton),
+        12.0,
+        propertyChanged: OnLookChanged);
+
+    public double FontSize
+    {
+        get { return (double)GetValue(FontSizeProperty); }
+        set { SetValue(FontSizeProperty, value); }
+    }
+    
+    public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(
+        nameof(FontFamily),
+        typeof(string),
+        typeof(SkiaButton),
+        defaultValue: string.Empty,
+        propertyChanged: OnLookChanged);
+
+    public string FontFamily
+    {
+        get { return (string)GetValue(FontFamilyProperty); }
+        set { SetValue(FontFamilyProperty, value); }
+    }
+    
     public static readonly BindableProperty IsDisabledProperty = BindableProperty.Create(
         nameof(IsDisabled),
         typeof(bool),

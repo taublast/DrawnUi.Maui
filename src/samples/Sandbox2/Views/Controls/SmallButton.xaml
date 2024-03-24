@@ -31,6 +31,7 @@
         HorizontalOptions="Center"
         Style="{x:StaticResource SkiaLabelDefaultStyle}"
         Tag="MainLabel"
+        FontFamily="FontGame"
         TextColor="White"
         VerticalOptions="Center" />
 
