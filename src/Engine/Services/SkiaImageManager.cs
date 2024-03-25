@@ -587,9 +587,9 @@ public partial class SkiaImageManager : IDisposable
                 }
 
                 QueueItem queueItem = GetPendingItemLoadsForPriority(LoadPriority.High);
-                if (queueItem == null)
+                if (queueItem == null && semaphoreLoad.CurrentCount > 1)
                     queueItem = GetPendingItemLoadsForPriority(LoadPriority.Normal);
-                if (queueItem == null)
+                if (queueItem == null && semaphoreLoad.CurrentCount > 7)
                     queueItem = GetPendingItemLoadsForPriority(LoadPriority.Low);
 
                 // If we didn't find a task in pendingLoads, try the main queue.
