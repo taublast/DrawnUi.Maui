@@ -10,11 +10,14 @@
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="thisView"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
     x:DataType="demo:MainPageViewModel">
 
 
 
     <draw:Canvas
+        BackgroundColor="Black"
         Gestures="Enabled"
         HardwareAcceleration="Enabled"
         HorizontalOptions="Fill"
@@ -29,7 +32,7 @@
             <!--  https://github.com/jsuarezruiz/AlohaKit.Controls  -->
 
             <aloha:SkiaMultiBarChart
-                Margin="24,50,24,0"
+                Margin="24,0,24,0"
                 AxisLinesColor="LightGray"
                 AxisLinesFontSize="11"
                 AxisLinesStrokeSize="0.9"
@@ -49,7 +52,7 @@
                 IsLabelTextTruncationEnabled="True"
                 PathsColorOpacity="0.6"
                 ReanimateOnPropertyChanged="True"
-                VerticalOptions="Start" />
+                VerticalOptions="Center" />
 
 
             <draw:SkiaLabelFps

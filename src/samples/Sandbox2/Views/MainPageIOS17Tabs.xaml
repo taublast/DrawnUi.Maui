@@ -9,6 +9,8 @@
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    ios:Page.UseSafeArea="True"
     BackgroundColor="#333333">
 
     <ContentPage.Resources>
