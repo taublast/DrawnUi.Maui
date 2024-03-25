@@ -1,7 +1,7 @@
 <Project>
   <!-- Conditional for SkiaSharp 3 -->
   <Target Name="IssueCustomWarning" BeforeTargets="BeforeBuild">
-    <Warning Text="------ Building for SkiaSharp 3.xx ------"   />
+    <Warning Text="------ Building $(TargetFramework) for SkiaSharp 3.xx ------"   />
   </Target>  
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);SKIA3</DefineConstants>

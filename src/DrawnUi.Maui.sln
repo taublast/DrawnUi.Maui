@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui", "Engine\DrawnUi.Maui.csproj", "{D76B6239-94A0-482C-A0FF-A764017B7393}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppoMobi.Maui.DrawnUi.Demo.Refs", "..\..\AppoMobi.Maui.DrawnUi.Demo\src\AllDrawn\AppoMobi.Maui.DrawnUi.Demo.Refs.csproj", "{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppoMobi.Maui.DrawnUi.Demo", "..\..\AppoMobi.Maui.DrawnUi.Demo\src\AllDrawn\AppoMobi.Maui.DrawnUi.Demo.csproj", "{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox3", "samples\Sandbox3\Sandbox3.csproj", "{616BE729-AEC2-44AA-956F-19AD7FFBCAED}"
 EndProject

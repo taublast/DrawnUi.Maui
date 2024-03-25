@@ -29,7 +29,7 @@ public partial class MauiEntryHandler : EntryHandler
     {
         if (_control != null)
         {
-            _control.Background = null; // new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Transparent.ToWindowsColor());
+            _control.Background = null; //new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red.ToWindowsColor()); //or null
             _control.BorderBrush = null;
             _control.Padding = new Microsoft.UI.Xaml.Thickness(0, 0, 0, 0);
         }

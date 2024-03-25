@@ -18,6 +18,13 @@ public interface IHasBanner
     public bool BannerPreloadOrdered { get; set; }
 }
 
+public enum LoadPriority
+{
+    Low,
+    Normal,
+    High
+}
+
 public partial class SkiaImageManager : IDisposable
 {
 
@@ -163,19 +170,7 @@ public partial class SkiaImageManager : IDisposable
 
     #endregion
 
-    public record QueueItem
-    {
-        public QueueItem(ImageSource source, CancellationTokenSource cancel, TaskCompletionSource<SKBitmap> task)
-        {
-            Source = source;
-            Cancel = cancel;
-            Task = task;
-        }
 
-        public ImageSource Source { get; set; }
-        public CancellationTokenSource Cancel { get; set; }
-        public TaskCompletionSource<SKBitmap> Task { get; set; }
-    }
 
     /// <summary>
     /// If set to true will not return clones for same sources, but will just return the existing cached SKBitmap reference. Useful if you have a lot on images reusing same sources, but you have to be carefull not to dispose the shared image. SkiaImage is aware of this setting and will keep a cached SKBitmap from being disposed.
@@ -269,18 +264,47 @@ public partial class SkiaImageManager : IDisposable
         {
             while (_queue.Count > 0)
             {
-                if (_queue.TryDequeue(out var item))
+                if (_queue.TryDequeue(out var item, out LoadPriority priority))
                     item.Cancel.Cancel();
             }
         }
     }
 
-    private readonly ConcurrentQueue<QueueItem> _queue = new();
+    public record QueueItem
+    {
+        public QueueItem(ImageSource source, CancellationTokenSource cancel, TaskCompletionSource<SKBitmap> task)
+        {
+            Source = source;
+            Cancel = cancel;
+            Task = task;
+        }
+
+        public ImageSource Source { get; init; }
+        public CancellationTokenSource Cancel { get; init; }
+        public TaskCompletionSource<SKBitmap> Task { get; init; }
+    }
+
+    private readonly SortedDictionary<LoadPriority, Queue<QueueItem>> _priorityQueue = new();
+
+    private readonly PriorityQueue<QueueItem, LoadPriority> _queue = new();
 
     private readonly ConcurrentDictionary<string, Task<SKBitmap>> _trackLoadingBitmapsUris = new();
 
     //todo avoid conflicts, cannot use concurrent otherwise will loose data
-    private readonly Dictionary<string, Stack<QueueItem>> _pendingLoads = new();
+    private readonly Dictionary<string, Stack<QueueItem>> _pendingLoadsLow = new();
+    private readonly Dictionary<string, Stack<QueueItem>> _pendingLoadsNormal = new();
+    private readonly Dictionary<string, Stack<QueueItem>> _pendingLoadsHigh = new();
+
+    private Dictionary<string, Stack<QueueItem>> GetPendingLoadsDictionary(LoadPriority priority)
+    {
+        return priority switch
+        {
+            LoadPriority.Low => _pendingLoadsLow,
+            LoadPriority.Normal => _pendingLoadsNormal,
+            LoadPriority.High => _pendingLoadsHigh,
+            _ => _pendingLoadsNormal,
+        };
+    }
 
 
     /// <summary>
@@ -300,7 +324,7 @@ public partial class SkiaImageManager : IDisposable
     /// <param name="source"></param>
     /// <param name="token"></param>
     /// <returns></returns>
-    public virtual Task<SKBitmap> LoadImageManagedAsync(ImageSource source, CancellationTokenSource token)
+    public virtual Task<SKBitmap> LoadImageManagedAsync(ImageSource source, CancellationTokenSource token, LoadPriority priority = LoadPriority.Normal)
     {
 
         var tcs = new TaskCompletionSource<SKBitmap>();
@@ -363,7 +387,10 @@ public partial class SkiaImageManager : IDisposable
                 {
                     // we're currently loading the same image, save the task to pendingLoads
                     TraceLog($"ImageLoadManager: Same image already loading, pausing task for UriImageSource {uri}");
-                    if (_pendingLoads.TryGetValue(uri, out var stack))
+
+                    var pendingLoads = GetPendingLoadsDictionary(priority);
+
+                    if (pendingLoads.TryGetValue(uri, out var stack))
                     {
                         stack.Push(tuple);
                     }
@@ -371,16 +398,18 @@ public partial class SkiaImageManager : IDisposable
                     {
                         var pendingStack = new Stack<QueueItem>();
                         pendingStack.Push(tuple);
-                        _pendingLoads[uri] = pendingStack;
+                        pendingLoads[uri] = pendingStack;
                     }
+
                 }
                 else
                 {
                     // We're about to load this image, so add its Task to the loadingBitmaps dictionary
                     _trackLoadingBitmapsUris[uri] = tcs.Task;
+
                     lock (lockObject)
                     {
-                        _queue.Enqueue(tuple);
+                        _queue.Enqueue(tuple, priority);
                     }
 
                     TraceLog($"ImageLoadManager: Enqueued {uri} (queue {_queue.Count})");
@@ -404,6 +433,38 @@ public partial class SkiaImageManager : IDisposable
         }).ConfigureAwait(false);
     }
 
+#if (!ONPLATFORM)
+
+    public static async Task<SKBitmap> LoadImageOnPlatformAsync(ImageSource source, CancellationToken cancel)
+    {
+        throw new NotImplementedException();
+    }
+
+#endif
+
+    private void ProcessPendingLoads()
+    {
+        ProcessPendingLoadsForPriority(LoadPriority.High);
+        ProcessPendingLoadsForPriority(LoadPriority.Normal);
+        ProcessPendingLoadsForPriority(LoadPriority.Low);
+    }
+
+    private void ProcessPendingLoadsForPriority(LoadPriority priority)
+    {
+        var pendingLoads = GetPendingLoadsDictionary(priority);
+        foreach (var uri in pendingLoads.Keys.ToList())
+        {
+            if (pendingLoads[uri].TryPop(out var nextTcs))
+            {
+                // Process nextTcs...
+                // Check and potentially remove empty stacks and URIs
+                if (!pendingLoads[uri].Any())
+                {
+                    pendingLoads.Remove(uri);
+                }
+            }
+        }
+    }
 
     private async Task ExecuteLoadTask(QueueItem queueItem)
     {
@@ -497,6 +558,20 @@ public partial class SkiaImageManager : IDisposable
 
     public bool IsDisposed { get; protected set; }
 
+    private QueueItem GetPendingItemLoadsForPriority(LoadPriority priority)
+    {
+        var pendingLoads = GetPendingLoadsDictionary(priority);
+        foreach (var pendingPair in pendingLoads)
+        {
+            if (pendingPair.Value.Count != 0 && pendingPair.Value.TryPop(out var nextTcs))
+            {
+                TraceLog($"ImageLoadManager: [UNPAUSED] task for {pendingPair.Key}");
+
+                return nextTcs;
+            }
+        }
+        return null;
+    }
 
     private async void ProcessQueue()
     {
@@ -504,36 +579,23 @@ public partial class SkiaImageManager : IDisposable
         {
             try
             {
-
-                QueueItem queueItem = null;
-
-                if (IsLoadingLocked)
+                if (IsLoadingLocked || semaphoreLoad.CurrentCount < 1)
                 {
                     TraceLog($"ImageLoadManager: Loading Locked!");
                     await Task.Delay(50);
                     continue;
                 }
 
-                foreach (var pendingPair in _pendingLoads)
-                {
-                    if (pendingPair.Value.Count != 0 && pendingPair.Value.TryPop(out var nextTcs))
-                    {
-                        string uri = pendingPair.Key;
-
-                        //_trackLoadingBitmapsUris[uri] = nextTcs.Item3.Task;
-
-                        queueItem = nextTcs;
-
-                        TraceLog($"ImageLoadManager: [UNPAUSED] task for {uri}");
-
-                        break; // We only want to move one task to the main queue at a time.
-                    }
-                }
+                QueueItem queueItem = GetPendingItemLoadsForPriority(LoadPriority.High);
+                if (queueItem == null)
+                    queueItem = GetPendingItemLoadsForPriority(LoadPriority.Normal);
+                if (queueItem == null)
+                    queueItem = GetPendingItemLoadsForPriority(LoadPriority.Low);
 
                 // If we didn't find a task in pendingLoads, try the main queue.
-                //lock (lockObject)
+                lock (lockObject)
                 {
-                    if (queueItem == null && _queue.TryDequeue(out queueItem))
+                    if (queueItem == null && _queue.TryDequeue(out queueItem, out LoadPriority priority))
                     {
                         TraceLog($"[DEQUEUE]: {queueItem.Source} (queue {_queue.Count})");
                     }
@@ -630,7 +692,7 @@ public partial class SkiaImageManager : IDisposable
 
         try
         {
-            _queue.Enqueue(tuple);
+            _queue.Enqueue(tuple, LoadPriority.Low);
 
             // Await the loading to ensure it's completed before returning
             await tcs.Task;
@@ -654,15 +716,6 @@ public partial class SkiaImageManager : IDisposable
     }
 
 
-
-#if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
-
-    public static async Task<SKBitmap> LoadImageOnPlatformAsync(ImageSource source, CancellationToken cancel)
-    {
-        throw new NotImplementedException();
-    }
-
-#endif
 
     public void Dispose()
     {
