@@ -106,20 +106,23 @@ public class DropShadowsEffect : BaseRenderEffect
     {
         if (NeedApply)
         {
-            using var paint = new SKPaint();
+            if (_paint == null)
+            {
+                _paint = new SKPaint();
+            }
 
             //draw every shadow without the controls itsselfs
             foreach (var shadow in Shadows)
             {
                 //SkiaControl.AddShadowFilter(paint, shadow, Parent.RenderingScale);
 
-                paint.ImageFilter = SKImageFilter.CreateDropShadowOnly(
+                _paint.ImageFilter = SKImageFilter.CreateDropShadowOnly(
                 (float)Math.Round(shadow.X * Parent.RenderingScale),
                 (float)Math.Round(shadow.Y * Parent.RenderingScale),
                 (float)shadow.Blur, (float)shadow.Blur,
                 shadow.Color.ToSKColor());
 
-                var restore = ctx.Canvas.SaveLayer(paint);
+                var restore = ctx.Canvas.SaveLayer(_paint);
 
                 drawControl(ctx);
 
@@ -131,6 +134,15 @@ public class DropShadowsEffect : BaseRenderEffect
         }
 
         return base.Draw(destination, ctx, drawControl);
+    }
+
+    private SKPaint _paint;
+
+    protected override void OnDisposing()
+    {
+        base.OnDisposing();
+
+        _paint?.Dispose();
     }
 
     public override bool NeedApply

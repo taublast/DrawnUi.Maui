@@ -1556,11 +1556,11 @@ namespace DrawnUi.Maui.Views
                         //notify registered tree final nodes of rendering tree state
                         foreach (var tree in RenderingTrees)
                         {
-                            //RenderingTreeStates[tree.Key].Enqueue(tree.Value.Transform);
-                            if (tree.Value.Nodes.Count != tree.Value.Transform.RenderedNodes)
-                            {
-                                tree.Value.Transform.IsVisible = false;
-                            }
+                            //todo what was this case? disabled as bugging
+                            //if (tree.Value.Nodes.Count != tree.Value.Transform.RenderedNodes)
+                            //{
+                            //tree.Value.Transform.IsVisible = false;
+                            //}
                             tree.Key.SetVisualTransform(tree.Value.Transform);
                         }
 

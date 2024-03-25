@@ -448,15 +448,18 @@
 
         protected virtual void DrawSnapshot(SKCanvas canvas, SKRect destination)
         {
-            var point = new SKPoint(destination.Left, destination.Top);
-            canvas.DrawSurface(CachedBitmap, point);
-
-            if (SnapshotReady && IsNativeVisible)
+            if (SnapshotReady)
             {
-                MainThread.BeginInvokeOnMainThread(() =>
+                var point = new SKPoint(destination.Left, destination.Top);
+                canvas.DrawSurface(CachedBitmap, point);
+
+                if (IsNativeVisible)
                 {
-                    SetNativeVisibility(false);
-                });
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        SetNativeVisibility(false);
+                    });
+                }
             }
         }
 

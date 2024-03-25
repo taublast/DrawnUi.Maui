@@ -58,7 +58,7 @@ public partial class SkiaMauiElement
         }
         catch (Exception ex)
         {
-            Trace.WriteLine($"Error creating bitmap: {ex}");
+            Super.Log($"[SkiaMauiElement] Error creating bitmap: {ex}");
             return null;
         }
     }
