@@ -5,7 +5,7 @@
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>          
-    <!--<UseSkiaSharp3>true</UseSkiaSharp3>-->
+    <UseSkiaSharp3>true</UseSkiaSharp3>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -87,8 +87,6 @@
     <PackageReference Include="Markdig" Version="0.34.0" />
     <!--for caching images-->
     <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
-    <!--beloved skiasharp-->
-    <PackageReference Include="Svg.Skia" Version="1.0.0.9" />
     <!--core tools-->
     <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.8.2" />
     <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
