@@ -8,5 +8,7 @@
     <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.7" />
     <PackageReference Include="SkiaSharp.Skottie" Version="2.88.7" />
     <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="8.0.14" />
+    <PackageReference Include="Svg.Skia" Version="1.0.0.9" />
+
   </ItemGroup>
 </Project>
