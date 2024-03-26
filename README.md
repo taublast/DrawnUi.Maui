@@ -13,19 +13,28 @@ _The current development state is __ALPHA__, many features remain to be implemen
 
 ## What's new
 
-__This would be the last version using SkiaSharp 2.xx, the next one will adopt SkiaSharp 3.0 which would start the era of MAUI shaders, with the latest SKSL syntax, Windows+MacCatalyst hardware acceleration, FPS rate, and scroll smoothness improved, and much more! Stay tuned!__
+As SkiaSharp3 stable version is expected towards the end of the year we will have DrawnUI skia2 version updated constantly and a skia3-preview version available in parallel.  
+New DrawnUI features/fixes will apply to both skia2/skia3 versions.You can manage how this project builds using `<UseSkiaSharp3>true</UseSkiaSharp3>`.
 
-__1.0.8.7 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
-* Gestures fixes for many controls solving problems with sensitive displays.
-* SkiaScroll multidirectional scrolling and swiping fixes.
-* Rendering loop fixes for capping android fps and some other.
-* MauiElement and drawn entry/editor fixes.
-* Hopefully next nuget will be targeting SKiaSharp 3.xx :) Soon!
-* [Demo app](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) is updated with new nuget.
+#### SkiaSharp3
+__1.3.0.1-pre [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
+* Windows/MacCatalyst now have hardware-acceleration support
+* Latest SKSL syntax, compatible with https://shaders.skia.org/
+* Shaders can be compiled by both CPU/GPU views
+
+#### SkiaSharp2
+__1.2.0.4-pre [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)__
+* FPS is now display synched, with small exceptions.
+* Every SkiaControl has a new `VisualEffects` property, you can blur/tint/apply other effect to anything in your app, see Sandbox app.
+* Added `Maui.Graphics` support, you can reused your existing works inside drawn layouts/controls, see Sandox app.
+* Hardware accelerated iOS Metal has it's `SkiaBackdrop` fixed, blur/affect anything below it (demo app bottom tabs).
+* MauiElement and drawn entry/editor get more fixes again.
+* Dropped support for .net7
+* [Demo app](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) is updated with new nuget, iOS version went true fullscreen.
 
 ## Demo
 
-* This repo includes a Sandbox project with some playground examples
+* This repo includes two separate Sandox projects for skia2 and skia3 with some playground examples.
 * Creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
