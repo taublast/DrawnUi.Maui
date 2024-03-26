@@ -11,6 +11,19 @@ namespace DrawnUi.Maui.Controls
     /// </summary>
     public class SkiaViewSwitcher : SkiaLayout, IDefinesViewport, IVisibilityAware
     {
+        public override void ApplyBindingContext()
+        {
+
+            if (FillGradient != null)
+                FillGradient.BindingContext = BindingContext;
+
+            foreach (var view in this.Views)
+            {
+                if (view.BindingContext == null) //do NOT break subview context!
+                    view.BindingContext = BindingContext;
+            }
+        }
+
         private NavigationStackEntry _ActiveView;
         public NavigationStackEntry ActiveView
         {

@@ -349,7 +349,8 @@ namespace DrawnUi.Maui.Draw
                         var x = args.Location.X + thisOffset.X;
                         var y = args.Location.Y + thisOffset.Y;
 
-                        for (int i = 0; i < RenderTree.Length; i++)
+                        for (int i = RenderTree.Length - 1; i >= 0; i--)
+                        //for (int i = 0; i < RenderTree.Length; i++)
                         {
                             var child = RenderTree[i];
 
@@ -1264,7 +1265,7 @@ namespace DrawnUi.Maui.Draw
         protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
         {
             var drawn = 0;
-            
+
             if (IsTemplated)
             {
                 if (ChildrenFactory.TemplatesAvailable)

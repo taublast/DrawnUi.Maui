@@ -88,7 +88,7 @@ public class SkiaImage : SkiaControl
 #if WINDOWS
             Trace.WriteLine(message);
 #else
-            Trace.WriteLine(message);
+            Console.WriteLine(message);
 #endif
         }
     }
@@ -411,7 +411,8 @@ public class SkiaImage : SkiaControl
                                 //Debug.WriteLine($"[SkiaImage] {Id} loading canceled for {url} - ({retries})");
                                 cancel?.Cancel();
                                 IsLoading = false;
-                                TraceLog($"[SkiaImage] Canceled loading {source}");
+                                if (SkiaImageManager.LogEnabled)
+                                    TraceLog($"[SkiaImage] Canceled loading {source}");
                                 return;
                             }
 
@@ -481,7 +482,7 @@ public class SkiaImage : SkiaControl
                     }
                     catch (Exception e)
                     {
-                        Super.Log(e);
+                        TraceLog(e.Message);
 
                         OnError?.Invoke(this, new ContentLoadedEventArgs(url));
                         OnSourceError();

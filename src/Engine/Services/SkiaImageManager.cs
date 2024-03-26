@@ -30,7 +30,7 @@ public partial class SkiaImageManager : IDisposable
 
     #region HELPERS
 
-    public virtual void PreloadImage(ImageSource source, CancellationTokenSource cancel = default)
+    public virtual async Task PreloadImage(ImageSource source, CancellationTokenSource cancel = default)
     {
         try
         {
@@ -41,7 +41,7 @@ public partial class SkiaImageManager : IDisposable
 
             if (source != null && !cancel.IsCancellationRequested)
             {
-                Preload(source, cancel).ConfigureAwait(false);
+                await Preload(source, cancel);
             }
         }
         catch (Exception e)
@@ -50,7 +50,7 @@ public partial class SkiaImageManager : IDisposable
         }
     }
 
-    public virtual void PreloadImage(string source, CancellationTokenSource cancel = default)
+    public virtual async Task PreloadImage(string source, CancellationTokenSource cancel = default)
     {
         try
         {
@@ -61,7 +61,7 @@ public partial class SkiaImageManager : IDisposable
 
             if (!string.IsNullOrEmpty(source) && !cancel.IsCancellationRequested)
             {
-                Preload(FrameworkImageSourceConverter.FromInvariantString(source), cancel).ConfigureAwait(false);
+                await Preload(FrameworkImageSourceConverter.FromInvariantString(source), cancel);
             }
         }
         catch (Exception e)
@@ -70,7 +70,7 @@ public partial class SkiaImageManager : IDisposable
         }
     }
 
-    public virtual void PreloadImages(IList<string> list, CancellationTokenSource cancel = default)
+    public virtual async Task PreloadImages(IList<string> list, CancellationTokenSource cancel = default)
     {
         try
         {
@@ -81,27 +81,27 @@ public partial class SkiaImageManager : IDisposable
 
             if (list.Count > 0 && !cancel.IsCancellationRequested)
             {
-                var index = 0;
-                var item = list[index];
-                while (!cancel.IsCancellationRequested)
+                var tasks = new List<Task>();
+                foreach (var source in list)
                 {
-                    Preload(FrameworkImageSourceConverter.FromInvariantString(item), cancel).ConfigureAwait(false);
-                    index++;
-                    if (index > list.Count - 1)
+                    if (!cancel.IsCancellationRequested)
                     {
-                        break;
+                        tasks.Add(Preload(source, cancel));
                     }
-                    item = list[index];
                 }
+
+                // Await all the preload tasks at once.
+                await Task.WhenAll(tasks);
             }
         }
         catch (Exception e)
         {
             Super.Log(e);
         }
+
     }
 
-    public virtual void PreloadImages(IList<ImageSource> list, CancellationTokenSource cancel = default)
+    public virtual async Task PreloadBanners<T>(IList<T> list, CancellationTokenSource cancel = default) where T : IHasBanner
     {
         try
         {
@@ -112,53 +112,19 @@ public partial class SkiaImageManager : IDisposable
 
             if (list.Count > 0 && !cancel.IsCancellationRequested)
             {
-                var index = 0;
-                var item = list[index];
-                while (!cancel.IsCancellationRequested)
+                var tasks = new List<Task>();
+                foreach (var item in list)
                 {
-                    Preload(item, cancel).ConfigureAwait(false);
-                    index++;
-                    if (index > list.Count - 1)
-                    {
-                        break;
-                    }
-                    item = list[index];
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Super.Log(e);
-        }
-    }
-
-    public virtual void PreloadBanners<T>(IList<T> list, CancellationTokenSource cancel = default) where T : IHasBanner
-    {
-        try
-        {
-            if (cancel == null)
-            {
-                cancel = new();
-            }
-
-            if (list.Count > 0 && !cancel.IsCancellationRequested)
-            {
-                var index = 0;
-                var item = list[index];
-                while (!cancel.IsCancellationRequested)
-                {
-                    if (!item.BannerPreloadOrdered)
+                    if (!cancel.IsCancellationRequested && !item.BannerPreloadOrdered)
                     {
                         item.BannerPreloadOrdered = true;
-                        Preload(item.Banner, cancel).ConfigureAwait(false);
+                        // Add the task to the list without awaiting it immediately.
+                        tasks.Add(Preload(item.Banner, cancel));
                     }
-                    index++;
-                    if (index > list.Count - 1)
-                    {
-                        break;
-                    }
-                    item = list[index];
                 }
+
+                // Await all the preload tasks at once.
+                await Task.WhenAll(tasks);
             }
         }
         catch (Exception e)
@@ -169,8 +135,6 @@ public partial class SkiaImageManager : IDisposable
     }
 
     #endregion
-
-
 
     /// <summary>
     /// If set to true will not return clones for same sources, but will just return the existing cached SKBitmap reference. Useful if you have a lot on images reusing same sources, but you have to be carefull not to dispose the shared image. SkiaImage is aware of this setting and will keep a cached SKBitmap from being disposed.
@@ -442,29 +406,7 @@ public partial class SkiaImageManager : IDisposable
 
 #endif
 
-    private void ProcessPendingLoads()
-    {
-        ProcessPendingLoadsForPriority(LoadPriority.High);
-        ProcessPendingLoadsForPriority(LoadPriority.Normal);
-        ProcessPendingLoadsForPriority(LoadPriority.Low);
-    }
 
-    private void ProcessPendingLoadsForPriority(LoadPriority priority)
-    {
-        var pendingLoads = GetPendingLoadsDictionary(priority);
-        foreach (var uri in pendingLoads.Keys.ToList())
-        {
-            if (pendingLoads[uri].TryPop(out var nextTcs))
-            {
-                // Process nextTcs...
-                // Check and potentially remove empty stacks and URIs
-                if (!pendingLoads[uri].Any())
-                {
-                    pendingLoads.Remove(uri);
-                }
-            }
-        }
-    }
 
     private async Task ExecuteLoadTask(QueueItem queueItem)
     {
@@ -519,7 +461,9 @@ public partial class SkiaImageManager : IDisposable
                 }
                 else
                 {
-                    TraceLog($"ImageLoadManager: BITMAP NULL for {queueItem.Source}");
+                    //might happen when task was canceled
+                    //TraceLog($"ImageLoadManager: BITMAP NULL for {queueItem.Source}");
+                    throw new OperationCanceledException("Platform bitmap returned null");
                 }
 
 
@@ -597,7 +541,8 @@ public partial class SkiaImageManager : IDisposable
                 {
                     if (queueItem == null && _queue.TryDequeue(out queueItem, out LoadPriority priority))
                     {
-                        TraceLog($"[DEQUEUE]: {queueItem.Source} (queue {_queue.Count})");
+                        //if (queueItem!=null)
+                        //    TraceLog($"[DEQUEUE]: {queueItem.Source} (queue {_queue.Count})");
                     }
                 }
 

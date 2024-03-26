@@ -451,4 +451,9 @@ public partial class Super
         }
     }
 
+#if SKIA3
+    public static int SkiaGeneration = 3;
+#else
+    public static int SkiaGeneration = 2;
+#endif
 }
