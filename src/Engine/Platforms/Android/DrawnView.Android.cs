@@ -103,8 +103,11 @@ namespace DrawnUi.Maui.Views
 
                         if (MainThread.IsMainThread)
                         {
-                            _loopStarted = true;
-                            Choreographer.Instance.PostFrameCallback(_frameCallback);
+                            if (!_loopStarted)
+                            {
+                                _loopStarted = true;
+                                Choreographer.Instance.PostFrameCallback(_frameCallback);
+                            }
                         }
 
                         _loopStarting = false;
