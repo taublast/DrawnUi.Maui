@@ -49,24 +49,43 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 
     protected static void DrawWithClipping(SkiaDrawingContext context, IDrawnBase control, SKPoint selfDrawingLocation, Action draw)
     {
-        if (control.ClipEffects)
+
+
+        void Render()
         {
-            using (SKPath clipInsideParent = new SKPath())
+            if (control.ClipEffects)
             {
-                ApplyControlClipping(control, clipInsideParent, selfDrawingLocation);
+                using (SKPath clipInsideParent = new SKPath())
+                {
+                    ApplyControlClipping(control, clipInsideParent, selfDrawingLocation);
 
-                context.Canvas.Save();
-                context.Canvas.ClipPath(clipInsideParent, SKClipOperation.Intersect, true);
+                    context.Canvas.Save();
+                    context.Canvas.ClipPath(clipInsideParent, SKClipOperation.Intersect, true);
 
-                draw();
+                    draw();
 
-                context.Canvas.Restore();
+                    context.Canvas.Restore();
+                }
             }
+            else
+            {
+                draw();
+            }
+        }
+
+        if (control is SkiaControl skiaControl)
+        {
+            skiaControl.DrawWithClipAndTransforms(context, context.Canvas.LocalClipBounds, false,
+                true, (ctx) =>
+                {
+                    Render();
+                });
         }
         else
         {
-            draw();
+            Render();
         }
+
     }
 
     protected static void ApplyControlClipping(IDrawnBase control, SKPath clipInsideParent, SKPoint selfDrawingLocation)

@@ -60,10 +60,30 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             }
 
         }
-
+        else
+        {
+            ApplyProperties();
+        }
     }
 
     #endregion
+
+    /// <summary>
+    /// Clip effects with rounded rect of the frame inside
+    /// </summary>
+    /// <returns></returns>
+    public override SKPath CreateClip(object arguments, bool usePosition)
+    {
+        if (MainFrame != null)
+        {
+            var offsetFrame = new SKPoint(MainFrame.DrawingRect.Left - DrawingRect.Left, MainFrame.DrawingRect.Top - DrawingRect.Top);
+            var clip = MainFrame.CreateClip(arguments, usePosition); ;
+            clip.Offset(offsetFrame);
+            return clip;
+        }
+
+        return base.CreateClip(arguments, usePosition);
+    }
 
     protected SkiaLabel MainLabel;
 
@@ -124,7 +144,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             }
         }
 
-        return false;
+        return true;
     }
 
     public virtual void OnUp()
@@ -151,10 +171,6 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
                 {
                     await Task.Run(() => { CommandTapped?.Execute(CommandTappedParameter); }).ConfigureAwait(false);
                 });
-            }
-            else
-            {
-                Debug.WriteLine("[SkiaButton] Command NULL");
             }
 
         }
@@ -303,7 +319,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         get { return (double)GetValue(FontSizeProperty); }
         set { SetValue(FontSizeProperty, value); }
     }
-    
+
     public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(
         nameof(FontFamily),
         typeof(string),
@@ -316,7 +332,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         get { return (string)GetValue(FontFamilyProperty); }
         set { SetValue(FontFamilyProperty, value); }
     }
-    
+
     public static readonly BindableProperty IsDisabledProperty = BindableProperty.Create(
         nameof(IsDisabled),
         typeof(bool),

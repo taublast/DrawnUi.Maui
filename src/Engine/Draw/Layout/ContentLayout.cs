@@ -172,7 +172,7 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
     {
         base.OnBindingContextChanged();
 
-        if (this.Content != null && BindingContext != null)
+        if (this.Content != null)
         {
             Content.BindingContext = BindingContext;
         }

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Sandbox.Views.MainPageMauiGraphics"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:views="clr-namespace:Sandbox.Views"
+    xmlns:aloha="clr-namespace:Sandbox.Views.Aloha"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel">
+
+    <ContentPage.Resources>
+        <views:ClockDrawable x:Key="clockDrawable" />
+    </ContentPage.Resources>
+
+    <draw:Canvas
+        Gestures="Enabled"
+        HardwareAcceleration="Enabled"
+        HorizontalOptions="Fill"
+        Tag="MainPage"
+        VerticalOptions="Fill">
+
+        <draw:SkiaLayout
+            x:Name="MainLayout"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+            <draw:SkiaMauiGraphics
+                BackgroundColor="Black"
+                Drawable="{StaticResource clockDrawable}"
+                HorizontalOptions="Fill"
+                Tag="Content"
+                VerticalOptions="Fill" />
+            
+            <controls:ButtonToRoot/>
+           
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
+
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
+
+</ContentPage>

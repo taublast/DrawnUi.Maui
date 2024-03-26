@@ -14,6 +14,16 @@ namespace DrawnUi.Maui.Controls
 
         }
 
+        protected override void OnBindingContextChanged()
+        {
+            base.OnBindingContextChanged();
+
+            if (this.Content != null)
+            {
+                Content.BindingContext = this.BindingContext;
+            }
+        }
+
         public ICommand CommandClose
         {
             get

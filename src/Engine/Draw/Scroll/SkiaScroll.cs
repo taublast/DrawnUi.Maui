@@ -511,6 +511,7 @@ namespace DrawnUi.Maui.Draw
 
         int lastNumberOfTouches;
 
+
         public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args,
             TouchActionResult touchAction,
             SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
@@ -652,6 +653,8 @@ namespace DrawnUi.Maui.Draw
 
                     if (passedToChildren)
                     {
+                        return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+
                         consumed = this;
                     }
                     else

@@ -3256,8 +3256,7 @@ namespace DrawnUi.Maui.Draw
 
             foreach (var view in this.Views)
             {
-                if (view.BindingContext == null)
-                    view.BindingContext = BindingContext;
+                view.BindingContext = BindingContext;
             }
 
             if (FillGradient != null)
@@ -4336,7 +4335,7 @@ namespace DrawnUi.Maui.Draw
 
         public HelperSk3dView Helper3d { get; } = new();
 
-        protected void DrawWithClipAndTransforms(
+        public void DrawWithClipAndTransforms(
             SkiaDrawingContext ctx,
             SKRect destination,
             bool useOpacity,
