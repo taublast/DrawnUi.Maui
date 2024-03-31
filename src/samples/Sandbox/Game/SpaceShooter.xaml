@@ -62,7 +62,7 @@
         StrokeColor="Black"
         StrokeWidth="2"
         TextColor="White"
-        UseCache="Image"
+        UseCache="GPU"
         ZIndex="110">
 
         <draw:SkiaControl.UseCache>
@@ -105,7 +105,7 @@
         StrokeColor="Black"
         StrokeWidth="2"
         TextColor="White"
-        UseCache="Image"
+        UseCache="GPU"
         ZIndex="110">
 
         <draw:SkiaControl.UseCache>
@@ -142,7 +142,7 @@
         HorizontalOptions="Center"
         Source="Space/Sprites/player.png"
         TranslationY="-40"
-        UseCache="Image"
+        UseCache="GPU"
         VerticalOptions="End"
         WidthRequest="60"
         ZIndex="5" />
