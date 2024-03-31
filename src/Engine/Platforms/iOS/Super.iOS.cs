@@ -59,7 +59,21 @@ namespace DrawnUi.Maui.Draw
                 Super.NavBarHeight = 47; //manual
 
             InsetsChanged?.Invoke(null, null);
+
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(500), async () =>
+            {
+                _displayLink = CADisplayLink.Create(OnFrame);
+                _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
+            });
         }
+
+        static void OnFrame()
+        {
+            DisplayLinkCallback?.Invoke(null, null);
+        }
+
+        public static event EventHandler DisplayLinkCallback;
+        static CADisplayLink _displayLink;
 
         public static UINavigationController NavigationController { get; set; } = null;
 
