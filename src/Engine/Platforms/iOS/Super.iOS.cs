@@ -72,7 +72,7 @@ namespace DrawnUi.Maui.Draw
                             return;
                         _loopStarting = true;
 
-                        if (MainThread.IsMainThread) //Choreographer is available
+                        if (MainThread.IsMainThread) //CADisplayLink is available
                         {
                             if (!_loopStarted)
                             {
@@ -80,7 +80,7 @@ namespace DrawnUi.Maui.Draw
                                 try
                                 {
                                     _displayLink = CADisplayLink.Create(OnFrame);
-                                    _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
+                                    _displayLink.AddToRunLoop(NSRunLoop.Main, NSRunLoopMode.Common);
                                 }
                                 catch (Exception e)
                                 {

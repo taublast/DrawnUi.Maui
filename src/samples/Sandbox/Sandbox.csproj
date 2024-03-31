@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+<!--        net8.0-android;-->
+		<TargetFrameworks>net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Sandbox</RootNamespace>
@@ -9,9 +10,12 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
     
-    <UseSkiaSharp3>false</UseSkiaSharp3>
-    
-		<!-- Display name -->
+        <UseSkiaSharp3>false</UseSkiaSharp3>
+
+        <ApplicationId>com.companyname.sandbox2</ApplicationId>
+        <ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3269b3</ApplicationIdGuid>
+        
+        <!-- Display name -->
 		<ApplicationTitle>Sandbox</ApplicationTitle>
 
 		<!-- Versions -->
@@ -24,11 +28,10 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
-    <ApplicationId>com.companyname.sandbox2</ApplicationId>
-    <ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3269b3</ApplicationIdGuid>    
-  </PropertyGroup>
-  
+    <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+      <NoWarn>$(NoWarn);NU1605</NoWarn>
+    </PropertyGroup>
+    
     <PropertyGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <DefineConstants>$(DefineConstants);SKIA3</DefineConstants>
       <ApplicationId>com.companyname.sandbox3</ApplicationId>
@@ -38,10 +41,17 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	  <CodesignProvision>Automatic</CodesignProvision>
-	  <CodesignKey>iPhone Developer</CodesignKey>
-	  <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
 	</PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+        <CreatePackage>false</CreatePackage>
+        <CodesignKey>iPhone Developer</CodesignKey>
+        <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
+        <MtouchLink>None</MtouchLink>
+        <RuntimeIdentifier>iossimulator-x64</RuntimeIdentifier>
+        <ForceSimulatorX64ArchitectureInIDE>true</ForceSimulatorX64ArchitectureInIDE>
+    </PropertyGroup>
+    
   <ItemGroup>
 	  <MauiImage Include="Resources\Raw\Svg\dotnet_bot.svg">
 	    <BaseSize>168,208</BaseSize>
@@ -228,6 +238,10 @@
     <PackageReference Include="Mapsui.Extensions" Version="5.0.0-beta.1" />
     <PackageReference Include="BruTile.MbTiles" Version="5.0.6" />
     <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.1" />
+    
+<!--    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />-->
+<!--    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />-->
+<!--    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.14" />-->
   </ItemGroup>
 
 

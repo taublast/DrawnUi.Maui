@@ -4401,7 +4401,6 @@ namespace DrawnUi.Maui.Draw
                     var alpha = (byte)(0xFF / 1.0 * Opacity);
                     _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
 
-
                     if (!DisableEffects)
                     {
                         var effectColor = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
@@ -4848,7 +4847,7 @@ namespace DrawnUi.Maui.Draw
                         if (kill != null)
                         {
                             kill.Surface = null; //do not dispose surface we are reusing it
-                            DisposeObject(kill);
+                            //DisposeObject(kill); //todo this leads to occasional crashes when ctx changing fast!!!
                         }
 
                         action = _offscreenCacheRenderingQueue.Pop();
@@ -5257,7 +5256,11 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.Color = SKColors.White;
                     _paintWithOpacity.IsAntialias = true;
                     _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
-
+                    
+                    //todo dispose existing!!!
+                    _paintWithOpacity.ColorFilter = null;
+                    _paintWithOpacity.ImageFilter = null;
+                    
                     cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
                 });
 
@@ -5401,7 +5404,7 @@ namespace DrawnUi.Maui.Draw
         {
             if (IsDisposed)
                 return;
-
+            
             NeedUpdateFrontCache = true;
             RenderObjectNeedsUpdate = true;
             NeedUpdate = true;

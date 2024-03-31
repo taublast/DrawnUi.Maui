@@ -11,50 +11,57 @@
     FontFamily="FontGame"
     FontSize="11"
     HeightRequest="40"
+    Tag="BtnRoot"
     LockRatio="1"
     Tapped="GoToRoot"
     TintColor="{StaticResource ColorPrimary}"
-    UseCache="Image"
+    UseCache="GPU"
     VerticalOptions="End"
     ZIndex="100"
     WidthRequest="50">
-
+    <draw:SkiaControl.VisualEffects>
+        <draw:DropShadowEffect
+            Blur="2"
+            X="2"
+            Y="2"
+            Color="#cc222222" />
+    </draw:SkiaControl.VisualEffects>
     <!--  padding let us save shadow in cache  -->
 
-    <draw:SkiaControl.Triggers>
-        <DataTrigger
-            Binding="{Binding Source={RelativeSource Self}, Path=IsPressed}"
-            TargetType="draw:SkiaControl"
-            Value="False">
-            <Setter Property="TranslationX" Value="0" />
-            <Setter Property="TranslationY" Value="0" />
-            <Setter Property="VisualEffects">
-                <generic:List x:TypeArguments="draw:SkiaEffect">
-                    <draw:DropShadowEffect
-                        Blur="2"
-                        X="2"
-                        Y="2"
-                        Color="#cc222222" />
-                </generic:List>
-            </Setter>
-        </DataTrigger>
-        <DataTrigger
-            Binding="{Binding Source={RelativeSource Self}, Path=IsPressed}"
-            TargetType="draw:SkiaControl"
-            Value="True">
-            <Setter Property="TranslationX" Value="1" />
-            <Setter Property="TranslationY" Value="1" />
-            <Setter Property="VisualEffects">
-                <generic:List x:TypeArguments="draw:SkiaEffect">
-                    <draw:DropShadowEffect
-                        Blur="2"
-                        X="1"
-                        Y="1"
-                        Color="#22222222" />
-                </generic:List>
-            </Setter>
-        </DataTrigger>
-    </draw:SkiaControl.Triggers>
+    <!-- <draw:SkiaControl.Triggers> -->
+    <!--     <DataTrigger -->
+    <!--         Binding="{Binding Source={RelativeSource Self}, Path=IsPressed}" -->
+    <!--         TargetType="draw:SkiaControl" -->
+    <!--         Value="False"> -->
+    <!--         <Setter Property="TranslationX" Value="0" /> -->
+    <!--         <Setter Property="TranslationY" Value="0" /> -->
+    <!--         <Setter Property="VisualEffects"> -->
+    <!--             <generic:List x:TypeArguments="draw:SkiaEffect"> -->
+    <!--                 <draw:DropShadowEffect -->
+    <!--                     Blur="2" -->
+    <!--                     X="2" -->
+    <!--                     Y="2" -->
+    <!--                     Color="#cc222222" /> -->
+    <!--             </generic:List> -->
+    <!--         </Setter> -->
+    <!--     </DataTrigger> -->
+    <!--     <DataTrigger -->
+    <!--         Binding="{Binding Source={RelativeSource Self}, Path=IsPressed}" -->
+    <!--         TargetType="draw:SkiaControl" -->
+    <!--         Value="True"> -->
+    <!--         <Setter Property="TranslationX" Value="1" /> -->
+    <!--         <Setter Property="TranslationY" Value="1" /> -->
+    <!--         <Setter Property="VisualEffects"> -->
+    <!--             <generic:List x:TypeArguments="draw:SkiaEffect"> -->
+    <!--                 <draw:DropShadowEffect -->
+    <!--                     Blur="2" -->
+    <!--                     X="1" -->
+    <!--                     Y="1" -->
+    <!--                     Color="#22222222" /> -->
+    <!--             </generic:List> -->
+    <!--         </Setter> -->
+    <!--     </DataTrigger> -->
+    <!-- </draw:SkiaControl.Triggers> -->
 
     <draw:SkiaShape
         HorizontalOptions="Fill"

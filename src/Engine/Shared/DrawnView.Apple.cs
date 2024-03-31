@@ -67,9 +67,7 @@ namespace DrawnUi.Maui.Views
         {
 
         }
-
-
-
+        
         public virtual void SetupRenderingLoop()
         {
             Super.DisplayLinkCallback += OnDisplayLink;
@@ -77,18 +75,7 @@ namespace DrawnUi.Maui.Views
 
         private void OnDisplayLink(object sender, EventArgs e)
         {
-            OnFrame();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected void UpdatePlatform()
-        {
-            IsDirty = true;
-        }
-
-        private void OnFrame()
-        {
-            if (CheckCanDraw() && !OrderedDraw)
+            if (CheckCanDraw())
             {
                 OrderedDraw = true;
                 if (NeedCheckParentVisibility)
@@ -96,6 +83,12 @@ namespace DrawnUi.Maui.Views
 
                 CanvasView?.Update();
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void UpdatePlatform()
+        {
+            IsDirty = true;
         }
 
         public bool CheckCanDraw()
@@ -109,10 +102,6 @@ namespace DrawnUi.Maui.Views
         protected virtual void DisposePlatform()
         {
             Super.DisplayLinkCallback -= OnDisplayLink;
-
-            //_displayLink?.RemoveFromRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
-            //_displayLink?.Dispose();
-            //_displayLink = null;
         }
     }
 }
