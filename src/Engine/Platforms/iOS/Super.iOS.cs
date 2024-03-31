@@ -60,12 +60,45 @@ namespace DrawnUi.Maui.Draw
 
             InsetsChanged?.Invoke(null, null);
 
+
+            
             Tasks.StartDelayed(TimeSpan.FromMilliseconds(500), async () =>
             {
-                _displayLink = CADisplayLink.Create(OnFrame);
-                _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
+                while (!_loopStarted)
+                {
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                    {
+                        if (_loopStarting)
+                            return;
+                        _loopStarting = true;
+
+                        if (MainThread.IsMainThread) //Choreographer is available
+                        {
+                            if (!_loopStarted)
+                            {
+                                _loopStarted = true;
+                                try
+                                {
+                                    _displayLink = CADisplayLink.Create(OnFrame);
+                                    _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    throw;
+                                }
+                            }
+                        }
+                        _loopStarting = false;
+                    });
+                    await Task.Delay(100);
+                }
             });
+            
         }
+    
+        static bool _loopStarting = false;
+        static bool _loopStarted = false;
 
         static void OnFrame()
         {
