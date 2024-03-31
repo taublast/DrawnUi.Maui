@@ -1,5 +1,5 @@
-﻿using DrawnUi.Maui;
-using AppoMobi.Specials;
+﻿using AppoMobi.Specials;
+using DrawnUi.Maui;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -206,5 +206,146 @@ namespace Sandbox
         public static Dictionary<string, bool> TapLocks = new();
 
         #endregion
+
+        private double _Value1 = 1;
+        public double Value1
+        {
+            get
+            {
+                return _Value1;
+            }
+            set
+            {
+                if (_Value1 != value)
+                {
+                    _Value1 = value;
+                    OnPropertyChanged();
+                    Super.Log($"[VAL1] {value}");
+                }
+            }
+        }
+
+        private double _Value2 = 1;
+        public double Value2
+        {
+            get
+            {
+                return _Value2;
+            }
+            set
+            {
+                if (_Value2 != value)
+                {
+                    _Value2 = value;
+                    OnPropertyChanged();
+                    Super.Log($"[VAL2] {value}");
+                }
+            }
+        }
+
+
+        private double _Value3 = 1;
+        public double Value3
+        {
+            get
+            {
+                return _Value3;
+            }
+            set
+            {
+                if (_Value3 != value)
+                {
+                    _Value3 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _Value4 = 1;
+        public double Value4
+        {
+            get
+            {
+                return _Value4;
+            }
+            set
+            {
+                if (_Value4 != value)
+                {
+                    _Value4 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _Value5 = 1;
+        public double Value5
+        {
+            get
+            {
+                return _Value5;
+            }
+            set
+            {
+                if (_Value5 != value)
+                {
+                    _Value5 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _Value6 = 1;
+        public double Value6
+        {
+            get
+            {
+                return _Value6;
+            }
+            set
+            {
+                if (_Value6 != value)
+                {
+                    _Value6 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _Value7 = 1;
+        public double Value7
+        {
+            get
+            {
+                return _Value7;
+            }
+            set
+            {
+                if (_Value7 != value)
+                {
+                    _Value7 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private bool _ValueSwitch = true;
+        public bool ValueSwitch
+        {
+            get
+            {
+                return _ValueSwitch;
+            }
+            set
+            {
+                if (_ValueSwitch != value)
+                {
+                    _ValueSwitch = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
     }
 }

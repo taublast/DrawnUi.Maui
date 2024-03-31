@@ -22,7 +22,6 @@ namespace DrawnUi.Maui.Views
                 layout.ClipBounds = new Android.Graphics.Rect(0, 0, (int)(Width * RenderingScale), (int)(Height * RenderingScale));
             }
 
-
             Update();
         }
 
@@ -38,7 +37,6 @@ namespace DrawnUi.Maui.Views
 
             if (element != null)
             {
-
 
                 if (element.Handler != null)
                 {
@@ -69,54 +67,28 @@ namespace DrawnUi.Maui.Views
 
 #if CHOREOGRAPHER
 
-        private static Super.FrameCallback _frameCallback;
 
         protected virtual void DisposePlatform()
         {
-            Choreographer.Instance.RemoveFrameCallback(_frameCallback);
+            Super.ChoreographerCallback -= OnChoreographer;
         }
 
-        bool _loopStarting = false;
-        bool _loopStarted = false;
+        private void OnChoreographer(object sender, EventArgs e)
+        {
+            if (CheckCanDraw())
+            {
+                OrderedDraw = true;
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+
+                CanvasView?.Update();
+            }
+        }
+
 
         public virtual void SetupRenderingLoop()
         {
-            _loopStarting = false;
-            _loopStarted = false;
-
-            _frameCallback = new Super.FrameCallback((nanos) =>
-            {
-                OnFrame();
-
-                Choreographer.Instance.PostFrameCallback(_frameCallback);
-            });
-
-            Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), async () =>
-            {
-                while (!_loopStarted)
-                {
-                    MainThread.BeginInvokeOnMainThread(async () =>
-                    {
-                        if (_loopStarting)
-                            return;
-                        _loopStarting = true;
-
-                        if (MainThread.IsMainThread)
-                        {
-                            if (!_loopStarted)
-                            {
-                                _loopStarted = true;
-                                Choreographer.Instance.PostFrameCallback(_frameCallback);
-                            }
-                        }
-
-                        _loopStarting = false;
-                    });
-                    await Task.Delay(100);
-                }
-
-            });
-
+            Super.ChoreographerCallback += OnChoreographer;
         }
 
         protected virtual void PlatformHardwareAccelerationChanged()
@@ -151,18 +123,6 @@ namespace DrawnUi.Maui.Views
 
 #endif
 
-        private void OnFrame()
-        {
-            if (CheckCanDraw() && !OrderedDraw)
-            {
-                OrderedDraw = true;
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
-
-                CanvasView?.Update();
-            }
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void UpdatePlatform()
         {
@@ -172,7 +132,9 @@ namespace DrawnUi.Maui.Views
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
         {
-            return CanvasView != null
+            return !OrderedDraw
+            && CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
+            && !CanvasView.IsDrawing
                    && IsDirty
                    && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
                    && IsVisible && Super.EnableRendering;

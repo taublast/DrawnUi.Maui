@@ -9,6 +9,15 @@ public class BaseColorFilterEffect : SkiaEffect, IColorEffect
         return null;
     }
 
+    public override void Update()
+    {
+        var kill = Filter;
+        Filter = null;
+        kill?.Dispose();
+
+        base.Update();
+    }
+
     protected override void OnDisposing()
     {
         Filter?.Dispose();

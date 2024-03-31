@@ -11,6 +11,9 @@
                 <ResourceDictionary Source="Resources/Styles.xaml" />
                 <ResourceDictionary Source="Resources/Svg.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <local:NotConverter x:Key="NotConverter" />
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -135,7 +135,7 @@ namespace DrawnUi.Maui.Controls
         }
 
 
-        public override void SetChildren(IEnumerable<ISkiaAttachable> views)
+        public override void SetChildren(IEnumerable<SkiaControl> views)
         {
             base.SetChildren(views);
 
@@ -206,7 +206,7 @@ namespace DrawnUi.Maui.Controls
             return null;
         }
 
-        public async void PushView(ISkiaAttachable page, bool animated, bool preserve = false, int tab = -1)
+        public async void PushView(SkiaControl view, bool animated, bool preserve = false, int tab = -1)
         {
             if (NavigationBusy)
                 return;
@@ -215,8 +215,6 @@ namespace DrawnUi.Maui.Controls
 
             try
             {
-                var view = page.AttachControl;
-
                 if (view == null)
                 {
                     throw new Exception("AttachControl is null");

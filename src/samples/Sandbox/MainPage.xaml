@@ -3,6 +3,7 @@
     x:Class="MauiNet8.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="using:Sandbox.Views.Controls"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Collections"
     xmlns:sandbox="clr-namespace:Sandbox"
@@ -56,7 +57,7 @@
                                     Color="#FF2222" />
 
                                 <!--  local  -->
-                                <draw:DropShadowsEffect>
+                                <draw:ChainDropShadowsEffect>
                                     <draw:SkiaShadow
                                         Blur="3"
                                         Opacity="1"
@@ -69,46 +70,71 @@
                                         X="4"
                                         Y="4"
                                         Color="#0000FF" />
-                                </draw:DropShadowsEffect>
+                                </draw:ChainDropShadowsEffect>
 
-                                <draw:IsolatedColorPresetEffect Preset="Sepia" />
+                                <draw:ChainColorPresetEffect Preset="Sepia" />
 
                             </draw:SkiaControl.VisualEffects>
                         </draw:SkiaImage>
 
-                        <draw:SkiaLabel
-                            Margin="0,0,0,20"
-                            FontSize="24"
+                        <!--  if you have effects sometimes 
+                        might need to cache with area around  -->
+                        <draw:SkiaLayout
                             HorizontalOptions="Center"
-                            Tag="Title"
-                            Text="SELECT PAGE"
-                            TextColor="Wheat"
-                            UseCache="None"
-                            VerticalOptions="Center">
-                            <draw:SkiaControl.VisualEffects>
-                                <draw:DropShadowEffect
-                                    Blur="5"
-                                    X="0"
-                                    Y="0"
-                                    Color="#FF2222" />
-                            </draw:SkiaControl.VisualEffects>
-                        </draw:SkiaLabel>
+                            Margin="0,-10,0,10"
+                            Padding="10"
+                            UseCache="Image">
+                            <draw:SkiaLabel
+                                FontSize="24"
+                                Tag="Title"
+                                Text="SELECT PAGE"
+                                TextColor="Wheat">
+                                <draw:SkiaControl.VisualEffects>
+                                    <draw:DropShadowEffect
+                                        Blur="5"
+                                        X="0"
+                                        Y="0"
+                                        Color="#FF2222" />
+                                </draw:SkiaControl.VisualEffects>
+                            </draw:SkiaLabel>
+                        </draw:SkiaLayout>
 
+                        <!--<controls:SkiaSwitchFun
+                            HorizontalOptions="Center"
+                            UseCache="Image" />-->
+
+                        <!--<controls:SkiaColorPicker
+                            BackgroundColor="Black"
+                            ColorFlowDirection="Vertical"
+                            ColorSpectrumStyle="TintToHueToShadeStyle"
+                            HeightRequest="100"
+                            HorizontalOptions="Center"
+                            WidthRequest="200" />-->
+
+                        <controls:SkiaSliderFun
+                            End="{Binding Value2, Mode=TwoWay}"
+                            HorizontalOptions="Center"
+                            Max="2"
+                            Min="0"
+                            MinMaxStringFormat="P0"
+                            Step="0.01"
+                            UseCache="Image"
+                            WidthRequest="200" />
 
                         <draw:SkiaLayout
                             x:Name="Buttons"
                             HorizontalOptions="Center"
                             MaxColumns="2"
-                            Spacing="10"
+                            Spacing="2"
                             Type="Column"
-                            UseCache="Operations">
+                            UseCache="Image">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">
 
                                     <!--  caching area with shadow  -->
                                     <draw:SkiaLayout
-                                        Padding="8"
+                                        Padding="16"
                                         HorizontalOptions="Start"
                                         UseCache="Image">
 
@@ -165,8 +191,6 @@
                     </draw:SkiaLayout>
 
                 </draw:SkiaScroll>
-
-
 
 
                 <draw:SkiaLabelFps

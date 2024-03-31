@@ -71,16 +71,22 @@ public class SkiaSwitch : SkiaToggle
 
     public virtual void ApplyOff()
     {
-        Thumb.TranslationX = GetThumbPosForOff();
-        Thumb.BackgroundColor = this.ColorThumbOff;
-        Track.BackgroundColor = this.ColorFrameOff;
+        if (Thumb != null)
+        {
+            Thumb.TranslationX = GetThumbPosForOff();
+            Thumb.BackgroundColor = this.ColorThumbOff;
+            Track.BackgroundColor = this.ColorFrameOff;
+        }
     }
 
     public virtual void ApplyOn()
     {
-        Thumb.TranslationX = GetThumbPosForOn();
-        Thumb.BackgroundColor = this.ColorThumbOn;
-        Track.BackgroundColor = this.ColorFrameOn;
+        if (Thumb != null)
+        {
+            Thumb.TranslationX = GetThumbPosForOn();
+            Thumb.BackgroundColor = this.ColorThumbOn;
+            Track.BackgroundColor = this.ColorFrameOn;
+        }
     }
 
     public SkiaShape Track;
@@ -126,7 +132,7 @@ public class SkiaSwitch : SkiaToggle
         if (LayoutReady && IsAnimated)
         {
             var easing = Easing.CubicOut;
-            var msSpeed = (uint)100;
+            var msSpeed = (uint)250;
             var pos = 0.0;
             if (!IsToggled)
             {

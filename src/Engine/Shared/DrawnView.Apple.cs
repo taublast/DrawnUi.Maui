@@ -67,34 +67,28 @@ namespace DrawnUi.Maui.Views
         {
 
         }
-
-        CADisplayLink _displayLink;
-
+        
         public virtual void SetupRenderingLoop()
         {
-            _displayLink = CADisplayLink.Create(OnFrame);
-            _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
+            Super.DisplayLinkCallback += OnDisplayLink;
+        }
+
+        private void OnDisplayLink(object sender, EventArgs e)
+        {
+            if (CheckCanDraw())
+            {
+                OrderedDraw = true;
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+
+                CanvasView?.Update();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void UpdatePlatform()
         {
             IsDirty = true;
-        }
-
-        private void OnFrame()
-        {
-            if (CheckCanDraw() && !OrderedDraw)
-            {
-                OrderedDraw = true;
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
-
-                Super.RunOnMainThreadAndWait(() =>
-                {
-                    CanvasView?.Update();
-                });
-            }
         }
 
         public bool CheckCanDraw()
@@ -107,9 +101,7 @@ namespace DrawnUi.Maui.Views
 
         protected virtual void DisposePlatform()
         {
-            _displayLink?.RemoveFromRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
-            _displayLink?.Dispose();
-            _displayLink = null;
+            Super.DisplayLinkCallback -= OnDisplayLink;
         }
     }
 }

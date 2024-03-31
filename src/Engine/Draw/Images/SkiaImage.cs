@@ -422,7 +422,6 @@ public class SkiaImage : SkiaControl
                                 try
                                 {
                                     //bitmap = await SkiaImageManager.LoadImageOnPlatformAsync(source, cancel.Token);
-
                                     bitmap = await SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel);
 
                                     if (cancel.Token.IsCancellationRequested)

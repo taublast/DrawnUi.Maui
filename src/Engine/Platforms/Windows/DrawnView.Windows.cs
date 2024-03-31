@@ -83,11 +83,12 @@ namespace DrawnUi.Maui.Views
             if (CheckCanDraw() && !OrderedDraw)
             {
                 OrderedDraw = true;
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
-
                 Super.RunOnMainThreadAndWait(() =>
                 {
+                    OrderedDraw = true;
+                    if (NeedCheckParentVisibility)
+                        CheckElementVisibility(this);
+
                     CanvasView?.Update();
                 });
             }
@@ -97,6 +98,7 @@ namespace DrawnUi.Maui.Views
         public bool CheckCanDraw()
         {
             return CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
+                   && !CanvasView.IsDrawing
                    && IsDirty
                    && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
                    && IsVisible && Super.EnableRendering;

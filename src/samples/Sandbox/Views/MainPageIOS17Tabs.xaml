@@ -330,7 +330,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                         Spacing="16"
                         Tag="Tab0"
                         Type="Column"
-                        UseCache="ImageDoubleBuffered">
+                        UseCache="Image">
 
                         <draw:SkiaLayout.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
@@ -359,7 +359,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                     CornerRadius="16"
                                     HeightRequest="140"
                                     HorizontalOptions="Fill"
-                                    UseCache="None">
+                                    UseCache="ImageDoubleBuffered">
 
                                     <draw:SkiaLayout
                                         Padding="16"
@@ -419,7 +419,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                         RecyclingTemplate="Enabled"
                         Spacing="16"
                         Type="Column"
-                        UseCache="ImageDoubleBuffered">
+                        UseCache="Image">
 
                         <draw:SkiaLayout.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
@@ -444,6 +444,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                             <DataTemplate>
 
                                 <draw:SkiaShape
+                                    UseCache="ImageDoubleBuffered"
                                     BackgroundColor="#BC5B93"
                                     CornerRadius="16"
                                     HeightRequest="140"

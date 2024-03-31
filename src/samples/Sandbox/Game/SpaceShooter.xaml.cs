@@ -795,20 +795,20 @@ public partial class SpaceShooter : MauiGame
             }
 
             if (touchAction == TouchActionResult.Tapped
-                || (touchAction == TouchActionResult.Up && Math.Abs(args.Distance.Total.X) < thresholdNotPanning * RenderingScale))
+                || (touchAction == TouchActionResult.Up && _isPressed && Math.Abs(args.Distance.Total.X) < thresholdNotPanning * RenderingScale))
             {
-                // custom tapped event
-                // we are not using TouchActionResult.Tapped here because it has some UI related
-                // logic and might sometimes not trigger if we move the finger too much
-                // while we need just spamming taps.
-                // also we let it fire when you are pannign and tapping at the same 
-                //  if ((!_wasPanning || args.NumberOfTouches > 1) && _isPressed)
-                {
-                    Fire();
-                }
+                Fire();
+            }
 
+            if (touchAction == TouchActionResult.Up)
+            {
                 _isPressed = false;
             }
+
+            _moveRight = false;
+            _moveLeft = false;
+
+            return this;
         }
 
         _moveRight = false;

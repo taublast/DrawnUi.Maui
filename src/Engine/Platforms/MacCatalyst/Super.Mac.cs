@@ -127,7 +127,52 @@ namespace DrawnUi.Maui.Draw
             if (Super.NavBarHeight < 0)
 
                 Super.NavBarHeight = 47; //manual
+            
+            
+            
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(500), async () =>
+            {
+                while (!_loopStarted)
+                {
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                    {
+                        if (_loopStarting)
+                            return;
+                        _loopStarting = true;
+
+                        if (MainThread.IsMainThread) //Choreographer is available
+                        {
+                            if (!_loopStarted)
+                            {
+                                _loopStarted = true;
+                                try
+                                {
+                                    _displayLink = CADisplayLink.Create(OnFrame);
+                                    _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    throw;
+                                }
+                            }
+                        }
+                        _loopStarting = false;
+                    });
+                    await Task.Delay(100);
+                }
+            });
         }
+
+        static bool _loopStarting = false;
+        static bool _loopStarted = false;
+        static void OnFrame()
+        {
+            DisplayLinkCallback?.Invoke(null, null);
+        }
+
+        public static event EventHandler DisplayLinkCallback;
+        static CADisplayLink _displayLink;
 
     }
 

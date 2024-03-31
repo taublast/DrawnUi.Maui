@@ -1,4 +1,6 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿using System;
+
+namespace DrawnUi.Maui.Draw;
 
 public class Looper : IDisposable
 {
@@ -16,13 +18,15 @@ public class Looper : IDisposable
 
     public void Start(int targetFps)
     {
-        Cancel?.Cancel();
+        var existingCanel = Cancel;
+        existingCanel?.Cancel(); ;
         Cancel = new();
         Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), async () =>
         {
             SetTargetFps(targetFps);
             await StartLooperAsync(Cancel.Token);
         });
+        existingCanel?.Dispose();
     }
 
     double targetIntervalMs;
@@ -35,6 +39,7 @@ public class Looper : IDisposable
     public void Stop()
     {
         Cancel?.Cancel();
+        Cancel?.Dispose();
     }
 
     public void Dispose()
@@ -59,8 +64,13 @@ public class Looper : IDisposable
             var elapsedTimeSinceLastFrame = loopStopwatch.ElapsedMilliseconds - lastFrameEnd;
             var timeToWait = targetIntervalMs - elapsedTimeSinceLastFrame - frameExecutionTimeMs;
 
+            if (timeToWait < 1)
+            {
+                timeToWait = 1;
+            }
             if (timeToWait > 0)
-                Thread.Sleep(TimeSpan.FromMilliseconds(timeToWait));
+                await Task.Delay(TimeSpan.FromMilliseconds(timeToWait));
+            //Thread.Sleep(TimeSpan.FromMilliseconds(timeToWait));
 
             lastFrameEnd = loopStopwatch.ElapsedMilliseconds;
         }

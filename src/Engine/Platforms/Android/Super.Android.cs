@@ -14,6 +14,11 @@ public partial class Super
 
     public static Android.App.Activity MainActivity { get; set; }
 
+    private static FrameCallback _frameCallback;
+    static bool _loopStarting = false;
+    static bool _loopStarted = false;
+    public static event EventHandler ChoreographerCallback;
+
     public static void Init(Android.App.Activity activity)
     {
         Initialized = true;
@@ -43,7 +48,43 @@ public partial class Super
         }
 
         VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
+
+
+
+        Tasks.StartDelayed(TimeSpan.FromMilliseconds(500), async () =>
+        {
+            _frameCallback = new FrameCallback((nanos) =>
+            {
+                ChoreographerCallback?.Invoke(null, null);
+                Choreographer.Instance.PostFrameCallback(_frameCallback);
+            });
+
+            while (!_loopStarted)
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    if (_loopStarting)
+                        return;
+                    _loopStarting = true;
+
+                    if (MainThread.IsMainThread) //Choreographer is available
+                    {
+                        if (!_loopStarted)
+                        {
+                            _loopStarted = true;
+                            Choreographer.Instance.PostFrameCallback(_frameCallback);
+                        }
+                    }
+                    _loopStarting = false;
+                });
+                await Task.Delay(100);
+            }
+        });
+
     }
+
+
+
 
     /// <summary>
     /// ToDo resolve obsolete for android api 30 and later
@@ -72,7 +113,7 @@ public partial class Super
 
     static InsetsListener _insetsListener;
 
-    private static FrameCallback _frameCallback;
+
 
     public class InsetsListener : Java.Lang.Object, Android.Views.View.IOnApplyWindowInsetsListener
     {

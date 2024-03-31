@@ -8,14 +8,14 @@
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
-    <UseSkiaSharp3>true</UseSkiaSharp3>
     
-		<!-- Display name -->
-		<ApplicationTitle>Sandbox</ApplicationTitle>
+        <UseSkiaSharp3>false</UseSkiaSharp3>
 
-		<!-- App Identifier -->
-		<ApplicationId>com.companyname.sandbox</ApplicationId>
-		<ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3d69b3</ApplicationIdGuid>
+        <ApplicationId>com.companyname.sandbox2</ApplicationId>
+        <ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3269b3</ApplicationIdGuid>
+        
+        <!-- Display name -->
+		<ApplicationTitle>Sandbox</ApplicationTitle>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -27,11 +27,10 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
-    <ApplicationId>com.companyname.sandbox</ApplicationId>
-    <ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3d69b3</ApplicationIdGuid>    
-  </PropertyGroup>
-  
+    <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+      <NoWarn>$(NoWarn);NU1605</NoWarn>
+    </PropertyGroup>
+    
     <PropertyGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <DefineConstants>$(DefineConstants);SKIA3</DefineConstants>
       <ApplicationId>com.companyname.sandbox3</ApplicationId>
@@ -41,10 +40,17 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	  <CodesignProvision>Automatic</CodesignProvision>
-	  <CodesignKey>iPhone Developer</CodesignKey>
-	  <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
 	</PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+        <CreatePackage>false</CreatePackage>
+        <CodesignKey>iPhone Developer</CodesignKey>
+        <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
+        <MtouchLink>None</MtouchLink>
+        <RuntimeIdentifier>iossimulator-x64</RuntimeIdentifier>
+        <ForceSimulatorX64ArchitectureInIDE>true</ForceSimulatorX64ArchitectureInIDE>
+    </PropertyGroup>
+    
   <ItemGroup>
 	  <MauiImage Include="Resources\Raw\Svg\dotnet_bot.svg">
 	    <BaseSize>168,208</BaseSize>
@@ -159,6 +165,7 @@
 
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Remove="Models\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -224,11 +231,29 @@
   </ItemGroup>
 
 
-
-  <ItemGroup>
-    <Folder Include="Models\" />
+  <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+    <PackageReference Include="BruTile" Version="5.0.6" />
+    <PackageReference Include="Mapsui.ArcGIS" Version="5.0.0-beta.1" />
+    <PackageReference Include="Mapsui.Extensions" Version="5.0.0-beta.1" />
+    <PackageReference Include="BruTile.MbTiles" Version="5.0.6" />
+    <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.1" />
+    
+<!--    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />-->
+<!--    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />-->
+<!--    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.14" />-->
   </ItemGroup>
 
 
+  <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
+    <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
+    <Compile Remove="Views\MainPageMap.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageMap.xaml" />
+    <Compile Remove="Views\Controls\SkiaMapControl.cs" />
+    <Compile Remove="Views\Controls\SkiaMapRenderer.cs" />
+    <Compile Remove="Views\Controls\DrawnUiRasterStyleRenderer.cs" />
+  </ItemGroup>
 
+ 
 </Project>
+ 

@@ -161,7 +161,7 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
 
     public SKRect ContentAvailableSpace { get; protected set; }
 
-    public override void SetChildren(IEnumerable<ISkiaAttachable> views)
+    public override void SetChildren(IEnumerable<SkiaControl> views)
     {
         //do not use subviews as we are using Content property for this control
 

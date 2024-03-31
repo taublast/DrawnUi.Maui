@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using SkiaControl = DrawnUi.Maui.Draw.SkiaControl;
 
 namespace DrawnUi.Maui.Controls
 {
@@ -28,9 +29,19 @@ namespace DrawnUi.Maui.Controls
     /// <summary>
     /// A Canvas with Navigation capabilities
     /// </summary>
-    public partial class SkiaShell : DrawnUiBasePage
+    public partial class SkiaShell : DrawnUiBasePage, IDisposable
     {
+        public void Dispose()
+        {
+            Super.InsetsChanged += OnInsetsChanged;
 
+            OnDisposing();
+        }
+
+        protected virtual void OnDisposing()
+        {
+
+        }
 
         protected override void OnHandlerChanged()
         {
@@ -100,6 +111,13 @@ namespace DrawnUi.Maui.Controls
 
             //close jeyboard on app startup
             Tasks.StartDelayed(TimeSpan.FromSeconds(2), TouchEffect.CloseKeyboard);
+
+            Super.InsetsChanged += OnInsetsChanged;
+        }
+
+        void OnInsetsChanged(object sender, EventArgs e)
+        {
+            OnNavBarInvalidated();
         }
 
         public SkiaControl ShellLayout { get; set; }
@@ -246,11 +264,6 @@ namespace DrawnUi.Maui.Controls
                 {
                     var skia = page as SkiaControl;
 
-                    if (page is ISkiaAttachable attachable)
-                    {
-                        skia = attachable.AttachControl;
-                    }
-
                     var presentation = Shell.GetPresentationMode(page);
 
                     if (animate == null)
@@ -302,12 +315,11 @@ namespace DrawnUi.Maui.Controls
                 {
                     SetArguments(page, arguments);
 
-                    if (page is ISkiaAttachable attachable)
+                    if (page is SkiaControl skia)
                     {
-                        await this.PushAsync(attachable.AttachControl, animate);
+                        await this.PushAsync(skia, animate);
                         return;
                     }
-
                 }
 
                 throw new Exception($"SkiaShell PushRegisteredPageAsync failed  for '{registered}'!");
@@ -333,7 +345,7 @@ namespace DrawnUi.Maui.Controls
 
             try
             {
-                NavigationLayout.PushView(page as ISkiaAttachable, animated, false);
+                NavigationLayout.PushView(page as SkiaControl, animated, false);
                 NavigationStackScreens.AddLast(new PageInStack
                 {
                     Page = page
@@ -587,7 +599,7 @@ namespace DrawnUi.Maui.Controls
 
                 try
                 {
-                    var content = (page as ISkiaAttachable).AttachControl;
+                    var content = page as SkiaControl;
                     modalWrapper.BindingContext = content.BindingContext;
                     modalWrapper.WrapContent(content);
 
@@ -2303,12 +2315,13 @@ namespace DrawnUi.Maui.Controls
         public void InvalidateNavBar()
         {
             OnNavBarInvalidated();
-
         }
 
         public virtual void OnNavBarInvalidated()
         {
+            //todo add navigation model stuff
 
+            //todo invalidate and update
         }
 
         public event EventHandler<RotationEventArgs> OnRotation;

@@ -719,9 +719,9 @@ public class ViewsAdapter : IDisposable
             if (LogEnabled)
                 Trace.WriteLine($"[ViewsAdapter] created new view !");
 
-            if (create is ISkiaAttachable element)
+            if (create is SkiaControl element)
             {
-                return element.AttachControl;
+                return element;
             }
             return (SkiaControl)create;
         }

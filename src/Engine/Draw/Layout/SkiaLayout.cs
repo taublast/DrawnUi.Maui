@@ -65,12 +65,16 @@ namespace DrawnUi.Maui.Draw
 
             try
             {
+                return base.GetVisualChildren();
+
+                //todo for IsTemplated
                 if (Type == LayoutType.Row || Type == LayoutType.Column)
                 {
-                    //this works fine with hotreload..
-                    return RenderTree.Where(w => w.Control != null)
+                    var children = RenderTree.Where(w => w.Control != null)
                         .Select(x => x.Control)
                         .ToList().AsReadOnly();
+                    //this works fine with hotreload..
+                    return children;
 
                     //using var cells = ChildrenFactory.GetViewsIterator();
                     //return cells.ToList().AsReadOnly();
@@ -730,7 +734,7 @@ namespace DrawnUi.Maui.Draw
         //	Update();
         //}
 
-        public override void SetChildren(IEnumerable<ISkiaAttachable> views)
+        public override void SetChildren(IEnumerable<SkiaControl> views)
         {
             base.SetChildren(views);
 

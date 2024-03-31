@@ -5,21 +5,28 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Collections"
-    Margin="8"
-    Padding="8"
+    Padding="16"
     CornerRadius="12"
     FontFamily="FontGame"
     FontSize="11"
     HeightRequest="40"
     LockRatio="1"
+    Tag="BtnRoot"
     Tapped="GoToRoot"
     TintColor="{StaticResource ColorPrimary}"
-    UseCache="Image"
+    UseCache="GPU"
     VerticalOptions="End"
-    ZIndex="100"
-    WidthRequest="50">
-
+    WidthRequest="50"
+    ZIndex="100">
     <!--  padding let us save shadow in cache  -->
+
+    <!--<draw:SkiaControl.VisualEffects>
+        <draw:DropShadowEffect
+            Blur="2"
+            X="2"
+            Y="2"
+            Color="#cc222222" />
+    </draw:SkiaControl.VisualEffects>-->
 
     <draw:SkiaControl.Triggers>
         <DataTrigger

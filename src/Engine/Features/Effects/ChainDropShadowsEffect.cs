@@ -4,14 +4,14 @@ using System.Collections.Specialized;
 namespace DrawnUi.Maui.Draw;
 
 [ContentProperty("Shadows")]
-public class DropShadowsEffect : BaseRenderEffect
+public class ChainDropShadowsEffect : BaseChainedEffect
 {
     #region PROPERTIES
 
     public static readonly BindableProperty ShadowsProperty = BindableProperty.Create(
         nameof(Shadows),
         typeof(IList<SkiaShadow>),
-        typeof(DropShadowsEffect),
+        typeof(ChainDropShadowsEffect),
         defaultValueCreator: (instance) =>
         {
             var created = new ObservableCollection<SkiaShadow>();
@@ -41,7 +41,7 @@ public class DropShadowsEffect : BaseRenderEffect
 
     private static void ShadowsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
     {
-        var effect = (DropShadowsEffect)bindable;
+        var effect = (ChainDropShadowsEffect)bindable;
 
         var enumerableShadows = (IEnumerable<SkiaShadow>)newvalue;
 
@@ -102,27 +102,29 @@ public class DropShadowsEffect : BaseRenderEffect
 
     #endregion
 
-    public override bool Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public override ChainEffectResult Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
     {
         if (NeedApply)
         {
-            if (_paint == null)
+            if (Paint == null)
             {
-                _paint = new SKPaint();
+                Paint = new();
             }
+
+            var restore = 0;
 
             //draw every shadow without the controls itsselfs
             foreach (var shadow in Shadows)
             {
                 //SkiaControl.AddShadowFilter(paint, shadow, Parent.RenderingScale);
 
-                _paint.ImageFilter = SKImageFilter.CreateDropShadowOnly(
+                Paint.ImageFilter = SKImageFilter.CreateDropShadowOnly(
                 (float)Math.Round(shadow.X * Parent.RenderingScale),
                 (float)Math.Round(shadow.Y * Parent.RenderingScale),
                 (float)shadow.Blur, (float)shadow.Blur,
                 shadow.Color.ToSKColor());
 
-                var restore = ctx.Canvas.SaveLayer(_paint);
+                restore = ctx.Canvas.SaveLayer(Paint);
 
                 drawControl(ctx);
 
@@ -130,19 +132,10 @@ public class DropShadowsEffect : BaseRenderEffect
                     ctx.Canvas.RestoreToCount(restore);
             }
 
-            return false;
+            return ChainEffectResult.Create(false, 0);
         }
 
         return base.Draw(destination, ctx, drawControl);
-    }
-
-    private SKPaint _paint;
-
-    protected override void OnDisposing()
-    {
-        base.OnDisposing();
-
-        _paint?.Dispose();
     }
 
     public override bool NeedApply

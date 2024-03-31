@@ -292,38 +292,61 @@ public class SkiaSlider : SkiaLayout
 
     public static readonly BindableProperty StartProperty =
         BindableProperty.Create(nameof(Start), typeof(double), typeof(SkiaSlider), 0.0, BindingMode.TwoWay,
-            coerceValue: (c, o) =>
-        {
-            if (c is SkiaSlider control)
-            {
-                double adjustedValue = control.AdjustToStepValue((double)o, control.Min, control.Step);
-                return adjustedValue;
-            }
-            return o;
-        });
+            propertyChanged: OnStartPropertyChanged);
+    /// <summary>
+    /// Enabled for ranged
+    /// </summary>
     public double Start
     {
         get { return (double)GetValue(StartProperty); }
         set { SetValue(StartProperty, value); }
     }
 
-    public static readonly BindableProperty EndProperty = BindableProperty.Create(nameof(End), typeof(double), typeof(SkiaSlider), 100.0,
-        BindingMode.TwoWay,
-        coerceValue: (c, o) =>
+    private static void OnStartPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is SkiaSlider slider && newValue is double newStartValue)
         {
-            if (c is SkiaSlider control)
+            // Check if the new value is different and needs processing
+            if (!slider.lockInternal && Math.Abs(slider.Start - newStartValue) > Double.Epsilon)
             {
-                double adjustedValue = control.AdjustToStepValue((double)o, control.Min, control.Step);
-                return adjustedValue;
+                slider.lockInternal = true;
+                // Assuming AdjustToStepValue and any other necessary adjustments are made within this method
+                slider.Start = slider.AdjustToStepValue(newStartValue, slider.Min, slider.Step);
+                slider.lockInternal = false;
             }
-            return o;
-        });
+        }
+    }
 
+    public static readonly BindableProperty EndProperty = BindableProperty.Create(
+        nameof(End),
+        typeof(double),
+        typeof(SkiaSlider),
+        100.0,
+        BindingMode.TwoWay,
+        propertyChanged: OnEndPropertyChanged);
+    /// <summary>
+    /// For non-ranged this is your main value
+    /// </summary>
     public double End
     {
         get { return (double)GetValue(EndProperty); }
         set { SetValue(EndProperty, value); }
     }
+    private static void OnEndPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is SkiaSlider slider && newValue is double newEndValue)
+        {
+            // Check if the new value is different and needs processing
+            if (!slider.lockInternal && Math.Abs(slider.End - newEndValue) > Double.Epsilon)
+            {
+                slider.lockInternal = true;
+                // Assuming AdjustToStepValue and any other necessary adjustments are made within this method
+                slider.End = slider.AdjustToStepValue(newEndValue, slider.Min, slider.Step);
+                slider.lockInternal = false;
+            }
+        }
+    }
+
 
     public static readonly BindableProperty StartThumbXProperty = BindableProperty.Create(nameof(StartThumbX), typeof(double), typeof(SkiaSlider), 0.0);
     public double StartThumbX
@@ -406,6 +429,8 @@ public class SkiaSlider : SkiaLayout
 
     #region ENGINE
 
+
+
     protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         base.OnPropertyChanged(propertyName);
@@ -418,16 +443,19 @@ public class SkiaSlider : SkiaLayout
             MaxDesc = string.Format(mask, Max).Trim();
         }
 
+        if (lockInternal)
+            return;
+
         if (propertyName.IsEither(nameof(Width),
             nameof(Min), nameof(Max), nameof(StartThumbX),
             nameof(EndThumbX), nameof(Step), nameof(Start),
             nameof(End), nameof(AvailableWidthAdjustment)))
         {
-            if (lockInternal)
-                return;
+
 
             if (Width > -1)
             {
+
                 Start = Math.Clamp(Start, Min, Max);
                 End = Math.Clamp(End, Min, Max);
 
@@ -453,10 +481,7 @@ public class SkiaSlider : SkiaLayout
                 }
             }
         }
-
     }
-
-
 
 
     protected double AdjustToStepValue(double value, double minValue, double stepValue)
@@ -481,8 +506,11 @@ public class SkiaSlider : SkiaLayout
         }
     }
 
+
     protected virtual void RecalculateValues()
     {
+        lockInternal = true;
+
         var mask = "{0:" + ValueStringFormat + "}";
         ConvertOffsetsToValues();
         if (EnableRange)
@@ -490,6 +518,8 @@ public class SkiaSlider : SkiaLayout
             StartDesc = string.Format(mask, Start).Trim();
         }
         EndDesc = string.Format(mask, End).Trim();
+
+        lockInternal = false;
     }
 
     protected void MoveEndThumbHere(double x)

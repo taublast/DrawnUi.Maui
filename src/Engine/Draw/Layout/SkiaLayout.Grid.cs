@@ -175,6 +175,10 @@ public partial class SkiaLayout
             {
                 //new ColumnDefinition(new GridLength(1,GridUnitType.Auto))
             };
+            if (bindable is SkiaLayout control)
+            {
+                control.InvalidateMeasure();
+            }
             colDef.ItemSizeChanged += ((SkiaLayout)bindable).DefinitionsChanged;
             return colDef;
         });
@@ -197,6 +201,10 @@ public partial class SkiaLayout
                 //new RowDefinition(new GridLength(1,GridUnitType.Auto))
             };
             colDef.ItemSizeChanged += ((SkiaLayout)bindable).DefinitionsChanged;
+            if (bindable is SkiaLayout control)
+            {
+                control.InvalidateMeasure();
+            }
             return colDef;
         });
     [TypeConverter(typeof(RowDefinitionCollectionTypeConverter))]
