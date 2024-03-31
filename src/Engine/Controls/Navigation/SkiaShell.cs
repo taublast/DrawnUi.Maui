@@ -29,9 +29,19 @@ namespace DrawnUi.Maui.Controls
     /// <summary>
     /// A Canvas with Navigation capabilities
     /// </summary>
-    public partial class SkiaShell : DrawnUiBasePage
+    public partial class SkiaShell : DrawnUiBasePage, IDisposable
     {
+        public void Dispose()
+        {
+            Super.InsetsChanged += OnInsetsChanged;
 
+            OnDisposing();
+        }
+
+        protected virtual void OnDisposing()
+        {
+
+        }
 
         protected override void OnHandlerChanged()
         {
@@ -101,6 +111,13 @@ namespace DrawnUi.Maui.Controls
 
             //close jeyboard on app startup
             Tasks.StartDelayed(TimeSpan.FromSeconds(2), TouchEffect.CloseKeyboard);
+
+            Super.InsetsChanged += OnInsetsChanged;
+        }
+
+        void OnInsetsChanged(object sender, EventArgs e)
+        {
+            OnNavBarInvalidated();
         }
 
         public SkiaControl ShellLayout { get; set; }
@@ -2298,12 +2315,13 @@ namespace DrawnUi.Maui.Controls
         public void InvalidateNavBar()
         {
             OnNavBarInvalidated();
-
         }
 
         public virtual void OnNavBarInvalidated()
         {
+            //todo add navigation model stuff
 
+            //todo invalidate and update
         }
 
         public event EventHandler<RotationEventArgs> OnRotation;

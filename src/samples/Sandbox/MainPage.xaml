@@ -77,23 +77,27 @@
                             </draw:SkiaControl.VisualEffects>
                         </draw:SkiaImage>
 
-                        <draw:SkiaLabel
-                            Margin="0,0,0,20"
-                            FontSize="24"
+                        <!--  if you have effects sometimes 
+                        might need to cache with area around  -->
+                        <draw:SkiaLayout
                             HorizontalOptions="Center"
-                            Tag="Title"
-                            Text="SELECT PAGE"
-                            TextColor="Wheat"
-                            UseCache="None"
-                            VerticalOptions="Center">
-                            <draw:SkiaControl.VisualEffects>
-                                <draw:DropShadowEffect
-                                    Blur="5"
-                                    X="0"
-                                    Y="0"
-                                    Color="#FF2222" />
-                            </draw:SkiaControl.VisualEffects>
-                        </draw:SkiaLabel>
+                            Margin="0,-10,0,10"
+                            Padding="10"
+                            UseCache="Image">
+                            <draw:SkiaLabel
+                                FontSize="24"
+                                Tag="Title"
+                                Text="SELECT PAGE"
+                                TextColor="Wheat">
+                                <draw:SkiaControl.VisualEffects>
+                                    <draw:DropShadowEffect
+                                        Blur="5"
+                                        X="0"
+                                        Y="0"
+                                        Color="#FF2222" />
+                                </draw:SkiaControl.VisualEffects>
+                            </draw:SkiaLabel>
+                        </draw:SkiaLayout>
 
                         <!--<controls:SkiaSwitchFun
                             HorizontalOptions="Center"
@@ -121,16 +125,16 @@
                             x:Name="Buttons"
                             HorizontalOptions="Center"
                             MaxColumns="2"
-                            Spacing="10"
+                            Spacing="2"
                             Type="Column"
-                            UseCache="Operations">
+                            UseCache="Image">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">
 
                                     <!--  caching area with shadow  -->
                                     <draw:SkiaLayout
-                                        Padding="8"
+                                        Padding="16"
                                         HorizontalOptions="Start"
                                         UseCache="Image">
 
@@ -187,8 +191,6 @@
                     </draw:SkiaLayout>
 
                 </draw:SkiaScroll>
-
-
 
 
                 <draw:SkiaLabelFps

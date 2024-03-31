@@ -22,7 +22,6 @@ namespace DrawnUi.Maui.Views
                 layout.ClipBounds = new Android.Graphics.Rect(0, 0, (int)(Width * RenderingScale), (int)(Height * RenderingScale));
             }
 
-
             Update();
         }
 
@@ -38,7 +37,6 @@ namespace DrawnUi.Maui.Views
 
             if (element != null)
             {
-
 
                 if (element.Handler != null)
                 {
@@ -77,7 +75,14 @@ namespace DrawnUi.Maui.Views
 
         private void OnChoreographer(object sender, EventArgs e)
         {
-            OnFrame();
+            if (CheckCanDraw())
+            {
+                OrderedDraw = true;
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+
+                CanvasView?.Update();
+            }
         }
 
 
@@ -118,18 +123,6 @@ namespace DrawnUi.Maui.Views
 
 #endif
 
-        private void OnFrame()
-        {
-            if (CheckCanDraw())
-            {
-                OrderedDraw = true;
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
-
-                CanvasView?.Update();
-            }
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void UpdatePlatform()
         {
@@ -139,8 +132,9 @@ namespace DrawnUi.Maui.Views
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
         {
-            return CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
-                   && !CanvasView.IsDrawing
+            return !OrderedDraw
+            && CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
+            && !CanvasView.IsDrawing
                    && IsDirty
                    && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
                    && IsVisible && Super.EnableRendering;

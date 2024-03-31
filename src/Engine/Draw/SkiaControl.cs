@@ -3793,6 +3793,7 @@ namespace DrawnUi.Maui.Draw
 #endif
 
                 _paintWithOpacity?.Dispose();
+                _paintWithEffects?.Dispose();
                 _clipBounds?.Dispose();
             });
         }
@@ -3990,41 +3991,37 @@ namespace DrawnUi.Maui.Draw
             SKRect destination, float scale)
         {
 
+            Arrange(destination, widthRequest, heightRequest, scale);
 
-            //lock (lockDraw)
+            bool willDraw = !CheckIsGhost();
+            if (willDraw)
             {
-                Arrange(destination, widthRequest, heightRequest, scale);
-
-                bool willDraw = !CheckIsGhost();
-                if (willDraw)
+                if (UsingCacheType != SkiaCacheType.None)
                 {
-                    if (UsingCacheType != SkiaCacheType.None)
-                    {
-                        var recordArea = DrawingRect;
+                    var recordArea = DrawingRect;
 
-                        //paint from cache
-                        if (!UseRenderingObject(context, recordArea, scale))
-                        {
-                            //record to cache and paint 
-                            CreateRenderingObjectAndPaint(context, recordArea, (ctx) =>
-                            {
-                                Paint(ctx, DrawingRect, scale, CreatePaintArguments());
-                            });
-                        }
-                    }
-                    else
+                    //paint from cache
+                    if (!UseRenderingObject(context, recordArea, scale))
                     {
-                        DrawWithClipAndTransforms(context, DrawingRect, true, true, (ctx) =>
+                        //record to cache and paint 
+                        CreateRenderingObjectAndPaint(context, recordArea, (ctx) =>
                         {
-                            Paint(ctx, DrawingRect, scale, CreatePaintArguments());
+                            PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
                         });
                     }
                 }
-
-                FinalizeDraw(context, scale); //NeedUpdate will go false
-
-                return willDraw;
+                else
+                {
+                    DrawWithClipAndTransforms(context, DrawingRect, true, true, (ctx) =>
+                    {
+                        PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
+                    });
+                }
             }
+
+            FinalizeDraw(context, scale); //NeedUpdate will go false
+
+            return willDraw;
         }
 
 
@@ -4326,6 +4323,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        protected SKPaint _paintWithEffects = null;
         protected SKPaint _paintWithOpacity = null;
         SKPath _clipBounds = null;
 
@@ -4379,8 +4377,7 @@ namespace DrawnUi.Maui.Draw
                 || CustomizeLayerPaint != null
                 || (VisualEffects?.Count > 0 && !DisableEffects))
             {
-                ctx.Canvas.Save();
-                var restore = 0;
+                var restore = ctx.Canvas.Save();
 
                 _paintWithOpacity ??= new SKPaint();
 
@@ -4395,29 +4392,12 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
 
-                if (applyOpacity || CustomizeLayerPaint != null || (VisualEffects?.Count > 0 && !DisableEffects))
+                if (applyOpacity || CustomizeLayerPaint != null)
                 {
 
                     var alpha = (byte)(0xFF / 1.0 * Opacity);
                     _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
 
-                    if (!DisableEffects)
-                    {
-                        var effectColor = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
-                        var effectImage = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
-
-                        if (effectImage != null)
-                            _paintWithOpacity.ImageFilter = effectImage.CreateFilter(destination);
-
-                        if (effectColor != null)
-                            _paintWithOpacity.ColorFilter = effectColor.CreateFilter(destination);
-                    }
-                    else
-                    {
-                        //todo dispose previous!!!
-                        _paintWithOpacity.ImageFilter = null;
-                        _paintWithOpacity.ColorFilter = null;
-                    }
 
                     if (CustomizeLayerPaint != null)
                     {
@@ -4426,12 +4406,12 @@ namespace DrawnUi.Maui.Draw
 
                     restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
-                else
-                {
-                    //todo dispose previous!!!
-                    _paintWithOpacity.ImageFilter = null;
-                    _paintWithOpacity.ColorFilter = null;
-                }
+                //else
+                //{
+                //    //todo dispose previous!!!
+                //    _paintWithOpacity.ImageFilter = null;
+                //    _paintWithOpacity.ColorFilter = null;
+                //}
 
                 if (needTransform)
                 {
@@ -4501,37 +4481,9 @@ namespace DrawnUi.Maui.Draw
                     ctx.Canvas.ClipPath(_clipBounds, SKClipOperation.Intersect, true);
                 }
 
-                if (DisableEffects)
-                {
-                    draw(ctx);
-                }
-                else
-                {
-                    bool hasDrawnControl = false;
-                    var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
-                    var chainRestore = 0;
-                    if (renderers.Count > 0)
-                    {
-                        foreach (var effect in renderers)
-                        {
-                            var chainedEffectResult = effect.Draw(destination, ctx, draw);
-                            if (chainedEffectResult.DrawnControl)
-                                hasDrawnControl = true;
-                            if (chainedEffectResult.NeedRestoreToCount > 0)
-                                chainRestore = chainedEffectResult.NeedRestoreToCount;
-                        }
-                    }
+                draw(ctx);
 
-                    if (!hasDrawnControl)
-                    {
-                        draw(ctx);
-                    }
-                }
-
-                if (restore != 0)
-                    ctx.Canvas.RestoreToCount(restore);
-
-                ctx.Canvas.Restore();
+                ctx.Canvas.RestoreToCount(restore);
             }
             else
             {
@@ -5060,6 +5012,64 @@ namespace DrawnUi.Maui.Draw
             return renderObject;
         }
 
+        protected virtual void PaintWithEffects(
+            SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        {
+            void draw(SkiaDrawingContext context)
+            {
+                Paint(context, destination, scale, arguments);
+            }
+
+            if (!DisableEffects && VisualEffects.Count > 0)
+            {
+                if (_paintWithEffects == null)
+                {
+                    _paintWithEffects = new();
+                }
+
+                var effectColor = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
+                var effectImage = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
+
+                if (effectImage != null)
+                    _paintWithEffects.ImageFilter = effectImage.CreateFilter(destination);
+                else
+                    _paintWithEffects.ImageFilter = null;//toso dispose!!!
+
+                if (effectColor != null)
+                    _paintWithEffects.ColorFilter = effectColor.CreateFilter(destination);
+                else
+                    _paintWithEffects.ColorFilter = null;//toso dispose!!!
+
+                var restore = ctx.Canvas.SaveLayer(_paintWithEffects);
+
+                bool hasDrawnControl = false;
+                var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
+                var chainRestore = 0;
+                if (renderers.Count > 0)
+                {
+                    foreach (var effect in renderers)
+                    {
+                        var chainedEffectResult = effect.Draw(destination, ctx, draw);
+                        if (chainedEffectResult.DrawnControl)
+                            hasDrawnControl = true;
+                        if (chainedEffectResult.NeedRestoreToCount > 0)
+                            chainRestore = chainedEffectResult.NeedRestoreToCount;
+                    }
+                }
+
+                if (!hasDrawnControl)
+                {
+                    draw(ctx);
+                }
+
+                ctx.Canvas.RestoreToCount(restore);
+            }
+            else
+            {
+                draw(ctx);
+            }
+        }
+
         /// <summary>
         /// This is NOT calling FinalizeDraw()!
         /// parameter 'area' Usually is equal to DrawingRect
@@ -5256,11 +5266,7 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.Color = SKColors.White;
                     _paintWithOpacity.IsAntialias = true;
                     _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
-                    
-                    //todo dispose existing!!!
-                    _paintWithOpacity.ColorFilter = null;
-                    _paintWithOpacity.ImageFilter = null;
-                    
+
                     cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
                 });
 
@@ -5404,7 +5410,7 @@ namespace DrawnUi.Maui.Draw
         {
             if (IsDisposed)
                 return;
-            
+
             NeedUpdateFrontCache = true;
             RenderObjectNeedsUpdate = true;
             NeedUpdate = true;
