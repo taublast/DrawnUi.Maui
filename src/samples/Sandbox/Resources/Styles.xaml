@@ -12,7 +12,6 @@
 
     <Style
         x:Key="SkiaLabelDefaultStyle"
-        Class="SkiaLabelDefaultStyle"
         TargetType="draw:SkiaLabel">
         <Setter Property="TextColor" Value="#FFFFFF" />
         <Setter Property="FontSize" Value="14" />

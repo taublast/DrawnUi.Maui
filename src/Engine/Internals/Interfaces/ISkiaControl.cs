@@ -30,7 +30,7 @@ public interface ISkiaControl : IDrawnBase
 
     SKRect RenderedAtDestination { get; set; }
 
-    void SetChildren(IEnumerable<ISkiaAttachable> views);
+    void SetChildren(IEnumerable<SkiaControl> views);
 
 
 

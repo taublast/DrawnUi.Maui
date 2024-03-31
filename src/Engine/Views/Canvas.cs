@@ -19,7 +19,7 @@ public class Canvas : DrawnView, IGestureListener
 
 
 
-    public override void SetChildren(IEnumerable<ISkiaAttachable> views)
+    public override void SetChildren(IEnumerable<SkiaControl> views)
     {
         //do not use subviews as we are using Content property for this control
         // so we just override not calling base

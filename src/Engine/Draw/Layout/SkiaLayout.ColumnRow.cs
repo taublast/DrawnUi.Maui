@@ -550,6 +550,9 @@ namespace DrawnUi.Maui.Draw
 
                         try
                         {
+                            if (rows[row].Count < column + 1)
+                                continue; //case when we last row with less items to fill all columns
+
                             var cell = rows[row][column];
 
                             SkiaControl child = null;

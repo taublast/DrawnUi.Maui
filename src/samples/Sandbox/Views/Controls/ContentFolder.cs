@@ -271,7 +271,7 @@ public class ContentFolder : ContentLayout
 #if SKIA3 
             paintWithShader.Shader = _compiledShader.ToShader(uniforms, _passTextures);
 #else
-            paintWithShader.Shader = _compiledShader.ToShader(false, uniforms, _passTextures),
+            paintWithShader.Shader = _compiledShader.ToShader(false, uniforms, _passTextures);
 #endif
 
             ctx.Canvas.DrawRect(destination, paintWithShader);

@@ -20,7 +20,7 @@ namespace DrawnUi.Maui.Draw
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]
     public partial class SkiaControl : VisualElement,
-        IHasAfterEffects, ISkiaControl, ISkiaAttachable,
+        IHasAfterEffects, ISkiaControl,
         IVisualTreeElement, IReloadHandler, IHotReloadableView
     {
         public SkiaControl()
@@ -3254,9 +3254,14 @@ namespace DrawnUi.Maui.Draw
         public virtual void ApplyBindingContext()
         {
 
-            foreach (var view in this.Views)
+            foreach (var content in this.Views)
             {
-                view.BindingContext = BindingContext;
+                content.BindingContext = BindingContext;
+            }
+
+            foreach (var content in this.VisualEffects)
+            {
+                content.BindingContext = BindingContext;
             }
 
             if (FillGradient != null)
@@ -4372,7 +4377,7 @@ namespace DrawnUi.Maui.Draw
 
             if (applyOpacity || isClipping || needTransform
                 || CustomizeLayerPaint != null
-                || VisualEffects?.Count > 0)
+                || (VisualEffects?.Count > 0 && !DisableEffects))
             {
                 ctx.Canvas.Save();
                 var restore = 0;
@@ -4390,27 +4395,43 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
 
-                if (applyOpacity || CustomizeLayerPaint != null || VisualEffects?.Count > 0)
+                if (applyOpacity || CustomizeLayerPaint != null || (VisualEffects?.Count > 0 && !DisableEffects))
                 {
-
-                    var effectColor = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
-                    var effectImage = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
 
                     var alpha = (byte)(0xFF / 1.0 * Opacity);
                     _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
+
+
+                    if (!DisableEffects)
+                    {
+                        var effectColor = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
+                        var effectImage = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
+
+                        if (effectImage != null)
+                            _paintWithOpacity.ImageFilter = effectImage.CreateFilter(destination);
+
+                        if (effectColor != null)
+                            _paintWithOpacity.ColorFilter = effectColor.CreateFilter(destination);
+                    }
+                    else
+                    {
+                        //todo dispose previous!!!
+                        _paintWithOpacity.ImageFilter = null;
+                        _paintWithOpacity.ColorFilter = null;
+                    }
 
                     if (CustomizeLayerPaint != null)
                     {
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
                     }
 
-                    if (effectImage != null)
-                        _paintWithOpacity.ImageFilter = effectImage.CreateFilter(destination);
-
-                    if (effectColor != null)
-                        _paintWithOpacity.ColorFilter = effectColor.CreateFilter(destination);
-
                     restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
+                }
+                else
+                {
+                    //todo dispose previous!!!
+                    _paintWithOpacity.ImageFilter = null;
+                    _paintWithOpacity.ColorFilter = null;
                 }
 
                 if (needTransform)
@@ -4481,19 +4502,31 @@ namespace DrawnUi.Maui.Draw
                     ctx.Canvas.ClipPath(_clipBounds, SKClipOperation.Intersect, true);
                 }
 
-                bool hasDrawnControl = false;
-                var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
-                if (renderers.Count > 0)
-                {
-                    foreach (var effect in renderers)
-                    {
-                        hasDrawnControl = effect.Draw(destination, ctx, draw);
-                    }
-                }
-
-                if (!hasDrawnControl)
+                if (DisableEffects)
                 {
                     draw(ctx);
+                }
+                else
+                {
+                    bool hasDrawnControl = false;
+                    var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
+                    var chainRestore = 0;
+                    if (renderers.Count > 0)
+                    {
+                        foreach (var effect in renderers)
+                        {
+                            var chainedEffectResult = effect.Draw(destination, ctx, draw);
+                            if (chainedEffectResult.DrawnControl)
+                                hasDrawnControl = true;
+                            if (chainedEffectResult.NeedRestoreToCount > 0)
+                                chainRestore = chainedEffectResult.NeedRestoreToCount;
+                        }
+                    }
+
+                    if (!hasDrawnControl)
+                    {
+                        draw(ctx);
+                    }
                 }
 
                 if (restore != 0)
@@ -5111,9 +5144,13 @@ namespace DrawnUi.Maui.Draw
                 {
                     _wasDrawn = value;
                     OnPropertyChanged();
+                    if (value)
+                        WasFirstTimeDrawn?.Invoke(this, null);
                 }
             }
         }
+
+        public event EventHandler WasFirstTimeDrawn;
 
         /// <summary>
         /// Create this control clip for painting content.
@@ -5796,6 +5833,15 @@ namespace DrawnUi.Maui.Draw
                 readonlyCollection.ToList());
         }
 
+        public static readonly BindableProperty DisableEffectsProperty = BindableProperty.Create(nameof(DisableEffects),
+            typeof(bool),
+            typeof(SkiaControl),
+            false, propertyChanged: NeedDraw);
+        public bool DisableEffects
+        {
+            get { return (bool)GetValue(DisableEffectsProperty); }
+            set { SetValue(DisableEffectsProperty, value); }
+        }
 
         #endregion
 
@@ -6271,32 +6317,32 @@ namespace DrawnUi.Maui.Draw
 
         public static readonly BindableProperty TemplatesProperty = BindableProperty.Create(
             nameof(Templates),
-            typeof(IList<ISkiaAttachable>),
+            typeof(IList<SkiaControl>),
             typeof(SkiaControl),
             defaultValueCreator: (instance) =>
             {
-                var created = new ObservableCollection<ISkiaAttachable>();
+                var created = new ObservableCollection<SkiaControl>();
                 ItemTemplateChanged(instance, null, created);
                 return created;
             },
-            validateValue: (bo, v) => v is IList<ISkiaAttachable>,
+            validateValue: (bo, v) => v is IList<SkiaControl>,
             propertyChanged: ItemTemplateChanged,
             coerceValue: CoerceTemplates);
 
-        public IList<ISkiaAttachable> Templates
+        public IList<SkiaControl> Templates
         {
-            get => (IList<ISkiaAttachable>)GetValue(TemplatesProperty);
+            get => (IList<SkiaControl>)GetValue(TemplatesProperty);
             set => SetValue(TemplatesProperty, value);
         }
 
         private static object CoerceTemplates(BindableObject bindable, object value)
         {
-            if (!(value is ReadOnlyCollection<ISkiaAttachable> readonlyCollection))
+            if (!(value is ReadOnlyCollection<SkiaControl> readonlyCollection))
             {
                 return value;
             }
 
-            return new ReadOnlyCollection<ISkiaAttachable>(
+            return new ReadOnlyCollection<SkiaControl>(
                 readonlyCollection.ToList());
         }
 
@@ -6325,20 +6371,20 @@ namespace DrawnUi.Maui.Draw
 
         public static readonly BindableProperty ChildrenProperty = BindableProperty.Create(
             nameof(Children),
-            typeof(IList<ISkiaAttachable>),
+            typeof(IList<SkiaControl>),
             typeof(SkiaControl),
             defaultValueCreator: (instance) =>
             {
-                var created = new ObservableCollection<ISkiaAttachable>();
+                var created = new ObservableCollection<SkiaControl>();
                 ChildrenPropertyChanged(instance, null, created);
                 return created;
             },
-            validateValue: (bo, v) => v is IList<ISkiaAttachable>,
+            validateValue: (bo, v) => v is IList<SkiaControl>,
             propertyChanged: ChildrenPropertyChanged);
 
-        public IList<ISkiaAttachable> Children
+        public IList<SkiaControl> Children
         {
-            get => (IList<ISkiaAttachable>)GetValue(ChildrenProperty);
+            get => (IList<SkiaControl>)GetValue(ChildrenProperty);
             set => SetValue(ChildrenProperty, value);
         }
 
@@ -6350,10 +6396,8 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected void AddOrRemoveView(ISkiaAttachable child, bool add)
+        protected void AddOrRemoveView(SkiaControl subView, bool add)
         {
-            SkiaControl subView = child.AttachControl;
-
             if (subView != null)
             {
                 if (add)
@@ -6368,7 +6412,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public virtual void SetChildren(IEnumerable<ISkiaAttachable> views)
+        public virtual void SetChildren(IEnumerable<SkiaControl> views)
         {
             ClearChildren();
             foreach (var child in views)
@@ -6382,11 +6426,11 @@ namespace DrawnUi.Maui.Draw
             if (bindable is SkiaControl skiaControl)
             {
 
-                var enumerableChildren = (IEnumerable<ISkiaAttachable>)newvalue;
+                var enumerableChildren = (IEnumerable<SkiaControl>)newvalue;
 
                 if (oldvalue != null)
                 {
-                    var oldViews = (IEnumerable<ISkiaAttachable>)oldvalue;
+                    var oldViews = (IEnumerable<SkiaControl>)oldvalue;
 
                     if (oldvalue is INotifyCollectionChanged oldCollection)
                     {
@@ -6436,7 +6480,7 @@ namespace DrawnUi.Maui.Draw
             switch (e.Action)
             {
             case NotifyCollectionChangedAction.Add:
-            foreach (ISkiaAttachable newChildren in e.NewItems)
+            foreach (SkiaControl newChildren in e.NewItems)
             {
                 AddOrRemoveView(newChildren, true);
             }
@@ -6444,7 +6488,7 @@ namespace DrawnUi.Maui.Draw
 
             case NotifyCollectionChangedAction.Reset:
             case NotifyCollectionChangedAction.Remove:
-            foreach (ISkiaAttachable oldChildren in e.OldItems ?? Array.Empty<ISkiaAttachable>())
+            foreach (SkiaControl oldChildren in e.OldItems ?? Array.Empty<SkiaControl>())
             {
                 AddOrRemoveView(oldChildren, false);
             }

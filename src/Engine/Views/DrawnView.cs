@@ -1883,7 +1883,7 @@ namespace DrawnUi.Maui.Views
             InvalidateViewsList();
         }
 
-        public virtual void SetChildren(IEnumerable<ISkiaAttachable> views)
+        public virtual void SetChildren(IEnumerable<SkiaControl> views)
         {
             ClearChildren();
             foreach (var child in views)
@@ -1953,30 +1953,28 @@ namespace DrawnUi.Maui.Views
 
         public static readonly BindableProperty ChildrenProperty = BindableProperty.Create(
             nameof(Children),
-            typeof(IList<ISkiaAttachable>),
+            typeof(IList<SkiaControl>),
             typeof(DrawnView),
             defaultValueCreator: (instance) =>
             {
-                var created = new ObservableCollection<ISkiaAttachable>();
+                var created = new ObservableCollection<SkiaControl>();
                 ChildrenPropertyChanged(instance, null, created);
                 return created;
             },
-            validateValue: (bo, v) => v is IList<ISkiaAttachable>,
+            validateValue: (bo, v) => v is IList<SkiaControl>,
             propertyChanged: ChildrenPropertyChanged);
 
 
-        public IList<ISkiaAttachable> Children
+        public IList<SkiaControl> Children
         {
-            get => (IList<ISkiaAttachable>)GetValue(ChildrenProperty);
+            get => (IList<SkiaControl>)GetValue(ChildrenProperty);
             set => SetValue(ChildrenProperty, value);
         }
 
 #pragma warning restore NU1605, CS0108
 
-        protected void AddOrRemoveView(ISkiaAttachable child, bool add)
+        protected void AddOrRemoveView(SkiaControl subView, bool add)
         {
-            SkiaControl subView = child.AttachControl;
-
             if (subView != null)
             {
                 if (add)
@@ -1998,11 +1996,11 @@ namespace DrawnUi.Maui.Views
         {
             if (bindable is DrawnView skiaControl)
             {
-                var enumerableChildren = (IEnumerable<ISkiaAttachable>)newvalue;
+                var enumerableChildren = (IEnumerable<SkiaControl>)newvalue;
 
                 if (oldvalue != null)
                 {
-                    var oldViews = (IEnumerable<ISkiaAttachable>)oldvalue;
+                    var oldViews = (IEnumerable<SkiaControl>)oldvalue;
 
                     if (oldvalue is INotifyCollectionChanged oldCollection)
                     {

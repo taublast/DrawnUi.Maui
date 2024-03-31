@@ -23,7 +23,7 @@ public partial class SpaceShooter
                 SpeedRatio = 0.9f + enemySpriteCounter * 2 / 10f, //random speed
                 ColorTint = Color.Parse("#22110022"), //tinted a bit for our game
                 ZIndex = 4,
-                UseCache = SkiaCacheType.GPU,
+                UseCache = SkiaCacheType.Image,
                 WidthRequest = 50,
                 HeightRequest = 44,
                 AddEffect = SkiaImageEffect.Tint,

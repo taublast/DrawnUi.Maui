@@ -8,14 +8,11 @@
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
-    <UseSkiaSharp3>true</UseSkiaSharp3>
+    
+    <UseSkiaSharp3>false</UseSkiaSharp3>
     
 		<!-- Display name -->
 		<ApplicationTitle>Sandbox</ApplicationTitle>
-
-		<!-- App Identifier -->
-		<ApplicationId>com.companyname.sandbox</ApplicationId>
-		<ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3d69b3</ApplicationIdGuid>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -28,8 +25,8 @@
 	</PropertyGroup>
 
   <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
-    <ApplicationId>com.companyname.sandbox</ApplicationId>
-    <ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3d69b3</ApplicationIdGuid>    
+    <ApplicationId>com.companyname.sandbox2</ApplicationId>
+    <ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3269b3</ApplicationIdGuid>    
   </PropertyGroup>
   
     <PropertyGroup Condition="'$(UseSkiaSharp3)' == 'true'">
@@ -159,6 +156,7 @@
 
     <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Remove="Models\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -224,11 +222,25 @@
   </ItemGroup>
 
 
-
-  <ItemGroup>
-    <Folder Include="Models\" />
+  <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+    <PackageReference Include="BruTile" Version="5.0.6" />
+    <PackageReference Include="Mapsui.ArcGIS" Version="5.0.0-beta.1" />
+    <PackageReference Include="Mapsui.Extensions" Version="5.0.0-beta.1" />
+    <PackageReference Include="BruTile.MbTiles" Version="5.0.6" />
+    <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.1" />
   </ItemGroup>
 
 
+  <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
+    <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
+    <Compile Remove="Views\MainPageMap.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageMap.xaml" />
+    <Compile Remove="Views\Controls\SkiaMapControl.cs" />
+    <Compile Remove="Views\Controls\SkiaMapRenderer.cs" />
+    <Compile Remove="Views\Controls\DrawnUiRasterStyleRenderer.cs" />
+  </ItemGroup>
 
+ 
 </Project>
+ 

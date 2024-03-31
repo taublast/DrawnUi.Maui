@@ -3,6 +3,7 @@
     x:Class="MauiNet8.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="using:Sandbox.Views.Controls"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Collections"
     xmlns:sandbox="clr-namespace:Sandbox"
@@ -56,7 +57,7 @@
                                     Color="#FF2222" />
 
                                 <!--  local  -->
-                                <draw:DropShadowsEffect>
+                                <draw:ChainDropShadowsEffect>
                                     <draw:SkiaShadow
                                         Blur="3"
                                         Opacity="1"
@@ -69,9 +70,9 @@
                                         X="4"
                                         Y="4"
                                         Color="#0000FF" />
-                                </draw:DropShadowsEffect>
+                                </draw:ChainDropShadowsEffect>
 
-                                <draw:IsolatedColorPresetEffect Preset="Sepia" />
+                                <draw:ChainColorPresetEffect Preset="Sepia" />
 
                             </draw:SkiaControl.VisualEffects>
                         </draw:SkiaImage>
@@ -94,6 +95,27 @@
                             </draw:SkiaControl.VisualEffects>
                         </draw:SkiaLabel>
 
+                        <!--<controls:SkiaSwitchFun
+                            HorizontalOptions="Center"
+                            UseCache="Image" />-->
+
+                        <!--<controls:SkiaColorPicker
+                            BackgroundColor="Black"
+                            ColorFlowDirection="Vertical"
+                            ColorSpectrumStyle="TintToHueToShadeStyle"
+                            HeightRequest="100"
+                            HorizontalOptions="Center"
+                            WidthRequest="200" />-->
+
+                        <controls:SkiaSliderFun
+                            End="{Binding Value2, Mode=TwoWay}"
+                            HorizontalOptions="Center"
+                            Max="2"
+                            Min="0"
+                            MinMaxStringFormat="P0"
+                            Step="0.01"
+                            UseCache="Image"
+                            WidthRequest="200" />
 
                         <draw:SkiaLayout
                             x:Name="Buttons"

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<draw:SkiaSwitch
+    x:Class="Sandbox.Views.Controls.SkiaSwitchFun"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    x:Name="ThisControl"
+    ColorFrameOff="Transparent"
+    ColorFrameOn="{StaticResource ColorPrimary}"
+    ColorThumbOff="{StaticResource ColorPrimary}"
+    ColorThumbOn="{StaticResource ColorPrimary}"
+    HeightRequest="28"
+    WidthRequest="50">
+
+    <draw:SkiaShape
+        Margin="4,8"
+        CornerRadius="20"
+        HorizontalOptions="Fill"
+        StrokeColor="{StaticResource ColorPrimaryDark}"
+        StrokeWidth="2"
+        Tag="Frame"
+        Type="Rectangle"
+        VerticalOptions="Fill" />
+
+    <draw:SkiaShape
+        x:Name="ThumbRef"
+        Margin="4,0"
+        HorizontalOptions="Start"
+        LockRatio="1"
+        Tag="Thumb"
+        Type="Circle"
+        VerticalOptions="Start"
+        WidthRequest="26">
+
+        <draw:SkiaShape.Shadows>
+
+            <draw:SkiaShadow
+                Blur="2"
+                Opacity="0.5"
+                X="1"
+                Y="1"
+                Color="Black" />
+
+        </draw:SkiaShape.Shadows>
+
+        <draw:SkiaShape
+            BackgroundColor="White"
+            HorizontalOptions="Center"
+            LockRatio="1"
+            Type="Circle"
+            VerticalOptions="Center"
+            WidthRequest="6" />
+
+    </draw:SkiaShape>
+
+    <draw:SkiaHotspot
+        Tapped="OnTapped"
+        TransformView="{x:Reference ThumbRef}" />
+
+</draw:SkiaSwitch>
+

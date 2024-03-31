@@ -407,8 +407,15 @@ public partial class Super
         var tcs = new TaskCompletionSource();
         MainThread.InvokeOnMainThreadAsync(() =>
         {
-            action();
-            tcs.SetResult();
+            try
+            {
+                action();
+                tcs.SetResult();
+            }
+            catch (Exception e)
+            {
+                tcs.SetException(e);
+            }
         });
         tcs.Task.Wait();
     }

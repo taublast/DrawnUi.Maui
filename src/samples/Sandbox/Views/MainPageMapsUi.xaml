@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Sandbox.Views.MainPageMapsUi"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:maui="clr-namespace:Mapsui.Samples.Maui"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style
+                x:Key="SkiaStyleControlInTable"
+                TargetType="draw:SkiaControl">
+                <Setter Property="MarginLeft" Value="120" />
+            </Style>
+
+            <Style
+                x:Key="SkiaStyleControlContainer"
+                TargetType="draw:SkiaLayout">
+                <Setter Property="HeightRequest" Value="44" />
+                <Setter Property="HorizontalOptions" Value="Fill" />
+                <Setter Property="UseCache" Value="Image" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <draw:Canvas
+        Gestures="Enabled"
+        HardwareAcceleration="Enabled"
+        HorizontalOptions="Fill"
+        Tag="MainPage"
+        VerticalOptions="Fill">
+
+
+        <draw:SkiaLayout
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+ 
+
+                <!--  GRID  -->
+                <draw:SkiaLayout
+                    HorizontalOptions="Fill"
+                    RowDefinitions="50, *"
+                    Type="Grid"
+                    UseCache="None"
+                    VerticalOptions="Fill">
+
+                    <draw:SkiaLabel
+                        FontAttributes="Bold"
+                        HorizontalOptions="Center"
+                        LockRatio="1"
+                        Text="MAPSUI"
+                        TextColor="Wheat"
+                        UseCache="Operations"
+                        VerticalOptions="Center" />
+
+                    <!--<maui:SkiaMapControl
+                        x:Name="mapControl"
+                        Grid.Row="1"
+                        BackgroundColor="Black"
+                        DisableEffects="{Binding ValueSwitch, Converter={x:StaticResource NotConverter}}"
+                        HorizontalOptions="Fill"
+                        UseCache="Image"
+                        VerticalOptions="Fill">
+                        <draw:SkiaControl.VisualEffects>
+
+                            <draw:AdjustRGBEffect
+                                x:DataType="demo:MainPageViewModel"
+                                Blue="{Binding Value5}"
+                                Green="{Binding Value4}"
+                                Red="{Binding Value3}" />
+
+                            <draw:ChainAdjustContrastEffect
+                                x:DataType="demo:MainPageViewModel"
+                                Value="{Binding Value1}" />
+
+                            <draw:ChainAdjustBrightnessEffect
+                                x:DataType="demo:MainPageViewModel"
+                                Value="{Binding Value2}" />
+
+                            <draw:ChainSaturationEffect
+                                x:DataType="demo:MainPageViewModel"
+                                Value="{Binding Value6}" />
+
+
+                        </draw:SkiaControl.VisualEffects>
+                    </maui:SkiaMapControl>-->
+
+                    <!--<draw:SkiaLayout
+                        Grid.Row="2"
+                        Margin="20"
+                        HorizontalOptions="Fill"
+                        RowSpacing="0"
+                        Spacing="0"
+                        Type="Column"
+                        UseCache="Image"
+                        VerticalOptions="Start">
+
+                        --><!--  Switch  --><!--
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Text="{Binding ValueSwitch, StringFormat='Effects: {0}'}"
+                                TextColor="Gray"
+                                VerticalOptions="Center" />
+                            <controls:SkiaSwitchFun
+                                IsToggled="{Binding ValueSwitch, Mode=TwoWay}"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image"
+                                VerticalOptions="Center" />
+                        </draw:SkiaLayout>
+
+                        --><!--  Brightness  --><!--
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Text="{Binding Value2, StringFormat='Brightness: {0:0.00}'}"
+                                TextColor="Gray"
+                                VerticalOptions="Center" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value2, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="2"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image"
+                                VerticalOptions="Center" />
+                        </draw:SkiaLayout>
+
+                        --><!--  Contrast  --><!--
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Text="{Binding Value1, StringFormat='Contrast: {0:0.00}'}"
+                                TextColor="Gray"
+                                VerticalOptions="Center" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value1, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="3"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image"
+                                VerticalOptions="Center" />
+                        </draw:SkiaLayout>
+
+                        --><!--  Saturation  --><!--
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Text="{Binding Value6, StringFormat='Saturation: {0:0.00}'}"
+                                TextColor="Gray"
+                                VerticalOptions="Center" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value6, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="2"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image"
+                                VerticalOptions="Center" />
+                        </draw:SkiaLayout>
+
+                        --><!--  Red  --><!--
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Text="{Binding Value3, StringFormat='Red: {0:0.00}'}"
+                                TextColor="Gray"
+                                VerticalOptions="Center" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value3, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="2"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image"
+                                VerticalOptions="Center" />
+                        </draw:SkiaLayout>
+
+                        --><!--  Green  --><!--
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Text="{Binding Value4, StringFormat='Green: {0:0.00}'}"
+                                TextColor="Gray"
+                                VerticalOptions="Center" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value4, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="2"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image"
+                                VerticalOptions="Center" />
+                        </draw:SkiaLayout>
+
+                        --><!--  Blue  --><!--
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Text="{Binding Value5, StringFormat='Blue: {0:0.00}'}"
+                                TextColor="Gray"
+                                VerticalOptions="Center" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value5, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="2"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image"
+                                VerticalOptions="Center" />
+                        </draw:SkiaLayout>
+
+
+                    </draw:SkiaLayout>-->
+
+                </draw:SkiaLayout>
+
+     
+
+            <controls:ButtonToRoot />
+
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
+
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
+
+</ContentPage>

@@ -204,7 +204,7 @@
                 BackgroundColor="Black"
                 FontSize="20"
                 Text="{Binding IsOpen}"
-                TextColor="Red" />
+                TextColor="White" />
 
             <controls:ButtonToRoot />
 

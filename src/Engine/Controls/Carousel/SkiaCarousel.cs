@@ -4,6 +4,7 @@ using DrawnUi.Maui.Draw;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Numerics;
+using SkiaControl = DrawnUi.Maui.Draw.SkiaControl;
 
 namespace DrawnUi.Maui.Controls;
 
@@ -329,25 +330,20 @@ public class SkiaCarousel : SnappingLayout
         }
     }
 
-
-
     public override object CreateContentFromTemplate()
     {
-        var created = base.CreateContentFromTemplate();
-        SkiaControl control;
-        if (created is ISkiaAttachable element)
+        try
         {
-            control = element.AttachControl;
+            var control = base.CreateContentFromTemplate() as SkiaControl;
+            AdaptTemplate(control);
+            return control;
         }
-        else
+        catch (Exception e)
         {
-            control = created as SkiaControl;
+            Super.Log(e);
+            return null;
         }
-
-        AdaptTemplate(control);
-        return control;
     }
-
 
     SemaphoreSlim semaphoreItemSouce = new(1);
 
@@ -1184,7 +1180,7 @@ public class SkiaCarousel : SnappingLayout
             useVelocity = (float)(args.Distance.Velocity.Y / RenderingScale);
             velocity = new(0, useVelocity);
         }
-        
+
         //record velocity
         VelocityAccumulator.CaptureVelocity(velocity);
 

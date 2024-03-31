@@ -1,10 +1,28 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public class BaseRenderEffect : SkiaEffect, IRenderEffect
+public class BaseChainedEffect : SkiaEffect, IRenderEffect
 {
-    public virtual bool Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public SKPaint Paint { get; set; }
+
+    public virtual ChainEffectResult Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
     {
-        return false;
+        return ChainEffectResult.Default;
     }
 
+    public override void Update()
+    {
+        var kill = Paint;
+        Paint = null;
+        kill?.Dispose();
+
+        base.Update();
+    }
+
+    protected override void OnDisposing()
+    {
+        Paint?.Dispose();
+
+        base.OnDisposing();
+    }
 }
+

@@ -158,14 +158,8 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     {
         if (this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
         {
-            try
-            {
-                InvalidateSurface();
-            }
-            catch (Exception e)
-            {
-                Super.Log(e);
-            }
+            IsDrawing = true;
+            InvalidateSurface();
         }
     }
 
