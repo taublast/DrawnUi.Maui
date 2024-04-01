@@ -117,7 +117,7 @@ namespace DrawnUi.Maui.Controls
 
         void OnInsetsChanged(object sender, EventArgs e)
         {
-            OnNavBarInvalidated();
+            OnLayoutInvalidated();
         }
 
         public SkiaControl ShellLayout { get; set; }
@@ -2312,23 +2312,58 @@ namespace DrawnUi.Maui.Controls
 
         public event EventHandler<ShellNavigatingEventArgs> Navigating;
 
-        public void InvalidateNavBar()
+        public void UpdateLayout()
         {
-            OnNavBarInvalidated();
+            OnLayoutInvalidated();
         }
 
-        public virtual void OnNavBarInvalidated()
+        public virtual void OnLayoutInvalidated()
         {
             //todo add navigation model stuff
 
             //todo invalidate and update
+            TopInsets = Super.StatusBarHeight;
+            BottomInsets = Super.Screen.BottomInset;
+        }
+
+        private double _BottomInsets;
+        public double BottomInsets
+        {
+            get
+            {
+                return _BottomInsets;
+            }
+            set
+            {
+                if (_BottomInsets != value)
+                {
+                    _BottomInsets = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _TopInsets;
+        public double TopInsets
+        {
+            get
+            {
+                return _TopInsets;
+            }
+            set
+            {
+                if (_TopInsets != value)
+                {
+                    _TopInsets = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public event EventHandler<RotationEventArgs> OnRotation;
 
         public event EventHandler<IndexArgs> TabReselected;
         public ObservableCollection<MenuPageItem> MenuItems { get; } = new ObservableCollection<MenuPageItem>();
-
 
         #endregion
 

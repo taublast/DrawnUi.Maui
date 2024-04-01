@@ -26,32 +26,6 @@ using System.Threading;
 
 namespace Mapsui.Samples.Maui;
 
-//public partial class SkiaMapControl : SkiaControl, IMapControl
-//{
-//    protected override void OnLayoutReady()
-//    {
-//        base.OnLayoutReady();
-
-//        AfterSetMap(this.Map);
-//    }
-
-//    private double ViewportWidth => DrawingRect.Width / RenderingScale;
-//    private double ViewportHeight => DrawingRect.Height / RenderingScale;
-
-//    protected virtual bool GetShiftPressed()
-//    {
-//        //todo on platform
-
-//        return false;
-//    }
-
-//    public void OpenInBrowser(string url)
-//    {
-//        //todo on platform
-
-//    }
-//}
-
 public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureListener
 {
 
@@ -89,8 +63,6 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
         };
 
     }
-
-
 
 
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
@@ -187,7 +159,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
             {
                 if (_lastPinch != 0)
                 {
-                    var delta = (int)Math.Round((args.Pinch.Scale - _lastPinch) * RenderingScale * 10);
+                    var delta = (int)Math.Round(((args.Pinch.Scale - _lastPinch) / RenderingScale) * 10);
                     _lastPinch = args.Pinch.Scale;
 
                     if (delta != 0)
@@ -196,7 +168,6 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
                         position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
 
-                        Super.Log($"[PINCH] delta {delta}");
                         OnZoomInOrOut(delta, position);
                     }
 

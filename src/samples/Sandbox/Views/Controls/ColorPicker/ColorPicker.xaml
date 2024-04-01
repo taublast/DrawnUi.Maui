@@ -16,7 +16,6 @@
     WidthRequest="250">
 
     <controls:SkiaColorPicker
-        PickedColorChanged ="ColorsPanelSelectionChanged"
         x:Name="ColorsPanel"
         Grid.Column="1"
         BackgroundColor="Black"
@@ -24,7 +23,8 @@
         ColorSpectrumStyle="HueToShadeStyle"
         ColorsBlendMode="SrcOver"
         HorizontalOptions="Fill"
-        UseCache="Image"
+        PickedColorChanged="ColorsPanelSelectionChanged"
+        UseCache="{Binding Source={x:Reference ThisControl}, Path=UseCache}"
         VerticalOptions="Fill">
         <!--<controls:SkiaColorPicker.SelectionColors>
             <Color>#FFFFFF</Color>
@@ -33,15 +33,16 @@
     </controls:SkiaColorPicker>
 
     <controls:SliderColor
-        EndChanged="OnSliderValueChanged"
+        x:Name="Slider"
         Grid.Row="1"
         Grid.ColumnSpan="2"
+        EndChanged="OnSliderValueChanged"
         HorizontalOptions="Fill"
         Max="1"
         Min="0"
         MinMaxStringFormat="P0"
         Step="0.001"
-        UseCache="Image" />
+        UseCache="{Binding Source={x:Reference ThisControl}, Path=UseCache}" />
 
     <draw:SkiaControl
         BackgroundColor="{Binding Source={x:Reference ThisControl}, Path=SelectedColor}"

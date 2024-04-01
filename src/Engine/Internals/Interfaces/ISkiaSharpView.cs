@@ -3,9 +3,9 @@
 public interface ISkiaSharpView
 {
     /// <summary>
-    /// Safe InvalidateSurface() call
+    /// Safe InvalidateSurface() call. If nanos not specified will generate ittself
     /// </summary>
-    public void Update();
+    public void Update(long nanos = 0);
 
     public void SignalFrame(long nanoseconds);
 

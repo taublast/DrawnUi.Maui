@@ -49,9 +49,7 @@ public partial class Super
 
         VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
 
-
-
-        Tasks.StartDelayed(TimeSpan.FromMilliseconds(500), async () =>
+        Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
         {
             _frameCallback = new FrameCallback((nanos) =>
             {

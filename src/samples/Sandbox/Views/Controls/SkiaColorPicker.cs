@@ -118,15 +118,14 @@ public partial class SkiaColorPicker : SkiaLayout
 
                     using (var bitmap = SKBitmap.FromImage(Panel.RenderObject.Image))
                     {
-                        var x = (int)Math.Round(child.TranslationX * scale);
-                        var y = (int)Math.Round(child.TranslationY * scale);
+                        var x = (int)Math.Round((child.TranslationX + child.Width / 2) * scale);
+                        var y = (int)Math.Round((child.TranslationY + child.Height / 2) * scale);
 
-                        // Ensure x and y are within the bounds of the image
-                        if (x >= 0 && y >= 0 && x < bitmap.Width && y < bitmap.Height)
-                        {
-                            touchPointColor = bitmap.GetPixel(x, y);
-                            PickedColor = touchPointColor.ToMauiColor();
-                        }
+                        x = Math.Clamp(x, 0, bitmap.Width - 1);
+                        y = Math.Clamp(y, 0, bitmap.Height - 1);
+
+                        touchPointColor = bitmap.GetPixel(x, y);
+                        PickedColor = touchPointColor.ToMauiColor();
                     }
 
                 }

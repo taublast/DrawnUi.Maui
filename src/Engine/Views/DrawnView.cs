@@ -398,7 +398,7 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public Dictionary<Guid, ISkiaAnimator> AnimatingControls { get; } = new(512);
 
-        protected int ExecuteAnimators()
+        protected int ExecuteAnimators(long nanos)
         {
 
             var executed = 0;
@@ -431,7 +431,7 @@ namespace DrawnUi.Maui.Views
                             if (skiaAnimation.IsPaused)
                                 skiaAnimation.Resume(); //continue anim from current time instead of the old one
 
-                            skiaAnimation.TickFrame(CanvasView.FrameTime);
+                            skiaAnimation.TickFrame(nanos);
                             executed++;
                         }
                         else
@@ -1532,7 +1532,7 @@ namespace DrawnUi.Maui.Views
                         }
                     }
 
-                    var executed = ExecuteAnimators();
+                    var executed = ExecuteAnimators(context.FrameTimeNanos);
 
                     if (this.Width > 0 && this.Height > 0)
                     {

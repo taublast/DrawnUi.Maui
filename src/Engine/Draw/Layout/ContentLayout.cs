@@ -168,9 +168,9 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
         return;
     }
 
-    protected override void OnBindingContextChanged()
+    public override void ApplyBindingContext()
     {
-        base.OnBindingContextChanged();
+        base.ApplyBindingContext();
 
         if (this.Content != null)
         {

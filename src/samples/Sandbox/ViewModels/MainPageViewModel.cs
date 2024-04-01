@@ -8,6 +8,23 @@ namespace Sandbox
     class MainPageViewModel : BindableObject
     {
 
+        private Color _selectedColor = Colors.Lime;
+        public Color SelectedColor
+        {
+            get
+            {
+                return _selectedColor;
+            }
+            set
+            {
+                if (_selectedColor != value)
+                {
+                    _selectedColor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         private string _Search = "Cocc";
         public string Search
@@ -141,6 +158,21 @@ namespace Sandbox
                 SelectedIndex = 0;
         });
 
+        public double DrawerHeaderSize
+        {
+            get
+            {
+                return Super.Screen.BottomInset + 40;
+            }
+        }
+
+        public double BottomInsets
+        {
+            get
+            {
+                return Super.Screen.BottomInset;
+            }
+        }
 
         private bool _IsOpen;
         public bool IsOpen

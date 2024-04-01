@@ -37,14 +37,16 @@
                         Type="Column"
                         UseCache="Image">
 
+                        <!--we set GPU to be able to fast change effects at runtime-->
                         <draw:SkiaImage
+                            Tag="Car"
                             Aspect="AspectFit"
                             HeightRequest="185"
                             HorizontalOptions="Center"
                             LoadSourceOnFirstDraw="False"
                             SemanticProperties.Description="dot net bot in a race car number eight"
                             Source="car.png"
-                            UseCache="Image">
+                            UseCache="GPU">
                             <draw:SkiaControl.VisualEffects>
 
                                 <!--<draw:BlurEffect Amount="5" />-->
@@ -54,11 +56,12 @@
                                     Blur="8"
                                     X="1"
                                     Y="2"
-                                    Color="#FF2222" />
+                                    Color="{Binding SelectedColor}" />
 
                                 <!--  local  -->
                                 <draw:ChainDropShadowsEffect>
                                     <draw:SkiaShadow
+                                        Tag="Watch"
                                         Blur="3"
                                         Opacity="1"
                                         X="-4"
@@ -101,11 +104,12 @@
                             </draw:SkiaLabel>
                         </draw:SkiaLayout>
 
-                        <!--<controls:SkiaSwitchFun
-                            HorizontalOptions="Center"
-                            UseCache="Image" />-->
-
-                        <controls:ColorPicker HorizontalOptions="Center" />
+                        <controls:ColorPicker 
+                            UseCache="GPU"
+                            DefaultColor="#00FF00"
+                            SelectedColor="{Binding SelectedColor}"
+                            Margin="0,0,0,16"
+                            HorizontalOptions="Center" />
 
                         <draw:SkiaLayout
                             x:Name="Buttons"

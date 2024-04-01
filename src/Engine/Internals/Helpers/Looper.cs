@@ -68,8 +68,7 @@ public class Looper : IDisposable
             {
                 timeToWait = 1;
             }
-            if (timeToWait > 0)
-                await Task.Delay(TimeSpan.FromMilliseconds(timeToWait));
+            await Task.Delay(TimeSpan.FromMilliseconds(timeToWait));
             //Thread.Sleep(TimeSpan.FromMilliseconds(timeToWait));
 
             lastFrameEnd = loopStopwatch.ElapsedMilliseconds;

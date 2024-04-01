@@ -2668,11 +2668,11 @@ namespace DrawnUi.Maui.Draw
             return;
         }
 
-        protected override void OnBindingContextChanged()
+        public override void ApplyBindingContext()
         {
-            base.OnBindingContextChanged();
+            base.ApplyBindingContext();
 
-            if (this.Content != null && Content.BindingContext == null)
+            if (this.Content != null && Content.BindingContext == null) //todo remove this last condition!
             {
                 Content.BindingContext = BindingContext;
             }

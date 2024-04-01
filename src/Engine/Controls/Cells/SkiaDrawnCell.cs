@@ -67,12 +67,7 @@ public class SkiaDrawnCell : SkiaLayout, ISkiaCell
         }
     }
 
-    protected override void OnBindingContextChanged()
-    {
-        base.OnBindingContextChanged();
 
-        ApplyBindingContext();
-    }
 
 
 

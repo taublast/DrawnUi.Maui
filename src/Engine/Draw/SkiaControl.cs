@@ -3261,7 +3261,7 @@ namespace DrawnUi.Maui.Draw
 
             foreach (var content in this.VisualEffects)
             {
-                content.BindingContext = BindingContext;
+                content.Attach(this);
             }
 
             if (FillGradient != null)
@@ -3815,18 +3815,6 @@ namespace DrawnUi.Maui.Draw
 
 
 
-
-        public SkiaDrawingContext CreateContext(SKCanvas canvas)
-        {
-            return new SkiaDrawingContext()
-            {
-                FrameTimeNanos = Superview.CanvasView.FrameTime,
-                Canvas = canvas,
-                Width = canvas.DeviceClipBounds.Width,
-                Height = canvas.DeviceClipBounds.Height,
-            };
-        }
-
         public virtual void OnBeforeMeasure()
         {
 
@@ -4227,7 +4215,9 @@ namespace DrawnUi.Maui.Draw
                 RenderObjectNeedsUpdate = false;
                 if (_renderObjectPrevious != value)
                 {
+                    var kill = _renderObjectPrevious;
                     _renderObjectPrevious = value;
+                    kill?.Dispose();
                 }
             }
         }
@@ -4790,17 +4780,10 @@ namespace DrawnUi.Maui.Draw
                     {
                         action.Invoke();
 
-                        var kill = RenderObjectPrevious;
                         RenderObject = RenderObjectPreparing;
                         _renderObjectPreparing = null;
 
                         Repaint();
-
-                        if (kill != null)
-                        {
-                            kill.Surface = null; //do not dispose surface we are reusing it
-                            //DisposeObject(kill); //todo this leads to occasional crashes when ctx changing fast!!!
-                        }
 
                         action = _offscreenCacheRenderingQueue.Pop();
                     }
@@ -5787,6 +5770,7 @@ namespace DrawnUi.Maui.Draw
 
         private void EffectsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+
             switch (e.Action)
             {
             case NotifyCollectionChangedAction.Add:
@@ -5817,7 +5801,11 @@ namespace DrawnUi.Maui.Draw
             defaultValueCreator: (instance) =>
             {
                 var created = new ObservableCollection<SkiaEffect>();
-                EffectsPropertyChanged(instance, null, created);
+                //EffectsPropertyChanged(instance, null, created);
+                if (instance is SkiaControl control)
+                {
+                    created.CollectionChanged += control.EffectsCollectionChanged;
+                }
                 return created;
             },
             validateValue: (bo, v) => v is IList<SkiaEffect>,

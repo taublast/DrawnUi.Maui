@@ -91,7 +91,20 @@ public partial class SkiaImageManager : IDisposable
                 }
 
                 // Await all the preload tasks at once.
-                await Task.WhenAll(tasks);
+                using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancel.Token);
+
+                if (tasks.Count > 0)
+                {
+
+                    var cancellationCompletionSource = new TaskCompletionSource<bool>();
+                    cts.Token.Register(() => cancellationCompletionSource.TrySetResult(true));
+
+                    var whenAnyTask = Task.WhenAny(Task.WhenAll(tasks), cancellationCompletionSource.Task);
+
+                    await whenAnyTask;
+
+                    cts.Token.ThrowIfCancellationRequested();
+                }
             }
         }
         catch (Exception e)
@@ -123,8 +136,21 @@ public partial class SkiaImageManager : IDisposable
                     }
                 }
 
-                // Await all the preload tasks at once.
-                await Task.WhenAll(tasks);
+                //await Task.WhenAll(tasks);
+                using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancel.Token);
+
+                if (tasks.Count > 0)
+                {
+
+                    var cancellationCompletionSource = new TaskCompletionSource<bool>();
+                    cts.Token.Register(() => cancellationCompletionSource.TrySetResult(true));
+
+                    var whenAnyTask = Task.WhenAny(Task.WhenAll(tasks), cancellationCompletionSource.Task);
+
+                    await whenAnyTask;
+
+                    cts.Token.ThrowIfCancellationRequested();
+                }
             }
         }
         catch (Exception e)

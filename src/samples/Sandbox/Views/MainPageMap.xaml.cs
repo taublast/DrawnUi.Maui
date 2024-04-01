@@ -1,10 +1,17 @@
-﻿using Mapsui;
+﻿using BruTile;
+using BruTile.Cache;
+using BruTile.Predefined;
+using BruTile.Web;
+using Mapsui;
 using Mapsui.ArcGIS.DynamicProvider;
 using Mapsui.Extensions;
 using Mapsui.Projections;
 using Mapsui.Samples.Maui;
 using Mapsui.Styles;
 using Mapsui.Tiling;
+using Mapsui.Tiling.Fetcher;
+using Mapsui.Tiling.Layers;
+using Mapsui.Tiling.Rendering;
 using Mapsui.Widgets.ButtonWidgets;
 
 namespace Sandbox.Views
@@ -32,6 +39,37 @@ namespace Sandbox.Views
 
         bool once;
 
+        public static class OpenCustomStreetMap
+        {
+            public class CustomizedLayer : TileLayer
+            {
+                public CustomizedLayer(ITileSource tileSource, int minTiles = 200, int maxTiles = 300, IDataFetchStrategy dataFetchStrategy = null, IRenderFetchStrategy renderFetchStrategy = null, int minExtraTiles = -1, int maxExtraTiles = -1, Func<TileInfo, Task<IFeature>> fetchTileAsFeature = null) : base(tileSource, minTiles, maxTiles, dataFetchStrategy, renderFetchStrategy, minExtraTiles, maxExtraTiles, fetchTileAsFeature)
+                {
+                }
+
+            }
+
+            public static IPersistentCache<byte[]>? DefaultCache = null;
+
+            private static readonly BruTile.Attribution OpenStreetMapAttribution = new(
+                "OpenStreetMap", "https://www.openstreetmap.org/copyright");
+
+            public static TileLayer CreateTileLayer(string? userAgent = null)
+            {
+                userAgent ??= $"user-agent-of-{Path.GetFileNameWithoutExtension(System.AppDomain.CurrentDomain.FriendlyName)}";
+
+                return new OpenCustomStreetMap.CustomizedLayer(CreateTileSource(userAgent)) { Name = "OpenStreetMap" };
+            }
+
+            private static HttpTileSource CreateTileSource(string userAgent)
+            {
+
+                return new HttpTileSource(new GlobalSphericalMercator(),
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    new[] { "a", "b", "c" }, name: "OpenStreetMap",
+                    attribution: OpenStreetMapAttribution, userAgent: userAgent, persistentCache: DefaultCache);
+            }
+        }
 
 
         protected override void OnAppearing()
@@ -53,11 +91,10 @@ namespace Sandbox.Views
 
                 map.CRS = "EPSG:3857";
 
-                mapControl.Renderer.StyleRenderers.TryGetValue(typeof(RasterStyle), out var existing);
+                //mapControl.Renderer.StyleRenderers.TryGetValue(typeof(RasterStyle), out var existing);
+                //mapControl.Renderer.StyleRenderers[typeof(RasterStyle)] = new DrawnUiRasterStyleRenderer();
 
-                mapControl.Renderer.StyleRenderers[typeof(RasterStyle)] = new DrawnUiRasterStyleRenderer();
-
-                var _layer = MainPageMapsUi.OpenCustomStreetMap.CreateTileLayer("drawnui-sandbox");
+                var _layer = OpenCustomStreetMap.CreateTileLayer("drawnui-sandbox");
 
                 map.Layers.Clear();
                 map.Layers.Add(_layer);
@@ -68,13 +105,13 @@ namespace Sandbox.Views
                     TextAlignment = Mapsui.Widgets.Alignment.Center,
                     HorizontalAlignment = Mapsui.Widgets.HorizontalAlignment.Center,
                     VerticalAlignment = Mapsui.Widgets.VerticalAlignment.Bottom,
-                    Margin = new(16, 40),
+                    Margin = new(16, 56),
                 });
 
                 //adds the +/- zoom widget
                 map.Widgets.Add(new ZoomInOutWidget
                 {
-                    Margin = new(16, 40),
+                    Margin = new(16, 56),
                 });
 
                 //mapControl.Map = map;
