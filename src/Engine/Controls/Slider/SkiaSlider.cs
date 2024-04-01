@@ -314,6 +314,8 @@ public class SkiaSlider : SkiaLayout
                 slider.Start = slider.AdjustToStepValue(newStartValue, slider.Min, slider.Step);
                 slider.lockInternal = false;
             }
+
+            slider.StartChanged?.Invoke(slider, slider.Start);
         }
     }
 
@@ -344,6 +346,9 @@ public class SkiaSlider : SkiaLayout
                 slider.End = slider.AdjustToStepValue(newEndValue, slider.Min, slider.Step);
                 slider.lockInternal = false;
             }
+
+            slider.EndChanged?.Invoke(slider, slider.End);
+
         }
     }
 
@@ -480,9 +485,12 @@ public class SkiaSlider : SkiaLayout
                     EndDesc = string.Format(mask, End).Trim();
                 }
             }
+
         }
     }
 
+    public event EventHandler<double> StartChanged;
+    public event EventHandler<double> EndChanged;
 
     protected double AdjustToStepValue(double value, double minValue, double stepValue)
     {

@@ -175,12 +175,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
   </ItemGroup>
- 
-  <ItemGroup>
-    <Compile Update="Views\Controls\ColorPicker\SliderColor.xaml.cs">
-      <DependentUpon>SliderColor.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
 
  
  
@@ -260,8 +254,10 @@
     <Compile Remove="Views\Controls\DrawnUiRasterStyleRenderer.cs" />
   </ItemGroup>
 
- 
- 
+
+  <ItemGroup>
+    <Folder Include="Views\Controls\NewFolder\" />
+  </ItemGroup>
 
  
 </Project>

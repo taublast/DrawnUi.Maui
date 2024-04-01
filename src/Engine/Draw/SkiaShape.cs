@@ -358,6 +358,8 @@ namespace DrawnUi.Maui.Draw
             DrawPathResized?.Dispose();
             DrawPathAligned?.Dispose();
 
+            pathB?.Dispose();
+
             base.OnDisposing();
         }
 
@@ -444,6 +446,68 @@ namespace DrawnUi.Maui.Draw
             return path;
         }
 
+        SKPath pathB = new();
+
+        protected virtual void PaintBackground(SkiaDrawingContext ctx,
+            SKRect outRect,
+            SKPoint[] radii,
+            float minSize,
+            SKPaint paint)
+        {
+            paint.BlendMode = this.FillBlendMode;
+
+            switch (Type)
+            {
+            case ShapeType.Rectangle:
+            if (CornerRadius != Thickness.Zero)
+            {
+                if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
+                {
+                    paint.IsAntialias = true;
+                }
+                using var rrect = new SKRoundRect();
+                rrect.SetRectRadii(outRect, radii);
+                ctx.Canvas.DrawRoundRect(rrect, RenderingPaint);
+            }
+            else
+                ctx.Canvas.DrawRect(outRect, RenderingPaint);
+            break;
+
+            case ShapeType.Circle:
+            if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
+            {
+                paint.IsAntialias = true;
+            }
+            ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, RenderingPaint);
+            break;
+
+            case ShapeType.Ellipse:
+            if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
+            {
+                paint.IsAntialias = true;
+            }
+            pathB.Reset();
+            pathB.AddOval(outRect);
+            ctx.Canvas.DrawPath(pathB, paint);
+
+            break;
+
+            case ShapeType.Path:
+            if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
+            {
+                paint.IsAntialias = true;
+            }
+
+
+            ctx.Canvas.DrawPath(DrawPathAligned, paint);
+
+            break;
+
+            //case ShapeType.Arc: - has no background
+            }
+        }
+
+
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
 
@@ -497,10 +561,20 @@ namespace DrawnUi.Maui.Draw
                 DrawPathAligned.Offset(outRect.Left, outRect.Top);
             }
 
-            var scaledRadiusLeftTop = (float)Math.Round(CornerRadius.Left * scale);
-            var scaledRadiusRightTop = (float)Math.Round(CornerRadius.Right * scale);
-            var scaledRadiusLeftBottom = (float)Math.Round(CornerRadius.Top * scale);
-            var scaledRadiusRightBottom = (float)Math.Round(CornerRadius.Bottom * scale);
+            Thickness scaledRadius = new(
+                Math.Round(CornerRadius.Left * scale),
+                Math.Round(CornerRadius.Top * scale),
+                Math.Round(CornerRadius.Right * scale),
+                Math.Round(CornerRadius.Bottom * scale));
+
+            var radii = new SKPoint[]
+            {
+                new SKPoint((float)scaledRadius.Left,(float)scaledRadius.Left), //LeftTop
+                new SKPoint((float)scaledRadius.Right,(float)scaledRadius.Right), //RightTop
+                new SKPoint((float)scaledRadius.Top,(float)scaledRadius.Top), //LeftBottom
+                new SKPoint((float)scaledRadius.Bottom,(float)scaledRadius.Bottom), //RightBottom
+                };
+
 
             void PaintStroke(SKPaint paint)
             {
@@ -540,14 +614,8 @@ namespace DrawnUi.Maui.Draw
                 case ShapeType.Rectangle:
                 if (CornerRadius != Thickness.Zero)
                 {
-                    var rrect = new SKRoundRect();
-                    rrect.SetRectRadii(outRect, new[]
-                    {
-                                    new SKPoint(scaledRadiusLeftTop,scaledRadiusLeftTop),
-                                    new SKPoint(scaledRadiusRightTop,scaledRadiusRightTop),
-                                    new SKPoint(scaledRadiusLeftBottom,scaledRadiusLeftBottom),
-                                    new SKPoint(scaledRadiusRightBottom,scaledRadiusRightBottom),
-                                });
+                    using var rrect = new SKRoundRect();
+                    rrect.SetRectRadii(outRect, radii);
                     ctx.Canvas.DrawRoundRect(rrect, paint);
                 }
                 //ctx.Canvas.DrawRoundRect(outRect, scaledRadius, scaledRadius, paint);
@@ -579,69 +647,6 @@ namespace DrawnUi.Maui.Draw
                 break;
                 }
 
-            }
-
-            using var pathB = new SKPath();
-
-            void PaintBackground(SKPaint paint)
-            {
-                paint.BlendMode = this.FillBlendMode;
-
-                switch (Type)
-                {
-                case ShapeType.Rectangle:
-                if (CornerRadius != Thickness.Zero)
-                {
-                    if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
-                    {
-                        paint.IsAntialias = true;
-                    }
-
-                    var rrect = new SKRoundRect();
-                    rrect.SetRectRadii(outRect, new[]
-                    {
-                                    new SKPoint(scaledRadiusLeftTop,scaledRadiusLeftTop),
-                                    new SKPoint(scaledRadiusRightTop,scaledRadiusRightTop),
-                                    new SKPoint(scaledRadiusLeftBottom,scaledRadiusLeftBottom),
-                                    new SKPoint(scaledRadiusRightBottom,scaledRadiusRightBottom),
-                                });
-
-                    ctx.Canvas.DrawRoundRect(rrect, RenderingPaint);
-                }
-                else
-                    ctx.Canvas.DrawRect(outRect, RenderingPaint);
-                break;
-
-                case ShapeType.Circle:
-                if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
-                {
-                    paint.IsAntialias = true;
-                }
-                ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, RenderingPaint);
-                break;
-
-                case ShapeType.Ellipse:
-                if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
-                {
-                    paint.IsAntialias = true;
-                }
-                pathB.AddOval(outRect);
-                ctx.Canvas.DrawPath(pathB, paint);
-                break;
-
-                case ShapeType.Path:
-                if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
-                {
-                    paint.IsAntialias = true;
-                }
-
-
-                ctx.Canvas.DrawPath(DrawPathAligned, paint);
-
-                break;
-
-                //case ShapeType.Arc: - has no background
-                }
             }
 
             void PaintWithShadows(Action render)
@@ -689,11 +694,11 @@ namespace DrawnUi.Maui.Draw
                     RenderingPaint.Shader = null;
                     RenderingPaint.BlendMode = this.FillBlendMode;
 
-                    PaintBackground(RenderingPaint);
+                    PaintBackground(ctx, outRect, radii, minSize, RenderingPaint);
                 }
 
                 var hasGradient = SetupGradient(RenderingPaint, FillGradient, outRect);
-                PaintBackground(RenderingPaint);
+                PaintBackground(ctx, outRect, radii, minSize, RenderingPaint);
             });
 
             //draw children views clipped with shape

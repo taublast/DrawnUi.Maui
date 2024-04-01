@@ -9,71 +9,9 @@ namespace Sandbox.Views.Controls;
 
 public partial class SkiaColorPicker : SkiaLayout
 {
-    public class GradientPanel : SkiaControl
-    {
-        //set by parent
+    protected SkiaColorsPanel Panel { get; set; }
 
-        public IList<SKColor> PrimaryColors { get; set; }
-
-        public IList<SKColor> SecondaryColors { get; set; }
-
-        public ColorFlowDirection ColorFlowDirection { get; set; }
-
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
-        {
-            base.Paint(ctx, destination, scale, arguments);
-
-            if (PrimaryColors != null && SecondaryColors != null)
-            {
-                //draw gradients
-
-                // Draw primary gradient color spectrum (Rainbow)
-                using (var paint = new SKPaint())
-                {
-                    paint.IsAntialias = true;
-                    // create the gradient shader between base Colors
-                    using (var shader = SKShader.CreateLinearGradient(
-                        new SKPoint(destination.Left, destination.Top),
-                        ColorFlowDirection == ColorFlowDirection.Vertical ?
-                            new SKPoint(destination.Right, destination.Top)
-                            : new SKPoint(destination.Left, destination.Bottom),
-                        PrimaryColors.ToArray(),
-                        null,
-                        SKShaderTileMode.Clamp))
-                    {
-                        paint.Shader = shader;
-                        ctx.Canvas.DrawRect(destination, paint);
-                    }
-                }
-
-                // Draw secondary gradient color spectrum (Lighness whatever..)
-                using (var paint = new SKPaint())
-                {
-                    paint.IsAntialias = true;
-
-                    // create the gradient shader between secondary colors
-                    using (var shader = SKShader.CreateLinearGradient(
-                        new SKPoint(destination.Left, destination.Top),
-                        ColorFlowDirection == ColorFlowDirection.Vertical ?
-                            new SKPoint(destination.Left, destination.Bottom)
-                            : new SKPoint(destination.Right, destination.Top),
-                        SecondaryColors.ToArray(),
-                        null,
-                        SKShaderTileMode.Clamp))
-                    {
-                        paint.Shader = shader;
-                        ctx.Canvas.DrawRect(destination, paint);
-                    }
-                }
-            }
-
-
-        }
-
-
-    }
-
-    protected GradientPanel Panel { get; set; }
+    protected SkiaShape Indicator { get; set; }
 
     public void SetupGradientPanel()
     {
@@ -81,6 +19,7 @@ public partial class SkiaColorPicker : SkiaLayout
         {
             Panel = new()
             {
+                BackgroundColor = Colors.White, //need opaque
                 ZIndex = -1,
                 UseCache = SkiaCacheType.Image,
                 HorizontalOptions = LayoutOptions.Fill,
@@ -95,9 +34,22 @@ public partial class SkiaColorPicker : SkiaLayout
         if (!_colorsSet)
         {
             _colorsSet = true;
-            Panel.ColorFlowDirection = this.ColorFlowDirection;
-            Panel.PrimaryColors = GetPrimaryLayerColors();
-            Panel.SecondaryColors = GetSecondaryLayerColors(ColorSpectrumStyle);
+            Panel.Direction = this.ColorFlowDirection;
+
+            var primary = GetPrimaryLayerColors();
+            var secondary = GetSecondaryLayerColors(ColorSpectrumStyle);
+
+            //if (ColorSpectrumStyle == ColorSpectrumStyle.Shades)
+            //{
+            //    Panel.PrimaryColors = secondary;
+            //    Panel.SecondaryColors = primary;
+            //}
+            //else
+            {
+                Panel.PrimaryColors = primary;
+                Panel.SecondaryColors = secondary;
+                Panel.ColorsBlendMode = this.ColorsBlendMode;
+            }
         }
     }
 
@@ -105,6 +57,30 @@ public partial class SkiaColorPicker : SkiaLayout
     {
         _colorsSet = false;
         SetupGradientPanel();
+    }
+
+
+    public virtual void SetupIndicator()
+    {
+        if (Indicator == null)
+        {
+            Indicator = new()
+            {
+                UseCache = SkiaCacheType.Operations,
+                StrokeColor = Microsoft.Maui.Graphics.Colors.White,
+                StrokeWidth = 3,
+                Type = ShapeType.Circle,
+                LockRatio = 1,
+                HeightRequest = PointerRingDiameterUnits
+            };
+            if (Views.All(x => x != Indicator))
+            {
+                AddSubView(Indicator);
+            }
+        }
+
+        Indicator.TranslationX = (DrawingRect.Width * PointerRingPositionXOffsetRatio) / RenderingScale - PointerRingDiameterUnits / 2f;
+        Indicator.TranslationY = (DrawingRect.Height * PointerRingPositionYOffsetRatio) / RenderingScale - PointerRingDiameterUnits / 2f;
     }
 
     protected virtual void UpdateIndicator()
@@ -124,30 +100,8 @@ public partial class SkiaColorPicker : SkiaLayout
         SetupIndicator();
     }
 
-    protected SkiaShape Indicator { get; set; }
 
-    public void SetupIndicator()
-    {
-        if (Indicator == null)
-        {
-            Indicator = new()
-            {
-                UseCache = SkiaCacheType.Image,
-                StrokeColor = Microsoft.Maui.Graphics.Colors.White,
-                StrokeWidth = 4,
-                Type = ShapeType.Circle,
-                LockRatio = 1,
-                HeightRequest = PointerRingDiameterUnits
-            };
-            if (Views.All(x => x != Indicator))
-            {
-                AddSubView(Indicator);
-            }
-        }
 
-        Indicator.TranslationX = (DrawingRect.Width * PointerRingPositionXOffsetRatio) / RenderingScale - PointerRingDiameterUnits / 2f;
-        Indicator.TranslationY = (DrawingRect.Height * PointerRingPositionYOffsetRatio) / RenderingScale - PointerRingDiameterUnits / 2f;
-    }
 
     protected override int RenderViewsList(IEnumerable<SkiaControl> skiaControls, SkiaDrawingContext context, SKRect destination, float scale,
         bool debug = false)
@@ -162,16 +116,15 @@ public partial class SkiaColorPicker : SkiaLayout
                     //just get the pixels color under before drawing it
                     SKColor touchPointColor = SKColor.Empty;
 
-                    context.Superview.CanvasView.Surface.Canvas.Flush();
-                    var snapshot = context.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
-                    var touchX = (int)_lastTouchPoint.X;
-                    var touchY = (int)_lastTouchPoint.Y;
-                    using (var bitmap = SKBitmap.FromImage(snapshot))
+                    using (var bitmap = SKBitmap.FromImage(Panel.RenderObject.Image))
                     {
+                        var x = (int)Math.Round(child.TranslationX * scale);
+                        var y = (int)Math.Round(child.TranslationY * scale);
+
                         // Ensure x and y are within the bounds of the image
-                        if (touchX >= 0 && touchY >= 0 && touchX < bitmap.Width && touchY < bitmap.Height)
+                        if (x >= 0 && y >= 0 && x < bitmap.Width && y < bitmap.Height)
                         {
-                            touchPointColor = bitmap.GetPixel(touchX, touchY);
+                            touchPointColor = bitmap.GetPixel(x, y);
                             PickedColor = touchPointColor.ToMauiColor();
                         }
                     }
@@ -222,7 +175,7 @@ public partial class SkiaColorPicker : SkiaLayout
     /// <summary>
     /// Occurs when the Picked Color changes
     /// </summary>
-    public event EventHandler<Color>? PickedColorChanged;
+    public event EventHandler<Color> PickedColorChanged;
 
     public static readonly BindableProperty PickedColorProperty
         = BindableProperty.Create(
@@ -256,7 +209,7 @@ public partial class SkiaColorPicker : SkiaLayout
          propertyChanged: (bindable, value, newValue) =>
          {
              if (newValue != null)
-                 ((SkiaColorPicker)bindable).Update();
+                 ((SkiaColorPicker)bindable).UpdateColors();
              else
                  ((SkiaColorPicker)bindable).ColorSpectrumStyle = default;
          });
@@ -283,28 +236,43 @@ public partial class SkiaColorPicker : SkiaLayout
         new Color(255, 0, 0), // Red
     };
 
-    public static readonly BindableProperty ColorsProperty = BindableProperty.Create(
-        nameof(Colors),
+    public static readonly BindableProperty ColorsBlendModeProperty = BindableProperty.Create(nameof(ColorsBlendMode),
+        typeof(SKBlendMode), typeof(SkiaColorPicker),
+        SKBlendMode.SrcOver,
+        propertyChanged: (bindable, value, newValue) =>
+        {
+            ((SkiaColorPicker)bindable).UpdateColors();
+        });
+    public SKBlendMode ColorsBlendMode
+    {
+        get { return (SKBlendMode)GetValue(ColorsBlendModeProperty); }
+        set { SetValue(ColorsBlendModeProperty, value); }
+    }
+
+    public static readonly BindableProperty SelectionColorsProperty = BindableProperty.Create(
+        nameof(SelectionColors),
         typeof(IList<Color>),
         typeof(SkiaColorPicker),
         defaultValueCreator: (instance) =>
         {
-            var created = new ObservableCollection<Color>(defaultColors);
-            //ColorsPropertyChanged(instance, null, created);
+            var created = new ObservableCollection<Color>();
+            if (instance is SkiaColorPicker control)
+            {
+                created.CollectionChanged += control.OnPropertyColorsCollectionChanged;
+            }
             return created;
         },
         validateValue: (bo, v) => v is IList<Color>,
-        propertyChanged: ColorsPropertyChanged,
-        coerceValue: CoerceColors);
+        propertyChanged: SelectionColorsPropertyChanged,
+        coerceValue: CoerceSelectionColors);
 
-
-    public IList<Color> Colors
+    public IList<Color> SelectionColors
     {
-        get => (IList<Color>)GetValue(ColorsProperty);
-        set => SetValue(ColorsProperty, value);
+        get => (IList<Color>)GetValue(SelectionColorsProperty);
+        set => SetValue(SelectionColorsProperty, value);
     }
 
-    private static object CoerceColors(BindableObject bindable, object value)
+    private static object CoerceSelectionColors(BindableObject bindable, object value)
     {
         if (!(value is ReadOnlyCollection<Color> readonlyCollection))
         {
@@ -316,9 +284,8 @@ public partial class SkiaColorPicker : SkiaLayout
                 .ToList());
     }
 
-    private static void ColorsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
+    private static void SelectionColorsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
     {
-
         if (bindable is SkiaColorPicker control)
         {
             if (oldvalue is INotifyCollectionChanged oldCollection)
@@ -327,6 +294,7 @@ public partial class SkiaColorPicker : SkiaLayout
             }
             if (newvalue is INotifyCollectionChanged newCollection)
             {
+                newCollection.CollectionChanged -= control.OnPropertyColorsCollectionChanged;
                 newCollection.CollectionChanged += control.OnPropertyColorsCollectionChanged;
             }
 
@@ -336,6 +304,7 @@ public partial class SkiaColorPicker : SkiaLayout
 
     private void OnPropertyColorsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
+        UpdateColors();
         this.Update();
     }
 
@@ -496,66 +465,80 @@ public partial class SkiaColorPicker : SkiaLayout
         set { SetValue(PointerRingPositionYOffsetRatioProperty, value); }
     }
 
-    protected virtual List<SKColor> GetPrimaryLayerColors()
+    protected virtual List<Color> GetPrimaryLayerColors()
     {
-        var colors = new System.Collections.Generic.List<SKColor>();
-        foreach (var color in Colors)
-            colors.Add(color.ToSKColor());
+        var colors = new System.Collections.Generic.List<Color>();
+        if (SelectionColors.Count > 1)
+        {
+            foreach (var color in SelectionColors)
+                colors.Add(color);
+        }
+        else
+        {
+            foreach (var color in defaultColors)
+                colors.Add(color);
+        }
         return colors;
     }
 
-    protected virtual List<SKColor> GetSecondaryLayerColors(ColorSpectrumStyle colorSpectrumStyle)
+    protected virtual List<Color> GetSecondaryLayerColors(ColorSpectrumStyle colorSpectrumStyle)
     {
         switch (colorSpectrumStyle)
         {
         case ColorSpectrumStyle.HueOnlyStyle:
         return new()
         {
-                SKColors.Transparent
+                Colors.Transparent
         };
+        case ColorSpectrumStyle.Shades:
+        return new()
+            {
+                Colors.White,
+                Colors.Black
+            };
         case ColorSpectrumStyle.HueToShadeStyle:
         return new()
         {
-                SKColors.Transparent,
-                SKColors.Black
+                Colors.Transparent,
+                Colors.Black
         };
         case ColorSpectrumStyle.ShadeToHueStyle:
         return new()
         {
-                SKColors.Black,
-                SKColors.Transparent
+            Colors.Black,
+                Colors.Transparent
         };
         case ColorSpectrumStyle.HueToTintStyle:
         return new()
         {
-                SKColors.Transparent,
-                SKColors.White
+                Colors.Transparent,
+                Colors.White
         };
         case ColorSpectrumStyle.TintToHueStyle:
         return new()
         {
-                SKColors.White,
-                SKColors.Transparent
+                Colors.White,
+                Colors.Transparent
         };
         case ColorSpectrumStyle.TintToHueToShadeStyle:
         return new()
         {
-                SKColors.White,
-                SKColors.Transparent,
-                SKColors.Black
+                Colors.White,
+                Colors.Transparent,
+                Colors.Black
         };
         case ColorSpectrumStyle.ShadeToHueToTintStyle:
         return new()
         {
-                SKColors.Black,
-                SKColors.Transparent,
-                SKColors.White
+                Colors.Black,
+                Colors.Transparent,
+                Colors.White
         };
         default:
         return new()
         {
-                SKColors.Transparent,
-                SKColors.Black
+                Colors.Transparent,
+                Colors.Black
         };
         }
     }
@@ -565,13 +548,15 @@ public partial class SkiaColorPicker : SkiaLayout
 
 public enum ColorSpectrumStyle
 {
+    Unset,
     HueOnlyStyle,
     HueToShadeStyle,
     ShadeToHueStyle,
     HueToTintStyle,
     TintToHueStyle,
     TintToHueToShadeStyle,
-    ShadeToHueToTintStyle
+    ShadeToHueToTintStyle,
+    Shades
 }
 
 public enum ColorFlowDirection
