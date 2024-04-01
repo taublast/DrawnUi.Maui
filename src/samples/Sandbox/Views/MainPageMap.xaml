@@ -52,12 +52,14 @@
             VerticalOptions="Fill">
 
             <!--  MAP  -->
+            
+            <!--enjoy the GPU cache :)-->
             <maui:SkiaMapControl
                 x:Name="mapControl"
                 BackgroundColor="Black"
                 DisableEffects="{Binding ValueSwitch, Converter={x:StaticResource NotConverter}}"
                 HorizontalOptions="Fill"
-                UseCache="Image"
+                UseCache="GPU"
                 VerticalOptions="Fill"
                 ZIndex="-1">
                 
@@ -92,7 +94,7 @@
             <draw:SkiaDrawer
                 x:Name="Drawer"
                 Direction="FromBottom"
-                HeaderSize="29"
+                HeaderSize="{Binding DrawerHeaderSize}"
                 HeightRequest="450"
                 HorizontalOptions="Fill"
                 IsOpen="{Binding IsOpen}"
@@ -110,7 +112,7 @@
                     <draw:SkiaShape
                         BackgroundColor="White"
                         CornerRadius="20,0,20,0"
-                        HeightRequest="30"
+                        HeightRequest="{Binding DrawerHeaderSize}"
                         HorizontalOptions="Fill"
                         UseCache="Image">
 
@@ -123,13 +125,15 @@
                             StrokeWidth="1"
                             Type="Rectangle"
                             VerticalOptions="Center"
+                            MarginBottom="{Binding BottomInsets}"
                             WidthRequest="64" />
 
                     </draw:SkiaShape>
 
                     <!--  CONTENT  -->
                     <draw:SkiaScroll
-                        Margin="0,30,0,0"
+                        MarginTop="{Binding DrawerHeaderSize}"
+                        MarginBottom="{Binding BottomInsets}"
                         BackgroundColor="White"
                         Bounces="False"
                         HorizontalOptions="Fill"
@@ -215,12 +219,12 @@
 
             </draw:SkiaDrawer>
 
-            <draw:SkiaLabel
+            <!--<draw:SkiaLabel
                 Margin="16"
                 BackgroundColor="Teal"
                 FontSize="20"
                 Text="{Binding IsOpen}"
-                TextColor="White" />
+                TextColor="White" />-->
 
             <controls:ButtonToRoot />
             

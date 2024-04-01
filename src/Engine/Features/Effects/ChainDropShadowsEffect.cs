@@ -102,6 +102,16 @@ public class ChainDropShadowsEffect : BaseChainedEffect
 
     #endregion
 
+    protected override void OnBindingContextChanged()
+    {
+        base.OnBindingContextChanged();
+
+        foreach (var skiaShadow in Shadows)
+        {
+            skiaShadow.BindingContext = this.BindingContext;
+        }
+    }
+
     public override ChainEffectResult Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
     {
         if (NeedApply)

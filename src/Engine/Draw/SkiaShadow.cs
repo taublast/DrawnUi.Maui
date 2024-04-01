@@ -17,6 +17,8 @@ public class SkiaShadow : BindableObject
         this.Parent = null;
     }
 
+    public string Tag { get; set; }
+
     private static void RedrawCanvas(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is SkiaShadow shadow)

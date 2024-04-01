@@ -126,6 +126,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     SKSurface _surface;
     private DateTime _lastFrame;
     private double _fps;
+    private long _nanos;
 
     public SKSurface Surface
     {
@@ -154,10 +155,11 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
     }
 
-    public void Update()
+    public void Update(long nanos)
     {
         if (this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
         {
+            _nanos = nanos;
             IsDrawing = true;
             InvalidateSurface();
         }

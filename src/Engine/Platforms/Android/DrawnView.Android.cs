@@ -108,7 +108,24 @@ namespace DrawnUi.Maui.Views
         public virtual void SetupRenderingLoop()
         {
             Looper = new(OnFrame);
-            Looper.Start(GetTargetFps());
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), () =>
+            {
+                Looper.Start(GetTargetFps()); //background thread
+            });
+        }
+
+        public void OnFrame()
+        {
+            //background thread
+
+            if (CheckCanDraw())
+            {
+                OrderedDraw = true;
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+
+                CanvasView?.Update();
+            }
         }
 
         protected virtual void PlatformHardwareAccelerationChanged()

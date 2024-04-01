@@ -47,14 +47,12 @@ namespace DrawnUi.Maui.Draw
             UpdateFont();
         }
 
-
-        protected override void OnBindingContextChanged()
+        public override void ApplyBindingContext()
         {
-            base.OnBindingContextChanged();
+            base.ApplyBindingContext();
 
             for (int i = 0; i < Spans.Count; i++)
                 SetInheritedBindingContext(Spans[i], BindingContext);
-
         }
 
         public override string ToString()
@@ -732,6 +730,8 @@ namespace DrawnUi.Maui.Draw
             PaintShadow.Dispose();
 
             PaintDeco.Dispose();
+
+            _spans.CollectionChanged -= OnCollectionChanged;
 
             base.OnDisposing();
         }

@@ -97,11 +97,11 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-        protected override void OnBindingContextChanged()
+        public override void ApplyBindingContext()
         {
-            base.OnBindingContextChanged();
-
             UpdateRowColumnBindingContexts();
+
+            base.ApplyBindingContext();
         }
 
         //todo use rendering tree for templated!!

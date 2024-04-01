@@ -100,7 +100,7 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         IsDrawing = false;
     }
 
-    public void Update()
+    public void Update(long nanos)
     {
         if (this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
         {

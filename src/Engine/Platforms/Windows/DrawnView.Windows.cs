@@ -80,24 +80,26 @@ namespace DrawnUi.Maui.Views
 
         private void OnFrame()
         {
-            if (CheckCanDraw() && !OrderedDraw)
+            if (CheckCanDraw())
             {
                 OrderedDraw = true;
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+
                 Super.RunOnMainThreadAndWait(() =>
                 {
-                    OrderedDraw = true;
-                    if (NeedCheckParentVisibility)
-                        CheckElementVisibility(this);
-
                     CanvasView?.Update();
                 });
+
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
         {
-            return CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
+            return
+                !OrderedDraw &&
+                CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
                    && !CanvasView.IsDrawing
                    && IsDirty
                    && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
