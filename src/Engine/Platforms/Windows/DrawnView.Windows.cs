@@ -53,6 +53,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
+            Looper?.Dispose();
             Looper = new(OnFrame);
             Looper.Start(GetTargetFps());
         }

@@ -20,9 +20,6 @@ namespace DrawnUi.Maui.Views
 
             if (element != null)
             {
-
-
-
                 //WARNING this must be called form UI thread only!
 
                 if (element.Handler != null)
@@ -67,9 +64,10 @@ namespace DrawnUi.Maui.Views
         {
 
         }
-        
+
         public virtual void SetupRenderingLoop()
         {
+            Super.DisplayLinkCallback -= OnDisplayLink;
             Super.DisplayLinkCallback += OnDisplayLink;
         }
 
@@ -93,8 +91,11 @@ namespace DrawnUi.Maui.Views
 
         public bool CheckCanDraw()
         {
-            return CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
-                   && IsDirty
+            return
+                !OrderedDraw &&
+                IsDirty &&
+                CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
+                    && !CanvasView.IsDrawing
                    && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
                    && IsVisible && Super.EnableRendering;
         }

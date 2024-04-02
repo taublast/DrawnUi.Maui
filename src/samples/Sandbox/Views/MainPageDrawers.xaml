@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<views:BasePage
     x:Class="Sandbox.Views.MainPageDrawers"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -8,6 +8,7 @@
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel">
 
@@ -27,7 +28,7 @@
                 x:Name="Drawer"
                 Direction="FromBottom"
                 HeaderSize="{Binding DrawerHeaderSize}"
-                HeightRequest="350"
+                HeightRequest="500"
                 HorizontalOptions="Fill"
                 IsOpen="{Binding IsOpen}"
                 Tag="Drawer"
@@ -60,13 +61,13 @@
                         BackgroundColor="Gainsboro"
                         Bounces="False"
                         HorizontalOptions="Fill"
-                        MarginBottom="{Binding BottomInsets}"
                         MarginTop="{Binding DrawerHeaderSize}"
                         Tag="InsideDrawer"
                         VerticalOptions="Fill">
 
                         <draw:SkiaLayout
                             Margin="2"
+                            MarginBottom="{Binding BottomInsets}"
                             HorizontalOptions="Fill"
                             Spacing="24"
                             Type="Column"
@@ -213,4 +214,4 @@
 
     </draw:Canvas>
 
-</ContentPage>
+</views:BasePage>

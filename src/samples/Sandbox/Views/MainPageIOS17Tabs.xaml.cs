@@ -2,7 +2,7 @@
 {
 
 
-    public partial class MainPageIOS17Tabs : ContentPage
+    public partial class MainPageIOS17Tabs 
     {
 
 

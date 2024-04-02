@@ -20,7 +20,7 @@ using Mapsui.Widgets.ButtonWidgets;
 
 namespace Sandbox.Views
 {
-    public partial class MainPageMap : ContentPage
+    public partial class MainPageMap 
     {
 
         public MainPageMap()

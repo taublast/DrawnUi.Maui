@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageDrawers : ContentPage
+    public partial class MainPageDrawers 
     {
 
         public MainPageDrawers()

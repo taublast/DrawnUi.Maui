@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<views:BasePage
     x:Class="Sandbox.Views.MainPageIOS17Tabs"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -10,6 +10,7 @@
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:views="clr-namespace:Sandbox.Views"
     ios:Page.UseSafeArea="True"
     BackgroundColor="#333333">
 
@@ -585,4 +586,4 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
     
     </draw:Canvas>
 
-</ContentPage>
+</views:BasePage>

@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageMauiGraphics : ContentPage
+    public partial class MainPageMauiGraphics 
     {
 
         public MainPageMauiGraphics()

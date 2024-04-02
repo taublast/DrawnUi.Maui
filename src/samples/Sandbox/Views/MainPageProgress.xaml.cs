@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views.Controls
 {
-    public partial class MainPageProgress : ContentPage
+    public partial class MainPageProgress 
     {
 
         public MainPageProgress()

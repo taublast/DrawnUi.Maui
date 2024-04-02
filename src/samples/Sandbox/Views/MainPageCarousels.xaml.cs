@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageCarousels : ContentPage
+    public partial class MainPageCarousels 
     {
 
         public MainPageCarousels()

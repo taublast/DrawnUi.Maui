@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<views:BasePage
     x:Class="Sandbox.Views.MainPageShader"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -7,6 +7,7 @@
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel"
     BackgroundColor="White">
@@ -26,7 +27,6 @@
         HorizontalOptions="Fill"
         Tag="MainPage"
         VerticalOptions="Fill">
-
 
         <draw:SkiaLayout
             x:Name="MainLayout"
@@ -140,4 +140,4 @@
 
 
 
-</ContentPage>
+</views:BasePage>

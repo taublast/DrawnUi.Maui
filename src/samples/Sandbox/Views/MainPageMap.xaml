@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<views:BasePage
     x:Class="Sandbox.Views.MainPageMap"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -9,6 +9,7 @@
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
     xmlns:maui="using:Mapsui.Samples.Maui"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel">
 
@@ -91,7 +92,7 @@
                 x:Name="Drawer"
                 Direction="FromBottom"
                 HeaderSize="{Binding DrawerHeaderSize}"
-                HeightRequest="450"
+                HeightRequest="500"
                 HorizontalOptions="Fill"
                 IsOpen="{Binding IsOpen}"
                 Tag="Drawer"
@@ -117,7 +118,7 @@
                             CornerRadius="20"
                             HeightRequest="4"
                             HorizontalOptions="Center"
-                            MarginBottom="{Binding BottomInsets}"
+                         
                             StrokeColor="{StaticResource Gray400}"
                             StrokeWidth="1"
                             Type="Rectangle"
@@ -127,20 +128,16 @@
                     </draw:SkiaShape>
 
                     <!--  CONTENT  -->
-                    <draw:SkiaScroll
-                        BackgroundColor="White"
-                        Bounces="False"
-                        HorizontalOptions="Fill"
-                        MarginBottom="{Binding BottomInsets}"
-                        MarginTop="{Binding DrawerHeaderSize}"
-                        Tag="InsideDrawer"
-                        VerticalOptions="Fill">
-
                         <draw:SkiaLayout
                             Padding="24,16"
                             HorizontalOptions="Fill"
                             Spacing="0"
                             Type="Column"
+                            BackgroundColor="White"
+                            MarginTop="{Binding DrawerHeaderSize}"
+                            Tag="InsideDrawer"
+                            VerticalOptions="Fill"
+                            
                             UseCache="Image">
 
                             <!--  Switch  -->
@@ -227,6 +224,7 @@
 
                             <!--  Tint  COLOR Picker-->
                             <draw:SkiaLayout
+                                MarginBottom="{Binding BottomInsets}"
                                 HeightRequest="100"
                                 MarginTop="16"
                                 Style="{x:StaticResource SkiaStyleControlContainer}">
@@ -237,7 +235,7 @@
                                     Text="Tint Color" />
 
                                 <controls:ColorPicker
-                                    DefaultColor="#00FF00"
+                                    DefaultColor="CornflowerBlue"
                                     HorizontalOptions="Fill"
                                     SelectedColor="{Binding SelectedColor}"
                                     Style="{x:StaticResource SkiaStyleControlInTable}"
@@ -249,7 +247,7 @@
 
                         </draw:SkiaLayout>
 
-                    </draw:SkiaScroll>
+
 
                 </draw:SkiaLayout>
 
@@ -278,4 +276,4 @@
 
     </draw:Canvas>
 
-</ContentPage>
+</views:BasePage>

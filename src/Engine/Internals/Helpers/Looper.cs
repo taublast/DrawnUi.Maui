@@ -61,7 +61,7 @@ public class Looper : IDisposable
 
             var endFrameTimestamp = Stopwatch.GetTimestamp();
             var frameElapsedTicks = endFrameTimestamp - startFrameTimestamp;
-            var frameElapsedMs = (frameElapsedTicks / (double)Stopwatch.Frequency) * 1000;
+            var frameElapsedMs = (frameElapsedTicks / (double)Stopwatch.Frequency) * 1_000.0;
             var totalElapsedMs = ((startFrameTimestamp - lastFrameTimestamp) / (double)Stopwatch.Frequency) * 1000;
             var timeToWaitMs = targetIntervalMs - totalElapsedMs - frameElapsedMs;
 
@@ -70,7 +70,14 @@ public class Looper : IDisposable
                 timeToWaitMs = 1;
             }
 
-            await Task.Delay(TimeSpan.FromMilliseconds(timeToWaitMs), cancellationToken);
+            try
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(timeToWaitMs), cancellationToken);
+            }
+            catch
+            {
+                break;
+            }
 
             lastFrameTimestamp = Stopwatch.GetTimestamp();
         }

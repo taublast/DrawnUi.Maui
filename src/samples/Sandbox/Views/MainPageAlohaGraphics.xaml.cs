@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace Sandbox.Views
 {
-    public partial class MainPageAlohaGraphics : ContentPage
+    public partial class MainPageAlohaGraphics 
     {
 
         public MainPageAlohaGraphics()

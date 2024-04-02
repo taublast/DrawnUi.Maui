@@ -5,7 +5,7 @@ namespace Sandbox.Views
 
 
 
-    public partial class MainPageLabels : ContentPage
+    public partial class MainPageLabels 
     {
 
 
