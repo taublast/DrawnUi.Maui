@@ -2119,8 +2119,6 @@ namespace DrawnUi.Maui.Draw
 
             InternalViewportOffset = ScaledPoint.FromPixels(offsetPixels, scale);
 
-            //Debug.WriteLine($"[PositionViewport] {InternalViewportOffset.Units.Y} => {InternalViewportOffset.Pixels.Y}");
-
             var childRect = ContentAvailableSpace;
             childRect.Offset(InternalViewportOffset.Pixels.X, InternalViewportOffset.Pixels.Y);
 
@@ -2397,19 +2395,14 @@ namespace DrawnUi.Maui.Draw
                                  || _updatedViewportForPtsX != ViewportOffsetX
                                  || _destination != Destination;
 
-                if (needReposition) //reposition viewport (scroll)
+                //reposition viewport (scroll)
+                if (needReposition)
                 {
-                    _offsetMoved = _updatedViewportForPtsY - ViewportOffsetY;
-
-                    var timeDiff = context.FrameTimeNanos - _offsetMovedTime;
-
-                    _offsetMovedTime = context.FrameTimeNanos;
-
-                    var time = TimeSpan.FromTicks(timeDiff);
-
-                    //Debug.WriteLine($"[PositionViewport] diff {_offsetMoved} in {time.TotalMilliseconds} ms");
-
-                    //monitor.UpdatePosition(_offsetMoved);
+                    //_offsetMoved = _updatedViewportForPtsY - ViewportOffsetY;
+                    //var timeDiff = context.FrameTimeNanos - _offsetMovedTime;
+                    //_offsetMovedTime = context.FrameTimeNanos;
+                    //var time = TimeSpan.FromTicks(timeDiff / 1000);
+                    //Debug.WriteLine($"[PositionViewport] diff {(_offsetMoved * _zoomedScale):0.00} in {time.TotalMilliseconds} ms");
 
                     _lastPosViewportScale = _zoomedScale;
                     _updatedViewportForPtsX = ViewportOffsetX;
@@ -2425,9 +2418,8 @@ namespace DrawnUi.Maui.Draw
                 DrawWithClipAndTransforms(context, DrawingRect, true,
                     true, (ctx) =>
                     {
-                        Paint(ctx, DrawingRect, scale, CreatePaintArguments());
+                        PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
                     });
-
             }
 
             FinalizeDraw(context, scale);

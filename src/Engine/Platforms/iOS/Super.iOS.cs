@@ -61,8 +61,8 @@ namespace DrawnUi.Maui.Draw
             InsetsChanged?.Invoke(null, null);
 
 
-            
-            Tasks.StartDelayed(TimeSpan.FromMilliseconds(500), async () =>
+
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
             {
                 while (!_loopStarted)
                 {
@@ -94,9 +94,9 @@ namespace DrawnUi.Maui.Draw
                     await Task.Delay(100);
                 }
             });
-            
+
         }
-    
+
         static bool _loopStarting = false;
         static bool _loopStarted = false;
 

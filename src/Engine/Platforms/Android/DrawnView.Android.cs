@@ -1,10 +1,6 @@
-﻿#define CHOREOGRAPHER
+﻿#define CHOREOGRAPHER //otherwise will use Looper like Windows 
 
 using Android.Views;
-using DrawnUi.Maui.Infrastructure.Enums;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.PlatformConfiguration;
-using Microsoft.Maui.Handlers;
 using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Views

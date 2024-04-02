@@ -1,10 +1,8 @@
-﻿using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.OS;
 using Android.Views;
-//using Bumptech.Glide;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android;
-using static Android.Views.Choreographer;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace DrawnUi.Maui.Draw;
@@ -279,7 +277,7 @@ public partial class Super
         }
     }
 
-    public class FrameCallback : Java.Lang.Object, IFrameCallback
+    public class FrameCallback : Java.Lang.Object, Choreographer.IFrameCallback
     {
         public FrameCallback(Action<long> callback)
         {

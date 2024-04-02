@@ -127,10 +127,10 @@ namespace DrawnUi.Maui.Draw
             if (Super.NavBarHeight < 0)
 
                 Super.NavBarHeight = 47; //manual
-            
-            
-            
-            Tasks.StartDelayed(TimeSpan.FromMilliseconds(500), async () =>
+
+
+
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
             {
                 while (!_loopStarted)
                 {
