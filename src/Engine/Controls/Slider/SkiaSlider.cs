@@ -292,7 +292,9 @@ public class SkiaSlider : SkiaLayout
 
     public static readonly BindableProperty StartProperty =
         BindableProperty.Create(nameof(Start), typeof(double), typeof(SkiaSlider), 0.0, BindingMode.TwoWay,
-            propertyChanged: OnStartPropertyChanged);
+            propertyChanged: OnStartPropertyChanged,
+            coerceValue: CoerceValue);
+
     /// <summary>
     /// Enabled for ranged
     /// </summary>
@@ -306,18 +308,27 @@ public class SkiaSlider : SkiaLayout
     {
         if (bindable is SkiaSlider slider && newValue is double newStartValue)
         {
-            // Check if the new value is different and needs processing
-            if (!slider.lockInternal && Math.Abs(slider.Start - newStartValue) > Double.Epsilon)
-            {
-                slider.lockInternal = true;
-                // Assuming AdjustToStepValue and any other necessary adjustments are made within this method
-                slider.Start = slider.AdjustToStepValue(newStartValue, slider.Min, slider.Step);
-                slider.lockInternal = false;
-            }
-
             slider.OnStartChanged();
         }
     }
+
+    private static object CoerceValue(BindableObject bindable, object value)
+    {
+        var newValue = (double)value;
+
+        if (bindable is SkiaSlider slider)
+        {
+            var adjusted = slider.AdjustToStepValue(newValue, slider.Min, slider.Step);
+            if (slider.Width >= 0)
+            {
+                return Math.Clamp(adjusted, slider.Min, slider.Max);
+            }
+            return adjusted;
+        }
+
+        return value;
+    }
+
 
     public static readonly BindableProperty EndProperty = BindableProperty.Create(
         nameof(End),
@@ -325,7 +336,9 @@ public class SkiaSlider : SkiaLayout
         typeof(SkiaSlider),
         100.0,
         BindingMode.TwoWay,
-        propertyChanged: OnEndPropertyChanged);
+        propertyChanged: OnEndPropertyChanged,
+        coerceValue: CoerceValue);
+
     /// <summary>
     /// For non-ranged this is your main value
     /// </summary>
@@ -338,20 +351,9 @@ public class SkiaSlider : SkiaLayout
     {
         if (bindable is SkiaSlider slider && newValue is double newEndValue)
         {
-            // Check if the new value is different and needs processing
-            if (!slider.lockInternal && Math.Abs(slider.End - newEndValue) > Double.Epsilon)
-            {
-                slider.lockInternal = true;
-                // Assuming AdjustToStepValue and any other necessary adjustments are made within this method
-                slider.End = slider.AdjustToStepValue(newEndValue, slider.Min, slider.Step);
-                slider.lockInternal = false;
-            }
-
             slider.OnEndChanged();
-
         }
     }
-
 
     public static readonly BindableProperty StartThumbXProperty = BindableProperty.Create(nameof(StartThumbX), typeof(double), typeof(SkiaSlider), 0.0);
     public double StartThumbX
@@ -457,13 +459,8 @@ public class SkiaSlider : SkiaLayout
             nameof(End), nameof(AvailableWidthAdjustment)))
         {
 
-
             if (Width > -1)
             {
-
-                Start = Math.Clamp(Start, Min, Max);
-                End = Math.Clamp(End, Min, Max);
-
                 if (EnableRange)
                 {
                     StepValue = (Max - Min) / (Width + AvailableWidthAdjustment - SliderHeight);
@@ -609,8 +606,7 @@ public class SkiaSlider : SkiaLayout
         }
     }
 
-    private bool lockInternal;
-
+    private volatile bool lockInternal;
 
     private string _StartDesc;
     [EditorBrowsable(EditorBrowsableState.Never)]
