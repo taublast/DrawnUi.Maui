@@ -16,8 +16,8 @@ _The current development state is __ALPHA__, many features remain to be implemen
 As SkiaSharp3 stable version is expected towards the end of the year we will have DrawnUI skia2 version updated constantly and a skia3-preview version available in parallel.  
 New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can manage how this project builds using `<UseSkiaSharp3>true</UseSkiaSharp3>`.
 
-* SkiaSharp v3 nuget [1.3.0.23-pre](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)
-* SkiaSharp v2 nuget [1.2.0.7](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)
+* SkiaSharp v3 nuget [1.3.0.23-pre](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi) **A new Nuget is incoming these days as the current one has a problem with multi-canvases** Also would bring new effects fixes and more.
+* SkiaSharp v2 nuget [1.2.0.7](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi) Based on skiasharp 3 preview 21, would use it for Windows hardware-accelerated canvas and/or new shaders experiments only.
 * FPS is now mainly display-synched (choreographer/display link..)
 * Every SkiaControl has a new `VisualEffects` property, you can blur/tint/apply other effects to anything in your app, see Sandbox app.
 * `Maui.Graphics` support, can reuse your existing works inside drawn layouts/controls, see Sandox app.
