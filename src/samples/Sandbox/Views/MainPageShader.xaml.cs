@@ -3,7 +3,7 @@ using DrawnUi.Maui.Infrastructure;
 
 namespace Sandbox.Views
 {
-    public partial class MainPageShader : ContentPage
+    public partial class MainPageShader 
     {
 
         public MainPageShader()

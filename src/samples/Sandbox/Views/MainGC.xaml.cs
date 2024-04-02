@@ -5,7 +5,7 @@ namespace Sandbox.Views
 {
 
 
-    public partial class MainGC : ContentPage
+    public partial class MainGC 
     {
 
 

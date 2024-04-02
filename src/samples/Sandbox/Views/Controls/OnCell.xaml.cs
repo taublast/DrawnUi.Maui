@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views.Controls
 {
-    public partial class OnCell : ContentPage
+    public partial class OnCell 
     {
 
         public OnCell()

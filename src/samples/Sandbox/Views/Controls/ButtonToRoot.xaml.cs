@@ -17,14 +17,6 @@ public partial class ButtonToRoot
         if (TouchEffect.CheckLockAndSet())
             return;
 
-        Super.EnableRendering = false; //globally disable the rendering
-        Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                App.Current.MainPage = new MainPage();
-                Super.EnableRendering = true;//enable back again and kick to update
-            });
-        });
+        App.Instance.SetMainPage(new MainPage());
     }
 }

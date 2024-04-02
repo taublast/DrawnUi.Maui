@@ -70,7 +70,14 @@ public class Looper : IDisposable
                 timeToWaitMs = 1;
             }
 
-            await Task.Delay(TimeSpan.FromMilliseconds(timeToWaitMs), cancellationToken);
+            try
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(timeToWaitMs), cancellationToken);
+            }
+            catch
+            {
+                break;
+            }
 
             lastFrameTimestamp = Stopwatch.GetTimestamp();
         }

@@ -1,4 +1,5 @@
-﻿using DrawnUi.Maui;
+﻿using AppoMobi.Specials;
+using DrawnUi.Maui;
 using Microsoft.Maui.Platform;
 using Sandbox.Views;
 using System.Globalization;
@@ -31,7 +32,29 @@ namespace Sandbox
 
         public static List<MainPageVariant> MainPages { get; protected set; }
 
+        public void SetMainPage(Page page)
+        {
+            Super.EnableRendering = false; //globally disable the rendering
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var kill = this.MainPage;
+                MainPage = page;
+                Super.EnableRendering = true;//enable back again and kick to update
+                if (kill is IDisposable disposable)
+                {
+                    Tasks.StartDelayed(TimeSpan.FromSeconds(2.5), () =>
+                    {
+                        disposable?.Dispose();
+                    });
+                }
+            });
+        }
+
+        public static App Instance => App.Current as App;
+
     }
+
+
 
     public record MainPageVariant()
     {

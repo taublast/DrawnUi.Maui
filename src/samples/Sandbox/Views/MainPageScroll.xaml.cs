@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageScroll : ContentPage
+    public partial class MainPageScroll 
     {
 
         public MainPageScroll()

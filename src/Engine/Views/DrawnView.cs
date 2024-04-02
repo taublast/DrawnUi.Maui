@@ -14,6 +14,9 @@ namespace DrawnUi.Maui.Views
     {
         public virtual void Update()
         {
+            if (!Super.EnableRendering)
+                return;
+
 #if ONPLATFORM
             UpdatePlatform();
 #endif
@@ -718,41 +721,48 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-
         public void Dispose()
         {
             if (IsDisposed)
                 return;
 
-            this.SizeChanged -= OnFormsSizeChanged;
-
-            OnDisposing();
-
-            IsDisposed = true;
-
-            Parent = null;
-
-            PaintSystem?.Dispose();
-
-            DestroySkiaView();
-
-            Content = null;
-
-            DisposeDisposables();
-
-            MainThread.BeginInvokeOnMainThread(() =>
+            try
             {
-                try
-                {
-                    this.Handler?.DisconnectHandler();
-                }
-                catch (Exception e)
-                {
-                    Super.Log(e);
-                }
-            });
+                this.SizeChanged -= OnFormsSizeChanged;
 
-            ClearChildren();
+                OnDisposing();
+
+                IsDisposed = true;
+
+                Parent = null;
+
+                PaintSystem?.Dispose();
+
+                DestroySkiaView();
+
+                DisposeDisposables();
+
+                ClearChildren();
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        this.Handler?.DisconnectHandler();
+
+                        Content = null;
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
+
         }
         /// <summary>
         /// Makes the control dirty, in need to be remeasured and rendered but this doesn't call Update, it's up yo you
@@ -1864,7 +1874,7 @@ namespace DrawnUi.Maui.Views
             foreach (var child in Views.ToList())
             {
                 RemoveSubView(child);
-                //child.Dispose();
+                child.Dispose();
             }
 
             Views.Clear();

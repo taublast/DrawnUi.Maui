@@ -6,7 +6,7 @@ using Sandbox;
 
 namespace MauiNet8;
 
-public partial class MainPage : ContentPage
+public partial class MainPage
 {
     int count = 0;
 
@@ -50,14 +50,8 @@ public partial class MainPage : ContentPage
                 //but double buffered hw-accelerated view might try to render to it
 
                 var instance = (ContentPage)Activator.CreateInstance(page.Type);
-                Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
-                {
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        App.Current.MainPage = instance;
-                        Super.EnableRendering = true;//enable back again and kick to update
-                    });
-                });
+
+                App.Instance.SetMainPage(instance);
 
             }
         }

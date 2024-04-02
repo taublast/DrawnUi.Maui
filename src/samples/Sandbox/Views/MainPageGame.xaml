@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<draw:DrawnUiBasePage
+<views:BasePage
     x:Class="Sandbox.Views.MainPageGame"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -7,6 +7,7 @@
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:game="clr-namespace:SpaceShooter.Game"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel"
     BackgroundColor="#000000">
@@ -54,4 +55,4 @@
 
 
 
-</draw:DrawnUiBasePage>
+</views:BasePage>
