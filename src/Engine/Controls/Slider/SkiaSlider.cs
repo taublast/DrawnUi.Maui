@@ -315,7 +315,7 @@ public class SkiaSlider : SkiaLayout
                 slider.lockInternal = false;
             }
 
-            slider.StartChanged?.Invoke(slider, slider.Start);
+            slider.OnStartChanged();
         }
     }
 
@@ -347,7 +347,7 @@ public class SkiaSlider : SkiaLayout
                 slider.lockInternal = false;
             }
 
-            slider.EndChanged?.Invoke(slider, slider.End);
+            slider.OnEndChanged();
 
         }
     }
@@ -487,6 +487,16 @@ public class SkiaSlider : SkiaLayout
             }
 
         }
+    }
+
+    public virtual void OnEndChanged()
+    {
+        EndChanged?.Invoke(this, End);
+    }
+
+    public virtual void OnStartChanged()
+    {
+        StartChanged?.Invoke(this, Start);
     }
 
     public event EventHandler<double> StartChanged;

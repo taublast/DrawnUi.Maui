@@ -12,6 +12,7 @@
     RowDefinitions="*, Auto"
     RowSpacing="0"
     Type="Grid"
+    Tag="ColorPickerGrid"
     UseCache="Image"
     WidthRequest="250">
 

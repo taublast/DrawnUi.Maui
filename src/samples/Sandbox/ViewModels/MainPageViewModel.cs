@@ -158,11 +158,19 @@ namespace Sandbox
                 SelectedIndex = 0;
         });
 
+        public double OffsetMap
+        {
+            get
+            {
+                return DrawerHeaderSize - 20;
+            }
+        }
+
         public double DrawerHeaderSize
         {
             get
             {
-                return Super.Screen.BottomInset + 40;
+                return Super.Screen.BottomInset + 60;
             }
         }
 
@@ -252,7 +260,7 @@ namespace Sandbox
                 {
                     _Value1 = value;
                     OnPropertyChanged();
-                    Super.Log($"[VAL1] {value}");
+                    //Super.Log($"[VAL1] {value}");
                 }
             }
         }
@@ -270,13 +278,13 @@ namespace Sandbox
                 {
                     _Value2 = value;
                     OnPropertyChanged();
-                    Super.Log($"[VAL2] {value}");
+                    //Super.Log($"[VAL2] {value}");
                 }
             }
         }
 
 
-        private double _Value3 = 1;
+        private double _Value3 = 0.05;
         public double Value3
         {
             get

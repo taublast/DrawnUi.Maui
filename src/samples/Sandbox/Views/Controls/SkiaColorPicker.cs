@@ -68,7 +68,7 @@ public partial class SkiaColorPicker : SkiaLayout
             {
                 UseCache = SkiaCacheType.Operations,
                 StrokeColor = Microsoft.Maui.Graphics.Colors.White,
-                StrokeWidth = 3,
+                StrokeWidth = PointerRingBorderUnits,
                 Type = ShapeType.Circle,
                 LockRatio = 1,
                 HeightRequest = PointerRingDiameterUnits
@@ -78,6 +78,8 @@ public partial class SkiaColorPicker : SkiaLayout
                 AddSubView(Indicator);
             }
         }
+
+        Indicator.StrokeWidth = PointerRingBorderUnits;
 
         Indicator.TranslationX = (DrawingRect.Width * PointerRingPositionXOffsetRatio) / RenderingScale - PointerRingDiameterUnits / 2f;
         Indicator.TranslationY = (DrawingRect.Height * PointerRingPositionYOffsetRatio) / RenderingScale - PointerRingDiameterUnits / 2f;
@@ -371,7 +373,7 @@ public partial class SkiaColorPicker : SkiaLayout
             nameof(PointerRingBorderUnits),
             typeof(double),
             typeof(SkiaColorPicker),
-            0.3,
+            3.0,
             BindingMode.Default,
             validateValue: (bindable, value) =>
             {
@@ -380,7 +382,7 @@ public partial class SkiaColorPicker : SkiaLayout
             propertyChanged: (bindable, value, newValue) =>
             {
                 if (newValue != null)
-                    ((SkiaColorPicker)bindable).Update();
+                    ((SkiaColorPicker)bindable).UpdateIndicator();
                 else
                     ((SkiaColorPicker)bindable).PointerRingBorderUnits = default;
             });
@@ -401,7 +403,7 @@ public partial class SkiaColorPicker : SkiaLayout
             nameof(PointerRingPositionXOffsetRatio),
             typeof(double),
             typeof(SkiaColorPicker),
-            0.5,
+            1.0,
             BindingMode.OneTime,
             coerceValue: (b, v) =>
             {
@@ -434,7 +436,7 @@ public partial class SkiaColorPicker : SkiaLayout
             nameof(PointerRingPositionYOffsetRatio),
             typeof(double),
             typeof(SkiaColorPicker),
-            0.5,
+            0.0,
             BindingMode.OneTime,
             coerceValue: (b, v) =>
             {

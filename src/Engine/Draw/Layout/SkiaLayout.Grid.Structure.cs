@@ -12,7 +12,7 @@ public partial class SkiaLayout
         public double HeightConstraint => _gridHeightConstraint;
         public double WidthConstraint => _gridWidthConstraint;
 
-        readonly ISkiaGridLayout _grid;
+        readonly ISkiaGridLayout _parentGrid;
 
         /// <summary>
         /// Pixels
@@ -49,14 +49,14 @@ public partial class SkiaLayout
         private DefinitionInfo[] _rows;
         private DefinitionInfo[] _columns;
 
-        public SkiaGridStructure(ISkiaGridLayout grid, double widthConstraint, double heightConstraint)
+        public SkiaGridStructure(ISkiaGridLayout parentGrid, double widthConstraint, double heightConstraint)
         {
-            _grid = grid;
+            _parentGrid = parentGrid;
 
             //ported from xamarin Grid
 
-            _explicitGridHeight = _grid.Height; //todo this is incorrect but we don't care for the structure
-            _explicitGridWidth = _grid.Width;
+            _explicitGridHeight = _parentGrid.Height; //todo this is incorrect but we don't care for the structure
+            _explicitGridWidth = _parentGrid.Width;
 
             _gridWidthConstraint = widthConstraint;//Dimension.IsExplicitSet(_explicitGridWidth) ? _explicitGridWidth : widthConstraint;
             _gridHeightConstraint = heightConstraint;//Dimension.IsExplicitSet(_explicitGridHeight) ? _explicitGridHeight : heightConstraint;
@@ -68,14 +68,14 @@ public partial class SkiaLayout
 
             // Cache these GridLayout properties so we don't have to keep looking them up via _grid
             // (Property access via _grid may have performance implications for some SDKs.)
-            _padding = grid.Padding;
-            _columnSpacing = grid.ColumnSpacing;
-            _rowSpacing = grid.RowSpacing;
-            _rowDefinitions = grid.RowDefinitions;
-            _columnDefinitions = grid.ColumnDefinitions;
+            _padding = parentGrid.Padding;
+            _columnSpacing = parentGrid.ColumnSpacing;
+            _rowSpacing = parentGrid.RowSpacing;
+            _rowDefinitions = parentGrid.RowDefinitions;
+            _columnDefinitions = parentGrid.ColumnDefinitions;
 
 
-            var layout = grid as SkiaControl;
+            var layout = parentGrid as SkiaControl;
             var children = layout.GetOrderedSubviews();
 
             var gridChildCount = children.Count;
@@ -161,11 +161,11 @@ public partial class SkiaLayout
                 {
                     if (isRow)
                     {
-                        array[i] = new DefinitionInfo(this._grid.DefaultRowDefinition.Height);
+                        array[i] = new DefinitionInfo(this._parentGrid.DefaultRowDefinition.Height);
                     }
                     else
                     {
-                        array[i] = new DefinitionInfo(this._grid.DefaultColumnDefinition.Width);
+                        array[i] = new DefinitionInfo(this._parentGrid.DefaultColumnDefinition.Width);
                     }
                 }
             }
@@ -178,14 +178,14 @@ public partial class SkiaLayout
             {
                 return new DefinitionInfo[]
                 {
-                    new DefinitionInfo(this._grid.DefaultRowDefinition.Height)
+                    new DefinitionInfo(this._parentGrid.DefaultRowDefinition.Height)
                 };
             }
             else
             {
                 return new DefinitionInfo[]
                 {
-                    new DefinitionInfo(this._grid.DefaultColumnDefinition.Width)
+                    new DefinitionInfo(this._parentGrid.DefaultColumnDefinition.Width)
                 };
             }
         }
@@ -204,10 +204,10 @@ public partial class SkiaLayout
             {
                 if (child.CanDraw)
                 {
-                    int row = _grid.GetRow(child as BindableObject);
-                    int column = _grid.GetColumn(child as BindableObject);
-                    int rowSpan = _grid.GetRowSpan(child as BindableObject);
-                    int columnSpan = _grid.GetColumnSpan(child as BindableObject);
+                    int row = _parentGrid.GetRow(child as BindableObject);
+                    int column = _parentGrid.GetColumn(child as BindableObject);
+                    int rowSpan = _parentGrid.GetRowSpan(child as BindableObject);
+                    int columnSpan = _parentGrid.GetColumnSpan(child as BindableObject);
 
                     maxRow = Math.Max(maxRow, row + rowSpan - 1);
                     maxColumn = Math.Max(maxColumn, column + columnSpan - 1);
@@ -260,12 +260,12 @@ public partial class SkiaLayout
 
         public Rect GetCellBoundsFor(ISkiaControl view, double xOffset, double yOffset)
         {
-            var firstColumn = _grid.GetColumn(view as BindableObject).Clamp(0, Columns.Length - 1);
-            var columnSpan = _grid.GetColumnSpan(view as BindableObject).Clamp(1, Columns.Length - firstColumn);
+            var firstColumn = _parentGrid.GetColumn(view as BindableObject).Clamp(0, Columns.Length - 1);
+            var columnSpan = _parentGrid.GetColumnSpan(view as BindableObject).Clamp(1, Columns.Length - firstColumn);
             var lastColumn = firstColumn + columnSpan;
 
-            var firstRow = _grid.GetRow(view as BindableObject).Clamp(0, Rows.Length - 1);
-            var rowSpan = _grid.GetRowSpan(view as BindableObject).Clamp(1, Rows.Length - firstRow);
+            var firstRow = _parentGrid.GetRow(view as BindableObject).Clamp(0, Rows.Length - 1);
+            var rowSpan = _parentGrid.GetRowSpan(view as BindableObject).Clamp(1, Rows.Length - firstRow);
             var lastRow = firstRow + rowSpan;
 
             double top = TopEdgeOfRow(firstRow);

@@ -1,14 +1,18 @@
-﻿using BruTile;
+﻿using AppoMobi.Specials;
+using BruTile;
 using BruTile.Cache;
 using BruTile.Predefined;
 using BruTile.Web;
 using Mapsui;
 using Mapsui.ArcGIS.DynamicProvider;
 using Mapsui.Extensions;
+using Mapsui.Layers;
 using Mapsui.Projections;
+using Mapsui.Rendering.Skia;
 using Mapsui.Samples.Maui;
 using Mapsui.Styles;
 using Mapsui.Tiling;
+using Mapsui.Tiling.Extensions;
 using Mapsui.Tiling.Fetcher;
 using Mapsui.Tiling.Layers;
 using Mapsui.Tiling.Rendering;
@@ -43,10 +47,12 @@ namespace Sandbox.Views
         {
             public class CustomizedLayer : TileLayer
             {
-                public CustomizedLayer(ITileSource tileSource, int minTiles = 200, int maxTiles = 300, IDataFetchStrategy dataFetchStrategy = null, IRenderFetchStrategy renderFetchStrategy = null, int minExtraTiles = -1, int maxExtraTiles = -1, Func<TileInfo, Task<IFeature>> fetchTileAsFeature = null) : base(tileSource, minTiles, maxTiles, dataFetchStrategy, renderFetchStrategy, minExtraTiles, maxExtraTiles, fetchTileAsFeature)
+                public CustomizedLayer(ITileSource tileSource, int minTiles = 200, int maxTiles = 300, IDataFetchStrategy dataFetchStrategy = null,
+                    IRenderFetchStrategy renderFetchStrategy = null,
+                    int minExtraTiles = -1, int maxExtraTiles = -1)
+                    : base(tileSource, minTiles, maxTiles, dataFetchStrategy, renderFetchStrategy, minExtraTiles, maxExtraTiles, null)
                 {
                 }
-
             }
 
             public static IPersistentCache<byte[]>? DefaultCache = null;
@@ -61,16 +67,43 @@ namespace Sandbox.Views
                 return new OpenCustomStreetMap.CustomizedLayer(CreateTileSource(userAgent)) { Name = "OpenStreetMap" };
             }
 
+            public class CustomTilesSource : HttpTileSource
+            {
+                public CustomTilesSource(ITileSchema tileSchema, string urlFormatter, IEnumerable<string> serverNodes = null, string apiKey = null, string name = null, IPersistentCache<byte[]> persistentCache = null, Func<Uri, Task<byte[]>> tileFetcher = null, Attribution attribution = null, string userAgent = null) : base(tileSchema, urlFormatter, serverNodes, apiKey, name, persistentCache, tileFetcher, attribution, userAgent)
+                {
+
+                }
+
+                public CustomTilesSource(ITileSchema tileSchema, IRequest request, string name = null, IPersistentCache<byte[]> persistentCache = null, Func<Uri, Task<byte[]>> tileFetcher = null, Attribution attribution = null, string userAgent = null) : base(tileSchema, request, name, persistentCache, tileFetcher, attribution, userAgent)
+                {
+
+                }
+
+                public override async Task<byte[]> GetTileAsync(TileInfo tileInfo)
+                {
+                    var data = await base.GetTileAsync(tileInfo);
+
+                    //using var skData = SKData.CreateCopy(data);
+                    //var image = SKImage.FromEncodedData(skData);
+                    //var bmp = new BitmapInfo { Bitmap = image };
+
+                    //todo modify image
+
+                    //codo convert back to data so it would be cached as modified
+
+                    return data;
+                }
+            }
+
             private static HttpTileSource CreateTileSource(string userAgent)
             {
 
-                return new HttpTileSource(new GlobalSphericalMercator(),
+                return new CustomTilesSource(new GlobalSphericalMercator(),
                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                     new[] { "a", "b", "c" }, name: "OpenStreetMap",
                     attribution: OpenStreetMapAttribution, userAgent: userAgent, persistentCache: DefaultCache);
             }
         }
-
 
         protected override void OnAppearing()
         {
@@ -81,13 +114,6 @@ namespace Sandbox.Views
                 once = true;
 
                 var map = mapControl.Map;
-
-                //var map = new Mapsui.Map()
-                //{
-                //    CRS = "EPSG:3857",
-                //    BackColor = Mapsui.Styles.Color.Transparent
-                //    //Transformation = new MinimalTransformation()
-                //};
 
                 map.CRS = "EPSG:3857";
 
@@ -105,13 +131,13 @@ namespace Sandbox.Views
                     TextAlignment = Mapsui.Widgets.Alignment.Center,
                     HorizontalAlignment = Mapsui.Widgets.HorizontalAlignment.Center,
                     VerticalAlignment = Mapsui.Widgets.VerticalAlignment.Bottom,
-                    Margin = new(16, 56),
+                    Margin = new(16, 75),
                 });
 
                 //adds the +/- zoom widget
                 map.Widgets.Add(new ZoomInOutWidget
                 {
-                    Margin = new(16, 56),
+                    Margin = new(16, 75),
                 });
 
                 //mapControl.Map = map;
@@ -127,11 +153,15 @@ namespace Sandbox.Views
 
                 mapControl?.Refresh();
 
-                var point = new MPoint(48.856663, 2.351556);
-                var sphericalMercatorCoordinate = SphericalMercator.FromLonLat(point.X, point.Y).ToMPoint();
+                Tasks.StartDelayed(TimeSpan.FromSeconds(2), () =>
+                {
+                    var point = new MPoint(2.351556, 48.856663);
+                    var sphericalMercatorCoordinate = SphericalMercator.FromLonLat(point.X, point.Y).ToMPoint();
 
-                mapControl.Map.Navigator.CenterOnAndZoomTo(
-                    sphericalMercatorCoordinate, mapControl.Map.Navigator.Resolutions[2]);
+                    mapControl.Map.Navigator.CenterOnAndZoomTo(
+                        sphericalMercatorCoordinate,
+                        mapControl.Map.Navigator.Resolutions[10]);
+                });
 
             }
 
