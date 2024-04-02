@@ -98,10 +98,18 @@ namespace DrawnUi.Maui.Views
             if (Handler == null)
             {
                 DestroySkiaView();
+                
+#if ONPLATFORM
+                DisposePlatform();
+#endif
             }
             else
             {
                 CreateSkiaView();
+                
+#if ONPLATFORM
+                SetupRenderingLoop();
+#endif
             }
 
             HandlerWasSet?.Invoke(this, Handler != null);

@@ -93,8 +93,11 @@ namespace DrawnUi.Maui.Views
 
         public bool CheckCanDraw()
         {
-            return CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
-                   && IsDirty
+            return 
+                !OrderedDraw &&
+                IsDirty &&
+                CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
+                    && !CanvasView.IsDrawing
                    && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
                    && IsVisible && Super.EnableRendering;
         }

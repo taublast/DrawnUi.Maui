@@ -13,7 +13,6 @@ public partial class ButtonToRoot
 
     private void GoToRoot(object sender, TouchActionEventArgs e)
     {
-
         if (TouchEffect.CheckLockAndSet())
             return;
 

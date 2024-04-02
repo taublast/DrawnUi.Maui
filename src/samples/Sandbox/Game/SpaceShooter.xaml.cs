@@ -312,11 +312,6 @@ public partial class SpaceShooter : MauiGame
                             bulletSprite.UpdatePosition(deltaMs);
                         }
                     }
-                    else
-                    {
-                        //shot happened
-                        var stop = bulletSprite;
-                    }
                 }
             }
 
