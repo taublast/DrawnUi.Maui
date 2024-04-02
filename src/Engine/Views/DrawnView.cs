@@ -98,7 +98,7 @@ namespace DrawnUi.Maui.Views
             if (Handler == null)
             {
                 DestroySkiaView();
-                
+
 #if ONPLATFORM
                 DisposePlatform();
 #endif
@@ -106,7 +106,7 @@ namespace DrawnUi.Maui.Views
             else
             {
                 CreateSkiaView();
-                
+
 #if ONPLATFORM
                 SetupRenderingLoop();
 #endif
@@ -503,10 +503,6 @@ namespace DrawnUi.Maui.Views
 
                 //bug this creates garbage on aandroid on every frame
                 // DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
-
-#if ONPLATFORM
-                SetupRenderingLoop();
-#endif
             }
         }
 

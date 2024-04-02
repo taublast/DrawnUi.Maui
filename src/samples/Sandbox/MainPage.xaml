@@ -38,8 +38,10 @@
                         Type="Column"
                         UseCache="Image">
 
-                        <!--  we set ImageDoubleBuffered to be able to fast redraw 
-                        the whole scroll even if image drawing with new effects might be slow -->
+                        <!--
+                            we set ImageDoubleBuffered to be able to fast redraw
+                            the whole scroll even if image drawing with new effects might be slow
+                        -->
                         <draw:SkiaImage
                             Aspect="AspectFit"
                             HeightRequest="185"
@@ -89,17 +91,17 @@
                             SelectedColor="{Binding SelectedColor}"
                             UseCache="GPU" />-->
 
-
                         <controls:SliderColor
-                            UseCache="ImageDoubleBuffered"
                             x:Name="Slider"
                             Margin="0,-16,0,16"
+                            DefaultColor="Red"
                             HorizontalOptions="Center"
                             Max="1"
                             Min="0"
                             MinMaxStringFormat="P0"
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
+                            UseCache="ImageDoubleBuffered"
                             WidthRequest="200" />
 
                         <!--

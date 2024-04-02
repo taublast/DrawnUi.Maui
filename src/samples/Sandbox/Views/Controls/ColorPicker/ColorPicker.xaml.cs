@@ -10,7 +10,7 @@ public partial class ColorPicker
     public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(
         nameof(SelectedColor),
         typeof(Color),
-        typeof(SkiaShape),
+        typeof(ColorPicker),
         Colors.White,
         propertyChanged: SelectedColorChanged,
         defaultBindingMode: BindingMode.OneWayToSource);
@@ -49,20 +49,19 @@ public partial class ColorPicker
     {
         if (Slider != null)
         {
-            var hue = color.GetHue();
+            Slider.SetSliderValueForColor(color);
 
             //set panel indicator position
             //todo
 
-            //set slider
-            ClearColor = Color.FromHsv(hue, 1, 1);
+            ClearColor = Slider.SelectedColor;
         }
     }
 
     public static readonly BindableProperty DefaultColorProperty = BindableProperty.Create(
         nameof(DefaultColor),
         typeof(Color),
-        typeof(SkiaShape),
+        typeof(ColorPicker),
         Colors.White,
         propertyChanged: DefaultColorChanged,
         defaultBindingMode: BindingMode.OneWayToSource);

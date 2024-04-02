@@ -84,6 +84,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
+            Super.ChoreographerCallback -= OnChoreographer;
             Super.ChoreographerCallback += OnChoreographer;
         }
 
@@ -103,6 +104,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
+            Looper?.Dispose();
             Looper = new(OnFrame);
             Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), () =>
             {

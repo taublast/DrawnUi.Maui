@@ -27,6 +27,17 @@ namespace Sandbox.Views
                         }
                     }
                 }
+                else
+                if (child is StackLayout stack)
+                {
+                    foreach (var stackChild in stack.Children)
+                    {
+                        if (stackChild is IDisposable disposableChild)
+                        {
+                            disposableChild?.Dispose();
+                        }
+                    }
+                }
             }
         }
     }

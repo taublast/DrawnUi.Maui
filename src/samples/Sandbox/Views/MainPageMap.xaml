@@ -235,7 +235,7 @@
                                     Text="Tint Color" />
 
                                 <controls:ColorPicker
-                                    DefaultColor="#00FF00"
+                                    DefaultColor="CornflowerBlue"
                                     HorizontalOptions="Fill"
                                     SelectedColor="{Binding SelectedColor}"
                                     Style="{x:StaticResource SkiaStyleControlInTable}"

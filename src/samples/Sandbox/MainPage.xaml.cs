@@ -3,10 +3,11 @@ using AppoMobi.Specials;
 using DrawnUi.Maui.Infrastructure;
 using DrawnUi.Maui.Views;
 using Sandbox;
+using Sandbox.Views;
 
 namespace MauiNet8;
 
-public partial class MainPage
+public partial class MainPage : BasePage
 {
     int count = 0;
 
