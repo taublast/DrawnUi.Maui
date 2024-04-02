@@ -13,7 +13,7 @@
     RowSpacing="0"
     Type="Grid"
     Tag="ColorPickerGrid"
-    UseCache="Image"
+    UseCache="ImageDoubleBuffered"
     WidthRequest="250">
 
     <controls:SkiaColorPicker

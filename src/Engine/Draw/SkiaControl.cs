@@ -4611,7 +4611,7 @@ namespace DrawnUi.Maui.Draw
                     //will be executed on background thread in parallel
                     RenderObjectPreparing = CreateRenderingObject(context, recordArea, RenderObjectPreparing, (ctx) =>
                     {
-                        Paint(ctx, recordArea, scale, args);
+                        PaintWithEffects(ctx, recordArea, scale, args);
                     });
                 });
 

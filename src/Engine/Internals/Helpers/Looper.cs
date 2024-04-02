@@ -47,33 +47,35 @@ public class Looper : IDisposable
         Stop();
     }
 
+
     protected async Task StartLooperAsync(CancellationToken cancellationToken)
     {
-        loopStopwatch.Restart();
-        long lastFrameEnd = loopStopwatch.ElapsedMilliseconds;
+        // Initial timestamp
+        long lastFrameTimestamp = Stopwatch.GetTimestamp();
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            frameStopwatch.Restart();
+            var startFrameTimestamp = Stopwatch.GetTimestamp();
 
             OnFrame?.Invoke();
 
-            frameStopwatch.Stop();
+            var endFrameTimestamp = Stopwatch.GetTimestamp();
+            var frameElapsedTicks = endFrameTimestamp - startFrameTimestamp;
+            var frameElapsedMs = (frameElapsedTicks / (double)Stopwatch.Frequency) * 1000;
+            var totalElapsedMs = ((startFrameTimestamp - lastFrameTimestamp) / (double)Stopwatch.Frequency) * 1000;
+            var timeToWaitMs = targetIntervalMs - totalElapsedMs - frameElapsedMs;
 
-            var frameExecutionTimeMs = frameStopwatch.Elapsed.TotalMilliseconds;
-            var elapsedTimeSinceLastFrame = loopStopwatch.ElapsedMilliseconds - lastFrameEnd;
-            var timeToWait = targetIntervalMs - elapsedTimeSinceLastFrame - frameExecutionTimeMs;
-
-            if (timeToWait < 1)
+            if (timeToWaitMs < 1)
             {
-                timeToWait = 1;
+                timeToWaitMs = 1;
             }
-            await Task.Delay(TimeSpan.FromMilliseconds(timeToWait));
-            //Thread.Sleep(TimeSpan.FromMilliseconds(timeToWait));
 
-            lastFrameEnd = loopStopwatch.ElapsedMilliseconds;
+            await Task.Delay(TimeSpan.FromMilliseconds(timeToWaitMs), cancellationToken);
+
+            lastFrameTimestamp = Stopwatch.GetTimestamp();
         }
     }
+
 
     public Action OnFrame { get; set; }
 

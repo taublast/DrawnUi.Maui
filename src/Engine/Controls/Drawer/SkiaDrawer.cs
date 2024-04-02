@@ -419,12 +419,17 @@ namespace DrawnUi.Maui.Controls
 
             var hideContent = GetOffsetToHide();
 
+            if (HeaderSize > 0)
+            {
+                hideContent = new(hideContent.X + 1, hideContent.Y + 1);
+            }
+
             if (ItemsSource != null)
             {
                 SnapPoints = new List<Vector2>(ItemsSource.Count)
                 {
                     new (0,0),
-                    new(hideContent.X+1, hideContent.Y+1)
+                    hideContent
                 };
             }
             else
@@ -432,7 +437,7 @@ namespace DrawnUi.Maui.Controls
                 SnapPoints = new List<Vector2>()
                 {
                     new (0,0),
-                    new(hideContent.X+1, hideContent.Y+1)
+                    hideContent
                 };
             }
 

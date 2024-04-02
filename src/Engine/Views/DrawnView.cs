@@ -1220,20 +1220,14 @@ namespace DrawnUi.Maui.Views
 
         public bool IsDisposed { get; protected set; }
 
-        public static long GetNanoseconds()
-        {
-            double timestamp = Stopwatch.GetTimestamp();
-            double nanoseconds = 1_000_000_000.0 * timestamp / Stopwatch.Frequency;
 
-            return (long)nanoseconds;
-        }
 
         SkiaDrawingContext CreateContext(SKCanvas canvas)
         {
             return new SkiaDrawingContext()
             {
                 Superview = this,
-                FrameTimeNanos = CanvasView.FrameTime,
+                FrameTimeNanos = Super.GetCurrentTimeNanos(),// CanvasView.FrameTime,
                 Canvas = canvas,
                 Width = canvas.DeviceClipBounds.Width,
                 Height = canvas.DeviceClipBounds.Height
@@ -1400,11 +1394,6 @@ namespace DrawnUi.Maui.Views
         /// Frame started rendering nanoseconds
         /// </summary>
         public long FrameTime { get; protected set; }
-
-        /// <summary>
-        /// Frame finished rendering nanoseconds
-        /// </summary>
-        public long FrameFinishedTime { get; protected set; }
 
         /// <summary>
         /// Actual FPS
@@ -1607,7 +1596,6 @@ namespace DrawnUi.Maui.Views
                 }
                 finally
                 {
-                    FrameFinishedTime = GetNanoseconds();
                     DrawingThreads--;
                 }
             }

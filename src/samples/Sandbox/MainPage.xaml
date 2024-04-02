@@ -37,16 +37,17 @@
                         Type="Column"
                         UseCache="Image">
 
-                        <!--  we set GPU to be able to fast change effects at runtime  -->
+                        <!--  we set ImageDoubleBuffered to be able to fast redraw 
+                        the whole scroll even if image drawing with new effects might be slow -->
                         <draw:SkiaImage
                             Aspect="AspectFit"
                             HeightRequest="185"
                             HorizontalOptions="Center"
                             LoadSourceOnFirstDraw="False"
-                            SemanticProperties.Description="dot net bot in a race car number eight"
+                            SemanticProperties.Description="dot net maui drawn ui"
                             Source="car.png"
                             Tag="Car"
-                            UseCache="GPU">
+                            UseCache="ImageDoubleBuffered">
                             <draw:SkiaControl.VisualEffects>
 
                                 <!--<draw:BlurEffect Amount="5" />-->
@@ -89,6 +90,7 @@
 
 
                         <controls:SliderColor
+                            UseCache="ImageDoubleBuffered"
                             x:Name="Slider"
                             Margin="0,-16,0,16"
                             HorizontalOptions="Center"
@@ -97,7 +99,6 @@
                             MinMaxStringFormat="P0"
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
-                            UseCache="GPU"
                             WidthRequest="200" />
 
                         <!--

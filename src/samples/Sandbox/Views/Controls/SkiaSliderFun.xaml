@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     x:Name="ThisSlider"
-    AvailableWidthAdjustment="2"
+    AvailableWidthAdjustment="1.5"
     HorizontalOptions="Fill"
     SliderHeight="35"
     Tag="SliderFun"

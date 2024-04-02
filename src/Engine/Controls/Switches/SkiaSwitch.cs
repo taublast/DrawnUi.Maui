@@ -127,12 +127,14 @@ public class SkiaSwitch : SkiaToggle
         }
     }
 
+    public static uint AnimationSpeed = 200;
+
     protected override void OnToggledChanged()
     {
         if (LayoutReady && IsAnimated)
         {
             var easing = Easing.CubicOut;
-            var msSpeed = (uint)250;
+            var msSpeed = AnimationSpeed;
             var pos = 0.0;
             if (!IsToggled)
             {
