@@ -26,7 +26,7 @@
             <draw:SkiaDrawer
                 x:Name="Drawer"
                 Direction="FromBottom"
-                HeaderSize="49"
+                HeaderSize="{Binding DrawerHeaderSize}"
                 HeightRequest="350"
                 HorizontalOptions="Fill"
                 IsOpen="{Binding IsOpen}"
@@ -42,7 +42,7 @@
                     <draw:SkiaShape
                         BackgroundColor="Red"
                         CornerRadius="20,0,20,0"
-                        HeightRequest="50"
+                        HeightRequest="{Binding DrawerHeaderSize}"
                         HorizontalOptions="Fill"
                         UseCache="Image">
 
@@ -57,10 +57,11 @@
                     </draw:SkiaShape>
 
                     <draw:SkiaScroll
-                        Margin="0,50,0,0"
                         BackgroundColor="Gainsboro"
                         Bounces="False"
                         HorizontalOptions="Fill"
+                        MarginBottom="{Binding BottomInsets}"
+                        MarginTop="{Binding DrawerHeaderSize}"
                         Tag="InsideDrawer"
                         VerticalOptions="Fill">
 

@@ -307,28 +307,31 @@ namespace DrawnUi.Maui.Controls
             var mySize = this.MeasuredSize;
             var headerSize = HeaderSize;
             double amplitudeSize = AmplitudeSize;
+            //round
+            var height = mySize.Units.Height;
+            var width = mySize.Units.Width;
 
             switch (this.Direction)
             {
             case DrawerDirection.FromLeft:
             if (AmplitudeSize >= 0)
-                headerSize = amplitudeSize >= 0 ? mySize.Units.Width - amplitudeSize : mySize.Units.Width;
-            return new Vector2((float)(-(mySize.Units.Width - headerSize)), 0);
+                headerSize = amplitudeSize >= 0 ? width - amplitudeSize : width;
+            return new Vector2((float)(-(width - headerSize)), 0);
 
             case DrawerDirection.FromRight:
             if (AmplitudeSize >= 0)
-                headerSize = amplitudeSize >= 0 ? mySize.Units.Width - amplitudeSize : mySize.Units.Width;
-            return new Vector2((float)(mySize.Units.Width - headerSize), 0);
+                headerSize = amplitudeSize >= 0 ? width - amplitudeSize : width;
+            return new Vector2((float)(width - headerSize), 0);
 
             case DrawerDirection.FromBottom:
             if (AmplitudeSize >= 0)
-                headerSize = amplitudeSize >= 0 ? mySize.Units.Height - amplitudeSize : mySize.Units.Height;
-            return new Vector2(0, (float)(mySize.Units.Height - headerSize));
+                headerSize = amplitudeSize >= 0 ? height - amplitudeSize : height;
+            return new Vector2(0, (float)(height - headerSize));
 
             case DrawerDirection.FromTop:
             if (AmplitudeSize >= 0)
-                headerSize = amplitudeSize >= 0 ? mySize.Units.Height - amplitudeSize : mySize.Units.Height;
-            return new Vector2(0, (float)(-(mySize.Units.Height - headerSize)));
+                headerSize = amplitudeSize >= 0 ? height - amplitudeSize : height;
+            return new Vector2(0, (float)(-(height - headerSize)));
 
             default:
             return Vector2.Zero;
@@ -414,12 +417,14 @@ namespace DrawnUi.Maui.Controls
 
             Viewport = Parent.DrawingRect;
 
+            var hideContent = GetOffsetToHide();
+
             if (ItemsSource != null)
             {
                 SnapPoints = new List<Vector2>(ItemsSource.Count)
                 {
                     new (0,0),
-                    GetOffsetToHide()
+                    new(hideContent.X+1, hideContent.Y+1)
                 };
             }
             else
@@ -427,7 +432,7 @@ namespace DrawnUi.Maui.Controls
                 SnapPoints = new List<Vector2>()
                 {
                     new (0,0),
-                    GetOffsetToHide()
+                    new(hideContent.X+1, hideContent.Y+1)
                 };
             }
 
@@ -621,6 +626,9 @@ namespace DrawnUi.Maui.Controls
             {
                 ResetPan();
             }
+
+            consumed = this;
+
             break;
 
             //---------------------------------------------------------------------------------------------------------

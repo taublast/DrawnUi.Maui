@@ -42,7 +42,7 @@ public partial class ColorPicker
     }
 
     /// <summary>
-    /// Under consctruction
+    /// TODO Under consctruction
     /// </summary>
     /// <param name="color"></param>
     public void SetSliderValueForColor(Color color)
@@ -101,9 +101,7 @@ public partial class ColorPicker
 
     public void OnSliderValueChanged(object sender, double e)
     {
-        var color = GetColorForValue(e);
-
-        ClearColor = color;
+        ClearColor = Slider.SelectedColor;
     }
 
     private void ColorsPanelSelectionChanged(object sender, Color value)
@@ -111,34 +109,4 @@ public partial class ColorPicker
         SelectedColor = value;
     }
 
-    public static Color GetColorForValue(double sliderValue)
-    {
-        int numberOfColors = SkiaColorsPanel.DefaultPrimaryColors.Count;
-        sliderValue = Math.Clamp(sliderValue, 0.0, 1.0);
-
-        double segmentSize = 1.0 / (numberOfColors - 1);
-        int segmentIndex = (int)(sliderValue / segmentSize);
-
-        // Handle edge case where sliderValue is 1.0
-        if (segmentIndex >= numberOfColors - 1)
-        {
-            segmentIndex = numberOfColors - 2;
-        }
-
-        double segmentStartValue = segmentSize * segmentIndex;
-        double fractionIntoSegment = (sliderValue - segmentStartValue) / segmentSize;
-
-        Color startColor = SkiaColorsPanel.DefaultPrimaryColors[segmentIndex];
-        Color endColor = SkiaColorsPanel.DefaultPrimaryColors[segmentIndex + 1];
-
-        return InterpolateColor(startColor, endColor, fractionIntoSegment);
-    }
-
-    private static Color InterpolateColor(Color start, Color end, double fraction)
-    {
-        float r = (float)(start.Red + (end.Red - start.Red) * fraction);
-        float g = (float)(start.Green + (end.Green - start.Green) * fraction);
-        float b = (float)(start.Blue + (end.Blue - start.Blue) * fraction);
-        return new Color(r, g, b);
-    }
 }

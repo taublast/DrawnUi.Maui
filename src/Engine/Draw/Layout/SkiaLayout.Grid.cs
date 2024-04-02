@@ -26,8 +26,6 @@ public partial class SkiaLayout
 
             using var cells = ChildrenFactory.GetViewsIterator();
 
-            //todo optimize this so we do not call GetCellBoundsFor every redraw but use RenderTree like in column/row stack
-
             List<SkiaControlWithRect> tree = new();
 
             foreach (var child in cells)
@@ -35,9 +33,11 @@ public partial class SkiaLayout
                 if (!child.CanDraw)
                     continue;
 
-                var cell = GridStructure.GetCellBoundsFor(child, destination.Left / scale,
-                    destination.Top / scale);
+                //GetCellBoundsFor works with points
+                var cell = GridStructure.GetCellBoundsFor(child, Math.Round(destination.Left / scale),
+                    Math.Round(destination.Top / scale));
 
+                //GetCellBoundsFor is in pixels
                 SKRect cellRect = new((float)Math.Round(cell.Left * scale), (float)Math.Round(cell.Top * scale),
                     (float)Math.Round(cell.Right * scale), (float)Math.Round(cell.Bottom * scale));
 

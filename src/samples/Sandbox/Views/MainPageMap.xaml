@@ -48,30 +48,26 @@
         <draw:SkiaLayout
             BackgroundColor="Gainsboro"
             HorizontalOptions="Fill"
-            Tag="DrawerInside"
             VerticalOptions="Fill">
 
             <!--  MAP  -->
-            
-            <!--enjoy the GPU cache :)-->
+
+            <!--  GPU cache makes a huge difference :)  -->
             <maui:SkiaMapControl
                 x:Name="mapControl"
                 BackgroundColor="Black"
                 DisableEffects="{Binding ValueSwitch, Converter={x:StaticResource NotConverter}}"
                 HorizontalOptions="Fill"
+                MarginBottom="{Binding OffsetMap}"
                 UseCache="GPU"
                 VerticalOptions="Fill"
                 ZIndex="-1">
-                
+
                 <draw:SkiaControl.VisualEffects>
 
-                    <draw:TintWithAlphaEffect ColorTint="CornflowerBlue" Alpha="0.25"/>
-                    
-                    <draw:ChainAdjustRGBEffect
-                        x:DataType="demo:MainPageViewModel"
-                        Blue="{Binding Value5}"
-                        Green="{Binding Value4}"
-                        Red="{Binding Value3}" />
+                    <draw:TintWithAlphaEffect
+                        Alpha="{Binding Value3}"
+                        ColorTint="{Binding SelectedColor}" />
 
                     <draw:ChainAdjustContrastEffect
                         x:DataType="demo:MainPageViewModel"
@@ -87,10 +83,10 @@
 
 
                 </draw:SkiaControl.VisualEffects>
-                
+
             </maui:SkiaMapControl>
 
-            <!--  VERTICAL  -->
+            <!--  DRAWER  -->
             <draw:SkiaDrawer
                 x:Name="Drawer"
                 Direction="FromBottom"
@@ -121,22 +117,22 @@
                             CornerRadius="20"
                             HeightRequest="4"
                             HorizontalOptions="Center"
+                            MarginBottom="{Binding BottomInsets}"
                             StrokeColor="{StaticResource Gray400}"
                             StrokeWidth="1"
                             Type="Rectangle"
                             VerticalOptions="Center"
-                            MarginBottom="{Binding BottomInsets}"
                             WidthRequest="64" />
 
                     </draw:SkiaShape>
 
                     <!--  CONTENT  -->
                     <draw:SkiaScroll
-                        MarginTop="{Binding DrawerHeaderSize}"
-                        MarginBottom="{Binding BottomInsets}"
                         BackgroundColor="White"
                         Bounces="False"
                         HorizontalOptions="Fill"
+                        MarginBottom="{Binding BottomInsets}"
+                        MarginTop="{Binding DrawerHeaderSize}"
                         Tag="InsideDrawer"
                         VerticalOptions="Fill">
 
@@ -152,10 +148,11 @@
                                 <draw:SkiaLabel
                                     HorizontalOptions="Fill"
                                     Style="{x:StaticResource SkiaStyleControLabel}"
-                                    Text="{Binding ValueSwitch, StringFormat='Effects: {0}'}" />
+                                    Text="Apply Effects" />
                                 <controls:SkiaSwitchFun
                                     IsToggled="{Binding ValueSwitch, Mode=TwoWay}"
                                     Style="{x:StaticResource SkiaStyleControlInTable}"
+                                    TranslationX="-4"
                                     UseCache="Image" />
                             </draw:SkiaLayout>
 
@@ -209,7 +206,46 @@
                                     Style="{x:StaticResource SkiaStyleControlInTable}"
                                     UseCache="Image" />
                             </draw:SkiaLayout>
- 
+
+                            <!--  Tint  -->
+                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                                <draw:SkiaLabel
+                                    HorizontalOptions="Fill"
+                                    Style="{x:StaticResource SkiaStyleControLabel}"
+                                    Text="{Binding Value3, StringFormat='Tint: {0:0.00}'}" />
+                                <controls:SkiaSliderFun
+                                    End="{Binding Value3, Mode=TwoWay}"
+                                    HorizontalOptions="Fill"
+                                    Max="1"
+                                    Min="0"
+                                    MinMaxStringFormat="P0"
+                                    Step="0.01"
+                                    Style="{x:StaticResource SkiaStyleControlInTable}"
+                                    UseCache="Image" />
+                            </draw:SkiaLayout>
+
+
+                            <!--  Tint  COLOR Picker-->
+                            <draw:SkiaLayout
+                                HeightRequest="100"
+                                MarginTop="16"
+                                Style="{x:StaticResource SkiaStyleControlContainer}">
+
+                                <draw:SkiaLabel
+                                    HorizontalOptions="Fill"
+                                    Style="{x:StaticResource SkiaStyleControLabel}"
+                                    Text="Tint Color" />
+
+                                <controls:ColorPicker
+                                    DefaultColor="#00FF00"
+                                    HorizontalOptions="Fill"
+                                    SelectedColor="{Binding SelectedColor}"
+                                    Style="{x:StaticResource SkiaStyleControlInTable}"
+                                    UseCache="Image"
+                                    WidthRequest="-1" />
+
+                            </draw:SkiaLayout>
+
 
                         </draw:SkiaLayout>
 
@@ -227,7 +263,7 @@
                 TextColor="White" />-->
 
             <controls:ButtonToRoot />
-            
+
             <draw:SkiaLabelFps
                 Margin="0,0,4,24"
                 BackgroundColor="DarkRed"

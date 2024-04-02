@@ -159,7 +159,8 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
             {
                 if (_lastPinch != 0)
                 {
-                    var delta = (int)Math.Round(((args.Pinch.Scale - _lastPinch) / RenderingScale) * 10);
+                    //this is rendering scale independent!
+                    var delta = (int)Math.Round(((args.Pinch.Scale - _lastPinch)) * PinchMultiplier);
                     _lastPinch = args.Pinch.Scale;
 
                     if (delta != 0)
@@ -203,11 +204,24 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
     #endregion
 
+    /// <summary>
+    /// Magic ergonomic number, you can change it
+    /// </summary>
+    public static float PinchMultiplier = 55.0f;
 
     private ScreenPosition GetScreenPosition(SKPoint point) => new ScreenPosition(point.X / PixelDensity, point.Y / PixelDensity);
 
-    private void OnZoomInOrOut(int mouseWheelDelta, ScreenPosition currentMousePosition)
-        => Map.Navigator.MouseWheelZoom(mouseWheelDelta, currentMousePosition);
+    private void OnZoomInOrOut(int mouseWheelDelta, ScreenPosition centerOfZoom)
+    => Map.Navigator.MouseWheelZoom(mouseWheelDelta, centerOfZoom);
+    //{
+    //    var resolution = Map.Navigator.MouseWheelAnimation.GetResolution(
+    //        mouseWheelDelta, Map.Navigator.Viewport.Resolution, Map.Navigator.ZoomBounds, Map.Navigator.Resolutions);
+
+    //    if (resolution == Map.Navigator.Viewport.Resolution)
+    //        return;
+
+    //    Map.Navigator.ZoomTo(resolution, centerOfZoom, Map.Navigator.MouseWheelAnimation.Duration, Map.Navigator.MouseWheelAnimation.Easing);
+    //}
 
     /// <summary>
     /// Public functions
