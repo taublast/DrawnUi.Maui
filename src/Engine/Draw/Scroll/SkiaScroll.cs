@@ -637,6 +637,7 @@ namespace DrawnUi.Maui.Draw
                 //----------------------------------------------------------------------
                 {
                     IsUserFocused = true;
+                    //todo cmon this todo is here almost a year
                     var zoomed = SetZoom(args.Pinch.Scale);
                     consumed = this;
                 }

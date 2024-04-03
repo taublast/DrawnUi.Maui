@@ -157,10 +157,16 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
             //if (!ZoomLocked)
             {
-                if (_lastPinch != 0)
+                if (_lastPinch != 0 || args.Pinch.Delta != 0)
                 {
-                    //this is rendering scale independent!
-                    var delta = (int)Math.Round(((args.Pinch.Scale - _lastPinch)) * PinchMultiplier);
+                    double delta = 0;
+                    if (args.Pinch.Delta != 0)
+                    {
+                        delta = args.Pinch.Delta * ZoomSpeed;
+                    }
+                    else
+                        delta = (args.Pinch.Scale - _lastPinch) * ZoomSpeed;
+
                     _lastPinch = args.Pinch.Scale;
 
                     if (delta != 0)
@@ -169,9 +175,9 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
                         position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
 
-                        OnZoomInOrOut(delta, position);
+                        var intZoom = (int)Math.Round(delta * PinchMultiplier);
+                        OnZoomInOrOut(intZoom, position);
                     }
-
                 }
                 else
                 {
@@ -203,6 +209,19 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     bool _wasPinching = false;
 
     #endregion
+
+    public static readonly BindableProperty ZoomSpeedProperty = BindableProperty.Create(nameof(ZoomSpeed),
+        typeof(double), typeof(SkiaMapControl),
+        0.9);
+
+    /// <summary>
+    /// How much of finger movement will afect zoom change
+    /// </summary>
+    public double ZoomSpeed
+    {
+        get { return (double)GetValue(ZoomSpeedProperty); }
+        set { SetValue(ZoomSpeedProperty, value); }
+    }
 
     /// <summary>
     /// Magic ergonomic number, you can change it
@@ -266,7 +285,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     private int _updateInterval = 16;
     // Stopwatch for measuring drawing times
     private readonly System.Diagnostics.Stopwatch _stopwatch = new();
-    private IRenderer _renderer = new SkiaMapRenderer();//MapRenderer();
+    private IRenderer _renderer = new MapRenderer(); //new SkiaMapRenderer();
     private readonly TapGestureTracker _tapGestureTracker = new();
     private readonly FlingTracker _flingTracker = new();
 

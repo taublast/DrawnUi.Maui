@@ -90,7 +90,7 @@
     <!--for caching images-->
     <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
     <!--core tools-->
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.8.2" />
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.0.8.3" />
     <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
     
   </ItemGroup>
@@ -143,10 +143,5 @@
       <Link>Platforms/iOS/%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
   </ItemGroup>
-
-   
-  <!--<ItemGroup>
-    <ProjectReference Include="..\..\..\AppoMobi.Maui.DrawnUi\src\Refs\AppoMobi.Maui.Gestures\src\AppoMobi.Maui.Gestures.csproj" />
-  </ItemGroup>-->
 
 </Project>

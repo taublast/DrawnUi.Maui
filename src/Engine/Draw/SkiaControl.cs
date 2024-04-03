@@ -1032,7 +1032,7 @@ namespace DrawnUi.Maui.Draw
                     if (HadInput.Count > 0)
                     {
                         if (
-                            (touchAction == TouchActionResult.Panned ||
+                            (
                              touchAction == TouchActionResult.Panning ||
                              touchAction == TouchActionResult.Pinched ||
                              touchAction == TouchActionResult.Up))
@@ -1070,7 +1070,7 @@ namespace DrawnUi.Maui.Draw
                                 continue;
 
                             if (HadInput.Values.Contains(listener) &&
-                                (touchAction == TouchActionResult.Panned ||
+                                (
                                 touchAction == TouchActionResult.Panning ||
                                 touchAction == TouchActionResult.Pinched ||
                                 touchAction == TouchActionResult.Up))
