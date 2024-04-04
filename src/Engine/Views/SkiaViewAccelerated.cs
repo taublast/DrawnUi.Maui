@@ -77,10 +77,10 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 #if ANDROID
 
             var renderer = Handler;// as SkiaSharp.Views.Maui.Controls.Compatibility.SKGLViewRenderer;
-            //var nativeView = renderer.Control as SkiaSharp.Views.Android.SKGLTextureView;
-            //var renderer = Handler as SkiaSharp.Views.Maui.Handlers.SKGLViewHandler;
-            //var nativeView = renderer.PlatformView as SkiaSharp.Views.Android.SKGLTextureView;
-            
+                                   //var nativeView = renderer.Control as SkiaSharp.Views.Android.SKGLTextureView;
+                                   //var renderer = Handler as SkiaSharp.Views.Maui.Handlers.SKGLViewHandler;
+                                   //var nativeView = renderer.PlatformView as SkiaSharp.Views.Android.SKGLTextureView;
+
             _orientationListener = new MyOrientationListener(this, Android.Hardware.SensorDelay.Normal);
             if (_orientationListener.CanDetectOrientation())
                 _orientationListener.Enable();
@@ -157,13 +157,18 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
     public void Update(long nanos)
     {
-        if (this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
+        if (
+            Super.EnableRendering &&
+            this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
         {
             _nanos = nanos;
             IsDrawing = true;
+            invalidations++;
             InvalidateSurface();
         }
     }
+
+    public static long invalidations;
 
     /// <summary>
     /// We are drawing the frame
@@ -187,6 +192,8 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         }
 
         IsDrawing = false;
+
+        invalidations--;
     }
 
 }

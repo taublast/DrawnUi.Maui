@@ -4577,7 +4577,7 @@ namespace DrawnUi.Maui.Draw
                 _offscreenCacheRenderingQueue.Push(() =>
                 {
                     //will be executed on background thread in parallel
-                    return CreateRenderingObject(context, recordArea, OffscreenRenderObject, (ctx) =>
+                    return CreateRenderingObject(context, recordArea, RenderObjectPreparing, (ctx) =>
                         {
                             Paint(ctx, recordArea, scale, args);
                         });
@@ -4654,9 +4654,7 @@ namespace DrawnUi.Maui.Draw
                 RenderObjectNeedsUpdate = false;
                 if (_renderObjectPreparing != value)
                 {
-                    var existing = _renderObjectPreparing;
                     _renderObjectPreparing = value;
-                    existing?.Dispose();
                 }
             }
         }
@@ -4780,10 +4778,20 @@ namespace DrawnUi.Maui.Draw
                     {
                         action.Invoke();
 
+                        var kill = RenderObjectPrevious;
                         RenderObject = RenderObjectPreparing;
                         _renderObjectPreparing = null;
 
                         Repaint();
+
+                        if (kill != null)
+                        {
+                            Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
+                            {
+                                kill.Surface = null; //do not dispose surface we are reusing it
+                                DisposeObject(kill);
+                            });
+                        }
 
                         action = _offscreenCacheRenderingQueue.Pop();
                     }

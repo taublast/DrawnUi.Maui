@@ -402,22 +402,27 @@ public partial class Super
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void RunOnMainThreadAndWait(Action action)
+    public static void RunOnMainThreadAndWait(Action action, CancellationToken cancellationToken = default)
     {
         var tcs = new TaskCompletionSource();
         MainThread.InvokeOnMainThreadAsync(() =>
         {
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 action();
                 tcs.SetResult();
+            }
+            catch (OperationCanceledException)
+            {
+                tcs.TrySetCanceled(cancellationToken);
             }
             catch (Exception e)
             {
                 tcs.SetException(e);
             }
         });
-        tcs.Task.Wait();
+        tcs.Task.Wait(cancellationToken);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

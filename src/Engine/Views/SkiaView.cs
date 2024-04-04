@@ -94,7 +94,17 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         if (OnDraw != null && Super.EnableRendering)
         {
             _surface = paintArgs.Surface;
-            bool invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
+            bool isDirty = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
+//            if (isDirty && Super.EnableRendering)
+//            {
+//#if ANDROID
+//                if (_fps < 100)
+//                {
+//                    InvalidateSurface();
+//                    return;
+//                }
+//#endif
+//            }
         }
 
         IsDrawing = false;
@@ -102,7 +112,9 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
     public void Update(long nanos)
     {
-        if (this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
+        if (
+            Super.EnableRendering &&
+            this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
         {
             IsDrawing = true;
             InvalidateSurface();

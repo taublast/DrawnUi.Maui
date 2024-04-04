@@ -35,17 +35,16 @@ namespace Sandbox
         public void SetMainPage(Page page)
         {
             Super.EnableRendering = false; //globally disable the rendering
-            MainThread.BeginInvokeOnMainThread(() =>
+            MainThread.BeginInvokeOnMainThread(async () =>
             {
+                await Task.Delay(500);
                 var kill = this.MainPage;
                 MainPage = page;
+                await Task.Delay(250);
                 Super.EnableRendering = true;//enable back again and kick to update
                 if (kill is IDisposable disposable)
                 {
-                    Tasks.StartDelayed(TimeSpan.FromSeconds(2.5), () =>
-                    {
-                        disposable?.Dispose();
-                    });
+                    disposable?.Dispose();
                 }
             });
         }

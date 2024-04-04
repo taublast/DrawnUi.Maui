@@ -201,12 +201,12 @@ public class SkiaImage : SkiaControl
         nameof(LoadSourceOnFirstDraw),
         typeof(bool),
         typeof(SkiaImage),
-        true,
+        false,
         propertyChanged: OnLoadSourceChanged);
 
     /// <summary>
     /// Should the source be loaded on the first draw, useful for the first fast rendering of the screen and loading images after,
-    /// default is True.
+    /// default is False.
     /// Set this to False if you need an off-screen loading and to True to make the screen load faster.
     /// While images are loaded in async manner this still has its impact.
     /// Useful to set True for for SkiaCarousel cells etc..
@@ -458,6 +458,9 @@ public class SkiaImage : SkiaControl
                                         RetriesLeft--;
                                         await LoadAction();
                                     }
+                                }
+                                catch (TaskCanceledException)
+                                {
                                 }
                                 catch (Exception e)
                                 {

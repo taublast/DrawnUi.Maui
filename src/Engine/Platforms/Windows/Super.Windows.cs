@@ -20,7 +20,7 @@ namespace DrawnUi.Maui.Draw
 
             Super.StatusBarHeight = 0;
 
-            VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
+            //VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
 
         }
 
