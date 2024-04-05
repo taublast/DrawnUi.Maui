@@ -77,10 +77,10 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 #if ANDROID
 
             var renderer = Handler;// as SkiaSharp.Views.Maui.Controls.Compatibility.SKGLViewRenderer;
-            //var nativeView = renderer.Control as SkiaSharp.Views.Android.SKGLTextureView;
-            //var renderer = Handler as SkiaSharp.Views.Maui.Handlers.SKGLViewHandler;
-            //var nativeView = renderer.PlatformView as SkiaSharp.Views.Android.SKGLTextureView;
-            
+                                   //var nativeView = renderer.Control as SkiaSharp.Views.Android.SKGLTextureView;
+                                   //var renderer = Handler as SkiaSharp.Views.Maui.Handlers.SKGLViewHandler;
+                                   //var nativeView = renderer.PlatformView as SkiaSharp.Views.Android.SKGLTextureView;
+
             _orientationListener = new MyOrientationListener(this, Android.Hardware.SensorDelay.Normal);
             if (_orientationListener.CanDetectOrientation())
                 _orientationListener.Enable();
@@ -126,8 +126,8 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     SKSurface _surface;
     private DateTime _lastFrame;
     private double _fps;
-    private long _nanos;
-
+    private double _reportFps;
+    
     public SKSurface Surface
     {
         get
@@ -142,7 +142,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     {
         get
         {
-            return _fps;
+            return _reportFps;
         }
     }
 
@@ -157,14 +157,44 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
     public void Update(long nanos)
     {
-        if (this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
+        if (
+            Super.EnableRendering &&
+            this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
         {
             _nanos = nanos;
             IsDrawing = true;
             InvalidateSurface();
         }
     }
+    
+    private double _fpsAverage;
+    private int _fpsCount;
+    private long _lastFrameTimestamp;
+    private long _nanos;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="currentTimestamp">Nanoseconds</param>
+    void CalculateFPS(long currentTimestamp, int averageAmount = 10)
+    {
+        double elapsedSeconds = (currentTimestamp - _lastFrameTimestamp) / 1_000_000_000.0; // Convert nanoseconds to seconds
+        double fps = 1.0 / elapsedSeconds;
+    
+        _lastFrameTimestamp = currentTimestamp;
+    
+        _fpsAverage += fps;
+        _fpsCount++;
+
+        if (_fpsCount >= averageAmount) 
+        {
+            _reportFps = _fpsAverage / _fpsCount;
+
+            _fpsCount = 0;
+            _fpsAverage = 0.0;
+        }
+    }
+    
     /// <summary>
     /// We are drawing the frame
     /// </summary>
@@ -173,17 +203,23 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
     {
         IsDrawing = true;
-
-        _fps = 1.0 / (DateTime.Now - _lastFrame).TotalSeconds;
-        _lastFrame = DateTime.Now;
-
+        
         FrameTime = Super.GetCurrentTimeNanos();
 
+        CalculateFPS(FrameTime);
+       
         if (OnDraw != null && Super.EnableRendering)
         {
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
             _surface = paintArgs.Surface;
             var isDirty = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
+//#if ANDROID
+            if (isDirty && FPS < 60) //fix refresh for low-end devices, gamechanger
+            {
+                InvalidateSurface();
+                return;
+            }
+//#endif
         }
 
         IsDrawing = false;

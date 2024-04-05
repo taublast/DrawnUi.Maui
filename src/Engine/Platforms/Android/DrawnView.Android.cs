@@ -69,15 +69,20 @@ namespace DrawnUi.Maui.Views
             Super.ChoreographerCallback -= OnChoreographer;
         }
 
+        object lockFrame = new();
+
         private void OnChoreographer(object sender, EventArgs e)
         {
-            if (CheckCanDraw())
+            lock (lockFrame)
             {
-                OrderedDraw = true;
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
+                if (CheckCanDraw())
+                {
+                    OrderedDraw = true;
+                    if (NeedCheckParentVisibility)
+                        CheckElementVisibility(this);
 
-                CanvasView?.Update();
+                    CanvasView?.Update();
+                }
             }
         }
 
@@ -100,17 +105,22 @@ namespace DrawnUi.Maui.Views
             Looper?.Dispose();
         }
 
-        Looper Looper { get; set; }
-
         public virtual void SetupRenderingLoop()
         {
             Looper?.Dispose();
             Looper = new(OnFrame);
-            Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), () =>
-            {
-                Looper.Start(GetTargetFps()); //background thread
-            });
+            Looper.Start(120);
         }
+
+        protected virtual void PlatformHardwareAccelerationChanged()
+        {
+            if (Looper != null && Looper.IsRunning)
+            {
+                SetupRenderingLoop();
+            }
+        }
+
+        Looper Looper { get; set; }
 
         public void OnFrame()
         {
@@ -126,15 +136,7 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-        protected virtual void PlatformHardwareAccelerationChanged()
-        {
-            Looper?.SetTargetFps(GetTargetFps());
-        }
 
-        int GetTargetFps()
-        {
-            return 120;
-        }
 
 #endif
 
@@ -149,10 +151,10 @@ namespace DrawnUi.Maui.Views
         {
             return !OrderedDraw
             && CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
-            && !CanvasView.IsDrawing
-                   && IsDirty
-                   && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
-                   && IsVisible && Super.EnableRendering;
+               //&& !CanvasView.IsDrawing
+               && IsDirty
+               && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
+               && IsVisible && Super.EnableRendering;
         }
 
         protected void OnHandlerChangedInternal()

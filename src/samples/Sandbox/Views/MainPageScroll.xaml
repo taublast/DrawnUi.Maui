@@ -35,9 +35,10 @@
                     Type="Column"
                     BackgroundColor="Blue"
                     Tag="Content"
-                    UseCache="Image">
+                    >
 
-                    <draw:SkiaImage                      
+                    <draw:SkiaImage
+                        UseCache="Image"
                         Source="https://4.img-dpreview.com/files/p/TS1200x900~sample_galleries/1330372094/0455063184.jpg"
                         Aspect="AspectCover"
                         HeightRequest="3000"

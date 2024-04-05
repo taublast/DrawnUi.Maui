@@ -157,21 +157,52 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
             //if (!ZoomLocked)
             {
-                if (_lastPinch != 0)
+                if (_lastPinch != 0 || args.Pinch.Delta != 0)
                 {
-                    //this is rendering scale independent!
-                    var delta = (int)Math.Round(((args.Pinch.Scale - _lastPinch)) * PinchMultiplier);
+                    double delta = 0;
+                    if (args.Pinch.Delta != 0)
+                    {
+                        delta = args.Pinch.Delta * PinchMultiplier * ZoomSpeed;
+                    }
+                    else
+                    {
+                        delta = (args.Pinch.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
+
+                        if (Math.Abs(delta) < 10)
+                        {
+                            _pinchAccumulated += delta;
+                            if (Math.Abs(_pinchAccumulated) < 10)
+                            {
+                                delta = 0;
+                            }
+                            else
+                            {
+                                delta = _pinchAccumulated;
+                                _pinchAccumulated = 0;
+                            }
+                        }
+                        else
+                        {
+                            _pinchAccumulated = 0;
+                        }
+                    }
+
                     _lastPinch = args.Pinch.Scale;
 
                     if (delta != 0)
                     {
+
                         point = TranslateInputOffsetToPixels(args.Pinch.Center, childOffset);
 
                         position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
 
-                        OnZoomInOrOut(delta, position);
-                    }
+                        var intZoom = (int)Math.Round(delta);
 
+                        Super.Log($"[G] {delta} => {intZoom}");
+
+                        if (Math.Abs(intZoom) >= 0.1)
+                            OnZoomInOrOut(intZoom, position);
+                    }
                 }
                 else
                 {
@@ -203,6 +234,19 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     bool _wasPinching = false;
 
     #endregion
+
+    public static readonly BindableProperty ZoomSpeedProperty = BindableProperty.Create(nameof(ZoomSpeed),
+        typeof(double), typeof(SkiaMapControl),
+        0.9);
+
+    /// <summary>
+    /// How much of finger movement will afect zoom change
+    /// </summary>
+    public double ZoomSpeed
+    {
+        get { return (double)GetValue(ZoomSpeedProperty); }
+        set { SetValue(ZoomSpeedProperty, value); }
+    }
 
     /// <summary>
     /// Magic ergonomic number, you can change it
@@ -266,7 +310,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     private int _updateInterval = 16;
     // Stopwatch for measuring drawing times
     private readonly System.Diagnostics.Stopwatch _stopwatch = new();
-    private IRenderer _renderer = new SkiaMapRenderer();//MapRenderer();
+    private IRenderer _renderer = new MapRenderer(); //new SkiaMapRenderer();
     private readonly TapGestureTracker _tapGestureTracker = new();
     private readonly FlingTracker _flingTracker = new();
 
@@ -601,6 +645,8 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     public static readonly BindableProperty MapProperty = BindableProperty.Create(nameof(Map),
         typeof(Map), typeof(SkiaMapControl), default(Map), defaultBindingMode: BindingMode.TwoWay,
         propertyChanged: MapPropertyChanged, propertyChanging: MapPropertyChanging);
+
+    private double _pinchAccumulated;
 
     private static void MapPropertyChanging(BindableObject bindable,
         object oldValue, object newValue)

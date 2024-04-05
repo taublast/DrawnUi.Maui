@@ -1,6 +1,4 @@
-﻿//#define DOUBLE
-
-using DrawnUi.Maui.Infrastructure.Extensions;
+﻿using DrawnUi.Maui.Infrastructure.Extensions;
 using Microsoft.Maui.Graphics.Text;
 using Microsoft.Maui.HotReload;
 using System.Collections;
@@ -1032,7 +1030,7 @@ namespace DrawnUi.Maui.Draw
                     if (HadInput.Count > 0)
                     {
                         if (
-                            (touchAction == TouchActionResult.Panned ||
+                            (
                              touchAction == TouchActionResult.Panning ||
                              touchAction == TouchActionResult.Pinched ||
                              touchAction == TouchActionResult.Up))
@@ -1070,7 +1068,7 @@ namespace DrawnUi.Maui.Draw
                                 continue;
 
                             if (HadInput.Values.Contains(listener) &&
-                                (touchAction == TouchActionResult.Panned ||
+                                (
                                 touchAction == TouchActionResult.Panning ||
                                 touchAction == TouchActionResult.Pinched ||
                                 touchAction == TouchActionResult.Up))
@@ -3787,10 +3785,10 @@ namespace DrawnUi.Maui.Draw
                 RenderObjectPrevious?.Dispose();
                 RenderObjectPrevious = null;
 
-#if !DOUBLE
+
                 RenderObjectPreparing?.Dispose();
                 RenderObjectPreparing = null;
-#endif
+
 
                 _paintWithOpacity?.Dispose();
                 _paintWithEffects?.Dispose();
@@ -4239,37 +4237,8 @@ namespace DrawnUi.Maui.Draw
                 RenderObjectNeedsUpdate = false;
                 if (_renderObject != value)
                 {
-
-#if DOUBLE
-
+                    //lock both RenderObjectPrevious and RenderObject
                     lock (LockDraw)
-                    {
-                        if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
-                            && value != null
-                            && _renderObject != null)
-                        {
-                            var kill = OffscreenRenderObject;
-                            OffscreenRenderObject = _renderObject; //push front to back
-                            _renderObject = value;
-                            if (kill != value)
-                            {
-                                kill?.Dispose();
-                            }
-                        }
-                        else
-                        {
-                            var kill = _renderObject;
-                            _renderObject = value;
-                            kill?.Dispose();
-                        }
-
-                        OnPropertyChanged();
-                        if (value != null)
-                            CreatedCache?.Invoke(this, value);
-                    }
-
-#else
-                    //  lock (LockDraw)
                     {
                         if (_renderObject != null)
                         {
@@ -4287,8 +4256,10 @@ namespace DrawnUi.Maui.Draw
 
                         if (value != null)
                             CreatedCache?.Invoke(this, value);
+
+                        Monitor.PulseAll(LockDraw);
                     }
-#endif
+
                 }
             }
         }
@@ -4537,106 +4508,82 @@ namespace DrawnUi.Maui.Draw
         {
 
             //lock (LockDraw)
-
-            var cache = RenderObject;
-            var cacheType = UsingCacheType;
-            var cacheOffscreen = RenderObjectPrevious;
-
-            if (cache != null)
             {
-                if (cache.Surface != null && cache.Surface.Context != null &&
-                    cacheType == SkiaCacheType.GPU && context.Superview?.CanvasView is SkiaViewAccelerated hardware)
+                var cache = RenderObject;
+                var cacheType = UsingCacheType;
+
+
+                if (cache != null)
                 {
-                    //hardware context might change if we returned from background..
-                    if (hardware.GRContext == null || (int)hardware.GRContext.Handle != (int)cache.Surface.Context.Handle)
+                    if (cache.Surface != null && cache.Surface.Context != null &&
+                        cacheType == SkiaCacheType.GPU && context.Superview?.CanvasView is SkiaViewAccelerated hardware)
                     {
-                        //maybe we returned to app from background and GPU memory was erased..
-                        Update();
-                        return false;
-                    }
-                }
-
-                DrawRenderObjectInternal(cache, context, recordArea);
-
-                if (UsingCacheType != SkiaCacheType.ImageDoubleBuffered || !NeedUpdateFrontCache)
-                    return true;
-            }
-            else
-            if (cacheOffscreen != null)
-            {
-                DrawRenderObjectInternal(cacheOffscreen, context, recordArea);
-            }
-
-#if DOUBLE
-
-
-            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered)
-            {
-                //push task to create new cache, will always try to take last from stack:
-                var args = CreatePaintArguments();
-                _offscreenCacheRenderingQueue.Push(() =>
-                {
-                    //will be executed on background thread in parallel
-                    return CreateRenderingObject(context, recordArea, OffscreenRenderObject, (ctx) =>
+                        //hardware context might change if we returned from background..
+                        if (hardware.GRContext == null || (int)hardware.GRContext.Handle != (int)cache.Surface.Context.Handle)
                         {
-                            Paint(ctx, recordArea, scale, args);
+                            //maybe we returned to app from background and GPU memory was erased..
+                            Update();
+                            return false;
+                        }
+                    }
+
+                    lock (LockDraw)
+                    {
+                        DrawRenderObjectInternal(cache, context, recordArea);
+                        Monitor.PulseAll(LockDraw);
+                    }
+
+                    if (UsingCacheType != SkiaCacheType.ImageDoubleBuffered || !NeedUpdateFrontCache)
+                        return true;
+                }
+
+                if (UseCache == SkiaCacheType.ImageDoubleBuffered)
+                {
+                    lock (LockDraw)
+                    {
+                        var cacheOffscreen = RenderObjectPrevious;
+                        if (cache == null && cacheOffscreen != null)
+                        {
+                            DrawRenderObjectInternal(cacheOffscreen, context, recordArea);
+                        }
+                        Monitor.PulseAll(LockDraw);
+                    }
+
+                    NeedUpdateFrontCache = false;
+
+                    //push task to create new cache, will always try to take last from stack:
+                    var args = CreatePaintArguments();
+                    _offscreenCacheRenderingQueue.Push(() =>
+                    {
+                        //will be executed on background thread in parallel
+                        RenderObjectPreparing = CreateRenderingObject(context, recordArea, RenderObjectPreparing, (ctx) =>
+                        {
+                            PaintWithEffects(ctx, recordArea, scale, args);
                         });
-                });
-
-                NeedUpdateCache = false;
-
-                if (!_processingOffscrenRendering)
-                {
-                    _processingOffscrenRendering = true;
-                    Task.Run(async () => //100% background thread
-                    {
-                        await ProcessOffscreenCacheRenderingAsync();
-
-                    }).ConfigureAwait(false);
-                }
-
-                return true;
-            }
-
-
-#else
-            if (UseCache == SkiaCacheType.ImageDoubleBuffered)
-            {
-                NeedUpdateFrontCache = false;
-
-                //push task to create new cache, will always try to take last from stack:
-                var args = CreatePaintArguments();
-                _offscreenCacheRenderingQueue.Push(() =>
-                {
-                    //will be executed on background thread in parallel
-                    RenderObjectPreparing = CreateRenderingObject(context, recordArea, RenderObjectPreparing, (ctx) =>
-                    {
-                        PaintWithEffects(ctx, recordArea, scale, args);
                     });
-                });
 
-                if (!_processingOffscrenRendering)
-                {
-                    _processingOffscrenRendering = true;
-                    Task.Run(async () => //100% background thread
+                    if (!_processingOffscrenRendering)
                     {
-                        await ProcessOffscreenCacheRenderingAsync();
+                        _processingOffscrenRendering = true;
+                        Task.Run(async () => //100% background thread
+                        {
+                            await ProcessOffscreenCacheRenderingAsync();
 
-                    }).ConfigureAwait(false);
+                        }).ConfigureAwait(false);
+                    }
+
+                    return !NeedUpdateFrontCache;
                 }
 
-                return !NeedUpdateFrontCache;
+                return false;
             }
-#endif
 
-            return false;
+
         }
 
 
-#if DOUBLE
-        private readonly LimitedQueue<Func<CachedObject>> _offscreenCacheRenderingQueue = new(1);
-#else
-        private readonly LimitedQueue<Action> _offscreenCacheRenderingQueue = new(1);
+
+        private readonly LimitedQueue<Action> _offscreenCacheRenderingQueue = new(2);
 
 
         /// <summary>
@@ -4654,14 +4601,12 @@ namespace DrawnUi.Maui.Draw
                 RenderObjectNeedsUpdate = false;
                 if (_renderObjectPreparing != value)
                 {
-                    var existing = _renderObjectPreparing;
                     _renderObjectPreparing = value;
-                    existing?.Dispose();
                 }
             }
         }
         CachedObject _renderObjectPreparing;
-#endif
+
 
         private bool _processingOffscrenRendering = false;
 
@@ -4713,56 +4658,6 @@ namespace DrawnUi.Maui.Draw
                 Superview.PostponeExecutionAfterDraw(action);
         }
 
-#if DOUBLE
-
-        public async Task ProcessOffscreenCacheRenderingAsync()
-        {
-
-            await semaphoreOffsecreenProcess.WaitAsync();
-
-            _processingOffscrenRendering = true;
-
-            try
-            {
-                var createCacheInBackground = _offscreenCacheRenderingQueue.Pop();
-                while (createCacheInBackground != null)
-                {
-                    try
-                    {
-                        //create new cache to become RenderObject 
-                        var cache = createCacheInBackground();
-
-                        RenderObject = cache;
-
-                        Repaint();
-
-                        createCacheInBackground = _offscreenCacheRenderingQueue.Pop();
-                    }
-                    catch (Exception e)
-                    {
-                        Log(e);
-                        return;
-                    }
-                }
-
-                //if (NeedUpdate) //someone changed us while rendering inner content
-                //{
-                //    Update();
-                //}
-
-                Repaint();
-
-            }
-            finally
-            {
-                _processingOffscrenRendering = false;
-                semaphoreOffsecreenProcess.Release();
-            }
-
-        }
-
-
-#else
 
         public async Task ProcessOffscreenCacheRenderingAsync()
         {
@@ -4793,7 +4688,8 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                Repaint();
+                if (NeedUpdate) //someone changed us while rendering inner content
+                    Repaint();
 
             }
             finally
@@ -4804,7 +4700,6 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-#endif
 
         /// <summary>
         /// Used for the Operations cache type to record inside the changed area, if your control is not inside the DrawingRect due to transforms/translations. This is NOT changing the rendering object 

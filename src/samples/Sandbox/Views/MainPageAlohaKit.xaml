@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <views:BasePage
-    x:Class="Sandbox.Views.MainPageAlohaGraphics"
+    x:Class="Sandbox.Views.MainPageAlohaKit"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:aloha="clr-namespace:Sandbox.Views.Aloha"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="thisView"
-    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     ios:Page.UseSafeArea="True"
     x:DataType="demo:MainPageViewModel">
 
@@ -55,8 +55,20 @@
                 ReanimateOnPropertyChanged="True"
                 VerticalOptions="Center" />
 
-            <controls:ButtonToRoot/>
+            <draw:SkiaLabel
+                Margin="50,0"
+                Padding="2"
+                AddMarginBottom="80"
+                BackgroundColor="#33000000"
+                FontSize="16"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="Consume Maui Graphics AlohaKit library by Javier Suárez"
+                TextColor="White"
+                VerticalOptions="End" />
             
+            <controls:ButtonToRoot />
+
             <draw:SkiaLabelFps
                 Margin="0,0,4,24"
                 BackgroundColor="DarkRed"

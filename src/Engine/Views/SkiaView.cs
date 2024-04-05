@@ -61,6 +61,8 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
     SKSurface _surface;
     private DateTime _lastFrame;
     private double _fps;
+    private double _reportFps;
+
 
     public SKSurface Surface
     {
@@ -74,9 +76,38 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
     {
         get
         {
-            return _fps;
+            return _reportFps;
         }
     }
+    
+        
+    private double _fpsAverage;
+    private int _fpsCount;
+    private long _lastFrameTimestamp;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="currentTimestamp">Nanoseconds</param>
+    void CalculateFPS(long currentTimestamp, int averageAmount = 10)
+    {
+        double elapsedSeconds = (currentTimestamp - _lastFrameTimestamp) / 1_000_000_000.0; // Convert nanoseconds to seconds
+        double fps = 1.0 / elapsedSeconds;
+    
+        _lastFrameTimestamp = currentTimestamp;
+    
+        _fpsAverage += fps;
+        _fpsCount++;
+
+        if (_fpsCount >= averageAmount) 
+        {
+            _reportFps = _fpsAverage / _fpsCount;
+
+            _fpsCount = 0;
+            _fpsAverage = 0.0;
+        }
+    }
+
 
     public long FrameTime { get; protected set; }
 
@@ -85,16 +116,22 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
     private void OnPaintingSurface(object sender, SKPaintSurfaceEventArgs paintArgs)
     {
         IsDrawing = true;
-
-        _fps = 1.0 / (DateTime.Now - _lastFrame).TotalSeconds;
-        _lastFrame = DateTime.Now;
-
+        
         FrameTime = Super.GetCurrentTimeNanos();
+
+        CalculateFPS(FrameTime);
 
         if (OnDraw != null && Super.EnableRendering)
         {
             _surface = paintArgs.Surface;
-            bool invalidate = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
+            bool isDirty = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
+//#if ANDROID
+            if (isDirty && FPS < 60) //fix refresh for low-end devices, gamechanger
+            {
+                InvalidateSurface();
+                return;
+            }
+//#endif
         }
 
         IsDrawing = false;
@@ -102,7 +139,9 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
     public void Update(long nanos)
     {
-        if (this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
+        if (
+            Super.EnableRendering &&
+            this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
         {
             IsDrawing = true;
             InvalidateSurface();

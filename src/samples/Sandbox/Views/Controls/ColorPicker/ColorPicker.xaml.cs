@@ -37,7 +37,7 @@ public partial class ColorPicker
     {
         if (bindable is ColorPicker control)
         {
-            control.SetSliderValueForColor((Color)newvalue);
+            control.SetupForDefaultColor((Color)newvalue);
         }
     }
 
@@ -45,16 +45,19 @@ public partial class ColorPicker
     /// TODO Under consctruction
     /// </summary>
     /// <param name="color"></param>
-    public void SetSliderValueForColor(Color color)
+    public void SetupForDefaultColor(Color color)
     {
         if (Slider != null)
         {
+            //set horizontal slider thumb position
             Slider.SetSliderValueForColor(color);
+            ClearColor = Slider.SelectedColor;
 
             //set panel indicator position
-            //todo
-
-            ClearColor = Slider.SelectedColor;
+            var saturation = color.GetSaturation();
+            var lumi = color.GetLuminosity();
+            ColorsPanel.PointerRingPositionXOffsetRatio = saturation;
+            ColorsPanel.PointerRingPositionYOffsetRatio = lumi;
         }
     }
 

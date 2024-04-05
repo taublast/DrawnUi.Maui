@@ -55,20 +55,23 @@ namespace DrawnUi.Maui.Views
         {
             Looper?.Dispose();
             Looper = new(OnFrame);
-            Looper.Start(GetTargetFps());
+            if (IsUsingHardwareAcceleration)
+            {
+                Looper.Start(120, false);
+                //Looper.Start(60, true);
+            }
+            else
+            {
+                Looper.Start(120);
+            }
         }
 
         protected virtual void PlatformHardwareAccelerationChanged()
         {
-            Looper?.SetTargetFps(GetTargetFps());
-        }
-
-        int GetTargetFps()
-        {
-            if (IsUsingHardwareAcceleration)
-                return 60;
-            else
-                return 120;
+            if (Looper != null && Looper.IsRunning)
+            {
+                SetupRenderingLoop();
+            }
         }
 
         Looper Looper { get; set; }
@@ -79,19 +82,23 @@ namespace DrawnUi.Maui.Views
             IsDirty = true;
         }
 
+        object lockOnFrame = new();
+
         private void OnFrame()
         {
-            if (CheckCanDraw())
+            lock (lockOnFrame)
             {
-                OrderedDraw = true;
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
-
-                Super.RunOnMainThreadAndWait(() =>
+                if (CheckCanDraw())
                 {
-                    CanvasView?.Update();
-                });
+                    OrderedDraw = true;
+                    if (NeedCheckParentVisibility)
+                        CheckElementVisibility(this);
 
+                    Super.RunOnMainThreadAndWait(() =>
+                    {
+                        CanvasView?.Update();
+                    });
+                }
             }
         }
 
@@ -99,12 +106,12 @@ namespace DrawnUi.Maui.Views
         public bool CheckCanDraw()
         {
             return
-                !OrderedDraw &&
                 CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
-                   && !CanvasView.IsDrawing
-                   && IsDirty
-                   && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
-                   && IsVisible && Super.EnableRendering;
+                && !OrderedDraw
+                && !CanvasView.IsDrawing
+               && IsDirty
+               && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
+               && IsVisible && Super.EnableRendering;
         }
 
         protected virtual void DisposePlatform()

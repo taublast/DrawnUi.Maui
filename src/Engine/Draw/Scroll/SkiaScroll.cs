@@ -12,7 +12,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// Min velocity in points/sec to flee/swipe when finger is up
         /// </summary>
-        public static float ThesholdSwipeOnUp = 80f;
+        public static float ThesholdSwipeOnUp = 40f;
 
         /// <summary>
         /// To filter micro-gestures while manually panning
@@ -637,6 +637,7 @@ namespace DrawnUi.Maui.Draw
                 //----------------------------------------------------------------------
                 {
                     IsUserFocused = true;
+                    //todo cmon this todo is here almost a year
                     var zoomed = SetZoom(args.Pinch.Scale);
                     consumed = this;
                 }

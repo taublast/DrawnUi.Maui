@@ -2319,11 +2319,11 @@ namespace DrawnUi.Maui.Controls
 
         public virtual void OnLayoutInvalidated()
         {
-            //todo add navigation model stuff
-
-            //todo invalidate and update
-            TopInsets = Super.StatusBarHeight;
+            TopInsets = Super.Screen.BottomInset; ;
             BottomInsets = Super.Screen.BottomInset;
+            StatusBarHeight = Super.StatusBarHeight;
+
+            this.RootLayout?.Update();
         }
 
         private double _BottomInsets;
@@ -2355,6 +2355,23 @@ namespace DrawnUi.Maui.Controls
                 if (_TopInsets != value)
                 {
                     _TopInsets = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _StatusBarHeight;
+        public double StatusBarHeight
+        {
+            get
+            {
+                return _StatusBarHeight;
+            }
+            set
+            {
+                if (_StatusBarHeight != value)
+                {
+                    _StatusBarHeight = value;
                     OnPropertyChanged();
                 }
             }

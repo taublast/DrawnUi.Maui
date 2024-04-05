@@ -16,7 +16,7 @@ public class Looper : IDisposable
 
     public CancellationTokenSource Cancel { get; protected set; }
 
-    public void Start(int targetFps)
+    public void Start(int targetFps, bool useLegacy = false)
     {
         var existingCanel = Cancel;
         existingCanel?.Cancel(); ;
@@ -24,7 +24,14 @@ public class Looper : IDisposable
         Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), async () =>
         {
             SetTargetFps(targetFps);
-            await StartLooperAsync(Cancel.Token);
+            if (useLegacy)
+            {
+                await StartLegacyLooperAsync(Cancel.Token);
+            }
+            else
+            {
+                await StartLooperAsync(Cancel.Token);
+            }
         });
         existingCanel?.Dispose();
     }
@@ -47,6 +54,38 @@ public class Looper : IDisposable
         Stop();
     }
 
+    public bool IsRunning { get; protected set; }
+
+    protected async Task StartLegacyLooperAsync(CancellationToken cancellationToken)
+    {
+        loopStopwatch.Restart();
+        long lastFrameEnd = loopStopwatch.ElapsedMilliseconds;
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            IsRunning = true;
+
+            frameStopwatch.Restart();
+
+            OnFrame?.Invoke();
+
+            frameStopwatch.Stop();
+
+            var frameExecutionTimeMs = frameStopwatch.Elapsed.TotalMilliseconds;
+            var elapsedTimeSinceLastFrame = loopStopwatch.ElapsedMilliseconds - lastFrameEnd;
+            var timeToWait = targetIntervalMs - elapsedTimeSinceLastFrame - frameExecutionTimeMs;
+
+            if (timeToWait < 1)
+            {
+                timeToWait = 1;
+            }
+            await Task.Delay(TimeSpan.FromMilliseconds(timeToWait));
+
+            lastFrameEnd = loopStopwatch.ElapsedMilliseconds;
+        }
+
+        IsRunning = false;
+    }
 
     protected async Task StartLooperAsync(CancellationToken cancellationToken)
     {
@@ -55,6 +94,8 @@ public class Looper : IDisposable
 
         while (!cancellationToken.IsCancellationRequested)
         {
+            IsRunning = true;
+
             var startFrameTimestamp = Stopwatch.GetTimestamp();
 
             OnFrame?.Invoke();
@@ -81,6 +122,8 @@ public class Looper : IDisposable
 
             lastFrameTimestamp = Stopwatch.GetTimestamp();
         }
+
+        IsRunning = false;
     }
 
 

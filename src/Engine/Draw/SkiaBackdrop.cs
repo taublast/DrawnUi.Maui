@@ -112,7 +112,7 @@ public class SkiaBackdrop : ContentLayout
 
         Snapshot?.Dispose();
         Snapshot = null;
-        
+
         if (CacheSource != null)
         {
             CacheSource.CreatedCache -= OnSourceCacheChanged;
@@ -152,42 +152,52 @@ public class SkiaBackdrop : ContentLayout
 
             BuildPaint();
 
+            var kill1 = ImagePaint.ImageFilter;
+            var kill2 = ImagePaint.ColorFilter;
+
             ImagePaint.ImageFilter = PaintImageFilter;
             ImagePaint.ColorFilter = PaintColorFilter;
 
             //notice we read from the real canvas and we write to ctx.Canvas which can be cache
 
             //if (ctx.Superview.HardwareAcceleration != HardwareAccelerationMode.Disabled)
-            
-                if (CacheSource != null)
-                {
-                    var cache = CacheSource.RenderObject;
-                    if (cache != null && !IsGhost && HasEffects)
-                    {
-                        var offsetX = CacheSource.DrawingRect.Left - this.DrawingRect.Left;
-                        var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
-                        destination.Offset(offsetX, offsetY);
-                        
-                        cache.Draw(ctx.Superview.CanvasView.Surface.Canvas, destination, ImagePaint);
-                    }
-                }
-                else
-                {
-                    ctx.Superview.CanvasView.Surface.Canvas.Flush();
-                    var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
- 
-                    if (snapshot != null)
-                    {
-                        if (!IsGhost && HasEffects)
-                            ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
 
-                        Snapshot?.Dispose();
-                        Snapshot = snapshot;
-                    }
-                    
+            if (CacheSource != null)
+            {
+                var cache = CacheSource.RenderObject;
+                if (cache != null && !IsGhost && HasEffects)
+                {
+                    var offsetX = CacheSource.DrawingRect.Left - this.DrawingRect.Left;
+                    var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
+                    destination.Offset(offsetX, offsetY);
+
+                    cache.Draw(ctx.Superview.CanvasView.Surface.Canvas, destination, ImagePaint);
                 }
-            
             }
+            else
+            {
+                ctx.Superview.CanvasView.Surface.Canvas.Flush();
+                var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
+
+                if (snapshot != null && Snapshot != snapshot)
+                {
+                    var kill = Snapshot;
+                    if (!IsGhost && HasEffects)
+                        ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
+
+                    Snapshot = snapshot;
+                    kill?.Dispose();
+                }
+
+            }
+
+            if (kill1 != null && kill1 != ImagePaint.ImageFilter)
+                kill1?.Dispose();
+
+            if (kill2 != null && kill2 != ImagePaint.ColorFilter)
+                kill2?.Dispose();
+
+        }
 
     }
 
@@ -231,7 +241,7 @@ public class SkiaBackdrop : ContentLayout
     {
         Update();
     }
-    
+
 
     /// <summary>
     /// Returns the snapshot that was used for drawing the backdrop.

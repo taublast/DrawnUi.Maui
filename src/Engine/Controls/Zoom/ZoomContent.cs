@@ -251,9 +251,15 @@ public class ZoomContent : ContentLayout
 
             if (!ZoomLocked)
             {
-                if (_lastPinch != 0)
+                if (_lastPinch != 0 || args.Pinch.Delta != 0)
                 {
-                    var delta = (args.Pinch.Scale - _lastPinch) * ZoomSpeed;
+                    double delta = 0;
+                    if (args.Pinch.Delta != 0)
+                    {
+                        delta = args.Pinch.Delta * ZoomSpeed;
+                    }
+                    else
+                        delta = (args.Pinch.Scale - _lastPinch) * ZoomSpeed;
 
                     if (PanningMode == PanningModeType.TwoFingers || PanningMode == PanningModeType.Enabled)
                     {

@@ -180,16 +180,18 @@
     <Compile Update="Views\Controls\ColorPicker\SliderColor.xaml.cs">
       <DependentUpon>SliderColor.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\AlohaKit.xaml.cs">
+      <DependentUpon>AlohaKit.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainPageAlohaKit.xaml.cs">
+      <DependentUpon>MainPageAlohaKit.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainPageMapsUi.xaml.cs">
+      <DependentUpon>MainPageMapsUi.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
  
- 
-
-<!--  <ItemGroup Condition="'$(Configuration)'=='Debug'">-->
-<!--    <ProjectReference Include="..\Refs\AppoMobi.Maui.Gestures\src\AppoMobi.Maui.Gestures.csproj" />-->
-<!--    <ProjectReference Include="..\Refs\AppoMobi.Maui.Navigation\src\AppoMobi.Maui.Navigation.csproj" />-->
-<!--  </ItemGroup>-->
-
 
   <ItemGroup>
     <MauiAsset Update="Resources\Raw\Images\glass2.jpg">
@@ -237,6 +239,7 @@
   </ItemGroup>
 
 
+  <!--unfortunately mapsui has a nuget limitation locked below skia3-->
   <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
     <PackageReference Include="BruTile" Version="5.0.6" />
     <PackageReference Include="Mapsui.ArcGIS" Version="5.0.0-beta.1" />
@@ -251,13 +254,9 @@
 
 
   <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
-    <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
-    <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
     <Compile Remove="Views\MainPageMap.xaml.cs" />
     <MauiXaml Remove="Views\MainPageMap.xaml" />
-    <Compile Remove="Views\Controls\SkiaMapControl.cs" />
-    <Compile Remove="Views\Controls\SkiaMapRenderer.cs" />
-    <Compile Remove="Views\Controls\DrawnUiRasterStyleRenderer.cs" />
+    <Compile Remove="Views\Controls\MapsUi\**\*.cs" />
   </ItemGroup>
 
  

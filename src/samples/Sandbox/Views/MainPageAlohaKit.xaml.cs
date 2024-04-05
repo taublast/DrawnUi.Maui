@@ -3,10 +3,10 @@ using System.Collections.ObjectModel;
 
 namespace Sandbox.Views
 {
-    public partial class MainPageAlohaGraphics 
+    public partial class MainPageAlohaKit
     {
 
-        public MainPageAlohaGraphics()
+        public MainPageAlohaKit()
         {
             try
             {

@@ -22,7 +22,11 @@ namespace Sandbox
             var xamlResources = this.GetType().Assembly.GetCustomAttributes<XamlResourceIdAttribute>();
 
             MainPages = xamlResources
-                .Where(x => x.Type.Name.Contains(mask) && x.Type.Name != mask)
+                .Where(x => x.Type.Name.Contains(mask)
+#if !SKIA3 && (WINDOWS || MACCATALYST)
+                && !x.Type.Name.ToLower().Contains("shader") //skia2 incompatible
+#endif
+                && x.Type.Name != mask)
                 .Select(s => new MainPageVariant()
                 {
                     Name = s.Type.Name.Replace(mask, string.Empty),
@@ -35,17 +39,16 @@ namespace Sandbox
         public void SetMainPage(Page page)
         {
             Super.EnableRendering = false; //globally disable the rendering
-            MainThread.BeginInvokeOnMainThread(() =>
+            MainThread.BeginInvokeOnMainThread(async () =>
             {
+                await Task.Delay(500);
                 var kill = this.MainPage;
                 MainPage = page;
+                await Task.Delay(250);
                 Super.EnableRendering = true;//enable back again and kick to update
                 if (kill is IDisposable disposable)
                 {
-                    Tasks.StartDelayed(TimeSpan.FromSeconds(2.5), () =>
-                    {
-                        disposable?.Dispose();
-                    });
+                    disposable?.Dispose();
                 }
             });
         }

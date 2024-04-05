@@ -60,9 +60,15 @@ public class SkiaHotspotZoom : SkiaHotspot
 
             if (!ZoomLocked)
             {
-                if (_lastPinch != 0)
+                if (_lastPinch != 0 || args.Pinch.Delta != 0)
                 {
-                    var delta = args.Pinch.Scale - _lastPinch;
+                    double delta = 0;
+                    if (args.Pinch.Delta != 0)
+                    {
+                        delta = args.Pinch.Delta * ZoomSpeed;
+                    }
+                    else
+                        delta = (args.Pinch.Scale - _lastPinch) * ZoomSpeed;
 
                     _lastPinch = args.Pinch.Scale;
                     _zoom += delta;
@@ -98,6 +104,19 @@ public class SkiaHotspotZoom : SkiaHotspot
         }
 
         return this; //absorb
+    }
+
+    public static readonly BindableProperty ZoomSpeedProperty = BindableProperty.Create(nameof(ZoomSpeed),
+        typeof(double), typeof(SkiaHotspotZoom),
+        0.9);
+
+    /// <summary>
+    /// How much of finger movement will afect zoom change
+    /// </summary>
+    public double ZoomSpeed
+    {
+        get { return (double)GetValue(ZoomSpeedProperty); }
+        set { SetValue(ZoomSpeedProperty, value); }
     }
 
     public event EventHandler<ZoomEventArgs> Zoomed;
