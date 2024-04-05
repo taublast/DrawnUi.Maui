@@ -1502,24 +1502,7 @@ namespace DrawnUi.Maui.Views
 
                     #region Calculate average fps
 
-                    var fps = CanvasFps;
-                    // Calculate an averaged fps
-                    _fpsAverage += fps;
-                    _fpsCount++;
-
-                    if (fps < 1)
-                    {
-                        FPS = 0;
-                    }
-                    else if (_fpsCount >= 16)
-                    {
-                        FPS = _fpsAverage / _fpsCount;
-
-                        _fpsCount = 0;
-                        _fpsAverage = 0.0;
-                    }
-
-                    _fps = fps;
+                    FPS = CanvasFps;
 
                     #endregion
 
