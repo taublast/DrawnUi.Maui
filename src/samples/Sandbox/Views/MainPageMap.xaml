@@ -239,7 +239,7 @@
                                     HorizontalOptions="Fill"
                                     SelectedColor="{Binding SelectedColor}"
                                     Style="{x:StaticResource SkiaStyleControlInTable}"
-                                    UseCache="ImageDoubleBuffered"
+                                    UseCache="Image"
                                     WidthRequest="-1" />
 
                             </draw:SkiaLayout>

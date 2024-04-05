@@ -84,13 +84,6 @@
                             </draw:SkiaControl.VisualEffects>
                         </draw:SkiaImage>
 
-                        <!--<controls:ColorPicker
-                            Margin="0,0,0,16"
-                            DefaultColor="#00FF00"
-                            HorizontalOptions="Center"
-                            SelectedColor="{Binding SelectedColor}"
-                            UseCache="GPU" />-->
-
                         <controls:SliderColor
                             x:Name="Slider"
                             Margin="0,-16,0,16"
@@ -101,7 +94,7 @@
                             MinMaxStringFormat="P0"
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
-                            UseCache="ImageDoubleBuffered"
+                            UseCache="Image"
                             WidthRequest="200" />
 
                         <!--

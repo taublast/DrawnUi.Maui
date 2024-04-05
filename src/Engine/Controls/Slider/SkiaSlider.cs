@@ -1,12 +1,6 @@
-﻿using DrawnUi.Maui.Controls;
-using DrawnUi.Maui.Draw;
-using HarfBuzzSharp;
-using Microsoft.Maui.Devices.Sensors;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Windows.Input;
 
 namespace DrawnUi.Maui.Draw;
 
