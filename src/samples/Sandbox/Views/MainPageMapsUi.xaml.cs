@@ -20,10 +20,10 @@ using Mapsui.Widgets.ButtonWidgets;
 
 namespace Sandbox.Views
 {
-    public partial class MainPageMap 
+    public partial class MainPageMapsUi
     {
 
-        public MainPageMap()
+        public MainPageMapsUi()
         {
             try
             {

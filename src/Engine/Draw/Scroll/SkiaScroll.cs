@@ -12,7 +12,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// Min velocity in points/sec to flee/swipe when finger is up
         /// </summary>
-        public static float ThesholdSwipeOnUp = 50f;
+        public static float ThesholdSwipeOnUp = 40f;
 
         /// <summary>
         /// To filter micro-gestures while manually panning

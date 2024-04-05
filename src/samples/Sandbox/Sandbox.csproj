@@ -180,6 +180,15 @@
     <Compile Update="Views\Controls\ColorPicker\SliderColor.xaml.cs">
       <DependentUpon>SliderColor.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\AlohaKit.xaml.cs">
+      <DependentUpon>AlohaKit.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainPageAlohaKit.xaml.cs">
+      <DependentUpon>MainPageAlohaKit.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainPageMapsUi.xaml.cs">
+      <DependentUpon>MainPageMapsUi.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
  

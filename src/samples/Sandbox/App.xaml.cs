@@ -22,7 +22,11 @@ namespace Sandbox
             var xamlResources = this.GetType().Assembly.GetCustomAttributes<XamlResourceIdAttribute>();
 
             MainPages = xamlResources
-                .Where(x => x.Type.Name.Contains(mask) && x.Type.Name != mask)
+                .Where(x => x.Type.Name.Contains(mask)
+#if !SKIA3 && (WINDOWS || MACCATALYST)
+                && !x.Type.Name.ToLower().Contains("shader") //skia2 incompatible
+#endif
+                && x.Type.Name != mask)
                 .Select(s => new MainPageVariant()
                 {
                     Name = s.Type.Name.Replace(mask, string.Empty),

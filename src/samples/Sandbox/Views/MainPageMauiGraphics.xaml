@@ -36,6 +36,18 @@
                 Tag="Content"
                 VerticalOptions="Fill" />
             
+            <draw:SkiaLabel
+                Margin="50,0"
+                Padding="2"
+                AddMarginBottom="80"
+                BackgroundColor="#33000000"
+                FontSize="16"
+                HorizontalOptions="Center"
+                HorizontalTextAlignment="Center"
+                Text="Consume and enhance existing Maui Graphics controls"
+                TextColor="White"
+                VerticalOptions="End" />
+            
             <controls:ButtonToRoot/>
            
             <draw:SkiaLabelFps

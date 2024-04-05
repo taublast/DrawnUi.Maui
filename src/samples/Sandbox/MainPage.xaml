@@ -36,7 +36,8 @@
                         HorizontalOptions="Fill"
                         Spacing="0"
                         Type="Column"
-                        UseCache="Image">
+                        Tag="ScrollContent"
+                        UseCache="None">
 
                         <!--
                             we set ImageDoubleBuffered to be able to fast redraw
@@ -94,7 +95,7 @@
                             MinMaxStringFormat="P0"
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
-                            UseCache="Image"
+                            UseCache="ImageDoubleBuffered"
                             WidthRequest="200" />
 
                         <!--
@@ -127,7 +128,7 @@
                             MaxColumns="2"
                             Spacing="0"
                             Type="Column"
-                            UseCache="Image">
+                            UseCache="ImageDoubleBuffered">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">
