@@ -149,8 +149,9 @@ namespace DrawnUi.Maui.Views
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
         {
-            return !OrderedDraw
-            && CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
+            return //!OrderedDraw
+
+                CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
                //&& !CanvasView.IsDrawing
                && IsDirty
                && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)

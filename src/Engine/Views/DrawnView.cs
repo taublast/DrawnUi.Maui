@@ -1241,7 +1241,7 @@ namespace DrawnUi.Maui.Views
             return new SkiaDrawingContext()
             {
                 Superview = this,
-                FrameTimeNanos = Super.GetCurrentTimeNanos(),// CanvasView.FrameTime,
+                FrameTimeNanos = CanvasView.FrameTime,
                 Canvas = canvas,
                 Width = canvas.DeviceClipBounds.Width,
                 Height = canvas.DeviceClipBounds.Height
@@ -1261,7 +1261,7 @@ namespace DrawnUi.Maui.Views
 
         private bool OnDrawSurface(SKCanvas canvas, SKRect rect)
         {
-            lock (LockDraw)
+            //lock (LockDraw)
             {
 
                 if (!OnStartRendering(canvas))
@@ -1498,13 +1498,9 @@ namespace DrawnUi.Maui.Views
                     DrawingThreads++;
 
                     FrameTime = CanvasView.FrameTime;
-                    context.FrameTimeNanos = FrameTime;
-
-                    #region Calculate average fps
+                    //context.FrameTimeNanos = FrameTime;
 
                     FPS = CanvasFps;
-
-                    #endregion
 
                     while (ExecuteBeforeDraw.TryDequeue(out Action action))
                     {

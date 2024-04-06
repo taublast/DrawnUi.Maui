@@ -4492,7 +4492,9 @@ namespace DrawnUi.Maui.Draw
             get
             {
                 if (UseCache == SkiaCacheType.GPU
-                    && (Superview == null || Superview.CanvasView == null || !Superview.CanvasView.IsHardwareAccelerated))
+                    && (Superview == null
+                        || Superview.CanvasView == null
+                        || !Superview.CanvasView.IsHardwareAccelerated))
                     return SkiaCacheType.Image;
 
                 //if (UseCache == SkiaCacheType.ImageDoubleBuffered)
@@ -4750,7 +4752,7 @@ namespace DrawnUi.Maui.Draw
 
             NeedUpdate = false; //if some child changes this while rendering to cache we will erase resulting RenderObject
 
-            var useCache = UseCache;
+            var useCache = UsingCacheType;
 
             if (useCache == SkiaCacheType.GPU
                 || useCache == SkiaCacheType.Image
@@ -4799,11 +4801,15 @@ namespace DrawnUi.Maui.Draw
                     var cacheSurfaceInfo = new SKImageInfo(width, height);
 
                     if (useCache == SkiaCacheType.GPU
-                        && context.Superview?.CanvasView is SkiaViewAccelerated accelerated)
+                        && context.Superview?.CanvasView is SkiaViewAccelerated accelerated && accelerated.GRContext != null)
                     {
-                        //hardware accelerated - might crash Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR)
-                        surface = SKSurface.Create(accelerated.GRContext, true, cacheSurfaceInfo)
-                                  ?? SKSurface.Create(cacheSurfaceInfo);
+                        //hardware accelerated
+                        surface = SKSurface.Create(accelerated.GRContext, true, cacheSurfaceInfo);
+
+                        if (surface == null) //fallback
+                        {
+                            surface = SKSurface.Create(cacheSurfaceInfo);
+                        }
                     }
                     else
                     {

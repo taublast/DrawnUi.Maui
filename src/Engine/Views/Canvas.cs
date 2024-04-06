@@ -335,8 +335,28 @@ public class Canvas : DrawnView, IGestureListener
 
     #endregion
 
-
     #region GESTURES
+
+    protected virtual void OnGesturesAttachChanged()
+    {
+        if (this.Gestures == GesturesMode.Disabled)
+        {
+            TouchEffect.SetForceAttach(this, false);
+        }
+        else
+        {
+            TouchEffect.SetForceAttach(this, true);
+
+            if (this.Gestures == GesturesMode.Enabled)
+                TouchEffect.SetShareTouch(this, TouchHandlingStyle.Default);
+            else
+            if (this.Gestures == GesturesMode.Lock)
+                TouchEffect.SetShareTouch(this, TouchHandlingStyle.Lock);
+            else
+            if (this.Gestures == GesturesMode.Share)
+                TouchEffect.SetShareTouch(this, TouchHandlingStyle.Share);
+        }
+    }
 
     public static Color DebugGesturesColor { get; set; } = Colors.Transparent;// Color.Parse("#ff0000");
 
@@ -472,7 +492,7 @@ public class Canvas : DrawnView, IGestureListener
             _isPanning = false;
         }
 
-
+        //this is intended to not loose gestures when fps drops
         PostponeExecutionBeforeDraw(() =>
         {
             try
@@ -486,7 +506,6 @@ public class Canvas : DrawnView, IGestureListener
         });
 
         Repaint();
-
     }
 
     #endregion
@@ -565,27 +584,6 @@ public class Canvas : DrawnView, IGestureListener
         if (propertyName.IsEither(nameof(WidthRequest), nameof(HeightRequest), nameof(BackgroundColor)))
         {
             Update();
-        }
-    }
-
-    protected virtual void OnGesturesAttachChanged()
-    {
-        if (this.Gestures == GesturesMode.Disabled)
-        {
-            TouchEffect.SetForceAttach(this, false);
-        }
-        else
-        {
-            TouchEffect.SetForceAttach(this, true);
-
-            if (this.Gestures == GesturesMode.Enabled)
-                TouchEffect.SetShareTouch(this, TouchHandlingStyle.Default);
-            else
-            if (this.Gestures == GesturesMode.Lock)
-                TouchEffect.SetShareTouch(this, TouchHandlingStyle.Lock);
-            else
-            if (this.Gestures == GesturesMode.Share)
-                TouchEffect.SetShareTouch(this, TouchHandlingStyle.Share);
         }
     }
 

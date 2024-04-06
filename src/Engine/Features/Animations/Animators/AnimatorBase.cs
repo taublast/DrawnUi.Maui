@@ -96,10 +96,9 @@ public class AnimatorBase : ISkiaAnimator
             runDelayMs = delayMs;
             Tasks.StartDelayed(TimeSpan.FromMilliseconds(delayMs), () =>
             {
+                isStarting = false;
                 Start();
             });
-
-            isStarting = false;
             return;
         }
 
