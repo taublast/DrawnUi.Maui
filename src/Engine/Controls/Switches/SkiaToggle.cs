@@ -1,4 +1,6 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿using System.Windows.Input;
+
+namespace DrawnUi.Maui.Draw;
 
 /// <summary>
 /// Base control for toggling between 2 states
@@ -18,7 +20,20 @@ public class SkiaToggle : SkiaLayout
     protected virtual void OnToggledChanged()
     {
         ApplyProperties();
+
+        NotifyWasToggled();
     }
+
+    protected virtual void NotifyWasToggled()
+    {
+        Toggled?.Invoke(this, IsToggled);
+
+        CommandToggled?.Execute(IsToggled);
+    }
+
+    public event EventHandler<bool> Toggled;
+
+
 
     protected virtual void OnAppearenceChanged()
     {
@@ -34,6 +49,16 @@ public class SkiaToggle : SkiaLayout
     }
 
     #region PROPERTIES
+
+
+    public static readonly BindableProperty CommandToggledProperty = BindableProperty.Create(nameof(CommandToggled), typeof(ICommand),
+        typeof(SkiaToggle),
+        null);
+    public ICommand CommandToggled
+    {
+        get { return (ICommand)GetValue(CommandToggledProperty); }
+        set { SetValue(CommandToggledProperty, value); }
+    }
 
     public static readonly BindableProperty IsToggledProperty = BindableProperty.Create(
         nameof(IsToggled),
@@ -99,7 +124,7 @@ public class SkiaToggle : SkiaLayout
     public static readonly BindableProperty ColorThumbOnProperty = BindableProperty.Create(
         nameof(ColorThumbOn),
         typeof(Color),
-        typeof(SkiaSwitch),
+        typeof(SkiaToggle),
         Colors.Red, propertyChanged: AppearenceChanged);
 
     public Color ColorThumbOn
@@ -111,7 +136,7 @@ public class SkiaToggle : SkiaLayout
     public static readonly BindableProperty ColorFrameOnProperty = BindableProperty.Create(
         nameof(ColorFrameOn),
         typeof(Color),
-        typeof(SkiaSwitch),
+        typeof(SkiaToggle),
         Colors.White, propertyChanged: AppearenceChanged);
 
     public Color ColorFrameOn
@@ -123,7 +148,7 @@ public class SkiaToggle : SkiaLayout
     public static readonly BindableProperty ColorThumbOffProperty = BindableProperty.Create(
         nameof(ColorThumbOff),
         typeof(Color),
-        typeof(SkiaSwitch),
+        typeof(SkiaToggle),
         Colors.White, propertyChanged: AppearenceChanged);
 
     public Color ColorThumbOff
@@ -135,7 +160,7 @@ public class SkiaToggle : SkiaLayout
     public static readonly BindableProperty ColorFrameOffProperty = BindableProperty.Create(
         nameof(ColorFrameOff),
         typeof(Color),
-        typeof(SkiaSwitch),
+        typeof(SkiaToggle),
         Colors.DarkGray, propertyChanged: AppearenceChanged);
 
     public Color ColorFrameOff
@@ -147,7 +172,7 @@ public class SkiaToggle : SkiaLayout
     public static readonly BindableProperty IsAnimatedProperty = BindableProperty.Create(
         nameof(IsAnimated),
         typeof(bool),
-        typeof(SkiaSwitch),
+        typeof(SkiaToggle),
         true);
 
     public bool IsAnimated

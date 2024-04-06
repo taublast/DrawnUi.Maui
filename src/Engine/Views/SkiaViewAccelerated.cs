@@ -127,7 +127,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     private DateTime _lastFrame;
     private double _fps;
     private double _reportFps;
-    
+
     public SKSurface Surface
     {
         get
@@ -146,7 +146,16 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         }
     }
 
-    public bool IsDrawing { get; set; }
+    public bool IsDrawing
+    {
+        get => _isDrawing;
+        set
+        {
+            if (value == _isDrawing) return;
+            _isDrawing = value;
+            OnPropertyChanged();
+        }
+    }
 
     public long FrameTime { get; protected set; }
 
@@ -166,35 +175,39 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
             InvalidateSurface();
         }
     }
-    
+
     private double _fpsAverage;
     private int _fpsCount;
     private long _lastFrameTimestamp;
     private long _nanos;
+    private bool _isDrawing;
+
 
     /// <summary>
-    /// 
+    /// Calculates the frames per second (FPS) and updates the rolling average FPS every 'averageAmount' frames.
     /// </summary>
-    /// <param name="currentTimestamp">Nanoseconds</param>
+    /// <param name="currentTimestamp">The current timestamp in nanoseconds.</param>
+    /// <param name="averageAmount">The number of frames over which to average the FPS. Default is 10.</param>
     void CalculateFPS(long currentTimestamp, int averageAmount = 10)
     {
-        double elapsedSeconds = (currentTimestamp - _lastFrameTimestamp) / 1_000_000_000.0; // Convert nanoseconds to seconds
-        double fps = 1.0 / elapsedSeconds;
-    
+        // Convert nanoseconds to seconds for elapsed time calculation.
+        double elapsedSeconds = (currentTimestamp - _lastFrameTimestamp) / 1_000_000_000.0;
         _lastFrameTimestamp = currentTimestamp;
-    
-        _fpsAverage += fps;
+
+        double currentFps = 1.0 / elapsedSeconds;
+
+        _fpsAverage = ((_fpsAverage * _fpsCount) + currentFps) / (_fpsCount + 1);
         _fpsCount++;
 
-        if (_fpsCount >= averageAmount) 
+        if (_fpsCount >= averageAmount)
         {
-            _reportFps = _fpsAverage / _fpsCount;
-
+            _reportFps = _fpsAverage;
             _fpsCount = 0;
             _fpsAverage = 0.0;
         }
     }
-    
+
+
     /// <summary>
     /// We are drawing the frame
     /// </summary>
@@ -203,28 +216,39 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
     {
         IsDrawing = true;
-        
+
         FrameTime = Super.GetCurrentTimeNanos();
 
+#if ANDROID
         CalculateFPS(FrameTime);
-       
+#else
+        CalculateFPS(FrameTime, 60);
+#endif
+
         if (OnDraw != null && Super.EnableRendering)
         {
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
             _surface = paintArgs.Surface;
             var isDirty = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
-//#if ANDROID
-            if (isDirty && FPS < 60) //fix refresh for low-end devices, gamechanger
+
+#if ANDROID
+            if (maybeLowEnd && FPS > 200)
+            {
+                maybeLowEnd = false;
+            }
+
+            if (maybeLowEnd && isDirty && _fps < 55) //kick refresh for low-end devices
             {
                 InvalidateSurface();
                 return;
             }
-//#endif
+#endif
         }
 
         IsDrawing = false;
     }
 
+    static bool maybeLowEnd = true;
 }
 
 

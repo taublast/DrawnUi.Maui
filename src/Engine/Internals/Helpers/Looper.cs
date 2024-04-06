@@ -36,6 +36,46 @@ public class Looper : IDisposable
         existingCanel?.Dispose();
     }
 
+    static bool _loopStarting = false;
+    static bool _loopStarted = false;
+
+    public void StartOnMainThread(int targetFps, bool useLegacy = false)
+    {
+        Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), async () =>
+        {
+            while (!_loopStarted)
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    if (_loopStarting)
+                        return;
+                    _loopStarting = true;
+
+                    if (MainThread.IsMainThread) //Choreographer is available
+                    {
+                        if (!_loopStarted)
+                        {
+                            _loopStarted = true;
+
+                            var existingCanel = Cancel;
+                            existingCanel?.Cancel(); ;
+                            Cancel = new();
+                            SetTargetFps(targetFps);
+                            if (useLegacy)
+                                await StartLegacyLooperAsync(Cancel.Token);
+                            else
+                                await StartLooperAsync(Cancel.Token);
+                            existingCanel?.Dispose();
+                        }
+                    }
+                    _loopStarting = false;
+                });
+                await Task.Delay(100);
+            }
+        });
+
+    }
+
     double targetIntervalMs;
 
     public void SetTargetFps(int targetFps)
@@ -125,7 +165,6 @@ public class Looper : IDisposable
 
         IsRunning = false;
     }
-
 
     public Action OnFrame { get; set; }
 

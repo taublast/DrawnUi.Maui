@@ -53,16 +53,16 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
+
             Looper?.Dispose();
             Looper = new(OnFrame);
             if (IsUsingHardwareAcceleration)
             {
-                Looper.Start(120, false);
-                //Looper.Start(60, true);
+                Looper.StartOnMainThread(120);
             }
             else
             {
-                Looper.Start(120);
+                Looper.StartOnMainThread(120);
             }
         }
 
@@ -86,29 +86,25 @@ namespace DrawnUi.Maui.Views
 
         private void OnFrame()
         {
-            lock (lockOnFrame)
-            {
-                if (CheckCanDraw())
-                {
-                    OrderedDraw = true;
-                    if (NeedCheckParentVisibility)
-                        CheckElementVisibility(this);
 
-                    Super.RunOnMainThreadAndWait(() =>
-                    {
-                        CanvasView?.Update();
-                    });
-                }
+            if (CheckCanDraw())
+            {
+                OrderedDraw = true;
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+
+                CanvasView?.Update();
             }
+
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
         {
             return
-                CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
-                && !OrderedDraw
-                && !CanvasView.IsDrawing
+               CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
+               && !OrderedDraw
+               && !CanvasView.IsDrawing
                && IsDirty
                && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
                && IsVisible && Super.EnableRendering;
@@ -118,6 +114,7 @@ namespace DrawnUi.Maui.Views
         {
             Looper?.Dispose();
         }
+
 
     }
 }

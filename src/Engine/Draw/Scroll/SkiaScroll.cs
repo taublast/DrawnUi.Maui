@@ -511,6 +511,23 @@ namespace DrawnUi.Maui.Draw
 
         int lastNumberOfTouches;
 
+        protected virtual void ResetPan()
+        {
+            //Trace.WriteLine("[SCROLL] Pan reset!");
+            ChildWasTapped = false;
+            WasSwiping = false;
+            IsUserFocused = true;
+            IsUserPanning = false;
+            ChildWasPanning = false;
+            ChildWasTapped = false;
+
+            StopScrolling();
+
+            VelocityAccumulator.Clear();
+
+            _panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
+            _panningCurrentOffsetPts = _panningStartOffsetPts;
+        }
 
         public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args,
             TouchActionResult touchAction,
@@ -529,6 +546,16 @@ namespace DrawnUi.Maui.Draw
                 var y = args.Location.Y + thisOffset.Y;
 
                 ContentGesturesHit = Content.HitIsInside(x, y);
+            }
+
+            if (TouchEffect.LogEnabled)
+            {
+                Super.Log($"[SCROLL] {this.Tag} Got {touchAction} touches {args.NumberOfTouches} {VelocityY}..");
+            }
+
+            if (touchAction == TouchActionResult.Down && RespondsToGestures)
+            {
+                ResetPan();
             }
 
             //lock (LockIterateListeners)
@@ -599,35 +626,9 @@ namespace DrawnUi.Maui.Draw
                     VelocityX = (float)(args.Distance.Velocity.X / RenderingScale);
                 }
 
-                //if (TouchEffect.LogEnabled)
-                //{
-                //    Super.Log($"[SCROLL] {this.Tag} Got {touchAction} touches {args.NumberOfTouches} {VelocityY}..");
-                //}
-
-                if (TouchEffect.LogEnabled)
-                {
-                    Trace.WriteLine($"[SkiaScroll] {Tag} touch {type} {touchAction} VY:{VelocityY:0.00}");
-                }
-
                 //Debug.WriteLine($"[SkiaScroll] {this.Tag} processing {touchAction}..");
 
-                void ResetPan()
-                {
-                    //Trace.WriteLine("[SCROLL] Pan reset!");
-                    WasSwiping = false;
-                    IsUserFocused = true;
-                    IsUserPanning = false;
-                    ChildWasPanning = false;
-                    ChildWasTapped = false;
 
-                    StopScrolling();
-
-                    VelocityAccumulator.Clear();
-
-                    _panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
-                    _panningCurrentOffsetPts = _panningStartOffsetPts;
-
-                }
 
                 var hadNumberOfTouches = lastNumberOfTouches;
                 lastNumberOfTouches = args.NumberOfTouches;
@@ -668,11 +669,7 @@ namespace DrawnUi.Maui.Draw
                     }
                     break;
 
-                    //----------------------------------------------------------------------
-                    case TouchActionResult.Down when RespondsToGestures:
-                    //----------------------------------------------------------------------
-                    ResetPan();
-                    break;
+
 
                     //----------------------------------------------------------------------
                     case TouchActionResult.Panning when RespondsToGestures:

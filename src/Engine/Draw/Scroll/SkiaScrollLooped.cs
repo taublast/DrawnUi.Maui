@@ -349,30 +349,19 @@ public class SkiaScrollLooped : SkiaScroll
                 if (hiddenContentHeightPixels > 0)
                 {
 
-                    float CorrectPixels(float offset)
-                    {
-                        var ending = Math.Abs(offset - Math.Truncate(offset));
-                        var adjust = (float)(CycleSpace + 1);
-                        if (ending >= 0.5) adjust++;
-                        return offset - adjust * Math.Sign(offset);
-                    }
-
                     var pixelsContentOffsetY = (float)(InternalViewportOffset.Pixels.Y);
                     float offsetY = 0;
                     if (pixelsContentOffsetY > 0)
                     {
-                        offsetY = CorrectPixels(pixelsContentOffsetY - Content.MeasuredSize.Pixels.Height);
+                        offsetY = pixelsContentOffsetY - Content.MeasuredSize.Pixels.Height;
                     }
                     else
                     if (pixelsContentOffsetY < 0)
                     {
-                        offsetY = CorrectPixels(Content.MeasuredSize.Pixels.Height + pixelsContentOffsetY);
+                        offsetY = Content.MeasuredSize.Pixels.Height + pixelsContentOffsetY;
                     }
 
-                    //if (UsePixelSnapping)
-                    //offsetY = SnapPixelsToPixel(pixelsContentOffsetY, offsetY);
-
-                    var childRect = destination.Clone();// ContentAvailableSpace.Clone();
+                    var childRect = destination.Clone();
                     childRect.Offset(0, offsetY);
 
                     if (pixelsContentOffsetY > 0)
@@ -407,32 +396,22 @@ public class SkiaScrollLooped : SkiaScroll
                 if (hiddenContentWidthPixels < 0)
                     hiddenContentWidthPixels = 0;
 
-                if (hiddenContentWidthPixels > 0)//hiddenContentSizePixels > 0 && InternalViewportOffsetX != 0.0)
+                if (hiddenContentWidthPixels > 0)
                 {
-                    float OffsetDuplicate(float offset)
-                    {
-                        var ending = Math.Abs(offset - Math.Truncate(offset));
-                        var adjust = (float)(CycleSpace + 1);
-                        if (ending >= 0.5) adjust++;
-                        return offset - adjust * Math.Sign(offset);
-                    }
 
                     var pixelsContentOffsetX = InternalViewportOffset.Pixels.X;
                     float offsetX = 0;
                     if (pixelsContentOffsetX > 0)
                     {
-                        offsetX = OffsetDuplicate(pixelsContentOffsetX - Content.MeasuredSize.Pixels.Width);
+                        offsetX = pixelsContentOffsetX - Content.MeasuredSize.Pixels.Width;
                     }
                     else
                     if (pixelsContentOffsetX < 0)
                     {
-                        offsetX = OffsetDuplicate(Content.MeasuredSize.Pixels.Width + pixelsContentOffsetX);
+                        offsetX = Content.MeasuredSize.Pixels.Width + pixelsContentOffsetX;
                     }
 
-                    //if (UsePixelSnapping)
-                    //offsetX = SnapPixelsToPixel(pixelsContentOffsetX, offsetX);
-
-                    var childRect = destination.Clone();// ContentAvailableSpace.Clone();
+                    var childRect = destination.Clone();
                     childRect.Offset(offsetX, 0);
 
                     DrawWithClipAndTransforms(context, DrawingRect, true,
@@ -441,12 +420,9 @@ public class SkiaScrollLooped : SkiaScroll
                             DrawViews(context, childRect, zoomedScale, debug);
                         });
 
-
                 }
             }
         }
-
-
 
         //ScrollOrientation.Both unsupported
 
