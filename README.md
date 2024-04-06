@@ -51,7 +51,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/fdaabc7a-29f1-43d9-8104
 
 * __Draw your UI using SkiaSharp with hardware acceleration__
 * __Easily create your controls and animations__
-* __Design in Xaml or code-behind__
+* __Design in XAML or code-behind__
 * __2D and 3D Transforms__
 * __Animations and transforms__ targeting max fps
 * __Gestures__ support for panning, scrolling and zooming (_rotation on the roadmap_)
@@ -69,7 +69,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/fdaabc7a-29f1-43d9-8104
 	* __SkiaScroll__ (Horizontal, Vertical, Both) with header, footer, zoom support and adjustable inertia, bounce, snap and much more. Can act like a collectionview with custom refresh indicator, load more etc
 	* __SkiaHotspot__ to handle gestures in a lazy way
 	* __SkiaBackdrop__ to apply effects to background below, like blur etc
-	* __SkiaMauiElement__ to embeed maui controls in your canvas
+	* __SkiaMauiElement__ to embed maui controls in your canvas
 	* __and more..__ 
 
 * __Derived custom controls__
@@ -112,7 +112,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/fdaabc7a-29f1-43d9-8104
 
  ## Development Notes
 
-* All files to be consumed (images etc) must be placed inside the maui app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
+* All files to be consumed (images etc) must be placed inside the MAUI app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
 * Accessibility support is compatible and is on the roadmap.
 
 ## Installation
@@ -151,7 +151,7 @@ Consume:
 </draw:Canvas>
 ```
 
-As you can see in this example the Maui view `Canvas` will adapt its size to drawn content and should take 44x44 pts. `LockRatio="1"` tells the engine to take the highest calculated dimension and multiply it by 1, so even we omitted `HeightRequest` it was set to 44.
+As you can see in this example the Maui view `Canvas` will adapt its size to drawn content and should take 44x44 pts. `LockRatio="1"` tells the engine to take the highest calculated dimension and multiply it by 1, so even if we omitted `HeightRequest` it was set to 44.
 
 #### Code behind
 
@@ -173,7 +173,7 @@ Use a simple `SkiaControl` with height and background color set. For complex sha
 
 #### Simulate MAUI StackLayout inside a ScrollView
 
-`SkiaScroll` + `SkiaLayout` of type `Column`/`Row`. Its up to you to decide whether to cache the layout or its children only. It's best not to cache the layout for large stacks and the virtialisation will enter the game.
+`SkiaScroll` + `SkiaLayout` of type `Column`/`Row`. Its up to you to decide whether to cache the layout or its children only. It's best not to cache the layout for large stacks and the virtualisation will enter the game.
 
 #### Simulate MAUI CollectionView
 
@@ -190,14 +190,14 @@ ___Please star ⭐ if you like it!___
 
 * Images loaded and converted for skia format are cached on a per-app run basis.
 
-* When an image fails to load then if the app was offline the image will get its method `ReloadSource` invoked. So when you go online your missing images will get automatically loded!
+* When an image fails to load then if the app was offline the image will get its method `ReloadSource` invoked. So when you go online your missing images will get automatically loaded!
 
 * 'SkiaScroll' can also control the loading of images via `VelocityImageLoaderLock` property, that would lock and unlock loading of images globally in case of a huge velocity scroll.
 
 Base control for using images is `SkiaImage` with many virtuals to be easily subclassed for your needs. The `Source` property is a usual maui `ImageSource`.
-`SkiaImageManager` loads platform sources and converts them to skia format. It falls back to default maui methods for loading `ImageSource` in some cases.
+`SkiaImageManager` loads platform sources and converts them to skia format. It falls back to default MAUI methods for loading `ImageSource` in some cases.
 
-On Android the `Glide` library is used for loading urls. It caches images, making it so if the app is offline it still gets its images from cache if they were loaded previously.
+On Android the `Glide` library is used for loading urls. It caches images, making it so that if the app is offline it still gets its images from cache if they were loaded previously.
 
 ### Gestures
 
@@ -279,10 +279,10 @@ When you start using any kind of animations you should start using caching to ma
 
 #### Loaded Images
 
-We are using the __EasyCaching.InMemory__ library for caching loaded bitmaps. It's impact can much be seen when using recycled cells inside a scroll. 
+We are using the __EasyCaching.InMemory__ library for caching loaded bitmaps. Its impact can much be seen when using recycled cells inside a scroll. 
 _todo add options and link to ImageLoader and SkiaImage docs_
 
-_!_ When using images inside dynamic scenes, like a a templated stack with scroll or other 
+_!_ When using images inside dynamic scenes, like a templated stack with scroll or other 
 you should try to set the image cache to `Image` this would most probably climb your fps.
 This is due to the fact that image sources are usually of the wrong size and they need processing 
 before being drawn. When using `Image` cache the image would be processed only once and 
@@ -315,15 +315,15 @@ There are two types of animators:
 
 ### Layout
 
-For initial items positionning you would be using `SkiaLayout`. 
-Its `Absolute` layout type is already buil-it in every skia control..
+For initial items positioning you would be using `SkiaLayout`. 
+Its `Absolute` layout type is already built-in inside every skia control..
 
 You can position your children using familiar properties like
 `HorizonalOptions`, `VerticalOptions`, `Margin`, parent `Padding`,
 `WidthRequest`, `HeightRequest`,`MinimumWidthRequest`, `MinimumHeightRequest` 
 and additional `MaximumWidthRequest`,  `MaximumHeightRequest`, `HorizontalFillRatio`, `VerticalFillRatio` and `LockRatio` properties.
 
-* `LockRatio`will be used to calculate the width when the height is set or vice versa. If it's above 0 the max value will be applied, if it's below 0 the min value will be applied. If it's 0 then the ratio will be ignored.
+* `LockRatio` will be used to calculate the width when the height is set or vice versa. If it's above 0 the max value will be applied, if it's below 0 the min value will be applied. If it's 0 then the ratio will be ignored.
 * `HorizontalFillRatio`, `VerticalFillRatio` will let you take a percent and the available size if you don't set a numeric request. For example if `HorizontalFillRatio` is set to 0.5 you will take 50% of the available width, at the same time being able to align the control at start, center or at the and in a usual way.
 * `HorizontalPositionOffsetRatio` and `VerticalPositionOffsetRatio` let you offset the item after it was aligned by applying a ratio to its computed size. Defaults are 0.0. For example, HorizontalPositionOffsetRatio of -0.5 will offset the item by -Width/2, practically centering it horizontally along the current x-position. Works almost like translation but relatively to the current size.
 
@@ -334,7 +334,7 @@ of different `LayoutType` : `Grid`, `Colum`, `Row` and others.
 
 Layout supports `ItemTemplate` for most of layout types.
 
-For grid we have so useful feats like, intead of using `RowDefinitions="32,32,32,32"` you can just do i nice `DefaultRowDefinition="32"`.
+For grid, we have so useful feats like, instead of using `RowDefinitions="32,32,32,32"` you can just do i nice `DefaultRowDefinition="32"`.
 
 Some differences from Xamarin.Forms/Maui to notice:
 
@@ -359,12 +359,12 @@ When designing custom controls please use `Margins` property to read the final m
 #### Loading sources
 
 SkiaImage, SkiaLottie and other controls that have a `Source` property, can load data from web, from bundled resources and from native file system.
-The conventions is the following:
+The conventions are the following:
 - if a web url is detected the source is loaded from web
 - if a file path starts with file:// it will be loaded from native file system
 - otherwise will try to load from bundled resources with root folder 'Resources\Raw'. 
 
-Example below will load animation from `Resources\Raw\Lottie\Loader.json`.
+The example below will load animation from `Resources\Raw\Lottie\Loader.json`.
 
 ```xml  
             <draw:SkiaLottie
