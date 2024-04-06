@@ -28,7 +28,10 @@ New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can mana
 * Dropped support for .net7
 * Too many other feats and fixes, hoping to have time for docs one day..
 
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/fd2c8550-64b7-4dd1-9cd9-199cb604fb6f
+
+
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
+
 _The new `VisualEffects` property_
 
 ## Demo
