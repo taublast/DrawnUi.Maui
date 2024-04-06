@@ -176,7 +176,7 @@
         SpeedRatio="0.5"
         Tag="PlayerShield"
         TranslationY="6"
-        UseCache="ImageDoubleBuffered"
+        UseCache="Operations"
         VerticalOptions="End"
         WidthRequest="130"
         ZIndex="4" />
