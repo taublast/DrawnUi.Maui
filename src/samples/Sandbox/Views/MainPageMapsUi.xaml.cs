@@ -20,10 +20,10 @@ using Mapsui.Widgets.ButtonWidgets;
 
 namespace Sandbox.Views
 {
-    public partial class MainPageMapsUi
+    public partial class MainPageMapsui
     {
 
-        public MainPageMapsUi()
+        public MainPageMapsui()
         {
             try
             {
@@ -67,43 +67,18 @@ namespace Sandbox.Views
                 return new OpenCustomStreetMap.CustomizedLayer(CreateTileSource(userAgent)) { Name = "OpenStreetMap" };
             }
 
-            public class CustomTilesSource : HttpTileSource
-            {
-                public CustomTilesSource(ITileSchema tileSchema, string urlFormatter, IEnumerable<string> serverNodes = null, string apiKey = null, string name = null, IPersistentCache<byte[]> persistentCache = null, Func<Uri, Task<byte[]>> tileFetcher = null, Attribution attribution = null, string userAgent = null) : base(tileSchema, urlFormatter, serverNodes, apiKey, name, persistentCache, tileFetcher, attribution, userAgent)
-                {
 
-                }
-
-                public CustomTilesSource(ITileSchema tileSchema, IRequest request, string name = null, IPersistentCache<byte[]> persistentCache = null, Func<Uri, Task<byte[]>> tileFetcher = null, Attribution attribution = null, string userAgent = null) : base(tileSchema, request, name, persistentCache, tileFetcher, attribution, userAgent)
-                {
-
-                }
-
-                public override async Task<byte[]> GetTileAsync(TileInfo tileInfo)
-                {
-                    var data = await base.GetTileAsync(tileInfo);
-
-                    //using var skData = SKData.CreateCopy(data);
-                    //var image = SKImage.FromEncodedData(skData);
-                    //var bmp = new BitmapInfo { Bitmap = image };
-
-                    //todo modify image
-
-                    //codo convert back to data so it would be cached as modified
-
-                    return data;
-                }
-            }
 
             private static HttpTileSource CreateTileSource(string userAgent)
             {
 
-                return new CustomTilesSource(new GlobalSphericalMercator(),
+                return new HttpTileSource(new GlobalSphericalMercator(),
                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                     new[] { "a", "b", "c" }, name: "OpenStreetMap",
                     attribution: OpenStreetMapAttribution, userAgent: userAgent, persistentCache: DefaultCache);
             }
         }
+
 
         protected override void OnAppearing()
         {

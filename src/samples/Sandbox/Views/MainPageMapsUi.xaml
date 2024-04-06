@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <views:BasePage
-    x:Class="Sandbox.Views.MainPageMapsUi"
+    x:Class="Sandbox.Views.MainPageMapsui"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
@@ -53,7 +53,7 @@
 
             <!--  MAP  -->
 
-            <!--  GPU cache makes a huge difference :)  -->
+            <!--  GPU cache makes a huge difference -->
             <maui:SkiaMapControl
                 x:Name="mapControl"
                 BackgroundColor="Black"
@@ -74,7 +74,7 @@
                         x:DataType="demo:MainPageViewModel"
                         Value="{Binding Value1}" />
 
-                    <draw:ChainAdjustBrightnessEffect
+                    <draw:ChainAdjustLightnessEffect
                         x:DataType="demo:MainPageViewModel"
                         Value="{Binding Value2}" />
 
@@ -86,6 +86,21 @@
                 </draw:SkiaControl.VisualEffects>
 
             </maui:SkiaMapControl>
+
+            <!--  ATTRIBUTION  -->
+            <!--in fullscreen can add
+            AddMarginTop="{x:Static draw:Super.StatusBarHeight}"-->
+            <draw:SkiaShape        
+                Margin="2"
+                Padding="4,2"
+                BackgroundColor="#33ffffff"
+                CornerRadius="6"
+                UseCache="Image">
+                <draw:SkiaLabel
+                    FontSize="10"
+                    Text="Mapsui and OpenStreetMap"
+                    TextColor="Black" />
+            </draw:SkiaShape>
 
             <!--  DRAWER  -->
             <draw:SkiaDrawer
@@ -118,7 +133,6 @@
                             CornerRadius="20"
                             HeightRequest="4"
                             HorizontalOptions="Center"
-                         
                             StrokeColor="{StaticResource Gray400}"
                             StrokeWidth="1"
                             Type="Rectangle"
@@ -128,137 +142,129 @@
                     </draw:SkiaShape>
 
                     <!--  CONTENT  -->
+                    <draw:SkiaLayout
+                        Padding="24,16"
+                        BackgroundColor="White"
+                        HorizontalOptions="Fill"
+                        MarginTop="{Binding DrawerHeaderSize}"
+                        Spacing="0"
+                        Tag="InsideDrawer"
+                        Type="Column"
+                        UseCache="Image"
+                        VerticalOptions="Fill">
+
+                        <!--  Switch  -->
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Style="{x:StaticResource SkiaStyleControLabel}"
+                                Text="Apply Effects" />
+                            <controls:SkiaSwitchFun
+                                IsToggled="{Binding ValueSwitch, Mode=TwoWay}"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                TranslationX="-4"
+                                UseCache="Image" />
+                        </draw:SkiaLayout>
+
+                        <!--  Brightness  -->
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Style="{x:StaticResource SkiaStyleControLabel}"
+                                Text="{Binding Value2, StringFormat='Brightness: {0:0.00}'}" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value2, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="2"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image" />
+                        </draw:SkiaLayout>
+
+                        <!--  Contrast  -->
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Style="{x:StaticResource SkiaStyleControLabel}"
+                                Text="{Binding Value1, StringFormat='Contrast: {0:0.00}'}" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value1, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="3"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image" />
+                        </draw:SkiaLayout>
+
+                        <!--  Saturation  -->
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Style="{x:StaticResource SkiaStyleControLabel}"
+                                Text="{Binding Value6, StringFormat='Saturation: {0:0.00}'}" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value6, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="2"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image" />
+                        </draw:SkiaLayout>
+
+                        <!--  Tint  -->
+                        <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Style="{x:StaticResource SkiaStyleControLabel}"
+                                Text="{Binding Value3, StringFormat='Tint: {0:0.00}'}" />
+                            <controls:SkiaSliderFun
+                                End="{Binding Value3, Mode=TwoWay}"
+                                HorizontalOptions="Fill"
+                                Max="1"
+                                Min="0"
+                                MinMaxStringFormat="P0"
+                                Step="0.01"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image" />
+                        </draw:SkiaLayout>
+
+
+                        <!--  Tint  COLOR Picker  -->
                         <draw:SkiaLayout
-                            Padding="24,16"
-                            HorizontalOptions="Fill"
-                            Spacing="0"
-                            Type="Column"
-                            BackgroundColor="White"
-                            MarginTop="{Binding DrawerHeaderSize}"
-                            Tag="InsideDrawer"
-                            VerticalOptions="Fill"
-                            
-                            UseCache="Image">
+                            HeightRequest="100"
+                            MarginBottom="{Binding BottomInsets}"
+                            MarginTop="16"
+                            Style="{x:StaticResource SkiaStyleControlContainer}">
 
-                            <!--  Switch  -->
-                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
-                                <draw:SkiaLabel
-                                    HorizontalOptions="Fill"
-                                    Style="{x:StaticResource SkiaStyleControLabel}"
-                                    Text="Apply Effects" />
-                                <controls:SkiaSwitchFun
-                                    IsToggled="{Binding ValueSwitch, Mode=TwoWay}"
-                                    Style="{x:StaticResource SkiaStyleControlInTable}"
-                                    TranslationX="-4"
-                                    UseCache="Image" />
-                            </draw:SkiaLayout>
+                            <draw:SkiaLabel
+                                HorizontalOptions="Fill"
+                                Style="{x:StaticResource SkiaStyleControLabel}"
+                                Text="Tint Color" />
 
-                            <!--  Brightness  -->
-                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
-                                <draw:SkiaLabel
-                                    HorizontalOptions="Fill"
-                                    Style="{x:StaticResource SkiaStyleControLabel}"
-                                    Text="{Binding Value2, StringFormat='Brightness: {0:0.00}'}" />
-                                <controls:SkiaSliderFun
-                                    End="{Binding Value2, Mode=TwoWay}"
-                                    HorizontalOptions="Fill"
-                                    Max="2"
-                                    Min="0"
-                                    MinMaxStringFormat="P0"
-                                    Step="0.01"
-                                    Style="{x:StaticResource SkiaStyleControlInTable}"
-                                    UseCache="Image" />
-                            </draw:SkiaLayout>
-
-                            <!--  Contrast  -->
-                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
-                                <draw:SkiaLabel
-                                    HorizontalOptions="Fill"
-                                    Style="{x:StaticResource SkiaStyleControLabel}"
-                                    Text="{Binding Value1, StringFormat='Contrast: {0:0.00}'}" />
-                                <controls:SkiaSliderFun
-                                    End="{Binding Value1, Mode=TwoWay}"
-                                    HorizontalOptions="Fill"
-                                    Max="3"
-                                    Min="0"
-                                    MinMaxStringFormat="P0"
-                                    Step="0.01"
-                                    Style="{x:StaticResource SkiaStyleControlInTable}"
-                                    UseCache="Image" />
-                            </draw:SkiaLayout>
-
-                            <!--  Saturation  -->
-                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
-                                <draw:SkiaLabel
-                                    HorizontalOptions="Fill"
-                                    Style="{x:StaticResource SkiaStyleControLabel}"
-                                    Text="{Binding Value6, StringFormat='Saturation: {0:0.00}'}" />
-                                <controls:SkiaSliderFun
-                                    End="{Binding Value6, Mode=TwoWay}"
-                                    HorizontalOptions="Fill"
-                                    Max="2"
-                                    Min="0"
-                                    MinMaxStringFormat="P0"
-                                    Step="0.01"
-                                    Style="{x:StaticResource SkiaStyleControlInTable}"
-                                    UseCache="Image" />
-                            </draw:SkiaLayout>
-
-                            <!--  Tint  -->
-                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
-                                <draw:SkiaLabel
-                                    HorizontalOptions="Fill"
-                                    Style="{x:StaticResource SkiaStyleControLabel}"
-                                    Text="{Binding Value3, StringFormat='Tint: {0:0.00}'}" />
-                                <controls:SkiaSliderFun
-                                    End="{Binding Value3, Mode=TwoWay}"
-                                    HorizontalOptions="Fill"
-                                    Max="1"
-                                    Min="0"
-                                    MinMaxStringFormat="P0"
-                                    Step="0.01"
-                                    Style="{x:StaticResource SkiaStyleControlInTable}"
-                                    UseCache="Image" />
-                            </draw:SkiaLayout>
-
-
-                            <!--  Tint  COLOR Picker-->
-                            <draw:SkiaLayout
-                                MarginBottom="{Binding BottomInsets}"
-                                HeightRequest="100"
-                                MarginTop="16"
-                                Style="{x:StaticResource SkiaStyleControlContainer}">
-
-                                <draw:SkiaLabel
-                                    HorizontalOptions="Fill"
-                                    Style="{x:StaticResource SkiaStyleControLabel}"
-                                    Text="Tint Color" />
-
-                                <controls:ColorPicker
-                                    DefaultColor="CornflowerBlue"
-                                    HorizontalOptions="Fill"
-                                    SelectedColor="{Binding SelectedColor}"
-                                    Style="{x:StaticResource SkiaStyleControlInTable}"
-                                    UseCache="Image"
-                                    WidthRequest="-1" />
-
-                            </draw:SkiaLayout>
-
+                            <controls:ColorPicker
+                                DefaultColor="CornflowerBlue"
+                                HorizontalOptions="Fill"
+                                SelectedColor="{Binding SelectedColor}"
+                                Style="{x:StaticResource SkiaStyleControlInTable}"
+                                UseCache="Image"
+                                WidthRequest="-1" />
 
                         </draw:SkiaLayout>
+
+
+                    </draw:SkiaLayout>
 
 
 
                 </draw:SkiaLayout>
 
             </draw:SkiaDrawer>
-
-            <!--<draw:SkiaLabel
-                Margin="16"
-                BackgroundColor="Teal"
-                FontSize="20"
-                Text="{Binding IsOpen}"
-                TextColor="White" />-->
 
             <controls:ButtonToRoot />
 

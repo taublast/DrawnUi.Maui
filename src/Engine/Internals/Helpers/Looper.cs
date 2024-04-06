@@ -36,8 +36,8 @@ public class Looper : IDisposable
         existingCanel?.Dispose();
     }
 
-    static bool _loopStarting = false;
-    static bool _loopStarted = false;
+    bool _loopStarting = false;
+    bool _loopStarted = false;
 
     public void StartOnMainThread(int targetFps, bool useLegacy = false)
     {
@@ -86,12 +86,15 @@ public class Looper : IDisposable
     public void Stop()
     {
         Cancel?.Cancel();
-        Cancel?.Dispose();
     }
 
     public void Dispose()
     {
         Stop();
+        Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
+        {
+            Cancel?.Dispose();
+        });
     }
 
     public bool IsRunning { get; protected set; }

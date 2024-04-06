@@ -115,6 +115,5 @@ namespace DrawnUi.Maui.Views
             Looper?.Dispose();
         }
 
-
     }
 }

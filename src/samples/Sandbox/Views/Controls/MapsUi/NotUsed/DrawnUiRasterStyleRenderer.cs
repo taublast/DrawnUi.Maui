@@ -1,4 +1,7 @@
-﻿using Mapsui.Extensions;
+﻿using BruTile;
+using BruTile.Cache;
+using BruTile.Web;
+using Mapsui.Extensions;
 using Mapsui.Layers;
 using Mapsui.Logging;
 using Mapsui.Rendering;
@@ -10,6 +13,34 @@ using System.Diagnostics.CodeAnalysis;
 using Color = Mapsui.Styles.Color;
 
 namespace Mapsui.Samples.Maui;
+
+public class CustomTilesSource : HttpTileSource
+{
+    public CustomTilesSource(ITileSchema tileSchema, string urlFormatter, IEnumerable<string> serverNodes = null, string apiKey = null, string name = null, IPersistentCache<byte[]> persistentCache = null, Func<Uri, Task<byte[]>> tileFetcher = null, Attribution attribution = null, string userAgent = null) : base(tileSchema, urlFormatter, serverNodes, apiKey, name, persistentCache, tileFetcher, attribution, userAgent)
+    {
+
+    }
+
+    public CustomTilesSource(ITileSchema tileSchema, IRequest request, string name = null, IPersistentCache<byte[]> persistentCache = null, Func<Uri, Task<byte[]>> tileFetcher = null, Attribution attribution = null, string userAgent = null) : base(tileSchema, request, name, persistentCache, tileFetcher, attribution, userAgent)
+    {
+
+    }
+
+    public override async Task<byte[]> GetTileAsync(TileInfo tileInfo)
+    {
+        var data = await base.GetTileAsync(tileInfo);
+
+        //using var skData = SKData.CreateCopy(data);
+        //var image = SKImage.FromEncodedData(skData);
+        //var bmp = new BitmapInfo { Bitmap = image };
+
+        //todo modify image
+
+        //codo convert back to data so it would be cached as modified
+
+        return data;
+    }
+}
 
 public class SkiaBitmapRenderer
 {
