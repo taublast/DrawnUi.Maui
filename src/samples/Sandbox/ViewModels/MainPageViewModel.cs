@@ -162,7 +162,7 @@ namespace Sandbox
         {
             get
             {
-                return DrawerHeaderSize - 20;
+                return DrawerHeaderSize - 20; //move down for rounded corners
             }
         }
 

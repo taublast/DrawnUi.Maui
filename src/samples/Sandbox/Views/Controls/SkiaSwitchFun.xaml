@@ -12,16 +12,33 @@
     HeightRequest="28"
     WidthRequest="50">
 
+    <!--  TRAY  -->
     <draw:SkiaShape
         Margin="4,8"
         CornerRadius="20"
         HorizontalOptions="Fill"
-        StrokeColor="{StaticResource Gray400}"
-        StrokeWidth="2"
+        StrokeColor="{StaticResource ColorPrimaryDark}"
+        StrokeWidth="1"
         Tag="Frame"
         Type="Rectangle"
-        VerticalOptions="Fill" />
+        VerticalOptions="Fill">
+        <draw:SkiaControl.Triggers>
+            <DataTrigger
+                Binding="{Binding Source={x:Reference ThisControl}, Path=IsToggled}"
+                TargetType="draw:SkiaShape"
+                Value="False">
+                <Setter Property="StrokeColor" Value="{StaticResource Gray400}" />
+            </DataTrigger>
+            <DataTrigger
+                Binding="{Binding Source={x:Reference ThisControl}, Path=IsToggled}"
+                TargetType="draw:SkiaShape"
+                Value="True">
+                <Setter Property="StrokeColor" Value="{StaticResource ColorPrimaryDark}" />
+            </DataTrigger>
+        </draw:SkiaControl.Triggers>
+    </draw:SkiaShape>
 
+    <!--  THUMB  -->
     <draw:SkiaShape
         x:Name="ThumbRef"
         Margin="4,0"

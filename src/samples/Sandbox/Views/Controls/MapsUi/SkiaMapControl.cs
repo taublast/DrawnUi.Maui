@@ -45,7 +45,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
         StartUpdates(false);
     }
 
-    private static bool GetShiftPressed() => false; // Work in progress: https://github.com/dotnet/maui/issues/16202
+    private static bool GetShiftPressed() => KeyboardManager.IsShiftPressed;
 
     private readonly ConcurrentDictionary<long, ScreenPosition> _positions = new();
     private Size _oldSize;

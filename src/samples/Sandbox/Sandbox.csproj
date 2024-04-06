@@ -187,7 +187,7 @@
       <DependentUpon>MainPageAlohaKit.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\MainPageMapsUi.xaml.cs">
-      <DependentUpon>MainPageMapsUi.xaml</DependentUpon>
+      <DependentUpon>MainPageMapsui.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
