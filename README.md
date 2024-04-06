@@ -16,19 +16,17 @@ _The current development state is __ALPHA__, many features remain to be implemen
 As SkiaSharp3 stable version is expected towards the end of the year we will have DrawnUI skia2 version updated constantly and a skia3-preview version available in parallel.  
 New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can manage how this project builds using `<UseSkiaSharp3>true</UseSkiaSharp3>`.
 
-* SkiaSharp v3 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi) **A new Nuget is incoming these days as the current one has a problem with multi-canvases** Also would bring new effects fixes and more.
-* SkiaSharp v2 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi) Based on skiasharp 3 preview 21, would use it for Windows hardware-accelerated canvas and/or new shaders experiments only.
-* FPS is now mainly display-synched (choreographer/display link..)
+* SkiaSharp v3 __preview__ 21 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi) with hardware accelerated Windows canvas, CPU-shaders, [latest SKSL syntax](https://shaders.skia.org/) etc.
+* SkiaSharp v2 [nuget](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi).
 * Every SkiaControl has a new `VisualEffects` property, you can blur/tint/apply other effects to anything in your app, see Sandbox app.
 * `Maui.Graphics` support, can reuse your existing works inside drawn layouts/controls, see Sandox app.
+* FPS is now mainly display-synched (choreographer/display link..)
 * Hardware accelerated iOS Metal has its `SkiaBackdrop` fixed, blur/affect anything below it (demo app bottom tabs).
 * MauiElement and drawn entry/editor get more fixes again.
 * SkiaImage resizing quality improved and support options.
 * SkiaImageManager preload functions added.
 * Dropped support for .net7
 * Too many other feats and fixes, hoping to have time for docs one day..
-
-
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
 
