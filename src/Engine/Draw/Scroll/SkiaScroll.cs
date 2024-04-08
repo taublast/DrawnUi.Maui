@@ -653,23 +653,12 @@ namespace DrawnUi.Maui.Draw
                     case TouchActionResult.LongPressing:
                     //----------------------------------------------------------------------
 
-                    if (passedToChildren)
-                    {
-                        return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
-
-                        consumed = this;
-                    }
-                    else
+                    if (!passedToChildren)
                     {
                         _panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
-
-                        //Debug.WriteLine($"[SCROLL] Delta: {Math.Abs(InternalViewportOffset.Units.X - _panningStartOffsetPts.X)} {Math.Abs(InternalViewportOffset.Units.Y - _panningStartOffsetPts.Y)}");
-
                         consumed = PassToChildren();
                     }
                     break;
-
-
 
                     //----------------------------------------------------------------------
                     case TouchActionResult.Panning when RespondsToGestures:

@@ -864,19 +864,9 @@ propertyChanged: NeedChangeColorFIlter);
 
     public void ClearBitmap()
     {
-        var safeDispose = LoadedSource;
-        LoadedSource = null;
-        Update(); //will delete old image and paint background
-
-        OnCleared?.Invoke(this, null);
-
-
-        if (safeDispose != null)
-        {
-            DisposeObject(safeDispose);
-        }
-
+        ImageBitmap = null;
     }
+
 
     public virtual void OnSourceError()
     {
@@ -1079,50 +1069,53 @@ propertyChanged: NeedChangeColorFIlter);
     protected override void Draw(SkiaDrawingContext context,
         SKRect destination, float scale)
     {
+        if (IsDisposed)
+            return;
+
         LoadSourceIfNeeded();
 
         var apply = ApplyNewSource;
         ApplyNewSource = null;
-        if (apply != null && apply != LoadedSource)
+        if (apply != null && apply != LoadedSource || (LoadedSource! != null && ImageBitmap == null))
         {
             var kill = LoadedSource;
             LoadedSource = apply;
-            var source = LoadedSource;
+            if (apply != null)
             {
-
-                if (kill != null)
+                var source = LoadedSource;
                 {
-                    if (SkiaImageManager.ReuseBitmaps)
-                        kill.Bitmap = null;
-                    DisposeObject(kill);
-                }
 
-                if (NeedAutoSize)
-                {
-                    Invalidate(); //resize on next frame
-                    return;
-                }
+                    if (kill != null)
+                    {
+                        if (SkiaImageManager.ReuseBitmaps)
+                            kill.Bitmap = null;
+                        DisposeObject(kill);
+                    }
 
-                if (DrawingRect == SKRect.Empty || source == null)
-                {
-                    NeedMeasure = true;
-                }
-                else
-                {
-                    //fast insert new image into presized rect
-                    SetAspectScale(source.Width, source.Height, DrawingRect, this.Aspect, scale);
-                }
+                    if (NeedAutoSize)
+                    {
+                        Invalidate(); //resize on next frame
+                        return;
+                    }
 
+                    if (DrawingRect == SKRect.Empty || source == null)
+                    {
+                        NeedMeasure = true;
+                    }
+                    else
+                    {
+                        //fast insert new image into presized rect
+                        SetAspectScale(source.Width, source.Height, DrawingRect, this.Aspect, scale);
+                    }
+                }
             }
 
             Update(); //gamechanger for doublebuffering and other complicated cases
         }
 
-        var widthRequest = SizeRequest.Width + (float)(Margins.Left + Margins.Right);
-        var heightRequest = SizeRequest.Height + (float)(Margins.Top + Margins.Bottom);
 
-        var drawn = DrawUsingRenderObject(context,
-            widthRequest, heightRequest,
+        DrawUsingRenderObject(context,
+            SizeRequest.Width, SizeRequest.Height,
             destination, scale);
     }
 
@@ -1198,6 +1191,7 @@ propertyChanged: NeedChangeColorFIlter);
                 if (this.RescalingQuality != SKFilterQuality.None)
                 {
                     if (ScaledSource == null
+                        || ScaledSource.Bitmap == null
                         || ScaledSource.Source != source.Id
                         || ScaledSource.Quality != this.RescalingQuality
                          || ScaledSource.Bitmap.Width != (int)display.Width
