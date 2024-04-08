@@ -432,8 +432,8 @@ namespace DrawnUi.Maui.Draw
                 {
                             new SKPoint(scaledRadiusLeftTop,scaledRadiusLeftTop),
                             new SKPoint(scaledRadiusRightTop,scaledRadiusRightTop),
-                            new SKPoint(scaledRadiusLeftBottom,scaledRadiusLeftBottom),
                             new SKPoint(scaledRadiusRightBottom,scaledRadiusRightBottom),
+                            new SKPoint(scaledRadiusLeftBottom,scaledRadiusLeftBottom),
                         });
                 path.AddRoundRect(rrect);
                 //path.AddRoundRect(strokeAwareChildrenSize, innerCornerRadius, innerCornerRadius);

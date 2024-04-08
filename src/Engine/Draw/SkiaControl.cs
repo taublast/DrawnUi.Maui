@@ -4335,8 +4335,8 @@ namespace DrawnUi.Maui.Draw
             bool needTransform = HasTransform;
 
             if (applyOpacity || isClipping || needTransform
-                || CustomizeLayerPaint != null
-                || (VisualEffects?.Count > 0 && !DisableEffects))
+                || CustomizeLayerPaint != null)
+            //|| (VisualEffects?.Count > 0 && !DisableEffects))
             {
                 var restore = ctx.Canvas.Save();
 
@@ -6284,14 +6284,6 @@ namespace DrawnUi.Maui.Draw
         {
             get => (IList<SkiaControl>)GetValue(ChildrenProperty);
             set => SetValue(ChildrenProperty, value);
-        }
-
-        public virtual SkiaControl AttachControl
-        {
-            get
-            {
-                return this;
-            }
         }
 
         protected void AddOrRemoveView(SkiaControl subView, bool add)

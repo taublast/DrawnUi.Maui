@@ -1165,16 +1165,6 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-        protected override void Draw(SkiaDrawingContext context,
-            SKRect destination, float scale)
-        {
-            var widthRequest = SizeRequest.Width + (float)(Margins.Left + Margins.Right);
-            var heightRequest = SizeRequest.Height + (float)(Margins.Top + Margins.Bottom);
-
-            var drawn = DrawUsingRenderObject(context,
-                widthRequest, heightRequest,
-                destination, scale);
-        }
 
 
     }

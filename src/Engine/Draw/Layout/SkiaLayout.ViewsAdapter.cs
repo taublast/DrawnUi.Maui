@@ -80,18 +80,22 @@ public class ViewsAdapter : IDisposable
 
     public void MarkViewAsHidden(int index)
     {
-        //lock (lockVisible)
+        lock (lockVisible)
         {
             if (_parent.IsTemplated && _parent.RecyclingTemplate == RecyclingTemplate.Enabled)
             {
-                if (_dicoCellsInUse.Remove(index, out SkiaControl hiddenView))
+                if (_dicoCellsInUse.ContainsKey(index))
                 {
-                    if (hiddenView is ISkiaCell notify)
+                    if (_dicoCellsInUse.TryGetValue(index, out SkiaControl hiddenView))
                     {
-                        notify.OnDisappeared();
-                    }
+                        if (hiddenView is ISkiaCell notify)
+                        {
+                            notify.OnDisappeared();
+                        }
 
-                    ReleaseView(hiddenView);
+                        _dicoCellsInUse.Remove(index);
+                        ReleaseView(hiddenView);
+                    }
 
                     //Debug.WriteLine($"[InUse] {_dicoCellsInUse.Keys.Select(k => k.ToString()).Aggregate((current, next) => $"{current},{next}")}");
                 }
@@ -753,36 +757,44 @@ public class ViewsAdapter : IDisposable
         {
             //lock (_syncLock)
             {
+                SkiaControl viewModel = null;
 
-                if (_pool.TryPop(out SkiaControl viewModel))
+                try
                 {
-                    return viewModel;
-                }
+                    if (_pool.Count > 0)
+                        viewModel = _pool.Pop();
+                    if (viewModel != null)
+                    {
+                        return viewModel;
+                    }
 
-                if (_pool.Count < MaxSize)
-                {
-                    try
+                    if (_pool.Count < MaxSize)
                     {
                         return CreateFromTemplate();
                     }
-                    catch (Exception e)
+
+                    // Wait and try again if the pool is full
+                    viewModel = _pool.Pop();
+                    while (viewModel != null)
                     {
-                        Trace.WriteLine(e);
-                        throw;
+                        System.Threading.Thread.Sleep(10); //todo add cancellation
+                        viewModel = _pool.Pop();
                     }
                 }
-
-                // Wait and try again if the pool is full
-                while (!_pool.TryPop(out viewModel))
+                catch (Exception e)
                 {
-                    System.Threading.Thread.Sleep(10); //todo add cancellation
+                    Super.Log(e);
+                    throw e;
                 }
+
+
 
                 return viewModel;
             }
 
 
         }
+
 
         public void Return(SkiaControl viewModel)
         {

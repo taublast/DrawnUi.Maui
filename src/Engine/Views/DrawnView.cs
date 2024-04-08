@@ -574,6 +574,7 @@ namespace DrawnUi.Maui.Views
 
         private void OnNeedUpdate(object sender, EventArgs e)
         {
+            NeedCheckParentVisibility = true;
             NeedGlobalRefreshCount++;
             Update();
         }
@@ -1487,9 +1488,7 @@ namespace DrawnUi.Maui.Views
                     _globalRefresh = NeedGlobalRefreshCount;
                     foreach (var item in Children)
                     {
-                        item.AttachControl.InvalidateMeasureInternal();
-                        NeedCheckParentVisibility = true;
-                        IsDirty = true;
+                        item.InvalidateMeasureInternal();
                     }
                 }
 
