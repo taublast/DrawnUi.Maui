@@ -4,7 +4,7 @@ Rendering engine to draw your UI on a Skia canvas, with gestures and animations,
 
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
-* To use inside a usual Maui app, consume drawn controls here and there inside `Canvas` views.
+* To use inside a usual MAUI app, consume drawn controls here and there inside `Canvas` views.
 * Create a totally drawn app with just one `Canvas` as root view, `SkiaShell` is provided for navigation.
  * Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas. 
 * Free to use under the MIT license, a nuget package is available. 
@@ -38,14 +38,6 @@ _The new `VisualEffects` property_
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget.
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
-
-The video below is from the Sandbox project:
-
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/68c39573-cb3f-4538-987f-9e13f6cdc543
-
-Totally drawn MAUI app (releasing soon):
-
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/fdaabc7a-29f1-43d9-8104-b0e9056bb917
 
 ## Features
 
