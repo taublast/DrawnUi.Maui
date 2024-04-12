@@ -2,12 +2,8 @@
 using Microsoft.Maui;
 using System.ComponentModel;
 
-
 namespace DrawnUi.Maui.Draw;
 
-/// <summary>
-/// This control has IsClippedToBounds set to true by default
-/// </summary>
 public class SkiaImage : SkiaControl
 {
 
@@ -22,7 +18,13 @@ public class SkiaImage : SkiaControl
     /// <param name="loaded"></param>
     protected virtual LoadedImageSource SetImage(LoadedImageSource loaded)
     {
-        if (loaded == ApplyNewSource)
+        if (loaded == null)
+        {
+            OnCleared?.Invoke(this, null);
+            _needClearBitmap = true;
+        }
+
+        if (loaded == ApplyNewSource && loaded != null)
         {
             return loaded;
         }
@@ -72,7 +74,18 @@ public class SkiaImage : SkiaControl
 
     public CancellationTokenSource CancelLoading;
 
-    public LoadedImageSource LoadedSource { get; set; }
+    public LoadedImageSource LoadedSource
+    {
+        get => _loadedSource;
+        set
+        {
+            if (value != _loadedSource)
+            {
+                _loadedSource = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
     public int RetriesOnError { get; set; } = 3;
 
@@ -174,7 +187,7 @@ public class SkiaImage : SkiaControl
         typeof(SkiaImage),
         defaultValue: null, propertyChanged: OnSetSource);
 
-    [TypeConverter(typeof(FrameworkImageSourceConverter))]
+    [System.ComponentModel.TypeConverter(typeof(FrameworkImageSourceConverter))]
     public ImageSource Source
     {
         get { return (ImageSource)GetValue(SourceProperty); }
@@ -302,7 +315,21 @@ public class SkiaImage : SkiaControl
         //SetImage(new InstancedBitmap(bitmap));
     }
 
-    protected LoadedImageSource ApplyNewSource { get; set; }
+
+    private LoadedImageSource _applyNewSource;
+
+    protected LoadedImageSource ApplyNewSource
+    {
+        get
+        {
+            return _applyNewSource;
+        }
+        set
+        {
+            _applyNewSource = value;
+
+        }
+    }
 
     private static void OnSetInstancedBitmap(BindableObject bindable, object oldvalue, object newvalue)
     {
@@ -411,7 +438,7 @@ public class SkiaImage : SkiaControl
                                 //Debug.WriteLine($"[SkiaImage] {Id} loading canceled for {url} - ({retries})");
                                 cancel?.Cancel();
                                 IsLoading = false;
-                                if (SkiaImageManager.LogEnabled)
+                                if (LogEnabled)
                                     TraceLog($"[SkiaImage] Canceled loading {source}");
                                 return;
                             }
@@ -500,7 +527,7 @@ public class SkiaImage : SkiaControl
                         if (action != null)
                         {
                             LoadSource = null;
-                            Tasks.StartDelayedAsync(TimeSpan.FromMicroseconds(1), async () =>
+                            Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(1), async () =>
                             {
                                 await Task.Run(action);
                             });
@@ -862,11 +889,12 @@ propertyChanged: NeedChangeColorFIlter);
         }
     }
 
+    bool _needClearBitmap;
     public void ClearBitmap()
     {
         ImageBitmap = null;
+        _needClearBitmap = true;
     }
-
 
     public virtual void OnSourceError()
     {
@@ -1042,6 +1070,9 @@ propertyChanged: NeedChangeColorFIlter);
 
     object lockDraw = new();
     private bool _hasError;
+    private RescaledBitmap _scaledSource;
+    private LoadedImageSource _loadedSource;
+
 
     public virtual void LoadSourceIfNeeded()
     {
@@ -1051,7 +1082,7 @@ propertyChanged: NeedChangeColorFIlter);
             if (action != null)
             {
                 LoadSource = null;
-                Tasks.StartDelayedAsync(TimeSpan.FromMicroseconds(1), async () =>
+                Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(1), async () =>
                 {
                     await Task.Run(action);
                 });
@@ -1072,14 +1103,17 @@ propertyChanged: NeedChangeColorFIlter);
         if (IsDisposed)
             return;
 
+
         LoadSourceIfNeeded();
 
         var apply = ApplyNewSource;
-        ApplyNewSource = null;
-        if (apply != null && apply != LoadedSource || (LoadedSource! != null && ImageBitmap == null))
+
+        if (apply != null && apply != LoadedSource || _needClearBitmap)
         {
+            ApplyNewSource = null;
             var kill = LoadedSource;
-            LoadedSource = apply;
+            LoadedSource = apply; //eventually clears bitmap
+            _needClearBitmap = false;
             if (apply != null)
             {
                 var source = LoadedSource;
@@ -1111,8 +1145,9 @@ propertyChanged: NeedChangeColorFIlter);
             }
 
             Update(); //gamechanger for doublebuffering and other complicated cases
-        }
 
+
+        }
 
         DrawUsingRenderObject(context,
             SizeRequest.Width, SizeRequest.Height,
@@ -1140,7 +1175,14 @@ propertyChanged: NeedChangeColorFIlter);
 
     public SKPoint AspectScale { get; protected set; }
 
-    public RescaledBitmap ScaledSource { get; protected set; }
+    public RescaledBitmap ScaledSource
+    {
+        get => _scaledSource;
+        protected set
+        {
+            _scaledSource = value;
+        }
+    }
 
     public class RescaledBitmap : IDisposable
     {
@@ -1191,7 +1233,6 @@ propertyChanged: NeedChangeColorFIlter);
                 if (this.RescalingQuality != SKFilterQuality.None)
                 {
                     if (ScaledSource == null
-                        || ScaledSource.Bitmap == null
                         || ScaledSource.Source != source.Id
                         || ScaledSource.Quality != this.RescalingQuality
                          || ScaledSource.Bitmap.Width != (int)display.Width
@@ -1221,7 +1262,6 @@ propertyChanged: NeedChangeColorFIlter);
             else
             if (source.Image != null)
                 ctx.Canvas.DrawImage(source.Image, display, paint);
-
         }
         catch (Exception e)
         {

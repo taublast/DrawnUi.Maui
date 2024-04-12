@@ -155,7 +155,6 @@ namespace DrawnUi.Maui.Draw
             _measuredNewTemplates = false;
             NeedMeasure = true;
             InvalidateParent();
-            Repaint();
         }
 
         protected override ScaledSize SetMeasured(float width, float height, float scale)

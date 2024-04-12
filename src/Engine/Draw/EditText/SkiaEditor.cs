@@ -729,7 +729,7 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-#if ((NET7_0 || NET8_0) && !ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if (!ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
 
         public void SetCursorPositionNative(int position, int stop = -1)

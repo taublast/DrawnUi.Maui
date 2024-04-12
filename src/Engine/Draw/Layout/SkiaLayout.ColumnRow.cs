@@ -349,7 +349,7 @@ namespace DrawnUi.Maui.Draw
 
                 bool smartMeasuring = false;
 
-                if (Superview != null)
+                if (Superview != null && !IsTemplated)
                 {
                     //enable measuring one changed item in foreground only,
                     //for background thread need full measurement

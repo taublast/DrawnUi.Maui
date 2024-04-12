@@ -22,10 +22,27 @@ public class SkiaToggle : SkiaLayout
         ApplyProperties();
 
         NotifyWasToggled();
+        
+        IsInternalCall = false;
     }
+
+    protected bool IsInternalCall;
+
+    protected virtual void ChangeDefaultValue()
+    {
+        IsInternalCall = true;
+
+        IsToggled = DefaultValue;
+    }
+
 
     protected virtual void NotifyWasToggled()
     {
+        if (IsInternalCall)
+        {
+            return;
+        }
+
         Toggled?.Invoke(this, IsToggled);
 
         CommandToggled?.Execute(IsToggled);
@@ -76,6 +93,24 @@ public class SkiaToggle : SkiaLayout
     {
         get { return (bool)GetValue(IsToggledProperty); }
         set { SetValue(IsToggledProperty, value); }
+    }
+
+    public static readonly BindableProperty DefaultValueProperty = BindableProperty.Create(
+        nameof(DefaultValue),
+        typeof(bool),
+        typeof(SkiaToggle),
+        false, propertyChanged: NeedChangeDefault);
+
+    private static void NeedChangeDefault(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        var control = bindable as SkiaToggle;
+        control?.ChangeDefaultValue();
+    }
+
+    public bool DefaultValue
+    {
+        get { return (bool)GetValue(DefaultValueProperty); }
+        set { SetValue(DefaultValueProperty, value); }
     }
 
     public static readonly BindableProperty RespondsToGesturesProperty = BindableProperty.Create(
