@@ -508,6 +508,7 @@ namespace DrawnUi.Maui.Controls
             //blur will create alpha on borders, so we need a background color
             var background = new SkiaImage()
             {
+                LoadSourceOnFirstDraw = true,
                 UseCache = SkiaCacheType.Image,
                 Tag = "RootLayoutSnapshot",
                 ZIndex = RootLayout.ZIndex + 1,

@@ -22,6 +22,8 @@ public class SkiaToggle : SkiaLayout
         ApplyProperties();
 
         NotifyWasToggled();
+        
+        IsInternalCall = false;
     }
 
     protected bool IsInternalCall;
@@ -31,8 +33,6 @@ public class SkiaToggle : SkiaLayout
         IsInternalCall = true;
 
         IsToggled = DefaultValue;
-
-        IsInternalCall = false;
     }
 
 

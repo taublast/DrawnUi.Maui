@@ -4691,7 +4691,10 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 if (NeedUpdate) //someone changed us while rendering inner content
+                {
+                    RenderObjectNeedsUpdate = true;
                     Repaint();
+                }
 
             }
             finally

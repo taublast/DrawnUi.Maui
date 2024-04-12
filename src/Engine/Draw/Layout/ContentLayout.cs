@@ -314,17 +314,6 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
 
 
 
-    public override bool IsClippedToBounds
-    {
-        get
-        {
-            return true;
-        }
-        set
-        {
-        }
-    }
-
 
 
 
