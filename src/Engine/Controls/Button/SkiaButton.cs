@@ -482,14 +482,16 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         nameof(CornerRadius),
         typeof(Thickness),
         typeof(SkiaButton),
-        new Thickness(8),
+        default(CornerRadius),
         propertyChanged: NeedApplyProperties);
 
-    public Thickness CornerRadius
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.CornerRadiusTypeConverter))]
+    public CornerRadius CornerRadius
     {
-        get { return (Thickness)GetValue(CornerRadiusProperty); }
+        get { return (CornerRadius)GetValue(CornerRadiusProperty); }
         set { SetValue(CornerRadiusProperty, value); }
     }
+
 
     public static readonly BindableProperty TintColorProperty = BindableProperty.Create(
         nameof(TintColor),
