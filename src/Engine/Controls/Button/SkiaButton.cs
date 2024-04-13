@@ -480,7 +480,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(
         nameof(CornerRadius),
-        typeof(Thickness),
+        typeof(CornerRadius),
         typeof(SkiaButton),
         default(CornerRadius),
         propertyChanged: NeedApplyProperties);
