@@ -365,7 +365,7 @@ namespace DrawnUi.Maui.Views
 
             try
             {
-                if (PostAnimators.Count == 0)
+                if (PostAnimators.Count == 0 || IsDisposing || IsDisposed)
                     return executed;
 
                 foreach (var skiaAnimation in PostAnimators)
@@ -726,8 +726,12 @@ namespace DrawnUi.Maui.Views
             }
         }
 
+        public bool IsDisposing { get; set; }
+
         public void Dispose()
         {
+            IsDisposing = true;
+
             if (IsDisposed)
                 return;
 

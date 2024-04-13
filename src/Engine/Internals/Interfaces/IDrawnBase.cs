@@ -13,6 +13,8 @@ public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
 
     bool IsDisposed { get; }
 
+    bool IsDisposing { get; }
+
     bool IsVisibleInViewTree();
 
     /// <summary>

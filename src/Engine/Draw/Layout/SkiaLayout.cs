@@ -319,6 +319,8 @@ namespace DrawnUi.Maui.Draw
         public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
             SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
         {
+            if (IsDisposed || IsDisposing)
+                return null;
 
             if (TouchEffect.LogEnabled)
             {
@@ -1216,6 +1218,9 @@ namespace DrawnUi.Maui.Draw
 
         protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
+            if (IsDisposed || IsDisposing)
+                return;
+
             ApplyMeasureResult();
 
             base.Draw(context, destination, scale);

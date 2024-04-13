@@ -45,7 +45,7 @@ public class RippleAnimator : RenderingAnimator
 
     protected override bool OnRendering(IDrawnBase control, SkiaDrawingContext context, double scale)
     {
-        if (IsRunning)
+        if (IsRunning && control != null && !control.IsDisposed && !control.IsDisposing)
         {
             var touchOffset = new SKPoint((float)(X * scale), (float)(Y * scale));
             var selfDrawingLocation = GetSelfDrawingLocation(control);
