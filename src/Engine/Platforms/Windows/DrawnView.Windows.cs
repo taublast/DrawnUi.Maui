@@ -1,9 +1,5 @@
-﻿using DrawnUi.Maui.Infrastructure.Enums;
-using Microsoft.Maui.Handlers;
-using Microsoft.Maui.Platform;
+﻿using Microsoft.Maui.Platform;
 using System.Runtime.CompilerServices;
-using Windows.System;
-using Windows.UI.Core;
 
 namespace DrawnUi.Maui.Views
 {
@@ -53,28 +49,14 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
-
-            Looper?.Dispose();
-            Looper = new(OnFrame);
-            if (IsUsingHardwareAcceleration)
-            {
-                Looper.StartOnMainThread(120);
-            }
-            else
-            {
-                Looper.StartOnMainThread(120);
-            }
+            Super.OnFrame -= OnSuperFrame;
+            Super.OnFrame += OnSuperFrame;
         }
 
         protected virtual void PlatformHardwareAccelerationChanged()
         {
-            if (Looper != null && Looper.IsRunning)
-            {
-                SetupRenderingLoop();
-            }
-        }
 
-        Looper Looper { get; set; }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void UpdatePlatform()
@@ -82,21 +64,6 @@ namespace DrawnUi.Maui.Views
             IsDirty = true;
         }
 
-        object lockOnFrame = new();
-
-        private void OnFrame()
-        {
-
-            if (CheckCanDraw())
-            {
-                OrderedDraw = true;
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
-
-                CanvasView?.Update();
-            }
-
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
@@ -110,9 +77,21 @@ namespace DrawnUi.Maui.Views
                && IsVisible && Super.EnableRendering;
         }
 
+        private void OnSuperFrame(object sender, EventArgs e)
+        {
+            if (CheckCanDraw())
+            {
+                OrderedDraw = true;
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+
+                CanvasView?.Update();
+            }
+        }
+
         protected virtual void DisposePlatform()
         {
-            Looper?.Dispose();
+            Super.OnFrame -= OnSuperFrame;
         }
 
     }

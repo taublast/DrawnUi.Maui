@@ -22,8 +22,19 @@ namespace DrawnUi.Maui.Draw
 
             //VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
 
+            Looper = new(() =>
+            {
+                OnFrame?.Invoke(null, null);
+            });
+
+            Looper.StartOnMainThread(120);
         }
 
+        static Looper Looper { get; set; }
+
+        public static EventHandler OnFrame;
     }
+
+
 }
 
