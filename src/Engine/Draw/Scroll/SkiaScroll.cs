@@ -55,7 +55,7 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void UpdateVisibleIndex()
         {
-            if (LayoutReady)
+            if (LayoutReady && TrackIndexPosition != RelativePositionType.None)
             {
                 CurrentIndexHit = CalculateVisibleIndex(TrackIndexPosition);
                 CurrentIndex = CurrentIndexHit.Index;
@@ -949,7 +949,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected ScrollFlingAnimator _animatorFling;
 
-        /*
+
         /// <summary>
         /// Direct scroller for ordered scroll, snap etc
         /// </summary>
@@ -959,7 +959,6 @@ namespace DrawnUi.Maui.Draw
         /// Direct scroller for ordered scroll, snap etc
         /// </summary>
         protected RangeAnimator _scrollerY;
-        */
 
         protected float _scrollMinX;
         protected float _scrollMinY;
@@ -968,6 +967,8 @@ namespace DrawnUi.Maui.Draw
 
         public void StopScrolling()
         {
+            _scrollerX?.Stop();
+            _scrollerY?.Stop();
             _animatorFling?.Stop();
             _animatorBounce?.Stop();
 
@@ -1035,7 +1036,8 @@ namespace DrawnUi.Maui.Draw
         //		&& ScrollStoppedForSnap());
         //}
 
-        protected bool _isSnapping;
+
+
         /// <summary>
         /// ToDo adapt this to same logic as ScrollLooped has !
         /// </summary>
@@ -1337,9 +1339,9 @@ namespace DrawnUi.Maui.Draw
 
         void SetDetectIndexChildPoint(RelativePositionType option = RelativePositionType.Start)
         {
-            //todo this will need to change if we implement multiple columns
+            //todo this will need to change for multiple columns?
 
-            if (!IsContentActive || Content.MeasuredSize == null)
+            if (!IsContentActive || Content.MeasuredSize == null || TrackIndexPosition == RelativePositionType.None)
                 return;
 
             var point = new SKPoint();
@@ -1393,14 +1395,213 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual ContainsPointResult CalculateVisibleIndex(RelativePositionType option)
         {
-            if (Content is ILayoutInsideViewport layout)
+            if (Content is SkiaLayout layout)
             {
-                return layout.GetVisibleChildIndexAt(DetectIndexChildIndexAt);
+
+                var pixelsOffsetX = InternalViewportOffset.Pixels.X;// (float)(ViewportOffsetX * layout.RenderingScale);
+                var pixelsOffsetY = InternalViewportOffset.Pixels.Y;// (float)(ViewportOffsetY * layout.RenderingScale);
+
+                return GetItemIndex(layout, pixelsOffsetX, pixelsOffsetY, option);
+            }
+            else
+            if (Content is ILayoutInsideViewport inside)
+            {
+
+                var point = new SKPoint(
+                    DetectIndexChildIndexAt.X + InternalViewportOffset.Pixels.X + DrawingRect.Left,
+                    DetectIndexChildIndexAt.Y + InternalViewportOffset.Pixels.Y + DrawingRect.Top);
+
+                var found = inside.GetVisibleChildIndexAt(point);
+
+                if (found.Index != -1)
+                {
+
+
+
+                    //todo translate found
+                    var area = found.Area;
+                    area.Offset(-DrawingRect.Left, -DrawingRect.Top);
+                    point.Offset(-DrawingRect.Left, -DrawingRect.Top);
+                    return new ContainsPointResult()
+                    {
+                        Index = found.Index,
+                        Area = area,
+                        Point = point,
+                        Unmodified = new(InternalViewportOffset.Pixels.X, InternalViewportOffset.Pixels.Y)
+                    };
+                }
+
+                return found;
             }
 
             return ContainsPointResult.NotFound();
         }
 
+        public virtual ContainsPointResult GetItemIndex(SkiaLayout layout, float pixelsOffsetX, float pixelsOffsetY, RelativePositionType option)
+        {
+            if (layout.LatestStackStructure == null)
+                return ContainsPointResult.NotFound();
+
+            bool trace = false;
+
+            if (this.Orientation == ScrollOrientation.Vertical)
+            {
+                var initialValue = pixelsOffsetY;
+
+                // ----------- proper to infinite start 
+
+                if (option == RelativePositionType.Center)
+                {
+                    pixelsOffsetY -= Viewport.Pixels.Height / 2f;
+                }
+                else
+                if (option == RelativePositionType.End)
+                {
+                    pixelsOffsetY -= Viewport.Pixels.Height;
+                }
+
+                if (pixelsOffsetY > 0)
+                {
+                    //inverted scroll
+                    pixelsOffsetY -= Content.MeasuredSize.Pixels.Height;
+
+                }
+                else
+                {
+                    //normal scroll
+                    if (-pixelsOffsetY > Content.MeasuredSize.Pixels.Height)
+                    {
+                        pixelsOffsetY += Content.MeasuredSize.Pixels.Height;
+                    }
+                }
+
+                // ----------- proper to infinite end
+
+                var point = new SKPoint(
+                (float)Math.Abs(pixelsOffsetX),
+                (float)Math.Abs(pixelsOffsetY)
+                );
+
+                if (layout.Type == LayoutType.Column) //todo grid
+                {
+                    var stackStructure = layout.LatestStackStructure;
+                    int index = -1;
+                    int row;
+                    int col;
+
+                    if (trace)
+                        Trace.WriteLine($"offset: {point.Y}");
+
+                    for (row = 0; row < stackStructure.Count; row++)
+                    {
+                        var rowContent = stackStructure[row];
+                        for (col = 0; col < rowContent.Count; col++)
+                        {
+                            index++;
+                            var childInfo = rowContent[col];
+
+                            if (childInfo.Destination.ContainsInclusive(point))
+                            {
+                                return new ContainsPointResult()
+                                {
+                                    Index = index,
+                                    Area = childInfo.Destination,
+                                    Point = point,
+                                    Unmodified = new SKPoint(0, initialValue)
+                                };
+                            }
+
+                        }
+                    }
+                }
+            }
+            else
+            if (this.Orientation == ScrollOrientation.Horizontal)
+            {
+                var initialValue = pixelsOffsetX;
+
+                // ----------- proper to infinite start 
+
+                if (option == RelativePositionType.Center)
+                {
+                    pixelsOffsetX -= Viewport.Pixels.Width / 2f;
+                }
+                else
+                if (option == RelativePositionType.End)
+                {
+                    pixelsOffsetX -= Viewport.Pixels.Width;
+                }
+
+                if (pixelsOffsetX > 0)
+                {
+                    //inverted scroll
+                    //var bak = pixelsOffsetX;
+                    pixelsOffsetX -= Content.MeasuredSize.Pixels.Width;
+                    //Trace.WriteLine($"[INVERT ] {bak:0.0} --> {pixelsOffsetX:0.0}");
+                }
+                else
+                {
+                    //normal scroll
+                    if (-pixelsOffsetX > Content.MeasuredSize.Pixels.Width)
+                    {
+                        pixelsOffsetX += Content.MeasuredSize.Pixels.Width;
+                    }
+                }
+
+                //Trace.WriteLine($"[CALC] for {pixelsOffsetX:0.0}");
+                // ----------- proper to infinite end
+
+
+                var point = new SKPoint(
+                (float)Math.Abs(pixelsOffsetX),
+                (float)Math.Abs(pixelsOffsetY)
+                );
+
+
+                if (layout.Type == LayoutType.Row) //todo grid
+                {
+                    var stackStructure = layout.StackStructure;
+                    int index = -1;
+                    int row;
+                    int col;
+
+                    if (trace)
+                        Trace.WriteLine($"offset: {point.X}");
+
+                    for (row = 0; row < stackStructure.Count; row++)
+                    {
+                        var rowContent = stackStructure[row];
+                        for (col = 0; col < rowContent.Count; col++)
+                        {
+                            index++;
+                            var childInfo = rowContent[col];
+
+                            var childRect = childInfo.Destination.Clone();
+                            //childRect.Offset(point.X, point.Y);
+
+                            if (trace)
+                                Trace.WriteLine($"child: {childRect.Left:0.0} - {childRect.Right:0.0}");
+
+                            if (childRect.ContainsInclusive(point))
+                            {
+                                return new ContainsPointResult()
+                                {
+                                    Index = index,
+                                    Area = childRect,
+                                    Point = point,
+                                    Unmodified = new SKPoint(initialValue, 0)
+                                };
+                            }
+
+                        }
+                    }
+
+
+                }
+            }
+
+            return ContainsPointResult.NotFound();
+        }
 
 
         protected virtual SKPoint ClampedOrderedScrollOffset(SKPoint scrollTo)
@@ -1531,123 +1732,14 @@ namespace DrawnUi.Maui.Draw
 
 
 
-        /// <summary>
-        /// We might order a scroll before the control was drawn, so it's a kind of startup position
-        /// saved every time one calls ScrollTo
-        /// </summary>
-        protected ScrollToPointOrder OrderedScrollTo = ScrollToPointOrder.NotValid;
-
-        /// <summary>
-        /// We might order a scroll before the control was drawn, so it's a kind of startup position
-        /// saved every time one calls ScrollToIndex
-        /// </summary>
-        protected ScrollToIndexOrder OrderedScrollToIndex;
-
-        public void ScrollToIndex(int index, bool animate, RelativePositionType option = RelativePositionType.Start)
-        {
-            //saving to use upon creating control if this was called before its internal structure was really created
-            OrderedScrollToIndex = new()
-            {
-                Animated = animate,
-                RelativePosition = option,
-                Index = index
-            };
-
-            ExecuteScrollToIndexOrder();
-        }
-
-        public bool ExecuteScrollToOrder()
-        {
-            if (OrderedScrollTo.IsValid)
-            {
-                ScrollToOffset(new Vector2(OrderedScrollTo.Location.X,
-                        OrderedScrollTo.Location.Y),
-                    OrderedScrollTo.MaxTimeSecs);
-                OrderedScrollTo = ScrollToPointOrder.NotValid;
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool ExecuteScrollToIndexOrder()
-        {
-            if (OrderedScrollToIndex.IsSet)
-            {
-                //saving to use upon creating control if this was called before its internal structure was really created
-                var offset = CalculateScrollOffsetForIndex(OrderedScrollToIndex.Index,
-                    OrderedScrollToIndex.RelativePosition);
-
-                if (PointIsValid(offset))
-                {
-                    var time = 0f;
-                    if (OrderedScrollToIndex.Animated)
-                        time = SystemAnimationTimeSecs;
-
-                    ScrollTo(offset.X, offset.Y, time);
-                    OrderedScrollToIndex = ScrollToIndexOrder.Default;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public void ScrollTo(float x, float y, float maxSpeedSecs)
-        {
-            StopScrolling();
-
-            OrderedScrollTo = ScrollToPointOrder.ToCoords(x, y, maxSpeedSecs);
-
-            if (!ExecuteScrollToOrder())
-            {
-                this.UpdateVisibleIndex();
-            }
-        }
-
-        public void ScrollToTop(float maxTimeSecs)
-        {
-            if (Orientation == ScrollOrientation.Vertical)
-            {
-                ScrollTo(InternalViewportOffset.Units.X, 0, maxTimeSecs);
-            }
-            else
-            if (Orientation == ScrollOrientation.Horizontal)
-            {
-                ScrollTo(0, InternalViewportOffset.Units.Y, maxTimeSecs);
-            }
-            else
-            {
-                ScrollTo(0, 0, maxTimeSecs);
-            }
-        }
-
-        public void ScrollToBottom(float maxTimeSecs)
-        {
-            if (Orientation == ScrollOrientation.Vertical)
-            {
-                ScrollTo(InternalViewportOffset.Units.X, _scrollMinY, maxTimeSecs);
-            }
-            else
-            if (Orientation == ScrollOrientation.Horizontal)
-            {
-                ScrollTo(_scrollMinX, InternalViewportOffset.Units.Y, maxTimeSecs);
-            }
-            else
-            {
-                ScrollTo(_scrollMinX, _scrollMinY, maxTimeSecs);
-            }
-        }
-
         protected virtual bool CheckNeedToSnap()
         {
-            var ret = true;
-
-            if (_isSnapping
-                || IsUserFocused
-                || this.SnapToChildren == SnapToChildrenType.Disabled
-                || _animatorBounce.IsRunning ||
-                _animatorFling.IsRunning && (Math.Abs(_animatorFling.CurrentVelocity.Y) > _minVelocitySnap || Math.Abs(_animatorFling.CurrentVelocity.X) > _minVelocitySnap))
-                ret = false;
+            bool ret = !(IsSnapping || Snapped
+                         || IsUserFocused
+                         || OrderedScrollTo.IsValid //already scrolling somewhere
+                         || this.SnapToChildren == SnapToChildrenType.Disabled
+                         || _animatorBounce.IsRunning
+                         || _animatorFling.IsRunning && (Math.Abs(_animatorFling.CurrentVelocity.Y) > _minVelocitySnap || Math.Abs(_animatorFling.CurrentVelocity.X) > _minVelocitySnap));
 
             //Trace.WriteLine($"CheckNeedToSnap {ret}");
 
@@ -1656,62 +1748,114 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void Snap(float maxTimeSecs)
         {
-            if (_isSnapping)
+            if (OrderedScrollTo.IsValid || IsSnapping)
             {
                 return;
             }
 
-            _isSnapping = true;
+            IsSnapping = true;
 
-            //todo after scrolllooped
-            _isSnapping = false;
+            if (Content is SkiaLayout layout)
+            {
+                var hit = CurrentIndexHit;
+                if (hit?.Index > -1 && layout.ChildrenFactory.GetChildrenCount() > hit?.Index)
+                {
+                    //if (hit.Unmodified == SKPoint.Empty)
+                    //{
+                    //	_isSnapping = false;
+                    //	return;
+                    //}
+
+                    var needMove = 0f;
+                    if (Orientation == ScrollOrientation.Vertical)
+                    {
+                        //float needOffsetY = (float)Math.Truncate(ViewportOffsetY);
+                        float needOffsetY = (float)Math.Truncate(InternalViewportOffset.Pixels.Y);
+                        var initialOffset = needOffsetY;
+                        if (SnapToChildren == SnapToChildrenType.Center)
+                        {
+                            var center = hit.Area.Height / 2f;
+                            var pointY = hit.Area.Bottom - hit.Point.Y;
+                            needMove = -(pointY - center);
+                        }
+                        else if (SnapToChildren == SnapToChildrenType.Side)
+                        {
+
+                            if (TrackIndexPosition == RelativePositionType.Start)
+                            {
+                                needMove = hit.Point.Y - hit.Area.Bottom;
+                            }
+                            else if (TrackIndexPosition == RelativePositionType.End)
+                            {
+                                needMove = -(hit.Area.Bottom - hit.Point.Y);
+                            }
+                        }
+
+                        var threshold = RenderingScale * 2;
+
+                        needOffsetY = hit.Unmodified.Y + needMove;
+                        if (needMove != 0f && Math.Abs(initialOffset - needOffsetY) > threshold)
+                        {
+                            //Snapped = true;
+                            //ScrollTo(InternalViewportOffset.Units.X, needOffsetY / layout.RenderingScale, maxTimeSecs);
+
+                            Snapped = true;
+
+                            _animatorFling.Stop();
+
+                            ScrollTo(ViewportOffsetX, needOffsetY / layout.RenderingScale, AutoScrollingSpeedMs);
+
+                            return;
+                        }
+
+                        //Trace.WriteLine($"Snap low threshold");
+                    }
+                    else if (Orientation == ScrollOrientation.Horizontal)
+                    {
+                        float needOffsetX = (float)Math.Truncate(InternalViewportOffset.Units.X);
+                        var initialOffset = needOffsetX;
+                        if (SnapToChildren == SnapToChildrenType.Center)
+                        {
+                            var center = hit.Area.Width / 2f;
+                            var pointX = hit.Area.Right - hit.Point.X;
+                            needMove = -(pointX - center);
+                        }
+                        else if (SnapToChildren == SnapToChildrenType.Side)
+                        {
+
+                            if (TrackIndexPosition == RelativePositionType.Start)
+                            {
+                                needMove = hit.Area.Width - (hit.Area.Right - hit.Point.X);
+                                //needOffsetX += needMove;
+                            }
+                            else if (TrackIndexPosition == RelativePositionType.End)
+                            {
+                                needMove = -(hit.Area.Right - hit.Point.X);
+                                //needOffsetX += needMove;
+                            }
+                        }
+
+                        needOffsetX = hit.Unmodified.X + needMove;
+                        if (needMove != 0f && initialOffset != needOffsetX)
+                        {
+                            Snapped = true;
+
+                            _animatorFling.Stop();
+
+                            ScrollTo(needOffsetX / layout.RenderingScale, ViewportOffsetY, AutoScrollingSpeedMs);
+
+                            return;
+                        }
+
+                    }
+                }
+
+            }
+
+            IsSnapping = false;
         }
 
-        /// <summary>
-        /// In Units
-        /// </summary>
-        /// <param name="offset"></param>
-        /// <param name="animate"></param>
-        protected void ScrollToOffset(Vector2 targetOffset, float maxTimeSecs)
-        {
-            if (maxTimeSecs > 0 && Height > 0)
-            {
-                _animatorFling.Stop();
-                var from = new Vector2((float)InternalViewportOffset.Units.X, (float)InternalViewportOffset.Units.Y);
 
-                //    FlingTo(from, targetOffset, maxTimeSecs);
-                FlingToAuto(from, targetOffset, maxTimeSecs);
-            }
-            else
-            {
-                ViewportOffsetX = targetOffset.X;
-                ViewportOffsetY = targetOffset.Y;
-                _isSnapping = false;
-
-                this.UpdateVisibleIndex();
-            }
-
-        }
-
-
-
-
-        public virtual void MoveToY(float value)
-        {
-            if (!ScrollLocked)
-            {
-                ViewportOffsetY = value;
-            }
-        }
-
-        public virtual void MoveToX(float value)
-        {
-            if (!ScrollLocked)
-            {
-                ViewportOffsetX = value;
-
-            }
-        }
 
         public static readonly BindableProperty SnapToChildrenProperty
         = BindableProperty.Create(nameof(SnapToChildren),
@@ -1736,7 +1880,7 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty TrackIndexPositionProperty
         = BindableProperty.Create(nameof(TrackIndexPosition),
         typeof(RelativePositionType), typeof(SkiaScroll),
-        RelativePositionType.End, propertyChanged: OnTrackingChanged);
+        RelativePositionType.None, propertyChanged: OnTrackingChanged);
 
         private static void OnTrackingChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
@@ -2101,6 +2245,11 @@ namespace DrawnUi.Maui.Draw
         {
             if (!IsContentActive)
                 return;
+
+            Debug.WriteLine($"[POS] {IsSnapping} {Snapped}");
+
+            if (!IsSnapping)
+                Snapped = false;
 
             ContentAvailableSpace = GetContentAvailableRect(destination);
 
@@ -2712,6 +2861,19 @@ namespace DrawnUi.Maui.Draw
 
         #region PROPERTIES
 
+        public static readonly BindableProperty ScrollingSpeedMsProperty = BindableProperty.Create(nameof(ScrollingSpeedMs),
+            typeof(int),
+            typeof(SkiaScroll),
+            400);
+
+        /// <summary>
+        /// Used by range scroller (ScrollToX, ScrollToY)
+        /// </summary>
+        public int ScrollingSpeedMs
+        {
+            get { return (int)GetValue(ScrollingSpeedMsProperty); }
+            set { SetValue(ScrollingSpeedMsProperty, value); }
+        }
 
         public static readonly BindableProperty ZoomLockedProperty = BindableProperty.Create(nameof(ZoomLocked),
         typeof(bool),

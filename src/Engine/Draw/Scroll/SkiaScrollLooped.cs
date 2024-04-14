@@ -38,9 +38,14 @@ public class SkiaScrollLooped : SkiaScroll
 
     }
 
+    //protected override bool PrepareToFlingAfterInitialized()
+    //{
+    //    IsSnapping = false;
 
+    //    return base.PrepareToFlingAfterInitialized();
+    //}
 
-    public ContainsPointResult GetItemIndex(SkiaLayout layout, float pixelsOffsetX, float pixelsOffsetY, RelativePositionType option)
+    public override ContainsPointResult GetItemIndex(SkiaLayout layout, float pixelsOffsetX, float pixelsOffsetY, RelativePositionType option)
     {
         if (layout.LatestStackStructure == null)
             return ContainsPointResult.NotFound();
@@ -231,12 +236,12 @@ public class SkiaScrollLooped : SkiaScroll
     {
         //Trace.WriteLine($"Snap entered");
 
-        if (OrderedScrollTo.IsValid || _isSnapping)
+        if (OrderedScrollTo.IsValid || IsSnapping)
         {
             return;
         }
 
-        _isSnapping = true;
+        IsSnapping = true;
 
         if (Content is SkiaLayout layout)
         {
@@ -327,7 +332,7 @@ public class SkiaScrollLooped : SkiaScroll
 
         }
 
-        _isSnapping = false;
+        IsSnapping = false;
     }
 
     //Using this to draw a second fake copy of content to loop the cycle

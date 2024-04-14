@@ -18,6 +18,7 @@ public class SkiaImage : SkiaControl
     /// <param name="loaded"></param>
     protected virtual LoadedImageSource SetImage(LoadedImageSource loaded)
     {
+
         if (loaded == null)
         {
             OnCleared?.Invoke(this, null);
@@ -272,6 +273,13 @@ public class SkiaImage : SkiaControl
         }
     }
 
+    protected override void OnWillBeDisposed()
+    {
+        CancelLoading?.Cancel();
+
+        base.OnWillBeDisposed();
+    }
+
     public void SetSource(Func<CancellationToken, Task<Stream>> getStream)
     {
         var source = new StreamImageSource { Stream = getStream };
@@ -280,12 +288,19 @@ public class SkiaImage : SkiaControl
 
     public void SetSource(ImageSource source)
     {
+        //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
+        if (IsDisposing || IsDisposed)
+            return;
+
         TraceLog($"[SkiaImage] Creating Source from {source}");
         SetImageSource(source);
     }
 
     public void SetSource(string source)
     {
+        //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
+        if (IsDisposing || IsDisposed)
+            return;
 
         if (string.IsNullOrEmpty(source))
         {
@@ -391,6 +406,10 @@ public class SkiaImage : SkiaControl
 
     public void SetImageSource(ImageSource source)
     {
+        //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
+        if (IsDisposing || IsDisposed)
+            return;
+
         StopLoading();
 
         RetriesLeft = RetriesOnError;
@@ -450,6 +469,14 @@ public class SkiaImage : SkiaControl
                                 {
                                     //bitmap = await SkiaImageManager.LoadImageOnPlatformAsync(source, cancel.Token);
                                     bitmap = await SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel);
+
+                                    if (IsDisposing || IsDisposed)
+                                    {
+                                        cancel?.Cancel();
+                                        IsLoading = false;
+                                        TraceLog($"[SkiaImage] Canceled disposed image {source}");
+                                        return;
+                                    }
 
                                     if (cancel.Token.IsCancellationRequested)
                                     {
@@ -1100,7 +1127,8 @@ propertyChanged: NeedChangeColorFIlter);
     protected override void Draw(SkiaDrawingContext context,
         SKRect destination, float scale)
     {
-        if (IsDisposed)
+        //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
+        if (IsDisposing || IsDisposed)
             return;
 
 

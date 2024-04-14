@@ -3762,6 +3762,8 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed)
                 return;
 
+            IsDisposing = true;
+
             SetWillDisposeWithChildren();
 
             IsDisposed = true;
@@ -3905,7 +3907,7 @@ namespace DrawnUi.Maui.Draw
             SKRect destination,
             float scale)
         {
-            if (IsDisposed)
+            if (IsDisposing || IsDisposed)
                 return;
 
             Superview = context.Superview;
@@ -4017,7 +4019,7 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
-            if (IsDisposed)
+            if (IsDisposing || IsDisposed)
                 return;
 
             DrawUsingRenderObject(context,
@@ -4990,7 +4992,8 @@ namespace DrawnUi.Maui.Draw
 
             if (RenderObject != null && UsingCacheType != SkiaCacheType.ImageDoubleBuffered)
             {
-                throw new Exception("RenderObject already exists for CreateRenderingObjectAndPaint! Need to dispose and assign null to it before.");
+                RenderObject = null;
+                //throw new Exception("RenderObject already exists for CreateRenderingObjectAndPaint! Need to dispose and assign null to it before.");
             }
 
             if ((UsingCacheType == SkiaCacheType.Image || UsingCacheType == SkiaCacheType.GPU || UsingCacheType == SkiaCacheType.ImageDoubleBuffered)
@@ -5004,7 +5007,15 @@ namespace DrawnUi.Maui.Draw
             var notValid = RenderObjectNeedsUpdate;
             RenderObject = created;
 
-            DrawRenderObjectInternal(RenderObject, context, RenderObject.Bounds);
+            if (RenderObject != null)
+            {
+                DrawRenderObjectInternal(RenderObject, context, RenderObject.Bounds);
+            }
+            else
+            {
+                notValid = true;
+            }
+
 
             if (NeedUpdate || notValid) //someone changed us while rendering inner content
             {
@@ -5023,16 +5034,8 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         protected virtual void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
-            if (destination.Width == 0 || destination.Height == 0)
+            if (destination.Width == 0 || destination.Height == 0 || IsDisposing || IsDisposed)
                 return;
-
-            if (IsDisposed)
-            {
-                //this will save a lot of trouble debugging unknown native crashes
-                var message = $"[SkiaControl] Attempting to Paint a disposed control: {this}";
-                Super.Log(message);
-                throw new Exception(message);
-            }
 
             PaintTintBackground(ctx.Canvas, destination);
 
@@ -5308,7 +5311,7 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void Update()
         {
-            if (IsDisposed)
+            if (IsDisposing || IsDisposed)
                 return;
 
             NeedUpdateFrontCache = true;

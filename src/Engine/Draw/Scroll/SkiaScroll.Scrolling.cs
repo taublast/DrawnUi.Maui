@@ -24,7 +24,7 @@ public class VelocityAccumulator
         velocities.Add((velocity, now));
     }
 
-    public Vector2 CalculateFinalVelocity(float clampAbsolute=0)
+    public Vector2 CalculateFinalVelocity(float clampAbsolute = 0)
     {
         var now = DateTime.UtcNow;
         var relevantVelocities = velocities.Where(v => (now - v.time).TotalMilliseconds <= ConsiderationTimeframeMs).ToList();
@@ -37,10 +37,10 @@ public class VelocityAccumulator
 
         if (clampAbsolute != 0)
         {
-            return new Vector2( Math.Clamp(weightedSumX / weightSum, -clampAbsolute, clampAbsolute), 
+            return new Vector2(Math.Clamp(weightedSumX / weightSum, -clampAbsolute, clampAbsolute),
                 Math.Clamp(weightedSumY / weightSum, -clampAbsolute, clampAbsolute));
         }
-        
+
         return new Vector2(weightedSumX / weightSum, weightedSumY / weightSum);
     }
 }
@@ -205,7 +205,7 @@ public partial class SkiaScroll
                 OnStop = () =>
                 {
                     UpdateLoadingLock(false);
-                    _isSnapping = false;
+                    IsSnapping = false;
                 },
                 OnVectorUpdated = (value) =>
                 {
@@ -250,23 +250,23 @@ public partial class SkiaScroll
                 }
             };
 
-            //_scrollerX = new(this)
-            //{
-            //    OnStop = () =>
-            //    {
-            //        _isSnapping = false;
-            //        SkiaImageLoadingManager.Instance.IsLoadingLocked = false;
-            //    }
-            //};
+            _scrollerX = new(this)
+            {
+                OnStop = () =>
+                {
+                    IsSnapping = false;
+                    //SkiaImageLoadingManager.Instance.IsLoadingLocked = false;
+                }
+            };
 
-            //_scrollerY = new(this)
-            //{
-            //    OnStop = () =>
-            //    {
-            //        _isSnapping = false;
-            //        SkiaImageLoadingManager.Instance.IsLoadingLocked = false;
-            //    }
-            //};
+            _scrollerY = new(this)
+            {
+                OnStop = () =>
+                {
+                    IsSnapping = false;
+                    //SkiaImageLoadingManager.Instance.IsLoadingLocked = false;
+                }
+            };
         }
 
         if (_animatorBounce.IsRunning)
@@ -282,6 +282,56 @@ public partial class SkiaScroll
 
         if (CheckNeedToSnap())
             Snap(0);
+    }
+
+    /// <summary>
+    /// Use Range scroller, offset in Units
+    /// </summary>
+    /// <param name="offset"></param>
+    /// <param name="animate"></param>
+    public void ScrollToX(float offset, bool animate)
+    {
+
+        if (animate)
+        {
+            _scrollerX.Start(
+                (value) =>
+                {
+                    ViewportOffsetX = (float)value;
+                },
+                InternalViewportOffset.Units.X, offset, (uint)ScrollingSpeedMs, ScrollingEasing);
+        }
+        else
+        {
+            ViewportOffsetX = offset;
+            IsSnapping = false;
+        }
+    }
+
+
+
+    /// <summary>
+    /// Use Range scroller, offset in Units
+    /// </summary>
+    /// <param name="offset"></param>
+    /// <param name="animate"></param>
+    protected void ScrollToY(float offset, bool animate)
+    {
+
+        if (animate)
+        {
+            _scrollerY.Start(
+                (value) =>
+                {
+                    ViewportOffsetY = (float)value;
+                },
+                InternalViewportOffset.Units.Y, offset, (uint)ScrollingSpeedMs, ScrollingEasing);
+        }
+        else
+        {
+            ViewportOffsetY = offset;
+            IsSnapping = false;
+        }
     }
 
     protected virtual void OnScrollerStarted()
@@ -399,6 +449,10 @@ public partial class SkiaScroll
             var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
             _animatorBounce.Initialize(offsetTo, displacement, velocity, spring);
             _animatorBounce.Start();
+        }
+        else
+        {
+            IsSnapping = false;
         }
     }
 
@@ -580,7 +634,7 @@ public partial class SkiaScroll
     }
 
 
-    public bool StartToFlingFrom(Vector2 from, Vector2 velocity)
+    public virtual bool StartToFlingFrom(Vector2 from, Vector2 velocity)
     {
         var contentOffset = from;
 
@@ -595,7 +649,7 @@ public partial class SkiaScroll
         return false;
     }
 
-    async Task<bool> FlingFrom(Vector2 from, Vector2 velocity)
+    protected virtual async Task<bool> FlingFrom(Vector2 from, Vector2 velocity)
     {
         //todo - add cancellation support
 
@@ -608,7 +662,7 @@ public partial class SkiaScroll
         return await FlingAfterInitialized();
     }
 
-    async Task<bool> FlingToAuto(Vector2 from, Vector2 to, float changeSpeedSecs = 0)
+    protected virtual async Task<bool> FlingToAuto(Vector2 from, Vector2 to, float changeSpeedSecs = 0)
     {
         var velocity = _animatorFling.Parameters.VelocityToZero(from, to, changeSpeedSecs);
 
@@ -620,7 +674,7 @@ public partial class SkiaScroll
         return await FlingAfterInitialized();
     }
 
-    async Task<bool> FlingTo(Vector2 from, Vector2 to, float timeSeconds)
+    protected virtual async Task<bool> FlingTo(Vector2 from, Vector2 to, float timeSeconds)
     {
         Vector2 velocity = _animatorFling.Parameters.VelocityTo(from, to, timeSeconds);
 
@@ -631,13 +685,12 @@ public partial class SkiaScroll
         return await FlingAfterInitialized();
     }
 
-    protected bool PrepareToFlingAfterInitialized()
+    protected virtual bool PrepareToFlingAfterInitialized()
     {
         var destination = _animatorFling.Parameters.Destination;
 
         var destinationPoint = new SKPoint(destination.X, destination.Y);
 
-        _isSnapping = false;
         _changeSpeed = null;
 
         if (!OffsetOk(destination)) //detected that scroll will end past the bounds
@@ -659,10 +712,202 @@ public partial class SkiaScroll
         if (PrepareToFlingAfterInitialized())
         {
             await _animatorFling.RunAsync(null);
+
+            IsSnapping = false;
+
             return true;
         }
 
         return false;
+    }
+
+
+
+    /// <summary>
+    /// We might order a scroll before the control was drawn, so it's a kind of startup position
+    /// saved every time one calls ScrollTo
+    /// </summary>
+    protected ScrollToPointOrder OrderedScrollTo = ScrollToPointOrder.NotValid;
+
+    /// <summary>
+    /// We might order a scroll before the control was drawn, so it's a kind of startup position
+    /// saved every time one calls ScrollToIndex
+    /// </summary>
+    protected ScrollToIndexOrder OrderedScrollToIndex;
+
+    /// <summary>
+    /// In Units
+    /// </summary>
+    /// <param name="offset"></param>
+    /// <param name="animate"></param>
+    protected void ScrollToOffset(Vector2 targetOffset, float maxTimeSecs)
+    {
+        if (maxTimeSecs > 0 && Height > 0)
+        {
+            //_animatorFling.Stop();
+            //var from = new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY);
+            //FlingToAuto(from, targetOffset, maxTimeSecs).ConfigureAwait(false);
+
+            StopScrolling();
+            ScrollToX(targetOffset.X, true);
+            ScrollToY(targetOffset.Y, true);
+        }
+        else
+        {
+            ViewportOffsetX = targetOffset.X;
+            ViewportOffsetY = targetOffset.Y;
+            IsSnapping = false;
+
+            this.UpdateVisibleIndex();
+        }
+    }
+
+
+    public virtual void MoveToY(float value)
+    {
+        if (!ScrollLocked)
+        {
+            ViewportOffsetY = value;
+        }
+    }
+
+    public virtual void MoveToX(float value)
+    {
+        if (!ScrollLocked)
+        {
+            ViewportOffsetX = value;
+
+        }
+    }
+
+    public void ScrollToIndex(int index, bool animate, RelativePositionType option = RelativePositionType.Start)
+    {
+        //saving to use upon creating control if this was called before its internal structure was really created
+        OrderedScrollToIndex = new()
+        {
+            Animated = animate,
+            RelativePosition = option,
+            Index = index
+        };
+
+        ExecuteScrollToIndexOrder();
+    }
+
+    public bool ExecuteScrollToOrder()
+    {
+        if (OrderedScrollTo.IsValid)
+        {
+            ScrollToOffset(new Vector2(OrderedScrollTo.Location.X,
+                    OrderedScrollTo.Location.Y),
+                OrderedScrollTo.MaxTimeSecs);
+            OrderedScrollTo = ScrollToPointOrder.NotValid;
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool ExecuteScrollToIndexOrder()
+    {
+        if (OrderedScrollToIndex.IsSet)
+        {
+            //saving to use upon creating control if this was called before its internal structure was really created
+            var offset = CalculateScrollOffsetForIndex(OrderedScrollToIndex.Index,
+                OrderedScrollToIndex.RelativePosition);
+
+            if (PointIsValid(offset))
+            {
+                var time = 0f;
+                if (OrderedScrollToIndex.Animated)
+                    time = SystemAnimationTimeSecs;
+
+                ScrollTo(offset.X, offset.Y, time);
+                OrderedScrollToIndex = ScrollToIndexOrder.Default;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void ScrollTo(float x, float y, float maxSpeedSecs)
+    {
+        StopScrolling();
+
+        OrderedScrollTo = ScrollToPointOrder.ToCoords(x, y, maxSpeedSecs);
+
+        if (!ExecuteScrollToOrder())
+        {
+            this.UpdateVisibleIndex();
+        }
+    }
+
+    public void ScrollToTop(float maxTimeSecs)
+    {
+        if (Orientation == ScrollOrientation.Vertical)
+        {
+            ScrollTo(InternalViewportOffset.Units.X, 0, maxTimeSecs);
+        }
+        else
+        if (Orientation == ScrollOrientation.Horizontal)
+        {
+            ScrollTo(0, InternalViewportOffset.Units.Y, maxTimeSecs);
+        }
+        else
+        {
+            ScrollTo(0, 0, maxTimeSecs);
+        }
+    }
+
+    public void ScrollToBottom(float maxTimeSecs)
+    {
+        if (Orientation == ScrollOrientation.Vertical)
+        {
+            ScrollTo(InternalViewportOffset.Units.X, _scrollMinY, maxTimeSecs);
+        }
+        else
+        if (Orientation == ScrollOrientation.Horizontal)
+        {
+            ScrollTo(_scrollMinX, InternalViewportOffset.Units.Y, maxTimeSecs);
+        }
+        else
+        {
+            ScrollTo(_scrollMinX, _scrollMinY, maxTimeSecs);
+        }
+    }
+
+    private bool _Snapped;
+    public bool Snapped
+    {
+        get
+        {
+            return _Snapped;
+        }
+        set
+        {
+            if (_Snapped != value)
+            {
+                _Snapped = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+
+    private bool _IsSnapping;
+    public bool IsSnapping
+    {
+        get
+        {
+            return _IsSnapping;
+        }
+        set
+        {
+            if (_IsSnapping != value)
+            {
+                _IsSnapping = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
     Vector2 _axis;

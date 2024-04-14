@@ -7,7 +7,6 @@ namespace DrawnUi.Maui.Draw
 {
     public partial class SkiaLayout
     {
-
         #region StackLayout
 
         public class ControlInStack

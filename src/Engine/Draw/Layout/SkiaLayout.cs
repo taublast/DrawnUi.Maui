@@ -1056,6 +1056,10 @@ namespace DrawnUi.Maui.Draw
         public virtual ScaledSize MeasureLayout(MeasureRequest request, bool force)
         {
 
+            //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
+            if (IsDisposing || IsDisposed)
+                return ScaledSize.Empty;
+
             lock (lockMeasureLayout)
             {
                 _measuredNewTemplates = false;
@@ -1712,11 +1716,11 @@ namespace DrawnUi.Maui.Draw
 
         public virtual ContainsPointResult GetVisibleChildIndexAt(SKPoint point)
         {
-
-
+            //relative inside parent:
             for (int i = 0; i < RenderTree.Length; i++)
             {
                 var child = RenderTree[i];
+
                 if (child.Rect.ContainsInclusive(point))
                 {
                     return new ContainsPointResult()
@@ -1727,42 +1731,6 @@ namespace DrawnUi.Maui.Draw
                     };
                 }
             }
-
-            return ContainsPointResult.NotFound();
-            /*
-			   {
-				   if (StackStructure != null)
-				   {
-					   var stackStructure = StackStructure;
-
-					   int index = -1;
-					   int row;
-					   int col;
-					   for (row = 0; row < stackStructure.Count; row++)
-					   {
-						   var rowContent = stackStructure[row];
-						   for (col = 0; col < rowContent.Count; col++)
-						   {
-							   index++;
-							   var childInfo = rowContent[col];
-
-							   if (childInfo.Destination.ContainsInclusive(point))
-							   {
-								   return new ContainsPointResult()
-								   {
-									   Index = index,
-									   Area = childInfo.Destination,
-									   Point = point
-								   };
-							   }
-
-							   //  if (Orientation == ScrollOrientation.Horizontal)
-						   }
-					   }
-				   }
-
-			   }
-			*/
 
             return ContainsPointResult.NotFound();
         }

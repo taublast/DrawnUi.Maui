@@ -1,7 +1,9 @@
-﻿using System.Globalization;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
+using System.Globalization;
 using System.Net;
+using System.Reflection;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using Animation = SkiaSharp.Skottie.Animation;
 
 namespace DrawnUi.Maui.Controls;
@@ -11,11 +13,141 @@ public class SkiaLottie : AnimatedFramesRenderer
     /// <summary>
     ///     To avoid reloading same files multiple times..
     /// </summary>
-    public static Dictionary<string, string> CachedAnimations = new();
+    public static ConcurrentDictionary<string, string> CachedAnimations = new();
+
+    public override void Stop()
+    {
+        base.Stop();
+
+        SeekToDefaultFrame();
+    }
+
+    protected override void OnFinished()
+    {
+        base.OnFinished();
+
+        SeekToDefaultFrame();
+    }
+
+    public virtual void SeekToDefaultFrame()
+    {
+        if (Animator != null)
+        {
+            lock (_lockSource)
+            {
+                if (IsOn)
+                    Seek(DefaultFrameWhenOn);
+                else
+                    Seek(DefaultFrame);
+
+                Monitor.PulseAll(_lockSource);
+            }
+        }
+    }
+
+
+    protected override void OnAnimatorSeeking(double frame)
+    {
+        if (LottieAnimation != null)
+        {
+            if (frame < 0)
+            {
+                frame = LottieAnimation.OutPoint;
+            }
+            LottieAnimation.SeekFrame(frame);
+        }
+
+        base.OnAnimatorSeeking(frame);
+    }
+
+    private static void ApplyDefaultFrameWhenOnProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaLottie control && !control.IsPlaying)
+        {
+            if (control.Animator != null && control.IsOn)
+                control.Seek((int)newvalue);
+        }
+    }
+
+    private static void ApplyDefaultFrameProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaLottie control && !control.IsPlaying)
+        {
+            if (control.Animator != null && !control.IsOn)
+                control.Seek((int)newvalue);
+        }
+    }
+
+    private static void ApplyIsOnProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaLottie control)
+        {
+            if (control.Animator != null)
+            {
+                var value = (bool)newvalue;
+                if (control.IsPlaying || !value)
+                    control.Stop();
+                else
+                {
+                    if (control.ApplyIsOnWhenNotPlaying)
+                        control.SeekToDefaultFrame();
+                }
+            }
+        }
+    }
+
+    public static readonly BindableProperty ApplyIsOnWhenNotPlayingProperty = BindableProperty.Create(nameof(ApplyIsOnWhenNotPlaying),
+    typeof(bool),
+    typeof(SkiaLottie),
+    true);
+    public bool ApplyIsOnWhenNotPlaying
+    {
+        get { return (bool)GetValue(ApplyIsOnWhenNotPlayingProperty); }
+        set { SetValue(ApplyIsOnWhenNotPlayingProperty, value); }
+    }
+
+
+    public static readonly BindableProperty DefaultFrameProperty = BindableProperty.Create(nameof(DefaultFrame),
+        typeof(int),
+        typeof(SkiaLottie),
+        0, propertyChanged: ApplyDefaultFrameProperty
+    );
+    /// <summary>
+    /// For the case IsOn = False. What frame should we display at start or when stopped. 0 (START) is default, can specify other number. if value is less than 0 then will seek to the last available frame (END).
+    /// </summary>
+    public int DefaultFrame
+    {
+        get => (int)GetValue(DefaultFrameProperty);
+        set => SetValue(DefaultFrameProperty, value);
+    }
+
+    public static readonly BindableProperty IsOnProperty = BindableProperty.Create(nameof(IsOn),
+    typeof(bool),
+    typeof(SkiaLottie),
+    false, propertyChanged: ApplyIsOnProperty);
+    public bool IsOn
+    {
+        get { return (bool)GetValue(IsOnProperty); }
+        set { SetValue(IsOnProperty, value); }
+    }
+
+    public static readonly BindableProperty DefaultFrameWhenOnProperty = BindableProperty.Create(nameof(DefaultFrameWhenOn),
+        typeof(int),
+        typeof(SkiaLottie),
+        0, propertyChanged: ApplyDefaultFrameWhenOnProperty
+    );
+    /// <summary>
+    /// For the case IsOn = True. What frame should we display at start or when stopped. 0 (START) is default, can specify other number. if value is less than 0 then will seek to the last available frame (END).
+    /// </summary>
+    public int DefaultFrameWhenOn
+    {
+        get => (int)GetValue(DefaultFrameWhenOnProperty);
+        set => SetValue(DefaultFrameWhenOnProperty, value);
+    }
 
     public static readonly BindableProperty SpeedRatioProperty = BindableProperty.Create(nameof(SpeedRatio),
         typeof(double),
-        typeof(AnimatedFramesRenderer),
+        typeof(SkiaLottie),
         1.0, propertyChanged: (b, o, n) =>
         {
             if (b is SkiaLottie control) control.ApplySpeed();
@@ -52,7 +184,6 @@ public class SkiaLottie : AnimatedFramesRenderer
         }
     }
 
-
     public double SpeedRatio
     {
         get => (double)GetValue(SpeedRatioProperty);
@@ -74,7 +205,7 @@ public class SkiaLottie : AnimatedFramesRenderer
     protected override void RenderFrame(SkiaDrawingContext ctx, SKRect destination, float scale,
         object arguments)
     {
-        if (IsDisposed)
+        if (IsDisposing || IsDisposed)
             return;
 
         if (LottieAnimation is Animation lottie)
@@ -116,8 +247,7 @@ public class SkiaLottie : AnimatedFramesRenderer
                 {
                     if (fileName.SafeContainsInLower(SkiaImageManager.NativeFilePrefix))
                     {
-                        var fullFilename = fileName.Replace(SkiaImageManager.NativeFilePrefix, "",
-                            StringComparison.InvariantCultureIgnoreCase);
+                        var fullFilename = fileName.Replace(SkiaImageManager.NativeFilePrefix, "");
                         using var stream = new FileStream(fullFilename, FileMode.Open);
                         using var reader = new StreamReader(stream);
                         json = await reader.ReadToEndAsync();
@@ -149,6 +279,33 @@ public class SkiaLottie : AnimatedFramesRenderer
         {
             _semaphoreLoadFile.Release();
         }
+    }
+
+    public static Stream StreamFromResourceUrl(string url, Assembly assembly = null)
+    {
+        var uri = new Uri(url);
+
+        var parts = uri.OriginalString.Substring(11).Split('?');
+        var resourceName = parts.First();
+
+        if (parts.Count() > 1)
+        {
+            var name = Uri.UnescapeDataString(uri.Query.Substring(10));
+            var assemblyName = new AssemblyName(name);
+            assembly = Assembly.Load(assemblyName);
+        }
+
+        if (assembly == null)
+        {
+            var callingAssemblyMethod = typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly");
+            assembly = (Assembly)callingAssemblyMethod.Invoke(null, new object[0]);
+        }
+
+        var fullPath = $"{assembly.GetName().Name}.{resourceName}";
+
+        Console.WriteLine($"[StreamFromResourceUrl] loading {fullPath}..");
+
+        return assembly.GetManifestResourceStream(fullPath);
     }
 
     /// <summary>
@@ -202,7 +359,14 @@ public class SkiaLottie : AnimatedFramesRenderer
 
             LottieAnimation = animation;
 
-            animation.SeekFrame(0);
+            if (IsOn)
+            {
+                OnAnimatorSeeking(DefaultFrameWhenOn);
+            }
+            else
+            {
+                OnAnimatorSeeking(DefaultFrame);
+            }
 
             //Debug.WriteLine($"[SkiaLottie] Loaded animation: Version:{Animation.Version} Duration:{Animation.Duration} Fps:{Animation.Fps} InPoint:{Animation.InPoint} OutPoint:{Animation.OutPoint}");
 
@@ -214,6 +378,7 @@ public class SkiaLottie : AnimatedFramesRenderer
                 Tasks.StartDelayed(TimeSpan.FromSeconds(2), () => { kill.Dispose(); });
 
             Monitor.PulseAll(_lockSource);
+
         }
     }
 
@@ -304,17 +469,11 @@ public class SkiaLottie : AnimatedFramesRenderer
         }
     }
 
-    protected override void OnAnimatorSeeking(double frame)
-    {
-        if (LottieAnimation != null) LottieAnimation.SeekFrame(frame);
-
-        base.OnAnimatorSeeking(frame);
-    }
 
     private static void ApplySourceProperty(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is SkiaLottie control)
-            Tasks.StartDelayedAsync(TimeSpan.FromMicroseconds(1), async () =>
+            Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(1), async () =>
             {
                 var animation = await control.LoadSource(control.Source);
                 if (animation != null) control.SetAnimation(animation, true);
@@ -439,7 +598,7 @@ public class SkiaLottie : AnimatedFramesRenderer
         if (Math.Abs(delta) < 0.001) return 0;
 
         var saturation = sum <= 1 ? delta / sum : delta / (2 - sum);
-        return saturation;
+        return (float)saturation;
     }
 
     private static bool IsColorArray(JToken token)
@@ -463,3 +622,4 @@ public class SkiaLottie : AnimatedFramesRenderer
 
     #endregion
 }
+
