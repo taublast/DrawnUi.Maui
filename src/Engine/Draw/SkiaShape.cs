@@ -21,6 +21,12 @@ namespace DrawnUi.Maui.Draw
                 shade.BindingContext = BindingContext;
             }
 
+
+
+
+
+
+
             base.ApplyBindingContext();
         }
 
@@ -118,14 +124,15 @@ namespace DrawnUi.Maui.Draw
 
         public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(
             nameof(CornerRadius),
-            typeof(Thickness),
+            typeof(CornerRadius),
             typeof(SkiaShape),
-            Thickness.Zero,
+            default(CornerRadius),
             propertyChanged: NeedInvalidateMeasure);
 
-        public Thickness CornerRadius
+        [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.CornerRadiusTypeConverter))]
+        public CornerRadius CornerRadius
         {
-            get { return (Thickness)GetValue(CornerRadiusProperty); }
+            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
             set { SetValue(CornerRadiusProperty, value); }
         }
 
@@ -410,12 +417,12 @@ namespace DrawnUi.Maui.Draw
 
             case ShapeType.Rectangle:
             default:
-            if (CornerRadius != Thickness.Zero)
+            if (CornerRadius != default)
             {
-                var scaledRadiusLeftTop = (float)(CornerRadius.Left * RenderingScale);
-                var scaledRadiusRightTop = (float)(CornerRadius.Right * RenderingScale);
-                var scaledRadiusLeftBottom = (float)(CornerRadius.Top * RenderingScale);
-                var scaledRadiusRightBottom = (float)(CornerRadius.Bottom * RenderingScale);
+                var scaledRadiusLeftTop = (float)(CornerRadius.TopLeft * RenderingScale);
+                var scaledRadiusRightTop = (float)(CornerRadius.TopRight * RenderingScale);
+                var scaledRadiusLeftBottom = (float)(CornerRadius.BottomLeft * RenderingScale);
+                var scaledRadiusRightBottom = (float)(CornerRadius.BottomRight * RenderingScale);
                 var rrect = new SKRoundRect(strokeAwareChildrenSize);
 
                 // Step 3: Calculate the inner rounded rectangle corner radii
@@ -459,7 +466,7 @@ namespace DrawnUi.Maui.Draw
             switch (Type)
             {
             case ShapeType.Rectangle:
-            if (CornerRadius != Thickness.Zero)
+            if (CornerRadius != default)
             {
                 if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
                 {
@@ -561,18 +568,18 @@ namespace DrawnUi.Maui.Draw
                 DrawPathAligned.Offset(outRect.Left, outRect.Top);
             }
 
-            Thickness scaledRadius = new(
-                Math.Round(CornerRadius.Left * scale),
-                Math.Round(CornerRadius.Top * scale),
-                Math.Round(CornerRadius.Right * scale),
-                Math.Round(CornerRadius.Bottom * scale));
+            CornerRadius scaledRadius = new(
+                Math.Round(CornerRadius.TopLeft * scale),
+                Math.Round(CornerRadius.TopRight * scale),
+                Math.Round(CornerRadius.BottomLeft * scale),
+                Math.Round(CornerRadius.BottomRight * scale));
 
             var radii = new SKPoint[]
             {
-                new SKPoint((float)scaledRadius.Left,(float)scaledRadius.Left), //LeftTop
-                new SKPoint((float)scaledRadius.Right,(float)scaledRadius.Right), //RightTop
-                new SKPoint((float)scaledRadius.Top,(float)scaledRadius.Top), //LeftBottom
-                new SKPoint((float)scaledRadius.Bottom,(float)scaledRadius.Bottom), //RightBottom
+                new SKPoint((float)scaledRadius.TopLeft,(float)scaledRadius.TopLeft), //LeftTop
+                new SKPoint((float)scaledRadius.TopRight,(float)scaledRadius.TopRight), //RightTop
+                new SKPoint((float)scaledRadius.BottomLeft,(float)scaledRadius.BottomLeft), //LeftBottom
+                new SKPoint((float)scaledRadius.BottomRight,(float)scaledRadius.BottomRight), //RightBottom
                 };
 
 
@@ -612,7 +619,7 @@ namespace DrawnUi.Maui.Draw
                 switch (Type)
                 {
                 case ShapeType.Rectangle:
-                if (CornerRadius != Thickness.Zero)
+                if (CornerRadius != default)
                 {
                     using var rrect = new SKRoundRect();
                     rrect.SetRectRadii(outRect, radii);
@@ -827,7 +834,6 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-        public void OnFocusChanged(bool focus)
-        { }
+
     }
 }

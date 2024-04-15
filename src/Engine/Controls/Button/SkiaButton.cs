@@ -29,10 +29,11 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             {
                 DefaultChildrenCreated = true;
 
-                if (this.WidthRequest < 0)
+                if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill)
                     this.WidthRequest = 100;
-                if (this.HeightRequest < 0)
-                    this.HeightRequest = 32;
+
+                if (this.HeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill)
+                    this.HeightRequest = 40;
 
                 var shape = new SkiaShape
                 {
@@ -480,16 +481,18 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(
         nameof(CornerRadius),
-        typeof(Thickness),
+        typeof(CornerRadius),
         typeof(SkiaButton),
-        new Thickness(8),
+        default(CornerRadius),
         propertyChanged: NeedApplyProperties);
 
-    public Thickness CornerRadius
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.CornerRadiusTypeConverter))]
+    public CornerRadius CornerRadius
     {
-        get { return (Thickness)GetValue(CornerRadiusProperty); }
+        get { return (CornerRadius)GetValue(CornerRadiusProperty); }
         set { SetValue(CornerRadiusProperty, value); }
     }
+
 
     public static readonly BindableProperty TintColorProperty = BindableProperty.Create(
         nameof(TintColor),

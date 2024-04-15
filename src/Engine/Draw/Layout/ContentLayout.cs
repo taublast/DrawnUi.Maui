@@ -90,6 +90,20 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
                 ContentSize = ScaledSize.Empty;
             }
 
+            //var width = constraints.Request.Width;
+            //if (HorizontalOptions.Alignment != LayoutAlignment.Fill || width < 0 || float.IsNaN(width) ||
+            //    float.IsInfinity(width))
+            //{
+            //    width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
+            //}
+
+            //var height = constraints.Request.Height;
+            //if (VerticalOptions.Alignment != LayoutAlignment.Fill || width < 0 || float.IsNaN(width) ||
+            //    float.IsInfinity(width))
+            //{
+            //    height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
+            //}
+
             var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
             var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
 

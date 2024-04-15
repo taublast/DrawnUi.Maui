@@ -130,7 +130,7 @@ public partial class SkiaCamera : SkiaControl
     /// </summary>
     public void Stop()
     {
-        if (IsDisposed)
+        if (IsDisposing || IsDisposed)
             return;
 
         NativeControl?.Stop();
@@ -143,7 +143,7 @@ public partial class SkiaCamera : SkiaControl
     /// </summary>
     public void Start()
     {
-        if (IsDisposed)
+        if (IsDisposing || IsDisposed)
             return;
 
         if (NativeControl == null)

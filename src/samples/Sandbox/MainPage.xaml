@@ -37,7 +37,7 @@
                         Spacing="0"
                         Type="Column"
                         Tag="ScrollContent"
-                        UseCache="None">
+                        UseCache="ImageComposition">
 
                         <!--
                             we set ImageDoubleBuffered to be able to fast redraw

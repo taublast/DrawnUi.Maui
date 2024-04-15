@@ -15,6 +15,31 @@ public partial class SkiaImageManager
 
         try
         {
+
+
+
+            if (source is UriImageSource withUri)
+            {
+                var pfx = "native://";
+                var url = withUri.Uri.ToString();
+                if (url.Contains(pfx))
+                {
+                    var native = url.Replace(pfx, string.Empty).Trim('/');
+                    source = new FileImageSource()
+                    {
+                        File = native
+                    };
+                    var handler = source.GetHandler();
+                    var androidBitmap = await handler.LoadImageAsync(source, Platform.CurrentActivity, cancel);
+
+                    if (androidBitmap != null)
+                    {
+                        SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync] loaded {source} ToSKBitmap");
+                        return androidBitmap.ToSKBitmap();
+                    }
+                }
+            }
+
             if (source is FileImageSource fileSource)
             {
                 return await LoadFromFile(fileSource.File, cancel);

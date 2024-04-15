@@ -1,17 +1,11 @@
 ﻿namespace DrawnUi.Maui.Controls;
 
+
 /// <summary>
 ///     Base class for playing frames. Subclass to play spritesheets, gifs, custom animations etc.
 /// </summary>
 public class AnimatedFramesRenderer : SkiaControl
 {
-    protected override void OnWillBeDisposed()
-    {
-        base.OnWillBeDisposed();
-
-        Stop();
-    }
-
     protected RangeAnimator Animator;
 
     protected bool PlayWhenAvailable;
@@ -165,7 +159,7 @@ public class AnimatedFramesRenderer : SkiaControl
         }
     }
 
-    public void Stop()
+    public virtual void Stop()
     {
         Animator.Stop();
     }
@@ -239,7 +233,6 @@ public class AnimatedFramesRenderer : SkiaControl
         get => (int)GetValue(RepeatProperty);
         set => SetValue(RepeatProperty, value);
     }
-
 
     public static readonly BindableProperty AutoPlayProperty = BindableProperty.Create(nameof(AutoPlay),
         typeof(bool),
