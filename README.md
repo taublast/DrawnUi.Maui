@@ -7,7 +7,8 @@ Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 * To use inside a usual MAUI app, consume drawn controls here and there inside `Canvas` views.
 * Create a totally drawn app with just one `Canvas` as root view, `SkiaShell` is provided for navigation.
  * Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas. 
-* Free to use under the MIT license, a nuget package is available. 
+* Free to use under the MIT license, a nuget package is available.
+* A Light [version for Xamarin](https://github.com/taublast/DrawnUi.Xamarin) is there too.
 
 _The current development state is __ALPHA__, many features remain to be implemented, documentation incoming._
 
@@ -38,6 +39,8 @@ _The new `VisualEffects` property_
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget.
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
+
+___Please star ⭐ if you like it!___
 
 ## Features
 
@@ -175,8 +178,6 @@ Use a simple `SkiaControl` with height and background color set. For complex sha
 #### Simulate MAUI StackLayout with a BidableLayout.ItemTemplate 
 
 `SkiaScroll` with `Virtualisation`=`Disabled` + `SkiaLayout` of type `Column`/`Row` (`ItemTemplate`=...) do not forget to cache your cell template. 
-
-___Please star ⭐ if you like it!___
 
 ## Images
 
