@@ -25,6 +25,12 @@ public enum SkiaCacheType
     /// </summary>
     ImageDoubleBuffered,
 
+
+    /// <summary>
+    /// TODO: Would receive the invalidated area rectangle, then redraw the previous cache but clipped to exclude the dirty area, then would re-create the dirty area and draw it clipped inside the dirty rectangle. This is useful for layouts with many children, like scroll content etc, but useless for non-containers.
+    /// </summary>
+    ImageComposition,
+
     /// <summary>
     /// The way to go when dealing with images surrounded by shapes etc.
     /// The cached surface will use the same graphic context as your canvas.

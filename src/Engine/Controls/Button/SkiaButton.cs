@@ -29,10 +29,11 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             {
                 DefaultChildrenCreated = true;
 
-                if (this.WidthRequest < 0)
+                if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill)
                     this.WidthRequest = 100;
-                if (this.HeightRequest < 0)
-                    this.HeightRequest = 32;
+
+                if (this.HeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill)
+                    this.HeightRequest = 40;
 
                 var shape = new SkiaShape
                 {

@@ -761,6 +761,9 @@ namespace DrawnUi.Maui.Draw
 
         public override void InvalidateWithChildren()
         {
+            if (ChildrenFactory == null)
+                return;
+
             ChildrenFactory.TemplatesInvalidated = true;
 
             base.InvalidateWithChildren();
@@ -1114,8 +1117,6 @@ namespace DrawnUi.Maui.Draw
 
                 var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
                 var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-
-                //Debug.WriteLine($"[Remeasured] {this.Tag} {this.Uid}");
 
                 var invalidated = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
                 if (invalidated)

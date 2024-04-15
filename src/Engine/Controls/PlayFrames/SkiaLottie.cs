@@ -297,8 +297,7 @@ public class SkiaLottie : AnimatedFramesRenderer
 
         if (assembly == null)
         {
-            var callingAssemblyMethod = typeof(Assembly).GetTypeInfo().GetDeclaredMethod("GetCallingAssembly");
-            assembly = (Assembly)callingAssemblyMethod.Invoke(null, new object[0]);
+            assembly = Assembly.GetCallingAssembly();
         }
 
         var fullPath = $"{assembly.GetName().Name}.{resourceName}";

@@ -332,6 +332,11 @@ public partial class SkiaImageManager : IDisposable
             {
                 uri = sourceFile.File;
             }
+            else
+            if (source is ImageSourceResourceStream stream)
+            {
+                uri = stream.Url;
+            }
 
             // 1 Try to get from cache
             var cacheKey = uri;
@@ -643,6 +648,12 @@ public partial class SkiaImageManager : IDisposable
         {
             uri = sourceFile.File;
         }
+        else
+        if (source is ImageSourceResourceStream stream)
+        {
+            uri = stream.Url;
+        }
+
         if (string.IsNullOrEmpty(uri))
         {
             TraceLog($"Preload: Invalid source {uri}");

@@ -1797,14 +1797,15 @@ namespace DrawnUi.Maui.Draw
             }
             else
             if (propertyName.IsEither(nameof(BackgroundColor),
-                    nameof(HorizontalOptions), nameof(VerticalOptions),
-                    nameof(IsClippedToBounds),
-                    nameof(Padding)))
+                    nameof(IsClippedToBounds)
+                    ))
             {
                 Update();
             }
             else
             if (propertyName.IsEither(
+                    nameof(Padding),
+                    nameof(HorizontalOptions), nameof(VerticalOptions),
                     nameof(HeightRequest), nameof(WidthRequest),
                     nameof(MaximumWidthRequest), nameof(MinimumWidthRequest),
                     nameof(MaximumHeightRequest), nameof(MinimumHeightRequest)
@@ -4488,6 +4489,18 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        public bool IsCacheImage
+        {
+            get
+            {
+                return UsingCacheType == SkiaCacheType.Image
+                       || UsingCacheType == SkiaCacheType.GPU
+                       || UsingCacheType == SkiaCacheType.ImageComposition
+                       || UsingCacheType == SkiaCacheType.ImageDoubleBuffered;
+            }
+        }
+
+
         /// <summary>
         /// Use this in custom controls code
         /// </summary>
@@ -4501,10 +4514,10 @@ namespace DrawnUi.Maui.Draw
                         || !Superview.CanvasView.IsHardwareAccelerated))
                     return SkiaCacheType.Image;
 
-                //if (UseCache == SkiaCacheType.ImageDoubleBuffered)
-                //{
-                //    return SkiaCacheType.Image;
-                //}
+                if (UseCache == SkiaCacheType.ImageComposition)
+                {
+                    return SkiaCacheType.Image;
+                }
 
                 return UseCache;
             }
@@ -4543,7 +4556,7 @@ namespace DrawnUi.Maui.Draw
                         return true;
                 }
 
-                if (UseCache == SkiaCacheType.ImageDoubleBuffered)
+                if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered)
                 {
                     lock (LockDraw)
                     {
@@ -4996,8 +5009,7 @@ namespace DrawnUi.Maui.Draw
                 //throw new Exception("RenderObject already exists for CreateRenderingObjectAndPaint! Need to dispose and assign null to it before.");
             }
 
-            if ((UsingCacheType == SkiaCacheType.Image || UsingCacheType == SkiaCacheType.GPU || UsingCacheType == SkiaCacheType.ImageDoubleBuffered)
-                && !IsClippedToBounds)
+            if (IsCacheImage && !IsClippedToBounds)
             {
                 throw new Exception("IsClippedToBounds is required to be TRUE for caching as image.");
             }
@@ -5598,6 +5610,7 @@ namespace DrawnUi.Maui.Draw
         protected override void InvalidateMeasure()
         {
             InvalidateMeasureInternal();
+
             Update();
         }
 

@@ -101,6 +101,8 @@
 
   <ItemGroup>
 
+ 
+
     <None Remove="Resources\Fonts\Orbitron-Black.ttf" />
 
     <None Remove="Resources\Fonts\Orbitron-Bold.ttf" />
@@ -257,6 +259,13 @@
     <Compile Remove="Views\MainPageMap.xaml.cs" />
     <MauiXaml Remove="Views\MainPageMap.xaml" />
     <Compile Remove="Views\Controls\MapsUi\**\*.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <MauiXaml Update="ImageTestPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
  
