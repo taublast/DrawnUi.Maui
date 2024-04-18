@@ -80,6 +80,11 @@ namespace DrawnUi.Maui.Views
             Invalidate();
         }
 
+        public virtual void UpdateByChild(SkiaControl child)
+        {
+            Update();
+        }
+
         public ScaledRect GetOnScreenVisibleArea()
         {
             var bounds = new SKRect(0, 0, (int)(Width * RenderingScale), (int)(Height * RenderingScale));

@@ -42,7 +42,7 @@
                     <!--  HEADER  -->
                     <draw:SkiaShape
                         BackgroundColor="Red"
-                        CornerRadius="20,0,20,0"
+                        CornerRadius="20,20,0,0"
                         HeightRequest="{Binding DrawerHeaderSize}"
                         HorizontalOptions="Fill"
                         UseCache="Image">

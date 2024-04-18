@@ -106,6 +106,12 @@ public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
     /// <param name="skiaControl"></param>
     void InvalidateByChild(SkiaControl skiaControl);
 
+    /// <summary>
+    /// To track dirty area when Updating parent
+    /// </summary>
+    /// <param name="skiaControl"></param>
+    void UpdateByChild(SkiaControl skiaControl);
+
     public bool ShouldInvalidateByChildren { get; }
 
     float RenderingScale { get; }
