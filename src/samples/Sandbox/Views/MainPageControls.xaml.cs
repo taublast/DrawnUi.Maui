@@ -1,9 +1,9 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageScroll
+    public partial class MainPageControls
     {
 
-        public MainPageScroll()
+        public MainPageControls()
         {
             try
             {

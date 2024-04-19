@@ -191,6 +191,9 @@
     <Compile Update="Views\MainPageMapsUi.xaml.cs">
       <DependentUpon>MainPageMapsui.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\MainPageControls.xaml.cs">
+      <DependentUpon>MainPageControls.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
  
@@ -264,6 +267,9 @@
 
   <ItemGroup>
     <MauiXaml Update="ImageTestPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\MainPageControls.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

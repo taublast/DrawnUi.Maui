@@ -301,7 +301,7 @@ namespace DrawnUi.Maui.Draw
             if (willStroke)
             {
                 pixelsStrokeWidth = (float)Math.Round(StrokeWidth * scale);
-                halfStroke = (float)Math.Round(pixelsStrokeWidth / 2.0f);
+                halfStroke = (float)(pixelsStrokeWidth / 2.0f);
 
                 strokeAwareSize =
                     SKRect.Inflate(strokeAwareSize, -halfStroke, -halfStroke);
@@ -430,10 +430,10 @@ namespace DrawnUi.Maui.Draw
 
                 float cornerRadiusDifference = (float)strokeWidth / 2.0f;
 
-                scaledRadiusLeftTop = (float)Math.Round(Math.Max(scaledRadiusLeftTop - cornerRadiusDifference, 0));
-                scaledRadiusRightTop = (float)Math.Round(Math.Max(scaledRadiusRightTop - cornerRadiusDifference, 0));
-                scaledRadiusLeftBottom = (float)Math.Round(Math.Max(scaledRadiusLeftBottom - cornerRadiusDifference, 0));
-                scaledRadiusRightBottom = (float)Math.Round(Math.Max(scaledRadiusRightBottom - cornerRadiusDifference, 0));
+                scaledRadiusLeftTop = (float)(Math.Max(scaledRadiusLeftTop - cornerRadiusDifference, 0));
+                scaledRadiusRightTop = (float)(Math.Max(scaledRadiusRightTop - cornerRadiusDifference, 0));
+                scaledRadiusLeftBottom = (float)(Math.Max(scaledRadiusLeftBottom - cornerRadiusDifference, 0));
+                scaledRadiusRightBottom = (float)(Math.Max(scaledRadiusRightBottom - cornerRadiusDifference, 0));
 
                 rrect.SetRectRadii(strokeAwareChildrenSize, new[]
                 {
@@ -569,10 +569,10 @@ namespace DrawnUi.Maui.Draw
             }
 
             CornerRadius scaledRadius = new(
-                Math.Round(CornerRadius.TopLeft * scale),
-                Math.Round(CornerRadius.TopRight * scale),
-                Math.Round(CornerRadius.BottomLeft * scale),
-                Math.Round(CornerRadius.BottomRight * scale));
+                (CornerRadius.TopLeft * scale),
+                (CornerRadius.TopRight * scale),
+                (CornerRadius.BottomLeft * scale),
+                (CornerRadius.BottomRight * scale));
 
             var radii = new SKPoint[]
             {
