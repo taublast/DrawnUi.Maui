@@ -9,19 +9,21 @@
     ColorFrameOn="{StaticResource ColorPrimary}"
     ColorThumbOff="{StaticResource ColorPrimary}"
     ColorThumbOn="{StaticResource ColorPrimary}"
-    HeightRequest="28"
+    HeightRequest="30"
     WidthRequest="50">
 
     <!--  TRAY  -->
     <draw:SkiaShape
         Margin="4,8"
-        CornerRadius="20"
+        CornerRadius="7"
+        HeightRequest="15"
         HorizontalOptions="Fill"
         StrokeColor="{StaticResource ColorPrimaryDark}"
         StrokeWidth="1"
         Tag="Frame"
         Type="Rectangle"
-        VerticalOptions="Fill">
+        UseCache="Image"
+        VerticalOptions="Center">
         <draw:SkiaControl.Triggers>
             <DataTrigger
                 Binding="{Binding Source={x:Reference ThisControl}, Path=IsToggled}"
@@ -46,7 +48,7 @@
         LockRatio="1"
         Tag="Thumb"
         Type="Circle"
-        VerticalOptions="Start"
+        VerticalOptions="Center"
         WidthRequest="26">
 
         <draw:SkiaShape.Shadows>

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage
+    x:Class="Sandbox.Views.MainPageControls"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:views="clr-namespace:Sandbox.Views"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel">
+
+    <draw:Canvas
+        Gestures="Enabled"
+        HardwareAcceleration="Enabled"
+        HorizontalOptions="Fill"
+        Tag="MainPage"
+        VerticalOptions="Fill">
+
+        <draw:SkiaLayout
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+
+            <draw:SkiaScroll
+                BackgroundColor="White"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
+                <draw:SkiaLayout
+                    Padding="0,32"
+                    HorizontalOptions="Center"
+                    Tag="Content"
+                    Type="Column"
+                    UseCache="ImageComposition"
+                    WidthRequest="250">
+
+                    <controls:SkiaSwitchFun UseCache="Operations" />
+
+                    <controls:SkiaSliderFun UseCache="Operations" />
+
+
+                </draw:SkiaLayout>
+
+            </draw:SkiaScroll>
+
+            <controls:ButtonToRoot />
+
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
+
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
+
+</views:BasePage>

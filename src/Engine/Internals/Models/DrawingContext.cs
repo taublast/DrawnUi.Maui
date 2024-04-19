@@ -9,6 +9,16 @@ public class SkiaDrawingContext
     public DrawnView Superview { get; set; }
     public string Tag { get; set; }
 
+    /// <summary>
+    /// Recording cache
+    /// </summary>
+    public bool IsVirtual { get; set; }
+
+    /// <summary>
+    /// Reusing surface from previous cache
+    /// </summary>
+    public bool IsRecycled { get; set; }
+
     public SkiaDrawingContext Clone()
     {
         return new SkiaDrawingContext()

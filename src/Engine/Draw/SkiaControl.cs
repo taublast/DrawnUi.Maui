@@ -62,7 +62,7 @@ namespace DrawnUi.Maui.Draw
             //Debug.WriteLine($"GetPositionOnCanvas ------------------------START at {LastDrawnAt}");
 
             //ignore cache for this specific control only
-            var position = BuildDrawingOffsetRecursive(LastDrawnAt, this, true, useTranslation);
+            var position = BuildDrawingOffsetRecursive(LastDrawnAt.Location, this, true, useTranslation);
 
             //Debug.WriteLine("GetPositionOnCanvas ------------------------END");
             return new(position.X, position.Y);
@@ -74,7 +74,7 @@ namespace DrawnUi.Maui.Draw
         /// <returns></returns>
         public virtual SKPoint GetSelfDrawingPosition()
         {
-            var position = BuildSelfDrawingPosition(LastDrawnAt, this, true);
+            var position = BuildSelfDrawingPosition(LastDrawnAt.Location, this, true);
 
             return new(position.X, position.Y);
         }
@@ -126,7 +126,7 @@ namespace DrawnUi.Maui.Draw
 
             if (parent == null)
             {
-                drawingOffset.Offset(control.LastDrawnAt);
+                drawingOffset.Offset(control.LastDrawnAt.Location);
                 //Debug.WriteLine($"[BuildDrawingOffsetRecursive] {this} returned {drawingOffset} for null parent");
                 return drawingOffset;
             }
@@ -2353,6 +2353,10 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        /// <summary>
+        /// To be able to fast track dirty children
+        /// </summary>
+        /// <param name="child"></param>
         public virtual void InvalidateByChild(SkiaControl child)
         {
             if (!DirtyChildren.Contains(child))
@@ -2945,12 +2949,12 @@ namespace DrawnUi.Maui.Draw
             {
                 if (RenderObject != null)
                 {
-                    thisOffset.Offset(RenderObject.TranslateInputCoords(DrawingRect));
+                    thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
                 }
                 else
                 if (RenderObjectPrevious != null)
                 {
-                    thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(DrawingRect));
+                    thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
                 }
             }
 
@@ -2974,12 +2978,12 @@ namespace DrawnUi.Maui.Draw
             {
                 if (RenderObject != null)
                 {
-                    thisOffset.Offset(RenderObject.CalculatePositionOffset(LastDrawnAt));
+                    thisOffset.Offset(RenderObject.CalculatePositionOffset(LastDrawnAt.Location));
                 }
                 else
                 if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered && RenderObjectPrevious != null)
                 {
-                    thisOffset.Offset(RenderObjectPrevious.CalculatePositionOffset(LastDrawnAt));
+                    thisOffset.Offset(RenderObjectPrevious.CalculatePositionOffset(LastDrawnAt.Location));
                 }
                 //Debug.WriteLine($"[CalculatePositionOffset] was cached!");
             }
@@ -4096,12 +4100,10 @@ namespace DrawnUi.Maui.Draw
 
             //trying to find exact location on the canvas
 
-            var drawnAt = this.DrawingRect.Location;
+            LastDrawnAt = DrawingRect;
 
-            LastDrawnAt = drawnAt;
-
-            X = LastDrawnAt.X / scale;
-            Y = LastDrawnAt.Y / scale;
+            X = LastDrawnAt.Location.X / scale;
+            Y = LastDrawnAt.Location.Y / scale;
 
             ExecutePostAnimators(context, scale);
         }
@@ -4143,9 +4145,9 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        /// Location on the canvas
+        /// Location on the canvas after last drawing completed
         /// </summary>
-        public SKPoint LastDrawnAt { get; protected set; }
+        public SKRect LastDrawnAt { get; protected set; }
 
         public void ExecutePostAnimators(SkiaDrawingContext context, double scale)
         {
@@ -4782,6 +4784,7 @@ namespace DrawnUi.Maui.Draw
                 //just draw subviews
                 //need a fake context for that..
                 var recordingContext = context.Clone();
+                recordingContext.IsVirtual = true;
                 recordingContext.Height = recordArea.Height;
                 recordingContext.Width = recordArea.Width;
 
@@ -4830,7 +4833,6 @@ namespace DrawnUi.Maui.Draw
                         }
                     }
 
-
                     if (needCreateSurface)
                     {
                         var kill = surface;
@@ -4866,7 +4868,7 @@ namespace DrawnUi.Maui.Draw
                             surface.Canvas.Clear();
                     }
 
-
+                    recordingContext.IsRecycled = !needCreateSurface;
                     recordingContext.Canvas = surface.Canvas;
 
                     // Translate the canvas to start drawing at (0,0)
@@ -5434,11 +5436,11 @@ namespace DrawnUi.Maui.Draw
                 if (IsRenderingWithComposition)
                 {
                     var previousCache = RenderObjectPrevious;
-                    var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
+                    var offset = new SKPoint(this.LastDrawnAt.Left - previousCache.Bounds.Left, LastDrawnAt.Top - previousCache.Bounds.Top);
                     clipPreviousCachePath.Reset();
                     foreach (var dirtyChild in DirtyChildrenInternal)
                     {
-                        var clip = dirtyChild.DrawingRect;
+                        var clip = dirtyChild.LastDrawnAt;
                         clip.Offset(offset);
                         clipPreviousCachePath.AddRect(clip);
                     }

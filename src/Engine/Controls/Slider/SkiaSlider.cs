@@ -83,10 +83,10 @@ public class SkiaSlider : SkiaLayout
         }
 
         var thisOffset = TranslateInputCoords(childOffset);
-        var x = args.Location.X + thisOffset.X - DrawingRect.Left; //inside this control
+        var x = args.Location.X + thisOffset.X - LastDrawnAt.Left; //inside this control
         var locationX = x / RenderingScale; //from pix to pts
 
-        var y = args.Location.Y + thisOffset.Y - DrawingRect.Top; //inside this control
+        var y = args.Location.Y + thisOffset.Y - LastDrawnAt.Top; //inside this control
         var locationY = y / RenderingScale; //from pix to pts
 
         if (EnableRange && locationX >= StartThumbX - moreHotspotSize &&

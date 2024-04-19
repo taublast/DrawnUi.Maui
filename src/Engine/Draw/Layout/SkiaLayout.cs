@@ -1293,11 +1293,11 @@ namespace DrawnUi.Maui.Draw
                 DirtyChildrenInternal.Clear();
 
                 var previousCache = RenderObjectPrevious;
-                if (previousCache != null && previousCache.SurfaceIsRecycled)
+                if (previousCache != null && ctx.IsRecycled)
                 {
                     IsRenderingWithComposition = true;
 
-                    var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
+                    var offset = new SKPoint(this.LastDrawnAt.Left - previousCache.Bounds.Left, LastDrawnAt.Top - previousCache.Bounds.Top);
 
                     // Add more children that are not already added but intersect with the dirty regions
                     var allChildren = RenderTree.Select(s => s.Control).ToList();
@@ -1324,7 +1324,7 @@ namespace DrawnUi.Maui.Draw
                     var count = 0;
                     foreach (var dirtyChild in DirtyChildrenInternal)
                     {
-                        var clip = dirtyChild.DrawingRect;
+                        var clip = dirtyChild.LastDrawnAt;
                         clip.Offset(offset);
 
                         previousCache.Surface.Canvas.DrawRect(clip, PaintErase);
