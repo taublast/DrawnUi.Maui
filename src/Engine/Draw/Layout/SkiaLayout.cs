@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Layouts;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.Specialized;
 
@@ -1284,6 +1285,7 @@ namespace DrawnUi.Maui.Draw
         }
 
 
+
         void SetupCacheComposition(SkiaDrawingContext ctx, SKRect destination)
         {
             if (UsingCacheType == SkiaCacheType.ImageComposition)
@@ -1291,9 +1293,7 @@ namespace DrawnUi.Maui.Draw
                 DirtyChildrenInternal.Clear();
 
                 var previousCache = RenderObjectPrevious;
-                if (UsingCacheType == SkiaCacheType.ImageComposition
-                    && previousCache != null
-                    && previousCache.SurfaceIsRecycled)
+                if (previousCache != null && previousCache.SurfaceIsRecycled)
                 {
                     IsRenderingWithComposition = true;
 
@@ -1343,6 +1343,7 @@ namespace DrawnUi.Maui.Draw
                 IsRenderingWithComposition = false;
             }
         }
+
 
 
 

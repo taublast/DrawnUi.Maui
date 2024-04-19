@@ -138,6 +138,7 @@ public class ContentFolder : ContentLayout
         if (Content != null)
         {
             Content.CreatedCache -= OnCacheCreated;
+            Content.DelegateDrawCache -= DrawContentImage;
         }
     }
 
@@ -146,6 +147,7 @@ public class ContentFolder : ContentLayout
         if (this.Content != null)
         {
             Content.CreatedCache += OnCacheCreated;
+            Content.DelegateDrawCache = DrawContentImage;
         }
     }
 
@@ -243,26 +245,14 @@ public class ContentFolder : ContentLayout
         }
     }
 
-    /// <summary>
-    ///  Instead of drawing cache to canvas directly,
-    /// we draw it using our shader
-    /// </summary>
-    /// <param name="cache"></param>
-    /// <param name="ctx"></param>
-    /// <param name="destination"></param>
-    /// <param name="delegateDraw"></param>
-    protected override void DrawRenderObjectInternal(CachedObject cache, SkiaDrawingContext ctx, SKRect destination,
-        Action<CachedObject, SkiaDrawingContext, SKRect> delegateDraw = null)
+    private void DrawContentImage(CachedObject cache, SkiaDrawingContext ctx, SKRect destination)
     {
-
-        //base.DrawRenderObjectInternal(cache, ctx, destination, delegateDraw);
-
         if (Content != null && _compiledShader != null && _passTextures != null)
         {
             var viewport = Content.DrawingRect;
 
             float margin = (float)Math.Round(VerticalMargin * RenderingScale);
-            float timeValue = _offset.Y; //0.0f;
+            float timeValue = _offset.Y;//0.0f;
             SKSize iResolution = new(viewport.Width, viewport.Height);
             SKSize iImageResolution = new(cache.Image.Width, cache.Image.Height);
 
@@ -278,16 +268,17 @@ public class ContentFolder : ContentLayout
 
             using var paintWithShader = new SKPaint();
 
-#if SKIA3
+#if SKIA3 
             paintWithShader.Shader = _compiledShader.ToShader(uniforms, _passTextures);
 #else
             paintWithShader.Shader = _compiledShader.ToShader(false, uniforms, _passTextures);
 #endif
 
             ctx.Canvas.DrawRect(destination, paintWithShader);
-        }
 
+        }
     }
+
 
 
     /// <summary>
@@ -309,8 +300,8 @@ public class ContentFolder : ContentLayout
     protected Vector2 _offset;
     protected Vector2 _origin;
 
-    public override ISkiaGestureListener OnSkiaGestureEvent(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
+    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
+        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
     {
 
         ISkiaGestureListener consumed = null;
@@ -326,7 +317,7 @@ public class ContentFolder : ContentLayout
         _offset = new(
             _origin.X - args.Distance.Total.X,
             _origin.Y - args.Distance.Total.Y
-            );
+        );
         consumed = this;
         Repaint();
         break;

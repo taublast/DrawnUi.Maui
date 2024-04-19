@@ -4483,14 +4483,16 @@ namespace DrawnUi.Maui.Draw
         }
         private bool _needMeasure = true;
 
+        public Action<CachedObject, SkiaDrawingContext, SKRect> DelegateDrawCache { get; set; }
+
         protected virtual void DrawRenderObjectInternal(
             CachedObject cache,
             SkiaDrawingContext ctx,
-            SKRect destination, Action<CachedObject, SkiaDrawingContext, SKRect> delegateDraw = null)
+            SKRect destination)
         {
-            if (delegateDraw != null)
+            if (DelegateDrawCache != null)
             {
-                delegateDraw(cache, ctx, destination);
+                DelegateDrawCache(cache, ctx, destination);
             }
             else
             {
@@ -5330,7 +5332,7 @@ namespace DrawnUi.Maui.Draw
 
         protected ConcurrentBag<SkiaControl> DirtyChildren { get; } = new();
 
-        protected ConcurrentBag<SkiaControl> DirtyChildrenInternal { get; set; } = new();
+        protected HashSet<SkiaControl> DirtyChildrenInternal { get; set; } = new();
 
         public virtual void UpdateByChild(SkiaControl control)
         {
@@ -5416,7 +5418,6 @@ namespace DrawnUi.Maui.Draw
         /// <param name="destination"></param>
         public virtual void PaintTintBackground(SKCanvas canvas, SKRect destination)
         {
-
             if (BackgroundColor != null && BackgroundColor != Colors.Transparent)
             {
                 if (PaintSystem == null)

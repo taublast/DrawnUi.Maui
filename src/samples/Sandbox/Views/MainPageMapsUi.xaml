@@ -141,16 +141,9 @@
 
                     </draw:SkiaShape>
 
-                    <!--CONTENT BACKGROUND-->
-                    <draw:SkiaControl    
-                        VerticalOptions="Fill"
-                        HorizontalOptions="Fill"
-                        BackgroundColor="White"
-                        UseCache="Operations"
-                        MarginTop="{Binding DrawerHeaderSize}" />
-
                     <!--  CONTENT  -->
                     <draw:SkiaLayout
+                        BackgroundColor="White"
                         Padding="24,16"
                         HorizontalOptions="Fill"
                         MarginTop="{Binding DrawerHeaderSize}"
