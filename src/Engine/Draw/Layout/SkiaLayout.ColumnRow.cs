@@ -163,6 +163,8 @@ namespace DrawnUi.Maui.Draw
                     nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
                 }
 
+                int countRendered = 0;
+
                 foreach (var cell in visibleElements.OrderBy(x => x.ZIndex))
                 {
                     index++;
@@ -225,13 +227,37 @@ namespace DrawnUi.Maui.Draw
                         }
                         */
 
-                        DrawChild(context, destinationRect, child, scale);
+
+                        if (IsRenderingWithComposition)
+                        {
+                            if (DirtyChildrenInternal.Contains(child))
+                            {
+                                DrawChild(context, destinationRect, child, scale);
+                                countRendered++;
+                            }
+                            else
+                            {
+                                //skip drawing but need arrange :(
+                                child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height, scale);
+                            }
+                        }
+                        else
+                        {
+                            DrawChild(context, destinationRect, child, scale);
+                            countRendered++;
+                        }
+
                         drawn++;
 
                         //gonna use that for gestures and for item inside viewport detection and for hotreload children tree
                         tree.Add(new SkiaControlWithRect(control, destinationRect, index));
                     }
                 }
+
+                //if (Tag == "Controls")
+                //{
+                //    Debug.WriteLine($"[?] {countRendered}");
+                //}
             }
 
             //_stopwatchRender.Restart();
@@ -343,9 +369,6 @@ namespace DrawnUi.Maui.Draw
                     nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
                 }
 
-                var dirty = DirtyChild;
-                DirtyChild = null;
-
                 bool smartMeasuring = false;
 
                 if (Superview != null && !IsTemplated)
@@ -359,7 +382,7 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 //smartMeasuring = false;
-
+                /*
                 if (smartMeasuring && dirty != null)
                 {
 
@@ -500,6 +523,7 @@ namespace DrawnUi.Maui.Draw
                         }
                     }
                 }
+                */
 
                 SkiaControl template = null;
                 ControlInStack firstCell = null;

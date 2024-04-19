@@ -37,6 +37,7 @@
             HorizontalOptions="Fill"
             StrokeColor="{StaticResource Gray400}"
             StrokeWidth="2"
+            UseCache="Operations"
             VerticalOptions="Center">
 
         </draw:SkiaShape>

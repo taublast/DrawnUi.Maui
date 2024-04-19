@@ -1565,9 +1565,6 @@ namespace DrawnUi.Maui.Draw
                     int row;
                     int col;
 
-                    if (trace)
-                        Trace.WriteLine($"offset: {point.X}");
-
                     for (row = 0; row < stackStructure.Count; row++)
                     {
                         var rowContent = stackStructure[row];
@@ -1578,9 +1575,6 @@ namespace DrawnUi.Maui.Draw
 
                             var childRect = childInfo.Destination.Clone();
                             //childRect.Offset(point.X, point.Y);
-
-                            if (trace)
-                                Trace.WriteLine($"child: {childRect.Left:0.0} - {childRect.Right:0.0}");
 
                             if (childRect.ContainsInclusive(point))
                             {
@@ -2245,8 +2239,6 @@ namespace DrawnUi.Maui.Draw
         {
             if (!IsContentActive)
                 return;
-
-            Debug.WriteLine($"[POS] {IsSnapping} {Snapped}");
 
             if (!IsSnapping)
                 Snapped = false;

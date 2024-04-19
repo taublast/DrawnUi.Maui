@@ -43,7 +43,22 @@ public partial class SkiaLayout
 
                 tree.Add(new SkiaControlWithRect(child, cellRect, drawn));
 
-                DrawChild(context, cellRect, child, scale);
+                if (IsRenderingWithComposition)
+                {
+                    if (DirtyChildrenInternal.Contains(child))
+                    {
+                        DrawChild(context, cellRect, child, scale);
+                    }
+                    else
+                    {
+                        child.Arrange(cellRect, child.SizeRequest.Width, child.SizeRequest.Height, scale);
+                    }
+                }
+                else
+                {
+                    DrawChild(context, cellRect, child, scale);
+                }
+
                 drawn++;
             }
 

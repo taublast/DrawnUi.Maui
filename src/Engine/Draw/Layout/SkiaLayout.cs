@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Layouts;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Collections.Specialized;
 
@@ -164,16 +165,6 @@ namespace DrawnUi.Maui.Draw
             return base.SetMeasured(width, height, scale);
         }
 
-        public override void OnDisposing()
-        {
-            ChildrenFactory?.Dispose();
-
-            ClearChildren();
-
-            DirtyChild = null;
-
-            base.OnDisposing();
-        }
 
         //bindable property RecyclingTemplate
         public static readonly BindableProperty RecyclingTemplateProperty = BindableProperty.Create(nameof(RecyclingTemplate),
@@ -828,10 +819,7 @@ namespace DrawnUi.Maui.Draw
             return ItemsSource.Count + 2;
         }
 
-        /// <summary>
-        /// Will be used while measuring then set to null. This is set by InvalidateByChild override.
-        /// </summary>
-        protected SkiaControl DirtyChild { get; set; }
+
 
         public override void Invalidate()
         {
@@ -844,8 +832,6 @@ namespace DrawnUi.Maui.Draw
         {
             if (!NeedAutoSize && child.NeedAutoSize)
                 return;
-
-            DirtyChild = child;
 
             if (Type == LayoutType.Absolute)
             {
@@ -1235,10 +1221,16 @@ namespace DrawnUi.Maui.Draw
 
         bool _trackWasDrawn;
 
+
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
             if (destination.Width == 0 || destination.Height == 0)
                 return;
+
+            if (Type == LayoutType.Grid || Type == LayoutType.Row || Type == LayoutType.Column)
+            {
+                SetupCacheComposition(ctx, destination);
+            }
 
             base.Paint(ctx, destination, scale, arguments);
 
@@ -1246,16 +1238,19 @@ namespace DrawnUi.Maui.Draw
 
             var drawnChildrenCount = 0;
 
+            //placeholder for empty
             if (_emptyView != null && _emptyView.IsVisible)
             {
                 drawnChildrenCount = DrawViews(ctx, rectForChildren, scale);
             }
             else
+            //grid
             if (Type == LayoutType.Grid) //todo add optimization for OptimizeRenderingViewport
             {
                 drawnChildrenCount = DrawChildrenGrid(ctx, rectForChildren, scale);
             }
             else
+            //stacklayout
             if (Type == LayoutType.Row || Type == LayoutType.Column)
             {
                 drawnChildrenCount = DrawChildrenStack(ctx, rectForChildren, scale);
@@ -1274,6 +1269,83 @@ namespace DrawnUi.Maui.Draw
                 OnAppeared();
             }
         }
+
+        public override void OnDisposing()
+        {
+            ChildrenFactory?.Dispose();
+
+            ClearChildren();
+
+            DirtyChildren.Clear();
+            DirtyChildrenInternal.Clear();
+
+
+
+            base.OnDisposing();
+        }
+
+
+
+        void SetupCacheComposition(SkiaDrawingContext ctx, SKRect destination)
+        {
+            if (UsingCacheType == SkiaCacheType.ImageComposition)
+            {
+                DirtyChildrenInternal.Clear();
+
+                var previousCache = RenderObjectPrevious;
+                if (previousCache != null && previousCache.SurfaceIsRecycled)
+                {
+                    IsRenderingWithComposition = true;
+
+                    var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
+
+                    // Add more children that are not already added but intersect with the dirty regions
+                    var allChildren = RenderTree.Select(s => s.Control).ToList();
+
+                    bool needRebuild = false;
+
+                    foreach (var item in DirtyChildren)
+                    {
+                        DirtyChildrenInternal.Add(item);
+                    }
+
+                    //make intersecting children dirty too
+                    foreach (var child in allChildren)
+                    {
+                        if (!DirtyChildrenInternal.Contains(child) &&
+                            DirtyChildrenInternal.Any(dirtyChild => dirtyChild.DrawingRect.IntersectsWith(child.DrawingRect)))
+                        {
+                            DirtyChildrenInternal.Add(child);
+                        }
+                    }
+
+                    DirtyChildren.Clear();
+
+                    var count = 0;
+                    foreach (var dirtyChild in DirtyChildrenInternal)
+                    {
+                        var clip = dirtyChild.DrawingRect;
+                        clip.Offset(offset);
+
+                        previousCache.Surface.Canvas.DrawRect(clip, PaintErase);
+
+                        count++;
+                    }
+                }
+                else
+                {
+                    IsRenderingWithComposition = false;
+                    DirtyChildren.Clear();
+                }
+            }
+            else
+            {
+                IsRenderingWithComposition = false;
+            }
+        }
+
+
+
 
         protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
         {

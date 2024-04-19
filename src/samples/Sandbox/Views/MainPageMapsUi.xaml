@@ -123,7 +123,7 @@
                     <!--  HEADER  -->
                     <draw:SkiaShape
                         BackgroundColor="White"
-                        CornerRadius="20,0,20,0"
+                        CornerRadius="20,20,0,0"
                         HeightRequest="{Binding DrawerHeaderSize}"
                         HorizontalOptions="Fill"
                         UseCache="Image">
@@ -143,14 +143,14 @@
 
                     <!--  CONTENT  -->
                     <draw:SkiaLayout
-                        Padding="24,16"
                         BackgroundColor="White"
+                        Padding="24,16"
                         HorizontalOptions="Fill"
                         MarginTop="{Binding DrawerHeaderSize}"
                         Spacing="0"
                         Tag="InsideDrawer"
                         Type="Column"
-                        UseCache="Image"
+                        UseCache="ImageComposition"
                         VerticalOptions="Fill">
 
                         <!--  Switch  -->

@@ -82,6 +82,11 @@ public class CachedObject : IDisposable
         Image = surface.Snapshot();
     }
 
+    /// <summary>
+    /// An existing surface was reused for creating this object
+    /// </summary>
+    public bool SurfaceIsRecycled { get; set; }
+
     public SKPicture Picture { get; set; }
 
     public SKImage Image { get; set; }

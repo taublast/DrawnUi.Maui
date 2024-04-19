@@ -4,7 +4,7 @@ using DrawnUi.Maui.Infrastructure;
 using System.Numerics;
 
 namespace Sandbox.Views.Controls;
- 
+
 /// <summary>
 /// Consume and process the cache of the content
 /// </summary>
@@ -138,7 +138,7 @@ public class ContentFolder : ContentLayout
         if (Content != null)
         {
             Content.CreatedCache -= OnCacheCreated;
-            Content.DelegateDrawCache = null;
+            Content.DelegateDrawCache -= DrawContentImage;
         }
     }
 
@@ -300,8 +300,8 @@ public class ContentFolder : ContentLayout
     protected Vector2 _offset;
     protected Vector2 _origin;
 
-    public override ISkiaGestureListener OnSkiaGestureEvent(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
+    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
+        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
     {
 
         ISkiaGestureListener consumed = null;
@@ -317,7 +317,7 @@ public class ContentFolder : ContentLayout
         _offset = new(
             _origin.X - args.Distance.Total.X,
             _origin.Y - args.Distance.Total.Y
-            );
+        );
         consumed = this;
         Repaint();
         break;
