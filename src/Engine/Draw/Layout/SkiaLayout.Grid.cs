@@ -10,6 +10,44 @@ public partial class SkiaLayout
 {
     #region GRID
 
+
+    public virtual ScaledSize MeasureGrid(SKRect rectForChildrenPixels, float scale)
+    {
+
+        var constraints = GetSizeInPoints(rectForChildrenPixels.Size, scale);
+
+        BuildGridLayout(constraints);
+
+        GridStructureMeasured.DecompressStars(constraints);
+
+        var maxHeight = 0.0f;
+        var maxWidth = 0.0f;
+        var spacing = 0.0;
+
+        if (GridStructureMeasured.Columns.Length > 1)
+        {
+            spacing = (GridStructureMeasured.Columns.Length - 1) * ColumnSpacing;
+        }
+
+        var contentWidth = (float)Math.Round((GridStructureMeasured.Columns.Sum(x => x.Size) + spacing + Padding.Left + Padding.Right) * scale);
+
+        spacing = 0.0;
+        if (GridStructureMeasured.Rows.Length > 1)
+        {
+            spacing = (GridStructureMeasured.Rows.Length - 1) * RowSpacing;
+        }
+        var contentHeight = (float)(Math.Round(GridStructureMeasured.Rows.Sum(x => x.Size) + spacing + Padding.Top + Padding.Bottom) * scale);
+
+        if (contentWidth > maxWidth)
+            maxWidth = contentWidth;
+        if (contentHeight > maxHeight)
+            maxHeight = contentHeight;
+
+
+        return ScaledSize.FromPixels(maxWidth, maxHeight, scale);
+    }
+
+
     /// <summary>
     /// Returns number of drawn children
     /// </summary>
@@ -34,8 +72,8 @@ public partial class SkiaLayout
                     continue;
 
                 //GetCellBoundsFor works with points
-                var cell = GridStructure.GetCellBoundsFor(child, Math.Round(destination.Left / scale),
-                    Math.Round(destination.Top / scale));
+                var cell = GridStructure.GetCellBoundsFor(child, (destination.Left / scale),
+                    (destination.Top / scale));
 
                 //GetCellBoundsFor is in pixels
                 SKRect cellRect = new((float)Math.Round(cell.Left * scale), (float)Math.Round(cell.Top * scale),
@@ -70,9 +108,9 @@ public partial class SkiaLayout
     }
 
 
-    protected void BuildGridLayout(SKSize constarints)
+    protected void BuildGridLayout(SKSize constraints)
     {
-        GridStructureMeasured = new SkiaGridStructure(this, constarints.Width, constarints.Height);
+        GridStructureMeasured = new SkiaGridStructure(this, constraints.Width, constraints.Height);
     }
 
     public int GetColumn(BindableObject bindable)

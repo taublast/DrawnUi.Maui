@@ -6,9 +6,7 @@
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
     xmlns:maui="using:Mapsui.Samples.Maui"
-    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel">
@@ -149,7 +147,7 @@
                         MarginTop="{Binding DrawerHeaderSize}"
                         Spacing="0"
                         Tag="InsideDrawer"
-                        Type="Column"
+                        Type="Stack"
                         UseCache="ImageComposition"
                         VerticalOptions="Fill">
 
@@ -159,7 +157,7 @@
                                 HorizontalOptions="Fill"
                                 Style="{x:StaticResource SkiaStyleControLabel}"
                                 Text="Apply Effects" />
-                            <controls:SkiaSwitchFun
+                            <controls:DrawnSwitch
                                 IsToggled="{Binding ValueSwitch, Mode=TwoWay}"
                                 Style="{x:StaticResource SkiaStyleControlInTable}"
                                 TranslationX="-4"
@@ -172,7 +170,7 @@
                                 HorizontalOptions="Fill"
                                 Style="{x:StaticResource SkiaStyleControLabel}"
                                 Text="{Binding Value2, StringFormat='Brightness: {0:0.00}'}" />
-                            <controls:SkiaSliderFun
+                            <controls:DrawnSlider
                                 End="{Binding Value2, Mode=TwoWay}"
                                 HorizontalOptions="Fill"
                                 Max="2"
@@ -189,7 +187,7 @@
                                 HorizontalOptions="Fill"
                                 Style="{x:StaticResource SkiaStyleControLabel}"
                                 Text="{Binding Value1, StringFormat='Contrast: {0:0.00}'}" />
-                            <controls:SkiaSliderFun
+                            <controls:DrawnSlider
                                 End="{Binding Value1, Mode=TwoWay}"
                                 HorizontalOptions="Fill"
                                 Max="3"
@@ -206,7 +204,7 @@
                                 HorizontalOptions="Fill"
                                 Style="{x:StaticResource SkiaStyleControLabel}"
                                 Text="{Binding Value6, StringFormat='Saturation: {0:0.00}'}" />
-                            <controls:SkiaSliderFun
+                            <controls:DrawnSlider
                                 End="{Binding Value6, Mode=TwoWay}"
                                 HorizontalOptions="Fill"
                                 Max="2"
@@ -223,7 +221,7 @@
                                 HorizontalOptions="Fill"
                                 Style="{x:StaticResource SkiaStyleControLabel}"
                                 Text="{Binding Value3, StringFormat='Tint: {0:0.00}'}" />
-                            <controls:SkiaSliderFun
+                            <controls:DrawnSlider
                                 End="{Binding Value3, Mode=TwoWay}"
                                 HorizontalOptions="Fill"
                                 Max="1"

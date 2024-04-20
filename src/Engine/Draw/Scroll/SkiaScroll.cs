@@ -693,6 +693,8 @@ namespace DrawnUi.Maui.Draw
                             checkOverscroll = false; //do not check overscroll if we just got focus
                         }
 
+                        IsUserPanning = true;
+
                         //var movedY = (float)Math.Round(args.Distance.Total.Y * ChangeDIstancePanned);
                         //var movedX = (float)Math.Round(args.Distance.Total.X * ChangeDIstancePanned);
 
@@ -911,6 +913,13 @@ namespace DrawnUi.Maui.Draw
                             {
                                 if (CheckNeedToSnap())
                                     Snap(SystemAnimationTimeSecs);
+                                else
+                                {
+                                    //scroling stopped
+                                    //force positionviewport for pixelsnap etc
+                                    _destination = SKRect.Empty;
+                                    //Update();
+                                }
                             }
 
                         }
@@ -1482,7 +1491,7 @@ namespace DrawnUi.Maui.Draw
                 (float)Math.Abs(pixelsOffsetY)
                 );
 
-                if (layout.Type == LayoutType.Column) //todo grid
+                if (layout.Type == LayoutType.Stack) //todo grid
                 {
                     var stackStructure = layout.LatestStackStructure;
                     int index = -1;
@@ -1492,27 +1501,21 @@ namespace DrawnUi.Maui.Draw
                     if (trace)
                         Trace.WriteLine($"offset: {point.Y}");
 
-                    for (row = 0; row < stackStructure.Count; row++)
+                    foreach (var childInfo in stackStructure.GetChildren())
                     {
-                        var rowContent = stackStructure[row];
-                        for (col = 0; col < rowContent.Count; col++)
+                        index++;
+                        if (childInfo.Destination.ContainsInclusive(point))
                         {
-                            index++;
-                            var childInfo = rowContent[col];
-
-                            if (childInfo.Destination.ContainsInclusive(point))
+                            return new ContainsPointResult()
                             {
-                                return new ContainsPointResult()
-                                {
-                                    Index = index,
-                                    Area = childInfo.Destination,
-                                    Point = point,
-                                    Unmodified = new SKPoint(0, initialValue)
-                                };
-                            }
-
+                                Index = index,
+                                Area = childInfo.Destination,
+                                Point = point,
+                                Unmodified = new SKPoint(0, initialValue)
+                            };
                         }
                     }
+
                 }
             }
             else
@@ -1558,38 +1561,30 @@ namespace DrawnUi.Maui.Draw
                 );
 
 
-                if (layout.Type == LayoutType.Row) //todo grid
+                if (layout.Type == LayoutType.Stack) //todo grid
                 {
                     var stackStructure = layout.StackStructure;
                     int index = -1;
                     int row;
                     int col;
 
-                    for (row = 0; row < stackStructure.Count; row++)
+                    foreach (var childInfo in stackStructure.GetChildren())
                     {
-                        var rowContent = stackStructure[row];
-                        for (col = 0; col < rowContent.Count; col++)
+                        index++;
+                        var childRect = childInfo.Destination.Clone();
+                        //childRect.Offset(point.X, point.Y);
+
+                        if (childRect.ContainsInclusive(point))
                         {
-                            index++;
-                            var childInfo = rowContent[col];
-
-                            var childRect = childInfo.Destination.Clone();
-                            //childRect.Offset(point.X, point.Y);
-
-                            if (childRect.ContainsInclusive(point))
+                            return new ContainsPointResult()
                             {
-                                return new ContainsPointResult()
-                                {
-                                    Index = index,
-                                    Area = childRect,
-                                    Point = point,
-                                    Unmodified = new SKPoint(initialValue, 0)
-                                };
-                            }
-
+                                Index = index,
+                                Area = childRect,
+                                Point = point,
+                                Unmodified = new SKPoint(initialValue, 0)
+                            };
                         }
                     }
-
 
                 }
             }
@@ -1613,7 +1608,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        /// ToDo this actually work only for Column and Row
+        /// ToDo this actually work only for Stack and Row
         /// </summary>
         /// <param name="index"></param>
         /// <param name="option"></param>
@@ -1641,10 +1636,11 @@ namespace DrawnUi.Maui.Draw
                     try
                     {
                         SkiaLayout.ControlInStack childInfo = null;
+
                         if (Orientation == ScrollOrientation.Horizontal)
-                            childInfo = structure[0][(int)index];
+                            childInfo = structure.GetAtIndexForRow(0, index);
                         else
-                            childInfo = structure[(int)index][0];
+                            childInfo = structure.GetAtIndexForColumn(0, index);
 
                         if (childInfo.Measured != null)
                         {
@@ -2243,7 +2239,18 @@ namespace DrawnUi.Maui.Draw
             if (!IsSnapping)
                 Snapped = false;
 
+            var isScroling = _animatorFling.IsRunning || _animatorBounce.IsRunning
+                                                      || _scrollerX.IsRunning || _scrollerY.IsRunning || IsUserPanning;
+
             ContentAvailableSpace = GetContentAvailableRect(destination);
+
+            //we scroll at subpixels but stop only at pixel-snapped
+            if (IsScrolling && !isScroling && !IsUserPanning || onceAfterInitializeViewport)
+            {
+                var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
+                var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
+                offsetPixels.Offset(roundX, roundY);
+            }
 
             InternalViewportOffset = ScaledPoint.FromPixels(offsetPixels, scale);
 
@@ -2334,14 +2341,43 @@ namespace DrawnUi.Maui.Draw
 
             //POST EVENTS
             Scrolled?.Invoke(this, InternalViewportOffset);
+
             OnScrolled();
 
+            if (isScroling)
+            {
+                IsScrolling = true;
+            }
+            else
+            {
+                if (IsScrolling)
+                {
+                    ScrollingEnded?.Invoke(this, InternalViewportOffset);
+                    OnScrollingEnded();
+                }
+                IsScrolling = false;
+            }
+
+            //Super.Log($"[SCROLL] {InternalViewportOffset.Pixels.Y}");
             //ExecuteDelayedScrollOrders(); //todo move toonscrolled?
         }
 
-
-
-
+        private bool _IsScrolling;
+        public bool IsScrolling
+        {
+            get
+            {
+                return _IsScrolling;
+            }
+            set
+            {
+                if (_IsScrolling != value)
+                {
+                    _IsScrolling = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public override ScaledRect GetOnScreenVisibleArea()
         {
@@ -2388,6 +2424,15 @@ namespace DrawnUi.Maui.Draw
             //    ApplyScrollPositionToRefreshViewUnsafe();
             //}
         }
+
+        public virtual void OnScrollingEnded()
+        {
+
+        }
+
+        public event EventHandler<ScaledPoint> ScrollingEnded;
+
+        public event EventHandler<ScaledPoint> Scrolled;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void ApplyScrollPositionToRefreshViewUnsafe()

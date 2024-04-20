@@ -237,7 +237,6 @@ public class SkiaCarousel : SnappingLayout
 
                     //used by gestures etc..
                     cell.Drawn.Set(view.DrawingRect.Left, view.DrawingRect.Top, view.DrawingRect.Right, view.DrawingRect.Bottom);
-                    cell.LastDrawnSize = new(cell.Drawn.Width, cell.Drawn.Height);
 
                     var destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right, cell.Drawn.Bottom);
                     tree.Add(new SkiaControlWithRect(view, destinationRect, cell.ControlIndex));

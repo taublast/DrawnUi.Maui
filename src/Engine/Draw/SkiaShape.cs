@@ -21,12 +21,6 @@ namespace DrawnUi.Maui.Draw
                 shade.BindingContext = BindingContext;
             }
 
-
-
-
-
-
-
             base.ApplyBindingContext();
         }
 
@@ -355,6 +349,10 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected SKPath DrawPath { get; set; } = new();
 
+        protected SKPath DrawPathShape { get; set; } = new();
+
+        protected SKRoundRect DrawRoundedRect { get; set; }
+
         public override void OnDisposing()
         {
 
@@ -364,8 +362,8 @@ namespace DrawnUi.Maui.Draw
             DrawPath?.Dispose();
             DrawPathResized?.Dispose();
             DrawPathAligned?.Dispose();
-
-            pathB?.Dispose();
+            DrawRoundedRect?.Dispose();
+            DrawPathShape?.Dispose();
 
             base.OnDisposing();
         }
@@ -419,6 +417,8 @@ namespace DrawnUi.Maui.Draw
             default:
             if (CornerRadius != default)
             {
+                //path.AddRect(strokeAwareChildrenSize);
+
                 var scaledRadiusLeftTop = (float)(CornerRadius.TopLeft * RenderingScale);
                 var scaledRadiusRightTop = (float)(CornerRadius.TopRight * RenderingScale);
                 var scaledRadiusLeftBottom = (float)(CornerRadius.BottomLeft * RenderingScale);
@@ -437,13 +437,14 @@ namespace DrawnUi.Maui.Draw
 
                 rrect.SetRectRadii(strokeAwareChildrenSize, new[]
                 {
-                            new SKPoint(scaledRadiusLeftTop,scaledRadiusLeftTop),
-                            new SKPoint(scaledRadiusRightTop,scaledRadiusRightTop),
-                            new SKPoint(scaledRadiusRightBottom,scaledRadiusRightBottom),
-                            new SKPoint(scaledRadiusLeftBottom,scaledRadiusLeftBottom),
-                        });
+                                new SKPoint(scaledRadiusLeftTop,scaledRadiusLeftTop),
+                                new SKPoint(scaledRadiusRightTop,scaledRadiusRightTop),
+                                new SKPoint(scaledRadiusRightBottom,scaledRadiusRightBottom),
+                                new SKPoint(scaledRadiusLeftBottom,scaledRadiusLeftBottom),
+                            });
                 path.AddRoundRect(rrect);
                 //path.AddRoundRect(strokeAwareChildrenSize, innerCornerRadius, innerCornerRadius);
+
             }
             else
                 path.AddRect(strokeAwareChildrenSize);
@@ -453,7 +454,6 @@ namespace DrawnUi.Maui.Draw
             return path;
         }
 
-        SKPath pathB = new();
 
         protected virtual void PaintBackground(SkiaDrawingContext ctx,
             SKRect outRect,
@@ -472,9 +472,10 @@ namespace DrawnUi.Maui.Draw
                 {
                     paint.IsAntialias = true;
                 }
-                using var rrect = new SKRoundRect();
-                rrect.SetRectRadii(outRect, radii);
-                ctx.Canvas.DrawRoundRect(rrect, RenderingPaint);
+                if (DrawRoundedRect == null)
+                    DrawRoundedRect = new();
+                DrawRoundedRect.SetRectRadii(outRect, radii);
+                ctx.Canvas.DrawRoundRect(DrawRoundedRect, RenderingPaint);
             }
             else
                 ctx.Canvas.DrawRect(outRect, RenderingPaint);
@@ -493,9 +494,9 @@ namespace DrawnUi.Maui.Draw
             {
                 paint.IsAntialias = true;
             }
-            pathB.Reset();
-            pathB.AddOval(outRect);
-            ctx.Canvas.DrawPath(pathB, paint);
+            DrawPathShape.Reset();
+            DrawPathShape.AddOval(outRect);
+            ctx.Canvas.DrawPath(DrawPathShape, paint);
 
             break;
 
@@ -614,18 +615,16 @@ namespace DrawnUi.Maui.Draw
                 paint.Color = StrokeColor.ToSKColor();
                 paint.IsAntialias = true;
 
-                using SKPath path1 = new SKPath();
-
                 switch (Type)
                 {
                 case ShapeType.Rectangle:
                 if (CornerRadius != default)
                 {
-                    using var rrect = new SKRoundRect();
-                    rrect.SetRectRadii(outRect, radii);
-                    ctx.Canvas.DrawRoundRect(rrect, paint);
+                    if (DrawRoundedRect == null)
+                        DrawRoundedRect = new();
+                    DrawRoundedRect.SetRectRadii(outRect, radii);
+                    ctx.Canvas.DrawRoundRect(DrawRoundedRect, paint);
                 }
-                //ctx.Canvas.DrawRoundRect(outRect, scaledRadius, scaledRadius, paint);
                 else
                     ctx.Canvas.DrawRect(outRect, paint);
                 break;
@@ -635,21 +634,24 @@ namespace DrawnUi.Maui.Draw
                 break;
 
                 case ShapeType.Ellipse:
-                path1.AddOval(outRect);
-                ctx.Canvas.DrawPath(path1, paint);
+                DrawPathShape.Reset();
+                DrawPathShape.AddOval(outRect);
+                ctx.Canvas.DrawPath(DrawPathShape, paint);
                 break;
 
                 case ShapeType.Arc:
+                DrawPathShape.Reset();
                 // Start & End Angle for Radial Gauge
                 var startAngle = (float)Value1;
                 var sweepAngle = (float)Value2;
-                path1.AddArc(outRect, startAngle, sweepAngle);
-                ctx.Canvas.DrawPath(path1, paint);
+                DrawPathShape.AddArc(outRect, startAngle, sweepAngle);
+                ctx.Canvas.DrawPath(DrawPathShape, paint);
                 break;
 
                 case ShapeType.Path:
-                path1.AddPath(DrawPathAligned);
-                ctx.Canvas.DrawPath(path1, paint);
+                DrawPathShape.Reset();
+                DrawPathShape.AddPath(DrawPathAligned);
+                ctx.Canvas.DrawPath(DrawPathShape, paint);
 
                 break;
                 }

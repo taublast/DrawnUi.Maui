@@ -8,7 +8,7 @@ namespace Sandbox.Views.Controls
     {
         public ExpandableVerticalStack()
         {
-            this.Type = LayoutType.Column;
+            this.Type = LayoutType.Stack;
         }
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)

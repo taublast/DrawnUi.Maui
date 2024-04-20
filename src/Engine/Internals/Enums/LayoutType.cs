@@ -8,32 +8,17 @@ public enum LayoutType
     Absolute,
 
     /// <summary>
-    /// Vertical stack
+    /// Versatile stack
     /// </summary>
-    Column,
+    Stack,
 
     /// <summary>
-    /// Horizontal stack
-    /// </summary>
-    Row,
-
-    /// <summary>
-    /// Use usual grid properties like Grid.Column, ColumnSpacing etc
+    /// Use usual grid properties like Grid.Stack, ColumnSpacing etc
     /// </summary>
     Grid,
 
     /// <summary>
-    /// todo
+    /// TODO
     /// </summary>
-    MasonryColumns,
-
-    /// <summary>
-    /// todo
-    /// </summary>
-
-    MasonryRows,
-    /// <summary>
-    /// todo
-    /// </summary>
-    Flex
+    Masonry,
 }

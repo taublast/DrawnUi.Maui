@@ -70,7 +70,7 @@
                             MarginBottom="{Binding BottomInsets}"
                             HorizontalOptions="Fill"
                             Spacing="24"
-                            Type="Column"
+                            Type="Stack"
                             UseCache="Image">
 
                             <draw:SkiaLabel

@@ -721,11 +721,11 @@ namespace DrawnUi.Maui.Draw
             double measuredDimension,
             double sideConstraintsPixels,
             bool autoSize,
-            double minRequest, double maxRequest, float scale)
+            double minRequest, double maxRequest, float scale, bool canExpand)
         {
             var contentDimension = sideConstraintsPixels + measuredDimension;
 
-            if (autoSize && (measuredDimension > 0 && measuredDimension < constraintPixels)
+            if (autoSize && measuredDimension > 0 && (canExpand || measuredDimension < constraintPixels)
                 || float.IsInfinity(constraintPixels))
             {
                 constraintPixels = (float)contentDimension;
@@ -757,7 +757,7 @@ namespace DrawnUi.Maui.Draw
                 NeedAutoHeight,
                 MinimumHeightRequest,
                 MaximumHeightRequest,
-                RenderingScale);
+                RenderingScale, CanExpand);
         }
 
         public float AdaptWidthConstraintToContentRequest(float widthConstraintPixels,
@@ -770,7 +770,7 @@ namespace DrawnUi.Maui.Draw
                 NeedAutoWidth,
                 MinimumWidthRequest,
                 MaximumWidthRequest,
-                RenderingScale);
+                RenderingScale, CanExpand);
         }
 
         public SKRect AdaptToContraints(SKRect measuredPixels,
@@ -2133,6 +2133,17 @@ namespace DrawnUi.Maui.Draw
         }
         */
 
+        public static readonly BindableProperty CanExpandProperty = BindableProperty.Create(nameof(CanExpand),
+            typeof(bool), typeof(SkiaControl), true,
+            propertyChanged: NeedInvalidateMeasure);
+        /// <summary>
+        /// Whether can expand beyond constraints if children content went beyond them, default is True.
+        /// </summary>
+        public virtual bool CanExpand
+        {
+            get { return (bool)GetValue(CanExpandProperty); }
+            set { SetValue(CanExpandProperty, value); }
+        }
 
         public static readonly BindableProperty IsClippedToBoundsProperty = BindableProperty.Create(nameof(IsClippedToBounds),
             typeof(bool), typeof(SkiaControl), false,
@@ -2949,12 +2960,12 @@ namespace DrawnUi.Maui.Draw
             {
                 if (RenderObject != null)
                 {
-                    thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
+                    thisOffset.Offset(RenderObject.TranslateInputCoords(DrawingRect));
                 }
                 else
                 if (RenderObjectPrevious != null)
                 {
-                    thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
+                    thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(DrawingRect));
                 }
             }
 
@@ -4540,14 +4551,14 @@ namespace DrawnUi.Maui.Draw
                 var cacheType = UsingCacheType;
                 var cacheOffscreen = RenderObjectPrevious;
 
-                if (RenderObjectPrevious != null &&
-                    cacheType != SkiaCacheType.ImageDoubleBuffered
-                    && cacheType != SkiaCacheType.ImageComposition)
+                if (RenderObjectPrevious != null && RenderObjectPreviousNeedsUpdate ||
+                    cacheType != SkiaCacheType.ImageDoubleBuffered && cacheType != SkiaCacheType.ImageComposition)
                 {
                     //this might happen only if we switch cache type at runtime
                     //while hotreloading etc.. rare case
                     RenderObjectPrevious?.Dispose();
                     RenderObjectPrevious = null;
+                    RenderObjectPreviousNeedsUpdate = false;
                 }
 
                 if (cache != null)
@@ -5100,6 +5111,23 @@ namespace DrawnUi.Maui.Draw
             return path;
         }
 
+        private bool _RenderObjectPreviousNeedsUpdate;
+        public bool RenderObjectPreviousNeedsUpdate
+        {
+            get
+            {
+                return _RenderObjectPreviousNeedsUpdate;
+            }
+            set
+            {
+                if (_RenderObjectPreviousNeedsUpdate != value)
+                {
+                    _RenderObjectPreviousNeedsUpdate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         /// <summary>
         /// Should delete RenderObject when starting new frame rendering
         /// </summary>
@@ -5436,11 +5464,12 @@ namespace DrawnUi.Maui.Draw
                 if (IsRenderingWithComposition)
                 {
                     var previousCache = RenderObjectPrevious;
-                    var offset = new SKPoint(this.LastDrawnAt.Left - previousCache.Bounds.Left, LastDrawnAt.Top - previousCache.Bounds.Top);
+                    var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
                     clipPreviousCachePath.Reset();
+
                     foreach (var dirtyChild in DirtyChildrenInternal)
                     {
-                        var clip = dirtyChild.LastDrawnAt;
+                        var clip = dirtyChild.DrawingRect;
                         clip.Offset(offset);
                         clipPreviousCachePath.AddRect(clip);
                     }

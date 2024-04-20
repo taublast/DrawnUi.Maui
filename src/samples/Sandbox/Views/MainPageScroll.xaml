@@ -32,7 +32,7 @@
 
                 <draw:SkiaLayout
                     HorizontalOptions="Fill"
-                    Type="Column"
+                    Type="Stack"
                     BackgroundColor="Blue"
                     Tag="Content"
                     >

@@ -65,7 +65,7 @@
                     ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding Items}"
                     RecyclingTemplate="Enabled"
-                    Type="Column">
+                    Type="Stack">
 
                     <draw:SkiaLayout.ItemTemplate>
                         <DataTemplate x:DataType="demo:ChatMessage">

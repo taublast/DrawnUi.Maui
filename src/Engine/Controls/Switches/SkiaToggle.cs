@@ -22,7 +22,7 @@ public class SkiaToggle : SkiaLayout
         ApplyProperties();
 
         NotifyWasToggled();
-        
+
         IsInternalCall = false;
     }
 
@@ -50,13 +50,6 @@ public class SkiaToggle : SkiaLayout
 
     public event EventHandler<bool> Toggled;
 
-
-
-    protected virtual void OnAppearenceChanged()
-    {
-        ApplyProperties();
-    }
-
     /// <summary>
     /// Base call Update()
     /// </summary>
@@ -66,7 +59,6 @@ public class SkiaToggle : SkiaLayout
     }
 
     #region PROPERTIES
-
 
     public static readonly BindableProperty CommandToggledProperty = BindableProperty.Create(nameof(CommandToggled), typeof(ICommand),
         typeof(SkiaToggle),
@@ -149,10 +141,10 @@ public class SkiaToggle : SkiaLayout
         set { SetValue(CommandTappedParameterProperty, value); }
     }
 
-    private static void AppearenceChanged(BindableObject bindable, object oldvalue, object newvalue)
+    protected static void NeedUpdateProperties(BindableObject bindable, object oldvalue, object newvalue)
     {
         var control = bindable as SkiaToggle;
-        control?.OnAppearenceChanged();
+        control?.ApplyProperties();
     }
 
 
@@ -160,7 +152,7 @@ public class SkiaToggle : SkiaLayout
         nameof(ColorThumbOn),
         typeof(Color),
         typeof(SkiaToggle),
-        Colors.Red, propertyChanged: AppearenceChanged);
+        Colors.Red, propertyChanged: NeedUpdateProperties);
 
     public Color ColorThumbOn
     {
@@ -172,7 +164,7 @@ public class SkiaToggle : SkiaLayout
         nameof(ColorFrameOn),
         typeof(Color),
         typeof(SkiaToggle),
-        Colors.White, propertyChanged: AppearenceChanged);
+        Colors.White, propertyChanged: NeedUpdateProperties);
 
     public Color ColorFrameOn
     {
@@ -184,7 +176,7 @@ public class SkiaToggle : SkiaLayout
         nameof(ColorThumbOff),
         typeof(Color),
         typeof(SkiaToggle),
-        Colors.White, propertyChanged: AppearenceChanged);
+        Colors.White, propertyChanged: NeedUpdateProperties);
 
     public Color ColorThumbOff
     {
@@ -196,7 +188,7 @@ public class SkiaToggle : SkiaLayout
         nameof(ColorFrameOff),
         typeof(Color),
         typeof(SkiaToggle),
-        Colors.DarkGray, propertyChanged: AppearenceChanged);
+        Colors.DarkGray, propertyChanged: NeedUpdateProperties);
 
     public Color ColorFrameOff
     {

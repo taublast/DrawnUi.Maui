@@ -153,6 +153,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="textPaint"></param>
         /// <param name="strokePaint"></param>
         /// <param name="scale"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawText(SKCanvas canvas, float x, float y, string text,
             SKPaint textPaint,
             SKPaint strokePaint,
@@ -174,8 +175,10 @@ namespace DrawnUi.Maui.Draw
             DrawTextInternal(canvas, text, x, y, textPaint, scale);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void DrawTextInternal(SKCanvas canvas, string text, float x, float y, SKPaint paint, float scale)
         {
+            //canvas.DrawText(text, x, y, paint);
             canvas.DrawText(text, (int)Math.Round(x), (int)Math.Round(y), paint);
         }
 
@@ -1202,6 +1205,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="paint"></param>
         /// <param name="paintStroke"></param>
         /// <param name="scale"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void DrawCharacter(SKCanvas canvas,
             int lineIndex, int letterIndex,
             string text, float x, float y, SKPaint paint, SKPaint paintStroke, SKPaint paintDropShadow, SKRect destination, float scale)
@@ -2320,8 +2324,10 @@ namespace DrawnUi.Maui.Draw
 
                     if (width > limitWidth)
                     {
-                        //the whole word is bigger than width, need break word,
-                        if (severalWords)
+                        //the whole word is bigger than width,
+
+                        //need break word,
+                        if (severalWords && LineBreakMode != LineBreakMode.NoWrap)
                         {
                             //cannot add this word
                             if (!AddLine(lineResult, textLine))
@@ -2329,6 +2335,13 @@ namespace DrawnUi.Maui.Draw
                                 break; //was last allowed line
                             }
                             PostponeToNextLine(word); //push word
+                            continue;
+                        }
+
+                        if (LineBreakMode == LineBreakMode.WordWrap || LineBreakMode == LineBreakMode.NoWrap)
+                        {
+                            //silly add
+                            AddLine(textLine);
                             continue;
                         }
 
@@ -2424,7 +2437,6 @@ namespace DrawnUi.Maui.Draw
                     }
                     else
                     {
-
                         lineResult = textLine;
                     }
                 }
@@ -2533,7 +2545,7 @@ namespace DrawnUi.Maui.Draw
         FontAttributes.None,
         propertyChanged: NeedUpdateFont);
 
-        [TypeConverter(typeof(FontAttributesConverter))]
+        [TypeConverter(typeof(Microsoft.Maui.Controls.FontAttributesConverter))]
         public FontAttributes FontAttributes
         {
             get { return (FontAttributes)GetValue(FontAttributesProperty); }

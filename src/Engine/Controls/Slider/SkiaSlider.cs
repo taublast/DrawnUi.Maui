@@ -118,7 +118,6 @@ public class SkiaSlider : SkiaLayout
         {
             //clicked on trail maybe
 
-
             if (onTrail)
             {
                 if (EnableRange)

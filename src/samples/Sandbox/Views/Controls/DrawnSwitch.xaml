@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <draw:SkiaSwitch
-    x:Class="Sandbox.Views.Controls.SkiaSwitchFun"
+    x:Class="Sandbox.Views.Controls.DrawnSwitch"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
@@ -10,6 +10,7 @@
     ColorThumbOff="{StaticResource ColorPrimary}"
     ColorThumbOn="{StaticResource ColorPrimary}"
     HeightRequest="30"
+    UseCache="Image"
     WidthRequest="50">
 
     <!--  TRAY  -->

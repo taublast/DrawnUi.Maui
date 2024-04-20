@@ -158,8 +158,6 @@ public partial class SkiaScroll
     }
     float _viewportOffsetX;
 
-    public event EventHandler<ScaledPoint> Scrolled;
-
     protected virtual void InitializeViewport(float scale)
     {
         _loadMoreTriggeredAt = 0;

@@ -416,13 +416,13 @@ public class ViewsAdapter : IDisposable
             bool CheckTemplateChanged()
             {
                 var ret = _templatedViewsPool.CreateTemplate != template
-                           //|| _parent.MaxColumns != _forColumns || _parent.MaxRows != _forRows
+                           //|| _parent.SplitMax != _forColumns || _parent.MaxRows != _forRows
                            ;
                 return ret;
             }
 
             var layoutChanged = true //todo cannot really optimize as can have same nb of cells, same references for  _dataContexts != dataContexts but different contexts
-             || _parent.RenderingScale != _forScale || _parent.MaxColumns != _forColumns || _parent.MaxRows != _forRows;
+             || _parent.RenderingScale != _forScale || _parent.SplitMax != _forColumns || _parent.MaxRows != _forRows;
 
             if (layoutChanged || _templatedViewsPool == null || _dataContexts != dataContexts || CheckTemplateChanged())
             {
@@ -432,7 +432,7 @@ public class ViewsAdapter : IDisposable
                     //kill provider ability to provide deprecated templates
                     _wrappers.Clear();
                     _forScale = _parent.RenderingScale;
-                    _forColumns = _parent.MaxColumns;
+                    _forColumns = _parent.SplitMax;
                     _forRows = _parent.MaxRows;
                     _dataContexts = null;
                     AddedMore = 0;

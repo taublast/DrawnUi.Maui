@@ -2,11 +2,11 @@
 
 public enum DrawTextAlignment
 {
-	Start,
-	Center,
-	End,
-	FillWords,
-	FillWordsFull,
-	FillCharacters,
-	FillCharactersFull,
+    Start,
+    Center,
+    End,
+    FillWords,
+    FillWordsFull,
+    FillCharacters,
+    FillCharactersFull,
 }

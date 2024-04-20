@@ -222,7 +222,7 @@ public class Canvas : DrawnView, IGestureListener
                 }
 
                 ContentSize = ScaledSize.FromPixels(maxWidth, maxHeight, (float)RenderingScale);
-              
+
                 widthConstraintPts = AdaptWidthContraintToContentRequest(widthConstraintPts, ContentSize, Padding.Left + Padding.Right);
                 heightConstraintPts = AdaptHeightContraintToContentRequest(heightConstraintPts, ContentSize, Padding.Top + Padding.Bottom);
 
@@ -264,7 +264,7 @@ public class Canvas : DrawnView, IGestureListener
             NeedAutoWidth,
             MinimumWidthRequest,
             MaximumWidthRequest,
-            1);
+            1, false);
     }
 
     public float AdaptHeightContraintToContentRequest(float heightConstraintUnits, ScaledSize measuredContent, double sideConstraintsUnits)
@@ -276,7 +276,7 @@ public class Canvas : DrawnView, IGestureListener
             NeedAutoHeight,
             MinimumHeightRequest,
             MaximumHeightRequest,
-            1);
+            1, false);
     }
 
 

@@ -185,6 +185,12 @@
     <Compile Update="Views\AlohaKit.xaml.cs">
       <DependentUpon>AlohaKit.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Controls\DrawnRadioButton.xaml.cs">
+      <DependentUpon>DrawnRadioButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Controls\DrawnSlider.xaml.cs">
+      <DependentUpon>DrawnSlider.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\MainPageAlohaKit.xaml.cs">
       <DependentUpon>MainPageAlohaKit.xaml</DependentUpon>
     </Compile>
@@ -267,6 +273,9 @@
 
   <ItemGroup>
     <MauiXaml Update="ImageTestPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\Controls\DrawnRadioButton.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\MainPageControls.xaml">

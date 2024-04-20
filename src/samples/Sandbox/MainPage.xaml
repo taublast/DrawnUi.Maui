@@ -35,8 +35,8 @@
                     <draw:SkiaLayout
                         HorizontalOptions="Fill"
                         Spacing="0"
-                        Type="Column"
                         Tag="ScrollContent"
+                        Type="Stack"
                         UseCache="ImageComposition">
 
                         <!--
@@ -44,6 +44,7 @@
                             the whole scroll even if image drawing with new effects might be slow
                         -->
                         <draw:SkiaImage
+                            draw:AddGestures.AnimationTapped="Shimmer"
                             Aspect="AspectFit"
                             HeightRequest="185"
                             HorizontalOptions="Center"
@@ -86,7 +87,6 @@
                         </draw:SkiaImage>
 
                         <controls:SliderColor
-                            Tag="Slider"
                             x:Name="Slider"
                             Margin="0,-16,0,16"
                             DefaultColor="Red"
@@ -96,6 +96,7 @@
                             MinMaxStringFormat="P0"
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
+                            Tag="Slider"
                             UseCache="ImageDoubleBuffered"
                             WidthRequest="200" />
 
@@ -104,10 +105,10 @@
                             might need to cache with area around
                         -->
                         <draw:SkiaLayout
-                            Tag="SetMainpageText"
                             Margin="0,-10,0,0"
                             Padding="10"
                             HorizontalOptions="Center"
+                            Tag="SetMainpageText"
                             UseCache="Image">
                             <draw:SkiaLabel
                                 FontSize="24"
@@ -126,11 +127,11 @@
 
                         <draw:SkiaLayout
                             x:Name="Buttons"
-                            Tag="Buttons"
                             HorizontalOptions="Center"
-                            MaxColumns="2"
                             Spacing="0"
-                            Type="Column"
+                            SplitMax="2"
+                            Tag="Buttons"
+                            Type="Stack"
                             UseCache="ImageComposition">
 
                             <draw:SkiaLayout.ItemTemplate>
@@ -138,9 +139,9 @@
 
                                     <!--  caching area with shadow  -->
                                     <draw:SkiaLayout
-                                        Tag="Button"
                                         Padding="16"
                                         HorizontalOptions="Start"
+                                        Tag="Button"
                                         UseCache="Image">
 
                                         <draw:SkiaButton

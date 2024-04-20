@@ -136,6 +136,23 @@ public partial class Super
         }
     }
 
+    private static bool _isRtl = false;
+    /// <summary>
+    /// RTL support UNDER CONSTRUCTION
+    /// </summary>
+    public static bool IsRtl
+    {
+        get => _isRtl;
+        set
+        {
+            if (_isRtl != value)
+            {
+                _isRtl = value;
+                NeedGlocalUpdate();
+            }
+        }
+    }
+
     public static IApplication App { get; set; }
 
     /// <summary>

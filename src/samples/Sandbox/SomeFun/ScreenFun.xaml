@@ -62,7 +62,7 @@
             Padding="24,0"
             HorizontalOptions="Fill"
             MarginTop="80"
-            Type="Column"
+            Type="Stack"
             UseCache="GPU">
 
             <draw:SkiaLabel

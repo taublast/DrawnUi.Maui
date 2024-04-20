@@ -29,18 +29,85 @@
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill">
 
+                <!--<draw:SkiaLayout
+                    Margin="16,20,16,16"
+                    AddMarginTop="11"
+                    BackgroundColor="Transparent"
+                    HorizontalOptions="Fill"
+                    Spacing="16"
+                    SplitMax="2"
+                    Type="Stack">
+
+                    <controls:DrawnRadioButton Text="Flowers" />
+
+                    <controls:DrawnRadioButton Text="Food" />
+
+                    <controls:DrawnRadioButton Text="Origami" />
+
+                    <controls:DrawnRadioButton Text="Lego Bricks" />
+
+                    <controls:DrawnRadioButton Text="Something else" />
+
+                    <controls:DrawnRadioButton Text="Various" />
+
+                </draw:SkiaLayout>-->
+
                 <draw:SkiaLayout
                     Padding="0,32"
                     HorizontalOptions="Center"
+                    Spacing="20"
                     Tag="Content"
-                    Type="Column"
+                    Type="Stack"
                     UseCache="ImageComposition"
-                    WidthRequest="250">
+                    WidthRequest="280">
 
-                    <controls:SkiaSwitchFun UseCache="Operations" />
+                    <draw:SkiaLayout HorizontalOptions="Fill">
 
-                    <controls:SkiaSliderFun UseCache="Operations" />
+                        <draw:SkiaShape
+                            AddMarginTop="10"
+                            CornerRadius="12"
+                            HorizontalOptions="Fill"
+                            StrokeColor="Black"
+                            StrokeWidth="1.0"
+                            VerticalOptions="Fill" />
 
+
+                        <!--  todo bugged FontAttributes="Bold"  -->
+
+                        <draw:SkiaLabel
+                            Margin="16,0,0,0"
+                            Padding="4,0"
+                            BackgroundColor="White"
+                            Text="Radio Buttons" />
+
+                        <draw:SkiaLayout
+                            Margin="20"
+                            AddMarginTop="14"
+                            DynamicColumns="True"
+                            HorizontalOptions="Fill"
+                            Spacing="12"
+                            SplitMax="2"
+                            Type="Stack"
+                            UseCache="ImageComposition">
+
+                            <controls:DrawnRadioButton Text="Flowers" />
+
+                            <controls:DrawnRadioButton Text="Food" />
+
+                            <controls:DrawnRadioButton Text="Origami" />
+
+                            <controls:DrawnRadioButton Text="Lego Bricks" />
+
+                            <controls:DrawnRadioButton Text="Something else" />
+
+                            <controls:DrawnRadioButton Text="Various" />
+
+                        </draw:SkiaLayout>
+                    </draw:SkiaLayout>
+
+                    <controls:DrawnSwitch />
+
+                    <controls:DrawnSlider />
 
                 </draw:SkiaLayout>
 
