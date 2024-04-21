@@ -1,6 +1,7 @@
 ﻿using Markdig.Helpers;
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using static DrawnUi.Maui.Draw.SkiaLayout;
 
 namespace DrawnUi.Maui.Draw;
@@ -29,18 +30,19 @@ public class BuildColumnLayout : StackLayoutStructure
         var structure = new LayoutStructure();
 
         //for current row, to layout upon finalizing
-        var cells = new List<ControlInStack>();
+        var cellsToLayoutLater = new List<ControlInStack>();
 
         var maxAvailableSpace = rectForChildrenPixels.Width;
         float sizePerChunk = maxAvailableSpace;
 
         SKRect rectForChild = rectForChildrenPixels;
-        bool useFixedSplitSize = _layout.SplitMax > 0;
+        bool useFixedSplitSize = _layout.Split > 0;
+        bool alignSplit = _layout.SplitAlign && useFixedSplitSize;
 
-        if (_layout.SplitMax > 1)
+        if (_layout.Split > 1)
         {
             sizePerChunk = (float)Math.Round(
-                (maxAvailableSpace - (_layout.SplitMax - 1) * _layout.Spacing * scale) / _layout.SplitMax);
+                (maxAvailableSpace - (_layout.Split - 1) * _layout.Spacing * scale) / _layout.Split);
         }
 
         var column = 0;
@@ -81,26 +83,37 @@ public class BuildColumnLayout : StackLayoutStructure
                 stackWidth = maxWidth;
 
             //layout cells in this row for the final height:
+            LayoutCellsInternal();
+
+            stackHeight += addHeight;
+            rectForChild.Top += addHeight;
+
+            row++;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void LayoutCellsInternal()
+        {
+            //layout cells in this row for the final height:
             if (!_layout.IsTemplated)
             {
-                foreach (var controlInStack in cells)
+                var layoutMaxHeight = float.IsFinite(rectFitChild.Height) ? rectFitChild.Height : maxHeight;
+                var layoutHeight = _layout.VerticalOptions == LayoutOptions.Fill
+                    ? layoutMaxHeight : maxHeight;
+
+                foreach (var controlInStack in CollectionsMarshal.AsSpan(cellsToLayoutLater))
                 {
                     //todo adjust cell.Area for the new height
                     controlInStack.Area = new(
                         controlInStack.Area.Left,
                         controlInStack.Area.Top,
                         controlInStack.Area.Right,
-                        controlInStack.Area.Top + maxHeight);
+                        controlInStack.Area.Top + layoutHeight);
 
                     LayoutCell(controlInStack, controlInStack.View, scale);
                 }
             }
-            cells.Clear();
-
-            stackHeight += addHeight;
-            rectForChild.Top += addHeight;
-
-            row++;
+            cellsToLayoutLater.Clear();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -149,7 +162,7 @@ public class BuildColumnLayout : StackLayoutStructure
             if (height > maxHeight)
                 maxHeight = height;
 
-            if (useFixedSplitSize)
+            if (alignSplit)
             {
                 width = sizePerChunk; //todo check space distribution for full/auto
             }
@@ -260,11 +273,11 @@ public class BuildColumnLayout : StackLayoutStructure
                 structure.Add(cell, column, row);
                 FinalizeColumn(cell.Measured.Pixels.Width, cell.Measured.Pixels.Height);
 
-                cells.Add(cell);
+                cellsToLayoutLater.Add(cell);
 
                 //check we need a new line?
                 if (!rowFinalized
-                     && _layout.SplitMax > 0 && column >= _layout.SplitMax)
+                     && _layout.Split > 0 && column >= _layout.Split)
                 {
                     FinalizeRow(maxHeight);
                 }

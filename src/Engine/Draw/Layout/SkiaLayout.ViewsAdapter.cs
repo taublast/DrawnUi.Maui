@@ -57,8 +57,6 @@ public class ViewsAdapter : IDisposable
         DisposeVisibleViews();
     }
 
-    private IEnumerable<SkiaControl> _children;
-
 
     /// <summary>
     /// Holds visible prepared views with appropriate context, index is inside ItemsSource 
@@ -261,9 +259,9 @@ public class ViewsAdapter : IDisposable
                 }
                 else
                 {
-                    _children ??= _parent.GetOrderedSubviews();
-                    if (index < _children.Count())
-                        return _children.ElementAt(index);
+                    var children = _parent.GetOrderedSubviews();
+                    if (index < children.Count())
+                        return children.ElementAt(index);
                 }
 
                 return null;
@@ -277,9 +275,9 @@ public class ViewsAdapter : IDisposable
     {
         if (!_parent.IsTemplated)
         {
-            _children ??= _parent.GetOrderedSubviews();
+            var children = _parent.GetOrderedSubviews();
 
-            return _children.Count();
+            return children.Count();
         }
 
         if (_parent.ItemsSource != null)
@@ -422,7 +420,7 @@ public class ViewsAdapter : IDisposable
             }
 
             var layoutChanged = true //todo cannot really optimize as can have same nb of cells, same references for  _dataContexts != dataContexts but different contexts
-             || _parent.RenderingScale != _forScale || _parent.SplitMax != _forColumns || _parent.MaxRows != _forRows;
+             || _parent.RenderingScale != _forScale || _parent.Split != _forColumns || _parent.MaxRows != _forRows;
 
             if (layoutChanged || _templatedViewsPool == null || _dataContexts != dataContexts || CheckTemplateChanged())
             {
@@ -432,7 +430,7 @@ public class ViewsAdapter : IDisposable
                     //kill provider ability to provide deprecated templates
                     _wrappers.Clear();
                     _forScale = _parent.RenderingScale;
-                    _forColumns = _parent.SplitMax;
+                    _forColumns = _parent.Split;
                     _forRows = _parent.MaxRows;
                     _dataContexts = null;
                     AddedMore = 0;
@@ -491,21 +489,12 @@ public class ViewsAdapter : IDisposable
 
     public void UpdateViews(IEnumerable<SkiaControl> views = null)
     {
-        //lock (_lockTemplates)
+
+        if (_parent.IsTemplated)
         {
-
-            if (_parent.IsTemplated)
-            {
-                UpdateVisibleViews();
-            }
-
-            if (views == null)
-                views = _parent.GetOrderedSubviews();
-
-            //DisposeWrapper();
-
-            _children = views;
+            UpdateVisibleViews();
         }
+
     }
 
 
@@ -547,17 +536,17 @@ public class ViewsAdapter : IDisposable
             {
                 int threadId = Thread.CurrentThread.ManagedThreadId;
 
-                _children ??= _parent.GetOrderedSubviews();
+                var children = _parent.GetOrderedSubviews();
 
                 if (!_wrappers.TryGetValue(threadId, out ViewsIterator iterator))
                 {
-                    iterator = new ViewsIterator(_children);
+                    iterator = new ViewsIterator(children);
 
                     _wrappers.TryAdd(threadId, iterator);
                 }
                 else
                 {
-                    iterator.SetViews(_children);
+                    iterator.SetViews(children);
                 }
 
                 return iterator;

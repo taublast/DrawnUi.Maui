@@ -100,7 +100,7 @@ public partial class SkiaLayout
                 drawn++;
             }
 
-            RenderTree = tree.ToImmutableArray();
+            RenderTree = tree;
             _builtRenderTreeStamp = _measuredStamp;
 
         }

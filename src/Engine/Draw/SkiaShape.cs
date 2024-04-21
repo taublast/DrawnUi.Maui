@@ -12,7 +12,7 @@ namespace DrawnUi.Maui.Draw
     /// <summary>
     /// Implements ISkiaGestureListener to pass gestures to children
     /// </summary>
-    public class SkiaShape : ContentLayout, ISkiaGestureListener
+    public class SkiaShape : ContentLayout
     {
         public override void ApplyBindingContext()
         {

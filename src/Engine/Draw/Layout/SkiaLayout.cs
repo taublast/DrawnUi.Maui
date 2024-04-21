@@ -1,14 +1,14 @@
 ﻿using Microsoft.Maui.Layouts;
 using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.Collections.Specialized;
+using System.Runtime.InteropServices;
 
 namespace DrawnUi.Maui.Draw
 {
 
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
     {
+
         #region HOTRELOAD
 
         public override void ReportHotreloadChildRemoved(SkiaControl control)
@@ -24,7 +24,7 @@ namespace DrawnUi.Maui.Draw
                     if (RenderTree == null)
                         index = -1;
                     else
-                        index = RenderTree.Length; //not Length-1 cuz already removed from RenderTree
+                        index = RenderTree.Count; //not Length-1 cuz already removed from RenderTree
                     VisualDiagnostics.OnChildRemoved(this, control, index);
                 }
                 else
@@ -67,24 +67,6 @@ namespace DrawnUi.Maui.Draw
             try
             {
                 return base.GetVisualChildren();
-
-                //todo for IsTemplated
-                if (Type == LayoutType.Stack)
-                {
-                    var children = RenderTree.Where(w => w.Control != null)
-                        .Select(x => x.Control)
-                        .ToList().AsReadOnly();
-                    //this works fine with hotreload..
-                    return children;
-
-                    //using var cells = ChildrenFactory.GetViewsIterator();
-                    //return cells.ToList().AsReadOnly();
-                }
-                else
-                {
-                    return base.GetVisualChildren();
-                }
-
             }
             catch (Exception e)
             {
@@ -277,35 +259,6 @@ namespace DrawnUi.Maui.Draw
             return null;
         }
 
-        protected IEnumerable<ISkiaGestureListener> EnumerateGestureListeners()
-        {
-
-            if (IsTemplated)
-            {
-                if (RenderTree != null)
-                    foreach (var listener in RenderTree.Select(s => s.Control as ISkiaGestureListener).Where(listener => listener.CanDraw && !listener.InputTransparent))
-                    {
-                        yield return listener;
-                    }
-                ////carousel etc
-                //var childrenCount = ChildrenFactory.GetChildrenCount();
-                //for (int index = 0; index < childrenCount; index++)
-                //{
-                //    var child = ChildrenFactory.GetChildAt(index, null);
-                //    if (child is ISkiaGestureListener listener && listener.CanDraw && !listener.InputTransparent)
-                //    {
-                //        yield return listener;
-                //    }
-                //}
-            }
-            else
-                //base cases
-                foreach (var listener in GestureListeners.Where(listener => listener.CanDraw && !listener.InputTransparent))
-                {
-                    yield return listener;
-                }
-
-        }
 
         public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
             SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
@@ -345,10 +298,11 @@ namespace DrawnUi.Maui.Draw
                         var x = args.Location.X + thisOffset.X;
                         var y = args.Location.Y + thisOffset.Y;
 
-                        for (int i = RenderTree.Length - 1; i >= 0; i--)
+                        var asSpan = CollectionsMarshal.AsSpan(RenderTree);
+                        for (int i = asSpan.Length - 1; i >= 0; i--)
                         //for (int i = 0; i < RenderTree.Length; i++)
                         {
-                            var child = RenderTree[i];
+                            var child = asSpan[i];
 
                             if (child == Superview.FocusedChild)
                                 manageChildFocus = true;
@@ -423,7 +377,8 @@ namespace DrawnUi.Maui.Draw
         {
             ChildrenFactory = new(this);
 
-            OnItemSourceChanged();
+            PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
+            //OnItemSourceChanged();
         }
 
         #region PROPERTIES
@@ -494,8 +449,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// Last rendered controls tree. Used by gestures etc..
         /// </summary>
-        public ImmutableArray<SkiaControlWithRect> RenderTree { get; protected set; } =
-            ImmutableArray<SkiaControlWithRect>.Empty;
+        public List<SkiaControlWithRect> RenderTree { get; protected set; }
 
         private Stopwatch _stopwatchRender = new();
         List<string> elapsedTimes = new();
@@ -594,10 +548,10 @@ namespace DrawnUi.Maui.Draw
             get
             {
                 var output = $"{GetType().Name} Tag {Tag}, ";
-                if (IsTemplated)
+                if (IsTemplated || RenderTree == null)
                     return output + ChildrenFactory.GetDebugInfo();
 
-                return output + $"visible {RenderTree.Length}, skipped {ChildrenFactory.GetChildrenCount() - RenderTree.Length}, total {ChildrenFactory.GetChildrenCount()}";
+                return output + $"visible {RenderTree.Count}, skipped {ChildrenFactory.GetChildrenCount() - RenderTree.Count}, total {ChildrenFactory.GetChildrenCount()}";
             }
         }
 
@@ -623,19 +577,34 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        public static readonly BindableProperty SplitMaxProperty = BindableProperty.Create(
-            nameof(SplitMax),
+        public static readonly BindableProperty SplitProperty = BindableProperty.Create(
+            nameof(Split),
             typeof(int),
             typeof(SkiaLayout),
             1, propertyChanged: NeedUpdateItemsSource);
 
         /// <summary>
-        /// Number of columns to use for Stack and Row layout types, If 0, columns will be created dynamically based layout type.
+        /// Number of columns/rows to split into, If 0 will not split at all, if 1 will have single column/row.
         /// </summary>
-        public int SplitMax
+        public int Split
         {
-            get { return (int)GetValue(SplitMaxProperty); }
-            set { SetValue(SplitMaxProperty, value); }
+            get { return (int)GetValue(SplitProperty); }
+            set { SetValue(SplitProperty, value); }
+        }
+
+        public static readonly BindableProperty SplitAlignProperty = BindableProperty.Create(
+            nameof(SplitAlign),
+            typeof(bool),
+            typeof(SkiaLayout),
+            true, propertyChanged: NeedUpdateItemsSource);
+
+        /// <summary>
+        /// Number of columns/rows to split into, If 0 will not split at all, if 1 will have single column/row.
+        /// </summary>
+        public bool SplitAlign
+        {
+            get { return (bool)GetValue(SplitAlignProperty); }
+            set { SetValue(SplitAlignProperty, value); }
         }
 
         public static readonly BindableProperty SplitSpaceProperty = BindableProperty.Create(
@@ -789,24 +758,16 @@ namespace DrawnUi.Maui.Draw
 
         public override void InvalidateViewsList()
         {
-            base.InvalidateViewsList();
+            base.InvalidateViewsList(); //_orderedChildren = null;
 
             ActualizeSubviews();
         }
 
         public virtual void ActualizeSubviews()
         {
-            //if (IsTemplated)
-            //{
-            //    this.ChildrenFactory.TemplatesInvalidated = true;
-            //}
-
             needUpdateViews = false;
-            if (ChildrenFactory != null)
-            {
-                ChildrenFactory.UpdateViews();
-                //Update();
-            }
+
+            ChildrenFactory?.UpdateViews();
         }
 
         bool needUpdateViews;
@@ -1210,23 +1171,25 @@ namespace DrawnUi.Maui.Draw
 
                     var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
 
+                    //var checkOffset = new SKPoint(this.LastDrawnAt.Left - previousCache.Bounds.Left, LastDrawnAt.Top - previousCache.Bounds.Top);
+
                     // Add more children that are not already added but intersect with the dirty regions
-                    var allChildren = RenderTree.Select(s => s.Control).ToList();
 
-                    bool needRebuild = false;
-
-                    foreach (var item in DirtyChildren)
+                    var asSpans = CollectionsMarshal.AsSpan(DirtyChildren.GetList());
+                    foreach (var item in asSpans)
                     {
                         DirtyChildrenInternal.Add(item);
                     }
 
                     //make intersecting children dirty too
-                    foreach (var child in allChildren)
+                    //var allChildren = RenderTree.Select(s => s.Control).ToList();
+                    var asSpan = CollectionsMarshal.AsSpan(RenderTree);
+                    foreach (var cell in asSpan)
                     {
-                        if (!DirtyChildrenInternal.Contains(child) &&
-                            DirtyChildrenInternal.Any(dirtyChild => dirtyChild.DrawingRect.IntersectsWith(child.DrawingRect)))
+                        if (!DirtyChildrenInternal.Contains(cell.Control) &&
+                            DirtyChildrenInternal.Any(dirtyChild => dirtyChild.DrawingRect.IntersectsWith(cell.Control.DrawingRect)))
                         {
-                            DirtyChildrenInternal.Add(child);
+                            DirtyChildrenInternal.Add(cell.Control);
                         }
                     }
 
@@ -1431,20 +1394,31 @@ namespace DrawnUi.Maui.Draw
                 newCollection.CollectionChanged += skiaControl.ItemsSourceCollectionChanged;
             }
 
-            skiaControl.OnItemSourceChanged();
+            skiaControl.PostponeInvalidation(nameof(OnItemSourceChanged), skiaControl.OnItemSourceChanged);
+
+            //skiaControl.OnItemSourceChanged();
         }
 
         private static void NeedUpdateItemsSource(BindableObject bindable, object oldvalue, object newvalue)
         {
             var skiaControl = (SkiaLayout)bindable;
 
-            skiaControl.OnItemSourceChanged();
-            skiaControl.Invalidate();
+            skiaControl.PostponeInvalidation(nameof(UpdateItemsSource), skiaControl.UpdateItemsSource);
+
+            //skiaControl.OnItemSourceChanged();
+            //skiaControl.Invalidate();
+        }
+
+        void UpdateItemsSource()
+        {
+            OnItemSourceChanged();
+            Invalidate();
         }
 
         public override void OnItemTemplateChanged()
         {
-            OnItemSourceChanged();
+            PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
+            //OnItemSourceChanged();
         }
 
         public bool ApplyNewItemsSource { get; set; }
@@ -1489,7 +1463,8 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void BuildFromZero()
         {
-            OnItemSourceChanged();
+            PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
+            //OnItemSourceChanged();
         }
 
         protected virtual void ItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -1659,7 +1634,8 @@ namespace DrawnUi.Maui.Draw
             break;
             }
 
-            OnItemSourceChanged();
+            PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
+            //OnItemSourceChanged();
 
         }
 
@@ -1702,9 +1678,10 @@ namespace DrawnUi.Maui.Draw
         public virtual ContainsPointResult GetVisibleChildIndexAt(SKPoint point)
         {
             //relative inside parent:
-            for (int i = 0; i < RenderTree.Length; i++)
+            var asSpan = CollectionsMarshal.AsSpan(RenderTree);
+            for (int i = 0; i < asSpan.Length; i++)
             {
-                var child = RenderTree[i];
+                var child = asSpan[i];
 
                 if (child.Rect.ContainsInclusive(point))
                 {

@@ -255,8 +255,6 @@ namespace DrawnUi.Maui.Draw
                 var index = -1;
                 //SkiaControl[] nonTemplated = null;
 
-
-
                 int countRendered = 0;
 
                 foreach (var cell in visibleElements.OrderBy(x => x.ZIndex))
@@ -349,7 +347,7 @@ namespace DrawnUi.Maui.Draw
             if (needrebuild && visibleElements.Count > 0)
             {
                 //reserve for one row above and one row below
-                var row = SplitMax;
+                var row = Split;
                 if (row < 1)
                     row = 1;
                 var reserve = row * 3;
@@ -372,7 +370,7 @@ namespace DrawnUi.Maui.Draw
             }
 
 
-            RenderTree = tree.ToImmutableArray();
+            RenderTree = tree;
             _builtRenderTreeStamp = _measuredStamp;
 
             if (Parent is IDefinesViewport viewport &&

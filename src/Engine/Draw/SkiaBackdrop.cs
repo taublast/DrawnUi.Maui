@@ -6,7 +6,7 @@ namespace DrawnUi.Maui.Draw;
 /// <summary>
 /// Warning with CPU-rendering edges will not be blurred: https://issues.skia.org/issues/40036320
 /// </summary>
-public class SkiaBackdrop : ContentLayout
+public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
 {
     public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
         SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)

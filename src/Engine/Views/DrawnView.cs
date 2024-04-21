@@ -1,6 +1,7 @@
 ﻿using DrawnUi.Maui.Infrastructure.Enums;
 using DrawnUi.Maui.Infrastructure.Extensions;
 using Microsoft.Maui.Controls.Internals;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
@@ -144,6 +145,7 @@ namespace DrawnUi.Maui.Views
             ExecuteBeforeDraw.Enqueue(action);
         }
 
+
         /// <summary>
         ///Postpone the action to be executed after the current frame is drawn. Exception-safe.
         /// </summary>
@@ -153,8 +155,8 @@ namespace DrawnUi.Maui.Views
             ExecuteAfterDraw.Enqueue(action);
         }
 
-        public Queue<Action> ExecuteBeforeDraw { get; } = new();
-        public Queue<Action> ExecuteAfterDraw { get; } = new();
+        public Queue<Action> ExecuteBeforeDraw { get; } = new(256);
+        public Queue<Action> ExecuteAfterDraw { get; } = new(256);
 
         protected Action<SKImage> CallbackScreenshot;
 
@@ -223,11 +225,8 @@ namespace DrawnUi.Maui.Views
             if (gestureListener == null)
                 return;
 
-            lock (LockIterateListeners)
-            {
-                gestureListener.GestureListenerRegistrationTime = DateTime.UtcNow;
-                GestureListeners.Add(gestureListener);
-            }
+            gestureListener.GestureListenerRegistrationTime = DateTime.UtcNow;
+            GestureListeners.Add(gestureListener);
         }
 
         public void UnregisterGestureListener(ISkiaGestureListener gestureListener)
@@ -235,10 +234,7 @@ namespace DrawnUi.Maui.Views
             if (gestureListener == null)
                 return;
 
-            lock (LockIterateListeners)
-            {
-                GestureListeners.Remove(gestureListener);
-            }
+            GestureListeners.Remove(gestureListener);
         }
 
         protected object LockIterateListeners = new();
@@ -247,7 +243,9 @@ namespace DrawnUi.Maui.Views
         /// <summary>
         /// Children we should check for touch hits
         /// </summary>
-        public SortedSet<ISkiaGestureListener> GestureListeners { get; } = new(new DescendingZIndexGestureListenerComparer());
+        public SortedGestureListeners GestureListeners { get; } = new();
+
+        //public SortedSet<ISkiaGestureListener> GestureListeners { get; } = new(new DescendingZIndexGestureListenerComparer());
 
 
         public SKRect DrawingRect
@@ -756,6 +754,8 @@ namespace DrawnUi.Maui.Views
 
                 DisposeDisposables();
 
+                GestureListeners.Clear();
+
                 ClearChildren();
 
                 MainThread.BeginInvokeOnMainThread(() =>
@@ -771,6 +771,7 @@ namespace DrawnUi.Maui.Views
                         Super.Log(e);
                     }
                 });
+
             }
             catch (Exception e)
             {
@@ -1461,6 +1462,45 @@ namespace DrawnUi.Maui.Views
             }
         }
 
+        public void PostponeInvalidation(SkiaControl key, Action action)
+        {
+            lock (_lockInvalidations)
+            {
+                GetBackInvalidations()[action] = key;
+                Repaint();
+            }
+        }
+
+        private object _lockInvalidations = new();
+        private bool _invalidationsA;
+        protected readonly Dictionary<Action, SkiaControl> InvalidationActionsA = new();
+        protected readonly Dictionary<Action, SkiaControl> InvalidationActionsB = new();
+
+        protected Dictionary<Action, SkiaControl> GetFrontInvalidations()
+        {
+            lock (_lockInvalidations)
+            {
+                return _invalidationsA ? InvalidationActionsA : InvalidationActionsB;
+            }
+        }
+
+        protected Dictionary<Action, SkiaControl> GetBackInvalidations()
+        {
+            lock (_lockInvalidations)
+            {
+                return !_invalidationsA ? InvalidationActionsA : InvalidationActionsB;
+            }
+        }
+
+
+        protected void SwapInvalidations()
+        {
+            lock (_lockInvalidations)
+            {
+                _invalidationsA = !_invalidationsA;
+            }
+        }
+
         /// <summary>
         /// For debugging purposes check if dont have concurrent threads
         /// </summary>
@@ -1509,6 +1549,14 @@ namespace DrawnUi.Maui.Views
                     //context.FrameTimeNanos = FrameTime;
 
                     FPS = CanvasFps;
+
+                    SwapInvalidations();
+                    var invalidations = GetFrontInvalidations();
+                    foreach (var invalidation in invalidations)
+                    {
+                        invalidation.Key.Invoke();
+                    }
+                    invalidations.Clear();
 
                     while (ExecuteBeforeDraw.TryDequeue(out Action action))
                     {

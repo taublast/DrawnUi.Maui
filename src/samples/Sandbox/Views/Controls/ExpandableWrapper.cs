@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-using AppoMobi.Maui.Gestures;
+﻿using AppoMobi.Maui.Gestures;
 using DrawnUi.Maui.Extensions;
+using System.Diagnostics;
 
 namespace Sandbox.Views.Controls
 {
-    public class ExpandableVerticalStack : SkiaLayout
+    public class ExpandableVerticalStack : SkiaLayout, ISkiaGestureListener
     {
         public ExpandableVerticalStack()
         {
@@ -19,7 +19,7 @@ namespace Sandbox.Views.Controls
         }
     }
 
-    public class ExpandableWrapper : ContentLayout
+    public class ExpandableWrapper : ContentLayout, ISkiaGestureListener
     {
 
         public ExpandableWrapper()

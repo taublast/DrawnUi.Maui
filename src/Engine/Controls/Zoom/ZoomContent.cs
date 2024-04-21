@@ -8,7 +8,7 @@ namespace DrawnUi.Maui.Draw;
 /// <summary>
 /// Wrapper to zoom and pan content by changing the rendering scale so not affecting quality, this is not a transform.TODO add animated movement
 /// </summary>
-public class ZoomContent : ContentLayout
+public class ZoomContent : ContentLayout, ISkiaGestureListener
 {
     protected override void OnBindingContextChanged()
     {

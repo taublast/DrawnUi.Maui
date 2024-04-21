@@ -16,6 +16,7 @@ using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace DrawnUi.Maui.Draw
 {
+
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]
     public partial class SkiaControl : VisualElement,
@@ -226,7 +227,7 @@ namespace DrawnUi.Maui.Draw
         {
             get
             {
-                if (!IsVisible || IsDisposed || SkipRendering)
+                if (!IsVisible || IsDisposed || IsDisposing || SkipRendering)
                     return false;
 
                 if (Superview != null && !Superview.CanDraw)
@@ -300,6 +301,7 @@ namespace DrawnUi.Maui.Draw
             if (control == null)
                 return;
             control.SetParent(this);
+
             OnChildAdded(control);
 
             if (Debugger.IsAttached)
@@ -367,8 +369,28 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void SuperViewChanged()
         {
-
+            if (Superview != null)
+            {
+                foreach (var invalidation in PostponedInvalidations)
+                {
+                    invalidation.Value.Invoke();
+                }
+                PostponedInvalidations.Clear();
+            }
         }
+        public void PostponeInvalidation(string key, Action action)
+        {
+            if (Superview == null)
+            {
+                PostponedInvalidations[key] = action;
+            }
+            else
+            {
+                //action.Invoke();
+                Superview.PostponeInvalidation(this, action);
+            }
+        }
+        readonly Dictionary<string, Action> PostponedInvalidations = new();
 
         /// <summary>
         /// Returns rendering scale adapted for another output size, useful for offline rendering
@@ -1065,7 +1087,7 @@ namespace DrawnUi.Maui.Draw
                     var hadInputConsumed = consumed;
 
                     if (consumed == null || touchAction == TouchActionResult.Up)// !GestureListeners.Contains(consumed))
-                        foreach (var listener in GestureListeners)
+                        foreach (var listener in GestureListeners.GetListeners())
                         {
                             if (!listener.CanDraw || listener.InputTransparent)
                                 continue;
@@ -2370,8 +2392,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="child"></param>
         public virtual void InvalidateByChild(SkiaControl child)
         {
-            if (!DirtyChildren.Contains(child))
-                DirtyChildren.Add(child);
+            DirtyChildren.Add(child);
 
             Invalidate();
         }
@@ -5360,19 +5381,20 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         //protected SkiaControl DirtyChild { get; set; }
 
-        protected ConcurrentBag<SkiaControl> DirtyChildren { get; } = new();
+        protected readonly ControlsTracker DirtyChildren = new();
+
+        //protected readonly ConcurrentBag<SkiaControl> DirtyChildren = new();
 
         protected HashSet<SkiaControl> DirtyChildrenInternal { get; set; } = new();
 
         public virtual void UpdateByChild(SkiaControl control)
         {
-            if (!DirtyChildren.Contains(control))
-                DirtyChildren.Add(control);
+            DirtyChildren.Add(control);
 
-            Update();
+            UpdateInternal();
         }
 
-        public virtual void Update()
+        protected virtual void UpdateInternal()
         {
             if (IsDisposing || IsDisposed)
                 return;
@@ -5396,6 +5418,16 @@ namespace DrawnUi.Maui.Draw
                 return;
 
             Parent?.UpdateByChild(this);
+        }
+
+        public virtual void Update()
+        {
+            if (UsingCacheType == SkiaCacheType.ImageComposition)
+            {
+                RenderObjectPreviousNeedsUpdate = true;
+            }
+
+            UpdateInternal();
         }
 
         public static MemoryStream StreamFromString(string value)
@@ -5519,37 +5551,6 @@ namespace DrawnUi.Maui.Draw
             canvas.Restore();
         }
 
-
-        protected static void NeedDraw(BindableObject bindable, object oldvalue, object newvalue)
-        {
-
-            try
-            {
-                var control = bindable as SkiaControl;
-                {
-                    control?.Update();
-                }
-            }
-            catch (Exception e)
-            {
-                Super.Log(e);
-            }
-
-        }
-
-        /// <summary>
-        /// Just make us repaint to apply new transforms etc
-        /// </summary>
-        protected static void NeedRepaint(BindableObject bindable, object oldvalue, object newvalue)
-        {
-            var control = bindable as SkiaControl;
-            {
-                if (control != null && !control.IsDisposed)
-                {
-                    control.Repaint();
-                }
-            }
-        }
 
         /// <summary>
         /// Soft invalidation, without requiring update. So next time we try to draw this one it will recalc everything.
@@ -5699,7 +5700,30 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaControl control)
             {
-                control.InvalidateMeasure();
+                //control.InvalidateMeasure();
+                control.PostponeInvalidation(nameof(InvalidateMeasure), control.InvalidateMeasure);
+            }
+        }
+
+
+        protected static void NeedDraw(BindableObject bindable, object oldvalue, object newvalue)
+        {
+            if (bindable is SkiaControl control)
+            {
+                control.Update();
+                //control.PostponeInvalidation(nameof(Update), control.Update);
+            }
+        }
+
+        /// <summary>
+        /// Just make us repaint to apply new transforms etc
+        /// </summary>
+        protected static void NeedRepaint(BindableObject bindable, object oldvalue, object newvalue)
+        {
+            if (bindable is SkiaControl control)
+            {
+                control.Repaint();
+                //control.PostponeInvalidation(nameof(Repaint), control.Repaint);
             }
         }
 
@@ -6079,9 +6103,9 @@ namespace DrawnUi.Maui.Draw
 
         #region CHILDREN VIEWS
 
-        private IReadOnlyList<SkiaControl> _orderedChildren;
+        private List<SkiaControl> _orderedChildren;
 
-        public IReadOnlyList<SkiaControl> GetOrderedSubviews(bool recalculate = false)
+        public List<SkiaControl> GetOrderedSubviews(bool recalculate = false)
         {
             if (_orderedChildren == null || recalculate)
             {
@@ -6182,7 +6206,9 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// Children we should check for touch hits
         /// </summary>
-        public SortedSet<ISkiaGestureListener> GestureListeners { get; } = new(new DescendingZIndexGestureListenerComparer());
+        //public SortedSet<ISkiaGestureListener> GestureListeners { get; } = new(new DescendingZIndexGestureListenerComparer());
+
+        public SortedGestureListeners GestureListeners { get; } = new();
 
         public virtual void OnParentChanged(IDrawnBase newvalue, IDrawnBase oldvalue)
         {
@@ -6237,7 +6263,7 @@ namespace DrawnUi.Maui.Draw
                     return;
                 }
 
-                if (!parent.Views.Contains(this))
+                //if (!parent.Views.Contains(this)) //Slow A
                 {
                     parent.Views.Add(this);
                     if (parent is SkiaControl skiaParent)
@@ -6245,6 +6271,10 @@ namespace DrawnUi.Maui.Draw
                         skiaParent.InvalidateViewsList();
                     }
                 }
+                //else
+                //{
+                //    var stop = 1;
+                //}
 
                 Parent = parent;
 
@@ -6255,17 +6285,9 @@ namespace DrawnUi.Maui.Draw
 
                 if (parent is IDrawnBase control)
                 {
-                    //control.InvalidateViewsList();
                     if (BindingContext == null)
                         BindingContext = control.BindingContext;
                 }
-
-                //if (this is ISkiaHasChildren)
-                //{
-                //    ((ISkiaHasChildren)this).LayoutInvalidated = true;
-                //}
-
-                //this.SizeChanged += OnFormsSizeChanged;
 
                 InvalidateInternal();
             }
@@ -6433,6 +6455,10 @@ namespace DrawnUi.Maui.Draw
         public virtual void SetChildren(IEnumerable<SkiaControl> views)
         {
             ClearChildren();
+
+            if (views == null)
+                return;
+
             foreach (var child in views)
             {
                 AddOrRemoveView(child, true);

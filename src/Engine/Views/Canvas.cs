@@ -3,6 +3,7 @@ using DrawnUi.Maui.Draw;
 using Microsoft.Maui.Controls.Internals;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Size = Microsoft.Maui.Graphics.Size;
 
 namespace DrawnUi.Maui.Views;
@@ -395,8 +396,14 @@ public class Canvas : DrawnView, IGestureListener
             //    });
             //}
 
-            foreach (var listener in GestureListeners.Where(listener => listener.CanDraw && !listener.InputTransparent))
+            //var listeners = CollectionsMarshal.AsSpan(GestureListeners.GetListeners());
+            foreach (var listener in GestureListeners.GetListeners())
             {
+                if (!listener.CanDraw || listener.InputTransparent)
+                {
+                    continue;
+                }
+
                 if (listener == FocusedChild)
                     manageChildFocus = true;
 

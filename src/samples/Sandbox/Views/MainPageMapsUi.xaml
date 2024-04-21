@@ -12,6 +12,7 @@
     x:DataType="demo:MainPageViewModel">
 
     <draw:Canvas
+        BackgroundColor="Gainsboro"
         Gestures="Enabled"
         HardwareAcceleration="Enabled"
         Tag="MainPage">
@@ -45,16 +46,14 @@
         </draw:Canvas.Resources>
 
         <draw:SkiaLayout
-            BackgroundColor="Gainsboro"
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
             <!--  MAP  -->
 
-            <!--  GPU cache makes a huge difference -->
+            <!--  GPU cache makes a huge difference  -->
             <maui:SkiaMapControl
                 x:Name="mapControl"
-                BackgroundColor="Black"
                 DisableEffects="{Binding ValueSwitch, Converter={x:StaticResource NotConverter}}"
                 HorizontalOptions="Fill"
                 MarginBottom="{Binding OffsetMap}"
@@ -86,9 +85,11 @@
             </maui:SkiaMapControl>
 
             <!--  ATTRIBUTION  -->
-            <!--in fullscreen can add
-            AddMarginTop="{x:Static draw:Super.StatusBarHeight}"-->
-            <draw:SkiaShape        
+            <!--
+                in fullscreen can add
+                AddMarginTop="{x:Static draw:Super.StatusBarHeight}"
+            -->
+            <draw:SkiaShape
                 Margin="2"
                 Padding="4,2"
                 BackgroundColor="#33ffffff"
@@ -109,7 +110,7 @@
                 HorizontalOptions="Fill"
                 IsOpen="{Binding IsOpen}"
                 Tag="Drawer"
-                UseCache="Image"
+                UseCache="ImageComposition"
                 VerticalOptions="End"
                 ZIndex="1">
 
@@ -141,8 +142,8 @@
 
                     <!--  CONTENT  -->
                     <draw:SkiaLayout
-                        BackgroundColor="White"
                         Padding="24,16"
+                        BackgroundColor="White"
                         HorizontalOptions="Fill"
                         MarginTop="{Binding DrawerHeaderSize}"
                         Spacing="0"

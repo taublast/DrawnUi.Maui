@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 namespace DrawnUi.Maui.Draw;
 
 [ContentProperty("Content")]
-public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibilityAware
+public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGestureListener
 {
 
     public virtual void OnFocusChanged(bool focus)
@@ -58,7 +58,7 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
         //background measuring or invisible or self measure from draw because layout will never pass -1
-        if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
+        if (IsMeasuring || !CanDraw || widthConstraint < 0 || heightConstraint < 0)
         {
             return MeasuredSize;
         }

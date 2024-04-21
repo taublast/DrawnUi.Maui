@@ -129,15 +129,15 @@
                             x:Name="Buttons"
                             HorizontalOptions="Center"
                             Spacing="0"
-                            SplitMax="2"
+                            Split="0"
                             Tag="Buttons"
                             Type="Stack"
-                            UseCache="ImageComposition">
+                            UseCache="None">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">
 
-                                    <!--  caching area with shadow  -->
+                               
                                     <draw:SkiaLayout
                                         Padding="16"
                                         HorizontalOptions="Start"

@@ -8,6 +8,6 @@ public class HorizontalStack : SkiaLayout
     public HorizontalStack()
     {
         Type = LayoutType.Stack;
-        SplitMax = 0;
+        Split = 0;
     }
 }

@@ -8,7 +8,7 @@ namespace Sandbox.Views.Controls;
 /// <summary>
 /// Consume and process the cache of the content
 /// </summary>
-public class ContentFolder : ContentLayout
+public class ContentFolder : ContentLayout, ISkiaGestureListener
 {
     public ContentFolder()
     {
