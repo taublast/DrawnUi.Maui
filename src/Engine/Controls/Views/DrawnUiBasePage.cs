@@ -11,6 +11,7 @@ public class DrawnUiBasePage : ContentPage
         Debug.WriteLine($"[DrawnUiBasePage] Keyboard {keyboardSize}");
         OnKeyboardResized(keyboardSize);
     }
+    
 
     public virtual double OnKeyboardResized(double size)
     {

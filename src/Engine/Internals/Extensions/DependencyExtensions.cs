@@ -62,7 +62,7 @@ public static class DependencyExtensions
 #elif MACCATALYST
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
-            handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
+            handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));  
 
             //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
             //handlers.AddHandler(typeof(Window), typeof(CustomizedWindowHandler));

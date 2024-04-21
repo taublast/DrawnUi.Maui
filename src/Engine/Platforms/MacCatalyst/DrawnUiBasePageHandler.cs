@@ -1,23 +1,30 @@
 ﻿using Foundation;
 using Microsoft.Maui.Handlers;
+using Microsoft.Maui.Platform;
 using UIKit;
 using ContentView = Microsoft.Maui.Platform.ContentView;
 
 namespace DrawnUi.Maui.Controls;
 
-public class DrawnUiBasePageHandler : PageHandler
+public class DrawnUiBasePageHandler : Microsoft.Maui.Handlers.PageHandler
 {
-    protected override void ConnectHandler(ContentView nativeView)
-    {
-        base.ConnectHandler(nativeView);
-    }
 
     protected override ContentView CreatePlatformView()
     {
-        return new CustomView(); //base.CreatePlatformView();
+        //return base.CreatePlatformView();;
+        if (ViewController == null)
+            ViewController =  new CustomView(VirtualView, MauiContext);
+        
+        if (ViewController is PageViewController pc && pc.CurrentPlatformView is ContentView pv)
+            return pv;
+
+        if (ViewController.View is ContentView cv)
+            return cv;
+
+        throw new InvalidOperationException($"PageViewController.View must be a {nameof(ContentView)}");  
     }
 
-    public class CustomView : ContentView
+    public class CustomView : PageViewController
     {
         public bool TracksKeyboard => DependencyExtensions.StartupSettings != null &&
                                       DependencyExtensions.StartupSettings.UseDesktopKeyboard;
@@ -70,5 +77,8 @@ public class DrawnUiBasePageHandler : PageHandler
                     //Trace.WriteLine($"[KEY] {press.Type}/{(int)press.Type} => {mapped}");
                 }
         }
+
+        public CustomView(IView page, IMauiContext mauiContext) : base(page, mauiContext)
+        { }
     }
 }
