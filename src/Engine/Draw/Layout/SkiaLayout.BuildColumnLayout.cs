@@ -25,7 +25,7 @@ public class BuildColumnLayout : StackLayoutStructure
 
         // row size
         float maxHeight = 0.0f;
-        float maxWidth = 0.0f;
+        float currentLineWidth = 0.0f;
 
         var structure = new LayoutStructure();
 
@@ -62,7 +62,7 @@ public class BuildColumnLayout : StackLayoutStructure
             rowFinalized = false;
 
             maxHeight = 0.0f;
-            maxWidth = 0.0f;
+            currentLineWidth = 0.0f;
 
             rectForChild.Left = isRtl ? rectForChildrenPixels.Right : 0;  //reset to start
 
@@ -79,8 +79,8 @@ public class BuildColumnLayout : StackLayoutStructure
         {
             rowFinalized = true;
 
-            if (maxWidth > stackWidth)
-                stackWidth = maxWidth;
+            if (currentLineWidth > stackWidth)
+                stackWidth = currentLineWidth;
 
             //layout cells in this row for the final height:
             LayoutCellsInternal();
@@ -132,7 +132,7 @@ public class BuildColumnLayout : StackLayoutStructure
                 rectForChild.Left += add;
             }
 
-            maxWidth += add;
+            currentLineWidth += add;
 
             if (useFixedSplitSize)
             {
@@ -152,6 +152,16 @@ public class BuildColumnLayout : StackLayoutStructure
                     rectForChild.Right,
                     rectForChild.Bottom);
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void BreakRow()
+        {
+            var removeSpacing = GetSpacingForIndex(column, scale);
+            currentLineWidth -= removeSpacing;
+            FinalizeRow(maxHeight);
+            StartRow();
+            StartColumn();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -176,7 +186,7 @@ public class BuildColumnLayout : StackLayoutStructure
                 rectForChild.Left += width;
             }
 
-            maxWidth += width;
+            currentLineWidth += width;
 
             column++;
         }
@@ -259,9 +269,7 @@ public class BuildColumnLayout : StackLayoutStructure
                 var fitsH = cell.Measured.Pixels.Width <= remainingSize;
                 if (!fitsH && !useFixedSplitSize)
                 {
-                    FinalizeRow(maxHeight);
-                    StartRow();
-                    StartColumn();
+                    BreakRow();
                     measured = MeasureCellInternal();
                 }
                 else
