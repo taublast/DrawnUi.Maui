@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 
 
+
 [assembly: XmlnsDefinition("http://schemas.appomobi.com/drawnUi/2023/draw",
     "DrawnUi.Maui.Draw")]
 
@@ -244,10 +245,10 @@ public partial class Super
     private const int GWL_STYLE = -16;
     private const int WS_THICKFRAME = 0x00040000;
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
     private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
     private static extern int SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
     public static void MakeWindowNonResizable(IntPtr hWnd)
@@ -284,12 +285,12 @@ public partial class Super
 
         //this crashes in NET8 for CATALYST so..
 #if !MACCATALYST
-        
+
         window.Width = width;
         window.Height = height;
         window.X = x;
         window.Y = y;
-        
+
 #else
         
         var platformWindow = window.Handler?.PlatformView as UIKit.UIWindow;

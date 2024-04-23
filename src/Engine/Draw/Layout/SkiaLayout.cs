@@ -1132,8 +1132,7 @@ namespace DrawnUi.Maui.Draw
                 var structure = LatestStackStructure;
                 if (structure != null && structure.GetCount() > 0)
                 {
-                    drawnChildrenCount = DrawChildrenStackPanel(
-                        structure, ctx, rectForChildren, scale);
+                    drawnChildrenCount = DrawStack(structure, ctx, rectForChildren, scale);
                 }
             }
             else

@@ -24,7 +24,7 @@ namespace DrawnUi.Maui.Draw
         /// Renders stack layout.
         /// Returns number of drawn children.
         /// </summary>
-        protected virtual int DrawChildrenStackPanel(
+        protected virtual int DrawStack(
             LayoutStructure structure,
             SkiaDrawingContext context, SKRect destination, float scale)
         {

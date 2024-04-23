@@ -45,6 +45,11 @@ public class BuildColumnLayout : StackLayoutStructure
                 (maxAvailableSpace - (_layout.Split - 1) * _layout.Spacing * scale) / _layout.Split);
         }
 
+        //if (_layout.Tag == "StackSettings")
+        //{
+        //    var stop = 1;
+        //}
+
         var column = 0;
         var row = 0;
         bool rowFinalized = true;

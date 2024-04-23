@@ -779,7 +779,7 @@ namespace DrawnUi.Maui.Draw
                 NeedAutoHeight,
                 MinimumHeightRequest,
                 MaximumHeightRequest,
-                RenderingScale, CanExpand);
+                RenderingScale, this.VerticalOptions.Expands);
         }
 
         public float AdaptWidthConstraintToContentRequest(float widthConstraintPixels,
@@ -792,7 +792,7 @@ namespace DrawnUi.Maui.Draw
                 NeedAutoWidth,
                 MinimumWidthRequest,
                 MaximumWidthRequest,
-                RenderingScale, CanExpand);
+                RenderingScale, this.HorizontalOptions.Expands);
         }
 
         public SKRect AdaptToContraints(SKRect measuredPixels,
@@ -2154,18 +2154,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(AlignContentHorizontalProperty, value); }
         }
         */
-
-        public static readonly BindableProperty CanExpandProperty = BindableProperty.Create(nameof(CanExpand),
-            typeof(bool), typeof(SkiaControl), true,
-            propertyChanged: NeedInvalidateMeasure);
-        /// <summary>
-        /// Whether can expand beyond constraints if children content went beyond them, default is True.
-        /// </summary>
-        public virtual bool CanExpand
-        {
-            get { return (bool)GetValue(CanExpandProperty); }
-            set { SetValue(CanExpandProperty, value); }
-        }
 
         public static readonly BindableProperty IsClippedToBoundsProperty = BindableProperty.Create(nameof(IsClippedToBounds),
             typeof(bool), typeof(SkiaControl), false,
