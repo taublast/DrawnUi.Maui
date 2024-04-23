@@ -12,7 +12,7 @@ global using SkiaSharp.Views.Maui.Controls;
 global using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+
 
 [assembly: XmlnsDefinition("http://schemas.appomobi.com/drawnUi/2023/draw",
     "DrawnUi.Maui.Draw")]
@@ -276,15 +276,41 @@ public partial class Super
     public static void ResizeWindow(Window window, int width, int height, bool isFixed)
     {
 
-        //this crashes in NET8 for CATALYST so..
-#if !MACCATALYST
-        window.Width = width;
-        window.Height = height;
 
         var disp = DeviceDisplay.Current.MainDisplayInfo;
         // move to screen center
-        window.X = (disp.Width / disp.Density - window.Width) / 2;
-        window.Y = (disp.Height / disp.Density - window.Height) / 2;
+        var x = (disp.Width / disp.Density - window.Width) / 2;
+        var y = (disp.Height / disp.Density - window.Height) / 2;
+
+        //this crashes in NET8 for CATALYST so..
+#if !MACCATALYST
+        
+        window.Width = width;
+        window.Height = height;
+        window.X = x;
+        window.Y = y;
+        
+#else
+        
+        var platformWindow = window.Handler?.PlatformView as UIKit.UIWindow;
+        MainThread.BeginInvokeOnMainThread(()=>
+        {
+            var frame = new CoreGraphics.CGRect(x, y,platformWindow.Frame.Width,platformWindow.Frame.Height);
+            
+            platformWindow.Frame = frame;
+            
+            var windowScene = UIKit.UIApplication.SharedApplication.ConnectedScenes.ToArray().First() as UIKit.UIWindowScene;
+            
+            platformWindow.WindowScene.KeyWindow.Frame = frame;
+            
+            windowScene.RequestGeometryUpdate(
+                new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
+                error =>
+                {
+                    var stopp=1;
+                });
+        });
+        
 #endif
 
 #if WINDOWS
@@ -305,8 +331,27 @@ public partial class Super
                 if (isFixed)
                 {
                     //windowScene.SizeRestrictions.AllowsFullScreen = false;
-                    windowScene.SizeRestrictions.MinimumSize = new(width, height);
-                    windowScene.SizeRestrictions.MaximumSize = new(width, height);
+                    //windowScene.SizeRestrictions.MinimumSize = new(width, height);
+                    //windowScene.SizeRestrictions.MaximumSize = new(width, height);
+                    
+                    var scale = windowScene.Screen.Scale;
+                    
+                    // Tasks.StartDelayed(TimeSpan.FromSeconds(3),()=>
+                    // {
+                        //todo move to view appeared etc
+                        // MainThread.BeginInvokeOnMainThread(()=>
+                        // {
+                        //     windowScene.RequestGeometryUpdate(
+                        //         new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
+                        //         error =>
+                        //         {
+                        //             var stopp=1;
+                        //         });
+                        //     
+                        //});
+                        
+                   // });
+                    
                 }
 
             }
