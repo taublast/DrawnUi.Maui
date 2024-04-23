@@ -2375,7 +2375,7 @@ namespace DrawnUi.Maui.Draw
                     }
                     else
                     {
-                        parent.Repaint();
+                        parent.Update();
                     }
                 }
                 else

@@ -29,7 +29,7 @@ public class BuildRowLayout : StackLayoutStructure
         var structure = new SkiaLayout.LayoutStructure();
 
         //for current row, to layout upon finalizing
-        var cells = new List<SkiaLayout.ControlInStack>();
+        var cells = new List<ControlInStack>();
 
         var maxAvailableSpace = rectForChildrenPixels.Height;
         float sizePerChunk = maxAvailableSpace;
@@ -181,7 +181,7 @@ public class BuildRowLayout : StackLayoutStructure
 
 
         int index = -1;
-        SkiaLayout.ControlInStack measuredCell = null; //if strategy is to measure first cell only
+        ControlInStack measuredCell = null; //if strategy is to measure first cell only
 
         foreach (var child in EnumerateViewsForMeasurement())
         {

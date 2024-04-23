@@ -8,7 +8,17 @@ public enum LayoutType
     Absolute,
 
     /// <summary>
-    /// Versatile stack
+    /// Vertical stack
+    /// </summary>
+    Column,
+
+    /// <summary>
+    /// Horizontal stack
+    /// </summary>
+    Row,
+
+    /// <summary>
+    /// Stack panel
     /// </summary>
     Stack,
 

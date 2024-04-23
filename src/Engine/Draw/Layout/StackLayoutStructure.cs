@@ -68,7 +68,7 @@ public abstract class StackLayoutStructure
     public abstract ScaledSize Build(SKRect rectForChildrenPixels, float scale);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected virtual ScaledSize MeasureAndArrangeCell(SKRect destination, SkiaLayout.ControlInStack cell, SkiaControl child, float scale)
+    protected virtual ScaledSize MeasureAndArrangeCell(SKRect destination, ControlInStack cell, SkiaControl child, float scale)
     {
         cell.Area = destination;
 
@@ -83,7 +83,7 @@ public abstract class StackLayoutStructure
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected virtual ScaledSize MeasureCell(SKRect destination,
-        SkiaLayout.ControlInStack cell, SkiaControl child,
+        ControlInStack cell, SkiaControl child,
         float scale)
     {
         cell.Area = destination;
@@ -97,7 +97,7 @@ public abstract class StackLayoutStructure
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected virtual ScaledSize LayoutCell(
-        SkiaLayout.ControlInStack cell, SkiaControl child,
+        ControlInStack cell, SkiaControl child,
         float scale)
     {
         var measured = cell.Measured;
@@ -110,7 +110,7 @@ public abstract class StackLayoutStructure
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected virtual void LayoutCell(
         ScaledSize measured,
-        SkiaLayout.ControlInStack cell,
+        ControlInStack cell,
         SkiaControl child,
         float scale)
     {
@@ -152,9 +152,9 @@ public abstract class StackLayoutStructure
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual SkiaLayout.ControlInStack CreateWrapper(int i, SkiaControl control)
+    public virtual ControlInStack CreateWrapper(int i, SkiaControl control)
     {
-        var add = new SkiaLayout.ControlInStack
+        var add = new ControlInStack
         {
             ControlIndex = i
         };

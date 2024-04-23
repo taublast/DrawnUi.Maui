@@ -1491,7 +1491,7 @@ namespace DrawnUi.Maui.Draw
                 (float)Math.Abs(pixelsOffsetY)
                 );
 
-                if (layout.Type == LayoutType.Stack) //todo grid
+                if (layout.Type == LayoutType.Column || layout.Type == LayoutType.Stack && layout.Split > 0) //todo grid
                 {
                     var stackStructure = layout.LatestStackStructure;
                     int index = -1;
@@ -1561,7 +1561,7 @@ namespace DrawnUi.Maui.Draw
                 );
 
 
-                if (layout.Type == LayoutType.Stack) //todo grid
+                if (layout.Type == LayoutType.Row || layout.Type == LayoutType.Stack && layout.Split == 0) //todo grid
                 {
                     var stackStructure = layout.StackStructure;
                     int index = -1;
@@ -1628,19 +1628,19 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 var structure = layout.LatestStackStructure;
-                if (structure != null && structure.Count > 0)// && layout.StackStructure.Count == childrenCount)
+                if (structure != null && structure.GetCount() > 0)// && layout.StackStructure.Count == childrenCount)
                 {
                     float offset = 0;
 
                     //in case index falls out of array bounds due to multiple threads..
                     try
                     {
-                        SkiaLayout.ControlInStack childInfo = null;
+                        ControlInStack childInfo = null;
 
                         if (Orientation == ScrollOrientation.Horizontal)
-                            childInfo = structure.GetAtIndexForRow(0, index);
+                            childInfo = structure.Get(index, 0);
                         else
-                            childInfo = structure.GetAtIndexForColumn(0, index);
+                            childInfo = structure.Get(0, index);
 
                         if (childInfo.Measured != null)
                         {
@@ -2124,9 +2124,6 @@ namespace DrawnUi.Maui.Draw
                     ContentSize = ScaledSize.Empty;
                 }
 
-                var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-                var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-
                 if (Header != null)
                     HeaderSize = Header.Measure(request.WidthRequest, request.HeightRequest, request.Scale);
                 else
@@ -2136,6 +2133,22 @@ namespace DrawnUi.Maui.Draw
                     FooterSize = Footer.Measure(request.WidthRequest, request.HeightRequest, request.Scale);
                 else
                     FooterSize = ScaledSize.Empty;
+
+                //var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
+                //var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
+
+                var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
+                var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
+
+                var invalidated = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
+                if (invalidated)
+                {
+                    RenderObjectNeedsUpdate = true;
+                    if (UsingCacheType == SkiaCacheType.ImageComposition)
+                    {
+                        RenderObjectPreviousNeedsUpdate = true;
+                    }
+                }
 
                 return SetMeasured(width, height, request.Scale);
             }

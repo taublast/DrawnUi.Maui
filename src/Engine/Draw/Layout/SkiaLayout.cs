@@ -19,7 +19,7 @@ namespace DrawnUi.Maui.Draw
             try
             {
                 var index = this.ChildrenFactory.GetChildrenCount();
-                if (Type == LayoutType.Stack)
+                if (IsStack)
                 {
                     if (RenderTree == null)
                         index = -1;
@@ -112,7 +112,7 @@ namespace DrawnUi.Maui.Draw
                     return true; //we need this to eventually recalculate spans
                 }
 
-                if (!IsTemplated && Type == LayoutType.Stack)
+                if (!IsTemplated && IsStack)
                     return true;
 
                 // do not invalidate if template didnt change from last time?
@@ -290,7 +290,7 @@ namespace DrawnUi.Maui.Draw
                     //using RenderTree
                     if ((RenderTree != null && (
                             Type == LayoutType.Grid ||
-                            Type == LayoutType.Stack) //normal stacklayout or..
+                            IsStack) //has rendering tree
                         || (IsTemplated && Type == LayoutType.Absolute) //templated carousel etc
                         ))
                     {
@@ -561,27 +561,13 @@ namespace DrawnUi.Maui.Draw
             protected set;
         }
 
-        public static readonly BindableProperty MaxRowsProperty = BindableProperty.Create(
-            nameof(MaxRows),
-            typeof(int),
-            typeof(SkiaLayout),
-            0, propertyChanged: NeedUpdateItemsSource);
-
-        /// <summary>
-        /// Number of rows to use for Stack and Row layout types, If 0, rows will be created dynamically based layout type.
-        /// </summary>
-        public int MaxRows
-        {
-            get { return (int)GetValue(MaxRowsProperty); }
-            set { SetValue(MaxRowsProperty, value); }
-        }
-
 
         public static readonly BindableProperty SplitProperty = BindableProperty.Create(
             nameof(Split),
             typeof(int),
             typeof(SkiaLayout),
-            1, propertyChanged: NeedUpdateItemsSource);
+            0,
+            propertyChanged: NeedUpdateItemsSource);
 
         /// <summary>
         /// Number of columns/rows to split into, If 0 will not split at all, if 1 will have single column/row.
@@ -946,7 +932,8 @@ namespace DrawnUi.Maui.Draw
                     ContentSize = MeasureGrid(constraints.Content, request.Scale);
                     break;
 
-                    case LayoutType.Stack:
+                    case LayoutType.Column:
+                    case LayoutType.Row:
                     if (IsTemplated) //fix threads conflict when templates are initialized in background thread
                     {
                         var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
@@ -956,6 +943,18 @@ namespace DrawnUi.Maui.Draw
                     }
 
                     ContentSize = MeasureStack(constraints.Content, request.Scale);
+                    break;
+
+                    case LayoutType.Stack:
+                    if (IsTemplated) //fix threads conflict when templates are initialized in background thread
+                    {
+                        var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
+
+                        if (!canMeasureTemplates)
+                            return ScaledSize.CreateEmpty(request.Scale);
+                    }
+
+                    ContentSize = MeasureStackPanel(constraints.Content, request.Scale);
                     break;
 
                     default:
@@ -1099,7 +1098,7 @@ namespace DrawnUi.Maui.Draw
             if (destination.Width == 0 || destination.Height == 0)
                 return;
 
-            if (Type == LayoutType.Grid || Type == LayoutType.Stack)
+            if (Type == LayoutType.Grid || IsStack)
             {
                 SetupCacheComposition(ctx, destination);
             }
@@ -1121,11 +1120,21 @@ namespace DrawnUi.Maui.Draw
             {
                 drawnChildrenCount = DrawChildrenGrid(ctx, rectForChildren, scale);
             }
+            //else
+            //if (Type == LayoutType.Row || Type == LayoutType.Column)
+            //{
+            //    drawnChildrenCount = DrawChildrenStack(ctx, rectForChildren, scale);
+            //}
             else
             //stacklayout
-            if (Type == LayoutType.Stack)
+            if (IsStack)
             {
-                drawnChildrenCount = DrawChildrenStack(ctx, rectForChildren, scale);
+                var structure = LatestStackStructure;
+                if (structure != null && structure.GetCount() > 0)
+                {
+                    drawnChildrenCount = DrawChildrenStackPanel(
+                        structure, ctx, rectForChildren, scale);
+                }
             }
             else
             //absolute layout
@@ -1250,6 +1259,17 @@ namespace DrawnUi.Maui.Draw
                 }
             }
             return drawn;
+        }
+
+        /// <summary>
+        /// Column/Row/Stack
+        /// </summary>
+        public bool IsStack
+        {
+            get
+            {
+                return this.Type == LayoutType.Column || Type == LayoutType.Row || Type == LayoutType.Stack;
+            }
         }
 
         public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type), typeof(LayoutType), typeof(SkiaLayout),
@@ -1412,6 +1432,7 @@ namespace DrawnUi.Maui.Draw
         void UpdateItemsSource()
         {
             OnItemSourceChanged();
+
             Invalidate();
         }
 

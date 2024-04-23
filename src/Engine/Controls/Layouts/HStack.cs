@@ -3,11 +3,10 @@ namespace DrawnUi.Maui.Controls;
 /// <summary>
 /// Helper class for SkiaLayout Type = LayoutType.Stack,  SplitMax = 0
 /// </summary>
-public class HorizontalStack : SkiaLayout
+public class HStack : SkiaLayout
 {
-    public HorizontalStack()
+    public HStack()
     {
-        Type = LayoutType.Stack;
-        Split = 0;
+        Type = LayoutType.Row;
     }
 }

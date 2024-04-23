@@ -227,7 +227,7 @@ public static class DependencyExtensions
                     //var win = window.GetWindow();
                     //var handle = window.GetWindowHandle();
 
-
+                    Super.OnMauiAppCreated?.Invoke();
 
                     Super.OnCreated();
                 });

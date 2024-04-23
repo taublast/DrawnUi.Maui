@@ -90,7 +90,7 @@ public class SkiaScrollLooped : SkiaScroll
             (float)Math.Abs(pixelsOffsetY)
             );
 
-            if (layout.Type == LayoutType.Stack) //todo grid
+            if (layout.Type == LayoutType.Column || layout.Type == LayoutType.Stack && layout.Split > 0) //todo grid
             {
                 var stackStructure = layout.LatestStackStructure;
                 int index = -1;
@@ -160,7 +160,7 @@ public class SkiaScrollLooped : SkiaScroll
             );
 
             //horizontal stack
-            if (layout.Type == LayoutType.Stack) //todo grid
+            if (layout.Type == LayoutType.Row || layout.Type == LayoutType.Stack && layout.Split == 0) //todo grid
             {
                 var stackStructure = layout.StackStructure;
                 int index = -1;
