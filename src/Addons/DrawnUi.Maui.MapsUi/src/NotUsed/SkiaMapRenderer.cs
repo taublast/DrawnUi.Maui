@@ -15,6 +15,7 @@ using Mapsui.Widgets.BoxWidgets;
 using Mapsui.Widgets.ButtonWidgets;
 using Mapsui.Widgets.InfoWidgets;
 using Mapsui.Widgets.ScaleBar;
+using SkiaSharp;
 using Color = Mapsui.Styles.Color;
 
 namespace Mapsui.Samples.Maui;

@@ -4,6 +4,14 @@ namespace DrawnUi.Maui.Extensions;
 
 public static class InternalExtensions
 {
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IntersectsWith(this SKRect rect, SKRect with, SKPoint offset)
+    {
+        with.Offset(offset);
+        return rect.IntersectsWith(with);
+    }
+
     /// <summary>
     /// The default Skia method is returning false if point is on the bounds, We correct this by custom function.
     /// </summary>
@@ -50,7 +58,7 @@ public static class InternalExtensions
 
         if (view.Handler is IElementHandler nativeViewHandler)
         {
-            
+
             MainThread.InvokeOnMainThreadAsync(() =>
             {
                 try

@@ -79,7 +79,7 @@ namespace DrawnUi.Maui.Draw
 
                         if (Virtualisation != VirtualisationType.Disabled)
                         {
-                            if (needrebuild && UsingCacheType == SkiaCacheType.None &&
+                            if (needrebuild && UseCache == SkiaCacheType.None &&
                                 Virtualisation == VirtualisationType.Smart
                                 && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
                             {
@@ -314,7 +314,7 @@ namespace DrawnUi.Maui.Draw
                     smartMeasuring =
                         WasMeasured
                         && Superview.DrawingThreadId == Thread.CurrentThread.ManagedThreadId
-                                     && UsingCacheType != SkiaCacheType.ImageDoubleBuffered;
+                                     && UseCache != SkiaCacheType.ImageDoubleBuffered;
                 }
 
                 //smartMeasuring = false;

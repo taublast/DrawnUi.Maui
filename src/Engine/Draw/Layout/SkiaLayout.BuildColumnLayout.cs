@@ -45,11 +45,6 @@ public class BuildColumnLayout : StackLayoutStructure
                 (maxAvailableSpace - (_layout.Split - 1) * _layout.Spacing * scale) / _layout.Split);
         }
 
-        //if (_layout.Tag == "StackSettings")
-        //{
-        //    var stop = 1;
-        //}
-
         var column = 0;
         var row = 0;
         bool rowFinalized = true;
@@ -236,6 +231,7 @@ public class BuildColumnLayout : StackLayoutStructure
                 {
                     bool needMeasure =
                         _layout.ItemSizingStrategy != ItemSizingStrategy.MeasureFirstItem ||
+                        _layout.RecyclingTemplate == RecyclingTemplate.Disabled ||
                         measuredCell == null;
 
                     if (needMeasure)

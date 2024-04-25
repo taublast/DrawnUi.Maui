@@ -63,7 +63,7 @@ namespace DrawnUi.Maui.Draw
 
                         if (Virtualisation != VirtualisationType.Disabled)
                         {
-                            if (needrebuild && UsingCacheType == SkiaCacheType.None &&
+                            if (needrebuild && UseCache == SkiaCacheType.None &&
                                 Virtualisation == VirtualisationType.Smart
                                 && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
                             {
@@ -151,7 +151,6 @@ namespace DrawnUi.Maui.Draw
                         }
                         */
 
-
                         if (IsRenderingWithComposition)
                         {
                             if (DirtyChildrenInternal.Contains(child))
@@ -162,6 +161,7 @@ namespace DrawnUi.Maui.Draw
                             else
                             {
                                 //skip drawing but need arrange :(
+                                //todo set virtual offset between drawnrect and the new
                                 child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height, scale);
                             }
                         }

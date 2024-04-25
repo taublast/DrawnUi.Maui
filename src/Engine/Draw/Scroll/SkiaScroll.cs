@@ -1637,12 +1637,25 @@ namespace DrawnUi.Maui.Draw
                     {
                         ControlInStack childInfo = null;
 
+                        bool isValid = false;
                         if (Orientation == ScrollOrientation.Horizontal)
-                            childInfo = structure.Get(index, 0);
+                        {
+                            if (index < structure.MaxColumns)
+                            {
+                                isValid = true;
+                                childInfo = structure.Get(index, 0);
+                            }
+                        }
                         else
-                            childInfo = structure.Get(0, index);
+                        {
+                            if (index < structure.MaxRows)
+                            {
+                                isValid = true;
+                                childInfo = structure.Get(0, index);
+                            }
+                        }
 
-                        if (childInfo.Measured != null)
+                        if (isValid && childInfo.Measured != null)
                         {
 
                             if (Orientation == ScrollOrientation.Horizontal)
@@ -2080,6 +2093,7 @@ namespace DrawnUi.Maui.Draw
         protected ScaledSize HeaderSize;
         protected ScaledSize FooterSize;
 
+
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
             if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
@@ -2144,7 +2158,7 @@ namespace DrawnUi.Maui.Draw
                 if (invalidated)
                 {
                     RenderObjectNeedsUpdate = true;
-                    if (UsingCacheType == SkiaCacheType.ImageComposition)
+                    if (UseCache == SkiaCacheType.ImageComposite)
                     {
                         RenderObjectPreviousNeedsUpdate = true;
                     }
@@ -2159,6 +2173,7 @@ namespace DrawnUi.Maui.Draw
             }
 
         }
+
 
         public ScaledRect Viewport { get; protected set; } = new();
 
@@ -2258,14 +2273,14 @@ namespace DrawnUi.Maui.Draw
             ContentAvailableSpace = GetContentAvailableRect(destination);
 
             //we scroll at subpixels but stop only at pixel-snapped
-            if (IsScrolling && !isScroling && !IsUserPanning || onceAfterInitializeViewport)
-            {
-                var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
-                var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
-                offsetPixels.Offset(roundX, roundY);
-            }
+            //if (IsScrolling && !isScroling && !IsUserPanning || onceAfterInitializeViewport)
+            //{
+            //    var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
+            //    var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
+            //    offsetPixels.Offset(roundX, roundY);
+            //}
 
-            InternalViewportOffset = ScaledPoint.FromPixels(offsetPixels, scale);
+            InternalViewportOffset = ScaledPoint.FromPixels(new((float)Math.Round(offsetPixels.X), (float)Math.Round(offsetPixels.Y)), scale);
 
             var childRect = ContentAvailableSpace;
             childRect.Offset(InternalViewportOffset.Pixels.X, InternalViewportOffset.Pixels.Y);
@@ -2606,6 +2621,8 @@ namespace DrawnUi.Maui.Draw
                     {
                         PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
                     });
+
+                //Paint(context, DrawingRect, scale, CreatePaintArguments());
             }
 
             FinalizeDraw(context, scale);

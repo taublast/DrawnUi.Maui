@@ -259,7 +259,7 @@ public class ViewsAdapter : IDisposable
                 }
                 else
                 {
-                    var children = _parent.GetOrderedSubviews();
+                    var children = _parent.GetUnorderedSubviews();
                     if (index < children.Count())
                         return children.ElementAt(index);
                 }
@@ -275,7 +275,7 @@ public class ViewsAdapter : IDisposable
     {
         if (!_parent.IsTemplated)
         {
-            var children = _parent.GetOrderedSubviews();
+            var children = _parent.GetUnorderedSubviews();
 
             return children.Count();
         }
@@ -534,7 +534,7 @@ public class ViewsAdapter : IDisposable
             {
                 int threadId = Thread.CurrentThread.ManagedThreadId;
 
-                var children = _parent.GetOrderedSubviews();
+                var children = _parent.GetUnorderedSubviews();
 
                 if (!_wrappers.TryGetValue(threadId, out ViewsIterator iterator))
                 {

@@ -21,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sandbox", "samples\Sandbox\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SomeBenchmarks", "benchmarks\SomeBenchmarks\SomeBenchmarks.csproj", "{A0F40A18-EF55-4EF9-813B-DAD5196228E4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{8B60E2B6-4347-450E-9999-319D8C7697D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.MapsUi", "Addons\DrawnUi.Maui.MapsUi\src\DrawnUi.Maui.MapsUi.csproj", "{D5538622-9DC4-40CD-B3E8-07BF07C3C9A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,10 @@ Global
 		{A0F40A18-EF55-4EF9-813B-DAD5196228E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0F40A18-EF55-4EF9-813B-DAD5196228E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0F40A18-EF55-4EF9-813B-DAD5196228E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5538622-9DC4-40CD-B3E8-07BF07C3C9A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5538622-9DC4-40CD-B3E8-07BF07C3C9A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5538622-9DC4-40CD-B3E8-07BF07C3C9A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5538622-9DC4-40CD-B3E8-07BF07C3C9A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +64,7 @@ Global
 		{C71AEBDE-75FE-4FB8-BD95-FFBA2B4A642E} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
 		{B1AD715F-E8D9-4514-9D2C-D084E66566F7} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
 		{A0F40A18-EF55-4EF9-813B-DAD5196228E4} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
+		{D5538622-9DC4-40CD-B3E8-07BF07C3C9A5} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08E673B7-06BF-468C-8D6C-2D1AA8E4A8CA}

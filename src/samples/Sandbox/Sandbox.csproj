@@ -175,6 +175,7 @@
 	</ItemGroup>
  
   <ItemGroup>
+    <ProjectReference Include="..\..\Addons\DrawnUi.Maui.MapsUi\src\DrawnUi.Maui.MapsUi.csproj" />
     <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
   </ItemGroup>
  
@@ -267,7 +268,6 @@
   <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <Compile Remove="Views\MainPageMap.xaml.cs" />
     <MauiXaml Remove="Views\MainPageMap.xaml" />
-    <Compile Remove="Views\Controls\MapsUi\**\*.cs" />
   </ItemGroup>
 
 

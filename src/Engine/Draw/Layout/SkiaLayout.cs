@@ -246,7 +246,7 @@ namespace DrawnUi.Maui.Draw
             }
             else
             {
-                foreach (var child in GetOrderedSubviews())
+                foreach (var child in GetUnorderedSubviews())
                 {
 
                     var rect = GetChildRect(child);
@@ -295,6 +295,7 @@ namespace DrawnUi.Maui.Draw
                         ))
                     {
                         var thisOffset = TranslateInputCoords(childOffset);
+
                         var x = args.Location.X + thisOffset.X;
                         var y = args.Location.Y + thisOffset.Y;
 
@@ -327,8 +328,10 @@ namespace DrawnUi.Maui.Draw
 
                                     if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
                                     {
-                                        var c = effect.OnSkiaGestureEvent(type, args, touchAction, thisOffset,
-                                            TranslateInputCoords(childOffsetDirect, false), alreadyConsumed);
+                                        var c = effect.OnSkiaGestureEvent(type, args, touchAction,
+                                            thisOffset,
+                                            TranslateInputCoords(childOffsetDirect, false),
+                                            alreadyConsumed);
                                         if (c != null)
                                         {
                                             consumed = effect;
@@ -337,8 +340,10 @@ namespace DrawnUi.Maui.Draw
                                     }
                                     else
                                     {
-                                        var c = listener.OnSkiaGestureEvent(type, args, touchAction, thisOffset,
-                                            TranslateInputCoords(childOffsetDirect, false), alreadyConsumed);
+                                        var c = listener.OnSkiaGestureEvent(type, args, touchAction,
+                                            thisOffset,
+                                            TranslateInputCoords(childOffsetDirect, false),
+                                            alreadyConsumed);
                                         if (c != null)
                                         {
                                             consumed = c;//listener;
@@ -832,7 +837,7 @@ namespace DrawnUi.Maui.Draw
             {
                 if (!IsTemplated)
                 {
-                    var children = GetOrderedSubviews();
+                    var children = GetUnorderedSubviews();
                     return MeasureContent(children, rectForChildrenPixels, scale);
                 }
 
@@ -974,10 +979,12 @@ namespace DrawnUi.Maui.Draw
                 if (invalidated)
                 {
                     RenderObjectNeedsUpdate = true;
-                    if (UsingCacheType == SkiaCacheType.ImageComposition)
-                    {
-                        RenderObjectPreviousNeedsUpdate = true;
-                    }
+                }
+
+                //always invalidate because children layouts will be reset
+                if (UseCache == SkiaCacheType.ImageComposite)
+                {
+                    RenderObjectPreviousNeedsUpdate = true;
                 }
 
                 return SetMeasured(width, height, request.Scale);
@@ -1168,16 +1175,17 @@ namespace DrawnUi.Maui.Draw
 
         void SetupCacheComposition(SkiaDrawingContext ctx, SKRect destination)
         {
-            if (UsingCacheType == SkiaCacheType.ImageComposition)
+            if (UseCache == SkiaCacheType.ImageComposite)
             {
                 DirtyChildrenInternal.Clear();
 
                 var previousCache = RenderObjectPrevious;
-                if (previousCache != null && ctx.IsRecycled)
+                if (previousCache != null && ctx.IsRecycled) //not the first draw
                 {
                     IsRenderingWithComposition = true;
 
                     var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
+                    //offset.Offset(new(_pixelsLastTranslationX, _pixelsLastTranslationY));
 
                     //var checkOffset = new SKPoint(this.LastDrawnAt.Left - previousCache.Bounds.Left, LastDrawnAt.Top - previousCache.Bounds.Top);
 
@@ -1192,6 +1200,7 @@ namespace DrawnUi.Maui.Draw
                     //make intersecting children dirty too
                     //var allChildren = RenderTree.Select(s => s.Control).ToList();
                     var asSpan = CollectionsMarshal.AsSpan(RenderTree);
+                    //var translated = new SKPoint(_pixelsLastTranslationX, _pixelsLastTranslationY);
                     foreach (var cell in asSpan)
                     {
                         if (!DirtyChildrenInternal.Contains(cell.Control) &&

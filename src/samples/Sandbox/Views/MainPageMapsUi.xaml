@@ -8,6 +8,7 @@
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:maui="using:Mapsui.Samples.Maui"
     xmlns:views="clr-namespace:Sandbox.Views"
+    xmlns:mapsUi="clr-namespace:DrawnUi.Maui.MapsUi;assembly=DrawnUi.Maui.MapsUi"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel">
 
@@ -52,7 +53,7 @@
             <!--  MAP  -->
 
             <!--  GPU cache makes a huge difference  -->
-            <maui:SkiaMapControl
+            <mapsUi:SkiaMapsUi
                 x:Name="mapControl"
                 DisableEffects="{Binding ValueSwitch, Converter={x:StaticResource NotConverter}}"
                 HorizontalOptions="Fill"
@@ -82,7 +83,7 @@
 
                 </draw:SkiaControl.VisualEffects>
 
-            </maui:SkiaMapControl>
+            </mapsUi:SkiaMapsUi>
 
             <!--  ATTRIBUTION  -->
             <!--

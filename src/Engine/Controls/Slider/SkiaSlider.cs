@@ -83,11 +83,15 @@ public class SkiaSlider : SkiaLayout
         }
 
         var thisOffset = TranslateInputCoords(childOffset);
-        var x = args.Location.X + thisOffset.X - LastDrawnAt.Left; //inside this control
-        var locationX = x / RenderingScale; //from pix to pts
 
-        var y = args.Location.Y + thisOffset.Y - LastDrawnAt.Top; //inside this control
-        var locationY = y / RenderingScale; //from pix to pts
+        var x = args.Location.X + thisOffset.X;
+        var y = args.Location.Y + thisOffset.Y;
+
+        var relativeX = x - LastDrawnAt.Left; //inside this control
+        var relativeY = y - LastDrawnAt.Top; //inside this control
+
+        var locationX = relativeX / RenderingScale; //from pix to pts
+        var locationY = relativeY / RenderingScale; //from pix to pts
 
         if (EnableRange && locationX >= StartThumbX - moreHotspotSize &&
             locationX <= StartThumbX + SliderHeight + moreHotspotSize)
@@ -108,8 +112,8 @@ public class SkiaSlider : SkiaLayout
         bool onTrail = true;
         if (Trail != null)
         {
-            var point = TranslateInputOffsetToPixels(args.Location, childOffset);
-            onTrail = Trail.HitIsInside(point.X, point.Y);
+            var trailOffset = Trail.TranslateInputCoords(thisOffset);
+            onTrail = Trail.HitIsInside(args.Location.X + trailOffset.X, args.Location.Y + trailOffset.Y);
         }
         if (onTrail || touchArea == RangeZone.Start || touchArea == RangeZone.End)
             IsPressed = true;
