@@ -18,8 +18,6 @@ namespace DrawnUi.Maui.Views;
 public class Canvas : DrawnView, IGestureListener
 {
 
-
-
     public override void SetChildren(IEnumerable<SkiaControl> views)
     {
         //do not use subviews as we are using Content property for this control
@@ -226,7 +224,6 @@ public class Canvas : DrawnView, IGestureListener
 
                 widthConstraintPts = AdaptWidthContraintToContentRequest(widthConstraintPts, ContentSize, Padding.Left + Padding.Right);
                 heightConstraintPts = AdaptHeightContraintToContentRequest(heightConstraintPts, ContentSize, Padding.Top + Padding.Bottom);
-
             }
         }
 

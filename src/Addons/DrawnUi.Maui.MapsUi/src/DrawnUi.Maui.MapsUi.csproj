@@ -43,13 +43,15 @@
     <PackageReference Include="BruTile.MbTiles" Version="5.0.6" />
     <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.1" />
     
-<!--    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.14" />-->
-<!--    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.14" />-->
-<!--    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.14" />-->
+    <!--required to build in rider-->
+    <!--<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.21" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.21" />
+    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.21" />-->
+
   </ItemGroup>            
   <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\DrawnUi.Maui.csproj" />
-  </ItemGroup>
+  </ItemGroup>            
 
 
 </Project>
