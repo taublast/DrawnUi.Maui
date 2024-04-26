@@ -2494,7 +2494,7 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void OnSizeChanged()
         {
-            Update();
+
         }
 
         public Action<SKPath, SKRect> Clipping { get; set; }

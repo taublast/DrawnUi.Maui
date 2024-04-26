@@ -13,6 +13,12 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
         RecyclingTemplate = RecyclingTemplate.Disabled;
     }
 
+    protected override void OnLayoutChanged()
+    {
+        //this one constantly changes size, we avoid invoking onsizechanged on every frame..
+
+        //base.OnLayoutReady();
+    }
 
 
     public static readonly BindableProperty DistortionAngleProperty = BindableProperty.Create(nameof(DistortionAngle),
