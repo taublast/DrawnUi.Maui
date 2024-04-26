@@ -8,6 +8,13 @@ namespace DrawnUi.Maui.Draw;
 public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGestureListener
 {
 
+    public override void Invalidate()
+    {
+        base.Invalidate();
+            
+        Update();
+    }
+
     public virtual void OnFocusChanged(bool focus)
     {
     }
