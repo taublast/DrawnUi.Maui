@@ -567,6 +567,8 @@ namespace DrawnUi.Maui.Controls
 
         protected VelocityAccumulator VelocityAccumulator { get; } = new();
 
+
+
         public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
             SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
         {
@@ -585,7 +587,10 @@ namespace DrawnUi.Maui.Controls
             ISkiaGestureListener consumed = null;
 
             //pass Released always to children first
-            if (touchAction == TouchActionResult.Up || touchAction == TouchActionResult.Tapped || !IsUserPanning || !RespondsToGestures)
+            if (touchAction == TouchActionResult.Up
+                || touchAction == TouchActionResult.Tapped
+                || !IsUserPanning
+                || !RespondsToGestures)
             {
                 consumed = PassToChildren();
                 if (consumed != null && touchAction != TouchActionResult.Up)

@@ -265,22 +265,6 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
         set { SetValue(OrientationProperty, value); }
     }
 
-    public static readonly BindableProperty FluidPanProperty = BindableProperty.Create(
-        nameof(FluidPan),
-        typeof(bool),
-        typeof(ContentLayout),
-        true);
-
-    /// <summary>
-    /// if enabled you get a fluidly panning scroll, if disabled you get a precisely panning scroll.
-    /// In the first case  we add last finger movement to last scroll position, in the second case we just set scroll position to current finger position. Default is True.
-    /// </summary>
-    public bool FluidPan
-    {
-        get { return (bool)GetValue(FluidPanProperty); }
-        set { SetValue(FluidPanProperty, value); }
-    }
-
     public static readonly BindableProperty ScrollTypeProperty = BindableProperty.Create(nameof(ViewportScrollType), typeof(ViewportScrollType), typeof(ContentLayout),
         ViewportScrollType.Scrollable,
         propertyChanged: NeedDraw);

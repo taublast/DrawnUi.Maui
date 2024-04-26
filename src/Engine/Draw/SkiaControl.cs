@@ -1068,6 +1068,7 @@ namespace DrawnUi.Maui.Draw
                                 }
                                 consumed = hadInput.OnSkiaGestureEvent(type, args, touchAction, TranslateInputCoords(childOffset, true),
                                     TranslateInputCoords(childOffsetDirect, false), tmpConsumed);
+
                                 if (consumed != null)
                                 {
                                     if (tmpConsumed == null)

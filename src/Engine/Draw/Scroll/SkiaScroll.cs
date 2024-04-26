@@ -480,6 +480,22 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(RespondsToGesturesProperty, value); }
         }
 
+
+        public static readonly BindableProperty CanScrollUsingHeaderProperty = BindableProperty.Create(
+            nameof(CanScrollUsingHeader),
+            typeof(bool),
+            typeof(SkiaScroll),
+            true);
+
+        /// <summary>
+        /// If disabled will not scroll using gestures. Scrolling will still be possible by code.
+        /// </summary>
+        public bool CanScrollUsingHeader
+        {
+            get { return (bool)GetValue(CanScrollUsingHeaderProperty); }
+            set { SetValue(CanScrollUsingHeaderProperty, value); }
+        }
+
         protected bool ContentGesturesHit;
 
         public override bool IsGestureForChild(ISkiaGestureListener listener, float x, float y)
@@ -529,12 +545,47 @@ namespace DrawnUi.Maui.Draw
             _panningCurrentOffsetPts = _panningStartOffsetPts;
         }
 
+
+        private bool lockHeader;
+
+        public override bool IsGestureForChild(ISkiaGestureListener listener, SKPoint point)
+        {
+            if (lockHeader && listener != Header)
+            {
+                return false;
+            }
+
+            var forChild = base.IsGestureForChild(listener, point);
+            if (!HeaderBehind && Header != null)
+            {
+                //block gestures for other children if from header got them
+                if (listener == this.Header && forChild)
+                {
+                    lockHeader = true;
+                }
+            }
+            return forChild;
+        }
+
+        private bool inContact;
+
         public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args,
             TouchActionResult touchAction,
             SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
         {
 
-            var smooth = FluidPan;
+            if (touchAction == TouchActionResult.Down)
+            {
+                lockHeader = false;
+                inContact = true;
+            }
+            else
+            if (touchAction == TouchActionResult.Up)
+            {
+                lockHeader = false;
+                inContact = false;
+            }
+
             var preciseStop = false;
             ContentGesturesHit = false;
 
@@ -680,6 +731,11 @@ namespace DrawnUi.Maui.Draw
                         canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold || Math.Abs(VelocityY) > ScrollVelocityThreshold;
                     }
 
+                    if (lockHeader && !CanScrollUsingHeader)
+                    {
+                        canPan = false;
+                    }
+
                     if (canPan)
                     {
                         //Trace.WriteLine($"[PAN] {Tag} VY:{VelocityY:0.00}");
@@ -774,11 +830,9 @@ namespace DrawnUi.Maui.Draw
 
                     break;
 
-                    //---------------------------------------------------------------------------------------------------------
+                    //----------------------------------------------------------------------
                     case TouchActionResult.Up when RespondsToGestures:
-                    //---------------------------------------------------------------------------------------------------------
-
-                    //Super.Log($"[SCROLL] {this.Tag} UP?. {ChildWasPanning}  {ScrollLocked}..");
+                    //----------------------------------------------------------------------
 
                     if ((!ChildWasTapped || OverScrolled) && (!ChildWasPanning || IsUserPanning)) //should we swipe?
                     {
@@ -789,7 +843,13 @@ namespace DrawnUi.Maui.Draw
                             return null;
                         }
 
-                        if (!ScrollLocked)
+                        bool canSwipe = true;
+                        if (lockHeader && !CanScrollUsingHeader)
+                        {
+                            canSwipe = false;
+                        }
+
+                        if (!ScrollLocked && canSwipe)
                         {
                             var finalVelocity = VelocityAccumulator.CalculateFinalVelocity(this.MaxVelocity);
 
@@ -3068,21 +3128,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(OrientationProperty, value); }
         }
 
-        public static readonly BindableProperty FluidPanProperty = BindableProperty.Create(
-            nameof(FluidPan),
-            typeof(bool),
-            typeof(SkiaScroll),
-            false);
-
-        /// <summary>
-        /// if enabled you get a fluidly panning scroll, if disabled you get a precisely panning scroll.
-        /// In the first case  we add last finger movement to last scroll position, in the second case we just set scroll position to current finger position. Default is True.
-        /// </summary>
-        public bool FluidPan
-        {
-            get { return (bool)GetValue(FluidPanProperty); }
-            set { SetValue(FluidPanProperty, value); }
-        }
 
         public static readonly BindableProperty ScrollTypeProperty = BindableProperty.Create(nameof(ViewportScrollType), typeof(ViewportScrollType), typeof(SkiaScroll),
             ViewportScrollType.Scrollable,
