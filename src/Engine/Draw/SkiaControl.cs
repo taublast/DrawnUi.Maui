@@ -4441,14 +4441,15 @@ namespace DrawnUi.Maui.Draw
                     {
                         if (_renderObject != null)
                         {
-                            if (UseCache == SkiaCacheType.ImageDoubleBuffered || UseCache == SkiaCacheType.ImageComposite)
-                            {
-                                RenderObjectPrevious = _renderObject;
-                            }
-                            else
-                            {
-                                DisposeObject(_renderObject);
-                            }
+                            RenderObjectPrevious = _renderObject;
+                            // if (UseCache == SkiaCacheType.ImageDoubleBuffered || UseCache == SkiaCacheType.ImageComposite)
+                            // {
+                            //     RenderObjectPrevious = _renderObject;
+                            // }
+                            // else
+                            // {
+                            //     DisposeObject(_renderObject);
+                            // }
                         }
                         _renderObject = value;
                         OnPropertyChanged();
@@ -4997,10 +4998,28 @@ namespace DrawnUi.Maui.Draw
                     bool needCreateSurface = false;
                     SKSurface surface = null;
 
+                    if (usingCacheType == SkiaCacheType.GPU)
+                    {
+                        var stop=1;
+                    }
+                    
                     if (reuseSurfaceFrom != null && reuseSurfaceFrom.Surface != null)
                     {
                         surface = reuseSurfaceFrom.Surface;
 
+                        //check hardware context maybe changed
+                        if (usingCacheType == SkiaCacheType.GPU &&
+                            surface.Context != null &&
+                            context.Superview?.CanvasView is SkiaViewAccelerated hardware)
+                        {
+                            //hardware context might change if we returned from background..
+                            if (hardware.GRContext == null || surface.Context==null
+                                || (int)hardware.GRContext.Handle != (int)surface.Context.Handle)
+                            {
+                                needCreateSurface = true;
+                            }
+                        }
+                        
                         if (height != reuseSurfaceFrom.Bounds.Height || width != reuseSurfaceFrom.Bounds.Width)
                         {
                             needCreateSurface = true;
@@ -5010,19 +5029,7 @@ namespace DrawnUi.Maui.Draw
                     {
                         needCreateSurface = true;
                     }
-
-                    //check hardware context maybe changed
-                    if (usingCacheType == SkiaCacheType.GPU &&
-                        surface != null && surface.Context != null &&
-                        context.Superview?.CanvasView is SkiaViewAccelerated hardware)
-                    {
-                        //hardware context might change if we returned from background..
-                        if (hardware.GRContext == null || (int)hardware.GRContext.Handle != (int)surface.Context.Handle)
-                        {
-                            needCreateSurface = true;
-                        }
-                    }
-
+                    
                     if (needCreateSurface)
                     {
                         var kill = surface;
@@ -5196,7 +5203,7 @@ namespace DrawnUi.Maui.Draw
             var usingCacheType = UseCache;
             var oldObject = RenderObject;
 
-            if (usingCacheType == SkiaCacheType.ImageComposite)
+            if (usingCacheType != SkiaCacheType.ImageDoubleBuffered)
             {
                 oldObject = RenderObjectPrevious;
             }
@@ -5205,6 +5212,11 @@ namespace DrawnUi.Maui.Draw
             if (created.SurfaceIsRecycled && oldObject != null)
             {
                 oldObject.Surface = null;
+                
+                if (usingCacheType != SkiaCacheType.ImageDoubleBuffered)
+                {
+                    oldObject.Dispose();
+                }
             }
 
             var notValid = RenderObjectNeedsUpdate;
