@@ -115,7 +115,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                 RowDefinitions="0,80,*"
                 Spacing="0"
                 Type="Grid"
-                UseCache="ImageComposition"
+                UseCache="ImageComposite"
                 VerticalOptions="Fill">
 
                 <draw:SkiaMarkdownLabel
@@ -168,8 +168,8 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                             <!--  0  -->
                             <draw:SkiaLayout
                                 HorizontalOptions="Center"
-                                Tag="Select0"
                                 Split="0"
+                                Tag="Select0"
                                 Type="Stack"
                                 VerticalOptions="Fill">
 
@@ -460,6 +460,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                             Padding="16"
                                             HorizontalOptions="Fill"
                                             Type="Stack"
+                                            Split="1"
                                             VerticalOptions="Fill">
 
                                             <draw:SkiaShape
@@ -515,6 +516,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                             Margin="24"
                             HorizontalOptions="Fill"
                             Spacing="24"
+                            Split="1"
                             Type="Stack"
                             UseCache="Image"
                             VerticalOptions="Center">

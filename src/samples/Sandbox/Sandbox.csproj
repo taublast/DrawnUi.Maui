@@ -281,6 +281,9 @@
     <MauiXaml Update="Views\MainPageControls.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\Xaml2Pdf\ReportSample.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
  

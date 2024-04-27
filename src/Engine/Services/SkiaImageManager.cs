@@ -538,11 +538,14 @@ public partial class SkiaImageManager : IDisposable
         var pendingLoads = GetPendingLoadsDictionary(priority);
         foreach (var pendingPair in pendingLoads)
         {
-            if (pendingPair.Value.Count != 0 && pendingPair.Value.TryPop(out var nextTcs))
+            if (pendingPair.Value != null)
             {
-                TraceLog($"ImageLoadManager: [UNPAUSED] task for {pendingPair.Key}");
+                if (pendingPair.Value.Count != 0 && pendingPair.Value.TryPop(out var nextTcs))
+                {
+                    TraceLog($"ImageLoadManager: [UNPAUSED] task for {pendingPair.Key}");
 
-                return nextTcs;
+                    return nextTcs;
+                }
             }
         }
         return null;

@@ -111,7 +111,7 @@
                 HorizontalOptions="Fill"
                 IsOpen="{Binding IsOpen}"
                 Tag="Drawer"
-                UseCache="ImageComposition"
+                UseCache="ImageComposite"
                 VerticalOptions="End"
                 ZIndex="1">
 
@@ -149,8 +149,8 @@
                         MarginTop="{Binding DrawerHeaderSize}"
                         Spacing="0"
                         Tag="InsideDrawer"
-                        Type="Stack"
-                        UseCache="ImageComposition"
+                        Type="Column"
+                        UseCache="ImageComposite"
                         VerticalOptions="Fill">
 
                         <!--  Switch  -->

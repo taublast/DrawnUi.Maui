@@ -65,6 +65,7 @@
                     ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding Items}"
                     RecyclingTemplate="Enabled"
+                    Split="1"
                     Type="Stack">
 
                     <draw:SkiaLayout.ItemTemplate>

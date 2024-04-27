@@ -63,7 +63,7 @@
                     Spacing="20"
                     Tag="Content"
                     Type="Stack"
-                    UseCache="ImageComposition"
+                    UseCache="ImageComposite"
                     WidthRequest="280">
 
                     <draw:SkiaLayout HorizontalOptions="Fill">
@@ -93,7 +93,7 @@
                             Spacing="12"
                             Split="2"
                             Type="Stack"
-                            UseCache="ImageComposition">
+                            UseCache="ImageComposite">
 
                             <controls:DrawnRadioButton Text="Flowers" />
 

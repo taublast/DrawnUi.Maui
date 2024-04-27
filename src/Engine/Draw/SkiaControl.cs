@@ -1,17 +1,13 @@
 ﻿using DrawnUi.Maui.Infrastructure.Extensions;
-using Microsoft.Maui.Graphics.Text;
 using Microsoft.Maui.HotReload;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using Color = Microsoft.Maui.Graphics.Color;
-using IImage = Microsoft.Maui.Graphics.IImage;
 
 
 namespace DrawnUi.Maui.Draw
@@ -1015,6 +1011,15 @@ namespace DrawnUi.Maui.Draw
             return ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, wasConsumed);
         }
 
+        public virtual bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
+        {
+            if (!child.Control.InputTransparent && child.Control.CanDraw)
+            {
+                return child.Rect.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
+            }
+            return false;
+        }
+
         public virtual ISkiaGestureListener ProcessGestures(
             TouchActionType type,
             TouchActionEventArgs args,
@@ -1023,8 +1028,6 @@ namespace DrawnUi.Maui.Draw
         {
             if (IsDisposed || IsDisposing)
                 return null;
-
-            //Debug.WriteLine($"[IN] {type} {touchAction}");
 
             if (Superview == null)
             {
@@ -1038,102 +1041,115 @@ namespace DrawnUi.Maui.Draw
                 Super.Log($"[BASE] {this.Tag} Got {touchAction}.. {Uid}");
             }
 
-            lock (LockIterateListeners)
+            ISkiaGestureListener consumed = null;
+            ISkiaGestureListener tmpConsumed = alreadyConsumed;
+            bool manageChildFocus = false;
+
+            if (UsesRenderingTree)
             {
-                ISkiaGestureListener consumed = null;
-                ISkiaGestureListener tmpConsumed = alreadyConsumed;
+                var thisOffset = TranslateInputCoords(childOffset);
+                var touchLocationWIthOffset = new SKPoint(args.Location.X + thisOffset.X, args.Location.Y + thisOffset.Y);
 
-                try
+                //process thoses who already had input
+                if (HadInput.Count > 0)
                 {
-                    if (CheckChildrenGesturesLocked(touchAction))
-                        return null;
-
-                    bool manageChildFocus = false;
-
-                    var point = TranslateInputOffsetToPixels(args.Location, childOffset);
-
-                    if (HadInput.Count > 0)
+                    if (
+                        (
+                            touchAction == TouchActionResult.Panning ||
+                            touchAction == TouchActionResult.Pinched ||
+                            touchAction == TouchActionResult.Up))
                     {
-                        if (
-                            (
-                             touchAction == TouchActionResult.Panning ||
-                             touchAction == TouchActionResult.Pinched ||
-                             touchAction == TouchActionResult.Up))
+                        foreach (var hadInput in HadInput.Values)
                         {
-                            foreach (var hadInput in HadInput.Values)
+                            if (!hadInput.CanDraw || hadInput.InputTransparent)
                             {
-                                if (!hadInput.CanDraw || hadInput.InputTransparent)
-                                {
-                                    continue;
-                                }
-                                consumed = hadInput.OnSkiaGestureEvent(type, args, touchAction, TranslateInputCoords(childOffset, true),
-                                    TranslateInputCoords(childOffsetDirect, false), tmpConsumed);
+                                continue;
+                            }
+                            consumed = hadInput.OnSkiaGestureEvent(type, args, touchAction, thisOffset,
+                                TranslateInputCoords(childOffsetDirect, false), tmpConsumed);
 
-                                if (consumed != null)
-                                {
-                                    if (tmpConsumed == null)
-                                        tmpConsumed = consumed;
+                            if (consumed != null)
+                            {
+                                if (tmpConsumed == null)
+                                    tmpConsumed = consumed;
 
-                                    if (touchAction != TouchActionResult.Up)
-                                        break;
-                                }
+                                if (touchAction != TouchActionResult.Up)
+                                    break;
                             }
                         }
-                        else
-                        {
-                            HadInput.Clear();
-                        }
                     }
+                    else
+                    {
+                        HadInput.Clear();
+                    }
+                }
 
-                    var hadInputConsumed = consumed;
+                var hadInputConsumed = consumed;
 
-                    if (consumed == null || touchAction == TouchActionResult.Up)// !GestureListeners.Contains(consumed))
-                        foreach (var listener in GestureListeners.GetListeners())
+                //if previously having input didn't keep it
+                if (consumed == null || touchAction == TouchActionResult.Up)
+                {
+
+                    var asSpan = CollectionsMarshal.AsSpan(RenderTree);
+                    for (int i = asSpan.Length - 1; i >= 0; i--)
+                    //for (int i = 0; i < RenderTree.Length; i++)
+                    {
+                        var child = asSpan[i];
+
+                        if (child == Superview.FocusedChild)
+                            manageChildFocus = true;
+
+                        ISkiaGestureListener listener = child.Control.GesturesEffect;
+                        if (listener == null && child.Control is ISkiaGestureListener listen)
                         {
-                            if (!listener.CanDraw || listener.InputTransparent)
-                                continue;
+                            listener = listen;
+                        }
 
-                            if (HadInput.Values.Contains(listener) &&
-                                (
+                        if (HadInput.Values.Contains(listener) &&
+                            (
                                 touchAction == TouchActionResult.Panning ||
                                 touchAction == TouchActionResult.Pinched ||
                                 touchAction == TouchActionResult.Up))
-                            {
-                                continue;
-                            }
+                        {
+                            continue;
+                        }
 
-                            //Debug.WriteLine($"Checking {listener} gestures in {this.Tag} {this}");
-
-                            if (listener == Superview.FocusedChild)
-                                manageChildFocus = true;
-
-                            var forChild = IsGestureForChild(listener, point);
-
-                            if (TouchEffect.LogEnabled)
-                            {
-                                if (listener is SkiaControl c)
-                                {
-                                    Debug.WriteLine($"[BASE] for child {forChild} {c.Tag} at {point.X:0},{point.Y:0} -> {c.HitBoxAuto} ");
-                                }
-                            }
-
+                        if (listener != null)
+                        {
+                            var forChild = IsGestureForChild(child, touchLocationWIthOffset);
                             if (forChild)
                             {
+                                //Trace.WriteLine($"[HIT] for cell {i} at Y {y:0.0}");
                                 if (manageChildFocus && listener == Superview.FocusedChild)
                                 {
                                     manageChildFocus = false;
                                 }
-                                //Log($"[OnGestureEvent] sent {touchAction} to {listener.Tag}");
-                                consumed = listener.OnSkiaGestureEvent(type, args, touchAction,
-                                    TranslateInputCoords(childOffset, true),
-                                    TranslateInputCoords(childOffsetDirect, false),
-                                    tmpConsumed);
+
+                                if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
+                                {
+                                    var c = effect.OnSkiaGestureEvent(type, args, touchAction,
+                                        thisOffset,
+                                        TranslateInputCoords(childOffsetDirect, false),
+                                        alreadyConsumed);
+                                    if (c != null)
+                                    {
+                                        consumed = effect;
+                                    }
+                                }
+                                else
+                                {
+                                    var c = listener.OnSkiaGestureEvent(type, args, touchAction,
+                                        thisOffset,
+                                        TranslateInputCoords(childOffsetDirect, false),
+                                        alreadyConsumed);
+                                    if (c != null)
+                                    {
+                                        consumed = c;
+                                    }
+                                }
 
                                 if (consumed != null)
                                 {
-                                    if (tmpConsumed == null)
-                                        tmpConsumed = consumed;
-
                                     if (touchAction != TouchActionResult.Up)
                                     {
                                         HadInput.TryAdd(listener.Uid, consumed);
@@ -1143,27 +1159,149 @@ namespace DrawnUi.Maui.Draw
                             }
                         }
 
-                    if (HadInput.Count > 0 && touchAction == TouchActionResult.Up)
-                    {
-                        HadInput.Clear();
                     }
+                }  //end
 
-                    if (manageChildFocus)
-                    {
-                        Superview.FocusedChild = null;
-                    }
-
-                    if (hadInputConsumed != null)
-                        consumed = hadInputConsumed;
-
-                }
-                catch (Exception e)
+                if (HadInput.Count > 0 && touchAction == TouchActionResult.Up)
                 {
-                    Super.Log(e);
+                    HadInput.Clear();
                 }
 
-                return consumed;
+                if (manageChildFocus)
+                {
+                    Superview.FocusedChild = null;
+                }
+
+                if (hadInputConsumed != null)
+                    consumed = hadInputConsumed;
             }
+            else
+            {
+                //lock (LockIterateListeners)
+                {
+
+                    try
+                    {
+                        if (CheckChildrenGesturesLocked(touchAction))
+                            return null;
+
+                        var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+
+                        if (HadInput.Count > 0)
+                        {
+                            if (
+                                (
+                                 touchAction == TouchActionResult.Panning ||
+                                 touchAction == TouchActionResult.Pinched ||
+                                 touchAction == TouchActionResult.Up))
+                            {
+                                foreach (var hadInput in HadInput.Values)
+                                {
+                                    if (!hadInput.CanDraw || hadInput.InputTransparent)
+                                    {
+                                        continue;
+                                    }
+                                    consumed = hadInput.OnSkiaGestureEvent(type, args, touchAction, TranslateInputCoords(childOffset, true),
+                                        TranslateInputCoords(childOffsetDirect, false), tmpConsumed);
+
+                                    if (consumed != null)
+                                    {
+                                        if (tmpConsumed == null)
+                                            tmpConsumed = consumed;
+
+                                        if (touchAction != TouchActionResult.Up)
+                                            break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                HadInput.Clear();
+                            }
+                        }
+
+                        var hadInputConsumed = consumed;
+
+                        if (consumed == null || touchAction == TouchActionResult.Up)// !GestureListeners.Contains(consumed))
+                            foreach (var listener in GestureListeners.GetListeners())
+                            {
+                                if (!listener.CanDraw || listener.InputTransparent)
+                                    continue;
+
+                                if (HadInput.Values.Contains(listener) &&
+                                    (
+                                    touchAction == TouchActionResult.Panning ||
+                                    touchAction == TouchActionResult.Pinched ||
+                                    touchAction == TouchActionResult.Up))
+                                {
+                                    continue;
+                                }
+
+                                //Debug.WriteLine($"Checking {listener} gestures in {this.Tag} {this}");
+
+                                if (listener == Superview.FocusedChild)
+                                    manageChildFocus = true;
+
+                                var forChild = IsGestureForChild(listener, point);
+
+                                if (TouchEffect.LogEnabled)
+                                {
+                                    if (listener is SkiaControl c)
+                                    {
+                                        Debug.WriteLine($"[BASE] for child {forChild} {c.Tag} at {point.X:0},{point.Y:0} -> {c.HitBoxAuto} ");
+                                    }
+                                }
+
+                                if (forChild)
+                                {
+                                    if (manageChildFocus && listener == Superview.FocusedChild)
+                                    {
+                                        manageChildFocus = false;
+                                    }
+                                    //Log($"[OnGestureEvent] sent {touchAction} to {listener.Tag}");
+                                    consumed = listener.OnSkiaGestureEvent(type, args, touchAction,
+                                        TranslateInputCoords(childOffset, true),
+                                        TranslateInputCoords(childOffsetDirect, false),
+                                        tmpConsumed);
+
+                                    if (consumed != null)
+                                    {
+                                        if (tmpConsumed == null)
+                                            tmpConsumed = consumed;
+
+                                        if (touchAction != TouchActionResult.Up)
+                                        {
+                                            HadInput.TryAdd(listener.Uid, consumed);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+
+                        if (HadInput.Count > 0 && touchAction == TouchActionResult.Up)
+                        {
+                            HadInput.Clear();
+                        }
+
+                        if (manageChildFocus)
+                        {
+                            Superview.FocusedChild = null;
+                        }
+
+                        if (hadInputConsumed != null)
+                            consumed = hadInputConsumed;
+
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+
+
+                }
+            }
+
+            return consumed;
         }
 
         public bool UpdateLocked { get; set; }
@@ -2966,16 +3104,31 @@ namespace DrawnUi.Maui.Draw
 
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
             //so we must offset the coordinates to match the current drawing rect
-            if (accountForCache && UseCache != SkiaCacheType.None)
+            if (accountForCache)
             {
-                if (RenderObjectPrevious != null)
+                if (UseCache == SkiaCacheType.ImageComposite)
                 {
-                    thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
+                    if (RenderObjectPrevious != null)
+                    {
+                        thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
+                    }
+                    else
+                    if (RenderObject != null)
+                    {
+                        thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
+                    }
                 }
                 else
-                if (RenderObject != null)
                 {
-                    thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
+                    if (RenderObject != null)
+                    {
+                        thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
+                    }
+                    else
+                    if (RenderObjectPrevious != null)
+                    {
+                        thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
+                    }
                 }
             }
             thisOffset.Offset(childOffset);
@@ -4426,8 +4579,8 @@ namespace DrawnUi.Maui.Draw
 
                 if (needTransform)
                 {
-                    var moveX = (float)Math.Round(UseTranslationX * RenderingScale);
-                    var moveY = (float)Math.Round(UseTranslationY * RenderingScale);
+                    var moveX = (float)(UseTranslationX * RenderingScale);
+                    var moveY = (float)(UseTranslationY * RenderingScale);
                     var centerX = (float)(moveX + destination.Left + destination.Width * TransformPivotPointX);
                     var centerY = (float)(moveY + destination.Top + destination.Height * TransformPivotPointY);
 
@@ -5266,6 +5419,9 @@ namespace DrawnUi.Maui.Draw
             bool debug = false)
         {
             var count = 0;
+
+            List<SkiaControlWithRect> tree = new();
+
             foreach (var child in skiaControls)
             {
                 if (child != null)
@@ -5273,14 +5429,50 @@ namespace DrawnUi.Maui.Draw
                     child.OnBeforeDraw(); //could set IsVisible or whatever inside
                     if (child.CanDraw) //still visible 
                     {
-                        count++;
                         child.Render(context, destination, scale);
+
+                        //var x = destination.Left + child.LastDrawnAt.Left;
+                        //var y = destination.Top + child.LastDrawnAt.Top;
+                        //var drawn = new SKRect(x, y, x + child.LastDrawnAt.Width, y + child.LastDrawnAt.Height);
+
+                        tree.Add(new SkiaControlWithRect(child, child.LastDrawnAt, count));
+
+                        count++;
                     }
                 }
             }
+
+            RenderTree = tree;
+            _builtRenderTreeStamp = _measuredStamp;
+
             return count;
         }
 
+        public virtual bool UsesRenderingTree
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Rect is real drawing position
+        /// </summary>
+        /// <param name="Control"></param>
+        /// <param name="Rect"></param>
+        /// <param name="Index"></param>
+        public record SkiaControlWithRect(SkiaControl Control, SKRect Rect, int Index);
+
+        protected long _measuredStamp;
+
+        protected long _builtRenderTreeStamp;
+
+
+        /// <summary>
+        /// Last rendered controls tree. Used by gestures etc..
+        /// </summary>
+        public List<SkiaControlWithRect> RenderTree { get; protected set; }
 
         #endregion
         public bool Invalidated { get; set; } = true;

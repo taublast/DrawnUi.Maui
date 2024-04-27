@@ -37,7 +37,8 @@
                         Spacing="0"
                         Tag="ScrollContent"
                         Type="Stack"
-                        UseCache="ImageComposition">
+                        Split="1"
+                        UseCache="ImageComposite">
 
                         <!--
                             we set ImageDoubleBuffered to be able to fast redraw
@@ -49,6 +50,7 @@
                             HeightRequest="185"
                             HorizontalOptions="Center"
                             LoadSourceOnFirstDraw="False"
+                            SemanticProperties.Hint ="image of a car"
                             SemanticProperties.Description="dot net maui drawn ui"
                             Source="car.png"
                             Tag="Car"

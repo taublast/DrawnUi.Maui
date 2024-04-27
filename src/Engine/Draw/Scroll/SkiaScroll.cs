@@ -548,6 +548,27 @@ namespace DrawnUi.Maui.Draw
 
         private bool lockHeader;
 
+        public override bool UsesRenderingTree => false;
+
+        public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
+        {
+            if (lockHeader && child.Control != Header)
+            {
+                return false;
+            }
+
+            var forChild = base.IsGestureForChild(child, point);
+            if (!HeaderBehind && Header != null)
+            {
+                //block gestures for other children if from header got them
+                if (child.Control == this.Header && forChild)
+                {
+                    lockHeader = true;
+                }
+            }
+            return forChild;
+        }
+
         public override bool IsGestureForChild(ISkiaGestureListener listener, SKPoint point)
         {
             if (lockHeader && listener != Header)

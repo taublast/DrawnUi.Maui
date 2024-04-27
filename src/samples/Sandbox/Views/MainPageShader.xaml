@@ -37,7 +37,7 @@
                 HorizontalOptions="Fill"
                 Spacing="0"
                 Tag="SkiaContainer"
-                Type="Stack"
+                Type="Column"
                 VerticalOptions="Fill">
 
                 <!--<draw:SkiaLabel
@@ -63,7 +63,7 @@
                     Padding="24"
                     BackgroundColor="Green"
                     Spacing="24"
-                    Type="Stack"
+                    Type="Column"
                     VerticalOptions="Start"
                     WidthRequest="300">
 

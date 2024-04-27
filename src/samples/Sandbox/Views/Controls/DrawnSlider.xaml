@@ -9,7 +9,7 @@
     HorizontalOptions="Fill"
     SliderHeight="35"
     Tag="SliderFun"
-    Type="Stack"
+    Type="Column"
     UseCache="Image">
 
     <draw:SkiaSlider.Resources>
