@@ -4520,18 +4520,43 @@ namespace DrawnUi.Maui.Draw
 #endif
 
         public void DrawWithClipAndTransforms(
-            SkiaDrawingContext ctx,
-            SKRect destination,
-            bool useOpacity,
-            bool useClipping,
-            Action<SkiaDrawingContext> draw)
+           SkiaDrawingContext ctx,
+           SKRect destination,
+           bool useOpacity,
+           bool useClipping,
+           Action<SkiaDrawingContext> draw)
         {
-            bool isClipping = useClipping && (IsClippedToBounds || Clipping != null);
+            bool isClipping = false;
+
+            //clipped inside this view bounds
+            if ((IsClippedToBounds || Clipping != null) && useClipping)
+            {
+                isClipping = true;
+
+                if (_clipBounds == null)
+                {
+                    _clipBounds = new();
+                }
+                else
+                {
+                    _clipBounds.Reset();
+                }
+
+                _clipBounds.AddRect(destination);
+
+                if (Clipping != null)
+                {
+                    Clipping.Invoke(_clipBounds, destination);
+                }
+
+            }
+
             bool applyOpacity = useOpacity && Opacity < 1;
             bool needTransform = HasTransform;
 
             if (applyOpacity || isClipping || needTransform
                 || CustomizeLayerPaint != null)
+            //|| (VisualEffects?.Count > 0 && !DisableEffects))
             {
 
                 _paintWithOpacity ??= new SKPaint();
@@ -4547,6 +4572,7 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
 
+
                 var restore = 0;
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {
@@ -4557,20 +4583,104 @@ namespace DrawnUi.Maui.Draw
                     {
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
                     }
+                }
 
-                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity); //very consuming!
+                if (applyOpacity)
+                {
+                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
                 else
                     restore = ctx.Canvas.Save();
 
                 if (needTransform)
                 {
-                    ApplyTransforms(ctx, destination);
+                    var moveX = (float)(UseTranslationX * RenderingScale);
+                    var moveY = (float)(UseTranslationY * RenderingScale);
+                    var centerX = (float)(moveX + destination.Left + destination.Width * TransformPivotPointX);
+                    var centerY = (float)(moveY + destination.Top + destination.Height * TransformPivotPointY);
+
+                    _pixelsLastTranslationX = moveX;
+                    _pixelsLastTranslationY = moveY;
+
+                    var skewX = 0f;
+                    if (SkewX > 0)
+                        skewX = (float)Math.Tan(Math.PI * SkewX / 180f);
+
+                    var skewY = 0f;
+                    if (SkewY > 0)
+                        skewY = (float)Math.Tan(Math.PI * SkewY / 180f);
+
+                    if (Rotation != 0)
+                    {
+                        ctx.Canvas.RotateDegrees((float)this.Rotation, centerX, centerY);
+                    }
+
+                    var matrixTransforms = new SKMatrix
+                    {
+                        TransX = moveX,
+                        TransY = moveY,
+                        Persp0 = Perspective1,
+                        Persp1 = Perspective2,
+                        SkewX = skewX,
+                        SkewY = skewY,
+                        Persp2 = 1,
+                        ScaleX = (float)this.ScaleX,
+                        ScaleY = (float)this.ScaleY,
+                    };
+
+                    //set pivot point
+                    var DrawingMatrix = SKMatrix.CreateTranslation(-centerX, -centerY);
+                    //apply stuff
+                    DrawingMatrix = DrawingMatrix.PostConcat(matrixTransforms);
+
+#if SKIA3
+                    if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
+                    {
+                        if (Helper3d == null)
+                        {
+                            Helper3d = new();
+                        }
+                        Helper3d.Reset();
+                        Helper3d.RotateXDegrees(CameraAngleX);
+                        Helper3d.RotateYDegrees(CameraAngleY);
+                        Helper3d.RotateZDegrees(CameraAngleZ);
+                        if (CameraTranslationZ != 0)
+                        {
+                            Helper3d.TranslateZ(CameraTranslationZ);
+                        }
+                        DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.GetMatrix());
+                    }
+#else
+                    if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
+                    {
+                        if (Helper3d == null)
+                        {
+                            Helper3d = new();
+                        }
+                        Helper3d.Save();
+                        Helper3d.RotateXDegrees(CameraAngleX);
+                        Helper3d.RotateYDegrees(CameraAngleY);
+                        Helper3d.RotateZDegrees(CameraAngleZ);
+                        if (CameraTranslationZ != 0)
+                            Helper3d.TranslateZ(CameraTranslationZ);
+                        DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.Matrix);
+                        Helper3d.Restore();
+                    }
+#endif
+
+                    //restore coordinates back
+                    DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(centerX, centerY));
+
+                    //apply parent's transforms
+                    DrawingMatrix = DrawingMatrix.PostConcat(ctx.Canvas.TotalMatrix);
+
+                    ctx.Canvas.SetMatrix(DrawingMatrix);
+
                 }
 
                 if (isClipping)
                 {
-                    ApplyClipping(ctx, destination);
+                    ctx.Canvas.ClipPath(_clipBounds, SKClipOperation.Intersect, true);
                 }
 
                 draw(ctx);
@@ -4583,6 +4693,7 @@ namespace DrawnUi.Maui.Draw
             }
 
         }
+
 
         protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
         {
