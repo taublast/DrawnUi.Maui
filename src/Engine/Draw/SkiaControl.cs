@@ -4456,10 +4456,8 @@ namespace DrawnUi.Maui.Draw
                     {
                         if (_renderObject != null)
                         {
-                            //RenderObjectPrevious = _renderObject;
                             if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
                                 || UsingCacheType == SkiaCacheType.Image
-                                || UsingCacheType == SkiaCacheType.GPU
                                 || UsingCacheType == SkiaCacheType.ImageComposite)
                             {
                                 RenderObjectPrevious = _renderObject;
@@ -4587,7 +4585,12 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
+                if (applyOpacity)
+                {
+                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
+                }
+                else
+                    restore = ctx.Canvas.Save();
 
                 if (needTransform)
                 {
@@ -4679,6 +4682,8 @@ namespace DrawnUi.Maui.Draw
                 {
                     ctx.Canvas.ClipPath(_clipBounds, SKClipOperation.Intersect, true);
                 }
+
+
 
                 draw(ctx);
 
@@ -5031,7 +5036,8 @@ namespace DrawnUi.Maui.Draw
                     var width = (int)recordArea.Width;
                     var height = (int)recordArea.Height;
 
-                    bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, context);
+                    bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, context) || usingCacheType == SkiaCacheType.GPU;
+
                     SKSurface surface = null;
 
                     if (!needCreateSurface && reuseSurfaceFrom != null && reuseSurfaceFrom.Surface != null)
@@ -5050,6 +5056,7 @@ namespace DrawnUi.Maui.Draw
                     if (needCreateSurface)
                     {
                         var kill = surface;
+                        surface = null;
                         var cacheSurfaceInfo = new SKImageInfo(width, height);
 
                         if (usingCacheType == SkiaCacheType.GPU)
@@ -5058,20 +5065,13 @@ namespace DrawnUi.Maui.Draw
                                 && accelerated.GRContext != null)
                             {
                                 //hardware accelerated
-                                surface = SKSurface.Create(accelerated.GRContext, false, cacheSurfaceInfo);
-                                if (surface == null)
-                                {
-                                    //fallback to non-gpu
-                                    surface = SKSurface.Create(cacheSurfaceInfo);
-                                }
-                            }
-                            else
-                            {
-                                return null;
+                                surface = SKSurface.Create(accelerated.GRContext, true, cacheSurfaceInfo);
                             }
                         }
-                        else
+
+                        if (surface == null)
                         {
+                            //fallback to non-gpu
                             surface = SKSurface.Create(cacheSurfaceInfo);
                         }
 
