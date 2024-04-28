@@ -4530,23 +4530,38 @@ namespace DrawnUi.Maui.Draw
             bool applyOpacity = useOpacity && Opacity < 1;
             bool needTransform = HasTransform;
 
-            if (applyOpacity || isClipping || needTransform || CustomizeLayerPaint != null)
+            if (applyOpacity || isClipping || needTransform
+                || CustomizeLayerPaint != null)
             {
-                SKPaint paint = null;
-                int restore = ctx.Canvas.Save();
 
-                if (applyOpacity || CustomizeLayerPaint != null && UsingCacheType != SkiaCacheType.GPU)
+                _paintWithOpacity ??= new SKPaint();
+
+                if (IsDistorted)
                 {
-                    paint = new SKPaint
-                    {
-                        IsAntialias = IsDistorted,
-                        FilterQuality = IsDistorted ? SKFilterQuality.Medium : SKFilterQuality.None,
-                        Color = SKColors.White.WithAlpha((byte)(255 * Opacity))
-                    };
-
-                    CustomizeLayerPaint?.Invoke(paint, destination);
-                    restore = ctx.Canvas.SaveLayer(paint);
+                    _paintWithOpacity.IsAntialias = true;
+                    _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
                 }
+                else
+                {
+                    _paintWithOpacity.IsAntialias = false;
+                    _paintWithOpacity.FilterQuality = SKFilterQuality.None;
+                }
+
+                var restore = 0;
+                if (applyOpacity || CustomizeLayerPaint != null)
+                {
+                    var alpha = (byte)(0xFF / 1.0 * Opacity);
+                    _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
+
+                    if (CustomizeLayerPaint != null)
+                    {
+                        CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
+                    }
+
+                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity); //very consuming!
+                }
+                else
+                    restore = ctx.Canvas.Save();
 
                 if (needTransform)
                 {
@@ -4569,7 +4584,7 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-        private void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
+        protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
         {
             var moveX = (float)(UseTranslationX * RenderingScale);
             var moveY = (float)(UseTranslationY * RenderingScale);
@@ -4654,7 +4669,7 @@ namespace DrawnUi.Maui.Draw
             ctx.Canvas.SetMatrix(DrawingMatrix);
         }
 
-        private void ApplyClipping(SkiaDrawingContext ctx, SKRect destination)
+        protected virtual void ApplyClipping(SkiaDrawingContext ctx, SKRect destination)
         {
             if (_clipBounds == null)
             {
