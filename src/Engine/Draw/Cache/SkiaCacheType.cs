@@ -21,20 +21,20 @@ public enum SkiaCacheType
     Image,
 
     /// <summary>
-    /// Using `Image` cache type with double buffering. Best for fast animated scenarios, this must be implemented by a specific control, not all controls support this, will fallback to 'Image' if anything.
+    /// Using `Image` cache type with double buffering. Will display a previous cache while rendering the new one in background, thus not slowing scrolling etc.
     /// </summary>
     ImageDoubleBuffered,
 
 
     /// <summary>
-    /// TODO: Would receive the invalidated area rectangle, then redraw the previous cache but clipped to exclude the dirty area, then would re-create the dirty area and draw it clipped inside the dirty rectangle. This is useful for layouts with many children, like scroll content etc, but useless for non-containers.
+    /// Would receive the invalidated area rectangle, then redraw the previous cache but clipped to exclude the dirty area, then would re-create the dirty area and draw it clipped inside the dirty rectangle. This is useful for layouts with many children, like scroll content etc, but useless for non-containers.
     /// </summary>
     ImageComposite,
 
     /// <summary>
-    /// The way to go when dealing with images surrounded by shapes etc.
-    /// The cached surface will use the same graphic context as your canvas.
-    /// If hardware acceleration is enabled will try to cache as Bitmap inside graphics memory. Will fallback to simple Bitmap cache type if not possible. If you experience issues using it, switch to Memory cache type.
+    /// The cached surface will use the same graphic context as your hardware-accelerated canvas.
+    /// This kind of cache will not apply Opacity as not all platforms support transparency for hardware accelerated layer.
+    /// Will fallback to simple Image cache type if hardware acceleration is not available.
     /// </summary>
     GPU,
 
