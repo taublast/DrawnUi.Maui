@@ -1002,8 +1002,6 @@ namespace DrawnUi.Maui.Controls
 
             try
             {
-                FrozenLayers.Remove(control, out var screenshot);
-
                 if (FreezingModals.Count > 0)
                 {
                     FreezingModals.Remove(control);
@@ -1029,15 +1027,19 @@ namespace DrawnUi.Maui.Controls
                 if (FreezingModals.Count < 1)
                     RootLayout.IsVisible = true;
 
-                if (screenshot != null)
+                if (FrozenLayers.Remove(control, out var screenshot))
                 {
-                    if (animated && screenshot.IsVisibleInViewTree())
-                        await screenshot.FadeToAsync(0, 250);
+                    if (screenshot != null)
+                    {
+                        if (animated && screenshot.IsVisibleInViewTree())
+                            await screenshot.FadeToAsync(0, 250);
 
-                    RootLayout.RemoveSubView(screenshot);
+                        RootLayout.RemoveSubView(screenshot);
 
-                    //GC.Collect(0, GCCollectionMode.Optimized);
+                        screenshot?.Dispose();
+                    }
                 }
+
             }
             finally
             {
@@ -1088,9 +1090,11 @@ namespace DrawnUi.Maui.Controls
                 var background = WrapScreenshot(control, screenshot, tintScreenshot, blurScreenshot, animated);
 
                 //background.ZIndex = int.MinValue;
-                ShellLayout.AddSubView(background);
-                FrozenLayers.TryAdd(control, background);
-                //will use FreezeRootLayoutInternal to hide views below when screenshot is drawn 
+                if (FrozenLayers.TryAdd(control, background))
+                {
+                    ShellLayout.AddSubView(background);
+                    //will use FreezeRootLayoutInternal to hide views below when screenshot is drawn 
+                }
             }
 
             UnlockLayers();

@@ -782,7 +782,7 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                if (UseCache != SkiaCacheType.None)
+                if (UsingCacheType != SkiaCacheType.None)
                 {
                     if (!UseRenderingObject(context, DrawingRect, scale))
                     {

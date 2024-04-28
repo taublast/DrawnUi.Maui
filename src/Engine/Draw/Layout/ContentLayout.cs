@@ -11,8 +11,15 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
     public override void Invalidate()
     {
         base.Invalidate();
-            
+
         Update();
+    }
+
+    public override void OnWillDisposeWithChildren()
+    {
+        base.OnWillDisposeWithChildren();
+
+        Content?.Dispose();
     }
 
     public virtual void OnFocusChanged(bool focus)

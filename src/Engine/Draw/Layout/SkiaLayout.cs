@@ -850,7 +850,7 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 //always invalidate because children layouts will be reset
-                if (UseCache == SkiaCacheType.ImageComposite)
+                if (UsingCacheType == SkiaCacheType.ImageComposite)
                 {
                     RenderObjectPreviousNeedsUpdate = true;
                 }
@@ -938,8 +938,11 @@ namespace DrawnUi.Maui.Draw
         {
             if (StackStructureMeasured != null)
             {
+                var kill = StackStructure;
                 StackStructure = StackStructureMeasured;
                 StackStructureMeasured = null;
+                if (kill != StackStructure)
+                    kill?.Clear();
                 CheckAndSetupIfEmpty();
             }
 
@@ -1032,9 +1035,11 @@ namespace DrawnUi.Maui.Draw
             ClearChildren();
 
             DirtyChildren.Clear();
+
             DirtyChildrenInternal.Clear();
 
-
+            StackStructure?.Clear();
+            StackStructureMeasured?.Clear();
 
             base.OnDisposing();
         }
@@ -1043,7 +1048,7 @@ namespace DrawnUi.Maui.Draw
 
         void SetupCacheComposition(SkiaDrawingContext ctx, SKRect destination)
         {
-            if (UseCache == SkiaCacheType.ImageComposite)
+            if (UsingCacheType == SkiaCacheType.ImageComposite)
             {
                 DirtyChildrenInternal.Clear();
 
@@ -1127,6 +1132,7 @@ namespace DrawnUi.Maui.Draw
             else
             {
                 drawn = base.DrawViews(context, destination, scale, debug);
+
                 if (drawn == 0 && _emptyView != null && _emptyView.IsVisible)
                 {
                     var drawViews = new List<SkiaControl> { _emptyView };

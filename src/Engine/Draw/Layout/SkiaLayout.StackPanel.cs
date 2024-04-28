@@ -63,7 +63,7 @@ namespace DrawnUi.Maui.Draw
 
                         if (Virtualisation != VirtualisationType.Disabled)
                         {
-                            if (needrebuild && UseCache == SkiaCacheType.None &&
+                            if (needrebuild && UsingCacheType == SkiaCacheType.None &&
                                 Virtualisation == VirtualisationType.Smart
                                 && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
                             {
@@ -178,10 +178,6 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                //if (Tag == "Controls")
-                //{
-                //    Debug.WriteLine($"[?] {countRendered}");
-                //}
             }
 
             //_stopwatchRender.Restart();

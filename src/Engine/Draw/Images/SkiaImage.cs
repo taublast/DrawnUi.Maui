@@ -273,11 +273,11 @@ public class SkiaImage : SkiaControl
         }
     }
 
-    protected override void OnWillBeDisposed()
+    public override void OnWillDisposeWithChildren()
     {
         CancelLoading?.Cancel();
 
-        base.OnWillBeDisposed();
+        base.OnWillDisposeWithChildren();
     }
 
     public void SetSource(Func<CancellationToken, Task<Stream>> getStream)

@@ -122,25 +122,22 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
 
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
     {
-        if (IsDisposed)
+        if (IsDisposed || IsDisposing)
         {
-            //this will save a lot of trouble debugging unknown native crashes
-            var message = $"[SkiaControl] Attempting to Paint a disposed control: {this}";
-            Trace.WriteLine(message);
-            throw new Exception(message);
+            return;
         }
 
         if (NeedInvalidateImageFilter)
         {
             NeedInvalidateImageFilter = false;
-            // PaintImageFilter?.Dispose(); //might be used in double buffered!
+            PaintImageFilter?.Dispose();
             PaintImageFilter = null;
         }
 
         if (NeedInvalidateColorFilter)
         {
             NeedInvalidateColorFilter = false;
-            // PaintColorFilter?.Dispose(); //might be used in double buffered!
+            PaintColorFilter?.Dispose();
             PaintColorFilter = null;
         }
 
@@ -246,7 +243,7 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
     /// <summary>
     /// Returns the snapshot that was used for drawing the backdrop.
     /// If we have no effects or the control has not yet been drawn the return value will be null.
-    /// You are responsible to dispose the returned image yourself.
+    /// You are responsible to dispose the returned image!
     /// </summary>
     /// <returns></returns>
     public virtual SKImage GetImage()

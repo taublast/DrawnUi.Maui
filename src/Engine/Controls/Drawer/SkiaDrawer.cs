@@ -14,6 +14,14 @@ namespace DrawnUi.Maui.Controls
 
         }
 
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            Content?.Dispose();
+        }
+
+
         public override void ApplyBindingContext()
         {
             if (this.Content != null)

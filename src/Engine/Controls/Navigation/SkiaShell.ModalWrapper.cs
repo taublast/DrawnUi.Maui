@@ -50,6 +50,15 @@ public partial class SkiaShell
             }
         }
 
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            _snapshot?.Dispose();
+            _snapshot = null;
+            Backdrop?.Dispose();
+        }
+
         public SkiaBackdrop Backdrop { get; protected set; }
 
         protected override void SetContent(SkiaControl view)
@@ -140,6 +149,7 @@ public partial class SkiaShell
         private readonly Color _color;
         private readonly bool _willFreeze;
         private readonly bool _useGestures;
+        private SKImage _snapshot;
 
         public bool IsFrozen { get; set; }
 
@@ -149,12 +159,14 @@ public partial class SkiaShell
 
             if (_willFreeze && !frozen && LayoutReady)
             {
-                var screenshot = Backdrop.GetImage();
-                if (screenshot != null)
+                if (_snapshot == null)
+                    _snapshot = Backdrop.GetImage();
+
+                if (_snapshot != null)
                 {
                     IsFrozen = true;
                     frozen = true;
-                    _shell.FreezeRootLayout(this, screenshot, _animated, _color, (float)SkiaShell.PopupsBackgroundBlur).ConfigureAwait(true);
+                    _shell.FreezeRootLayout(this, _snapshot, _animated, _color, (float)SkiaShell.PopupsBackgroundBlur).ConfigureAwait(true);
                     Backdrop.IsVisible = false;
                 }
             }

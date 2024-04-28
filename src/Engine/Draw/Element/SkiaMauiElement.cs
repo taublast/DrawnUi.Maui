@@ -163,17 +163,18 @@
 
         public SKImageInfo CacheSurfaceInfo { get; set; }
 
-        protected override void OnWillBeDisposed()
+        public override void OnWillDisposeWithChildren()
         {
-            base.OnWillBeDisposed();
-
             SubscribeToRenderingChain(false);
 
 #if ONPLATFORM
             RemoveMauiElement(Element);
 #endif
 
+            base.OnWillDisposeWithChildren();
         }
+
+
 
         public override void OnDisposing()
         {

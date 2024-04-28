@@ -664,7 +664,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     for (int index = 0; index < Shadows.Count(); index++)
                     {
-                        AddShadowFilter(RenderingPaint, Shadows[index], RenderingScale);
+                        SetupShadow(RenderingPaint, Shadows[index], RenderingScale);
 
                         if (ClipBackgroundColor)
                         {

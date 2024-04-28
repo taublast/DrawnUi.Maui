@@ -1,5 +1,6 @@
 ﻿using DrawnUi.Maui.Infrastructure.Extensions;
 using Microsoft.Maui.HotReload;
+using ShimSkiaSharp;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -8,6 +9,22 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Color = Microsoft.Maui.Graphics.Color;
+using SKBlendMode = SkiaSharp.SKBlendMode;
+using SKCanvas = SkiaSharp.SKCanvas;
+using SKClipOperation = SkiaSharp.SKClipOperation;
+using SKColor = SkiaSharp.SKColor;
+using SKFilterQuality = SkiaSharp.SKFilterQuality;
+using SKImageFilter = SkiaSharp.SKImageFilter;
+using SKMatrix = SkiaSharp.SKMatrix;
+using SKPaint = SkiaSharp.SKPaint;
+using SKPaintStyle = SkiaSharp.SKPaintStyle;
+using SKPath = SkiaSharp.SKPath;
+using SKPathOp = SkiaSharp.SKPathOp;
+using SKPictureRecorder = SkiaSharp.SKPictureRecorder;
+using SKPoint = SkiaSharp.SKPoint;
+using SKRect = SkiaSharp.SKRect;
+using SKShader = SkiaSharp.SKShader;
+using SKSize = SkiaSharp.SKSize;
 
 
 namespace DrawnUi.Maui.Draw
@@ -1365,7 +1382,10 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void OnParentVisibilityChanged(bool newvalue)
         {
-
+            if (!newvalue)
+            {
+                //DestroyRenderingObject();
+            }
         }
 
         /// <summary>
@@ -1374,32 +1394,25 @@ namespace DrawnUi.Maui.Draw
         /// <param name="newvalue"></param>
         public virtual void OnVisibilityChanged(bool newvalue)
         {
+            if (!newvalue)
+            {
+                //DestroyRenderingObject();
+            }
             // need to this to:
             // disable child gesture listeners
             // pause hidden animations
             try
             {
-                //if (!newvalue)
-                //{
-                //    PauseAllAnimators();
-                //}
-                //else
-                //{
-                //    ResumePausedAnimators();
-                //}
-
                 var pass = IsVisible && newvalue;
                 foreach (var child in Views)
                 {
                     child.OnParentVisibilityChanged(pass);
                 }
-
             }
             catch (Exception e)
             {
                 Super.Log(e);
             }
-
         }
 
         /// <summary>
@@ -2491,12 +2504,12 @@ namespace DrawnUi.Maui.Draw
                 if (parent is SkiaControl skia)
                 {
 
-                    if (skia.IgnoreChildrenInvalidations && skia.UseCache == SkiaCacheType.None)
+                    if (skia.IgnoreChildrenInvalidations && skia.UsingCacheType == SkiaCacheType.None)
                     {
                         return;
                     }
 
-                    if (skia.ShouldInvalidateByChildren || skia.UseCache != SkiaCacheType.None)
+                    if (skia.ShouldInvalidateByChildren || skia.UsingCacheType != SkiaCacheType.None)
                     {
                         parent.InvalidateByChild(this);
                     }
@@ -3026,7 +3039,7 @@ namespace DrawnUi.Maui.Draw
         {
             var hitbox = HitBoxAuto;
 
-            //if (UseCache != SkiaCacheType.None && RenderObject != null)
+            //if (UsingCacheType != SkiaCacheType.None && RenderObject != null)
             //{
             //    var offsetCacheX = Math.Abs(DrawingRect.Left - RenderObject.Bounds.Left);
             //    var offsetCacheY = Math.Abs(DrawingRect.Top - RenderObject.Bounds.Top);
@@ -3106,7 +3119,7 @@ namespace DrawnUi.Maui.Draw
             //so we must offset the coordinates to match the current drawing rect
             if (accountForCache)
             {
-                if (UseCache == SkiaCacheType.ImageComposite)
+                if (UsingCacheType == SkiaCacheType.ImageComposite)
                 {
                     if (RenderObjectPrevious != null)
                     {
@@ -3151,14 +3164,14 @@ namespace DrawnUi.Maui.Draw
             }
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
             //so we must offset the coordinates to match the current drawing rect
-            if (!ignoreCache && UseCache != SkiaCacheType.None)
+            if (!ignoreCache && UsingCacheType != SkiaCacheType.None)
             {
                 if (RenderObject != null)
                 {
                     thisOffset.Offset(RenderObject.CalculatePositionOffset(LastDrawnAt.Location));
                 }
                 else
-                if (UseCache == SkiaCacheType.ImageDoubleBuffered && RenderObjectPrevious != null)
+                if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered && RenderObjectPrevious != null)
                 {
                     thisOffset.Offset(RenderObjectPrevious.CalculatePositionOffset(LastDrawnAt.Location));
                 }
@@ -3867,20 +3880,11 @@ namespace DrawnUi.Maui.Draw
                 {
                     _isDisposing = value;
                     OnPropertyChanged();
-                    if (value)
-                        OnWillBeDisposed();
                 }
             }
         }
 
-        /// <summary>
-        /// The OnDisposing might come with a delay to avoid disposing resources at use.
-        /// This method will be called without delay when IsDisposed is set to True.
-        /// </summary>
-        protected virtual void OnWillBeDisposed()
-        {
 
-        }
 
         /// <summary>
         /// Developer can use this to mark control as to be disposed by parent custom controls
@@ -3956,15 +3960,14 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed)
                 return;
 
-            IsDisposing = true;
-
-            SetWillDisposeWithChildren();
+            OnWillDisposeWithChildren();
 
             IsDisposed = true;
 
             //for the double buffering case it's safer to delay
-            Tasks.StartDelayed(TimeSpan.FromSeconds(3), () =>
+            Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
             {
+
                 RenderObject = null;
 
                 PaintSystem?.Dispose();
@@ -3973,23 +3976,34 @@ namespace DrawnUi.Maui.Draw
 
                 DisposeChildren();
 
+                RenderTree?.Clear();
+
+                GestureListeners?.Clear();
+
+                VisualEffects?.Clear();
+
                 OnDisposing();
 
                 Parent = null;
 
                 Superview = null;
 
+                LastGradient?.Dispose();
+                LastGradient = null;
+
+                LastShadow?.Dispose();
+                LastShadow = null;
+
                 CustomizeLayerPaint = null;
-
-                RenderObjectPrevious?.Dispose();
-                RenderObjectPrevious = null;
-
 
                 RenderObjectPreparing?.Dispose();
                 RenderObjectPreparing = null;
 
                 clipPreviousCachePath?.Dispose();
                 PaintErase?.Dispose();
+
+                RenderObjectPrevious?.Dispose();
+                RenderObjectPrevious = null;
 
                 _paintWithOpacity?.Dispose();
                 _paintWithEffects?.Dispose();
@@ -4187,7 +4201,7 @@ namespace DrawnUi.Maui.Draw
             bool willDraw = !CheckIsGhost();
             if (willDraw)
             {
-                if (UseCache != SkiaCacheType.None)
+                if (UsingCacheType != SkiaCacheType.None)
                 {
                     var recordArea = DrawingRect;
 
@@ -4281,7 +4295,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         protected void FinalizeDraw(SkiaDrawingContext context, double scale)
         {
-            if (UseCache == SkiaCacheType.None)
+            if (UsingCacheType == SkiaCacheType.None)
                 NeedUpdate = false; //otherwise CreateRenderingObject will set this to false
 
             //trying to find exact location on the canvas
@@ -4397,6 +4411,7 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(UseCacheProperty, value); }
         }
 
+
         /// <summary>
         /// Used by the UseCacheDoubleBuffering process. 
         /// </summary>
@@ -4441,15 +4456,18 @@ namespace DrawnUi.Maui.Draw
                     {
                         if (_renderObject != null)
                         {
-                            RenderObjectPrevious = _renderObject;
-                            // if (UseCache == SkiaCacheType.ImageDoubleBuffered || UseCache == SkiaCacheType.ImageComposite)
-                            // {
-                            //     RenderObjectPrevious = _renderObject;
-                            // }
-                            // else
-                            // {
-                            //     DisposeObject(_renderObject);
-                            // }
+                            //RenderObjectPrevious = _renderObject;
+                            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
+                                || UsingCacheType == SkiaCacheType.Image
+                                || UsingCacheType == SkiaCacheType.GPU
+                                || UsingCacheType == SkiaCacheType.ImageComposite)
+                            {
+                                RenderObjectPrevious = _renderObject;
+                            }
+                            else
+                            {
+                                DisposeObject(_renderObject);
+                            }
                         }
                         _renderObject = value;
                         OnPropertyChanged();
@@ -4542,7 +4560,6 @@ namespace DrawnUi.Maui.Draw
                 || CustomizeLayerPaint != null)
             //|| (VisualEffects?.Count > 0 && !DisableEffects))
             {
-                var restore = ctx.Canvas.Save();
 
                 _paintWithOpacity ??= new SKPaint();
 
@@ -4557,6 +4574,8 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
 
+
+                var restore = 0;
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {
 
@@ -4571,6 +4590,9 @@ namespace DrawnUi.Maui.Draw
 
                     restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
+                else
+                    restore = ctx.Canvas.Save();
+
                 //else
                 //{
                 //    //todo dispose previous!!!
@@ -4720,10 +4742,11 @@ namespace DrawnUi.Maui.Draw
         {
             get
             {
-                return UseCache == SkiaCacheType.Image
-                       || UseCache == SkiaCacheType.GPU
-                       || UseCache == SkiaCacheType.ImageComposite
-                       || UseCache == SkiaCacheType.ImageDoubleBuffered;
+                var cache = UsingCacheType;
+                return cache == SkiaCacheType.Image
+                       || cache == SkiaCacheType.GPU
+                       || cache == SkiaCacheType.ImageComposite
+                       || cache == SkiaCacheType.ImageDoubleBuffered;
             }
         }
 
@@ -4734,7 +4757,7 @@ namespace DrawnUi.Maui.Draw
             //lock (LockDraw)
             {
                 var cache = RenderObject;
-                var cacheType = UseCache;
+                var cacheType = UsingCacheType;
                 var cacheOffscreen = RenderObjectPrevious;
 
                 if (RenderObjectPrevious != null && RenderObjectPreviousNeedsUpdate ||
@@ -4747,31 +4770,24 @@ namespace DrawnUi.Maui.Draw
                     RenderObjectPreviousNeedsUpdate = false;
                 }
 
-                if (cache != null)
+                if (!CheckCachedObjectValid(cache, context))
                 {
-                    if (cache.Surface != null && cache.Surface.Context != null &&
-                        cacheType == SkiaCacheType.GPU && context.Superview?.CanvasView is SkiaViewAccelerated hardware)
-                    {
-                        //hardware context might change if we returned from background..
-                        if (hardware.GRContext == null || (int)hardware.GRContext.Handle != (int)cache.Surface.Context.Handle)
-                        {
-                            //maybe we returned to app from background and GPU memory was erased..
-                            Update();
-                            return false;
-                        }
-                    }
-
-                    lock (LockDraw)
-                    {
-                        DrawRenderObjectInternal(cache, context, recordArea);
-                        Monitor.PulseAll(LockDraw);
-                    }
-
-                    if (UseCache != SkiaCacheType.ImageDoubleBuffered || !NeedUpdateFrontCache)
-                        return true;
+                    //maybe we returned to app from background and GPU memory was erased..
+                    //Update();
+                    //Console.WriteLine($"***UseRenderingObject*** invalid existing cache {UseCache} {Tag}!");
+                    return false;
                 }
 
-                if (UseCache == SkiaCacheType.ImageDoubleBuffered)
+                lock (LockDraw)
+                {
+                    DrawRenderObjectInternal(cache, context, recordArea);
+                    Monitor.PulseAll(LockDraw);
+                }
+
+                if (UsingCacheType != SkiaCacheType.ImageDoubleBuffered || !NeedUpdateFrontCache)
+                    return true;
+
+                if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered)
                 {
                     lock (LockDraw)
                     {
@@ -4961,6 +4977,37 @@ namespace DrawnUi.Maui.Draw
             RenderObject = null;
         }
 
+        protected virtual bool CheckCachedObjectValid(CachedObject cache, SkiaDrawingContext context)
+        {
+            if (cache != null)
+            {
+                //check hardware context maybe changed
+                if (UsingCacheType == SkiaCacheType.GPU && cache.Surface != null &&
+                    cache.Surface.Context != null &&
+                    context.Superview?.CanvasView is SkiaViewAccelerated hardware)
+                {
+                    //hardware context might change if we returned from background..
+                    if (hardware.GRContext == null || cache.Surface.Context == null
+                                                   || (int)hardware.GRContext.Handle != (int)cache.Surface.Context.Handle)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            return false;
+        }
+
+
+        public virtual SkiaCacheType UsingCacheType
+        {
+            get
+            {
+                return UseCache;//SkiaCacheType.None;  //UseCache;
+            }
+        }
+
         protected virtual CachedObject CreateRenderingObject(
     SkiaDrawingContext context,
     SKRect recordingArea,
@@ -4990,36 +5037,16 @@ namespace DrawnUi.Maui.Draw
                 if (IsCacheImage)
                 {
                     //IMAGE
-                    var usingCacheType = UseCache;
+                    var usingCacheType = UsingCacheType;
 
                     var width = (int)recordArea.Width;
                     var height = (int)recordArea.Height;
 
-                    bool needCreateSurface = false;
+                    bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, context);
                     SKSurface surface = null;
 
-                    if (usingCacheType == SkiaCacheType.GPU)
+                    if (!needCreateSurface && reuseSurfaceFrom != null && reuseSurfaceFrom.Surface != null)
                     {
-                        var stop=1;
-                    }
-                    
-                    if (reuseSurfaceFrom != null && reuseSurfaceFrom.Surface != null)
-                    {
-                        surface = reuseSurfaceFrom.Surface;
-
-                        //check hardware context maybe changed
-                        if (usingCacheType == SkiaCacheType.GPU &&
-                            surface.Context != null &&
-                            context.Superview?.CanvasView is SkiaViewAccelerated hardware)
-                        {
-                            //hardware context might change if we returned from background..
-                            if (hardware.GRContext == null || surface.Context==null
-                                || (int)hardware.GRContext.Handle != (int)surface.Context.Handle)
-                            {
-                                needCreateSurface = true;
-                            }
-                        }
-                        
                         if (height != reuseSurfaceFrom.Bounds.Height || width != reuseSurfaceFrom.Bounds.Width)
                         {
                             needCreateSurface = true;
@@ -5029,7 +5056,7 @@ namespace DrawnUi.Maui.Draw
                     {
                         needCreateSurface = true;
                     }
-                    
+
                     if (needCreateSurface)
                     {
                         var kill = surface;
@@ -5057,6 +5084,7 @@ namespace DrawnUi.Maui.Draw
                     }
                     else
                     {
+                        surface = reuseSurfaceFrom.Surface;
                         //reusing existing surface
                         if (usingCacheType != SkiaCacheType.ImageComposite)
                             surface.Canvas.Clear();
@@ -5082,7 +5110,8 @@ namespace DrawnUi.Maui.Draw
                     };
 
                 }
-                else    // OPERATIONS
+                else
+                if (UsingCacheType == SkiaCacheType.Operations)
                 {
                     var cacheRecordingArea = GetCacheRecordingArea(recordArea);
                     using (var recorder = new SKPictureRecorder())
@@ -5098,7 +5127,6 @@ namespace DrawnUi.Maui.Draw
                         renderObject = new(SkiaCacheType.Operations, skPicture, recordArea);
                     }
                 }
-
             }
             catch (Exception e)
             {
@@ -5187,10 +5215,10 @@ namespace DrawnUi.Maui.Draw
                 return;
             }
 
-            if (RenderObject != null && UseCache != SkiaCacheType.ImageDoubleBuffered)
+            if (RenderObject != null && UsingCacheType != SkiaCacheType.ImageDoubleBuffered)
             {
-                RenderObject = null;
-                //throw new Exception("RenderObject already exists for CreateRenderingObjectAndPaint! Need to dispose and assign null to it before.");
+                //RenderObject = null;
+                throw new Exception("RenderObject already exists for CreateRenderingObjectAndPaint! Need to dispose and assign null to it before.");
             }
 
             if (IsCacheImage && !IsClippedToBounds)
@@ -5200,19 +5228,25 @@ namespace DrawnUi.Maui.Draw
 
             RenderObjectNeedsUpdate = false;
 
-            var usingCacheType = UseCache;
-            var oldObject = RenderObject;
+            var usingCacheType = UsingCacheType;
 
-            if (usingCacheType != SkiaCacheType.ImageDoubleBuffered)
+            CachedObject oldObject = null;
+            if (usingCacheType == SkiaCacheType.ImageDoubleBuffered)
+            {
+                oldObject = RenderObject;
+            }
+            else if (usingCacheType == SkiaCacheType.Image || usingCacheType == SkiaCacheType.GPU || usingCacheType == SkiaCacheType.ImageComposite)
             {
                 oldObject = RenderObjectPrevious;
             }
 
             var created = CreateRenderingObject(context, recordingArea, oldObject, action);
-            if (created.SurfaceIsRecycled && oldObject != null)
+            if (oldObject != null)
             {
-                oldObject.Surface = null;
-                
+                if (created.SurfaceIsRecycled)
+                {
+                    oldObject.Surface = null;
+                }
                 if (usingCacheType != SkiaCacheType.ImageDoubleBuffered)
                 {
                     oldObject.Dispose();
@@ -5400,11 +5434,6 @@ namespace DrawnUi.Maui.Draw
                         _paintWithOpacity = new SKPaint();
                     }
 
-                    if (UseCache == SkiaCacheType.GPU)
-                    {
-                        var check = 1;
-                    }
-
                     _paintWithOpacity.Color = SKColors.White;
                     _paintWithOpacity.IsAntialias = true;
                     _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
@@ -5434,6 +5463,9 @@ namespace DrawnUi.Maui.Draw
 
             List<SkiaControlWithRect> tree = new();
 
+            //todo
+            //var visibleArea = GetOnScreenVisibleArea();
+
             foreach (var child in skiaControls)
             {
                 if (child != null)
@@ -5442,10 +5474,6 @@ namespace DrawnUi.Maui.Draw
                     if (child.CanDraw) //still visible 
                     {
                         child.Render(context, destination, scale);
-
-                        //var x = destination.Left + child.LastDrawnAt.Left;
-                        //var y = destination.Top + child.LastDrawnAt.Top;
-                        //var drawn = new SKRect(x, y, x + child.LastDrawnAt.Width, y + child.LastDrawnAt.Height);
 
                         tree.Add(new SkiaControlWithRect(child, child.LastDrawnAt, count));
 
@@ -5547,7 +5575,7 @@ namespace DrawnUi.Maui.Draw
 
         public virtual ScaledRect GetOnScreenVisibleArea()
         {
-            if (this.UseCache != SkiaCacheType.None)
+            if (this.UsingCacheType != SkiaCacheType.None)
             {
                 //we are going to cache our children so they all must draw
                 //regardless of the fact they might still be offscreen
@@ -5617,7 +5645,7 @@ namespace DrawnUi.Maui.Draw
             if (UpdateLocked)
                 return;
 
-            if (UseCache != SkiaCacheType.None && UseCache != SkiaCacheType.Operations)
+            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
                 IsClippedToBounds = true;
 
             if (IsParentIndependent)
@@ -5628,7 +5656,7 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void Update()
         {
-            if (UseCache == SkiaCacheType.ImageComposite)
+            if (UsingCacheType == SkiaCacheType.ImageComposite)
             {
                 RenderObjectPreviousNeedsUpdate = true;
             }
@@ -6209,9 +6237,9 @@ namespace DrawnUi.Maui.Draw
         #endregion
 
 
-        #region GRADIENTS
+        #region PAINT HELPERS
 
-        public SKShader CreateGradientAsShader(SKRect destination, SkiaGradient gradient)
+        public SKShader CreateGradient(SKRect destination, SkiaGradient gradient)
         {
             if (gradient != null && gradient.Type != GradientType.None)
             {
@@ -6243,7 +6271,7 @@ namespace DrawnUi.Maui.Draw
                 {
                 case GradientType.Sweep:
 
-                float sweep = (float)Value3;//((float)this.Variable1 % (float)this.Variable2 / 100F) * 360.0F;
+                //float sweep = (float)Value3;//((float)this.Variable1 % (float)this.Variable2 / 100F) * 360.0F;
 
                 return SKShader.CreateSweepGradient(
                      new SKPoint(destination.Left + destination.Width / 2.0f,
@@ -6279,6 +6307,10 @@ namespace DrawnUi.Maui.Draw
             return null;
         }
 
+        protected CachedGradient LastGradient;
+
+        protected CachedShadow LastShadow;
+
         /// <summary>
         /// Creates Shader for gradient and sets it to passed SKPaint along with BlendMode
         /// </summary>
@@ -6287,6 +6319,8 @@ namespace DrawnUi.Maui.Draw
         /// <param name="destination"></param>
         public bool SetupGradient(SKPaint paint, SkiaGradient gradient, SKRect destination)
         {
+
+
             if (gradient != null && paint != null)
             {
                 if (paint.Color.Alpha == 0)
@@ -6295,8 +6329,92 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 paint.Color = SKColors.White;
-                paint.Shader = CreateGradientAsShader(destination, gradient);
                 paint.BlendMode = gradient.BlendMode;
+
+                var o = paint.Shader;
+                paint.Shader = CreateGradient(destination, gradient);
+                o?.Dispose();
+
+                return true;
+
+                if (LastGradient == null || LastGradient.Gradient != gradient ||
+                    LastGradient.Destination != destination)
+                {
+                    var kill = LastGradient;
+                    LastGradient = new()
+                    {
+                        Shader = CreateGradient(destination, gradient),
+                        Destination = destination,
+                        Gradient = gradient
+                    };
+                    kill?.Dispose();
+                }
+
+                var old = paint.Shader;
+                paint.Shader = LastGradient.Shader;
+                if (old != paint.Shader)
+                {
+                    old?.Dispose();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public static SKImageFilter CreateShadow(SkiaShadow shadow, float scale)
+        {
+            var colorShadow = shadow.Color;
+            if (colorShadow.Alpha == 1.0)
+            {
+                colorShadow = shadow.Color.WithAlpha((float)shadow.Opacity);
+            }
+            if (shadow.ShadowOnly)
+            {
+                return SKImageFilter.CreateDropShadowOnly(
+                    (float)(shadow.X * scale), (float)(shadow.Y * scale),
+                    (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
+                    colorShadow.ToSKColor());
+            }
+            else
+            {
+                return SKImageFilter.CreateDropShadow(
+                    (float)(shadow.X * scale), (float)(shadow.Y * scale),
+                    (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
+                    colorShadow.ToSKColor());
+            }
+        }
+
+        /// <summary>
+        /// Creates and sets an ImageFilter for SKPaint
+        /// </summary>
+        /// <param name="paint"></param>
+        /// <param name="shadow"></param>
+        public bool SetupShadow(SKPaint paint, SkiaShadow shadow, float scale)
+        {
+            if (shadow != null && paint != null)
+            {
+
+                if (LastShadow == null || LastShadow.Shadow != shadow ||
+                    LastShadow.Scale != scale)
+                {
+                    var kill = LastShadow;
+                    LastShadow = new()
+                    {
+                        Filter = CreateShadow(shadow, scale),
+                        Scale = scale,
+                        Shadow = shadow
+                    };
+                    kill?.Dispose();
+                }
+
+                var old = paint.ImageFilter;
+                paint.ImageFilter = LastShadow.Filter;
+                if (old != paint.ImageFilter)
+                {
+                    old?.Dispose();
+                }
 
                 return true;
             }
@@ -6339,13 +6457,17 @@ namespace DrawnUi.Maui.Draw
             Invalidate();
         }
 
-        public virtual void SetWillDisposeWithChildren()
+        /// <summary>
+        /// The OnDisposing might come with a delay to avoid disposing resources at use.
+        /// This method will be called without delay when Dispose() is invoked. Disposed will set to True and for Views their OnWillDisposeWithChildren will be called.
+        /// </summary>
+        public virtual void OnWillDisposeWithChildren()
         {
             IsDisposing = true;
 
             foreach (var child in Views.ToList())
             {
-                child.SetWillDisposeWithChildren();
+                child.OnWillDisposeWithChildren();
             }
         }
 
@@ -6820,33 +6942,7 @@ namespace DrawnUi.Maui.Draw
 
         #region HELPERS
 
-        /// <summary>
-        /// Creates and sets an ImageFilter for SKPaint
-        /// </summary>
-        /// <param name="paintShadow"></param>
-        /// <param name="shadow"></param>
-        public static void AddShadowFilter(SKPaint paintShadow, SkiaShadow shadow, float scale)
-        {
-            var colorShadow = shadow.Color;
-            if (colorShadow.Alpha == 1.0)
-            {
-                colorShadow = shadow.Color.WithAlpha((float)shadow.Opacity);
-            }
-            if (shadow.ShadowOnly)
-            {
-                paintShadow.ImageFilter = SKImageFilter.CreateDropShadowOnly(
-                    (float)(shadow.X * scale), (float)(shadow.Y * scale),
-                    (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
-                    colorShadow.ToSKColor());
-            }
-            else
-            {
-                paintShadow.ImageFilter = SKImageFilter.CreateDropShadow(
-                    (float)(shadow.X * scale), (float)(shadow.Y * scale),
-                    (float)(shadow.Blur * scale), (float)(shadow.Blur * scale),
-                    colorShadow.ToSKColor());
-            }
-        }
+
 
         public static Random Random = new Random();
         protected double _arrangedViewportHeightLimit;

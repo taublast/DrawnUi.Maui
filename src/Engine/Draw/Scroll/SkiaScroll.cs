@@ -35,6 +35,15 @@ namespace DrawnUi.Maui.Draw
             Zooming
         }
 
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            Content?.Dispose();
+            Header?.Dispose();
+            Footer?.Dispose();
+        }
+
         private ScrollingInteractionState _intercationState;
         public ScrollingInteractionState InteractionState
         {
@@ -2239,7 +2248,7 @@ namespace DrawnUi.Maui.Draw
                 if (invalidated)
                 {
                     RenderObjectNeedsUpdate = true;
-                    if (UseCache == SkiaCacheType.ImageComposite)
+                    if (UsingCacheType == SkiaCacheType.ImageComposite)
                     {
                         RenderObjectPreviousNeedsUpdate = true;
                     }
