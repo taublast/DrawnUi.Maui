@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeBenchmarks", "test\Some
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "test\UnitTests\UnitTests.csproj", "{C8BAD2E9-FDFA-404D-85AE-2F179CA78016}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.Game", "Addons\DrawnUi.Maui.Game\DrawnUi.Maui.Game.csproj", "{C9CABC24-B5D7-4824-BD1B-279BEF419348}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{C8BAD2E9-FDFA-404D-85AE-2F179CA78016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8BAD2E9-FDFA-404D-85AE-2F179CA78016}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8BAD2E9-FDFA-404D-85AE-2F179CA78016}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9CABC24-B5D7-4824-BD1B-279BEF419348}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9CABC24-B5D7-4824-BD1B-279BEF419348}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9CABC24-B5D7-4824-BD1B-279BEF419348}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9CABC24-B5D7-4824-BD1B-279BEF419348}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{D5538622-9DC4-40CD-B3E8-07BF07C3C9A5} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
 		{03A9CCB9-92B5-4A4A-8696-127603AE8816} = {507756AE-A224-4CDD-80C1-55F06502DE1B}
 		{C8BAD2E9-FDFA-404D-85AE-2F179CA78016} = {507756AE-A224-4CDD-80C1-55F06502DE1B}
+		{C9CABC24-B5D7-4824-BD1B-279BEF419348} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08E673B7-06BF-468C-8D6C-2D1AA8E4A8CA}

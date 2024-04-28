@@ -4583,11 +4583,8 @@ namespace DrawnUi.Maui.Draw
                     {
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
                     }
-                }
 
-                if (applyOpacity)
-                {
-                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
+                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity); //very consuming!
                 }
                 else
                     restore = ctx.Canvas.Save();
@@ -4682,7 +4679,6 @@ namespace DrawnUi.Maui.Draw
                 {
                     ctx.Canvas.ClipPath(_clipBounds, SKClipOperation.Intersect, true);
                 }
-
 
 
                 draw(ctx);

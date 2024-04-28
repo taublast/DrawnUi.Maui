@@ -15,7 +15,6 @@
     <!--  STARS BACKGROUND  -->
     <draw:SkiaLayout
         HorizontalOptions="Fill"
-        IsVisible="True"
         UseCache="Image"
         VerticalOptions="Fill"
         ZIndex="-1">
@@ -23,7 +22,7 @@
         <draw:SkiaImage
             Aspect="AspectCover"
             HorizontalOptions="Fill"
-            Opacity="0.33"
+            Opacity="0.375"
             Source="Space/Sprites/nebula.jpg"
             VerticalOptions="Fill" />
 
@@ -41,13 +40,13 @@
     <!--  STARS PARALLAX  -->
     <draw:SkiaImageTiles
         x:Name="ParallaxLayer"
-        VerticalOptions="Fill"
         HorizontalOptions="Fill"
         Source="Space/Sprites/stars.png"
         TileAspect="Cover"
+        TileCacheType="GPU"
         TileHeight="600"
         TileWidth="600"
-        TileCacheType="GPU" />
+        VerticalOptions="Fill" />
 
     <!--  SCORE  -->
     <draw:SkiaLabel
