@@ -4555,7 +4555,7 @@ namespace DrawnUi.Maui.Draw
 
             bool applyOpacity = useOpacity && Opacity < 1;
             bool needTransform = HasTransform;
-            
+
             if (applyOpacity || isClipping || needTransform
                 || CustomizeLayerPaint != null)
             //|| (VisualEffects?.Count > 0 && !DisableEffects))
@@ -4580,7 +4580,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     var alpha = (byte)(0xFF / 1.0 * Opacity);
                     _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
-                    
+
                     if (CustomizeLayerPaint != null)
                     {
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
@@ -5003,11 +5003,8 @@ namespace DrawnUi.Maui.Draw
     CachedObject reuseSurfaceFrom,
      Action<SkiaDrawingContext> action)
         {
-            bool log = Tag=="HeaderGpu";
-
             if (recordingArea.Height == 0 || recordingArea.Width == 0 || IsDisposed || IsDisposing)
             {
-                if (log) Console.WriteLine("[***] return null");
                 return null;
             }
 
@@ -5017,8 +5014,6 @@ namespace DrawnUi.Maui.Draw
             {
                 var recordArea = GetCacheArea(recordingArea);
 
-                if (log) Console.WriteLine($"$[***] record {recordArea}");
-                
                 //just draw subviews
                 //need a fake context for that..
                 var recordingContext = context.Clone();
@@ -5051,6 +5046,7 @@ namespace DrawnUi.Maui.Draw
                     {
                         needCreateSurface = true;
                     }
+
                     if (needCreateSurface)
                     {
                         var kill = surface;
@@ -5058,14 +5054,15 @@ namespace DrawnUi.Maui.Draw
 
                         if (usingCacheType == SkiaCacheType.GPU)
                         {
-                            if(context.Superview?.CanvasView is SkiaViewAccelerated accelerated
+                            if (context.Superview?.CanvasView is SkiaViewAccelerated accelerated
                                 && accelerated.GRContext != null)
                             {
                                 //hardware accelerated
                                 surface = SKSurface.Create(accelerated.GRContext, false, cacheSurfaceInfo);
-                                if (surface == null) 
+                                if (surface == null)
                                 {
-                                    return null;
+                                    //fallback to non-gpu
+                                    surface = SKSurface.Create(cacheSurfaceInfo);
                                 }
                             }
                             else
@@ -5077,7 +5074,7 @@ namespace DrawnUi.Maui.Draw
                         {
                             surface = SKSurface.Create(cacheSurfaceInfo);
                         }
-                    
+
                         if (kill != surface)
                             DisposeObject(kill);
                     }
@@ -5087,6 +5084,11 @@ namespace DrawnUi.Maui.Draw
                         //reusing existing surface
                         if (usingCacheType != SkiaCacheType.ImageComposite)
                             surface.Canvas.Clear();
+                    }
+
+                    if (surface == null)
+                    {
+                        return null; //would be unexpected
                     }
 
                     recordingContext.IsRecycled = !needCreateSurface;
@@ -5126,6 +5128,8 @@ namespace DrawnUi.Maui.Draw
                         renderObject = new(SkiaCacheType.Operations, skPicture, recordArea);
                     }
                 }
+
+                //else we landed here with no cache type at all..
             }
             catch (Exception e)
             {
