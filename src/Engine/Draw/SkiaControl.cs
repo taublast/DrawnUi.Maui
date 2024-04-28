@@ -4555,7 +4555,7 @@ namespace DrawnUi.Maui.Draw
 
             bool applyOpacity = useOpacity && Opacity < 1;
             bool needTransform = HasTransform;
-
+            
             if (applyOpacity || isClipping || needTransform
                 || CustomizeLayerPaint != null)
             //|| (VisualEffects?.Count > 0 && !DisableEffects))
@@ -4578,27 +4578,16 @@ namespace DrawnUi.Maui.Draw
                 var restore = 0;
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {
-
                     var alpha = (byte)(0xFF / 1.0 * Opacity);
                     _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
-
-
+                    
                     if (CustomizeLayerPaint != null)
                     {
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
                     }
-
-                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
-                else
-                    restore = ctx.Canvas.Save();
 
-                //else
-                //{
-                //    //todo dispose previous!!!
-                //    _paintWithOpacity.ImageFilter = null;
-                //    _paintWithOpacity.ColorFilter = null;
-                //}
+                restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
 
                 if (needTransform)
                 {
@@ -5014,8 +5003,11 @@ namespace DrawnUi.Maui.Draw
     CachedObject reuseSurfaceFrom,
      Action<SkiaDrawingContext> action)
         {
+            bool log = Tag=="HeaderGpu";
+
             if (recordingArea.Height == 0 || recordingArea.Width == 0 || IsDisposed || IsDisposing)
             {
+                if (log) Console.WriteLine("[***] return null");
                 return null;
             }
 
@@ -5025,6 +5017,8 @@ namespace DrawnUi.Maui.Draw
             {
                 var recordArea = GetCacheArea(recordingArea);
 
+                if (log) Console.WriteLine($"$[***] record {recordArea}");
+                
                 //just draw subviews
                 //need a fake context for that..
                 var recordingContext = context.Clone();
@@ -5047,6 +5041,7 @@ namespace DrawnUi.Maui.Draw
 
                     if (!needCreateSurface && reuseSurfaceFrom != null && reuseSurfaceFrom.Surface != null)
                     {
+                        surface = reuseSurfaceFrom.Surface;
                         if (height != reuseSurfaceFrom.Bounds.Height || width != reuseSurfaceFrom.Bounds.Width)
                         {
                             needCreateSurface = true;
@@ -5056,31 +5051,35 @@ namespace DrawnUi.Maui.Draw
                     {
                         needCreateSurface = true;
                     }
-
                     if (needCreateSurface)
                     {
                         var kill = surface;
                         var cacheSurfaceInfo = new SKImageInfo(width, height);
 
-                        if (usingCacheType == SkiaCacheType.GPU
-                            && context.Superview?.CanvasView is SkiaViewAccelerated accelerated
-                            && accelerated.GRContext != null)
+                        if (usingCacheType == SkiaCacheType.GPU)
                         {
-                            //hardware accelerated
-                            surface = SKSurface.Create(accelerated.GRContext, false, cacheSurfaceInfo);
-
-                            if (surface == null) //fallback
+                            if(context.Superview?.CanvasView is SkiaViewAccelerated accelerated
+                                && accelerated.GRContext != null)
                             {
-                                surface = SKSurface.Create(cacheSurfaceInfo);
+                                //hardware accelerated
+                                surface = SKSurface.Create(accelerated.GRContext, false, cacheSurfaceInfo);
+                                if (surface == null) 
+                                {
+                                    return null;
+                                }
+                            }
+                            else
+                            {
+                                return null;
                             }
                         }
                         else
                         {
-                            //normal one
                             surface = SKSurface.Create(cacheSurfaceInfo);
                         }
-
-                        DisposeObject(kill);
+                    
+                        if (kill != surface)
+                            DisposeObject(kill);
                     }
                     else
                     {
