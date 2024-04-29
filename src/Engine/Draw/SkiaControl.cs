@@ -4007,7 +4007,7 @@ namespace DrawnUi.Maui.Draw
 
                 _paintWithOpacity?.Dispose();
                 _paintWithEffects?.Dispose();
-                _clipBounds?.Dispose();
+                _preparedClipBounds?.Dispose();
             });
         }
 
@@ -4502,7 +4502,7 @@ namespace DrawnUi.Maui.Draw
 
         protected SKPaint _paintWithEffects = null;
         protected SKPaint _paintWithOpacity = null;
-        SKPath _clipBounds = null;
+        SKPath _preparedClipBounds = null;
 
         private IAnimatorsManager _lastAnimatorManager;
 
@@ -4529,24 +4529,25 @@ namespace DrawnUi.Maui.Draw
             bool isClipping = false;
 
             //clipped inside this view bounds
+            //todo extract to PrepareClipping
             if ((IsClippedToBounds || Clipping != null) && useClipping)
             {
                 isClipping = true;
 
-                if (_clipBounds == null)
+                if (_preparedClipBounds == null)
                 {
-                    _clipBounds = new();
+                    _preparedClipBounds = new();
                 }
                 else
                 {
-                    _clipBounds.Reset();
+                    _preparedClipBounds.Reset();
                 }
 
-                _clipBounds.AddRect(destination);
+                _preparedClipBounds.AddRect(destination);
 
                 if (Clipping != null)
                 {
-                    Clipping.Invoke(_clipBounds, destination);
+                    Clipping.Invoke(_preparedClipBounds, destination);
                 }
 
             }
@@ -4556,9 +4557,7 @@ namespace DrawnUi.Maui.Draw
 
             if (applyOpacity || isClipping || needTransform
                 || CustomizeLayerPaint != null)
-            //|| (VisualEffects?.Count > 0 && !DisableEffects))
             {
-
                 _paintWithOpacity ??= new SKPaint();
 
                 if (IsDistorted)
@@ -4571,120 +4570,37 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.IsAntialias = false;
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
-
-
+                
                 var restore = 0;
+                var alpha = (byte)(0xFF / 1.0 * Opacity);
+                _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
+
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {
-                    var alpha = (byte)(0xFF / 1.0 * Opacity);
-                    _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
-
                     if (CustomizeLayerPaint != null)
                     {
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
                     }
-                }
-
-                if (applyOpacity)
-                {
+                    
                     restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
                 else
-                    restore = ctx.Canvas.Save();
-
+                {
+                   restore = ctx.Canvas.Save();
+                }
+                
                 if (needTransform)
                 {
-                    var moveX = (float)(UseTranslationX * RenderingScale);
-                    var moveY = (float)(UseTranslationY * RenderingScale);
-                    var centerX = (float)(moveX + destination.Left + destination.Width * TransformPivotPointX);
-                    var centerY = (float)(moveY + destination.Top + destination.Height * TransformPivotPointY);
-
-                    _pixelsLastTranslationX = moveX;
-                    _pixelsLastTranslationY = moveY;
-
-                    var skewX = 0f;
-                    if (SkewX > 0)
-                        skewX = (float)Math.Tan(Math.PI * SkewX / 180f);
-
-                    var skewY = 0f;
-                    if (SkewY > 0)
-                        skewY = (float)Math.Tan(Math.PI * SkewY / 180f);
-
-                    if (Rotation != 0)
-                    {
-                        ctx.Canvas.RotateDegrees((float)this.Rotation, centerX, centerY);
-                    }
-
-                    var matrixTransforms = new SKMatrix
-                    {
-                        TransX = moveX,
-                        TransY = moveY,
-                        Persp0 = Perspective1,
-                        Persp1 = Perspective2,
-                        SkewX = skewX,
-                        SkewY = skewY,
-                        Persp2 = 1,
-                        ScaleX = (float)this.ScaleX,
-                        ScaleY = (float)this.ScaleY,
-                    };
-
-                    //set pivot point
-                    var DrawingMatrix = SKMatrix.CreateTranslation(-centerX, -centerY);
-                    //apply stuff
-                    DrawingMatrix = DrawingMatrix.PostConcat(matrixTransforms);
-
-#if SKIA3
-                    if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
-                    {
-                        if (Helper3d == null)
-                        {
-                            Helper3d = new();
-                        }
-                        Helper3d.Reset();
-                        Helper3d.RotateXDegrees(CameraAngleX);
-                        Helper3d.RotateYDegrees(CameraAngleY);
-                        Helper3d.RotateZDegrees(CameraAngleZ);
-                        if (CameraTranslationZ != 0)
-                        {
-                            Helper3d.TranslateZ(CameraTranslationZ);
-                        }
-                        DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.GetMatrix());
-                    }
-#else
-                    if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
-                    {
-                        if (Helper3d == null)
-                        {
-                            Helper3d = new();
-                        }
-                        Helper3d.Save();
-                        Helper3d.RotateXDegrees(CameraAngleX);
-                        Helper3d.RotateYDegrees(CameraAngleY);
-                        Helper3d.RotateZDegrees(CameraAngleZ);
-                        if (CameraTranslationZ != 0)
-                            Helper3d.TranslateZ(CameraTranslationZ);
-                        DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.Matrix);
-                        Helper3d.Restore();
-                    }
-#endif
-
-                    //restore coordinates back
-                    DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(centerX, centerY));
-
-                    //apply parent's transforms
-                    DrawingMatrix = DrawingMatrix.PostConcat(ctx.Canvas.TotalMatrix);
-
-                    ctx.Canvas.SetMatrix(DrawingMatrix);
-
+                    ApplyTransforms(ctx, destination);
                 }
 
                 if (isClipping)
                 {
-                    ctx.Canvas.ClipPath(_clipBounds, SKClipOperation.Intersect, true);
+                    ctx.Canvas.ClipPath(_preparedClipBounds, SKClipOperation.Intersect, true);
                 }
 
                 draw(ctx);
-
+                
                 ctx.Canvas.RestoreToCount(restore);
             }
             else
@@ -4779,28 +4695,7 @@ namespace DrawnUi.Maui.Draw
 
             ctx.Canvas.SetMatrix(DrawingMatrix);
         }
-
-        protected virtual void ApplyClipping(SkiaDrawingContext ctx, SKRect destination)
-        {
-            if (_clipBounds == null)
-            {
-                _clipBounds = new();
-            }
-            else
-            {
-                _clipBounds.Reset();
-            }
-
-            _clipBounds.AddRect(destination);
-
-            if (Clipping != null)
-            {
-                Clipping.Invoke(_clipBounds, destination);
-            }
-
-            ctx.Canvas.ClipPath(_clipBounds, SKClipOperation.Intersect, true);
-        }
-
+        
         public virtual bool NeedMeasure
         {
             get => _needMeasure;
@@ -5101,6 +4996,9 @@ namespace DrawnUi.Maui.Draw
         {
             get
             {
+                if (UseCache == SkiaCacheType.GPU && !Super.GpuCacheEnabled)
+                    return  SkiaCacheType.Image;
+                
                 return UseCache;
             }
         }
@@ -5131,11 +5029,10 @@ namespace DrawnUi.Maui.Draw
 
                 NeedUpdate = false; //if some child changes this while rendering to cache we will erase resulting RenderObject
 
+                var usingCacheType = UsingCacheType;
+
                 if (IsCacheImage)
                 {
-                    //IMAGE
-                    var usingCacheType = UsingCacheType;
-
                     var width = (int)recordArea.Width;
                     var height = (int)recordArea.Height;
 
@@ -5143,21 +5040,20 @@ namespace DrawnUi.Maui.Draw
 
                     SKSurface surface = null;
 
-                    if (!needCreateSurface && reuseSurfaceFrom != null && reuseSurfaceFrom.Surface != null)
+                    if (!needCreateSurface)
                     {
+                        //reusing existing surface
                         surface = reuseSurfaceFrom.Surface;
-                        if (height != reuseSurfaceFrom.Bounds.Height || width != reuseSurfaceFrom.Bounds.Width)
+                        if (surface == null)
                         {
-                            needCreateSurface = true;
+                            return null; //would be unexpected
                         }
+                        if (usingCacheType != SkiaCacheType.ImageComposite)
+                            surface.Canvas.Clear();
                     }
                     else
                     {
                         needCreateSurface = true;
-                    }
-
-                    if (needCreateSurface)
-                    {
                         var kill = surface;
                         surface = null;
                         var cacheSurfaceInfo = new SKImageInfo(width, height);
@@ -5168,49 +5064,46 @@ namespace DrawnUi.Maui.Draw
                                 && accelerated.GRContext != null)
                             {
                                 //hardware accelerated
-                                surface = SKSurface.Create(accelerated.GRContext, true, cacheSurfaceInfo);
+                                surface = SKSurface.Create(accelerated.GRContext, 
+                                    true, 
+                                    cacheSurfaceInfo);
                             }
                         }
-
-                        if (surface == null)
+                        if (surface == null) //fallback if gpu failed
                         {
-                            //fallback to non-gpu
+                            //non-gpu
                             surface = SKSurface.Create(cacheSurfaceInfo);
                         }
 
                         if (kill != surface)
-                            DisposeObject(kill);
+                            DisposeObject(kill); 
+                        
+                        // if (usingCacheType == SkiaCacheType.GPU)
+                        //     surface.Canvas.Clear(SKColors.Red);
                     }
-                    else
-                    {
-                        surface = reuseSurfaceFrom.Surface;
-                        //reusing existing surface
-                        if (usingCacheType != SkiaCacheType.ImageComposite)
-                            surface.Canvas.Clear();
-                    }
-
+                    
                     if (surface == null)
                     {
-                        return null; //would be unexpected
+                        return null; //would be totally unexpected
                     }
-
+                    
                     recordingContext.IsRecycled = !needCreateSurface;
                     recordingContext.Canvas = surface.Canvas;
-
+                    
                     // Translate the canvas to start drawing at (0,0)
                     recordingContext.Canvas.Translate(-recordArea.Left, -recordArea.Top);
 
                     // Perform the drawing action
                     action(recordingContext);
 
-                    // Restore the original matrix
+                    // Restore position
                     recordingContext.Canvas.Translate(recordArea.Left, recordArea.Top);
-
+                    
                     surface.Canvas.Flush(); //gamechanger
 
                     renderObject = new(usingCacheType, surface, recordArea)
                     {
-                        SurfaceIsRecycled = !needCreateSurface
+                        SurfaceIsRecycled = recordingContext.IsRecycled
                     };
 
                 }
@@ -5329,7 +5222,8 @@ namespace DrawnUi.Maui.Draw
 
             if (IsCacheImage && !IsClippedToBounds)
             {
-                throw new Exception("IsClippedToBounds is required to be TRUE for caching as image.");
+                IsClippedToBounds = true;
+                //throw new Exception("IsClippedToBounds is required to be TRUE for caching as image.");
             }
 
             RenderObjectNeedsUpdate = false;
@@ -5341,7 +5235,8 @@ namespace DrawnUi.Maui.Draw
             {
                 oldObject = RenderObject;
             }
-            else if (usingCacheType == SkiaCacheType.Image || usingCacheType == SkiaCacheType.GPU || usingCacheType == SkiaCacheType.ImageComposite)
+            else if (usingCacheType == SkiaCacheType.Image 
+                     || usingCacheType == SkiaCacheType.ImageComposite)
             {
                 oldObject = RenderObjectPrevious;
             }
@@ -5882,13 +5777,13 @@ namespace DrawnUi.Maui.Draw
                 clip.Close();
             }
 
-            canvas.Save();
+            var saved = canvas.Save();
 
             canvas.ClipPath(clip, SKClipOperation.Intersect, true);
 
             draw();
 
-            canvas.Restore();
+            canvas.RestoreToCount(saved);
         }
 
 

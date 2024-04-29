@@ -139,7 +139,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
             var applyMatrix = control.Helper3d.Matrix;
             control.Helper3d.Restore();
 #endif
-            context.Canvas.Save();
+            var saved = context.Canvas.Save();
 
             //set pivot point
             var DrawingMatrix = SKMatrix.CreateTranslation(-centerX, -centerY);
@@ -176,7 +176,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
 
             var ret = base.DrawChild(context, dest, child, scale);
 
-            context.Canvas.Restore();
+            context.Canvas.RestoreToCount(saved);
 
             return true;
         }

@@ -912,13 +912,13 @@ namespace DrawnUi.Maui.Draw
 
                     paint.ImageFilter = null;
 
-                    canvas.Save();
+                    var saved = canvas.Save();
 
                     canvas.ClipPath(path, SKClipOperation.Intersect, true);
 
                     canvas.DrawPicture(picture, display.Left, display.Top, paint);
 
-                    canvas.Restore();
+                    canvas.RestoreToCount(saved);
                 }
             }
             else
@@ -1146,12 +1146,12 @@ namespace DrawnUi.Maui.Draw
                                 Clipping.Invoke(clipPath, Destination);
                             }
 
-                            ctx.Canvas.Save();
+                            var saved = ctx.Canvas.Save();
                             ctx.Canvas.ClipPath(clipPath, SKClipOperation.Intersect, true);
 
                             ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
 
-                            ctx.Canvas.Restore();
+                            ctx.Canvas.RestoreToCount(saved);
 
                             clipPath.Dispose();
                         }

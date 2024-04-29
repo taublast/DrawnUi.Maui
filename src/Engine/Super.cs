@@ -525,7 +525,11 @@ public partial class Super
             }
         }
     }
+    
+    public static bool GpuCacheEnabled { get; set; } 
 
+    public static string UserAgent { get; set; } = "#dotnetmaui"; 
+    
 #if SKIA3
     public static int SkiaGeneration = 3;
 #else

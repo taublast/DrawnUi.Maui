@@ -81,7 +81,7 @@ public class ShimmerAnimator : RenderingAnimator
                 }
                 else
                 {
-                    canvas.Save();
+                    var saved = canvas.Save();
                     // Translate the canvas so that the center of the control is at the origin
                     var rotationX = rect.Left + rect.Width / 2f;
                     var rotationY = rect.Top + rect.Height / 2f;
@@ -92,7 +92,7 @@ public class ShimmerAnimator : RenderingAnimator
 
                     canvas.DrawRect(rect, Paint);
 
-                    canvas.Restore();
+                    canvas.RestoreToCount(saved);
                 }
             });
 

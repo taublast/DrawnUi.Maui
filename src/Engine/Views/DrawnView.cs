@@ -1544,7 +1544,7 @@ namespace DrawnUi.Maui.Views
                 try
                 {
                     DrawingThreads++;
-
+                    
                     FrameTime = CanvasView.FrameTime;
                     //context.FrameTimeNanos = FrameTime;
 

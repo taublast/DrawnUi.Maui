@@ -671,12 +671,12 @@ namespace DrawnUi.Maui.Draw
                             using var clip = new SKPath();
                             using var clipContent = CreateClip(arguments, true);
                             clip.AddPath(clipContent);
-                            ctx.Canvas.Save();
+                            var saved = ctx.Canvas.Save();
                             ctx.Canvas.ClipPath(clip, SKClipOperation.Difference, true);
 
                             render();
 
-                            ctx.Canvas.Restore();
+                            ctx.Canvas.RestoreToCount(saved);
                         }
                         else
                         {
@@ -714,14 +714,14 @@ namespace DrawnUi.Maui.Draw
             using var clip = new SKPath();
             using var clipContent = CreateClip(arguments, true);
             clip.AddPath(clipContent);
-            ctx.Canvas.Save();
+            var saved = ctx.Canvas.Save();
             ctx.Canvas.ClipPath(clip, SKClipOperation.Intersect, true);
 
             var rectForChildren = ContractPixelsRect(strokeAwareChildrenSize, scale, Padding);
 
             DrawViews(ctx, rectForChildren, scale);
 
-            ctx.Canvas.Restore();
+            ctx.Canvas.RestoreToCount(saved);
 
             //last pass for stroke over background or children
             if (willStroke)
