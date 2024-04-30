@@ -90,6 +90,16 @@ public partial class SkiaImageManager
     }
     */
 
+    public static async Task<string> HandleRedirects(HttpClient client, string url)
+    {
+        var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        if (response.IsSuccessStatusCode && (response.StatusCode == System.Net.HttpStatusCode.MovedPermanently || response.StatusCode == System.Net.HttpStatusCode.Redirect))
+        {
+            return response.Headers.Location.ToString();
+        }
+        return url;
+    }
+
     public static async Task<SKBitmap> LoadImageOnPlatformAsync(ImageSource source, CancellationToken cancel)
     {
         if (source == null)
@@ -124,6 +134,8 @@ public partial class SkiaImageManager
 
                 httpClientHandler.SslProtocols = SslProtocols.Tls12;
                 var client = new HttpClient(httpClientHandler);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(Super.UserAgent);
+
                 var response = await client.GetAsync(uriSource.Uri, cancel);
                 if (response.IsSuccessStatusCode)
                 {
