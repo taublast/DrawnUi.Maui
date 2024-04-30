@@ -1,6 +1,6 @@
 ﻿# DrawnUI for .NET MAUI
 
-Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones. 
+Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍.
 
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
