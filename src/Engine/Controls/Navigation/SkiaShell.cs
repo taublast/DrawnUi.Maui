@@ -617,7 +617,8 @@ namespace DrawnUi.Maui.Controls
                         if (sender is SkiaDrawer control)
                         {
                             control.OnViewportReady -= ViewportReadyHandler;
-                            MainThread.BeginInvokeOnMainThread(async () => //to unlock ui thread before this
+                            
+                            Tasks.StartDelayed(TimeSpan.FromMicroseconds(50),async ()=>
                             {
                                 _pushModalWaitingAnimatedOpen = !animated;
                                 if (control is IVisibilityAware aware)

@@ -312,15 +312,23 @@ public class SnappingLayout : SkiaLayout
         }
     }
 
+    protected Vector2 _appliedPosition;
     public virtual void ApplyPosition(Vector2 position)
     {
+        _appliedPosition = position;
+        
         TranslationX = position.X;
         TranslationY = position.Y;
+        
         MainThread.BeginInvokeOnMainThread(() =>
         {
             InTransition = !CheckTransitionEnded();
         });
+        
+        Scrolled?.Invoke(this, position);
     }
+    
+    public event EventHandler<Vector2> Scrolled;
 
     public virtual bool CheckTransitionEnded()
     {

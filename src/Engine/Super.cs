@@ -526,7 +526,7 @@ public partial class Super
         }
     }
     
-    public static bool GpuCacheEnabled { get; set; } 
+    public static bool GpuCacheEnabled { get; set; }  = true;
 
     public static string UserAgent { get; set; } = "#dotnetmaui"; 
     

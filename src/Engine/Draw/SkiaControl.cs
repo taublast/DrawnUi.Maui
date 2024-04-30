@@ -4582,11 +4582,11 @@ namespace DrawnUi.Maui.Draw
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
                     }
                     
-                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
+                    ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
                 else
                 {
-                   restore = ctx.Canvas.Save();
+                   ctx.Canvas.Save();
                 }
                 
                 if (needTransform)
@@ -4601,7 +4601,7 @@ namespace DrawnUi.Maui.Draw
 
                 draw(ctx);
                 
-                ctx.Canvas.RestoreToCount(restore);
+                ctx.Canvas.Restore();
             }
             else
             {
@@ -4613,6 +4613,7 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
         {
+
             var moveX = (float)(UseTranslationX * RenderingScale);
             var moveY = (float)(UseTranslationY * RenderingScale);
             var centerX = (float)(moveX + destination.Left + destination.Width * TransformPivotPointX);
@@ -4636,8 +4637,8 @@ namespace DrawnUi.Maui.Draw
 
             var matrixTransforms = new SKMatrix
             {
-                TransX = moveX,
-                TransY = moveY,
+                TransX = moveX+centerX,
+                TransY = moveY+centerY,
                 Persp0 = Perspective1,
                 Persp1 = Perspective2,
                 SkewX = skewX,
@@ -4686,10 +4687,7 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.Restore();
             }
 #endif
-
-            //restore coordinates back
-            DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(centerX, centerY));
-
+            
             //apply parent's transforms
             DrawingMatrix = DrawingMatrix.PostConcat(ctx.Canvas.TotalMatrix);
 
@@ -5031,6 +5029,8 @@ namespace DrawnUi.Maui.Draw
 
                 var usingCacheType = UsingCacheType;
 
+                GRContext grContext = null;
+                
                 if (IsCacheImage)
                 {
                     var width = (int)recordArea.Width;
@@ -5063,6 +5063,7 @@ namespace DrawnUi.Maui.Draw
                             if (context.Superview?.CanvasView is SkiaViewAccelerated accelerated
                                 && accelerated.GRContext != null)
                             {
+                                grContext = accelerated.GRContext;
                                 //hardware accelerated
                                 surface = SKSurface.Create(accelerated.GRContext, 
                                     true, 
@@ -5091,15 +5092,16 @@ namespace DrawnUi.Maui.Draw
                     recordingContext.Canvas = surface.Canvas;
                     
                     // Translate the canvas to start drawing at (0,0)
+                    
                     recordingContext.Canvas.Translate(-recordArea.Left, -recordArea.Top);
-
+                    
                     // Perform the drawing action
                     action(recordingContext);
-
-                    // Restore position
-                    recordingContext.Canvas.Translate(recordArea.Left, recordArea.Top);
                     
-                    surface.Canvas.Flush(); //gamechanger
+                    surface.Canvas.Flush(); 
+                    //grContext?.Flush();
+                    
+                    recordingContext.Canvas.Translate(recordArea.Left, recordArea.Top);
 
                     renderObject = new(usingCacheType, surface, recordArea)
                     {
@@ -5746,7 +5748,7 @@ namespace DrawnUi.Maui.Draw
 
                     canvas.DrawRect(destination, PaintSystem);
 
-                    canvas.RestoreToCount(saved);
+                    canvas.Restore();
                 }
                 else
                 {
@@ -5783,7 +5785,7 @@ namespace DrawnUi.Maui.Draw
 
             draw();
 
-            canvas.RestoreToCount(saved);
+            canvas.Restore();
         }
 
 

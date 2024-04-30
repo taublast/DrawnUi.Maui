@@ -918,7 +918,7 @@ namespace DrawnUi.Maui.Draw
 
                     canvas.DrawPicture(picture, display.Left, display.Top, paint);
 
-                    canvas.RestoreToCount(saved);
+                    canvas.Restore();
                 }
             }
             else
@@ -1151,7 +1151,7 @@ namespace DrawnUi.Maui.Draw
 
                             ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
 
-                            ctx.Canvas.RestoreToCount(saved);
+                            ctx.Canvas.Restore();
 
                             clipPath.Dispose();
                         }

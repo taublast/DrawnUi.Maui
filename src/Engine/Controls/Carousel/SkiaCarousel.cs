@@ -45,9 +45,9 @@ public class SkiaCarousel : SnappingLayout
 
     public event EventHandler<int> ItemDisappearing;
 
-    public event EventHandler Scrolled;
 
-    public event EventHandler Scrolling;
+
+    public event EventHandler<Vector2> Stopped;
 
     protected Dictionary<int, bool> ItemsVisibility { get; } = new();
 
@@ -584,12 +584,11 @@ public class SkiaCarousel : SnappingLayout
                     },
                     OnStop = () =>
                     {
-                        Scrolled?.Invoke(this, null);
+                        Stopped?.Invoke(this, _appliedPosition);
                     },
                     OnVectorUpdated = (value) =>
                     {
                         ApplyPosition(value);
-                        Scrolling?.Invoke(this, null);
                     }
                 };
                 _animatorRange = new(this)
@@ -597,11 +596,10 @@ public class SkiaCarousel : SnappingLayout
                     OnVectorUpdated = (value) =>
                     {
                         ApplyPosition(value);
-                        Scrolling?.Invoke(this, null);
                     },
                     OnStop = () =>
                     {
-                        Scrolled?.Invoke(this, null);
+                        Stopped?.Invoke(this, _appliedPosition);
                     }
                 };
             }

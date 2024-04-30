@@ -35,7 +35,7 @@ public class SkiaHoverMask : SkiaShape
 
                     //todo add stroke property?
 
-                    ctx.Canvas.RestoreToCount(saved);
+                    ctx.Canvas.Restore();
                 }
             }
 

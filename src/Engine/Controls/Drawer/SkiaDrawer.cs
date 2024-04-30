@@ -122,9 +122,7 @@ namespace DrawnUi.Maui.Controls
 
         public event EventHandler<bool> IsOpenChanged;
 
-        public event EventHandler Scrolled;
-
-        public event EventHandler Scrolling;
+        public event EventHandler<Vector2> Stopped;
 
         #endregion
 
@@ -264,12 +262,11 @@ namespace DrawnUi.Maui.Controls
                         },
                         OnStop = () =>
                         {
-                            Scrolled?.Invoke(this, null);
+                            Stopped?.Invoke(this, _appliedPosition);
                         },
                         OnVectorUpdated = (value) =>
                         {
                             ApplyPosition(value);
-                            Scrolling?.Invoke(this, null);
                         }
                     };
                     _animatorRange = new(this)
@@ -277,11 +274,10 @@ namespace DrawnUi.Maui.Controls
                         OnVectorUpdated = (value) =>
                         {
                             ApplyPosition(value);
-                            Scrolling?.Invoke(this, null);
                         },
                         OnStop = () =>
                         {
-                            Scrolled?.Invoke(this, null);
+                            Stopped?.Invoke(this, _appliedPosition);
                         }
                     };
                 }

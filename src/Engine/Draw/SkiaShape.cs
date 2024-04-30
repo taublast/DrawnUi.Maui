@@ -676,7 +676,7 @@ namespace DrawnUi.Maui.Draw
 
                             render();
 
-                            ctx.Canvas.RestoreToCount(saved);
+                            ctx.Canvas.Restore();
                         }
                         else
                         {
@@ -721,7 +721,7 @@ namespace DrawnUi.Maui.Draw
 
             DrawViews(ctx, rectForChildren, scale);
 
-            ctx.Canvas.RestoreToCount(saved);
+            ctx.Canvas.Restore();
 
             //last pass for stroke over background or children
             if (willStroke)
