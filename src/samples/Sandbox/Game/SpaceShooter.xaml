@@ -148,6 +148,7 @@
 
     <!--  SHIELD EXPLOSION  -->
     <draw:SkiaLottie
+        DefaultFrame="-1"
         x:Name="PlayerShieldExplosion"
         AutoPlay="False"
         HorizontalOptions="Center"
