@@ -3523,7 +3523,7 @@ namespace DrawnUi.Maui.Draw
 
             try
             {
-                RenderObjectNeedsUpdate = true;
+                InvalidateCache();
 
                 InvalidateViewsList(); //we might get different ZIndex which is bindable..
 
@@ -4779,7 +4779,7 @@ namespace DrawnUi.Maui.Draw
                 if (value)
                 {
                     IsLayoutDirty = true;
-                    RenderObjectNeedsUpdate = true;
+                    InvalidateCache();
                 }
                 //OnPropertyChanged(); disabled atm
             }
@@ -5002,7 +5002,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (NeedUpdate) //someone changed us while rendering inner content
                 {
-                    RenderObjectNeedsUpdate = true;
+                    InvalidateCache();
                     Repaint();
                 }
 
@@ -5338,7 +5338,7 @@ namespace DrawnUi.Maui.Draw
 
             if (NeedUpdate || notValid) //someone changed us while rendering inner content
             {
-                RenderObjectNeedsUpdate = true;
+                InvalidateCache();
                 //Update();
             }
         }
@@ -5604,7 +5604,7 @@ namespace DrawnUi.Maui.Draw
                     _needUpdate = value;
 
                     if (value)
-                        RenderObjectNeedsUpdate = true;
+                        InvalidateCache();
                 }
             }
         }
@@ -5709,7 +5709,6 @@ namespace DrawnUi.Maui.Draw
                 return;
 
             NeedUpdateFrontCache = true;
-            RenderObjectNeedsUpdate = true;
             NeedUpdate = true;
 
             if (UpdateLocked)
@@ -5864,7 +5863,7 @@ namespace DrawnUi.Maui.Draw
             InvalidateViewsList();
             IsLayoutDirty = true;
             NeedMeasure = true;
-            RenderObjectNeedsUpdate = true;
+            InvalidateCache();
         }
 
 

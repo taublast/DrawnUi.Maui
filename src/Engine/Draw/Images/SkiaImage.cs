@@ -1161,13 +1161,22 @@ propertyChanged: NeedChangeColorFIlter);
             }
 
             Update(); //gamechanger for doublebuffering and other complicated cases
-
-
         }
 
         DrawUsingRenderObject(context,
             SizeRequest.Width, SizeRequest.Height,
             destination, scale);
+    }
+
+    protected override void OnLayoutChanged()
+    {
+        base.OnLayoutChanged();
+
+        if (DrawingRect != SKRect.Empty && LoadedSource != null)
+        {
+            SetAspectScale(LoadedSource.Width, LoadedSource.Height, DrawingRect, this.Aspect, RenderingScale);
+        }
+
     }
 
     public override void OnDisposing()

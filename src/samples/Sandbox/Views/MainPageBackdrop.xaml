@@ -50,6 +50,7 @@
                         Padding="24"
                         BackgroundColor="WhiteSmoke"
                         HeightRequest="600"
+                        HorizontalOptions="Fill"
                         Tag="ScrollContent"
                         UseCache="Image">
 
@@ -62,7 +63,7 @@
 
                         <!--  wrapper for composition  -->
                         <draw:SkiaLayout
-                            Margin="64,32,64,0"
+                            Margin="0,32,0,0"
                             HeightRequest="200"
                             HorizontalOptions="Center"
                             VerticalOptions="Start"
@@ -128,9 +129,7 @@
                                         HorizontalOptions="Fill"
                                         Tag="Blur"
                                         VerticalOptions="Fill"
-                                        ZIndex="-1">
-
-                                    </draw:SkiaBackdrop>
+                                        ZIndex="-1" />
 
                                     <draw:SkiaLayout
                                         Padding="8"
