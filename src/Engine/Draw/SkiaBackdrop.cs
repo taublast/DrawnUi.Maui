@@ -168,13 +168,14 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
                     var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
                     destination.Offset(offsetX, offsetY);
 
-                    cache.Draw(ctx.Superview.CanvasView.Surface.Canvas, destination, ImagePaint);
+                    cache.Draw(ctx.Surface.Canvas, destination, ImagePaint);
                 }
             }
             else
             {
-                ctx.Superview.CanvasView.Surface.Canvas.Flush();
-                var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
+                ctx.Canvas.Flush();
+
+                var snapshot = ctx.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
 
                 if (snapshot != null && Snapshot != snapshot)
                 {
@@ -185,7 +186,6 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
                     Snapshot = snapshot;
                     kill?.Dispose();
                 }
-
             }
 
             if (kill1 != null && kill1 != ImagePaint.ImageFilter)

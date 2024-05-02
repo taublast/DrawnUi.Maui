@@ -118,11 +118,11 @@ public class ChainAdjustRGBEffect : BaseChainedEffect
 
             paint.ColorFilter = CreateRGBAdjustmentFilter(Red, Green, Blue);
 
-            var restore = ctx.Canvas.SaveLayer(paint);
+            ctx.Canvas.SaveLayer(paint);
 
             drawControl(ctx);
 
-            return ChainEffectResult.Create(true, restore);
+            return ChainEffectResult.Create(true);
         }
 
         return base.Draw(destination, ctx, drawControl);

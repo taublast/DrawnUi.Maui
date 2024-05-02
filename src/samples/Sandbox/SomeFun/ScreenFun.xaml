@@ -61,7 +61,7 @@
         <draw:SkiaLayout
             Padding="24,0"
             HorizontalOptions="Fill"
-            MarginTop="80"
+            AddMarginTop="80"
             Type="Column"
             UseCache="GPU">
 
@@ -137,7 +137,7 @@
             <draw:SkiaLabel
                 FontFamily="FontText"
                 HorizontalOptions="Center"
-                MarginTop="50"
+                AddMarginTop="50"
                 MaxLines="1"
                 Tag="LabelDrag"
                 Text=".Net Maui"

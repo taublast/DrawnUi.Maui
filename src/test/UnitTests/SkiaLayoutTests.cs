@@ -4,7 +4,10 @@ using SkiaSharp;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Reflection.Emit;
 using Xunit;
+using static UnitTests.RenderingTests;
+using SkiaLayout = DrawnUi.Maui.Draw.SkiaLayout;
 
 namespace UnitTests
 {
@@ -59,7 +62,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public async Task LayoutAndChildDisposedAndNotLeaked()
+        public async Task NoLeaksDisposedLayoutWithChildren()
         {
             var layout = CreateSampleLayoutWIthChildren();
             var image = layout.FindView<SkiaImage>("Image");
@@ -100,6 +103,245 @@ namespace UnitTests
             Assert.False(childRef.IsAlive, "child should not be alive!");
         }
 
+        [Fact]
+        public void AbsoluteTypeRespectZIndex()
+        {
+            var layout = CreateAbsoluteLayoutSampleWIthChildren();
+
+            var destination = new SKRect(0, 0, 100, float.PositiveInfinity);
+            layout.Measure(destination.Width, destination.Height, 1);
+
+            //prepare DrawingRect
+            layout.Arrange(new SKRect(0, 0, layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height),
+                layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height, 1);
+
+            var picture = RenderWithOperationsContext(destination, (ctx) =>
+            {
+                layout.Render(ctx, layout.DrawingRect, 1);
+            });
+
+            var cache = layout.RenderObject;
+            var pixels = cache.Image.PeekPixels();
+            var color = pixels.GetPixelColor(0, 0);
+
+            Assert.Equal(color, SKColors.Red);
+        }
+
+        [Fact]
+        public void ColumnTypeRespectZIndex()
+        {
+            var layout = new SkiaLayout
+            {
+                Type = LayoutType.Column,
+                BackgroundColor = Colors.Black,
+                Spacing = 0,
+                UseCache = SkiaCacheType.Image,
+                Children = new List<SkiaControl>()
+                {
+                    new SkiaShape()
+                    {
+                        ZIndex = 0,
+                        Tag = "Green",
+                        BackgroundColor = Colors.Green,
+                        HeightRequest=100,
+                        LockRatio=1,
+                    },
+                    new SkiaShape()
+                    {
+                        AddMarginTop=-100,
+                        ZIndex = 1,
+                        Tag = "Red",
+                        BackgroundColor = Colors.Red,
+                        HeightRequest=100,
+                        LockRatio=1,
+                    },
+                    new SkiaShape()
+                    {
+                        //AddMarginTop=-200,
+                        Tag = "Blue",
+                        BackgroundColor = Colors.Blue,
+                        HeightRequest=100,
+                        LockRatio=-1,
+                    },
+                }
+            };
+
+            var destination = new SKRect(0, 0, 100, float.PositiveInfinity);
+            layout.Measure(destination.Width, destination.Height, 1);
+
+            //prepare DrawingRect
+            layout.Arrange(new SKRect(0, 0, layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height),
+                layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height, 1);
+
+            var picture = RenderWithOperationsContext(destination, (ctx) =>
+            {
+                layout.Render(ctx, layout.DrawingRect, 1);
+            });
+
+            var cache = layout.RenderObject;
+            var pixels = cache.Image.PeekPixels();
+            var color = pixels.GetPixelColor(0, 0);
+            Assert.Equal(color, SKColors.Red);
+        }
+
+        [Fact]
+        public void AbsoluteTypePaddingOk()
+        {
+            var layout = new SkiaLayout
+            {
+                Padding = new Thickness(16),
+                Type = LayoutType.Absolute,
+                WidthRequest = 100,
+                Spacing = 0,
+                UseCache = SkiaCacheType.Image,
+                Children = new List<SkiaControl>()
+                {
+                    new SkiaShape()
+                    {
+                        ZIndex = 0,
+                        Tag = "Green",
+                        BackgroundColor = Colors.Green,
+                        HeightRequest=100,
+                        LockRatio=1,
+                    },
+                    new SkiaShape()
+                    {
+                        AddMarginTop=-100,
+                        ZIndex = 1,
+                        Tag = "Red",
+                        BackgroundColor = Colors.Red,
+                        HeightRequest=100,
+                        LockRatio=1,
+                    },
+                    new SkiaShape()
+                    {
+                        //AddMarginTop=-200,
+                        Tag = "Blue",
+                        BackgroundColor = Colors.Blue,
+                        HeightRequest=100,
+                        LockRatio=-1,
+                    },
+                }
+            };
+
+            var destination = new SKRect(0, 0, 150, float.PositiveInfinity);
+            layout.Measure(destination.Width, destination.Height, 1);
+
+            //prepare DrawingRect
+            layout.Arrange(new SKRect(0, 0, layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height),
+                layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height, 1);
+
+            var picture = RenderWithOperationsContext(destination, (ctx) =>
+            {
+                layout.Render(ctx, layout.DrawingRect, 1);
+            });
+
+            var image = layout.RenderObject.Image;
+
+            Assert.Equal(layout.DrawingRect.Width, 100);
+        }
+
+        [Fact]
+        public void ColumnTypePaddingOk()
+        {
+            var layout = new SkiaLayout
+            {
+                Padding = new Thickness(16),
+                Type = LayoutType.Column,
+                WidthRequest = 100,
+                Spacing = 0,
+                UseCache = SkiaCacheType.Image,
+                Children = new List<SkiaControl>()
+                {
+                    new SkiaShape()
+                    {
+                        ZIndex = 0,
+                        Tag = "Green",
+                        BackgroundColor = Colors.Green,
+                        HeightRequest=100,
+                        LockRatio=1,
+                    },
+                    new SkiaShape()
+                    {
+                        AddMarginTop=-100,
+                        ZIndex = 1,
+                        Tag = "Red",
+                        BackgroundColor = Colors.Red,
+                        HeightRequest=100,
+                        LockRatio=1,
+                    },
+                    new SkiaShape()
+                    {
+                        //AddMarginTop=-200,
+                        Tag = "Blue",
+                        BackgroundColor = Colors.Blue,
+                        HeightRequest=100,
+                        LockRatio=-1,
+                    },
+                }
+            };
+
+            var destination = new SKRect(0, 0, 150, float.PositiveInfinity);
+            layout.Measure(destination.Width, destination.Height, 1);
+
+            //prepare DrawingRect
+            layout.Arrange(new SKRect(0, 0, layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height),
+                layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height, 1);
+
+            var picture = RenderWithOperationsContext(destination, (ctx) =>
+            {
+                layout.Render(ctx, layout.DrawingRect, 1);
+            });
+
+            var image = layout.RenderObject.Image;
+
+            Assert.Equal(layout.DrawingRect.Width, 100);
+        }
+
+        [Fact]
+        public void ColumnTypeMarginOk()
+        {
+            var layout = new SkiaLayout
+            {
+                BackgroundColor = Colors.Black,
+                Type = LayoutType.Column,
+                Margin = new Thickness(0),
+                VerticalOptions = LayoutOptions.Fill,
+                Spacing = 0,
+                UseCache = SkiaCacheType.Image,
+                Children = new List<SkiaControl>()
+                {
+                    new SkiaLabel()
+                    {
+                        BackgroundColor = Colors.Red,
+                        WidthRequest = 100,
+                        Tag="Label",
+                        Text="Tests",
+                    },
+                }
+            };
+
+            var label = layout.FindViewByTag("Label");
+
+            var destination = new SKRect(0, 0, 150, 150);
+            layout.Measure(destination.Width, destination.Height, 1);
+
+            //prepare DrawingRect
+            layout.Arrange(new SKRect(0, 0, layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height),
+                layout.MeasuredSize.Pixels.Width, layout.MeasuredSize.Pixels.Height, 1);
+
+            var picture = RenderWithOperationsContext(destination, (ctx) =>
+            {
+                layout.Render(ctx, layout.DrawingRect, 1);
+            });
+
+            var image = layout.RenderObject.Image;
+
+            Assert.Equal(layout.DrawingRect.Width, 100);
+
+            Assert.True(label.DrawingRect.Height > 0);
+
+        }
 
         /*
         [Fact]
@@ -109,7 +351,7 @@ namespace UnitTests
             var image = layout.FindView<SkiaImage>("Image");
             var label = layout.FindView<SkiaLabel>("Label");
 
-            image.MarginTop = 110;
+            image.AddMarginTop = 110;
 
             var destination = new SKRect(0, 0, 100, 100);
             layout.Measure(destination.Width, destination.Height, 1);
@@ -184,6 +426,40 @@ namespace UnitTests
                         LockRatio = 1
                     },
                     new SkiaLabelFps()
+                }
+            };
+        }
+
+        static SkiaLayout CreateAbsoluteLayoutSampleWIthChildren()
+        {
+            return new SkiaLayout
+            {
+                BackgroundColor = Colors.Black,
+                UseCache = SkiaCacheType.Image,
+                Children = new List<SkiaControl>()
+                {
+                    new SkiaLabel()
+                    {
+                        Tag="Label",
+                        Text="Tests",
+                        HorizontalOptions = LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.Center,
+                        ZIndex = 2,
+                    },
+                    new SkiaShape()
+                    {
+                        Tag="Shape",
+                        ZIndex = 1,
+                        BackgroundColor = Colors.Red,
+                        HorizontalOptions = LayoutOptions.Fill,
+                        VerticalOptions = LayoutOptions.Fill
+                    },
+                    new SkiaShape()
+                    {
+                        BackgroundColor = Colors.Yellow,
+                        HorizontalOptions = LayoutOptions.Fill,
+                        VerticalOptions = LayoutOptions.Fill
+                    },
                 }
             };
         }

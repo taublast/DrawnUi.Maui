@@ -27,11 +27,11 @@ public class ChainAdjustContrastEffect : BaseChainedEffect
                 };
             }
 
-            var restore = ctx.Canvas.SaveLayer(Paint);
+            ctx.Canvas.SaveLayer(Paint);
 
             drawControl(ctx);
 
-            return ChainEffectResult.Create(true, restore);
+            return ChainEffectResult.Create(true);
         }
 
         return base.Draw(destination, ctx, drawControl);

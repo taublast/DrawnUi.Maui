@@ -2225,36 +2225,20 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                 {
-                    ContentSize = ScaledSize.Empty;
+                    ContentSize = ScaledSize.Default;
                 }
 
                 if (Header != null)
                     HeaderSize = Header.Measure(request.WidthRequest, request.HeightRequest, request.Scale);
                 else
-                    HeaderSize = ScaledSize.Empty;
+                    HeaderSize = ScaledSize.Default;
 
                 if (Footer != null)
                     FooterSize = Footer.Measure(request.WidthRequest, request.HeightRequest, request.Scale);
                 else
-                    FooterSize = ScaledSize.Empty;
+                    FooterSize = ScaledSize.Default;
 
-                //var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-                //var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-
-                var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-                var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-
-                var invalidated = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
-                if (invalidated)
-                {
-                    RenderObjectNeedsUpdate = true;
-                    if (UsingCacheType == SkiaCacheType.ImageComposite)
-                    {
-                        RenderObjectPreviousNeedsUpdate = true;
-                    }
-                }
-
-                return SetMeasured(width, height, request.Scale);
+                return SetMeasuredAdaptToContentSize(constraints, scale);
             }
             finally
             {
@@ -2267,11 +2251,16 @@ namespace DrawnUi.Maui.Draw
 
         public ScaledRect Viewport { get; protected set; } = new();
 
-        protected override ScaledSize SetMeasured(float width, float height, float scale)
+        protected override ScaledSize SetMeasured(float width, float height, bool widthCut, bool heightCut, float scale)
         {
-            _lastContentSize = this.Content?.MeasuredSize;
+            if (Content != null)
+            {
+                _lastContentSize = this.Content.MeasuredSize;
+            }
+            else
+                _lastContentSize = ScaledSize.Default;
 
-            return base.SetMeasured(width, height, scale);
+            return base.SetMeasured(width, height, widthCut, heightCut, scale);
         }
 
 

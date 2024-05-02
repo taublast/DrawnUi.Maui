@@ -7,17 +7,12 @@ public struct ChainEffectResult
     /// </summary>
     public bool DrawnControl { get; set; }
 
-    /// <summary>
-    /// Set this to return value you got after saving a layer if any
-    /// </summary>
-    public int NeedRestoreToCount { get; set; }
 
-    public static ChainEffectResult Create(bool drawnControl, int restore)
+    public static ChainEffectResult Create(bool drawnControl)
     {
         return new ChainEffectResult
         {
             DrawnControl = drawnControl,
-            NeedRestoreToCount = restore
         };
     }
 

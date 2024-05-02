@@ -186,11 +186,7 @@ namespace Sandbox.Views.Controls
             return RenderViewsList(drawViews, context, destination, scale);
         }
 
-        protected override ScaledSize SetMeasured(float width, float height, float scale)
-        {
 
-            return base.SetMeasured(width, height, scale);
-        }
 
         bool isMeasuring;
 
@@ -232,7 +228,7 @@ namespace Sandbox.Views.Controls
                     {
                         new SkiaLabel
                         {
-                            MarginBottom = 32,
+                            AddMarginBottom = 32,
                             TextColor = App.Current.Resources.Get<Color>("ColorPrimary"),
                             FontFamily = "FontText",
                             FontSize = 15,

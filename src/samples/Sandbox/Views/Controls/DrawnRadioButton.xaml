@@ -9,7 +9,6 @@
     ColorFrameOn="{StaticResource ColorPrimary}"
     ColorThumbOff="{StaticResource ColorPrimary}"
     ColorThumbOn="{StaticResource ColorPrimary}"
-    HorizontalOptions="Start"
     MinimumHeightRequest="24"
     UseCache="Image"
     VerticalOptions="Center">

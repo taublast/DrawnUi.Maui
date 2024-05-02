@@ -30,7 +30,7 @@
                 HeaderSize="{Binding DrawerHeaderSize}"
                 HeightRequest="500"
                 HorizontalOptions="Fill"
-                IsOpen="{Binding IsOpen}"
+                IsOpen="{Binding IsOpen, Mode=TwoWay}"
                 Tag="Drawer"
                 VerticalOptions="End">
 
@@ -58,16 +58,16 @@
                     </draw:SkiaShape>
 
                     <draw:SkiaScroll
+                        AddMarginTop="{Binding DrawerHeaderSize}"
                         BackgroundColor="Gainsboro"
                         Bounces="False"
                         HorizontalOptions="Fill"
-                        MarginTop="{Binding DrawerHeaderSize}"
                         Tag="InsideDrawer"
                         VerticalOptions="Fill">
 
                         <draw:SkiaLayout
                             Margin="2"
-                            MarginBottom="{Binding BottomInsets}"
+                            AddMarginBottom="{Binding BottomInsets}"
                             HorizontalOptions="Fill"
                             Spacing="24"
                             Type="Column"

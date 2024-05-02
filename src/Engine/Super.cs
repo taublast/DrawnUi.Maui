@@ -525,11 +525,11 @@ public partial class Super
             }
         }
     }
-    
-    public static bool GpuCacheEnabled { get; set; }  = true;
 
-    public static string UserAgent { get; set; } = "#dotnetmaui"; 
-    
+    public static bool GpuCacheEnabled { get; set; } = true;
+
+    public static string UserAgent { get; set; } = "Mozilla/5.0 AppleWebKit Chrome Mobile Safari";
+
 #if SKIA3
     public static int SkiaGeneration = 3;
 #else

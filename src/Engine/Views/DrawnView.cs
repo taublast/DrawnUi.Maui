@@ -1181,7 +1181,7 @@ namespace DrawnUi.Maui.Views
             if (widthConstraintPts < 0 || heightConstraintPts < 0)
             {
                 //not setting NeedMeasure=false;
-                return ScaledSize.Empty;
+                return ScaledSize.Default;
             }
 
             var widthPixels = (float)((WidthRequest));
@@ -1247,15 +1247,16 @@ namespace DrawnUi.Maui.Views
 
 
 
-        SkiaDrawingContext CreateContext(SKCanvas canvas)
+        SkiaDrawingContext CreateContext(SKSurface surface)
         {
             return new SkiaDrawingContext()
             {
                 Superview = this,
                 FrameTimeNanos = CanvasView.FrameTime,
-                Canvas = canvas,
-                Width = canvas.DeviceClipBounds.Width,
-                Height = canvas.DeviceClipBounds.Height
+                Surface = surface,
+                Canvas = surface.Canvas,
+                Width = surface.Canvas.DeviceClipBounds.Width,
+                Height = surface.Canvas.DeviceClipBounds.Height
             };
         }
 
@@ -1270,12 +1271,12 @@ namespace DrawnUi.Maui.Views
         public event EventHandler<SkiaDrawingContext?> WillDraw;
         public event EventHandler<SkiaDrawingContext?> WillFirstTimeDraw;
 
-        private bool OnDrawSurface(SKCanvas canvas, SKRect rect)
+        private bool OnDrawSurface(SKSurface surface, SKRect rect)
         {
             //lock (LockDraw)
             {
 
-                if (!OnStartRendering(canvas))
+                if (!OnStartRendering(surface.Canvas))
                     return UpdateMode == UpdateMode.Constant;
 
                 try
@@ -1285,7 +1286,7 @@ namespace DrawnUi.Maui.Views
                         FixDensity();
                     }
 
-                    var args = CreateContext(canvas);
+                    var args = CreateContext(surface);
 
                     this.DrawingThreadId = Thread.CurrentThread.ManagedThreadId;
 
@@ -1544,7 +1545,7 @@ namespace DrawnUi.Maui.Views
                 try
                 {
                     DrawingThreads++;
-                    
+
                     FrameTime = CanvasView.FrameTime;
                     //context.FrameTimeNanos = FrameTime;
 

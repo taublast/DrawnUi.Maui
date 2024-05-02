@@ -44,7 +44,7 @@ namespace Sandbox
                 {
                     Width = 500,
                     Height = 700,
-                    IsFixedSize = true //user cannot resize window
+                    //IsFixedSize = true //user cannot resize window
                 }
             });
 

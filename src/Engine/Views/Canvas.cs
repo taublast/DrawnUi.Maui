@@ -189,7 +189,7 @@ public class Canvas : DrawnView, IGestureListener
         if (widthConstraintPts < 0 || heightConstraintPts < 0)
         {
             //not setting NeedMeasure=false;
-            return ScaledSize.Empty;
+            return ScaledSize.Default;
         }
 
         widthConstraintPts = AdaptWidthContraintToRequest(widthConstraintPts);
@@ -211,7 +211,7 @@ public class Canvas : DrawnView, IGestureListener
                 {
                     child.OnBeforeMeasure(); //could set IsVisible or whatever inside
                     var willDraw = MeasureChild(child, rectForChild.Width, rectForChild.Height, RenderingScale);
-                    if (willDraw != ScaledSize.Empty)
+                    if (!willDraw.IsEmpty)
                     {
                         if (willDraw.Pixels.Width > maxWidth)
                             maxWidth = willDraw.Pixels.Width;
@@ -327,7 +327,7 @@ public class Canvas : DrawnView, IGestureListener
     {
         child.OnBeforeMeasure();
         if (!child.CanDraw)
-            return ScaledSize.Empty; //child set himself invisible
+            return ScaledSize.Default; //child set himself invisible
 
         return child.Measure((float)availableWidth, (float)availableHeight, (float)scale);
     }

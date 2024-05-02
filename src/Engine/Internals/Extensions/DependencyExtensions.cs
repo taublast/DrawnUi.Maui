@@ -1,9 +1,16 @@
 ﻿using AppoMobi.Specials;
 using DrawnUi.Maui.Controls;
 using EasyCaching.InMemory;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 using Microsoft.Maui.LifecycleEvents;
 using Microsoft.Maui.Platform;
+using Polly;
+using Polly.Timeout;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Authentication;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -41,6 +48,89 @@ public static class DependencyExtensions
 {
     public static UiSettings StartupSettings { get; set; }
 
+    public static IServiceCollection AddApiClient(this IServiceCollection services, string apiBase, string clientName)
+    {
+        var retryPolicy = Policy
+            .HandleResult<HttpResponseMessage>(r =>
+                r.StatusCode == HttpStatusCode.GatewayTimeout
+                || r.StatusCode == HttpStatusCode.RequestTimeout)
+            .Or<HttpRequestException>()
+            .Or<TimeoutRejectedException>()
+            .WaitAndRetryAsync(new[]
+            {
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromSeconds(3),
+            });
+
+        services.AddHttpClient(clientName, client =>
+            {
+                client.BaseAddress = new Uri(apiBase);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Add("User-Agent", Super.UserAgent);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+                if (handler.SupportsAutomaticDecompression)
+                {
+                    handler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                }
+                //sometimes it just bugs so we override ssl
+                //#if DEBUG
+                //                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+                //                {
+                //                    return true;
+                //                };
+                //                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                //#endif
+                handler.SslProtocols = SslProtocols.Tls12;
+                return handler;
+            })
+            .AddPolicyHandler(retryPolicy);
+
+        return services;
+    }
+
+    static IServiceCollection AddDefaultUrlImageSourceHttpClient(this IServiceCollection services)
+    {
+        var retryPolicy = Policy
+            .HandleResult<HttpResponseMessage>(r =>
+                r.StatusCode == HttpStatusCode.GatewayTimeout
+                || r.StatusCode == HttpStatusCode.RequestTimeout)
+            .Or<HttpRequestException>()
+            .Or<TimeoutRejectedException>()
+            .WaitAndRetryAsync(new[]
+            {
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromSeconds(3),
+            });
+
+        services.AddHttpClient("drawimages", client =>
+            {
+                client.DefaultRequestHeaders.Add("User-Agent", Super.UserAgent);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler();
+                if (handler.SupportsAutomaticDecompression)
+                {
+                    handler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                }
+                handler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
+                return handler;
+            })
+            .AddPolicyHandler(retryPolicy);
+
+        //do not slow us down with logs spam
+        //one could inject IHttpMessageHandlerBuilderFilter after this to enable logs back
+        return services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
+    }
+
+    public static IHttpClientBuilder AddUrlImageSourceHttpClient(this IServiceCollection services, Action<HttpClient> configureClient)
+    {
+        return services.AddHttpClient("drawimages", configureClient);
+    }
+
     public static MauiAppBuilder UseDrawnUi(this MauiAppBuilder builder, UiSettings settings = null)
     {
         StartupSettings = settings;
@@ -62,17 +152,16 @@ public static class DependencyExtensions
 #elif MACCATALYST
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
-            handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));  
+            handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
 
             //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
             //handlers.AddHandler(typeof(Window), typeof(CustomizedWindowHandler));
-            
+
 #elif WINDOWS
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 #endif
         });
-
 
         builder
             .ConfigureAnimations();
@@ -85,6 +174,8 @@ public static class DependencyExtensions
 #endif
 
         builder.UseGestures();
+
+        builder.Services.AddDefaultUrlImageSourceHttpClient();
 
         //In-Memory Caching of bitmaps
         builder.Services  //Important step for In-Memory Caching
@@ -323,14 +414,14 @@ public static class DependencyExtensions
                         Super.OnMauiAppCreated?.Invoke();
                     }
                 });
-                
+
                 apple.FinishedLaunching((application, launchOptions) =>
                 {
                     Super.App = Super.Services.GetRequiredService<IApplication>();
                     var appWindow = Super.App.Windows.First() as Microsoft.Maui.Controls.Window;
                     var view = appWindow.Handler?.PlatformView as UIKit.UIView;
                     //var check = UIKit.UIApplication.SharedApplication.KeyWindow;
-                    
+
                     Super.Init();
 
 #if MACCATALYST
@@ -353,8 +444,8 @@ public static class DependencyExtensions
                                   // {
                                   //     //unsupported
                                   // }
-                                  
-                                  
+
+
                               });
 
 #endif

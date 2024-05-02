@@ -1,4 +1,6 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿using System.Runtime.CompilerServices;
+
+namespace DrawnUi.Maui.Draw;
 
 public struct RangeF
 {
@@ -16,17 +18,88 @@ public struct RangeF
     public float Delta => End - Start;
 }
 
+
+
 public class ScaledSize
 {
+
+    /*
+     
+     
+    #region COMPARE
+
+    public static bool operator ==(ScaledSize left, ScaledSize right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(ScaledSize left, ScaledSize right)
+    {
+        return !left.Equals(right);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is ScaledSize other)
+        {
+            return Scale == other.Scale && Pixels == other.Pixels;
+            // Units == other.Units &&
+            //Pixels == other.Pixels &&
+            //WidthCut == other.WidthCut &&
+            //HeightCut == other.HeightCut;
+        }
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Scale, Units, Pixels, WidthCut, HeightCut);
+    }
+
+    #endregion
+
+    */
+
     public ScaledSize()
     {
+        Units = default;
+        Pixels = default;
+        WidthCut = false;
+        HeightCut = false;
         Scale = 1;
-        Units = SKSize.Empty;
-        Pixels = SKSize.Empty;
     }
-    public float Scale { get; set; }
+
+    public ScaledSize WithCut(bool widthCut, bool heightCut)
+    {
+        return new ScaledSize
+        {
+            Scale = this.Scale,
+            Units = this.Units,
+            Pixels = this.Pixels,
+            WidthCut = widthCut,
+            HeightCut = heightCut
+        };
+    }
+
+    public static ScaledSize Default => new();
+
+    public float _scale = 1;
+    public float Scale
+    {
+        get
+        {
+            return _scale;
+        }
+        set
+        {
+            _scale = value;
+        }
+    }
+
     public SKSize Units { get; set; }
     public SKSize Pixels { get; set; }
+    public bool WidthCut { get; set; }
+    public bool HeightCut { get; set; }
 
     public ScaledSize Clone()
     {
@@ -34,7 +107,9 @@ public class ScaledSize
         {
             Scale = this.Scale,
             Units = this.Units,
-            Pixels = this.Pixels
+            Pixels = this.Pixels,
+            HeightCut = this.HeightCut,
+            WidthCut = this.WidthCut
         };
     }
 
@@ -48,16 +123,11 @@ public class ScaledSize
         };
     }
 
-    public static ScaledSize Empty
+    public bool IsEmpty
     {
         get
         {
-            return new()
-            {
-                Scale = 1,
-                Units = SKSize.Empty,
-                Pixels = SKSize.Empty
-            };
+            return Pixels.IsEmpty;
         }
     }
 
@@ -93,13 +163,17 @@ public class ScaledSize
         };
     }
 
-
     public static ScaledSize FromPixels(SKSize size, float scale)
     {
-        return FromPixels((float)Math.Round(size.Width), (float)Math.Round(size.Height), scale);
+        return FromPixels((float)Math.Round(size.Width), (float)Math.Round(size.Height), false, false, scale);
     }
 
     public static ScaledSize FromPixels(float width, float height, float scale)
+    {
+        return FromPixels(width, height, false, false, scale);
+    }
+
+    public static ScaledSize FromPixels(float width, float height, bool widthCut, bool heighCut, float scale)
     {
         if (double.IsNaN(width))
             width = -1;
@@ -118,7 +192,9 @@ public class ScaledSize
         {
             Scale = scale,
             Pixels = new SKSize(width, height),
-            Units = new SKSize(nWidth, nHeight)
+            Units = new SKSize(nWidth, nHeight),
+            WidthCut = widthCut,
+            HeightCut = heighCut
         };
     }
 }

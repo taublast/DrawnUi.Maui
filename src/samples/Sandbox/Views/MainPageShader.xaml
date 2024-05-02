@@ -43,7 +43,7 @@
                 <!--<draw:SkiaLabel
                 BackgroundColor="Red"
                 HorizontalOptions="Center"
-                MarginTop="24"
+                AddMarginTop="24"
                 Text="Windows and Catalyst unsupported yet, SOON!"
                 TextColor="White">
                 <draw:SkiaLabel.IsVisible>

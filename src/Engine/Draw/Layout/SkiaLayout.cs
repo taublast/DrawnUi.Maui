@@ -140,11 +140,11 @@ namespace DrawnUi.Maui.Draw
             InvalidateParent();
         }
 
-        protected override ScaledSize SetMeasured(float width, float height, float scale)
+        protected override ScaledSize SetMeasured(float width, float height, bool widthCut, bool heightCut, float scale)
         {
             _measuredNewTemplates = true;
 
-            return base.SetMeasured(width, height, scale);
+            return base.SetMeasured(width, height, widthCut, heightCut, scale);
         }
 
 
@@ -730,7 +730,7 @@ namespace DrawnUi.Maui.Draw
                         //}
                         var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
 
-                        if (measured != ScaledSize.Empty)
+                        if (!measured.IsEmpty)
                         {
                             if (measured.Pixels.Width > maxWidth && child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
                                 maxWidth = measured.Pixels.Width;
@@ -750,7 +750,7 @@ namespace DrawnUi.Maui.Draw
                             var child = ChildrenFactory.GetChildAt(index, null);
 
                             var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
-                            if (measured != ScaledSize.Empty)
+                            if (!measured.IsEmpty)
                             {
                                 if (measured.Pixels.Width > maxWidth && child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
                                     maxWidth = measured.Pixels.Width;
@@ -782,7 +782,7 @@ namespace DrawnUi.Maui.Draw
 
             //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
             if (IsDisposing || IsDisposed)
-                return ScaledSize.Empty;
+                return ScaledSize.Default;
 
             lock (lockMeasureLayout)
             {
@@ -840,22 +840,7 @@ namespace DrawnUi.Maui.Draw
                     ContentSize = MeasureAbsoluteBase(constraints.Content, request.Scale);
                 }
 
-                var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-                var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-
-                var invalidated = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
-                if (invalidated)
-                {
-                    RenderObjectNeedsUpdate = true;
-                }
-
-                //always invalidate because children layouts will be reset
-                if (UsingCacheType == SkiaCacheType.ImageComposite)
-                {
-                    RenderObjectPreviousNeedsUpdate = true;
-                }
-
-                return SetMeasured(width, height, request.Scale);
+                return SetMeasuredAdaptToContentSize(constraints, request.Scale);
             }
 
         }
@@ -895,8 +880,8 @@ namespace DrawnUi.Maui.Draw
 
                     if (request.WidthRequest == 0 || request.HeightRequest == 0)
                     {
-                        RenderObjectNeedsUpdate = true;
-                        return SetMeasured(0, 0, request.Scale);
+                        InvalidateCache();
+                        return SetMeasuredAsEmpty(request.Scale);
                     }
 
                     if (IsTemplated)
@@ -924,7 +909,7 @@ namespace DrawnUi.Maui.Draw
             }
             catch (Exception e)
             {
-                Trace.WriteLine(e);
+                Super.Log(e);
                 return MeasuredSize;
             }
             finally

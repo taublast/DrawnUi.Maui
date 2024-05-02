@@ -114,7 +114,7 @@ public abstract class StackLayoutStructure
         SkiaControl child,
         float scale)
     {
-        if (measured != ScaledSize.Empty)
+        if (!measured.IsEmpty)
         {
             child.Arrange(cell.Area, measured.Units.Width, measured.Units.Height, scale);
 

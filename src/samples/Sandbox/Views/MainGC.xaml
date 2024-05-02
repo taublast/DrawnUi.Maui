@@ -45,7 +45,7 @@
         <draw:SkiaLayout
             BackgroundColor="Red"
             HorizontalOptions="Fill"
-            MarginTop="24"
+            AddMarginTop="24"
             VerticalOptions="Fill">
 
             <partials:ScreenFun

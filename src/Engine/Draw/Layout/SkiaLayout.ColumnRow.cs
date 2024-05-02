@@ -246,7 +246,7 @@ namespace DrawnUi.Maui.Draw
 
         void LayoutCell(ScaledSize measured, ControlInStack cell, SkiaControl child, float scale)
         {
-            if (measured != ScaledSize.Empty)
+            if (!measured.IsEmpty)
             {
                 child.Arrange(cell.Area, measured.Units.Width, measured.Units.Height, scale);
 
@@ -295,7 +295,7 @@ namespace DrawnUi.Maui.Draw
         {
             if (ChildrenFactory.GetChildrenCount() > 0)
             {
-                ScaledSize measured = new();
+                ScaledSize measured;
                 SKRect rectForChild = rectForChildrenPixels;//.Clone();
 
                 SkiaControl[] nonTemplated = null;
@@ -463,7 +463,8 @@ namespace DrawnUi.Maui.Draw
 
                 SkiaControl template = null;
                 ControlInStack firstCell = null;
-                measured = null;
+                measured = ScaledSize.Default;
+
                 var stackHeight = 0.0f;
                 var stackWidth = 0.0f;
 
@@ -529,13 +530,12 @@ namespace DrawnUi.Maui.Draw
                             if (child == null)
                             {
                                 Trace.WriteLine($"[MeasureStack] FAILED to get child at index {cell.ControlIndex}");
-                                return ScaledSize.Empty;
+                                return ScaledSize.Default;
                             }
 
                             if (!child.CanDraw)
                             {
-                                cell.Measured = ScaledSize.Empty;
-                                continue;
+                                cell.Measured = ScaledSize.Default;
                             }
 
                             if (column == 0)
@@ -570,7 +570,7 @@ namespace DrawnUi.Maui.Draw
                                 measured = MeasureAndArrangeCell(rectFitChild, cell, child, scale);
                             }
 
-                            if (measured != ScaledSize.Empty)
+                            if (!measured.IsEmpty)
                             {
                                 maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
 

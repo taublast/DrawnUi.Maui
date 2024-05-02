@@ -118,12 +118,15 @@ public partial class SkiaImageManager
             else
             if (source is UriImageSource uriSource)
             {
+                var clientFactory = Super.Services.GetService<IHttpClientFactory>();
+                var client = clientFactory.CreateClient("images");
+
+                /*
                 var httpClientHandler = new HttpClientHandler();
                 if (httpClientHandler.SupportsAutomaticDecompression)
                 {
                     httpClientHandler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
                 }
-
                 //#if DEBUG
                 //						httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
                 //						{
@@ -135,6 +138,7 @@ public partial class SkiaImageManager
                 httpClientHandler.SslProtocols = SslProtocols.Tls12;
                 var client = new HttpClient(httpClientHandler);
                 client.DefaultRequestHeaders.UserAgent.ParseAdd(Super.UserAgent);
+                */
 
                 var response = await client.GetAsync(uriSource.Uri, cancel);
                 if (response.IsSuccessStatusCode)

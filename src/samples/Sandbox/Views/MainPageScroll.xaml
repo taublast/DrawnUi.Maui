@@ -36,6 +36,10 @@
                     Tag="Content"
                     Type="Column">
 
+                    <draw:SkiaShape HorizontalOptions="Fill">
+
+                    </draw:SkiaShape>
+
                     <draw:SkiaImage
                         Aspect="AspectCover"
                         HeightRequest="3000"

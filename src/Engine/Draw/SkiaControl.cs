@@ -724,7 +724,9 @@ namespace DrawnUi.Maui.Draw
         /// <returns></returns>
         public float AdaptHeightContraintToRequest(float heightConstraint, Thickness constraints, double scale)
         {
-            var widthPixels = (float)Math.Round(SizeRequest.Height * scale + constraints.VerticalThickness);
+            var thickness = constraints.VerticalThickness;
+
+            var widthPixels = (float)Math.Round(SizeRequest.Height * scale + thickness);
 
             if (SizeRequest.Height >= 0)
                 heightConstraint = widthPixels;
@@ -735,7 +737,7 @@ namespace DrawnUi.Maui.Draw
         public virtual MeasuringConstraints GetMeasuringConstraints(MeasureRequest request)
         {
             var withLock = GetSizeRequest(request.WidthRequest, request.HeightRequest, true);
-            var margins = GetAllMarginsInPixels(request.Scale);
+            var margins = GetMarginsInPixels(request.Scale);
 
             var adaptedWidthConstraint = AdaptWidthConstraintToRequest(withLock.Width, margins, request.Scale);
             var adaptedHeightConstraint = AdaptHeightContraintToRequest(withLock.Height, margins, request.Scale);
@@ -745,12 +747,13 @@ namespace DrawnUi.Maui.Draw
             return new MeasuringConstraints
             {
                 Margins = margins,
+                TotalMargins = GetAllMarginsInPixels(request.Scale),
                 Request = new(adaptedWidthConstraint, adaptedHeightConstraint),
                 Content = rectForChildrenPixels
             };
         }
 
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float AdaptConstraintToContentRequest(
             float constraintPixels,
             double measuredDimension,
@@ -758,6 +761,7 @@ namespace DrawnUi.Maui.Draw
             bool autoSize,
             double minRequest, double maxRequest, float scale, bool canExpand)
         {
+
             var contentDimension = sideConstraintsPixels + measuredDimension;
 
             if (autoSize && measuredDimension > 0 && (canExpand || measuredDimension < constraintPixels)
@@ -768,18 +772,76 @@ namespace DrawnUi.Maui.Draw
 
             if (minRequest >= 0)
             {
-                var min = Math.Round(minRequest * scale);
+                var min = double.MinValue;
+                if (double.IsFinite(minRequest))
+                {
+                    min = Math.Round(minRequest * scale);
+                }
                 constraintPixels = (float)Math.Max(constraintPixels, min);
             }
 
             if (maxRequest >= 0)
             {
-                var max = Math.Round(maxRequest * scale);
+                var max = double.MaxValue;
+                if (double.IsFinite(maxRequest))
+                {
+                    max = Math.Round(maxRequest * scale);
+                }
                 constraintPixels = (float)Math.Min(constraintPixels, max);
             }
 
             return (float)Math.Round(constraintPixels);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float AdaptWidthConstraintToContentRequest(MeasuringConstraints constraints, float contentWidthPixels, bool canExpand)
+        {
+            var sideConstraintsPixels = NeedAutoWidth
+                ? constraints.TotalMargins.HorizontalThickness
+                : constraints.Margins.HorizontalThickness;
+
+            return AdaptConstraintToContentRequest(
+                constraints.Request.Width,
+                contentWidthPixels,
+                sideConstraintsPixels,
+                NeedAutoWidth,
+                MinimumWidthRequest,
+                MaximumWidthRequest,
+                RenderingScale, canExpand);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float AdaptHeightConstraintToContentRequest(MeasuringConstraints constraints,
+            float contentHeightPixels, bool canExpand)
+        {
+            var sideConstraintsPixels = NeedAutoHeight
+                ? constraints.TotalMargins.VerticalThickness
+                : constraints.Margins.VerticalThickness;
+
+            return AdaptConstraintToContentRequest(
+                constraints.Request.Height,
+                contentHeightPixels,
+                sideConstraintsPixels,
+                NeedAutoHeight,
+                MinimumHeightRequest,
+                MaximumHeightRequest,
+                RenderingScale, canExpand);
+        }
+
+
+        public float AdaptWidthConstraintToContentRequest(float widthConstraintPixels,
+            ScaledSize measuredContent, double sideConstraintsPixels)
+        {
+            return AdaptConstraintToContentRequest(
+                widthConstraintPixels,
+                measuredContent.Pixels.Width,
+                sideConstraintsPixels,
+                NeedAutoWidth,
+                MinimumWidthRequest,
+                MaximumWidthRequest,
+                RenderingScale, this.HorizontalOptions.Expands);
+        }
+
 
         public float AdaptHeightConstraintToContentRequest(float heightConstraintPixels,
             ScaledSize measuredContent,
@@ -795,19 +857,8 @@ namespace DrawnUi.Maui.Draw
                 RenderingScale, this.VerticalOptions.Expands);
         }
 
-        public float AdaptWidthConstraintToContentRequest(float widthConstraintPixels,
-            ScaledSize measuredContent, double sideConstraintsPixels)
-        {
-            return AdaptConstraintToContentRequest(
-                widthConstraintPixels,
-                measuredContent.Pixels.Width,
-                sideConstraintsPixels,
-                NeedAutoWidth,
-                MinimumWidthRequest,
-                MaximumWidthRequest,
-                RenderingScale, this.HorizontalOptions.Expands);
-        }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public SKRect AdaptToContraints(SKRect measuredPixels,
             double constraintLeft,
             double constraintRight,
@@ -1028,11 +1079,13 @@ namespace DrawnUi.Maui.Draw
             return ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, wasConsumed);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
         {
             if (!child.Control.InputTransparent && child.Control.CanDraw)
             {
-                return child.Rect.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
+                var transformed = child.Control.ApplyTransforms(child.Rect);
+                return transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
             }
             return false;
         }
@@ -1514,27 +1567,38 @@ namespace DrawnUi.Maui.Draw
 
         public virtual SKSize GetSizeRequest(float widthConstraint, float heightConstraint, bool insideLayout)
         {
-            if (insideLayout)
-            {
-                //todo
-            }
-
             widthConstraint *= (float)this.WidthRequestRatio;
             heightConstraint *= (float)this.HeightRequestRatio;
 
             if (LockRatio > 0)
             {
-                var lockValue = (float)Math.Max(widthConstraint, heightConstraint);
+                var lockValue = (float)SmartMax(widthConstraint, heightConstraint);
                 return new SKSize(lockValue, lockValue);
             }
 
             if (LockRatio < 0)
             {
-                var lockValue = (float)Math.Min(widthConstraint, heightConstraint);
+                var lockValue = (float)SmartMin(widthConstraint, heightConstraint);
                 return new SKSize(lockValue, lockValue);
             }
 
             return new SKSize(widthConstraint, heightConstraint);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static float SmartMax(float a, float b)
+        {
+            if (!float.IsFinite(a) || float.IsFinite(b) && b > a)
+                return b;
+            return a;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static float SmartMin(float a, float b)
+        {
+            if (!float.IsFinite(a) || float.IsFinite(a) && b < a)
+                return b;
+            return a;
         }
 
         public static readonly BindableProperty ViewportHeightLimitProperty = BindableProperty.Create(
@@ -2117,54 +2181,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(MarginProperty, value); }
         }
 
-        public static readonly BindableProperty MarginTopProperty = BindableProperty.Create(
-            nameof(MarginTop),
-            typeof(double),
-            typeof(SkiaControl),
-            -1.0, propertyChanged: NeedInvalidateMeasure);
-
-        public double MarginTop
-        {
-            get { return (double)GetValue(MarginTopProperty); }
-            set { SetValue(MarginTopProperty, value); }
-        }
-
-        public static readonly BindableProperty MarginBottomProperty = BindableProperty.Create(
-            nameof(MarginBottom),
-            typeof(double),
-            typeof(SkiaControl),
-            -1.0, propertyChanged: NeedInvalidateMeasure);
-
-        public double MarginBottom
-        {
-            get { return (double)GetValue(MarginBottomProperty); }
-            set { SetValue(MarginBottomProperty, value); }
-        }
-
-        public static readonly BindableProperty MarginLeftProperty = BindableProperty.Create(
-            nameof(MarginLeft),
-            typeof(double),
-            typeof(SkiaControl),
-            -1.0, propertyChanged: NeedInvalidateMeasure);
-
-        public double MarginLeft
-        {
-            get { return (double)GetValue(MarginLeftProperty); }
-            set { SetValue(MarginLeftProperty, value); }
-        }
-
-        public static readonly BindableProperty MarginRightProperty = BindableProperty.Create(
-            nameof(MarginRight),
-            typeof(double),
-            typeof(SkiaControl),
-            -1.0, propertyChanged: NeedInvalidateMeasure);
-
-        public double MarginRight
-        {
-            get { return (double)GetValue(MarginRightProperty); }
-            set { SetValue(MarginRightProperty, value); }
-        }
-
         public static readonly BindableProperty AddMarginTopProperty = BindableProperty.Create(
             nameof(AddMarginTop),
             typeof(double),
@@ -2678,12 +2694,12 @@ namespace DrawnUi.Maui.Draw
         {
             var rectWidth = destination.Width;
             var wants = widthRequest * scale;
-            if (wants > 0 && wants < rectWidth)
+            if (wants >= 0 && wants < rectWidth)
                 rectWidth = (int)wants;
 
             var rectHeight = destination.Height;
             wants = heightRequest * scale;
-            if (wants > 0 && wants < rectHeight)
+            if (wants >= 0 && wants < rectHeight)
                 rectHeight = (int)wants;
 
             return ScaledSize.FromPixels(rectWidth, rectHeight, scale);
@@ -2714,10 +2730,10 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         public SKRect CalculateLayout(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
-            if (widthRequest == 0 || heightRequest == 0)
-            {
-                return new SKRect(0, 0, 0, 0);
-            }
+            //if (widthRequest == 0 || heightRequest == 0)
+            //{
+            //    return new SKRect(0, 0, 0, 0);
+            //}
 
             var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale);
 
@@ -2727,7 +2743,7 @@ namespace DrawnUi.Maui.Draw
             var availableHeight = destination.Height;
 
             var layoutHorizontal = new LayoutOptions(HorizontalOptions.Alignment, HorizontalOptions.Expands);
-            var layoutVertical = new LayoutOptions(VerticalOptions.Alignment, HorizontalOptions.Expands);
+            var layoutVertical = new LayoutOptions(VerticalOptions.Alignment, VerticalOptions.Expands);
 
             // initial fill
             var left = destination.Left;
@@ -3258,7 +3274,10 @@ namespace DrawnUi.Maui.Draw
                 return;
             }
 
-            PostArrange(destination, MeasuredSize.Units.Width, MeasuredSize.Units.Height, scale);
+            var width = HorizontalOptions.Alignment == LayoutAlignment.Fill ? -1 : MeasuredSize.Units.Width;
+            var height = VerticalOptions.Alignment == LayoutAlignment.Fill ? -1 : MeasuredSize.Units.Height;
+
+            PostArrange(destination, width, height, scale);
         }
 
         protected virtual void PostArrange(SKRect destination, float widthRequest, float heightRequest, float scale)
@@ -3328,18 +3347,24 @@ namespace DrawnUi.Maui.Draw
         {
             if (child == null)
             {
-                return ScaledSize.Empty;
+                return ScaledSize.Default;
             }
 
             child.OnBeforeMeasure(); //could set IsVisible or whatever inside
 
             if (!child.CanDraw)
-                return ScaledSize.Empty; //child set himself invisible
+                return ScaledSize.Default; //child set himself invisible
 
             return child.Measure((float)availableWidth, (float)availableHeight, scale);
         }
 
-
+        /// <summary>
+        /// Measuring as absolute layout for passed children
+        /// </summary>
+        /// <param name="children"></param>
+        /// <param name="rectForChildrenPixels"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
         protected virtual ScaledSize MeasureContent(
             IEnumerable<SkiaControl> children,
             SKRect rectForChildrenPixels,
@@ -3354,7 +3379,7 @@ namespace DrawnUi.Maui.Draw
 
             void PostProcessMeasuredChild(ScaledSize measured, SkiaControl child, bool ignoreFill)
             {
-                if (measured != ScaledSize.Empty)
+                if (!measured.IsEmpty)
                 {
                     var measuredHeight = measured.Pixels.Height;
                     var measuredWidth = measured.Pixels.Width;
@@ -3399,6 +3424,8 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
+            bool heightCut = false, widthCut = false;
+
             //PASS 1
             foreach (var child in children)
             {
@@ -3417,14 +3444,20 @@ namespace DrawnUi.Maui.Draw
                 hadFixedSize = true;
                 var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
                 PostProcessMeasuredChild(measured, child, true);
+
+                widthCut |= measured.WidthCut;
+                heightCut |= measured.HeightCut;
             }
+
+
 
             //PASS 2 for thoses with Fill 
             foreach (var child in fill)
             {
+                ScaledSize measured;
                 if (!hadFixedSize) //we had only children with fill so no fixed dimensions yet
                 {
-                    var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
+                    measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
                     PostProcessMeasuredChild(measured, child, false);
                 }
                 else
@@ -3439,12 +3472,15 @@ namespace DrawnUi.Maui.Draw
                     {
                         provideHeight = maxHeight;
                     }
-                    var measured = MeasureChild(child, provideWidth, provideHeight, scale);
+                    measured = MeasureChild(child, provideWidth, provideHeight, scale);
                     if (maxHeight == 0 || maxWidth == 0)
                     {
                         PostProcessMeasuredChild(measured, child, false);
                     }
                 }
+
+                widthCut |= measured.WidthCut;
+                heightCut |= measured.HeightCut;
             }
 
             if (HorizontalOptions.Alignment == LayoutAlignment.Fill)
@@ -3456,7 +3492,7 @@ namespace DrawnUi.Maui.Draw
                 maxHeight = rectForChildrenPixels.Height;
             }
 
-            return ScaledSize.FromPixels(maxWidth, maxHeight, scale);
+            return ScaledSize.FromPixels(maxWidth, maxHeight, widthCut, heightCut, scale);
         }
 
         public virtual void ApplyBindingContext()
@@ -3538,8 +3574,9 @@ namespace DrawnUi.Maui.Draw
 
                 if (!this.CanDraw || request.WidthRequest == 0 || request.HeightRequest == 0)
                 {
-                    RenderObjectNeedsUpdate = true;
-                    return SetMeasured(0, 0, request.Scale);
+                    InvalidateCache();
+
+                    return SetMeasuredAsEmpty(request.Scale);
                 }
 
                 var constraints = GetMeasuringConstraints(request);
@@ -3554,22 +3591,45 @@ namespace DrawnUi.Maui.Draw
                     ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height, request.Scale);
                 }
 
-                var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.HorizontalThickness);
-                var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.VerticalThickness);
-
-                var invalid = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
-                if (invalid)
-                {
-                    RenderObjectNeedsUpdate = true;
-                }
-
-                return SetMeasured(width, height, scale);
+                return SetMeasuredAdaptToContentSize(constraints, scale);
             }
             finally
             {
                 IsMeasuring = false;
             }
 
+        }
+
+        protected virtual ScaledSize SetMeasuredAsEmpty(float scale)
+        {
+            return SetMeasured(0, 0, false, false, scale);
+        }
+
+        public virtual ScaledSize SetMeasuredAdaptToContentSize(MeasuringConstraints constraints, float scale)
+        {
+            var width = AdaptWidthConstraintToContentRequest(constraints, ContentSize.Pixels.Width, HorizontalOptions.Expands);
+            var height = AdaptHeightConstraintToContentRequest(constraints, ContentSize.Pixels.Height, VerticalOptions.Expands);
+
+            var widthCut = ContentSize.Pixels.Width > width || ContentSize.WidthCut;
+            var heighCut = ContentSize.Pixels.Height > height || ContentSize.HeightCut;
+
+            var invalid = !CompareSize(new SKSize(width, height), MeasuredSize.Pixels, 0);
+            if (invalid)
+            {
+                InvalidateCache();
+            }
+
+            return SetMeasured(width, height, widthCut, heighCut, scale);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual void InvalidateCache()
+        {
+            RenderObjectNeedsUpdate = true;
+            if (UsingCacheType == SkiaCacheType.ImageComposite)
+            {
+                RenderObjectPreviousNeedsUpdate = true;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -3694,10 +3754,16 @@ namespace DrawnUi.Maui.Draw
 
         public SKRect GetDrawingRectForChildren(SKRect destination, double scale)
         {
+            //var constraintLeft = (Padding.Left + Margins.Left) * scale;
+            //var constraintRight = (Padding.Right + Margins.Right) * scale;
+            //var constraintTop = (Padding.Top + Margins.Top) * scale;
+            //var constraintBottom = (Padding.Bottom + Margins.Bottom) * scale;
+
             var constraintLeft = (Padding.Left + Margins.Left) * scale;
             var constraintRight = (Padding.Right + Margins.Right) * scale;
             var constraintTop = (Padding.Top + Margins.Top) * scale;
             var constraintBottom = (Padding.Bottom + Margins.Bottom) * scale;
+
 
             SKRect rectForChild = new SKRect(
                 (float)Math.Round(destination.Left + (float)constraintLeft),
@@ -3762,6 +3828,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public bool IsMeasuring { get; protected internal set; }
 
+
         /// <summary>
         /// Parameters in PIXELS. sets IsLayoutDirty = true;
         /// </summary>
@@ -3769,7 +3836,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="height"></param>
         /// <param name="scale"></param>
         /// <returns></returns>
-        protected virtual ScaledSize SetMeasured(float width, float height, float scale)
+        protected virtual ScaledSize SetMeasured(float width, float height, bool widthCut, bool heightCut, float scale)
         {
             lock (lockMeasured)
             {
@@ -3799,7 +3866,7 @@ namespace DrawnUi.Maui.Draw
                     Width = width;
                 }
 
-                MeasuredSize = ScaledSize.FromPixels(width, height, scale);
+                MeasuredSize = ScaledSize.FromPixels(width, height, widthCut, heightCut, scale);
 
                 //SetValueCore(RenderingScaleProperty, scale, SetValueFlags.None);
 
@@ -4195,7 +4262,6 @@ namespace DrawnUi.Maui.Draw
             float widthRequest, float heightRequest,
             SKRect destination, float scale)
         {
-
             Arrange(destination, widthRequest, heightRequest, scale);
 
             bool willDraw = !CheckIsGhost();
@@ -4570,8 +4636,7 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.IsAntialias = false;
                     _paintWithOpacity.FilterQuality = SKFilterQuality.None;
                 }
-                
-                var restore = 0;
+
                 var alpha = (byte)(0xFF / 1.0 * Opacity);
                 _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
 
@@ -4581,14 +4646,14 @@ namespace DrawnUi.Maui.Draw
                     {
                         CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
                     }
-                    
+
                     ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
                 else
                 {
-                   ctx.Canvas.Save();
+                    ctx.Canvas.Save();
                 }
-                
+
                 if (needTransform)
                 {
                     ApplyTransforms(ctx, destination);
@@ -4600,7 +4665,7 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 draw(ctx);
-                
+
                 ctx.Canvas.Restore();
             }
             else
@@ -4610,12 +4675,14 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-
         protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
         {
+            var moveX = (int)Math.Round(UseTranslationX * RenderingScale);
+            var moveY = (int)Math.Round(UseTranslationY * RenderingScale);
 
-            var moveX = (float)(UseTranslationX * RenderingScale);
-            var moveY = (float)(UseTranslationY * RenderingScale);
+            var pivotX = (float)(destination.Left + destination.Width * TransformPivotPointX);
+            var pivotY = (float)(destination.Top + destination.Height * TransformPivotPointY);
+
             var centerX = (float)(moveX + destination.Left + destination.Width * TransformPivotPointX);
             var centerY = (float)(moveY + destination.Top + destination.Height * TransformPivotPointY);
 
@@ -4637,8 +4704,8 @@ namespace DrawnUi.Maui.Draw
 
             var matrixTransforms = new SKMatrix
             {
-                TransX = moveX+centerX,
-                TransY = moveY+centerY,
+                TransX = moveX,
+                TransY = moveY,
                 Persp0 = Perspective1,
                 Persp1 = Perspective2,
                 SkewX = skewX,
@@ -4649,27 +4716,29 @@ namespace DrawnUi.Maui.Draw
             };
 
             //set pivot point
-            var DrawingMatrix = SKMatrix.CreateTranslation(-centerX, -centerY);
+            //var DrawingMatrix = SKMatrix.CreateTranslation(-centerX, -centerY);
+            var DrawingMatrix = SKMatrix.CreateTranslation(-pivotX, -pivotY);
+
             //apply stuff
             DrawingMatrix = DrawingMatrix.PostConcat(matrixTransforms);
 
 #if SKIA3
-             if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
-             {
-                 if (Helper3d == null)
-                 {
-                     Helper3d = new();
-                 }
-                 Helper3d.Reset();
-                 Helper3d.RotateXDegrees(CameraAngleX);
-                 Helper3d.RotateYDegrees(CameraAngleY);
-                 Helper3d.RotateZDegrees(CameraAngleZ);
-                 if (CameraTranslationZ != 0)
-                 {
-                     Helper3d.TranslateZ(CameraTranslationZ);
-                 }
-                 DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.GetMatrix());
-             }
+                    if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
+                    {
+                        if (Helper3d == null)
+                        {
+                            Helper3d = new();
+                        }
+                        Helper3d.Reset();
+                        Helper3d.RotateXDegrees(CameraAngleX);
+                        Helper3d.RotateYDegrees(CameraAngleY);
+                        Helper3d.RotateZDegrees(CameraAngleZ);
+                        if (CameraTranslationZ != 0)
+                        {
+                            Helper3d.TranslateZ(CameraTranslationZ);
+                        }
+                        DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.GetMatrix());
+                    }
 #else
             if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
             {
@@ -4687,13 +4756,18 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.Restore();
             }
 #endif
-            
+
+            //restore coordinates back
+            //DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(centerX, centerY));
+
+            DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY));
+
             //apply parent's transforms
             DrawingMatrix = DrawingMatrix.PostConcat(ctx.Canvas.TotalMatrix);
 
             ctx.Canvas.SetMatrix(DrawingMatrix);
         }
-        
+
         public virtual bool NeedMeasure
         {
             get => _needMeasure;
@@ -4995,8 +5069,8 @@ namespace DrawnUi.Maui.Draw
             get
             {
                 if (UseCache == SkiaCacheType.GPU && !Super.GpuCacheEnabled)
-                    return  SkiaCacheType.Image;
-                
+                    return SkiaCacheType.Image;
+
                 return UseCache;
             }
         }
@@ -5018,19 +5092,12 @@ namespace DrawnUi.Maui.Draw
             {
                 var recordArea = GetCacheArea(recordingArea);
 
-                //just draw subviews
-                //need a fake context for that..
-                var recordingContext = context.Clone();
-                recordingContext.IsVirtual = true;
-                recordingContext.Height = recordArea.Height;
-                recordingContext.Width = recordArea.Width;
-
                 NeedUpdate = false; //if some child changes this while rendering to cache we will erase resulting RenderObject
 
                 var usingCacheType = UsingCacheType;
 
                 GRContext grContext = null;
-                
+
                 if (IsCacheImage)
                 {
                     var width = (int)recordArea.Width;
@@ -5060,13 +5127,13 @@ namespace DrawnUi.Maui.Draw
 
                         if (usingCacheType == SkiaCacheType.GPU)
                         {
-                            if (context.Superview?.CanvasView is SkiaViewAccelerated accelerated
+                            if (context.Superview != null && context.Superview?.CanvasView is SkiaViewAccelerated accelerated
                                 && accelerated.GRContext != null)
                             {
                                 grContext = accelerated.GRContext;
                                 //hardware accelerated
-                                surface = SKSurface.Create(accelerated.GRContext, 
-                                    true, 
+                                surface = SKSurface.Create(accelerated.GRContext,
+                                    true,
                                     cacheSurfaceInfo);
                             }
                         }
@@ -5077,30 +5144,31 @@ namespace DrawnUi.Maui.Draw
                         }
 
                         if (kill != surface)
-                            DisposeObject(kill); 
-                        
+                            DisposeObject(kill);
+
                         // if (usingCacheType == SkiaCacheType.GPU)
                         //     surface.Canvas.Clear(SKColors.Red);
                     }
-                    
+
                     if (surface == null)
                     {
                         return null; //would be totally unexpected
                     }
-                    
+
+                    var recordingContext = context.CreateForRecordingImage(surface, recordArea.Size);
+
                     recordingContext.IsRecycled = !needCreateSurface;
-                    recordingContext.Canvas = surface.Canvas;
-                    
+
                     // Translate the canvas to start drawing at (0,0)
-                    
+
                     recordingContext.Canvas.Translate(-recordArea.Left, -recordArea.Top);
-                    
+
                     // Perform the drawing action
                     action(recordingContext);
-                    
-                    surface.Canvas.Flush(); 
+
+                    surface.Canvas.Flush();
                     //grContext?.Flush();
-                    
+
                     recordingContext.Canvas.Translate(recordArea.Left, recordArea.Top);
 
                     renderObject = new(usingCacheType, surface, recordArea)
@@ -5113,10 +5181,11 @@ namespace DrawnUi.Maui.Draw
                 if (UsingCacheType == SkiaCacheType.Operations)
                 {
                     var cacheRecordingArea = GetCacheRecordingArea(recordArea);
+
+
                     using (var recorder = new SKPictureRecorder())
                     {
-                        var canvas = recorder.BeginRecording(cacheRecordingArea);
-                        recordingContext.Canvas = canvas;
+                        var recordingContext = context.CreateForRecordingOperations(recorder, cacheRecordingArea);
 
                         action(recordingContext);
 
@@ -5172,7 +5241,7 @@ namespace DrawnUi.Maui.Draw
 
                 bool hasDrawnControl = false;
                 var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
-                var chainRestore = 0;
+
                 if (renderers.Count > 0)
                 {
                     foreach (var effect in renderers)
@@ -5180,8 +5249,6 @@ namespace DrawnUi.Maui.Draw
                         var chainedEffectResult = effect.Draw(destination, ctx, draw);
                         if (chainedEffectResult.DrawnControl)
                             hasDrawnControl = true;
-                        if (chainedEffectResult.NeedRestoreToCount > 0)
-                            chainRestore = chainedEffectResult.NeedRestoreToCount;
                     }
                 }
 
@@ -5211,7 +5278,7 @@ namespace DrawnUi.Maui.Draw
             Action<SkiaDrawingContext> action)
         {
 
-            if (context.Superview == null || recordingArea.Width <= 0 || recordingArea.Height <= 0 || float.IsInfinity(recordingArea.Height) || float.IsInfinity(recordingArea.Width) || IsDisposed || IsDisposing)
+            if (recordingArea.Width <= 0 || recordingArea.Height <= 0 || float.IsInfinity(recordingArea.Height) || float.IsInfinity(recordingArea.Width) || IsDisposed || IsDisposing)
             {
                 return;
             }
@@ -5237,7 +5304,7 @@ namespace DrawnUi.Maui.Draw
             {
                 oldObject = RenderObject;
             }
-            else if (usingCacheType == SkiaCacheType.Image 
+            else if (usingCacheType == SkiaCacheType.Image
                      || usingCacheType == SkiaCacheType.ImageComposite)
             {
                 oldObject = RenderObjectPrevious;
@@ -5819,14 +5886,6 @@ namespace DrawnUi.Maui.Draw
             //if specific margin is set (>=0) apply 
             //to final Thickness
             var margin = Margin;
-            if (MarginTop >= 0)
-                margin.Top = MarginTop;
-            if (MarginBottom >= 0)
-                margin.Bottom = MarginBottom;
-            if (MarginLeft >= 0)
-                margin.Left = MarginLeft;
-            if (MarginRight >= 0)
-                margin.Right = MarginRight;
 
             margin.Left += AddMarginLeft;
             margin.Right += AddMarginRight;
@@ -5842,6 +5901,15 @@ namespace DrawnUi.Maui.Draw
             var constraintRight = Math.Round((Margins.Right + Padding.Right) * scale);
             var constraintTop = Math.Round((Margins.Top + Padding.Top) * scale);
             var constraintBottom = Math.Round((Margins.Bottom + Padding.Bottom) * scale);
+            return new(constraintLeft, constraintTop, constraintRight, constraintBottom);
+        }
+
+        public virtual Thickness GetMarginsInPixels(float scale)
+        {
+            var constraintLeft = Math.Round((Margins.Left) * scale);
+            var constraintRight = Math.Round((Margins.Right) * scale);
+            var constraintTop = Math.Round((Margins.Top) * scale);
+            var constraintBottom = Math.Round((Margins.Bottom) * scale);
             return new(constraintLeft, constraintTop, constraintRight, constraintBottom);
         }
 
@@ -6334,33 +6402,33 @@ namespace DrawnUi.Maui.Draw
                 paint.Color = SKColors.White;
                 paint.BlendMode = gradient.BlendMode;
 
-                var o = paint.Shader;
+                var kill = paint.Shader;
                 paint.Shader = CreateGradient(destination, gradient);
-                o?.Dispose();
+                kill?.Dispose();
 
                 return true;
 
-                if (LastGradient == null || LastGradient.Gradient != gradient ||
-                    LastGradient.Destination != destination)
-                {
-                    var kill = LastGradient;
-                    LastGradient = new()
-                    {
-                        Shader = CreateGradient(destination, gradient),
-                        Destination = destination,
-                        Gradient = gradient
-                    };
-                    kill?.Dispose();
-                }
+                //if (LastGradient == null || LastGradient.Gradient != gradient ||
+                //    LastGradient.Destination != destination)
+                //{
+                //    var kill = LastGradient;
+                //    LastGradient = new()
+                //    {
+                //        Shader = CreateGradient(destination, gradient),
+                //        Destination = destination,
+                //        Gradient = gradient
+                //    };
+                //    kill?.Dispose();
+                //}
 
-                var old = paint.Shader;
-                paint.Shader = LastGradient.Shader;
-                if (old != paint.Shader)
-                {
-                    old?.Dispose();
-                }
+                //var old = paint.Shader;
+                //paint.Shader = LastGradient.Shader;
+                //if (old != paint.Shader)
+                //{
+                //    old?.Dispose();
+                //}
 
-                return true;
+                //return true;
             }
 
             return false;

@@ -89,7 +89,9 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
 
             if (request.WidthRequest == 0 || request.HeightRequest == 0)
             {
-                return SetMeasured(0, 0, request.Scale);
+                InvalidateCache();
+
+                return SetMeasuredAsEmpty(request.Scale);
             }
 
             var constraints = GetMeasuringConstraints(request);
@@ -101,27 +103,10 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
             }
             else
             {
-                ContentSize = ScaledSize.Empty;
+                ContentSize = ScaledSize.Default;
             }
 
-            //var width = constraints.Request.Width;
-            //if (HorizontalOptions.Alignment != LayoutAlignment.Fill || width < 0 || float.IsNaN(width) ||
-            //    float.IsInfinity(width))
-            //{
-            //    width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-            //}
-
-            //var height = constraints.Request.Height;
-            //if (VerticalOptions.Alignment != LayoutAlignment.Fill || width < 0 || float.IsNaN(width) ||
-            //    float.IsInfinity(width))
-            //{
-            //    height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-            //}
-
-            var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-            var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-
-            return SetMeasured(width, height, request.Scale);
+            return SetMeasuredAdaptToContentSize(constraints, scale);
         }
         finally
         {

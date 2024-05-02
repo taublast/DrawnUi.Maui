@@ -222,7 +222,7 @@ public class BuildColumnLayout : StackLayoutStructure
                 remainingSize = rectFitChild.Width;
             }
 
-            ScaledSize measured = null;
+            ScaledSize measured;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             ScaledSize MeasureCellInternal()
@@ -262,12 +262,12 @@ public class BuildColumnLayout : StackLayoutStructure
 
             measured = MeasureCellInternal();
 
-            if (measured != ScaledSize.Empty)
+            if (!measured.IsEmpty)
             {
                 //add logic for col row
 
                 //check we are within bounds
-                var fitsH = cell.Measured.Pixels.Width <= remainingSize;
+                var fitsH = cell.Measured.Pixels.Width <= remainingSize && !cell.Measured.WidthCut;
                 if (!fitsH && !useFixedSplitSize)
                 {
                     BreakRow();
