@@ -546,7 +546,7 @@ namespace DrawnUi.Maui.Draw
 
                             if (IsTemplated)
                             {
-                                bool needMeasure = (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && columnsCount != Split) || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && measured != null);
+                                bool needMeasure = (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && columnsCount != Split) || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && firstCell != null);
                                 if (needMeasure)
                                 {
                                     measured = MeasureAndArrangeCell(rectFitChild, cell, child, scale);
