@@ -23,7 +23,6 @@ public class RenderingTests : DrawnTestsBase
             BindingContext = vm,
             BackgroundColor = Colors.Black,
             UseCache = SkiaCacheType.Image,
-            Padding = new Thickness(2),
             Children = new List<SkiaControl>()
             {
                 new SkiaLabel()
