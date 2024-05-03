@@ -107,7 +107,6 @@ public partial class SkiaImageManager
 
         try
         {
-
             if (source is StreamImageSource streamSource)
             {
                 using (var stream = await streamSource.Stream(cancel))
@@ -118,37 +117,7 @@ public partial class SkiaImageManager
             else
             if (source is UriImageSource uriSource)
             {
-                var clientFactory = Super.Services.GetService<IHttpClientFactory>();
-                var client = clientFactory.CreateClient("images");
-
-                /*
-                var httpClientHandler = new HttpClientHandler();
-                if (httpClientHandler.SupportsAutomaticDecompression)
-                {
-                    httpClientHandler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                }
-                //#if DEBUG
-                //						httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-                //						{
-                //							return true;
-                //						};
-                //						httpClientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                //#endif
-
-                httpClientHandler.SslProtocols = SslProtocols.Tls12;
-                var client = new HttpClient(httpClientHandler);
-                client.DefaultRequestHeaders.UserAgent.ParseAdd(Super.UserAgent);
-                */
-
-                var response = await client.GetAsync(uriSource.Uri, cancel);
-                if (response.IsSuccessStatusCode)
-                {
-                    using (var stream = await response.Content.ReadAsStreamAsync())
-                    {
-                        return SKBitmap.Decode(stream);
-                    }
-                }
-
+                return await LoadImageFromInternetAsync(uriSource, cancel);
             }
             else
             if (source is FileImageSource fileSource)

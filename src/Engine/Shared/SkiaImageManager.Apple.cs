@@ -18,6 +18,11 @@ public partial class SkiaImageManager
                 return await LoadFromFile(fileSource.File, cancel);
             }
             else
+             if (source is UriImageSource uriSource)
+            {
+                return await LoadImageFromInternetAsync(uriSource, cancel);
+            }
+            else
             {
                 var iosImage = await LoadNativeImage(source, cancel, 1.0f);
                 if (iosImage != null)
@@ -45,10 +50,8 @@ public partial class SkiaImageManager
 
         try
         {
-
             var handler = source.GetHandler();
             return await handler.LoadImageAsync(source, token);
-
         }
         catch (Exception e)
         {

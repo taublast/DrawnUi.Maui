@@ -164,17 +164,30 @@ public partial class Super
     private static IServiceProvider _services;
     private static bool _servicesFromHandler;
 
+
     public static IServiceProvider Services
-        =>
+    {
+        get
+        {
+            var services = AppContext?.Services;
+            if (services == null)
+            {
+                services =
 #if WINDOWS10_0_17763_0_OR_GREATER
             MauiWinUIApplication.Current.Services;
 #elif ANDROID
-        MauiApplication.Current.Services;
+                    MauiApplication.Current.Services;
 #elif IOS || MACCATALYST
         MauiUIApplicationDelegate.Current.Services;
 #else
         null;
 #endif
+            }
+            return services;
+        }
+    }
+
+    public static IMauiContext AppContext => Application.Current?.FindMauiContext();
 
     private static Screen _screen;
     public static Screen Screen

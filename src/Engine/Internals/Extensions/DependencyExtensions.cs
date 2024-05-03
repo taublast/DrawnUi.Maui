@@ -91,44 +91,60 @@ public static class DependencyExtensions
         return services;
     }
 
-    static IServiceCollection AddDefaultUrlImageSourceHttpClient(this IServiceCollection services)
-    {
-        var retryPolicy = Policy
-            .HandleResult<HttpResponseMessage>(r =>
-                r.StatusCode == HttpStatusCode.GatewayTimeout
-                || r.StatusCode == HttpStatusCode.RequestTimeout)
-            .Or<HttpRequestException>()
-            .Or<TimeoutRejectedException>()
-            .WaitAndRetryAsync(new[]
-            {
-                TimeSpan.FromSeconds(2),
-                TimeSpan.FromSeconds(3),
-            });
+    const string HttpClientKey = "drawnui";
 
-        services.AddHttpClient("drawimages", client =>
-            {
-                client.DefaultRequestHeaders.Add("User-Agent", Super.UserAgent);
-            })
-            .ConfigurePrimaryHttpMessageHandler(() =>
-            {
-                var handler = new HttpClientHandler();
-                if (handler.SupportsAutomaticDecompression)
+    public static IServiceCollection AddUriImageSourceHttpClient(this IServiceCollection services,
+        Action<HttpClient>? configureDelegate = null, Func<IHttpClientBuilder, IHttpClientBuilder>? delegateBuilder = null)
+    {
+        IHttpClientBuilder clientBuilder;
+
+        if (configureDelegate != null)
+        {
+            clientBuilder = services.AddHttpClient(HttpClientKey, configureDelegate);
+        }
+        else
+        {
+            var retryPolicy = Policy
+                .HandleResult<HttpResponseMessage>(r =>
+                    r.StatusCode == HttpStatusCode.GatewayTimeout
+                    || r.StatusCode == HttpStatusCode.RequestTimeout)
+                .Or<HttpRequestException>()
+                .Or<TimeoutRejectedException>()
+                .WaitAndRetryAsync(new[]
                 {
-                    handler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                }
-                handler.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
-                return handler;
-            })
-            .AddPolicyHandler(retryPolicy);
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(3),
+                });
+
+            clientBuilder = services.AddHttpClient(HttpClientKey, client =>
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", Super.UserAgent);
+                })
+                .ConfigurePrimaryHttpMessageHandler(() =>
+                {
+                    var handler = new HttpClientHandler();
+                    if (handler.SupportsAutomaticDecompression)
+                    {
+                        handler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                    }
+
+                    return handler;
+                })
+                .AddPolicyHandler(retryPolicy);
+        }
+
+        delegateBuilder?.Invoke(clientBuilder);
 
         //do not slow us down with logs spam
         //one could inject IHttpMessageHandlerBuilderFilter after this to enable logs back
-        return services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
+        services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
+
+        return services;
     }
 
-    public static IHttpClientBuilder AddUrlImageSourceHttpClient(this IServiceCollection services, Action<HttpClient> configureClient)
+    public static HttpClient? CreateLoadImagesHttpClient(this IServiceProvider services)
     {
-        return services.AddHttpClient("drawimages", configureClient);
+        return services.GetService<IHttpClientFactory>()?.CreateClient(HttpClientKey);
     }
 
     public static MauiAppBuilder UseDrawnUi(this MauiAppBuilder builder, UiSettings settings = null)
@@ -175,7 +191,7 @@ public static class DependencyExtensions
 
         builder.UseGestures();
 
-        builder.Services.AddDefaultUrlImageSourceHttpClient();
+        builder.Services.AddUriImageSourceHttpClient();
 
         //In-Memory Caching of bitmaps
         builder.Services  //Important step for In-Memory Caching
