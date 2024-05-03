@@ -17,6 +17,8 @@ public class BuildColumnLayout : StackLayoutStructure
 
     public override ScaledSize Build(SKRect rectForChildrenPixels, float scale)
     {
+
+
         bool isRtl = Super.IsRtl;
 
         //content size
@@ -194,6 +196,11 @@ public class BuildColumnLayout : StackLayoutStructure
         int index = -1;
         ControlInStack measuredCell = null; //if strategy is to measure first cell only
 
+        if (_layout.Tag == "ButtonsStack")
+        {
+            var stop = 1;
+        }
+
         foreach (var child in EnumerateViewsForMeasurement())
         {
             index++;
@@ -220,6 +227,12 @@ public class BuildColumnLayout : StackLayoutStructure
             if (useFixedSplitSize)
             {
                 remainingSize = rectFitChild.Width;
+            }
+
+            var fitsH = remainingSize > 0;
+            if (!fitsH && !useFixedSplitSize)
+            {
+                BreakRow();
             }
 
             ScaledSize measured;
@@ -267,7 +280,8 @@ public class BuildColumnLayout : StackLayoutStructure
                 //add logic for col row
 
                 //check we are within bounds
-                var fitsH = cell.Measured.Pixels.Width <= remainingSize && !cell.Measured.WidthCut;
+                fitsH = cell.Measured.Pixels.Width <= remainingSize && !cell.Measured.WidthCut;
+
                 if (!fitsH && !useFixedSplitSize)
                 {
                     BreakRow();
