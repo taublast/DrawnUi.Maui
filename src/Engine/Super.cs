@@ -176,11 +176,11 @@ public partial class Super
 #if WINDOWS10_0_17763_0_OR_GREATER
             MauiWinUIApplication.Current.Services;
 #elif ANDROID
-                    MauiApplication.Current.Services;
+            MauiApplication.Current.Services;
 #elif IOS || MACCATALYST
-        MauiUIApplicationDelegate.Current.Services;
+            MauiUIApplicationDelegate.Current.Services;
 #else
-        null;
+            null;
 #endif
             }
             return services;
