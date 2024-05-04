@@ -60,52 +60,71 @@ namespace DrawnUi.Maui.Draw
 
             InsetsChanged?.Invoke(null, null);
 
-
-
-            Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
+            if (UseDisplaySync)
             {
-                while (!_loopStarted)
+                Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
                 {
-                    MainThread.BeginInvokeOnMainThread(async () =>
+                    while (!_loopStarted)
                     {
-                        if (_loopStarting)
-                            return;
-                        _loopStarting = true;
-
-                        if (MainThread.IsMainThread) //CADisplayLink is available
+                        MainThread.BeginInvokeOnMainThread(async () =>
                         {
-                            if (!_loopStarted)
+                            if (_loopStarting)
+                                return;
+                            _loopStarting = true;
+
+                            if (MainThread.IsMainThread) //CADisplayLink is available
                             {
-                                _loopStarted = true;
-                                try
+                                if (!_loopStarted)
                                 {
-                                    _displayLink = CADisplayLink.Create(OnFrame);
-                                    _displayLink.AddToRunLoop(NSRunLoop.Main, NSRunLoopMode.Common);
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                    throw;
+                                    _loopStarted = true;
+                                    try
+                                    {
+                                        _displayLink = CADisplayLink.Create(() => OnFrame?.Invoke(null, null));
+                                        _displayLink.AddToRunLoop(NSRunLoop.Main, NSRunLoopMode.Default);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e);
+                                        throw;
+                                    }
                                 }
                             }
-                        }
-                        _loopStarting = false;
-                    });
-                    await Task.Delay(100);
-                }
-            });
 
+                            _loopStarting = false;
+                        });
+                        await Task.Delay(100);
+                    }
+                });
+            }
+            else
+            {
+                Looper = new(() =>
+                {
+                    OnFrame?.Invoke(null, null);
+                });
+
+                Looper.StartOnMainThread(120);
+            }
         }
+
+        static Looper Looper { get; set; }
+
+        /// <summary>
+        /// When set to true will run loop upon CADisplayLink hits instead of a timer looper that targets 120 fps
+        /// </summary>
+        public static bool UseDisplaySync = true;
 
         static bool _loopStarting = false;
         static bool _loopStarted = false;
 
-        static void OnFrame()
-        {
-            DisplayLinkCallback?.Invoke(null, null);
-        }
 
-        public static event EventHandler DisplayLinkCallback;
+        //static void OnFrame()
+        //{
+        //    DisplayLinkCallback?.Invoke(null, null);
+        //}
+
+        public static event EventHandler OnFrame;
+
         static CADisplayLink _displayLink;
 
         public static UINavigationController NavigationController { get; set; } = null;

@@ -27,6 +27,8 @@ namespace DrawnUi.Maui.Views
         {
             get
             {
+                if (!Super.CanUseHardwareAcceleration)
+                    return false;
 #if SKIA3
                 return HardwareAcceleration != HardwareAccelerationMode.Disabled;
 #else
@@ -114,7 +116,9 @@ namespace DrawnUi.Maui.Views
                 CreateSkiaView();
 
 #if ONPLATFORM
+
                 SetupRenderingLoop();
+
 #endif
             }
 
@@ -779,14 +783,13 @@ namespace DrawnUi.Maui.Views
             }
 
         }
+
         /// <summary>
         /// Makes the control dirty, in need to be remeasured and rendered but this doesn't call Update, it's up yo you
         /// </summary>
         public virtual void Invalidate()
         {
             NeedMeasure = true;
-
-            //InvalidateChildren();
         }
 
         public void InvalidateParents()
@@ -2251,6 +2254,105 @@ namespace DrawnUi.Maui.Views
         }
         ISkiaGestureListener _focusedChild;
         private ISkiaDrawable _canvasView;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [Obsolete("Used by Update() when Super.UseLegacyLoop is True")]
+        protected void InvalidateCanvas()
+        {
+            IsDirty = true;
+
+            if (CanvasView == null)
+            {
+                OrderedDraw = false;
+                return;
+            }
+
+            //sanity check
+            var widthPixels = (int)CanvasView.CanvasSize.Width;
+            var heightPixels = (int)CanvasView.CanvasSize.Height;
+            if (widthPixels > 0 && heightPixels > 0)
+            {
+
+#if ANDROID || WINDOWS
+
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+                Continue();
+
+#else
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        if (NeedCheckParentVisibility)
+                            CheckElementVisibility(this);
+                        Continue();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+
+                });
+#endif
+
+                void Continue()
+                {
+                    if (CanvasView != null)
+                    {
+                        if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
+                        {
+                            _isWaiting = true;
+                            InvalidatedCanvas++;
+                            MainThread.BeginInvokeOnMainThread(async () =>
+                            {
+                                try
+                                {
+                                    //cap fps around 120fps
+                                    var nowNanos = Super.GetCurrentTimeNanos();
+                                    var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
+                                    _lastUpdateTimeNanos = nowNanos;
+
+                                    var needWait =
+                                        Super.CapMicroSecs
+#if IOS || MACCATALYST  
+                                * 2 // apple is double buffered                             
+#endif
+                                        - elapsedMicros;
+                                    if (needWait < 1)
+                                        needWait = 1;
+
+                                    var ms = (int)(needWait / 1000);
+                                    if (ms < 1)
+                                        ms = 1;
+                                    await Task.Delay(ms);
+                                    CanvasView?.Update(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
+                                }
+                                catch (Exception e)
+                                {
+                                    Super.Log(e);
+                                }
+                                finally
+                                {
+                                    _isWaiting = false;
+                                }
+
+                            });
+                            return;
+                        }
+                    }
+                    OrderedDraw = false;
+                }
+            }
+            else
+            {
+                OrderedDraw = false;
+            }
+        }
+
+
 
 #if !ONPLATFORM
 

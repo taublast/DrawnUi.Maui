@@ -5,9 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Views
 {
-
     public partial class DrawnView
     {
+
         /// <summary>
         /// To optimize rendering and not update controls that are inside storyboard that is offscreen or hidden
         /// Apple - UI thread only !!!
@@ -67,11 +67,11 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
-            Super.DisplayLinkCallback -= OnDisplayLink;
-            Super.DisplayLinkCallback += OnDisplayLink;
+            Super.OnFrame -= OnFrame;
+            Super.OnFrame += OnFrame;
         }
 
-        private void OnDisplayLink(object sender, EventArgs e)
+        private void OnFrame(object sender, EventArgs e)
         {
             if (CheckCanDraw())
             {
@@ -102,7 +102,7 @@ namespace DrawnUi.Maui.Views
 
         protected virtual void DisposePlatform()
         {
-            Super.DisplayLinkCallback -= OnDisplayLink;
+            Super.OnFrame -= OnFrame;
         }
     }
 }

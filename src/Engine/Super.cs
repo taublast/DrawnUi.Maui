@@ -40,6 +40,11 @@ public partial class Super
 #endif
 
     /// <summary>
+    /// Can optionally disable hardware-acceleration with this flag, for example on iOS you would want to avoid creating many metal views.
+    /// </summary>
+    public static bool CanUseHardwareAcceleration = true;
+
+    /// <summary>
     /// Display xaml page creation exception
     /// </summary>
     /// <param name="view"></param>

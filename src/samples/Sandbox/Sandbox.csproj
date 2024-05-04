@@ -42,14 +42,14 @@
 	  <CodesignProvision>Automatic</CodesignProvision>
 	</PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+    <!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
         <CreatePackage>false</CreatePackage>
         <CodesignKey>iPhone Developer</CodesignKey>
         <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
         <MtouchLink>None</MtouchLink>
         <RuntimeIdentifier>iossimulator-x64</RuntimeIdentifier>
         <ForceSimulatorX64ArchitectureInIDE>true</ForceSimulatorX64ArchitectureInIDE>
-    </PropertyGroup>
+    </PropertyGroup>-->
     
   <ItemGroup>
 	  <MauiImage Include="Resources\Raw\Svg\dotnet_bot.svg">

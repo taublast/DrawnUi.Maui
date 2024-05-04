@@ -64,7 +64,6 @@ namespace DrawnUi.Maui.Views
             IsDirty = true;
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
         {
