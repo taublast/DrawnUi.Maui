@@ -48,49 +48,6 @@ public static class DependencyExtensions
 {
     public static UiSettings StartupSettings { get; set; }
 
-    public static IServiceCollection AddApiClient(this IServiceCollection services, string apiBase, string clientName)
-    {
-        var retryPolicy = Policy
-            .HandleResult<HttpResponseMessage>(r =>
-                r.StatusCode == HttpStatusCode.GatewayTimeout
-                || r.StatusCode == HttpStatusCode.RequestTimeout)
-            .Or<HttpRequestException>()
-            .Or<TimeoutRejectedException>()
-            .WaitAndRetryAsync(new[]
-            {
-                TimeSpan.FromSeconds(2),
-                TimeSpan.FromSeconds(3),
-            });
-
-        services.AddHttpClient(clientName, client =>
-            {
-                client.BaseAddress = new Uri(apiBase);
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Add("User-Agent", Super.UserAgent);
-            })
-            .ConfigurePrimaryHttpMessageHandler(() =>
-            {
-                var handler = new HttpClientHandler();
-                if (handler.SupportsAutomaticDecompression)
-                {
-                    handler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                }
-                //sometimes it just bugs so we override ssl
-                //#if DEBUG
-                //                handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-                //                {
-                //                    return true;
-                //                };
-                //                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                //#endif
-                handler.SslProtocols = SslProtocols.Tls12;
-                return handler;
-            })
-            .AddPolicyHandler(retryPolicy);
-
-        return services;
-    }
-
     const string HttpClientKey = "drawnui";
 
     public static IServiceCollection AddUriImageSourceHttpClient(this IServiceCollection services,

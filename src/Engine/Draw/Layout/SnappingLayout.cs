@@ -299,7 +299,12 @@ public class SnappingLayout : SkiaLayout
             InTransition = !CheckTransitionEnded();
         });
 
-        Scrolled?.Invoke(this, position);
+        SendScrolled();
+    }
+
+    public virtual void SendScrolled()
+    {
+        Scrolled?.Invoke(this, _appliedPosition);
     }
 
     public event EventHandler<Vector2> Scrolled;
@@ -411,7 +416,12 @@ public class SnappingLayout : SkiaLayout
         {
             if (b is SnappingLayout control)
             {
-                control.OnTransitionChanged?.Invoke(control, (bool)n);
+                var changed = (bool)n;
+                control.OnTransitionChanged?.Invoke(control, changed);
+                if (!changed)
+                {
+                    control.SendScrolled();
+                }
             }
         });
 
