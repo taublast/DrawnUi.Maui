@@ -162,8 +162,6 @@ public partial class SkiaScroll
     {
         _loadMoreTriggeredAt = 0;
 
-        _lastPosViewportScale = -1;
-
         ContentOffsetBounds = GetContentOffsetBounds();
 
         HasContentToScroll = ptsContentHeight > Viewport.Units.Height || ptsContentWidth > Viewport.Units.Width;

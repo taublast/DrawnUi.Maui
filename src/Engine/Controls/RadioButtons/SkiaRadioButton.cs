@@ -129,10 +129,9 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
         }
     }
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        if (touchAction == TouchActionResult.Tapped)
+        if (args.Type == TouchActionResult.Tapped)
         {
             if (!IsToggled)
             {
@@ -141,7 +140,7 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
             }
         }
 
-        return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        return base.ProcessGestures(args, apply);
     }
 
     protected override void NotifyWasToggled()

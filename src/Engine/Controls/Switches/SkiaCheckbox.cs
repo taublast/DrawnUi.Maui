@@ -1,4 +1,4 @@
-﻿ 
+﻿
 namespace DrawnUi.Maui.Draw;
 
 /// <summary>
@@ -115,16 +115,15 @@ public class SkiaCheckbox : SkiaToggle
         }
     }
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        if (touchAction == TouchActionResult.Tapped)
+        if (args.Type == TouchActionResult.Tapped)
         {
             IsToggled = !IsToggled;
             return this;
         }
 
-        return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        return base.ProcessGestures(args, apply);
     }
 
 

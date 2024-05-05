@@ -39,7 +39,7 @@ public partial class MainPage : BasePage
 #endif
     }
 
-    private void TappedSelectPage(object sender, TouchActionEventArgs e)
+    private void TappedSelectPage(object sender, SkiaGesturesParameters skiaGesturesParameters)
     {
         if (sender is SkiaButton btn)
         {

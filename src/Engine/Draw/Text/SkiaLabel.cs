@@ -3055,18 +3055,16 @@ namespace DrawnUi.Maui.Draw
         { }
 
 
-        public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args,
-            TouchActionResult touchAction,
-            SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
-            if (touchAction == TouchActionResult.Tapped)
+            if (args.Type == TouchActionResult.Tapped)
             {
 
                 //apply transfroms
-                var thisOffset = TranslateInputCoords(childOffset, true);
+                var thisOffset = TranslateInputCoords(apply.childOffset, true);
                 //apply touch coords
-                var x = args.Location.X + thisOffset.X;
-                var y = args.Location.Y + thisOffset.Y;
+                var x = args.Event.Location.X + thisOffset.X;
+                var y = args.Event.Location.Y + thisOffset.Y;
 
                 foreach (var span in Spans.ToList())
                 {
@@ -3074,7 +3072,7 @@ namespace DrawnUi.Maui.Draw
                     {
                         if (span.HitIsInside(x, y))
                         {
-                            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Location, childOffset);
+                            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
                             PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
 
                             return OnSpanTapped(span);
@@ -3083,7 +3081,7 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
 
 

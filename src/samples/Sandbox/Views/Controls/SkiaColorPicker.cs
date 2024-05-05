@@ -147,13 +147,12 @@ public partial class SkiaColorPicker : SkiaLayout
 
     #region GESTURES
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
-        if (touchAction == TouchActionResult.Down || touchAction == TouchActionResult.Panning)
+        if (args.Type == TouchActionResult.Down || args.Type == TouchActionResult.Panning)
         {
-            var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+            var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
             //e.Location.X / canvasSize.Width;
             PointerRingPositionXOffsetRatio = (point.X - DrawingRect.Left) / DrawingRect.Width;
@@ -163,7 +162,7 @@ public partial class SkiaColorPicker : SkiaLayout
             return this;
         }
 
-        return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        return base.ProcessGestures(args, apply);
     }
 
     private SKPoint _lastTouchPoint = new SKPoint();

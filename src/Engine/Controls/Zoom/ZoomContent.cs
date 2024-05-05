@@ -241,41 +241,40 @@ public class ZoomContent : ContentLayout, ISkiaGestureListener
 
     protected PointF _panStarted;
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
-        if (touchAction == TouchActionResult.Pinched)
+        if (args.Type == TouchActionResult.Pinched)
         {
             _wasPinching = true;
 
             if (!ZoomLocked)
             {
-                if (_lastPinch != 0 || args.Pinch.Delta != 0)
+                if (_lastPinch != 0 || args.Event.Pinch.Delta != 0)
                 {
                     double delta = 0;
-                    if (args.Pinch.Delta != 0)
+                    if (args.Event.Pinch.Delta != 0)
                     {
-                        delta = args.Pinch.Delta * ZoomSpeed;
+                        delta = args.Event.Pinch.Delta * ZoomSpeed;
                     }
                     else
-                        delta = (args.Pinch.Scale - _lastPinch) * ZoomSpeed;
+                        delta = (args.Event.Pinch.Scale - _lastPinch) * ZoomSpeed;
 
                     if (PanningMode == PanningModeType.TwoFingers || PanningMode == PanningModeType.Enabled)
                     {
-                        var moved = args.Pinch.Center - _pinchCenter;
+                        var moved = args.Event.Pinch.Center - _pinchCenter;
 
                         OffsetImage = new(
                             (float)Math.Round(OffsetImage.X - Math.Round(ScalePoints(PanSpeed) * moved.Width / RenderingScale)),
                             (float)Math.Round(OffsetImage.Y - Math.Round(ScalePoints(PanSpeed) * moved.Height / RenderingScale)));
                     }
 
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Pinch.Scale;
                     _zoom += delta;
 
-                    //Debug.WriteLine($"[ZOOM] got {args.Pinch.Scale:0.000}, delta {delta:0.00} -> {_zoom:0.00}");
+                    //Debug.WriteLine($"[ZOOM] got {args.Event.Pinch.Scale:0.000}, delta {delta:0.00} -> {_zoom:0.00}");
 
-                    _pinchCenter = args.Pinch.Center;
+                    _pinchCenter = args.Event.Pinch.Center;
 
                     SetZoom(_zoom, false); //todo
 
@@ -284,16 +283,16 @@ public class ZoomContent : ContentLayout, ISkiaGestureListener
                 else
                 {
                     //attach
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Pinch.Scale;
 
                     if (!_wasPanning)
-                        _pinchCenter = args.Pinch.Center;
+                        _pinchCenter = args.Event.Pinch.Center;
                     else
                     {
                         var inverseOffsetX = (float)Math.Round(OffsetImage.X / ScalePoints(PanSpeed)) * RenderingScale;
                         var inverseOffsetY = (float)Math.Round(OffsetImage.Y / ScalePoints(PanSpeed)) * RenderingScale;
 
-                        _pinchCenter = new(args.Pinch.Center.X - inverseOffsetX, args.Pinch.Center.Y - inverseOffsetY);
+                        _pinchCenter = new(args.Event.Pinch.Center.X - inverseOffsetX, args.Event.Pinch.Center.Y - inverseOffsetY);
 
                     }
 
@@ -303,9 +302,9 @@ public class ZoomContent : ContentLayout, ISkiaGestureListener
             }
         }
         else
-        if (touchAction == TouchActionResult.Panning)
+        if (args.Type == TouchActionResult.Panning)
         {
-            if (_wasPinching && args.NumberOfTouches < 2)
+            if (_wasPinching && args.Event.NumberOfTouches < 2)
             {
                 _wasPinching = false;
                 _wasPanning = false;
@@ -316,19 +315,19 @@ public class ZoomContent : ContentLayout, ISkiaGestureListener
                 return null; //let us be panned by parent control
             }
 
-            if (PanningMode == PanningModeType.OneFinger && args.NumberOfTouches < 2 || PanningMode == PanningModeType.Enabled)
+            if (PanningMode == PanningModeType.OneFinger && args.Event.NumberOfTouches < 2 || PanningMode == PanningModeType.Enabled)
             {
                 if (!_wasPanning)
                 {
-                    _panStarted = args.Location;
+                    _panStarted = args.Event.Location;
                 }
 
                 _wasPanning = true;
 
-                var deltatX = args.Location.X - _panStarted.X;
-                var deltaY = args.Location.Y - _panStarted.Y;
+                var deltatX = args.Event.Location.X - _panStarted.X;
+                var deltaY = args.Event.Location.Y - _panStarted.Y;
 
-                _panStarted = args.Location;
+                _panStarted = args.Event.Location;
 
                 OffsetImage = new((float)Math.Round(OffsetImage.X - ScalePoints(PanSpeed) * deltatX / RenderingScale),
                     (float)Math.Round(OffsetImage.Y - ScalePoints(PanSpeed) * deltaY / RenderingScale));
@@ -340,9 +339,9 @@ public class ZoomContent : ContentLayout, ISkiaGestureListener
 
         }
         else
-        if (touchAction == TouchActionResult.Up)
+        if (args.Type == TouchActionResult.Up)
         {
-            if (args.NumberOfTouches < 2 && ViewportZoom == 1)
+            if (args.Event.NumberOfTouches < 2 && ViewportZoom == 1)
             {
                 OffsetImage = SKPoint.Empty;
             }
@@ -351,10 +350,10 @@ public class ZoomContent : ContentLayout, ISkiaGestureListener
 
         if (!_wasPinching)
         {
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
 
-        if (_wasPinching && touchAction == TouchActionResult.Up && args.NumberOfTouches < 2)
+        if (_wasPinching && args.Type == TouchActionResult.Up && args.Event.NumberOfTouches < 2)
         {
             _lastPinch = 0;
             _wasPinching = false;

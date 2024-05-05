@@ -50,31 +50,30 @@ public class SkiaHotspotZoom : SkiaHotspot
     }
 
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
-        if (touchAction == TouchActionResult.Pinched)
+        if (args.Type == TouchActionResult.Pinched)
         {
             _wasPinching = true;
 
             if (!ZoomLocked)
             {
-                if (_lastPinch != 0 || args.Pinch.Delta != 0)
+                if (_lastPinch != 0 || args.Event.Pinch.Delta != 0)
                 {
                     double delta = 0;
-                    if (args.Pinch.Delta != 0)
+                    if (args.Event.Pinch.Delta != 0)
                     {
-                        delta = args.Pinch.Delta * ZoomSpeed;
+                        delta = args.Event.Pinch.Delta * ZoomSpeed;
                     }
                     else
-                        delta = (args.Pinch.Scale - _lastPinch) * ZoomSpeed;
+                        delta = (args.Event.Pinch.Scale - _lastPinch) * ZoomSpeed;
 
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Pinch.Scale;
                     _zoom += delta;
-                    _pinchCenter = args.Pinch.Center;
+                    _pinchCenter = args.Event.Pinch.Center;
 
-                    //Debug.WriteLine($"[ZOOM] got {args.Pinch.Scale:0.000}, delta {delta:0.00} -> {_zoom:0.00}");
+                    //Debug.WriteLine($"[ZOOM] got {args.Event.Pinch.Scale:0.000}, delta {delta:0.00} -> {_zoom:0.00}");
 
                     SetZoom(_zoom, false); //todo
 
@@ -83,7 +82,7 @@ public class SkiaHotspotZoom : SkiaHotspot
                 else
                 {
                     //attach
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Pinch.Scale;
                     LastValue = -1;
                     //Debug.WriteLine($"[ZOOM] attached to {_lastPinch:0.00}");
 
@@ -94,10 +93,10 @@ public class SkiaHotspotZoom : SkiaHotspot
 
         if (!_wasPinching)
         {
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
 
-        if (_wasPinching && touchAction == TouchActionResult.Up && args.NumberOfTouches < 2)
+        if (_wasPinching && args.Type == TouchActionResult.Up && args.Event.NumberOfTouches < 2)
         {
             _lastPinch = 0;
             _wasPinching = false;

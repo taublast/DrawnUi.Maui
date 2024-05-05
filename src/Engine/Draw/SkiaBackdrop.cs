@@ -8,8 +8,7 @@ namespace DrawnUi.Maui.Draw;
 /// </summary>
 public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
 {
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         //consume everything
         return this;
@@ -155,36 +154,45 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
             ImagePaint.ImageFilter = PaintImageFilter;
             ImagePaint.ColorFilter = PaintColorFilter;
 
-            //notice we read from the real canvas and we write to ctx.Canvas which can be cache
-
-            //if (ctx.Superview.HardwareAcceleration != HardwareAccelerationMode.Disabled)
-
-            if (CacheSource != null)
+            if (!IsGhost)// && HasEffects)
             {
-                var cache = CacheSource.RenderObject;
-                if (cache != null && !IsGhost && HasEffects)
-                {
-                    var offsetX = CacheSource.DrawingRect.Left - this.DrawingRect.Left;
-                    var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
-                    destination.Offset(offsetX, offsetY);
 
-                    cache.Draw(ctx.Surface.Canvas, destination, ImagePaint);
+                if (CacheSource != null)
+                {
+                    var cache = CacheSource.RenderObject;
+                    if (cache != null && !IsGhost && HasEffects)
+                    {
+                        var offsetX = CacheSource.DrawingRect.Left - this.DrawingRect.Left;
+                        var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
+                        destination.Offset(offsetX, offsetY);
+
+                        cache.Draw(ctx.Surface.Canvas, destination, ImagePaint);
+                    }
                 }
-            }
-            else
-            {
-                ctx.Canvas.Flush();
-
-                var snapshot = ctx.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
-
-                if (snapshot != null && Snapshot != snapshot)
+                else
                 {
-                    var kill = Snapshot;
-                    if (!IsGhost && HasEffects)
-                        ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
+                    SKImage snapshot;
+                    if (UseContext)
+                    {
+                        ctx.Canvas.Flush();
+                        snapshot = ctx.Surface.Snapshot(new((int)destination.Left, (int)destination.Top,
+                            (int)destination.Right, (int)destination.Bottom));
+                    }
+                    else
+                    {
+                        //notice we read from the real canvas and we write to ctx.Canvas which can be cache
+                        ctx.Superview.CanvasView.Surface.Canvas.Flush();
+                        snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left,
+                            (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
+                    }
 
-                    Snapshot = snapshot;
-                    kill?.Dispose();
+                    if (snapshot != null && Snapshot != snapshot)
+                    {
+                        var kill = Snapshot;
+                        ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
+                        Snapshot = snapshot;
+                        kill?.Dispose();
+                    }
                 }
             }
 
@@ -197,6 +205,8 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
         }
 
     }
+
+    private bool UseContext = false;
 
     protected SKImage Snapshot { get; set; }
 

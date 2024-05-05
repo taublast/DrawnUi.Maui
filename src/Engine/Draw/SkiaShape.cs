@@ -836,6 +836,28 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
+        public override ScaledSize SetMeasuredAdaptToContentSize(MeasuringConstraints constraints, float scale)
+        {
+            //this control cannot be less that content size, contrary to normal content layout
 
+            var contentWidth = SmartMax(ContentSize.Pixels.Width, constraints.Request.Width);
+            var contentHeight = SmartMax(ContentSize.Pixels.Height, constraints.Request.Height);
+
+            var width = AdaptWidthConstraintToContentRequest(constraints, contentWidth, HorizontalOptions.Expands);
+            var height = AdaptHeightConstraintToContentRequest(constraints, contentHeight, VerticalOptions.Expands);
+
+            var widthCut = ContentSize.Pixels.Width > width || ContentSize.WidthCut;
+            var heighCut = ContentSize.Pixels.Height > height || ContentSize.HeightCut;
+
+            SKSize size = new(width, height);// GetSizeRequest(width, height, false);
+
+            var invalid = !CompareSize(size, MeasuredSize.Pixels, 0);
+            if (invalid)
+            {
+                InvalidateCache();
+            }
+
+            return SetMeasured(size.Width, size.Height, widthCut, heighCut, scale);
+        }
     }
 }

@@ -95,19 +95,18 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
     public void OnFocusChanged(bool focus)
     { }
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
         var consumed = this; //   e.Handled = true;
 
-        var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
         var position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
 
-        if (touchAction == TouchActionResult.Down)
+        if (args.Type == TouchActionResult.Down)
         {
-            _positions[args.Id] = position;
+            _positions[args.Event.Id] = position;
             if (_positions.Count == 1) // Not sure if this check is necessary.
                 _manipulationTracker.Restart(_positions.Values.ToArray());
 
@@ -115,12 +114,12 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
             //if (OnMapPointerPressed(_positions.Values.ToArray()))
             //    return consumed;
 
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
         else
-        if (touchAction == TouchActionResult.Panning)
+        if (args.Type == TouchActionResult.Panning)
         {
-            _positions[args.Id] = position;
+            _positions[args.Event.Id] = position;
 
             if (OnMapPointerMoved(_positions.Values.ToArray(), false))
                 return consumed;
@@ -130,7 +129,7 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
             RefreshGraphics();
         }
         else
-        if (touchAction == TouchActionResult.Up)
+        if (args.Type == TouchActionResult.Up)
         {
             //            _positions.Remove(args.Id, out var releasedTouch);
             _positions.Clear();
@@ -144,22 +143,22 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
         //    OnZoomInOrOut(e.WheelDelta, position);
         //}
         else
-        if (touchAction == TouchActionResult.Pinched)
+        if (args.Type == TouchActionResult.Pinched)
         {
             _wasPinching = true;
 
             //if (!ZoomLocked)
             {
-                if (_lastPinch != 0 || args.Pinch.Delta != 0)
+                if (_lastPinch != 0 || args.Event.Pinch.Delta != 0)
                 {
                     double delta = 0;
-                    if (args.Pinch.Delta != 0)
+                    if (args.Event.Pinch.Delta != 0)
                     {
-                        delta = args.Pinch.Delta * PinchMultiplier * ZoomSpeed;
+                        delta = args.Event.Pinch.Delta * PinchMultiplier * ZoomSpeed;
                     }
                     else
                     {
-                        delta = (args.Pinch.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
+                        delta = (args.Event.Pinch.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
 
                         if (Math.Abs(delta) < 10)
                         {
@@ -180,12 +179,11 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
                         }
                     }
 
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Pinch.Scale;
 
                     if (delta != 0)
                     {
-
-                        point = TranslateInputOffsetToPixels(args.Pinch.Center, childOffset);
+                        point = TranslateInputOffsetToPixels(args.Event.Pinch.Center, apply.childOffset);
 
                         position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
 
@@ -200,7 +198,7 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
                 else
                 {
                     //attach
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Pinch.Scale;
 
                 }
                 return this;
@@ -209,10 +207,10 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 
         //if (!_wasPinching)
         //{
-        //    return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        //    return base.ProcessGestures(type, args, args.Action, childOffset, childOffsetDirect, alreadyConsumed);
         //}
 
-        if (_wasPinching && touchAction == TouchActionResult.Up && args.NumberOfTouches < 2)
+        if (_wasPinching && args.Type == TouchActionResult.Up && args.Event.NumberOfTouches < 2)
         {
             _lastPinch = 0;
             _wasPinching = false;
@@ -220,7 +218,7 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 
         return consumed;
 
-        //return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        //return base.ProcessGestures(type, args, args.Action, childOffset, childOffsetDirect, alreadyConsumed);
     }
 
     double _lastPinch = 0;

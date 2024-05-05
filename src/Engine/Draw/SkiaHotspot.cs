@@ -38,23 +38,22 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args,
-            TouchActionResult touchAction, SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
-            //Trace.WriteLine($"SkiaHotspot. {type} {touchAction} {args.Location.X} {args.Location.Y}");
+            //Trace.WriteLine($"SkiaHotspot. {type} {args.Action} {args.Event.Location.X} {args.Event.Location.Y}");
 
-            if (touchAction == TouchActionResult.Down)
+            if (args.Type == TouchActionResult.Down)
             {
                 TotalDown++;
                 Down?.Invoke(this, args);
             }
             else
-            if (touchAction == TouchActionResult.Up)
+            if (args.Type == TouchActionResult.Up)
             {
                 Up?.Invoke(this, args);
             }
             else
-            if (touchAction == TouchActionResult.Tapped)
+            if (args.Type == TouchActionResult.Tapped)
             {
                 var consumed = false;
 
@@ -67,8 +66,8 @@ namespace DrawnUi.Maui.Draw
                 TotalTapped++;
                 var delay = 10;
 
-                var x = (args.Location.X) / RenderingScale;
-                var y = (args.Location.Y) / RenderingScale;
+                var x = (args.Event.Location.X) / RenderingScale;
+                var y = (args.Event.Location.Y) / RenderingScale;
 
                 if (this.AnimationTapped != SkiaTouchAnimation.None)
                 {
@@ -81,7 +80,7 @@ namespace DrawnUi.Maui.Draw
 
                     if (AnimationTapped == SkiaTouchAnimation.Ripple)
                     {
-                        var ptsInsideControl = GetOffsetInsideControlInPoints(args.Location, childOffset);
+                        var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
                         control.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
 
                         delay = DelayCallbackMs;
@@ -151,11 +150,11 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public static int DelayCallbackMs = 0;
 
-        public event EventHandler<TouchActionEventArgs> Up;
+        public event EventHandler<SkiaGesturesParameters> Up;
 
-        public event EventHandler<TouchActionEventArgs> Down;
+        public event EventHandler<SkiaGesturesParameters> Down;
 
-        public event EventHandler<TouchActionEventArgs> Tapped;
+        public event EventHandler<SkiaGesturesParameters> Tapped;
 
         #region PROPERTIES
 

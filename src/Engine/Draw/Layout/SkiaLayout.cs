@@ -1033,22 +1033,27 @@ namespace DrawnUi.Maui.Draw
 
         void SetupCacheComposition(SkiaDrawingContext ctx, SKRect destination)
         {
+            if (Tag == "ButtonsStack")
+            {
+                var stop = 1;
+            }
             if (UsingCacheType == SkiaCacheType.ImageComposite)
             {
                 DirtyChildrenInternal.Clear();
 
+
                 var previousCache = RenderObjectPrevious;
+
                 if (previousCache != null && ctx.IsRecycled) //not the first draw
                 {
                     IsRenderingWithComposition = true;
 
                     var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
-                    //offset.Offset(new(_pixelsLastTranslationX, _pixelsLastTranslationY));
 
-                    //var checkOffset = new SKPoint(this.LastDrawnAt.Left - previousCache.Bounds.Left, LastDrawnAt.Top - previousCache.Bounds.Top);
+                    //Super.Log($"[ImageComposite] {Tag} drawing cached at {offset}  {DrawingRect}");
+
 
                     // Add more children that are not already added but intersect with the dirty regions
-
                     var asSpans = CollectionsMarshal.AsSpan(DirtyChildren.GetList());
                     foreach (var item in asSpans)
                     {
@@ -1056,9 +1061,7 @@ namespace DrawnUi.Maui.Draw
                     }
 
                     //make intersecting children dirty too
-                    //var allChildren = RenderTree.Select(s => s.Control).ToList();
                     var asSpan = CollectionsMarshal.AsSpan(RenderTree);
-                    //var translated = new SKPoint(_pixelsLastTranslationX, _pixelsLastTranslationY);
                     foreach (var cell in asSpan)
                     {
                         if (!DirtyChildrenInternal.Contains(cell.Control) &&
@@ -1083,6 +1086,8 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                 {
+                    //Super.Log($"[ImageComposite] {Tag} drawing new");
+
                     IsRenderingWithComposition = false;
                     DirtyChildren.Clear();
                 }

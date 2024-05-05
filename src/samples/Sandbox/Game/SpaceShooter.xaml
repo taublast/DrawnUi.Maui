@@ -148,9 +148,9 @@
 
     <!--  SHIELD EXPLOSION  -->
     <draw:SkiaLottie
-        DefaultFrame="-1"
         x:Name="PlayerShieldExplosion"
         AutoPlay="False"
+        DefaultFrame="-1"
         HorizontalOptions="Center"
         LockRatio="1"
         Opacity="0.75"
@@ -222,7 +222,7 @@
         <draw:SkiaLayout
             Padding="16"
             HorizontalOptions="Fill"
-            UseCache="GPU"
+            UseCache="None"
             VerticalOptions="Fill"
             ZIndex="-1">
 

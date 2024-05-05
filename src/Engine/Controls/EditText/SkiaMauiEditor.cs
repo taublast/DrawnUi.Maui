@@ -7,21 +7,16 @@ namespace DrawnUi.Maui.Controls;
 public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 {
 
-    public SkiaMauiEditor()
-    {
 
-    }
-
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        if (touchAction == TouchActionResult.Up)
+        if (args.Type == TouchActionResult.Up)
         {
-            var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+            var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
             if (!DrawingRect.Contains(point))
             {
                 //we got this gesture because we were focused, but it's now outside our bounds, can unfocus
-                return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+                return base.ProcessGestures(args, apply);
             }
         }
 

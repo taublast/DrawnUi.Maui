@@ -366,7 +366,7 @@ public class Canvas : DrawnView, IGestureListener
 
     bool _isPanning;
 
-    protected virtual void ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
+    protected virtual void ProcessGestures(SkiaGesturesParameters args)
     {
 
 
@@ -378,7 +378,7 @@ public class Canvas : DrawnView, IGestureListener
             IsHiddenInViewTree = false; //if we get a gesture, we are visible by design
             bool manageChildFocus = false;
 
-            //if (DebugGesturesColor != Colors.Transparent && touchAction == TouchActionResult.Down)
+            //if (DebugGesturesColor != Colors.Transparent && args.Action == TouchActionResult.Down)
             //{
             //    PostponeExecutionAfterDraw(() =>
             //    {
@@ -388,7 +388,7 @@ public class Canvas : DrawnView, IGestureListener
             //            Color = DebugGesturesColor.ToSKColor()
             //        })
             //        {
-            //            this.CanvasView.Surface.Canvas.DrawCircle((float)(args.Location.X), (float)(args.Location.Y), (float)(20 * RenderingScale), paint);
+            //            this.CanvasView.Surface.Canvas.DrawCircle((float)(args.Event.Location.X), (float)(args.Event.Location.Y), (float)(20 * RenderingScale), paint);
             //        }
             //    });
             //}
@@ -405,8 +405,8 @@ public class Canvas : DrawnView, IGestureListener
                     manageChildFocus = true;
 
                 var forChild = true;
-                if (touchAction != TouchActionResult.Up)
-                    forChild = ((SkiaControl)listener).HitIsInside(args.StartingLocation.X, args.StartingLocation.Y) || listener == FocusedChild;
+                if (args.Type != TouchActionResult.Up)
+                    forChild = ((SkiaControl)listener).HitIsInside(args.Event.StartingLocation.X, args.Event.StartingLocation.Y) || listener == FocusedChild;
 
                 if (forChild)
                 {
@@ -415,13 +415,19 @@ public class Canvas : DrawnView, IGestureListener
                     {
                         manageChildFocus = false;
                     }
-                    consumed = listener.OnSkiaGestureEvent(type, args, touchAction, SKPoint.Empty, SKPoint.Empty, wasConsumed);
+
+                    var adjust = new GestureEventProcessingInfo()
+                    {
+                        alreadyConsumed = wasConsumed
+                    };
+
+                    consumed = listener.OnSkiaGestureEvent(args, adjust);
 
                     if (consumed != null)
                     {
                         // TODO implement same code as skiacontrol !!!
 
-                        //if (touchAction == TouchActionResult.Tapped && consumed is SkiaControl control)
+                        //if (args.Action == TouchActionResult.Tapped && consumed is SkiaControl control)
                         //{
                         //    var location = control.GetPositionOnCanvas();
 
@@ -448,15 +454,15 @@ public class Canvas : DrawnView, IGestureListener
             {
                 if (consumed == null)
                 {
-                    Super.Log($"[Touch] {touchAction} ({args.NumberOfTouches}) not consumed");
+                    Super.Log($"[Touch] {args.Type} ({args.Event.NumberOfTouches}) not consumed");
                 }
                 else
                 {
-                    Super.Log($"[Touch] {touchAction} ({args.NumberOfTouches}) consumed by {consumed} {consumed.Tag}");
+                    Super.Log($"[Touch] {args.Type} ({args.Event.NumberOfTouches}) consumed by {consumed} {consumed.Tag}");
                 }
             }
 
-            if (touchAction == TouchActionResult.Up)
+            if (args.Type == TouchActionResult.Up)
                 if (manageChildFocus || FocusedChild != null && consumed != FocusedChild)
                 {
                     FocusedChild = consumed;
@@ -465,34 +471,51 @@ public class Canvas : DrawnView, IGestureListener
 
     }
 
-    public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction)
+    private SKPoint _panningOffset;
+
+    /// <summary>
+    /// IGestureListener implementation
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="args1"></param>
+    /// <param name="args1"></param>
+    /// <param name=""></param>
+    public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
+        var args = SkiaGesturesParameters.Create(touchAction, args1);
 
-        //ProcessGestures(type, args, touchAction);
-
-        if (touchAction == TouchActionResult.Panning)
+        if (args.Type == TouchActionResult.Panning)
         {
             //filter micro-gestures
-            if ((Math.Abs(args.Distance.Delta.X) < 1 && Math.Abs(args.Distance.Delta.Y) < 1)
-                || (Math.Abs(args.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args.Distance.Velocity.Y / RenderingScale) < 1))
+            if ((Math.Abs(args.Event.Distance.Delta.X) < 1 && Math.Abs(args.Event.Distance.Delta.Y) < 1)
+                || (Math.Abs(args.Event.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args.Event.Distance.Velocity.Y / RenderingScale) < 1))
             {
                 return;
             }
 
             var threshold = FirstPanThreshold * RenderingScale;
+
             if (!_isPanning)
             {
                 //filter first panning movement on super sensitive screens
-                if (Math.Abs(args.Distance.Total.X) < threshold && Math.Abs(args.Distance.Total.Y) < threshold)
+                if (Math.Abs(args.Event.Distance.Total.X) < threshold && Math.Abs(args.Event.Distance.Total.Y) < threshold)
                 {
+                    _panningOffset = SKPoint.Empty;
                     return;
                 }
+
+                if (_panningOffset == SKPoint.Empty)
+                {
+                    _panningOffset = args.Event.Distance.Total.ToSKPoint();
+                }
+
+                //args.PanningOffset = _panningOffset;
 
                 _isPanning = true;
             }
         }
 
-        if (touchAction == TouchActionResult.Down)
+        if (args.Type == TouchActionResult.Down)
         {
             _isPanning = false;
         }
@@ -502,7 +525,7 @@ public class Canvas : DrawnView, IGestureListener
         {
             try
             {
-                ProcessGestures(type, args, touchAction);
+                ProcessGestures(args);
             }
             catch (Exception e)
             {
@@ -635,7 +658,7 @@ public class Canvas : DrawnView, IGestureListener
         null,
         propertyChanged: OnReplaceContent);
 
-# pragma warning restore NU1605, CS0108
+#pragma warning restore NU1605, CS0108
 
     private static void OnReplaceContent(BindableObject bindable, object oldvalue, object newvalue)
     {

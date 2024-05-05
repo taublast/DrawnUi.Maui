@@ -99,21 +99,20 @@ public partial class SkiaShell
             }
         }
 
-        public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-            SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
             if (_closeWhenBackgroundTapped
                 && Content != null
-                && touchAction == TouchActionResult.Tapped)
+                && args.Type == TouchActionResult.Tapped)
             {
-                var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+                var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
                 if (!Content.HitIsInside(point.X, point.Y))
                 {
                     _shell.ClosePopupAsync(this, _animated).ConfigureAwait(false);
                 }
             }
 
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
     }
 }

@@ -48,7 +48,7 @@ public class SkiaImage : SkiaControl
     /// Will containt all the effects and other rendering properties applied, size will correspond to source.
     /// </summary>
     /// <returns></returns>
-    public SKImage GetRenderedSource()
+    public virtual SKImage GetRenderedSource()
     {
         if (LoadedSource != null)
         {

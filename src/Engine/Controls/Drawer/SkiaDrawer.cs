@@ -9,10 +9,7 @@ namespace DrawnUi.Maui.Controls
     [ContentProperty("Content")]
     public class SkiaDrawer : SnappingLayout, IVisibilityAware
     {
-        public SkiaDrawer()
-        {
 
-        }
 
         public override void OnWillDisposeWithChildren()
         {
@@ -244,47 +241,45 @@ namespace DrawnUi.Maui.Controls
             IsOpen = true;
         }
 
+
+
         void Init()
         {
-            if (Parent != null)
+            CurrentSnap = new(-1, -1);
+
+            if (_animatorSpring == null)
             {
-                CurrentSnap = new(-1, -1);
-
-                ApplyOptions();
-
-                if (_animatorSpring == null)
+                _animatorSpring = new(this)
                 {
-                    _animatorSpring = new(this)
+                    OnStart = () =>
                     {
-                        OnStart = () =>
-                        {
 
-                        },
-                        OnStop = () =>
-                        {
-                            Stopped?.Invoke(this, _appliedPosition);
-                        },
-                        OnVectorUpdated = (value) =>
-                        {
-                            ApplyPosition(value);
-                        }
-                    };
-                    _animatorRange = new(this)
+                    },
+                    OnStop = () =>
                     {
-                        OnVectorUpdated = (value) =>
-                        {
-                            ApplyPosition(value);
-                        },
-                        OnStop = () =>
-                        {
-                            Stopped?.Invoke(this, _appliedPosition);
-                        }
-                    };
-                }
-
-                ViewportReady = this.Height > 0 && this.Width > 0;
+                        Stopped?.Invoke(this, _appliedPosition);
+                    },
+                    OnVectorUpdated = (value) =>
+                    {
+                        ApplyPosition(value);
+                    }
+                };
+                _animatorRange = new(this)
+                {
+                    OnVectorUpdated = (value) =>
+                    {
+                        ApplyPosition(value);
+                    },
+                    OnStop = () =>
+                    {
+                        Stopped?.Invoke(this, _appliedPosition);
+                    }
+                };
             }
+
+            ApplyOptions();
         }
+
 
         protected override void OnLayoutChanged()
         {
@@ -300,6 +295,8 @@ namespace DrawnUi.Maui.Controls
                     Init();
                 }
             }
+
+
         }
 
         /// <summary>
@@ -451,7 +448,7 @@ namespace DrawnUi.Maui.Controls
 
             snap = IsOpen ? SnapPoints[0] : SnapPoints[1];
 
-            ScrollToOffset(snap, Vector2.Zero, Animated && ViewportReady);
+            ScrollToOffset(snap, Vector2.Zero, Animated && WasDrawn);
         }
 
 
@@ -459,7 +456,7 @@ namespace DrawnUi.Maui.Controls
 
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
-            if (IsOpen && !ViewportReady)
+            if (IsOpen && !LayoutReady)
                 return;
 
             base.Paint(ctx, destination, scale, arguments);
@@ -573,8 +570,7 @@ namespace DrawnUi.Maui.Controls
 
         private bool _inContact;
 
-        public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-            SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
             bool passedToChildren = false;
 
@@ -582,22 +578,22 @@ namespace DrawnUi.Maui.Controls
             {
                 passedToChildren = true;
 
-                return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+                return base.ProcessGestures(args, apply);
             }
 
             if (TouchEffect.LogEnabled)
-                Super.Log($"[DRAWER] {this.Tag} Got {touchAction} touches {args.NumberOfTouches}..");
+                Super.Log($"[DRAWER] {this.Tag} Got {args.Type} touches {args.Event.NumberOfTouches}..");
 
             ISkiaGestureListener consumed = null;
 
             //pass Released always to children first
-            if (touchAction == TouchActionResult.Up
-                || touchAction == TouchActionResult.Tapped
+            if (args.Type == TouchActionResult.Up
+                || args.Type == TouchActionResult.Tapped
                 || !IsUserPanning
                 || !RespondsToGestures)
             {
                 consumed = PassToChildren();
-                if (consumed != null && touchAction != TouchActionResult.Up)
+                if (consumed != null && args.Type != TouchActionResult.Up)
                 {
                     return consumed;
                 }
@@ -627,8 +623,8 @@ namespace DrawnUi.Maui.Controls
             var processInput = this.RespondsToGestures;
             if (!_inContact && processInput && !InputTransparent && CanDraw && Content != null && Content.CanDraw && !Content.InputTransparent)
             {
-                var thisOffset = TranslateInputCoords(childOffset);
-                var touchLocationWIthOffset = new SKPoint(args.Location.X + thisOffset.X, args.Location.Y + thisOffset.Y);
+                var thisOffset = TranslateInputCoords(apply.childOffset);
+                var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X, args.Event.Location.Y + thisOffset.Y);
 
                 processInput = Content.LastDrawnAt.ContainsInclusive(touchLocationWIthOffset.X, touchLocationWIthOffset.Y);
             }
@@ -637,7 +633,7 @@ namespace DrawnUi.Maui.Controls
             {
                 _inContact = true;
 
-                switch (touchAction)
+                switch (args.Type)
                 {
                 //---------------------------------------------------------------------------------------------------------
                 case TouchActionResult.Tapped:
@@ -650,7 +646,7 @@ namespace DrawnUi.Maui.Controls
                 //---------------------------------------------------------------------------------------------------------
                 case TouchActionResult.Down:
                 //---------------------------------------------------------------------------------------------------------
-                if (args.NumberOfTouches == 1) //first finger down
+                if (args.Event.NumberOfTouches == 1) //first finger down
                 {
                     ResetPan();
                 }
@@ -660,7 +656,7 @@ namespace DrawnUi.Maui.Controls
                 break;
 
                 //---------------------------------------------------------------------------------------------------------
-                case TouchActionResult.Panning when args.NumberOfTouches == 1:
+                case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
                 //---------------------------------------------------------------------------------------------------------
 
                 var direction = DirectionType.None;
@@ -670,34 +666,34 @@ namespace DrawnUi.Maui.Controls
                 if (Direction == DrawerDirection.FromLeft)
                 {
                     direction = DirectionType.Horizontal;
-                    if (args.Distance.Delta.X > 0)
+                    if (args.Event.Distance.Delta.X > 0)
                         // horizontal, lock if panning to right and we are already at SnapPoints[0]
                         lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
                 }
                 else if (Direction == DrawerDirection.FromRight)
                 {
                     direction = DirectionType.Horizontal;
-                    if (args.Distance.Delta.X < 0)
+                    if (args.Event.Distance.Delta.X < 0)
                         // horizontal, lock if panning to left and we are already at SnapPoints[0]
                         lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
                 }
                 else if (Direction == DrawerDirection.FromBottom)
                 {
                     direction = DirectionType.Vertical;
-                    if (args.Distance.Delta.Y < 0)
+                    if (args.Event.Distance.Delta.Y < 0)
                         // vertical, lock if panning to top and we are already at SnapPoints[0]
                         lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
                 }
                 else if (Direction == DrawerDirection.FromTop)
                 {
                     direction = DirectionType.Vertical;
-                    if (args.Distance.Delta.Y > 0)
+                    if (args.Event.Distance.Delta.Y > 0)
                         // vertical, lock if panning to bottom and we are already at SnapPoints[1]
                         lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[1], 1);
                 }
 
-                var x = _panningOffset.X + args.Distance.Delta.X / RenderingScale;
-                var y = _panningOffset.Y + args.Distance.Delta.Y / RenderingScale;
+                var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
+                var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
 
                 if (!IsUserFocused)
                 {
@@ -723,12 +719,12 @@ namespace DrawnUi.Maui.Controls
                     float useVelocity = 0;
                     if (direction == DirectionType.Horizontal)
                     {
-                        useVelocity = (float)(args.Distance.Velocity.X / RenderingScale);
+                        useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
                         velocity = new(useVelocity, 0);
                     }
                     else
                     {
-                        useVelocity = (float)(args.Distance.Velocity.Y / RenderingScale);
+                        useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
                         velocity = new(0, useVelocity);
                     }
                     //record velocity
@@ -748,11 +744,11 @@ namespace DrawnUi.Maui.Controls
                         if (AreEqual(clamped.X, 0, 1) && AreEqual(clamped.Y, 0, 1))
                         {
                             var verticalMove = DrawerDirection.FromBottom;
-                            if (args.Distance.Delta.Y < 0)
+                            if (args.Event.Distance.Delta.Y < 0)
                                 verticalMove = DrawerDirection.FromTop;
 
                             var horizontalMove = DrawerDirection.FromLeft;
-                            if (args.Distance.Delta.X < 0)
+                            if (args.Event.Distance.Delta.X < 0)
                                 horizontalMove = DrawerDirection.FromRight;
 
                             if ((direction == DirectionType.Vertical && Direction == verticalMove)
@@ -785,7 +781,7 @@ namespace DrawnUi.Maui.Controls
                 var Velocity = Vector2.Zero;
 
                 Velocity = VelocityAccumulator.CalculateFinalVelocity(500);
-                //Velocity = new((float)(args.Distance.Velocity.X / RenderingScale), (float)(args.Distance.Velocity.Y / RenderingScale));
+                //Velocity = new((float)(args.Event.Distance.Velocity.X / RenderingScale), (float)(args.Event.Distance.Velocity.Y / RenderingScale));
 
                 if (IsUserPanning)
                 {
@@ -835,7 +831,7 @@ namespace DrawnUi.Maui.Controls
                 break;
                 }
 
-                if (consumed != null || IsUserPanning)// || args.NumberOfTouches > 1)
+                if (consumed != null || IsUserPanning)// || args.Event.NumberOfTouches > 1)
                 {
                     return consumed ?? this;
                 }

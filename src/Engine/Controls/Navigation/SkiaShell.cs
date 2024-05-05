@@ -1,11 +1,7 @@
 ﻿using AppoMobi.Maui.Navigation;
-using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
-using SkiaControl = DrawnUi.Maui.Draw.SkiaControl;
 
 namespace DrawnUi.Maui.Controls
 {
@@ -523,10 +519,11 @@ namespace DrawnUi.Maui.Controls
                 //Darken = FrozenBackgroundDim,
                 Opacity = 0,
                 BackgroundColor = Colors.Black,
-                WhenLayoutIsReady = async (sender) =>
-                {
-                    await FreezeRootLayoutInternal(control, sender, animated);
-                },
+            };
+
+            background.LayoutIsReady += async (sender, o) =>
+            {
+                await FreezeRootLayoutInternal(control, (SkiaControl)sender, animated);
             };
 
             //if (blur > 0)
@@ -606,8 +603,7 @@ namespace DrawnUi.Maui.Controls
 
                     if (modalWrapper.Content is SkiaDrawer drawer)
                     {
-                        drawer.OnViewportReady += ViewportReadyHandler;
-                        drawer.OnTransitionChanged += OnModalDrawerScrolled;
+                        drawer.LayoutIsReady += ViewportReadyHandler;
                     }
 
                     _pushModalWaitingAnimatedOpen = false;
@@ -617,8 +613,8 @@ namespace DrawnUi.Maui.Controls
                         if (sender is SkiaDrawer control)
                         {
                             control.OnViewportReady -= ViewportReadyHandler;
-                            
-                            Tasks.StartDelayed(TimeSpan.FromMicroseconds(50),async ()=>
+
+                            Tasks.StartDelayed(TimeSpan.FromMicroseconds(50), async () =>
                             {
                                 _pushModalWaitingAnimatedOpen = !animated;
                                 if (control is IVisibilityAware aware)
@@ -632,6 +628,10 @@ namespace DrawnUi.Maui.Controls
                                         await Task.Delay(15);
                                     }
                                 }
+
+                                _pushModalWasOpen = false;
+                                drawer.Scrolled += OnModalDrawerScrolled;
+
                                 control.IsOpen = true;
                             });
                         }
@@ -664,28 +664,38 @@ namespace DrawnUi.Maui.Controls
         }
 
         volatile bool _pushModalWaitingAnimatedOpen;
+        private volatile bool _pushModalWasOpen;
 
-        async void OnModalDrawerScrolled(object sender, bool inTransition)
+        async void OnModalDrawerScrolled(object sender, Vector2 vector2)
         {
-            if (!inTransition && sender is SkiaDrawer control)
+            if (sender is SkiaDrawer control)
             {
-                if (control.IsOpen)
+                if (!control.InTransition)
                 {
-                    //animated to open, display frozen layer if any
-                    if (CanUnfreezeLayout())
+                    if (control.IsOpen)
                     {
-                        await SetFrozenLayerVisibility(control, true);
+                        if (!_pushModalWasOpen)
+                        {
+                            _pushModalWasOpen = true;
+                            //animated to open, display frozen layer if any
+                            if (CanUnfreezeLayout())
+                            {
+                                await SetFrozenLayerVisibility(control, true);
+                            }
+
+                            OnLayersChanged();
+
+                            _pushModalWaitingAnimatedOpen = true;
+                        }
                     }
-
-                    OnLayersChanged();
-
-                    _pushModalWaitingAnimatedOpen = true;
+                    else
+                    {
+                        //animated to closed
+                        _pushModalWasOpen = false;
+                        await RemoveModal(control.Parent as SkiaControl, true);
+                    }
                 }
-                else
-                {
-                    //animated to closed
-                    await RemoveModal(control.Parent as SkiaControl, true);
-                }
+
             }
         }
 
@@ -860,7 +870,7 @@ namespace DrawnUi.Maui.Controls
                             NavigationStackModals.Remove(inStack);
                         }
 
-                        modalWrapper.Drawer.OnTransitionChanged -= OnModalDrawerScrolled;
+                        modalWrapper.Drawer.Scrolled -= OnModalDrawerScrolled;
                         if (removed is IVisibilityAware aware)
                         {
                             aware.OnDisappearing();
@@ -1316,49 +1326,51 @@ namespace DrawnUi.Maui.Controls
                     //Opacity = 0,
                     //ScaleX = 0.1,
                     //ScaleY = 0.1,
-                    WhenLayoutIsReady = async (sender) =>
-                    {
-                        try
-                        {
-                            popup = sender;
-                            /*
-                            if (taskAnimateAppearence != null)
-                            {
-                                await taskAnimateAppearence(sender);
-                            }
-                            else
-                            {
-                                if (animated)
-                                {
-                                    await sender.AnimateWith(
-                                        (c) => c.FadeToAsync(1, PopupsAnimationSpeed),
-                                        (c) => c.ScaleToAsync(1, 1, PopupsAnimationSpeed));
-                                }
-                                else
-                                {
-                                    sender.Scale = 1;
-                                    sender.Opacity = 1;
-                                }
-                            }
-                            */
-                            taskCompletionSource.SetResult(popup);
-                        }
-                        catch (Exception e)
-                        {
-                            Super.Log(e);
-                        }
-                        finally
-                        {
-                            OnLayersChanged();
-                        }
-                    },
-                    WhenDisposing = (sender) =>
-                    {
-                        popup = null;
-                    },
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill,
                     Content = content
+                };
+
+                control.LayoutIsReady += async (sender, o) =>
+                {
+                    try
+                    {
+                        popup = sender as SkiaControl;
+                        /*
+                        if (taskAnimateAppearence != null)
+                        {
+                            await taskAnimateAppearence(sender);
+                        }
+                        else
+                        {
+                            if (animated)
+                            {
+                                await sender.AnimateWith(
+                                    (c) => c.FadeToAsync(1, PopupsAnimationSpeed),
+                                    (c) => c.ScaleToAsync(1, 1, PopupsAnimationSpeed));
+                            }
+                            else
+                            {
+                                sender.Scale = 1;
+                                sender.Opacity = 1;
+                            }
+                        }
+                        */
+                        taskCompletionSource.SetResult(popup);
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+                    finally
+                    {
+                        OnLayersChanged();
+                    }
+                };
+
+                control.Disposing += (sender, a) =>
+                {
+                    popup = null;
                 };
 
                 popup = control;
@@ -1439,21 +1451,6 @@ namespace DrawnUi.Maui.Controls
                         UseCache = SkiaCacheType.Operations,
                         ZIndex = ZIndexToasts + Toasts.NavigationStack.Count,
                         Opacity = 0,
-                        WhenLayoutIsReady = (sender) =>
-                        {
-                            sender.TranslationY = sender.Height;
-                            sender.TranslateToAsync(0, 0, 300);
-                            sender.FadeToAsync(1, 300);
-                            var cancel = new CancellationTokenSource();
-                            Tasks.StartDelayed(TimeSpan.FromMilliseconds(msShowTime), cancel.Token, async () =>
-                            {
-                                await Task.WhenAll(
-                                    sender.TranslateToAsync(0, sender.Height, 250),
-                                    sender.FadeToAsync(0, 250));
-                                //disposed inside
-                                await Toasts.Close(sender, true);
-                            });
-                        },
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.End,
                         BackgroundColor = ToastBackgroundColor,
@@ -1469,6 +1466,24 @@ namespace DrawnUi.Maui.Controls
                             }
                         }
                     };
+
+                    control.LayoutIsReady += (s, o) =>
+                    {
+                        var sender = s as SkiaControl;
+                        sender.TranslationY = sender.Height;
+                        sender.TranslateToAsync(0, 0, 300);
+                        sender.FadeToAsync(1, 300);
+                        var cancel = new CancellationTokenSource();
+                        Tasks.StartDelayed(TimeSpan.FromMilliseconds(msShowTime), cancel.Token, async () =>
+                        {
+                            await Task.WhenAll(
+                                sender.TranslateToAsync(0, sender.Height, 250),
+                                sender.FadeToAsync(0, 250));
+                            //disposed inside
+                            await Toasts.Close(sender, true);
+                        });
+                    };
+
 
                     await Toasts.Open(control, true);
                 }

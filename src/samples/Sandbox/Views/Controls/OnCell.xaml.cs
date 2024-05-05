@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views.Controls
 {
-    public partial class OnCell 
+    public partial class OnCell
     {
 
         public OnCell()
@@ -20,7 +20,7 @@
             }
         }
 
-        private void SkiaButton_Tapped(object sender, AppoMobi.Maui.Gestures.TouchActionEventArgs e)
+        private void SkiaButton_Tapped(object sender, SkiaGesturesParameters skiaGesturesParameters)
         {
             //MainCarousel.ChildrenFactory.PrintDebugVisible();
         }
