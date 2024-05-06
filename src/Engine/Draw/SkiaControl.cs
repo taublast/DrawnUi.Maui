@@ -3279,8 +3279,8 @@ namespace DrawnUi.Maui.Draw
                 return;
             }
 
-            var width = HorizontalOptions.Alignment == LayoutAlignment.Fill ? -1 : MeasuredSize.Units.Width;
-            var height = VerticalOptions.Alignment == LayoutAlignment.Fill ? -1 : MeasuredSize.Units.Height;
+            var width = (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0) ? -1 : MeasuredSize.Units.Width;
+            var height = (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0) ? -1 : MeasuredSize.Units.Height;
 
             PostArrange(destination, width, height, scale);
         }
@@ -3488,11 +3488,11 @@ namespace DrawnUi.Maui.Draw
                 heightCut |= measured.HeightCut;
             }
 
-            if (HorizontalOptions.Alignment == LayoutAlignment.Fill)
+            if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
             {
                 maxWidth = rectForChildrenPixels.Width;
             }
-            if (VerticalOptions.Alignment == LayoutAlignment.Fill)
+            if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
             {
                 maxHeight = rectForChildrenPixels.Height;
             }
@@ -3613,8 +3613,11 @@ namespace DrawnUi.Maui.Draw
         public virtual ScaledSize SetMeasuredAdaptToContentSize(MeasuringConstraints constraints,
             float scale)
         {
-            var width = AdaptWidthConstraintToContentRequest(constraints, ContentSize.Pixels.Width, HorizontalOptions.Expands);
-            var height = AdaptHeightConstraintToContentRequest(constraints, ContentSize.Pixels.Height, VerticalOptions.Expands);
+            var contentWidth = NeedAutoWidth ? ContentSize.Pixels.Width : SmartMax(ContentSize.Pixels.Width, constraints.Request.Width);
+            var contentHeight = NeedAutoHeight ? ContentSize.Pixels.Height : SmartMax(ContentSize.Pixels.Height, constraints.Request.Height);
+
+            var width = AdaptWidthConstraintToContentRequest(constraints, contentWidth, HorizontalOptions.Expands);
+            var height = AdaptHeightConstraintToContentRequest(constraints, contentHeight, VerticalOptions.Expands);
 
             var widthCut = ContentSize.Pixels.Width > width || ContentSize.WidthCut;
             var heighCut = ContentSize.Pixels.Height > height || ContentSize.HeightCut;

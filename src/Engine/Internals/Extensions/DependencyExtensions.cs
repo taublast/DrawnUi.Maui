@@ -113,10 +113,8 @@ public static class DependencyExtensions
 #if ANDROID
             handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
-            handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 #elif IOS
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
-            handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 
 #if !SKIA3
             handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
@@ -124,7 +122,6 @@ public static class DependencyExtensions
 
 #elif MACCATALYST
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
-            handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
             handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
 
             //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
@@ -132,7 +129,6 @@ public static class DependencyExtensions
 
 #elif WINDOWS
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
-            handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 #endif
         });
 

@@ -8,7 +8,7 @@ using TextChangedEventArgs = Microsoft.UI.Xaml.Controls.TextChangedEventArgs;
 namespace DrawnUi.Maui.Controls;
 
 
-public partial class MauiEditorHandler : EditorHandler
+public partial class MauiEditorHandlerBack : EditorHandler
 {
 
     TextBox _control;

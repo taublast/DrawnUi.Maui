@@ -54,62 +54,73 @@ public partial class SkiaMauiElement
 
     protected virtual void LayoutNativeView(VisualElement element)
     {
-        if (element.Handler?.PlatformView is View nativeView)
+        //lock (locknative)
         {
-            nativeView.Visibility = VisualTransformNative.IsVisible ? ViewStates.Visible : ViewStates.Invisible;
-
-            IsNativeVisible = nativeView.Visibility == ViewStates.Visible;
-
-            if (nativeView.Visibility == ViewStates.Visible)
+            if (element.Handler?.PlatformView is View nativeView)
             {
-                nativeView.TranslationX = VisualTransformNative.Translation.X;
-                nativeView.TranslationY = VisualTransformNative.Translation.Y;
-                nativeView.Rotation = VisualTransformNative.Rotation;
-                nativeView.ScaleX = VisualTransformNative.Scale.X;
-                nativeView.ScaleY = VisualTransformNative.Scale.Y;
-                nativeView.Alpha = VisualTransformNative.Opacity;
+                nativeView.Visibility = VisualTransformNative.IsVisible ? ViewStates.Visible : ViewStates.Invisible;
 
-                //int widthMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Width, MeasureSpecMode.Exactly);
-                //int heightMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Height, MeasureSpecMode.Exactly);
-                //nativeView.Measure(widthMeasureSpec, heightMeasureSpec);
+                IsNativeVisible = nativeView.Visibility == ViewStates.Visible;
 
-                //apply Padding:
-                nativeView.Layout(
-                    (int)(VisualTransformNative.Rect.Left + this.Padding.Left * RenderingScale),
-                    (int)(VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale),
-                    (int)(VisualTransformNative.Rect.Right + this.Padding.Right * RenderingScale),
-                    (int)(VisualTransformNative.Rect.Bottom + this.Padding.Bottom * RenderingScale));
+                if (nativeView.Visibility == ViewStates.Visible)
+                {
+                    nativeView.TranslationX = VisualTransformNative.Translation.X;
+                    nativeView.TranslationY = VisualTransformNative.Translation.Y;
+                    nativeView.Rotation = VisualTransformNative.Rotation;
+                    nativeView.ScaleX = VisualTransformNative.Scale.X;
+                    nativeView.ScaleY = VisualTransformNative.Scale.Y;
+                    nativeView.Alpha = VisualTransformNative.Opacity;
 
-                //nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
+                    //int widthMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Width, MeasureSpecMode.Exactly);
+                    //int heightMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Height, MeasureSpecMode.Exactly);
+                    //nativeView.Measure(widthMeasureSpec, heightMeasureSpec);
 
-                if (!WasRendered)
-                    WasRendered = nativeView.Width > 0;
+                    //apply Padding:
+                    nativeView.Layout(
+                        (int)(VisualTransformNative.Rect.Left + this.Padding.Left * RenderingScale),
+                        (int)(VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale),
+                        (int)(VisualTransformNative.Rect.Right + this.Padding.Right * RenderingScale),
+                        (int)(VisualTransformNative.Rect.Bottom + this.Padding.Bottom * RenderingScale));
+
+                    //nativeView.Invalidate();
+
+                    //nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
+
+                    if (!WasRendered)
+                        WasRendered = nativeView.Width > 0;
+                }
+
+                //Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} width {nativeView.Width}");
             }
-
-            //Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} width {nativeView.Width}");
         }
+
     }
+
+    private object locknative = new();
 
     protected void RemoveMauiElement(Element element)
     {
-        if (element == null)
-            return;
-
-        var layout = Superview.Handler?.PlatformView as ViewGroup;
-        if (layout != null)
+        lock (locknative)
         {
-            MainThread.BeginInvokeOnMainThread(() =>
+            if (element == null || element.Handler == null || IsDisposed)
+                return;
+
+            var layout = Superview.Handler?.PlatformView as ViewGroup;
+            if (layout != null)
             {
-                if (element.Handler?.PlatformView is View nativeView)
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    layout.RemoveView(nativeView);
-                    if (element is IDisposable disposable)
+                    if (element.Handler?.PlatformView is View nativeView)
                     {
-                        disposable.Dispose();
+                        layout.RemoveView(nativeView);
+                        if (element is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+                        //todo destroy child handler?
                     }
-                    //todo destroy child handler?
-                }
-            });
+                });
+            }
         }
     }
 

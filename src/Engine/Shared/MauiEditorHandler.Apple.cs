@@ -8,7 +8,7 @@ namespace DrawnUi.Maui.Controls;
  /// <summary>
  /// TODO
  /// </summary>
-public partial class MauiEditorHandler : EditorHandler
+public partial class MauiEditorHandlerBack : EditorHandler
 {
     protected override void ConnectHandler(MauiTextView platformView)
     {

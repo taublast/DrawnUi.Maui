@@ -605,11 +605,11 @@ namespace DrawnUi.Maui.Draw
                     ChildrenFactory.ReleaseView(template);
                 }
 
-                if (HorizontalOptions.Alignment == LayoutAlignment.Fill)
+                if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
                 {
                     stackWidth = rectForChildrenPixels.Width;
                 }
-                if (VerticalOptions.Alignment == LayoutAlignment.Fill)
+                if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
                 {
                     stackHeight = rectForChildrenPixels.Height;
                 }

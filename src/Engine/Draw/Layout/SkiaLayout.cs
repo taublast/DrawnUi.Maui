@@ -732,9 +732,13 @@ namespace DrawnUi.Maui.Draw
 
                         if (!measured.IsEmpty)
                         {
-                            if (measured.Pixels.Width > maxWidth && child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
+
+                            if (measured.Pixels.Width > maxWidth
+                                && child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
                                 maxWidth = measured.Pixels.Width;
-                            if (measured.Pixels.Height > maxHeight && child.VerticalOptions.Alignment != LayoutAlignment.Fill)
+
+                            if (measured.Pixels.Height > maxHeight
+                                && child.VerticalOptions.Alignment != LayoutAlignment.Fill)
                                 maxHeight = measured.Pixels.Height;
                         }
 
@@ -1500,9 +1504,9 @@ namespace DrawnUi.Maui.Draw
                     GetTemplatesPoolLimit(),
                     GetTemplatesPoolPrefill());
 
-                Invalidate();
+                // Invalidate();
 
-                return;
+                // return;
             }
 
             break;
@@ -1529,6 +1533,7 @@ namespace DrawnUi.Maui.Draw
 
             PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
             //OnItemSourceChanged();
+            Update();
 
         }
 

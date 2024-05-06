@@ -325,11 +325,11 @@ public class BuildColumnLayout : StackLayoutStructure
             _layout.StackStructureMeasured = structure;
         }
 
-        if (_layout.HorizontalOptions.Alignment == LayoutAlignment.Fill)
+        if (_layout.HorizontalOptions.Alignment == LayoutAlignment.Fill && _layout.WidthRequest < 0)
         {
             stackWidth = rectForChildrenPixels.Width;
         }
-        if (_layout.VerticalOptions.Alignment == LayoutAlignment.Fill)
+        if (_layout.VerticalOptions.Alignment == LayoutAlignment.Fill && _layout.HeightRequest < 0)
         {
             stackHeight = rectForChildrenPixels.Height;
         }

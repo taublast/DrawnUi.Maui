@@ -478,19 +478,22 @@
                 {
                     PostponeShowingNativeView(FreezeTimeMs);
                 }
-                if (manageMainThread)
-                {
-                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(10), () =>
-                    {
-                        MainThread.BeginInvokeOnMainThread(() =>
-                        {
-                            Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
-                        });
-                    });
-                }
                 else
                 {
-                    Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                    if (manageMainThread)
+                    {
+                        Tasks.StartDelayed(TimeSpan.FromMilliseconds(10), () =>
+                        {
+                            MainThread.BeginInvokeOnMainThread(() =>
+                            {
+                                Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                            });
+                        });
+                    }
+                    else
+                    {
+                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                    }
                 }
                 return;
             }
