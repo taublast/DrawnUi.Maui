@@ -37,6 +37,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        public static float PanThreshold = 5;
 
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
@@ -106,6 +107,14 @@ namespace DrawnUi.Maui.Draw
                 return consumed ? this : null;
             }
             //do not need to call base we have no children
+            else
+            if (args.Type == TouchActionResult.Panning)
+            {
+                if (LockPanning)
+                {
+                    return this; //no panning for you my friend 
+                }
+            }
 
             return null;
         }
@@ -264,6 +273,17 @@ namespace DrawnUi.Maui.Draw
             get { return GetValue(CommandLongPressingParameterProperty); }
             set { SetValue(CommandLongPressingParameterProperty, value); }
         }
+
+        public static readonly BindableProperty LockPanningProperty = BindableProperty.Create(nameof(LockPanning),
+        typeof(bool),
+        typeof(SkiaHotspot),
+        false);
+        public bool LockPanning
+        {
+            get { return (bool)GetValue(LockPanningProperty); }
+            set { SetValue(LockPanningProperty, value); }
+        }
+
 
 
         #endregion

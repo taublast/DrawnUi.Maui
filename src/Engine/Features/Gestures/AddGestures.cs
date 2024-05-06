@@ -117,6 +117,14 @@ public static partial class AddGestures
                     return this;
                 }
             }
+            else
+            if (args.Type == TouchActionResult.Panning)
+            {
+                if (GetLockPanning(_parent))
+                {
+                    return this;
+                }
+            }
 
             if (_parent is ISkiaGestureListener listener)
             {
@@ -206,7 +214,7 @@ public static partial class AddGestures
         {
             ICommand command = GetCommandTapped(control);
             var effect = GetAnimationTapped(control);
-            var needAttach = command != null || effect != SkiaTouchAnimation.None || GetCommandLongPressing(control) != null;
+            var needAttach = command != null || effect != SkiaTouchAnimation.None || GetCommandLongPressing(control) != null || GetLockPanning(control);
             return needAttach;
         }
         return false;
@@ -341,6 +349,22 @@ public static partial class AddGestures
     }
 
 
+    public static readonly BindableProperty LockPanningProperty =
+        BindableProperty.CreateAttached(
+            "LockPanning",
+            typeof(bool),
+            typeof(AddGestures),
+            null,
+            propertyChanged: OnAttachableChanged);
 
+    public static bool GetLockPanning(BindableObject view)
+    {
+        return (bool)view.GetValue(LockPanningProperty);
+    }
+
+    public static void SetLockPanning(BindableObject view, bool value)
+    {
+        view.SetValue(LockPanningProperty, value);
+    }
 
 }

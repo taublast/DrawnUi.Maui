@@ -186,6 +186,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
+
         //Trace.WriteLine($"SkiaButton. {type} {args.Action} {args.Event.Location.X} {args.Event.Location.Y}");
         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
@@ -217,9 +218,16 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         if (args.Type == TouchActionResult.Panning)
         {
+            if (LockPanning)
+            {
+                return this; //no panning for you my friend 
+            }
+
             var current = point;
-            if (Math.Abs(current.X - _lastDownPts.X) > PanThreshold
-                || Math.Abs(current.Y - _lastDownPts.Y) > PanThreshold)
+            var panthreshold = PanThreshold * RenderingScale;
+
+            if (Math.Abs(current.X - _lastDownPts.X) > panthreshold
+                || Math.Abs(current.Y - _lastDownPts.Y) > panthreshold)
             {
                 if (hadDown)
                     SetUp();
@@ -304,6 +312,16 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         {
             control.ApplyProperties();
         }
+    }
+
+    public static readonly BindableProperty LockPanningProperty = BindableProperty.Create(nameof(LockPanning),
+        typeof(bool),
+        typeof(SkiaButton),
+        false);
+    public bool LockPanning
+    {
+        get { return (bool)GetValue(LockPanningProperty); }
+        set { SetValue(LockPanningProperty, value); }
     }
 
     public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(
