@@ -1,19 +1,9 @@
-﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace DrawnUi.Maui.Controls;
 
-/// <summary>
-/// Used to draw maui element over a skia canvas. Positions elelement using drawnUi layout and sometimes just renders element bitmap snapshot instead of displaying the real element, for example, when scrolling/animating.
-/// </summary>
-public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
+public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 {
-
-    public SkiaMauiEntry()
-    {
-
-    }
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
@@ -31,7 +21,6 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     }
 
 #if ONPLATFORM
-
     public override void SetNativeVisibility(bool state)
     {
         base.SetNativeVisibility(state);
@@ -40,12 +29,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         {
             SetFocusInternal(true);
         }
-
-
     }
-
-
-
 #endif
 
     #region CAN LOCALIZE
@@ -70,15 +54,26 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     public override bool IsClippedToBounds => true;
 
-    protected virtual Entry GetOrCreateControl()
+    protected virtual void MapProps(Editor control)
+    {
+        var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
+        control.FontFamily = alias;
+        control.FontSize = FontSize;
+        control.TextColor = this.TextColor;
+        //control.ReturnType = this.ReturnType;
+
+        control.Keyboard = this.KeyboardType;
+        control.Text = Text;
+        //todo customize
+        control.Placeholder = this.Placeholder;
+    }
+
+    protected virtual Editor GetOrCreateControl()
     {
         if (Control == null)
         {
-            //var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
-            Control = new MauiEntry()
-            {
-                //VerticalTextAlignment = TextAlignment.Center
-            };
+            var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
+            Control = new MauiEditor();
             MapProps(Control);
             AdaptControlSize();
 
@@ -92,7 +87,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         return Control;
     }
 
-    public MauiEntry Control { get; protected set; }
+    public Editor Control { get; protected set; }
 
     protected void FocusNative()
     {
@@ -129,65 +124,38 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     protected virtual void AdaptControlSize()
     {
-        if (Control != null)
+
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            Control.WidthRequest = this.Width;
-            Control.HeightRequest = this.Height;
-        }
+            if (Control != null)
+            {
+                Control.WidthRequest = this.Width;
+                Control.HeightRequest = this.Height;
+            }
+        });
+
+
     }
 
-    private bool test1;
-
-    protected virtual void MapProps(MauiEntry control)
-    {
-        //if (control.Handler == null)
-        //    return;
-
-        //if (test1)
-        //    return;
-
-        test1 = true;
-
-        var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
-        control.FontFamily = alias;
-        control.MaxLines = MaxLines;
-        control.FontSize = FontSize;
-        control.TextColor = this.TextColor;
-        //control.ReturnType = this.ReturnType;
-        //control.Keyboard = this.KeyboardType;
-        if (Text != control.Text)
-            control.Text = Text;
-        //todo customize
-        control.Placeholder = this.Placeholder;
-    }
-
-    object lockAccess = new();
     public virtual void UpdateControl()
     {
-        if (Control != null && Control.Handler != null && Control.Handler.PlatformView != null)
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            MainThread.BeginInvokeOnMainThread(() =>
+            if (Control != null)
             {
-                lock (lockAccess)
-                {
-                    MapProps(Control);
-                    Update();
-                }
+                MapProps(Control);
+                Update();
+            }
 
-                AdaptControlSize();
-            });
-        }
+            AdaptControlSize();
+        });
     }
 
     protected override void OnLayoutChanged()
     {
         base.OnLayoutChanged();
 
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            AdaptControlSize();
-        });
-
+        AdaptControlSize();
     }
 
     protected void SubscribeToControl(bool subscribe)
@@ -199,17 +167,18 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
                 Control.Unfocused += OnControlUnfocused;
                 Control.Focused += OnControlFocused;
                 Control.TextChanged += OnControlTextChanged;
-                Control.OnCompleted += OnControlCompleted;
+                Control.Completed += OnControlCompleted;
             }
             else
             {
                 Control.Unfocused -= OnControlUnfocused;
                 Control.Focused -= OnControlFocused;
                 Control.TextChanged -= OnControlTextChanged;
-                Control.OnCompleted -= OnControlCompleted;
+                Control.Completed -= OnControlCompleted;
             }
         }
     }
+
 
     private void OnControlCompleted(object sender, EventArgs e)
     {
@@ -238,7 +207,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         //Debug.WriteLine($"[SKiaMauiEntry] Focused by native");
         lock (lockFocus)
         {
-            Superview.ReportFocus(this, this);
+            Superview.FocusedChild = this;
         }
     }
 
@@ -254,7 +223,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         {
             if (Superview.FocusedChild == this)
             {
-                Superview.ReportFocus(null, this);
+                Superview.FocusedChild = null;
             };
         }
     }
@@ -318,6 +287,23 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         }
     }
 
+    private static void NeedUpdateControl(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaMauiEditor control)
+        {
+            control.UpdateControl();
+        }
+    }
+
+    private static void OnControlTextChanged(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaMauiEditor control)
+        {
+            control.TextChanged?.Invoke(control, (string)newvalue);
+            control.CommandOnTextChanged?.Execute((string)newvalue);
+            control.UpdateControl();
+        }
+    }
 
     /// <summary>
     /// TODO
@@ -327,37 +313,22 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     #region   PROPERTIES
 
-    private static void NeedUpdateControl(BindableObject bindable, object oldvalue, object newvalue)
-    {
-        if (bindable is SkiaMauiEntry control)
-        {
-            control.UpdateControl();
-        }
-    }
+    public static readonly BindableProperty KeyboardTypeProperty = BindableProperty.Create(
+        nameof(KeyboardType),
+        typeof(Keyboard),
+        typeof(SkiaMauiEditor),
+        Keyboard.Default,
+        propertyChanged: NeedUpdateControl);
 
-    public static readonly BindableProperty MaxLinesProperty = BindableProperty.Create(nameof(MaxLines),
-        typeof(int), typeof(SkiaMauiEntry), 1);
-    /// <summary>
-    /// WIth 1 will behave like an ordinary Entry, with -1 (auto) or explicitly set you get an Editor
-    /// </summary>
-    public int MaxLines
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.KeyboardTypeConverter))]
+    public Keyboard KeyboardType
     {
-        get { return (int)GetValue(MaxLinesProperty); }
-        set { SetValue(MaxLinesProperty, value); }
-    }
-
-    private static void NeedUpdateText(BindableObject bindable, object oldvalue, object newvalue)
-    {
-        if (bindable is SkiaMauiEntry control)
-        {
-            control.TextChanged?.Invoke(control, (string)newvalue);
-            control.CommandOnTextChanged?.Execute((string)newvalue);
-            control.UpdateControl();
-        }
+        get { return (Keyboard)GetValue(KeyboardTypeProperty); }
+        set { SetValue(KeyboardTypeProperty, value); }
     }
 
     public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create(nameof(FontFamily),
-       typeof(string), typeof(SkiaMauiEntry), string.Empty, propertyChanged: NeedUpdateControl);
+       typeof(string), typeof(SkiaMauiEditor), string.Empty, propertyChanged: NeedUpdateControl);
     public string FontFamily
     {
         get { return (string)GetValue(FontFamilyProperty); }
@@ -365,7 +336,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     }
 
     public static readonly BindableProperty TextColorProperty = BindableProperty.Create(
-        nameof(TextColor), typeof(Color), typeof(SkiaMauiEntry),
+        nameof(TextColor), typeof(Color), typeof(SkiaMauiEditor),
         Colors.GreenYellow,
         propertyChanged: NeedUpdateControl);
     public Color TextColor
@@ -377,7 +348,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     public static readonly BindableProperty FontWeightProperty = BindableProperty.Create(
         nameof(FontWeight),
         typeof(int),
-        typeof(SkiaMauiEntry),
+        typeof(SkiaMauiEditor),
         0,
         propertyChanged: NeedUpdateControl);
 
@@ -388,7 +359,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     }
 
     public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(nameof(FontSize),
-        typeof(double), typeof(SkiaMauiEntry), 12.0,
+        typeof(double), typeof(SkiaMauiEditor), 12.0,
         propertyChanged: NeedUpdateControl);
 
     public double FontSize
@@ -400,10 +371,11 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     public static readonly BindableProperty TextProperty = BindableProperty.Create(
         nameof(Text),
         typeof(string),
-        typeof(SkiaMauiEntry),
+        typeof(SkiaMauiEditor),
         default(string),
         BindingMode.TwoWay,
-        propertyChanged: NeedUpdateText);
+        propertyChanged: OnControlTextChanged);
+
 
     public string Text
     {
@@ -414,7 +386,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(
         nameof(Placeholder),
         typeof(string),
-        typeof(SkiaMauiEntry),
+        typeof(SkiaMauiEditor),
         default(string),
         propertyChanged: NeedUpdateControl);
 
@@ -428,9 +400,8 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     public static readonly BindableProperty ReturnTypeProperty = BindableProperty.Create(
         nameof(ReturnType),
         typeof(ReturnType),
-        typeof(SkiaMauiEntry),
-        ReturnType.Done,
-        propertyChanged: NeedUpdateControl);
+        typeof(SkiaMauiEditor),
+        ReturnType.Default);
 
     public ReturnType ReturnType
     {
@@ -438,24 +409,10 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         set { SetValue(ReturnTypeProperty, value); }
     }
 
-    public static readonly BindableProperty KeyboardTypeProperty = BindableProperty.Create(
-        nameof(KeyboardType),
-        typeof(Keyboard),
-        typeof(SkiaMauiEntry),
-        Keyboard.Default,
-        propertyChanged: NeedUpdateControl);
-
-    [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.KeyboardTypeConverter))]
-    public Keyboard KeyboardType
-    {
-        get { return (Keyboard)GetValue(KeyboardTypeProperty); }
-        set { SetValue(KeyboardTypeProperty, value); }
-    }
-
     public static readonly BindableProperty CommandOnSubmitProperty = BindableProperty.Create(
         nameof(CommandOnSubmit),
         typeof(ICommand),
-        typeof(SkiaMauiEntry),
+        typeof(SkiaMauiEditor),
         null);
 
     public ICommand CommandOnSubmit
@@ -467,7 +424,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     public static readonly BindableProperty CommandOnFocusChangedProperty = BindableProperty.Create(
         nameof(CommandOnFocusChanged),
         typeof(ICommand),
-        typeof(SkiaMauiEntry),
+        typeof(SkiaMauiEditor),
         null);
 
     public ICommand CommandOnFocusChanged
@@ -479,7 +436,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     public static readonly BindableProperty CommandOnTextChangedProperty = BindableProperty.Create(
         nameof(CommandOnTextChanged),
         typeof(ICommand),
-        typeof(SkiaMauiEntry),
+        typeof(SkiaMauiEditor),
         null);
 
     public ICommand CommandOnTextChanged
@@ -491,14 +448,14 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     public new static readonly BindableProperty IsFocusedProperty = BindableProperty.Create(
         nameof(IsFocused),
         typeof(bool),
-        typeof(SkiaMauiEntry),
+        typeof(SkiaMauiEditor),
         false,
         BindingMode.TwoWay,
         propertyChanged: OnNeedChangeFocus);
 
     private static void OnNeedChangeFocus(BindableObject bindable, object oldvalue, object newvalue)
     {
-        if (bindable is SkiaMauiEntry control)
+        if (bindable is SkiaMauiEditor control)
         {
             control.SetFocusInternal((bool)newvalue);
         }

@@ -2216,40 +2216,80 @@ namespace DrawnUi.Maui.Views
             public SkiaControl Item { get; set; }
         }
 
+        /// <summary>
+        /// Internal call by control, after reporting will affect FocusedChild but will not get FocusedItemChanged as it was its own call
+        /// </summary>
+        /// <param name="listener"></param>
+        public void ReportFocus(ISkiaGestureListener value, ISkiaGestureListener setter = null)
+        {
+            if (_focusedChild != value && !FocusLocked)
+            {
+                if (_focusedChild != null)
+                {
+                    Debug.WriteLine($"[UNFOCUSED] {_focusedChild}");
+                    if (_focusedChild != setter)
+                        _focusedChild.OnFocusChanged(false);
+                    FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, false));
+                }
+
+                _focusedChild = value;
+                Debug.WriteLine($"[FOCUSED] {_focusedChild}");
+
+                if (_focusedChild != null)
+                {
+                    if (_focusedChild != setter)
+                        _focusedChild.OnFocusChanged(true);
+                    FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, true));
+                }
+                else
+                {
+                    //with delay maybe some other control will focus itsself in that time
+                    ResetFocusWithDelay(150);
+                }
+
+                OnPropertyChanged(nameof(FocusedChild));
+            }
+        }
+
+        private static RestartingTimer<object> _timerResetFocus;
+
+        void ResetFocusWithDelay(int ms)
+        {
+            if (_timerResetFocus == null)
+            {
+                _timerResetFocus = new(TimeSpan.FromMilliseconds(ms), (arg) =>
+                {
+                    if (FocusedChild == null)
+                    {
+                        try
+                        {
+                            this.Focus();
+                        }
+                        catch (Exception e)
+                        {
+                            Super.Log(e);
+                        }
+                        TouchEffect.CloseKeyboard();
+                        FocusedItemChanged?.Invoke(this, new(null, false));
+                    }
+                });
+                _timerResetFocus.Start(null);
+            }
+            else
+            {
+                _timerResetFocus.Restart(null);
+            }
+        }
+
         public ISkiaGestureListener FocusedChild
         {
             get
             {
                 return _focusedChild;
             }
-
             set
             {
-                if (_focusedChild != value && !FocusLocked)
-                {
-                    if (_focusedChild != null)
-                    {
-                        //Debug.WriteLine($"[UNFOCUSED] {_focusedChild}");
-                        _focusedChild.OnFocusChanged(false);
-                        FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, false));
-                    }
-                    _focusedChild = value;
-                    if (_focusedChild != null)
-                    {
-                        //Debug.WriteLine($"[FOCUSED] {_focusedChild}");
-                        _focusedChild.OnFocusChanged(true);
-                        FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, true));
-                    }
-                    else
-                    {
-                        this.Focus();
-                        TouchEffect.CloseKeyboard();
-                        FocusedItemChanged?.Invoke(this, new(null, false));
-                    }
-                    //Debug.WriteLine($"[FOCUSED] {value}");
-
-                    OnPropertyChanged();
-                }
+                ReportFocus(value);
             }
         }
         ISkiaGestureListener _focusedChild;

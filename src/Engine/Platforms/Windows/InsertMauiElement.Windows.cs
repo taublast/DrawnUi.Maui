@@ -71,9 +71,9 @@ public partial class SkiaMauiElement
     {
         if (Element.Handler?.PlatformView is FrameworkElement nativeView)
         {
-            nativeView.Visibility = !state ? Visibility.Collapsed : Visibility.Visible;
-            //Trace.WriteLine($"Layout Maui SetNativeVisibility : {nativeView.Visibility}");
-            IsNativeVisible = nativeView.Visibility == Visibility.Visible;
+            IsNativeVisible = state;
+
+            LayoutNativeView(Element);
         }
     }
 
@@ -83,40 +83,35 @@ public partial class SkiaMauiElement
         {
             nativeView.Visibility = !VisualTransformNative.IsVisible ? Visibility.Collapsed : Visibility.Visible;
 
-            IsNativeVisible = nativeView.Visibility == Visibility.Visible;
+            //UIElement
+            nativeView.Width = VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right);
+            nativeView.Height = VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom);
 
-            if (nativeView.Visibility == Visibility.Visible)
+            nativeView.Opacity = VisualTransformNative.Opacity;
+
+            // Creating a new CompositeTransform to handle the transforms
+            var transform = new CompositeTransform
             {
-                //UIElement
-                nativeView.Width = VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right);
-                nativeView.Height = VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom);
+                TranslateX = VisualTransformNative.Translation.X,
+                TranslateY = VisualTransformNative.Translation.Y,
+                Rotation = VisualTransformNative.Rotation, // Assuming rotation is in degrees
+                ScaleX = VisualTransformNative.Scale.X,
+                ScaleY = VisualTransformNative.Scale.Y
+            };
 
-                nativeView.Opacity = VisualTransformNative.Opacity;
+            nativeView.RenderTransform = transform;
 
-                // Creating a new CompositeTransform to handle the transforms
-                var transform = new CompositeTransform
-                {
-                    TranslateX = VisualTransformNative.Translation.X,
-                    TranslateY = VisualTransformNative.Translation.Y,
-                    Rotation = VisualTransformNative.Rotation, // Assuming rotation is in degrees
-                    ScaleX = VisualTransformNative.Scale.X,
-                    ScaleY = VisualTransformNative.Scale.Y
-                };
+            nativeView.UpdateLayout();
 
-                nativeView.RenderTransform = transform;
+            Windows.Foundation.Size availableSize = new(
+                VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
+                VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom));
+            nativeView.Measure(availableSize);
 
-                nativeView.UpdateLayout();
+            nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
 
-                Windows.Foundation.Size availableSize = new(
-                    VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
-                    VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom));
-                nativeView.Measure(availableSize);
-
-                nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
-
-                if (!WasRendered)
-                    WasRendered = nativeView.RenderSize.Width > 0;
-            }
+            if (!WasRendered)
+                WasRendered = nativeView.RenderSize.Width > 0;
 
             nativeView.UpdateLayout(); //required. in maui this is also needed to be called as fix for after IsVisible is set to true sometimes the view just doesn't show up.
 

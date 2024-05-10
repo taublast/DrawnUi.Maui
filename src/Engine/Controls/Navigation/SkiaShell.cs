@@ -864,17 +864,25 @@ namespace DrawnUi.Maui.Controls
                     {
                         RemoveFromCurrentRouteNodes(removed);
 
-                        var inStack = NavigationStackModals.FirstOrDefault(x => x.Page == modalWrapper);
-                        if (inStack != null)
+                        try
                         {
-                            NavigationStackModals.Remove(inStack);
+                            modalWrapper.Drawer.Scrolled -= OnModalDrawerScrolled;
+                            if (removed is IVisibilityAware aware)
+                            {
+                                aware.OnDisappearing();
+                            }
+
+                            var inStack = NavigationStackModals.FirstOrDefault(x => x.Page == modalWrapper);
+                            if (inStack != null)
+                            {
+                                NavigationStackModals.Remove(inStack);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Super.Log(e);
                         }
 
-                        modalWrapper.Drawer.Scrolled -= OnModalDrawerScrolled;
-                        if (removed is IVisibilityAware aware)
-                        {
-                            aware.OnDisappearing();
-                        }
                     }
                 }
                 else

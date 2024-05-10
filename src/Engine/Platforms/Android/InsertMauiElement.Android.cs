@@ -41,15 +41,15 @@ public partial class SkiaMauiElement
         }
     }
 
-
+    /// <summary>
+    /// This is mainly ued by show/hide to display Snapshot instead the native view
+    /// </summary>
+    /// <param name="state"></param>
     public virtual void SetNativeVisibility(bool state)
     {
-        if (Element.Handler?.PlatformView is View nativeView)
-        {
-            //Super.Log($"SetNativeVisibility] {state} while ShowSnapshot is {ShowSnapshot}");
-            nativeView.Visibility = state ? ViewStates.Visible : ViewStates.Invisible;
-            IsNativeVisible = state;
-        }
+        IsNativeVisible = state;
+
+        LayoutNativeView(Element);
     }
 
     protected virtual void LayoutNativeView(VisualElement element)
@@ -58,37 +58,30 @@ public partial class SkiaMauiElement
         {
             if (element.Handler?.PlatformView is View nativeView)
             {
-                nativeView.Visibility = VisualTransformNative.IsVisible ? ViewStates.Visible : ViewStates.Invisible;
+                nativeView.Visibility = VisualTransformNative.IsVisible && IsNativeVisible ? ViewStates.Visible : ViewStates.Invisible;
 
-                IsNativeVisible = nativeView.Visibility == ViewStates.Visible;
+                //                Debug.WriteLine($"Visibility {nativeView.Visibility}");
+                //                Debug.WriteLine($"Drawing VIEW at {VisualTransformNative.Rect}");
 
-                if (nativeView.Visibility == ViewStates.Visible)
-                {
-                    nativeView.TranslationX = VisualTransformNative.Translation.X;
-                    nativeView.TranslationY = VisualTransformNative.Translation.Y;
-                    nativeView.Rotation = VisualTransformNative.Rotation;
-                    nativeView.ScaleX = VisualTransformNative.Scale.X;
-                    nativeView.ScaleY = VisualTransformNative.Scale.Y;
-                    nativeView.Alpha = VisualTransformNative.Opacity;
+                nativeView.TranslationX = VisualTransformNative.Translation.X;
+                nativeView.TranslationY = VisualTransformNative.Translation.Y;
+                nativeView.Rotation = VisualTransformNative.Rotation;
+                nativeView.ScaleX = VisualTransformNative.Scale.X;
+                nativeView.ScaleY = VisualTransformNative.Scale.Y;
+                nativeView.Alpha = VisualTransformNative.Opacity;
 
-                    //int widthMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Width, MeasureSpecMode.Exactly);
-                    //int heightMeasureSpec = View.MeasureSpec.MakeMeasureSpec((int)VisualTransformNative.Rect.Height, MeasureSpecMode.Exactly);
-                    //nativeView.Measure(widthMeasureSpec, heightMeasureSpec);
+                nativeView.Layout(
+                    (int)(VisualTransformNative.Rect.Left + this.Padding.Left * RenderingScale),
+                    (int)(VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale),
+                    (int)(VisualTransformNative.Rect.Right + this.Padding.Right * RenderingScale),
+                    (int)(VisualTransformNative.Rect.Bottom + this.Padding.Bottom * RenderingScale));
 
-                    //apply Padding:
-                    nativeView.Layout(
-                        (int)(VisualTransformNative.Rect.Left + this.Padding.Left * RenderingScale),
-                        (int)(VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale),
-                        (int)(VisualTransformNative.Rect.Right + this.Padding.Right * RenderingScale),
-                        (int)(VisualTransformNative.Rect.Bottom + this.Padding.Bottom * RenderingScale));
+                //nativeView.Invalidate();
 
-                    //nativeView.Invalidate();
+                //nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
 
-                    //nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
-
-                    if (!WasRendered)
-                        WasRendered = nativeView.Width > 0;
-                }
+                if (!WasRendered)
+                    WasRendered = nativeView.Width > 0;
 
                 //Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} width {nativeView.Width}");
             }

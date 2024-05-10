@@ -1,18 +1,103 @@
 ﻿using Android.Content;
 using Android.Runtime;
-using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
 using Microsoft.Maui.Handlers;
-using Microsoft.Maui.Platform;
 using System.Diagnostics.CodeAnalysis;
+using Context = Android.Content.Context;
+using Size = Microsoft.Maui.Graphics.Size;
+using TextChangedEventArgs = Android.Text.TextChangedEventArgs;
+
 
 namespace DrawnUi.Maui.Controls;
+/*
+public partial class MauiEditorHandler : EditorHandler
+{
+    AppCompatEditText _control;
 
-public partial class MauiEditorHandlerBack : EditorHandler
+    void ApplySettings()
+    {
+        if (_control != null)
+        {
+            _control.SetPadding(0, 0, 0, 0);
+            _control.VerticalScrollBarEnabled = true;
+            _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+
+            _control.RequestLayout();
+            _control.Invalidate();
+        }
+    }
+
+    protected override void ConnectHandler(AppCompatEditText platformView)
+    {
+        base.ConnectHandler(platformView);
+
+        _control = platformView;
+
+        platformView.TextChanged += OnTextChanged;
+
+        ApplySettings();
+
+    }
+
+    private void OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        Android.Graphics.Rect visibleRect = new();
+        _control.GetLocalVisibleRect(visibleRect);
+
+        //need this to apply our parent control new size to dynamic "Layout" property
+        _control.RequestLayout();
+        _control.Invalidate();
+
+
+        if (_control.Layout != null)
+        {
+            Debug.WriteLine($"[LAYOUT] {_control.Layout.Width} {_control.Layout.Height}"); ;
+
+            //var scrollAmount = _control.Layout.GetLineTop(_control.LineCount) - _control.Height;
+            //if (scrollAmount > 0)
+            //    _control.ScrollTo(0, scrollAmount);
+            //else
+            //    _control.ScrollTo(0, 0);
+
+
+            int x = 0, y = 0;
+
+            var scrollX = _control.ScrollX; // Current horizontal scroll position
+            var contentWidth = _control.Layout.GetLineWidth(0); // Width of the content
+            var controlWidth = _control.Width - _control.PaddingLeft - _control.PaddingRight; // Width of the control
+
+            var scrollAmount = contentWidth - (controlWidth + scrollX);
+            if (scrollAmount > 0)
+            {
+                x = (int)scrollAmount;
+            }
+
+            var scrollY = _control.Layout.GetLineTop(_control.LineCount) - _control.Height;
+            // if there is no need to scroll, scrollAmount will be <=0
+            if (scrollY > 0)
+                y = scrollY;
+
+            _control.ScrollTo(x, y);
+        }
+    }
+
+    protected override void DisconnectHandler(AppCompatEditText platformView)
+    {
+        _control = null;
+
+        platformView.TextChanged -= OnTextChanged;
+
+        base.DisconnectHandler(platformView);
+    }
+
+}
+*/
+
+public partial class MauiEditorHandler : EditorHandler
 {
     AppCompatEditText _control;
 
@@ -25,16 +110,16 @@ public partial class MauiEditorHandlerBack : EditorHandler
 
         platformView.TextChanged += OnTextChanged;
 
-
         ApplySettings();
     }
 
-
-    /*
     private void OnTextChanged(object sender, TextChangedEventArgs e)
     {
         Android.Graphics.Rect visibleRect = new();
         _control.GetLocalVisibleRect(visibleRect);
+
+        _control.RequestLayout();
+        _control.Invalidate();
 
         if (_control.Layout != null)
         {
@@ -46,34 +131,8 @@ public partial class MauiEditorHandlerBack : EditorHandler
                 _control.ScrollTo(0, 0);
         }
     }
-    */
 
-    private void OnTextChanged(object sender, Android.Text.TextChangedEventArgs e)
-    {
-        Android.Graphics.Rect visibleRect = new();
-        _control.GetLocalVisibleRect(visibleRect);
 
-        if (_control.Layout != null)
-        {
-            var scrollX = _control.ScrollX; // Current horizontal scroll position
-            var contentWidth = _control.Layout.GetLineWidth(0); // Width of the content
-            var controlWidth = _control.Width - _control.PaddingLeft - _control.PaddingRight; // Width of the control
-
-            // Calculate the amount to scroll
-            var scrollAmount = contentWidth - (controlWidth + scrollX);
-            // Scroll only if there is overflow
-            if (scrollAmount > 0)
-            {
-                _control.ScrollTo((int)scrollAmount, 0);
-            }
-            else
-            {
-                _control.ScrollTo(0, 0);
-            }
-        }
-    }
-
-    private bool once;
     void ApplySettings()
     {
         if (_control != null)
@@ -81,19 +140,6 @@ public partial class MauiEditorHandlerBack : EditorHandler
             _control.SetPadding(0, 0, 0, 0);
             _control.VerticalScrollBarEnabled = true;
             _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-
-            _control.LayoutParameters = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MatchParent,
-                ViewGroup.LayoutParams.WrapContent);
-
-            _control.Gravity = Android.Views.GravityFlags.Top | Android.Views.GravityFlags.Start;
-
-            _control.SetAutoSizeTextTypeWithDefaults(AutoSizeTextType.None); ;
-
-            _control.SetSingleLine(false);
-            _control.InputType = Android.Text.InputTypes.ClassText |
-                                 Android.Text.InputTypes.TextFlagMultiLine |
-                                 Android.Text.InputTypes.TextFlagCapSentences;
         }
     }
 
@@ -102,31 +148,6 @@ public partial class MauiEditorHandlerBack : EditorHandler
         base.PlatformArrange(frame);
 
         ApplySettings();
-    }
-
-
-
-    public override void SetVirtualView(IView view)
-    {
-        base.SetVirtualView(view);
-
-        // TODO: NET8 issoto - Remove the casting once we can set the TPlatformView generic type as MauiAppCompatEditText
-        if (!once && PlatformView is SubclassedAppCompatEditText editText)
-            editText.SelectionChanged += MyOnSelectionChanged;
-
-        once = true;
-    }
-
-    private void MyOnSelectionChanged(object? sender, EventArgs e)
-    {
-        var cursorPosition = PlatformView.GetCursorPosition();
-        var selectedTextLength = PlatformView.GetSelectedTextLength();
-
-        if (VirtualView.CursorPosition != cursorPosition)
-            VirtualView.CursorPosition = cursorPosition;
-
-        if (VirtualView.SelectionLength != selectedTextLength)
-            VirtualView.SelectionLength = selectedTextLength;
     }
 
     protected override void DisconnectHandler(AppCompatEditText platformView)
@@ -152,10 +173,65 @@ public partial class MauiEditorHandlerBack : EditorHandler
         editText.SetHorizontallyScrolling(false);
 
         return editText;
+
+        //return base.CreatePlatformView();
+    }
+
+    public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
+    {
+        return base.GetDesiredSize(widthConstraint, heightConstraint);
+    }
+
+    private bool once;
+
+    public override void SetVirtualView(IView view)
+    {
+        base.SetVirtualView(view);
+
+        // TODO: NET8 issoto - Remove the casting once we can set the TPlatformView generic type as MauiAppCompatEditText
+        if (!once && PlatformView is SubclassedAppCompatEditText editText)
+            editText.SelectionChanged += MyOnSelectionChanged;
+
+        once = true;
+    }
+
+    private void MyOnSelectionChanged(object? sender, EventArgs e)
+    {
+        var cursorPosition = GetCursorPosition(PlatformView);
+        var selectedTextLength = GetSelectedTextLength(PlatformView);
+
+        if (VirtualView.CursorPosition != cursorPosition)
+            VirtualView.CursorPosition = cursorPosition;
+
+        if (VirtualView.SelectionLength != selectedTextLength)
+            VirtualView.SelectionLength = selectedTextLength;
+    }
+
+    int GetCursorPosition(EditText editText, int cursorOffset = 0)
+    {
+        var newCursorPosition = editText.SelectionStart + cursorOffset;
+        return Math.Max(0, newCursorPosition);
+    }
+
+    int GetSelectedTextLength(EditText editText)
+    {
+        var selectedLength = editText.SelectionEnd - editText.SelectionStart;
+        return Math.Max(0, selectedLength);
     }
 
     public class SubclassedAppCompatEditText : AppCompatEditText
     {
+        protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
+        {
+            base.OnLayout(changed, left, top, right, bottom);
+
+        }
+
+        protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
+        {
+            base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
+        }
+
         protected override void OnSelectionChanged(int selStart, int selEnd)
         {
             base.OnSelectionChanged(selStart, selEnd);
@@ -179,6 +255,9 @@ public partial class MauiEditorHandlerBack : EditorHandler
 
         public override IInputConnection OnCreateInputConnection(EditorInfo outAttrs)
         {
+            RequestLayout();
+            Invalidate();
+
             var conn = base.OnCreateInputConnection(outAttrs);
 
             outAttrs.ImeOptions &= ~Android.Views.InputMethods.ImeFlags.NoEnterAction;
@@ -186,24 +265,4 @@ public partial class MauiEditorHandlerBack : EditorHandler
             return conn;
         }
     }
-
-
-
-}
-
-public static class EditTextExtensions
-{
-    public static int GetCursorPosition(this EditText editText, int cursorOffset = 0)
-    {
-        var newCursorPosition = editText.SelectionStart + cursorOffset;
-        return Math.Max(0, newCursorPosition);
-    }
-
-    public static int GetSelectedTextLength(this EditText editText)
-    {
-        var selectedLength = editText.SelectionEnd - editText.SelectionStart;
-        return Math.Max(0, selectedLength);
-    }
-
-
 }
