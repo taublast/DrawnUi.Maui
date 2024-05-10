@@ -12,7 +12,7 @@ namespace DrawnUi.Maui.Draw
     /// <summary>
     /// Implements ISkiaGestureListener to pass gestures to children
     /// </summary>
-    public class SkiaShape : ContentLayout
+    public class SkiaShape : ContentLayout//SkiaControl, ISkiaGestureListener //
     {
         public override void ApplyBindingContext()
         {
@@ -52,6 +52,7 @@ namespace DrawnUi.Maui.Draw
             typeof(ShapeType), typeof(SkiaShape),
             ShapeType.Rectangle,
             propertyChanged: NeedSetType);
+
         public ShapeType Type
         {
             get { return (ShapeType)GetValue(TypeProperty); }
@@ -62,6 +63,7 @@ namespace DrawnUi.Maui.Draw
         #region StrokeGradient
 
         private const string nameStrokeGradient = "StrokeGradient";
+
         public static readonly BindableProperty StrokeGradientProperty = BindableProperty.Create(
             nameStrokeGradient,
             typeof(SkiaGradient),
@@ -200,9 +202,10 @@ namespace DrawnUi.Maui.Draw
 
 
         public static readonly BindableProperty StrokeBlendModeProperty = BindableProperty.Create(nameof(StrokeBlendMode),
-           typeof(SKBlendMode), typeof(SkiaShape),
-           SKBlendMode.SrcOver,
-           propertyChanged: NeedDraw);
+            typeof(SKBlendMode), typeof(SkiaShape),
+            SKBlendMode.SrcOver,
+            propertyChanged: NeedDraw);
+
         public SKBlendMode StrokeBlendMode
         {
             get { return (SKBlendMode)GetValue(StrokeBlendModeProperty); }
@@ -228,6 +231,7 @@ namespace DrawnUi.Maui.Draw
             {
                 array[i] = Convert.ToSingle(Math.Round(input[i] * scale));
             }
+
             return array;
         }
 
@@ -256,6 +260,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     DrawPath = null;
                 }
+
                 if (kill != null)
                 {
                     Tasks.StartDelayed(TimeSpan.FromSeconds(3), () =>
@@ -316,8 +321,10 @@ namespace DrawnUi.Maui.Draw
 
                 float scaleX = strokeAwareSize.Width / (bounds.Width + halfStroke);
                 float scaleY = strokeAwareSize.Height / (bounds.Height + halfStroke);
-                float translateX = (strokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 - bounds.Left * scaleX;
-                float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 - bounds.Top * scaleY;
+                float translateX = (strokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 -
+                                   bounds.Left * scaleX;
+                float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 -
+                                   bounds.Top * scaleY;
                 SKMatrix matrix = SKMatrix.CreateIdentity();
 #if SKIA3
                 matrix.PreConcat(SKMatrix.CreateScale(scaleX, scaleY));
@@ -390,9 +397,12 @@ namespace DrawnUi.Maui.Draw
 
             if (!usePosition)
             {
-                var offsetToZero = new SKPoint(strokeAwareSize.Left - strokeAwareChildrenSize.Left, strokeAwareSize.Top - strokeAwareChildrenSize.Top);
-                strokeAwareChildrenSize = new(offsetToZero.X, offsetToZero.Y, strokeAwareChildrenSize.Width + offsetToZero.X, strokeAwareChildrenSize.Height + offsetToZero.Y);
+                var offsetToZero = new SKPoint(strokeAwareSize.Left - strokeAwareChildrenSize.Left,
+                    strokeAwareSize.Top - strokeAwareChildrenSize.Top);
+                strokeAwareChildrenSize = new(offsetToZero.X, offsetToZero.Y,
+                    strokeAwareChildrenSize.Width + offsetToZero.X, strokeAwareChildrenSize.Height + offsetToZero.Y);
             }
+
             var path = new SKPath();
 
             switch (Type)
@@ -403,10 +413,10 @@ namespace DrawnUi.Maui.Draw
 
             case ShapeType.Circle:
             path.AddCircle(
-               (float)Math.Round(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
-               (float)Math.Round(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
-               Math.Min(strokeAwareChildrenSize.Width, strokeAwareChildrenSize.Height) /
-               2.0f);
+                (float)Math.Round(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
+                (float)Math.Round(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
+                Math.Min(strokeAwareChildrenSize.Width, strokeAwareChildrenSize.Height) /
+                2.0f);
             break;
 
             case ShapeType.Ellipse:
@@ -437,17 +447,18 @@ namespace DrawnUi.Maui.Draw
 
                 rrect.SetRectRadii(strokeAwareChildrenSize, new[]
                 {
-                                new SKPoint(scaledRadiusLeftTop,scaledRadiusLeftTop),
-                                new SKPoint(scaledRadiusRightTop,scaledRadiusRightTop),
-                                new SKPoint(scaledRadiusRightBottom,scaledRadiusRightBottom),
-                                new SKPoint(scaledRadiusLeftBottom,scaledRadiusLeftBottom),
-                            });
+                        new SKPoint(scaledRadiusLeftTop, scaledRadiusLeftTop),
+                        new SKPoint(scaledRadiusRightTop, scaledRadiusRightTop),
+                        new SKPoint(scaledRadiusRightBottom, scaledRadiusRightBottom),
+                        new SKPoint(scaledRadiusLeftBottom, scaledRadiusLeftBottom),
+                    });
                 path.AddRoundRect(rrect);
                 //path.AddRoundRect(strokeAwareChildrenSize, innerCornerRadius, innerCornerRadius);
 
             }
             else
                 path.AddRect(strokeAwareChildrenSize);
+
             break;
             }
 
@@ -472,6 +483,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     paint.IsAntialias = true;
                 }
+
                 if (DrawRoundedRect == null)
                     DrawRoundedRect = new();
                 DrawRoundedRect.SetRectRadii(outRect, radii);
@@ -479,6 +491,7 @@ namespace DrawnUi.Maui.Draw
             }
             else
                 ctx.Canvas.DrawRect(outRect, RenderingPaint);
+
             break;
 
             case ShapeType.Circle:
@@ -486,6 +499,7 @@ namespace DrawnUi.Maui.Draw
             {
                 paint.IsAntialias = true;
             }
+
             ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, RenderingPaint);
             break;
 
@@ -494,6 +508,7 @@ namespace DrawnUi.Maui.Draw
             {
                 paint.IsAntialias = true;
             }
+
             DrawPathShape.Reset();
             DrawPathShape.AddOval(outRect);
             ctx.Canvas.DrawPath(DrawPathShape, paint);
@@ -556,6 +571,7 @@ namespace DrawnUi.Maui.Draw
             {
                 RenderingPaint.Color = SKColors.Transparent;
             }
+
             RenderingPaint.Style = SKPaintStyle.Fill;
 
             var minSize = Math.Min(strokeAwareSize.Height, strokeAwareSize.Width);
@@ -577,11 +593,11 @@ namespace DrawnUi.Maui.Draw
 
             var radii = new SKPoint[]
             {
-                new SKPoint((float)scaledRadius.TopLeft,(float)scaledRadius.TopLeft), //LeftTop
-                new SKPoint((float)scaledRadius.TopRight,(float)scaledRadius.TopRight), //RightTop
-                new SKPoint((float)scaledRadius.BottomLeft,(float)scaledRadius.BottomLeft), //LeftBottom
-                new SKPoint((float)scaledRadius.BottomRight,(float)scaledRadius.BottomRight), //RightBottom
-                };
+            new SKPoint((float)scaledRadius.TopLeft, (float)scaledRadius.TopLeft), //LeftTop
+            new SKPoint((float)scaledRadius.TopRight, (float)scaledRadius.TopRight), //RightTop
+            new SKPoint((float)scaledRadius.BottomLeft, (float)scaledRadius.BottomLeft), //LeftBottom
+            new SKPoint((float)scaledRadius.BottomRight, (float)scaledRadius.BottomRight), //RightBottom
+            };
 
 
             void PaintStroke(SKPaint paint)
@@ -627,6 +643,7 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                     ctx.Canvas.DrawRect(outRect, paint);
+
                 break;
 
                 case ShapeType.Circle:
@@ -835,6 +852,7 @@ namespace DrawnUi.Maui.Draw
 
 
         #endregion
+
 
     }
 }

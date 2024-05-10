@@ -3434,6 +3434,9 @@ namespace DrawnUi.Maui.Draw
             //PASS 1
             foreach (var child in children)
             {
+                if (child == null)
+                    continue;
+
                 child.OnBeforeMeasure(); //could set IsVisible or whatever inside
 
                 if (autosize &&
@@ -3453,8 +3456,6 @@ namespace DrawnUi.Maui.Draw
                 widthCut |= measured.WidthCut;
                 heightCut |= measured.HeightCut;
             }
-
-
 
             //PASS 2 for thoses with Fill 
             foreach (var child in fill)
@@ -3586,15 +3587,7 @@ namespace DrawnUi.Maui.Draw
 
                 var constraints = GetMeasuringConstraints(request);
 
-                if (NeedAutoSize)
-                {
-                    ContentSize = MeasureAbsolute(constraints.Content, scale);
-                }
-                else
-                {
-                    //children size will not matter
-                    ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height, request.Scale);
-                }
+                ContentSize = MeasureAbsolute(constraints.Content, scale);
 
                 return SetMeasuredAdaptToContentSize(constraints, scale);
             }

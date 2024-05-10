@@ -96,15 +96,8 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
 
             var constraints = GetMeasuringConstraints(request);
 
-            if (IsContentActive)
-            {
-                var children = new List<SkiaControl> { Content };
-                ContentSize = MeasureContent(children, constraints.Content, request.Scale);
-            }
-            else
-            {
-                ContentSize = ScaledSize.Default;
-            }
+            var children = new List<SkiaControl> { Content };
+            ContentSize = MeasureContent(children, constraints.Content, scale);
 
             return SetMeasuredAdaptToContentSize(constraints, scale);
         }

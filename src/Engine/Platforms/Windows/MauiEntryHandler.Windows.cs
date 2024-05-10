@@ -34,6 +34,11 @@ public partial class MauiEntryHandler : EntryHandler
             _control.Background = null; //new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red.ToWindowsColor()); //or null
             _control.BorderBrush = null;
             _control.Padding = new Microsoft.UI.Xaml.Thickness(0, 0, 0, 0);
+
+            //todo not working
+            var brush = Colors.Transparent.ToPlatform();
+            _control.Resources["TextControlBackgroundFocused"] = brush;
+            _control.Resources["TextControlBackgroundPointerOver"] = brush;
             RefreshThemeResources(_control);
         }
     }
@@ -43,11 +48,6 @@ public partial class MauiEntryHandler : EntryHandler
         var view = base.CreatePlatformView();
 
         _control = view;
-
-        var brush = Colors.Transparent.ToPlatform();
-        _control.Resources["TextControlBackgroundFocused"] = brush;
-        _control.Resources["TextControlBackgroundPointerOver"] = brush;
-        _control.FocusVisualSecondaryBrush = brush;
 
         return _control;
     }
