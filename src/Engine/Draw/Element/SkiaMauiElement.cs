@@ -538,7 +538,7 @@
                     SetNativeVisibility(true);
                 }
 #else
-                //SetNativeVisibility(VisualTransformNative.IsVisible);
+                SetNativeVisibility(true);
 #endif
             }
 

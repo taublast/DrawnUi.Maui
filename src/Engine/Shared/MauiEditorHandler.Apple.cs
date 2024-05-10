@@ -8,7 +8,7 @@ namespace DrawnUi.Maui.Controls;
  /// <summary>
  /// TODO
  /// </summary>
-public partial class MauiEditorHandlerBack : EditorHandler
+public partial class MauiEditorHandler : EditorHandler
 {
     protected override void ConnectHandler(MauiTextView platformView)
     {
@@ -16,6 +16,6 @@ public partial class MauiEditorHandlerBack : EditorHandler
 
         platformView.BackgroundColor = UIColor.FromRGBA(0,0,0,0);
     }
-
+    
 }
 
