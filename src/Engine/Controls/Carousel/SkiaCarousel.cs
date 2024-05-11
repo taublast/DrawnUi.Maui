@@ -572,7 +572,7 @@ public class SkiaCarousel : SnappingLayout
 
         if (Parent != null)
         {
-            ApplyOptions();
+  
 
             if (_animatorSpring == null)
             {
@@ -603,6 +603,8 @@ public class SkiaCarousel : SnappingLayout
                     }
                 };
             }
+            
+            ApplyOptions();
 
         }
     }
