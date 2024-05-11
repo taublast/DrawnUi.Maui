@@ -231,12 +231,12 @@ public class SkiaImage : SkiaControl
         nameof(RescalingQuality),
         typeof(SKFilterQuality),
         typeof(SkiaImage),
-        SKFilterQuality.Medium,
+        SKFilterQuality.None,
         propertyChanged: NeedInvalidateMeasure);
 
     /// <summary>
-    /// Default value is Medium.
-    /// You might want to set this to None for large a quick changing images like camera preview etc.
+    /// Default value is None.
+    /// You might want to set this to Medium for static images for better quality.
     /// </summary>
     public SKFilterQuality RescalingQuality
     {
