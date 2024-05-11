@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "test\UnitTests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.Game", "Addons\DrawnUi.Maui.Game\DrawnUi.Maui.Game.csproj", "{C9CABC24-B5D7-4824-BD1B-279BEF419348}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppoMobi.Maui.Gestures", "..\..\AppoMobi.Maui.Gestures\src\AppoMobi.Maui.Gestures.csproj", "{18335ADE-9F6F-46E2-B0A3-FB2DB22DC2DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{C9CABC24-B5D7-4824-BD1B-279BEF419348}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9CABC24-B5D7-4824-BD1B-279BEF419348}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9CABC24-B5D7-4824-BD1B-279BEF419348}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18335ADE-9F6F-46E2-B0A3-FB2DB22DC2DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18335ADE-9F6F-46E2-B0A3-FB2DB22DC2DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18335ADE-9F6F-46E2-B0A3-FB2DB22DC2DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18335ADE-9F6F-46E2-B0A3-FB2DB22DC2DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{03A9CCB9-92B5-4A4A-8696-127603AE8816} = {507756AE-A224-4CDD-80C1-55F06502DE1B}
 		{C8BAD2E9-FDFA-404D-85AE-2F179CA78016} = {507756AE-A224-4CDD-80C1-55F06502DE1B}
 		{C9CABC24-B5D7-4824-BD1B-279BEF419348} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
+		{18335ADE-9F6F-46E2-B0A3-FB2DB22DC2DA} = {22EE9E7A-55C6-4F9F-9878-9376F7BC1DCC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08E673B7-06BF-468C-8D6C-2D1AA8E4A8CA}

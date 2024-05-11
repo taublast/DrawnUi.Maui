@@ -1,0 +1,128 @@
+using Mapsui.Manipulations;
+
+namespace DrawnUi.Maui.MapsUi;
+
+public class ManipulationTracker
+{
+    private double _totalRotationChange; // We need this to calculate snapping
+    private TouchState? _touchState;
+    private TouchState? _previousTouchState;
+
+    /// <summary>
+    /// Call this method before the first Update call. The Update method tracks the start touch angle which is needed 
+    /// to for rotation snapping and the previous touch state.
+    /// </summary>
+    public void Restart(ReadOnlySpan<ScreenPosition> positions) => Restart(GetTouchState(positions));
+
+    public void Manipulate(ReadOnlySpan<ScreenPosition> positions, Action<Manipulation> onManipulation)
+        => Manipulate(GetTouchState(positions), onManipulation);
+
+    private Manipulation? GetManipulation()
+    {
+        if (_touchState is null)
+            return null;
+
+        if (_previousTouchState is null)
+            return null; // There is a touch but no previous touch so no manipulation.
+
+        var scaleFactor = _touchState.GetScaleFactor(_previousTouchState);
+        var rotationChange = _touchState.GetRotationChange(_previousTouchState);
+
+        if (_touchState.Equals(_previousTouchState))
+            return null; // The default will not change anything so don't return a manipulation.
+
+        System.Diagnostics.Debug.WriteLine($"Scale {scaleFactor:0.00} TotalRotation {_totalRotationChange:0.00}");
+        
+        return new Manipulation(_touchState.Center, _previousTouchState.Center, scaleFactor, rotationChange, _totalRotationChange);
+    }
+
+    private static TouchState? GetTouchState(ReadOnlySpan<ScreenPosition> positions)
+    {
+        if (positions.Length == 0)
+            return null;
+
+        if (positions.Length == 1)
+            return new TouchState(positions[0], null, null, positions.Length);
+
+        var (centerX, centerY) = GetCenter(positions);
+        var radius = Distance(centerX, centerY, positions[0].X, positions[0].Y);
+        var angle = Math.Atan2(positions[1].Y - positions[0].Y, positions[1].X - positions[0].X) * 180.0 / Math.PI;
+
+        return new TouchState(new ScreenPosition(centerX, centerY), radius, angle, positions.Length);
+    }
+
+    private static double Distance(double x1, double y1, double x2, double y2)
+        => Math.Sqrt(Math.Pow(x1 - x2, 2.0) + Math.Pow(y1 - y2, 2.0));
+
+    private static (double centerX, double centerY) GetCenter(ReadOnlySpan<ScreenPosition> touches)
+    {
+        double centerX = 0;
+        double centerY = 0;
+
+        foreach (var location in touches)
+        {
+            centerX += location.X;
+            centerY += location.Y;
+        }
+
+        centerX /= touches.Length;
+        centerY /= touches.Length;
+
+        return (centerX, centerY);
+    }
+
+    private void Restart(TouchState? touchState)
+    {
+        _totalRotationChange = 0; // Reset the total. It will incremented in each Update call
+        _touchState = touchState;
+        _previousTouchState = null;
+    }
+
+    private void Manipulate(TouchState? touchState, Action<Manipulation> onManipulation)
+    {
+        _previousTouchState = _touchState;
+        _touchState = touchState;
+
+        if (!(touchState?.LocationsLength == _previousTouchState?.LocationsLength))
+        {
+            // If the finger count changes this is considered a reset.
+            _totalRotationChange = 0;
+            _previousTouchState = null;
+            // Note, there is the unlikely change that one finger is lifted exactly when 
+            // another is touched down. This should also be ignored, but we can only
+            // do that if we had the touch ids. We accept this problem. It will not crash the system.
+            return;
+        }
+
+        if (touchState is null)
+            _totalRotationChange = 0;
+
+        if (touchState is not null && _previousTouchState is not null)
+            _totalRotationChange += touchState.GetRotationChange(_previousTouchState);
+
+        var manipulation = GetManipulation();
+        if (manipulation is not null)
+            onManipulation(manipulation);
+    }
+
+    private record TouchState(ScreenPosition Center, double? Radius, double? Angle, int LocationsLength)
+    {
+        public double GetRotationChange(TouchState previousTouchState)
+        {
+            if (Angle is null)
+                return 0;
+            if (previousTouchState.Angle is null)
+                return 0;
+            return Angle.Value - previousTouchState.Angle.Value;
+        }
+
+        public double GetScaleFactor(TouchState previousTouchState)
+        {
+            if (Radius is null)
+                return 1;
+            if (previousTouchState.Radius is null)
+                return 1;
+            return Radius.Value / previousTouchState.Radius.Value;
+        }
+    }
+}

@@ -20,6 +20,9 @@ using Map = Mapsui.Map;
 
 namespace DrawnUi.Maui.MapsUi;
 
+/// <summary>
+/// MapControl for MAUI DrawnUI
+/// </summary>
 public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 {
 
@@ -106,6 +109,8 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 
         if (args.Type == TouchActionResult.Down)
         {
+            Super.Log($"[DOWN] id {args.Event.Id}");
+            
             _positions[args.Event.Id] = position;
             if (_positions.Count == 1) // Not sure if this check is necessary.
                 _manipulationTracker.Restart(_positions.Values.ToArray());
@@ -115,6 +120,11 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
             //    return consumed;
 
             return base.ProcessGestures(args, apply);
+        }
+        else
+        if (args.Type == TouchActionResult.Pinched)
+        {
+            
         }
         else
         if (args.Type == TouchActionResult.Panning)
@@ -143,7 +153,7 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
         //    OnZoomInOrOut(e.WheelDelta, position);
         //}
         else
-        if (args.Type == TouchActionResult.Pinched)
+        if (false && args.Type == TouchActionResult.Pinched)
         {
             _wasPinching = true;
 
@@ -825,4 +835,3 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
         return false;
     }
 }
-
