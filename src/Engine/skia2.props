@@ -2,7 +2,7 @@
   <!-- Conditional for SkiaSharp 2 -->
   <PropertyGroup>
     <PackageReleaseNotes>Alpha for SkiaSharp 2.xx</PackageReleaseNotes>
-    <Version>1.2.1.1</Version>
+    <Version>1.2.2.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.7" />

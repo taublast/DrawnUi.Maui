@@ -122,11 +122,6 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
             return base.ProcessGestures(args, apply);
         }
         else
-        if (args.Type == TouchActionResult.Wheel)
-        {
-
-        }
-        else
         if (args.Type == TouchActionResult.Panning)
         {
             _positions[args.Event.Id] = position;

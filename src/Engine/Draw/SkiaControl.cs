@@ -6548,6 +6548,9 @@ namespace DrawnUi.Maui.Draw
 
             foreach (var child in Views.ToList())
             {
+                if (child == null)
+                    continue;
+
                 child.OnWillDisposeWithChildren();
             }
         }
@@ -6556,6 +6559,9 @@ namespace DrawnUi.Maui.Draw
         {
             foreach (var child in Views.ToList())
             {
+                if (child == null)
+                    continue;
+
                 RemoveSubView(child);
             }
 

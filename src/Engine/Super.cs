@@ -30,7 +30,7 @@ namespace DrawnUi.Maui.Draw;
 public partial class Super
 {
 
-#if (!ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if (!ONPLATFORM)
 
     protected static void SetupFrameLooper()
     {

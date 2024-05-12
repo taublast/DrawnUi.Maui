@@ -119,7 +119,11 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
         FrameTime = Super.GetCurrentTimeNanos();
 
+#if ANDROID
         CalculateFPS(FrameTime);
+#else
+        CalculateFPS(FrameTime, 60);
+#endif
 
         if (OnDraw != null && Super.EnableRendering)
         {
