@@ -69,7 +69,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual bool IsVisibleInViewTree()
         {
-            return GetIsVisibleWithParent(this);
+            return IsVisible; //this is used by animators, do not make this heavier!
         }
 
         public void TakeScreenShot(Action<SKImage> callback)

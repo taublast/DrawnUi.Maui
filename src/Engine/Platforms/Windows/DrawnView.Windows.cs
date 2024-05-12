@@ -18,7 +18,7 @@ namespace DrawnUi.Maui.Views
         public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
-            IsHiddenInViewTree = !IsVisibleInViewTree();
+            IsHiddenInViewTree = !GetIsVisibleWithParent(this);
         }
 
         protected virtual void OnSizeChanged()
