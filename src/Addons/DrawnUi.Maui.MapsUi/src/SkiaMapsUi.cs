@@ -109,8 +109,8 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 
         if (args.Type == TouchActionResult.Down)
         {
-            Super.Log($"[DOWN] id {args.Event.Id}");
-            
+            //Super.Log($"[DOWN] id {args.Event.Id}");
+
             _positions[args.Event.Id] = position;
             if (_positions.Count == 1) // Not sure if this check is necessary.
                 _manipulationTracker.Restart(_positions.Values.ToArray());
@@ -122,9 +122,9 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
             return base.ProcessGestures(args, apply);
         }
         else
-        if (args.Type == TouchActionResult.Pinched)
+        if (args.Type == TouchActionResult.Wheel)
         {
-            
+
         }
         else
         if (args.Type == TouchActionResult.Panning)
@@ -153,22 +153,22 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
         //    OnZoomInOrOut(e.WheelDelta, position);
         //}
         else
-        if (false && args.Type == TouchActionResult.Pinched)
+        if (args.Type == TouchActionResult.Wheel)
         {
             _wasPinching = true;
 
             //if (!ZoomLocked)
             {
-                if (_lastPinch != 0 || args.Event.Pinch.Delta != 0)
+                if (_lastPinch != 0 || args.Event.Wheel.Delta != 0)
                 {
                     double delta = 0;
-                    if (args.Event.Pinch.Delta != 0)
+                    if (args.Event.Wheel.Delta != 0)
                     {
-                        delta = args.Event.Pinch.Delta * PinchMultiplier * ZoomSpeed;
+                        delta = args.Event.Wheel.Delta * PinchMultiplier * ZoomSpeed;
                     }
                     else
                     {
-                        delta = (args.Event.Pinch.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
+                        delta = (args.Event.Wheel.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
 
                         if (Math.Abs(delta) < 10)
                         {
@@ -189,11 +189,11 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
                         }
                     }
 
-                    _lastPinch = args.Event.Pinch.Scale;
+                    _lastPinch = args.Event.Wheel.Scale;
 
                     if (delta != 0)
                     {
-                        point = TranslateInputOffsetToPixels(args.Event.Pinch.Center, apply.childOffset);
+                        point = TranslateInputOffsetToPixels(args.Event.Wheel.Center, apply.childOffset);
 
                         position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
 
@@ -208,7 +208,7 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
                 else
                 {
                     //attach
-                    _lastPinch = args.Event.Pinch.Scale;
+                    _lastPinch = args.Event.Wheel.Scale;
 
                 }
                 return this;

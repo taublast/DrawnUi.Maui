@@ -53,25 +53,33 @@ public class SkiaHotspotZoom : SkiaHotspot
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
-        if (args.Type == TouchActionResult.Pinched)
+        if (args.Type == TouchActionResult.Panning && args.Event.Manipulation != null)
+        {
+            _zoom += args.Event.Manipulation.Scale * ZoomSpeed;
+            _pinchCenter = args.Event.Manipulation.Center;
+            SetZoom(_zoom, false);
+            _zoom = ViewportZoom;
+        }
+        else
+        if (args.Type == TouchActionResult.Wheel)
         {
             _wasPinching = true;
 
             if (!ZoomLocked)
             {
-                if (_lastPinch != 0 || args.Event.Pinch.Delta != 0)
+                if (_lastPinch != 0 || args.Event.Wheel.Delta != 0)
                 {
                     double delta = 0;
-                    if (args.Event.Pinch.Delta != 0)
+                    if (args.Event.Wheel.Delta != 0)
                     {
-                        delta = args.Event.Pinch.Delta * ZoomSpeed;
+                        delta = args.Event.Wheel.Delta * ZoomSpeed;
                     }
                     else
-                        delta = (args.Event.Pinch.Scale - _lastPinch) * ZoomSpeed;
+                        delta = (args.Event.Wheel.Scale - _lastPinch) * ZoomSpeed;
 
-                    _lastPinch = args.Event.Pinch.Scale;
+                    _lastPinch = args.Event.Wheel.Scale;
                     _zoom += delta;
-                    _pinchCenter = args.Event.Pinch.Center;
+                    _pinchCenter = args.Event.Wheel.Center;
 
                     //Debug.WriteLine($"[ZOOM] got {args.Event.Pinch.Scale:0.000}, delta {delta:0.00} -> {_zoom:0.00}");
 
@@ -82,7 +90,7 @@ public class SkiaHotspotZoom : SkiaHotspot
                 else
                 {
                     //attach
-                    _lastPinch = args.Event.Pinch.Scale;
+                    _lastPinch = args.Event.Wheel.Scale;
                     LastValue = -1;
                     //Debug.WriteLine($"[ZOOM] attached to {_lastPinch:0.00}");
 

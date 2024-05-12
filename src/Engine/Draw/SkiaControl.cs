@@ -1125,7 +1125,7 @@ namespace DrawnUi.Maui.Draw
                     if (
                         (
                             args.Type == TouchActionResult.Panning ||
-                            args.Type == TouchActionResult.Pinched ||
+                            args.Type == TouchActionResult.Wheel ||
                             args.Type == TouchActionResult.Up))
                     {
                         foreach (var hadInput in HadInput.Values)
@@ -1179,7 +1179,7 @@ namespace DrawnUi.Maui.Draw
                         if (HadInput.Values.Contains(listener) &&
                             (
                                 args.Type == TouchActionResult.Panning ||
-                                args.Type == TouchActionResult.Pinched ||
+                                args.Type == TouchActionResult.Wheel ||
                                 args.Type == TouchActionResult.Up))
                         {
                             continue;
@@ -1265,7 +1265,7 @@ namespace DrawnUi.Maui.Draw
                             if (
                                 (
                                  args.Type == TouchActionResult.Panning ||
-                                 args.Type == TouchActionResult.Pinched ||
+                                 args.Type == TouchActionResult.Wheel ||
                                  args.Type == TouchActionResult.Up))
                             {
                                 foreach (var hadInput in HadInput.Values)
@@ -1306,7 +1306,7 @@ namespace DrawnUi.Maui.Draw
                                 if (HadInput.Values.Contains(listener) &&
                                     (
                                     args.Type == TouchActionResult.Panning ||
-                                    args.Type == TouchActionResult.Pinched ||
+                                    args.Type == TouchActionResult.Wheel ||
                                     args.Type == TouchActionResult.Up))
                                 {
                                     continue;

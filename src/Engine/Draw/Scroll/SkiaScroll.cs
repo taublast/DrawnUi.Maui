@@ -720,12 +720,12 @@ namespace DrawnUi.Maui.Draw
                 lastNumberOfTouches = args.Event.NumberOfTouches;
 
                 //----------------------------------------------------------------------
-                if (args.Type == TouchActionResult.Pinched && !ZoomLocked)
+                if (args.Type == TouchActionResult.Wheel && !ZoomLocked)
                 //----------------------------------------------------------------------
                 {
                     IsUserFocused = true;
                     //todo cmon this todo is here almost a year
-                    var zoomed = SetZoom(args.Event.Pinch.Scale);
+                    var zoomed = SetZoom(args.Event.Wheel.Scale);
                     consumed = this;
                 }
                 else
