@@ -249,6 +249,8 @@ public class SKTouchHandlerPublic : UIKit.UIGestureRecognizer
 
     public void SetEnabled(UIKit.UIView view, bool enableTouchEvents)
     {
+        return;
+        
         if (view != null)
         {
             if (!view.UserInteractionEnabled || DisablesUserInteraction)
