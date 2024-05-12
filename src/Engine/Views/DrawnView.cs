@@ -894,6 +894,11 @@ namespace DrawnUi.Maui.Views
             {
                 Invalidate();
             }
+            else
+            if (propertyName == nameof(IsVisible))
+            {
+                Super.NeedGlobalUpdate();
+            }
         }
 
         public Guid Uid { get; } = Guid.NewGuid();
