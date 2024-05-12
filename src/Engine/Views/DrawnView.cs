@@ -2397,15 +2397,13 @@ namespace DrawnUi.Maui.Views
         {
             if (element != null)
             {
-                if (element.Handler == null || !element.IsVisible)
+                if (!element.IsVisible)
                     return false;
 
                 if (element.Parent is VisualElement visualParent)
                 {
                     return GetIsVisibleWithParent(visualParent);
                 }
-
-                return element.Parent is IWindow;
             }
 
             return true;
