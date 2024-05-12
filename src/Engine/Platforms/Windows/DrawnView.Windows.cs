@@ -59,6 +59,7 @@ namespace DrawnUi.Maui.Views
             return
                CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
                && !OrderedDraw
+               && !IsHiddenInViewTree
                && !CanvasView.IsDrawing
                && IsDirty
                && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
@@ -75,8 +76,8 @@ namespace DrawnUi.Maui.Views
                 {
                     CheckElementVisibility(this);
                 }
-
-                CanvasView?.Update();
+                if (CanDraw)
+                    CanvasView?.Update();
             }
         }
 

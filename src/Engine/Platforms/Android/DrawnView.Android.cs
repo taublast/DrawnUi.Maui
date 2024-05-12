@@ -82,7 +82,8 @@ namespace DrawnUi.Maui.Views
                     if (NeedCheckParentVisibility)
                         CheckElementVisibility(this);
 
-                    CanvasView?.Update();
+                    if (CanDraw)
+                        CanvasView?.Update();
                 }
             }
         }
