@@ -138,7 +138,7 @@ public partial class Super
         {
             enableRendering = value;
             if (value)
-                NeedGlocalUpdate();
+                NeedGlobalUpdate();
         }
     }
 
@@ -154,7 +154,7 @@ public partial class Super
             if (_isRtl != value)
             {
                 _isRtl = value;
-                NeedGlocalUpdate();
+                NeedGlobalUpdate();
             }
         }
     }
@@ -396,7 +396,7 @@ public partial class Super
     public static void OnWentForeground()
     {
         InBackground = false;
-        NeedGlocalUpdate();
+        NeedGlobalUpdate();
         OnNativeAppResumed?.Invoke(null, EventArgs.Empty);
     }
 
@@ -408,7 +408,10 @@ public partial class Super
 
     public static event EventHandler NeedGlobalRefresh;
 
-    public static void NeedGlocalUpdate()
+    /// <summary>
+    /// This will force recalculate canvas visibility in ViewTree and update those visible
+    /// </summary>
+    public static void NeedGlobalUpdate()
     {
         NeedGlobalRefresh?.Invoke(null, null);
     }

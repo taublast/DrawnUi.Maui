@@ -14,40 +14,41 @@ namespace DrawnUi.Maui.Views
         /// If you set 
         /// </summary>
         /// <param name="element"></param>
-        public void CheckElementVisibility(Element element)
+        public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
+            IsHiddenInViewTree = !IsVisibleInViewTree();
 
-            if (element != null)
-            {
-                //WARNING this must be called form UI thread only!
+            //if (element != null)
+            //{
+            //    //WARNING this must be called form UI thread only!
 
-                if (element.Handler != null)
-                {
-                    if (element.Handler.PlatformView is UIKit.UIView iosView)
-                    {
-                        if (iosView.Hidden)
-                        {
-                            IsHiddenInViewTree = true;
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    if (element.GetVisualElementWindow() == null)
-                    {
-                        IsHiddenInViewTree = true;
-                        return;
-                    }
-                }
-
-
-                element = element.Parent;
-            }
+            //    if (element.Handler != null)
+            //    {
+            //        if (element.Handler.PlatformView is UIKit.UIView iosView)
+            //        {
+            //            if (iosView.Hidden)
+            //            {
+            //                IsHiddenInViewTree = true;
+            //                return;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (element.GetVisualElementWindow() == null)
+            //        {
+            //            IsHiddenInViewTree = true;
+            //            return;
+            //        }
+            //    }
 
 
-            IsHiddenInViewTree = false;
+
+            //}
+
+
+            //IsHiddenInViewTree = false;
         }
 
         protected virtual void OnSizeChanged()

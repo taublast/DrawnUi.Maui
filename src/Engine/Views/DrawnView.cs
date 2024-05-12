@@ -69,7 +69,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual bool IsVisibleInViewTree()
         {
-            return IsVisible; //todo
+            return GetIsVisibleWithParent(this);
         }
 
         public void TakeScreenShot(Action<SKImage> callback)
@@ -2393,10 +2393,27 @@ namespace DrawnUi.Maui.Views
         }
 
 
+        public bool GetIsVisibleWithParent(VisualElement element)
+        {
+            if (element != null)
+            {
+                if (element.Handler == null || !element.IsVisible)
+                    return false;
+
+                if (element.Parent is VisualElement visualParent)
+                {
+                    return GetIsVisibleWithParent(visualParent);
+                }
+
+                return element.Parent is IWindow;
+            }
+
+            return true;
+        }
 
 #if !ONPLATFORM
 
-        public void CheckElementVisibility(Element element)
+        public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
         }

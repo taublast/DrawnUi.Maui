@@ -436,7 +436,7 @@ public static class DependencyExtensions
                                         //not working with several displays never ever
                                         //var test = DeviceDisplay.Current.MainDisplayInfo.Density;                                      
                                         Super.Screen.Density = windowScene.Screen.Scale;
-                                        Super.NeedGlocalUpdate();
+                                        Super.NeedGlobalUpdate();
                                     }
                                 }
                             }
@@ -467,7 +467,7 @@ public static class DependencyExtensions
                                             if (Super.Screen.Density != windowScene.Screen.Scale)
                                             {
                                                 Super.Screen.Density = windowScene.Screen.Scale;
-                                                Super.NeedGlocalUpdate();
+                                                Super.NeedGlobalUpdate();
                                             }
                                         }
                                     }

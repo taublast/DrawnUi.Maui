@@ -27,38 +27,40 @@ namespace DrawnUi.Maui.Views
         /// If you set 
         /// </summary>
         /// <param name="element"></param>
-        public void CheckElementVisibility(Element element)
+        public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
-
-            if (element != null)
-            {
-
-                if (element.Handler != null)
-                {
-                    if (element.Handler.PlatformView is Android.Views.View nativeView)
-                    {
-                        if (nativeView.Visibility != Android.Views.ViewStates.Visible)
-                        {
-                            IsHiddenInViewTree = true;
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    if (element.GetVisualElementWindow() == null)
-                    {
-                        IsHiddenInViewTree = true;
-                        return;
-                    }
-                }
-
-                element = element.Parent;
-            }
+            IsHiddenInViewTree = !IsVisibleInViewTree();
 
 
-            IsHiddenInViewTree = false;
+            //if (element != null)
+            //{
+
+            //    if (element.Handler != null)
+            //    {
+            //        if (element.Handler.PlatformView is Android.Views.View nativeView)
+            //        {
+            //            if (nativeView.Visibility != Android.Views.ViewStates.Visible)
+            //            {
+            //                IsHiddenInViewTree = true;
+            //                return;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (element.GetVisualElementWindow() == null)
+            //        {
+            //            IsHiddenInViewTree = true;
+            //            return;
+            //        }
+            //    }
+
+
+            //}
+
+
+            //IsHiddenInViewTree = false;
         }
 
 #if CHOREOGRAPHER
