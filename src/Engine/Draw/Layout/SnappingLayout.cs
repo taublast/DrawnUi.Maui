@@ -177,35 +177,9 @@ public class SnappingLayout : SkiaLayout
     {
         get
         {
-            return CanDraw && ViewportReady;
+            return CanDraw && LayoutReady;
         }
     }
-
-    protected virtual void OnViewportIsReady()
-    {
-
-    }
-
-    public bool ViewportReady
-    {
-        get
-        {
-            return _viewportReady;
-        }
-
-        protected set
-        {
-            if (_viewportReady != value)
-            {
-                _viewportReady = value;
-                OnPropertyChanged();
-                OnViewportReady?.Invoke(this, null);
-                if (value)
-                    OnViewportIsReady();
-            }
-        }
-    }
-    bool _viewportReady;
 
     protected bool ScrollLocked { get; set; }
 
@@ -214,7 +188,7 @@ public class SnappingLayout : SkiaLayout
     protected RangeVectorAnimator _animatorRange;
     private Vector2 _currentPosition;
 
-    protected Vector2 CurrentSnap { get; set; }
+    protected Vector2 CurrentSnap { get; set; } = new(-1, -1);
 
     /// <summary>
     /// todo calc upon measured size + prop for speed
@@ -312,15 +286,28 @@ public class SnappingLayout : SkiaLayout
         }
     }
 
+    protected Vector2 _appliedPosition;
     public virtual void ApplyPosition(Vector2 position)
     {
+        _appliedPosition = position;
+
         TranslationX = position.X;
         TranslationY = position.Y;
+
         MainThread.BeginInvokeOnMainThread(() =>
         {
             InTransition = !CheckTransitionEnded();
         });
+
+        SendScrolled();
     }
+
+    public virtual void SendScrolled()
+    {
+        Scrolled?.Invoke(this, _appliedPosition);
+    }
+
+    public event EventHandler<Vector2> Scrolled;
 
     public virtual bool CheckTransitionEnded()
     {
@@ -429,7 +416,12 @@ public class SnappingLayout : SkiaLayout
         {
             if (b is SnappingLayout control)
             {
-                control.OnTransitionChanged?.Invoke(control, (bool)n);
+                var changed = (bool)n;
+                control.OnTransitionChanged?.Invoke(control, changed);
+                if (!changed)
+                {
+                    control.SendScrolled();
+                }
             }
         });
 

@@ -5,8 +5,22 @@ using System.Runtime.CompilerServices;
 namespace DrawnUi.Maui.Draw;
 
 [ContentProperty("Content")]
-public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibilityAware
+public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGestureListener
 {
+
+    public override void Invalidate()
+    {
+        base.Invalidate();
+
+        Update();
+    }
+
+    public override void OnWillDisposeWithChildren()
+    {
+        base.OnWillDisposeWithChildren();
+
+        Content?.Dispose();
+    }
 
     public virtual void OnFocusChanged(bool focus)
     {
@@ -58,7 +72,7 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
         //background measuring or invisible or self measure from draw because layout will never pass -1
-        if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
+        if (IsMeasuring || !CanDraw || widthConstraint < 0 || heightConstraint < 0)
         {
             return MeasuredSize;
         }
@@ -75,39 +89,17 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
 
             if (request.WidthRequest == 0 || request.HeightRequest == 0)
             {
-                return SetMeasured(0, 0, request.Scale);
+                InvalidateCache();
+
+                return SetMeasuredAsEmpty(request.Scale);
             }
 
             var constraints = GetMeasuringConstraints(request);
 
-            if (IsContentActive)
-            {
-                var children = new List<SkiaControl> { Content };
-                ContentSize = MeasureContent(children, constraints.Content, request.Scale);
-            }
-            else
-            {
-                ContentSize = ScaledSize.Empty;
-            }
+            var children = new List<SkiaControl> { Content };
+            ContentSize = MeasureContent(children, constraints.Content, scale);
 
-            //var width = constraints.Request.Width;
-            //if (HorizontalOptions.Alignment != LayoutAlignment.Fill || width < 0 || float.IsNaN(width) ||
-            //    float.IsInfinity(width))
-            //{
-            //    width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-            //}
-
-            //var height = constraints.Request.Height;
-            //if (VerticalOptions.Alignment != LayoutAlignment.Fill || width < 0 || float.IsNaN(width) ||
-            //    float.IsInfinity(width))
-            //{
-            //    height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-            //}
-
-            var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-            var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
-
-            return SetMeasured(width, height, request.Scale);
+            return SetMeasuredAdaptToContentSize(constraints, scale);
         }
         finally
         {
@@ -263,22 +255,6 @@ public partial class ContentLayout : SkiaControl, ISkiaGestureListener, IVisibil
     {
         get { return (ScrollOrientation)GetValue(OrientationProperty); }
         set { SetValue(OrientationProperty, value); }
-    }
-
-    public static readonly BindableProperty FluidPanProperty = BindableProperty.Create(
-        nameof(FluidPan),
-        typeof(bool),
-        typeof(ContentLayout),
-        true);
-
-    /// <summary>
-    /// if enabled you get a fluidly panning scroll, if disabled you get a precisely panning scroll.
-    /// In the first case  we add last finger movement to last scroll position, in the second case we just set scroll position to current finger position. Default is True.
-    /// </summary>
-    public bool FluidPan
-    {
-        get { return (bool)GetValue(FluidPanProperty); }
-        set { SetValue(FluidPanProperty, value); }
     }
 
     public static readonly BindableProperty ScrollTypeProperty = BindableProperty.Create(nameof(ViewportScrollType), typeof(ViewportScrollType), typeof(ContentLayout),

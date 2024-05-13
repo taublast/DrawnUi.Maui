@@ -2,6 +2,47 @@
 
 namespace DrawnUi.Maui.Draw;
 
+public class CachedShader : IDisposable
+{
+
+    public SKRect Destination { get; set; }
+    public SKShader Shader { get; set; }
+
+    public void Dispose()
+    {
+        Shader?.Dispose();
+        Shader = null;
+        OnDisposing();
+    }
+
+    protected virtual void OnDisposing()
+    {
+
+    }
+}
+
+public class CachedGradient : CachedShader
+{
+    public SkiaGradient Gradient { get; set; }
+
+    protected override void OnDisposing()
+    {
+        Gradient = null;
+    }
+}
+
+public class CachedShadow : IDisposable
+{
+    public SkiaShadow Shadow { get; set; }
+    public SKImageFilter Filter { get; set; }
+    public float Scale { get; set; }
+
+    public void Dispose()
+    {
+        Filter?.Dispose();
+    }
+}
+
 public class DescendingZIndexGestureListenerComparer : IComparer<ISkiaGestureListener>
 {
     public int Compare(ISkiaGestureListener x, ISkiaGestureListener y)

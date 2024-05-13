@@ -42,14 +42,14 @@
 	  <CodesignProvision>Automatic</CodesignProvision>
 	</PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+    <!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
         <CreatePackage>false</CreatePackage>
         <CodesignKey>iPhone Developer</CodesignKey>
         <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
         <MtouchLink>None</MtouchLink>
         <RuntimeIdentifier>iossimulator-x64</RuntimeIdentifier>
         <ForceSimulatorX64ArchitectureInIDE>true</ForceSimulatorX64ArchitectureInIDE>
-    </PropertyGroup>
+    </PropertyGroup>-->
     
   <ItemGroup>
 	  <MauiImage Include="Resources\Raw\Svg\dotnet_bot.svg">
@@ -175,6 +175,7 @@
 	</ItemGroup>
  
   <ItemGroup>
+    <ProjectReference Include="..\..\Addons\DrawnUi.Maui.MapsUi\src\DrawnUi.Maui.MapsUi.csproj" />
     <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
   </ItemGroup>
  
@@ -184,6 +185,12 @@
     </Compile>
     <Compile Update="Views\AlohaKit.xaml.cs">
       <DependentUpon>AlohaKit.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Controls\DrawnRadioButton.xaml.cs">
+      <DependentUpon>DrawnRadioButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Controls\DrawnSlider.xaml.cs">
+      <DependentUpon>DrawnSlider.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\MainPageAlohaKit.xaml.cs">
       <DependentUpon>MainPageAlohaKit.xaml</DependentUpon>
@@ -261,7 +268,6 @@
   <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <Compile Remove="Views\MainPageMap.xaml.cs" />
     <MauiXaml Remove="Views\MainPageMap.xaml" />
-    <Compile Remove="Views\Controls\MapsUi\**\*.cs" />
   </ItemGroup>
 
 
@@ -269,7 +275,13 @@
     <MauiXaml Update="ImageTestPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\Controls\DrawnRadioButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\MainPageControls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\Xaml2Pdf\ReportSample.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

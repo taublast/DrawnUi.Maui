@@ -21,6 +21,7 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
     public bool IsDeactivated { get; set; }
 
     public bool IsPaused { get; set; }
+    public bool IsHiddenInViewTree { get; set; }
 
     public virtual void Pause()
     {
@@ -83,8 +84,12 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
 
     protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
     {
-        Text = $"FPS: {Superview.FPS:00.0}";
         base.Draw(context, destination, scale);
+
+        if (Superview == null)
+            return;
+
+        Text = $"FPS: {Superview.FPS:00.0}";
 
         UpdateForceRefresh();
         //if we had zero updates after 2secs just display a zero

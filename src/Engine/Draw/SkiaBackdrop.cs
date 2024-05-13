@@ -6,10 +6,9 @@ namespace DrawnUi.Maui.Draw;
 /// <summary>
 /// Warning with CPU-rendering edges will not be blurred: https://issues.skia.org/issues/40036320
 /// </summary>
-public class SkiaBackdrop : ContentLayout
+public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
 {
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         //consume everything
         return this;
@@ -122,25 +121,22 @@ public class SkiaBackdrop : ContentLayout
 
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
     {
-        if (IsDisposed)
+        if (IsDisposed || IsDisposing)
         {
-            //this will save a lot of trouble debugging unknown native crashes
-            var message = $"[SkiaControl] Attempting to Paint a disposed control: {this}";
-            Trace.WriteLine(message);
-            throw new Exception(message);
+            return;
         }
 
         if (NeedInvalidateImageFilter)
         {
             NeedInvalidateImageFilter = false;
-            // PaintImageFilter?.Dispose(); //might be used in double buffered!
+            PaintImageFilter?.Dispose();
             PaintImageFilter = null;
         }
 
         if (NeedInvalidateColorFilter)
         {
             NeedInvalidateColorFilter = false;
-            // PaintColorFilter?.Dispose(); //might be used in double buffered!
+            PaintColorFilter?.Dispose();
             PaintColorFilter = null;
         }
 
@@ -158,37 +154,46 @@ public class SkiaBackdrop : ContentLayout
             ImagePaint.ImageFilter = PaintImageFilter;
             ImagePaint.ColorFilter = PaintColorFilter;
 
-            //notice we read from the real canvas and we write to ctx.Canvas which can be cache
-
-            //if (ctx.Superview.HardwareAcceleration != HardwareAccelerationMode.Disabled)
-
-            if (CacheSource != null)
+            if (!IsGhost)// && HasEffects)
             {
-                var cache = CacheSource.RenderObject;
-                if (cache != null && !IsGhost && HasEffects)
-                {
-                    var offsetX = CacheSource.DrawingRect.Left - this.DrawingRect.Left;
-                    var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
-                    destination.Offset(offsetX, offsetY);
 
-                    cache.Draw(ctx.Superview.CanvasView.Surface.Canvas, destination, ImagePaint);
+                if (CacheSource != null)
+                {
+                    var cache = CacheSource.RenderObject;
+                    if (cache != null && !IsGhost && HasEffects)
+                    {
+                        var offsetX = CacheSource.DrawingRect.Left - this.DrawingRect.Left;
+                        var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
+                        destination.Offset(offsetX, offsetY);
+
+                        cache.Draw(ctx.Surface.Canvas, destination, ImagePaint);
+                    }
                 }
-            }
-            else
-            {
-                ctx.Superview.CanvasView.Surface.Canvas.Flush();
-                var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
-
-                if (snapshot != null && Snapshot != snapshot)
+                else
                 {
-                    var kill = Snapshot;
-                    if (!IsGhost && HasEffects)
+                    SKImage snapshot;
+                    if (UseContext)
+                    {
+                        ctx.Canvas.Flush();
+                        snapshot = ctx.Surface.Snapshot(new((int)destination.Left, (int)destination.Top,
+                            (int)destination.Right, (int)destination.Bottom));
+                    }
+                    else
+                    {
+                        //notice we read from the real canvas and we write to ctx.Canvas which can be cache
+                        ctx.Superview.CanvasView.Surface.Canvas.Flush();
+                        snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left,
+                            (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
+                    }
+
+                    if (snapshot != null && Snapshot != snapshot)
+                    {
+                        var kill = Snapshot;
                         ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
-
-                    Snapshot = snapshot;
-                    kill?.Dispose();
+                        Snapshot = snapshot;
+                        kill?.Dispose();
+                    }
                 }
-
             }
 
             if (kill1 != null && kill1 != ImagePaint.ImageFilter)
@@ -200,6 +205,8 @@ public class SkiaBackdrop : ContentLayout
         }
 
     }
+
+    private bool UseContext = false;
 
     protected SKImage Snapshot { get; set; }
 
@@ -246,7 +253,7 @@ public class SkiaBackdrop : ContentLayout
     /// <summary>
     /// Returns the snapshot that was used for drawing the backdrop.
     /// If we have no effects or the control has not yet been drawn the return value will be null.
-    /// You are responsible to dispose the returned image yourself.
+    /// You are responsible to dispose the returned image!
     /// </summary>
     /// <returns></returns>
     public virtual SKImage GetImage()

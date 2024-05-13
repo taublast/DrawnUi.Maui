@@ -186,7 +186,6 @@ namespace DrawnUi.Maui.Draw
             return uniqueId;
         }
 
-
         public void SetReturnType(ReturnType type)
         {
 
@@ -219,7 +218,6 @@ namespace DrawnUi.Maui.Draw
             break;
             }
         }
-
 
         public class MyTextWatcher : Java.Lang.Object, ITextWatcher
         {

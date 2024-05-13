@@ -150,6 +150,9 @@ public class AnimatedFramesRenderer : SkiaControl
     {
         if (CanPlay)
         {
+            if (Animator.IsRunning)
+                Animator.Stop();
+
             OnAnimatorStarting();
             Animator.Start(delayMs);
         }

@@ -72,7 +72,8 @@
                     x:Name="StackContainer"
                     HorizontalOptions="Start"
                     Spacing="16"
-                    Type="Column"
+                    Split="1"
+                    Type="Stack"
                     VerticalOptions="Start">
 
                     <draw:SkiaLabel

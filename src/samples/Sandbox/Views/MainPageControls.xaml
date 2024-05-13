@@ -21,26 +21,107 @@
 
         <draw:SkiaLayout
             HorizontalOptions="Fill"
+            Tag="Wrapper"
             VerticalOptions="Fill">
 
-
             <draw:SkiaScroll
-                BackgroundColor="White"
+                BackgroundColor="WhiteSmoke"
                 HorizontalOptions="Fill"
+                Tag="Scroll"
                 VerticalOptions="Fill">
 
                 <draw:SkiaLayout
-                    Padding="0,32"
-                    HorizontalOptions="Center"
-                    Tag="Content"
-                    Type="Column"
-                    UseCache="ImageComposition"
-                    WidthRequest="250">
+                    HorizontalOptions="Fill"
+                    Type="Column">
 
-                    <controls:SkiaSwitchFun UseCache="Operations" />
+                    <draw:SkiaLayout
+                        Margin="16,20,16,16"
+                        AddMarginTop="10"
+                        BackgroundColor="Transparent"
+                        HorizontalOptions="Fill"
+                        Spacing="16"
+                        Split="0"
+                        Type="Stack"
+                        UseCache="ImageComposite">
 
-                    <controls:SkiaSliderFun UseCache="Operations" />
+                        <controls:DrawnRadioButton Text="Flowers" />
 
+                        <controls:DrawnRadioButton
+                            HorizontalOptions="Start"
+                            Text="Food" />
+
+                        <controls:DrawnRadioButton Text="Origami" />
+
+                        <controls:DrawnRadioButton Text="Lego Bricks" />
+
+                        <controls:DrawnRadioButton
+                            Tag="CheckMe"
+                            Text="Something else" />
+
+                        <controls:DrawnRadioButton Text="Various" />
+
+                    </draw:SkiaLayout>
+
+                    <!--  todo bugged FontAttributes="Bold"  -->
+
+                    <draw:SkiaLayout
+                        Padding="0,32"
+                        HorizontalOptions="Center"
+                        Spacing="20"
+                        Tag="Content"
+                        Type="Stack"
+                        UseCache="ImageComposite"
+                        WidthRequest="280">
+
+                        <draw:SkiaLayout HorizontalOptions="Fill">
+
+                            <draw:SkiaShape
+                                AddMarginTop="10"
+                                CornerRadius="12"
+                                HorizontalOptions="Fill"
+                                StrokeColor="Black"
+                                StrokeWidth="1.0"
+                                VerticalOptions="Fill" />
+
+
+
+
+                            <draw:SkiaLabel
+                                Margin="16,0,0,0"
+                                Padding="4,0"
+                                BackgroundColor="White"
+                                Text="Radio Buttons" />
+
+                            <draw:SkiaLayout
+                                Margin="20"
+                                AddMarginTop="14"
+                                DynamicColumns="True"
+                                HorizontalOptions="Fill"
+                                Spacing="12"
+                                Split="2"
+                                Type="Stack"
+                                UseCache="ImageComposite">
+
+                                <controls:DrawnRadioButton Text="Flowers" />
+
+                                <controls:DrawnRadioButton Text="Food" />
+
+                                <controls:DrawnRadioButton Text="Origami" />
+
+                                <controls:DrawnRadioButton Text="Lego Bricks" />
+
+                                <controls:DrawnRadioButton Text="Something else" />
+
+                                <controls:DrawnRadioButton Text="Various" />
+
+                            </draw:SkiaLayout>
+                        </draw:SkiaLayout>
+
+                        <controls:DrawnSwitch />
+
+                        <controls:DrawnSlider />
+
+                    </draw:SkiaLayout>
 
                 </draw:SkiaLayout>
 

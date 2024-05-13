@@ -8,7 +8,7 @@ namespace DrawnUi.Maui.Draw;
 /// <summary>
 /// Wrapper to zoom and pan content by changing the rendering scale so not affecting quality, this is not a transform.TODO add animated movement
 /// </summary>
-public class ZoomContent : ContentLayout
+public class ZoomContent : ContentLayout, ISkiaGestureListener
 {
     protected override void OnBindingContextChanged()
     {
@@ -153,42 +153,22 @@ public class ZoomContent : ContentLayout
         return (float)(value * useScale);
     }
 
+
     public (SKRect ScaledDestination, float Scale) ComputeContentScale(SKRect destination, SKPoint offsetCenter, float scale)
     {
         var useScale = scale / (float)ViewportZoom;
         var scaleDifference = scale - useScale;
+        var applyScale = 1 + scaleDifference;
 
-        var scaledOffset = new SKPoint(offsetCenter.X * (1 + scaleDifference), offsetCenter.Y * (1 + scaleDifference));
+        var scaledDestination = new SKRect(destination.Left * applyScale, destination.Top * applyScale, destination.Right * applyScale, destination.Bottom * applyScale);
+        var offsetScaled = new SKPoint(offsetCenter.X * applyScale, offsetCenter.Y * applyScale);
+        var offsetToCenter = new SKPoint(-(scaledDestination.Width - destination.Width) / 2f, -(scaledDestination.Height - destination.Height) / 2f);
 
-        float scaledContentWidth = Content.MeasuredSize.Units.Width * useScale;
-        float scaledContentHeight = Content.MeasuredSize.Units.Height * useScale;
+        var moveX = Math.Clamp(offsetScaled.X, offsetToCenter.X, -offsetToCenter.X);
+        var moveY = Math.Clamp(offsetScaled.Y, offsetToCenter.Y, -offsetToCenter.Y);
+        scaledDestination.Offset(offsetToCenter.X + moveX, offsetToCenter.Y + moveY);
 
-        // Calculate boundaries for clamping
-        float maxOffsetX = Math.Max(0, (scaledContentWidth - destination.Width) / 2);
-        float minOffsetX = -maxOffsetX;
-        float maxOffsetY = Math.Max(0, (scaledContentHeight - destination.Height) / 2);
-        float minOffsetY = -maxOffsetY;
-
-        // Clamp offsetCenter to these boundaries
-        float clampedOffsetX = Math.Clamp(scaledOffset.X, minOffsetX, maxOffsetX);
-        float clampedOffsetY = Math.Clamp(scaledOffset.Y, minOffsetY, maxOffsetY);
-
-        // Remaining scaling and positioning logic...
-        float centerX = destination.Left + destination.Width / 2.0f;
-        float centerY = destination.Top + destination.Height / 2.0f;
-
-        float newWidth = destination.Width * (1 + scaleDifference);
-        float newHeight = destination.Height * (1 + scaleDifference);
-
-        float newLeft = centerX - (newWidth / 2) + clampedOffsetX;
-        float newTop = centerY - (newHeight / 2) + clampedOffsetY;
-
-        var scaledDestination = new SKRect(
-            (float)Math.Round(newLeft),
-            (float)Math.Round(newTop),
-            (float)Math.Round(newLeft + newWidth),
-            (float)Math.Round(newTop + newHeight)
-            );
+        //scaledDestination.Offset(offsetToCenter);
 
         return (scaledDestination, useScale);
     }
@@ -206,7 +186,13 @@ public class ZoomContent : ContentLayout
 
     protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
     {
-        var use = ComputeContentScale(destination, scale, OffsetImage);
+        var offset = OffsetImage;
+        if (scale == 1)
+        {
+            offset = SKPoint.Empty;
+        }
+
+        var use = ComputeContentScale(destination, scale, offset);
 
         var useScale = use.Scale;
         if (use.Scale < 1)
@@ -224,7 +210,13 @@ public class ZoomContent : ContentLayout
 
     protected override ScaledSize MeasureContent(IEnumerable<SkiaControl> children, SKRect destination, float scale)
     {
-        var use = ComputeContentScale(destination, scale, OffsetImage);
+        var offset = OffsetImage;
+        if (scale == 1)
+        {
+            offset = SKPoint.Empty;
+        }
+
+        var use = ComputeContentScale(destination, scale, offset);
 
         return base.MeasureContent(children, use.ScaledDestination, use.Scale);
     }
@@ -241,41 +233,40 @@ public class ZoomContent : ContentLayout
 
     protected PointF _panStarted;
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
-        if (touchAction == TouchActionResult.Pinched)
+        if (args.Type == TouchActionResult.Wheel)
         {
             _wasPinching = true;
 
             if (!ZoomLocked)
             {
-                if (_lastPinch != 0 || args.Pinch.Delta != 0)
+                if (_lastPinch != 0 || args.Event.Wheel.Delta != 0)
                 {
                     double delta = 0;
-                    if (args.Pinch.Delta != 0)
+                    if (args.Event.Wheel.Delta != 0)
                     {
-                        delta = args.Pinch.Delta * ZoomSpeed;
+                        delta = args.Event.Wheel.Delta * ZoomSpeed;
                     }
                     else
-                        delta = (args.Pinch.Scale - _lastPinch) * ZoomSpeed;
+                        delta = (args.Event.Wheel.Scale - _lastPinch) * ZoomSpeed;
 
                     if (PanningMode == PanningModeType.TwoFingers || PanningMode == PanningModeType.Enabled)
                     {
-                        var moved = args.Pinch.Center - _pinchCenter;
+                        var moved = args.Event.Wheel.Center - _pinchCenter;
 
                         OffsetImage = new(
-                            (float)Math.Round(OffsetImage.X - Math.Round(ScalePoints(PanSpeed) * moved.Width / RenderingScale)),
-                            (float)Math.Round(OffsetImage.Y - Math.Round(ScalePoints(PanSpeed) * moved.Height / RenderingScale)));
+                            (float)(OffsetImage.X - (ScalePoints(PanSpeed) * moved.Width / RenderingScale)),
+                            (float)(OffsetImage.Y - (ScalePoints(PanSpeed) * moved.Height / RenderingScale)));
                     }
 
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Wheel.Scale;
                     _zoom += delta;
 
-                    //Debug.WriteLine($"[ZOOM] got {args.Pinch.Scale:0.000}, delta {delta:0.00} -> {_zoom:0.00}");
+                    //Debug.WriteLine($"[ZOOM] got {args.Event.Pinch.Scale:0.000}, delta {delta:0.00} -> {_zoom:0.00}");
 
-                    _pinchCenter = args.Pinch.Center;
+                    _pinchCenter = args.Event.Wheel.Center;
 
                     SetZoom(_zoom, false); //todo
 
@@ -284,16 +275,16 @@ public class ZoomContent : ContentLayout
                 else
                 {
                     //attach
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Wheel.Scale;
 
                     if (!_wasPanning)
-                        _pinchCenter = args.Pinch.Center;
+                        _pinchCenter = args.Event.Wheel.Center;
                     else
                     {
-                        var inverseOffsetX = (float)Math.Round(OffsetImage.X / ScalePoints(PanSpeed)) * RenderingScale;
-                        var inverseOffsetY = (float)Math.Round(OffsetImage.Y / ScalePoints(PanSpeed)) * RenderingScale;
+                        var inverseOffsetX = (float)(OffsetImage.X / ScalePoints(PanSpeed)) * RenderingScale;
+                        var inverseOffsetY = (float)(OffsetImage.Y / ScalePoints(PanSpeed)) * RenderingScale;
 
-                        _pinchCenter = new(args.Pinch.Center.X - inverseOffsetX, args.Pinch.Center.Y - inverseOffsetY);
+                        _pinchCenter = new(args.Event.Wheel.Center.X - inverseOffsetX, args.Event.Wheel.Center.Y - inverseOffsetY);
 
                     }
 
@@ -303,46 +294,75 @@ public class ZoomContent : ContentLayout
             }
         }
         else
-        if (touchAction == TouchActionResult.Panning)
+        if (args.Type == TouchActionResult.Panning)
         {
-            if (_wasPinching && args.NumberOfTouches < 2)
+            if (args.Event.Manipulation != null)
             {
-                _wasPinching = false;
-                _wasPanning = false;
-            }
+                if (ZoomLocked)
+                    return null;
 
-            if (CompareDoubles(ViewportZoom, 1, 0.001))
-            {
-                return null; //let us be panned by parent control
-            }
+                _zoom += args.Event.Manipulation.Scale * ZoomSpeed;
+                _pinchCenter = args.Event.Manipulation.Center;
+                SetZoom(_zoom, false);
+                _zoom = ViewportZoom;
+                _wasPinching = true;
 
-            if (PanningMode == PanningModeType.OneFinger && args.NumberOfTouches < 2 || PanningMode == PanningModeType.Enabled)
-            {
-                if (!_wasPanning)
+                var deltatX = args.Event.Manipulation.Center.X - args.Event.Manipulation.PreviousCenter.X;
+                var deltatY = args.Event.Manipulation.Center.Y - args.Event.Manipulation.PreviousCenter.Y;
+                var offset = OffsetImage;
+                if (_zoom == 1)
                 {
-                    _panStarted = args.Location;
+                    OffsetImage = SKPoint.Empty;
+                }
+                else
+                {
+                    if (PanningMode == PanningModeType.Enabled || PanningMode == PanningModeType.TwoFingers)
+                    {
+                        OffsetImage = new((float)(offset.X - deltatX * PanSpeed), (float)(offset.Y - deltatY * PanSpeed));
+                    }
+                }
+            }
+            else
+            {
+                if (_wasPinching && args.Event.NumberOfTouches < 2)
+                {
+                    _wasPinching = false;
+                    _wasPanning = false;
                 }
 
-                _wasPanning = true;
+                if (CompareDoubles(ViewportZoom, 1, 0.001))
+                {
+                    return null; //let us be panned by parent control
+                }
 
-                var deltatX = args.Location.X - _panStarted.X;
-                var deltaY = args.Location.Y - _panStarted.Y;
+                if (PanningMode == PanningModeType.OneFinger && args.Event.NumberOfTouches < 2 || PanningMode == PanningModeType.Enabled)
+                {
+                    if (!_wasPanning)
+                    {
+                        _panStarted = args.Event.Location;
+                    }
 
-                _panStarted = args.Location;
+                    _wasPanning = true;
 
-                OffsetImage = new((float)Math.Round(OffsetImage.X - ScalePoints(PanSpeed) * deltatX / RenderingScale),
-                    (float)Math.Round(OffsetImage.Y - ScalePoints(PanSpeed) * deltaY / RenderingScale));
+                    var deltatX = args.Event.Location.X - _panStarted.X;
+                    var deltaY = args.Event.Location.Y - _panStarted.Y;
+
+                    _panStarted = args.Event.Location;
+
+                    OffsetImage = new((float)(OffsetImage.X - ScalePoints(PanSpeed) * deltatX / RenderingScale),
+                        (float)(OffsetImage.Y - ScalePoints(PanSpeed) * deltaY / RenderingScale));
+
+                }
 
                 Update();
 
                 return this;  //absorb
             }
-
         }
         else
-        if (touchAction == TouchActionResult.Up)
+        if (args.Type == TouchActionResult.Up)
         {
-            if (args.NumberOfTouches < 2 && ViewportZoom == 1)
+            if (args.Event.NumberOfTouches < 2 && ViewportZoom == 1)
             {
                 OffsetImage = SKPoint.Empty;
             }
@@ -351,10 +371,10 @@ public class ZoomContent : ContentLayout
 
         if (!_wasPinching)
         {
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
 
-        if (_wasPinching && touchAction == TouchActionResult.Up && args.NumberOfTouches < 2)
+        if (_wasPinching && args.Type == TouchActionResult.Up && args.Event.NumberOfTouches < 2)
         {
             _lastPinch = 0;
             _wasPinching = false;
@@ -461,6 +481,9 @@ public class ZoomContent : ContentLayout
         }
 
         LastValue = Value;
+
+        if (Value == 1)
+            _pinchCenter = PointF.Zero;
 
         //Debug.WriteLine($"[ZOOM] {ViewportZoom:0.000}");
     }

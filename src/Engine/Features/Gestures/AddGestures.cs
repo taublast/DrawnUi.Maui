@@ -7,7 +7,7 @@ namespace DrawnUi.Maui.Draw;
 /// <summary>
 /// For fast and lazy gestures handling to attach to dran controls inside the canvas only
 /// </summary>
-public static class AddGestures
+public static partial class AddGestures
 {
     public class GestureListener : SkiaControl, ISkiaGestureListener
     {
@@ -57,13 +57,12 @@ public static class AddGestures
             return _parent.TranslateInputCoords(childOffset, accountForCache);
         }
 
-        public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-            SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
             if (!_parent.CanDraw)
                 return null;
 
-            if (touchAction == TouchActionResult.Tapped)
+            if (args.Type == TouchActionResult.Tapped)
             {
                 var anim = GetAnimationTapped(_parent);
                 if (anim != SkiaTouchAnimation.None)
@@ -74,16 +73,16 @@ public static class AddGestures
 
                     if (view is IHasAfterEffects hasEffects)
                     {
-                        var thisOffset = TranslateInputCoords(childOffset, false);
-                        var pixX = args.Location.X + thisOffset.X;
-                        var pixY = args.Location.Y + thisOffset.Y;
+                        var thisOffset = TranslateInputCoords(apply.childOffset, false);
+                        var pixX = args.Event.Location.X + thisOffset.X;
+                        var pixY = args.Event.Location.Y + thisOffset.Y;
                         var x = pixX / RenderingScale;
                         var y = pixY / RenderingScale;
 
                         var color = GetTouchEffectColor(_parent);
                         if (anim == SkiaTouchAnimation.Ripple)
                         {
-                            var ptsInsideControl = hasEffects.GetOffsetInsideControlInPoints(args.Location, childOffset);
+                            var ptsInsideControl = hasEffects.GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
                             hasEffects.PlayRippleAnimation(color, ptsInsideControl.X, ptsInsideControl.Y);
                         }
                         else
@@ -106,7 +105,7 @@ public static class AddGestures
                 }
             }
             else
-            if (touchAction == TouchActionResult.LongPressing)
+            if (args.Type == TouchActionResult.LongPressing)
             {
                 var command = GetCommandLongPressing(_parent);
                 if (command != null)
@@ -118,13 +117,21 @@ public static class AddGestures
                     return this;
                 }
             }
+            else
+            if (args.Type == TouchActionResult.Panning)
+            {
+                if (GetLockPanning(_parent))
+                {
+                    return this;
+                }
+            }
 
             if (_parent is ISkiaGestureListener listener)
             {
-                return listener.OnSkiaGestureEvent(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+                return listener.OnSkiaGestureEvent(args, apply);
             }
 
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
 
         public void OnFocusChanged(bool focus)
@@ -207,7 +214,7 @@ public static class AddGestures
         {
             ICommand command = GetCommandTapped(control);
             var effect = GetAnimationTapped(control);
-            var needAttach = command != null || effect != SkiaTouchAnimation.None || GetCommandLongPressing(control) != null;
+            var needAttach = command != null || effect != SkiaTouchAnimation.None || GetCommandLongPressing(control) != null || GetLockPanning(control);
             return needAttach;
         }
         return false;
@@ -342,6 +349,22 @@ public static class AddGestures
     }
 
 
+    public static readonly BindableProperty LockPanningProperty =
+        BindableProperty.CreateAttached(
+            "LockPanning",
+            typeof(bool),
+            typeof(AddGestures),
+            null,
+            propertyChanged: OnAttachableChanged);
 
+    public static bool GetLockPanning(BindableObject view)
+    {
+        return (bool)view.GetValue(LockPanningProperty);
+    }
+
+    public static void SetLockPanning(BindableObject view, bool value)
+    {
+        view.SetValue(LockPanningProperty, value);
+    }
 
 }

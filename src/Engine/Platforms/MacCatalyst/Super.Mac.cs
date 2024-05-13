@@ -128,50 +128,66 @@ namespace DrawnUi.Maui.Draw
 
                 Super.NavBarHeight = 47; //manual
 
-
-
-            Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
+            if (UseDisplaySync)
             {
-                while (!_loopStarted)
-                {
-                    MainThread.BeginInvokeOnMainThread(async () =>
-                    {
-                        if (_loopStarting)
-                            return;
-                        _loopStarting = true;
 
-                        if (MainThread.IsMainThread) //Choreographer is available
+                Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
+                {
+                    while (!_loopStarted)
+                    {
+                        MainThread.BeginInvokeOnMainThread(async () =>
                         {
-                            if (!_loopStarted)
+                            if (_loopStarting)
+                                return;
+                            _loopStarting = true;
+
+                            if (MainThread.IsMainThread) //Choreographer is available
                             {
-                                _loopStarted = true;
-                                try
+                                if (!_loopStarted)
                                 {
-                                    _displayLink = CADisplayLink.Create(OnFrame);
-                                    _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                    throw;
+                                    _loopStarted = true;
+                                    try
+                                    {
+                                        _displayLink = CADisplayLink.Create(() => OnFrame?.Invoke(null, null));
+                                        _displayLink.AddToRunLoop(NSRunLoop.Current, NSRunLoopMode.Default);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e);
+                                        throw;
+                                    }
                                 }
                             }
-                        }
-                        _loopStarting = false;
-                    });
-                    await Task.Delay(100);
-                }
-            });
+
+                            _loopStarting = false;
+                        });
+                        await Task.Delay(100);
+                    }
+                });
+            }
+            else
+            {
+                Looper = new(() =>
+                {
+                    OnFrame?.Invoke(null, null);
+                });
+
+                Looper.StartOnMainThread(120);
+            }
         }
 
         static bool _loopStarting = false;
         static bool _loopStarted = false;
-        static void OnFrame()
-        {
-            DisplayLinkCallback?.Invoke(null, null);
-        }
 
-        public static event EventHandler DisplayLinkCallback;
+        static Looper Looper { get; set; }
+
+        /// <summary>
+        /// When set to true will run loop upon CADisplayLink hits instead of a timer looper that targets 120 fps
+        /// </summary>
+        public static bool UseDisplaySync = false;
+
+        public static event EventHandler OnFrame;
+
         static CADisplayLink _displayLink;
 
     }

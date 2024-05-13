@@ -6,6 +6,10 @@
         Circle,
         Ellipse,
         Arc,
+        /// <summary>
+        /// TODO
+        /// </summary>
+        Squricle,
         Path,
         Custom
     }

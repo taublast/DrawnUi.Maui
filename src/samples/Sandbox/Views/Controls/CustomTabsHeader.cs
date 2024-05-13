@@ -78,20 +78,19 @@ public class DrawnTabsHeader : SkiaLayout
 
     #region GESTURES
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        if (touchAction == TouchActionResult.Tapped)
+        if (args.Type == TouchActionResult.Tapped)
         {
 
-            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Location, childOffset);
+            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
             this.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
 
             //apply transfroms
-            var thisOffset = TranslateInputCoords(childOffset, true);
+            var thisOffset = TranslateInputCoords(apply.childOffset, true);
 
             //apply touch coords
-            var x = (args.Location.X + thisOffset.X) / RenderingScale;
+            var x = (args.Event.Location.X + thisOffset.X) / RenderingScale;
 
             int Index = Math.Min((int)(x / _ptsTabWidth), TabsCount - 1);
 
@@ -104,7 +103,7 @@ public class DrawnTabsHeader : SkiaLayout
 
         }
 
-        return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, wasConsumed);
+        return base.ProcessGestures(args, apply);
     }
 
     #endregion

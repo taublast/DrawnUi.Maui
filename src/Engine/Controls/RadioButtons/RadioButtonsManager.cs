@@ -37,6 +37,7 @@ namespace DrawnUi.Maui.Controls
                 GroupsByName[groupName] = new();
             }
             GroupsByName[groupName].Add(control);
+            MakeAtLeastOneSelected(GroupsByName[groupName]);
         }
 
         // Adds a control to a parent-based group (Group B).
@@ -47,6 +48,7 @@ namespace DrawnUi.Maui.Controls
                 GroupsByParent[parent] = new();
             }
             GroupsByParent[parent].Add(control);
+            MakeAtLeastOneSelected(GroupsByParent[parent]);
         }
 
         // Removes a control from a named group (Group A).
@@ -56,7 +58,7 @@ namespace DrawnUi.Maui.Controls
             {
                 GroupsByName[groupName].Remove(control);
                 // After removal, check and ensure that at least one button is selected.
-                EnsureAtLeastOneSelected(GroupsByName[groupName]);
+                MakeAtLeastOneSelected(GroupsByName[groupName]);
             }
         }
 
@@ -67,7 +69,7 @@ namespace DrawnUi.Maui.Controls
             {
                 GroupsByParent[parent].Remove(control);
                 // After removal, check and ensure that at least one button is selected.
-                EnsureAtLeastOneSelected(GroupsByParent[parent]);
+                MakeAtLeastOneSelected(GroupsByParent[parent]);
             }
         }
 
@@ -81,7 +83,7 @@ namespace DrawnUi.Maui.Controls
                 if (group.Contains(control))
                 {
                     group.Remove(control);
-                    EnsureAtLeastOneSelected(group);
+                    MakeAtLeastOneSelected(group);
                     removed = true;
                     break; // Assuming a control can only belong to one group, we stop once found
                 }
@@ -95,7 +97,7 @@ namespace DrawnUi.Maui.Controls
                     if (group.Contains(control))
                     {
                         group.Remove(control);
-                        EnsureAtLeastOneSelected(group);
+                        MakeAtLeastOneSelected(group);
                         break; // Assuming a control can only belong to one group, we stop once found
                     }
                 }
@@ -103,7 +105,7 @@ namespace DrawnUi.Maui.Controls
         }
 
 
-        private void EnsureAtLeastOneSelected(List<ISkiaRadioButton> group)
+        private void MakeAtLeastOneSelected(List<ISkiaRadioButton> group)
         {
             // Check if any button is still selected in the group.
             if (!group.Any(c => c.GetValueInternal()))

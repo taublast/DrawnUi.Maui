@@ -1,16 +1,5 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public interface ISkiaLayout : ISkiaControl, ILayoutInsideViewport
-{
-    bool NeedAutoSize { get; }
-
-    bool NeedAutoHeight { get; }
-
-    bool NeedAutoWidth { get; }
-
-}
-
-
 public interface ISkiaGridLayout : ISkiaLayout
 {
 

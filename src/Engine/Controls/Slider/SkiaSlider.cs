@@ -36,8 +36,7 @@ public class SkiaSlider : SkiaLayout
 
     public SkiaControl Trail { get; set; }
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         bool passedToChildren = false;
 
@@ -45,20 +44,20 @@ public class SkiaSlider : SkiaLayout
         {
             passedToChildren = true;
 
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
 
         ISkiaGestureListener consumed = null;
 
         //pass Released always to children first
-        if (touchAction == TouchActionResult.Up
+        if (args.Type == TouchActionResult.Up
             || !IsUserPanning || !RespondsToGestures)
         {
-            if (args.NumberOfTouches < 2)
+            if (args.Event.NumberOfTouches < 2)
                 TouchBusy = false;
 
             consumed = PassToChildren();
-            if (consumed != null && touchAction != TouchActionResult.Up)
+            if (consumed != null && args.Type != TouchActionResult.Up)
             {
                 return consumed;
             }
@@ -70,24 +69,28 @@ public class SkiaSlider : SkiaLayout
         void ResetPan()
         {
             IsUserPanning = false;
-            _panningStartOffsetPts = new(args.Location.X, args.Location.Y);
+            _panningStartOffsetPts = new(args.Event.Location.X, args.Event.Location.Y);
         }
 
-        switch (touchAction)
+        switch (args.Type)
         {
         case TouchActionResult.Down:
 
-        if (args.NumberOfTouches < 2)
+        if (args.Event.NumberOfTouches < 2)
         {
             ResetPan();
         }
 
-        var thisOffset = TranslateInputCoords(childOffset);
-        var x = args.Location.X + thisOffset.X - LastDrawnAt.Left; //inside this control
-        var locationX = x / RenderingScale; //from pix to pts
+        var thisOffset = TranslateInputCoords(apply.childOffset);
 
-        var y = args.Location.Y + thisOffset.Y - LastDrawnAt.Top; //inside this control
-        var locationY = y / RenderingScale; //from pix to pts
+        var x = args.Event.Location.X + thisOffset.X;
+        var y = args.Event.Location.Y + thisOffset.Y;
+
+        var relativeX = x - LastDrawnAt.Left; //inside this control
+        var relativeY = y - LastDrawnAt.Top; //inside this control
+
+        var locationX = relativeX / RenderingScale; //from pix to pts
+        var locationY = relativeY / RenderingScale; //from pix to pts
 
         if (EnableRange && locationX >= StartThumbX - moreHotspotSize &&
             locationX <= StartThumbX + SliderHeight + moreHotspotSize)
@@ -108,8 +111,8 @@ public class SkiaSlider : SkiaLayout
         bool onTrail = true;
         if (Trail != null)
         {
-            var point = TranslateInputOffsetToPixels(args.Location, childOffset);
-            onTrail = Trail.HitIsInside(point.X, point.Y);
+            var trailOffset = Trail.TranslateInputCoords(thisOffset);
+            onTrail = Trail.HitIsInside(args.Event.Location.X + trailOffset.X, args.Event.Location.Y + trailOffset.Y);
         }
         if (onTrail || touchArea == RangeZone.Start || touchArea == RangeZone.End)
             IsPressed = true;
@@ -117,7 +120,6 @@ public class SkiaSlider : SkiaLayout
         if (touchArea == RangeZone.Unknown && ClickOnTrailEnabled)
         {
             //clicked on trail maybe
-
 
             if (onTrail)
             {
@@ -157,13 +159,13 @@ public class SkiaSlider : SkiaLayout
 
         break;
 
-        case TouchActionResult.Panning when args.NumberOfTouches == 1:
+        case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
 
         //filter correct direction so we could scroll below the control in another direction:
         if (!IsUserPanning && IgnoreWrongDirection)
         {
             //first panning gesture..
-            var panDirection = GetDirectionType(_panningStartOffsetPts, new Vector2(_panningStartOffsetPts.X + args.Distance.Total.X, _panningStartOffsetPts.Y + args.Distance.Total.Y), 0.8f);
+            var panDirection = GetDirectionType(_panningStartOffsetPts, new Vector2(_panningStartOffsetPts.X + args.Event.Distance.Total.X, _panningStartOffsetPts.Y + args.Event.Distance.Total.Y), 0.8f);
 
             if (Orientation == OrientationType.Vertical && panDirection != DirectionType.Vertical)
             {
@@ -193,13 +195,13 @@ public class SkiaSlider : SkiaLayout
 
             if (touchArea == RangeZone.Start)
             {
-                var maybe = lastTouchX + args.Distance.Delta.X / RenderingScale;//args.TotalDistance.X;
+                var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;//args.TotalDistance.X;
                 SetStartOffsetClamped(maybe);
             }
             else
             if (touchArea == RangeZone.End)
             {
-                var maybe = lastTouchX + args.Distance.Delta.X / RenderingScale;
+                var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;
                 SetEndOffsetClamped(maybe);
             }
 
@@ -209,14 +211,14 @@ public class SkiaSlider : SkiaLayout
         consumed = this;
         break;
 
-        case TouchActionResult.Up when args.NumberOfTouches < 2:
+        case TouchActionResult.Up when args.Event.NumberOfTouches < 2:
         IsUserPanning = false;
         IsPressed = false;
         break;
 
         }
 
-        if (consumed != null || IsUserPanning)// || args.NumberOfTouches > 1)
+        if (consumed != null || IsUserPanning)// || args.Event.NumberOfTouches > 1)
         {
             return consumed ?? this;
         }

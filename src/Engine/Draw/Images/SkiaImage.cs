@@ -48,7 +48,7 @@ public class SkiaImage : SkiaControl
     /// Will containt all the effects and other rendering properties applied, size will correspond to source.
     /// </summary>
     /// <returns></returns>
-    public SKImage GetRenderedSource()
+    public virtual SKImage GetRenderedSource()
     {
         if (LoadedSource != null)
         {
@@ -87,10 +87,6 @@ public class SkiaImage : SkiaControl
             }
         }
     }
-
-    public int RetriesOnError { get; set; } = 3;
-
-    protected int RetriesLeft { get; set; }
 
 
     public static bool LogEnabled = false;
@@ -235,12 +231,12 @@ public class SkiaImage : SkiaControl
         nameof(RescalingQuality),
         typeof(SKFilterQuality),
         typeof(SkiaImage),
-        SKFilterQuality.Medium,
+        SKFilterQuality.None,
         propertyChanged: NeedInvalidateMeasure);
 
     /// <summary>
-    /// Default value is Medium.
-    /// You might want to set this to None for large a quick changing images like camera preview etc.
+    /// Default value is None.
+    /// You might want to set this to Medium for static images for better quality.
     /// </summary>
     public SKFilterQuality RescalingQuality
     {
@@ -273,11 +269,11 @@ public class SkiaImage : SkiaControl
         }
     }
 
-    protected override void OnWillBeDisposed()
+    public override void OnWillDisposeWithChildren()
     {
         CancelLoading?.Cancel();
 
-        base.OnWillBeDisposed();
+        base.OnWillDisposeWithChildren();
     }
 
     public void SetSource(Func<CancellationToken, Task<Stream>> getStream)
@@ -412,8 +408,6 @@ public class SkiaImage : SkiaControl
 
         StopLoading();
 
-        RetriesLeft = RetriesOnError;
-
         if (source == null)
         {
             TraceLog($"[SkiaImage] source is null");
@@ -502,16 +496,10 @@ public class SkiaImage : SkiaControl
                                         return;
                                     }
 
-                                    TraceLog($"[SkiaImage] Error loading {url} as {source} for tag {Tag} try {RetriesOnError - RetriesLeft + 1}");
+                                    TraceLog($"[SkiaImage] Error loading {url} as {source} for tag {Tag} ");
 
                                     //ClearBitmap(); //erase old image anyway even if EraseChangedContent is false
 
-                                    if (RetriesLeft > 0)
-                                    {
-                                        await Task.Delay(1000);
-                                        RetriesLeft--;
-                                        await LoadAction();
-                                    }
                                 }
                                 catch (TaskCanceledException)
                                 {
@@ -1173,13 +1161,22 @@ propertyChanged: NeedChangeColorFIlter);
             }
 
             Update(); //gamechanger for doublebuffering and other complicated cases
-
-
         }
 
         DrawUsingRenderObject(context,
             SizeRequest.Width, SizeRequest.Height,
             destination, scale);
+    }
+
+    protected override void OnLayoutChanged()
+    {
+        base.OnLayoutChanged();
+
+        if (DrawingRect != SKRect.Empty && LoadedSource != null)
+        {
+            SetAspectScale(LoadedSource.Width, LoadedSource.Height, DrawingRect, this.Aspect, RenderingScale);
+        }
+
     }
 
     public override void OnDisposing()
@@ -1317,10 +1314,11 @@ propertyChanged: NeedChangeColorFIlter);
         AspectScale = new SKPoint(scaled.X, scaled.Y);
     }
 
-    protected ScaledSize SetMeasuredAsEmpty(float scale)
+    protected override ScaledSize SetMeasuredAsEmpty(float scale)
     {
         AspectScale = SKPoint.Empty;
-        return SetMeasured(0, 0, scale);
+
+        return base.SetMeasuredAsEmpty(scale);
     }
 
 
@@ -1355,7 +1353,9 @@ propertyChanged: NeedChangeColorFIlter);
 
         if (request.WidthRequest == 0 || request.HeightRequest == 0)
         {
-            return SetMeasured(0, 0, request.Scale);
+            InvalidateCache();
+
+            return SetMeasuredAsEmpty(request.Scale);
         }
 
         var widthConstraint = request.WidthRequest;
@@ -1398,13 +1398,15 @@ propertyChanged: NeedChangeColorFIlter);
                 //not setting NeedMeasure=false; to force remeasurement on next frame
                 AspectScale = SKPoint.Empty;
 
-                return ScaledSize.Empty;
+                return ScaledSize.Default;
                 //return ScaledSize.FromPixels(0, 0, request.Scale);
             }
         }
 
         if (widthConstraint == 0 || heightConstraint == 0)
         {
+            InvalidateCache();
+
             return SetMeasuredAsEmpty(request.Scale);
         }
 
@@ -1413,13 +1415,10 @@ propertyChanged: NeedChangeColorFIlter);
         //we measured no children, simulated !
         ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height, request.Scale);
 
-        if (constraints.Content.Width == 0 || constraints.Content.Height == 0)
-        {
-            return SetMeasuredAsEmpty(request.Scale);
-        }
+        //return SetMeasuredAdaptToContentSize(constraints, request.Scale);
 
-        var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-        var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
+        var width = AdaptWidthConstraintToContentRequest(constraints, ContentSize.Pixels.Width, HorizontalOptions.Expands);
+        var height = AdaptHeightConstraintToContentRequest(constraints, ContentSize.Pixels.Height, VerticalOptions.Expands);
 
         if (LoadedSource != null)
         {
@@ -1435,7 +1434,7 @@ propertyChanged: NeedChangeColorFIlter);
             AspectScale = SKPoint.Empty;
         }
 
-        return SetMeasured(width, height, request.Scale);
+        return SetMeasured(width, height, false, false, request.Scale);
     }
 
     #endregion

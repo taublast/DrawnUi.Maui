@@ -64,7 +64,7 @@
                     HorizontalOptions="Fill"
                     ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding Items}"
-                    RecyclingTemplate="Enabled"
+                    RecyclingTemplate="Disabled"
                     Type="Column">
 
                     <draw:SkiaLayout.ItemTemplate>

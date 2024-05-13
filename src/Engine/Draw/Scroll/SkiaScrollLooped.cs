@@ -90,7 +90,7 @@ public class SkiaScrollLooped : SkiaScroll
             (float)Math.Abs(pixelsOffsetY)
             );
 
-            if (layout.Type == LayoutType.Column) //todo grid
+            if (layout.Type == LayoutType.Column || layout.Type == LayoutType.Stack && layout.Split > 0) //todo grid
             {
                 var stackStructure = layout.LatestStackStructure;
                 int index = -1;
@@ -100,27 +100,21 @@ public class SkiaScrollLooped : SkiaScroll
                 if (trace)
                     Trace.WriteLine($"offset: {point.Y}");
 
-                for (row = 0; row < stackStructure.Count; row++)
+                foreach (var childInfo in stackStructure.GetChildren())
                 {
-                    var rowContent = stackStructure[row];
-                    for (col = 0; col < rowContent.Count; col++)
+                    index++;
+                    if (childInfo.Destination.ContainsInclusive(point))
                     {
-                        index++;
-                        var childInfo = rowContent[col];
-
-                        if (childInfo.Destination.ContainsInclusive(point))
+                        return new ContainsPointResult()
                         {
-                            return new ContainsPointResult()
-                            {
-                                Index = index,
-                                Area = childInfo.Destination,
-                                Point = point,
-                                Unmodified = new SKPoint(0, initialValue)
-                            };
-                        }
-
+                            Index = index,
+                            Area = childInfo.Destination,
+                            Point = point,
+                            Unmodified = new SKPoint(0, initialValue)
+                        };
                     }
                 }
+
             }
         }
         else
@@ -165,8 +159,8 @@ public class SkiaScrollLooped : SkiaScroll
             (float)Math.Abs(pixelsOffsetY)
             );
 
-
-            if (layout.Type == LayoutType.Row) //todo grid
+            //horizontal stack
+            if (layout.Type == LayoutType.Row || layout.Type == LayoutType.Stack && layout.Split == 0) //todo grid
             {
                 var stackStructure = layout.StackStructure;
                 int index = -1;
@@ -176,31 +170,21 @@ public class SkiaScrollLooped : SkiaScroll
                 if (trace)
                     Trace.WriteLine($"offset: {point.X}");
 
-                for (row = 0; row < stackStructure.Count; row++)
+                foreach (var childInfo in stackStructure.GetChildren())
                 {
-                    var rowContent = stackStructure[row];
-                    for (col = 0; col < rowContent.Count; col++)
+                    index++;
+                    var childRect = childInfo.Destination.Clone();
+                    //childRect.Offset(point.X, point.Y);
+
+                    if (childRect.ContainsInclusive(point))
                     {
-                        index++;
-                        var childInfo = rowContent[col];
-
-                        var childRect = childInfo.Destination.Clone();
-                        //childRect.Offset(point.X, point.Y);
-
-                        if (trace)
-                            Trace.WriteLine($"child: {childRect.Left:0.0} - {childRect.Right:0.0}");
-
-                        if (childRect.ContainsInclusive(point))
+                        return new ContainsPointResult()
                         {
-                            return new ContainsPointResult()
-                            {
-                                Index = index,
-                                Area = childRect,
-                                Point = point,
-                                Unmodified = new SKPoint(initialValue, 0)
-                            };
-                        }
-
+                            Index = index,
+                            Area = childRect,
+                            Point = point,
+                            Unmodified = new SKPoint(initialValue, 0)
+                        };
                     }
                 }
 
@@ -385,7 +369,7 @@ public class SkiaScrollLooped : SkiaScroll
 
                                 DrawViews(context, childRect, zoomedScale, debug);
 
-                                context.Canvas.RestoreToCount(count);
+                                context.Canvas.Restore();
                             }
                             else
                             {

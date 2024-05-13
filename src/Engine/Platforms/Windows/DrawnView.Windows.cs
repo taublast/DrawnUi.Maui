@@ -1,5 +1,7 @@
 ﻿using Microsoft.Maui.Platform;
+using Microsoft.UI.Xaml;
 using System.Runtime.CompilerServices;
+using Visibility = Microsoft.UI.Xaml.Visibility;
 
 namespace DrawnUi.Maui.Views
 {
@@ -13,24 +15,11 @@ namespace DrawnUi.Maui.Views
         /// If you set 
         /// </summary>
         /// <param name="element"></param>
-        public void CheckElementVisibility(Element element)
+        public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
-
-            if (element != null)
-            {
-
-
-                //todo
-
-
-                element = element.Parent;
-            }
-
-
-            IsHiddenInViewTree = false;
+            IsHiddenInViewTree = !GetIsVisibleWithParent(this);
         }
-
 
         protected virtual void OnSizeChanged()
         {
@@ -64,7 +53,6 @@ namespace DrawnUi.Maui.Views
             IsDirty = true;
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckCanDraw()
         {
@@ -77,15 +65,25 @@ namespace DrawnUi.Maui.Views
                && IsVisible && Super.EnableRendering;
         }
 
+        private long test;
         private void OnSuperFrame(object sender, EventArgs e)
         {
             if (CheckCanDraw())
             {
                 OrderedDraw = true;
                 if (NeedCheckParentVisibility)
+                {
                     CheckElementVisibility(this);
-
-                CanvasView?.Update();
+                }
+                if (CanDraw)
+                {
+                    //Debug.WriteLine($"UPDATE {Tag}");
+                    CanvasView?.Update();
+                }
+                else
+                {
+                    OrderedDraw = false;
+                }
             }
         }
 

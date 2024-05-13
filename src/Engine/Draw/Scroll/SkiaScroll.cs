@@ -35,6 +35,15 @@ namespace DrawnUi.Maui.Draw
             Zooming
         }
 
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            Content?.Dispose();
+            Header?.Dispose();
+            Footer?.Dispose();
+        }
+
         private ScrollingInteractionState _intercationState;
         public ScrollingInteractionState InteractionState
         {
@@ -344,6 +353,7 @@ namespace DrawnUi.Maui.Draw
         protected float _velocitySwipe = 200; //pts
         protected float _velocitySwipeRatio = 1.0f;
 
+        protected Vector2 _panningLastDelta;
         protected Vector2 _panningCurrentOffsetPts;
         private Vector2 _panningStartOffsetPts;
 
@@ -480,6 +490,22 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(RespondsToGesturesProperty, value); }
         }
 
+
+        public static readonly BindableProperty CanScrollUsingHeaderProperty = BindableProperty.Create(
+            nameof(CanScrollUsingHeader),
+            typeof(bool),
+            typeof(SkiaScroll),
+            true);
+
+        /// <summary>
+        /// If disabled will not scroll using gestures. Scrolling will still be possible by code.
+        /// </summary>
+        public bool CanScrollUsingHeader
+        {
+            get { return (bool)GetValue(CanScrollUsingHeaderProperty); }
+            set { SetValue(CanScrollUsingHeaderProperty, value); }
+        }
+
         protected bool ContentGesturesHit;
 
         public override bool IsGestureForChild(ISkiaGestureListener listener, float x, float y)
@@ -525,35 +551,95 @@ namespace DrawnUi.Maui.Draw
 
             VelocityAccumulator.Clear();
 
-            _panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
+            _panningLastDelta = Vector2.Zero;
+            _panningStartOffsetPts = new(ViewportOffsetX, ViewportOffsetY);
             _panningCurrentOffsetPts = _panningStartOffsetPts;
         }
 
-        public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args,
-            TouchActionResult touchAction,
-            SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+
+        private bool lockHeader;
+
+        public override bool UsesRenderingTree => false;
+
+        public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
+        {
+            if (lockHeader && child.Control != Header)
+            {
+                return false;
+            }
+
+            var forChild = base.IsGestureForChild(child, point);
+            if (!HeaderBehind && Header != null)
+            {
+                //block gestures for other children if from header got them
+                if (child.Control == this.Header && forChild)
+                {
+                    lockHeader = true;
+                }
+            }
+            return forChild;
+        }
+
+        public override bool IsGestureForChild(ISkiaGestureListener listener, SKPoint point)
+        {
+            if (lockHeader && listener != Header)
+            {
+                return false;
+            }
+
+            var forChild = base.IsGestureForChild(listener, point);
+            if (!HeaderBehind && Header != null)
+            {
+                //block gestures for other children if from header got them
+                if (listener == this.Header && forChild)
+                {
+                    lockHeader = true;
+                }
+            }
+            return forChild;
+        }
+
+        /// <summary>
+        /// panning interpolation to avoid trembling finlgers
+        /// </summary>
+        private const float InterpolationFactor = 0.1f;
+
+        private bool inContact;
+
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
 
-            var smooth = FluidPan;
+            if (args.Type == TouchActionResult.Down)
+            {
+                lockHeader = false;
+                inContact = true;
+            }
+            else
+            if (args.Type == TouchActionResult.Up)
+            {
+                lockHeader = false;
+                inContact = false;
+            }
+
             var preciseStop = false;
             ContentGesturesHit = false;
 
-            var thisOffset = TranslateInputCoords(childOffset);
+            var thisOffset = TranslateInputCoords(apply.childOffset);
 
             if (Content != null && Header != null)
             {
-                var x = args.Location.X + thisOffset.X;
-                var y = args.Location.Y + thisOffset.Y;
+                var x = args.Event.Location.X + thisOffset.X;
+                var y = args.Event.Location.Y + thisOffset.Y;
 
                 ContentGesturesHit = Content.HitIsInside(x, y);
             }
 
             if (TouchEffect.LogEnabled)
             {
-                Super.Log($"[SCROLL] {this.Tag} Got {touchAction} touches {args.NumberOfTouches} {VelocityY}..");
+                Super.Log($"[SCROLL] {this.Tag} Got {args.Type} touches {args.Event.NumberOfTouches} {VelocityY}..");
             }
 
-            if (touchAction == TouchActionResult.Down && RespondsToGestures)
+            if (args.Type == TouchActionResult.Down && RespondsToGestures)
             {
                 ResetPan();
             }
@@ -565,15 +651,15 @@ namespace DrawnUi.Maui.Draw
                 {
                     passedToChildren = true;
 
-                    return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+                    return base.ProcessGestures(args, apply);
                 }
 
                 bool wrongDirection = false;
-                if (IgnoreWrongDirection && touchAction == TouchActionResult.Panning)
+                if (IgnoreWrongDirection && args.Type == TouchActionResult.Panning)
                 {
                     //first panning gesture..
                     var panDirection = DirectionType.Vertical;
-                    if (Math.Abs(args.Distance.Delta.X) > Math.Abs(args.Distance.Delta.Y))
+                    if (Math.Abs(args.Event.Distance.Delta.X) > Math.Abs(args.Event.Distance.Delta.Y))
                     {
                         panDirection = DirectionType.Horizontal;
                     }
@@ -589,25 +675,25 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 if (!IsUserPanning || wrongDirection ||
-                    touchAction == TouchActionResult.Up
-                    || touchAction == TouchActionResult.Tapped
+                    args.Type == TouchActionResult.Up
+                    || args.Type == TouchActionResult.Tapped
                     || !RespondsToGestures)
-                //&& touchAction != TouchActionResult.Tapped && touchAction != TouchActionResult.LongPressing)
+                //&& args.Action != TouchActionResult.Tapped && args.Action != TouchActionResult.LongPressing)
                 {
                     var childConsumed = PassToChildren();
                     if (childConsumed != null)
                     {
-                        if (touchAction == TouchActionResult.Panning)
+                        if (args.Type == TouchActionResult.Panning)
                         {
                             ChildWasPanning = true;
                         }
                         else
-                        if (touchAction == TouchActionResult.Tapped)
+                        if (args.Type == TouchActionResult.Tapped)
                         {
                             ChildWasTapped = true;
                         }
 
-                        if (touchAction != TouchActionResult.Up)
+                        if (args.Type != TouchActionResult.Up)
                             return childConsumed;
                     }
                     else
@@ -619,33 +705,33 @@ namespace DrawnUi.Maui.Draw
                 ISkiaGestureListener consumed = null;
                 if (Orientation == ScrollOrientation.Vertical || Orientation == ScrollOrientation.Both)
                 {
-                    VelocityY = (float)(args.Distance.Velocity.Y / RenderingScale);
+                    VelocityY = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
                 }
                 if (Orientation == ScrollOrientation.Horizontal || Orientation == ScrollOrientation.Both)
                 {
-                    VelocityX = (float)(args.Distance.Velocity.X / RenderingScale);
+                    VelocityX = (float)(args.Event.Distance.Velocity.X / RenderingScale);
                 }
 
-                //Debug.WriteLine($"[SkiaScroll] {this.Tag} processing {touchAction}..");
+                //Debug.WriteLine($"[SkiaScroll] {this.Tag} processing {args.Action}..");
 
 
 
                 var hadNumberOfTouches = lastNumberOfTouches;
-                lastNumberOfTouches = args.NumberOfTouches;
+                lastNumberOfTouches = args.Event.NumberOfTouches;
 
                 //----------------------------------------------------------------------
-                if (touchAction == TouchActionResult.Pinched && !ZoomLocked)
+                if (args.Type == TouchActionResult.Wheel && !ZoomLocked)
                 //----------------------------------------------------------------------
                 {
                     IsUserFocused = true;
                     //todo cmon this todo is here almost a year
-                    var zoomed = SetZoom(args.Pinch.Scale);
+                    var zoomed = SetZoom(args.Event.Wheel.Scale);
                     consumed = this;
                 }
                 else
-                if (args.NumberOfTouches < 2 && hadNumberOfTouches < 2)
+                if (args.Event.NumberOfTouches < 2 && hadNumberOfTouches < 2)
                 {
-                    switch (touchAction)
+                    switch (args.Type)
                     {
 
                     //----------------------------------------------------------------------
@@ -680,6 +766,11 @@ namespace DrawnUi.Maui.Draw
                         canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold || Math.Abs(VelocityY) > ScrollVelocityThreshold;
                     }
 
+                    if (lockHeader && !CanScrollUsingHeader)
+                    {
+                        canPan = false;
+                    }
+
                     if (canPan)
                     {
                         //Trace.WriteLine($"[PAN] {Tag} VY:{VelocityY:0.00}");
@@ -693,29 +784,50 @@ namespace DrawnUi.Maui.Draw
                             checkOverscroll = false; //do not check overscroll if we just got focus
                         }
 
-                        //var movedY = (float)Math.Round(args.Distance.Total.Y * ChangeDIstancePanned);
-                        //var movedX = (float)Math.Round(args.Distance.Total.X * ChangeDIstancePanned);
+                        IsUserPanning = true;
 
-                        var movedPtsY = (float)Math.Round((args.Distance.Delta.Y / RenderingScale) * ChangeDIstancePanned);
-                        var movedPtsX = (float)Math.Round((args.Distance.Delta.X / RenderingScale) * ChangeDIstancePanned);
+                        var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDIstancePanned;
+                        var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDIstancePanned;
 
-                        Vector2 moveTo;
-                        moveTo = new Vector2(
-                            _panningCurrentOffsetPts.X + movedPtsX, _panningCurrentOffsetPts.Y + movedPtsY);
+                        var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.9f;
+                        var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.9f;
+
+                        //Debug.WriteLine($"[S] {interpolatedMoveToY} / {movedPtsY} pts");
+
+                        _panningLastDelta = new Vector2(
+                            interpolatedMoveToX, interpolatedMoveToY);
+
+                        var moveTo = new Vector2(
+                            (float)Math.Round(_panningCurrentOffsetPts.X + interpolatedMoveToX),
+                            (float)Math.Round(_panningCurrentOffsetPts.Y + interpolatedMoveToY));
 
                         _panningCurrentOffsetPts = moveTo;
 
-                        //if (smooth)
-                        //{
-                        //    moveTo = new Vector2(_panningCurrentOffsetPts.X + args.Distance.Delta.X / RenderingScale, _panningCurrentOffsetPts.Y + args.Distance.Delta.Y / RenderingScale);
-                        //}
-                        //else
-                        //{
-                        //    moveTo = new Vector2(
-                        //        _panningCurrentOffsetPts.X + movedX / RenderingScale,
-                        //        _panningCurrentOffsetPts.Y + movedY / RenderingScale);
-                        //}
+                        /*
+                          var threshold = 0f;
+                           if (!IsUserPanning)
+                           {
+                               //apply starting thresold to first panning only
+                               //threshold = Canvas.FirstPanThreshold * RenderingScale;
+                           }
 
+                           IsUserPanning = true;
+
+                           var movedPtsY = ((args.Event.Distance.Delta.Y - threshold * Math.Sign(args.Event.Distance.Delta.Y)) / RenderingScale) * ChangeDIstancePanned;
+                           var movedPtsX = ((args.Event.Distance.Delta.X - threshold * Math.Sign(args.Event.Distance.Delta.X)) / RenderingScale) * ChangeDIstancePanned;
+
+                           var interpolatedMoveToX = movedPtsX;//_panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.985f;
+                           var interpolatedMoveToY = movedPtsX;//_panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.985f;
+
+                           _panningLastDelta = new Vector2(
+                               interpolatedMoveToX, interpolatedMoveToY);
+
+                           var moveTo = new Vector2(
+                               (float)Math.Round(_panningCurrentOffsetPts.X + interpolatedMoveToX),
+                               (float)Math.Round(_panningCurrentOffsetPts.Y + interpolatedMoveToY));
+
+                           _panningCurrentOffsetPts = moveTo;
+                         */
 
                         //if the panning is not in the same direction as the scroll and we havn't started panning yet,
                         //do not consume gesture and return
@@ -772,22 +884,26 @@ namespace DrawnUi.Maui.Draw
 
                     break;
 
-                    //---------------------------------------------------------------------------------------------------------
+                    //----------------------------------------------------------------------
                     case TouchActionResult.Up when RespondsToGestures:
-                    //---------------------------------------------------------------------------------------------------------
-
-                    //Super.Log($"[SCROLL] {this.Tag} UP?. {ChildWasPanning}  {ScrollLocked}..");
+                    //----------------------------------------------------------------------
 
                     if ((!ChildWasTapped || OverScrolled) && (!ChildWasPanning || IsUserPanning)) //should we swipe?
                     {
-                        if (alreadyConsumed != null)
+                        if (apply.alreadyConsumed != null)
                         {
                             if (CheckNeedToSnap())
                                 Snap(SystemAnimationTimeSecs);
                             return null;
                         }
 
-                        if (!ScrollLocked)
+                        bool canSwipe = true;
+                        if (lockHeader && !CanScrollUsingHeader)
+                        {
+                            canSwipe = false;
+                        }
+
+                        if (!ScrollLocked && canSwipe)
                         {
                             var finalVelocity = VelocityAccumulator.CalculateFinalVelocity(this.MaxVelocity);
 
@@ -911,6 +1027,13 @@ namespace DrawnUi.Maui.Draw
                             {
                                 if (CheckNeedToSnap())
                                     Snap(SystemAnimationTimeSecs);
+                                else
+                                {
+                                    //scroling stopped
+                                    //force positionviewport for pixelsnap etc
+                                    _destination = SKRect.Empty;
+                                    //Update();
+                                }
                             }
 
                         }
@@ -923,13 +1046,13 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                if (consumed != null || IsUserPanning)// || args.NumberOfTouches > 1)
+                if (consumed != null || IsUserPanning)// || args.Event.NumberOfTouches > 1)
                 {
                     //Debug.WriteLine($"[SCROLL] Consumed");
                     return consumed ?? this;
                 }
 
-                //return PassGesturesToContent(type, args, touchAction, thisOffset);
+                //return PassGesturesToContent(type, args, args.Action, thisOffset);
 
                 if (!passedToChildren)
                     return PassToChildren();
@@ -1482,7 +1605,7 @@ namespace DrawnUi.Maui.Draw
                 (float)Math.Abs(pixelsOffsetY)
                 );
 
-                if (layout.Type == LayoutType.Column) //todo grid
+                if (layout.Type == LayoutType.Column || layout.Type == LayoutType.Stack && layout.Split > 0) //todo grid
                 {
                     var stackStructure = layout.LatestStackStructure;
                     int index = -1;
@@ -1492,27 +1615,21 @@ namespace DrawnUi.Maui.Draw
                     if (trace)
                         Trace.WriteLine($"offset: {point.Y}");
 
-                    for (row = 0; row < stackStructure.Count; row++)
+                    foreach (var childInfo in stackStructure.GetChildren())
                     {
-                        var rowContent = stackStructure[row];
-                        for (col = 0; col < rowContent.Count; col++)
+                        index++;
+                        if (childInfo.Destination.ContainsInclusive(point))
                         {
-                            index++;
-                            var childInfo = rowContent[col];
-
-                            if (childInfo.Destination.ContainsInclusive(point))
+                            return new ContainsPointResult()
                             {
-                                return new ContainsPointResult()
-                                {
-                                    Index = index,
-                                    Area = childInfo.Destination,
-                                    Point = point,
-                                    Unmodified = new SKPoint(0, initialValue)
-                                };
-                            }
-
+                                Index = index,
+                                Area = childInfo.Destination,
+                                Point = point,
+                                Unmodified = new SKPoint(0, initialValue)
+                            };
                         }
                     }
+
                 }
             }
             else
@@ -1558,38 +1675,30 @@ namespace DrawnUi.Maui.Draw
                 );
 
 
-                if (layout.Type == LayoutType.Row) //todo grid
+                if (layout.Type == LayoutType.Row || layout.Type == LayoutType.Stack && layout.Split == 0) //todo grid
                 {
                     var stackStructure = layout.StackStructure;
                     int index = -1;
                     int row;
                     int col;
 
-                    for (row = 0; row < stackStructure.Count; row++)
+                    foreach (var childInfo in stackStructure.GetChildren())
                     {
-                        var rowContent = stackStructure[row];
-                        for (col = 0; col < rowContent.Count; col++)
+                        index++;
+                        var childRect = childInfo.Destination.Clone();
+                        //childRect.Offset(point.X, point.Y);
+
+                        if (childRect.ContainsInclusive(point))
                         {
-                            index++;
-                            var childInfo = rowContent[col];
-
-                            var childRect = childInfo.Destination.Clone();
-                            //childRect.Offset(point.X, point.Y);
-
-                            if (childRect.ContainsInclusive(point))
+                            return new ContainsPointResult()
                             {
-                                return new ContainsPointResult()
-                                {
-                                    Index = index,
-                                    Area = childRect,
-                                    Point = point,
-                                    Unmodified = new SKPoint(initialValue, 0)
-                                };
-                            }
-
+                                Index = index,
+                                Area = childRect,
+                                Point = point,
+                                Unmodified = new SKPoint(initialValue, 0)
+                            };
                         }
                     }
-
 
                 }
             }
@@ -1613,7 +1722,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        /// ToDo this actually work only for Column and Row
+        /// ToDo this actually work only for Stack and Row
         /// </summary>
         /// <param name="index"></param>
         /// <param name="option"></param>
@@ -1633,20 +1742,34 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 var structure = layout.LatestStackStructure;
-                if (structure != null && structure.Count > 0)// && layout.StackStructure.Count == childrenCount)
+                if (structure != null && structure.GetCount() > 0)// && layout.StackStructure.Count == childrenCount)
                 {
                     float offset = 0;
 
                     //in case index falls out of array bounds due to multiple threads..
                     try
                     {
-                        SkiaLayout.ControlInStack childInfo = null;
-                        if (Orientation == ScrollOrientation.Horizontal)
-                            childInfo = structure[0][(int)index];
-                        else
-                            childInfo = structure[(int)index][0];
+                        ControlInStack childInfo = null;
 
-                        if (childInfo.Measured != null)
+                        bool isValid = false;
+                        if (Orientation == ScrollOrientation.Horizontal)
+                        {
+                            if (index < structure.MaxColumns)
+                            {
+                                isValid = true;
+                                childInfo = structure.Get(index, 0);
+                            }
+                        }
+                        else
+                        {
+                            if (index < structure.MaxRows)
+                            {
+                                isValid = true;
+                                childInfo = structure.Get(0, index);
+                            }
+                        }
+
+                        if (isValid && childInfo.Measured != null)
                         {
 
                             if (Orientation == ScrollOrientation.Horizontal)
@@ -1957,40 +2080,14 @@ namespace DrawnUi.Maui.Draw
         private long c1;
 
 
-        protected virtual ISkiaGestureListener PassGestureToChildren(TouchActionType type, TouchActionEventArgs args,
-            TouchActionResult tag, SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
+        protected virtual ISkiaGestureListener PassGestureToChildren(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
             if (IsContentActive)
             {
-                return Content.OnSkiaGestureEvent(type, args, tag, childOffset, childOffsetDirect, wasConsumed);
+                return Content.OnSkiaGestureEvent(args, apply);
             }
 
             return null;
-        }
-
-        protected virtual bool PassGesturesToContent(TouchActionType type, TouchActionEventArgs args, TouchActionResult tag, SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
-        {
-            switch (LockChildrenGestures)
-            {
-            case LockTouch.Enabled:
-            return true;
-
-            case LockTouch.Disabled:
-            PassGestureToChildren(type, args, tag, childOffset, childOffsetDirect, wasConsumed);
-            break;
-
-            case LockTouch.PassTap:
-            if (tag == TouchActionResult.Tapped)
-                PassGestureToChildren(type, args, tag, childOffset, childOffsetDirect, wasConsumed);
-            break;
-
-            case LockTouch.PassTapAndLongPress:
-            if (tag == TouchActionResult.Tapped || tag == TouchActionResult.LongPressing)
-                PassGestureToChildren(type, args, tag, childOffset, childOffsetDirect, wasConsumed);
-            break;
-            }
-
-            return true;
         }
 
         /// <summary>
@@ -2084,6 +2181,7 @@ namespace DrawnUi.Maui.Draw
         protected ScaledSize HeaderSize;
         protected ScaledSize FooterSize;
 
+
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
             if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
@@ -2125,23 +2223,20 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                 {
-                    ContentSize = ScaledSize.Empty;
+                    ContentSize = ScaledSize.Default;
                 }
-
-                var width = AdaptWidthConstraintToContentRequest(constraints.Request.Width, ContentSize, constraints.Margins.Left + constraints.Margins.Right);
-                var height = AdaptHeightConstraintToContentRequest(constraints.Request.Height, ContentSize, constraints.Margins.Top + constraints.Margins.Bottom);
 
                 if (Header != null)
                     HeaderSize = Header.Measure(request.WidthRequest, request.HeightRequest, request.Scale);
                 else
-                    HeaderSize = ScaledSize.Empty;
+                    HeaderSize = ScaledSize.Default;
 
                 if (Footer != null)
                     FooterSize = Footer.Measure(request.WidthRequest, request.HeightRequest, request.Scale);
                 else
-                    FooterSize = ScaledSize.Empty;
+                    FooterSize = ScaledSize.Default;
 
-                return SetMeasured(width, height, request.Scale);
+                return SetMeasuredAdaptToContentSize(constraints, scale);
             }
             finally
             {
@@ -2151,13 +2246,19 @@ namespace DrawnUi.Maui.Draw
 
         }
 
+
         public ScaledRect Viewport { get; protected set; } = new();
 
-        protected override ScaledSize SetMeasured(float width, float height, float scale)
+        protected override ScaledSize SetMeasured(float width, float height, bool widthCut, bool heightCut, float scale)
         {
-            _lastContentSize = this.Content?.MeasuredSize;
+            if (Content != null)
+            {
+                _lastContentSize = this.Content.MeasuredSize;
+            }
+            else
+                _lastContentSize = ScaledSize.Default;
 
-            return base.SetMeasured(width, height, scale);
+            return base.SetMeasured(width, height, widthCut, heightCut, scale);
         }
 
 
@@ -2243,9 +2344,20 @@ namespace DrawnUi.Maui.Draw
             if (!IsSnapping)
                 Snapped = false;
 
+            var isScroling = _animatorFling.IsRunning || _animatorBounce.IsRunning
+                                                      || _scrollerX.IsRunning || _scrollerY.IsRunning || IsUserPanning;
+
             ContentAvailableSpace = GetContentAvailableRect(destination);
 
-            InternalViewportOffset = ScaledPoint.FromPixels(offsetPixels, scale);
+            //we scroll at subpixels but stop only at pixel-snapped
+            //if (IsScrolling && !isScroling && !IsUserPanning || onceAfterInitializeViewport)
+            //{
+            //    var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
+            //    var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
+            //    offsetPixels.Offset(roundX, roundY);
+            //}
+
+            InternalViewportOffset = ScaledPoint.FromPixels(new((float)Math.Round(offsetPixels.X), (float)Math.Round(offsetPixels.Y)), scale);
 
             var childRect = ContentAvailableSpace;
             childRect.Offset(InternalViewportOffset.Pixels.X, InternalViewportOffset.Pixels.Y);
@@ -2334,14 +2446,43 @@ namespace DrawnUi.Maui.Draw
 
             //POST EVENTS
             Scrolled?.Invoke(this, InternalViewportOffset);
+
             OnScrolled();
 
+            if (isScroling)
+            {
+                IsScrolling = true;
+            }
+            else
+            {
+                if (IsScrolling)
+                {
+                    ScrollingEnded?.Invoke(this, InternalViewportOffset);
+                    OnScrollingEnded();
+                }
+                IsScrolling = false;
+            }
+
+            //Super.Log($"[SCROLL] {InternalViewportOffset.Pixels.Y}");
             //ExecuteDelayedScrollOrders(); //todo move toonscrolled?
         }
 
-
-
-
+        private bool _IsScrolling;
+        public bool IsScrolling
+        {
+            get
+            {
+                return _IsScrolling;
+            }
+            set
+            {
+                if (_IsScrolling != value)
+                {
+                    _IsScrolling = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public override ScaledRect GetOnScreenVisibleArea()
         {
@@ -2388,6 +2529,15 @@ namespace DrawnUi.Maui.Draw
             //    ApplyScrollPositionToRefreshViewUnsafe();
             //}
         }
+
+        public virtual void OnScrollingEnded()
+        {
+
+        }
+
+        public event EventHandler<ScaledPoint> ScrollingEnded;
+
+        public event EventHandler<ScaledPoint> Scrolled;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void ApplyScrollPositionToRefreshViewUnsafe()
@@ -2517,28 +2667,22 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                //comparing floats on purpose
-                var needReposition = _lastPosViewportScale != _zoomedScale
-                                     || _updatedViewportForPtsY != ViewportOffsetY
-                                 || _updatedViewportForPtsX != ViewportOffsetX
+                var posX = (int)Math.Round(ViewportOffsetX * _zoomedScale);
+                var posY = (int)Math.Round(ViewportOffsetY * _zoomedScale);
+
+                var needReposition =
+                                     _updatedViewportForPixY != posY
+                                 || _updatedViewportForPixX != posX
                                  || _destination != Destination;
 
                 //reposition viewport (scroll)
                 if (needReposition)
                 {
-                    //_offsetMoved = _updatedViewportForPtsY - ViewportOffsetY;
-                    //var timeDiff = context.FrameTimeNanos - _offsetMovedTime;
-                    //_offsetMovedTime = context.FrameTimeNanos;
-                    //var time = TimeSpan.FromTicks(timeDiff / 1000);
-                    //Debug.WriteLine($"[PositionViewport] diff {(_offsetMoved * _zoomedScale):0.00} in {time.TotalMilliseconds} ms");
-
-                    _lastPosViewportScale = _zoomedScale;
-                    _updatedViewportForPtsX = ViewportOffsetX;
-                    _updatedViewportForPtsY = ViewportOffsetY;
-
+                    _updatedViewportForPixX = posX;
+                    _updatedViewportForPixY = posY;
                     _destination = Destination;
 
-                    PositionViewport(DrawingRect, new(_updatedViewportForPtsX * _zoomedScale, _updatedViewportForPtsY * _zoomedScale), _zoomedScale, (float)scale);
+                    PositionViewport(DrawingRect, new(posX, posY), _zoomedScale, (float)scale);
 
                     RenderObject = null;
                 }
@@ -2548,6 +2692,8 @@ namespace DrawnUi.Maui.Draw
                     {
                         PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
                     });
+
+                //Paint(context, DrawingRect, scale, CreatePaintArguments());
             }
 
             FinalizeDraw(context, scale);
@@ -2759,9 +2905,9 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        float _updatedViewportForPtsX;
-        float _updatedViewportForPtsY;
-        float _lastPosViewportScale;
+        int _updatedViewportForPixX;
+        int _updatedViewportForPixY;
+        //float _lastPosViewportScale;
 
         public SKRect ContentAvailableSpace { get; protected set; }
 
@@ -2993,21 +3139,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(OrientationProperty, value); }
         }
 
-        public static readonly BindableProperty FluidPanProperty = BindableProperty.Create(
-            nameof(FluidPan),
-            typeof(bool),
-            typeof(SkiaScroll),
-            false);
-
-        /// <summary>
-        /// if enabled you get a fluidly panning scroll, if disabled you get a precisely panning scroll.
-        /// In the first case  we add last finger movement to last scroll position, in the second case we just set scroll position to current finger position. Default is True.
-        /// </summary>
-        public bool FluidPan
-        {
-            get { return (bool)GetValue(FluidPanProperty); }
-            set { SetValue(FluidPanProperty, value); }
-        }
 
         public static readonly BindableProperty ScrollTypeProperty = BindableProperty.Create(nameof(ViewportScrollType), typeof(ViewportScrollType), typeof(SkiaScroll),
             ViewportScrollType.Scrollable,

@@ -1,5 +1,6 @@
 ﻿using AppoMobi.Maui.Gestures;
 using DrawnUi.Maui.Draw;
+using Mapsui;
 using Mapsui.Disposing;
 using Mapsui.Extensions;
 using Mapsui.Fetcher;
@@ -11,22 +12,18 @@ using Mapsui.Rendering.Skia;
 using Mapsui.UI;
 using Mapsui.Utilities;
 using Mapsui.Widgets;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Controls;
-using Sandbox.Views;
-using SkiaSharp.Views.Maui;
-using System;
+using SkiaSharp;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Threading;
+using Map = Mapsui.Map;
 
-namespace Mapsui.Samples.Maui;
+namespace DrawnUi.Maui.MapsUi;
 
-public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureListener
+/// <summary>
+/// MapControl for MAUI DrawnUI
+/// </summary>
+public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 {
 
     protected override void OnLayoutChanged()
@@ -49,19 +46,18 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
     private readonly ConcurrentDictionary<long, ScreenPosition> _positions = new();
     private Size _oldSize;
-    private static List<WeakReference<SkiaMapControl>>? _listeners;
+    private static List<WeakReference<SkiaMapsUi>>? _listeners;
     private readonly ManipulationTracker _manipulationTracker = new();
 
-    public SkiaMapControl()
+    public SkiaMapsUi()
     {
         SharedConstructor();
 
         Map = new()
         {
-            BackColor = Mapsui.Styles.Color.Black,
+            BackColor = Mapsui.Styles.Color.FromArgb(0, 0, 0, 0), //feel the freedom..
             CRS = "EPSG:3857"
         };
-
     }
 
 
@@ -102,19 +98,20 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     public void OnFocusChanged(bool focus)
     { }
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
         var consumed = this; //   e.Handled = true;
 
-        var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
         var position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
 
-        if (touchAction == TouchActionResult.Down)
+        if (args.Type == TouchActionResult.Down)
         {
-            _positions[args.Id] = position;
+            //Super.Log($"[DOWN] id {args.Event.Id}");
+
+            _positions[args.Event.Id] = position;
             if (_positions.Count == 1) // Not sure if this check is necessary.
                 _manipulationTracker.Restart(_positions.Values.ToArray());
 
@@ -122,12 +119,12 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
             //if (OnMapPointerPressed(_positions.Values.ToArray()))
             //    return consumed;
 
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
         else
-        if (touchAction == TouchActionResult.Panning)
+        if (args.Type == TouchActionResult.Panning)
         {
-            _positions[args.Id] = position;
+            _positions[args.Event.Id] = position;
 
             if (OnMapPointerMoved(_positions.Values.ToArray(), false))
                 return consumed;
@@ -137,7 +134,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
             RefreshGraphics();
         }
         else
-        if (touchAction == TouchActionResult.Up)
+        if (args.Type == TouchActionResult.Up)
         {
             //            _positions.Remove(args.Id, out var releasedTouch);
             _positions.Clear();
@@ -151,22 +148,22 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
         //    OnZoomInOrOut(e.WheelDelta, position);
         //}
         else
-        if (touchAction == TouchActionResult.Pinched)
+        if (args.Type == TouchActionResult.Wheel)
         {
             _wasPinching = true;
 
             //if (!ZoomLocked)
             {
-                if (_lastPinch != 0 || args.Pinch.Delta != 0)
+                if (_lastPinch != 0 || args.Event.Wheel.Delta != 0)
                 {
                     double delta = 0;
-                    if (args.Pinch.Delta != 0)
+                    if (args.Event.Wheel.Delta != 0)
                     {
-                        delta = args.Pinch.Delta * PinchMultiplier * ZoomSpeed;
+                        delta = args.Event.Wheel.Delta * PinchMultiplier * ZoomSpeed;
                     }
                     else
                     {
-                        delta = (args.Pinch.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
+                        delta = (args.Event.Wheel.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
 
                         if (Math.Abs(delta) < 10)
                         {
@@ -187,12 +184,11 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
                         }
                     }
 
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Wheel.Scale;
 
                     if (delta != 0)
                     {
-
-                        point = TranslateInputOffsetToPixels(args.Pinch.Center, childOffset);
+                        point = TranslateInputOffsetToPixels(args.Event.Wheel.Center, apply.childOffset);
 
                         position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
 
@@ -207,7 +203,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
                 else
                 {
                     //attach
-                    _lastPinch = args.Pinch.Scale;
+                    _lastPinch = args.Event.Wheel.Scale;
 
                 }
                 return this;
@@ -216,10 +212,10 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
         //if (!_wasPinching)
         //{
-        //    return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        //    return base.ProcessGestures(type, args, args.Action, childOffset, childOffsetDirect, alreadyConsumed);
         //}
 
-        if (_wasPinching && touchAction == TouchActionResult.Up && args.NumberOfTouches < 2)
+        if (_wasPinching && args.Type == TouchActionResult.Up && args.Event.NumberOfTouches < 2)
         {
             _lastPinch = 0;
             _wasPinching = false;
@@ -227,7 +223,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
         return consumed;
 
-        //return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        //return base.ProcessGestures(type, args, args.Action, childOffset, childOffsetDirect, alreadyConsumed);
     }
 
     double _lastPinch = 0;
@@ -236,7 +232,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     #endregion
 
     public static readonly BindableProperty ZoomSpeedProperty = BindableProperty.Create(nameof(ZoomSpeed),
-        typeof(double), typeof(SkiaMapControl),
+        typeof(double), typeof(SkiaMapsUi),
         0.9);
 
     /// <summary>
@@ -500,28 +496,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     /// Called whenever the map is clicked. The MapInfoEventArgs contain the features that were hit in
     /// the layers that have IsMapInfoLayer set to true. 
     /// </summary>
-    public event EventHandler<MapInfoEventArgs>? Info;
-
-    /// <summary>
-    /// Called whenever a property is changed
-    /// </summary>
-#if __MAUI__ || __AVALONIA__
-    public new event PropertyChangedEventHandler? PropertyChanged;
-#else
-    public event PropertyChangedEventHandler? PropertyChanged;
-#endif
-
-#if __MAUI__
-    protected override void OnPropertyChanged([CallerMemberName] string propertyName = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-#else
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-#endif
+    public event EventHandler<MapInfoEventArgs> Info;
 
     /// <summary>
     /// Unsubscribe from map events 
@@ -613,11 +588,11 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
 
     private void Map_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(Layers.Layer.Enabled))
+        if (e.PropertyName == nameof(Mapsui.Layers.Layer.Enabled))
         {
             RefreshGraphics();
         }
-        else if (e.PropertyName == nameof(Layers.Layer.Opacity))
+        else if (e.PropertyName == nameof(Mapsui.Layers.Layer.Opacity))
         {
             RefreshGraphics();
         }
@@ -625,7 +600,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
         {
             RefreshGraphics();
         }
-        else if (e.PropertyName == nameof(Layers.Layer.DataSource))
+        else if (e.PropertyName == nameof(Mapsui.Layers.Layer.DataSource))
         {
             Refresh(); // There is a new DataSource so let's fetch the new data.
         }
@@ -643,7 +618,7 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     private DisposableWrapper<Map>? _map;
 
     public static readonly BindableProperty MapProperty = BindableProperty.Create(nameof(Map),
-        typeof(Map), typeof(SkiaMapControl), default(Map), defaultBindingMode: BindingMode.TwoWay,
+        typeof(Map), typeof(SkiaMapsUi), default(Map), defaultBindingMode: BindingMode.TwoWay,
         propertyChanged: MapPropertyChanged, propertyChanging: MapPropertyChanging);
 
     private double _pinchAccumulated;
@@ -651,14 +626,14 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
     private static void MapPropertyChanging(BindableObject bindable,
         object oldValue, object newValue)
     {
-        var mapControl = (SkiaMapControl)bindable;
+        var mapControl = (SkiaMapsUi)bindable;
         mapControl.BeforeSetMap();
     }
 
     private static void MapPropertyChanged(BindableObject bindable,
         object oldValue, object newValue)
     {
-        var mapControl = (SkiaMapControl)bindable;
+        var mapControl = (SkiaMapsUi)bindable;
         mapControl.AfterSetMap((Map)newValue);
     }
 
@@ -855,4 +830,3 @@ public partial class SkiaMapControl : SkiaControl, IMapControl, ISkiaGestureList
         return false;
     }
 }
-

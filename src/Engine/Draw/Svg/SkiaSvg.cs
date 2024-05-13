@@ -912,7 +912,7 @@ namespace DrawnUi.Maui.Draw
 
                     paint.ImageFilter = null;
 
-                    canvas.Save();
+                    var saved = canvas.Save();
 
                     canvas.ClipPath(path, SKClipOperation.Intersect, true);
 
@@ -1146,7 +1146,7 @@ namespace DrawnUi.Maui.Draw
                                 Clipping.Invoke(clipPath, Destination);
                             }
 
-                            ctx.Canvas.Save();
+                            var saved = ctx.Canvas.Save();
                             ctx.Canvas.ClipPath(clipPath, SKClipOperation.Intersect, true);
 
                             ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);

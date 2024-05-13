@@ -45,9 +45,9 @@ public class SkiaCarousel : SnappingLayout
 
     public event EventHandler<int> ItemDisappearing;
 
-    public event EventHandler Scrolled;
 
-    public event EventHandler Scrolling;
+
+    public event EventHandler<Vector2> Stopped;
 
     protected Dictionary<int, bool> ItemsVisibility { get; } = new();
 
@@ -237,7 +237,6 @@ public class SkiaCarousel : SnappingLayout
 
                     //used by gestures etc..
                     cell.Drawn.Set(view.DrawingRect.Left, view.DrawingRect.Top, view.DrawingRect.Right, view.DrawingRect.Bottom);
-                    cell.LastDrawnSize = new(cell.Drawn.Width, cell.Drawn.Height);
 
                     var destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right, cell.Drawn.Bottom);
                     tree.Add(new SkiaControlWithRect(view, destinationRect, cell.ControlIndex));
@@ -247,7 +246,7 @@ public class SkiaCarousel : SnappingLayout
 
             //Trace.WriteLine($"[CAROUSEL] {Tag}: {ChildrenFactory.GetDebugInfo()}");
 
-            RenderTree = tree.ToImmutableArray();
+            RenderTree = tree;
             _builtRenderTreeStamp = _measuredStamp;
 
             return drawn;
@@ -573,7 +572,7 @@ public class SkiaCarousel : SnappingLayout
 
         if (Parent != null)
         {
-            ApplyOptions();
+  
 
             if (_animatorSpring == null)
             {
@@ -585,12 +584,11 @@ public class SkiaCarousel : SnappingLayout
                     },
                     OnStop = () =>
                     {
-                        Scrolled?.Invoke(this, null);
+                        Stopped?.Invoke(this, _appliedPosition);
                     },
                     OnVectorUpdated = (value) =>
                     {
                         ApplyPosition(value);
-                        Scrolling?.Invoke(this, null);
                     }
                 };
                 _animatorRange = new(this)
@@ -598,21 +596,16 @@ public class SkiaCarousel : SnappingLayout
                     OnVectorUpdated = (value) =>
                     {
                         ApplyPosition(value);
-                        Scrolling?.Invoke(this, null);
                     },
                     OnStop = () =>
                     {
-                        Scrolled?.Invoke(this, null);
+                        Stopped?.Invoke(this, _appliedPosition);
                     }
                 };
             }
+            
+            ApplyOptions();
 
-            ViewportReady = this.Height > 0 && this.Width > 0;
-
-            //if (IsTemplated)
-            //{
-            //    ResizeChildrenViewport();
-            //}
         }
     }
 
@@ -1079,14 +1072,13 @@ public class SkiaCarousel : SnappingLayout
 
     protected VelocityAccumulator VelocityAccumulator { get; } = new();
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-    SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         bool passedToChildren = false;
 
-        //Super.Log($"[CAROUSEL] {this.Tag} Got {touchAction}..");
+        //Super.Log($"[CAROUSEL] {this.Tag} Got {args.Action}..");
 
-        //var thisOffset = TranslateInputCoords(childOffset);
+        //var thisOffset = TranslateInputCoords(apply.childOffset);
 
         ISkiaGestureListener PassToChildren()
         {
@@ -1094,17 +1086,17 @@ public class SkiaCarousel : SnappingLayout
 
             if (!IsTemplated || RecyclingTemplate == RecyclingTemplate.Disabled)
             {
-                return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed); //can pass to them all
+                return base.ProcessGestures(args, apply); //can pass to them all
             }
 
             //todo templated visible only...
 
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
 
         ISkiaGestureListener consumed = null;
 
-        if (!IsUserPanning || !RespondsToGestures || touchAction == TouchActionResult.Tapped)
+        if (!IsUserPanning || !RespondsToGestures || args.Type == TouchActionResult.Tapped)
         {
             consumed = PassToChildren();
             if (consumed != null)
@@ -1130,12 +1122,12 @@ public class SkiaCarousel : SnappingLayout
             _panningStartOffset = CurrentPosition;
         }
 
-        switch (touchAction)
+        switch (args.Type)
         {
         case TouchActionResult.Down:
 
         //        if (!IsUserFocused) //first finger down
-        if (args.NumberOfTouches == 1) //first finger down
+        if (args.Event.NumberOfTouches == 1) //first finger down
         {
             ResetPan();
         }
@@ -1144,12 +1136,12 @@ public class SkiaCarousel : SnappingLayout
 
         break;
 
-        case TouchActionResult.Panning when args.NumberOfTouches == 1:
+        case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
 
         if (!IsUserPanning)
         {
             //first pan
-            if (args.Distance.Total.X == 0 || Math.Abs(args.Distance.Total.Y) > Math.Abs(args.Distance.Total.X) || Math.Abs(args.Distance.Total.X) < 2)
+            if (args.Event.Distance.Total.X == 0 || Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) || Math.Abs(args.Event.Distance.Total.X) < 2)
             {
                 return null;
             }
@@ -1165,19 +1157,19 @@ public class SkiaCarousel : SnappingLayout
 
         IsUserPanning = true;
 
-        var x = _panningOffset.X + args.Distance.Delta.X / RenderingScale;
-        var y = _panningOffset.Y + args.Distance.Delta.Y / RenderingScale;
+        var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
+        var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
 
         Vector2 velocity;
         float useVelocity = 0;
         if (!IsVertical)
         {
-            useVelocity = (float)(args.Distance.Velocity.X / RenderingScale);
+            useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
             velocity = new(useVelocity, 0);
         }
         else
         {
-            useVelocity = (float)(args.Distance.Velocity.Y / RenderingScale);
+            useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
             velocity = new(0, useVelocity);
         }
 

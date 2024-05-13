@@ -9,6 +9,7 @@ using Mapsui.Rendering.Skia;
 using Mapsui.Rendering.Skia.Extensions;
 using Mapsui.Rendering.Skia.SkiaStyles;
 using Mapsui.Styles;
+using SkiaSharp;
 using System.Diagnostics.CodeAnalysis;
 using Color = Mapsui.Styles.Color;
 

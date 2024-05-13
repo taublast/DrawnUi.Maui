@@ -8,7 +8,7 @@ namespace Sandbox.Views.Controls;
 /// <summary>
 /// Consume and process the cache of the content
 /// </summary>
-public class ContentFolder : ContentLayout
+public class ContentFolder : ContentLayout, ISkiaGestureListener
 {
     public ContentFolder()
     {
@@ -300,23 +300,22 @@ public class ContentFolder : ContentLayout
     protected Vector2 _offset;
     protected Vector2 _origin;
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
         ISkiaGestureListener consumed = null;
 
-        switch (touchAction)
+        switch (args.Type)
         {
-        case TouchActionResult.Down when args.NumberOfTouches == 1:
+        case TouchActionResult.Down when args.Event.NumberOfTouches == 1:
         _origin = _offset;
         consumed = this;
         break;
 
-        case TouchActionResult.Panning when args.NumberOfTouches == 1:
+        case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
         _offset = new(
-            _origin.X - args.Distance.Total.X,
-            _origin.Y - args.Distance.Total.Y
+            _origin.X - args.Event.Distance.Total.X,
+            _origin.Y - args.Event.Distance.Total.Y
         );
         consumed = this;
         Repaint();

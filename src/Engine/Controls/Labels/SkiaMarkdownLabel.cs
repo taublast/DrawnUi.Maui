@@ -302,6 +302,21 @@ public class SkiaMarkdownLabel : SkiaLabel
         }
     }
 
+    protected virtual void AddCodeSpan(CodeInline code)
+    {
+        string labelText = code.Content;
+
+        Spans.Add(SpanWithAttributes(new()
+        {
+            //Tag = link.Url,
+            Text = labelText,
+            FontSize = this.FontSize,
+            TextColor = _codeColor,
+            IsItalic = true,
+            BackgroundColor = _codeBackgroundColor,
+        }));
+    }
+
     protected virtual void AddLinkSpan(LinkInline link)
     {
         string labelText = GetLinkLabelText(link);
@@ -330,6 +345,8 @@ public class SkiaMarkdownLabel : SkiaLabel
     protected readonly MarkdownPipeline _pipeline;
     private Color _strikeoutColor = Colors.Red;
     private Color _linkColor = Colors.Blue;
+    private Color _codeBackgroundColor = Colors.Gray;
+    private Color _codeColor = Colors.White;
 
     protected void RenderBlock(Block block)
     {
@@ -372,6 +389,10 @@ public class SkiaMarkdownLabel : SkiaLabel
         case LiteralInline literal:
         //todo detect available font
         AddTextSpan(literal);
+        break;
+
+        case CodeInline code:
+        AddCodeSpan(code);
         break;
 
         case LinkInline link:
@@ -436,8 +457,8 @@ public class SkiaMarkdownLabel : SkiaLabel
 
     protected virtual TextSpan SpanWithAttributes(TextSpan span)
     {
-        span.IsBold = isBold;
-        span.IsItalic = isItalic;
+        span.IsBold = isBold || span.IsBold;
+        span.IsItalic = isItalic || span.IsItalic;
         span.Strikeout = isStrikethrough;
         if (isStrikethrough)
             span.StrikeoutColor = this.StrikeoutColor;

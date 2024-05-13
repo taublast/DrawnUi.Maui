@@ -17,7 +17,7 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         return SKSurface.Create(new SKImageInfo(width, height));
     }
 
-    public Func<SKCanvas, SKRect, bool> OnDraw { get; set; }
+    public Func<SKSurface, SKRect, bool> OnDraw { get; set; }
 
     public DrawnView Superview { get; protected set; }
 
@@ -119,12 +119,16 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
         FrameTime = Super.GetCurrentTimeNanos();
 
+#if ANDROID
         CalculateFPS(FrameTime);
+#else
+        CalculateFPS(FrameTime, 60);
+#endif
 
         if (OnDraw != null && Super.EnableRendering)
         {
             _surface = paintArgs.Surface;
-            bool isDirty = OnDraw.Invoke(paintArgs.Surface.Canvas, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
+            bool isDirty = OnDraw.Invoke(paintArgs.Surface, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
 
 #if ANDROID
             if (maybeLowEnd && FPS > 200)

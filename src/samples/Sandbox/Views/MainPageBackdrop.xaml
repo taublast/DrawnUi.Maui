@@ -3,12 +3,12 @@
     x:Class="Sandbox.Views.MainPageBackdrop"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    x:Name="ThisPage"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:views="clr-namespace:Sandbox.Views"
+    x:Name="ThisPage"
     ios:Page.UseSafeArea="True"
     x:DataType="demo:MainPageViewModel"
     BackgroundColor="#000000">
@@ -49,7 +49,10 @@
                     <draw:SkiaLayout
                         Padding="24"
                         BackgroundColor="WhiteSmoke"
-                        HeightRequest="2000">
+                        HeightRequest="600"
+                        HorizontalOptions="Fill"
+                        Tag="ScrollContent"
+                        UseCache="Image">
 
                         <draw:SkiaImage
                             Aspect="AspectCover"
@@ -60,18 +63,17 @@
 
                         <!--  wrapper for composition  -->
                         <draw:SkiaLayout
-                            Margin="64,32,64,0"
+                            Margin="0,32,0,0"
                             HeightRequest="200"
                             HorizontalOptions="Center"
                             VerticalOptions="Start"
                             WidthRequest="200">
 
                             <!--  static shadow+texture  -->
-                            <!--  cached GPU  -->
                             <draw:SkiaLayout
                                 Padding="16"
                                 HorizontalOptions="Fill"
-                                UseCache="GPU"
+                                UseCache="Image"
                                 VerticalOptions="Fill"
                                 ZIndex="-1">
 
@@ -111,7 +113,7 @@
 
                             </draw:SkiaLayout>
 
-
+                            <!--  BACKDROP  -->
                             <draw:SkiaShape
                                 Margin="16"
                                 BackgroundColor="#66ffffff"
@@ -127,9 +129,7 @@
                                         HorizontalOptions="Fill"
                                         Tag="Blur"
                                         VerticalOptions="Fill"
-                                        ZIndex="-1">
-
-                                    </draw:SkiaBackdrop>
+                                        ZIndex="-1" />
 
                                     <draw:SkiaLayout
                                         Padding="8"
@@ -169,8 +169,8 @@
 
                 </draw:SkiaScroll>
 
-                <controls:ButtonToRoot/>
-                
+                <controls:ButtonToRoot />
+
                 <draw:SkiaLabelFps
                     Margin="0,0,4,24"
                     BackgroundColor="DarkRed"

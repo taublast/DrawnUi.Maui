@@ -21,7 +21,7 @@ public class SkiaHoverMask : SkiaShape
 
                 using (SKPath clipInsideParent = new SKPath())
                 {
-                    ctx.Canvas.Save();
+                    var saved = ctx.Canvas.Save();
 
                     using var clipContent = CreateClip(arguments, true);
                     clipInsideParent.AddPath(clipContent);

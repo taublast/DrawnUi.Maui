@@ -195,10 +195,10 @@ namespace DrawnUi.Maui.Draw
 
 
 
-        public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction, SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
 
-            switch (touchAction)
+            switch (args.Type)
             {
             case TouchActionResult.Up:
             return this;
@@ -206,10 +206,10 @@ namespace DrawnUi.Maui.Draw
 
             case TouchActionResult.Down:
 
-            var thisOffset = TranslateInputCoords(childOffset);
+            var thisOffset = TranslateInputCoords(apply.childOffset);
 
-            var x = args.StartingLocation.X + thisOffset.X;
-            var y = args.StartingLocation.Y + thisOffset.Y;
+            var x = args.Event.StartingLocation.X + thisOffset.X;
+            var y = args.Event.StartingLocation.Y + thisOffset.Y;
 
             var pos = GetCursorPosition(x, y);
             Debug.WriteLine($"GetCursorPosition detected {pos}");
@@ -225,7 +225,7 @@ namespace DrawnUi.Maui.Draw
             break;
             }
 
-            return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+            return base.ProcessGestures(args, apply);
         }
 
 

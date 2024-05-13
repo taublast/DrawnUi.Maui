@@ -42,4 +42,9 @@ public interface ISkiaAnimator : IDisposable
     /// </summary>
     bool IsPaused { get; set; }
 
+    /// <summary>
+    /// For internal use by the engine
+    /// </summary>
+    bool IsHiddenInViewTree { get; set; }
+
 }

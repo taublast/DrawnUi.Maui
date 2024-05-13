@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 
+
 namespace DrawnUi.Maui.Draw;
 
 /// <summary>
@@ -81,7 +82,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             var clip = MainFrame.CreateClip(arguments, usePosition); ;
             clip.Offset(offsetFrame);
             return clip;
-        }
+        } 
 
         return base.CreateClip(arguments, usePosition);
     }
@@ -122,7 +123,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         }
     }
 
-    public virtual bool OnDown(TouchActionEventArgs args, SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
+    public virtual bool OnDown(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         if (this.ApplyEffect != SkiaTouchAnimation.None)
         {
@@ -134,7 +135,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
             if (ApplyEffect == SkiaTouchAnimation.Ripple)
             {
-                var ptsInsideControl = GetOffsetInsideControlInPoints(args.Location, childOffset);
+                var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
                 control.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
             }
             else
@@ -154,7 +155,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     }
 
 
-    public virtual bool OnTapped(TouchActionEventArgs args, SKPoint childOffset)
+    public virtual bool OnTapped(SkiaGesturesParameters args, SKPoint childOffset)
     {
         var ret = false;
 
@@ -183,12 +184,11 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public static float PanThreshold = 5;
 
-    public override ISkiaGestureListener ProcessGestures(
-        TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-    SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        //Trace.WriteLine($"SkiaButton. {type} {touchAction} {args.Location.X} {args.Location.Y}");
-        var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+
+        //Trace.WriteLine($"SkiaButton. {type} {args.Action} {args.Event.Location.X} {args.Event.Location.Y}");
+        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
         var ret = false;
 
@@ -203,7 +203,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             OnUp();
         }
 
-        if (touchAction == TouchActionResult.Down)
+        if (args.Type == TouchActionResult.Down)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
@@ -213,14 +213,21 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             hadDown = true;
             TotalDown++;
             Down?.Invoke(this, args);
-            return OnDown(args, childOffset, childOffsetDirect, alreadyConsumed) ? this : null;
+            return OnDown(args, apply) ? this : null;
         }
 
-        if (touchAction == TouchActionResult.Panning)
+        if (args.Type == TouchActionResult.Panning)
         {
+            if (LockPanning)
+            {
+                return this; //no panning for you my friend 
+            }
+
             var current = point;
-            if (Math.Abs(current.X - _lastDownPts.X) > PanThreshold
-                || Math.Abs(current.Y - _lastDownPts.Y) > PanThreshold)
+            var panthreshold = PanThreshold * RenderingScale;
+
+            if (Math.Abs(current.X - _lastDownPts.X) > panthreshold
+                || Math.Abs(current.Y - _lastDownPts.Y) > panthreshold)
             {
                 if (hadDown)
                     SetUp();
@@ -230,7 +237,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             }
         }
         else
-        if (touchAction == TouchActionResult.Up)
+        if (args.Type == TouchActionResult.Up)
         {
             //todo track multifingers?
             SetUp();
@@ -239,10 +246,10 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             //OnUp();
         }
         else
-        if (touchAction == TouchActionResult.Tapped)
+        if (args.Type == TouchActionResult.Tapped)
         {
             TotalTapped++;
-            return OnTapped(args, childOffset) ? this : null;
+            return OnTapped(args, apply.childOffset) ? this : null;
         }
 
         return hadDown ? this : null;
@@ -253,12 +260,11 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     /// </summary>
     public static int DelayCallbackMs = 0;
 
-    public event EventHandler<TouchActionEventArgs> Up;
+    public event EventHandler<SkiaGesturesParameters> Up;
 
-    public event EventHandler<TouchActionEventArgs> Down;
+    public event EventHandler<SkiaGesturesParameters> Down;
 
-    public event EventHandler<TouchActionEventArgs> Tapped;
-
+    public event EventHandler<SkiaGesturesParameters> Tapped;
 
 
     private long _TotalTapped;
@@ -306,6 +312,16 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         {
             control.ApplyProperties();
         }
+    }
+
+    public static readonly BindableProperty LockPanningProperty = BindableProperty.Create(nameof(LockPanning),
+        typeof(bool),
+        typeof(SkiaButton),
+        false);
+    public bool LockPanning
+    {
+        get { return (bool)GetValue(LockPanningProperty); }
+        set { SetValue(LockPanningProperty, value); }
     }
 
     public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(

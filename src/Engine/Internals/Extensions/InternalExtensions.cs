@@ -4,6 +4,46 @@ namespace DrawnUi.Maui.Extensions;
 
 public static class InternalExtensions
 {
+
+    #region MAUI CONTEXT
+
+    public static IMauiContext? FindMauiContext(this Element element, bool fallbackToAppMauiContext = false)
+    {
+        if (element is IElement fe && fe.Handler?.MauiContext != null)
+            return fe.Handler.MauiContext;
+
+        foreach (var parent in element.GetParentsPath())
+        {
+            if (parent is IElement parentView && parentView.Handler?.MauiContext != null)
+                return parentView.Handler.MauiContext;
+        }
+
+        return fallbackToAppMauiContext ? Application.Current?.FindMauiContext() : default;
+    }
+
+    public static IEnumerable<Element> GetParentsPath(this Element self)
+    {
+        Element current = self;
+
+        while (!IsAppOrNull(current.RealParent))
+        {
+            current = current.RealParent;
+            yield return current;
+        }
+    }
+
+    internal static bool IsAppOrNull(object? element) =>
+        element == null || element is IApplication;
+
+    #endregion
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IntersectsWith(this SKRect rect, SKRect with, SKPoint offset)
+    {
+        with.Offset(offset);
+        return rect.IntersectsWith(with);
+    }
+
     /// <summary>
     /// The default Skia method is returning false if point is on the bounds, We correct this by custom function.
     /// </summary>
@@ -50,7 +90,7 @@ public static class InternalExtensions
 
         if (view.Handler is IElementHandler nativeViewHandler)
         {
-            
+
             MainThread.InvokeOnMainThreadAsync(() =>
             {
                 try

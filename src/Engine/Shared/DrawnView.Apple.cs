@@ -5,49 +5,50 @@ using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Views
 {
-
     public partial class DrawnView
     {
+
         /// <summary>
         /// To optimize rendering and not update controls that are inside storyboard that is offscreen or hidden
         /// Apple - UI thread only !!!
         /// If you set 
         /// </summary>
         /// <param name="element"></param>
-        public void CheckElementVisibility(Element element)
+        public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
+            IsHiddenInViewTree =  !GetIsVisibleWithParent(this);
 
-            if (element != null)
-            {
-                //WARNING this must be called form UI thread only!
+            //if (element != null)
+            //{
+            //    //WARNING this must be called form UI thread only!
 
-                if (element.Handler != null)
-                {
-                    if (element.Handler.PlatformView is UIKit.UIView iosView)
-                    {
-                        if (iosView.Hidden)
-                        {
-                            IsHiddenInViewTree = true;
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    if (element.GetVisualElementWindow() == null)
-                    {
-                        IsHiddenInViewTree = true;
-                        return;
-                    }
-                }
-
-
-                element = element.Parent;
-            }
+            //    if (element.Handler != null)
+            //    {
+            //        if (element.Handler.PlatformView is UIKit.UIView iosView)
+            //        {
+            //            if (iosView.Hidden)
+            //            {
+            //                IsHiddenInViewTree = true;
+            //                return;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (element.GetVisualElementWindow() == null)
+            //        {
+            //            IsHiddenInViewTree = true;
+            //            return;
+            //        }
+            //    }
 
 
-            IsHiddenInViewTree = false;
+
+            //}
+
+
+            //IsHiddenInViewTree = false;
         }
 
         protected virtual void OnSizeChanged()
@@ -67,19 +68,33 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
-            Super.DisplayLinkCallback -= OnDisplayLink;
-            Super.DisplayLinkCallback += OnDisplayLink;
+            Super.OnFrame -= OnFrame;
+            Super.OnFrame += OnFrame;
         }
 
-        private void OnDisplayLink(object sender, EventArgs e)
+        private void OnFrame(object sender, EventArgs e)
         {
             if (CheckCanDraw())
             {
                 OrderedDraw = true;
                 if (NeedCheckParentVisibility)
+                {
                     CheckElementVisibility(this);
+                    if (Tag=="TabSettings")
+                    {
+                        Debug.WriteLine($"TabSettings hidden {IsHiddenInViewTree}");
+                    }
+                }
 
-                CanvasView?.Update();
+                if (CanDraw)
+                {
+                    //Debug.WriteLine($"UPDATE {Tag}");
+                    CanvasView?.Update();
+                }
+                else
+                {
+                    OrderedDraw = false;
+                }
             }
         }
 
@@ -102,7 +117,7 @@ namespace DrawnUi.Maui.Views
 
         protected virtual void DisposePlatform()
         {
-            Super.DisplayLinkCallback -= OnDisplayLink;
+            Super.OnFrame -= OnFrame;
         }
     }
 }

@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace DrawnUi.Maui.Controls;
 
 public partial class SkiaDecoratedGrid : SkiaLayout
@@ -121,7 +123,7 @@ public partial class SkiaDecoratedGrid : SkiaLayout
         if (VerticalLine != null)
         {
             var col = 0;
-            foreach (var definition in GridStructure.Columns.ToList())
+            foreach (var definition in GridStructure.Columns)
             {
                 if (col > 0)
                 {

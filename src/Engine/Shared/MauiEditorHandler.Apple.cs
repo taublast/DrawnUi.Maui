@@ -16,6 +16,6 @@ public partial class MauiEditorHandler : EditorHandler
 
         platformView.BackgroundColor = UIColor.FromRGBA(0,0,0,0);
     }
-
+    
 }
 

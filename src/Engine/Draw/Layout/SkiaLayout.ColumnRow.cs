@@ -9,56 +9,18 @@ namespace DrawnUi.Maui.Draw
     {
         #region StackLayout
 
-        public class ControlInStack
-        {
-            public ControlInStack()
-            {
-                Drawn = new();
-                Destination = new();
-                Area = new();
-            }
-            public int ControlIndex { get; set; }
-
-            public bool Expands { get; set; }
-
-            public ScaledSize Measured { get; set; }
-
-            /// <summary>
-            /// Available area for arrange
-            /// </summary>
-            public SKRect Area { get; set; }
-
-            /// <summary>
-            /// PIXELS
-            /// </summary>
-            public SKRect Destination { get; set; }
-
-            public SKRect Tmp { get; set; }
-
-            public ISkiaCell Cell { get; set; }
-
-            public DrawingRect Drawn { get; set; }
-
-            public Vector2 Offset { get; set; }
-
-            public SKSize LastDrawnSize { get; set; }
-
-            public bool IsVisible { get; set; }
-
-            public int ZIndex { get; set; }
-        }
 
         /// <summary>
-        /// Used for StackLayout (Column, Row) kind of layout
+        /// Used for StackLayout (Stack, Row) kind of layout
         /// </summary>
-        public List<List<ControlInStack>> StackStructure { get; set; }
+        public LayoutStructure StackStructure { get; set; }
 
         /// <summary>
         /// When measuring we set this, and it will be swapped with StackStructure upon drawing so we don't affect the drawing if measuring in background.
         /// </summary>
-        public List<List<ControlInStack>> StackStructureMeasured { get; set; }
+        public LayoutStructure StackStructureMeasured { get; set; }
 
-        public List<List<ControlInStack>> LatestStackStructure
+        public LayoutStructure LatestStackStructure
         {
             get
             {
@@ -92,8 +54,6 @@ namespace DrawnUi.Maui.Draw
             if (structure != null)
             {
                 //draw children manually
-                int row;
-                int col;
 
                 var visibleArea = GetOnScreenVisibleArea();
 
@@ -101,71 +61,59 @@ namespace DrawnUi.Maui.Draw
                 //we need this pass before drawing to recycle views that became hidden
                 var viewsTotal = 0;
 
-                for (row = 0; row < structure.Count; row++)
+                foreach (var cell in structure.GetChildren())
                 {
-                    var rowContent = structure[row];
-                    for (col = 0; col < rowContent.Count; col++)
+
+                    viewsTotal++;
+
+                    if (cell.Destination == SKRect.Empty)
                     {
-                        viewsTotal++;
-                        var cell = rowContent[col];
-                        if (cell.Destination == SKRect.Empty)
-                        {
-                            cell.IsVisible = false;
-                        }
-                        else
-                        {
-                            var x = destination.Left + cell.Destination.Left;
-                            var y = destination.Top + cell.Destination.Top;
+                        cell.IsVisible = false;
+                    }
+                    else
+                    {
+                        var x = destination.Left + cell.Destination.Left;
+                        var y = destination.Top + cell.Destination.Top;
 
-                            cell.LastDrawnSize = new(cell.Drawn.Width, cell.Drawn.Height);
-                            cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
+                        cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
 
-                            if (Virtualisation != VirtualisationType.Disabled)
-                            {
-                                if (needrebuild && UsingCacheType == SkiaCacheType.None &&
-                                    Virtualisation == VirtualisationType.Smart
-                                    && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
-                                {
-                                    cell.IsVisible = true;
-                                }
-                                else
-                                {
-                                    cell.IsVisible = cell.Drawn.IntersectsWith(visibleArea.Pixels);
-                                }
-                            }
-                            else
+                        if (Virtualisation != VirtualisationType.Disabled)
+                        {
+                            if (needrebuild && UsingCacheType == SkiaCacheType.None &&
+                                Virtualisation == VirtualisationType.Smart
+                                && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
                             {
                                 cell.IsVisible = true;
                             }
-                        }
-
-                        if (!cell.IsVisible)
-                        {
-                            ChildrenFactory.MarkViewAsHidden(cell.ControlIndex);
+                            else
+                            {
+                                cell.IsVisible = cell.Drawn.IntersectsWith(visibleArea.Pixels);
+                            }
                         }
                         else
                         {
-                            visibleElements.Add(cell);
+                            cell.IsVisible = true;
                         }
                     }
+
+                    if (!cell.IsVisible)
+                    {
+                        ChildrenFactory.MarkViewAsHidden(cell.ControlIndex);
+                    }
+                    else
+                    {
+                        visibleElements.Add(cell);
+                    }
                 }
+
 
                 //PASS 2 DRAW VISIBLE
                 //using precalculated rects
                 bool wasVisible = false;
                 var index = -1;
-                SkiaControl[] nonTemplated = null;
 
-                //precalculate stuff
-                if (!IsTemplated)
-                {
-                    //..because we didnt store invisible stuff in structure!
-                    nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
-                }
-
-                int countRendered = 0;
-
-                foreach (var cell in visibleElements.OrderBy(x => x.ZIndex))
+                //todo modify structure upon ZIndex or something... do not order on every frame!!!!!
+                foreach (var cell in visibleElements)//.OrderBy(x => x.ZIndex))
                 {
                     index++;
 
@@ -182,8 +130,7 @@ namespace DrawnUi.Maui.Draw
                     {
                         try
                         {
-                            //..because we didnt store invisible stuff in structure!
-                            child = nonTemplated[cell.ControlIndex];
+                            child = cell.View;
                         }
                         catch (Exception ex)
                         {
@@ -227,37 +174,13 @@ namespace DrawnUi.Maui.Draw
                         }
                         */
 
-
-                        if (IsRenderingWithComposition)
-                        {
-                            if (DirtyChildrenInternal.Contains(child))
-                            {
-                                DrawChild(context, destinationRect, child, scale);
-                                countRendered++;
-                            }
-                            else
-                            {
-                                //skip drawing but need arrange :(
-                                child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height, scale);
-                            }
-                        }
-                        else
-                        {
-                            DrawChild(context, destinationRect, child, scale);
-                            countRendered++;
-                        }
-
+                        DrawChild(context, destinationRect, child, scale);
                         drawn++;
 
                         //gonna use that for gestures and for item inside viewport detection and for hotreload children tree
                         tree.Add(new SkiaControlWithRect(control, destinationRect, index));
                     }
                 }
-
-                //if (Tag == "Controls")
-                //{
-                //    Debug.WriteLine($"[?] {countRendered}");
-                //}
             }
 
             //_stopwatchRender.Restart();
@@ -265,7 +188,7 @@ namespace DrawnUi.Maui.Draw
             if (needrebuild && visibleElements.Count > 0)
             {
                 //reserve for one row above and one row below
-                var row = MaxColumns;
+                var row = Split;
                 if (row < 1)
                     row = 1;
                 var reserve = row * 3;
@@ -288,7 +211,7 @@ namespace DrawnUi.Maui.Draw
             }
 
 
-            RenderTree = tree.ToImmutableArray();
+            RenderTree = tree;
             _builtRenderTreeStamp = _measuredStamp;
 
             if (Parent is IDefinesViewport viewport &&
@@ -323,7 +246,7 @@ namespace DrawnUi.Maui.Draw
 
         void LayoutCell(ScaledSize measured, ControlInStack cell, SkiaControl child, float scale)
         {
-            if (measured != ScaledSize.Empty)
+            if (!measured.IsEmpty)
             {
                 child.Arrange(cell.Area, measured.Units.Width, measured.Units.Height, scale);
 
@@ -349,6 +272,19 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected float GetSpacingForIndex(int forIndex, float scale)
+        {
+            var spacing = 0.0f;
+            if (forIndex > 0)
+            {
+                spacing = (float)Math.Round(Spacing * scale);
+            }
+            return spacing;
+        }
+
         /// <summary>
         /// TODO for templated measure only visible?! and just reserve predicted scroll amount for scrolling
         /// </summary>
@@ -359,7 +295,7 @@ namespace DrawnUi.Maui.Draw
         {
             if (ChildrenFactory.GetChildrenCount() > 0)
             {
-                ScaledSize measured = new();
+                ScaledSize measured;
                 SKRect rectForChild = rectForChildrenPixels;//.Clone();
 
                 SkiaControl[] nonTemplated = null;
@@ -527,11 +463,13 @@ namespace DrawnUi.Maui.Draw
 
                 SkiaControl template = null;
                 ControlInStack firstCell = null;
-                measured = null;
+                measured = ScaledSize.Default;
+
                 var stackHeight = 0.0f;
                 var stackWidth = 0.0f;
 
-                var rows = BuildStackStructure(scale);
+                var layoutStructure = BuildStackStructure(scale);
+
                 bool useOneTemplate =
                                        //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
                                        RecyclingTemplate == RecyclingTemplate.Enabled;
@@ -543,15 +481,16 @@ namespace DrawnUi.Maui.Draw
 
                 //measure
                 //left to right, top to bottom
-                for (var row = 0; row < rows.Count; row++)
+                for (var row = 0; row < layoutStructure.MaxRows; row++)
                 {
                     var maxHeight = 0.0f;
                     var maxWidth = 0.0f;
-                    var columnsCount = rows[row].Count;
 
-                    if (!DynamicColumns && columnsCount < MaxColumns)
+                    var columnsCount = layoutStructure.GetColumnCountForRow(row);
+
+                    if (!DynamicColumns && columnsCount < Split)
                     {
-                        columnsCount = MaxColumns;
+                        columnsCount = Split;
                     }
 
                     // Calculate the width for each column
@@ -573,10 +512,10 @@ namespace DrawnUi.Maui.Draw
 
                         try
                         {
-                            if (rows[row].Count < column + 1)
+                            if (layoutStructure.GetColumnCountForRow(row) < column + 1)
                                 continue; //case when we last row with less items to fill all columns
 
-                            var cell = rows[row][column];
+                            var cell = layoutStructure.Get(column, row);
 
                             SkiaControl child = null;
                             if (IsTemplated)
@@ -591,13 +530,12 @@ namespace DrawnUi.Maui.Draw
                             if (child == null)
                             {
                                 Trace.WriteLine($"[MeasureStack] FAILED to get child at index {cell.ControlIndex}");
-                                return ScaledSize.Empty;
+                                return ScaledSize.Default;
                             }
 
                             if (!child.CanDraw)
                             {
-                                cell.Measured = ScaledSize.Empty;
-                                continue;
+                                cell.Measured = ScaledSize.Default;
                             }
 
                             if (column == 0)
@@ -608,7 +546,7 @@ namespace DrawnUi.Maui.Draw
 
                             if (IsTemplated)
                             {
-                                bool needMeasure = (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && columnsCount != MaxColumns) || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && measured != null);
+                                bool needMeasure = (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && columnsCount != Split) || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && firstCell != null);
                                 if (needMeasure)
                                 {
                                     measured = MeasureAndArrangeCell(rectFitChild, cell, child, scale);
@@ -632,7 +570,7 @@ namespace DrawnUi.Maui.Draw
                                 measured = MeasureAndArrangeCell(rectFitChild, cell, child, scale);
                             }
 
-                            if (measured != ScaledSize.Empty)
+                            if (!measured.IsEmpty)
                             {
                                 maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
 
@@ -667,11 +605,11 @@ namespace DrawnUi.Maui.Draw
                     ChildrenFactory.ReleaseView(template);
                 }
 
-                if (HorizontalOptions.Alignment == LayoutAlignment.Fill)
+                if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
                 {
                     stackWidth = rectForChildrenPixels.Width;
                 }
-                if (VerticalOptions.Alignment == LayoutAlignment.Fill)
+                if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
                 {
                     stackHeight = rectForChildrenPixels.Height;
                 }
@@ -682,18 +620,7 @@ namespace DrawnUi.Maui.Draw
             return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected float GetSpacingForIndex(int forIndex, float scale)
-        {
-            var spacing = 0.0f;
-            if (forIndex > 0)
-            {
-                spacing = (float)Math.Round(Spacing * scale);
-            }
-            return spacing;
-        }
-
-        private List<List<ControlInStack>> BuildStackStructure(float scale)
+        private LayoutStructure BuildStackStructure(float scale)
         {
 
             //build stack grid
@@ -702,22 +629,32 @@ namespace DrawnUi.Maui.Draw
             var row = 0;
             var rows = new List<List<ControlInStack>>();
             var columns = new List<ControlInStack>();
-            var maxColumns = MaxColumns;
-            int maxRows = MaxRows; // New MaxRows property
+            var maxColumns = Split;
+            int maxRows = 0;
 
             //returns true if can continue
             bool ProcessStructure(int i, SkiaControl control)
             {
-                var add = new ControlInStack { ControlIndex = i };
+                var add = new ControlInStack
+                {
+                    ControlIndex = i,
+                    View = control
+                };
                 if (control != null)
                 {
                     add.ZIndex = control.ZIndex;
                     add.ControlIndex = i;
                 }
 
+                if (Type == LayoutType.Row)
+                {
+                    var stop = 1;
+                }
+
                 // vertical stack or if maxColumns is exceeded
-                if (Type == LayoutType.Column && maxColumns < 1 || (maxColumns > 0 && column >= maxColumns) ||
-                    LineBreaks.Contains(i))
+                if (Type == LayoutType.Column && column >= maxColumns
+                    || Type == LayoutType.Row && (maxColumns > 0 && column >= maxColumns)
+                    || LineBreaks.Contains(i))
                 {
                     if (i > 0)
                     {
@@ -766,16 +703,18 @@ namespace DrawnUi.Maui.Draw
 
             rows.Add(columns);
 
+            var structure = new LayoutStructure(rows);
+
             if (InitializeTemplatesInBackgroundDelay > 0)
             {
-                StackStructure = rows;
+                StackStructure = structure;
             }
             else
             {
-                StackStructureMeasured = rows;
+                StackStructureMeasured = structure;
             }
 
-            return rows;
+            return structure;
         }
 
         //2 passes for FILL LAYOUT OPTIONS
@@ -1096,120 +1035,6 @@ namespace DrawnUi.Maui.Draw
         break;
         */
 
-        private float CalculateTakenHeightAbove(int row, float scaledSpacing)
-        {
-            float totalHeight = 0;
-            for (int i = 0; i < row; i++)
-            {
-                foreach (var cell in LatestStackStructure[i])
-                {
-                    totalHeight += cell.Measured.Pixels.Height;
-                }
-                totalHeight += scaledSpacing; // don't forget to account for the spacing
-            }
-            return totalHeight;
-        }
-
-        public float CalculateTakenWidthAtLeft(int rowIndex, int colIndex, float scaledSpacing)
-        {
-            float totalWidth = 0;
-
-            var structure = LatestStackStructure;
-            // Check if rowIndex is within the StackStructure bounds
-            if (rowIndex < structure.Count)
-            {
-                var row = structure[rowIndex];
-
-                // Iterate over each cell in the row up to colIndex
-                for (int i = 0; i < colIndex; i++)
-                {
-                    totalWidth += row[i].Measured.Pixels.Width;
-                    totalWidth += scaledSpacing;
-                }
-            }
-
-            return totalWidth;
-        }
-
-
-        public float CalculateTakenHeightBelow(int rowIndex, float scaledSpacing)
-        {
-            float totalHeight = 0;
-            var structure = LatestStackStructure;
-            for (int i = rowIndex + 1; i < structure.Count; i++)
-            {
-                foreach (ControlInStack cell in structure[i])
-                {
-                    totalHeight += cell.Measured.Pixels.Height;
-                }
-                totalHeight += scaledSpacing;
-            }
-            return totalHeight;
-        }
-
-        public float CalculateTakenWidthRight(int rowIndex, int colIndex, float scaledSpacing)
-        {
-            float totalWidth = 0;
-            var structure = LatestStackStructure;
-            if (rowIndex < structure.Count)
-            {
-                var row = structure[rowIndex];
-
-
-                for (int i = colIndex + 1; i < row.Count; i++)
-                {
-                    totalWidth += row[i].Measured.Pixels.Width;
-                    totalWidth += scaledSpacing;
-                }
-            }
-            return totalWidth;
-        }
-
-
-        public ContainsPointResult StackStructureGetItemAtCoordinates(SKPoint point)
-        {
-            int index = -1;
-            int row;
-            int col;
-            for (row = 0; row < StackStructure.Count; row++)
-            {
-                var rowContent = StackStructure[row];
-                for (col = 0; col < rowContent.Count; col++)
-                {
-                    index++;
-                    var childInfo = rowContent[col];
-                    if (childInfo.Destination.ContainsInclusive(point))
-                    {
-                        return new ContainsPointResult()
-                        {
-                            Index = index,
-                            Area = childInfo.Destination.Clone(),
-                            Point = point,
-                        };
-                    }
-                }
-            }
-            return ContainsPointResult.NotFound();
-        }
-
-        public ControlInStack GetStackChild(int position)
-        {
-            int index = -1;
-            int row;
-            int col;
-            var structure = LatestStackStructure;
-            for (row = 0; row < structure.Count; row++)
-            {
-                var rowContent = structure[row];
-                for (col = 0; col < rowContent.Count; col++)
-                {
-                    index++;
-                    if (index == position)
-                        return rowContent[col];
-                }
-            }
-            return null;
-        }
 
 
         #endregion

@@ -13,6 +13,12 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
         RecyclingTemplate = RecyclingTemplate.Disabled;
     }
 
+    protected override void OnLayoutChanged()
+    {
+        //this one constantly changes size, we avoid invoking onsizechanged on every frame..
+
+        //base.OnLayoutReady();
+    }
 
 
     public static readonly BindableProperty DistortionAngleProperty = BindableProperty.Create(nameof(DistortionAngle),
@@ -116,17 +122,30 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
 
             var centerViewportY = scroll.Destination.Top + scroll.Viewport.Pixels.MidY;
 
+            if (control.Helper3d == null)
+            {
+                control.Helper3d = new();
+            }
+
+#if SKIA3
             control.Helper3d.Reset();
             control.Helper3d.RotateXDegrees(childViewAngle);
             control.Helper3d.TranslateZ(z);
-
-            context.Canvas.Save();
+            var applyMatrix = control.Helper3d.GetMatrix();
+#else
+            control.Helper3d.Save();
+            control.Helper3d.RotateXDegrees(childViewAngle);
+            control.Helper3d.TranslateZ(z);
+            var applyMatrix = control.Helper3d.Matrix;
+            control.Helper3d.Restore();
+#endif
+            var saved = context.Canvas.Save();
 
             //set pivot point
             var DrawingMatrix = SKMatrix.CreateTranslation(-centerX, -centerY);
 
             //apply stuff
-            DrawingMatrix = DrawingMatrix.PostConcat(control.Helper3d.Matrix);
+            DrawingMatrix = DrawingMatrix.PostConcat(applyMatrix);
 
             //restore coordinates back
             DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(centerX, centerY));

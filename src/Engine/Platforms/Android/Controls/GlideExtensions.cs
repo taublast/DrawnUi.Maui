@@ -8,6 +8,7 @@ using Bumptech.Glide.Load.Engine;
 using Bumptech.Glide.Request.Target;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android;
 using System.Diagnostics;
+using Bumptech.Glide.Load.Model;
 using Activity = Android.App.Activity;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
@@ -116,10 +117,11 @@ public static class GlideExtensions
     static RequestBuilder HandleUriImageSource(RequestManager request, UriImageSource source)
     {
         var url = source.Uri.OriginalString;
-        return request.Load(url);
+        var forGlide = new GlideUrl(url, new LazyHeaders.Builder().AddHeader("User-Agent", Super.UserAgent).Build());
+        return request.Load(forGlide);
     }
 
-    static async Task<RequestBuilder?> HandleStreamImageSource(RequestManager request, StreamImageSource source, CancellationToken token, Func<bool> cancelled)
+    static async Task<RequestBuilder> HandleStreamImageSource(RequestManager request, StreamImageSource source, CancellationToken token, Func<bool> cancelled)
     {
         using var memoryStream = new MemoryStream();
         using var stream = await source.Stream(token);

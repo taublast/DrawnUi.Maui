@@ -90,6 +90,16 @@ public partial class SkiaImageManager
     }
     */
 
+    public static async Task<string> HandleRedirects(HttpClient client, string url)
+    {
+        var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        if (response.IsSuccessStatusCode && (response.StatusCode == System.Net.HttpStatusCode.MovedPermanently || response.StatusCode == System.Net.HttpStatusCode.Redirect))
+        {
+            return response.Headers.Location.ToString();
+        }
+        return url;
+    }
+
     public static async Task<SKBitmap> LoadImageOnPlatformAsync(ImageSource source, CancellationToken cancel)
     {
         if (source == null)
@@ -97,7 +107,6 @@ public partial class SkiaImageManager
 
         try
         {
-
             if (source is StreamImageSource streamSource)
             {
                 using (var stream = await streamSource.Stream(cancel))
@@ -108,31 +117,7 @@ public partial class SkiaImageManager
             else
             if (source is UriImageSource uriSource)
             {
-                var httpClientHandler = new HttpClientHandler();
-                if (httpClientHandler.SupportsAutomaticDecompression)
-                {
-                    httpClientHandler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-                }
-
-                //#if DEBUG
-                //						httpClientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-                //						{
-                //							return true;
-                //						};
-                //						httpClientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                //#endif
-
-                httpClientHandler.SslProtocols = SslProtocols.Tls12;
-                var client = new HttpClient(httpClientHandler);
-                var response = await client.GetAsync(uriSource.Uri, cancel);
-                if (response.IsSuccessStatusCode)
-                {
-                    using (var stream = await response.Content.ReadAsStreamAsync())
-                    {
-                        return SKBitmap.Decode(stream);
-                    }
-                }
-
+                return await LoadImageFromInternetAsync(uriSource, cancel);
             }
             else
             if (source is FileImageSource fileSource)

@@ -1,9 +1,16 @@
 ﻿using AppoMobi.Specials;
 using DrawnUi.Maui.Controls;
 using EasyCaching.InMemory;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 using Microsoft.Maui.LifecycleEvents;
 using Microsoft.Maui.Platform;
+using Polly;
+using Polly.Timeout;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Authentication;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -41,6 +48,62 @@ public static class DependencyExtensions
 {
     public static UiSettings StartupSettings { get; set; }
 
+    const string HttpClientKey = "drawnui";
+
+    public static IServiceCollection AddUriImageSourceHttpClient(this IServiceCollection services,
+        Action<HttpClient>? configureDelegate = null, Func<IHttpClientBuilder, IHttpClientBuilder>? delegateBuilder = null)
+    {
+        IHttpClientBuilder clientBuilder;
+
+        if (configureDelegate != null)
+        {
+            clientBuilder = services.AddHttpClient(HttpClientKey, configureDelegate);
+        }
+        else
+        {
+            var retryPolicy = Policy
+                .HandleResult<HttpResponseMessage>(r =>
+                    r.StatusCode == HttpStatusCode.GatewayTimeout
+                    || r.StatusCode == HttpStatusCode.RequestTimeout)
+                .Or<HttpRequestException>()
+                .Or<TimeoutRejectedException>()
+                .WaitAndRetryAsync(new[]
+                {
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(3),
+                });
+
+            clientBuilder = services.AddHttpClient(HttpClientKey, client =>
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", Super.UserAgent);
+                })
+                .ConfigurePrimaryHttpMessageHandler(() =>
+                {
+                    var handler = new HttpClientHandler();
+                    if (handler.SupportsAutomaticDecompression)
+                    {
+                        handler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+                    }
+
+                    return handler;
+                })
+                .AddPolicyHandler(retryPolicy);
+        }
+
+        delegateBuilder?.Invoke(clientBuilder);
+
+        //do not slow us down with logs spam
+        //one could inject IHttpMessageHandlerBuilderFilter after this to enable logs back
+        services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
+
+        return services;
+    }
+
+    public static HttpClient? CreateLoadImagesHttpClient(this IServiceProvider services)
+    {
+        return services.GetService<IHttpClientFactory>()?.CreateClient(HttpClientKey);
+    }
+
     public static MauiAppBuilder UseDrawnUi(this MauiAppBuilder builder, UiSettings settings = null)
     {
         StartupSettings = settings;
@@ -66,13 +129,12 @@ public static class DependencyExtensions
 
             //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
             //handlers.AddHandler(typeof(Window), typeof(CustomizedWindowHandler));
-            
+
 #elif WINDOWS
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 #endif
         });
-
 
         builder
             .ConfigureAnimations();
@@ -85,6 +147,8 @@ public static class DependencyExtensions
 #endif
 
         builder.UseGestures();
+
+        builder.Services.AddUriImageSourceHttpClient();
 
         //In-Memory Caching of bitmaps
         builder.Services  //Important step for In-Memory Caching
@@ -227,7 +291,7 @@ public static class DependencyExtensions
                     //var win = window.GetWindow();
                     //var handle = window.GetWindowHandle();
 
-
+                    Super.OnMauiAppCreated?.Invoke();
 
                     Super.OnCreated();
                 });
@@ -323,14 +387,14 @@ public static class DependencyExtensions
                         Super.OnMauiAppCreated?.Invoke();
                     }
                 });
-                
+
                 apple.FinishedLaunching((application, launchOptions) =>
                 {
                     Super.App = Super.Services.GetRequiredService<IApplication>();
                     var appWindow = Super.App.Windows.First() as Microsoft.Maui.Controls.Window;
                     var view = appWindow.Handler?.PlatformView as UIKit.UIView;
                     //var check = UIKit.UIApplication.SharedApplication.KeyWindow;
-                    
+
                     Super.Init();
 
 #if MACCATALYST
@@ -353,8 +417,8 @@ public static class DependencyExtensions
                                   // {
                                   //     //unsupported
                                   // }
-                                  
-                                  
+
+
                               });
 
 #endif
@@ -372,7 +436,7 @@ public static class DependencyExtensions
                                         //not working with several displays never ever
                                         //var test = DeviceDisplay.Current.MainDisplayInfo.Density;                                      
                                         Super.Screen.Density = windowScene.Screen.Scale;
-                                        Super.NeedGlocalUpdate();
+                                        Super.NeedGlobalUpdate();
                                     }
                                 }
                             }
@@ -403,7 +467,7 @@ public static class DependencyExtensions
                                             if (Super.Screen.Density != windowScene.Screen.Scale)
                                             {
                                                 Super.Screen.Density = windowScene.Screen.Scale;
-                                                Super.NeedGlocalUpdate();
+                                                Super.NeedGlobalUpdate();
                                             }
                                         }
                                     }

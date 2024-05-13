@@ -8,7 +8,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         return SKSurface.Create(new SKImageInfo(width, height));
     }
 
-    public Func<SKCanvas, SKRect, bool> OnDraw { get; set; }
+    public Func<SKSurface, SKRect, bool> OnDraw { get; set; }
 
     public SkiaViewAccelerated(DrawnView superview)
     {
@@ -229,7 +229,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         {
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
             _surface = paintArgs.Surface;
-            var isDirty = OnDraw.Invoke(paintArgs.Surface.Canvas, rect);
+            var isDirty = OnDraw.Invoke(paintArgs.Surface, rect);
 
 #if ANDROID
             if (maybeLowEnd && FPS > 200)

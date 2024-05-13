@@ -1,8 +1,8 @@
 namespace Sandbox.Views.Controls;
 
-public partial class SkiaSliderFun : SkiaSlider
+public partial class DrawnSlider : SkiaSlider
 {
-    public SkiaSliderFun()
+    public DrawnSlider()
     {
         InitializeComponent();
     }

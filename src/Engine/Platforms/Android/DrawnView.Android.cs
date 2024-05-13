@@ -27,38 +27,39 @@ namespace DrawnUi.Maui.Views
         /// If you set 
         /// </summary>
         /// <param name="element"></param>
-        public void CheckElementVisibility(Element element)
+        public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
+            IsHiddenInViewTree = !GetIsVisibleWithParent(this);
 
-            if (element != null)
-            {
+            //if (element != null)
+            //{
 
-                if (element.Handler != null)
-                {
-                    if (element.Handler.PlatformView is Android.Views.View nativeView)
-                    {
-                        if (nativeView.Visibility != Android.Views.ViewStates.Visible)
-                        {
-                            IsHiddenInViewTree = true;
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    if (element.GetVisualElementWindow() == null)
-                    {
-                        IsHiddenInViewTree = true;
-                        return;
-                    }
-                }
-
-                element = element.Parent;
-            }
+            //    if (element.Handler != null)
+            //    {
+            //        if (element.Handler.PlatformView is Android.Views.View nativeView)
+            //        {
+            //            if (nativeView.Visibility != Android.Views.ViewStates.Visible)
+            //            {
+            //                IsHiddenInViewTree = true;
+            //                return;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (element.GetVisualElementWindow() == null)
+            //        {
+            //            IsHiddenInViewTree = true;
+            //            return;
+            //        }
+            //    }
 
 
-            IsHiddenInViewTree = false;
+            //}
+
+
+            //IsHiddenInViewTree = false;
         }
 
 #if CHOREOGRAPHER
@@ -81,7 +82,15 @@ namespace DrawnUi.Maui.Views
                     if (NeedCheckParentVisibility)
                         CheckElementVisibility(this);
 
-                    CanvasView?.Update();
+                    if (CanDraw)
+                    {
+                        //Debug.WriteLine($"UPDATE {Tag}");
+                        CanvasView?.Update();
+                    }
+                    else
+                    {
+                        OrderedDraw = false;
+                    }
                 }
             }
         }

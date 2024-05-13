@@ -5,7 +5,7 @@ public interface ISkiaDrawable : ISkiaSharpView, IDisposable
     /// <summary>
     /// Return true if need force invalidation on next frame
     /// </summary>
-    public Func<SKCanvas, SKRect, bool> OnDraw { get; set; }
+    public Func<SKSurface, SKRect, bool> OnDraw { get; set; }
 
     public SKSurface Surface { get; }
 

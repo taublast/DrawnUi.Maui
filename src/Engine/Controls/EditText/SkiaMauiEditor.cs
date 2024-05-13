@@ -1,27 +1,19 @@
-﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace DrawnUi.Maui.Controls;
 
 public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 {
 
-    public SkiaMauiEditor()
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-
-    }
-
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
-    {
-        if (touchAction == TouchActionResult.Up)
+        if (args.Type == TouchActionResult.Up)
         {
-            var point = TranslateInputOffsetToPixels(args.Location, childOffset);
+            var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
             if (!DrawingRect.Contains(point))
             {
                 //we got this gesture because we were focused, but it's now outside our bounds, can unfocus
-                return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+                return base.ProcessGestures(args, apply);
             }
         }
 
@@ -69,6 +61,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         control.FontSize = FontSize;
         control.TextColor = this.TextColor;
         //control.ReturnType = this.ReturnType;
+
         control.Keyboard = this.KeyboardType;
         control.Text = Text;
         //todo customize
@@ -131,11 +124,17 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     protected virtual void AdaptControlSize()
     {
-        if (Control != null)
+
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            Control.WidthRequest = this.Width;
-            Control.HeightRequest = this.Height;
-        }
+            if (Control != null)
+            {
+                Control.WidthRequest = this.Width;
+                Control.HeightRequest = this.Height;
+            }
+        });
+
+
     }
 
     public virtual void UpdateControl()
@@ -402,7 +401,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         nameof(ReturnType),
         typeof(ReturnType),
         typeof(SkiaMauiEditor),
-        ReturnType.Done);
+        ReturnType.Default);
 
     public ReturnType ReturnType
     {

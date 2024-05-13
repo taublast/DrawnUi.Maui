@@ -657,7 +657,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
     public bool ManualZoomEnabled = true;
 
-    private void OnScaleChanged(object sender, TouchEffect.ScaleEventArgs e)
+    private void OnScaleChanged(object sender, TouchEffect.WheelEventArgs e)
     {
         if (ManualZoomEnabled)
         {

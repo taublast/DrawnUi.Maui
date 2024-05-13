@@ -35,20 +35,23 @@
                     <draw:SkiaLayout
                         HorizontalOptions="Fill"
                         Spacing="0"
-                        Type="Column"
+                        Split="1"
                         Tag="ScrollContent"
-                        UseCache="ImageComposition">
+                        Type="Stack"
+                        UseCache="ImageComposite">
 
                         <!--
                             we set ImageDoubleBuffered to be able to fast redraw
                             the whole scroll even if image drawing with new effects might be slow
                         -->
                         <draw:SkiaImage
+                            draw:AddGestures.AnimationTapped="Shimmer"
                             Aspect="AspectFit"
                             HeightRequest="185"
                             HorizontalOptions="Center"
                             LoadSourceOnFirstDraw="False"
                             SemanticProperties.Description="dot net maui drawn ui"
+                            SemanticProperties.Hint="image of a car"
                             Source="car.png"
                             Tag="Car"
                             UseCache="ImageDoubleBuffered">
@@ -86,7 +89,6 @@
                         </draw:SkiaImage>
 
                         <controls:SliderColor
-                            Tag="Slider"
                             x:Name="Slider"
                             Margin="0,-16,0,16"
                             DefaultColor="Red"
@@ -96,6 +98,7 @@
                             MinMaxStringFormat="P0"
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
+                            Tag="Slider"
                             UseCache="ImageDoubleBuffered"
                             WidthRequest="200" />
 
@@ -104,10 +107,10 @@
                             might need to cache with area around
                         -->
                         <draw:SkiaLayout
-                            Tag="SetMainpageText"
                             Margin="0,-10,0,0"
                             Padding="10"
                             HorizontalOptions="Center"
+                            Tag="SetMainpageText"
                             UseCache="Image">
                             <draw:SkiaLabel
                                 FontSize="24"
@@ -126,21 +129,21 @@
 
                         <draw:SkiaLayout
                             x:Name="Buttons"
-                            Tag="Buttons"
                             HorizontalOptions="Center"
-                            MaxColumns="2"
                             Spacing="0"
-                            Type="Column"
-                            UseCache="ImageComposition">
+                            Split="0"
+                            Tag="Buttons"
+                            Type="Stack"
+                            UseCache="None">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">
 
-                                    <!--  caching area with shadow  -->
+
                                     <draw:SkiaLayout
-                                        Tag="Button"
                                         Padding="16"
                                         HorizontalOptions="Start"
+                                        Tag="Button"
                                         UseCache="Image">
 
                                         <draw:SkiaButton
@@ -197,6 +200,34 @@
                     </draw:SkiaLayout>
 
                 </draw:SkiaScroll>
+
+                <!--<draw:SkiaShape
+                    Margin="0"
+                    Padding="10"
+                    BackgroundColor="Red"
+                    Tag="New">
+
+                    <draw:SkiaShape
+                        BackgroundColor="Black"
+                        HeightRequest="40"
+                        HorizontalOptions="Fill"
+                        Tag="NewChild"
+                        VerticalOptions="Fill"
+                        WidthRequest="40" />
+
+                </draw:SkiaShape>-->
+
+                <!--<draw:SkiaLayout
+                    Margin="0"
+                    BackgroundColor="Black"
+                    Spacing="0"
+                    Type="Column"
+                    UseCache="Image">
+                    <draw:SkiaLabel
+                        BackgroundColor="Red"
+                        Text="Tests"
+                        WidthRequest="100" />
+                </draw:SkiaLayout>-->
 
 
                 <draw:SkiaLabelFps

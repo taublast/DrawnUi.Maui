@@ -12,7 +12,8 @@ global using SkiaSharp.Views.Maui.Controls;
 global using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+
+
 
 [assembly: XmlnsDefinition("http://schemas.appomobi.com/drawnUi/2023/draw",
     "DrawnUi.Maui.Draw")]
@@ -29,7 +30,7 @@ namespace DrawnUi.Maui.Draw;
 public partial class Super
 {
 
-#if (!ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if (!ONPLATFORM)
 
     protected static void SetupFrameLooper()
     {
@@ -37,6 +38,11 @@ public partial class Super
     }
 
 #endif
+
+    /// <summary>
+    /// Can optionally disable hardware-acceleration with this flag, for example on iOS you would want to avoid creating many metal views.
+    /// </summary>
+    public static bool CanUseHardwareAcceleration = true;
 
     /// <summary>
     /// Display xaml page creation exception
@@ -132,7 +138,24 @@ public partial class Super
         {
             enableRendering = value;
             if (value)
-                NeedGlocalUpdate();
+                NeedGlobalUpdate();
+        }
+    }
+
+    private static bool _isRtl = false;
+    /// <summary>
+    /// RTL support UNDER CONSTRUCTION
+    /// </summary>
+    public static bool IsRtl
+    {
+        get => _isRtl;
+        set
+        {
+            if (_isRtl != value)
+            {
+                _isRtl = value;
+                NeedGlobalUpdate();
+            }
         }
     }
 
@@ -146,17 +169,30 @@ public partial class Super
     private static IServiceProvider _services;
     private static bool _servicesFromHandler;
 
+
     public static IServiceProvider Services
-        =>
+    {
+        get
+        {
+            var services = AppContext?.Services;
+            if (services == null)
+            {
+                services =
 #if WINDOWS10_0_17763_0_OR_GREATER
             MauiWinUIApplication.Current.Services;
 #elif ANDROID
-        MauiApplication.Current.Services;
+            MauiApplication.Current.Services;
 #elif IOS || MACCATALYST
-        MauiUIApplicationDelegate.Current.Services;
+            MauiUIApplicationDelegate.Current.Services;
 #else
-        null;
+            null;
 #endif
+            }
+            return services;
+        }
+    }
+
+    public static IMauiContext AppContext => Application.Current?.FindMauiContext();
 
     private static Screen _screen;
     public static Screen Screen
@@ -227,10 +263,10 @@ public partial class Super
     private const int GWL_STYLE = -16;
     private const int WS_THICKFRAME = 0x00040000;
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
     private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
     private static extern int SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
     public static void MakeWindowNonResizable(IntPtr hWnd)
@@ -259,15 +295,41 @@ public partial class Super
     public static void ResizeWindow(Window window, int width, int height, bool isFixed)
     {
 
-        //this crashes in NET8 for CATALYST so..
-#if !MACCATALYST
-        window.Width = width;
-        window.Height = height;
 
         var disp = DeviceDisplay.Current.MainDisplayInfo;
         // move to screen center
-        window.X = (disp.Width / disp.Density - window.Width) / 2;
-        window.Y = (disp.Height / disp.Density - window.Height) / 2;
+        var x = (disp.Width / disp.Density - window.Width) / 2;
+        var y = (disp.Height / disp.Density - window.Height) / 2;
+
+        //this crashes in NET8 for CATALYST so..
+#if !MACCATALYST
+
+        window.Width = width;
+        window.Height = height;
+        window.X = x;
+        window.Y = y;
+
+#else
+        
+        var platformWindow = window.Handler?.PlatformView as UIKit.UIWindow;
+        MainThread.BeginInvokeOnMainThread(()=>
+        {
+            var frame = new CoreGraphics.CGRect(x, y,platformWindow.Frame.Width,platformWindow.Frame.Height);
+            
+            platformWindow.Frame = frame;
+            
+            var windowScene = UIKit.UIApplication.SharedApplication.ConnectedScenes.ToArray().First() as UIKit.UIWindowScene;
+            
+            platformWindow.WindowScene.KeyWindow.Frame = frame;
+            
+            windowScene.RequestGeometryUpdate(
+                new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
+                error =>
+                {
+                    var stopp=1;
+                });
+        });
+        
 #endif
 
 #if WINDOWS
@@ -288,8 +350,27 @@ public partial class Super
                 if (isFixed)
                 {
                     //windowScene.SizeRestrictions.AllowsFullScreen = false;
-                    windowScene.SizeRestrictions.MinimumSize = new(width, height);
-                    windowScene.SizeRestrictions.MaximumSize = new(width, height);
+                    //windowScene.SizeRestrictions.MinimumSize = new(width, height);
+                    //windowScene.SizeRestrictions.MaximumSize = new(width, height);
+                    
+                    var scale = windowScene.Screen.Scale;
+                    
+                    // Tasks.StartDelayed(TimeSpan.FromSeconds(3),()=>
+                    // {
+                        //todo move to view appeared etc
+                        // MainThread.BeginInvokeOnMainThread(()=>
+                        // {
+                        //     windowScene.RequestGeometryUpdate(
+                        //         new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
+                        //         error =>
+                        //         {
+                        //             var stopp=1;
+                        //         });
+                        //     
+                        //});
+                        
+                   // });
+                    
                 }
 
             }
@@ -315,7 +396,7 @@ public partial class Super
     public static void OnWentForeground()
     {
         InBackground = false;
-        NeedGlocalUpdate();
+        NeedGlobalUpdate();
         OnNativeAppResumed?.Invoke(null, EventArgs.Empty);
     }
 
@@ -327,7 +408,10 @@ public partial class Super
 
     public static event EventHandler NeedGlobalRefresh;
 
-    public static void NeedGlocalUpdate()
+    /// <summary>
+    /// This will force recalculate canvas visibility in ViewTree and update those visible
+    /// </summary>
+    public static void NeedGlobalUpdate()
     {
         NeedGlobalRefresh?.Invoke(null, null);
     }
@@ -462,6 +546,10 @@ public partial class Super
             }
         }
     }
+
+    public static bool GpuCacheEnabled { get; set; } = true;
+
+    public static string UserAgent { get; set; } = "Mozilla/5.0 AppleWebKit Chrome Mobile Safari";
 
 #if SKIA3
     public static int SkiaGeneration = 3;

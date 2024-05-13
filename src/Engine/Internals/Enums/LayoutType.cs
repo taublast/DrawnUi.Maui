@@ -18,22 +18,17 @@ public enum LayoutType
     Row,
 
     /// <summary>
-    /// Use usual grid properties like Grid.Column, ColumnSpacing etc
+    /// Stack panel
+    /// </summary>
+    Stack,
+
+    /// <summary>
+    /// Use usual grid properties like Grid.Stack, ColumnSpacing etc
     /// </summary>
     Grid,
 
     /// <summary>
-    /// todo
+    /// TODO
     /// </summary>
-    MasonryColumns,
-
-    /// <summary>
-    /// todo
-    /// </summary>
-
-    MasonryRows,
-    /// <summary>
-    /// todo
-    /// </summary>
-    Flex
+    Masonry,
 }

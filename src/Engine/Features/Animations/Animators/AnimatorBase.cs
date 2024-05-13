@@ -21,6 +21,7 @@ public class AnimatorBase : ISkiaAnimator
         }
     }
 
+    public bool IsHiddenInViewTree { get; set; }
 
     public AnimatorBase(IDrawnBase parent)
     {

@@ -1,9 +1,9 @@
-﻿using DrawnUi.Maui.Animate.Animators;
+﻿using AppoMobi.Maui.Gestures;
 using DrawnUi.Maui;
 using DrawnUi.Maui;
 using DrawnUi.Maui;
+using DrawnUi.Maui.Animate.Animators;
 using DrawnUi.Maui.Infrastructure.Extensions;
-using AppoMobi.Maui.Gestures;
 using SkiaSharp;
 
 namespace DrawnUi.Maui.Demo.Views.Controls;
@@ -189,13 +189,12 @@ public partial class Lake : SkiaLayout
         _animationDuckMoveY?.Stop();
     }
 
-    public override ISkiaGestureListener OnSkiaGestureEvent(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        if (touchAction == TouchActionResult.Touch)
+        if (args.Type == TouchActionResult.Touch)
             return null;
 
-        //		Trace.WriteLine($"[IN] {type} {action} dY: {args.Distance.Delta.Y:0.00} dX: {args.Distance.Delta.X:0.00} | vX: {args.Distance.Velocity.X:0.00} vY: {args.Distance.Velocity.Y:0.00}");
+        //		Trace.WriteLine($"[IN] {type} {action} dY: {args.Event.Distance.Delta.Y:0.00} dX: {args.Event.Distance.Delta.X:0.00} | vX: {args.Event.Distance.Velocity.X:0.00} vY: {args.Event.Distance.Velocity.Y:0.00}");
 
 
 
@@ -205,48 +204,48 @@ public partial class Lake : SkiaLayout
             try
             {
 
-                if (touchAction == TouchActionResult.Down && args.NumberOfTouches < 2)
+                if (args.Type == TouchActionResult.Down && args.Event.NumberOfTouches < 2)
                 {
                     StopAnimators();
                     _movingDuck = true;
                 }
                 else
-                if (touchAction == TouchActionResult.Panning)
+                if (args.Type == TouchActionResult.Panning)
                 {
 
-                    var velocityX = (float)(args.Distance.Velocity.X / _velocityRatoX);
+                    var velocityX = (float)(args.Event.Distance.Velocity.X / _velocityRatoX);
                     _animationDuckMoveX.SetVelocity(velocityX).SetValue((float)_duck.TranslationX).Start();
 
-                    var velocityY = (float)(args.Distance.Velocity.Y / _velocityRatoY);
+                    var velocityY = (float)(args.Event.Distance.Velocity.Y / _velocityRatoY);
                     _animationDuckMoveY.SetVelocity(velocityY).SetValue((float)_duck.TranslationY).Start();
 
-                    //var velocityX = args.Distance.Velocity.X / _velocityRatoX;
+                    //var velocityX = args.Event.Distance.Velocity.X / _velocityRatoX;
                     //_animationDuckMoveX.SetVelocity((float)velocityX).SetValue((float)_duck.TranslationX).Start();
 
-                    //var velocityY = args.Distance.Velocity.Y / _velocityRatoY;
+                    //var velocityY = args.Event.Distance.Velocity.Y / _velocityRatoY;
                     //_animationDuckMoveY.SetVelocity((float)velocityY).SetValue((float)_duck.TranslationY).Start();
 
                     //Console.WriteLine($"[V] {velocityX:0.00} {velocityY:0.00}");
                 }
                 else
-                if (touchAction == TouchActionResult.Up)
+                if (args.Type == TouchActionResult.Up)
                 {
-                    if (GestureStartedInside(args))
+                    if (GestureStartedInside(args.Event))
                     {
                         _movingDuck = false;
 
-                        //var velocityX = (float)(args.Distance.Velocity.X / _velocityRatoX);
+                        //var velocityX = (float)(args.Event.Distance.Velocity.X / _velocityRatoX);
                         //_animationDuckMoveX.SetVelocity(velocityX).SetValue((float)_duck.TranslationX).Start();
 
-                        //var velocityY = (float)(args.Distance.Velocity.Y / _velocityRatoY);
+                        //var velocityY = (float)(args.Event.Distance.Velocity.Y / _velocityRatoY);
                         //_animationDuckMoveY.SetVelocity(velocityY).SetValue((float)_duck.TranslationY).Start();
 
 
                         if (!_animationDuckMoveX.IsRunning)
-                            MoveDuckX(args.Location.X / RenderingScale - _duck.Width / 2);
+                            MoveDuckX(args.Event.Location.X / RenderingScale - _duck.Width / 2);
 
                         if (!_animationDuckMoveY.IsRunning)
-                            MoveDuckY(args.Location.Y / RenderingScale - _duck.Height / 2);
+                            MoveDuckY(args.Event.Location.Y / RenderingScale - _duck.Height / 2);
 
                         _anumatorJump.Start();
                         _welcome.StartAnimation();
@@ -264,9 +263,9 @@ public partial class Lake : SkiaLayout
 
         //if (action != TouchActionResult.Touch)
         //{
-        //	Debug.WriteLine($"[LAKE] {type} {action} d {args.Distance.Delta.X}x{args.Distance.Delta.Y}  v {args.Distance.Velocity.X}x{args.Distance.Velocity.Y}");
+        //	Debug.WriteLine($"[LAKE] {type} {action} d {args.Event.Distance.Delta.X}x{args.Event.Distance.Delta.Y}  v {args.Event.Distance.Velocity.X}x{args.Event.Distance.Velocity.Y}");
         //}
 
-        return base.OnSkiaGestureEvent(type, args, touchAction, childOffset, childOffsetDirect, wasConsumed);
+        return base.OnSkiaGestureEvent(args, apply);
     }
 }

@@ -22,7 +22,7 @@ public class SkiaSpringWithVelocityAnimator : SkiaVectorAnimator
 
         if (secs > Parameters.DurationSecs)
         {
-            Vector = Origin + Parameters.ValueAt(Parameters.DurationSecs);
+            Vector = Origin;
             return true;
         }
 

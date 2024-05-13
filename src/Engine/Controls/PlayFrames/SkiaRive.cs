@@ -8,12 +8,13 @@ namespace DrawnUi.Maui.Controls;
 /// </summary>
 public partial class SkiaRive : SkiaControl
 {
-    protected override void OnWillBeDisposed()
+    public override void OnWillDisposeWithChildren()
     {
-        base.OnWillBeDisposed();
-
         Stop();
+
+        base.OnWillDisposeWithChildren();
     }
+
 
     // Source actions originating from other threads must be funneled through this queue.
     private readonly ConcurrentQueue<Action> sceneActionsQueue = new();

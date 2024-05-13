@@ -163,17 +163,18 @@
 
         public SKImageInfo CacheSurfaceInfo { get; set; }
 
-        protected override void OnWillBeDisposed()
+        public override void OnWillDisposeWithChildren()
         {
-            base.OnWillBeDisposed();
-
             SubscribeToRenderingChain(false);
 
 #if ONPLATFORM
             RemoveMauiElement(Element);
 #endif
 
+            base.OnWillDisposeWithChildren();
         }
+
+
 
         public override void OnDisposing()
         {
@@ -206,11 +207,10 @@
                             {
                                 Invalidate();
                             }
-
-                            LayoutNativeView(Element);
+                            SetNativeVisibility(true);
                         });
 #else
-                        LayoutNativeView(Element);
+                        SetNativeVisibility(true);
 #endif
                     }
                 });
@@ -439,6 +439,7 @@
 
             if (ShowSnapshot && CachedBitmap != null)
             {
+                //Debug.WriteLine($"Drawing snapshot at {destination}");
                 //todo apply transforms
                 DrawSnapshot(ctx.Canvas, destination);
             }
@@ -450,6 +451,8 @@
         {
             if (SnapshotReady)
             {
+                //Debug.WriteLine($"Drawing snapshot");
+
                 var point = new SKPoint(destination.Left, destination.Top);
                 canvas.DrawSurface(CachedBitmap, point);
 
@@ -465,7 +468,17 @@
 
 #endif
 
-        public bool IsNativeVisible { get; protected set; }
+        public bool IsNativeVisible
+        {
+            get => _isNativeVisible;
+            protected set
+            {
+                if (value == _isNativeVisible) return;
+                _isNativeVisible = value;
+                OnPropertyChanged();
+                //Debug.WriteLine($"IsNativeVisible {value}");
+            }
+        }
 
         public bool WasRendered { get; protected set; }
 
@@ -477,13 +490,23 @@
                 {
                     PostponeShowingNativeView(FreezeTimeMs);
                 }
-                //Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
-                //{
-                //    MainThread.BeginInvokeOnMainThread(() =>
-                //    {
-                //        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
-                //    });
-                //});
+                else
+                {
+                    if (manageMainThread)
+                    {
+                        Tasks.StartDelayed(TimeSpan.FromMilliseconds(10), () =>
+                        {
+                            MainThread.BeginInvokeOnMainThread(() =>
+                            {
+                                Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                            });
+                        });
+                    }
+                    else
+                    {
+                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                    }
+                }
                 return;
             }
 
@@ -512,10 +535,10 @@
                 }
                 else
                 {
-                    SetNativeVisibility(VisualTransformNative.IsVisible);
+                    SetNativeVisibility(true);
                 }
 #else
-                //SetNativeVisibility(VisualTransformNative.IsVisible);
+                SetNativeVisibility(true);
 #endif
             }
 
@@ -577,7 +600,7 @@
             nameof(AnimateSnapshot),
             typeof(bool),
             typeof(SkiaMauiElement),
-            false);
+            true);
 
         /// <summary>
         /// Set to true if you are hosting the control inside a scroll or similar case
@@ -596,6 +619,7 @@
             propertyChanged: OnReplaceContent);
 
         private VisualTransform _transform;
+        private bool _isNativeVisible;
 
         private static void OnReplaceContent(BindableObject bindable, object oldvalue, object newvalue)
         {

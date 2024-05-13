@@ -97,12 +97,14 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
 
     public SkiaControl ViewOff;
     public SkiaControl ViewOn;
+    public SkiaLabel ViewText;
 
 
     protected virtual void FindViews()
     {
-        ViewOn = FindView<SkiaControl>("ViewOn");
-        ViewOff = FindView<SkiaControl>("ViewOff");
+        ViewOn = FindView<SkiaControl>("On");
+        ViewOff = FindView<SkiaControl>("Off");
+        ViewText = FindView<SkiaLabel>("Text");
     }
 
     public override void ApplyProperties()
@@ -110,6 +112,11 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
         if (ViewOn == null)
         {
             FindViews();
+        }
+
+        if (ViewText != null)
+        {
+            ViewText.Text = this.Text;
         }
 
         if (IsToggled)
@@ -122,16 +129,18 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
         }
     }
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        if (touchAction == TouchActionResult.Tapped)
+        if (args.Type == TouchActionResult.Tapped)
         {
-            IsToggled = !IsToggled;
-            return this;
+            if (!IsToggled)
+            {
+                IsToggled = true;
+                return this;
+            }
         }
 
-        return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        return base.ProcessGestures(args, apply);
     }
 
     protected override void NotifyWasToggled()
@@ -204,5 +213,20 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
     {
         get { return (string)GetValue(GroupNameProperty); }
         set { SetValue(GroupNameProperty, value); }
+    }
+
+    public static readonly BindableProperty TextProperty = BindableProperty.Create(
+        nameof(Text),
+        typeof(string),
+        typeof(SkiaButton),
+        string.Empty, propertyChanged: NeedUpdateProperties);
+
+    /// <summary>
+    /// Bind to your own content!
+    /// </summary>
+    public string Text
+    {
+        get { return (string)GetValue(TextProperty); }
+        set { SetValue(TextProperty, value); }
     }
 }

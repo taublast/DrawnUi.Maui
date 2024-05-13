@@ -1,6 +1,7 @@
 ﻿using DrawnUi.Maui.Infrastructure.Enums;
 using DrawnUi.Maui.Infrastructure.Extensions;
 using Microsoft.Maui.Controls.Internals;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
@@ -26,6 +27,8 @@ namespace DrawnUi.Maui.Views
         {
             get
             {
+                if (!Super.CanUseHardwareAcceleration)
+                    return false;
 #if SKIA3
                 return HardwareAcceleration != HardwareAccelerationMode.Disabled;
 #else
@@ -66,7 +69,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual bool IsVisibleInViewTree()
         {
-            return IsVisible; //todo
+            return IsVisible; //this is used by animators, do not make this heavier!
         }
 
         public void TakeScreenShot(Action<SKImage> callback)
@@ -113,7 +116,9 @@ namespace DrawnUi.Maui.Views
                 CreateSkiaView();
 
 #if ONPLATFORM
+
                 SetupRenderingLoop();
+
 #endif
             }
 
@@ -144,6 +149,7 @@ namespace DrawnUi.Maui.Views
             ExecuteBeforeDraw.Enqueue(action);
         }
 
+
         /// <summary>
         ///Postpone the action to be executed after the current frame is drawn. Exception-safe.
         /// </summary>
@@ -153,8 +159,8 @@ namespace DrawnUi.Maui.Views
             ExecuteAfterDraw.Enqueue(action);
         }
 
-        public Queue<Action> ExecuteBeforeDraw { get; } = new();
-        public Queue<Action> ExecuteAfterDraw { get; } = new();
+        public Queue<Action> ExecuteBeforeDraw { get; } = new(256);
+        public Queue<Action> ExecuteAfterDraw { get; } = new(256);
 
         protected Action<SKImage> CallbackScreenshot;
 
@@ -223,11 +229,8 @@ namespace DrawnUi.Maui.Views
             if (gestureListener == null)
                 return;
 
-            lock (LockIterateListeners)
-            {
-                gestureListener.GestureListenerRegistrationTime = DateTime.UtcNow;
-                GestureListeners.Add(gestureListener);
-            }
+            gestureListener.GestureListenerRegistrationTime = DateTime.UtcNow;
+            GestureListeners.Add(gestureListener);
         }
 
         public void UnregisterGestureListener(ISkiaGestureListener gestureListener)
@@ -235,10 +238,7 @@ namespace DrawnUi.Maui.Views
             if (gestureListener == null)
                 return;
 
-            lock (LockIterateListeners)
-            {
-                GestureListeners.Remove(gestureListener);
-            }
+            GestureListeners.Remove(gestureListener);
         }
 
         protected object LockIterateListeners = new();
@@ -247,7 +247,9 @@ namespace DrawnUi.Maui.Views
         /// <summary>
         /// Children we should check for touch hits
         /// </summary>
-        public SortedSet<ISkiaGestureListener> GestureListeners { get; } = new(new DescendingZIndexGestureListenerComparer());
+        public SortedGestureListeners GestureListeners { get; } = new();
+
+        //public SortedSet<ISkiaGestureListener> GestureListeners { get; } = new(new DescendingZIndexGestureListenerComparer());
 
 
         public SKRect DrawingRect
@@ -340,6 +342,27 @@ namespace DrawnUi.Maui.Views
                 return ret;
             }
         }
+
+        public virtual IEnumerable<ISkiaAnimator> SetViewTreeVisibilityByParent(SkiaControl parent, bool state)
+        {
+            lock (LockAnimatingControls)
+            {
+                var ret = AnimatingControls.Values.Where(x => x.Parent == parent).ToArray();
+                foreach (var animator in ret)
+                {
+                    try
+                    {
+                        animator.IsHiddenInViewTree = !state;
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+                }
+                return ret;
+            }
+        }
+
 
         public virtual IEnumerable<ISkiaAnimator> SetPauseStateOfAllAnimatorsByParent(SkiaControl parent, bool state)
         {
@@ -440,7 +463,7 @@ namespace DrawnUi.Maui.Views
                             continue;
                         }
 
-                        bool canPlay = !(skiaAnimation.Parent != null && !skiaAnimation.Parent.IsVisibleInViewTree());
+                        bool canPlay = !skiaAnimation.IsHiddenInViewTree; //!(skiaAnimation.Parent != null && !skiaAnimation.Parent.IsVisibleInViewTree());
 
                         if (canPlay)
                         {
@@ -579,9 +602,34 @@ namespace DrawnUi.Maui.Views
 
         private void OnNeedUpdate(object sender, EventArgs e)
         {
+            if (Tag == "TabSettings")
+            {
+                Debug.WriteLine($"TabSettings kicked");
+            }
+            // else
+            // {
+            //     Debug.WriteLine($"Canvas {Tag} kicked");
+            // }
             NeedCheckParentVisibility = true;
             NeedGlobalRefreshCount++;
             Update();
+        }
+
+        /// <summary>
+        /// Invoked when IsHiddenInViewTree changes
+        /// </summary>
+        /// <param name="state"></param>
+        public virtual void OnCanRenderChanged(bool state)
+        {
+            if (state)
+            {
+                if (Tag == "TabSettings")
+                {
+                    Debug.WriteLine($"TabSettings need rebuild");
+                }
+                NeedMeasure = true;
+                Update();
+            }
         }
 
         public virtual void ConnectedHandler()
@@ -756,6 +804,8 @@ namespace DrawnUi.Maui.Views
 
                 DisposeDisposables();
 
+                GestureListeners.Clear();
+
                 ClearChildren();
 
                 MainThread.BeginInvokeOnMainThread(() =>
@@ -771,6 +821,7 @@ namespace DrawnUi.Maui.Views
                         Super.Log(e);
                     }
                 });
+
             }
             catch (Exception e)
             {
@@ -778,14 +829,13 @@ namespace DrawnUi.Maui.Views
             }
 
         }
+
         /// <summary>
         /// Makes the control dirty, in need to be remeasured and rendered but this doesn't call Update, it's up yo you
         /// </summary>
         public virtual void Invalidate()
         {
             NeedMeasure = true;
-
-            //InvalidateChildren();
         }
 
         public void InvalidateParents()
@@ -889,6 +939,11 @@ namespace DrawnUi.Maui.Views
                 )
             {
                 Invalidate();
+            }
+            else
+            if (propertyName == nameof(IsVisible))
+            {
+                Super.NeedGlobalUpdate();
             }
         }
 
@@ -1180,7 +1235,7 @@ namespace DrawnUi.Maui.Views
             if (widthConstraintPts < 0 || heightConstraintPts < 0)
             {
                 //not setting NeedMeasure=false;
-                return ScaledSize.Empty;
+                return ScaledSize.Default;
             }
 
             var widthPixels = (float)((WidthRequest));
@@ -1246,15 +1301,16 @@ namespace DrawnUi.Maui.Views
 
 
 
-        SkiaDrawingContext CreateContext(SKCanvas canvas)
+        SkiaDrawingContext CreateContext(SKSurface surface)
         {
             return new SkiaDrawingContext()
             {
                 Superview = this,
                 FrameTimeNanos = CanvasView.FrameTime,
-                Canvas = canvas,
-                Width = canvas.DeviceClipBounds.Width,
-                Height = canvas.DeviceClipBounds.Height
+                Surface = surface,
+                Canvas = surface.Canvas,
+                Width = surface.Canvas.DeviceClipBounds.Width,
+                Height = surface.Canvas.DeviceClipBounds.Height
             };
         }
 
@@ -1269,12 +1325,12 @@ namespace DrawnUi.Maui.Views
         public event EventHandler<SkiaDrawingContext?> WillDraw;
         public event EventHandler<SkiaDrawingContext?> WillFirstTimeDraw;
 
-        private bool OnDrawSurface(SKCanvas canvas, SKRect rect)
+        private bool OnDrawSurface(SKSurface surface, SKRect rect)
         {
             //lock (LockDraw)
             {
 
-                if (!OnStartRendering(canvas))
+                if (!OnStartRendering(surface.Canvas))
                     return UpdateMode == UpdateMode.Constant;
 
                 try
@@ -1284,7 +1340,7 @@ namespace DrawnUi.Maui.Views
                         FixDensity();
                     }
 
-                    var args = CreateContext(canvas);
+                    var args = CreateContext(surface);
 
                     this.DrawingThreadId = Thread.CurrentThread.ManagedThreadId;
 
@@ -1461,6 +1517,45 @@ namespace DrawnUi.Maui.Views
             }
         }
 
+        public void PostponeInvalidation(SkiaControl key, Action action)
+        {
+            lock (_lockInvalidations)
+            {
+                GetBackInvalidations()[action] = key;
+                Repaint();
+            }
+        }
+
+        private object _lockInvalidations = new();
+        private bool _invalidationsA;
+        protected readonly Dictionary<Action, SkiaControl> InvalidationActionsA = new();
+        protected readonly Dictionary<Action, SkiaControl> InvalidationActionsB = new();
+
+        protected Dictionary<Action, SkiaControl> GetFrontInvalidations()
+        {
+            lock (_lockInvalidations)
+            {
+                return _invalidationsA ? InvalidationActionsA : InvalidationActionsB;
+            }
+        }
+
+        protected Dictionary<Action, SkiaControl> GetBackInvalidations()
+        {
+            lock (_lockInvalidations)
+            {
+                return !_invalidationsA ? InvalidationActionsA : InvalidationActionsB;
+            }
+        }
+
+
+        protected void SwapInvalidations()
+        {
+            lock (_lockInvalidations)
+            {
+                _invalidationsA = !_invalidationsA;
+            }
+        }
+
         /// <summary>
         /// For debugging purposes check if dont have concurrent threads
         /// </summary>
@@ -1509,6 +1604,14 @@ namespace DrawnUi.Maui.Views
                     //context.FrameTimeNanos = FrameTime;
 
                     FPS = CanvasFps;
+
+                    SwapInvalidations();
+                    var invalidations = GetFrontInvalidations();
+                    foreach (var invalidation in invalidations)
+                    {
+                        invalidation.Key.Invoke();
+                    }
+                    invalidations.Clear();
 
                     while (ExecuteBeforeDraw.TryDequeue(out Action action))
                     {
@@ -1697,8 +1800,22 @@ namespace DrawnUi.Maui.Views
         /// Indicates that view is either hidden or offscreen.
         /// This disables rendering if you don't set CanRenderOffScreen to true
         /// </summary>
-        public bool IsHiddenInViewTree { get; protected set; }
-
+        public bool IsHiddenInViewTree
+        {
+            get
+            {
+                return _stopRendering;
+            }
+            protected set
+            {
+                if (value != _stopRendering)
+                {
+                    _stopRendering = value;
+                    OnCanRenderChanged(!value);
+                }
+            }
+        }
+        bool _stopRendering;
 
         public bool NeedCheckParentVisibility
         {
@@ -2164,48 +2281,202 @@ namespace DrawnUi.Maui.Views
             public SkiaControl Item { get; set; }
         }
 
+        /// <summary>
+        /// Internal call by control, after reporting will affect FocusedChild but will not get FocusedItemChanged as it was its own call
+        /// </summary>
+        /// <param name="listener"></param>
+        public void ReportFocus(ISkiaGestureListener value, ISkiaGestureListener setter = null)
+        {
+            if (_focusedChild != value && !FocusLocked)
+            {
+                if (_focusedChild != null)
+                {
+                    Debug.WriteLine($"[UNFOCUSED] {_focusedChild}");
+                    if (_focusedChild != setter)
+                        _focusedChild.OnFocusChanged(false);
+                    FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, false));
+                }
+
+                _focusedChild = value;
+                Debug.WriteLine($"[FOCUSED] {_focusedChild}");
+
+                if (_focusedChild != null)
+                {
+                    if (_focusedChild != setter)
+                        _focusedChild.OnFocusChanged(true);
+                    FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, true));
+                }
+                else
+                {
+                    //with delay maybe some other control will focus itsself in that time
+                    ResetFocusWithDelay(150);
+                }
+
+                OnPropertyChanged(nameof(FocusedChild));
+            }
+        }
+
+        private static RestartingTimer<object> _timerResetFocus;
+
+        void ResetFocusWithDelay(int ms)
+        {
+            if (_timerResetFocus == null)
+            {
+                _timerResetFocus = new(TimeSpan.FromMilliseconds(ms), (arg) =>
+                {
+                    if (FocusedChild == null)
+                    {
+                        try
+                        {
+                            this.Focus();
+                        }
+                        catch (Exception e)
+                        {
+                            Super.Log(e);
+                        }
+                        TouchEffect.CloseKeyboard();
+                        FocusedItemChanged?.Invoke(this, new(null, false));
+                    }
+                });
+                _timerResetFocus.Start(null);
+            }
+            else
+            {
+                _timerResetFocus.Restart(null);
+            }
+        }
+
         public ISkiaGestureListener FocusedChild
         {
             get
             {
                 return _focusedChild;
             }
-
             set
             {
-                if (_focusedChild != value && !FocusLocked)
-                {
-                    if (_focusedChild != null)
-                    {
-                        //Debug.WriteLine($"[UNFOCUSED] {_focusedChild}");
-                        _focusedChild.OnFocusChanged(false);
-                        FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, false));
-                    }
-                    _focusedChild = value;
-                    if (_focusedChild != null)
-                    {
-                        //Debug.WriteLine($"[FOCUSED] {_focusedChild}");
-                        _focusedChild.OnFocusChanged(true);
-                        FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, true));
-                    }
-                    else
-                    {
-                        this.Focus();
-                        TouchEffect.CloseKeyboard();
-                        FocusedItemChanged?.Invoke(this, new(null, false));
-                    }
-                    //Debug.WriteLine($"[FOCUSED] {value}");
-
-                    OnPropertyChanged();
-                }
+                ReportFocus(value);
             }
         }
         ISkiaGestureListener _focusedChild;
         private ISkiaDrawable _canvasView;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [Obsolete("Used by Update() when Super.UseLegacyLoop is True")]
+        protected void InvalidateCanvas()
+        {
+            IsDirty = true;
+
+            if (CanvasView == null)
+            {
+                OrderedDraw = false;
+                return;
+            }
+
+            //sanity check
+            var widthPixels = (int)CanvasView.CanvasSize.Width;
+            var heightPixels = (int)CanvasView.CanvasSize.Height;
+            if (widthPixels > 0 && heightPixels > 0)
+            {
+
+#if ANDROID || WINDOWS
+
+                if (NeedCheckParentVisibility)
+                    CheckElementVisibility(this);
+                Continue();
+
+#else
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        if (NeedCheckParentVisibility)
+                            CheckElementVisibility(this);
+                        Continue();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+
+                });
+#endif
+
+                void Continue()
+                {
+                    if (CanvasView != null)
+                    {
+                        if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
+                        {
+                            _isWaiting = true;
+                            InvalidatedCanvas++;
+                            MainThread.BeginInvokeOnMainThread(async () =>
+                            {
+                                try
+                                {
+                                    //cap fps around 120fps
+                                    var nowNanos = Super.GetCurrentTimeNanos();
+                                    var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
+                                    _lastUpdateTimeNanos = nowNanos;
+
+                                    var needWait =
+                                        Super.CapMicroSecs
+#if IOS || MACCATALYST  
+                                * 2 // apple is double buffered                             
+#endif
+                                        - elapsedMicros;
+                                    if (needWait < 1)
+                                        needWait = 1;
+
+                                    var ms = (int)(needWait / 1000);
+                                    if (ms < 1)
+                                        ms = 1;
+                                    await Task.Delay(ms);
+                                    CanvasView?.Update(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
+                                }
+                                catch (Exception e)
+                                {
+                                    Super.Log(e);
+                                }
+                                finally
+                                {
+                                    _isWaiting = false;
+                                }
+
+                            });
+                            return;
+                        }
+                    }
+                    OrderedDraw = false;
+                }
+            }
+            else
+            {
+                OrderedDraw = false;
+            }
+        }
+
+
+        public bool GetIsVisibleWithParent(VisualElement element)
+        {
+            if (element != null)
+            {
+                if (!element.IsVisible)
+                    return false;
+
+                if (element.Parent is VisualElement visualParent)
+                {
+                    return GetIsVisibleWithParent(visualParent);
+                }
+            }
+
+            return true;
+        }
+
 #if !ONPLATFORM
 
-        public void CheckElementVisibility(Element element)
+        public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
         }

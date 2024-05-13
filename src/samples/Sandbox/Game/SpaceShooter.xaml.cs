@@ -3,9 +3,9 @@
 
 global using DrawnUi.Maui.Controls;
 global using SkiaSharp;
-using System.Collections.Concurrent;
 using AppoMobi.Maui.Gestures;
 using AppoMobi.Specials;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -648,7 +648,7 @@ public partial class SpaceShooter : MauiGame
                 RemoveSprite(sprite);
             }
         }
-        
+
     }
 
     #endregion
@@ -754,18 +754,17 @@ public partial class SpaceShooter : MauiGame
 
     const double thresholdNotPanning = 20.0;
 
-    public override ISkiaGestureListener ProcessGestures(TouchActionType type, TouchActionEventArgs args, TouchActionResult touchAction,
-        SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed)
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         if (State == GameState.Playing)
         {
-            var velocityX = (float)(args.Distance.Velocity.X / RenderingScale);
-            //var velocityY = (float)(args.Distance.Velocity.Y / RenderingScale);
+            var velocityX = (float)(args.Event.Distance.Velocity.X / RenderingScale);
+            //var velocityY = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
 
-            if (touchAction == TouchActionResult.Panning)
+            if (args.Type == TouchActionResult.Panning)
             {
                 _wasPanning = true;
-                _lastPan = args.Location;
+                _lastPan = args.Event.Location;
                 if (velocityX < 0)
                 {
                     _moveLeft = true;
@@ -781,20 +780,20 @@ public partial class SpaceShooter : MauiGame
                 return this;
             }
 
-            if (touchAction == TouchActionResult.Down)
+            if (args.Type == TouchActionResult.Down)
             {
-                _lastDown = args.Location;
+                _lastDown = args.Event.Location;
                 _wasPanning = false;
                 _isPressed = true;
             }
 
-            if (touchAction == TouchActionResult.Tapped
-                || (touchAction == TouchActionResult.Up && _isPressed && Math.Abs(args.Distance.Total.X) < thresholdNotPanning * RenderingScale))
+            if (args.Type == TouchActionResult.Tapped
+                || (args.Type == TouchActionResult.Up && _isPressed && Math.Abs(args.Event.Distance.Total.X) < thresholdNotPanning * RenderingScale))
             {
                 Fire();
             }
 
-            if (touchAction == TouchActionResult.Up)
+            if (args.Type == TouchActionResult.Up)
             {
                 _isPressed = false;
             }
@@ -808,7 +807,7 @@ public partial class SpaceShooter : MauiGame
         _moveRight = false;
         _moveLeft = false;
 
-        return base.ProcessGestures(type, args, touchAction, childOffset, childOffsetDirect, alreadyConsumed);
+        return base.ProcessGestures(args, apply);
     }
     #endregion
 
@@ -966,12 +965,12 @@ public partial class SpaceShooter : MauiGame
     protected Dictionary<Guid, ExplosionSprite> ExplosionsPool = new(MAX_EXPLOSIONS);
 
     protected Dictionary<Guid, ExplosionCrashSprite> ExplosionsCrashPool = new(MAX_EXPLOSIONS);
-    
+
     /// <summary>
     /// This could be changed from loop and from individual sprite animatiion thread
     /// </summary>
     private ConcurrentQueue<SkiaControl> _spritesToBeRemovedLater = new();
-    
+
     private List<SkiaControl> _spritesToBeAdded = new(128);
     private List<SkiaControl> _startAnimations = new(MAX_EXPLOSIONS);
     private float _pauseEnemyCreation;
