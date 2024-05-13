@@ -343,6 +343,27 @@ namespace DrawnUi.Maui.Views
             }
         }
 
+        public virtual IEnumerable<ISkiaAnimator> SetViewTreeVisibilityByParent(SkiaControl parent, bool state)
+        {
+            lock (LockAnimatingControls)
+            {
+                var ret = AnimatingControls.Values.Where(x => x.Parent == parent).ToArray();
+                foreach (var animator in ret)
+                {
+                    try
+                    {
+                        animator.IsHiddenInViewTree = !state;
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+                }
+                return ret;
+            }
+        }
+
+
         public virtual IEnumerable<ISkiaAnimator> SetPauseStateOfAllAnimatorsByParent(SkiaControl parent, bool state)
         {
             lock (LockAnimatingControls)
@@ -442,7 +463,7 @@ namespace DrawnUi.Maui.Views
                             continue;
                         }
 
-                        bool canPlay =  !(skiaAnimation.Parent != null && !skiaAnimation.Parent.IsVisibleInViewTree());
+                        bool canPlay = !skiaAnimation.IsHiddenInViewTree; //!(skiaAnimation.Parent != null && !skiaAnimation.Parent.IsVisibleInViewTree());
 
                         if (canPlay)
                         {
@@ -581,7 +602,7 @@ namespace DrawnUi.Maui.Views
 
         private void OnNeedUpdate(object sender, EventArgs e)
         {
-            if (Tag=="TabSettings")
+            if (Tag == "TabSettings")
             {
                 Debug.WriteLine($"TabSettings kicked");
             }
@@ -593,7 +614,7 @@ namespace DrawnUi.Maui.Views
             NeedGlobalRefreshCount++;
             Update();
         }
-        
+
         /// <summary>
         /// Invoked when IsHiddenInViewTree changes
         /// </summary>
@@ -602,7 +623,7 @@ namespace DrawnUi.Maui.Views
         {
             if (state)
             {
-                if (Tag=="TabSettings")
+                if (Tag == "TabSettings")
                 {
                     Debug.WriteLine($"TabSettings need rebuild");
                 }
@@ -1779,8 +1800,8 @@ namespace DrawnUi.Maui.Views
         /// Indicates that view is either hidden or offscreen.
         /// This disables rendering if you don't set CanRenderOffScreen to true
         /// </summary>
-        public bool IsHiddenInViewTree 
-        { 
+        public bool IsHiddenInViewTree
+        {
             get
             {
                 return _stopRendering;

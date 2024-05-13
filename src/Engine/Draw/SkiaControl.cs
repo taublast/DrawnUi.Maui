@@ -1439,16 +1439,34 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(HorizontalOptionsProperty, value); }
         }
 
+        /// <summary>
+        /// todo override for templated skialayout to use ViewsProvider
+        /// </summary>
+        /// <param name="newvalue"></param>
         protected virtual void OnParentVisibilityChanged(bool newvalue)
         {
             if (!newvalue)
             {
                 //DestroyRenderingObject();
             }
+
+            Superview?.SetViewTreeVisibilityByParent(this, newvalue);
+
+            try
+            {
+                foreach (var child in Views)
+                {
+                    child.OnParentVisibilityChanged(newvalue);
+                }
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
         }
 
         /// <summary>
-        /// todo override for templated skialayout to use ViewsProfider
+        /// todo override for templated skialayout to use ViewsProvider
         /// </summary>
         /// <param name="newvalue"></param>
         public virtual void OnVisibilityChanged(bool newvalue)

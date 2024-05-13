@@ -21,6 +21,7 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
     public bool IsDeactivated { get; set; }
 
     public bool IsPaused { get; set; }
+    public bool IsHiddenInViewTree { get; set; }
 
     public virtual void Pause()
     {
