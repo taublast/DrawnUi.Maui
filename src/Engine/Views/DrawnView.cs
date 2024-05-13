@@ -442,7 +442,7 @@ namespace DrawnUi.Maui.Views
                             continue;
                         }
 
-                        bool canPlay = !(skiaAnimation.Parent != null && !skiaAnimation.Parent.IsVisibleInViewTree());
+                        bool canPlay =  !(skiaAnimation.Parent != null && !skiaAnimation.Parent.IsVisibleInViewTree());
 
                         if (canPlay)
                         {
@@ -581,9 +581,34 @@ namespace DrawnUi.Maui.Views
 
         private void OnNeedUpdate(object sender, EventArgs e)
         {
+            if (Tag=="TabSettings")
+            {
+                Debug.WriteLine($"TabSettings kicked");
+            }
+            // else
+            // {
+            //     Debug.WriteLine($"Canvas {Tag} kicked");
+            // }
             NeedCheckParentVisibility = true;
             NeedGlobalRefreshCount++;
             Update();
+        }
+        
+        /// <summary>
+        /// Invoked when IsHiddenInViewTree changes
+        /// </summary>
+        /// <param name="state"></param>
+        public virtual void OnCanRenderChanged(bool state)
+        {
+            if (state)
+            {
+                if (Tag=="TabSettings")
+                {
+                    Debug.WriteLine($"TabSettings need rebuild");
+                }
+                NeedMeasure = true;
+                Update();
+            }
         }
 
         public virtual void ConnectedHandler()
@@ -1754,8 +1779,22 @@ namespace DrawnUi.Maui.Views
         /// Indicates that view is either hidden or offscreen.
         /// This disables rendering if you don't set CanRenderOffScreen to true
         /// </summary>
-        public bool IsHiddenInViewTree { get; protected set; }
-
+        public bool IsHiddenInViewTree 
+        { 
+            get
+            {
+                return _stopRendering;
+            }
+            protected set
+            {
+                if (value != _stopRendering)
+                {
+                    _stopRendering = value;
+                    OnCanRenderChanged(!value);
+                }
+            }
+        }
+        bool _stopRendering;
 
         public bool NeedCheckParentVisibility
         {

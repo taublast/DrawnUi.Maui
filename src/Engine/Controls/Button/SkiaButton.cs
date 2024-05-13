@@ -82,7 +82,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
             var clip = MainFrame.CreateClip(arguments, usePosition); ;
             clip.Offset(offsetFrame);
             return clip;
-        }
+        } 
 
         return base.CreateClip(arguments, usePosition);
     }

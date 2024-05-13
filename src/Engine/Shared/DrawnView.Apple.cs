@@ -17,7 +17,7 @@ namespace DrawnUi.Maui.Views
         public void CheckElementVisibility(VisualElement element)
         {
             NeedCheckParentVisibility = false;
-            IsHiddenInViewTree = !GetIsVisibleWithParent(this);
+            IsHiddenInViewTree =  !GetIsVisibleWithParent(this);
 
             //if (element != null)
             //{
@@ -78,10 +78,23 @@ namespace DrawnUi.Maui.Views
             {
                 OrderedDraw = true;
                 if (NeedCheckParentVisibility)
+                {
                     CheckElementVisibility(this);
+                    if (Tag=="TabSettings")
+                    {
+                        Debug.WriteLine($"TabSettings hidden {IsHiddenInViewTree}");
+                    }
+                }
 
                 if (CanDraw)
+                {
+                    //Debug.WriteLine($"UPDATE {Tag}");
                     CanvasView?.Update();
+                }
+                else
+                {
+                    OrderedDraw = false;
+                }
             }
         }
 
