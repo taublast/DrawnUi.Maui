@@ -83,7 +83,14 @@ namespace DrawnUi.Maui.Views
                         CheckElementVisibility(this);
 
                     if (CanDraw)
+                    {
+                        //Debug.WriteLine($"UPDATE {Tag}");
                         CanvasView?.Update();
+                    }
+                    else
+                    {
+                        OrderedDraw = false;
+                    }
                 }
             }
         }

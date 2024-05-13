@@ -59,7 +59,6 @@ namespace DrawnUi.Maui.Views
             return
                CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
                && !OrderedDraw
-               && !IsHiddenInViewTree
                && !CanvasView.IsDrawing
                && IsDirty
                && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
@@ -77,7 +76,14 @@ namespace DrawnUi.Maui.Views
                     CheckElementVisibility(this);
                 }
                 if (CanDraw)
+                {
+                    //Debug.WriteLine($"UPDATE {Tag}");
                     CanvasView?.Update();
+                }
+                else
+                {
+                    OrderedDraw = false;
+                }
             }
         }
 
