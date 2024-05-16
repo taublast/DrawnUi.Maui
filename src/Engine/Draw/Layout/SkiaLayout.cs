@@ -458,7 +458,7 @@ namespace DrawnUi.Maui.Draw
             true, propertyChanged: NeedUpdateItemsSource);
 
         /// <summary>
-        /// Number of columns/rows to split into, If 0 will not split at all, if 1 will have single column/row.
+        /// Whether should keep same column width among rows
         /// </summary>
         public bool SplitAlign
         {

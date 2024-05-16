@@ -31,18 +31,18 @@
                 VerticalOptions="Fill">
 
                 <draw:SkiaLayout
-                    Tag="Wrapper"
                     HorizontalOptions="Fill"
+                    Tag="Wrapper"
                     Type="Column">
 
                     <draw:SkiaLayout
-                        Tag="Radio1"
                         Margin="16,20,16,16"
                         AddMarginTop="10"
                         BackgroundColor="Transparent"
                         HorizontalOptions="Fill"
                         Spacing="16"
                         Split="0"
+                        Tag="Radio1"
                         Type="Stack"
                         UseCache="ImageComposite">
 
@@ -67,15 +67,16 @@
                     <!--  todo bugged FontAttributes="Bold"  -->
 
                     <draw:SkiaLayout
-                        Padding="0,32"
+                        Padding="32,32"
                         HorizontalOptions="Center"
                         Spacing="20"
                         Tag="Content"
                         Type="Stack"
                         UseCache="ImageComposite"
-                        WidthRequest="280">
+                        WidthRequest="-1">
 
-                        <draw:SkiaLayout HorizontalOptions="Fill">
+                        <!--  Controls inside frame  -->
+                        <draw:SkiaLayout HorizontalOptions="Start">
 
                             <draw:SkiaShape
                                 AddMarginTop="10"
@@ -85,9 +86,6 @@
                                 StrokeWidth="1.0"
                                 VerticalOptions="Fill" />
 
-
-
-
                             <draw:SkiaLabel
                                 Margin="16,0,0,0"
                                 Padding="4,0"
@@ -95,13 +93,13 @@
                                 Text="Radio Buttons" />
 
                             <draw:SkiaLayout
-                                Tag="Radio2"
                                 Margin="20"
                                 AddMarginTop="14"
                                 DynamicColumns="True"
-                                HorizontalOptions="Fill"
                                 Spacing="12"
-                                Split="2"
+                                Split="-1"
+                                SplitAlign="True"
+                                Tag="Radio2"
                                 Type="Stack"
                                 UseCache="ImageComposite">
 
@@ -118,6 +116,7 @@
                                 <controls:DrawnRadioButton Text="Various" />
 
                             </draw:SkiaLayout>
+
                         </draw:SkiaLayout>
 
                         <controls:DrawnSwitch />
