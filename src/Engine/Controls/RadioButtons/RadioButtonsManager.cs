@@ -126,7 +126,7 @@ namespace DrawnUi.Maui.Controls
             {
                 if (GroupsByName[groupName].Contains(control))
                 {
-                    SetGroupValuesExcept(groupName, control, newValue, true);
+                    SetGroupValuesExcept(groupName, control, newValue, false);
                     return;
                 }
             }
@@ -135,7 +135,7 @@ namespace DrawnUi.Maui.Controls
             {
                 if (GroupsByParent[parent].Contains(control))
                 {
-                    SetGroupValuesExcept(parent, control, newValue, false);
+                    SetGroupValuesExcept(parent, control, newValue, true);
                     return;
                 }
             }
@@ -155,9 +155,9 @@ namespace DrawnUi.Maui.Controls
             }
         }
 
-        private void SetGroupValuesExcept(SkiaControl parent, ISkiaRadioButton exceptControl, bool newValue, bool isGroupB)
+        private void SetGroupValuesExcept(SkiaControl parent, ISkiaRadioButton exceptControl, bool newValue, bool byParent)
         {
-            var group = isGroupB ? GroupsByParent[parent] : null;
+            var group = byParent ? GroupsByParent[parent] : null;
 
             if (newValue)
             {

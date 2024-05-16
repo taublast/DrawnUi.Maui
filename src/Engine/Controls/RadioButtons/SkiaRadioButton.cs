@@ -162,13 +162,14 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
     {
         Manager.RemoveFromGroups(this);
 
-        if (string.IsNullOrEmpty(GroupName))
+        if (!string.IsNullOrEmpty(GroupName))
         {
             Manager.AddToGroup(this, GroupName);
         }
         else
+        if (this.Parent is SkiaControl control)
         {
-            Manager.AddToGroup(this, Parent as SkiaControl);
+            Manager.AddToGroup(this, control);
         }
     }
 

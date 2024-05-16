@@ -31,10 +31,12 @@
                 VerticalOptions="Fill">
 
                 <draw:SkiaLayout
+                    Tag="Wrapper"
                     HorizontalOptions="Fill"
                     Type="Column">
 
                     <draw:SkiaLayout
+                        Tag="Radio1"
                         Margin="16,20,16,16"
                         AddMarginTop="10"
                         BackgroundColor="Transparent"
@@ -93,6 +95,7 @@
                                 Text="Radio Buttons" />
 
                             <draw:SkiaLayout
+                                Tag="Radio2"
                                 Margin="20"
                                 AddMarginTop="14"
                                 DynamicColumns="True"
