@@ -28,6 +28,10 @@ public class BuildColumnLayout : StackLayoutStructure
         // row size
         float maxHeight = 0.0f;
         float currentLineWidth = 0.0f;
+        float currentLineRealWidth = 0.0f;
+
+        // for autosize
+        float maxWidth = 0.0f;
 
         var structure = new LayoutStructure();
 
@@ -64,7 +68,8 @@ public class BuildColumnLayout : StackLayoutStructure
             rowFinalized = false;
 
             maxHeight = 0.0f;
-            currentLineWidth = 0.0f;
+            currentLineWidth = 0f;
+            currentLineRealWidth = 0f;
 
             rectForChild.Left = isRtl ? rectForChildrenPixels.Right : 0;  //reset to start
 
@@ -81,11 +86,16 @@ public class BuildColumnLayout : StackLayoutStructure
         {
             rowFinalized = true;
 
+            if (currentLineRealWidth > maxWidth)
+            {
+                maxWidth = currentLineRealWidth;
+            }
+
             if (currentLineWidth > stackWidth)
                 stackWidth = currentLineWidth;
 
             //layout cells in this row for the final height:
-            LayoutCellsInternal();
+            LayoutCellsInternal(); //todo move to  second pass !!!
 
             stackHeight += addHeight;
             rectForChild.Top += addHeight;
@@ -135,6 +145,7 @@ public class BuildColumnLayout : StackLayoutStructure
             }
 
             currentLineWidth += add;
+            currentLineRealWidth += add;
 
             if (useFixedSplitSize)
             {
@@ -161,6 +172,7 @@ public class BuildColumnLayout : StackLayoutStructure
         {
             var removeSpacing = GetSpacingForIndex(column, scale);
             currentLineWidth -= removeSpacing;
+            currentLineRealWidth -= removeSpacing;
             FinalizeRow(maxHeight);
             StartRow();
             StartColumn();
@@ -174,10 +186,25 @@ public class BuildColumnLayout : StackLayoutStructure
             if (height > maxHeight)
                 maxHeight = height;
 
-            if (alignSplit)
+            if (alignSplit) //todo check space distribution for full/auto
             {
-                width = sizePerChunk; //todo check space distribution for full/auto
+                if (_layout.NeedAutoWidth)
+                {
+                    currentLineRealWidth += width;
+                    width = sizePerChunk;
+                }
+                else
+                {
+                    width = sizePerChunk;
+                    currentLineRealWidth += width;
+                }
             }
+            else
+            {
+                currentLineRealWidth += width;
+            }
+
+            currentLineWidth += width;
 
             if (isRtl)
             {
@@ -188,15 +215,13 @@ public class BuildColumnLayout : StackLayoutStructure
                 rectForChild.Left += width;
             }
 
-            currentLineWidth += width;
-
             column++;
         }
 
         int index = -1;
         ControlInStack measuredCell = null; //if strategy is to measure first cell only
 
-        if (_layout.Tag == "ButtonsStack")
+        if (_layout.Tag == "Radio2")
         {
             var stop = 1;
         }
@@ -333,6 +358,8 @@ public class BuildColumnLayout : StackLayoutStructure
         {
             stackHeight = rectForChildrenPixels.Height;
         }
+
+        //todo layout all cells according final size
 
         return ScaledSize.FromPixels(stackWidth, stackHeight, scale);
     }
