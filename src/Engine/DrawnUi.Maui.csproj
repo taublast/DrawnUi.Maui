@@ -23,7 +23,7 @@
   <Import Condition="'$(UseSkiaSharp3)' != 'true'" Project="skia2.props" />
 
   <PropertyGroup>
-    <Title>DrawnUi for .NET MAUI</Title>
+    <Title>DrawnUI for .NET MAUI</Title>
     <PackageId>AppoMobi.Maui.DrawnUi</PackageId>
     <Description>Cross-platform rendering engine for .NET MAUI to draw your UI with SkiaSharp</Description>
     <PackageTags>maui drawnui skia skiasharp draw ui</PackageTags>

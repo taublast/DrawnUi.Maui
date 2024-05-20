@@ -22,7 +22,7 @@
     <UseNuget>true</UseNuget>
     <Version>1.2.0.1</Version>
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi demo project for usage example. Temporarily Windows only is supported.</PackageReleaseNotes>
-    <Title>Rive addon to DrawnUi for .NET MAUI</Title>
+    <Title>Rive addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.Maui.Rive</PackageId>
     <Description>SkiaRive DrawnUi control for .NET MAUI (temporarily Windows only is supported)</Description>
     <PackageTags>maui drawnui skia skiasharp draw rive</PackageTags>
@@ -48,7 +48,7 @@
 
   <!--production-->
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.1" />
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.2" />
   </ItemGroup>
 
  

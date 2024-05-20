@@ -29,7 +29,7 @@
     <UseNuget>false</UseNuget>
     <Version>1.2.0.1</Version>
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sandbox project on how to use SkiaMapsUi control.</PackageReleaseNotes>
-    <Title>MapsUi addon to DrawnUi for .NET MAUI</Title>
+    <Title>MapsUi addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.Maui.MapsUi</PackageId>
     <Description>SkiaMapsUi DrawnUi control for .NET MAUI</Description>
     <PackageTags>maui drawnui skia skiasharp draw maps mapsui</PackageTags>
@@ -55,7 +55,7 @@
 
   <!--production-->
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.1" />
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.2" />
   </ItemGroup>
 
 </Project>

@@ -16,7 +16,7 @@
     <UseNuget>true</UseNuget>
     <Version>1.2.0.1</Version>
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi demo repository for usage example. Currently only Android is implemented, iOS will be too when i have time.</PackageReleaseNotes>
-    <Title>Camera addon to DrawnUi for .NET MAUI</Title>
+    <Title>Camera addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.Maui.Camera</PackageId>
     <Description>Camera implementation (temporarily Android only) and preview rendering with SkiaSharp in .NET MAUI</Description>
     <PackageTags>maui drawnui skia skiasharp draw camera</PackageTags>
@@ -42,7 +42,7 @@
 
     <!--production-->
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.1" />
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.2" />
   </ItemGroup>
 
 </Project>
