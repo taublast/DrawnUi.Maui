@@ -32,8 +32,6 @@ Been/still busy with contractual work, all updates were ment for production apps
 * Fixed random crashes due to disposed items when using `ImageDoubleBuffered` cache type.
 * Long-term awaited layout fixes, and gazillions of other ones.
 
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
-
 _The new `VisualEffects` property_
 
 ## Demo
