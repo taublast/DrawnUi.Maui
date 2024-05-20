@@ -10,6 +10,7 @@
     xmlns:views="clr-namespace:Sandbox.Views"
     xmlns:aloha="clr-namespace:Sandbox.Views.Aloha"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:mauiGraphics="clr-namespace:DrawnUi.MauiGraphics;assembly=DrawnUi.MauiGraphics"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel">
 
@@ -29,7 +30,7 @@
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
-            <draw:SkiaMauiGraphics
+            <mauiGraphics:SkiaMauiGraphics
                 BackgroundColor="Black"
                 Drawable="{StaticResource clockDrawable}"
                 HorizontalOptions="Fill"

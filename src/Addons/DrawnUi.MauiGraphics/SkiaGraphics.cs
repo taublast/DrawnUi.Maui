@@ -1,6 +1,8 @@
-﻿using Microsoft.Maui.Graphics.Skia;
+﻿using DrawnUi.Maui.Draw;
+using Microsoft.Maui.Graphics.Skia;
+using SkiaSharp;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.MauiGraphics;
 
 [ContentProperty("Drawable")]
 public class SkiaMauiGraphics : ContentLayout
