@@ -58,6 +58,7 @@
     <Compile Remove="Internals\ConditionalStyle.cs" />
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
     <Compile Remove="Controls\Extensions\**" />
+    <Compile Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
@@ -77,11 +78,7 @@
       <Pack>True</Pack>
     </None>
     <None Remove="Controls\Extensions\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-    <None Include="Controls\AnimateFrames\SkiaRive.cs" />
-	  <None Include="Platforms\Windows\SkiaRive.Windows.cs" />
+    <None Remove="Platforms\Windows\Controls\**" />
 	</ItemGroup>
     
   <ItemGroup>
@@ -95,13 +92,6 @@
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.4" />
     
   </ItemGroup>
- 
-  <!--WINDOWS-->
-  <ItemGroup Condition="$(TargetFramework.Contains('windows')) == true">
-    <!--native stuff-->
-    <PackageReference Include="AppoMobi.Maui.Rive" Version="1.0.1.2-pre">
-    </PackageReference>
-  </ItemGroup>
 
   <!--ANDROID-->
   <ItemGroup Condition="$(TargetFramework.Contains('android')) == true">
@@ -111,18 +101,20 @@
 
   <ItemGroup>
     <EmbeddedResource Remove="Controls\Extensions\**" />
+    <EmbeddedResource Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   <ItemGroup>
     <MauiXaml Remove="Controls\Extensions\**" />
+    <MauiXaml Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   <ItemGroup>
     <MauiCss Remove="Controls\Extensions\**" />
+    <MauiCss Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAarLibrary Remove="Controls\Extensions\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Platforms\Windows\Controls\" />
     <Folder Include="Shared\" />
     <Folder Include="Views\Compat\" />
   </ItemGroup>
