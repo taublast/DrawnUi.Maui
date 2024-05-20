@@ -73,7 +73,7 @@
                     HorizontalOptions="Start"
                     Spacing="16"
                     Split="1"
-                    Type="Stack"
+                    Type="Wrap"
                     VerticalOptions="Start">
 
                     <draw:SkiaLabel

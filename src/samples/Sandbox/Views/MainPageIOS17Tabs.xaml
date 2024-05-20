@@ -170,7 +170,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                 HorizontalOptions="Center"
                                 Split="0"
                                 Tag="Select0"
-                                Type="Stack"
+                                Type="Wrap"
                                 VerticalOptions="Fill">
 
                                 <draw:SkiaSvg
@@ -192,7 +192,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                 Grid.Column="1"
                                 HorizontalOptions="Center"
                                 Split="0"
-                                Type="Stack"
+                                Type="Wrap"
                                 VerticalOptions="Fill">
 
                                 <draw:SkiaSvg
@@ -213,7 +213,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                 Grid.Column="2"
                                 HorizontalOptions="Center"
                                 Split="0"
-                                Type="Stack"
+                                Type="Wrap"
                                 VerticalOptions="Fill">
 
                                 <draw:SkiaSvg
@@ -247,7 +247,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                             <draw:SkiaLayout
                                 HorizontalOptions="Center"
                                 Split="0"
-                                Type="Stack"
+                                Type="Wrap"
                                 VerticalOptions="Fill">
 
                                 <draw:SkiaSvg
@@ -270,7 +270,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                 Grid.Column="1"
                                 HorizontalOptions="Center"
                                 Split="0"
-                                Type="Stack"
+                                Type="Wrap"
                                 VerticalOptions="Fill">
 
                                 <draw:SkiaSvg
@@ -292,7 +292,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                 Grid.Column="2"
                                 HorizontalOptions="Center"
                                 Split="0"
-                                Type="Stack"
+                                Type="Wrap"
                                 VerticalOptions="Fill">
 
                                 <draw:SkiaSvg
@@ -335,7 +335,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                             Spacing="16"
                             Split="2"
                             Tag="Tab0"
-                            Type="Stack"
+                            Type="Wrap"
                             UseCache="Image">
 
                             <draw:SkiaLayout.ItemsSource>
@@ -424,7 +424,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                             RecyclingTemplate="Enabled"
                             Spacing="16"
                             Split="2"
-                            Type="Stack"
+                            Type="Wrap"
                             UseCache="Image">
 
                             <draw:SkiaLayout.ItemsSource>
@@ -460,7 +460,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                             Padding="16"
                                             HorizontalOptions="Fill"
                                             Split="1"
-                                            Type="Stack"
+                                            Type="Wrap"
                                             VerticalOptions="Fill">
 
                                             <draw:SkiaShape
@@ -517,7 +517,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                             HorizontalOptions="Fill"
                             Spacing="24"
                             Split="1"
-                            Type="Stack"
+                            Type="Wrap"
                             UseCache="Image"
                             VerticalOptions="Center">
 

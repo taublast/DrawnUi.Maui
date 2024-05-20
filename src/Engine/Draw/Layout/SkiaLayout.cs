@@ -822,7 +822,7 @@ namespace DrawnUi.Maui.Draw
                     ContentSize = MeasureStack(constraints.Content, request.Scale);
                     break;
 
-                    case LayoutType.Stack:
+                    case LayoutType.Wrap:
                     if (IsTemplated) //fix threads conflict when templates are initialized in background thread
                     {
                         var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
@@ -1144,7 +1144,7 @@ namespace DrawnUi.Maui.Draw
         {
             get
             {
-                return this.Type == LayoutType.Column || Type == LayoutType.Row || Type == LayoutType.Stack;
+                return this.Type == LayoutType.Column || Type == LayoutType.Row || Type == LayoutType.Wrap;
             }
         }
 

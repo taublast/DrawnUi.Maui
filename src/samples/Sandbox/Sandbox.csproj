@@ -175,8 +175,8 @@
 	</ItemGroup>
  
   <ItemGroup>
+    <ProjectReference Include="..\..\Addons\DrawnUi.Maui.Game\DrawnUi.Maui.Game.csproj" />
     <ProjectReference Include="..\..\Addons\DrawnUi.Maui.MapsUi\src\DrawnUi.Maui.MapsUi.csproj" />
-    <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
   </ItemGroup>
  
   <ItemGroup>

@@ -13,11 +13,15 @@ _The current development state is __ALPHA__, many features remain to be implemen
 
 ## What's new
 
-As SkiaSharp3 stable version is expected towards the end of the year we will have DrawnUI skia2 version updated constantly and a skia3-preview version available in parallel.  
-New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can manage how this project builds using `<UseSkiaSharp3>true</UseSkiaSharp3>`.
+* New SkiaLayout `Stack` type, arrange like flex (Split=0) or columns (Split=cols).
+* New cache type `ImageComposite` redrawing only changed areas, for large scrolls with many items etc.
+* Fixed random crashes due to disposed items when using `ImageDoubleBuffered` cache type.
+* `SkiaScroll` got snapping and tracking current item index with `SnapToChildren` and `TrackIndexPosition` properties. Any scroll can now snap its children to borders/center and report child index at that point. Restored ranged scroll animators (from 2 years ago code) using them for snapping and programmating scrolling. Fling velocity animator still used by gestures initiated scroling only, Bounce animator still in place for edges.
+* `SkiaLottie` got new properties `DefaultFrame`, `DefaultFrameWhenOn` and `IsOn`, to be able to easily switch the look between two states. In the future it might be replaced with State + States with default frames ranges for them, looking at how **Rive** is designed for this mater.
+* `SkiaShape` became a `ContentLayout`, its `CornerRadius` property changed to MAUI `CornerRadius` struct type.
 
-* SkiaSharp v3 nuget [1.3.0.23-pre](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)
-* SkiaSharp v2 nuget [1.2.0.7](https://www.nuget.org/packages/AppoMobi.Maui.DrawnUi)
+## Previously
+
 * FPS is now mainly display-synched (choreographer/display link..)
 * Every SkiaControl has a new `VisualEffects` property, you can blur/tint/apply other effects to anything in your app, see Sandbox app.
 * `Maui.Graphics` support, can reuse your existing works inside drawn layouts/controls, see Sandox app.
@@ -27,6 +31,9 @@ New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can mana
 * SkiaImageManager preload functions added.
 * Dropped support for .net7
 * Other feats and fixes.
+
+* As SkiaSharp3 stable version is expected towards the end of the year we will have DrawnUI skia2 version updated constantly and a skia3-preview version available in parallel.  
+New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can manage how this project builds using `<UseSkiaSharp3>true</UseSkiaSharp3>`.
 
 ## Demo
 
@@ -347,7 +354,7 @@ This system ensures that you can have an infinite-size layout inside a scroll an
 At the same time if you want a `SkiaScroll` to <s>lye</s> communicate to its content that everything is visible on the screen you can set its `VirtualizationEnabled="False"`.
 
 _!_ You can absolutely use the `Margin` property in a usual Maui way. In case if you would need to bind a specific margin you can switch to 
-using `MarginLeft`, `MarginTop`, `MarginRight`, `MarginBottom` properties, -1.0 by default, 
+using `AddMarginLeft`, `AddMarginTop`, `AddMarginRight`, `AddMarginBottom` properties, -1.0 by default, 
 if set they will override the specific value from `Margin`, and the result would be accessible via `Margins` read-only bindable static property.  
 Even more, sometimes you might want to bind your code to `AddMarginTop`, `AddMarginLeft`, `AddMarginRight`, `AddMarginBottom`..  
 When designing custom controls please use `Margins` property to read the final margin value.

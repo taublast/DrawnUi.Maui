@@ -171,11 +171,11 @@ namespace SomeBenchmarks
         }
 
         [Benchmark]
-        public void CreateDrawnUiLayoutStack()
+        public void CreateDrawnUiLayoutWrap()
         {
             var layout = new SkiaLayout()
             {
-                Type = LayoutType.Stack
+                Type = LayoutType.Wrap
             };
 
             for (int i = 0; i < Iterations; i++)

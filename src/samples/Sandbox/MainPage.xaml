@@ -37,7 +37,7 @@
                         Spacing="0"
                         Split="1"
                         Tag="ScrollContent"
-                        Type="Stack"
+                        Type="Wrap"
                         UseCache="ImageComposite">
 
                         <!--
@@ -133,7 +133,7 @@
                             Spacing="0"
                             Split="0"
                             Tag="Buttons"
-                            Type="Stack"
+                            Type="Wrap"
                             UseCache="None">
 
                             <draw:SkiaLayout.ItemTemplate>

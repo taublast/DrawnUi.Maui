@@ -7,7 +7,7 @@ public class VStack : SkiaLayout
 {
     public VStack()
     {
-        Type = LayoutType.Stack;
+        Type = LayoutType.Wrap;
         Split = 1;
     }
 }
