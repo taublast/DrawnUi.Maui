@@ -1,7 +1,7 @@
 <Project>
   <!-- Conditional for SkiaSharp 2 -->
   <PropertyGroup>
-    <PackageReleaseNotes>Alpha for SkiaSharp 2.xx</PackageReleaseNotes>
+    <PackageReleaseNotes>Alpha for SkiaSharp 2.xx. New SkiaLayout type Wrap and many fixes and improvements. Some controls where moved to separate packages: SkiaMauiGraphics, SkiaCamera, SkiaRive.</PackageReleaseNotes>
     <Version>1.2.2.1</Version>
   </PropertyGroup>
   <ItemGroup>

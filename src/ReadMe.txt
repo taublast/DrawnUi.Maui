@@ -26,7 +26,7 @@ Strategic Mid-priority:
 
 port to SkiaSharp 3.0 (breaking changes)
 add Maui.Graphics support
-after that implement DrawnUI.Blazor
+after that implement DrawnUi.Blazor
 
 Strategic Low-proirity:
 

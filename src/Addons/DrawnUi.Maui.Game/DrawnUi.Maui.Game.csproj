@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
@@ -13,8 +13,38 @@
     <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
   </PropertyGroup>    
 
-  <ItemGroup>
+  <PropertyGroup>
+    <UseNuget>false</UseNuget>
+    <Version>1.2.0.1</Version>
+    <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sandbox project or look for DrawnUi SpaceShooter for usage example.</PackageReleaseNotes>
+    <Title>Game creation addon to DrawnUi for .NET MAUI</Title>
+    <PackageId>DrawnUi.Maui.Game</PackageId>
+    <Description>Base class for implementing a game with SkiaSharp in .NET MAUI</Description>
+    <PackageTags>maui drawnui skia skiasharp draw game</PackageTags>
+    <Authors>Nick Kovalsky aka AppoMobi</Authors>
+    <Copyright>(c) AppoMobi, 2023 - present day</Copyright>
+    <PackageProjectUrl>https://github.com/taublast/DrawnUi.Maui</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/taublast/DrawnUi.Maui</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <Packable>true</Packable>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <CreatePackage>false</CreatePackage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
+  </PropertyGroup>
+
+  <!--for development-->
+  <ItemGroup Condition="'$(UseNuget)' != 'true'">
     <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
   </ItemGroup>
+
+  <!--production-->
+  <ItemGroup Condition="'$(UseNuget)' == 'true'">
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.1" />
+  </ItemGroup>
+
 
 </Project>

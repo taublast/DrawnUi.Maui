@@ -21,7 +21,7 @@ using Map = Mapsui.Map;
 namespace DrawnUi.Maui.MapsUi;
 
 /// <summary>
-/// MapControl for MAUI DrawnUI
+/// MapControl for MAUI DrawnUi
 /// </summary>
 public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 {

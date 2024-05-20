@@ -23,7 +23,7 @@
   <Import Condition="'$(UseSkiaSharp3)' != 'true'" Project="skia2.props" />
 
   <PropertyGroup>
-    <Title>DrawnUI for .NET MAUI</Title>
+    <Title>DrawnUi for .NET MAUI</Title>
     <PackageId>AppoMobi.Maui.DrawnUi</PackageId>
     <Description>Cross-platform rendering engine for .NET MAUI to draw your UI with SkiaSharp</Description>
     <PackageTags>maui drawnui skia skiasharp draw ui</PackageTags>
@@ -45,7 +45,7 @@
     <WarningsAsErrors>$(WarningsAsErrors);CS0108;XLS0501</WarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <NoWarn>1701;1702;XLS0505</NoWarn>
     <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
   </PropertyGroup>

@@ -1650,7 +1650,7 @@ namespace DrawnUi.Maui.Controls
                 RootLayout = ShellLayout.FindViewByTag("RootLayout");
                 if (RootLayout == null)
                 {
-                    throw new Exception("[DrawnUI] `RootLayout` Tag not found while initializing SkiaShell");
+                    throw new Exception("[DrawnUi] `RootLayout` Tag not found while initializing SkiaShell");
                 }
                 ImportRootLayout();
             }

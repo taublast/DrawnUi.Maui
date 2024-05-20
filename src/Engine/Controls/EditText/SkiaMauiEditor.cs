@@ -229,7 +229,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     }
 
     /// <summary>
-    /// Called by DrawnUI when the focus changes
+    /// Called by DrawnUi when the focus changes
     /// </summary>
     /// <param name="focus"></param>
     public void OnFocusChanged(bool focus)

@@ -88,6 +88,21 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
         set { SetValue(BrightnessProperty, value); }
     }
 
+    public static readonly BindableProperty UseContextProperty = BindableProperty.Create(nameof(UseContext),
+        typeof(bool),
+        typeof(SkiaControl),
+        true,
+        propertyChanged: NeedDraw);
+
+    /// <summary>
+    /// Use either context of global Superview background, default is True. 
+    /// </summary>
+    public bool UseContext
+    {
+        get { return (bool)GetValue(UseContextProperty); }
+        set { SetValue(UseContextProperty, value); }
+    }
+
     public bool HasEffects
     {
         get
@@ -205,8 +220,6 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
         }
 
     }
-
-    private bool UseContext = false;
 
     protected SKImage Snapshot { get; set; }
 
