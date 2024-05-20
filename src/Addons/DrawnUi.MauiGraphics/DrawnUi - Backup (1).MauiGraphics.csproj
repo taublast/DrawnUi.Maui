@@ -14,7 +14,7 @@
   </PropertyGroup>    
 
   <PropertyGroup>
-    <UseNuget>false</UseNuget>
+    <UseNuget>true</UseNuget>
     <Version>1.2.2.3</Version>
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sanbox project for usage example.</PackageReleaseNotes>
     <Title>MauiGraphics addon to DrawnUI for .NET MAUI</Title>

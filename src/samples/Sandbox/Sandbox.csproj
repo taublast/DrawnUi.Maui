@@ -9,7 +9,7 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
     
-    <UseNuget>true</UseNuget>
+    <UseNuget>false</UseNuget>
     <UseSkiaSharp3>false</UseSkiaSharp3>
 
         <ApplicationId>com.companyname.sandbox2</ApplicationId>

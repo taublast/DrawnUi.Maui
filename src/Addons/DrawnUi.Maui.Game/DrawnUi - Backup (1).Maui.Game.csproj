@@ -14,13 +14,13 @@
   </PropertyGroup>    
 
   <PropertyGroup>
-    <UseNuget>false</UseNuget>
+    <UseNuget>true</UseNuget>
     <Version>1.2.2.3</Version>
-    <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sanbox project for usage example.</PackageReleaseNotes>
-    <Title>MauiGraphics addon to DrawnUI for .NET MAUI</Title>
-    <PackageId>DrawnUi.MauiGraphics</PackageId>
-    <Description>SkiaMauiGraphics DrawnUi control for .NET MAUI</Description>
-    <PackageTags>maui drawnui skia skiasharp draw</PackageTags>
+    <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sandbox project or look for DrawnUI SpaceShooter for usage example.</PackageReleaseNotes>
+    <Title>Game creation addon to DrawnUI for .NET MAUI</Title>
+    <PackageId>DrawnUi.Maui.Game</PackageId>
+    <Description>Base class for implementing a game with SkiaSharp in .NET MAUI</Description>
+    <PackageTags>maui drawnui skia skiasharp draw game</PackageTags>
     <Authors>Nick Kovalsky aka AppoMobi</Authors>
     <Copyright>(c) AppoMobi, 2023 - present day</Copyright>
     <PackageProjectUrl>https://github.com/taublast/DrawnUi.Maui</PackageProjectUrl>
@@ -45,11 +45,6 @@
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
     <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.3" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="8.0.40" />
-  </ItemGroup>
-
 
 
 </Project>
