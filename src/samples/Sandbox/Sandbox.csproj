@@ -9,7 +9,7 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
     
-    <UseNuget>false</UseNuget>
+    <UseNuget>true</UseNuget>
     <UseSkiaSharp3>false</UseSkiaSharp3>
 
         <ApplicationId>com.companyname.sandbox2</ApplicationId>
@@ -171,9 +171,9 @@
 
     <!--production-->
     <ItemGroup Condition="'$(UseNuget)' == 'true'">
-      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.0.1" />
-      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.0.1" />
-      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.0.1" />
+      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.2.2" />
+      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.2.2" />
+      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.2.2" />
     </ItemGroup>
  
 
