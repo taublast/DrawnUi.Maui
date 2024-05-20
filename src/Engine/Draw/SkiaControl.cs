@@ -1452,6 +1452,12 @@ namespace DrawnUi.Maui.Draw
 
             Superview?.SetViewTreeVisibilityByParent(this, newvalue);
 
+            if (!IsVisible)
+            {
+                //though shell not pass
+                return;
+            }
+
             try
             {
                 foreach (var child in Views)
