@@ -1605,7 +1605,7 @@ namespace DrawnUi.Maui.Draw
                 (float)Math.Abs(pixelsOffsetY)
                 );
 
-                if (layout.Type == LayoutType.Column || layout.Type == LayoutType.Stack && layout.Split > 0) //todo grid
+                if (layout.Type == LayoutType.Column || layout.Type == LayoutType.Wrap && layout.Split > 0) //todo grid
                 {
                     var stackStructure = layout.LatestStackStructure;
                     int index = -1;
@@ -1675,7 +1675,7 @@ namespace DrawnUi.Maui.Draw
                 );
 
 
-                if (layout.Type == LayoutType.Row || layout.Type == LayoutType.Stack && layout.Split == 0) //todo grid
+                if (layout.Type == LayoutType.Row || layout.Type == LayoutType.Wrap && layout.Split == 0) //todo grid
                 {
                     var stackStructure = layout.StackStructure;
                     int index = -1;

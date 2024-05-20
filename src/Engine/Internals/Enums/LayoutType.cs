@@ -18,9 +18,9 @@ public enum LayoutType
     Row,
 
     /// <summary>
-    /// Stack panel
+    /// Think of wrap panel
     /// </summary>
-    Stack,
+    Wrap,
 
     /// <summary>
     /// Use usual grid properties like Grid.Stack, ColumnSpacing etc

@@ -1,13 +1,12 @@
 <Project>
   <!-- Conditional for SkiaSharp 2 -->
   <PropertyGroup>
-    <PackageReleaseNotes>Alpha for SkiaSharp 2.xx</PackageReleaseNotes>
-    <Version>1.2.2.1</Version>
+    <PackageReleaseNotes>Alpha for SkiaSharp 2.xx. New SkiaLayout type Wrap and many fixes and improvements. Some controls where moved to separate packages: SkiaMauiGraphics, SkiaCamera, SkiaRive.</PackageReleaseNotes>
+    <Version>1.2.2.3</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.7" />
     <PackageReference Include="SkiaSharp.Skottie" Version="2.88.7" />
-    <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="8.0.14" />
     <PackageReference Include="Svg.Skia" Version="1.0.0.9" />
 
   </ItemGroup>

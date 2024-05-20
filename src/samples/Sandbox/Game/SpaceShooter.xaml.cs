@@ -5,6 +5,7 @@ global using DrawnUi.Maui.Controls;
 global using SkiaSharp;
 using AppoMobi.Maui.Gestures;
 using AppoMobi.Specials;
+using DrawnUi.Maui.Game;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;

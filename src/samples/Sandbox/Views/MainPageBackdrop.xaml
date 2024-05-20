@@ -125,6 +125,7 @@
                                 <draw:SkiaLayout>
 
                                     <draw:SkiaBackdrop
+                                        UseContext="True"
                                         Blur="10"
                                         HorizontalOptions="Fill"
                                         Tag="Blur"

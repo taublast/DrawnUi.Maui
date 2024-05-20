@@ -11,7 +11,6 @@
   <ItemGroup>
     <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.0.0-preview.2.1" />
     <PackageReference Include="SkiaSharp.Skottie" Version="3.0.0-preview.2.1" />
-    <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="8.0.14" />
     <PackageReference Include="Svg.SkiaSharp3" Version="1.0.3.2-preview.2.1" />
 
   </ItemGroup>

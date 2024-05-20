@@ -1452,6 +1452,12 @@ namespace DrawnUi.Maui.Draw
 
             Superview?.SetViewTreeVisibilityByParent(this, newvalue);
 
+            if (!IsVisible)
+            {
+                //though shell not pass
+                return;
+            }
+
             try
             {
                 foreach (var child in Views)
@@ -4708,8 +4714,7 @@ namespace DrawnUi.Maui.Draw
             var centerX = (float)(moveX + destination.Left + destination.Width * TransformPivotPointX);
             var centerY = (float)(moveY + destination.Top + destination.Height * TransformPivotPointY);
 
-            _pixelsLastTranslationX = moveX;
-            _pixelsLastTranslationY = moveY;
+
 
             var skewX = 0f;
             if (SkewX > 0)
@@ -7058,8 +7063,7 @@ namespace DrawnUi.Maui.Draw
         private SKRect _lastArrangedInside;
         private double _lastArrangedForScale;
         private bool _needUpdateFrontCache;
-        protected float _pixelsLastTranslationX;
-        protected float _pixelsLastTranslationY;
+
 
         public static Color GetRandomColor()
         {

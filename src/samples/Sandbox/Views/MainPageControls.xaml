@@ -43,7 +43,7 @@
                         Spacing="16"
                         Split="0"
                         Tag="Radio1"
-                        Type="Stack"
+                        Type="Wrap"
                         UseCache="ImageComposite">
 
                         <controls:DrawnRadioButton Text="Flowers" />
@@ -71,7 +71,7 @@
                         HorizontalOptions="Center"
                         Spacing="20"
                         Tag="Content"
-                        Type="Stack"
+                        Type="Wrap"
                         UseCache="ImageComposite"
                         WidthRequest="-1">
 
@@ -100,7 +100,7 @@
                                 Split="-1"
                                 SplitAlign="True"
                                 Tag="Radio2"
-                                Type="Stack"
+                                Type="Wrap"
                                 UseCache="ImageComposite">
 
                                 <controls:DrawnRadioButton Text="Flowers" />

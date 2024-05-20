@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
@@ -16,42 +16,46 @@
   <PropertyGroup Condition="$(TargetFramework.Contains('windows')) == true Or $(TargetFramework.Contains('droid')) == true Or $(TargetFramework.Contains('ios')) == true Or $(TargetFramework.Contains('catalyst')) == true">
     <DefineConstants>$(DefineConstants);ONPLATFORM</DefineConstants>
   </PropertyGroup>
-  
-    
-   
+
+<ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+    <PackageReference Include="BruTile" Version="5.0.6" />
+    <PackageReference Include="Mapsui.ArcGIS" Version="5.0.0-beta.1" />
+    <PackageReference Include="Mapsui.Extensions" Version="5.0.0-beta.1" />
+    <PackageReference Include="BruTile.MbTiles" Version="5.0.6" />
+    <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.1" />
+</ItemGroup>    
+
   <PropertyGroup>
+    <UseNuget>false</UseNuget>
+    <Version>1.2.2.3</Version>
+    <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sandbox project on how to use SkiaMapsUi control.</PackageReleaseNotes>
+    <Title>MapsUi addon to DrawnUI for .NET MAUI</Title>
+    <PackageId>DrawnUi.Maui.MapsUi</PackageId>
+    <Description>SkiaMapsUi DrawnUi control for .NET MAUI</Description>
+    <PackageTags>maui drawnui skia skiasharp draw maps mapsui</PackageTags>
+    <Authors>Nick Kovalsky aka AppoMobi</Authors>
+    <Copyright>(c) AppoMobi, 2023 - present day</Copyright>
+    <PackageProjectUrl>https://github.com/taublast/DrawnUi.Maui</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/taublast/DrawnUi.Maui</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <IncludeSymbols>true</IncludeSymbols>
     <Packable>true</Packable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <CreatePackage>false</CreatePackage>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;XLS0505</NoWarn>
-    <WarningsAsErrors>$(WarningsAsErrors);CS0108;XLS0501</WarningsAsErrors>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;XLS0505</NoWarn>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
   </PropertyGroup>
 
-      <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
-    <PackageReference Include="BruTile" Version="5.0.6" />
-    <PackageReference Include="Mapsui.ArcGIS" Version="5.0.0-beta.1" />
-    <PackageReference Include="Mapsui.Extensions" Version="5.0.0-beta.1" />
-    <PackageReference Include="BruTile.MbTiles" Version="5.0.6" />
-    <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.1" />
-    
-    <!--required to build in rider-->
-    <!--<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.21" />
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.21" />
-    <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.21" />-->
-
-  </ItemGroup>            
-  <ItemGroup>
+  <!--for development-->
+  <ItemGroup Condition="'$(UseNuget)' != 'true'">
     <ProjectReference Include="..\..\..\Engine\DrawnUi.Maui.csproj" />
-  </ItemGroup>            
+  </ItemGroup>
 
+  <!--production-->
+  <ItemGroup Condition="'$(UseNuget)' == 'true'">
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.3" />
+  </ItemGroup>
 
 </Project>
