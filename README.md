@@ -22,13 +22,9 @@ Been/still busy with contractual work, all updates were ment for production apps
 * `SkiaRadioButton` can be auto-groupped by parent or by group name, seen in Sandbox project.
 * `SkiaLottie` got new properties `DefaultFrame`, `DefaultFrameWhenOn` and `IsOn`, to be able to easily switch the look between two states. In the future it might be replaced with State + States with default frames ranges for them, looking at how **Rive** is designed for this mater.
 * `SkiaMarkdownLabel` can now correctly render `code`.
-* `SkiaBackdrop` can now use canvas or context background while inside cache, control with UseContext` property.
-* `SkiaShape` became a `ContentLayout`, its `CornerRadius` property changed to MAUI `CornerRadius` struct type.
-* Derived controls that bring additional dependencies moved into separate assemblies/packages: 
--- DrawnUi.Maui.Camera
--- DrawnUi.Maui.MapsUi
--- DrawnUi.MauiGraphics
--- DrawnUi.Maui.Rive
+* `SkiaBackdrop` can now use canvas or context background while inside cache, control with `UseContext` property.
+* `SkiaShape` became a subclassed `ContentLayout` instead of `SkiaControl`, its `CornerRadius` property changed to MAUI `CornerRadius` struct type.
+* Derived controls that bring additional dependencies moved into separate assemblies/packages: `DrawnUi.Maui.Camera`, `DrawnUi.Maui.MapsUi`, `DrawnUi.MauiGraphics`, `DrawnUi.Maui.Rive`.
 * Fixed random crashes due to disposed items when using `ImageDoubleBuffered` cache type.
 * Long-term awaited layout fixes, and gazillions of other ones.
 
