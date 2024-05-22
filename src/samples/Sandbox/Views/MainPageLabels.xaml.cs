@@ -5,7 +5,7 @@ namespace Sandbox.Views
 
 
 
-    public partial class MainPageLabels 
+    public partial class MainPageLabels
     {
 
 
@@ -21,8 +21,6 @@ namespace Sandbox.Views
                 //having parent BindingContext still null when constructing from xaml
                 BindingContext = new MainPageViewModel();
 
-                //RiveoTest();
-
             }
             catch (Exception e)
             {
@@ -30,10 +28,6 @@ namespace Sandbox.Views
                 Console.WriteLine(e);
             }
         }
-
-
-
-
 
 
 

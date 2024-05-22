@@ -784,6 +784,7 @@ namespace DrawnUi.Maui.Draw
         public virtual ScaledSize MeasureLayout(MeasureRequest request, bool force)
         {
 
+
             //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
             if (IsDisposing || IsDisposed)
                 return ScaledSize.Default;
@@ -859,7 +860,6 @@ namespace DrawnUi.Maui.Draw
         /// <returns></returns>
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
-
             //background measuring or invisible or self measure from draw because layout will never pass -1
             if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0)
                 || (IsTemplated && ChildrenFactory.TemplatesBusy))
@@ -873,6 +873,7 @@ namespace DrawnUi.Maui.Draw
                 IsMeasuring = true;
 
                 CreateDefaultContent();
+
 
                 //lock (lockMeasure)
                 {
@@ -1037,10 +1038,6 @@ namespace DrawnUi.Maui.Draw
 
         void SetupCacheComposition(SkiaDrawingContext ctx, SKRect destination)
         {
-            if (Tag == "ButtonsStack")
-            {
-                var stop = 1;
-            }
             if (UsingCacheType == SkiaCacheType.ImageComposite)
             {
                 DirtyChildrenInternal.Clear();

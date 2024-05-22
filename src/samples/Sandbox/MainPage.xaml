@@ -16,7 +16,7 @@
         VerticalOptions="Fill">
 
         <draw:Canvas
-            BackgroundColor="Wheat"
+            BackgroundColor="DarkSlateBlue"
             Gestures="Enabled"
             HardwareAcceleration="Enabled"
             HorizontalOptions="Fill"
@@ -113,6 +113,7 @@
                             Tag="SetMainpageText"
                             UseCache="Image">
                             <draw:SkiaLabel
+                                StrokeColor="Red"
                                 FontSize="24"
                                 Tag="Title"
                                 Text="SET MAINPAGE"
@@ -153,6 +154,7 @@
                                             Tapped="TappedSelectPage"
                                             Text="{Binding Name}"
                                             TextColor="#ccffffff"
+                                            TextStrokeColor="Red"
                                             TintColor="{StaticResource ColorPrimary}"
                                             WidthRequest="150">
                                             <draw:SkiaControl.Triggers>

@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage
+    x:Class="MauiNet8.MainPageDev"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:sandbox="clr-namespace:Sandbox"
+    xmlns:views="clr-namespace:Sandbox.Views"
+    xmlns:strings="clr-namespace:Sandbox.Resources.Strings"
+    x:DataType="sandbox:MainPageViewModel"
+    BackgroundColor="Gray">
+
+    <Grid
+        Padding="0,0,0,8"
+        HorizontalOptions="Fill"
+        RowDefinitions="52, 232,64,*"
+        VerticalOptions="FillAndExpand">
+
+        <draw:Canvas
+            Grid.RowSpan="3"
+            Margin="32,64"
+            BackgroundColor="#66000000"
+            Gestures="Enabled"
+            HorizontalOptions="Fill"
+            Tag="Warning"
+            VerticalOptions="Center">
+
+            <draw:SkiaScroll
+                HorizontalOptions="Fill"
+                VerticalOptions="Start">
+                <draw:SkiaLayout 
+                    HorizontalOptions="Fill">
+
+                    <draw:SkiaLayout 
+                        BackgroundColor="Black"
+                        HorizontalOptions="Fill"
+                        Tag="VStack"
+                        Type="Column">
+
+
+                        <draw:SkiaLabel
+                            HorizontalOptions="Center"
+                            Tag="Warning"
+                            Text="WARNING"
+                            TextColor="White" />
+
+                        <draw:SkiaMarkdownLabel
+                            TextColor="White"
+                            LinkTapped="OnLinkTapped"
+                            HorizontalOptions="Center"
+                            Text="{x:Static strings:ResStrings.MarkdownTest}" />
+
+                        <!--  BTN  -->
+                        <controls:SmallButton
+                            Margin="0,16"
+                            HorizontalOptions="Center"
+                            Text="BUTTON" />
+
+                    </draw:SkiaLayout>
+                </draw:SkiaLayout>
+            </draw:SkiaScroll>
+
+        </draw:Canvas>
+
+
+    </Grid>
+
+</views:BasePage>

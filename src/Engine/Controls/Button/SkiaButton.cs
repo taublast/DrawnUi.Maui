@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using Microsoft.Maui.Controls;
+using System.Windows.Input;
 
 
 namespace DrawnUi.Maui.Draw;
@@ -78,11 +79,12 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
         if (MainFrame != null)
         {
-            var offsetFrame = new SKPoint(MainFrame.DrawingRect.Left - DrawingRect.Left, MainFrame.DrawingRect.Top - DrawingRect.Top);
-            var clip = MainFrame.CreateClip(arguments, usePosition); ;
-            clip.Offset(offsetFrame);
-            return clip;
-        } 
+            return MainFrame.CreateClip(arguments, false);
+            //var offsetFrame = new SKPoint(MainFrame.DrawingRect.Left - DrawingRect.Left, MainFrame.DrawingRect.Top - DrawingRect.Top);
+            //var clip = MainFrame.CreateClip(arguments, usePosition); ;
+            //clip.Offset(offsetFrame);
+            //return clip;
+        }
 
         return base.CreateClip(arguments, usePosition);
     }
@@ -111,6 +113,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         {
             MainLabel.Text = this.Text;
             MainLabel.TextColor = this.TextColor;
+            MainFrame.StrokeColor = TextStrokeColor;
 
             MainLabel.FontFamily = this.FontFamily;
             MainLabel.FontSize = this.FontSize;
@@ -125,6 +128,9 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public virtual bool OnDown(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
+
+        //todo check we are inside mainframe OR inside the rect accounting for margins
+
         if (this.ApplyEffect != SkiaTouchAnimation.None)
         {
             var control = this as SkiaControl;
@@ -537,6 +543,19 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
         get { return (Color)GetValue(TextColorProperty); }
         set { SetValue(TextColorProperty, value); }
+    }
+
+    public static readonly BindableProperty TextStrokeColorProperty = BindableProperty.Create(
+        nameof(TextStrokeColor),
+        typeof(Color),
+        typeof(SkiaButton),
+        Colors.White,
+        propertyChanged: NeedApplyProperties);
+
+    public Color TextStrokeColor
+    {
+        get { return (Color)GetValue(TextStrokeColorProperty); }
+        set { SetValue(TextStrokeColorProperty, value); }
     }
 
     private static void NeedApplyProperties(BindableObject bindable, object oldvalue, object newvalue)

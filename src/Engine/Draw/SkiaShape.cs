@@ -397,8 +397,8 @@ namespace DrawnUi.Maui.Draw
 
             if (!usePosition)
             {
-                var offsetToZero = new SKPoint(strokeAwareSize.Left - strokeAwareChildrenSize.Left,
-                    strokeAwareSize.Top - strokeAwareChildrenSize.Top);
+                var offsetToZero = new SKPoint(strokeAwareChildrenSize.Left - strokeAwareSize.Left,
+                    strokeAwareChildrenSize.Top - strokeAwareSize.Top);
                 strokeAwareChildrenSize = new(offsetToZero.X, offsetToZero.Y,
                     strokeAwareChildrenSize.Width + offsetToZero.X, strokeAwareChildrenSize.Height + offsetToZero.Y);
             }

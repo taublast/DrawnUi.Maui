@@ -239,7 +239,10 @@ public class SkiaCarousel : SnappingLayout
                     cell.Drawn.Set(view.DrawingRect.Left, view.DrawingRect.Top, view.DrawingRect.Right, view.DrawingRect.Bottom);
 
                     var destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right, cell.Drawn.Bottom);
-                    tree.Add(new SkiaControlWithRect(view, destinationRect, cell.ControlIndex));
+                    tree.Add(new SkiaControlWithRect(view,
+                        destinationRect,
+                        view.LastDrawnAt,
+                        cell.ControlIndex));
                 }
 
             }
@@ -572,7 +575,7 @@ public class SkiaCarousel : SnappingLayout
 
         if (Parent != null)
         {
-  
+
 
             if (_animatorSpring == null)
             {
@@ -603,7 +606,7 @@ public class SkiaCarousel : SnappingLayout
                     }
                 };
             }
-            
+
             ApplyOptions();
 
         }

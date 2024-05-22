@@ -602,14 +602,6 @@ namespace DrawnUi.Maui.Views
 
         private void OnNeedUpdate(object sender, EventArgs e)
         {
-            if (Tag == "TabSettings")
-            {
-                Debug.WriteLine($"TabSettings kicked");
-            }
-            // else
-            // {
-            //     Debug.WriteLine($"Canvas {Tag} kicked");
-            // }
             NeedCheckParentVisibility = true;
             NeedGlobalRefreshCount++;
             Update();
@@ -623,10 +615,6 @@ namespace DrawnUi.Maui.Views
         {
             if (state)
             {
-                if (Tag == "TabSettings")
-                {
-                    Debug.WriteLine($"TabSettings need rebuild");
-                }
                 NeedMeasure = true;
                 Update();
             }

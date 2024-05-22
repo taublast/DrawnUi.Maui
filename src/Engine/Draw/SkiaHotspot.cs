@@ -27,7 +27,7 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                DrawWithClipAndTransforms(context, DrawingRect, true, true, (ctx) =>
+                DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true, true, (ctx) =>
                 {
                     PaintTintBackground(canvas, DrawingRect);
                     //Paint(ctx, DrawingRect, scale, CreatePaintArguments());
@@ -67,8 +67,8 @@ namespace DrawnUi.Maui.Draw
                 TotalTapped++;
                 var delay = 10;
 
-                var x = (args.Event.Location.X) / RenderingScale;
-                var y = (args.Event.Location.Y) / RenderingScale;
+                //var x = (args.Event.Location.X) / RenderingScale;
+                //var y = (args.Event.Location.Y) / RenderingScale;
 
                 if (this.AnimationTapped != SkiaTouchAnimation.None)
                 {
@@ -100,7 +100,10 @@ namespace DrawnUi.Maui.Draw
                     consumed = true;
                     Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(delay), async () =>
                     {
-                        await Task.Run(() => { CommandTapped?.Execute(CommandTappedParameter); }).ConfigureAwait(false);
+                        await Task.Run(() =>
+                        {
+                            CommandTapped?.Execute(CommandTappedParameter);
+                        }).ConfigureAwait(false);
                     });
                 }
 
