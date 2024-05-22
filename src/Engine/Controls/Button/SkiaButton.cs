@@ -113,8 +113,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         {
             MainLabel.Text = this.Text;
             MainLabel.TextColor = this.TextColor;
-            MainFrame.StrokeColor = TextStrokeColor;
-
+            MainLabel.StrokeColor = TextStrokeColor;
             MainLabel.FontFamily = this.FontFamily;
             MainLabel.FontSize = this.FontSize;
         }
