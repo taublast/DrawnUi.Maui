@@ -569,6 +569,7 @@ public partial class SkiaScroll
             width = 0;
 
         var rect = new SKRect(-width, -height, 0, 0);
+
         return rect;
     }
 
@@ -594,6 +595,8 @@ public partial class SkiaScroll
         {
             overscrollY = -(_scrollMinY - y);
         }
+
+        //Debug.WriteLine($"[OVERSCROLL] {overscrollY}");
 
         return new Vector2(overscrollX, overscrollY);
     }
