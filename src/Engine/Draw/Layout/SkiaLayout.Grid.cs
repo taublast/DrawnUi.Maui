@@ -79,7 +79,6 @@ public partial class SkiaLayout
                 SKRect cellRect = new((float)Math.Round(cell.Left * scale), (float)Math.Round(cell.Top * scale),
                     (float)Math.Round(cell.Right * scale), (float)Math.Round(cell.Bottom * scale));
 
-                tree.Add(new SkiaControlWithRect(child, cellRect, drawn));
 
                 if (IsRenderingWithComposition)
                 {
@@ -96,6 +95,8 @@ public partial class SkiaLayout
                 {
                     DrawChild(context, cellRect, child, scale);
                 }
+
+                tree.Add(new SkiaControlWithRect(child, cellRect, child.LastDrawnAt, drawn));
 
                 drawn++;
             }

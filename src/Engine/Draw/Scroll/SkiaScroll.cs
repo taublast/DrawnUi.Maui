@@ -1083,8 +1083,17 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected RangeAnimator _scrollerY;
 
+        /// <summary>
+        /// Units
+        /// </summary>
         protected float _scrollMinX;
+
+        /// <summary>
+        /// Units
+        /// </summary>
         protected float _scrollMinY;
+
+
         protected float _scrollMaxX;
         protected float _scrollMaxY;
 
@@ -2060,14 +2069,17 @@ namespace DrawnUi.Maui.Draw
 
 
         protected SKSize LastContentSizePixels = new SKSize(-1, -1);
+        protected SKSize LastMeasuredSizePixels = new SKSize(-1, -1);
+
 
         protected override void OnMeasured()
         {
             base.OnMeasured();
 
-            if (ContentSize.Pixels != LastContentSizePixels)
+            if (ContentSize.Pixels != LastContentSizePixels || MeasuredSize.Pixels != LastMeasuredSizePixels)
             {
                 LastContentSizePixels = ContentSize.Pixels;
+                LastMeasuredSizePixels = MeasuredSize.Pixels;
 
                 InitializeViewport((float)RenderingScale);
 
@@ -2184,6 +2196,7 @@ namespace DrawnUi.Maui.Draw
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
+
             if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
             {
                 return MeasuredSize;
@@ -2338,7 +2351,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         protected virtual void PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale, float scale)
         {
-            if (!IsContentActive)
+            if (!IsContentActive || Content == null)
                 return;
 
             if (!IsSnapping)
@@ -2687,7 +2700,7 @@ namespace DrawnUi.Maui.Draw
                     RenderObject = null;
                 }
 
-                DrawWithClipAndTransforms(context, DrawingRect, true,
+                DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true,
                     true, (ctx) =>
                     {
                         PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());

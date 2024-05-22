@@ -197,7 +197,7 @@
                         LineSpacing="1.5"
                         LinkColor="Purple"
                         LinkTapped="HandleLinkTapped"
-                        StrikeoutColor="Red"
+                        StrokeColor="Red"
                         Text="~~Just put~~ a simple markdown string and this control will ***auto-split*** it into spans. It will recognize links _[a link](https://firstlink.app)_ rendered with ___SkiaMarkdownLabel___ Here it auto-created a span for 🚀🐴🤖👻 and switched back. _[More info..](https://moreinfo.app)_. Subclass this control or consume LinkTappedCommand property or LinkTapped event handler to react to taps."
                         TextColor="Black" />
 

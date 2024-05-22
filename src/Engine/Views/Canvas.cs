@@ -1,9 +1,5 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-using Microsoft.Maui.Controls.Internals;
-using System.Diagnostics;
+﻿using Microsoft.Maui.Controls.Internals;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Size = Microsoft.Maui.Graphics.Size;
 
 namespace DrawnUi.Maui.Views;
@@ -102,9 +98,29 @@ public class Canvas : DrawnView, IGestureListener
         return DesiredSize;
     }
 
+    /// <summary>
+    /// We need this mainly to autosize inside grid cells
+    /// This is also called when parent visibilty changes
+    /// </summary>
+    /// <param name="bounds"></param>
+    /// <returns></returns>
+    protected override Size ArrangeOverride(Rect bounds)
+    {
+        NeedCheckParentVisibility = true;
+
+        if (NeedAutoSize)
+        {
+            AdaptSizeToContentIfNeeded(bounds.Width, bounds.Height, true);
+        }
+
+        return base.ArrangeOverride(bounds);
+    }
+
+
+
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
-        //ResetUpdate();
+        //we are going to receive the size NOT reduced by Maui margins
         Size ret;
         NeedCheckParentVisibility = true;
 
@@ -140,41 +156,19 @@ public class Canvas : DrawnView, IGestureListener
         base.Invalidate();
     }
 
-    /// <summary>
-    /// We need this mainly to autosize inside grid cells
-    /// This is also called when parent visibilty changes
-    /// </summary>
-    /// <param name="bounds"></param>
-    /// <returns></returns>
-    protected override Size ArrangeOverride(Rect bounds)
-    {
-        NeedCheckParentVisibility = true;
-
-        if (NeedAutoSize)
-        {
-            AdaptSizeToContentIfNeeded(bounds.Width, bounds.Height, true);
-        }
-
-        return base.ArrangeOverride(bounds);
-    }
-
 
 
     public float AdaptWidthContraintToRequest(double widthConstraint)
     {
-        var width = WidthRequest;
-
-        if (WidthRequest > 0)//&& width < widthConstraint)
-            widthConstraint = width;
+        if (widthConstraint >= 0)//&& width < widthConstraint)
+            widthConstraint -= Margin.HorizontalThickness;
 
         return (float)widthConstraint;
     }
     public float AdaptHeightContraintToRequest(double heightConstraint)
     {
-        var widthPixels = HeightRequest;
-
-        if (HeightRequest > 0)// && widthPixels < heightConstraint)
-            heightConstraint = widthPixels;
+        if (heightConstraint >= 0)// && widthPixels < heightConstraint)
+            heightConstraint -= Margin.VerticalThickness;
 
         return (float)heightConstraint;
     }

@@ -356,7 +356,7 @@ public class SkiaScrollLooped : SkiaScroll
                     if (pixelsContentOffsetY > 0)
                         childRect.Bottom += hiddenContentHeightPixels;
 
-                    DrawWithClipAndTransforms(context, DrawingRect, true,
+                    DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true,
                         true, (ctx) =>
                         {
                             if (Debug)
@@ -403,7 +403,7 @@ public class SkiaScrollLooped : SkiaScroll
                     var childRect = destination.Clone();
                     childRect.Offset(offsetX, 0);
 
-                    DrawWithClipAndTransforms(context, DrawingRect, true,
+                    DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true,
                         true, (ctx) =>
                         {
                             DrawViews(context, childRect, zoomedScale, debug);

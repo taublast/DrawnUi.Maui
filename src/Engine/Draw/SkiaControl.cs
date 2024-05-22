@@ -1080,12 +1080,19 @@ namespace DrawnUi.Maui.Draw
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
         {
+            bool inside = false;
             if (!child.Control.InputTransparent && child.Control.CanDraw)
             {
-                var transformed = child.Control.ApplyTransforms(child.Rect);
-                return transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
+                var transformed = child.Control.ApplyTransforms(child.HitRect);
+                inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
             }
-            return false;
+
+            //if (inside)
+            //{
+            //    Debug.WriteLine($"[IsGestureForChild] {this}");
+            //}
+
+            return inside;
         }
 
         //          
@@ -4198,11 +4205,18 @@ namespace DrawnUi.Maui.Draw
 
             if (NeedMeasure)
             {
-                var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
-                ArrangedDestination = adjustedDestination;
-
-                Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
-                ApplyMeasureResult();
+                if (Parent is DrawnView || Parent == null)
+                {
+                    //self measuring
+                    var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
+                    ArrangedDestination = adjustedDestination;
+                    Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
+                    ApplyMeasureResult();
+                }
+                else
+                {
+                    Invalidate(); //make parent measure us
+                }
             }
             else
             {
@@ -4311,7 +4325,7 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                 {
-                    DrawWithClipAndTransforms(context, DrawingRect, true, true, (ctx) =>
+                    DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true, true, (ctx) =>
                     {
                         PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
                     });
@@ -4614,6 +4628,89 @@ namespace DrawnUi.Maui.Draw
 #endif
 
         public void DrawWithClipAndTransforms(
+            SkiaDrawingContext ctx,
+            SKRect destination,
+            SKRect transformsArea,
+            bool useOpacity,
+            bool useClipping,
+            Action<SkiaDrawingContext> draw)
+        {
+            bool isClipping = false;
+
+            if ((IsClippedToBounds || Clipping != null) && useClipping)
+            {
+                isClipping = true;
+
+                if (_preparedClipBounds == null)
+                {
+                    _preparedClipBounds = new SKPath();
+                }
+                else
+                {
+                    _preparedClipBounds.Reset();
+                }
+
+                _preparedClipBounds.AddRect(destination);
+
+                if (Clipping != null)
+                {
+                    Clipping.Invoke(_preparedClipBounds, destination);
+                }
+            }
+
+            bool applyOpacity = useOpacity && Opacity < 1;
+            bool needTransform = HasTransform;
+
+            if (applyOpacity || isClipping || needTransform || CustomizeLayerPaint != null)
+            {
+                _paintWithOpacity ??= new SKPaint();
+
+                if (IsDistorted)
+                {
+                    _paintWithOpacity.IsAntialias = true;
+                    _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
+                }
+                else
+                {
+                    _paintWithOpacity.IsAntialias = false;
+                    _paintWithOpacity.FilterQuality = SKFilterQuality.None;
+                }
+
+                var alpha = (byte)(0xFF * Opacity);
+                _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
+
+                if (applyOpacity || CustomizeLayerPaint != null)
+                {
+                    CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
+                    ctx.Canvas.SaveLayer(_paintWithOpacity);
+                }
+                else
+                {
+                    ctx.Canvas.Save();
+                }
+
+                if (needTransform)
+                {
+                    ApplyTransforms(ctx, transformsArea);
+                }
+
+                if (isClipping)
+                {
+                    ctx.Canvas.ClipPath(_preparedClipBounds, SKClipOperation.Intersect, true);
+                }
+
+                draw(ctx);
+
+                ctx.Canvas.Restore();
+            }
+            else
+            {
+                draw(ctx);
+            }
+        }
+
+        /*
+        public void DrawWithClipAndTransforms(
            SkiaDrawingContext ctx,
            SKRect destination,
            bool useOpacity,
@@ -4702,6 +4799,7 @@ namespace DrawnUi.Maui.Draw
             }
 
         }
+        */
 
         protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
         {
@@ -4785,8 +4883,6 @@ namespace DrawnUi.Maui.Draw
 #endif
 
             //restore coordinates back
-            //DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(centerX, centerY));
-
             DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY));
 
             //apply parent's transforms
@@ -4794,6 +4890,7 @@ namespace DrawnUi.Maui.Draw
 
             ctx.Canvas.SetMatrix(DrawingMatrix);
         }
+
 
         public virtual bool NeedMeasure
         {
@@ -5534,7 +5631,7 @@ namespace DrawnUi.Maui.Draw
         {
             //lock (LockDraw)
             {
-                DrawWithClipAndTransforms(ctx, destination, true, true, (ctx) =>
+                DrawWithClipAndTransforms(ctx, destination, destination, true, true, (ctx) =>
                 {
                     if (_paintWithOpacity == null)
                     {
@@ -5582,7 +5679,9 @@ namespace DrawnUi.Maui.Draw
                     {
                         child.Render(context, destination, scale);
 
-                        tree.Add(new SkiaControlWithRect(child, child.LastDrawnAt, count));
+                        tree.Add(new SkiaControlWithRect(child,
+                            child.LastDrawnAt,
+                            child.LastDrawnAt, count));
 
                         count++;
                     }
@@ -5609,7 +5708,10 @@ namespace DrawnUi.Maui.Draw
         /// <param name="Control"></param>
         /// <param name="Rect"></param>
         /// <param name="Index"></param>
-        public record SkiaControlWithRect(SkiaControl Control, SKRect Rect, int Index);
+        public record SkiaControlWithRect(SkiaControl Control,
+            SKRect Rect,
+            SKRect HitRect,
+            int Index);
 
         protected long _measuredStamp;
 
@@ -6038,8 +6140,8 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaControl control)
             {
-                //control.InvalidateMeasure();
-                control.PostponeInvalidation(nameof(InvalidateMeasure), control.InvalidateMeasure);
+                control.InvalidateMeasure();
+                //control.PostponeInvalidation(nameof(InvalidateMeasure), control.InvalidateMeasure);
             }
         }
 

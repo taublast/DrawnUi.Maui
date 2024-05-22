@@ -174,7 +174,10 @@ namespace DrawnUi.Maui.Draw
                         drawn++;
 
                         //gonna use that for gestures and for item inside viewport detection and for hotreload children tree
-                        tree.Add(new SkiaControlWithRect(control, destinationRect, index));
+                        tree.Add(new SkiaControlWithRect(control,
+                            destinationRect,
+                            control.LastDrawnAt,
+                            index));
                     }
                 }
 
