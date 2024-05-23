@@ -548,7 +548,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
         nameof(TextStrokeColor),
         typeof(Color),
         typeof(SkiaButton),
-        Colors.White,
+        Colors.Transparent,
         propertyChanged: NeedApplyProperties);
 
     public Color TextStrokeColor
