@@ -885,7 +885,7 @@ namespace DrawnUi.Maui.Draw
 
                     if (request.WidthRequest == 0 || request.HeightRequest == 0)
                     {
-                        InvalidateCache();
+                        InvalidateCacheWithPrevious();
                         return SetMeasuredAsEmpty(request.Scale);
                     }
 

@@ -3560,7 +3560,7 @@ namespace DrawnUi.Maui.Draw
 
             try
             {
-                InvalidateCache();
+                InvalidateCacheWithPrevious();
 
                 //InvalidateViewsList(); //we might get different ZIndex which is bindable..
 
@@ -3611,7 +3611,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (!this.CanDraw || request.WidthRequest == 0 || request.HeightRequest == 0)
                 {
-                    InvalidateCache();
+                    InvalidateCacheWithPrevious();
 
                     return SetMeasuredAsEmpty(request.Scale);
                 }
@@ -3651,7 +3651,7 @@ namespace DrawnUi.Maui.Draw
             var invalid = !CompareSize(size, MeasuredSize.Pixels, 0);
             if (invalid)
             {
-                InvalidateCache();
+                InvalidateCacheWithPrevious();
             }
 
             return SetMeasured(size.Width, size.Height, widthCut, heighCut, scale);
@@ -3659,6 +3659,12 @@ namespace DrawnUi.Maui.Draw
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void InvalidateCache()
+        {
+            RenderObjectNeedsUpdate = true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual void InvalidateCacheWithPrevious()
         {
             RenderObjectNeedsUpdate = true;
             if (UsingCacheType == SkiaCacheType.ImageComposite)
@@ -4896,7 +4902,7 @@ namespace DrawnUi.Maui.Draw
                 if (value)
                 {
                     IsLayoutDirty = true;
-                    InvalidateCache();
+                    InvalidateCacheWithPrevious();
                 }
                 //OnPropertyChanged(); disabled atm
             }
@@ -5992,7 +5998,7 @@ namespace DrawnUi.Maui.Draw
             InvalidateViewsList();
             IsLayoutDirty = true;
             NeedMeasure = true;
-            InvalidateCache();
+            InvalidateCacheWithPrevious();
         }
 
 

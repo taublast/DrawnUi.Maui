@@ -163,7 +163,7 @@
                                 IsToggled="{Binding ValueSwitch, Mode=TwoWay}"
                                 Style="{x:StaticResource SkiaStyleControlInTable}"
                                 TranslationX="-4"
-                                UseCache="Image" />
+                                 />
                         </draw:SkiaLayout>
 
                         <!--  Brightness  -->
@@ -180,7 +180,7 @@
                                 MinMaxStringFormat="P0"
                                 Step="0.01"
                                 Style="{x:StaticResource SkiaStyleControlInTable}"
-                                UseCache="Image" />
+                                 />
                         </draw:SkiaLayout>
 
                         <!--  Contrast  -->
@@ -197,7 +197,7 @@
                                 MinMaxStringFormat="P0"
                                 Step="0.01"
                                 Style="{x:StaticResource SkiaStyleControlInTable}"
-                                UseCache="Image" />
+                                />
                         </draw:SkiaLayout>
 
                         <!--  Saturation  -->
@@ -214,7 +214,7 @@
                                 MinMaxStringFormat="P0"
                                 Step="0.01"
                                 Style="{x:StaticResource SkiaStyleControlInTable}"
-                                UseCache="Image" />
+                                />
                         </draw:SkiaLayout>
 
                         <!--  Tint  -->
@@ -231,7 +231,7 @@
                                 MinMaxStringFormat="P0"
                                 Step="0.01"
                                 Style="{x:StaticResource SkiaStyleControlInTable}"
-                                UseCache="Image" />
+                             />
                         </draw:SkiaLayout>
 
 

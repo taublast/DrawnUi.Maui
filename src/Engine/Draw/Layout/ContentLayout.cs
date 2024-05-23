@@ -89,7 +89,7 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
 
             if (request.WidthRequest == 0 || request.HeightRequest == 0)
             {
-                InvalidateCache();
+                InvalidateCacheWithPrevious();
 
                 return SetMeasuredAsEmpty(request.Scale);
             }
