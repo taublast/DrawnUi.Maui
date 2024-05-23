@@ -5108,7 +5108,7 @@ namespace DrawnUi.Maui.Draw
             try
             {
                 Action action = _offscreenCacheRenderingQueue.Pop();
-                while (!IsDisposed && !IsDisposing && action != null)
+                if (!IsDisposed && !IsDisposing && action != null)
                 {
                     try
                     {
@@ -5118,8 +5118,6 @@ namespace DrawnUi.Maui.Draw
                         _renderObjectPreparing = null;
 
                         Repaint();
-
-                        action = _offscreenCacheRenderingQueue.Pop();
                     }
                     catch (Exception e)
                     {
