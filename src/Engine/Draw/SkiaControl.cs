@@ -4205,18 +4205,11 @@ namespace DrawnUi.Maui.Draw
 
             if (NeedMeasure)
             {
-                if (Parent is DrawnView || Parent == null)
-                {
-                    //self measuring
-                    var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
-                    ArrangedDestination = adjustedDestination;
-                    Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
-                    ApplyMeasureResult();
-                }
-                else
-                {
-                    Invalidate(); //make parent measure us
-                }
+                //self measuring
+                var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
+                ArrangedDestination = adjustedDestination;
+                Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
+                ApplyMeasureResult();
             }
             else
             {
