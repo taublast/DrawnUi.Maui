@@ -58,10 +58,10 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
                 {
                     ApplyControlClipping(control, clipInsideParent, selfDrawingLocation);
 
-                    //context.Canvas.Save();
+                    context.Canvas.Save();
                     context.Canvas.ClipPath(clipInsideParent, SKClipOperation.Intersect, true);
                     draw();
-                    //context.Canvas.Restore();
+                    context.Canvas.Restore();
                 }
             }
             else
