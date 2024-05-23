@@ -99,7 +99,6 @@
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
                             Tag="Slider"
-                            UseCache="Operations"
                             WidthRequest="200" />
 
                         <!--
