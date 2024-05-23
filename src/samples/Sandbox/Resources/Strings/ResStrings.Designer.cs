@@ -143,11 +143,11 @@ namespace Sandbox.Resources.Strings {
         
         /// <summary>
         ///   Looks up a localized string similar to To update the device software, follow these steps:
-        /// 1. Download the new version of the software from the website [racebox.ru](https://racebox.ru/obnovlenie-po).
+        /// 1. Download the new version of the software from the website [supadupa.com](https://google.com).
         /// 2. Copy the firmware file in `HEX` format corresponding to your device model to the root directory of the memory card.
         /// 3. Insert the memory card into the device when it is turned off.
         /// 4. While holding the `Mode` button, connect the device to power via the USB cable.
-        /// 5. Wait until the memory card is initialized and the message `HOLD TO UPDAT [rest of string was truncated]&quot;;.
+        /// 5. Wait until the memory card is initialized and the message `HOLD TO UPDATE X.XX` appe [rest of string was truncated]&quot;;.
         /// </summary>
         public static string MarkdownTest {
             get {

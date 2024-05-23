@@ -155,7 +155,7 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
     protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale,
         bool debug = false)
     {
-        if (!IsContentActive || context.Superview == null || destination.Width <= 0 || destination.Height <= 0)
+        if (!IsContentActive || destination.Width <= 0 || destination.Height <= 0)
         {
             return 0;
         }

@@ -178,5 +178,44 @@ namespace DrawnUi.Maui.Draw
 
         }
 
+        /// <summary>
+        /// Opens web link in native browser
+        /// </summary>
+        /// <param name="link"></param>
+
+        public static void OpenLink(string link)
+        {
+            try
+            {
+                var url = new NSUrl(link);
+                var res = UIApplication.SharedApplication.OpenUrl(url);
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
+        }
+
+        /// <summary>
+        /// Lists assets inside the Resources/Raw subfolder
+        /// </summary>
+        /// <param name="subfolder"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> ListResources(string subfolder)
+        {
+            NSBundle mainBundle = NSBundle.MainBundle;
+            string resourcesPath = mainBundle.ResourcePath;
+            string subfolderPath = Path.Combine(resourcesPath, subfolder);
+
+            if (Directory.Exists(subfolderPath))
+            {
+                string[] files = Directory.GetFiles(subfolderPath);
+                return files.Select(Path.GetFileName).ToList();
+            }
+            else
+            {
+                return new List<string>();
+            }
+        }
     }
 }

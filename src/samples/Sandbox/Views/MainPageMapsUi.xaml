@@ -65,6 +65,7 @@
                 <draw:SkiaControl.VisualEffects>
 
                     <draw:TintWithAlphaEffect
+                        x:DataType="demo:MainPageViewModel"
                         Alpha="{Binding Value3}"
                         ColorTint="{Binding SelectedColor}" />
 

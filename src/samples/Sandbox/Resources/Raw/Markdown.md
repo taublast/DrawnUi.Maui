@@ -11,12 +11,13 @@ Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 ## Installation
 
-Install the package __AppoMobi.Maui.DrawnUi__ from NuGet. Check the pre-release option if you don't see the package.
+Install the package __AppoMobi.Maui.DrawnUi__ from NuGet.
 
 After that initialize the library inside your `MauiProgram.cs` file:
 
 ```csharp
-builder.UseDrawnUi();
+	builder.UseDrawnUi();
+	callAnotherLine();
 ```
 
-## ___Docs are under construction!___
+## ___This control is under construction!___

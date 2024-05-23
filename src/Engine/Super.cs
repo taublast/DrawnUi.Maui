@@ -106,11 +106,7 @@ public partial class Super
     {
         //TODO use ILogger with levels etc
 
-#if WINDOWS
-        Trace.WriteLine(message);
-#else
         Console.WriteLine(message);
-#endif
     }
 
     public static void SetLocale(string lang)

@@ -1,9 +1,9 @@
 namespace Sandbox.Views.Xaml2Pdf;
 
-public partial class ReportSample : ContentView
+public partial class ReportSample : SkiaLayout
 {
-	public ReportSample()
-	{
-		InitializeComponent();
-	}
+    public ReportSample()
+    {
+        InitializeComponent();
+    }
 }

@@ -179,21 +179,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="MainPageDev.xaml.cs">
-        <DependentUpon>MainPageDev.xaml</DependentUpon>
-      </Compile>
+ 
       <Compile Update="Resources\Strings\ResStrings.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
-    </ItemGroup>
-    <ItemGroup>
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>ResStrings.Designer.cs</LastGenOutput>
       </EmbeddedResource>
     </ItemGroup>
+ 
  
 
   <ItemGroup>
@@ -247,7 +244,7 @@
     <MauiXaml Remove="Views\MainPageMap.xaml" />
   </ItemGroup>
 
-
+ 
  
 </Project>
  

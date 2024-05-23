@@ -1,8 +1,9 @@
 ﻿using Android.Content;
+using Android.Content.Res;
 using Android.OS;
 using Android.Views;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android;
-using Microsoft.Maui.Controls.PlatformConfiguration;
+using Context = Android.Content.Context;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace DrawnUi.Maui.Draw;
@@ -157,7 +158,6 @@ public partial class Super
             statusBarHeight = context.Resources.GetDimensionPixelSize(resourceId);
             totalHeight = context.Resources.DisplayMetrics.HeightPixels;
             contentHeight = totalHeight - statusBarHeight;
-            statusBarHeight = statusBarHeight;
         }
 
         return statusBarHeight;
@@ -291,5 +291,37 @@ public partial class Super
             _callback?.Invoke(frameTimeNanos);
         }
 
+    }
+
+    /// <summary>
+    /// Opens web link in native browser
+    /// </summary>
+    /// <param name="link"></param>
+    public static void OpenLink(string link)
+    {
+        try
+        {
+            var intent2 = new Intent(Intent.ActionView,
+                Android.Net.Uri.Parse(link));
+            intent2.AddFlags(ActivityFlags.NewTask);
+            Android.App.Application.Context.StartActivity(intent2);
+        }
+        catch (Exception e)
+        {
+            Super.Log(e);
+        }
+
+    }
+
+    /// <summary>
+    /// Lists assets inside the Resources/Raw subfolder
+    /// </summary>
+    /// <param name="subfolder"></param>
+    /// <returns></returns>
+    public static IEnumerable<string> ListResources(string subfolder)
+    {
+        AssetManager assets = Platform.AppContext.Assets;
+        string[] files = assets.List(subfolder);
+        return files;
     }
 }

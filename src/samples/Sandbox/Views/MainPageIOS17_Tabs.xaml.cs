@@ -1,12 +1,10 @@
 ﻿namespace Sandbox.Views
 {
-
-
-    public partial class MainPageIOS17Tabs 
+    public partial class MainPageIOS17_Tabs
     {
 
 
-        public MainPageIOS17Tabs()
+        public MainPageIOS17_Tabs()
         {
             try
             {

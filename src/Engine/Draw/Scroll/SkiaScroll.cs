@@ -2730,7 +2730,7 @@ namespace DrawnUi.Maui.Draw
         protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale,
             bool debug = false)
         {
-            if (context.Superview == null || destination.Width <= 0 || destination.Height <= 0)
+            if (destination.Width <= 0 || destination.Height <= 0)
             {
                 return 0;
             }

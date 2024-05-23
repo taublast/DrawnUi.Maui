@@ -1,8 +1,41 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Sandbox.Views.Xaml2Pdf.ReportSample">
+<draw:SkiaLayout
+    x:Class="Sandbox.Views.Xaml2Pdf.ReportSample"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    Tag="ReportWrapper"
+    xmlns:strings="clr-namespace:Sandbox.Resources.Strings">
 
+    <draw:SkiaShape
+        Margin="16"
+        CornerRadius="8"
+        Padding="16"
+        StrokeColor="Black"
+        StrokeWidth="1">
 
+        <draw:SkiaLayout
+            Tag="ReportColumn"
+            Spacing="12"
+            Type="Column">
 
-</ContentView>
+            <draw:SkiaLabel 
+                Tag="ReportTitle"
+                Text="This is a report sample, we will use different controls inside. We are using a localized markdown text from app resources below:" />
+
+            <draw:SkiaMarkdownLabel
+                BackgroundColor="Gainsboro"
+                FontSize="13"
+                LinkColor="Blue"
+                Text="{x:Static strings:ResStrings.MarkdownTest}"
+                TextColor="Black" />
+
+            <draw:SkiaLabel
+                Text="{Binding BindableText}"
+                TextColor="Red" />
+
+        </draw:SkiaLayout>
+
+    </draw:SkiaShape>
+
+</draw:SkiaLayout>

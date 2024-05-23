@@ -1076,15 +1076,35 @@ namespace DrawnUi.Maui.Draw
 
                 //DRAW LINE SPANS
                 float offsetX = 0;
+                var spanIndex = 0;
                 foreach (var lineSpan in line.Spans)
                 {
-
                     SKRect rectPrecalculatedSpanBounds = SKRect.Empty;
 
                     var paint = paintDefault;
                     if (lineSpan.Span != null)
                     {
                         paint = lineSpan.Span.SetupPaint(scale, paintDefault);
+
+                        //first span can initiate painting line background
+                        if (spanIndex == 0)
+                        {
+                            if (lineSpan.Span.ParagraphColor != Colors.Transparent)
+                            {
+                                //todo
+
+
+                                rectPrecalculatedSpanBounds = new SKRect(
+                                    alignedLineDrawingStartX,
+                                    line.Bounds.Top,
+                                    alignedLineDrawingStartX + rectDraw.Width,
+                                    line.Bounds.Bottom + (float)SpaceBetweenParagraphs);
+
+                                PaintDeco.Color = lineSpan.Span.ParagraphColor.ToSKColor();
+                                PaintDeco.Style = SKPaintStyle.StrokeAndFill;
+                                canvas.DrawRect(rectPrecalculatedSpanBounds, PaintDeco);
+                            }
+                        }
                     }
 
                     var offsetAdjustmentX = 0.0f;
@@ -1121,23 +1141,27 @@ namespace DrawnUi.Maui.Draw
                         //---
                         //precalculate rectangle for painting background
 
-                        if (lineSpan.Span != null && lineSpan.Span.BackgroundColor != Colors.Transparent)
+                        if (lineSpan.Span != null)
                         {
-                            var x = offsetAdjustmentX;
-                            foreach (var glyph in lineSpan.Glyphs)
+                            if (lineSpan.Span.BackgroundColor != Colors.Transparent)
                             {
-                                x = MoveOffsetAdjustmentX(x, glyph.Text);
+                                var x = offsetAdjustmentX;
+                                foreach (var glyph in lineSpan.Glyphs)
+                                {
+                                    x = MoveOffsetAdjustmentX(x, glyph.Text);
+                                }
+
+                                rectPrecalculatedSpanBounds = new SKRect(
+                                    alignedLineDrawingStartX + offsetX,
+                                    line.Bounds.Top,
+                                    alignedLineDrawingStartX + offsetX + lineSpan.Size.Width + x,
+                                    line.Bounds.Top + lineSpan.Size.Height);
+
+                                PaintDeco.Color = lineSpan.Span.BackgroundColor.ToSKColor();
+                                PaintDeco.Style = SKPaintStyle.StrokeAndFill;
+                                canvas.DrawRect(rectPrecalculatedSpanBounds, PaintDeco);
                             }
 
-                            rectPrecalculatedSpanBounds = new SKRect(
-                                alignedLineDrawingStartX + offsetX,
-                                line.Bounds.Top,
-                                alignedLineDrawingStartX + offsetX + lineSpan.Size.Width + x,
-                                line.Bounds.Top + lineSpan.Size.Height);
-
-                            PaintDeco.Color = lineSpan.Span.BackgroundColor.ToSKColor();
-                            PaintDeco.Style = SKPaintStyle.StrokeAndFill;
-                            canvas.DrawRect(rectPrecalculatedSpanBounds, PaintDeco);
                         }
 
                         //---
@@ -1185,6 +1209,7 @@ namespace DrawnUi.Maui.Draw
                     }
 
                     offsetX += lineSpan.Size.Width + offsetAdjustmentX;
+                    spanIndex++;
                 }
 
                 baselineY += (float)(LineHeightPixels + SpaceBetweenLines);
@@ -1321,8 +1346,6 @@ namespace DrawnUi.Maui.Draw
             NeedMeasure = true;
         }
 
-        protected bool ShouldUpdateFont { get; set; }
-
         protected virtual async void UpdateFont()
         {
             if (
@@ -1336,7 +1359,7 @@ namespace DrawnUi.Maui.Draw
                 _replaceFont = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
             }
 
-            InvalidateMeasure();
+            InvalidateText();
         }
 
         protected void ReplaceFont()
@@ -2779,7 +2802,7 @@ namespace DrawnUi.Maui.Draw
             string.Empty,
             propertyChanged: TextWasChanged);
 
-        private static void TextWasChanged(BindableObject bindable, object oldvalue, object newvalue)
+        protected static void TextWasChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is SkiaLabel control)
             {
@@ -2794,6 +2817,11 @@ namespace DrawnUi.Maui.Draw
         }
 
         protected virtual void OnTextChanged(string value)
+        {
+            InvalidateText();
+        }
+
+        public virtual void InvalidateText()
         {
             InvalidateMeasure();
         }

@@ -2,6 +2,7 @@
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using Newtonsoft.Json.Linq;
 using System.Windows.Input;
 
 namespace DrawnUi.Maui.Draw;
@@ -20,8 +21,9 @@ public class SkiaMarkdownLabel : SkiaLabel
     }
 
     //properties defaults
-    public static Color ColorLink = Colors.Blue;
+    public static Color ColorLink = Colors.CornflowerBlue;
     public static Color ColorCodeBackground = Colors.DimGray;
+    public static Color ColorCodeBlock = Color.Parse("#222222");
     public static Color ColorCode = Colors.White;
     public static Color ColorStrikeout = Colors.Red;
 
@@ -29,33 +31,96 @@ public class SkiaMarkdownLabel : SkiaLabel
     public static string PrefixBullet = "• ";
     public static string PrefixNumbered = "{0}. ";
 
-    protected override void OnTextChanged(string value)
+    public override void InvalidateText()
     {
-        var markdownDocument = Markdig.Markdown.Parse(value, _pipeline);
+        var markdownDocument = Markdig.Markdown.Parse(Text, _pipeline);
 
         Spans.Clear();
 
         isBold = false;
         isItalic = false;
+        isHeading1 = false;
+        isHeading2 = false;
+        isCodeBlock = false;
+        hadParagraph = false;
 
         foreach (var block in markdownDocument)
         {
             RenderBlock(block);
         }
 
-        base.OnTextChanged(value);
+        base.InvalidateText();
     }
+
+    protected virtual TextSpan SpanWithAttributes(TextSpan span)
+    {
+        span.IsBold = isBold || span.IsBold;
+        span.IsItalic = isItalic || span.IsItalic;
+        span.Strikeout = isStrikethrough;
+        if (isStrikethrough)
+            span.StrikeoutColor = this.StrokeColor;
+
+        if (isHeading1)
+        {
+            span.IsBold = true;
+            span.FontSize += 6;
+        }
+
+        if (isHeading2)
+        {
+            span.IsBold = true;
+            span.FontSize += 3;
+        }
+        return span;
+    }
+
 
     #region PARSER
 
     protected bool hadParagraph;
     protected bool isBold;
     protected bool isItalic;
+    protected bool isCodeBlock;
+    protected bool isHeading1;
+    protected bool isHeading2;
     protected bool isStrikethrough;
     protected readonly MarkdownPipeline _pipeline;
 
     protected void RenderBlock(Block block, Inline prefix = null)
     {
+        var wasHeading1 = isHeading1;
+        var wasHeading2 = isHeading2;
+        var wasCode = isCodeBlock;
+
+        if (block is HeadingBlock heading)
+        {
+            var level = heading.Level;
+            isHeading1 = level == 1;
+            if (!isHeading1)
+            {
+                isHeading2 = true;
+            }
+
+            if (heading.Inline != null)
+            {
+                if (hadParagraph)
+                {
+                    //start new line
+                    RenderInline(new LineBreakInline());
+                }
+
+                hadParagraph = true;
+
+                var inline = heading.Inline.FirstChild;
+                while (inline != null)
+                {
+                    RenderInline(inline);
+                    inline = inline.NextSibling;
+                }
+
+            }
+        }
+        else
         if (block is ParagraphBlock paragraphBlock)
         {
             if (hadParagraph)
@@ -78,6 +143,39 @@ public class SkiaMarkdownLabel : SkiaLabel
                 inline = inline.NextSibling;
             }
 
+        }
+        else if (block is FencedCodeBlock codeBlock)
+        {
+            if (hadParagraph)
+            {
+                //start new line
+                RenderInline(new LineBreakInline());
+            }
+
+            if (prefix != null)
+            {
+                RenderInline(prefix);
+            }
+
+            hadParagraph = true;
+
+            isCodeBlock = true;
+
+            var codeType = codeBlock.Info; //todo can display header like "csharp" etc
+            var lineNb = 0;
+            foreach (var line in codeBlock.Lines)
+            {
+                if (lineNb > 0)
+                {
+                    RenderInline(new LineBreakInline());
+                }
+                AddTextSpan(line.ToStringSafe(), (span) =>
+                {
+                    span.TextColor = CodeTextColor;
+                    span.ParagraphColor = ColorCodeBlock;
+                });
+                lineNb++;
+            }
         }
         else
         if (block is ListBlock listBlock)
@@ -104,12 +202,15 @@ public class SkiaMarkdownLabel : SkiaLabel
         else
         if (block is ListItemBlock listItem)
         {
-            //todo
             foreach (var line in listItem)
             {
                 RenderBlock(line);
             }
         }
+
+        isCodeBlock = wasCode;
+        isHeading1 = wasHeading1;
+        isHeading2 = wasHeading2;
     }
 
     protected void RenderOrderedListItem(ListItemBlock listItem, int startNumber)
@@ -154,6 +255,11 @@ public class SkiaMarkdownLabel : SkiaLabel
 
     protected void RenderInline(Inline inline)
     {
+        bool wasBold = isBold;
+        bool wasItalic = isItalic;
+        bool wasStrikethrough = isStrikethrough;
+
+
         switch (inline)
         {
 
@@ -175,7 +281,7 @@ public class SkiaMarkdownLabel : SkiaLabel
 
         case LiteralInline literal:
         //todo detect available font
-        AddTextSpan(literal);
+        AddTextSpan(literal.Content.ToStringSafe());
         break;
 
         case CodeInline code:
@@ -187,12 +293,6 @@ public class SkiaMarkdownLabel : SkiaLabel
         break;
 
         case EmphasisInline emphasis:
-
-        // Update state based on the emphasis type
-        bool wasBold = isBold;
-        bool wasItalic = isItalic;
-        bool wasStrikethrough = isStrikethrough;
-
         if (emphasis.DelimiterCount == 3)
         {
             if (emphasis.DelimiterChar is '_' or '*')
@@ -230,26 +330,17 @@ public class SkiaMarkdownLabel : SkiaLabel
             child = child.NextSibling;
         }
 
+        break;
+
+        }
+
         // Restore the previous state
         isBold = wasBold;
         isItalic = wasItalic;
         isStrikethrough = wasStrikethrough;
-
-        break;
-
-        }
     }
 
 
-    protected virtual TextSpan SpanWithAttributes(TextSpan span)
-    {
-        span.IsBold = isBold || span.IsBold;
-        span.IsItalic = isItalic || span.IsItalic;
-        span.Strikeout = isStrikethrough;
-        if (isStrikethrough)
-            span.StrikeoutColor = this.StrokeColor;
-        return span;
-    }
 
     #endregion
 
@@ -289,12 +380,12 @@ public class SkiaMarkdownLabel : SkiaLabel
         return (bestTypeface, symbol);
     }
 
-    protected virtual void AddTextSpan(LiteralInline literal)
+    protected virtual void AddTextSpan(string text, Action<TextSpan> modifySpan = null)
     {
         if (TypeFace == null) //might happen early in cycle when set via Styles
             return;
 
-        var text = literal.Content.ToStringSafe();
+        //var text = literal.Content.ToStringSafe();
         var currentIndex = 0;
         var spanStart = 0;
         var spanData = new List<(string Text, SKTypeface Typeface, int Symbol, bool shape)>();
@@ -380,8 +471,6 @@ public class SkiaMarkdownLabel : SkiaLabel
             }
         }
 
-
-
         // Optimize spans data
         ProcessSpanData(ref spanData, originalTypeFace);
 
@@ -395,9 +484,9 @@ public class SkiaMarkdownLabel : SkiaLabel
                 FontDetectedWith = Symbol,
                 NeedShape = Shape
             };
+            modifySpan?.Invoke(span);
             Spans.Add(SpanWithAttributes(span));
         }
-
     }
 
     protected static HashSet<char> standardSymbols = new HashSet<char> { ' ', '\n', '\r', '\t' };
@@ -463,7 +552,41 @@ public class SkiaMarkdownLabel : SkiaLabel
 
     #endregion
 
+    #region CODE
+
+
+    protected virtual void AddCodeSpan(CodeInline code)
+    {
+        string text = code.Content;
+
+        AddTextSpan(text, (span) =>
+        {
+            span.TextColor = this.CodeTextColor;
+            span.BackgroundColor = CodeBackgroundColor;
+        });
+
+    }
+
+    #endregion
+
     #region LINKS
+
+
+    protected virtual void AddLinkSpan(LinkInline link)
+    {
+        string text = GetLinkLabelText(link);
+        if (string.IsNullOrEmpty(text))
+            text = link.Url;
+
+        AddTextSpan(text, (span) =>
+        {
+            Tag = link.Url;
+            span.TextColor = this.LinkColor;
+            span.Underline = true;
+            span.ForceCaptureInput = true;
+        });
+
+    }
 
     public static readonly BindableProperty CommandLinkTappedProperty = BindableProperty.Create(nameof(CommandLinkTapped), typeof(ICommand),
         typeof(SkiaMarkdownLabel),
@@ -497,37 +620,8 @@ public class SkiaMarkdownLabel : SkiaLabel
         return labelText;
     }
 
-    protected virtual void AddCodeSpan(CodeInline code)
-    {
-        string labelText = code.Content;
 
-        Spans.Add(SpanWithAttributes(new()
-        {
-            Text = labelText,
-            FontSize = this.FontSize,
-            TextColor = this.CodeTextColor,
-            //IsItalic = true,
-            BackgroundColor = this.CodeBackgroundColor,
-        }));
-    }
 
-    protected virtual void AddLinkSpan(LinkInline link)
-    {
-        string labelText = GetLinkLabelText(link);
-        if (string.IsNullOrEmpty(labelText))
-            labelText = link.Url;
-
-        Spans.Add(SpanWithAttributes(new()
-        {
-            Tag = link.Url,
-            Text = labelText,
-            //BackgroundColor = Colors.Red,
-            FontSize = this.FontSize,
-            TextColor = this.LinkColor,
-            Underline = true,
-            ForceCaptureInput = true
-        }));
-    }
 
     #endregion
 
@@ -536,7 +630,7 @@ public class SkiaMarkdownLabel : SkiaLabel
         typeof(Color),
         typeof(SkiaLabel),
         ColorStrikeout,
-        propertyChanged: NeedInvalidateMeasure);
+        propertyChanged: NeedUpdateFont);
 
     public Color StrikeoutColor
     {
@@ -549,7 +643,7 @@ public class SkiaMarkdownLabel : SkiaLabel
         typeof(Color),
         typeof(SkiaLabel),
         ColorLink,
-        propertyChanged: NeedInvalidateMeasure);
+        propertyChanged: NeedUpdateFont);
 
     public Color LinkColor
     {
@@ -562,7 +656,7 @@ public class SkiaMarkdownLabel : SkiaLabel
         typeof(Color),
         typeof(SkiaLabel),
         ColorCode,
-        propertyChanged: NeedInvalidateMeasure);
+        propertyChanged: NeedUpdateFont);
 
     public Color CodeTextColor
     {
@@ -570,12 +664,25 @@ public class SkiaMarkdownLabel : SkiaLabel
         set { SetValue(CodeTextColorProperty, value); }
     }
 
+    public static readonly BindableProperty CodeBlockBackgroundColorProperty = BindableProperty.Create(
+        nameof(CodeBlockBackgroundColor),
+        typeof(Color),
+        typeof(SkiaLabel),
+        ColorCodeBlock,
+        propertyChanged: NeedUpdateFont);
+
+    public Color CodeBlockBackgroundColor
+    {
+        get { return (Color)GetValue(CodeBlockBackgroundColorProperty); }
+        set { SetValue(CodeBlockBackgroundColorProperty, value); }
+    }
+
     public static readonly BindableProperty CodeBackgroundColorProperty = BindableProperty.Create(
         nameof(CodeBackgroundColor),
         typeof(Color),
         typeof(SkiaLabel),
         ColorCodeBackground,
-        propertyChanged: NeedInvalidateMeasure);
+        propertyChanged: NeedUpdateFont);
 
     public Color CodeBackgroundColor
     {
