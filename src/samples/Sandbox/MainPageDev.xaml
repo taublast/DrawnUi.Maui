@@ -46,6 +46,7 @@
                             TextColor="White" />
 
                         <draw:SkiaMarkdownLabel
+                            x:Name="LabelMarkdown"
                             TextColor="White"
                             LinkTapped="OnLinkTapped"
                             HorizontalOptions="Center"

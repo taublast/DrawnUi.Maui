@@ -121,6 +121,8 @@
 
     <None Remove="Resources\Raw\Lottie\robot.json" />
 
+    <None Remove="Resources\Raw\Markdown.md" />
+
     <None Remove="Resources\raw\Shaders2\blit.sksl" />
 
     <None Remove="Resources\raw\Shaders2\blur - Copy.sksl" />

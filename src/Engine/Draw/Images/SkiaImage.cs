@@ -1353,7 +1353,7 @@ propertyChanged: NeedChangeColorFIlter);
 
         if (request.WidthRequest == 0 || request.HeightRequest == 0)
         {
-            InvalidateCache();
+            InvalidateCacheWithPrevious();
 
             return SetMeasuredAsEmpty(request.Scale);
         }
@@ -1405,7 +1405,7 @@ propertyChanged: NeedChangeColorFIlter);
 
         if (widthConstraint == 0 || heightConstraint == 0)
         {
-            InvalidateCache();
+            InvalidateCacheWithPrevious();
 
             return SetMeasuredAsEmpty(request.Scale);
         }

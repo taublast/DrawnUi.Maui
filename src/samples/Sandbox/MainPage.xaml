@@ -99,7 +99,7 @@
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
                             Tag="Slider"
-                            UseCache="ImageDoubleBuffered"
+                            UseCache="Operations"
                             WidthRequest="200" />
 
                         <!--
@@ -113,8 +113,8 @@
                             Tag="SetMainpageText"
                             UseCache="Image">
                             <draw:SkiaLabel
-                                StrokeColor="Red"
                                 FontSize="24"
+                                StrokeColor="Red"
                                 Tag="Title"
                                 Text="SET MAINPAGE"
                                 TextColor="Wheat">
@@ -131,6 +131,7 @@
                         <draw:SkiaLayout
                             x:Name="Buttons"
                             HorizontalOptions="Center"
+                            IsVisible="True"
                             Spacing="0"
                             Split="0"
                             Tag="Buttons"
