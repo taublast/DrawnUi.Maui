@@ -2697,7 +2697,7 @@ namespace DrawnUi.Maui.Draw
 
                     PositionViewport(DrawingRect, new(posX, posY), _zoomedScale, (float)scale);
 
-                    RenderObject = null;
+                    InvalidateCache();
                 }
 
                 DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true,

@@ -3866,7 +3866,6 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public bool IsMeasuring { get; protected internal set; }
 
-
         /// <summary>
         /// Parameters in PIXELS. sets IsLayoutDirty = true;
         /// </summary>
@@ -4410,6 +4409,32 @@ namespace DrawnUi.Maui.Draw
             Y = LastDrawnAt.Location.Y / scale;
 
             ExecutePostAnimators(context, scale);
+
+            if (NeedRemeasuring)
+            {
+                NeedRemeasuring = false;
+
+            }
+
+            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
+                && RenderObject != null)
+            {
+                //Debug.WriteLine($"[D] {Superview.CanvasView.CanvasSize.Width} -> {RenderObject.Bounds.Width} at {DrawingRect.Width}");
+                if (DrawingRect.Size != RenderObject.Bounds.Size)
+                {
+                    InvalidateMeasure();
+                }
+            }
+            else
+            if (UsingCacheType == SkiaCacheType.ImageComposite
+                && RenderObjectPrevious != null)
+            {
+                if (DrawingRect.Size != RenderObjectPrevious.Bounds.Size)
+                {
+                    InvalidateMeasure();
+                }
+            }
+
         }
 
         public SKPoint GetPositionOffsetInPoints()
@@ -5124,9 +5149,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (NeedUpdate) //someone changed us while rendering inner content
                 {
-                    Update();
-                    //InvalidateCache();
-                    //Repaint();
+                    Update(); //kick
                 }
 
             }
@@ -5137,6 +5160,8 @@ namespace DrawnUi.Maui.Draw
             }
 
         }
+
+        protected bool NeedRemeasuring;
 
 
         /// <summary>

@@ -76,7 +76,7 @@
                         WidthRequest="-1">
 
                         <!--  Controls inside frame  -->
-                        <draw:SkiaLayout HorizontalOptions="Start">
+                        <draw:SkiaLayout>
 
                             <draw:SkiaShape
                                 AddMarginTop="10"

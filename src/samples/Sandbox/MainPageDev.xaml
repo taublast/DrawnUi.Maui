@@ -7,6 +7,7 @@
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:views="clr-namespace:Sandbox.Views"
     xmlns:xaml2Pdf="clr-namespace:Sandbox.Views.Xaml2Pdf"
+    xmlns:mauiNet8="using:MauiNet8"
     BackgroundColor="Gray">
 
     <Grid
@@ -24,51 +25,26 @@
             VerticalOptions="Center">
 
             <draw:SkiaScroll
+                BackgroundColor="Red"
                 HorizontalOptions="Fill"
                 VerticalOptions="Start">
                 <draw:SkiaLayout HorizontalOptions="Fill">
 
-                    <draw:SkiaLayout
+                    <mauiNet8:BuggedLayout
                         Padding="6"
                         BackgroundColor="Blue"
                         HorizontalOptions="Fill"
                         Tag="VStack"
                         Type="Column"
-                        UseCache="ImageComposite">
-
-                        <!--  TITLE  -->
-                        <draw:SkiaLabel
-                            HorizontalOptions="Center"
-                            HorizontalTextAlignment="Center"
-                            Text="For PDF we will not use the rendered image that you already see below, but we will instantiate the report from scratch."
-                            TextColor="Yellow" />
+                        UseCache="ImageDoubleBuffered">
 
                         <!--  REPORT  -->
                         <xaml2Pdf:ReportSample
+                            Margin="20"
                             BackgroundColor="White"
                             HorizontalOptions="Center" />
 
-                        <draw:SkiaLayout
-                            ColumnDefinitions="1*,1*"
-                            HorizontalOptions="Fill"
-                            RowDefinitions="Auto"
-                            Type="Grid">
-
-                            <!--  BTN A4  -->
-                            <controls:SmallButton
-                                Margin="0,16"
-                                HorizontalOptions="Center"
-                                Text="Create Pdf A4" />
-
-                            <!--  BTN  A6  -->
-                            <controls:SmallButton
-                                Grid.Column="1"
-                                Margin="0,16"
-                                HorizontalOptions="Center"
-                                Text="Create Pdf A6" />
-                        </draw:SkiaLayout>
-
-                    </draw:SkiaLayout>
+                    </mauiNet8:BuggedLayout>
 
                 </draw:SkiaLayout>
             </draw:SkiaScroll>

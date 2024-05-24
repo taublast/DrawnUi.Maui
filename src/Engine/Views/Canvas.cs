@@ -117,7 +117,6 @@ public class Canvas : DrawnView, IGestureListener
     }
 
 
-
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
         //we are going to receive the size NOT reduced by Maui margins
