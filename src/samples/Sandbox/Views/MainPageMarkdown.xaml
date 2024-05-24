@@ -36,6 +36,7 @@
                     <draw:SkiaLayout HorizontalOptions="Fill">
 
                         <draw:SkiaLayout
+                            UseCache="ImageComposite"
                             Padding="6"
                             BackgroundColor="Black"
                             HorizontalOptions="Fill"
