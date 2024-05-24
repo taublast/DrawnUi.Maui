@@ -1,4 +1,4 @@
-﻿# DrawnUI for .NET MAUI
+# DrawnUI for .NET MAUI
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍.
 
@@ -15,18 +15,12 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 ## What's new
 
-Been/still busy with contractual work, all updates were ment for production apps: 
-
-* New SkiaLayout type `Wrap`, can optionally align with `Split` and `SplitAlign` properties. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons.
-* New `ImageComposite` cache type for redrawing changed areas only, gamechanger for large scrolls with many items.
-* `SkiaRadioButton` can be auto-groupped by parent or by group name, seen in Sandbox project.
-* `SkiaLottie` got new properties `DefaultFrame`, `DefaultFrameWhenOn` and `IsOn`, to be able to easily switch the look between two states. In the future it might be replaced with State + States with default frames ranges for them, looking at how **Rive** is designed for this mater.
-* `SkiaMarkdownLabel` can now correctly render `code`.
-* `SkiaBackdrop` can now use canvas or context background while inside cache, control with `UseContext` property.
-* `SkiaShape` became a subclassed `ContentLayout` instead of `SkiaControl`, its `CornerRadius` property changed to MAUI `CornerRadius` struct type.
-* Derived controls that bring additional dependencies moved into separate assemblies/packages: `DrawnUi.Maui.Camera`, `DrawnUi.Maui.MapsUi`, `DrawnUi.MauiGraphics`, `DrawnUi.Maui.Rive`.
-* Fixed random crashes due to disposed items when using `ImageDoubleBuffered` cache type.
-* Long-term awaited layout fixes, and gazillions of other ones.
+* In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget out.
+* `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
+* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo. 
+* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons. 
+Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
+* Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
 
@@ -111,7 +105,7 @@ ___Please star ⭐ if you like it!___
 
 ## Installation
 
-Install the package __AppoMobi.Maui.DrawnUi__ from NuGet. Check the pre-release option if you don't see the package.
+Install the package __AppoMobi.Maui.DrawnUi__ from NuGet, please install stable versions only, avoid -pre.
 
 After that initialize the library inside your MauiProgram.cs file:
 
@@ -569,6 +563,18 @@ It will render a mask over its children when hovered, think of it as an inverted
 * Binding RelativeSource with FindAncestorBindingContext not working yet.
 
 ## Previously
+
+* `SkiaRadioButton` can be auto-groupped by parent or by group name, seen in Sandbox project.
+* `SkiaLottie` got new properties `DefaultFrame`, `DefaultFrameWhenOn` and `IsOn`, to be able to easily switch the look between two states. In the future it might be replaced with State + States with default frames ranges for them, looking at how **Rive** is designed for this mater.
+* `SkiaMarkdownLabel` can now correctly render `code`.
+* `SkiaBackdrop` can now use canvas or context background while inside cache, control with UseContext` property.
+* `SkiaShape` became a `ContentLayout`, its `CornerRadius` property changed to MAUI `CornerRadius` struct type.
+* Derived controls that bring additional dependencies moved into separate assemblies/packages: 
+-- DrawnUi.Maui.Camera
+-- DrawnUi.Maui.MapsUi
+-- DrawnUi.MauiGraphics
+-- DrawnUi.Maui.Rive
+* Fixed random crashes due to disposed items when using `ImageDoubleBuffered` cache type.
 
 As SkiaSharp3 stable version is expected towards the end of the year we will have DrawnUI skia2 version updated constantly and a skia3-preview version available in parallel.  
 New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can manage how this project builds using `<UseSkiaSharp3>true</UseSkiaSharp3>`.
