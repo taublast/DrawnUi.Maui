@@ -1,5 +1,5 @@
 # DrawnUI for .NET MAUI
-![](https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309)
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍.
 
