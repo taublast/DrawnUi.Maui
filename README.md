@@ -25,9 +25,10 @@ Fixes for the new `ImageComposite` cache type that redraws changed areas only, g
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
 
 _The new `VisualEffects` property_
+![Sandbox_Kjh18lQ7ol](https://github.com/taublast/DrawnUi.Maui/assets/25801194/f1ad221b-63ab-4d92-bd83-f3c2c824580f)
 
 ## Demo
-<img src="assets/25801194/f0a8eea2-a3c8-4055-b22a-b878e2314665" width="200">
+<img src="https://github.com/taublast/DrawnUi.Maui/assets/25801194/f1ad221b-63ab-4d92-bd83-f3c2c824580f" width="200">
 * This repo includes a Sandox project for some custom controls, with playground examples, custom controls, maps etc
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 This one is using the previous DrawnUI nuget, will be update soon!
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
