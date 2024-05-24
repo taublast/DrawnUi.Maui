@@ -30,6 +30,7 @@
                 Text="{x:Static strings:ResStrings.MarkdownTest}"
                 TextColor="Black" />
 
+            <!--Export data from viewmodel-->
             <draw:SkiaLabel
                 Text="{Binding BindableText}"
                 TextColor="Red" />

@@ -5,11 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:sandbox="clr-namespace:Sandbox"
-    xmlns:strings="clr-namespace:Sandbox.Resources.Strings"
     xmlns:views="clr-namespace:Sandbox.Views"
     xmlns:xaml2Pdf="clr-namespace:Sandbox.Views.Xaml2Pdf"
-    x:DataType="sandbox:MainPageViewModel"
     BackgroundColor="Gray">
 
     <Grid
@@ -21,6 +18,7 @@
             Margin="8,44"
             BackgroundColor="#66000000"
             Gestures="Enabled"
+            HardwareAcceleration="Enabled"
             HorizontalOptions="Fill"
             Tag="Warning"
             VerticalOptions="Center">
@@ -32,11 +30,11 @@
 
                     <draw:SkiaLayout
                         Padding="6"
-                        BackgroundColor="DarkBlue"
+                        BackgroundColor="Blue"
                         HorizontalOptions="Fill"
                         Tag="VStack"
-                        Type="Column">
-
+                        Type="Column"
+                        UseCache="ImageComposite">
 
                         <!--  TITLE  -->
                         <draw:SkiaLabel
@@ -50,14 +48,28 @@
                             BackgroundColor="White"
                             HorizontalOptions="Center" />
 
-                        <!--  BTN  -->
-                        <controls:SmallButton
-                            Margin="0,16"
-                            HorizontalOptions="Center"
-                            Tapped="SkiaButton_OnTapped"
-                            Text="Create Pdf" />
+                        <draw:SkiaLayout
+                            ColumnDefinitions="1*,1*"
+                            HorizontalOptions="Fill"
+                            RowDefinitions="Auto"
+                            Type="Grid">
+
+                            <!--  BTN A4  -->
+                            <controls:SmallButton
+                                Margin="0,16"
+                                HorizontalOptions="Center"
+                                Text="Create Pdf A4" />
+
+                            <!--  BTN  A6  -->
+                            <controls:SmallButton
+                                Grid.Column="1"
+                                Margin="0,16"
+                                HorizontalOptions="Center"
+                                Text="Create Pdf A6" />
+                        </draw:SkiaLayout>
 
                     </draw:SkiaLayout>
+
                 </draw:SkiaLayout>
             </draw:SkiaScroll>
 

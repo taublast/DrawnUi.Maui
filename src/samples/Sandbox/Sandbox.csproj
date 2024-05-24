@@ -185,6 +185,10 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
+ 
+      <Compile Update="Views\MainPageXaml2Pdf.xaml.cs">
+        <DependentUpon>MainPageXaml2Pdf.xaml</DependentUpon>
+      </Compile>
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>ResStrings.Designer.cs</LastGenOutput>
@@ -242,6 +246,13 @@
   <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <Compile Remove="Views\MainPageMap.xaml.cs" />
     <MauiXaml Remove="Views\MainPageMap.xaml" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <MauiXaml Update="Views\MainPageXaml2Pdf.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
  

@@ -9,7 +9,7 @@
 
     <ShellContent
         Title="Sandbox"
-        ContentTemplate="{DataTemplate mauiNet8:MainPageDev}"
+        ContentTemplate="{DataTemplate mauiNet8:MainPage}"
         Route="MainPage" />
 
 </Shell>
