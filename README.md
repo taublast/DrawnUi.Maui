@@ -1,5 +1,5 @@
 # DrawnUI for .NET MAUI
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
+![](https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309)
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍.
 
@@ -26,6 +26,7 @@ Fixes for the new `ImageComposite` cache type that redraws changed areas only, g
 ## Demo
 * This repo includes a Sandox project for some custom controls, with playground examples, custom controls, maps etc
 <img src="https://github.com/taublast/DrawnUi.Maui/assets/25801194/f1ad221b-63ab-4d92-bd83-f3c2c824580f" width="400">
+
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 This one is using the previous DrawnUI nuget, will be update soon!
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
