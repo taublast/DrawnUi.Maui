@@ -27,7 +27,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd
 _The new `VisualEffects` property_
 
 ## Demo
-<img src="https://github.com/taublast/DrawnUi.Maui/assets/25801194/f1ad221b-63ab-4d92-bd83-f3c2c824580f" width="200">
+<img src="https://github.com/taublast/DrawnUi.Maui/assets/25801194/f1ad221b-63ab-4d92-bd83-f3c2c824580f" width="400">
 
 * This repo includes a Sandox project for some custom controls, with playground examples, custom controls, maps etc
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 This one is using the previous DrawnUI nuget, will be update soon!
