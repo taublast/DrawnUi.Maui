@@ -24,7 +24,7 @@ Fixes for the new `ImageComposite` cache type that redraws changed areas only, g
 * Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
 
 ## Demo
-<img src="https://github.com/taublast/DrawnUi.Maui/assets/25801194/eeec4cb0-ea4e-4646-9c6f-ddfd45474919" width="50%">
+<img src="https://github.com/taublast/DrawnUi.Maui/assets/25801194/eeec4cb0-ea4e-4646-9c6f-ddfd45474919" width="50%" min-width="350">
 
 * This repo includes a Sandox project for some custom controls, with playground examples, custom controls, maps etc
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 This one is using the previous DrawnUI nuget, will be update soon!
