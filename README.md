@@ -1,4 +1,5 @@
 # DrawnUI for .NET MAUI
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍.
 
@@ -21,10 +22,6 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 * Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons. 
 Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
 * Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
-
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
-
-_The new `VisualEffects` property_
 
 ## Demo
 <img src="https://github.com/taublast/DrawnUi.Maui/assets/25801194/f1ad221b-63ab-4d92-bd83-f3c2c824580f" width="400">
