@@ -27,7 +27,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd
 _The new `VisualEffects` property_
 
 ## Demo
-
+<img src="assets/25801194/f0a8eea2-a3c8-4055-b22a-b878e2314665" width="200">
 * This repo includes a Sandox project for some custom controls, with playground examples, custom controls, maps etc
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 This one is using the previous DrawnUI nuget, will be update soon!
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
