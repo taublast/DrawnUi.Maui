@@ -43,6 +43,7 @@ public class SkiaMarkdownLabel : SkiaLabel
         isHeading2 = false;
         isCodeBlock = false;
         hadParagraph = false;
+        isStrikethrough = false;
 
         foreach (var block in markdownDocument)
         {
@@ -56,9 +57,10 @@ public class SkiaMarkdownLabel : SkiaLabel
     {
         span.IsBold = isBold || span.IsBold;
         span.IsItalic = isItalic || span.IsItalic;
-        span.Strikeout = isStrikethrough;
-        if (isStrikethrough)
-            span.StrikeoutColor = this.StrokeColor;
+
+        span.Strikeout = isStrikethrough || span.Strikeout;
+        if (span.Strikeout)
+            span.StrikeoutColor = this.StrikeoutColor;
 
         if (isHeading1)
         {

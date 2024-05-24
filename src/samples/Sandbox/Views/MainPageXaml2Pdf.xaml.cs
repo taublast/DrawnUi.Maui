@@ -114,6 +114,15 @@ namespace Sandbox.Views
                                      Height = reportSize.Height
                                  };
 
+                                 //with no async stuff this is enough for most cases
+                                 layout.Render(ctx, new SKRect(0, 0, reportSize.Width, reportSize.Height), scale);
+
+                                 //in our specific case we have images inside that load async,
+                                 //so wait for them and render final result
+                                 while (!layout.AllImagesLoaded)
+                                 {
+                                     await Task.Delay(50);
+                                 }
                                  layout.Render(ctx, new SKRect(0, 0, reportSize.Width, reportSize.Height), scale);
 
                              }

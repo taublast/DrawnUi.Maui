@@ -79,7 +79,6 @@
                     TextColor="White"
                     VerticalOptions="End" />
 
-
             </draw:SkiaLayout>
         </draw:Canvas>
 

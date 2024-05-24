@@ -54,7 +54,7 @@
 
             <!--  GPU cache makes a huge difference  -->
             <mapsUi:SkiaMapsUi
-                x:Name="mapControl"
+                x:Name="mapControl" 
                 DisableEffects="{Binding ValueSwitch, Converter={x:StaticResource NotConverter}}"
                 HorizontalOptions="Fill"
                 AddMarginBottom="{Binding OffsetMap}"

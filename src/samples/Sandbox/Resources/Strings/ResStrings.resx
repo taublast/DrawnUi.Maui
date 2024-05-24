@@ -157,7 +157,8 @@
     <value>About</value>
   </data>
   <data name="MarkdownTest" xml:space="preserve">
-    <value>To update the device software, follow these steps:
+    <value>In the soon-coming __SkiaSharp__ release we could generate tagged PDF containing links and much more!.. 
+ To update the device software, follow these steps:
  1. Download the new version of the software from the website [supadupa.com](https://google.com).
  2. Copy the firmware file in `HEX` format corresponding to your device model to the root directory of the memory card.
  3. Insert the memory card into the device when it is turned off.

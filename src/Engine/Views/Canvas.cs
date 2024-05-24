@@ -363,7 +363,6 @@ public class Canvas : DrawnView, IGestureListener
     protected virtual void ProcessGestures(SkiaGesturesParameters args)
     {
 
-
         lock (LockIterateListeners)
         {
             ISkiaGestureListener consumed = null;
@@ -372,20 +371,21 @@ public class Canvas : DrawnView, IGestureListener
             IsHiddenInViewTree = false; //if we get a gesture, we are visible by design
             bool manageChildFocus = false;
 
-            //if (DebugGesturesColor != Colors.Transparent && args.Action == TouchActionResult.Down)
-            //{
-            //    PostponeExecutionAfterDraw(() =>
-            //    {
-            //        using (SKPaint paint = new SKPaint
-            //        {
-            //            Style = SKPaintStyle.StrokeAndFill,
-            //            Color = DebugGesturesColor.ToSKColor()
-            //        })
-            //        {
-            //            this.CanvasView.Surface.Canvas.DrawCircle((float)(args.Event.Location.X), (float)(args.Event.Location.Y), (float)(20 * RenderingScale), paint);
-            //        }
-            //    });
-            //}
+
+            if (DebugGesturesColor != Colors.Transparent && args.Type == TouchActionResult.Down)
+            {
+                PostponeExecutionAfterDraw(() =>
+                {
+                    using (SKPaint paint = new SKPaint
+                    {
+                        Style = SKPaintStyle.StrokeAndFill,
+                        Color = DebugGesturesColor.ToSKColor()
+                    })
+                    {
+                        this.CanvasView.Surface.Canvas.DrawCircle((float)(args.Event.Location.X), (float)(args.Event.Location.Y), (float)(20 * RenderingScale), paint);
+                    }
+                });
+            }
 
             //var listeners = CollectionsMarshal.AsSpan(GestureListeners.GetListeners());
             foreach (var listener in GestureListeners.GetListeners())
@@ -419,26 +419,7 @@ public class Canvas : DrawnView, IGestureListener
 
                     if (consumed != null)
                     {
-                        // TODO implement same code as skiacontrol !!!
-
-                        //if (args.Action == TouchActionResult.Tapped && consumed is SkiaControl control)
-                        //{
-                        //    var location = control.GetPositionOnCanvas();
-
-                        //    PostponeExecutionAfterDraw(() =>
-                        //    {
-                        //        using (SKPaint paint = new SKPaint
-                        //        {
-                        //            Style = SKPaintStyle.StrokeAndFill,
-                        //            Color = SKColors.GreenYellow
-                        //        })
-                        //        {
-                        //            this.CanvasView.Surface.Canvas.DrawCircle(location.X, location.Y, (float)(20 * RenderingScale), paint);
-                        //            this.CanvasView.InvalidateSurface();
-                        //        }
-                        //    });
-                        //}
-
+                        // TODO implement same code as skiacontrol?
                         break;
                     }
                 }

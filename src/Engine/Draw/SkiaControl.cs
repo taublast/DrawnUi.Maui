@@ -1087,11 +1087,6 @@ namespace DrawnUi.Maui.Draw
                 inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
             }
 
-            //if (inside)
-            //{
-            //    Debug.WriteLine($"[IsGestureForChild] {this}");
-            //}
-
             return inside;
         }
 
@@ -1126,14 +1121,15 @@ namespace DrawnUi.Maui.Draw
                 var thisOffset = TranslateInputCoords(apply.childOffset);
                 var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X, args.Event.Location.Y + thisOffset.Y);
 
-                //process thoses who already had input
+                //first process those who already had input
                 if (HadInput.Count > 0)
                 {
                     if (
-                        (
                             args.Type == TouchActionResult.Panning ||
                             args.Type == TouchActionResult.Wheel ||
-                            args.Type == TouchActionResult.Up))
+                            args.Type == TouchActionResult.Tapped ||
+                            args.Type == TouchActionResult.Up
+                        )
                     {
                         foreach (var hadInput in HadInput.Values)
                         {
@@ -1203,12 +1199,14 @@ namespace DrawnUi.Maui.Draw
                                     manageChildFocus = false;
                                 }
 
+                                var childOffset = TranslateInputCoords(apply.childOffsetDirect, false);
+
                                 if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
                                 {
                                     var c = effect.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
                                         thisOffset,
-                                        TranslateInputCoords(apply.childOffsetDirect, false),
+                                        childOffset,
                                         apply.alreadyConsumed));
                                     if (c != null)
                                     {
@@ -1220,7 +1218,7 @@ namespace DrawnUi.Maui.Draw
                                     var c = listener.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
                                         thisOffset,
-                                        TranslateInputCoords(apply.childOffsetDirect, false),
+                                        childOffset,
                                         apply.alreadyConsumed));
                                     if (c != null)
                                     {

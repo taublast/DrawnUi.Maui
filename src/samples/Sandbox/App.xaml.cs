@@ -23,6 +23,7 @@ namespace Sandbox
 
             MainPages = xamlResources
                 .Where(x => x.Type.Name.Contains(mask)
+                && !x.Type.Name.ToLower().Contains("dev")
 #if !SKIA3 && (WINDOWS || MACCATALYST)
                 && !x.Type.Name.ToLower().Contains("shader") //skia2 incompatible
 #endif

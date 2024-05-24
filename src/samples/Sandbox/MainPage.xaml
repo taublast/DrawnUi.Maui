@@ -136,7 +136,7 @@
                             Split="0"
                             Tag="Buttons"
                             Type="Wrap"
-                            UseCache="None">
+                            UseCache="ImageComposite">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">
