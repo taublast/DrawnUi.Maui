@@ -44,7 +44,11 @@ public class SliderValueDesc : SkiaLayout
 
         if (propertyName.IsEither(nameof(TranslationX), nameof(Width)))
         {
-            RightX = TranslationX + Width;
+
+            var right = TranslationX + Width;
+            if (right < 0)
+                right = 0;
+            RightX = right;
         }
 
         if (propertyName == nameof(XCenter) ||

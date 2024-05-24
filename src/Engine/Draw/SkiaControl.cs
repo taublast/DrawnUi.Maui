@@ -1083,7 +1083,7 @@ namespace DrawnUi.Maui.Draw
             bool inside = false;
             if (!child.Control.InputTransparent && child.Control.CanDraw)
             {
-                var transformed = child.Control.ApplyTransforms(child.HitRect);
+                var transformed = child.Control.ApplyTransforms(child.Rect);//todo HitRect
                 inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
             }
 
@@ -1127,7 +1127,6 @@ namespace DrawnUi.Maui.Draw
                     if (
                             args.Type == TouchActionResult.Panning ||
                             args.Type == TouchActionResult.Wheel ||
-                            args.Type == TouchActionResult.Tapped ||
                             args.Type == TouchActionResult.Up
                         )
                     {
