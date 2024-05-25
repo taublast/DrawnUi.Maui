@@ -16,7 +16,7 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 ## What's new
 
-* In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget out.
+* In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget comes out.
 * `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
 * Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo. 
 * Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons. 
