@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace DrawnUi.Maui.Draw
 {
@@ -321,11 +322,11 @@ namespace DrawnUi.Maui.Draw
                                      && UsingCacheType != SkiaCacheType.ImageDoubleBuffered;
                 }
 
-                //smartMeasuring = false;
+                smartMeasuring = false;
                 /*
+                var dirty = DirtyChildren.GetList().FirstOrDefault();
                 if (smartMeasuring && dirty != null)
                 {
-
                     //measure only changed child
                     var viewIndex = -1;
                     if (IsTemplated)
@@ -336,48 +337,45 @@ namespace DrawnUi.Maui.Draw
                             ScaledSize newContentSize = null;
                             SKSize sizeChange = new();
 
-                            //IReadOnlyList<SkiaControl> views = null;
-                            //if (!IsTemplated)
-                            //{
-                            //    views = GetUnorderedSubviews();
-                            //}
-
-                            var index = 0;
-                            foreach (var structureRow in LatestStackStructure)
+                            IReadOnlyList<SkiaControl> views = null;
+                            if (!IsTemplated)
                             {
-                                foreach (var cell in structureRow)
+                                views = GetUnorderedSubviews();
+                            }
+
+                            var index = -1;
+                            foreach (var cell in LatestStackStructure.GetChildren())
+                            {
+                                index++;
+
+                                if (newContentSize != null)
                                 {
-                                    if (newContentSize != null)
+                                    //Offset the subsequent children
+                                    cell.Area = new SKRect(
+                                        cell.Area.Left + sizeChange.Width,
+                                        cell.Area.Top + sizeChange.Height,
+                                        cell.Area.Right + sizeChange.Width,
+                                        cell.Area.Bottom + sizeChange.Height);
+
+                                    //todo layout cell ?
+                                    if (views != null)
                                     {
-                                        // Offset the subsequent children
-                                        cell.Area = new SKRect(
-                                            cell.Area.Left + sizeChange.Width,
-                                            cell.Area.Top + sizeChange.Height,
-                                            cell.Area.Right + sizeChange.Width,
-                                            cell.Area.Bottom + sizeChange.Height);
-
-                                        //todo layout cell?
-                                        //if (views != null)
-                                        //{
-                                        //    LayoutCell(cell.Measured, cell, views[index], scale);
-                                        //}
+                                        LayoutCell(cell.Measured, cell, views[index], scale);
                                     }
-                                    else
-                                    if (cell.ControlIndex == viewIndex)
-                                    {
-                                        // Measure only DirtyChild
-                                        measured = MeasureAndArrangeCell(cell.Area, cell, dirty, scale);
+                                }
+                                else
+                                if (cell.ControlIndex == viewIndex)
+                                {
+                                    //Measure only DirtyChild
+                                    measured = MeasureAndArrangeCell(cell.Area, cell, dirty, scale);
 
-                                        //todo offset other children accroding new size of this cell
-                                        //and adjust new content size to be returned
+                                    //todo offset other children accroding new size of this cell
+                                    //and adjust new content size to be returned
 
-                                        sizeChange = new SKSize(measured.Pixels.Width - cell.Measured.Pixels.Width,
-                                            measured.Pixels.Height - cell.Measured.Pixels.Height);
+                                    sizeChange = new SKSize(measured.Pixels.Width - cell.Measured.Pixels.Width,
+                                        measured.Pixels.Height - cell.Measured.Pixels.Height);
 
-                                        newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width + sizeChange.Width, MeasuredSize.Pixels.Height + sizeChange.Height, scale);
-                                    }
-
-                                    index++;
+                                    newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width + sizeChange.Width, MeasuredSize.Pixels.Height + sizeChange.Height, scale);
                                 }
                             }
 
@@ -396,64 +394,64 @@ namespace DrawnUi.Maui.Draw
                             ScaledSize newContentSize = null;
                             SKSize sizeChange = new();
 
-                            //IReadOnlyList<SkiaControl> views = null;
-                            //if (!IsTemplated)
-                            //{
-                            //    views = GetUnorderedSubviews();
-                            //}
-
-                            var index = 0;
-                            foreach (var structureRow in LatestStackStructure)
+                            IReadOnlyList<SkiaControl> views = null;
+                            if (!IsTemplated)
                             {
-                                foreach (var cell in structureRow)
-                                {
-                                    if (newContentSize != null)
-                                    {
-                                        // Offset the subsequent children
-                                        cell.Area = new SKRect(
-                                            cell.Area.Left + sizeChange.Width,
-                                            cell.Area.Top + sizeChange.Height,
-                                            cell.Area.Right + sizeChange.Width,
-                                            cell.Area.Bottom + sizeChange.Height);
+                                views = GetUnorderedSubviews();
+                            }
 
-                                        //todo layout cell?
-                                        //if (views != null)
-                                        //{
-                                        //    LayoutCell(cell.Measured, cell, views[index], scale);
-                                        //}
+                            var index = -1;
+                            foreach (var cell in LatestStackStructure.GetChildren())
+                            {
+                                index++;
+
+                                if (newContentSize != null)
+                                {
+                                    //Offset the subsequent children
+                                    cell.Area = new SKRect(
+                                        cell.Area.Left + sizeChange.Width,
+                                        cell.Area.Top + sizeChange.Height,
+                                        cell.Area.Right + sizeChange.Width,
+                                        cell.Area.Bottom + sizeChange.Height);
+
+                                    //todo layout cell ?
+                                    if (views != null)
+                                    {
+                                        LayoutCell(cell.Measured, cell, views[index], scale);
+                                    }
+                                }
+                                else
+                                if (cell.ControlIndex == viewIndex)
+                                {
+                                    if (dirty.CanDraw)
+                                    {
+                                        //Measure only DirtyChild
+                                        measured = MeasureAndArrangeCell(cell.Area, cell, dirty, scale);
+
+                                        //todo offset other children accroding new size of this cell
+                                        //and adjust new content size to be returned
+
+                                        sizeChange = new SKSize(measured.Pixels.Width - cell.Measured.Pixels.Width,
+                                            measured.Pixels.Height - cell.Measured.Pixels.Height);
+
+                                        newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width + sizeChange.Width, MeasuredSize.Pixels.Height + sizeChange.Height, scale);
                                     }
                                     else
-                                    if (cell.ControlIndex == viewIndex)
                                     {
-                                        if (dirty.CanDraw)
+                                        if (cell.Measured != ScaledSize.Default)
                                         {
-                                            // Measure only DirtyChild
-                                            measured = MeasureAndArrangeCell(cell.Area, cell, dirty, scale);
+                                            //add new space
+                                            sizeChange = new SKSize(measured.Pixels.Width + cell.Measured.Pixels.Width,
+                                                measured.Pixels.Height + cell.Measured.Pixels.Height);
 
-                                            //todo offset other children accroding new size of this cell
-                                            //and adjust new content size to be returned
-
-                                            sizeChange = new SKSize(measured.Pixels.Width - cell.Measured.Pixels.Width,
-                                                measured.Pixels.Height - cell.Measured.Pixels.Height);
-
-                                            newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width + sizeChange.Width, MeasuredSize.Pixels.Height + sizeChange.Height, scale);
+                                            newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width - sizeChange.Width, MeasuredSize.Pixels.Height - sizeChange.Height, scale);
                                         }
-                                        else
-                                        {
-                                            if (cell.Measured != ScaledSize.Empty)
-                                            {
-                                                //add new space
-                                                sizeChange = new SKSize(measured.Pixels.Width + cell.Measured.Pixels.Width,
-                                                    measured.Pixels.Height + cell.Measured.Pixels.Height);
-
-                                                newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width - sizeChange.Width, MeasuredSize.Pixels.Height - sizeChange.Height, scale);
-                                            }
-                                            cell.Measured = ScaledSize.Empty;
-                                        }
+                                        cell.Measured = ScaledSize.Default;
                                     }
-
-                                    index++;
                                 }
+
+
+
                             }
 
                             if (newContentSize != null)

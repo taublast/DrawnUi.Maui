@@ -15,7 +15,7 @@
 
   <PropertyGroup>
     <UseNuget>false</UseNuget>
-    <Version>1.2.2.3</Version>
+    <Version>1.2.2.5</Version>
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sandbox project or look for DrawnUI SpaceShooter for usage example.</PackageReleaseNotes>
     <Title>Game creation addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.Maui.Game</PackageId>
@@ -43,7 +43,7 @@
 
   <!--production-->
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.3" />
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.5" />
   </ItemGroup>
 
 
