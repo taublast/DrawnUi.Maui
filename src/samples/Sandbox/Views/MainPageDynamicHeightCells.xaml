@@ -55,16 +55,23 @@
                     so the cells pool size is 100. when we reach some border, before loadMore or start of page
                     be return 50 cells from the other direction to pool and reuse them all 50 for the up coming page
                     this way we have a lag spike on borders only but smooth scrolling through the existing content
+                
+                    todo this idea remains to be implemented at my free time :)
+                
+                    at the moment the code belows works just like maui bindable.layout + stacklayout what is not so cool
+                    as we need less memory consumption
+                
+                    another method i already verified that works smoothly is to take maui collectioview and use canvases as cells
                 -->
 
                 <draw:SkiaLayout
                     x:Name="StackCells"
                     BackgroundColor="White"
-                    HiddenAmountToRender="50"
                     HorizontalOptions="Fill"
+                    UseCache="Image"
                     ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding Items}"
-                    RecyclingTemplate="Disabled"
+                    RecyclingTemplate="Enabled"
                     Type="Column">
 
                     <draw:SkiaLayout.ItemTemplate>

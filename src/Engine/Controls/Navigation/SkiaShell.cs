@@ -854,50 +854,61 @@ namespace DrawnUi.Maui.Controls
 
         async Task RemoveModal(SkiaControl control, bool animated)
         {
-            if (control != null)
+            try
             {
-                control.IsVisible = false;
-
-                if (control is ModalWrapper modalWrapper)
+                if (control != null)
                 {
-                    if (modalWrapper.Drawer != null && modalWrapper.Drawer.Content is SkiaControl removed)
+                    control.IsVisible = false;
+
+                    if (control is ModalWrapper modalWrapper)
                     {
-                        RemoveFromCurrentRouteNodes(removed);
-
-                        try
+                        if (modalWrapper.Drawer != null && modalWrapper.Drawer.Content is SkiaControl removed)
                         {
-                            modalWrapper.Drawer.Scrolled -= OnModalDrawerScrolled;
-                            if (removed is IVisibilityAware aware)
+                            RemoveFromCurrentRouteNodes(removed);
+
+                            try
                             {
-                                aware.OnDisappearing();
+                                modalWrapper.Drawer.Scrolled -= OnModalDrawerScrolled;
+                                if (removed is IVisibilityAware aware)
+                                {
+                                    aware.OnDisappearing();
+                                }
+
+                                var inStack = NavigationStackModals.FirstOrDefault(x => x.Page == modalWrapper);
+                                if (inStack != null)
+                                {
+                                    NavigationStackModals.Remove(inStack);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Super.Log(e);
                             }
 
-                            var inStack = NavigationStackModals.FirstOrDefault(x => x.Page == modalWrapper);
-                            if (inStack != null)
-                            {
-                                NavigationStackModals.Remove(inStack);
-                            }
                         }
-                        catch (Exception e)
-                        {
-                            Super.Log(e);
-                        }
-
                     }
+                    else
+                    {
+                        RemoveFromCurrentRouteNodes(control);
+                    }
+
+                    if (CanUnfreezeLayout())
+                        await UnfreezeRootLayout(control, animated);
+
+                    OnLayersChanged(control);
+
+                    control.SetParent(null); //unregister gestures etc
+                    Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                    {
+                        control.Dispose();
+                    });
                 }
-                else
-                {
-                    RemoveFromCurrentRouteNodes(control);
-                }
-
-                if (CanUnfreezeLayout())
-                    await UnfreezeRootLayout(control, animated);
-
-                OnLayersChanged(control);
-
-                control.SetParent(null); //unregister gestures etc
-                control.Dispose();
             }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
+
         }
 
         bool isBusyClosingModal;
@@ -1619,7 +1630,11 @@ namespace DrawnUi.Maui.Controls
                     Act();
                 });
             }
-            kill?.Dispose();
+            if (kill != null)
+                Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                   {
+                       kill?.Dispose();
+                   });
         }
 
         protected virtual void ReplaceRootLayout(ISkiaControl newLayout)
@@ -1640,7 +1655,11 @@ namespace DrawnUi.Maui.Controls
 
             ImportRootLayout();
 
-            kill?.Dispose();
+            if (kill != null)
+                Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                   {
+                       kill?.Dispose();
+                   });
         }
 
         protected virtual void ImportShellLayout()

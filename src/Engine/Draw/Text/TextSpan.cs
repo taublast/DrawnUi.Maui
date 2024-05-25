@@ -444,6 +444,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
     private bool _isBold;
     private Color _textColor = Colors.GreenYellow;
     private Color _backgroundColor = Colors.Transparent;
+    private Color _paragraphColor = Colors.Transparent;
     private bool _autoFindFont;
     private SKTypeface _typeFace;
     private bool _needShape;
@@ -516,6 +517,17 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
             if (Equals(value, _backgroundColor)) return;
             _backgroundColor = value;
             OnPropertyChanged(nameof(BackgroundColor));
+        }
+    }
+
+    public Color ParagraphColor
+    {
+        get => _paragraphColor;
+        set
+        {
+            if (Equals(value, _paragraphColor)) return;
+            _paragraphColor = value;
+            OnPropertyChanged(nameof(ParagraphColor));
         }
     }
 

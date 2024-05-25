@@ -71,8 +71,14 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
 
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
+        if (IsMeasuring)
+        {
+            NeedRemeasuring = true;
+            return MeasuredSize;
+        }
+
         //background measuring or invisible or self measure from draw because layout will never pass -1
-        if (IsMeasuring || !CanDraw || widthConstraint < 0 || heightConstraint < 0)
+        if (!CanDraw || widthConstraint < 0 || heightConstraint < 0)
         {
             return MeasuredSize;
         }
@@ -155,7 +161,7 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
     protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale,
         bool debug = false)
     {
-        if (!IsContentActive || context.Superview == null || destination.Width <= 0 || destination.Height <= 0)
+        if (!IsContentActive || destination.Width <= 0 || destination.Height <= 0)
         {
             return 0;
         }

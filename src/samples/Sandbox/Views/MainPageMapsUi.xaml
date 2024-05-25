@@ -54,7 +54,7 @@
 
             <!--  GPU cache makes a huge difference  -->
             <mapsUi:SkiaMapsUi
-                x:Name="mapControl"
+                x:Name="mapControl" 
                 DisableEffects="{Binding ValueSwitch, Converter={x:StaticResource NotConverter}}"
                 HorizontalOptions="Fill"
                 AddMarginBottom="{Binding OffsetMap}"
@@ -65,6 +65,7 @@
                 <draw:SkiaControl.VisualEffects>
 
                     <draw:TintWithAlphaEffect
+                        x:DataType="demo:MainPageViewModel"
                         Alpha="{Binding Value3}"
                         ColorTint="{Binding SelectedColor}" />
 

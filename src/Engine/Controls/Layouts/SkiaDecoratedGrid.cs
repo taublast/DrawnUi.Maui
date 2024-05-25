@@ -107,7 +107,8 @@ public partial class SkiaDecoratedGrid : SkiaLayout
             return;
         }
 
-        ContainerLines?.Dispose();
+        var kill = ContainerLines;
+
         ContainerLines = new()
         {
             ZIndex = -1,
@@ -119,6 +120,8 @@ public partial class SkiaDecoratedGrid : SkiaLayout
             MeasuredSize = this.MeasuredSize,
             NeedMeasure = false
         };
+
+        kill?.Dispose();
 
         if (VerticalLine != null)
         {
@@ -173,15 +176,22 @@ public partial class SkiaDecoratedGrid : SkiaLayout
         }
     }
 
+    protected override void OnLayoutChanged()
+    {
+        base.OnLayoutChanged();
+
+        UpdateLines();
+
+    }
 
     protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
     {
         base.Draw(context, destination, scale);
 
-        if (ContainerLines == null)
-        {
-            CreateLines();
-        }
+        //if (ContainerLines == null)
+        //{
+        //    CreateLines();
+        //}
 
         if (ContainerLines != null)
             ContainerLines.Render(context, GetDrawingRectForChildren(Destination, scale), scale);

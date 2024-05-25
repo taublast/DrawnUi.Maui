@@ -157,14 +157,15 @@
     <value>About</value>
   </data>
   <data name="MarkdownTest" xml:space="preserve">
-    <value>To update the device software, follow these steps:
- 1. Download the new version of the software from the website [racebox.ru](https://racebox.ru/obnovlenie-po).
+    <value>In the soon-coming __SkiaSharp__ release we could generate tagged PDF containing links and much more!.. 
+ To update the device software, follow these steps:
+ 1. Download the new version of the software from the website [supadupa.com](https://google.com).
  2. Copy the firmware file in `HEX` format corresponding to your device model to the root directory of the memory card.
  3. Insert the memory card into the device when it is turned off.
  4. While holding the `Mode` button, connect the device to power via the USB cable.
  5. Wait until the memory card is initialized and the message `HOLD TO UPDATE X.XX` appears (where X.XX is the version of the downloaded software)
  6. Press and hold the `Mode` button to begin the update process.
  7. Wait for the update to complete and make sure that the new firmware version is displayed when you turn on the device.
- 8. Restart the __Racebox__ application.</value>
+ 8. Restart the __MyApp__ application.</value>
   </data>
 </root>

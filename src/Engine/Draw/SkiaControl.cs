@@ -1081,16 +1081,12 @@ namespace DrawnUi.Maui.Draw
         public virtual bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
         {
             bool inside = false;
-            if (!child.Control.InputTransparent && child.Control.CanDraw)
+            if (child.Control != null && !child.Control.IsDisposing && !child.Control.IsDisposed &&
+            !child.Control.InputTransparent && child.Control.CanDraw)
             {
-                var transformed = child.Control.ApplyTransforms(child.HitRect);
+                var transformed = child.Control.ApplyTransforms(child.Rect);//todo HitRect
                 inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
             }
-
-            //if (inside)
-            //{
-            //    Debug.WriteLine($"[IsGestureForChild] {this}");
-            //}
 
             return inside;
         }
@@ -1126,14 +1122,14 @@ namespace DrawnUi.Maui.Draw
                 var thisOffset = TranslateInputCoords(apply.childOffset);
                 var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X, args.Event.Location.Y + thisOffset.Y);
 
-                //process thoses who already had input
+                //first process those who already had input
                 if (HadInput.Count > 0)
                 {
                     if (
-                        (
                             args.Type == TouchActionResult.Panning ||
                             args.Type == TouchActionResult.Wheel ||
-                            args.Type == TouchActionResult.Up))
+                            args.Type == TouchActionResult.Up
+                        )
                     {
                         foreach (var hadInput in HadInput.Values)
                         {
@@ -1203,12 +1199,14 @@ namespace DrawnUi.Maui.Draw
                                     manageChildFocus = false;
                                 }
 
+                                var childOffset = TranslateInputCoords(apply.childOffsetDirect, false);
+
                                 if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
                                 {
                                     var c = effect.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
                                         thisOffset,
-                                        TranslateInputCoords(apply.childOffsetDirect, false),
+                                        childOffset,
                                         apply.alreadyConsumed));
                                     if (c != null)
                                     {
@@ -1220,7 +1218,7 @@ namespace DrawnUi.Maui.Draw
                                     var c = listener.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
                                         thisOffset,
-                                        TranslateInputCoords(apply.childOffsetDirect, false),
+                                        childOffset,
                                         apply.alreadyConsumed));
                                     if (c != null)
                                     {
@@ -3869,7 +3867,6 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public bool IsMeasuring { get; protected internal set; }
 
-
         /// <summary>
         /// Parameters in PIXELS. sets IsLayoutDirty = true;
         /// </summary>
@@ -4413,6 +4410,32 @@ namespace DrawnUi.Maui.Draw
             Y = LastDrawnAt.Location.Y / scale;
 
             ExecutePostAnimators(context, scale);
+
+            if (NeedRemeasuring)
+            {
+                NeedRemeasuring = false;
+
+            }
+
+            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
+                && RenderObject != null)
+            {
+                //Debug.WriteLine($"[D] {Superview.CanvasView.CanvasSize.Width} -> {RenderObject.Bounds.Width} at {DrawingRect.Width}");
+                if (DrawingRect.Size != RenderObject.Bounds.Size)
+                {
+                    InvalidateMeasure();
+                }
+            }
+            else
+            if (UsingCacheType == SkiaCacheType.ImageComposite
+                && RenderObjectPrevious != null)
+            {
+                if (DrawingRect.Size != RenderObjectPrevious.Bounds.Size)
+                {
+                    InvalidateMeasure();
+                }
+            }
+
         }
 
         public SKPoint GetPositionOffsetInPoints()
@@ -5127,10 +5150,9 @@ namespace DrawnUi.Maui.Draw
 
                 if (NeedUpdate) //someone changed us while rendering inner content
                 {
-                    Update();
-                    //InvalidateCache();
-                    //Repaint();
+                    Update(); //kick
                 }
+
 
             }
             finally
@@ -5140,6 +5162,8 @@ namespace DrawnUi.Maui.Draw
             }
 
         }
+
+        protected bool NeedRemeasuring;
 
 
         /// <summary>

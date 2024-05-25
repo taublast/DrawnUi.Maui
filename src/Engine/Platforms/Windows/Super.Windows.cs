@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace DrawnUi.Maui.Draw
 {
@@ -33,6 +34,36 @@ namespace DrawnUi.Maui.Draw
         static Looper Looper { get; set; }
 
         public static EventHandler OnFrame;
+
+        /// <summary>
+        /// Opens web link in native browser
+        /// </summary>
+        /// <param name="link"></param>
+        public static void OpenLink(string link)
+        {
+            try
+            {
+                Windows.System.Launcher.LaunchUriAsync(new Uri(link));
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
+        }
+
+        /// <summary>
+        /// Lists assets inside the Resources/Raw subfolder
+        /// </summary>
+        /// <param name="subfolder"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> ListAssets(string subfolder)
+        {
+            StorageFolder installFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            StorageFolder sub = installFolder.GetFolderAsync(subfolder).GetAwaiter().GetResult();
+            IReadOnlyList<StorageFile> files = sub.GetFilesAsync().GetAwaiter().GetResult();
+
+            return files.Select(f => f.Name);
+        }
     }
 
 

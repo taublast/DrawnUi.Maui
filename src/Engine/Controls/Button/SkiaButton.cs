@@ -192,7 +192,8 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
-        //Trace.WriteLine($"SkiaButton. {type} {args.Action} {args.Event.Location.X} {args.Event.Location.Y}");
+        //Debug.WriteLine($"SkiaButton. {args.Type} {args.Event.Distance.Delta}");
+
         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
         var ret = false;

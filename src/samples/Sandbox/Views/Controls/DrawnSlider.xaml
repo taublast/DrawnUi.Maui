@@ -7,6 +7,7 @@
     x:Name="ThisSlider"
     AvailableWidthAdjustment="1.5"
     HorizontalOptions="Fill"
+    MinimumWidthRequest="64"
     SliderHeight="35"
     Tag="SliderFun"
     Type="Column"

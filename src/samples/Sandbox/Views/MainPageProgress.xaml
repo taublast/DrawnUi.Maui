@@ -5,9 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:drawnUi="clr-namespace:DrawnUi.Maui;assembly=DrawnUi.Maui"
-    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
-    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     x:Name="ThisPage"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
@@ -21,8 +18,6 @@
         HorizontalOptions="Fill"
         Tag="MainPage"
         VerticalOptions="Fill">
-
-
 
         <draw:SkiaLayout
             BackgroundColor="Black"
@@ -60,126 +55,6 @@
                 Text="Custom drawn control example"
                 TextColor="White"
                 VerticalOptions="End" />
-
-            <!--  SCROLL  -->
-            <!--<draw:SkiaScroll
-                BackgroundColor="Red"
-                Bounces="False"
-                HeaderSticky="True"
-                HeightRequest="410"
-                HorizontalOptions="Fill"
-                VerticalOptions="Center">
-
-                <draw:SkiaScroll.Header>
-
-            -->
-            <!--  Collection header  -->
-            <!--  top nav bar, drops shadow  -->
-            <!--
-                    <draw:SkiaLayout
-                        BackgroundColor="White"
-                        HeightRequest="{x:Static drawnUi:Super.NavBarHeight}"
-                        HorizontalOptions="Fill">
-
-            -->
-            <!--  background + shadow  -->
-            <!--
-                        <draw:SkiaShape
-                            BackgroundColor="#EEEEEE"
-                            CornerRadius="0,24"
-                            HorizontalOptions="Fill"
-                            IsClippedToBounds="False"
-                            StrokeColor="#DDDDDD"
-                            StrokeWidth="1"
-                            Tag="TabsBackground"
-                            VerticalOptions="Fill"
-                            ZIndex="-1">
-                            <draw:SkiaShape.Shadows>
-
-                                <draw:SkiaShadow
-                                    Blur="3"
-                                    Opacity="0.33"
-                                    X="2"
-                                    Y="3"
-                                    Color="Gray" />
-
-                            </draw:SkiaShape.Shadows>
-                        </draw:SkiaShape>
-
-                        <draw:SkiaLabel
-                            FontFamily="FontText"
-                            FontSize="18"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center"
-                            MaxLines="1"
-                            FontWeight="600"
-                            LineBreakMode="TailTruncation"
-                            Text="Header Title"
-                            TextColor="Black" />
-
-                    </draw:SkiaLayout>
-
-                </draw:SkiaScroll.Header>
-
-            -->
-            <!--
-                insert one layout between scroll and column to check
-                how column inside will optimize not rendering views that
-                are not on screen
-            -->
-            <!--
-                <draw:SkiaLayout
-                    Padding="16"
-                    BackgroundColor="Yellow"
-                    HorizontalOptions="Fill">
-
-                    <draw:SkiaLayout
-                    Padding="16,0"
-                    BackgroundColor="Blue"
-                    HorizontalOptions="Fill"
-                    Type="Column"
-                    Spacing="24">
-
-                        <draw:SkiaShape
-                        Margin="0,8,0,0"
-                        BackgroundColor="LightGoldenrodYellow"
-                        HeightRequest="80"
-                        HorizontalOptions="Center"
-                        LockRatio="1"
-                        Type="Circle" />
-
-                        <draw:SkiaShape
-                        BackgroundColor="Aquamarine"
-                        HeightRequest="300"
-                        HorizontalOptions="Center"
-                        WidthRequest="50" />
-
-                        <draw:SkiaShape
-                        BackgroundColor="Goldenrod"
-                        HeightRequest="80"
-                        HorizontalOptions="Center"
-                        LockRatio="1"
-                        Type="Circle" />
-
-                        <draw:SkiaShape
-                        BackgroundColor="PeachPuff"
-                        HeightRequest="300"
-                        HorizontalOptions="Center"
-                        WidthRequest="50" />
-
-                        <draw:SkiaShape
-                        BackgroundColor="PaleGreen"
-                        HeightRequest="80"
-                        HorizontalOptions="Center"
-                        LockRatio="1"
-                        Type="Circle" />
-
-
-                    </draw:SkiaLayout>
-
-                </draw:SkiaLayout>
-
-            </draw:SkiaScroll>-->
 
             <controls:ButtonToRoot/>
 

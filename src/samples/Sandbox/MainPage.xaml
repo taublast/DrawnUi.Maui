@@ -61,6 +61,7 @@
 
                                 <!--  global  -->
                                 <draw:DropShadowEffect
+                                    x:DataType="sandbox:MainPageViewModel"
                                     Blur="8"
                                     X="1"
                                     Y="2"
@@ -99,7 +100,7 @@
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
                             Tag="Slider"
-                            WidthRequest="200" />
+                             WidthRequest="200" />
 
                         <!--
                             if you have effects sometimes
@@ -135,7 +136,7 @@
                             Split="0"
                             Tag="Buttons"
                             Type="Wrap"
-                            UseCache="None">
+                            UseCache="ImageComposite">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">
