@@ -29,6 +29,13 @@ namespace DrawnUi.Maui.Draw;
 
 public partial class Super
 {
+    static Super()
+    {
+        //Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
+        //{
+        //    ProcessBackgroundQueue().ConfigureAwait(false);
+        //});
+    }
 
 #if (!ONPLATFORM)
 
@@ -552,4 +559,36 @@ public partial class Super
 #else
     public static int SkiaGeneration = 2;
 #endif
+
+
+
+
+    static readonly Queue<Func<Task>> _offscreenCacheRenderingQueue = new(1024);
+    private static bool _processingOffscrenRendering;
+
+    public static void EnqueueBackgroundTask(Func<Task> asyncAction)
+    {
+        _offscreenCacheRenderingQueue.Enqueue(asyncAction);
+    }
+
+    protected static async Task ProcessBackgroundQueue()
+    {
+        if (_processingOffscrenRendering)
+            return;
+
+        _processingOffscrenRendering = true;
+
+        while (_processingOffscrenRendering)
+        {
+            _offscreenCacheRenderingQueue.TryDequeue(out var action);
+            if (action != null)
+            {
+                action().ConfigureAwait(false);
+            }
+
+            await Task.Delay(1);
+        }
+
+    }
+
 }
