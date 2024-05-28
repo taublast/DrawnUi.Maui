@@ -1121,6 +1121,7 @@ propertyChanged: NeedChangeColorFIlter);
             return;
 
 
+
         LoadSourceIfNeeded();
 
         var apply = ApplyNewSource;

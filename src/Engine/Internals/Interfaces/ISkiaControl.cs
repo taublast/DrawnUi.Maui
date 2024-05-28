@@ -20,7 +20,7 @@ public interface ISkiaControl : IDrawnBase
 
     int ZIndex { get; }
 
-    void OnBeforeDraw();
+    void OptionalOnBeforeDrawing();
 
     void OnBeforeMeasure();
 

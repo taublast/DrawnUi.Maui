@@ -18,6 +18,8 @@ namespace DrawnUi.Maui.Draw
 
         protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
+
+
             var canvas = context.Canvas;
 
             if (IsRootView() && !IsOverlay)
@@ -33,7 +35,7 @@ namespace DrawnUi.Maui.Draw
                     //Paint(ctx, DrawingRect, scale, CreatePaintArguments());
                 });
 
-                FinalizeDraw(context, scale);
+                FinalizeDrawingWithRenderObject(context, scale);
             }
         }
 

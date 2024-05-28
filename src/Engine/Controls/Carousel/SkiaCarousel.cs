@@ -220,7 +220,7 @@ public class SkiaCarousel : SnappingLayout
 
                 if (cell.IsVisible || this.PreloadNeighboors)
                 {
-                    view.OnBeforeDraw(); //draw even hidden neighboors to be able to preload stuff
+                    view.OptionalOnBeforeDrawing(); //draw even hidden neighboors to be able to preload stuff
                     if (view.CanDraw)
                     {
                         view.LockUpdate(true);

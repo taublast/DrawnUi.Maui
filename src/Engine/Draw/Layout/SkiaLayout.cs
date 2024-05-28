@@ -526,7 +526,7 @@ namespace DrawnUi.Maui.Draw
             SkiaDrawingContext context,
             SKRect dest, ISkiaControl child, float scale)
         {
-            child.OnBeforeDraw(); //could set IsVisible or whatever inside
+            child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
 
             if (!child.CanDraw)
                 return false; //child set himself invisible

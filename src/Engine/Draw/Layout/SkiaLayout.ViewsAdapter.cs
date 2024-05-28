@@ -31,7 +31,7 @@ public class ViewsAdapter : IDisposable
     {
         lock (lockVisible)
         {
-            foreach (var view in _dicoCellsInUse.Values)
+            foreach (var view in _dicoCellsInUse.Values.ToList())
             {
                 view.InvalidateInternal();
             }

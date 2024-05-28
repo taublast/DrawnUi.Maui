@@ -2193,6 +2193,7 @@ namespace DrawnUi.Maui.Draw
         protected ScaledSize HeaderSize;
         protected ScaledSize FooterSize;
 
+        //private Stopwatch measureWatch = new();
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
@@ -2204,6 +2205,9 @@ namespace DrawnUi.Maui.Draw
 
             try
             {
+
+                //measureWatch.Restart();
+
                 IsMeasuring = true;
 
                 var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
@@ -2254,6 +2258,11 @@ namespace DrawnUi.Maui.Draw
             finally
             {
                 IsMeasuring = false;
+                //measureWatch.Stop();
+                //if (Tag == "Details")
+                //{
+                //    Super.Log($"[Scroll] measured {measureWatch.Elapsed.TotalMilliseconds:0.00}ms");
+                //}
 
             }
 
@@ -2664,6 +2673,8 @@ namespace DrawnUi.Maui.Draw
         protected override void Draw(SkiaDrawingContext context, SKRect destination,
             float scale)
         {
+
+
             isDrawing = true;
             if (IsContentActive)
             {
@@ -2709,7 +2720,7 @@ namespace DrawnUi.Maui.Draw
                 //Paint(context, DrawingRect, scale, CreatePaintArguments());
             }
 
-            FinalizeDraw(context, scale);
+            FinalizeDrawingWithRenderObject(context, scale);
 
             OnDrawn(context, DrawingRect, _zoomedScale, scale);
 

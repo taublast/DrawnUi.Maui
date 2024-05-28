@@ -935,8 +935,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (control is SkiaControl skia)
                 {
-                    if (skia.Parent != null)
-                        return GetParentElement(skia.Parent);
+                    return GetParentElement(skia.Parent);
                 }
             }
 
@@ -2547,10 +2546,26 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        public bool InvalidatedParent;
+        private bool _invalidatedParentPostponed;
+
         public virtual void InvalidateParent()
         {
             if (IsParentIndependent)
                 return;
+
+            if (InvalidatedParent)
+            {
+                if (IsRendering)
+                    _invalidatedParentPostponed = true;
+                else
+                {
+                    Superview?.SetChildAsDirty(this);
+                }
+                return;
+            }
+
+            InvalidatedParent = true;
 
             var parent = Parent;
             if (parent != null)
@@ -4142,17 +4157,15 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-
         public virtual void OnBeforeMeasure()
         {
 
         }
 
-        public virtual void OnBeforeDraw()
+        public virtual void OptionalOnBeforeDrawing()
         {
             Superview?.UpdateRenderingChains(this);
         }
-
 
 
         /// <summary>
@@ -4228,6 +4241,8 @@ namespace DrawnUi.Maui.Draw
             return true;
         }
 
+        protected bool IsRendering { get; set; }
+
         public virtual void Render(SkiaDrawingContext context,
             SKRect destination,
             float scale)
@@ -4235,11 +4250,13 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposing || IsDisposed)
                 return;
 
+            IsRendering = true;
+
             Superview = context.Superview;
-
             RenderingScale = scale;
-
             NeedUpdate = false;
+
+            OnBeforeDrawing(context, destination, scale);
 
             if (WillInvalidateMeasure)
             {
@@ -4273,7 +4290,11 @@ namespace DrawnUi.Maui.Draw
 
             //UpdateLocked = false;
 
+            OnAfterDrawing(context, destination, scale);
+
             Rendered?.Invoke(this, null);
+
+            IsRendering = false;
         }
 
         public event EventHandler Rendered;
@@ -4291,6 +4312,61 @@ namespace DrawnUi.Maui.Draw
         public virtual object CreatePaintArguments()
         {
             return null;
+        }
+
+        protected virtual void OnBeforeDrawing(SkiaDrawingContext context,
+            SKRect destination,
+            float scale)
+        {
+            InvalidatedParent = false;
+            _invalidatedParentPostponed = false;
+        }
+
+        protected virtual void OnAfterDrawing(SkiaDrawingContext context,
+            SKRect destination,
+            float scale)
+        {
+            if (_invalidatedParentPostponed)
+            {
+                InvalidatedParent = false;
+                InvalidateParent();
+            }
+
+            if (UsingCacheType == SkiaCacheType.None)
+                NeedUpdate = false; //otherwise CreateRenderingObject will set this to false
+
+            //trying to find exact location on the canvas
+
+            LastDrawnAt = DrawingRect;
+
+            X = LastDrawnAt.Location.X / scale;
+            Y = LastDrawnAt.Location.Y / scale;
+
+            ExecutePostAnimators(context, scale);
+
+            if (NeedRemeasuring)
+            {
+                NeedRemeasuring = false;
+            }
+
+            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
+                && RenderObject != null)
+            {
+                if (DrawingRect.Size != RenderObject.Bounds.Size)
+                {
+                    InvalidateMeasure();
+                }
+            }
+            else
+            if (UsingCacheType == SkiaCacheType.ImageComposite
+                && RenderObjectPrevious != null)
+            {
+                if (DrawingRect.Size != RenderObjectPrevious.Bounds.Size)
+                {
+                    InvalidateMeasure();
+                }
+            }
+
         }
 
         /// <summary>
@@ -4334,7 +4410,7 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
-            FinalizeDraw(context, scale); //NeedUpdate will go false
+            FinalizeDrawingWithRenderObject(context, scale); //NeedUpdate will go false
 
             return willDraw;
         }
@@ -4403,42 +4479,9 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         /// <param name="context"></param>
         /// <param name="scale"></param>
-        protected void FinalizeDraw(SkiaDrawingContext context, double scale)
+        protected void FinalizeDrawingWithRenderObject(SkiaDrawingContext context, double scale)
         {
-            if (UsingCacheType == SkiaCacheType.None)
-                NeedUpdate = false; //otherwise CreateRenderingObject will set this to false
 
-            //trying to find exact location on the canvas
-
-            LastDrawnAt = DrawingRect;
-
-            X = LastDrawnAt.Location.X / scale;
-            Y = LastDrawnAt.Location.Y / scale;
-
-            ExecutePostAnimators(context, scale);
-
-            if (NeedRemeasuring)
-            {
-                NeedRemeasuring = false;
-            }
-
-            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
-                && RenderObject != null)
-            {
-                if (DrawingRect.Size != RenderObject.Bounds.Size)
-                {
-                    InvalidateMeasure();
-                }
-            }
-            else
-            if (UsingCacheType == SkiaCacheType.ImageComposite
-                && RenderObjectPrevious != null)
-            {
-                if (DrawingRect.Size != RenderObjectPrevious.Bounds.Size)
-                {
-                    InvalidateMeasure();
-                }
-            }
 
         }
 
@@ -5743,7 +5786,7 @@ namespace DrawnUi.Maui.Draw
             {
                 if (child != null)
                 {
-                    child.OnBeforeDraw(); //could set IsVisible or whatever inside
+                    child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
                     if (child.CanDraw) //still visible 
                     {
                         child.Render(context, destination, scale);

@@ -1549,6 +1549,18 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public int DrawingThreads { get; protected set; }
 
+        protected Dictionary<Guid, SkiaControl> DirtyChildren = new();
+
+        public void SetChildAsDirty(SkiaControl child)
+        {
+            if (dirtyChilrenProcessing)
+                return;
+
+            DirtyChildren[child.Uid] = child;
+        }
+
+        private volatile bool dirtyChilrenProcessing;
+
         protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
             ++renderedFrames;
@@ -1622,7 +1634,7 @@ namespace DrawnUi.Maui.Views
 
                         foreach (var child in children)
                         {
-                            child.OnBeforeDraw(); //could set IsVisible or whatever inside
+                            child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
                             if (child.CanDraw) //still visible
                             {
                                 var rectForChild = new SKRect(
@@ -1633,6 +1645,18 @@ namespace DrawnUi.Maui.Views
                                 child.Render(context, rectForChild, (float)scale);
                             }
                         }
+
+                        dirtyChilrenProcessing = true;
+                        foreach (var child in DirtyChildren.Values)
+                        {
+                            if (child != null && !child.IsDisposing)
+                            {
+                                child.InvalidatedParent = false;
+                                child?.InvalidateParent();
+                            }
+                        }
+                        DirtyChildren.Clear();
+                        dirtyChilrenProcessing = false;
 
                         //notify registered tree final nodes of rendering tree state
                         foreach (var tree in RenderingTrees)
