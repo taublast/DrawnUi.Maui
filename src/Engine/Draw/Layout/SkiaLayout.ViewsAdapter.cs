@@ -29,7 +29,7 @@ public class ViewsAdapter : IDisposable
 
     protected void UpdateVisibleViews()
     {
-        //lock (lockVisible)
+        lock (lockVisible)
         {
             foreach (var view in _dicoCellsInUse.Values)
             {
@@ -65,7 +65,7 @@ public class ViewsAdapter : IDisposable
 
     public void MarkAllViewsAsHidden()
     {
-        //lock (lockVisible)
+        lock (lockVisible)
         {
             // Add all visible views back to the recycling pool (e.g., _viewModelPool.Return(hiddenView))
             foreach (var hiddenView in _dicoCellsInUse.Values)
@@ -601,7 +601,7 @@ public class ViewsAdapter : IDisposable
 
     public void PrintDebugVisible()
     {
-        //lock (lockVisible)
+        lock (lockVisible)
         {
             Trace.WriteLine($"Visible views {_dicoCellsInUse.Count}:");
             foreach (var view in _dicoCellsInUse.Values)

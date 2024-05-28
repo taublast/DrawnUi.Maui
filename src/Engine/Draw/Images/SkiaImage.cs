@@ -71,7 +71,8 @@ public class SkiaImage : SkiaControl
         return null;
     }
 
-    public override bool IsClippedToBounds => true;
+    public override bool WillClipBounds => true;
+
 
     public CancellationTokenSource CancelLoading;
 

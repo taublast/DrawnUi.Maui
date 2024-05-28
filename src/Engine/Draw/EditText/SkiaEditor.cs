@@ -9,8 +9,9 @@ namespace DrawnUi.Maui.Draw
     {
         public SkiaEditor()
         {
-            IsClippedToBounds = true;
         }
+
+        public override bool WillClipBounds => true;
 
         #region EVENTS
 

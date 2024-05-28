@@ -405,7 +405,8 @@ public partial class SkiaCamera : SkiaControl
         };
     }
 
-    public override bool IsClippedToBounds => true;
+    public override bool WillClipBounds => true;
+
 
     public SkiaCamera()
     {

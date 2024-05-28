@@ -882,7 +882,7 @@ namespace DrawnUi.Maui.Draw
             //display.Offset(SkiaControl.DeviceUnitsToPixels(HorizontalOffset), SkiaControl.DeviceUnitsToPixels(VerticalOffset));
 
             //todo apply clipping here
-            if (IsClippedToBounds || Clipping != null)
+            if (WillClipBounds || Clipping != null)
             {
                 using (SKPath path = new SKPath())
                 {

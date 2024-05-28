@@ -52,7 +52,8 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     #endregion
 
-    public override bool IsClippedToBounds => true;
+    public override bool WillClipBounds => true;
+
 
     protected virtual void MapProps(Editor control)
     {

@@ -68,7 +68,8 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     #endregion
 
-    public override bool IsClippedToBounds => true;
+    public override bool WillClipBounds => true;
+
 
     protected virtual Entry GetOrCreateControl()
     {

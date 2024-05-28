@@ -3296,7 +3296,8 @@ namespace DrawnUi.Maui.Draw
         #region RENDERiNG
 
 
-        public override bool IsClippedToBounds => true;
+        public override bool WillClipBounds => true;
+
 
 
         bool isDrawing;

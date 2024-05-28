@@ -675,7 +675,7 @@ namespace DrawnUi.Maui.Draw
             base.InvalidateByChild(child);
         }
 
-        protected object lockMeasure = new();
+        //protected object lockMeasure = new();
 
         SemaphoreSlim semaphoreItemTemplates = new(1);
 
@@ -879,7 +879,6 @@ namespace DrawnUi.Maui.Draw
                 IsMeasuring = true;
 
                 CreateDefaultContent();
-
 
                 //lock (lockMeasure)
                 {

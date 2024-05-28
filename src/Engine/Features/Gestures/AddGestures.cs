@@ -156,28 +156,32 @@ public static partial class AddGestures
     {
         lock (_lockListeners)
         {
-            if (attach)
+            if (control.Parent != null)
             {
-                if (!AttachedListeners.ContainsKey(control))
+                if (attach)
                 {
-                    GestureListener gestureListener = new GestureListener(control);
-                    AttachedListeners.TryAdd(control, gestureListener);
-                    //will throw if parent null
-                    control.GesturesEffect = gestureListener;
-                    control.Parent.RegisterGestureListener(gestureListener);
-                }
-            }
-            else
-            {
-                if (AttachedListeners.ContainsKey(control))
-                {
-                    AttachedListeners.Remove(control, out var gestureListener);
-                    control.GesturesEffect = null;
-                    if (control.Parent != null)
+                    if (!AttachedListeners.ContainsKey(control))
                     {
-                        control.Parent.UnregisterGestureListener(gestureListener);
+                        GestureListener gestureListener = new GestureListener(control);
+                        AttachedListeners.TryAdd(control, gestureListener);
+                        //will throw if parent null
+                        control.GesturesEffect = gestureListener;
+                        control.Parent.RegisterGestureListener(gestureListener);
                     }
                 }
+                else
+                {
+                    if (AttachedListeners.ContainsKey(control))
+                    {
+                        AttachedListeners.Remove(control, out var gestureListener);
+                        control.GesturesEffect = null;
+                        if (control.Parent != null)
+                        {
+                            control.Parent.UnregisterGestureListener(gestureListener);
+                        }
+                    }
+                }
+
             }
         }
     }

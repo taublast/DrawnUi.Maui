@@ -20,7 +20,8 @@ public class SkiaCarousel : SnappingLayout
         ChildrenFactory.UpdateViews();
     }
 
-    public override bool IsClippedToBounds => true;
+    public override bool WillClipBounds => true;
+
 
     public override void ScrollToNearestAnchor(Vector2 location, Vector2 velocity)
     {
