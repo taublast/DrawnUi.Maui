@@ -926,15 +926,18 @@ namespace DrawnUi.Maui.Draw
         }
         public static IDrawnBase GetParentElement(IDrawnBase control)
         {
-            if (control is DrawnView)
+            if (control != null)
             {
-                return control;
-            }
+                if (control is DrawnView)
+                {
+                    return control;
+                }
 
-            if (control is SkiaControl skia)
-            {
-                if (skia.Parent != null)
-                    return GetParentElement(skia.Parent);
+                if (control is SkiaControl skia)
+                {
+                    if (skia.Parent != null)
+                        return GetParentElement(skia.Parent);
+                }
             }
 
             return null;
@@ -2364,7 +2367,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// This cuts shadows etc. You might want to enable it for some cases as it speeds up the rendering, it is False by default
         /// </summary>
-        public virtual bool IsClippedToBounds
+        public bool IsClippedToBounds
         {
             get { return (bool)GetValue(IsClippedToBoundsProperty); }
             set { SetValue(IsClippedToBoundsProperty, value); }
@@ -2376,7 +2379,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// This cuts shadows etc
         /// </summary>
-        public virtual bool ClipEffects
+        public bool ClipEffects
         {
             get { return (bool)GetValue(ClipEffectsProperty); }
             set { SetValue(ClipEffectsProperty, value); }
@@ -3592,6 +3595,7 @@ namespace DrawnUi.Maui.Draw
         {
             if (IsMeasuring) //basically we need this for cache double buffering to avoid conflicts with background thread
             {
+                NeedRemeasuring = true;
                 return MeasuredSize;
             }
 
@@ -3602,10 +3606,10 @@ namespace DrawnUi.Maui.Draw
                 RenderingScale = scale;
 
                 var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-                if (request.IsSame)
-                {
-                    return MeasuredSize;
-                }
+                //if (request.IsSame)
+                //{
+                //    return MeasuredSize;
+                //}
 
                 if (!this.CanDraw || request.WidthRequest == 0 || request.HeightRequest == 0)
                 {
@@ -3866,6 +3870,8 @@ namespace DrawnUi.Maui.Draw
         /// Flag for internal use, maynly used to avoid conflicts between measuring on ui-thread and in background. If true, measure will return last measured value.
         /// </summary>
         public bool IsMeasuring { get; protected internal set; }
+
+        protected object LockMeasure = new();
 
         /// <summary>
         /// Parameters in PIXELS. sets IsLayoutDirty = true;
@@ -4414,13 +4420,11 @@ namespace DrawnUi.Maui.Draw
             if (NeedRemeasuring)
             {
                 NeedRemeasuring = false;
-
             }
 
             if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
                 && RenderObject != null)
             {
-                //Debug.WriteLine($"[D] {Superview.CanvasView.CanvasSize.Width} -> {RenderObject.Bounds.Width} at {DrawingRect.Width}");
                 if (DrawingRect.Size != RenderObject.Bounds.Size)
                 {
                     InvalidateMeasure();
@@ -4659,7 +4663,7 @@ namespace DrawnUi.Maui.Draw
         {
             bool isClipping = false;
 
-            if ((IsClippedToBounds || Clipping != null) && useClipping)
+            if ((WillClipBounds || Clipping != null) && useClipping)
             {
                 isClipping = true;
 
@@ -4743,7 +4747,7 @@ namespace DrawnUi.Maui.Draw
 
             //clipped inside this view bounds
             //todo extract to PrepareClipping
-            if ((IsClippedToBounds || Clipping != null) && useClipping)
+            if ((WillClipBounds || Clipping != null) && useClipping)
             {
                 isClipping = true;
 
@@ -4974,8 +4978,8 @@ namespace DrawnUi.Maui.Draw
 
                 if (RenderObjectPrevious != null && RenderObjectPreviousNeedsUpdate
                     ||
-                    cacheType != SkiaCacheType.ImageDoubleBuffered
-                    && cacheType != SkiaCacheType.ImageComposite)
+                     cacheType != SkiaCacheType.ImageDoubleBuffered &&
+                     cacheType != SkiaCacheType.ImageComposite)
                 {
                     //this might happen only if we switch cache type at runtime
                     //while hotreloading etc.. rare case
@@ -5045,7 +5049,7 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-        private readonly LimitedQueue<Action> _offscreenCacheRenderingQueue = new(2);
+        private readonly LimitedQueue<Action> _offscreenCacheRenderingQueue = new(1);
 
 
         /// <summary>
@@ -5120,7 +5124,7 @@ namespace DrawnUi.Maui.Draw
                 Superview.PostponeExecutionAfterDraw(action);
         }
 
-
+        /*
         public async Task ProcessOffscreenCacheRenderingAsync()
         {
 
@@ -5147,12 +5151,57 @@ namespace DrawnUi.Maui.Draw
                         Super.Log(e);
                     }
                 }
+            }
+            finally
+            {
+                _processingOffscrenRendering = false;
+                semaphoreOffsecreenProcess.Release();
+
+                if (NeedUpdate || _offscreenCacheRenderingQueue.Count > 0) //someone changed us while rendering inner content
+                {
+                    Update(); //kick
+                }
+            }
+
+        }
+        */
+
+        public async Task ProcessOffscreenCacheRenderingAsync()
+        {
+
+            await semaphoreOffsecreenProcess.WaitAsync();
+
+            _processingOffscrenRendering = true;
+
+            try
+            {
+                Action action = _offscreenCacheRenderingQueue.Pop();
+                while (!IsDisposed && !IsDisposing && action != null)
+                {
+                    try
+                    {
+                        action.Invoke();
+
+                        RenderObject = RenderObjectPreparing;
+                        _renderObjectPreparing = null;
+
+                        if (Parent != null && !Parent.UpdateLocked)
+                        {
+                            Parent?.UpdateByChild(this); //repaint us
+                        }
+
+                        action = _offscreenCacheRenderingQueue.Pop();
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+                }
 
                 if (NeedUpdate) //someone changed us while rendering inner content
                 {
                     Update(); //kick
                 }
-
 
             }
             finally
@@ -5439,10 +5488,9 @@ namespace DrawnUi.Maui.Draw
                 throw new Exception("RenderObject already exists for CreateRenderingObjectAndPaint! Need to dispose and assign null to it before.");
             }
 
-            if (IsCacheImage && !IsClippedToBounds)
+            if (IsCacheImage && !WillClipBounds)
             {
-                IsClippedToBounds = true;
-                //throw new Exception("IsClippedToBounds is required to be TRUE for caching as image.");
+                throw new Exception("WillClipBounds is required to be TRUE for caching as image.");
             }
 
             RenderObjectNeedsUpdate = false;
@@ -5863,6 +5911,27 @@ namespace DrawnUi.Maui.Draw
             UpdateInternal();
         }
 
+        /// <summary>
+        /// Used to check whether to apply IsClippedToBounds property
+        /// </summary>
+        public virtual bool WillClipBounds
+        {
+            get
+            {
+                return IsClippedToBounds ||
+                       (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations);
+            }
+        }
+
+        public virtual bool WillClipEffects
+        {
+            get
+            {
+                return ClipEffects;
+            }
+        }
+
+
         protected virtual void UpdateInternal()
         {
             if (IsDisposing || IsDisposed)
@@ -5873,9 +5942,6 @@ namespace DrawnUi.Maui.Draw
 
             if (UpdateLocked)
                 return;
-
-            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
-                IsClippedToBounds = true;
 
             if (IsParentIndependent)
                 return;
