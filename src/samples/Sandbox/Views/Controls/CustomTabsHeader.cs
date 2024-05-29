@@ -177,7 +177,7 @@ public class DrawnTabsHeader : SkiaLayout
         {
             if (child != null)
             {
-                child.OnBeforeDraw(); //could set IsVisible or whatever inside
+                child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
                 if (child.CanDraw) //still visible 
                 {
                     if (child.Tag == "Active" && _clip != null)

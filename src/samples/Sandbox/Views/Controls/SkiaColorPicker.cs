@@ -131,7 +131,7 @@ public partial class SkiaColorPicker : SkiaLayout
                     }
 
                 }
-                child.OnBeforeDraw();
+                child.OptionalOnBeforeDrawing();
                 if (child.CanDraw) //still visible 
                 {
                     count++;

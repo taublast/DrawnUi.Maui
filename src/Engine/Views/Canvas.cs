@@ -123,7 +123,7 @@ public class Canvas : DrawnView, IGestureListener
         Size ret;
         NeedCheckParentVisibility = true;
 
-        if (NeedAutoSize || double.IsInfinity(heightConstraint) || double.IsInfinity(widthConstraint))
+        if (NeedAutoSize)
         {
             ret = AdaptSizeToContentIfNeeded(widthConstraint, heightConstraint, NeedMeasure);
         }
@@ -370,6 +370,7 @@ public class Canvas : DrawnView, IGestureListener
             IsHiddenInViewTree = false; //if we get a gesture, we are visible by design
             bool manageChildFocus = false;
 
+            //Super.Log($"[Touch] Canvas got {args.Type}");
 
             if (DebugGesturesColor != Colors.Transparent && args.Type == TouchActionResult.Down)
             {
@@ -681,6 +682,7 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
     {
+
         if (BackgroundColor != null)
         {
             context.Canvas.Clear(BackgroundColor.ToSKColor());
