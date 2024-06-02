@@ -22,8 +22,9 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
         Content?.Dispose();
     }
 
-    public virtual void OnFocusChanged(bool focus)
+    public virtual bool OnFocusChanged(bool focus)
     {
+        return false;
     }
 
     public virtual void OnAppeared()

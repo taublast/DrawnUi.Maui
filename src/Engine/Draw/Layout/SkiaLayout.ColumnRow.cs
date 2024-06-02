@@ -312,21 +312,28 @@ namespace DrawnUi.Maui.Draw
 
                 bool smartMeasuring = false;
 
-                if (Superview != null && !IsTemplated)
+                /*
+                List<SkiaControl> dirtyChildren = DirtyChildren.GetList();
+
+                if (Superview != null)
                 {
                     //enable measuring one changed item in foreground only,
                     //for background thread need full measurement
                     smartMeasuring =
                         WasMeasured
+                        && dirtyChildren.Count > 0
                         && Superview.DrawingThreadId == Thread.CurrentThread.ManagedThreadId
                                      && UsingCacheType != SkiaCacheType.ImageDoubleBuffered;
                 }
 
-                smartMeasuring = false;
-                /*
-                var dirty = DirtyChildren.GetList().FirstOrDefault();
+                var dirty = dirtyChildren.FirstOrDefault();
                 if (smartMeasuring && dirty != null)
                 {
+                    if (Tag == "InsectStack")
+                    {
+                        Super.Log($"[S] Measuring, smart ON");
+                    }
+
                     //measure only changed child
                     var viewIndex = -1;
                     if (IsTemplated)
@@ -459,6 +466,13 @@ namespace DrawnUi.Maui.Draw
                                 return newContentSize;
                             }
                         }
+                    }
+                }
+                else
+                {
+                    if (Tag == "InsectStack")
+                    {
+                        Super.Log($"[S] Measuring, smart OFF");
                     }
                 }
                 */

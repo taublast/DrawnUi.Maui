@@ -1,7 +1,5 @@
 ﻿using DrawnUi.Maui.Infrastructure.Enums;
 using DrawnUi.Maui.Infrastructure.Extensions;
-using Microsoft.Maui.Controls.Internals;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
@@ -1549,6 +1547,18 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public int DrawingThreads { get; protected set; }
 
+        protected Dictionary<Guid, SkiaControl> DirtyChildren = new();
+
+        public void SetChildAsDirty(SkiaControl child)
+        {
+            if (dirtyChilrenProcessing)
+                return;
+
+            DirtyChildren[child.Uid] = child;
+        }
+
+        private volatile bool dirtyChilrenProcessing;
+
         protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
             ++renderedFrames;
@@ -1622,7 +1632,7 @@ namespace DrawnUi.Maui.Views
 
                         foreach (var child in children)
                         {
-                            child.OnBeforeDraw(); //could set IsVisible or whatever inside
+                            child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
                             if (child.CanDraw) //still visible
                             {
                                 var rectForChild = new SKRect(
@@ -1633,6 +1643,18 @@ namespace DrawnUi.Maui.Views
                                 child.Render(context, rectForChild, (float)scale);
                             }
                         }
+
+                        dirtyChilrenProcessing = true;
+                        foreach (var child in DirtyChildren.Values)
+                        {
+                            if (child != null && !child.IsDisposing)
+                            {
+                                child.InvalidatedParent = false;
+                                child?.InvalidateParent();
+                            }
+                        }
+                        DirtyChildren.Clear();
+                        dirtyChilrenProcessing = false;
 
                         //notify registered tree final nodes of rendering tree state
                         foreach (var tree in RenderingTrees)
@@ -2280,25 +2302,42 @@ namespace DrawnUi.Maui.Views
                 if (_focusedChild != null)
                 {
                     Debug.WriteLine($"[UNFOCUSED] {_focusedChild}");
-                    if (_focusedChild != setter)
+                    if (_focusedChild != setter || setter == null)
                         _focusedChild.OnFocusChanged(false);
+
                     FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, false));
+                }
+
+
+
+                if (value != null)
+                {
+                    if (value != setter || setter == null)
+                    {
+                        var accept = value.OnFocusChanged(true);
+                        if (!accept)
+                        {
+                            value = null;
+                        }
+                    }
+
+                    if (value != null)
+                    {
+                        FocusedItemChanged?.Invoke(this, new(value as SkiaControl, true));
+                    }
                 }
 
                 _focusedChild = value;
                 Debug.WriteLine($"[FOCUSED] {_focusedChild}");
 
-                if (_focusedChild != null)
+                if (_focusedChild == null)
                 {
-                    if (_focusedChild != setter)
-                        _focusedChild.OnFocusChanged(true);
-                    FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, true));
-                }
-                else
-                {
+                    Debug.WriteLine($"[FOCUSED] {_focusedChild}");
+
                     //with delay maybe some other control will focus itsself in that time
                     ResetFocusWithDelay(150);
                 }
+
 
                 OnPropertyChanged(nameof(FocusedChild));
             }
@@ -2306,7 +2345,7 @@ namespace DrawnUi.Maui.Views
 
         private static RestartingTimer<object> _timerResetFocus;
 
-        void ResetFocusWithDelay(int ms)
+        public void ResetFocusWithDelay(int ms)
         {
             if (_timerResetFocus == null)
             {
@@ -2314,16 +2353,25 @@ namespace DrawnUi.Maui.Views
                 {
                     if (FocusedChild == null)
                     {
-                        try
+
+                        MainThread.BeginInvokeOnMainThread(() =>
                         {
-                            this.Focus();
-                        }
-                        catch (Exception e)
-                        {
-                            Super.Log(e);
-                        }
-                        TouchEffect.CloseKeyboard();
-                        FocusedItemChanged?.Invoke(this, new(null, false));
+                            try
+                            {
+                                this.Focus();
+                            }
+                            catch (Exception e)
+                            {
+                                Super.Log(e);
+                            }
+#if ANDROID
+                            ResetFocus();
+#else
+                            TouchEffect.CloseKeyboard();
+#endif
+                        });
+
+
                     }
                 });
                 _timerResetFocus.Start(null);

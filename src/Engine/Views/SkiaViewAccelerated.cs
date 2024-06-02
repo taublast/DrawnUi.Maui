@@ -232,7 +232,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
             var isDirty = OnDraw.Invoke(paintArgs.Surface, rect);
 
 #if ANDROID
-            if (maybeLowEnd && FPS > 200)
+            if (maybeLowEnd && FPS > 160)
             {
                 maybeLowEnd = false;
             }

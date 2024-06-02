@@ -82,8 +82,8 @@
 	</ItemGroup>
     
   <ItemGroup>
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.2.2.1" />
     <!--for parsing markdown text-->
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.2.1.1" />
     <PackageReference Include="Markdig" Version="0.34.0" />
     <!--for caching images-->
     <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />

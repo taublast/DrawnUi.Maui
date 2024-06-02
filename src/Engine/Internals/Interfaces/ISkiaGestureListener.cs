@@ -25,11 +25,13 @@ public interface ISkiaGestureListener
 
     DateTime GestureListenerRegistrationTime { get; set; }
 
+
     /// <summary>
-    /// This will be called only for views registered at Superview.FocusedChild
+    /// This will be called only for views registered at Superview.FocusedChild. The view will return it's overriden value to indicate if it accepts focus or grabs it.
     /// </summary>
     /// <param name="focus"></param>
-    public void OnFocusChanged(bool focus);
+    /// <returns></returns>
+    public bool OnFocusChanged(bool focus);
 
     public bool HitIsInside(float x, float y);
 }

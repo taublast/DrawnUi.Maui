@@ -260,8 +260,10 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        public virtual void OnFocusChanged(bool focus)
-        { }
+        public virtual bool OnFocusChanged(bool focus)
+        {
+            return false;
+        }
 
 
         public SkiaLayout()
@@ -526,7 +528,7 @@ namespace DrawnUi.Maui.Draw
             SkiaDrawingContext context,
             SKRect dest, ISkiaControl child, float scale)
         {
-            child.OnBeforeDraw(); //could set IsVisible or whatever inside
+            child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
 
             if (!child.CanDraw)
                 return false; //child set himself invisible
@@ -596,7 +598,9 @@ namespace DrawnUi.Maui.Draw
             if (ChildrenFactory == null)
                 return;
 
-            ChildrenFactory.TemplatesInvalidated = true;
+            //todo cannot really spam this if we find out we need this need to find some
+            //more optimizations to minimize the lag from recreating templates
+            //ChildrenFactory.TemplatesInvalidated = true;
 
             base.InvalidateWithChildren();
         }
@@ -675,7 +679,7 @@ namespace DrawnUi.Maui.Draw
             base.InvalidateByChild(child);
         }
 
-        protected object lockMeasure = new();
+        //protected object lockMeasure = new();
 
         SemaphoreSlim semaphoreItemTemplates = new(1);
 
@@ -851,6 +855,7 @@ namespace DrawnUi.Maui.Draw
         }
 
 
+
         /// <summary>
         /// If you call this while measurement is in process (IsMeasuring==True) will return last measured value.
         /// </summary>
@@ -880,7 +885,6 @@ namespace DrawnUi.Maui.Draw
 
                 CreateDefaultContent();
 
-
                 //lock (lockMeasure)
                 {
                     var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
@@ -897,8 +901,9 @@ namespace DrawnUi.Maui.Draw
 
                     if (IsTemplated)
                     {
-                        if (ChildrenFactory.TemplatesInvalidated)
+                        if (ChildrenFactory.TemplatesInvalidated && !ChildrenFactory.TemplesInvalidating)
                         {
+                            ChildrenFactory.TemplesInvalidating = true;
                             ApplyNewItemsSource = false;
                             ChildrenFactory.InitializeTemplates(CreateContentFromTemplate, ItemsSource,
                                 GetTemplatesPoolLimit(),

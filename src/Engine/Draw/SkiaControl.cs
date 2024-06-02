@@ -26,7 +26,6 @@ using SKRect = SkiaSharp.SKRect;
 using SKShader = SkiaSharp.SKShader;
 using SKSize = SkiaSharp.SKSize;
 
-
 namespace DrawnUi.Maui.Draw
 {
 
@@ -68,7 +67,18 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        /// Absolute position in pixels.
+        /// Absolute position in points
+        /// </summary>
+        /// <returns></returns>
+        public virtual SKPoint GetFuturePositionOnCanvasInPoints(bool useTranslation = true)
+        {
+            var position = GetFuturePositionOnCanvas(useTranslation);
+
+            return new(position.X / RenderingScale, position.Y / RenderingScale);
+        }
+
+        /// <summary>
+        /// Absolute position in pixels afetr drawn.
         /// </summary>
         /// <returns></returns>
         public virtual SKPoint GetPositionOnCanvas(bool useTranslation = true)
@@ -76,11 +86,22 @@ namespace DrawnUi.Maui.Draw
             //Debug.WriteLine($"GetPositionOnCanvas ------------------------START at {LastDrawnAt}");
 
             //ignore cache for this specific control only
-            var position = BuildDrawingOffsetRecursive(LastDrawnAt.Location, this, true, useTranslation);
+            var position = BuildDrawnOffsetRecursive(LastDrawnAt.Location, this, true, useTranslation);
 
             //Debug.WriteLine("GetPositionOnCanvas ------------------------END");
             return new(position.X, position.Y);
         }
+
+        /// <summary>
+        /// Absolute position in pixels before drawn.
+        /// </summary>
+        /// <returns></returns>
+        public virtual SKPoint GetFuturePositionOnCanvas(bool useTranslation = true)
+        {
+            var position = BuildDrawnOffsetRecursive(DrawingRect.Location, this, true, useTranslation);
+            return new(position.X, position.Y);
+        }
+
 
         /// <summary>
         /// Find drawing position for control accounting for all caches up the rendering tree.
@@ -129,23 +150,36 @@ namespace DrawnUi.Maui.Draw
         {
             if (control == null)
             {
-                //Debug.WriteLine($"[BuildDrawingOffsetRecursive] {this} returned {offset} for null control");
+                return offset;
+            }
+
+            var drawingOffset = control.GetFuturePositionOffsetInPixels(false, ignoreCache);
+            drawingOffset.Offset(offset);
+            var parent = control.Parent as SkiaControl;
+            if (parent == null)
+            {
+                drawingOffset.Offset(control.DrawingRect.Location);
+                return drawingOffset;
+            }
+            return BuildDrawingOffsetRecursive(drawingOffset, parent, false, useTranslation);
+        }
+
+        public SKPoint BuildDrawnOffsetRecursive(SKPoint offset, SkiaControl control, bool ignoreCache, bool useTranslation = true)
+        {
+            if (control == null)
+            {
                 return offset;
             }
 
             var drawingOffset = control.GetPositionOffsetInPixels(false, ignoreCache);
             drawingOffset.Offset(offset);
-
             var parent = control.Parent as SkiaControl;
-
             if (parent == null)
             {
                 drawingOffset.Offset(control.LastDrawnAt.Location);
-                //Debug.WriteLine($"[BuildDrawingOffsetRecursive] {this} returned {drawingOffset} for null parent");
                 return drawingOffset;
             }
-
-            return BuildDrawingOffsetRecursive(drawingOffset, parent, false, useTranslation);
+            return BuildDrawnOffsetRecursive(drawingOffset, parent, false, useTranslation);
         }
 
 
@@ -926,15 +960,17 @@ namespace DrawnUi.Maui.Draw
         }
         public static IDrawnBase GetParentElement(IDrawnBase control)
         {
-            if (control is DrawnView)
+            if (control != null)
             {
-                return control;
-            }
+                if (control is DrawnView)
+                {
+                    return control;
+                }
 
-            if (control is SkiaControl skia)
-            {
-                if (skia.Parent != null)
+                if (control is SkiaControl skia)
+                {
                     return GetParentElement(skia.Parent);
+                }
             }
 
             return null;
@@ -2364,7 +2400,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// This cuts shadows etc. You might want to enable it for some cases as it speeds up the rendering, it is False by default
         /// </summary>
-        public virtual bool IsClippedToBounds
+        public bool IsClippedToBounds
         {
             get { return (bool)GetValue(IsClippedToBoundsProperty); }
             set { SetValue(IsClippedToBoundsProperty, value); }
@@ -2376,7 +2412,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// This cuts shadows etc
         /// </summary>
-        public virtual bool ClipEffects
+        public bool ClipEffects
         {
             get { return (bool)GetValue(ClipEffectsProperty); }
             set { SetValue(ClipEffectsProperty, value); }
@@ -2544,10 +2580,26 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        public bool InvalidatedParent;
+        private bool _invalidatedParentPostponed;
+
         public virtual void InvalidateParent()
         {
             if (IsParentIndependent)
                 return;
+
+            if (InvalidatedParent)
+            {
+                if (IsRendering)
+                    _invalidatedParentPostponed = true;
+                else
+                {
+                    Superview?.SetChildAsDirty(this);
+                }
+                return;
+            }
+
+            InvalidatedParent = true;
 
             var parent = Parent;
             if (parent != null)
@@ -3234,6 +3286,32 @@ namespace DrawnUi.Maui.Draw
             return thisOffset;
         }
 
+        public virtual SKPoint CalculateFuturePositionOffset(bool cacheOnly = false,
+            bool ignoreCache = false,
+            bool useTranlsation = true)
+        {
+            var thisOffset = SKPoint.Empty;
+            if (!cacheOnly && useTranlsation)
+            {
+                thisOffset = new SKPoint((float)(UseTranslationX * RenderingScale), (float)(UseTranslationY * RenderingScale));
+            }
+            //inside a cached object coordinates are frozen at the moment the snapshot was taken
+            //so we must offset the coordinates to match the current drawing rect
+            if (!ignoreCache && UsingCacheType != SkiaCacheType.None)
+            {
+                if (RenderObject != null)
+                {
+                    thisOffset.Offset(RenderObject.CalculatePositionOffset(DrawingRect.Location));
+                }
+                else
+                if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered && RenderObjectPrevious != null)
+                {
+                    thisOffset.Offset(RenderObjectPrevious.CalculatePositionOffset(DrawingRect.Location));
+                }
+            }
+            return thisOffset;
+        }
+
         long _layoutChanged = 0;
 
         public SKRect ArrangedDestination { get; protected set; }
@@ -3592,6 +3670,7 @@ namespace DrawnUi.Maui.Draw
         {
             if (IsMeasuring) //basically we need this for cache double buffering to avoid conflicts with background thread
             {
+                NeedRemeasuring = true;
                 return MeasuredSize;
             }
 
@@ -3602,10 +3681,10 @@ namespace DrawnUi.Maui.Draw
                 RenderingScale = scale;
 
                 var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-                if (request.IsSame)
-                {
-                    return MeasuredSize;
-                }
+                //if (request.IsSame)
+                //{
+                //    return MeasuredSize;
+                //}
 
                 if (!this.CanDraw || request.WidthRequest == 0 || request.HeightRequest == 0)
                 {
@@ -3866,6 +3945,8 @@ namespace DrawnUi.Maui.Draw
         /// Flag for internal use, maynly used to avoid conflicts between measuring on ui-thread and in background. If true, measure will return last measured value.
         /// </summary>
         public bool IsMeasuring { get; protected internal set; }
+
+        protected object LockMeasure = new();
 
         /// <summary>
         /// Parameters in PIXELS. sets IsLayoutDirty = true;
@@ -4136,17 +4217,15 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-
         public virtual void OnBeforeMeasure()
         {
 
         }
 
-        public virtual void OnBeforeDraw()
+        public virtual void OptionalOnBeforeDrawing()
         {
             Superview?.UpdateRenderingChains(this);
         }
-
 
 
         /// <summary>
@@ -4222,6 +4301,8 @@ namespace DrawnUi.Maui.Draw
             return true;
         }
 
+        protected bool IsRendering { get; set; }
+
         public virtual void Render(SkiaDrawingContext context,
             SKRect destination,
             float scale)
@@ -4229,11 +4310,13 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposing || IsDisposed)
                 return;
 
+            IsRendering = true;
+
             Superview = context.Superview;
-
             RenderingScale = scale;
-
             NeedUpdate = false;
+
+            OnBeforeDrawing(context, destination, scale);
 
             if (WillInvalidateMeasure)
             {
@@ -4267,7 +4350,11 @@ namespace DrawnUi.Maui.Draw
 
             //UpdateLocked = false;
 
+            OnAfterDrawing(context, destination, scale);
+
             Rendered?.Invoke(this, null);
+
+            IsRendering = false;
         }
 
         public event EventHandler Rendered;
@@ -4285,6 +4372,61 @@ namespace DrawnUi.Maui.Draw
         public virtual object CreatePaintArguments()
         {
             return null;
+        }
+
+        protected virtual void OnBeforeDrawing(SkiaDrawingContext context,
+            SKRect destination,
+            float scale)
+        {
+            InvalidatedParent = false;
+            _invalidatedParentPostponed = false;
+        }
+
+        protected virtual void OnAfterDrawing(SkiaDrawingContext context,
+            SKRect destination,
+            float scale)
+        {
+            if (_invalidatedParentPostponed)
+            {
+                InvalidatedParent = false;
+                InvalidateParent();
+            }
+
+            if (UsingCacheType == SkiaCacheType.None)
+                NeedUpdate = false; //otherwise CreateRenderingObject will set this to false
+
+            //trying to find exact location on the canvas
+
+            LastDrawnAt = DrawingRect;
+
+            X = LastDrawnAt.Location.X / scale;
+            Y = LastDrawnAt.Location.Y / scale;
+
+            ExecutePostAnimators(context, scale);
+
+            if (NeedRemeasuring)
+            {
+                NeedRemeasuring = false;
+            }
+
+            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
+                && RenderObject != null)
+            {
+                if (DrawingRect.Size != RenderObject.Bounds.Size)
+                {
+                    InvalidateMeasure();
+                }
+            }
+            else
+            if (UsingCacheType == SkiaCacheType.ImageComposite
+                && RenderObjectPrevious != null)
+            {
+                if (DrawingRect.Size != RenderObjectPrevious.Bounds.Size)
+                {
+                    InvalidateMeasure();
+                }
+            }
+
         }
 
         /// <summary>
@@ -4328,7 +4470,7 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
-            FinalizeDraw(context, scale); //NeedUpdate will go false
+            FinalizeDrawingWithRenderObject(context, scale); //NeedUpdate will go false
 
             return willDraw;
         }
@@ -4397,44 +4539,9 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         /// <param name="context"></param>
         /// <param name="scale"></param>
-        protected void FinalizeDraw(SkiaDrawingContext context, double scale)
+        protected void FinalizeDrawingWithRenderObject(SkiaDrawingContext context, double scale)
         {
-            if (UsingCacheType == SkiaCacheType.None)
-                NeedUpdate = false; //otherwise CreateRenderingObject will set this to false
 
-            //trying to find exact location on the canvas
-
-            LastDrawnAt = DrawingRect;
-
-            X = LastDrawnAt.Location.X / scale;
-            Y = LastDrawnAt.Location.Y / scale;
-
-            ExecutePostAnimators(context, scale);
-
-            if (NeedRemeasuring)
-            {
-                NeedRemeasuring = false;
-
-            }
-
-            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
-                && RenderObject != null)
-            {
-                //Debug.WriteLine($"[D] {Superview.CanvasView.CanvasSize.Width} -> {RenderObject.Bounds.Width} at {DrawingRect.Width}");
-                if (DrawingRect.Size != RenderObject.Bounds.Size)
-                {
-                    InvalidateMeasure();
-                }
-            }
-            else
-            if (UsingCacheType == SkiaCacheType.ImageComposite
-                && RenderObjectPrevious != null)
-            {
-                if (DrawingRect.Size != RenderObjectPrevious.Bounds.Size)
-                {
-                    InvalidateMeasure();
-                }
-            }
 
         }
 
@@ -4449,6 +4556,14 @@ namespace DrawnUi.Maui.Draw
         public SKPoint GetPositionOffsetInPixels(bool cacheOnly = false, bool ignoreCache = false, bool useTranslation = true)
         {
             var thisOffset = CalculatePositionOffset(cacheOnly, ignoreCache, useTranslation);
+            var x = (thisOffset.X);
+            var y = (thisOffset.Y);
+            return new((float)x, (float)y);
+        }
+
+        public SKPoint GetFuturePositionOffsetInPixels(bool cacheOnly = false, bool ignoreCache = false, bool useTranslation = true)
+        {
+            var thisOffset = CalculateFuturePositionOffset(cacheOnly, ignoreCache, useTranslation);
             var x = (thisOffset.X);
             var y = (thisOffset.Y);
             return new((float)x, (float)y);
@@ -4649,35 +4764,24 @@ namespace DrawnUi.Maui.Draw
         public SK3dView Helper3d;
 #endif
 
+
+
         public void DrawWithClipAndTransforms(
-            SkiaDrawingContext ctx,
-            SKRect destination,
-            SKRect transformsArea,
-            bool useOpacity,
-            bool useClipping,
-            Action<SkiaDrawingContext> draw)
+         SkiaDrawingContext ctx,
+         SKRect destination,
+         SKRect transformsArea,
+         bool useOpacity,
+         bool useClipping,
+         Action<SkiaDrawingContext> draw)
         {
-            bool isClipping = false;
+            bool isClipping = (WillClipBounds || Clipping != null) && useClipping;
 
-            if ((IsClippedToBounds || Clipping != null) && useClipping)
+            if (isClipping)
             {
-                isClipping = true;
-
-                if (_preparedClipBounds == null)
-                {
-                    _preparedClipBounds = new SKPath();
-                }
-                else
-                {
-                    _preparedClipBounds.Reset();
-                }
-
+                _preparedClipBounds ??= new SKPath();
+                _preparedClipBounds.Reset();
                 _preparedClipBounds.AddRect(destination);
-
-                if (Clipping != null)
-                {
-                    Clipping.Invoke(_preparedClipBounds, destination);
-                }
+                Clipping?.Invoke(_preparedClipBounds, destination);
             }
 
             bool applyOpacity = useOpacity && Opacity < 1;
@@ -4685,21 +4789,13 @@ namespace DrawnUi.Maui.Draw
 
             if (applyOpacity || isClipping || needTransform || CustomizeLayerPaint != null)
             {
-                _paintWithOpacity ??= new SKPaint();
-
-                if (IsDistorted)
+                _paintWithOpacity ??= new SKPaint
                 {
-                    _paintWithOpacity.IsAntialias = true;
-                    _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
-                }
-                else
-                {
-                    _paintWithOpacity.IsAntialias = false;
-                    _paintWithOpacity.FilterQuality = SKFilterQuality.None;
-                }
+                    IsAntialias = IsDistorted,
+                    FilterQuality = IsDistorted ? SKFilterQuality.Medium : SKFilterQuality.None
+                };
 
-                var alpha = (byte)(0xFF * Opacity);
-                _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
+                _paintWithOpacity.Color = SKColors.White.WithAlpha((byte)(0xFF * Opacity));
 
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {
@@ -4722,7 +4818,6 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 draw(ctx);
-
                 ctx.Canvas.Restore();
             }
             else
@@ -4730,123 +4825,24 @@ namespace DrawnUi.Maui.Draw
                 draw(ctx);
             }
         }
-
-        /*
-        public void DrawWithClipAndTransforms(
-           SkiaDrawingContext ctx,
-           SKRect destination,
-           bool useOpacity,
-           bool useClipping,
-           Action<SkiaDrawingContext> draw)
-        {
-            bool isClipping = false;
-
-            //clipped inside this view bounds
-            //todo extract to PrepareClipping
-            if ((IsClippedToBounds || Clipping != null) && useClipping)
-            {
-                isClipping = true;
-
-                if (_preparedClipBounds == null)
-                {
-                    _preparedClipBounds = new();
-                }
-                else
-                {
-                    _preparedClipBounds.Reset();
-                }
-
-                _preparedClipBounds.AddRect(destination);
-
-                if (Clipping != null)
-                {
-                    Clipping.Invoke(_preparedClipBounds, destination);
-                }
-
-            }
-
-            bool applyOpacity = useOpacity && Opacity < 1;
-            bool needTransform = HasTransform;
-
-            if (applyOpacity || isClipping || needTransform
-                || CustomizeLayerPaint != null)
-            {
-                _paintWithOpacity ??= new SKPaint();
-
-                if (IsDistorted)
-                {
-                    _paintWithOpacity.IsAntialias = true;
-                    _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
-                }
-                else
-                {
-                    _paintWithOpacity.IsAntialias = false;
-                    _paintWithOpacity.FilterQuality = SKFilterQuality.None;
-                }
-
-                var alpha = (byte)(0xFF / 1.0 * Opacity);
-                _paintWithOpacity.Color = SKColors.White.WithAlpha(alpha);
-
-                if (applyOpacity || CustomizeLayerPaint != null)
-                {
-                    if (CustomizeLayerPaint != null)
-                    {
-                        CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
-                    }
-
-                    ctx.Canvas.SaveLayer(_paintWithOpacity);
-                }
-                else
-                {
-                    ctx.Canvas.Save();
-                }
-
-                if (needTransform)
-                {
-                    ApplyTransforms(ctx, destination);
-                }
-
-                if (isClipping)
-                {
-                    ctx.Canvas.ClipPath(_preparedClipBounds, SKClipOperation.Intersect, true);
-                }
-
-                draw(ctx);
-
-                ctx.Canvas.Restore();
-            }
-            else
-            {
-                draw(ctx);
-            }
-
-        }
-        */
 
         protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
         {
             var moveX = (int)Math.Round(UseTranslationX * RenderingScale);
             var moveY = (int)Math.Round(UseTranslationY * RenderingScale);
 
-            var pivotX = (float)(destination.Left + destination.Width * TransformPivotPointX);
-            var pivotY = (float)(destination.Top + destination.Height * TransformPivotPointY);
+            float pivotX = (float)(destination.Left + destination.Width * TransformPivotPointX);
+            float pivotY = (float)(destination.Top + destination.Height * TransformPivotPointY);
 
-            var centerX = (float)(moveX + destination.Left + destination.Width * TransformPivotPointX);
-            var centerY = (float)(moveY + destination.Top + destination.Height * TransformPivotPointY);
+            var centerX = moveX + destination.Left + destination.Width * TransformPivotPointX;
+            var centerY = moveY + destination.Top + destination.Height * TransformPivotPointY;
 
-
-
-            var skewX = 0f;
-            if (SkewX > 0)
-                skewX = (float)Math.Tan(Math.PI * SkewX / 180f);
-
-            var skewY = 0f;
-            if (SkewY > 0)
-                skewY = (float)Math.Tan(Math.PI * SkewY / 180f);
+            var skewX = SkewX > 0 ? (float)Math.Tan(Math.PI * SkewX / 180f) : 0f;
+            var skewY = SkewY > 0 ? (float)Math.Tan(Math.PI * SkewY / 180f) : 0f;
 
             if (Rotation != 0)
             {
-                ctx.Canvas.RotateDegrees((float)this.Rotation, centerX, centerY);
+                ctx.Canvas.RotateDegrees((float)Rotation, (float)centerX, (float)centerY);
             }
 
             var matrixTransforms = new SKMatrix
@@ -4858,60 +4854,40 @@ namespace DrawnUi.Maui.Draw
                 SkewX = skewX,
                 SkewY = skewY,
                 Persp2 = 1,
-                ScaleX = (float)this.ScaleX,
-                ScaleY = (float)this.ScaleY,
+                ScaleX = (float)ScaleX,
+                ScaleY = (float)ScaleY
             };
 
-            //set pivot point
-            //var DrawingMatrix = SKMatrix.CreateTranslation(-centerX, -centerY);
-            var DrawingMatrix = SKMatrix.CreateTranslation(-pivotX, -pivotY);
+            var drawingMatrix = SKMatrix.CreateTranslation((float)-pivotX, (float)-pivotY).PostConcat(matrixTransforms);
 
-            //apply stuff
-            DrawingMatrix = DrawingMatrix.PostConcat(matrixTransforms);
-
-#if SKIA3
-                    if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
-                    {
-                        if (Helper3d == null)
-                        {
-                            Helper3d = new();
-                        }
-                        Helper3d.Reset();
-                        Helper3d.RotateXDegrees(CameraAngleX);
-                        Helper3d.RotateYDegrees(CameraAngleY);
-                        Helper3d.RotateZDegrees(CameraAngleZ);
-                        if (CameraTranslationZ != 0)
-                        {
-                            Helper3d.TranslateZ(CameraTranslationZ);
-                        }
-                        DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.GetMatrix());
-                    }
-#else
             if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
             {
-                if (Helper3d == null)
-                {
-                    Helper3d = new();
-                }
+                Helper3d ??= new();
+#if SKIA3
+        Helper3d.Reset();
+        Helper3d.RotateXDegrees(CameraAngleX);
+        Helper3d.RotateYDegrees(CameraAngleY);
+        Helper3d.RotateZDegrees(CameraAngleZ);
+        if (CameraTranslationZ != 0) Helper3d.TranslateZ(CameraTranslationZ);
+        drawingMatrix = drawingMatrix.PostConcat(Helper3d.GetMatrix());
+#else
                 Helper3d.Save();
                 Helper3d.RotateXDegrees(CameraAngleX);
                 Helper3d.RotateYDegrees(CameraAngleY);
                 Helper3d.RotateZDegrees(CameraAngleZ);
-                if (CameraTranslationZ != 0)
-                    Helper3d.TranslateZ(CameraTranslationZ);
-                DrawingMatrix = DrawingMatrix.PostConcat(Helper3d.Matrix);
+                if (CameraTranslationZ != 0) Helper3d.TranslateZ(CameraTranslationZ);
+                drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
                 Helper3d.Restore();
-            }
 #endif
+            }
 
-            //restore coordinates back
-            DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY));
+            drawingMatrix = drawingMatrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY))
+                                          .PostConcat(ctx.Canvas.TotalMatrix);
 
-            //apply parent's transforms
-            DrawingMatrix = DrawingMatrix.PostConcat(ctx.Canvas.TotalMatrix);
-
-            ctx.Canvas.SetMatrix(DrawingMatrix);
+            ctx.Canvas.SetMatrix(drawingMatrix);
         }
+
+
 
 
         public virtual bool NeedMeasure
@@ -4974,8 +4950,8 @@ namespace DrawnUi.Maui.Draw
 
                 if (RenderObjectPrevious != null && RenderObjectPreviousNeedsUpdate
                     ||
-                    cacheType != SkiaCacheType.ImageDoubleBuffered
-                    && cacheType != SkiaCacheType.ImageComposite)
+                     cacheType != SkiaCacheType.ImageDoubleBuffered &&
+                     cacheType != SkiaCacheType.ImageComposite)
                 {
                     //this might happen only if we switch cache type at runtime
                     //while hotreloading etc.. rare case
@@ -5045,7 +5021,7 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-        private readonly LimitedQueue<Action> _offscreenCacheRenderingQueue = new(2);
+        private readonly LimitedQueue<Action> _offscreenCacheRenderingQueue = new(1);
 
 
         /// <summary>
@@ -5120,7 +5096,7 @@ namespace DrawnUi.Maui.Draw
                 Superview.PostponeExecutionAfterDraw(action);
         }
 
-
+        /*
         public async Task ProcessOffscreenCacheRenderingAsync()
         {
 
@@ -5147,12 +5123,57 @@ namespace DrawnUi.Maui.Draw
                         Super.Log(e);
                     }
                 }
+            }
+            finally
+            {
+                _processingOffscrenRendering = false;
+                semaphoreOffsecreenProcess.Release();
+
+                if (NeedUpdate || _offscreenCacheRenderingQueue.Count > 0) //someone changed us while rendering inner content
+                {
+                    Update(); //kick
+                }
+            }
+
+        }
+        */
+
+        public async Task ProcessOffscreenCacheRenderingAsync()
+        {
+
+            await semaphoreOffsecreenProcess.WaitAsync();
+
+            _processingOffscrenRendering = true;
+
+            try
+            {
+                Action action = _offscreenCacheRenderingQueue.Pop();
+                while (!IsDisposed && !IsDisposing && action != null)
+                {
+                    try
+                    {
+                        action.Invoke();
+
+                        RenderObject = RenderObjectPreparing;
+                        _renderObjectPreparing = null;
+
+                        if (Parent != null && !Parent.UpdateLocked)
+                        {
+                            Parent?.UpdateByChild(this); //repaint us
+                        }
+
+                        action = _offscreenCacheRenderingQueue.Pop();
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+                }
 
                 if (NeedUpdate) //someone changed us while rendering inner content
                 {
                     Update(); //kick
                 }
-
 
             }
             finally
@@ -5439,10 +5460,9 @@ namespace DrawnUi.Maui.Draw
                 throw new Exception("RenderObject already exists for CreateRenderingObjectAndPaint! Need to dispose and assign null to it before.");
             }
 
-            if (IsCacheImage && !IsClippedToBounds)
+            if (IsCacheImage && !WillClipBounds)
             {
-                IsClippedToBounds = true;
-                //throw new Exception("IsClippedToBounds is required to be TRUE for caching as image.");
+                throw new Exception("WillClipBounds is required to be TRUE for caching as image.");
             }
 
             RenderObjectNeedsUpdate = false;
@@ -5695,7 +5715,7 @@ namespace DrawnUi.Maui.Draw
             {
                 if (child != null)
                 {
-                    child.OnBeforeDraw(); //could set IsVisible or whatever inside
+                    child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
                     if (child.CanDraw) //still visible 
                     {
                         child.Render(context, destination, scale);
@@ -5863,6 +5883,27 @@ namespace DrawnUi.Maui.Draw
             UpdateInternal();
         }
 
+        /// <summary>
+        /// Used to check whether to apply IsClippedToBounds property
+        /// </summary>
+        public virtual bool WillClipBounds
+        {
+            get
+            {
+                return IsClippedToBounds ||
+                       (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations);
+            }
+        }
+
+        public virtual bool WillClipEffects
+        {
+            get
+            {
+                return ClipEffects;
+            }
+        }
+
+
         protected virtual void UpdateInternal()
         {
             if (IsDisposing || IsDisposed)
@@ -5873,9 +5914,6 @@ namespace DrawnUi.Maui.Draw
 
             if (UpdateLocked)
                 return;
-
-            if (UsingCacheType != SkiaCacheType.None && UsingCacheType != SkiaCacheType.Operations)
-                IsClippedToBounds = true;
 
             if (IsParentIndependent)
                 return;

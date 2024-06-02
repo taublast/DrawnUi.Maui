@@ -16,6 +16,17 @@ public partial class MauiEditor : Editor
         return ret;
     }
 
+    public static readonly BindableProperty MaxLinesProperty = BindableProperty.Create(nameof(MaxLines),
+        typeof(int), typeof(MauiEditor), -1);
+    /// <summary>
+    /// WIth 1 will behave like an ordinary Entry, with -1 (auto) or explicitly set you get an Editor
+    /// </summary>
+    public int MaxLines
+    {
+        get { return (int)GetValue(MaxLinesProperty); }
+        set { SetValue(MaxLinesProperty, value); }
+    }
+
     public static readonly BindableProperty ReturnTypeProperty = BindableProperty.Create(nameof(ReturnType),
     typeof(ReturnType),
     typeof(MauiEditor),

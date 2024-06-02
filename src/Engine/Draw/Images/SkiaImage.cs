@@ -71,7 +71,8 @@ public class SkiaImage : SkiaControl
         return null;
     }
 
-    public override bool IsClippedToBounds => true;
+    public override bool WillClipBounds => true;
+
 
     public CancellationTokenSource CancelLoading;
 
@@ -1118,6 +1119,7 @@ propertyChanged: NeedChangeColorFIlter);
         //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
         if (IsDisposing || IsDisposed)
             return;
+
 
 
         LoadSourceIfNeeded();

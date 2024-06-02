@@ -46,6 +46,8 @@
             {
                 if (Element is IView view && Element.Handler != null && ptsWidth > 0 && ptsHeight > 0 && LayoutReady)
                 {
+                    //todo System.InvalidOperationException: Unable to convert DrawnUi.Maui.Controls.MauiEditor to Android.Views.View
+
                     var measured = view.Measure(
                         ptsWidth - (this.Padding.Left + this.Padding.Right),
                         ptsHeight - (this.Padding.Top + this.Padding.Bottom)

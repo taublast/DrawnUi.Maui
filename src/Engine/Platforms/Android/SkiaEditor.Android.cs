@@ -92,6 +92,33 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        protected override void OnPropertyChanged(string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+
+            //todo use mapper
+
+            if (propertyName == nameof(MaxLines))
+            {
+                if (MaxLines == 1)
+                {
+                    Control.SetMaxLines(1);
+                    Control.SetSingleLine(true);
+                }
+                else
+                {
+                    if (MaxLines > 1)
+                    {
+                        Control.SetMaxLines(1);
+                    }
+                    else
+                    {
+                        Control.SetMaxLines(0);
+                    }
+                    Control.SetSingleLine(false);
+                }
+            }
+        }
 
 
         void CreateNativeControl()

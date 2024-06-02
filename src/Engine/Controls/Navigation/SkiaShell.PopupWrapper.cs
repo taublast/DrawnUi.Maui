@@ -97,6 +97,8 @@ public partial class SkiaShell
                     Backdrop.IsVisible = false;
                 }
             }
+
+            FinalizeDrawingWithRenderObject(context, scale);
         }
 
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)

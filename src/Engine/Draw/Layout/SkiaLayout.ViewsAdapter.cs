@@ -29,9 +29,9 @@ public class ViewsAdapter : IDisposable
 
     protected void UpdateVisibleViews()
     {
-        //lock (lockVisible)
+        lock (lockVisible)
         {
-            foreach (var view in _dicoCellsInUse.Values)
+            foreach (var view in _dicoCellsInUse.Values.ToList())
             {
                 view.InvalidateInternal();
             }
@@ -65,7 +65,7 @@ public class ViewsAdapter : IDisposable
 
     public void MarkAllViewsAsHidden()
     {
-        //lock (lockVisible)
+        lock (lockVisible)
         {
             // Add all visible views back to the recycling pool (e.g., _viewModelPool.Return(hiddenView))
             foreach (var hiddenView in _dicoCellsInUse.Values)
@@ -109,6 +109,7 @@ public class ViewsAdapter : IDisposable
         //lock (_lockTemplates)
         {
             view.Parent = _parent;
+            if (index == 0 || view.ContextIndex != index)
             //if (view.BindingContext == null || _parent.RecyclingTemplate == RecyclingTemplate.Enabled)
             {
                 try
@@ -203,7 +204,6 @@ public class ViewsAdapter : IDisposable
                 if (_parent.IsTemplated)
                 {
 
-
                     if (_dicoCellsInUse.TryGetValue(index, out SkiaControl ready))
                     {
                         if (LogEnabled)
@@ -296,6 +296,8 @@ public class ViewsAdapter : IDisposable
     private readonly Dictionary<int, ViewsIterator> _wrappers =
         new();
 
+    public bool TemplesInvalidating;
+
     public bool TemplatesInvalidated
     {
         get => _templatesInvalidated;
@@ -351,6 +353,7 @@ public class ViewsAdapter : IDisposable
             if (template == null)
             {
                 TemplatesInvalidated = false;
+                TemplesInvalidating = false;
                 return;
             }
 
@@ -358,6 +361,8 @@ public class ViewsAdapter : IDisposable
             {
                 //lock (_lockTemplates)
                 {
+                    TemplesInvalidating = false;
+
                     var kill = _templatedViewsPool;
 
                     _dicoCellsInUse.Clear();
@@ -386,8 +391,11 @@ public class ViewsAdapter : IDisposable
 
             void InitializeSoft(bool layoutChanged)
             {
+
                 //lock (_lockTemplates)
                 {
+                    TemplesInvalidating = false;
+
                     _templatedViewsPool.MaxSize = poolSize;
                     if (layoutChanged)
                     {
@@ -442,6 +450,8 @@ public class ViewsAdapter : IDisposable
                     {
                         Task.Run(async () => //100% background thread
                         {
+
+
                             try
                             {
                                 await InitializeFull(_parent.RecyclingTemplate == RecyclingTemplate.Disabled);
@@ -456,7 +466,7 @@ public class ViewsAdapter : IDisposable
                 }
                 else
                 {
-                    InitializeFull(false).ConfigureAwait(false);
+                    InitializeFull(false);//.ConfigureAwait(false);
                 }
             }
             else
@@ -601,7 +611,7 @@ public class ViewsAdapter : IDisposable
 
     public void PrintDebugVisible()
     {
-        //lock (lockVisible)
+        lock (lockVisible)
         {
             Trace.WriteLine($"Visible views {_dicoCellsInUse.Count}:");
             foreach (var view in _dicoCellsInUse.Values)

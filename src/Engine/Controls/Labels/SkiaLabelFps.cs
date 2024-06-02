@@ -103,6 +103,8 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
         //		});
         //	_restartingTimer.Kick(null);
         //}
+        FinalizeDrawingWithRenderObject(context, scale);
+
     }
 
 

@@ -129,8 +129,8 @@ public partial class SkiaScroll
             if (_orderedOffsetY != value)
             {
                 _orderedOffsetY = value;
-                //Debug.WriteLine($"[ViewportOffsetY] {value}");
-                Update();
+                if (!NeedUpdate)
+                    Update();
                 OnPropertyChanged();
             }
         }
@@ -151,7 +151,8 @@ public partial class SkiaScroll
             if (_viewportOffsetX != value)
             {
                 _viewportOffsetX = value;
-                Update();
+                if (!NeedUpdate)
+                    Update();
                 OnPropertyChanged();
             }
         }

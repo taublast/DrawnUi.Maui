@@ -196,5 +196,6 @@ public partial class SkiaDecoratedGrid : SkiaLayout
         if (ContainerLines != null)
             ContainerLines.Render(context, GetDrawingRectForChildren(Destination, scale), scale);
 
+        FinalizeDrawingWithRenderObject(context, scale);
     }
 }
