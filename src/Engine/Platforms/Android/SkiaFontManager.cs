@@ -14,15 +14,25 @@
             var font = SKTypeface.FromFamilyName(alias);
             if (font == null)
             {
-                var registrar = FontRegistrar;
-                var realName = registrar.GetFont(alias);
-                if (!string.IsNullOrEmpty(realName))
+                try
                 {
-                    using (Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(realName))
+
+                    var registrar = FontRegistrar;
+                    var realName = registrar.GetFont(alias);
+                    if (!string.IsNullOrEmpty(realName))
                     {
-                        font = SKTypeface.FromStream(fileStream);
+                        using (Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(realName))
+                        {
+                            font = SKTypeface.FromStream(fileStream);
+                        }
                     }
+
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
             }
 
             if (font == null)

@@ -134,9 +134,9 @@ public static partial class AddGestures
             return base.ProcessGestures(args, apply);
         }
 
-        public void OnFocusChanged(bool focus)
+        public virtual bool OnFocusChanged(bool focus)
         {
-
+            return false;
         }
     }
 

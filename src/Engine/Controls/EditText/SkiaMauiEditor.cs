@@ -20,6 +20,18 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         return this;
     }
 
+    public static readonly BindableProperty MaxLinesProperty = BindableProperty.Create(nameof(MaxLines),
+        typeof(int), typeof(SkiaMauiEditor), -1);
+    /// <summary>
+    /// WIth 1 will behave like an ordinary Entry, with -1 (auto) or explicitly set you get an Editor
+    /// </summary>
+    public int MaxLines
+    {
+        get { return (int)GetValue(MaxLinesProperty); }
+        set { SetValue(MaxLinesProperty, value); }
+    }
+
+
 #if ONPLATFORM
     public override void SetNativeVisibility(bool state)
     {
@@ -55,14 +67,13 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     public override bool WillClipBounds => true;
 
 
-    protected virtual void MapProps(Editor control)
+    protected virtual void MapProps(MauiEditor control)
     {
         var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
         control.FontFamily = alias;
         control.FontSize = FontSize;
         control.TextColor = this.TextColor;
-        //control.ReturnType = this.ReturnType;
-
+        control.ReturnType = this.ReturnType;
         control.Keyboard = this.KeyboardType;
         control.Text = Text;
         //todo customize
@@ -88,7 +99,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         return Control;
     }
 
-    public Editor Control { get; protected set; }
+    public MauiEditor Control { get; protected set; }
 
     protected void FocusNative()
     {
@@ -233,7 +244,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     /// Called by DrawnUi when the focus changes
     /// </summary>
     /// <param name="focus"></param>
-    public void OnFocusChanged(bool focus)
+    public bool OnFocusChanged(bool focus)
     {
         lock (lockFocus)
         {
@@ -247,6 +258,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
                         FocusNative();
                 });
             }
+            return true;
         }
     }
 

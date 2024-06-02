@@ -173,8 +173,10 @@ namespace DrawnUi.Maui.Draw
         #region PROPERTIES
 
 
-        public virtual void OnFocusChanged(bool focus)
-        { }
+        public virtual bool OnFocusChanged(bool focus)
+        {
+            return false;
+        }
 
         public static readonly BindableProperty ShimmerEffectColorProperty = BindableProperty.Create(nameof(ShimmerEffectColor),
             typeof(Color),

@@ -154,8 +154,8 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         control.MaxLines = MaxLines;
         control.FontSize = FontSize;
         control.TextColor = this.TextColor;
-        //control.ReturnType = this.ReturnType;
-        //control.Keyboard = this.KeyboardType;
+        control.ReturnType = this.ReturnType;
+        control.Keyboard = this.KeyboardType;
         if (Text != control.Text)
             control.Text = Text;
         //todo customize
@@ -236,7 +236,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     /// <param name="e"></param>
     private void OnControlFocused(object sender, FocusEventArgs e)
     {
-        //Debug.WriteLine($"[SKiaMauiEntry] Focused by native");
+        Debug.WriteLine($"[SKiaMauiEntry] Focused by native");
         lock (lockFocus)
         {
             Superview.ReportFocus(this, this);
@@ -250,7 +250,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     /// <param name="e"></param>
     private void OnControlUnfocused(object sender, FocusEventArgs e)
     {
-        //Debug.WriteLine($"[SKiaMauiEntry] Unfocused by native");
+        Debug.WriteLine($"[SKiaMauiEntry] Unfocused by native");
         lock (lockFocus)
         {
             if (Superview.FocusedChild == this)
@@ -264,7 +264,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     /// Called by DrawnUi when the focus changes
     /// </summary>
     /// <param name="focus"></param>
-    public void OnFocusChanged(bool focus)
+    public bool OnFocusChanged(bool focus)
     {
         lock (lockFocus)
         {
@@ -278,6 +278,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
                         FocusNative();
                 });
             }
+            return true;
         }
     }
 
@@ -443,7 +444,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         nameof(KeyboardType),
         typeof(Keyboard),
         typeof(SkiaMauiEntry),
-        Keyboard.Default,
+        Keyboard.Plain,
         propertyChanged: NeedUpdateControl);
 
     [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.KeyboardTypeConverter))]

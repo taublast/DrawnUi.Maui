@@ -137,6 +137,10 @@ public partial class MauiEditorHandler : EditorHandler
     {
         if (_control != null)
         {
+            if (_control is SubclassedAppCompatEditText custom)
+            {
+                custom.SetReturnType(Control.ReturnType);
+            }
             _control.SetPadding(0, 0, 0, 0);
             _control.VerticalScrollBarEnabled = true;
             _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
@@ -160,8 +164,13 @@ public partial class MauiEditorHandler : EditorHandler
         //platformView.EditorAction -= OnEditorAction;
     }
 
+    private MauiEditor Control;
+
     protected override AppCompatEditText CreatePlatformView()
     {
+        //var native = base.CreatePlatformView();
+        Control = this.VirtualView as MauiEditor;
+
         var editText = new SubclassedAppCompatEditText(Context)
         {
             ImeOptions = ImeAction.Done,
@@ -177,10 +186,10 @@ public partial class MauiEditorHandler : EditorHandler
         //return base.CreatePlatformView();
     }
 
-    public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
-    {
-        return base.GetDesiredSize(widthConstraint, heightConstraint);
-    }
+    //public override Size GetDesiredSize(double widthConstraint, double heightConstraint)
+    //{
+    //    return base.GetDesiredSize(widthConstraint, heightConstraint);
+    //}
 
     private bool once;
 
@@ -221,10 +230,36 @@ public partial class MauiEditorHandler : EditorHandler
 
     public class SubclassedAppCompatEditText : AppCompatEditText
     {
-        protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
-        {
-            base.OnLayout(changed, left, top, right, bottom);
 
+        public void SetReturnType(ReturnType returnType)
+        {
+            ImeAction imeOptions;
+
+            switch (returnType)
+            {
+            case ReturnType.Done:
+            imeOptions = ImeAction.Done;
+            break;
+            case ReturnType.Go:
+            imeOptions = ImeAction.Go;
+            break;
+            case ReturnType.Next:
+            imeOptions = ImeAction.Next;
+            break;
+            case ReturnType.Search:
+            imeOptions = ImeAction.Search;
+            break;
+            case ReturnType.Send:
+            imeOptions = ImeAction.Send;
+            break;
+            default:
+            imeOptions = ImeAction.Unspecified;
+            break;
+            }
+
+            ImeOptions = imeOptions;
+
+            RequestLayout();
         }
 
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
@@ -256,11 +291,15 @@ public partial class MauiEditorHandler : EditorHandler
         public override IInputConnection OnCreateInputConnection(EditorInfo outAttrs)
         {
             RequestLayout();
+
             Invalidate();
 
             var conn = base.OnCreateInputConnection(outAttrs);
 
-            outAttrs.ImeOptions &= ~Android.Views.InputMethods.ImeFlags.NoEnterAction;
+            if (ImeOptions != ImeAction.Unspecified)
+            {
+                outAttrs.ImeOptions &= ~Android.Views.InputMethods.ImeFlags.NoEnterAction;
+            }
 
             return conn;
         }

@@ -1061,8 +1061,10 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public virtual void OnFocusChanged(bool focus)
-        { }
+        public virtual bool OnFocusChanged(bool focus)
+        {
+            return false;
+        }
 
 
         SkiaSpringWithVelocityAnimator _animatorBounce;
@@ -2691,8 +2693,8 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                var posX = (int)Math.Round(ViewportOffsetX * _zoomedScale);
-                var posY = (int)Math.Round(ViewportOffsetY * _zoomedScale);
+                var posX = (ViewportOffsetX * _zoomedScale);
+                var posY = (ViewportOffsetY * _zoomedScale);
 
                 var needReposition =
                                      _updatedViewportForPixY != posY
@@ -2929,8 +2931,8 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        int _updatedViewportForPixX;
-        int _updatedViewportForPixY;
+        float _updatedViewportForPixX;
+        float _updatedViewportForPixY;
         //float _lastPosViewportScale;
 
         public SKRect ContentAvailableSpace { get; protected set; }

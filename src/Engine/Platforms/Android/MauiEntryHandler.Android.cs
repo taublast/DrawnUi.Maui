@@ -20,6 +20,7 @@ namespace DrawnUi.Maui.Controls;
 public partial class MauiEntryHandler : EntryHandler
 {
 
+    #region UNUSED
     static IPropertyMapper<IEntry, IEntryHandler> ChangeMapper()
     {
         var mapper = new MyMapper(Mapper);
@@ -62,11 +63,6 @@ public partial class MauiEntryHandler : EntryHandler
 
     //}
 
-
-    AppCompatEditText _control;
-
-    protected MauiEntry Control => VirtualView as MauiEntry;
-
     public static void MapAllSettings(IEntryHandler handler, IEntry entry)
     {
         if (handler is MauiEntryHandler me)
@@ -79,7 +75,7 @@ public partial class MauiEntryHandler : EntryHandler
     {
         var imeOptions = ((Microsoft.Maui.Controls.Entry)entry).OnThisPlatform().ImeOptions().ToPlatform();
 
-        handler.PlatformView.ImeOptions = ImeAction.Unspecified;// imeOptions;
+        handler.PlatformView.ImeOptions = imeOptions;
     }
 
     public class MyMapper : PropertyMapper<IEntry, IEntryHandler>
@@ -88,60 +84,13 @@ public partial class MauiEntryHandler : EntryHandler
         {
 
         }
-
-        protected override void UpdatePropertyCore(string key, IElementHandler viewHandler, IElement virtualView)
-        {
-            // UpdateReturnType UpdateKeyboard UpdateIsReadOnly UpdateIsPassword
-            Debug.WriteLine($"[MAPPER] update {key}");
-
-            if (key.IsEither(
-                    "IsPassword",
-                    "IsReadOnly"
-                    //  "ReturnType",
-                    // "Keyboard"
-                    )
-                )
-                return;
-
-            bool singleLine = false, lineOne = false;
-            var handler = viewHandler as MauiEntryHandler;
-            AppCompatEditText native = null;
-            if (handler != null)
-            {
-                native = handler.PlatformView as AppCompatEditText;
-            }
-
-            if (native != null)
-            {
-                singleLine = native.IsSingleLine;
-                lineOne = native.MaxLines == 1;
-            }
-            if (singleLine || lineOne)
-            {
-                Debug.WriteLine($"[MAPPER] CATCH THAT BITCH - {key}");
-            }
-
-
-            base.UpdatePropertyCore(key, viewHandler, virtualView);
-
-            if (native != null)
-            {
-                var singleLine1 = native.IsSingleLine;
-                var lineOne1 = native.MaxLines == 1;
-                if (singleLine1 || lineOne1)
-                {
-                    Debug.WriteLine($"[MAPPER] CATCH THAT BITCH - {key}");
-                }
-            }
-
-        }
-
-        protected override void SetPropertyCore(string key, Action<IElementHandler, IElement> action)
-        {
-            Debug.WriteLine($"[MAPPER] set {key}");
-            base.SetPropertyCore(key, action);
-        }
     }
+
+    #endregion
+
+    AppCompatEditText _control;
+
+    protected MauiEntry Control => VirtualView as MauiEntry;
 
     protected override void ConnectHandler(AppCompatEditText platformView)
     {
@@ -193,8 +142,9 @@ public partial class MauiEntryHandler : EntryHandler
     {
         base.PlatformArrange(frame);
 
-        ApplySettings();
-
+        //ApplySettings();
+        if (Control != null)
+            Control.Keyboard = Keyboard.Numeric;
 
     }
 
@@ -227,9 +177,21 @@ public partial class MauiEntryHandler : EntryHandler
     {
         _control = base.CreatePlatformView();
 
+        _control.SetPadding(0, 0, 0, 0);
+        _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+
+        // ApplySettings();
+
+        return _control;
+
+
+        _control.InputType = InputTypes.TextVariationNormal;
+        _control.ImeOptions = ImeAction.Done;
+
         _control.Gravity = GravityFlags.Top;
         _control.TextAlignment = Android.Views.TextAlignment.ViewStart;
         _control.SetSingleLine(false);
+
         //created.SetAutoSizeTextTypeWithDefaults(AutoSizeTextType.Uniform);
         //_control.LayoutParameters = new ViewGroup.LayoutParams(
         //    ViewGroup.LayoutParams.MatchParent,
@@ -241,7 +203,7 @@ public partial class MauiEntryHandler : EntryHandler
         _control.SetPadding(0, 0, 0, 0);
         _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
 
-        ApplySettings();
+        // ApplySettings();
 
         return _control;
     }
@@ -251,10 +213,10 @@ public partial class MauiEntryHandler : EntryHandler
         Android.Graphics.Rect visibleRect = new();
         _control.GetLocalVisibleRect(visibleRect);
 
-        if (Control.MaxLines == 1)
-        {
-            _control.SetMaxLines(1);
-        }
+        //if (Control.MaxLines == 1)
+        //{
+        //    _control.SetMaxLines(1);
+        //}
 
         Debug.WriteLine($"IsSingleLine {_control.IsSingleLine} lines {_control.MaxLines} gravity {_control.Gravity} inputType {_control.InputType}");
 
@@ -359,7 +321,6 @@ public partial class MauiEntryHandler : EntryHandler
         {
             _control.KeyListener = LocalizedDigitsKeyListener.Create(_control.InputType);
         }
-
 
         if (Control is IElement element)
         {

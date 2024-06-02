@@ -1,4 +1,6 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿using System.Runtime.InteropServices;
+
+namespace DrawnUi.Maui.Draw;
 
 public class DynamicGrid<T>
 {
@@ -78,6 +80,11 @@ public class DynamicGrid<T>
     public IEnumerable<T> GetChildren()
     {
         return grid.Values;
+    }
+
+    public Span<T> GetChildrenAsSpans()
+    {
+        return CollectionsMarshal.AsSpan(grid.Values.ToList());
     }
 
     public int GetCount()

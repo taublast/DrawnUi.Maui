@@ -1,6 +1,7 @@
 ﻿#define CHOREOGRAPHER //otherwise will use Looper like Windows 
 
 using Android.Views;
+using Android.Widget;
 using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Views
@@ -8,6 +9,20 @@ namespace DrawnUi.Maui.Views
 
     public partial class DrawnView
     {
+
+        public void ResetFocus()
+        {
+            if (this.Handler != null && Handler.PlatformView is Android.Views.View view)
+            {
+                var focused = view.FindFocus();
+                if (focused != null)
+                {
+                    focused.ClearFocus();
+                }
+            }
+
+            TouchEffect.CloseKeyboard();
+        }
 
         protected virtual void OnSizeChanged()
         {

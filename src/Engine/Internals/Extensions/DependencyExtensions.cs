@@ -248,18 +248,25 @@ public static class DependencyExtensions
 
             AppLifecycle.AddAndroid((android) =>
             {
+                bool appCreated = false;
+
                 android.OnCreate((activity, bundle) =>
                 {
-                    Super.Init(activity);
-
-                    if (StartupSettings != null)
+                    if (!appCreated)
                     {
-                        if (StartupSettings.MobileIsFullscreen)
+                        appCreated = true;
+
+                        Super.Init(activity);
+
+                        if (StartupSettings != null)
                         {
-                            Super.SetFullScreen(activity);
+                            if (StartupSettings.MobileIsFullscreen)
+                            {
+                                Super.SetFullScreen(activity);
+                            }
                         }
+                        Super.OnMauiAppCreated?.Invoke();
                     }
-                    Super.OnMauiAppCreated?.Invoke();
                 });
 
                 android.OnApplicationCreate((app) =>

@@ -125,9 +125,9 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public override void OnFocusChanged(bool focus)
+        public override bool OnFocusChanged(bool focus)
         {
-            base.OnFocusChanged(focus);
+            //base.OnFocusChanged(focus);
 
             if (focus)
             {
@@ -140,6 +140,8 @@ namespace DrawnUi.Maui.Draw
 
             FocusChanged?.Invoke(this, focus);
             CommandOnFocusChanged?.Execute(focus);
+
+            return true;
         }
 
         /// <summary>

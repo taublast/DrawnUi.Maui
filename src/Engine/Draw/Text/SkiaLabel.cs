@@ -3079,8 +3079,10 @@ namespace DrawnUi.Maui.Draw
             return this;
         }
 
-        public void OnFocusChanged(bool focus)
-        { }
+        public virtual bool OnFocusChanged(bool focus)
+        {
+            return false;
+        }
 
 
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)

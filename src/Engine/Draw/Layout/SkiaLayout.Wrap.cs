@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace DrawnUi.Maui.Draw
 {
@@ -46,7 +47,7 @@ namespace DrawnUi.Maui.Draw
                 //PASS 1 - VISIBILITY
                 //we need this pass before drawing to recycle views that became hidden
                 var viewsTotal = 0;
-                foreach (var cell in structure.GetChildren())
+                foreach (var cell in structure.GetChildrenAsSpans())
                 {
                     viewsTotal++;
                     viewsTotal++;
@@ -98,8 +99,7 @@ namespace DrawnUi.Maui.Draw
 
                 int countRendered = 0;
 
-                //todo modify structure upon ZIndex or something... do not order on every frame!!!!!
-                foreach (var cell in visibleElements)//.OrderBy(x => x.ZIndex))
+                foreach (var cell in CollectionsMarshal.AsSpan(visibleElements))
                 {
                     index++;
 

@@ -1,4 +1,5 @@
 ﻿using DrawnUi.Maui.Draw;
+using DrawnUi.Maui.Features.Images;
 using NSubstitute;
 using Xunit;
 

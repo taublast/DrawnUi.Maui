@@ -95,8 +95,10 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
         _positions.Clear();
     }
 
-    public void OnFocusChanged(bool focus)
-    { }
+    public bool OnFocusChanged(bool focus)
+    {
+        return false;
+    }
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
