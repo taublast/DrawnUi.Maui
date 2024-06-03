@@ -15,7 +15,7 @@
 
   <PropertyGroup>
     <UseNuget>false</UseNuget>
-    <Version>1.2.2.5</Version>
+    <Version>1.2.2.7</Version>
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sanbox project for usage example.</PackageReleaseNotes>
     <Title>MauiGraphics addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.MauiGraphics</PackageId>
@@ -43,7 +43,7 @@
 
   <!--production-->
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.5" />
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.2.7" />
   </ItemGroup>
 
   <ItemGroup>

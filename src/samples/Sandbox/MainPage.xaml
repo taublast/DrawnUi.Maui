@@ -100,7 +100,7 @@
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
                             Tag="Slider"
-                             WidthRequest="200" />
+                            WidthRequest="200" />
 
                         <!--
                             if you have effects sometimes
@@ -155,14 +155,16 @@
                                             Tapped="TappedSelectPage"
                                             Text="{Binding Name}"
                                             TextColor="#ccffffff"
-                                            TextStrokeColor="Red"
+                                            TextStrokeColor="#99FF0000"
                                             TintColor="{StaticResource ColorPrimary}"
                                             WidthRequest="150">
                                             <draw:SkiaControl.Triggers>
                                                 <DataTrigger
                                                     Binding="{Binding Source={RelativeSource Self}, Path=IsPressed}"
-                                                    TargetType="draw:SkiaControl"
+                                                    TargetType="draw:SkiaButton"
                                                     Value="False">
+                                                    <Setter Property="TextColor" Value="#ccffffff" />
+                                                    <Setter Property="TextStrokeColor" Value="#AAFF0000" />
                                                     <Setter Property="TranslationX" Value="0" />
                                                     <Setter Property="TranslationY" Value="0" />
                                                     <Setter Property="VisualEffects">
@@ -177,8 +179,10 @@
                                                 </DataTrigger>
                                                 <DataTrigger
                                                     Binding="{Binding Source={RelativeSource Self}, Path=IsPressed}"
-                                                    TargetType="draw:SkiaControl"
+                                                    TargetType="draw:SkiaButton"
                                                     Value="True">
+                                                    <Setter Property="TextColor" Value="#FF4444" />
+                                                    <Setter Property="TextStrokeColor" Value="#EEFF0000" />
                                                     <Setter Property="TranslationX" Value="1" />
                                                     <Setter Property="TranslationY" Value="1" />
                                                     <Setter Property="VisualEffects">

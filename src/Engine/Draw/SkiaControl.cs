@@ -4864,12 +4864,12 @@ namespace DrawnUi.Maui.Draw
             {
                 Helper3d ??= new();
 #if SKIA3
-        Helper3d.Reset();
-        Helper3d.RotateXDegrees(CameraAngleX);
-        Helper3d.RotateYDegrees(CameraAngleY);
-        Helper3d.RotateZDegrees(CameraAngleZ);
-        if (CameraTranslationZ != 0) Helper3d.TranslateZ(CameraTranslationZ);
-        drawingMatrix = drawingMatrix.PostConcat(Helper3d.GetMatrix());
+                Helper3d.Reset();
+                Helper3d.RotateXDegrees(CameraAngleX);
+                Helper3d.RotateYDegrees(CameraAngleY);
+                Helper3d.RotateZDegrees(CameraAngleZ);
+                if (CameraTranslationZ != 0) Helper3d.TranslateZ(CameraTranslationZ);
+                drawingMatrix = drawingMatrix.PostConcat(Helper3d.GetMatrix());
 #else
                 Helper3d.Save();
                 Helper3d.RotateXDegrees(CameraAngleX);

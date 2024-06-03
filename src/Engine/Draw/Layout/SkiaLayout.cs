@@ -836,7 +836,7 @@ namespace DrawnUi.Maui.Draw
                             return ScaledSize.CreateEmpty(request.Scale);
                     }
 
-                    ContentSize = MeasureStackPanel(constraints.Content, request.Scale);
+                    ContentSize = MeasureWrap(constraints.Content, request.Scale);
                     break;
 
                     default:
