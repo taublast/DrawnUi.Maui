@@ -473,13 +473,6 @@ namespace DrawnUi.Maui.Draw
                         remainingSize = rectFitChild.Width;
                     }
 
-                    //var fitsH = remainingSize > 0;
-                    //if (!fitsH && !useFixedSplitSize)
-                    //{
-                    //    Debug.WriteLine($"[BreakRow] BUILD no fit {remainingSize}");
-                    //    BreakRow();
-                    //}
-
                     ScaledSize measured;
 
                     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -535,7 +528,7 @@ namespace DrawnUi.Maui.Draw
                         else
                         {
                             var fitsV = cell.Measured.Pixels.Height <= maxHeight;
-                            //keke we need bigger height
+                            //todo keke we need bigger height
                         }
 
                         structure.Add(cell, column, row);
@@ -553,7 +546,6 @@ namespace DrawnUi.Maui.Draw
                         //SplitMax = 2  Split Auto, Even, EvenAdaptive
 
                     }
-
                 }
 
                 if (!rowFinalized)
