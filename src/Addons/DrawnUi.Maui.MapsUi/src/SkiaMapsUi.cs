@@ -20,11 +20,49 @@ using Map = Mapsui.Map;
 
 namespace DrawnUi.Maui.MapsUi;
 
+
 /// <summary>
 /// MapControl for MAUI DrawnUi
 /// </summary>
 public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 {
+    public class SkiaMapLayer : SkiaControl
+    {
+        public SkiaMapLayer()
+        {
+            HorizontalOptions = LayoutOptions.Fill;
+            VerticalOptions = LayoutOptions.Fill;
+        }
+
+    }
+
+    public SkiaMapsUi()
+    {
+        SharedConstructor();
+
+        Map = new()
+        {
+            BackColor = Mapsui.Styles.Color.FromArgb(0, 0, 0, 0), //feel the freedom..
+            CRS = "EPSG:3857"
+        };
+    }
+
+    public List<SkiaMapLayer> Layers;
+
+    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    {
+        base.Paint(ctx, destination, scale, arguments); //paint background
+
+        ctx.Canvas.Save();
+        ctx.Canvas.ClipRect(destination);
+        ctx.Canvas.Translate(destination.Left, destination.Top);
+        ctx.Canvas.Scale(PixelDensity, PixelDensity);
+
+        //paint map into the layout area
+        CommonDrawControl(ctx.Canvas);
+
+        ctx.Canvas.Restore();
+    }
 
     protected override void OnLayoutChanged()
     {
@@ -49,32 +87,6 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
     private static List<WeakReference<SkiaMapsUi>>? _listeners;
     private readonly ManipulationTracker _manipulationTracker = new();
 
-    public SkiaMapsUi()
-    {
-        SharedConstructor();
-
-        Map = new()
-        {
-            BackColor = Mapsui.Styles.Color.FromArgb(0, 0, 0, 0), //feel the freedom..
-            CRS = "EPSG:3857"
-        };
-    }
-
-
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
-    {
-        base.Paint(ctx, destination, scale, arguments); //paint background
-
-        ctx.Canvas.Save();
-        ctx.Canvas.ClipRect(destination);
-        ctx.Canvas.Translate(destination.Left, destination.Top);
-        ctx.Canvas.Scale(PixelDensity, PixelDensity);
-
-        //paint map into the layout area
-        CommonDrawControl(ctx.Canvas);
-
-        ctx.Canvas.Restore();
-    }
 
     /// <summary>
     /// Pixels
@@ -293,7 +305,6 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
     //from shared but already changed a bit:
     //---------------------------------------------------
 
-
     // Flag indicating if a drawing process is running
     private bool _drawing;
     // Flag indicating if the control has to be redrawn
@@ -301,6 +312,8 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
     // Flag indicating if a new drawing process should start
     private bool _refresh;
 
+    private IRenderer _renderer = new MapRenderer();
+    //private IRenderer _renderer = new DrawnUiSkiaMapRenderer();
 
     // Timer for loop to invalidating the control
     private Timer? _invalidateTimer;
@@ -308,7 +321,6 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
     private int _updateInterval = 16;
     // Stopwatch for measuring drawing times
     private readonly System.Diagnostics.Stopwatch _stopwatch = new();
-    private IRenderer _renderer = new MapRenderer(); //new SkiaMapRenderer();
     private readonly TapGestureTracker _tapGestureTracker = new();
     private readonly FlingTracker _flingTracker = new();
 

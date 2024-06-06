@@ -3,16 +3,10 @@ using BruTile;
 using BruTile.Cache;
 using BruTile.Predefined;
 using BruTile.Web;
+using DrawnUi.Maui.MapsUi;
 using Mapsui;
-using Mapsui.ArcGIS.DynamicProvider;
 using Mapsui.Extensions;
-using Mapsui.Layers;
 using Mapsui.Projections;
-using Mapsui.Rendering.Skia;
-using Mapsui.Samples.Maui;
-using Mapsui.Styles;
-using Mapsui.Tiling;
-using Mapsui.Tiling.Extensions;
 using Mapsui.Tiling.Fetcher;
 using Mapsui.Tiling.Layers;
 using Mapsui.Tiling.Rendering;
@@ -64,21 +58,65 @@ namespace Sandbox.Views
             {
                 userAgent ??= $"user-agent-of-{Path.GetFileNameWithoutExtension(System.AppDomain.CurrentDomain.FriendlyName)}";
 
-                return new OpenCustomStreetMap.CustomizedLayer(CreateTileSource(userAgent)) { Name = "OpenStreetMap" };
+                return new OpenCustomStreetMap.CustomizedLayer(CreateTileSource(userAgent))
+                {
+                    Name = "OpenStreetMap"
+                };
             }
-
-
 
             private static HttpTileSource CreateTileSource(string userAgent)
             {
-
-                return new HttpTileSource(new GlobalSphericalMercator(),
+                var source = new HttpTileSource(new GlobalSphericalMercator(),
                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                     new[] { "a", "b", "c" }, name: "OpenStreetMap",
                     attribution: OpenStreetMapAttribution, userAgent: userAgent, persistentCache: DefaultCache);
+
+                return source;
             }
         }
 
+        /*
+        private static HttpTileSource CreateTileSource(string userAgent)
+        {
+            var source = new CustomizeDownloadedTiles(new GlobalSphericalMercator(),
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                new[] { "a", "b", "c" }, name: "OpenStreetMap",
+                attribution: OpenStreetMapAttribution, userAgent: userAgent, persistentCache: DefaultCache);
+
+
+            var filterTint = SkiaImageEffects.Tint(Colors.Blue.WithAlpha(0.13f), SKBlendMode.SrcATop);
+
+            var filterDesaturate = ChainSaturationEffect.CreateSaturationFilter(0.2f);
+
+            source.RenderBitmap = (renderAction, canvas) =>
+            {
+                using SKPaint paintTint = new SKPaint()
+                {
+                    ColorFilter = filterTint
+                };
+
+                using SKPaint paintDesaturate = new SKPaint()
+                {
+                    ColorFilter = filterDesaturate
+                };
+
+                //apply main filter
+                var restore = canvas.SaveLayer(paintTint);
+
+                //miltiple chain..
+                //canvas.SaveLayer(paintDesaturate);
+                //other chains
+                //renderAction(null);
+
+                renderAction(paintDesaturate);
+
+                canvas.RestoreToCount(restore);
+            };
+
+            return source;
+        }
+    }
+    */
 
         protected override void OnAppearing()
         {

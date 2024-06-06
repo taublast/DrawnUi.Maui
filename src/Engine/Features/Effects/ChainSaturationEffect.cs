@@ -38,7 +38,7 @@ public class ChainSaturationEffect : BaseChainedEffect
     }
 
 
-    private SKColorFilter CreateSaturationFilter(float saturation)
+    public static SKColorFilter CreateSaturationFilter(float saturation)
     {
         float invSat = 1 - saturation;
         float R = 0.213f * invSat;
