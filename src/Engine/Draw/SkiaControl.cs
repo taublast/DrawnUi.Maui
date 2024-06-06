@@ -5512,10 +5512,6 @@ namespace DrawnUi.Maui.Draw
             var notValid = RenderObjectNeedsUpdate;
             RenderObject = created;
 
-            if (usingCacheType == SkiaCacheType.ImageComposite)
-            {
-                var check = 1;
-            }
 
             if (RenderObject != null)
             {
@@ -5942,7 +5938,11 @@ namespace DrawnUi.Maui.Draw
             InvalidateCache();
 
             UpdateInternal();
+
+            Updated?.Invoke(this, null);
         }
+
+        public event EventHandler Updated;
 
         public static MemoryStream StreamFromString(string value)
         {
