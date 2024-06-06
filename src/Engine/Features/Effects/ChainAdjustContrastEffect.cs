@@ -37,7 +37,7 @@ public class ChainAdjustContrastEffect : BaseChainedEffect
         return base.Draw(destination, ctx, drawControl);
     }
 
-    private SKColorFilter CreateContrastFilter(float contrast)
+    public static SKColorFilter CreateContrastFilter(float contrast)
     {
         float t = (1 - contrast) / 2;
         float[] colorMatrix = {

@@ -3787,6 +3787,22 @@ namespace DrawnUi.Maui.Draw
                 heightConstraint *= (float)VerticalFillRatio;
             }
 
+            if (LockRatio < 0)
+            {
+                var size = Math.Min(heightConstraint, widthConstraint);
+                size *= (float)-LockRatio;
+                heightConstraint = size;
+                widthConstraint = size;
+            }
+            else
+            if (LockRatio > 0)
+            {
+                var size = Math.Max(heightConstraint, widthConstraint);
+                size *= (float)LockRatio;
+                heightConstraint = size;
+                widthConstraint = size;
+            }
+
             var isSame =
                 !NeedMeasure
                 && _lastMeasuredForScale == scale
@@ -4022,14 +4038,14 @@ namespace DrawnUi.Maui.Draw
         {
             get
             {
-                return VerticalOptions.Alignment != LayoutAlignment.Fill && SizeRequest.Height < 0;
+                return LockRatio == 0 && VerticalOptions.Alignment != LayoutAlignment.Fill && SizeRequest.Height < 0;
             }
         }
         public bool NeedAutoWidth
         {
             get
             {
-                return HorizontalOptions.Alignment != LayoutAlignment.Fill && SizeRequest.Width < 0;
+                return LockRatio == 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill && SizeRequest.Width < 0;
             }
         }
 
@@ -5496,10 +5512,6 @@ namespace DrawnUi.Maui.Draw
             var notValid = RenderObjectNeedsUpdate;
             RenderObject = created;
 
-            if (usingCacheType == SkiaCacheType.ImageComposite)
-            {
-                var check = 1;
-            }
 
             if (RenderObject != null)
             {
@@ -5926,7 +5938,11 @@ namespace DrawnUi.Maui.Draw
             InvalidateCache();
 
             UpdateInternal();
+
+            Updated?.Invoke(this, null);
         }
+
+        public event EventHandler Updated;
 
         public static MemoryStream StreamFromString(string value)
         {

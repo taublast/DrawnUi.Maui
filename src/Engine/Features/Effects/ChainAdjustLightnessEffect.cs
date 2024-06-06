@@ -42,7 +42,7 @@ public class ChainAdjustLightnessEffect : BaseChainedEffect
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    private SKColorFilter CreateLightnessFilter(float value)
+    public static SKColorFilter CreateLightnessFilter(float value)
     {
         var brightness = Math.Clamp(value - 1, -1f, 1f);
 
