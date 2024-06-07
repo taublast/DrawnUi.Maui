@@ -187,6 +187,17 @@ namespace DrawnUi.Maui.Views
             return chain;
         }
 
+        private static bool debugV;
+
+        static void DebugV(bool value)
+        {
+            if (debugV != value)
+            {
+                Debug.WriteLine($"V Changed {value}");
+                debugV = value;
+            }
+        }
+
         public void UpdateRenderingChains(SkiaControl node)
         {
             // Check each chain
@@ -201,7 +212,10 @@ namespace DrawnUi.Maui.Views
                         chain.Transform = new VisualTransform();
                     }
 
-                    chain.Transform.IsVisible = chain.Transform.IsVisible && node.CanDraw;
+                    chain.Transform.IsVisible = chain.Nodes.All(x => x.IsVisible) && node.CanDraw;
+
+                    //Debug.WriteLine($"U {node.GetType().Name} {node.IsVisible} => {chain.Transform.IsVisible}");
+
                     var translation = new SKPoint((float)node.UseTranslationX, (float)node.UseTranslationY);
                     chain.Transform.Translation += translation;
                     chain.Transform.Opacity *= (float)node.Opacity;
@@ -1659,6 +1673,7 @@ namespace DrawnUi.Maui.Views
                         //notify registered tree final nodes of rendering tree state
                         foreach (var tree in RenderingTrees)
                         {
+                            //DebugV(tree.Value.Transform.IsVisible);
                             //todo what was this case? disabled as bugging
                             //if (tree.Value.Nodes.Count != tree.Value.Transform.RenderedNodes)
                             //{
