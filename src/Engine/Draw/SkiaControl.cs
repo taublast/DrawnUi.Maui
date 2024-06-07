@@ -1532,6 +1532,8 @@ namespace DrawnUi.Maui.Draw
                 {
                     child.OnParentVisibilityChanged(pass);
                 }
+
+                Superview?.UpdateRenderingChains(this);
             }
             catch (Exception e)
             {

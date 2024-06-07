@@ -20,7 +20,6 @@
  
   <PropertyGroup>
     <UseNuget>false</UseNuget>
-    <Version>1.2.2.7</Version>
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi demo project for usage example. Temporarily Windows only is supported.</PackageReleaseNotes>
     <Title>Rive addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.Maui.Rive</PackageId>

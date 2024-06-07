@@ -18,11 +18,6 @@ public class CustomizeDownloadedTiles : HttpTileSource
 
     }
 
-
-    //protected SKColorFilter ColorFilter { get; set; }
-
-    //protected SKImageFilter ImageFilter { get; set; }
-
     public Action<Action<SKPaint>, SKCanvas> RenderBitmap;
 
     public override async Task<byte[]> GetTileAsync(TileInfo tileInfo)

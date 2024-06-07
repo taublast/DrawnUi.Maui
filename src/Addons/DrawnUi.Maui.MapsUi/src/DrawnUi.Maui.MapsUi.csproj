@@ -27,7 +27,6 @@
 
   <PropertyGroup>
     <UseNuget>false</UseNuget>
-    <Version>1.2.2.7</Version>
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi sandbox project on how to use SkiaMapsUi control.</PackageReleaseNotes>
     <Title>MapsUi addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.Maui.MapsUi</PackageId>
