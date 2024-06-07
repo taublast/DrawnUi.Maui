@@ -33,6 +33,8 @@ Fixes for the new `ImageComposite` cache type that redraws changed areas only, g
 
 ___Please star ⭐ if you like it!___
 
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
+
 ## Features
 
 * __Draw your UI using SkiaSharp with hardware acceleration__
