@@ -31,9 +31,9 @@ Fixes for the new `ImageComposite` cache type that redraws changed areas only, g
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
 
-___Please star ⭐ if you like it!___
-
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
+
+___Please star ⭐ if you like it!___
 
 ## Features
 
