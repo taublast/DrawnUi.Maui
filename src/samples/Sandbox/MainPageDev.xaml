@@ -33,7 +33,8 @@
                     Type="Column">
 
 
-                    <draw:SkiaLayout HorizontalOptions="Fill" HeightRequest="100">
+                    <draw:SkiaLayout HorizontalOptions="Fill" 
+                                     HeightRequest="250">
                         
                         <draw:SkiaImage
                             UseCache="Image"
@@ -53,7 +54,7 @@
                             LoadSourceOnFirstDraw="False"
                             Source="Images/nico.jpg" />
 
-                        <controls:ShaderTransition
+                        <controls:AnimatedShaderTransition
                             BackgroundColor="Black"
                             ControlFrom="{x:Reference GoFrom}"
                             ControlTo="{x:Reference GoTo}"

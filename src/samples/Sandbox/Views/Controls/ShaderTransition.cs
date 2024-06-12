@@ -2,6 +2,59 @@ using DrawnUi.Maui.Infrastructure;
 
 namespace Sandbox.Views.Controls;
 
+public class PingPongAnimator : RangeAnimator
+{
+    public PingPongAnimator(SkiaControl player) : base(player)
+    {
+        Repeat = -1;
+    }
+
+    protected override bool FinishedRunning()
+    {
+        if (Repeat < 0) //forever
+        {
+            (mMaxValue, mMinValue) = (mMinValue, mMaxValue);
+            Distance = mMaxValue - mMinValue;
+            
+            mValue = mMinValue;
+            mLastFrameTime = 0;
+            mStartFrameTime = 0;
+            return false;
+        }
+        
+        return base.FinishedRunning();
+    }
+}
+public class AnimatedShaderTransition : ShaderTransition
+{
+    public AnimatedShaderTransition()
+    {
+        //  "transitions/fade.sksl";
+        //  "transitions/doorway.sksl";
+        ShaderFilename = "transitions/cube.sksl";
+    }
+    
+    private PingPongAnimator _animator;
+
+    protected override void OnLayoutReady()
+    {
+        base.OnLayoutReady();
+        
+        if (_animator == null)
+        {
+            _animator = new(this);
+
+            _animator.Start((v)=>
+            {
+                this.Progress = v;
+                Update();
+            }, 0, 1, 3500);
+        }
+        
+    }
+    
+}
+
 public class ShaderTransition : SkiaControl
 {
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
@@ -19,7 +72,7 @@ public class ShaderTransition : SkiaControl
             uniforms["iOffset"] = new[] { viewport.Left, viewport.Top };
             uniforms["iResolution"] = new[] { iResolution.Width, iResolution.Height };
             uniforms["iImageResolution"] = new[] { iImageResolution.Width, iImageResolution.Height };
-            uniforms["progress"] = 0.5f;
+            uniforms["progress"] = (float)Progress;
 
             using var paintWithShader = new SKPaint();
 
@@ -45,8 +98,8 @@ public class ShaderTransition : SkiaControl
     /// </summary>
     private SKRuntimeEffectChildren _passTextures;
     
-    public string ShaderFilename {get;set;} = "transfade.sksl";
-    
+    public double Progress {get; set;}
+    public string ShaderFilename {get;set;}
     void CreateShader()
     {
         string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/{ShaderFilename}");
