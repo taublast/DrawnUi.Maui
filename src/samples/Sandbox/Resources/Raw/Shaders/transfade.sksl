@@ -1,0 +1,26 @@
+﻿uniform float progress; //0.0 - 1.0
+uniform shader iImage1;  // Texture
+uniform shader iImage2;  // Texture for backside
+
+vec4 getFromColor(vec2 uv){
+    return iImage1.eval(uv);
+}
+
+vec4 getToColor(vec2 uv){
+    return iImage2.eval(uv);
+}
+
+vec4 transition (vec2 uv) {
+  return mix(
+    getFromColor(uv),
+    getToColor(uv),
+    progress
+  );
+}
+
+half4 main(float2 fragCoord) {
+    
+    half4 fragColor = transition(fragCoord.xy);
+
+    return fragColor;
+}

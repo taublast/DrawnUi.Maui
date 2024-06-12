@@ -124,8 +124,6 @@
 
     <None Remove="Resources\raw\Shaders2\blit.sksl" />
 
-    <None Remove="Resources\raw\Shaders2\blur - Copy.sksl" />
-
     <None Remove="Resources\raw\Shaders2\blur.sksl" />
 
     <None Remove="Resources\raw\Shaders2\blurmasked.sksl" />
@@ -137,6 +135,10 @@
     <None Remove="Resources\raw\Shaders2\glowblur.glsl" />
 
     <None Remove="Resources\raw\Shaders2\glowblur.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transdoorway.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transfade.sksl" />
 
     <None Remove="Resources\Raw\Space\Sprites\glass.jpg" />
 
@@ -185,6 +187,10 @@
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
  
+      <Compile Update="Views\MainPageShader_Transition.xaml.cs">
+        <DependentUpon>MainPageShader_Transition.xaml</DependentUpon>
+      </Compile>
+ 
       <Compile Update="Views\MainPageXaml2Pdf.xaml.cs">
         <DependentUpon>MainPageXaml2Pdf.xaml</DependentUpon>
       </Compile>
@@ -215,9 +221,6 @@
     <MauiAsset Update="Resources\Raw\Shaders2\blit.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders2\blur - Copy.sksl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders2\blurmasked.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
@@ -231,6 +234,12 @@
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders2\glowblur.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transfade.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transdoorway.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Space\Sprites\glass.jpg">
@@ -249,6 +258,9 @@
 
 
   <ItemGroup>
+    <MauiXaml Update="Views\MainPageShader_Transition.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\MainPageXaml2Pdf.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

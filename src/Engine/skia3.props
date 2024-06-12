@@ -4,8 +4,8 @@
     <Warning Text="------ Building $(TargetFramework) for SkiaSharp 3.xx ------"   />
   </Target>  
   <ItemGroup>
-    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.0.0-preview.2.1" />
-    <PackageReference Include="SkiaSharp.Skottie" Version="3.0.0-preview.2.1" />
+    <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.0.0-preview.3.1" />
+    <PackageReference Include="SkiaSharp.Skottie" Version="3.0.0-preview.3.1" />
     <PackageReference Include="Svg.SkiaSharp3" Version="1.0.3.2-preview.2.1" />
 
   </ItemGroup>

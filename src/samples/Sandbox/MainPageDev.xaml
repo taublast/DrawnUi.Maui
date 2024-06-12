@@ -10,48 +10,49 @@
     xmlns:mauiNet8="using:MauiNet8"
     BackgroundColor="Gray">
 
-    <Grid
-        Padding="0,0,0,8"
+    <draw:Canvas
+        Gestures="Enabled"
+        HardwareAcceleration="Enabled"
         HorizontalOptions="Fill"
-        VerticalOptions="FillAndExpand">
+        Tag="MainPage"
+        VerticalOptions="Fill">
 
-        <draw:Canvas
-            Margin="8,44"
-            BackgroundColor="#66000000"
-            Gestures="Enabled"
-            HardwareAcceleration="Enabled"
+        <draw:SkiaLayout
             HorizontalOptions="Fill"
-            Tag="Warning"
-            VerticalOptions="Center">
+            VerticalOptions="Fill">
 
             <draw:SkiaScroll
-                BackgroundColor="Red"
+                BackgroundColor="Black"
                 HorizontalOptions="Fill"
-                VerticalOptions="Start">
-                <draw:SkiaLayout HorizontalOptions="Fill">
+                VerticalOptions="Fill">
 
-                    <mauiNet8:BuggedLayout
-                        Padding="6"
-                        BackgroundColor="Blue"
-                        HorizontalOptions="Fill"
-                        Tag="VStack"
-                        Type="Column"
-                        UseCache="ImageDoubleBuffered">
+                <draw:SkiaLayout
+                    BackgroundColor="Blue"
+                    HorizontalOptions="Fill"
+                    Tag="Content"
+                    Type="Column">
 
-                        <!--  REPORT  -->
-                        <xaml2Pdf:ReportSample
-                            Margin="20"
-                            BackgroundColor="White"
-                            HorizontalOptions="Center" />
 
-                    </mauiNet8:BuggedLayout>
+                     
 
                 </draw:SkiaLayout>
+
             </draw:SkiaScroll>
 
-        </draw:Canvas>
+            <controls:ButtonToRoot />
 
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
 
-    </Grid>
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
 
 </views:BasePage>
