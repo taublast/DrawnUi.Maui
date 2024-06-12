@@ -33,6 +33,35 @@
                     Type="Column">
 
 
+                    <draw:SkiaLayout HorizontalOptions="Fill" HeightRequest="100">
+                        
+                        <draw:SkiaImage
+                            UseCache="Image"
+                            x:Name="GoFrom"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            Aspect="AspectCover"
+                            LoadSourceOnFirstDraw="False"
+                            Source="Images/8.jpg" />
+
+                        <draw:SkiaImage
+                            UseCache="Image"
+                            x:Name="GoTo"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            Aspect="AspectCover"
+                            LoadSourceOnFirstDraw="False"
+                            Source="Images/nico.jpg" />
+
+                        <controls:ShaderTransition
+                            BackgroundColor="Black"
+                            ControlFrom="{x:Reference GoFrom}"
+                            ControlTo="{x:Reference GoTo}"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"/>
+
+
+                    </draw:SkiaLayout>
                      
 
                 </draw:SkiaLayout>

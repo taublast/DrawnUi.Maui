@@ -2,6 +2,10 @@
 uniform shader iImage1;  // Texture
 uniform shader iImage2;  // Texture for backside
 
+uniform float2 iOffset;  // Top-left corner of DrawingRect
+uniform float2 iResolution;      // Viewport resolution (pixels)
+uniform float2 iImageResolution; // iImage1 resolution (pixels)
+
 vec4 getFromColor(vec2 uv){
     return iImage1.eval(uv);
 }
@@ -20,7 +24,10 @@ vec4 transition (vec2 uv) {
 
 half4 main(float2 fragCoord) {
     
-    half4 fragColor = transition(fragCoord.xy);
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+
+    half4 fragColor = transition(inputCoord.xy);
 
     return fragColor;
 }

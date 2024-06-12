@@ -231,14 +231,6 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
     #region PROPERTIES
 
 
-
-
-    public static readonly BindableProperty ContentProperty = BindableProperty.Create(
-        nameof(Content),
-        typeof(SkiaControl), typeof(ContentLayout),
-        null,
-        propertyChanged: OnReplaceContent);
-
     private static void OnReplaceContent(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is ContentLayout control)
@@ -246,6 +238,13 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
             control.SetContent(newvalue as SkiaControl);
         }
     }
+
+    public static readonly BindableProperty ContentProperty = BindableProperty.Create(
+        nameof(Content),
+        typeof(SkiaControl), typeof(ContentLayout),
+        null,
+        propertyChanged: OnReplaceContent);
+    
     public SkiaControl Content
     {
         get { return (SkiaControl)GetValue(ContentProperty); }
