@@ -21,7 +21,18 @@ public class PingPongAnimator : RangeAnimator
             mStartFrameTime = 0;
             return false;
         }
-        
+        else if (Repeat > 0)
+        {
+            Repeat--;
+
+            (mMaxValue, mMinValue) = (mMinValue, mMaxValue);
+            Distance = mMaxValue - mMinValue;
+            
+            mValue = mMinValue;
+            mLastFrameTime = 0;
+            mStartFrameTime = 0;
+            return false;
+        }
         return base.FinishedRunning();
     }
 }
