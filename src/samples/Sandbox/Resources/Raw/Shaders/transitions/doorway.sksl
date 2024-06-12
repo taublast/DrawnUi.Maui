@@ -1,4 +1,5 @@
-﻿uniform float progress; // 0.0 - 1.0
+﻿uniform float ratio; // width / height
+uniform float progress; // 0.0 - 1.0
 uniform shader iImage1; // Texture
 uniform shader iImage2; // Texture for backside
 uniform float2 iOffset; // Top-left corner of DrawingRect
@@ -7,9 +8,9 @@ uniform float2 iImageResolution; // iImage1 resolution (pixels)
 
 // Author: gre
 // License: MIT
-uniform float reflection; // = 0.4
-uniform float perspective; // = 0.4
-uniform float depth; // = 3
+float reflection = 0.4;
+float perspective = 0.4;
+float depth = 3;
 
 const vec4 black = vec4(0.0, 0.0, 0.0, 1.0);
 const vec2 boundMin = vec2(0.0, 0.0);

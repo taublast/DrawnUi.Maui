@@ -32,7 +32,8 @@ public class AnimatedShaderTransition : ShaderTransition
         //  "transitions/fade.sksl";
         //  "transitions/doorway.sksl";
         //ShaderFilename = "transitions/cube.sksl";
-        ShaderFilename = "transitions/crosswarp.sksl";
+        //ShaderFilename = "transitions/crosswarp.sksl";
+        ShaderFilename = "transitions/new.sksl";
 
     }
     
@@ -75,6 +76,7 @@ public class ShaderTransition : SkiaControl
             uniforms["iResolution"] = new[] { iResolution.Width, iResolution.Height };
             uniforms["iImageResolution"] = new[] { iImageResolution.Width, iImageResolution.Height };
             uniforms["progress"] = (float)Progress;
+            uniforms["ratio"] = (float)(viewport.Width / viewport.Height);
 
             using var paintWithShader = new SKPaint();
 

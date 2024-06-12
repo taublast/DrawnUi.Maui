@@ -1,0 +1,43 @@
+﻿uniform float ratio; // width / height
+uniform float progress; // 0.0 - 1.0
+uniform shader iImage1; // Texture
+uniform shader iImage2; // Texture for backside
+uniform float2 iOffset; // Top-left corner of DrawingRect
+uniform float2 iResolution; // Viewport resolution (pixels)
+uniform float2 iImageResolution; // iImage1 resolution (pixels)
+
+vec2 center = vec2(0.5);
+float threshold = 3.0;
+float fadeEdge = 0.1;
+
+vec4 getFromColor(vec2 uv) {
+    // Adjust UV coordinates to match the image resolution
+    vec2 adjustedUV = uv * iImageResolution;
+    return iImage1.eval(adjustedUV);
+}
+
+vec4 getToColor(vec2 uv) {
+    // Adjust UV coordinates to match the image resolution
+    vec2 adjustedUV = uv * iImageResolution;
+    return iImage2.eval(adjustedUV);
+}
+
+// License: MIT
+// Author: pthrasher
+// adapted by gre from https://gist.github.com/pthrasher/04fd9a7de4012cbb03f6
+
+float rand(vec2 co) {
+  return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+vec4 transition(vec2 p) {
+  float dist = distance(center, p) / threshold;
+  float r = progress - min(rand(vec2(p.y, 0.0)), rand(vec2(0.0, p.x)));
+  return mix(getFromColor(p), getToColor(p), mix(0.0, mix(step(dist, r), 1.0, smoothstep(1.0-fadeEdge, 1.0, progress)), smoothstep(0.0, fadeEdge, progress)));    
+}
+
+half4 main(float2 fragCoord) {
+    // Normalize the coordinates
+    float2 normCoord = (fragCoord - iOffset) / iResolution;
+    half4 fragColor = transition(normCoord);
+    return fragColor;
+}
