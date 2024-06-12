@@ -34,7 +34,7 @@
 
 
                     <draw:SkiaLayout HorizontalOptions="Fill" 
-                                     HeightRequest="250">
+                                     HeightRequest="450">
                         
                         <draw:SkiaImage
                             UseCache="Image"

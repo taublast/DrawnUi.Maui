@@ -31,7 +31,9 @@ public class AnimatedShaderTransition : ShaderTransition
     {
         //  "transitions/fade.sksl";
         //  "transitions/doorway.sksl";
-        ShaderFilename = "transitions/cube.sksl";
+        //ShaderFilename = "transitions/cube.sksl";
+        ShaderFilename = "transitions/crosswarp.sksl";
+
     }
     
     private PingPongAnimator _animator;
