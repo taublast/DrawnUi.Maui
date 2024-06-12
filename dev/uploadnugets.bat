@@ -13,12 +13,13 @@ REM Define the source directory for the packages
 set "source_dir=E:\Nugets"
 
 REM Define the file mask for the packages
-set "file_mask=*DrawnUi.Maui*.1.2.2.8.nupkg"
+REM set "file_mask=DrawnUi.Maui*.1.2.2.67*.nupkg"
+set "file_mask=AppoMobi.Maui.DrawnUi.1.2.2.67*.*nupkg"
 
 REM Loop through each package file in the source directory
 for %%f in ("%source_dir%\%file_mask%") do (
     echo Uploading %%f to GitHub with API key.
-    dotnet nuget push --source github --api-key %APIKEY% "%%f"
+    dotnet nuget push --source github %%f --api-key %APIKEY%
     if errorlevel 1 (
         echo An error occurred while uploading %%f.
     ) else (
@@ -28,3 +29,5 @@ for %%f in ("%source_dir%\%file_mask%") do (
 
 pause
 endlocal
+
+ 

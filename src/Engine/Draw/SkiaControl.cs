@@ -1,6 +1,5 @@
 ﻿using DrawnUi.Maui.Infrastructure.Extensions;
 using Microsoft.Maui.HotReload;
-using ShimSkiaSharp;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
