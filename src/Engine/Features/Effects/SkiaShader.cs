@@ -7,7 +7,7 @@ public class ShaderAnimatedEffect : SkiaShader
 
 
 
-public class StateEffect : SkiaEffect, ISkiaStateEffect
+public class StateEffect : SkiaEffect, IStateEffect
 {
     public virtual void UpdateState()
     {

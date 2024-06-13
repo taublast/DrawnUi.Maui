@@ -6384,6 +6384,7 @@ namespace DrawnUi.Maui.Draw
                 EffectColorFilter = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
                 EffectImageFilter = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
                 EffectRenderers = VisualEffects.OfType<IRenderEffect>().ToList();
+                EffectsState = VisualEffects.OfType<IStateEffect>().ToList();
                 EffectPostRenderer = VisualEffects.OfType<IPostRendererEffect>().FirstOrDefault();
             }
             else
@@ -6391,12 +6392,14 @@ namespace DrawnUi.Maui.Draw
                 EffectColorFilter = null;
                 EffectImageFilter = null;
                 EffectRenderers = new();
+                EffectsState = new();
                 EffectPostRenderer = null;
             }
 
             Update();
         }
 
+        protected List<IStateEffect> EffectsState;
         protected List<IRenderEffect> EffectRenderers;
         protected IImageEffect EffectImageFilter;
         protected IColorEffect EffectColorFilter;
