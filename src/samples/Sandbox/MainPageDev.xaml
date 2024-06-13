@@ -64,43 +64,45 @@
 
                     </draw:SkiaLayout>-->
 
+                    <!--Simulating view switcher-->
                     <draw:SkiaLayout
                         HeightRequest="250"
                         HorizontalOptions="Fill">
 
-                        <draw:SkiaControl.Shaders>
-
-                            <controls:TestShaderEffect ShaderFilename="Shaders/blit.sksl" />
-
-                        </draw:SkiaControl.Shaders>
-
-                        <draw:SkiaControl.VisualEffects>
-
-                            <draw:ChainColorPresetEffect Preset="BlackAndWhite" />
-
-                        </draw:SkiaControl.VisualEffects>
-
+                        <!--simulating a view that would show, drawing below-->
                         <draw:SkiaImage
-                            x:Name="GoFrom"
+                            x:Name="GoToView"
                             Aspect="AspectCover"
-                            HorizontalOptions="Fill"
-                            LoadSourceOnFirstDraw="False"
-                            Source="Images/8.jpg"
-                            UseCache="Image"
-                            VerticalOptions="Fill" />
-
-                        <draw:SkiaImage
-                            x:Name="GoTo"
-                            Aspect="AspectCover"
+                            VerticalOptions="Fill"
                             HorizontalOptions="Fill"
                             LoadSourceOnFirstDraw="False"
                             Source="Images/nico.jpg"
-                            UseCache="Image"
-                            VerticalOptions="Fill" />
+                            UseCache="Image" />
 
+                        <!--simulating a view that is actually active in view switcher-->
+                        <draw:SkiaLayout
+                            BackgroundColor="Black"
+                            VerticalOptions="Fill"
+                            HorizontalOptions="Fill">
 
+                            <draw:SkiaControl.VisualEffects>
+
+                                <draw:ChainColorPresetEffect Preset="BlackAndWhite" />
+
+                                <controls:TestShaderEffect ShaderFilename="Shaders/invert.sksl" />
+
+                            </draw:SkiaControl.VisualEffects>
+
+                            <draw:SkiaImage
+                                Aspect="AspectCover"
+                                HorizontalOptions="Fill"
+                                LoadSourceOnFirstDraw="False"
+                                Source="Images/8.jpg"
+                                UseCache="Image"
+                                VerticalOptions="Fill" />
+
+                        </draw:SkiaLayout>
                     </draw:SkiaLayout>
-
                 </draw:SkiaLayout>
 
             </draw:SkiaScroll>

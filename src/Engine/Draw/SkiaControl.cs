@@ -4211,7 +4211,6 @@ namespace DrawnUi.Maui.Draw
                 _paintWithOpacity?.Dispose();
                 _paintWithEffects?.Dispose();
                 _preparedClipBounds?.Dispose();
-                _paintWithShader?.Dispose();
             });
         }
 
@@ -4765,7 +4764,7 @@ namespace DrawnUi.Maui.Draw
 
         protected SKPaint _paintWithEffects = null;
         protected SKPaint _paintWithOpacity = null;
-        protected SKPaint _paintWithShader;
+
         SKPath _preparedClipBounds = null;
 
         private IAnimatorsManager _lastAnimatorManager;
@@ -5261,7 +5260,7 @@ namespace DrawnUi.Maui.Draw
                 if (UseCache == SkiaCacheType.GPU && !Super.GpuCacheEnabled)
                     return SkiaCacheType.Image;
 
-                if (Shaders.Count > 0 && (UseCache == SkiaCacheType.None || UseCache == SkiaCacheType.Operations))
+                if (EffectPostRenderer != null && (UseCache == SkiaCacheType.None || UseCache == SkiaCacheType.Operations))
                     return SkiaCacheType.Image;
 
                 return UseCache;
@@ -5417,8 +5416,8 @@ namespace DrawnUi.Maui.Draw
                     _paintWithEffects = new();
                 }
 
-                var effectColor = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
-                var effectImage = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
+                var effectColor = EffectColorFilter;
+                var effectImage = EffectImageFilter;
 
                 if (effectImage != null)
                     _paintWithEffects.ImageFilter = effectImage.CreateFilter(destination);
@@ -5434,7 +5433,7 @@ namespace DrawnUi.Maui.Draw
 
                 bool hasDrawnControl = false;
 
-                var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
+                var renderers = EffectRenderers;
 
                 if (renderers.Count > 0)
                 {
@@ -5703,17 +5702,9 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.IsAntialias = true;
                     _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
 
-                    if (Shaders.Count > 0)
+                    if (EffectPostRenderer != null)
                     {
-                        if (_paintWithShader == null)
-                        {
-                            _paintWithShader = new SKPaint();
-                        }
-                        foreach (var shader in Shaders)
-                        {
-                            _paintWithShader.Shader = shader.CreateShader(ctx, destination, cache.Image);
-                            ctx.Canvas.DrawRect(destination, _paintWithShader);
-                        }
+                        EffectPostRenderer.Render(ctx, destination);
                     }
                     else
                     {
@@ -6319,119 +6310,6 @@ namespace DrawnUi.Maui.Draw
         }
         static object lockViews = new();
 
-        #region SHADERS
-
-        private static void ShadersPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
-        {
-            if (bindable is SkiaControl control)
-            {
-
-                var enumerableShadows = (IEnumerable<SkiaShader>)newvalue;
-
-                if (oldvalue != null)
-                {
-                    if (oldvalue is INotifyCollectionChanged oldCollection)
-                    {
-                        oldCollection.CollectionChanged -= control.ShadersCollectionChanged;
-                    }
-
-                    if (oldvalue is IEnumerable<SkiaShader> oldList)
-                    {
-                        foreach (var shade in oldList)
-                        {
-                            shade.Dettach();
-                        }
-                    }
-                }
-
-                foreach (var shade in enumerableShadows)
-                {
-                    shade.Attach(control);
-                }
-
-                if (newvalue is INotifyCollectionChanged newCollection)
-                {
-                    newCollection.CollectionChanged -= control.ShadersCollectionChanged;
-                    newCollection.CollectionChanged += control.ShadersCollectionChanged;
-                }
-
-                control.Update();
-            }
-        }
-
-        private void ShadersCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-
-            switch (e.Action)
-            {
-            case NotifyCollectionChangedAction.Add:
-            foreach (SkiaShader newItem in e.NewItems)
-            {
-                newItem.Attach(this);
-            }
-
-            break;
-
-            case NotifyCollectionChangedAction.Reset:
-            case NotifyCollectionChangedAction.Remove:
-            foreach (SkiaShader oldItem in e.OldItems ?? new SkiaShader[0])
-            {
-                oldItem.Dettach();
-            }
-
-            break;
-            }
-
-            Update();
-        }
-
-        public static readonly BindableProperty ShadersProperty = BindableProperty.Create(
-            nameof(Shaders),
-            typeof(IList<SkiaShader>),
-            typeof(SkiaControl),
-            defaultValueCreator: (instance) =>
-            {
-                var created = new ObservableCollection<SkiaShader>();
-                //ShadersPropertyChanged(instance, null, created);
-                if (instance is SkiaControl control)
-                {
-                    created.CollectionChanged += control.ShadersCollectionChanged;
-                }
-                return created;
-            },
-            validateValue: (bo, v) => v is IList<SkiaShader>,
-            propertyChanged: ShadersPropertyChanged,
-            coerceValue: CoerceShaders);
-
-
-
-        public IList<SkiaShader> Shaders
-        {
-            get => (IList<SkiaShader>)GetValue(ShadersProperty);
-            set => SetValue(ShadersProperty, value);
-        }
-
-        private static object CoerceShaders(BindableObject bindable, object value)
-        {
-            if (!(value is ReadOnlyCollection<SkiaShader> readonlyCollection))
-            {
-                return value;
-            }
-            return new ReadOnlyCollection<SkiaShader>(
-                readonlyCollection.ToList());
-        }
-
-        public static readonly BindableProperty DisableShadersProperty = BindableProperty.Create(nameof(DisableShaders),
-            typeof(bool),
-            typeof(SkiaControl),
-            false, propertyChanged: NeedDraw);
-        public bool DisableShaders
-        {
-            get { return (bool)GetValue(DisableShadersProperty); }
-            set { SetValue(DisableShadersProperty, value); }
-        }
-
-        #endregion
 
         #region EFFECTS
 
@@ -6440,7 +6318,7 @@ namespace DrawnUi.Maui.Draw
             if (bindable is SkiaControl control)
             {
 
-                var enumerableShadows = (IEnumerable<SkiaEffect>)newvalue;
+                var skiaEffects = (IEnumerable<SkiaEffect>)newvalue;
 
                 if (oldvalue != null)
                 {
@@ -6451,14 +6329,14 @@ namespace DrawnUi.Maui.Draw
 
                     if (oldvalue is IEnumerable<SkiaEffect> oldList)
                     {
-                        foreach (var shade in oldList)
+                        foreach (var skiaEffect in oldList)
                         {
-                            shade.Dettach();
+                            skiaEffect.Dettach();
                         }
                     }
                 }
 
-                foreach (var shade in enumerableShadows)
+                foreach (var shade in skiaEffects)
                 {
                     shade.Attach(control);
                 }
@@ -6469,7 +6347,7 @@ namespace DrawnUi.Maui.Draw
                     newCollection.CollectionChanged += control.EffectsCollectionChanged;
                 }
 
-                control.Update();
+                control.OnVisualEffectsChanged();
             }
         }
 
@@ -6496,8 +6374,33 @@ namespace DrawnUi.Maui.Draw
             break;
             }
 
+            OnVisualEffectsChanged();
+        }
+
+        protected virtual void OnVisualEffectsChanged()
+        {
+            if (VisualEffects != null)
+            {
+                EffectColorFilter = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
+                EffectImageFilter = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
+                EffectRenderers = VisualEffects.OfType<IRenderEffect>().ToList();
+                EffectPostRenderer = VisualEffects.OfType<IPostRendererEffect>().FirstOrDefault();
+            }
+            else
+            {
+                EffectColorFilter = null;
+                EffectImageFilter = null;
+                EffectRenderers = new();
+                EffectPostRenderer = null;
+            }
+
             Update();
         }
+
+        protected List<IRenderEffect> EffectRenderers;
+        protected IImageEffect EffectImageFilter;
+        protected IColorEffect EffectColorFilter;
+        protected IPostRendererEffect EffectPostRenderer;
 
         public static readonly BindableProperty VisualEffectsProperty = BindableProperty.Create(
             nameof(VisualEffects),

@@ -466,6 +466,16 @@ Example 2:
 ```
 This control will request 30 by 30 pts.
 
+__`VisualEffects`__ a list of effects you can attach to affect to change how your controls is drawing. 
+It's easy to create effects for dirrerent tasks, would it be making your control black and white or animate it with conditions.
+Actually you can attach different types of effects to every control:
+* One effect changing the color filter, impements `IColorEffect`.
+* One effect changing the image filter, impements `IImageEffect`.
+* Any number of effects affecting the rendering before the controls drawing is finalized and eventually saved to cache, implementing `IRenderEffect`, applied in chain.
+* Any number of effects implementing `IStateEffect`, thoses can be used to change your control state, animate etc.
+* One post renderer, impements `IImageEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
+  
+
 ### `SkiaScroll`
 
 `SkiaScroll` is a scrollable container that supports virtualization and recycling of its children.

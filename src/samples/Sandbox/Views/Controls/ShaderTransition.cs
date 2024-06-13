@@ -5,8 +5,10 @@ namespace Sandbox.Views.Controls;
 public class ShaderTransitionEffect : ShaderAnimatedEffect
 {
 
+}
 
-
+public class PlayTransitionInLoopEffect : StateEffect
+{
 
 }
 

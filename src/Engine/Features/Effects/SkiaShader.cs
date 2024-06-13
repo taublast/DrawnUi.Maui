@@ -7,9 +7,18 @@ public class ShaderAnimatedEffect : SkiaShader
 
 
 
-
-public class SkiaShader : SkiaEffect, IShaderEffect
+public class StateEffect : SkiaEffect, ISkiaStateEffect
 {
+    public virtual void UpdateState()
+    {
+
+    }
+}
+
+
+public class SkiaShader : SkiaEffect, IPostRendererEffect
+{
+    protected SKPaint _paintWithShader;
 
     public static readonly BindableProperty UseContextProperty = BindableProperty.Create(nameof(UseContext),
         typeof(bool),
@@ -66,6 +75,20 @@ public class SkiaShader : SkiaEffect, IShaderEffect
         return snapshot;
     }
 
+
+    public virtual void Render(SkiaDrawingContext ctx, SKRect destination)
+    {
+        if (_paintWithShader == null)
+        {
+            _paintWithShader = new SKPaint();
+        }
+
+        SKImage source = Parent.RenderObject.Image;
+
+        _paintWithShader.Shader = CreateShader(ctx, destination, source);
+
+        ctx.Canvas.DrawRect(destination, _paintWithShader);
+    }
 
     public virtual SKShader CreateShader(SkiaDrawingContext ctx, SKRect destination, SKImage source)
     {
@@ -187,6 +210,7 @@ public class SkiaShader : SkiaEffect, IShaderEffect
 
         CompiledShader?.Dispose();
         TexturesUniforms?.Dispose();
+        _paintWithShader?.Dispose();
 
         base.OnDisposing();
     }
