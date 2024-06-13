@@ -71,7 +71,7 @@
 
                         <!--simulating a view that would show, drawing below-->
                         <draw:SkiaImage
-                            x:Name="GoToView"
+                            x:Name="GoTo"
                             Aspect="AspectCover"
                             VerticalOptions="Fill"
                             HorizontalOptions="Fill"
@@ -87,10 +87,13 @@
 
                             <draw:SkiaControl.VisualEffects>
 
-                                <draw:ChainColorPresetEffect Preset="BlackAndWhite" />
-
-                                <controls:TestShaderEffect ShaderFilename="Shaders/invert.sksl" />
-
+                                <draw:ChainColorPresetEffect 
+                                    Preset="BlackAndWhite" />
+                                
+                                <controls:TestLoopEffect
+                                    ShaderFilename="Shaders/transitions/scalein.sksl"
+                                    ControlTo="{x:Reference GoTo}"/>
+                                
                             </draw:SkiaControl.VisualEffects>
 
                             <draw:SkiaImage

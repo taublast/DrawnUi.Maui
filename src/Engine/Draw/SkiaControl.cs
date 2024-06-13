@@ -3339,8 +3339,11 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected virtual void OnLayoutReady()
         {
+            IsLayoutReady=true;
             LayoutIsReady?.Invoke(this, null);
         }
+        
+        public bool IsLayoutReady{get; protected set;}
 
         public bool LayoutReady
         {
@@ -4397,6 +4400,14 @@ namespace DrawnUi.Maui.Draw
         {
             InvalidatedParent = false;
             _invalidatedParentPostponed = false;
+            
+            if (EffectsState!=null)
+            {
+                foreach (var stateEffect in EffectsState)
+                {
+                    stateEffect?.UpdateState();
+                }
+            }
         }
 
         protected virtual void OnAfterDrawing(SkiaDrawingContext context,

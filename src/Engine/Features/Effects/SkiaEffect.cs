@@ -12,13 +12,13 @@ public class SkiaEffect : BindableObject, IDisposable, ICanBeUpdatedWithContext
 
     }
 
-    public void Attach(SkiaControl parent)
+    public virtual void Attach(SkiaControl parent)
     {
         this.Parent = parent;
         this.BindingContext = parent.BindingContext;
     }
 
-    public void Dettach()
+    public virtual void Dettach()
     {
         this.BindingContext = null;
         this.Parent = null;

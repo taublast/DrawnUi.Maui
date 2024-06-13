@@ -7,9 +7,134 @@ public class ShaderTransitionEffect : ShaderAnimatedEffect
 
 }
 
-public class PlayTransitionInLoopEffect : StateEffect
+public class TestLoopEffect : SkiaShader, IStateEffect
 {
+    public override void Render(SkiaDrawingContext ctx, SKRect destination)
+    {
+        base.Render(ctx, destination);
+    }
 
+    public double Progress { get; set; }
+    
+    private SkiaControl _controlTo;
+    private PingPongAnimator _animator;
+    bool _initialized;
+    public void UpdateState()
+    {
+        if (Parent!=null && !_initialized && Parent.IsLayoutReady)
+        {
+            _initialized=true;
+            if (_animator == null)
+            {
+                _animator = new(Parent);
+
+                _animator.Start((v) =>
+                {
+                    this.Progress = v;
+                    Update();
+                }, 0, 1, 3500);
+            }
+        }
+        
+        base.Update();
+    }
+
+    public override void Attach(SkiaControl parent)
+    {
+        base.Attach(parent);
+        
+        UpdateState();
+    }
+
+    protected override SKRuntimeEffectUniforms CreateUniforms(SKRect destination)
+    {
+        var uniforms = base.CreateUniforms(destination);
+        
+        uniforms["progress"] = (float)Progress;
+        uniforms["ratio"] = (float)(destination.Width / destination.Height);
+        
+        return uniforms;
+    }
+    
+    protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKImage snapshot)
+    {
+        if (ControlTo==null || ControlTo.RenderObject==null)
+        {
+            return new SKRuntimeEffectChildren(CompiledShader)
+            {
+            };
+        }
+        
+        var snapshot2 = ControlTo.RenderObject.Image;
+        
+        if (snapshot != null && snapshot2!=null)
+        {
+            var texture1 = snapshot.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+            var texture2 = snapshot2.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+            
+            return new SKRuntimeEffectChildren(CompiledShader)
+            {
+                { "iImage1", texture1 },
+                { "iImage2", texture2 }
+            };
+        }
+        else
+        {
+            return new SKRuntimeEffectChildren(CompiledShader)
+            {
+            };
+        }
+    }
+    
+    private void OnCacheCreatedTo(object sender, CachedObject e)
+    {
+        Update();
+    }
+    void DetachTo()
+    {
+        if (_controlTo != null)
+        {
+            _controlTo.CreatedCache -= OnCacheCreatedTo;
+            _controlTo = null;
+        }
+    }
+    private static void ApplyControlToProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (oldvalue != newvalue && bindable is TestLoopEffect control)
+        {
+            control.ApplyControlTo(newvalue as SkiaControl);
+        }
+    }
+    void ApplyControlTo(SkiaControl control)
+    {
+        if (_controlTo == control)
+            return;
+
+        DetachTo();
+        _controlTo = control;
+        if (_controlTo != null)
+        {
+            _controlTo.CreatedCache += OnCacheCreatedTo;
+        }
+    }
+    
+    public static readonly BindableProperty ControlToProperty = BindableProperty.Create(
+        nameof(ControlTo),
+        typeof(SkiaControl), typeof(TestLoopEffect),
+        null,
+        propertyChanged: ApplyControlToProperty);
+    
+    public SkiaControl ControlTo
+    {
+        get { return (SkiaControl)GetValue(ControlToProperty); }
+        set { SetValue(ControlToProperty, value); }
+    }
+
+    protected override void OnDisposing()
+    {
+        base.OnDisposing();
+        DetachTo();
+    }
 }
 
 public class TestShaderEffect : SkiaShader
@@ -144,14 +269,6 @@ public class ShaderTransition : SkiaControl
         }
     }
 
-    private static void ApplyControlToProperty(BindableObject bindable, object oldvalue, object newvalue)
-    {
-        if (oldvalue != newvalue && bindable is ShaderTransition control)
-        {
-            control.ApplyControlTo(newvalue as SkiaControl);
-        }
-    }
-
     void ApplyControlFrom(SkiaControl control)
     {
         if (_controlFrom == control)
@@ -166,6 +283,13 @@ public class ShaderTransition : SkiaControl
         }
     }
 
+    private static void ApplyControlToProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (oldvalue != newvalue && bindable is ShaderTransition control)
+        {
+            control.ApplyControlTo(newvalue as SkiaControl);
+        }
+    }
     void ApplyControlTo(SkiaControl control)
     {
         if (_controlTo == control)
@@ -217,15 +341,16 @@ public class ShaderTransition : SkiaControl
     {
 
     }
+    private void OnCacheCreatedTo(object sender, CachedObject e)
+    {
+        UpdateTextures();
+    }
     private void OnCacheCreatedFrom(object sender, CachedObject e)
     {
         UpdateTextures();
     }
 
-    private void OnCacheCreatedTo(object sender, CachedObject e)
-    {
-        UpdateTextures();
-    }
+
 
     void UpdateTextures()
     {

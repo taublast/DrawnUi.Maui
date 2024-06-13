@@ -111,8 +111,10 @@ public class SkiaShader : SkiaEffect, IPostRendererEffect
             }
 
             //if textures didn't change.. use previous?
-            CreateTexturesUniforms(ctx, destination, source);
-
+            var killTextures = TexturesUniforms;
+            TexturesUniforms = CreateTexturesUniforms(ctx, destination, source);
+            killTextures?.Dispose();
+            
             var kill = Shader;
             var uniforms = CreateUniforms(destination);
 #if SKIA3 
@@ -155,12 +157,10 @@ public class SkiaShader : SkiaEffect, IPostRendererEffect
 
     protected virtual SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKImage snapshot)
     {
-        var kill = TexturesUniforms;
-
         if (snapshot != null)
         {
             var texture1 = snapshot.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
-            TexturesUniforms = new SKRuntimeEffectChildren(CompiledShader)
+            return new SKRuntimeEffectChildren(CompiledShader)
             {
                 { "iImage1", texture1 },
                 //{ "iImage2", _texture2 }
@@ -168,13 +168,10 @@ public class SkiaShader : SkiaEffect, IPostRendererEffect
         }
         else
         {
-            TexturesUniforms = new SKRuntimeEffectChildren(CompiledShader)
+            return new SKRuntimeEffectChildren(CompiledShader)
             {
             };
         }
-
-        kill?.Dispose();
-        return TexturesUniforms;
     }
 
     protected virtual void CompileShader()
@@ -186,7 +183,7 @@ public class SkiaShader : SkiaEffect, IPostRendererEffect
     public static readonly BindableProperty ShaderFilenameProperty = BindableProperty.Create(nameof(ShaderFilename),
         typeof(string),
         typeof(SkiaShader),
-        string.Empty);
+        string.Empty, propertyChanged: NeedUpdate);
     public string ShaderFilename
     {
         get { return (string)GetValue(ShaderFilenameProperty); }
