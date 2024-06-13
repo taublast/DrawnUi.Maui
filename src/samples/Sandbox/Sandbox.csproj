@@ -136,9 +136,13 @@
 
     <None Remove="Resources\raw\Shaders2\glowblur.sksl" />
 
+    <None Remove="Resources\Raw\Shaders\invert.sksl" />
+
     <None Remove="Resources\Raw\Shaders\transdoorway.sksl" />
 
     <None Remove="Resources\Raw\Shaders\transfade.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\pagecurl.sksl" />
 
     <None Remove="Resources\Raw\Space\Sprites\glass.jpg" />
 
@@ -236,10 +240,16 @@
     <MauiAsset Update="Resources\Raw\Shaders2\glowblur.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\invert.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\transfade.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\transdoorway.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\pagecurl.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Space\Sprites\glass.jpg">

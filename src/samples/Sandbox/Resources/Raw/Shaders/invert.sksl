@@ -11,6 +11,9 @@ half4 main(float2 fragCoord)
     float2 renderingScale = iImageResolution.xy / iResolution.xy;
 	 float2 inputCoord = (fragCoord - iOffset) * renderingScale;
 
-	return iImage1.eval(inputCoord);
+	 half4 originalColor = iImage1.eval(inputCoord);
 
+    half4 invertedColor = half4(1.0 - originalColor.rgb, originalColor.a);
+
+    return invertedColor;
 }

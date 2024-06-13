@@ -18,6 +18,7 @@ vec4 getToColor(vec2 uv) {
     return iImage2.eval(adjustedUV);
 }
 
+//here goes the third party script with "transition" function etc
 
 
 half4 main(float2 fragCoord) {

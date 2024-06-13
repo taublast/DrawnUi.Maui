@@ -5,9 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:mauiNet8="using:MauiNet8"
     xmlns:views="clr-namespace:Sandbox.Views"
     xmlns:xaml2Pdf="clr-namespace:Sandbox.Views.Xaml2Pdf"
-    xmlns:mauiNet8="using:MauiNet8"
     BackgroundColor="Gray">
 
     <draw:Canvas
@@ -33,9 +33,9 @@
                     Type="Column">
 
 
-                    <draw:SkiaLayout HorizontalOptions="Fill" 
+                    <!--<draw:SkiaLayout HorizontalOptions="Fill"
                                      HeightRequest="250">
-                        
+
                         <draw:SkiaImage
                             UseCache="Image"
                             x:Name="GoFrom"
@@ -62,8 +62,44 @@
                             VerticalOptions="Fill"/>
 
 
+                    </draw:SkiaLayout>-->
+
+                    <draw:SkiaLayout
+                        HeightRequest="250"
+                        HorizontalOptions="Fill">
+
+                        <draw:SkiaControl.Shaders>
+
+                            <controls:TestShaderEffect ShaderFilename="Shaders/blit.sksl" />
+
+                        </draw:SkiaControl.Shaders>
+
+                        <draw:SkiaControl.VisualEffects>
+
+                            <draw:ChainColorPresetEffect Preset="BlackAndWhite" />
+
+                        </draw:SkiaControl.VisualEffects>
+
+                        <draw:SkiaImage
+                            x:Name="GoFrom"
+                            Aspect="AspectCover"
+                            HorizontalOptions="Fill"
+                            LoadSourceOnFirstDraw="False"
+                            Source="Images/8.jpg"
+                            UseCache="Image"
+                            VerticalOptions="Fill" />
+
+                        <draw:SkiaImage
+                            x:Name="GoTo"
+                            Aspect="AspectCover"
+                            HorizontalOptions="Fill"
+                            LoadSourceOnFirstDraw="False"
+                            Source="Images/nico.jpg"
+                            UseCache="Image"
+                            VerticalOptions="Fill" />
+
+
                     </draw:SkiaLayout>
-                     
 
                 </draw:SkiaLayout>
 

@@ -6,9 +6,6 @@ uniform float2 iOffset; // Top-left corner of DrawingRect
 uniform float2 iResolution; // Viewport resolution (pixels)
 uniform float2 iImageResolution; // iImage1 resolution (pixels)
 
-vec3 color = vec3(0.0);
-float colorPhase = 0.4 ; // if 0.0, there is no black phase, if 0.9, the black phase is very important
-
 vec4 getFromColor(vec2 uv) {
     // Adjust UV coordinates to match the image resolution
     vec2 adjustedUV = uv * iImageResolution;
@@ -21,15 +18,8 @@ vec4 getToColor(vec2 uv) {
     return iImage2.eval(adjustedUV);
 }
 
-// author: gre
-// License: MIT
+//here goes the third party script with "transition" function etc
 
-vec4 transition (vec2 uv) {
-  return mix(
-    mix(vec4(color, 1.0), getFromColor(uv), smoothstep(1.0-colorPhase, 0.0, progress)),
-    mix(vec4(color, 1.0), getToColor(uv), smoothstep(    colorPhase, 1.0, progress)),
-    progress);
-}
 
 half4 main(float2 fragCoord) {
     // Normalize the coordinates

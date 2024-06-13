@@ -4211,6 +4211,7 @@ namespace DrawnUi.Maui.Draw
                 _paintWithOpacity?.Dispose();
                 _paintWithEffects?.Dispose();
                 _preparedClipBounds?.Dispose();
+                _paintWithShader?.Dispose();
             });
         }
 
@@ -4764,6 +4765,7 @@ namespace DrawnUi.Maui.Draw
 
         protected SKPaint _paintWithEffects = null;
         protected SKPaint _paintWithOpacity = null;
+        protected SKPaint _paintWithShader;
         SKPath _preparedClipBounds = null;
 
         private IAnimatorsManager _lastAnimatorManager;
@@ -5259,6 +5261,9 @@ namespace DrawnUi.Maui.Draw
                 if (UseCache == SkiaCacheType.GPU && !Super.GpuCacheEnabled)
                     return SkiaCacheType.Image;
 
+                if (Shaders.Count > 0 && (UseCache == SkiaCacheType.None || UseCache == SkiaCacheType.Operations))
+                    return SkiaCacheType.Image;
+
                 return UseCache;
             }
         }
@@ -5418,16 +5423,17 @@ namespace DrawnUi.Maui.Draw
                 if (effectImage != null)
                     _paintWithEffects.ImageFilter = effectImage.CreateFilter(destination);
                 else
-                    _paintWithEffects.ImageFilter = null;//toso dispose!!!
+                    _paintWithEffects.ImageFilter = null;//will be disposed internally by effect
 
                 if (effectColor != null)
                     _paintWithEffects.ColorFilter = effectColor.CreateFilter(destination);
                 else
-                    _paintWithEffects.ColorFilter = null;//toso dispose!!!
+                    _paintWithEffects.ColorFilter = null;
 
                 var restore = ctx.Canvas.SaveLayer(_paintWithEffects);
 
                 bool hasDrawnControl = false;
+
                 var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
 
                 if (renderers.Count > 0)
@@ -5683,6 +5689,7 @@ namespace DrawnUi.Maui.Draw
             SkiaDrawingContext ctx,
             SKRect destination)
         {
+
             //lock (LockDraw)
             {
                 DrawWithClipAndTransforms(ctx, destination, destination, true, true, (ctx) =>
@@ -5696,7 +5703,22 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.IsAntialias = true;
                     _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
 
-                    cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
+                    if (Shaders.Count > 0)
+                    {
+                        if (_paintWithShader == null)
+                        {
+                            _paintWithShader = new SKPaint();
+                        }
+                        foreach (var shader in Shaders)
+                        {
+                            _paintWithShader.Shader = shader.CreateShader(ctx, destination, cache.Image);
+                            ctx.Canvas.DrawRect(destination, _paintWithShader);
+                        }
+                    }
+                    else
+                    {
+                        cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
+                    }
                 });
 
             }
@@ -6297,6 +6319,120 @@ namespace DrawnUi.Maui.Draw
         }
         static object lockViews = new();
 
+        #region SHADERS
+
+        private static void ShadersPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
+        {
+            if (bindable is SkiaControl control)
+            {
+
+                var enumerableShadows = (IEnumerable<SkiaShader>)newvalue;
+
+                if (oldvalue != null)
+                {
+                    if (oldvalue is INotifyCollectionChanged oldCollection)
+                    {
+                        oldCollection.CollectionChanged -= control.ShadersCollectionChanged;
+                    }
+
+                    if (oldvalue is IEnumerable<SkiaShader> oldList)
+                    {
+                        foreach (var shade in oldList)
+                        {
+                            shade.Dettach();
+                        }
+                    }
+                }
+
+                foreach (var shade in enumerableShadows)
+                {
+                    shade.Attach(control);
+                }
+
+                if (newvalue is INotifyCollectionChanged newCollection)
+                {
+                    newCollection.CollectionChanged -= control.ShadersCollectionChanged;
+                    newCollection.CollectionChanged += control.ShadersCollectionChanged;
+                }
+
+                control.Update();
+            }
+        }
+
+        private void ShadersCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+
+            switch (e.Action)
+            {
+            case NotifyCollectionChangedAction.Add:
+            foreach (SkiaShader newItem in e.NewItems)
+            {
+                newItem.Attach(this);
+            }
+
+            break;
+
+            case NotifyCollectionChangedAction.Reset:
+            case NotifyCollectionChangedAction.Remove:
+            foreach (SkiaShader oldItem in e.OldItems ?? new SkiaShader[0])
+            {
+                oldItem.Dettach();
+            }
+
+            break;
+            }
+
+            Update();
+        }
+
+        public static readonly BindableProperty ShadersProperty = BindableProperty.Create(
+            nameof(Shaders),
+            typeof(IList<SkiaShader>),
+            typeof(SkiaControl),
+            defaultValueCreator: (instance) =>
+            {
+                var created = new ObservableCollection<SkiaShader>();
+                //ShadersPropertyChanged(instance, null, created);
+                if (instance is SkiaControl control)
+                {
+                    created.CollectionChanged += control.ShadersCollectionChanged;
+                }
+                return created;
+            },
+            validateValue: (bo, v) => v is IList<SkiaShader>,
+            propertyChanged: ShadersPropertyChanged,
+            coerceValue: CoerceShaders);
+
+
+
+        public IList<SkiaShader> Shaders
+        {
+            get => (IList<SkiaShader>)GetValue(ShadersProperty);
+            set => SetValue(ShadersProperty, value);
+        }
+
+        private static object CoerceShaders(BindableObject bindable, object value)
+        {
+            if (!(value is ReadOnlyCollection<SkiaShader> readonlyCollection))
+            {
+                return value;
+            }
+            return new ReadOnlyCollection<SkiaShader>(
+                readonlyCollection.ToList());
+        }
+
+        public static readonly BindableProperty DisableShadersProperty = BindableProperty.Create(nameof(DisableShaders),
+            typeof(bool),
+            typeof(SkiaControl),
+            false, propertyChanged: NeedDraw);
+        public bool DisableShaders
+        {
+            get { return (bool)GetValue(DisableShadersProperty); }
+            set { SetValue(DisableShadersProperty, value); }
+        }
+
+        #endregion
+
         #region EFFECTS
 
         private static void EffectsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
@@ -6381,7 +6517,7 @@ namespace DrawnUi.Maui.Draw
             propertyChanged: EffectsPropertyChanged,
             coerceValue: CoerceVisualEffects);
 
-        private static int instanceCount = 0;
+
 
         public IList<SkiaEffect> VisualEffects
         {

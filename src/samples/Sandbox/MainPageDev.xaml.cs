@@ -48,8 +48,7 @@ public partial class MainPageDev : BasePage
 
     void Test()
     {
-        string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/transfade.sksl");
-
-        var effect = SkSl.Compile(shaderCode);
+        //string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/transfade.sksl");
+        //var effect = SkSl.Compile(shaderCode);
     }
 }
