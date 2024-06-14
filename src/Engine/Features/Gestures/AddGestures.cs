@@ -27,6 +27,9 @@ public static partial class AddGestures
         {
             get
             {
+                if (_parent == null)
+                    return false;
+
                 return _parent.CanDraw;
             }
         }
@@ -41,6 +44,9 @@ public static partial class AddGestures
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool HitIsInside(float x, float y)
         {
+            if (_parent == null)
+                return false;
+
             return _parent.HitIsInside(x, y);
         }
 
@@ -59,7 +65,7 @@ public static partial class AddGestures
 
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
-            if (!_parent.CanDraw)
+            if (_parent == null || !_parent.CanDraw)
                 return null;
 
             if (args.Type == TouchActionResult.Tapped)

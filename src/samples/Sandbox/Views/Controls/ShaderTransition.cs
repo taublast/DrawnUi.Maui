@@ -1,3 +1,4 @@
+using AppoMobi.Maui.Gestures;
 using DrawnUi.Maui.Infrastructure;
 
 namespace Sandbox.Views.Controls;
@@ -7,23 +8,19 @@ public class ShaderTransitionEffect : ShaderAnimatedEffect
 
 }
 
-public class TestLoopEffect : SkiaShader, IStateEffect
+public class TestLoopEffect : SkiaShader, IStateEffect, ISkiaGestureProcessor
 {
-    public override void Render(SkiaDrawingContext ctx, SKRect destination)
-    {
-        base.Render(ctx, destination);
-    }
 
     public double Progress { get; set; }
-    
+
     private SkiaControl _controlTo;
     private PingPongAnimator _animator;
     bool _initialized;
     public void UpdateState()
     {
-        if (Parent!=null && !_initialized && Parent.IsLayoutReady)
+        if (Parent != null && !_initialized && Parent.IsLayoutReady)
         {
-            _initialized=true;
+            _initialized = true;
             if (_animator == null)
             {
                 _animator = new(Parent);
@@ -35,43 +32,43 @@ public class TestLoopEffect : SkiaShader, IStateEffect
                 }, 0, 1, 3500);
             }
         }
-        
+
         base.Update();
     }
 
     public override void Attach(SkiaControl parent)
     {
         base.Attach(parent);
-        
+
         UpdateState();
     }
 
     protected override SKRuntimeEffectUniforms CreateUniforms(SKRect destination)
     {
         var uniforms = base.CreateUniforms(destination);
-        
+
         uniforms["progress"] = (float)Progress;
         uniforms["ratio"] = (float)(destination.Width / destination.Height);
-        
+
         return uniforms;
     }
-    
+
     protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKImage snapshot)
     {
-        if (ControlTo==null || ControlTo.RenderObject==null)
+        if (ControlTo == null || ControlTo.RenderObject == null)
         {
             return new SKRuntimeEffectChildren(CompiledShader)
             {
             };
         }
-        
+
         var snapshot2 = ControlTo.RenderObject.Image;
-        
-        if (snapshot != null && snapshot2!=null)
+
+        if (snapshot != null && snapshot2 != null)
         {
             var texture1 = snapshot.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
             var texture2 = snapshot2.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
-            
+
             return new SKRuntimeEffectChildren(CompiledShader)
             {
                 { "iImage1", texture1 },
@@ -85,7 +82,7 @@ public class TestLoopEffect : SkiaShader, IStateEffect
             };
         }
     }
-    
+
     private void OnCacheCreatedTo(object sender, CachedObject e)
     {
         Update();
@@ -117,13 +114,15 @@ public class TestLoopEffect : SkiaShader, IStateEffect
             _controlTo.CreatedCache += OnCacheCreatedTo;
         }
     }
-    
+
     public static readonly BindableProperty ControlToProperty = BindableProperty.Create(
         nameof(ControlTo),
         typeof(SkiaControl), typeof(TestLoopEffect),
         null,
         propertyChanged: ApplyControlToProperty);
-    
+
+    private PointF _mouse = new();
+
     public SkiaControl ControlTo
     {
         get { return (SkiaControl)GetValue(ControlToProperty); }
@@ -135,7 +134,17 @@ public class TestLoopEffect : SkiaShader, IStateEffect
         base.OnDisposing();
         DetachTo();
     }
+
+    public virtual ISkiaGestureListener ProcessGestures(
+        SkiaGesturesParameters args,
+        GestureEventProcessingInfo apply)
+    {
+        _mouse = args.Event.Location;
+        return null;
+    }
 }
+
+
 
 public class TestShaderEffect : SkiaShader
 {

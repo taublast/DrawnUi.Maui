@@ -1099,6 +1099,9 @@ namespace DrawnUi.Maui.Draw
 
         public virtual ISkiaGestureListener OnSkiaGestureEvent(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
+            if (!CanDraw)
+                return null;
+
             if (args.Type == _lastIncomingTouchAction && args.Type == TouchActionResult.Up)
             {
                 //a case when we were called for same event by parent and by some top level
@@ -1107,7 +1110,8 @@ namespace DrawnUi.Maui.Draw
                 return null;
             }
 
-            _lastIncomingTouchAction = args.Type;
+            //todo check latest behaviour!
+            //_lastIncomingTouchAction = args.Type;
 
             return ProcessGestures(args, apply);
         }
@@ -1146,6 +1150,14 @@ namespace DrawnUi.Maui.Draw
             if (TouchEffect.LogEnabled)
             {
                 Super.Log($"[BASE] {this.Tag} Got {args.Type}.. {Uid}");
+            }
+
+            if (EffectsGestureProcessors.Count > 0)
+            {
+                foreach (var effect in EffectsGestureProcessors)
+                {
+                    effect.ProcessGestures(args, apply);
+                }
             }
 
             ISkiaGestureListener consumed = null;
@@ -3339,11 +3351,11 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected virtual void OnLayoutReady()
         {
-            IsLayoutReady=true;
+            IsLayoutReady = true;
             LayoutIsReady?.Invoke(this, null);
         }
-        
-        public bool IsLayoutReady{get; protected set;}
+
+        public bool IsLayoutReady { get; protected set; }
 
         public bool LayoutReady
         {
@@ -4214,6 +4226,13 @@ namespace DrawnUi.Maui.Draw
                 _paintWithOpacity?.Dispose();
                 _paintWithEffects?.Dispose();
                 _preparedClipBounds?.Dispose();
+
+                EffectColorFilter = null;
+                EffectImageFilter = null;
+                EffectRenderers = null;
+                EffectsState = null;
+                EffectsGestureProcessors = null;
+                EffectPostRenderer = null;
             });
         }
 
@@ -4400,8 +4419,8 @@ namespace DrawnUi.Maui.Draw
         {
             InvalidatedParent = false;
             _invalidatedParentPostponed = false;
-            
-            if (EffectsState!=null)
+
+            if (EffectsState != null)
             {
                 foreach (var stateEffect in EffectsState)
                 {
@@ -6392,26 +6411,20 @@ namespace DrawnUi.Maui.Draw
         {
             if (VisualEffects != null)
             {
+                EffectsGestureProcessors = VisualEffects.OfType<ISkiaGestureProcessor>().ToList();
                 EffectColorFilter = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
                 EffectImageFilter = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
                 EffectRenderers = VisualEffects.OfType<IRenderEffect>().ToList();
                 EffectsState = VisualEffects.OfType<IStateEffect>().ToList();
                 EffectPostRenderer = VisualEffects.OfType<IPostRendererEffect>().FirstOrDefault();
             }
-            else
-            {
-                EffectColorFilter = null;
-                EffectImageFilter = null;
-                EffectRenderers = new();
-                EffectsState = new();
-                EffectPostRenderer = null;
-            }
 
             Update();
         }
 
-        protected List<IStateEffect> EffectsState;
-        protected List<IRenderEffect> EffectRenderers;
+        protected List<ISkiaGestureProcessor> EffectsGestureProcessors = new();
+        protected List<IStateEffect> EffectsState = new();
+        protected List<IRenderEffect> EffectRenderers = new();
         protected IImageEffect EffectImageFilter;
         protected IColorEffect EffectColorFilter;
         protected IPostRendererEffect EffectPostRenderer;

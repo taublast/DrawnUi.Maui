@@ -114,7 +114,7 @@ public class SkiaShader : SkiaEffect, IPostRendererEffect
             var killTextures = TexturesUniforms;
             TexturesUniforms = CreateTexturesUniforms(ctx, destination, source);
             killTextures?.Dispose();
-            
+
             var kill = Shader;
             var uniforms = CreateUniforms(destination);
 #if SKIA3 
@@ -159,7 +159,9 @@ public class SkiaShader : SkiaEffect, IPostRendererEffect
     {
         if (snapshot != null)
         {
-            var texture1 = snapshot.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+            var texture1 = snapshot
+                .ToShader();
+            //.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
             return new SKRuntimeEffectChildren(CompiledShader)
             {
                 { "iImage1", texture1 },

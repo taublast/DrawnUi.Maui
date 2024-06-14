@@ -136,6 +136,8 @@
 
     <None Remove="Resources\raw\Shaders2\glowblur.sksl" />
 
+    <None Remove="Resources\Raw\Shaders\apple.sksl" />
+
     <None Remove="Resources\Raw\Shaders\invert.sksl" />
 
     <None Remove="Resources\Raw\Shaders\transdoorway.sksl" />
@@ -238,6 +240,9 @@
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders2\glowblur.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\apple.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\invert.sksl">

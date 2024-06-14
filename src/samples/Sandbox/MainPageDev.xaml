@@ -18,6 +18,7 @@
         VerticalOptions="Fill">
 
         <draw:SkiaLayout
+            Tag="Wrapper"
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
@@ -66,6 +67,7 @@
 
                     <!--Simulating view switcher-->
                     <draw:SkiaLayout
+                        Tag="Switcher"
                         HeightRequest="250"
                         HorizontalOptions="Fill">
 
@@ -81,6 +83,7 @@
 
                         <!--simulating a view that is actually active in view switcher-->
                         <draw:SkiaLayout
+                            Tag="Front"
                             BackgroundColor="Black"
                             VerticalOptions="Fill"
                             HorizontalOptions="Fill">
@@ -90,9 +93,12 @@
                                 <draw:ChainColorPresetEffect 
                                     Preset="BlackAndWhite" />
                                 
-                                <controls:TestLoopEffect
+                                <controls:TestPressEffect
+                                    ShaderFilename="Shaders/apple.sksl"/>
+
+                                <!--<controls:TestLoopEffect
                                     ShaderFilename="Shaders/transitions/scalein.sksl"
-                                    ControlTo="{x:Reference GoTo}"/>
+                                    ControlTo="{x:Reference GoTo}"/>-->
                                 
                             </draw:SkiaControl.VisualEffects>
 
