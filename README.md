@@ -23,6 +23,12 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
 * Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
 
+## What's incoming
+
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/69db2f99-e99f-4b12-b270-7bf27950fcf8
+
+Stay tuned for upcoming effects with shaders more!
+
 ## Demo Apps
 
 * This repo includes a Sandox project for some custom controls, with playground examples, custom controls, maps etc
