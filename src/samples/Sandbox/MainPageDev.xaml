@@ -18,23 +18,36 @@
         VerticalOptions="Fill">
 
         <draw:SkiaLayout
-            Tag="Wrapper"
             HorizontalOptions="Fill"
+            Tag="Wrapper"
             VerticalOptions="Fill">
 
-            <draw:SkiaScroll
-                BackgroundColor="Black"
+            <draw:SkiaLayout
                 HorizontalOptions="Fill"
+                UseCache="GPU"
                 VerticalOptions="Fill">
+                <draw:SkiaControl.VisualEffects>
 
-                <draw:SkiaLayout
-                    BackgroundColor="Blue"
+                    <!--<draw:ChainColorPresetEffect
+                           Preset="BlackAndWhite" />-->
+
+                    <controls:MultiRippleWithTouchEffect />
+
+                </draw:SkiaControl.VisualEffects>
+                <draw:SkiaScroll
+                    BackgroundColor="Black"
                     HorizontalOptions="Fill"
-                    Tag="Content"
-                    Type="Column">
+                    VerticalOptions="Fill">
 
 
-                    <!--<draw:SkiaLayout HorizontalOptions="Fill"
+                    <draw:SkiaLayout
+                        BackgroundColor="Blue"
+                        HorizontalOptions="Fill"
+                        Tag="Content"
+                        Type="Column">
+
+
+                        <!--<draw:SkiaLayout HorizontalOptions="Fill"
                                      HeightRequest="250">
 
                         <draw:SkiaImage
@@ -65,56 +78,67 @@
 
                     </draw:SkiaLayout>-->
 
-                    <!--Simulating view switcher-->
-                    <draw:SkiaLayout
-                        Tag="Switcher"
-                        HeightRequest="250"
-                        HorizontalOptions="Fill">
-
-                        <!--simulating a view that would show, drawing below-->
-                        <draw:SkiaImage
-                            x:Name="GoTo"
-                            Aspect="AspectCover"
-                            VerticalOptions="Fill"
-                            HorizontalOptions="Fill"
-                            LoadSourceOnFirstDraw="False"
-                            Source="Images/nico.jpg"
-                            UseCache="Image" />
-
-                        <!--simulating a view that is actually active in view switcher-->
+                        <!--  Simulating view switcher  -->
                         <draw:SkiaLayout
-                            Tag="Front"
-                            BackgroundColor="Black"
-                            VerticalOptions="Fill"
-                            HorizontalOptions="Fill">
+                            HeightRequest="350"
+                            HorizontalOptions="Fill"
+                            Tag="Switcher">
 
-                            <draw:SkiaControl.VisualEffects>
-
-                                <draw:ChainColorPresetEffect 
-                                    Preset="BlackAndWhite" />
-                                
-                                <controls:TestPressEffect
-                                    ShaderFilename="Shaders/apple.sksl"/>
-
-                                <!--<controls:TestLoopEffect
-                                    ShaderFilename="Shaders/transitions/scalein.sksl"
-                                    ControlTo="{x:Reference GoTo}"/>-->
-                                
-                            </draw:SkiaControl.VisualEffects>
-
+                            <!--  simulating a view that would show, drawing below  -->
                             <draw:SkiaImage
+                                x:Name="GoTo"
                                 Aspect="AspectCover"
                                 HorizontalOptions="Fill"
                                 LoadSourceOnFirstDraw="False"
-                                Source="Images/8.jpg"
+                                Source="Images/nico.jpg"
                                 UseCache="Image"
                                 VerticalOptions="Fill" />
 
+                            <!--  simulating a view that is actually active in view switcher  -->
+                            <draw:SkiaLayout
+                                BackgroundColor="Black"
+                                HorizontalOptions="Fill"
+                                Tag="Front"
+                                Type="Column"
+                                VerticalOptions="Fill">
+
+
+                                <!--<draw:SkiaMarkdownLabel
+                                AddMarginTop="8"
+                                FontFamily="OpenSansRegular"
+                                FontSize="14"
+                                HorizontalOptions="Center"
+                                Text="_#dotnetmaui_ shaders"
+                                TextColor="White"
+                                UseCache="Image" />-->
+
+                                <draw:SkiaImage
+                                    Aspect="AspectCover"
+                                    HeightRequest="250"
+                                    HorizontalOptions="Fill"
+                                    LoadSourceOnFirstDraw="False"
+                                    Source="Images/8.jpg"
+                                    UseCache="Image" />
+
+                                <draw:SkiaMarkdownLabel
+                                    Margin="16,0"
+                                    FontFamily="OpenSansRegular"
+                                    FontSize="14"
+                                    HorizontalOptions="Center"
+                                    HorizontalTextAlignment="Center"
+                                    Text="Infinite ripples! 😋 _#dotnetmaui_"
+                                    TextColor="White"
+                                    UseCache="Image" />
+
+                            </draw:SkiaLayout>
                         </draw:SkiaLayout>
                     </draw:SkiaLayout>
-                </draw:SkiaLayout>
 
-            </draw:SkiaScroll>
+                </draw:SkiaScroll>
+
+              
+
+            </draw:SkiaLayout>
 
             <controls:ButtonToRoot />
 

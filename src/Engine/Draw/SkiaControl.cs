@@ -676,7 +676,9 @@ namespace DrawnUi.Maui.Draw
         /// <param name="cancel"></param>
         /// <param name="onStopped"></param>
         /// <returns></returns>
-        public Task AnimateRangeAsync(Action<double> callback, double start, double end, double length = 250, Easing easing = null, CancellationToken cancel = default, bool applyEndValueOnStop = false)
+        public Task AnimateRangeAsync(Action<double> callback, double start, double end, double length = 250, Easing easing = null,
+            CancellationToken cancel = default,
+            bool applyEndValueOnStop = false)
         {
             RangeAnimator animator = null;
 

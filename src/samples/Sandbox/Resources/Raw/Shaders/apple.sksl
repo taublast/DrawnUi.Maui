@@ -27,7 +27,7 @@ half4 main(float2 fragCoord)
     float2 scale = iImageResolution.xy / iResolution.xy;
 
     // Normalize the coordinates
-    vec2 uv = fragCoord / iResolution.xy;
+    vec2 uv = (fragCoord - iOffset) / iResolution.xy;
 
     // Get the cursor position and normalize it
     vec2 origin = iMouse.xy / iResolution.xy;

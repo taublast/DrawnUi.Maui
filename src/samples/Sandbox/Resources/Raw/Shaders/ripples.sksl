@@ -1,0 +1,84 @@
+﻿uniform float4 iMouse;           // Mouse drag pos=.xy Click pos=.zw (pixels)
+uniform float  iTime;            // Shader playback time (s)
+uniform float2 iResolution;      // Viewport resolution (pixels)
+uniform float2 iImageResolution; // iImage1 resolution (pixels)
+uniform shader iImage1;          // Texture
+uniform shader iImage2;          // Texture for reflection
+uniform float2 iOffset;          // Top-left corner of DrawingRect
+uniform float2 iOrigin;          // Mouse drag started here
+
+uniform float2 origins[10];      // Array for multiple mouse positions
+uniform float  progresses[10];   // Array for multiple animation progresses (0.0 -> 1.0)
+
+/*
+This shader is ported from the original Apple shader presented at WWDC 2024.
+For more details, see the session here: https://developer.apple.com/videos/play/wwdc2024/10151/
+Credit to Apple for the original implementation.
+Credits to Raouf Rahiche for the GLSL version that was used to create this SKSL.
+*/
+
+const float duration = 5.0;      // This is the solved animation duration at speed 1
+const float amplitude = 0.015;     // Default amplitude of the ripple
+const float frequency = 15.0;    // Default frequency of the ripple
+const float decay = 2.0;         // Default decay rate of the ripple
+const float speed = 0.8;         // Default speed of the ripple
+
+half4 main(float2 fragCoord) 
+{
+    // Precompute the scale factor
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+    vec2 uv = (fragCoord - iOffset) / iResolution.xy;
+
+    // Sample the base color
+    half4 baseColor = iImage1.eval(inputCoord);
+
+    // Initialize the combined displacement vector
+    vec2 combinedDisplacement = vec2(0.0, 0.0);
+
+    // Loop through the ripples
+    for (int i = 0; i < 10; i++) 
+    {
+        float progress = progresses[i];
+        vec2 mouse = origins[i];
+
+        if (progress >= 0.0 && progress <= 1.0) 
+        {
+            // Get the cursor position and normalize it
+            vec2 origin = mouse / iResolution.xy;
+
+            // Calculate the distance and direction from the origin
+            vec2 direction = uv - origin;
+            float distance = length(direction);
+
+            // Calculate the delay based on the distance
+            float delay = distance / speed;
+
+            // Adjust the time for the delay and clamp to 0
+            float time = max(0.0, progress * duration - delay);
+
+            // Calculate the ripple amount
+            float rippleAmount = amplitude * sin(frequency * time) * exp(-decay * time);
+
+            // Normalize the direction vector
+            vec2 n = direction / distance;
+
+            // Accumulate the displacement caused by this ripple
+            combinedDisplacement += rippleAmount * n;
+        }
+    }
+
+    // Calculate the final position by applying the combined displacement
+    vec2 finalPosition = uv + combinedDisplacement;
+
+    // Sample the texture at the new combined position
+    vec3 finalColor = iImage1.eval(finalPosition * iResolution.xy * renderingScale).rgb;
+
+    // Lighten or darken the color based on the combined ripple amount
+    finalColor += 0.05 * (length(combinedDisplacement) / amplitude);
+
+    // Set the fragment color
+    half4 fragColor = vec4(finalColor, 1.0);
+
+    return fragColor;
+}

@@ -80,6 +80,27 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
+        public override void OnSuperviewShouldRenderChanged(bool state)
+        {
+            if (UpdateWhenReturnedFromBackground)
+            {
+                Update();
+            }
+
+            try
+            {
+                using var children = ChildrenFactory.GetViewsIterator();
+                foreach (var view in children)
+                {
+                    view.OnSuperviewShouldRenderChanged(state);
+                }
+            }
+            catch (System.Exception e)
+            {
+                Super.Log(e);
+            }
+        }
+
         public override void ApplyBindingContext()
         {
             UpdateRowColumnBindingContexts();
