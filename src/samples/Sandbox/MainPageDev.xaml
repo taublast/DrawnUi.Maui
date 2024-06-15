@@ -31,7 +31,8 @@
                     <!--<draw:ChainColorPresetEffect
                            Preset="BlackAndWhite" />-->
 
-                    <controls:MultiRippleWithTouchEffect />
+                    <controls:MultiRippleWithTouchEffect 
+                        BacksideSource="Images/maui1.png"/>
 
                 </draw:SkiaControl.VisualEffects>
                 <draw:SkiaScroll

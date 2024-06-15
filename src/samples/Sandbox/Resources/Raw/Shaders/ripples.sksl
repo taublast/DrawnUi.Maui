@@ -17,6 +17,8 @@ Credit to Apple for the original implementation.
 Credits to Raouf Rahiche for the GLSL version that was used to create this SKSL.
 */
 
+const float reflectionIntensity = 0.15;
+
 const float duration = 5.0;      // This is the solved animation duration at speed 1
 const float amplitude = 0.015;     // Default amplitude of the ripple
 const float frequency = 15.0;    // Default frequency of the ripple
@@ -74,9 +76,15 @@ half4 main(float2 fragCoord)
     // Sample the texture at the new combined position
     vec3 finalColor = iImage1.eval(finalPosition * iResolution.xy * renderingScale).rgb;
 
+    //get reflection input
+    vec3 reflectionColor = iImage2.eval(finalPosition * iResolution.xy * renderingScale).rgb;
+
     // Lighten or darken the color based on the combined ripple amount
     finalColor += 0.05 * (length(combinedDisplacement) / amplitude);
 
+    float reflectionFactor = clamp(length(combinedDisplacement) / amplitude, 0.0, 1.0);
+    finalColor = mix(finalColor, reflectionColor, reflectionFactor * reflectionIntensity);
+ 
     // Set the fragment color
     half4 fragColor = vec4(finalColor, 1.0);
 

@@ -8,7 +8,7 @@ public class ShaderTransitionEffect : ShaderAnimatedEffect
 
 }
 
-public class TestLoopEffect : SkiaShader, IStateEffect, ISkiaGestureProcessor
+public class TestLoopEffect : SkiaShaderEffect, IStateEffect, ISkiaGestureProcessor
 {
 
     public double Progress { get; set; }
@@ -87,6 +87,7 @@ public class TestLoopEffect : SkiaShader, IStateEffect, ISkiaGestureProcessor
     {
         Update();
     }
+
     void DetachTo()
     {
         if (_controlTo != null)
@@ -95,6 +96,7 @@ public class TestLoopEffect : SkiaShader, IStateEffect, ISkiaGestureProcessor
             _controlTo = null;
         }
     }
+
     private static void ApplyControlToProperty(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (oldvalue != newvalue && bindable is TestLoopEffect control)
@@ -102,6 +104,7 @@ public class TestLoopEffect : SkiaShader, IStateEffect, ISkiaGestureProcessor
             control.ApplyControlTo(newvalue as SkiaControl);
         }
     }
+
     void ApplyControlTo(SkiaControl control)
     {
         if (_controlTo == control)
@@ -146,7 +149,7 @@ public class TestLoopEffect : SkiaShader, IStateEffect, ISkiaGestureProcessor
 
 
 
-public class TestShaderEffect : SkiaShader
+public class TestShaderEffect : SkiaShaderEffect
 {
 
     public static readonly BindableProperty ProgressProperty = BindableProperty.Create(nameof(Progress),
