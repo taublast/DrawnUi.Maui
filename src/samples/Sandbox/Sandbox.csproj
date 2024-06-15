@@ -206,6 +206,10 @@
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>ResStrings.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <Compile Update="Views\MainPageShaderRipples.xaml.cs">
+        <DependentUpon>MainPageShaderRipples.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
  
  
@@ -274,6 +278,9 @@
   <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
     <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
+    <MauiXaml Update="Views\MainPageShaderRipples.xaml">
+      <SubType>Designer</SubType>
+    </MauiXaml>
   </ItemGroup>
 
 

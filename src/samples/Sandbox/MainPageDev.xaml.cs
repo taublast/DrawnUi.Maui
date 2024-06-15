@@ -48,7 +48,7 @@ public partial class MainPageDev : BasePage
 
     void Test()
     {
-        string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/apple.sksl");
-        var effect = SkSl.Compile(shaderCode);
+       // string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/apple.sksl");
+        //var effect = SkSl.Compile(shaderCode);
     }
 }

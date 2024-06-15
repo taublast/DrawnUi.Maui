@@ -17,13 +17,23 @@ Credit to Apple for the original implementation.
 Credits to Raouf Rahiche for the GLSL version that was used to create this SKSL.
 */
 
-const float reflectionIntensity = 0.15;
 
 const float duration = 5.0;      // This is the solved animation duration at speed 1
 const float amplitude = 0.015;     // Default amplitude of the ripple
 const float frequency = 15.0;    // Default frequency of the ripple
 const float decay = 2.0;         // Default decay rate of the ripple
 const float speed = 0.8;         // Default speed of the ripple
+const float rippleIntensity = 0.05;
+
+const float reflectionIntensity = 0.05;
+const float minReflectionIntensity = 0.05; // minimum reflection visible
+
+const vec3 waterTint = vec3(0.1, 0.2, 0.5);
+
+// Define separate reflection angles to simulate 3D viewing perspective
+const float reflectionAngleX = -5.0; // Adjust the angle to simulate the viewing perspective on X axis
+const float reflectionAngleY = 5.0; // Adjust the angle to simulate the viewing perspective on Y axis
+const float reflectionAngleZ = 1.0; // Adjust the angle to simulate the viewing perspective on Z axis
 
 half4 main(float2 fragCoord) 
 {
@@ -77,13 +87,6 @@ half4 main(float2 fragCoord)
     vec3 finalColor = iImage1.eval(finalPosition * iResolution.xy * renderingScale).rgb;
 
     //get reflection input
-    const float reflectionIntensity = 0.05;
-    const float minReflectionIntensity = 0.05; // Adjust this value to control minimum reflection
-
-    // Define separate reflection angles to simulate 3D viewing perspective
-    const float reflectionAngleX = -5.0; // Adjust the angle to simulate the viewing perspective on X axis
-    const float reflectionAngleY = 5.0; // Adjust the angle to simulate the viewing perspective on Y axis
-    const float reflectionAngleZ = 1.0; // Adjust the angle to simulate the viewing perspective on Z axis
 
     // Calculate dynamic perturbation factor based on combined displacement
     float dynamicPerturbationFactor = length(combinedDisplacement) * 10.0; // Adjust factor based on ripple strength
@@ -106,7 +109,7 @@ half4 main(float2 fragCoord)
     vec3 reflectionColor = iImage2.eval(distortedCoord * iResolution.xy * renderingScale).rgb;
 
     // Lighten or darken the color based on the combined ripple amount
-    finalColor += 0.05 * (length(combinedDisplacement) / amplitude);
+    finalColor += rippleIntensity * (length(combinedDisplacement) / amplitude);
 
     // Define viewing direction using reflection angles
     vec2 viewingDirection = normalize(vec2(reflectionAngleX, reflectionAngleY));
@@ -121,7 +124,6 @@ half4 main(float2 fragCoord)
     reflectionFactor = max(reflectionFactor, minReflectionIntensity);
 
     // Tint the reflection color based on water color
-    vec3 waterTint = vec3(0.1, 0.2, 0.5); // Example tint, adjust as needed
     vec3 tintedReflectionColor = mix(reflectionColor, reflectionColor * waterTint, 0.5);
 
     // Blend the reflection with the base color
