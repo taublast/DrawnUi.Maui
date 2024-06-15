@@ -77,13 +77,56 @@ half4 main(float2 fragCoord)
     vec3 finalColor = iImage1.eval(finalPosition * iResolution.xy * renderingScale).rgb;
 
     //get reflection input
-    vec3 reflectionColor = iImage2.eval(finalPosition * iResolution.xy * renderingScale).rgb;
+    const float reflectionIntensity = 0.05;
+    const float minReflectionIntensity = 0.05; // Adjust this value to control minimum reflection
+
+    // Define separate reflection angles to simulate 3D viewing perspective
+    const float reflectionAngleX = -5.0; // Adjust the angle to simulate the viewing perspective on X axis
+    const float reflectionAngleY = 5.0; // Adjust the angle to simulate the viewing perspective on Y axis
+    const float reflectionAngleZ = 1.0; // Adjust the angle to simulate the viewing perspective on Z axis
+
+    // Calculate dynamic perturbation factor based on combined displacement
+    float dynamicPerturbationFactor = length(combinedDisplacement) * 10.0; // Adjust factor based on ripple strength
+
+    // Calculate perturbation
+    vec2 perturbation = vec2(sin(finalPosition.x * dynamicPerturbationFactor), cos(finalPosition.y * dynamicPerturbationFactor)) * 0.05;
+
+    // Calculate 3D angle-based offsets
+    vec2 angleOffsetX = vec2(reflectionAngleX * combinedDisplacement.y, reflectionAngleX * combinedDisplacement.x);
+    vec2 angleOffsetY = vec2(reflectionAngleY * combinedDisplacement.y, reflectionAngleY * combinedDisplacement.x);
+    vec2 angleOffsetZ = vec2(reflectionAngleZ * combinedDisplacement.y, reflectionAngleZ * combinedDisplacement.x);
+
+    // Combine all 3D offsets
+    vec2 angleOffset = angleOffsetX + angleOffsetY + angleOffsetZ;
+
+    // Apply angle offset and perturbation to get final distorted coordinates for reflection
+    vec2 distortedCoord = finalPosition + perturbation + angleOffset;
+
+    // Sample the distorted reflection texture
+    vec3 reflectionColor = iImage2.eval(distortedCoord * iResolution.xy * renderingScale).rgb;
 
     // Lighten or darken the color based on the combined ripple amount
     finalColor += 0.05 * (length(combinedDisplacement) / amplitude);
 
-    float reflectionFactor = clamp(length(combinedDisplacement) / amplitude, 0.0, 1.0);
-    finalColor = mix(finalColor, reflectionColor, reflectionFactor * reflectionIntensity);
+    // Define viewing direction using reflection angles
+    vec2 viewingDirection = normalize(vec2(reflectionAngleX, reflectionAngleY));
+
+    // Calculate Fresnel effect
+    float fresnelEffect = pow(1.0 - dot(normalize(combinedDisplacement), viewingDirection), 3.0);
+
+    // Adjust reflection intensity with Fresnel effect
+    float reflectionFactor = fresnelEffect * clamp(length(combinedDisplacement) / amplitude, 0.0, 1.0);
+
+    // Ensure minimum reflection intensity
+    reflectionFactor = max(reflectionFactor, minReflectionIntensity);
+
+    // Tint the reflection color based on water color
+    vec3 waterTint = vec3(0.1, 0.2, 0.5); // Example tint, adjust as needed
+    vec3 tintedReflectionColor = mix(reflectionColor, reflectionColor * waterTint, 0.5);
+
+    // Blend the reflection with the base color
+    finalColor = mix(finalColor, tintedReflectionColor, reflectionFactor * reflectionIntensity);
+
  
     // Set the fragment color
     half4 fragColor = vec4(finalColor, 1.0);

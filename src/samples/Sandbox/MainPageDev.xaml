@@ -24,7 +24,7 @@
 
             <draw:SkiaLayout
                 HorizontalOptions="Fill"
-                UseCache="GPU"
+                UseCache="Image"
                 VerticalOptions="Fill">
                 <draw:SkiaControl.VisualEffects>
 
@@ -103,16 +103,6 @@
                                 Type="Column"
                                 VerticalOptions="Fill">
 
-
-                                <!--<draw:SkiaMarkdownLabel
-                                AddMarginTop="8"
-                                FontFamily="OpenSansRegular"
-                                FontSize="14"
-                                HorizontalOptions="Center"
-                                Text="_#dotnetmaui_ shaders"
-                                TextColor="White"
-                                UseCache="Image" />-->
-
                                 <draw:SkiaImage
                                     Aspect="AspectCover"
                                     HeightRequest="250"
@@ -127,7 +117,7 @@
                                     FontSize="14"
                                     HorizontalOptions="Center"
                                     HorizontalTextAlignment="Center"
-                                    Text="Infinite ripples! 😋 _#dotnetmaui_"
+                                    Text="Infinite ripples with reflection! 😋 _#dotnetmaui_"
                                     TextColor="White"
                                     UseCache="Image" />
 
