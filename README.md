@@ -1,5 +1,4 @@
 # DrawnUI for .NET MAUI
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/e9906044-783c-4f3c-aedd-868b0ccf5309
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. Plug any existing and unique SkiaSharp code into MAUI layout!
 
@@ -7,24 +6,30 @@ Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 * To use inside a usual MAUI app, consume drawn controls here and there inside `Canvas` views.
 * Create a totally drawn app with just one `Canvas` as root view, `SkiaShell` is provided for navigation.
- * Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas. 
+* Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas.
 * Free to use under the MIT license, a nuget package is available.
 * A Light [version for Xamarin](https://github.com/taublast/DrawnUi.Xamarin) is there too.
 
 _The current development state is __ALPHA__, features remain to be implemented, documentation incoming._
 
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 
 ## What's new
 
 * In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget comes out.
 * `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
-* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo. 
-* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons. 
-Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
+* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo.
+* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons.
+  Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
 * Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
 
-## Demo
-<img src="https://github.com/taublast/DrawnUi.Maui/assets/25801194/eeec4cb0-ea4e-4646-9c6f-ddfd45474919" width="50%" min-width="350">
+## What's incoming
+
+https://github.com/taublast/DrawnUi.Maui/assets/25801194/69db2f99-e99f-4b12-b270-7bf27950fcf8
+
+Stay tuned for upcoming effects with shaders more!
+
+## Demo Apps
 
 * This repo includes a Sandox project for some custom controls, with playground examples, custom controls, maps etc
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 __Updated with latest nuget!__
