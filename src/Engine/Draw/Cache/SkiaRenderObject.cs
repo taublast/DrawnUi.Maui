@@ -63,7 +63,7 @@ public class CachedObject : IDisposable
         }
         catch (Exception e)
         {
-            Debug.WriteLine(e); //on windows we had an issue when refreshing image tab 2/2 of demo
+            Super.Log(e); //on windows we had an issue when refreshing image tab 2/2 of demo
         }
     }
 

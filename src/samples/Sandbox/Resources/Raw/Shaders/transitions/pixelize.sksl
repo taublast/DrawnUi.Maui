@@ -1,0 +1,45 @@
+﻿uniform float ratio; // width / height
+uniform float progress; // 0.0 - 1.0
+uniform shader iImage1; // Texture
+uniform shader iImage2; // Texture for backside
+uniform float2 iOffset; // Top-left corner of DrawingRect
+uniform float2 iResolution; // Viewport resolution (pixels)
+uniform float2 iImageResolution; // iImage1 resolution (pixels)
+
+// minimum number of squares (when the effect is at its highest level)
+const ivec2 squaresMin = ivec2(20); // make it a constant as it doesn't need to be changed
+const int steps = 50; // make it a constant as it doesn't need to be changed
+
+vec4 getFromColor(vec2 uv) {
+    // Adjust UV coordinates to match the image resolution
+    vec2 adjustedUV = uv * iImageResolution;
+    return iImage1.eval(adjustedUV);
+}
+
+vec4 getToColor(vec2 uv) {
+    // Adjust UV coordinates to match the image resolution
+    vec2 adjustedUV = uv * iImageResolution;
+    return iImage2.eval(adjustedUV);
+}
+
+// Author: gre
+// License: MIT
+// forked from https://gist.github.com/benraziel/c528607361d90a072e98
+
+vec4 transition(vec2 uv, float dist, vec2 squareSize) {
+    vec2 p = dist > 0.0 ? (floor(uv / squareSize) + 0.5) * squareSize : uv;
+    return mix(getFromColor(p), getToColor(p), progress);
+}
+
+half4 main(float2 fragCoord) {
+    // Normalize the coordinates
+    float2 normCoord = (fragCoord - iOffset) / iResolution;
+    
+    // Calculate variables inside main
+    float d = min(progress, 1.0 - progress);
+    float dist = steps > 0 ? ceil(d * float(steps)) / float(steps) : d;
+    vec2 squareSize = 2.0 * dist / vec2(squaresMin);
+    
+    half4 fragColor = transition(normCoord, dist, squareSize);
+    return fragColor;
+}

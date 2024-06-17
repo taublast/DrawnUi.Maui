@@ -6,7 +6,7 @@ Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 * To use inside a usual MAUI app, consume drawn controls here and there inside `Canvas` views.
 * Create a totally drawn app with just one `Canvas` as root view, `SkiaShell` is provided for navigation.
- * Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas. 
+* Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas.
 * Free to use under the MIT license, a nuget package is available.
 * A Light [version for Xamarin](https://github.com/taublast/DrawnUi.Xamarin) is there too.
 
@@ -18,9 +18,9 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 * In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget comes out.
 * `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
-* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo. 
-* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons. 
-Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
+* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo.
+* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons.
+  Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
 * Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
 
 ## What's incoming
@@ -471,6 +471,16 @@ Example 2:
 ```
 This control will request 30 by 30 pts.
 
+__`VisualEffects`__ a list of effects you can attach to affect to change how your controls is drawing. 
+It's easy to create effects for dirrerent tasks, would it be making your control black and white or animate it with conditions.
+Actually you can attach different types of effects to every control:
+* One effect changing the color filter, impements `IColorEffect`.
+* One effect changing the image filter, impements `IImageEffect`.
+* Any number of effects affecting the rendering before the controls drawing is finalized and eventually saved to cache, implementing `IRenderEffect`, applied in chain.
+* Any number of effects implementing `IStateEffect`, thoses can be used to change your control state, animate etc.
+* One post renderer, impements `IImageEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
+  
+
 ### `SkiaScroll`
 
 `SkiaScroll` is a scrollable container that supports virtualization and recycling of its children.
@@ -597,5 +607,11 @@ New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can mana
 * WIndows platform FPS stabilized.
 * .NET 8 support.
 
+### SkiaSharp version 3
+
+https://github.com/mono/SkiaSharp/pull/2547
+
 ### Docs under construction
+
+
  

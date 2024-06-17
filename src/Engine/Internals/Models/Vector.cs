@@ -7,7 +7,7 @@ public class Vector
         return degrees * 0.0174533;
     }
 
-    private double xComp, yComp;
+    private double X, Y;
     private double magnitude, angle;
 
     public Vector()
@@ -17,48 +17,54 @@ public class Vector
 
     public Vector(double x1, double y1, double x2, double y2)
     {
-
-
-        xComp = x2 - x1;
-        yComp = y2 - y1;
+        X = x2 - x1;
+        Y = y2 - y1;
 
         calculateMagnitude();
 
-        xComp /= magnitude;
-        yComp /= magnitude;
+        X /= magnitude;
+        Y /= magnitude;
 
         magnitude = 1;
         calculateAngle();
     }
 
-
-
     public Vector(double xComp, double yComp)
     {
 
-        this.xComp = xComp;
-        this.yComp = yComp;
+        this.X = xComp;
+        this.Y = yComp;
         calculateMagnitude();
         calculateAngle();
     }
 
     public void setComponents(double xComp, double yComp)
     {
-        this.xComp = xComp;
-        this.yComp = yComp;
+        this.X = xComp;
+        this.Y = yComp;
 
         calculateMagnitude();
         calculateAngle();
     }
 
+    public static double CrossProduct(Vector a, Vector b)
+    {
+        return a.X * b.Y - a.Y * b.X;
+    }
+
+    public double Cross(Vector b)
+    {
+        return this.X * b.Y - this.Y * b.X;
+    }
+
     public double getXComp()
     {
-        return xComp;
+        return X;
     }
 
     public void setXComp(double xComp)
     {
-        this.xComp = xComp;
+        this.X = xComp;
 
         calculateMagnitude();
         calculateAngle();
@@ -66,12 +72,12 @@ public class Vector
 
     public double getYComp()
     {
-        return yComp;
+        return Y;
     }
 
     public void setYComp(double yComp)
     {
-        this.yComp = yComp;
+        this.Y = yComp;
 
         calculateMagnitude();
         calculateAngle();
@@ -79,13 +85,13 @@ public class Vector
 
     public Vector add(Vector other)
     {
-        return new Vector(xComp + other.xComp,
-            yComp + other.yComp);
+        return new Vector(X + other.X,
+            Y + other.Y);
     }
 
     public void mAdd(Vector other)
     {
-        setComponents(xComp + other.xComp, yComp + other.yComp);
+        setComponents(X + other.X, Y + other.Y);
     }
 
     public void setAngle(double angle)
@@ -97,15 +103,15 @@ public class Vector
 
         this.angle = angle;
 
-        xComp = magnitude * Math.Cos(angle);
-        yComp = magnitude * Math.Sin(angle);
+        X = magnitude * Math.Cos(angle);
+        Y = magnitude * Math.Sin(angle);
     }
 
     public void setMagnitude(double magnitude)
     {
         this.magnitude = Math.Abs(magnitude);
-        xComp = magnitude * Math.Cos(angle);
-        yComp = magnitude * Math.Sin(angle);
+        X = magnitude * Math.Cos(angle);
+        Y = magnitude * Math.Sin(angle);
 
         if (magnitude < 0)
             setAngle(angle - Math.PI);
@@ -118,7 +124,7 @@ public class Vector
 
     private void calculateMagnitude()
     {
-        magnitude = Math.Sqrt(Math.Pow(xComp, 2) + Math.Pow(yComp, 2));
+        magnitude = Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2));
     }
 
     public void mScale(double scalar)
@@ -128,7 +134,7 @@ public class Vector
 
     public Vector scale(double scalar)
     {
-        return new Vector(xComp * scalar, yComp * scalar);
+        return new Vector(X * scalar, Y * scalar);
     }
 
     public double getAngle()
@@ -138,7 +144,7 @@ public class Vector
 
     private void calculateAngle()
     {
-        angle = Math.Atan2(yComp, xComp);
+        angle = Math.Atan2(Y, X);
 
         //		if(this.angle < 0) 
         //			this.angle += 2.0 * Math.PI;

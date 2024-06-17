@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage
+    x:Class="Sandbox.Views.MainPageShaderRipples"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:demo="clr-namespace:Sandbox"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:views="clr-namespace:Sandbox.Views"
+    x:Name="ThisPage"
+    x:DataType="demo:MainPageViewModel">
+
+    <draw:Canvas
+        Gestures="Enabled"
+        HardwareAcceleration="Enabled"
+        HorizontalOptions="Fill"
+        Tag="MainPage"
+        VerticalOptions="Fill">
+
+
+        <draw:SkiaLayout
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+            <draw:SkiaLayout
+                HorizontalOptions="Fill"
+                UseCache="Image"
+                VerticalOptions="Fill">
+                <draw:SkiaControl.VisualEffects>
+
+                    <!--<draw:ChainColorPresetEffect
+                           Preset="BlackAndWhite" />-->
+
+                    <controls:MultiRippleWithTouchEffect 
+                        BacksideSource="Images/maui1.png"/>
+
+                </draw:SkiaControl.VisualEffects>
+                <draw:SkiaScroll
+                    BackgroundColor="Black"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+
+
+                    <draw:SkiaLayout
+                        BackgroundColor="Blue"
+                        HorizontalOptions="Fill"
+                        Tag="Content"
+                        Type="Column">
+
+
+                        <!--<draw:SkiaLayout HorizontalOptions="Fill"
+                                     HeightRequest="250">
+
+                        <draw:SkiaImage
+                            UseCache="Image"
+                            x:Name="GoFrom"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            Aspect="AspectCover"
+                            LoadSourceOnFirstDraw="False"
+                            Source="Images/8.jpg" />
+
+                        <draw:SkiaImage
+                            UseCache="Image"
+                            x:Name="GoTo"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            Aspect="AspectCover"
+                            LoadSourceOnFirstDraw="False"
+                            Source="Images/nico.jpg" />
+
+                        <controls:AnimatedShaderTransition
+                            BackgroundColor="Black"
+                            ControlFrom="{x:Reference GoFrom}"
+                            ControlTo="{x:Reference GoTo}"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"/>
+
+
+                    </draw:SkiaLayout>-->
+
+                        <!--  Simulating view switcher  -->
+                        <draw:SkiaLayout
+                            HeightRequest="350"
+                            HorizontalOptions="Fill"
+                            Tag="Switcher">
+
+                            <!--  simulating a view that would show, drawing below  -->
+                            <draw:SkiaImage
+                                x:Name="GoTo"
+                                Aspect="AspectCover"
+                                HorizontalOptions="Fill"
+                                LoadSourceOnFirstDraw="False"
+                                Source="Images/nico.jpg"
+                                UseCache="Image"
+                                VerticalOptions="Fill" />
+
+                            <!--  simulating a view that is actually active in view switcher  -->
+                            <draw:SkiaLayout
+                                BackgroundColor="Black"
+                                HorizontalOptions="Fill"
+                                Tag="Front"
+                                Type="Column"
+                                VerticalOptions="Fill">
+
+                                <draw:SkiaImage
+                                    Aspect="AspectCover"
+                                    HeightRequest="250"
+                                    HorizontalOptions="Fill"
+                                    LoadSourceOnFirstDraw="False"
+                                    Source="Images/8.jpg"
+                                    UseCache="Image" />
+
+                                <draw:SkiaMarkdownLabel
+                                    Margin="16,0"
+                                    FontFamily="OpenSansRegular"
+                                    FontSize="14"
+                                    HorizontalOptions="Center"
+                                    HorizontalTextAlignment="Center"
+                                    Text="Infinite ripples with reflection! 😋 _#dotnetmaui_"
+                                    TextColor="White"
+                                    UseCache="Image" />
+
+                            </draw:SkiaLayout>
+                        </draw:SkiaLayout>
+                    </draw:SkiaLayout>
+
+                </draw:SkiaScroll>
+
+              
+
+            </draw:SkiaLayout>
+
+            
+            <controls:ButtonToRoot />
+
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
+
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
+
+</views:BasePage>

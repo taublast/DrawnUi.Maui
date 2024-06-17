@@ -73,6 +73,30 @@ public class SkiaValueAnimator : AnimatorBase
 
     }
 
+    protected virtual bool FinishedRunning()
+    {
+        bool finished = true;
+        if (Repeat < 0) //forever
+        {
+            mValue = mMinValue;
+            mLastFrameTime = 0;
+            mStartFrameTime = 0;
+            finished = false;
+        }
+        else if (Repeat > 0)
+        {
+            Repeat--;
+            mValue = mMinValue;
+            mLastFrameTime = 0;
+            mStartFrameTime = 0;
+            finished = false;
+        }
+        else
+        {
+            Stop();
+        }
+        return finished;
+    }
     public override bool TickFrame(long frameTime)
     {
         if (lockCheck)
@@ -104,25 +128,7 @@ public class SkiaValueAnimator : AnimatorBase
 
             if (finished)
             {
-                if (Repeat < 0) //forever
-                {
-                    mValue = mMinValue;
-                    mLastFrameTime = 0;
-                    mStartFrameTime = 0;
-                    finished = false;
-                }
-                else if (Repeat > 0)
-                {
-                    Repeat--;
-                    mValue = mMinValue;
-                    mLastFrameTime = 0;
-                    mStartFrameTime = 0;
-                    finished = false;
-                }
-                else
-                {
-                    Stop();
-                }
+                finished = FinishedRunning();
             }
 
             //#if DEBUG

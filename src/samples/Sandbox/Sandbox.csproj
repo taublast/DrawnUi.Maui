@@ -66,8 +66,6 @@
     <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
   </PropertyGroup>
 
- 
-
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
   </PropertyGroup>
@@ -124,8 +122,6 @@
 
     <None Remove="Resources\raw\Shaders2\blit.sksl" />
 
-    <None Remove="Resources\raw\Shaders2\blur - Copy.sksl" />
-
     <None Remove="Resources\raw\Shaders2\blur.sksl" />
 
     <None Remove="Resources\raw\Shaders2\blurmasked.sksl" />
@@ -137,6 +133,18 @@
     <None Remove="Resources\raw\Shaders2\glowblur.glsl" />
 
     <None Remove="Resources\raw\Shaders2\glowblur.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\apple.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\invert.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\ripples.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transdoorway.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transfade.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\pagecurl.sksl" />
 
     <None Remove="Resources\Raw\Space\Sprites\glass.jpg" />
 
@@ -184,16 +192,25 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
- 
-      <Compile Update="Views\MainPageXaml2Pdf.xaml.cs">
-        <DependentUpon>MainPageXaml2Pdf.xaml</DependentUpon>
-      </Compile>
+             
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>ResStrings.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+    
     </ItemGroup>
  
+  
+    <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
+    <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+    <Compile Remove="Views\Controls\ShaderTransition.cs" />
+    <Compile Remove="Views\MainPageShaderRipples.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageShaderRipples.xaml" />
+    </ItemGroup>
  
 
   <ItemGroup>
@@ -215,9 +232,6 @@
     <MauiAsset Update="Resources\Raw\Shaders2\blit.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders2\blur - Copy.sksl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders2\blurmasked.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
@@ -233,25 +247,30 @@
     <MauiAsset Update="Resources\Raw\Shaders2\glowblur.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\ripples.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\apple.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\invert.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transfade.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transdoorway.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\pagecurl.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
     <MauiAsset Update="Resources\Raw\Space\Sprites\glass.jpg">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Svg\dotnet_bot.svg">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
-  </ItemGroup>
-
-
-  <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
-    <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
-    <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <MauiXaml Update="Views\MainPageXaml2Pdf.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
   </ItemGroup>
 
  

@@ -1,0 +1,45 @@
+﻿uniform float ratio; // width / height
+uniform float progress; // 0.0 - 1.0
+uniform shader iImage1; // Texture
+uniform shader iImage2; // Texture for backside
+uniform float2 iOffset; // Top-left corner of DrawingRect
+uniform float2 iResolution; // Viewport resolution (pixels)
+uniform float2 iImageResolution; // iImage1 resolution (pixels)
+
+vec4 getFromColor(vec2 uv) {
+    // Adjust UV coordinates to match the image resolution
+    vec2 adjustedUV = uv * iImageResolution;
+    return iImage1.eval(adjustedUV);
+}
+
+vec4 getToColor(vec2 uv) {
+    // Adjust UV coordinates to match the image resolution
+    vec2 adjustedUV = uv * iImageResolution;
+    return iImage2.eval(adjustedUV);
+}
+
+
+// Author: gre
+// License: MIT
+float size = 0.04;
+float zoom = 50.0;
+float colorSeparation= 0.3;
+
+vec4 transition(vec2 p) {
+  float inv = 1. - progress;
+  vec2 disp = size*vec2(cos(zoom*p.x), sin(zoom*p.y));
+  vec4 texTo = getToColor(p + inv*disp);
+  vec4 texFrom = vec4(
+    getFromColor(p + progress*disp*(1.0 - colorSeparation)).r,
+    getFromColor(p + progress*disp).g,
+    getFromColor(p + progress*disp*(1.0 + colorSeparation)).b,
+    1.0);
+  return texTo*progress + texFrom*inv;
+}
+
+half4 main(float2 fragCoord) {
+    // Normalize the coordinates
+    float2 normCoord = (fragCoord - iOffset) / iResolution;
+    half4 fragColor = transition(normCoord);
+    return fragColor;
+}

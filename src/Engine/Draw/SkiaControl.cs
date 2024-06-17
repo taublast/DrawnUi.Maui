@@ -676,7 +676,9 @@ namespace DrawnUi.Maui.Draw
         /// <param name="cancel"></param>
         /// <param name="onStopped"></param>
         /// <returns></returns>
-        public Task AnimateRangeAsync(Action<double> callback, double start, double end, double length = 250, Easing easing = null, CancellationToken cancel = default, bool applyEndValueOnStop = false)
+        public Task AnimateRangeAsync(Action<double> callback, double start, double end, double length = 250, Easing easing = null,
+            CancellationToken cancel = default,
+            bool applyEndValueOnStop = false)
         {
             RangeAnimator animator = null;
 
@@ -1099,6 +1101,9 @@ namespace DrawnUi.Maui.Draw
 
         public virtual ISkiaGestureListener OnSkiaGestureEvent(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
+            if (!CanDraw)
+                return null;
+
             if (args.Type == _lastIncomingTouchAction && args.Type == TouchActionResult.Up)
             {
                 //a case when we were called for same event by parent and by some top level
@@ -1107,6 +1112,7 @@ namespace DrawnUi.Maui.Draw
                 return null;
             }
 
+            //todo check latest behaviour!
             _lastIncomingTouchAction = args.Type;
 
             return ProcessGestures(args, apply);
@@ -1146,6 +1152,14 @@ namespace DrawnUi.Maui.Draw
             if (TouchEffect.LogEnabled)
             {
                 Super.Log($"[BASE] {this.Tag} Got {args.Type}.. {Uid}");
+            }
+
+            if (EffectsGestureProcessors.Count > 0)
+            {
+                foreach (var effect in EffectsGestureProcessors)
+                {
+                    effect.ProcessGestures(args, apply);
+                }
             }
 
             ISkiaGestureListener consumed = null;
@@ -3339,8 +3353,11 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected virtual void OnLayoutReady()
         {
+            IsLayoutReady = true;
             LayoutIsReady?.Invoke(this, null);
         }
+
+        public bool IsLayoutReady { get; protected set; }
 
         public bool LayoutReady
         {
@@ -4211,6 +4228,13 @@ namespace DrawnUi.Maui.Draw
                 _paintWithOpacity?.Dispose();
                 _paintWithEffects?.Dispose();
                 _preparedClipBounds?.Dispose();
+
+                EffectColorFilter = null;
+                EffectImageFilter = null;
+                EffectRenderers = null;
+                EffectsState = null;
+                EffectsGestureProcessors = null;
+                EffectPostRenderer = null;
             });
         }
 
@@ -4397,6 +4421,14 @@ namespace DrawnUi.Maui.Draw
         {
             InvalidatedParent = false;
             _invalidatedParentPostponed = false;
+
+            if (EffectsState != null)
+            {
+                foreach (var stateEffect in EffectsState)
+                {
+                    stateEffect?.UpdateState();
+                }
+            }
         }
 
         protected virtual void OnAfterDrawing(SkiaDrawingContext context,
@@ -4764,6 +4796,7 @@ namespace DrawnUi.Maui.Draw
 
         protected SKPaint _paintWithEffects = null;
         protected SKPaint _paintWithOpacity = null;
+
         SKPath _preparedClipBounds = null;
 
         private IAnimatorsManager _lastAnimatorManager;
@@ -4776,7 +4809,7 @@ namespace DrawnUi.Maui.Draw
         public Action<SKPaint, SKRect> CustomizeLayerPaint { get; set; }
 
 #if SKIA3
-        public HelperSk3DView Helper3d;
+        public Sk3dView Helper3d;
 #else
         public SK3dView Helper3d;
 #endif
@@ -4885,7 +4918,9 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.RotateXDegrees(CameraAngleX);
                 Helper3d.RotateYDegrees(CameraAngleY);
                 Helper3d.RotateZDegrees(CameraAngleZ);
-                if (CameraTranslationZ != 0) Helper3d.TranslateZ(CameraTranslationZ);
+                if (CameraTranslationZ != 0)
+                    Helper3d.Translate(0, 0, CameraTranslationZ);
+
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.GetMatrix());
 #else
                 Helper3d.Save();
@@ -5259,6 +5294,9 @@ namespace DrawnUi.Maui.Draw
                 if (UseCache == SkiaCacheType.GPU && !Super.GpuCacheEnabled)
                     return SkiaCacheType.Image;
 
+                if (EffectPostRenderer != null && (UseCache == SkiaCacheType.None || UseCache == SkiaCacheType.Operations))
+                    return SkiaCacheType.Image;
+
                 return UseCache;
             }
         }
@@ -5409,26 +5447,32 @@ namespace DrawnUi.Maui.Draw
             {
                 if (_paintWithEffects == null)
                 {
-                    _paintWithEffects = new();
+                    _paintWithEffects = new()
+                    {
+                        IsAntialias = true,
+                        FilterQuality = SKFilterQuality.Medium
+                    };
+
                 }
 
-                var effectColor = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
-                var effectImage = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
+                var effectColor = EffectColorFilter;
+                var effectImage = EffectImageFilter;
 
                 if (effectImage != null)
                     _paintWithEffects.ImageFilter = effectImage.CreateFilter(destination);
                 else
-                    _paintWithEffects.ImageFilter = null;//toso dispose!!!
+                    _paintWithEffects.ImageFilter = null;//will be disposed internally by effect
 
                 if (effectColor != null)
                     _paintWithEffects.ColorFilter = effectColor.CreateFilter(destination);
                 else
-                    _paintWithEffects.ColorFilter = null;//toso dispose!!!
+                    _paintWithEffects.ColorFilter = null;
 
                 var restore = ctx.Canvas.SaveLayer(_paintWithEffects);
 
                 bool hasDrawnControl = false;
-                var renderers = VisualEffects.OfType<IRenderEffect>().ToList();
+
+                var renderers = EffectRenderers;
 
                 if (renderers.Count > 0)
                 {
@@ -5683,6 +5727,7 @@ namespace DrawnUi.Maui.Draw
             SkiaDrawingContext ctx,
             SKRect destination)
         {
+
             //lock (LockDraw)
             {
                 DrawWithClipAndTransforms(ctx, destination, destination, true, true, (ctx) =>
@@ -5696,7 +5741,14 @@ namespace DrawnUi.Maui.Draw
                     _paintWithOpacity.IsAntialias = true;
                     _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
 
-                    cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
+                    if (EffectPostRenderer != null)
+                    {
+                        EffectPostRenderer.Render(ctx, destination);
+                    }
+                    else
+                    {
+                        cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
+                    }
                 });
 
             }
@@ -6022,7 +6074,7 @@ namespace DrawnUi.Maui.Draw
                     }
 
                     var saved = canvas.Save();
-                    canvas.ClipPath(clipPreviousCachePath, SKClipOperation.Intersect);
+                    canvas.ClipPath(clipPreviousCachePath, SKClipOperation.Intersect, false); //we have rectangles, no need to antialiase
 
                     canvas.DrawRect(destination, PaintSystem);
 
@@ -6297,6 +6349,7 @@ namespace DrawnUi.Maui.Draw
         }
         static object lockViews = new();
 
+
         #region EFFECTS
 
         private static void EffectsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
@@ -6304,7 +6357,7 @@ namespace DrawnUi.Maui.Draw
             if (bindable is SkiaControl control)
             {
 
-                var enumerableShadows = (IEnumerable<SkiaEffect>)newvalue;
+                var skiaEffects = (IEnumerable<SkiaEffect>)newvalue;
 
                 if (oldvalue != null)
                 {
@@ -6315,14 +6368,14 @@ namespace DrawnUi.Maui.Draw
 
                     if (oldvalue is IEnumerable<SkiaEffect> oldList)
                     {
-                        foreach (var shade in oldList)
+                        foreach (var skiaEffect in oldList)
                         {
-                            shade.Dettach();
+                            skiaEffect.Dettach();
                         }
                     }
                 }
 
-                foreach (var shade in enumerableShadows)
+                foreach (var shade in skiaEffects)
                 {
                     shade.Attach(control);
                 }
@@ -6333,7 +6386,7 @@ namespace DrawnUi.Maui.Draw
                     newCollection.CollectionChanged += control.EffectsCollectionChanged;
                 }
 
-                control.Update();
+                control.OnVisualEffectsChanged();
             }
         }
 
@@ -6360,8 +6413,30 @@ namespace DrawnUi.Maui.Draw
             break;
             }
 
+            OnVisualEffectsChanged();
+        }
+
+        protected virtual void OnVisualEffectsChanged()
+        {
+            if (VisualEffects != null)
+            {
+                EffectsGestureProcessors = VisualEffects.OfType<ISkiaGestureProcessor>().ToList();
+                EffectColorFilter = VisualEffects.OfType<IColorEffect>().FirstOrDefault();
+                EffectImageFilter = VisualEffects.OfType<IImageEffect>().FirstOrDefault();
+                EffectRenderers = VisualEffects.OfType<IRenderEffect>().ToList();
+                EffectsState = VisualEffects.OfType<IStateEffect>().ToList();
+                EffectPostRenderer = VisualEffects.OfType<IPostRendererEffect>().FirstOrDefault();
+            }
+
             Update();
         }
+
+        protected List<ISkiaGestureProcessor> EffectsGestureProcessors = new();
+        protected List<IStateEffect> EffectsState = new();
+        protected List<IRenderEffect> EffectRenderers = new();
+        protected IImageEffect EffectImageFilter;
+        protected IColorEffect EffectColorFilter;
+        protected IPostRendererEffect EffectPostRenderer;
 
         public static readonly BindableProperty VisualEffectsProperty = BindableProperty.Create(
             nameof(VisualEffects),
@@ -6381,7 +6456,7 @@ namespace DrawnUi.Maui.Draw
             propertyChanged: EffectsPropertyChanged,
             coerceValue: CoerceVisualEffects);
 
-        private static int instanceCount = 0;
+
 
         public IList<SkiaEffect> VisualEffects
         {

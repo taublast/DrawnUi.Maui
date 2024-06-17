@@ -37,6 +37,8 @@ public partial class MainPageDev : BasePage
         try
         {
             InitializeComponent();
+
+            Test();
         }
         catch (Exception e)
         {
@@ -44,5 +46,9 @@ public partial class MainPageDev : BasePage
         }
     }
 
-
+    void Test()
+    {
+       // string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/apple.sksl");
+        //var effect = SkSl.Compile(shaderCode);
+    }
 }

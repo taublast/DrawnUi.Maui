@@ -5,53 +5,72 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:mauiNet8="using:MauiNet8"
     xmlns:views="clr-namespace:Sandbox.Views"
     xmlns:xaml2Pdf="clr-namespace:Sandbox.Views.Xaml2Pdf"
-    xmlns:mauiNet8="using:MauiNet8"
     BackgroundColor="Gray">
 
-    <Grid
-        Padding="0,0,0,8"
+    <draw:Canvas
+        Gestures="Enabled"
+        HardwareAcceleration="Enabled"
         HorizontalOptions="Fill"
-        VerticalOptions="FillAndExpand">
+        Tag="MainPage"
+        VerticalOptions="Fill">
 
-        <draw:Canvas
-            Margin="8,44"
-            BackgroundColor="#66000000"
-            Gestures="Enabled"
-            HardwareAcceleration="Enabled"
+        <draw:SkiaLayout
             HorizontalOptions="Fill"
-            Tag="Warning"
-            VerticalOptions="Center">
+            Tag="Wrapper"
+            VerticalOptions="Fill">
 
-            <draw:SkiaScroll
-                BackgroundColor="Red"
+            <draw:SkiaLayout
                 HorizontalOptions="Fill"
-                VerticalOptions="Start">
-                <draw:SkiaLayout HorizontalOptions="Fill">
-
-                    <mauiNet8:BuggedLayout
-                        Padding="6"
-                        BackgroundColor="Blue"
-                        HorizontalOptions="Fill"
-                        Tag="VStack"
-                        Type="Column"
-                        UseCache="ImageDoubleBuffered">
-
-                        <!--  REPORT  -->
-                        <xaml2Pdf:ReportSample
-                            Margin="20"
-                            BackgroundColor="White"
-                            HorizontalOptions="Center" />
-
-                    </mauiNet8:BuggedLayout>
-
-                </draw:SkiaLayout>
-            </draw:SkiaScroll>
-
-        </draw:Canvas>
+                VerticalOptions="Fill">
 
 
-    </Grid>
+                <!--<draw:SkiaShape
+                    Margin="16"
+                    BackgroundColor="#88CC0033"
+                    CornerRadius="20"
+                    HorizontalOptions="Center"
+                    LockRatio="1"
+                    Opacity="0.93"
+                    Rotation="12"
+                    StrokeColor="GreenYellow"
+                    StrokeWidth="4"
+                    TranslationX="0"
+                    Type="Rectangle"
+                    UseCache="Image"
+                    VerticalOptions="Center"
+                    WidthRequest="80"/>-->
+
+                <draw:SkiaImage
+                    Aspect="AspectCover"
+                    HeightRequest="100"
+                    HorizontalOptions="Center"
+                    RescalingQuality="High"
+                    Rotation="12"
+                    Source="Images/nico.jpg"
+                    VerticalOptions="Center"
+                    WidthRequest="100" />
+
+
+
+            </draw:SkiaLayout>
+
+            <controls:ButtonToRoot />
+
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
+
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
 
 </views:BasePage>
