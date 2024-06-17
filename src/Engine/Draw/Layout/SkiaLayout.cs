@@ -89,6 +89,9 @@ namespace DrawnUi.Maui.Draw
 
             try
             {
+                if (IsTemplated && !ChildrenFactory.TemplatesAvailable)
+                    return;
+
                 using var children = ChildrenFactory.GetViewsIterator();
                 foreach (var view in children)
                 {

@@ -55,6 +55,7 @@
     <Compile Remove="Draw\SkiaGif.cs" />
     <Compile Remove="Internals\ConditionalStyle.cs" />
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
+    <Compile Remove="Platforms\Windows\ViewChainPanel.Windows.cs" />
     <Compile Remove="Controls\Extensions\**" />
     <Compile Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
@@ -66,6 +67,11 @@
     <Compile Remove="Platforms\iOS\SKMetalViewRenderer.cs" />
   </ItemGroup>
 
+   <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+    <Compile Remove="Internals\Helpers\3D\**" />
+  </ItemGroup>
+
+  
   <ItemGroup>
     <None Include="..\..\icon128.png">
 	    <Pack>True</Pack>
@@ -75,6 +81,7 @@
       <PackagePath>\</PackagePath>
       <Pack>True</Pack>
     </None>
+    <None Include="Platforms\Windows\ViewChainPanel.Windows.cs" />
     <None Remove="Controls\Extensions\**" />
     <None Remove="Platforms\Windows\Controls\**" />
 	</ItemGroup>

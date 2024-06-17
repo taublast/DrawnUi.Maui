@@ -607,5 +607,11 @@ New DrawnUI features/fixes will apply to both skia2/skia3 versions. You can mana
 * WIndows platform FPS stabilized.
 * .NET 8 support.
 
+### SkiaSharp version 3
+
+https://github.com/mono/SkiaSharp/pull/2547
+
 ### Docs under construction
+
+
  

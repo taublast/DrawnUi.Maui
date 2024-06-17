@@ -219,8 +219,6 @@ public class SkiaScrollLooped : SkiaScroll
 
     public override void Snap(float maxTimeSecs)
     {
-        //Trace.WriteLine($"Snap entered");
-
         if (OrderedScrollTo.IsValid || IsSnapping)
         {
             return;

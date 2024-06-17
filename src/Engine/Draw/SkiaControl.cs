@@ -1113,7 +1113,7 @@ namespace DrawnUi.Maui.Draw
             }
 
             //todo check latest behaviour!
-            //_lastIncomingTouchAction = args.Type;
+            _lastIncomingTouchAction = args.Type;
 
             return ProcessGestures(args, apply);
         }
@@ -4809,7 +4809,7 @@ namespace DrawnUi.Maui.Draw
         public Action<SKPaint, SKRect> CustomizeLayerPaint { get; set; }
 
 #if SKIA3
-        public HelperSk3DView Helper3d;
+        public Sk3dView Helper3d;
 #else
         public SK3dView Helper3d;
 #endif
@@ -4918,7 +4918,9 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.RotateXDegrees(CameraAngleX);
                 Helper3d.RotateYDegrees(CameraAngleY);
                 Helper3d.RotateZDegrees(CameraAngleZ);
-                if (CameraTranslationZ != 0) Helper3d.TranslateZ(CameraTranslationZ);
+                if (CameraTranslationZ != 0)
+                    Helper3d.Translate(0, 0, CameraTranslationZ);
+
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.GetMatrix());
 #else
                 Helper3d.Save();
@@ -5445,7 +5447,12 @@ namespace DrawnUi.Maui.Draw
             {
                 if (_paintWithEffects == null)
                 {
-                    _paintWithEffects = new();
+                    _paintWithEffects = new()
+                    {
+                        IsAntialias = true,
+                        FilterQuality = SKFilterQuality.Medium
+                    };
+
                 }
 
                 var effectColor = EffectColorFilter;
@@ -6067,7 +6074,7 @@ namespace DrawnUi.Maui.Draw
                     }
 
                     var saved = canvas.Save();
-                    canvas.ClipPath(clipPreviousCachePath, SKClipOperation.Intersect);
+                    canvas.ClipPath(clipPreviousCachePath, SKClipOperation.Intersect, false); //we have rectangles, no need to antialiase
 
                     canvas.DrawRect(destination, PaintSystem);
 

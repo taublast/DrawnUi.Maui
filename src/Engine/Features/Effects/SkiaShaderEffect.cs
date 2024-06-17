@@ -114,15 +114,17 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
             var killTextures = TexturesUniforms;
             TexturesUniforms = CreateTexturesUniforms(ctx, destination, source);
 
+#if SKIA3
             if (Parent != null && killTextures != null)
                 Parent.DisposeObject(killTextures);
+#endif
 
             var kill = Shader;
             var uniforms = CreateUniforms(destination);
 #if SKIA3 
             Shader = CompiledShader.ToShader(uniforms, TexturesUniforms);
 #else
-            paintWithShader.Shader = _compiledShader.ToShader(false, uniforms, _passTextures);
+            Shader = CompiledShader.ToShader(false, uniforms, TexturesUniforms);
 #endif
             if (kill != null)
                 Parent.DisposeObject(kill);
@@ -217,7 +219,9 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         Shader = null;
 
         CompiledShader?.Dispose();
+#if SKIA3
         TexturesUniforms?.Dispose();
+#endif
         _paintWithShader?.Dispose();
 
         base.OnDisposing();

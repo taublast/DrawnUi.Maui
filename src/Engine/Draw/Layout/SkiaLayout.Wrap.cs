@@ -445,6 +445,8 @@ namespace DrawnUi.Maui.Draw
                 int index = -1;
                 ControlInStack measuredCell = null; //if strategy is to measure first cell only
 
+                var allStak = EnumerateViewsForMeasurement().ToList();
+
                 foreach (var child in EnumerateViewsForMeasurement())
                 {
                     index++;
@@ -471,6 +473,17 @@ namespace DrawnUi.Maui.Draw
                     if (useFixedSplitSize)
                     {
                         remainingSize = rectFitChild.Width;
+                    }
+
+                    if (remainingSize <= 0)
+                    {
+                        //start new line
+                        BreakRow();
+                        remainingSize = rectForChild.Width;
+                        if (useFixedSplitSize)
+                        {
+                            remainingSize = rectFitChild.Width;
+                        }
                     }
 
                     ScaledSize measured;
@@ -570,8 +583,6 @@ namespace DrawnUi.Maui.Draw
                 {
                     stackHeight = rectForChildrenPixels.Height;
                 }
-
-                //todo layout all cells according final size
 
                 return ScaledSize.FromPixels(stackWidth, stackHeight, scale);
             }
