@@ -16,18 +16,18 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's new
 
-* In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget comes out.
-* `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
-* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo.
-* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons.
-  Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
-* Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
+__`VisualEffects`__ a list of effects you can attach to affect to change how your controls is drawing. 
+It's easy to create effects for dirrerent tasks, would it be making your control black and white or animate it with conditions.
+Actually you can attach different types of effects to every control:
+* One effect changing the color filter, impements `IColorEffect`.
+* One effect changing the image filter, impements `IImageEffect`.
+* Any number of effects affecting the rendering before the controls drawing is finalized and eventually saved to cache, implementing `IRenderEffect`, applied in chain.
+* Any number of effects implementing `IStateEffect`, thoses can be used to change your control state, animate etc.
+* One post renderer, impements `IImageEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
 
-## What's incoming
+[Sandbox_mevoQ2ZLWk.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/d01f3c25-bb9a-478d-9aed-782f4d36bf2b)
 
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/69db2f99-e99f-4b12-b270-7bf27950fcf8
-
-Stay tuned for upcoming effects with shaders more!
+Subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect`.
 
 ## Demo Apps
 
@@ -478,7 +478,7 @@ Actually you can attach different types of effects to every control:
 * One effect changing the image filter, impements `IImageEffect`.
 * Any number of effects affecting the rendering before the controls drawing is finalized and eventually saved to cache, implementing `IRenderEffect`, applied in chain.
 * Any number of effects implementing `IStateEffect`, thoses can be used to change your control state, animate etc.
-* One post renderer, impements `IImageEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
+* One post renderer, impements `IPostRendererEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
   
 
 ### `SkiaScroll`
@@ -577,6 +577,13 @@ It will render a mask over its children when hovered, think of it as an inverted
 
 ## Previously
 
+* In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget comes out.
+* `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
+* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo.
+* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons.
+  Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
+* Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
+  
 * `SkiaRadioButton` can be auto-groupped by parent or by group name, seen in Sandbox project.
 * `SkiaLottie` got new properties `DefaultFrame`, `DefaultFrameWhenOn` and `IsOn`, to be able to easily switch the look between two states. In the future it might be replaced with State + States with default frames ranges for them, looking at how **Rive** is designed for this mater.
 * `SkiaMarkdownLabel` can now correctly render `code`.
