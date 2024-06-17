@@ -66,8 +66,6 @@
     <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
   </PropertyGroup>
 
- 
-
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
   </PropertyGroup>
@@ -194,24 +192,25 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
- 
-      <Compile Update="Views\MainPageShader_Transition.xaml.cs">
-        <DependentUpon>MainPageShader_Transition.xaml</DependentUpon>
-      </Compile>
- 
-      <Compile Update="Views\MainPageXaml2Pdf.xaml.cs">
-        <DependentUpon>MainPageXaml2Pdf.xaml</DependentUpon>
-      </Compile>
+             
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>ResStrings.Designer.cs</LastGenOutput>
       </EmbeddedResource>
-      <Compile Update="Views\MainPageShaderRipples.xaml.cs">
-        <DependentUpon>MainPageShaderRipples.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+    
     </ItemGroup>
  
+  
+    <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
+    <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+    <Compile Remove="Views\Controls\ShaderTransition.cs" />
+    <Compile Remove="Views\MainPageShaderRipples.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageShaderRipples.xaml" />
+    </ItemGroup>
  
 
   <ItemGroup>
@@ -272,25 +271,6 @@
     <MauiAsset Update="Resources\Raw\Svg\dotnet_bot.svg">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
-  </ItemGroup>
-
-
-  <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
-    <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
-    <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
-    <MauiXaml Update="Views\MainPageShaderRipples.xaml">
-      <SubType>Designer</SubType>
-    </MauiXaml>
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <MauiXaml Update="Views\MainPageShader_Transition.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Views\MainPageXaml2Pdf.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
   </ItemGroup>
 
  
