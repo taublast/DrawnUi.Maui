@@ -23,7 +23,8 @@ Actually you can attach different types of effects to every control:
 * One effect changing the image filter, impements `IImageEffect`.
 * Any number of effects affecting the rendering before the controls drawing is finalized and eventually saved to cache, implementing `IRenderEffect`, applied in chain.
 * Any number of effects implementing `IStateEffect`, thoses can be used to change your control state, animate etc.
-* One post renderer, impements `IImageEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
+* One post renderer, impements `IPostRendererEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
+* Any effect can implement `ISkiaGestureProcessor`, to become gestures-aware.
 
 [Sandbox_mevoQ2ZLWk.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/d01f3c25-bb9a-478d-9aed-782f4d36bf2b)
 
@@ -479,7 +480,7 @@ Actually you can attach different types of effects to every control:
 * Any number of effects affecting the rendering before the controls drawing is finalized and eventually saved to cache, implementing `IRenderEffect`, applied in chain.
 * Any number of effects implementing `IStateEffect`, thoses can be used to change your control state, animate etc.
 * One post renderer, impements `IPostRendererEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
-  
+* Any effect can implement `ISkiaGestureProcessor`, to become gestures-aware.  
 
 ### `SkiaScroll`
 
