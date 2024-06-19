@@ -41,22 +41,22 @@ public class CachedObject : IDisposable
         {
             if (Picture != null)
             {
-                //var x = destination.Left - Bounds.Left;
-                //var y = destination.Top - Bounds.Top;
+                var x = destination.Left - Bounds.Left;
+                var y = destination.Top - Bounds.Top;
 
-                var x = (float)Math.Round(destination.Left - Bounds.Left);
-                var y = (float)Math.Round(destination.Top - Bounds.Top);
+                //var x = (float)Math.Round(destination.Left - Bounds.Left);
+                //var y = (float)Math.Round(destination.Top - Bounds.Top);
 
                 canvas.DrawPicture(Picture, x, y, paint);
             }
             else
             if (Image != null)
             {
-                //var x = destination.Left;
-                //var y = destination.Top;
+                var x = destination.Left;
+                var y = destination.Top;
 
-                var x = (float)Math.Round(destination.Left);
-                var y = (float)Math.Round(destination.Top);
+                //var x = (float)Math.Round(destination.Left);
+                //var y = (float)Math.Round(destination.Top);
 
                 canvas.DrawImage(Image, x, y, paint);
             }
