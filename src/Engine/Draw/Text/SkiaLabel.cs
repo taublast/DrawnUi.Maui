@@ -654,7 +654,7 @@ namespace DrawnUi.Maui.Draw
                         MeasuredLineHeight = maxLineHeight;
 
                         textHeightPixels = (float)(maxLineHeight * LinesCount +
-                                                   (LinesCount - 1) * SpaceBetweenLines + addParagraphSpacings);
+                                                   (LinesCount - 1) * GetSpaceBetweenLines(MeasuredLineHeight) + addParagraphSpacings);
                     }
                     else
                     {
@@ -669,7 +669,7 @@ namespace DrawnUi.Maui.Draw
                                 lineHeight = LineHeightPixels;
 
                             textHeightPixels += (float)(lineHeight +
-                                                        i * SpaceBetweenLines + addParagraphSpacings);
+                                                        i * GetSpaceBetweenLines(lineHeight) + addParagraphSpacings);
                         }
                     }
 
@@ -989,9 +989,8 @@ namespace DrawnUi.Maui.Draw
                 if (!baseLineCalculated)
                 {
 
-                    float PositionBaseline(float move)
+                    float PositionBaseline(float calcBaselineY)
                     {
-                        var calcBaselineY = rectDraw.Top + move;//(float)(rectDraw.Top - FontMetrics.Top - adjust); //descent to text baseline
 
                         if (this.VerticalTextAlignment == TextAlignment.End)
                         {
@@ -1014,20 +1013,25 @@ namespace DrawnUi.Maui.Draw
                         //calc for every line
                         useLineHeight = line.Height;
                         moveToBaseline = useLineHeight - FontMetrics.Descent;
-                        baselineY += PositionBaseline(moveToBaseline);
+                        if (lineNb == 0)
+                        {
+                            baselineY += PositionBaseline(rectDraw.Top + moveToBaseline);
+                        }
+                        else
+                        {
+                            baselineY += PositionBaseline(moveToBaseline);
+                        }
                     }
                     else
                     {
                         //just once
                         useLineHeight = MeasuredLineHeight;
                         moveToBaseline = useLineHeight - FontMetrics.Descent;
-                        baselineY = PositionBaseline(moveToBaseline);
+                        baselineY = PositionBaseline(moveToBaseline + rectDraw.Top);
                         baseLineCalculated = true;
                     }
 
                 }
-
-
 
                 lineNb++;
 
@@ -1149,7 +1153,7 @@ namespace DrawnUi.Maui.Draw
 
                     var offsetAdjustmentX = 0.0f;
 
-                    if (lineSpan.Span is IDrawnTextSpan drawn)
+                    if (lineSpan.Span is IDrawnTextSpan drawn) //MIXED CONTENT SPANS
                     {
                         SKRect drawnDestination;
 
@@ -1278,17 +1282,13 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 if (LineHeightUniform)
-                    baselineY += (float)(useLineHeight + SpaceBetweenLines);
+                    baselineY += (float)(useLineHeight + GetSpaceBetweenLines(useLineHeight));
                 else
-                    baselineY += (float)(SpaceBetweenLines);
+                    baselineY += (float)GetSpaceBetweenLines(useLineHeight);
             }
 
         }
 
-        protected virtual void DrawTextLine()
-        {
-
-        }
 
         /// <summary>
         /// This is called when CharByChar is enabled
@@ -1325,23 +1325,24 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        public double GetSpaceBetweenLines(float lineHeight)
+        {
+            if (FontMetrics.Leading > 0)
+            {
+                return FontMetrics.Leading * LineSpacing;
+            }
+            else
+            {
+                double defaultLeading = lineHeight * 0.1;
+                return defaultLeading * LineSpacing;
+            }
+        }
+
         public double SpaceBetweenLines
         {
             get
             {
-                if (FontMetrics.Leading > 0)
-                {
-                    return FontMetrics.Leading * LineSpacing;
-                }
-                else
-                {
-                    if (LineSpacing != 1)
-                    {
-                        double defaultLeading = LineHeightPixels * 0.1;
-                        return defaultLeading * LineSpacing;
-                    }
-                    return 0;
-                }
+                return GetSpaceBetweenLines(LineHeightPixels);
             }
         }
 

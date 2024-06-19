@@ -29,17 +29,20 @@
                 VerticalOptions="Fill">
 
                 <draw:SkiaLayout
+                    Padding="0,0,0,20"
                     HorizontalOptions="Fill"
                     Type="Column"
-                    UseCache="ImageComposite">
+                    UseCache="Operations">
 
 
-                    <!--<draw:SkiaLabel
+
+                    <draw:SkiaLabel
                         Padding="16,8,16,8"
                         FontFamily="FontText"
                         FontSize="15"
                         HorizontalOptions="Center"
                         HorizontalTextAlignment="Center"
+                        LineHeightUniform="False"
                         TextColor="#3333FF">
                         <draw:SkiaLabel.Spans>
 
@@ -56,17 +59,17 @@
 
                         </draw:SkiaLabel.Spans>
 
-                    </draw:SkiaLabel>-->
+                    </draw:SkiaLabel>
 
 
                     <draw:SkiaLabel
-                        Padding="16,8,16,8"
-                        BackgroundColor="Gainsboro"
+                        Padding="16,16,16,8"
+                        BackgroundColor="Transparent"
                         FontFamily="FontText"
                         FontSize="14"
                         HorizontalOptions="Center"
-                        LineHeightUniform="False"
                         HorizontalTextAlignment="Center"
+                        LineHeightUniform="False"
                         TextColor="#222222">
                         <draw:SkiaLabel.Spans>
 
@@ -78,7 +81,7 @@
                                 Source="Images/dotnetbot.svg"
                                 VerticalAlignement="Start" />
 
-                            <draw:TextSpan Text="says hello! From the bottom if the " />
+                            <draw:TextSpan Text="says hello! From the bottom of the " />
 
                             <draw:SvgSpan
                                 Width="20"
@@ -92,6 +95,7 @@
                         </draw:SkiaLabel.Spans>
 
                     </draw:SkiaLabel>
+
 
 
                 </draw:SkiaLayout>

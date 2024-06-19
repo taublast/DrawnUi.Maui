@@ -87,7 +87,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        /// TODO for templated measure only visible?! and just reserve predicted scroll amount for scrolling
+        /// Measuring column/row
         /// </summary>
         /// <param name="rectForChildrenPixels"></param>
         /// <param name="scale"></param>
