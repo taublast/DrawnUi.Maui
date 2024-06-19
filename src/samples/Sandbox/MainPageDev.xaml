@@ -29,15 +29,15 @@
                 VerticalOptions="Fill">
 
                 <draw:SkiaLayout
-                    Padding="0,0,0,20"
+                    Padding="20,20,20,20"
                     HorizontalOptions="Fill"
                     Type="Column"
-                    UseCache="Operations">
+                    Spacing="0"
+                    UseCache="ImageComposite">
 
-
-
+                    
                     <draw:SkiaLabel
-                        Padding="16,8,16,8"
+                        BackgroundColor="Gainsboro"
                         FontFamily="FontText"
                         FontSize="15"
                         HorizontalOptions="Center"
@@ -63,7 +63,7 @@
 
 
                     <draw:SkiaLabel
-                        Padding="16,16,16,8"
+                        Padding="16,0,16,0"
                         BackgroundColor="Transparent"
                         FontFamily="FontText"
                         FontSize="14"
