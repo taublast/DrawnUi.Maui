@@ -61,7 +61,7 @@
                             BackgroundColor="Black"
                             FontSize="20"
                             IsBold="True"
-                            Text=" SVG "
+                            Text="SVG"
                             TextColor="White" />
 
                         <draw:TextSpan Text=" files mixed with text" />
@@ -86,7 +86,7 @@
                                 Height="17"
                                 Source="Images/linkout.svg"
                                 TintColor="#3333FF"
-                                VerticalAlignement="End" />
+                                VerticalAlignement="Center" />
 
                         </draw:SkiaLabel.Spans>
 
