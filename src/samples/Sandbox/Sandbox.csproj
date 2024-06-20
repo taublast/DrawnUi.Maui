@@ -192,6 +192,10 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
+ 
+      <Compile Update="Views\MainPageDrawnSpans.xaml.cs">
+        <DependentUpon>MainPageDrawnSpans.xaml</DependentUpon>
+      </Compile>
              
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
@@ -271,6 +275,13 @@
     <MauiAsset Update="Resources\Raw\Svg\dotnet_bot.svg">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
+  </ItemGroup>
+ 
+
+  <ItemGroup>
+    <MauiXaml Update="Views\MainPageDrawnSpans.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
  
