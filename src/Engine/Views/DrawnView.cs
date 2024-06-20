@@ -845,7 +845,7 @@ namespace DrawnUi.Maui.Views
 
         public virtual void OnSuperviewShouldRenderChanged(bool state)
         {
-            foreach (var view in Views) //will crash?
+            foreach (var view in Views.ToList())
             {
                 view.OnSuperviewShouldRenderChanged(state);
             }

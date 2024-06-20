@@ -8,8 +8,8 @@
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
-        Title="Sandbox"
-        ContentTemplate="{DataTemplate mauiNet8:MainPage}"
+        Title="Drawn UI"
+        ContentTemplate="{DataTemplate mauiNet8:MainPageDev}"
         Route="MainPage" />
 
 </Shell>

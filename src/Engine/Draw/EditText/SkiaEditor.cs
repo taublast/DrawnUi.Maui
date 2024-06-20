@@ -269,7 +269,7 @@ namespace DrawnUi.Maui.Draw
                 var cursorIndex = CursorPosition;
 
                 //make cursor fit the line height
-                Cursor.HeightRequest = Label.LineHeightPixels / RenderingScale;
+                Cursor.HeightRequest = Label.MeasuredLineHeight / RenderingScale;
 
                 if (cursorIndex < 0 || Label.Lines == null)
                 {

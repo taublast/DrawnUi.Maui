@@ -316,7 +316,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         CommandTapped?.Execute(null);
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         Parent = null;
 
@@ -363,9 +363,22 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
 
     public event EventHandler<TouchActionEventArgs> Tapped;
 
+    protected SkiaControl ParentControl
+    {
+        get
+        {
+            return Parent as SkiaControl;
+        }
+    }
+
     protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         base.OnPropertyChanged(propertyName);
+
+        if (propertyName.IsEither(nameof(Text)))
+        {
+            ParentControl?.Invalidate();
+        }
 
         if (propertyName.IsEither(nameof(FontFamily), nameof(FontWeight)))
         {
@@ -378,18 +391,21 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
                 nameof(FontWeight)))
         {
             HasSetFont = true;
+            ParentControl?.Invalidate();
         }
 
         if (propertyName.IsEither(
                 nameof(FontSize)))
         {
             HasSetSize = true;
+            ParentControl?.Invalidate();
         }
 
         if (propertyName.IsEither(
                 nameof(TextColor)))
         {
             HasSetColor = true;
+            ParentControl?.Update();
         }
 
         if (propertyName.IsEither(nameof(Text), nameof(AutoFindFont)))
