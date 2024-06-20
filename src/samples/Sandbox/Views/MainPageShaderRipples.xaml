@@ -28,15 +28,17 @@
                 HorizontalOptions="Fill"
                 UseCache="Image"
                 VerticalOptions="Fill">
+                
                 <draw:SkiaControl.VisualEffects>
 
-                    <!--<draw:ChainColorPresetEffect
-                           Preset="BlackAndWhite" />-->
+                    <draw:ChainColorPresetEffect
+                           Preset="BlackAndWhite" />
 
                     <controls:MultiRippleWithTouchEffect 
                         BacksideSource="Images/maui1.png"/>
 
                 </draw:SkiaControl.VisualEffects>
+                
                 <draw:SkiaScroll
                     BackgroundColor="Black"
                     HorizontalOptions="Fill"
@@ -48,56 +50,11 @@
                         HorizontalOptions="Fill"
                         Tag="Content"
                         Type="Column">
-
-
-                        <!--<draw:SkiaLayout HorizontalOptions="Fill"
-                                     HeightRequest="250">
-
-                        <draw:SkiaImage
-                            UseCache="Image"
-                            x:Name="GoFrom"
-                            HorizontalOptions="Fill"
-                            VerticalOptions="Fill"
-                            Aspect="AspectCover"
-                            LoadSourceOnFirstDraw="False"
-                            Source="Images/8.jpg" />
-
-                        <draw:SkiaImage
-                            UseCache="Image"
-                            x:Name="GoTo"
-                            HorizontalOptions="Fill"
-                            VerticalOptions="Fill"
-                            Aspect="AspectCover"
-                            LoadSourceOnFirstDraw="False"
-                            Source="Images/nico.jpg" />
-
-                        <controls:AnimatedShaderTransition
-                            BackgroundColor="Black"
-                            ControlFrom="{x:Reference GoFrom}"
-                            ControlTo="{x:Reference GoTo}"
-                            HorizontalOptions="Fill"
-                            VerticalOptions="Fill"/>
-
-
-                    </draw:SkiaLayout>-->
-
-                        <!--  Simulating view switcher  -->
+                        
                         <draw:SkiaLayout
                             HeightRequest="350"
-                            HorizontalOptions="Fill"
-                            Tag="Switcher">
-
-                            <!--  simulating a view that would show, drawing below  -->
-                            <draw:SkiaImage
-                                x:Name="GoTo"
-                                Aspect="AspectCover"
-                                HorizontalOptions="Fill"
-                                LoadSourceOnFirstDraw="False"
-                                Source="Images/nico.jpg"
-                                UseCache="Image"
-                                VerticalOptions="Fill" />
-
-                            <!--  simulating a view that is actually active in view switcher  -->
+                            HorizontalOptions="Fill">
+                            
                             <draw:SkiaLayout
                                 BackgroundColor="Black"
                                 HorizontalOptions="Fill"
