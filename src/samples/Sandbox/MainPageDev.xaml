@@ -31,13 +31,44 @@
                 <draw:SkiaLayout
                     Padding="20,20,20,20"
                     HorizontalOptions="Fill"
+                    Spacing="20"
                     Type="Column"
-                    Spacing="0"
                     UseCache="ImageComposite">
 
-                    
                     <draw:SkiaLabel
+                        Padding="8"
+                        AddMarginBottom="16"
                         BackgroundColor="Gainsboro"
+                        FallbackCharacter="?"
+                        FontFamily="OpenSansRegular"
+                        FontSize="15"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Start"
+                        LineSpacing="1.5"
+                        TextColor="Black">
+
+                        <draw:TextSpan
+                            FontSize="20"
+                            IsBold="True"
+                            IsItalic="False"
+                            Text="S"
+                            TextColor="Red" />
+
+                        <draw:TextSpan Text="pans below are " />
+
+
+                        <draw:TextSpan
+                            BackgroundColor="Black"
+                            FontSize="20"
+                            IsBold="True"
+                            Text=" SVG "
+                            TextColor="White" />
+
+                        <draw:TextSpan Text=" files mixed with text" />
+
+                    </draw:SkiaLabel>
+
+                    <draw:SkiaLabel
                         FontFamily="FontText"
                         FontSize="15"
                         HorizontalOptions="Center"
@@ -55,7 +86,7 @@
                                 Height="17"
                                 Source="Images/linkout.svg"
                                 TintColor="#3333FF"
-                                VerticalAlignement="Center" />
+                                VerticalAlignement="End" />
 
                         </draw:SkiaLabel.Spans>
 
@@ -73,7 +104,7 @@
                         TextColor="#222222">
                         <draw:SkiaLabel.Spans>
 
-                            <draw:TextSpan Text="Look! " />
+                            <draw:TextSpan Text="Look who " />
 
                             <draw:SvgSpan
                                 Width="50"
@@ -102,9 +133,9 @@
 
             </draw:SkiaScroll>
 
-            <controls:ButtonToRoot />
+            <!--<controls:ButtonToRoot />-->
 
-            <draw:SkiaLabelFps
+            <!--<draw:SkiaLabelFps
                 Margin="0,0,4,24"
                 BackgroundColor="DarkRed"
                 ForceRefresh="False"
@@ -112,7 +143,7 @@
                 Rotation="-45"
                 TextColor="White"
                 VerticalOptions="End"
-                ZIndex="100" />
+                ZIndex="100" />-->
 
         </draw:SkiaLayout>
 

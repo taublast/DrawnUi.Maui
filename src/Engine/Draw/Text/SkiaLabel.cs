@@ -668,8 +668,9 @@ namespace DrawnUi.Maui.Draw
                             if (LineHeightPixels > lineHeight)
                                 lineHeight = LineHeightPixels;
 
-                            textHeightPixels += (float)(lineHeight +
-                                                        i * GetSpaceBetweenLines(lineHeight) + addParagraphSpacings);
+                            textHeightPixels += (float)(lineHeight + addParagraphSpacings);
+                            if (i < LinesCount - 1)
+                                textHeightPixels += (float)GetSpaceBetweenLines(lineHeight);
                         }
                     }
 
@@ -991,7 +992,6 @@ namespace DrawnUi.Maui.Draw
 
                     float PositionBaseline(float calcBaselineY)
                     {
-
                         if (this.VerticalTextAlignment == TextAlignment.End)
                         {
                             if (rectDraw.Height > ContentSize.Pixels.Height)
@@ -1019,7 +1019,8 @@ namespace DrawnUi.Maui.Draw
                         }
                         else
                         {
-                            baselineY += PositionBaseline(moveToBaseline);
+
+                            baselineY += PositionBaseline(moveToBaseline) + FontMetrics.Descent;
                         }
                     }
                     else
@@ -1332,10 +1333,13 @@ namespace DrawnUi.Maui.Draw
                 return FontMetrics.Leading * LineSpacing;
             }
             else
+            if (LineSpacing != 1)
             {
                 double defaultLeading = lineHeight * 0.1;
                 return defaultLeading * LineSpacing;
             }
+
+            return 0;
         }
 
         public double SpaceBetweenLines
@@ -2181,6 +2185,52 @@ namespace DrawnUi.Maui.Draw
             return false;
         }
 
+        /// <summary>
+        /// Returns new totalHeight
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="span"></param>
+        /// <param name="totalHeight"></param>
+        /// <param name="heightBlock"></param>
+        /// <param name="isNewParagraph"></param>
+        /// <param name="needsShaping"></param>
+        float AddEmptyLine(List<TextLine> result, TextSpan span,
+            float totalHeight, float heightBlock, bool isNewParagraph, bool needsShaping)
+        {
+            bool assingnIsNewParagraph = isNewParagraph;
+            var widthBlock = 0;
+
+            var chunk = new LineSpan()
+            {
+                NeedsShaping = needsShaping,
+                Glyphs = Array.Empty<LineGlyph>(),
+                Text = "",
+                Span = span,
+                Size = new(widthBlock, heightBlock)
+            };
+
+            var addLine = new TextLine()
+            {
+                Value = "",
+                IsNewParagraph = assingnIsNewParagraph,
+                Width = widthBlock,
+                Spans = new()
+                {
+                    chunk
+                },
+                Height = heightBlock
+            };
+
+            result.Add(addLine);
+
+            if (assingnIsNewParagraph && result.Count > 1)
+            {
+                totalHeight += (float)SpaceBetweenParagraphs;
+            }
+
+            return totalHeight;
+        }
+
 
         protected DecomposedText DecomposeText(string text, SKPaint paint,
     SKPoint firstLineOffset,
@@ -2192,36 +2242,47 @@ namespace DrawnUi.Maui.Draw
         {
 
             var ret = new DecomposedText();
+            var result = new List<TextLine>();
 
             if (span != null)
             {
+                needsShaping = span.NeedShape;
+
                 if (span is IDrawnTextSpan drawn)
                 {
                     var drawnMeasured = drawn.Measure(maxWidth, maxHeight, this.RenderingScale);
-                    //todo
-                    ret.Lines = new List<TextLine>()
+
+                    //todo check we fit
+                    var fitWidth = maxWidth - firstLineOffset.X;
+                    if (drawnMeasured.Pixels.Width > fitWidth)
                     {
-                        new TextLine()
+                        AddEmptyLine(result, span, drawnMeasured.Pixels.Height,
+                            MeasuredLineHeight,
+                            firstLineOffset.X == 0, needsShaping);
+                    }
+
+                    result.Add(new TextLine()
+                    {
+                        Width = drawnMeasured.Pixels.Width,
+                        Height = drawnMeasured.Pixels.Height,
+                        Value = span.TextFiltered,
+                        Spans = new()
                         {
-                            Width =drawnMeasured.Pixels.Width,
-                            Height =drawnMeasured.Pixels.Height,
-                            Value = span.TextFiltered,
-                            Spans = new()
+                            new LineSpan()
                             {
-                                new LineSpan()
-                                {
-                                    NeedsShaping = needsShaping,
-                                    Glyphs = Array.Empty<LineGlyph>(),
-                                    Text = span.TextFiltered,
-                                    Span = span,
-                                    Size = drawnMeasured.Pixels
-                                }
+                                NeedsShaping = needsShaping,
+                                Glyphs = Array.Empty<LineGlyph>(),
+                                Text = span.TextFiltered,
+                                Span = span,
+                                Size = drawnMeasured.Pixels
                             }
                         }
-                    }.ToArray();
+                    });
+
+                    ret.Lines = result.ToArray();
                     return ret;
                 }
-                needsShaping = span.NeedShape;
+
             }
 
             bool isCut = false;
@@ -2235,8 +2296,6 @@ namespace DrawnUi.Maui.Draw
 
             var paragraphs = text.Split('\n');
             ret.CountParagraphs = paragraphs.Length;
-
-            var result = new List<TextLine>();
 
             foreach (var line in paragraphs)
             {
@@ -2267,47 +2326,6 @@ namespace DrawnUi.Maui.Draw
                 bool spanPostponed = false;
 
                 Stack<string> stackWords = new Stack<string>(SplitLineToWords(line, space));
-
-                void AddEmptyLine()
-                {
-                    bool assingnIsNewParagraph = isNewParagraph;
-                    isNewParagraph = false; //have to set again to true upstairs
-
-                    var widthBlock = 0;
-                    var heightBlock = LineHeightPixels;
-
-                    var chunk = new LineSpan()
-                    {
-                        NeedsShaping = needsShaping,
-                        Glyphs = Array.Empty<LineGlyph>(),
-                        Text = "",
-                        Span = span,
-                        Size = new(widthBlock, heightBlock)
-                    };
-                    var addLine = new TextLine()
-                    {
-                        Value = "",
-                        IsNewParagraph = assingnIsNewParagraph,
-                        Width = widthBlock,
-                        Spans = new()
-                        {
-                            chunk
-                        },
-                        Height = heightBlock
-                    };
-
-                    if (addLine.Height > lineMaxHeight)
-                        lineMaxHeight = addLine.Height;
-                    result.Add(addLine);
-
-                    if (assingnIsNewParagraph && result.Count > 1)
-                    {
-                        totalHeight += (float)SpaceBetweenParagraphs;
-                    }
-                    width = 0;
-                    lineResult = "";
-                    limitWidth = maxWidth;
-                }
 
                 //returns true if need stop processing: was last allowed line
                 bool AddLine(string adding, string full = null)
@@ -2413,6 +2431,20 @@ namespace DrawnUi.Maui.Draw
                     width = 0;
                 }
 
+                void AddEmptyLineInternal()
+                {
+                    totalHeight = AddEmptyLine(result, span, totalHeight, MeasuredLineHeight,
+                        isNewParagraph, needsShaping);
+
+                    if (MeasuredLineHeight > lineMaxHeight)
+                        lineMaxHeight = MeasuredLineHeight;
+
+                    isNewParagraph = false;
+                    width = 0;
+                    lineResult = "";
+                    limitWidth = maxWidth;
+                }
+
                 while (stackWords.Count > 0)
                 {
                     var word = stackWords.Pop();
@@ -2479,7 +2511,8 @@ namespace DrawnUi.Maui.Draw
                                 break;
                             }
 
-                            AddEmptyLine();
+                            AddEmptyLineInternal();
+
                             PostponeToNextLine(word); //push word
                             continue;
                         }
@@ -2569,7 +2602,8 @@ namespace DrawnUi.Maui.Draw
                 {
                     if (string.IsNullOrEmpty(lineResult) && span != null)
                     {
-                        AddEmptyLine(); //we can add an empty one because we gonna merge spans later and remove empty lines eventually
+                        //we can add an empty one because we gonna merge spans later and remove empty lines eventually
+                        AddEmptyLineInternal();
                     }
                     else
                         AddLine(lineResult);
