@@ -22,7 +22,7 @@ jobs:
       run: dotnet workload install maui
       
     - name: Build
-      run: dotnet build DrawnUi.Maui.sln --no-restore
+      run: dotnet build src\DrawnUi.Maui.sln --no-restore
      
     - name: Test
-      run: dotnet test DrawnUi.Maui.sln --no-build --verbosity normal
+      run: dotnet test src\DrawnUi.Maui.sln --no-build --verbosity normal
