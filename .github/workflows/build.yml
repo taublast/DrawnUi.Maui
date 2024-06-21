@@ -20,6 +20,9 @@ jobs:
         
     - name: Install MAUI workload
       run: dotnet workload install maui
+
+    - name: Restore
+      run: dotnet restore src\DrawnUi.Maui.sln
       
     - name: Build
       run: dotnet build src\DrawnUi.Maui.sln
