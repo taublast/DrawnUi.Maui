@@ -102,7 +102,8 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         {
             Paint = new()
             {
-                IsAntialias = true
+                IsAntialias = true,
+                IsDither = true
             };
         };
 
@@ -150,7 +151,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
             Paint.TextSkewX = 0;
         }
 
-        //todo stroke and gradient..
+        //todo stroke and gradient for spans..
 
         return Paint;
     }

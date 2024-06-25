@@ -446,7 +446,7 @@ namespace DrawnUi.Maui.Draw
             propertyChanged: NeedUpdateItemsSource);
 
         /// <summary>
-        /// Number of columns/rows to split into, If 0 will not split at all, if 1 will have single column/row.
+        /// For Wrap number of columns/rows to split into, If 0 will use auto, if 1+ will have 1+ columns.
         /// </summary>
         public int Split
         {

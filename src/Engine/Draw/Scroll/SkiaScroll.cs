@@ -2693,8 +2693,8 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                var posX = (ViewportOffsetX * _zoomedScale);
-                var posY = (ViewportOffsetY * _zoomedScale);
+                var posX = (float)Math.Round(ViewportOffsetX * _zoomedScale);
+                var posY = (float)Math.Round(ViewportOffsetY * _zoomedScale);
 
                 var needReposition =
                                      _updatedViewportForPixY != posY

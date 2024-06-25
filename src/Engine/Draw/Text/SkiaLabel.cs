@@ -357,16 +357,19 @@ namespace DrawnUi.Maui.Draw
         public SKPaint PaintDefault = new SKPaint
         {
             IsAntialias = true,
+            IsDither = true
         };
 
         public SKPaint PaintStroke = new SKPaint
         {
             IsAntialias = true,
+            IsDither = true
         };
 
         public SKPaint PaintShadow = new SKPaint
         {
             IsAntialias = true,
+            IsDither = true
         };
 
         public SKPaint PaintDeco = new SKPaint
@@ -1119,11 +1122,15 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
+
+
                 //DRAW LINE SPANS
                 float offsetX = 0;
                 var spanIndex = 0;
                 foreach (var lineSpan in line.Spans)
                 {
+
+
                     SKRect rectPrecalculatedSpanBounds = SKRect.Empty;
 
                     var paint = paintDefault;
@@ -1243,6 +1250,11 @@ namespace DrawnUi.Maui.Draw
                             offsetAdjustmentX = MoveOffsetAdjustmentX(offsetAdjustmentX, print);
 
                             var posX = alignedLineDrawingStartX + offsetX + lineSpan.Glyphs[charIndex].Position + offsetAdjustmentX;
+
+                            //if (Tag == "Debug")
+                            //{
+                            //    Debug.WriteLine($"Drawing span {lineSpan.Span.Text} with {paint.Typeface.FamilyName} -> {glyph.Text} {glyph.Symbol}");
+                            //}
 
                             DrawCharacter(canvas, lineNb - 1, charIndex, print, posX,
                                 baselineY, paint, paintStroke, paintDropShadow, line.Bounds, (float)scale);
