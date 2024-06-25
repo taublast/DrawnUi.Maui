@@ -434,17 +434,7 @@ public class Canvas : DrawnView, IGestureListener
                 }
             }
 
-            if (args.Type == TouchActionResult.Down)
-            {
-                Debug.WriteLine($"DOWN {args.Event.Location.Y}");
-            }
-
-            if (args.Type == TouchActionResult.Tapped)
-            {
-                Debug.WriteLine($"TAPPED {args.Event.Location.Y}");
-            }
-
-            //if (TouchEffect.LogEnabled)
+            if (TouchEffect.LogEnabled)
             {
                 if (consumed == null)
                 {
