@@ -1,11 +1,11 @@
 <Project>
   <PropertyGroup>
-    <UseSkiaSharp3>true</UseSkiaSharp3>
+    <UseSkiaSharp3>false</UseSkiaSharp3>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi Sandbox project for usage example.</PackageReleaseNotes>
-    <Version>1.2.2.617</Version>
+    <Version>1.2.2.624</Version>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(UseSkiaSharp3)' == 'true'">

@@ -923,7 +923,7 @@ public class SkiaCarousel : SnappingLayout
         {
             Viewport = Parent.DrawingRect;
 
-            if (!viewportSet)// !CompareRects(Viewport, _lastViewport, 1))
+            if (!viewportSet)// !CompareRects(Viewport, _lastViewport, 0.5f))
             {
                 viewportSet = true;
                 _lastViewport = Viewport;

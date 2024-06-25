@@ -186,6 +186,7 @@ public class SkiaImage : SkiaControl
         defaultValue: null, propertyChanged: OnSetSource);
 
     [System.ComponentModel.TypeConverter(typeof(FrameworkImageSourceConverter))]
+    //[System.ComponentModel.TypeConverter(typeof(ImageSourceConverter))]
     public ImageSource Source
     {
         get { return (ImageSource)GetValue(SourceProperty); }

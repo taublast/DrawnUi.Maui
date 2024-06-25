@@ -16,19 +16,8 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's new
 
-__`VisualEffects`__ a list of effects you can attach to affect to change how your controls is drawing. 
-It's easy to create effects for dirrerent tasks, would it be making your control black and white or animate it with conditions.
-Actually you can attach different types of effects to every control:
-* One effect changing the color filter, impements `IColorEffect`.
-* One effect changing the image filter, impements `IImageEffect`.
-* Any number of effects affecting the rendering before the controls drawing is finalized and eventually saved to cache, implementing `IRenderEffect`, applied in chain.
-* Any number of effects implementing `IStateEffect`, thoses can be used to change your control state, animate etc.
-* One post renderer, impements `IPostRendererEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
-* Any effect can implement `ISkiaGestureProcessor`, to become gestures-aware.
-
- [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
-
-Subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect`.
+* New: SvgSpan for SkiaLabel
+* FIxes for: SkiaMarkdownLabel, gestures, subpixel scrolling, SkiaDrawer, SkiaLayout, Canvas and some more.
 
 ## Demo Apps
 
@@ -36,6 +25,10 @@ Subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffe
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 __Updated with latest nuget!__
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
+
+ [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
+
+Subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect`.
 
 ___Please star ⭐ if you like it!___
 

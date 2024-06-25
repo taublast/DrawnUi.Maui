@@ -1,4 +1,5 @@
-﻿using DrawnUi.Maui.Infrastructure.Extensions;
+﻿using DrawnUi.Maui.Controls;
+using DrawnUi.Maui.Infrastructure.Extensions;
 using Microsoft.Maui.HotReload;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -1115,7 +1116,9 @@ namespace DrawnUi.Maui.Draw
             //todo check latest behaviour!
             _lastIncomingTouchAction = args.Type;
 
-            return ProcessGestures(args, apply);
+            var result = ProcessGestures(args, apply);
+
+            return result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1136,8 +1139,8 @@ namespace DrawnUi.Maui.Draw
         // SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed
 
         public virtual ISkiaGestureListener ProcessGestures(
-            SkiaGesturesParameters args,
-            GestureEventProcessingInfo apply)
+                  SkiaGesturesParameters args,
+                  GestureEventProcessingInfo apply)
         {
             if (IsDisposed || IsDisposing)
                 return null;
@@ -1201,7 +1204,8 @@ namespace DrawnUi.Maui.Draw
                             }
                         }
                     }
-                    else
+                    //else
+                    if (HadInput.Count > 0 && args.Type == TouchActionResult.Up)
                     {
                         HadInput.Clear();
                     }
@@ -1212,7 +1216,6 @@ namespace DrawnUi.Maui.Draw
                 //if previously having input didn't keep it
                 if (consumed == null || args.Type == TouchActionResult.Up)
                 {
-
                     var asSpan = CollectionsMarshal.AsSpan(RenderTree);
                     for (int i = asSpan.Length - 1; i >= 0; i--)
                     //for (int i = 0; i < RenderTree.Length; i++)
@@ -1343,7 +1346,8 @@ namespace DrawnUi.Maui.Draw
                                     }
                                 }
                             }
-                            else
+                            //else
+                            if (HadInput.Count > 0 && args.Type == TouchActionResult.Up)
                             {
                                 HadInput.Clear();
                             }
@@ -1433,6 +1437,7 @@ namespace DrawnUi.Maui.Draw
 
             return consumed;
         }
+
 
         public bool UpdateLocked { get; set; }
 
@@ -3129,7 +3134,7 @@ namespace DrawnUi.Maui.Draw
         public float _lastMeasuredForHeight { get; protected set; }
 
         /// <summary>
-        /// This is the destination in PIXELS with margins applied, using this to paint background
+        /// This is the destination in PIXELS with margins applied, using this to paint background. Since we enabled subpixel drawing (for smooth scroll etc) expect this to have non-rounded values, use CompareRects and similar for comparison.
         /// </summary>
         public SKRect DrawingRect { get; set; }
 
@@ -3337,7 +3342,7 @@ namespace DrawnUi.Maui.Draw
             LayoutReady = this.Height > 0 && this.Width > 0;
             if (LayoutReady)
             {
-                if (DrawingRect.Size != _lastSize)
+                if (!CompareSize(DrawingRect.Size, _lastSize, 1))
                 {
                     _lastSize = DrawingRect.Size;
                     Frame = new Rect(DrawingRect.Left, DrawingRect.Top, DrawingRect.Width, DrawingRect.Height);
@@ -3418,9 +3423,9 @@ namespace DrawnUi.Maui.Draw
                 (ViewportHeightLimit != _arrangedViewportHeightLimit ||
                  ViewportWidthLimit != _arrangedViewportWidthLimit ||
                  scale != _lastArrangedForScale ||
-                 !CompareRects(arrangingFor, _lastArrangedFor, 1) ||
-                 !AreEqual(_lastArrangedHeight, heightRequest, 1) ||
-                 !AreEqual(_lastArrangedWidth, widthRequest, 1)))
+                 !CompareRects(arrangingFor, _lastArrangedFor, 0.5f) ||
+                 !AreEqual(_lastArrangedHeight, heightRequest, 0.5f) ||
+                 !AreEqual(_lastArrangedWidth, widthRequest, 0.5f)))
             {
                 IsLayoutDirty = true;
             }
@@ -4461,7 +4466,7 @@ namespace DrawnUi.Maui.Draw
             if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
                 && RenderObject != null)
             {
-                if (DrawingRect.Size != RenderObject.Bounds.Size)
+                if (!CompareRectsSize(DrawingRect, RenderObject.Bounds, 0.5f))
                 {
                     InvalidateMeasure();
                 }
@@ -4470,7 +4475,7 @@ namespace DrawnUi.Maui.Draw
             if (UsingCacheType == SkiaCacheType.ImageComposite
                 && RenderObjectPrevious != null)
             {
-                if (DrawingRect.Size != RenderObjectPrevious.Bounds.Size)
+                if (!CompareRectsSize(DrawingRect, RenderObjectPrevious.Bounds, 0.5f))
                 {
                     InvalidateMeasure();
                 }
@@ -6075,10 +6080,8 @@ namespace DrawnUi.Maui.Draw
 
                     var saved = canvas.Save();
                     canvas.ClipPath(clipPreviousCachePath, SKClipOperation.Intersect, false); //we have rectangles, no need to antialiase
-
                     canvas.DrawRect(destination, PaintSystem);
-
-                    canvas.Restore();
+                    canvas.RestoreToCount(saved);
                 }
                 else
                 {

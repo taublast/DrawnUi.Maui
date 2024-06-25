@@ -13,12 +13,13 @@ public partial class SkiaImageManager
         if (source == null)
             return null;
 
+        bool useDrawn = true;
+
         try
         {
 
 
-
-            if (source is UriImageSource withUri)
+            if (useDrawn && source is UriImageSource withUri)
             {
                 var pfx = "native://";
                 var url = withUri.Uri.ToString();
@@ -40,12 +41,12 @@ public partial class SkiaImageManager
                 }
             }
 
-            if (source is FileImageSource fileSource)
+            if (useDrawn && source is FileImageSource fileSource)
             {
                 return await LoadFromFile(fileSource.File, cancel);
             }
-            else
-            if (UseGlide && source is UriImageSource)
+
+            if (useDrawn && UseGlide && source is UriImageSource)
             {
                 var androidBitmap = await source.LoadOriginalViaGlide(Platform.CurrentActivity, cancel);
                 if (androidBitmap != null)

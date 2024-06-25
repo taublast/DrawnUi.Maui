@@ -192,7 +192,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
 
-        //Debug.WriteLine($"SkiaButton. {args.Type} {args.Event.Distance.Delta}");
+        //Debug.WriteLine($"SkiaButton {Text}. {args.Type} {args.Event.Distance.Delta}");
 
         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
@@ -200,10 +200,11 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         void SetUp()
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                IsPressed = false;
-            });
+            IsPressed = false;
+            //MainThread.BeginInvokeOnMainThread(() =>
+            //{
+            //    IsPressed = false;
+            //});
             hadDown = false; //todo track multifingers
             Up?.Invoke(this, args);
             OnUp();
@@ -211,10 +212,11 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         if (args.Type == TouchActionResult.Down)
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                IsPressed = true;
-            });
+            IsPressed = true;
+            //MainThread.BeginInvokeOnMainThread(() =>
+            //{
+            //    IsPressed = true;
+            //});
             _lastDownPts = point;
             hadDown = true;
             TotalDown++;

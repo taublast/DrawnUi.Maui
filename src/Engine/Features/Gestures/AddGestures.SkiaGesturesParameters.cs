@@ -36,7 +36,7 @@ public struct GestureEventProcessingInfo
     {
         childOffset = childOffset1;
         childOffsetDirect = childOffsetDirect1;
-        wasConsumed1 = wasConsumed1;
+        alreadyConsumed = wasConsumed1;
     }
 
     public GestureEventProcessingInfo()

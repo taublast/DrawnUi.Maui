@@ -116,9 +116,16 @@ public class Canvas : DrawnView, IGestureListener
         return base.ArrangeOverride(bounds);
     }
 
+    private Size _lastMeasureResult;
+    private Size _lastMeasureConstraints;
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
+        if (_lastMeasureConstraints.Width == widthConstraint && _lastMeasureConstraints.Height == heightConstraint)
+        {
+            return _lastMeasureResult;
+        }
+
         //we are going to receive the size NOT reduced by Maui margins
         Size ret;
         NeedCheckParentVisibility = true;
@@ -133,6 +140,9 @@ public class Canvas : DrawnView, IGestureListener
             NeedMeasure = false;
             Update();
         }
+
+        _lastMeasureConstraints = new(widthConstraint, heightConstraint);
+        _lastMeasureResult = ret;
 
         return ret;
     }
@@ -371,7 +381,6 @@ public class Canvas : DrawnView, IGestureListener
             bool manageChildFocus = false;
 
             //Super.Log($"[Touch] Canvas got {args.Type}");
-
             if (DebugGesturesColor != Colors.Transparent && args.Type == TouchActionResult.Down)
             {
                 PostponeExecutionAfterDraw(() =>
@@ -425,7 +434,17 @@ public class Canvas : DrawnView, IGestureListener
                 }
             }
 
-            if (TouchEffect.LogEnabled)
+            if (args.Type == TouchActionResult.Down)
+            {
+                Debug.WriteLine($"DOWN {args.Event.Location.Y}");
+            }
+
+            if (args.Type == TouchActionResult.Tapped)
+            {
+                Debug.WriteLine($"TAPPED {args.Event.Location.Y}");
+            }
+
+            //if (TouchEffect.LogEnabled)
             {
                 if (consumed == null)
                 {
@@ -495,18 +514,18 @@ public class Canvas : DrawnView, IGestureListener
             _isPanning = false;
         }
 
-        //this is intended to not loose gestures when fps drops
+        //this is intended to not lose gestures when fps drops and avoid crashes in double-buffering
         PostponeExecutionBeforeDraw(() =>
-        {
-            try
-            {
-                ProcessGestures(args);
-            }
-            catch (Exception e)
-            {
-                Trace.WriteLine(e);
-            }
-        });
+               {
+                   try
+                   {
+                       ProcessGestures(args);
+                   }
+                   catch (Exception e)
+                   {
+                       Trace.WriteLine(e);
+                   }
+               });
 
         Repaint();
     }
