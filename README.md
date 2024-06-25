@@ -16,18 +16,8 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's new
 
-* In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget comes out.
-* `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
-* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo.
-* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons.
-  Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
-* Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
-
-## What's incoming
-
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/69db2f99-e99f-4b12-b270-7bf27950fcf8
-
-Stay tuned for upcoming effects with shaders more!
+* New: SvgSpan for SkiaLabel
+* FIxes for: SkiaMarkdownLabel, gestures, subpixel scrolling, SkiaDrawer, SkiaLayout, Canvas and some more.
 
 ## Demo Apps
 
@@ -35,6 +25,10 @@ Stay tuned for upcoming effects with shaders more!
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 __Updated with latest nuget!__
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
+
+ [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
+
+Subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect`.
 
 ___Please star ⭐ if you like it!___
 
@@ -478,8 +472,8 @@ Actually you can attach different types of effects to every control:
 * One effect changing the image filter, impements `IImageEffect`.
 * Any number of effects affecting the rendering before the controls drawing is finalized and eventually saved to cache, implementing `IRenderEffect`, applied in chain.
 * Any number of effects implementing `IStateEffect`, thoses can be used to change your control state, animate etc.
-* One post renderer, impements `IImageEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
-  
+* One post renderer, impements `IPostRendererEffect`, this one will render the cache in its own way, if you'd want to apply a shader etc.
+* Any effect can implement `ISkiaGestureProcessor`, to become gestures-aware.  
 
 ### `SkiaScroll`
 
@@ -577,6 +571,13 @@ It will render a mask over its children when hovered, think of it as an inverted
 
 ## Previously
 
+* In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget comes out.
+* `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
+* Added `Files` native helper to framework Features, used for Xaml2Pdf Sandbox demo.
+* Fixes for the new SkiaLayout type `Wrap`. Awesome for Tags/Chips etc. Used in Sandbox for main screen buttons.
+  Fixes for the new `ImageComposite` cache type that redraws changed areas only, gamechanger for large scrolls with many items.
+* Canvas auto-size fixes, `ImageDoubleBuffered` cache fixes and many others..
+  
 * `SkiaRadioButton` can be auto-groupped by parent or by group name, seen in Sandbox project.
 * `SkiaLottie` got new properties `DefaultFrame`, `DefaultFrameWhenOn` and `IsOn`, to be able to easily switch the look between two states. In the future it might be replaced with State + States with default frames ranges for them, looking at how **Rive** is designed for this mater.
 * `SkiaMarkdownLabel` can now correctly render `code`.

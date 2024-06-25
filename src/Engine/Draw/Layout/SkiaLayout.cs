@@ -80,29 +80,6 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-        public override void OnSuperviewShouldRenderChanged(bool state)
-        {
-            if (UpdateWhenReturnedFromBackground)
-            {
-                Update();
-            }
-
-            try
-            {
-                if (IsTemplated && !ChildrenFactory.TemplatesAvailable)
-                    return;
-
-                using var children = ChildrenFactory.GetViewsIterator();
-                foreach (var view in children)
-                {
-                    view.OnSuperviewShouldRenderChanged(state);
-                }
-            }
-            catch (System.Exception e)
-            {
-                Super.Log(e);
-            }
-        }
 
         public override void ApplyBindingContext()
         {
@@ -684,6 +661,11 @@ namespace DrawnUi.Maui.Draw
 
         public override void Invalidate()
         {
+            if (Tag == "Posts")
+            {
+                Debug.WriteLine("Invalidate posts!!!");
+            }
+
             base.Invalidate();
 
             Update();
@@ -875,9 +857,7 @@ namespace DrawnUi.Maui.Draw
 
                 return SetMeasuredAdaptToContentSize(constraints, request.Scale);
             }
-
         }
-
 
 
         /// <summary>
@@ -1003,7 +983,7 @@ namespace DrawnUi.Maui.Draw
 
             if (Type == LayoutType.Grid || IsStack)
             {
-                SetupCacheComposition(ctx, destination);
+                SetupRenderingWithComposition(ctx, destination);
             }
 
             base.Paint(ctx, destination, scale, arguments);
@@ -1070,8 +1050,13 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-
-        void SetupCacheComposition(SkiaDrawingContext ctx, SKRect destination)
+        /// <summary>
+        /// Find intersections between changed children and DrawingRect,
+        /// add intersecting ones to DirtyChildrenInternal and set IsRenderingWithComposition = true if any.
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="destination"></param>
+        void SetupRenderingWithComposition(SkiaDrawingContext ctx, SKRect destination)
         {
             if (UsingCacheType == SkiaCacheType.ImageComposite)
             {

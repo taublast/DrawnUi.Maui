@@ -692,13 +692,15 @@ namespace DrawnUi.Maui.Controls
                         lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[1], 1);
                 }
 
-                var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
-                var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
-
                 if (!IsUserFocused)
                 {
                     ResetPan();
+                    _panningOffset = new(_panningOffset.X - args.Event.Distance.Delta.X / RenderingScale, _panningOffset.Y - args.Event.Distance.Delta.Y / RenderingScale);
                 }
+
+                var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
+                var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
+
 
                 if (!IsUserPanning) //for the first panning move only
                 {
@@ -721,11 +723,13 @@ namespace DrawnUi.Maui.Controls
                     {
                         useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
                         velocity = new(useVelocity, 0);
+                        y = 0;
                     }
                     else
                     {
                         useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
                         velocity = new(0, useVelocity);
+                        x = 0;
                     }
                     //record velocity
                     VelocityAccumulator.CaptureVelocity(velocity);

@@ -199,12 +199,10 @@ namespace DrawnUi.Maui.Draw
                     //basically we have to do this here becase now we know the quantity
                     //of visible cells onscreen. so we can oversize the pool a bit to avoid
                     //a lag spike when scrolling would start.
-                    Task.Run(async () =>
+                    Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(30), async () =>
                     {
-
                         ChildrenFactory.AddMoreToPool(reserve);
-
-                    }).ConfigureAwait(false);
+                    });
                 }
 
                 templatesInvalidated = false;

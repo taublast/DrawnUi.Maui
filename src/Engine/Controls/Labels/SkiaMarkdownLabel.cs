@@ -582,7 +582,7 @@ public class SkiaMarkdownLabel : SkiaLabel
 
         AddTextSpan(text, (span) =>
         {
-            Tag = link.Url;
+            span.Tag = link.Url;
             span.TextColor = this.LinkColor;
             span.Underline = true;
             span.ForceCaptureInput = true;

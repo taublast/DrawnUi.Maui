@@ -163,8 +163,8 @@
                                                     Binding="{Binding Source={RelativeSource Self}, Path=IsPressed}"
                                                     TargetType="draw:SkiaButton"
                                                     Value="False">
-                                                    <Setter Property="TextColor" Value="#ccffffff" />
-                                                    <Setter Property="TextStrokeColor" Value="#AAFF0000" />
+                                                    <Setter Property="TextColor" Value="#ffffff" />
+                                                    <Setter Property="TextStrokeColor" Value="#CCFF3333" />
                                                     <Setter Property="TranslationX" Value="0" />
                                                     <Setter Property="TranslationY" Value="0" />
                                                     <Setter Property="VisualEffects">
