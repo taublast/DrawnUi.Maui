@@ -16,9 +16,10 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's new
 
-* New: SvgSpan for SkiaLabel
-* Critical fix for release builds native crash while using ImageDoubleBuffered cache
+* New: SvgSpan for SkiaLabel.
+* Critical fix for Release builds native crash while using ImageDoubleBuffered cache.
 * Fixes for: gestures, SkiaMarkdownLabel, SkiaDrawer, SkiaLayout, Canvas and more.
+* Added real published apps in the repo Readme.
 
 ## Demo Apps
 
@@ -26,6 +27,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 __Updated with latest nuget!__
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
+* For real published apps scroll below Features!
 
  [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
 
@@ -95,6 +97,22 @@ ___Please star ⭐ if you like it!___
 	* SkewY
 	* Perspective1
 	* Perspective2
+
+## Published Apps powered by DrawnUI For .Net MAUI
+
+### Bug ID: Insect Identifier AI
+
+_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
+
+GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
+
+### Racebox
+
+_MAUI pages with canvases, custom navigation. All scrolls, cells collections, maps, buttons, labels and custom controls are drawn._
+
+iOS: https://apps.apple.com/us/app/racebox-vehicle-dynamics/id6444165250  
+GooglePlay: https://play.google.com/store/apps/details?id=com.raceboxcompanion.app
+
 
  ## Development Notes
 

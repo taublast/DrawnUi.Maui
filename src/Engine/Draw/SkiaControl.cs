@@ -5011,12 +5011,12 @@ namespace DrawnUi.Maui.Draw
                 {
                     DisposeObject(RenderObjectPrevious);
                     RenderObjectPrevious = null;
+                    RenderObjectPreviousNeedsUpdate = false;
                 }
-                RenderObjectPreviousNeedsUpdate = false;
 
                 if (cache != null)
                 {
-                    if (!CheckCachedObjectValid(cache, context))
+                    if (!CheckCachedObjectValid(cache, recordArea, context))
                     {
                         return false;
                     }
@@ -5028,11 +5028,11 @@ namespace DrawnUi.Maui.Draw
                         Monitor.PulseAll(LockDraw);
                     }
 
-                    if (UsingCacheType != SkiaCacheType.ImageDoubleBuffered || !NeedUpdateFrontCache)
+                    if (cacheType != SkiaCacheType.ImageDoubleBuffered || !NeedUpdateFrontCache)
                         return true;
                 }
 
-                if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered)
+                if (cacheType == SkiaCacheType.ImageDoubleBuffered)
                 {
                     lock (LockDraw)
                     {
@@ -5267,10 +5267,13 @@ namespace DrawnUi.Maui.Draw
             RenderObject = null;
         }
 
-        protected virtual bool CheckCachedObjectValid(CachedObject cache, SkiaDrawingContext context)
+        protected virtual bool CheckCachedObjectValid(CachedObject cache, SKRect recordingArea, SkiaDrawingContext context)
         {
             if (cache != null)
             {
+                if (cache.Bounds.Size != recordingArea.Size)
+                    return false;
+
                 //check hardware context maybe changed
                 if (UsingCacheType == SkiaCacheType.GPU && cache.Surface != null &&
                     cache.Surface.Context != null &&
@@ -5331,7 +5334,7 @@ namespace DrawnUi.Maui.Draw
                     var width = (int)recordArea.Width;
                     var height = (int)recordArea.Height;
 
-                    bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, context) || usingCacheType == SkiaCacheType.GPU;
+                    bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, recordingArea, context) || usingCacheType == SkiaCacheType.GPU; //never reuse GPU surfaces
 
                     SKSurface surface = null;
 
@@ -5532,13 +5535,13 @@ namespace DrawnUi.Maui.Draw
 
             var usingCacheType = UsingCacheType;
 
-            CachedObject oldObject = null;
+            CachedObject oldObject = null; //reusing this
             if (usingCacheType == SkiaCacheType.ImageDoubleBuffered)
             {
                 oldObject = RenderObject;
             }
-            else if (usingCacheType == SkiaCacheType.Image
-                     || usingCacheType == SkiaCacheType.ImageComposite)
+            else
+            if (usingCacheType == SkiaCacheType.Image || usingCacheType == SkiaCacheType.ImageComposite)
             {
                 oldObject = RenderObjectPrevious;
             }
