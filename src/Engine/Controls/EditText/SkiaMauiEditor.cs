@@ -275,6 +275,9 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
+        if (IsDisposed || IsDisposing)
+            return ScaledSize.Default;
+
         GetOrCreateControl();
 
         return base.Measure(widthConstraint, heightConstraint, scale);

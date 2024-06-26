@@ -107,7 +107,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
             };
         };
 
-        if (HasSetFont || AutoFindFont)
+        if (HasSetFont || AutoFindFont || defaultPaint == null)
         {
             Paint.Typeface = TypeFace;
         }
@@ -116,28 +116,31 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
             Paint.Typeface = defaultPaint.Typeface;
         }
 
-        if (HasSetColor)
+        if (defaultPaint != null)
         {
-            if (TextColor == null)
-                Paint.Color = defaultPaint.Color;
+            if (HasSetColor)
+            {
+                if (TextColor == null)
+                    Paint.Color = defaultPaint.Color;
+                else
+                    Paint.Color = TextColor.ToSKColor();
+            }
             else
-                Paint.Color = TextColor.ToSKColor();
-        }
-        else
-        {
-            Paint.Color = defaultPaint.Color;
-        }
+            {
+                Paint.Color = defaultPaint.Color;
+            }
 
-        if (HasSetSize)
-        {
-            Paint.TextSize = (float)Math.Round(FontSize * scale);
-            Paint.StrokeWidth = 0;
-        }
-        else
-        {
-            //Paint.Typeface = defaultPaint.Typeface;
-            Paint.TextSize = defaultPaint.TextSize;
-            Paint.StrokeWidth = defaultPaint.StrokeWidth;
+            if (HasSetSize)
+            {
+                Paint.TextSize = (float)Math.Round(FontSize * scale);
+                Paint.StrokeWidth = 0;
+            }
+            else
+            {
+                //Paint.Typeface = defaultPaint.Typeface;
+                Paint.TextSize = defaultPaint.TextSize;
+                Paint.StrokeWidth = defaultPaint.StrokeWidth;
+            }
         }
 
         //always use our own attributes

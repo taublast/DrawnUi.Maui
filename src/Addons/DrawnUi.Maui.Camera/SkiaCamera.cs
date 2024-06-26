@@ -416,6 +416,9 @@ public partial class SkiaCamera : SkiaControl
 
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
+        if (IsDisposed || IsDisposing)
+            return ScaledSize.Default;
+
         if (Display == null)
         {
             //will serve as preview wrapper

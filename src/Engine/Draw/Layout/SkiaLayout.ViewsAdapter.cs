@@ -359,7 +359,7 @@ public class ViewsAdapter : IDisposable
 
             async Task InitializeFull(bool measure)
             {
-                //lock (_lockTemplates)
+                lock (_lockTemplates)
                 {
                     TemplesInvalidating = false;
 
@@ -370,7 +370,16 @@ public class ViewsAdapter : IDisposable
 
                     FillPool(reserve, dataContexts);
 
-                    kill?.Dispose();
+                    if (kill != null)
+                    {
+                        //we need a delay here for several threads access, if previous cells are still being drawn. not elegant but.. remains in global todo to find a better way.
+                        Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                        {
+                            kill?.Dispose();
+                        });
+                    }
+
+                    Monitor.PulseAll(_lockTemplates);
                 }
 
                 if (measure)
@@ -392,7 +401,7 @@ public class ViewsAdapter : IDisposable
             void InitializeSoft(bool layoutChanged)
             {
 
-                //lock (_lockTemplates)
+                lock (_lockTemplates)
                 {
                     TemplesInvalidating = false;
 
@@ -405,6 +414,7 @@ public class ViewsAdapter : IDisposable
                         }
                     }
                     //MarkAllViewsAsHidden(); //todo think
+                    Monitor.PulseAll(_lockTemplates);
                 }
 
                 TemplatesAvailable();
@@ -636,7 +646,7 @@ public class ViewsAdapter : IDisposable
 
     public SkiaControl GetTemplateInstance()
     {
-        //lock (_lockTemplates)
+        lock (_lockTemplates)
         {
             if (_templatedViewsPool == null || _dataContexts == null)
             {

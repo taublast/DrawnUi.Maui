@@ -31,8 +31,9 @@ namespace DrawnUi.Maui.Views
                 return HardwareAcceleration != HardwareAccelerationMode.Disabled;
 #else
                 return HardwareAcceleration != HardwareAccelerationMode.Disabled
-                       && DeviceInfo.Platform != DevicePlatform.WinUI
-                       && DeviceInfo.Platform != DevicePlatform.MacCatalyst;
+                       && !(DeviceInfo.Current.DeviceType == DeviceType.Virtual && DeviceInfo.Platform == DevicePlatform.iOS) //simulator
+                       && DeviceInfo.Platform != DevicePlatform.WinUI //no Angle yet
+                       && DeviceInfo.Platform != DevicePlatform.MacCatalyst; //bug, create GRContext returns null
 #endif
             }
         }

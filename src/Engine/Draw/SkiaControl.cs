@@ -3691,6 +3691,9 @@ namespace DrawnUi.Maui.Draw
         /// <returns></returns>
         public virtual ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
+            if (IsDisposed || IsDisposing)
+                return ScaledSize.Default;
+
             if (IsMeasuring) //basically we need this for cache double buffering to avoid conflicts with background thread
             {
                 NeedRemeasuring = true;
@@ -4753,13 +4756,13 @@ namespace DrawnUi.Maui.Draw
                     //lock both RenderObjectPrevious and RenderObject
                     lock (LockDraw)
                     {
-                        if (_renderObject != null)
+                        if (_renderObject != null) //if we already have something in actual cache then
                         {
                             if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
-                                || UsingCacheType == SkiaCacheType.Image
+                                || UsingCacheType == SkiaCacheType.Image //to just reuse same surface
                                 || UsingCacheType == SkiaCacheType.ImageComposite)
                             {
-                                RenderObjectPrevious = _renderObject;
+                                RenderObjectPrevious = _renderObject; //send it to back for special cases
                             }
                             else
                             {
@@ -5004,18 +5007,12 @@ namespace DrawnUi.Maui.Draw
                 var cacheType = UsingCacheType;
                 var cacheOffscreen = RenderObjectPrevious;
 
-
-                if (RenderObjectPrevious != null && RenderObjectPreviousNeedsUpdate
-                    ||
-                     cacheType != SkiaCacheType.ImageDoubleBuffered &&
-                     cacheType != SkiaCacheType.ImageComposite)
+                if (RenderObjectPrevious != null && RenderObjectPreviousNeedsUpdate)
                 {
-                    //this might happen only if we switch cache type at runtime
-                    //while hotreloading etc.. rare case
-                    RenderObjectPrevious?.Dispose();
+                    DisposeObject(RenderObjectPrevious);
                     RenderObjectPrevious = null;
-                    RenderObjectPreviousNeedsUpdate = false;
                 }
+                RenderObjectPreviousNeedsUpdate = false;
 
                 if (cache != null)
                 {

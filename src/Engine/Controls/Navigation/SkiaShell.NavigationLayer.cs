@@ -76,7 +76,10 @@ public partial class SkiaShell
 
                 control.SetParent(null);
 
-                control.Dispose();
+                Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                {
+                    control?.Dispose();
+                });
             }
             catch (Exception e)
             {

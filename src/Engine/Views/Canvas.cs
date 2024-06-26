@@ -184,6 +184,9 @@ public class Canvas : DrawnView, IGestureListener
 
     public override ScaledSize Measure(float widthConstraintPts, float heightConstraintPts)
     {
+        if (IsDisposed || IsDisposing)
+            return ScaledSize.Default;
+
         if (!IsVisible)
         {
             return SetMeasured(0, 0, (float)RenderingScale);
