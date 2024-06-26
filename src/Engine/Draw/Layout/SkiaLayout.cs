@@ -661,11 +661,6 @@ namespace DrawnUi.Maui.Draw
 
         public override void Invalidate()
         {
-            if (Tag == "Posts")
-            {
-                Debug.WriteLine("Invalidate posts!!!");
-            }
-
             base.Invalidate();
 
             Update();

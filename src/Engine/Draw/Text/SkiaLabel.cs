@@ -190,6 +190,8 @@ namespace DrawnUi.Maui.Draw
 
         #region RASTERIZE - NOT USED
 
+        /*
+
         public static void DrawRasterizedText(SKCanvas canvas, float x, float y, string text, SKPaint textPaint, SKColor colorOutline)
         {
             using (var imageText = RasterizeText(text, textPaint, colorOutline))
@@ -304,6 +306,7 @@ namespace DrawnUi.Maui.Draw
 
 
         }
+        */
 
         #endregion
 
@@ -448,6 +451,9 @@ namespace DrawnUi.Maui.Draw
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
+            if (IsDisposed || IsDisposing)
+                return ScaledSize.Default;
+
             ReplaceFont();
 
             //background measuring or invisible or self measure from draw because layout will never pass -1
@@ -920,6 +926,9 @@ namespace DrawnUi.Maui.Draw
             SKRect rectDraw,
             double scale)
         {
+            if (paintDefault == null)
+                return;
+
             //apply dynamic properties that were not applied during measure
             paintDefault.Color = TextColor.ToSKColor();
             paintDefault.BlendMode = this.FillBlendMode;
@@ -1803,44 +1812,17 @@ namespace DrawnUi.Maui.Draw
                 throw new ArgumentNullException(nameof(paint));
 
             using var font = paint.ToFont();
-            font.Typeface = shaper.Typeface;
-
-            // shape the text
-            var result = shaper.Shape(text, x, y, paint);
-
-            return result;
-
-            /*
-
-            // create the text blob
-            using var builder = new SKTextBlobBuilder();
-            var run = builder.AllocatePositionedRun(font, result.Codepoints.Length);
-
-            // copy the glyphs
-            var g = run.GetGlyphSpan();
-            var p = run.GetPositionSpan();
-            for (var i = 0; i < result.Codepoints.Length; i++)
+            if (font != null && shaper.Typeface != null)
             {
-                g[i] = (ushort)result.Codepoints[i];
-                p[i] = result.Points[i];
+                font.Typeface = shaper.Typeface;
+                // shape the text
+                var result = shaper.Shape(text, x, y, paint);
+                return result;
             }
 
-            // build
-            using var textBlob = builder.Build();
-
-            // adjust alignment
-            var xOffset = 0f;
-            if (paint.TextAlign != SKTextAlign.Left) {
-                var width = result.Width;
-                if (paint.TextAlign == SKTextAlign.Center)
-                    width *= 0.5f;
-                xOffset -= width;
-            }
-
-            */
+            return null;
 
 
-            //canvas.DrawText(textBlob, xOffset, 0, paint);
         }
 
 
@@ -1903,6 +1885,10 @@ namespace DrawnUi.Maui.Draw
             {
                 using var shaper = new SKShaper(paint.Typeface);
                 var result = GetShapedText(shaper, text, 0, 0, paint);
+                if (result == null)
+                {
+                    return (0.0f, null);
+                }
                 var measured = GetResultSize(result);
                 return (measured.Width, null);
             }

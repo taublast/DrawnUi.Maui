@@ -16,6 +16,9 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
+        if (IsDisposed || IsDisposing)
+            return ScaledSize.Default;
+
         var measured = base.Measure(widthConstraint, heightConstraint, scale);
         var test = this.WidthRequest;
         return measured;

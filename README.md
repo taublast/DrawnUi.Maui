@@ -17,7 +17,8 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 ## What's new
 
 * New: SvgSpan for SkiaLabel
-* FIxes for: SkiaMarkdownLabel, gestures, subpixel scrolling, SkiaDrawer, SkiaLayout, Canvas and some more.
+* Critical fix for release builds native crash while using ImageDoubleBuffered cache
+* Fixes for: gestures, SkiaMarkdownLabel, SkiaDrawer, SkiaLayout, Canvas and more.
 
 ## Demo Apps
 

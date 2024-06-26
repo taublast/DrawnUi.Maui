@@ -82,6 +82,9 @@
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
+            if (IsDisposed || IsDisposing)
+                return ScaledSize.Default;
+
             //lock (lockLayout)
             {
                 var bounds = base.Measure(widthConstraint, heightConstraint, scale);

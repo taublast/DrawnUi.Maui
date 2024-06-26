@@ -13,8 +13,8 @@ REM Define the source directory for the packages
 set "source_dir=E:\Nugets"
 
 REM Define the file mask for the packages
-set "file_mask=DrawnUi.Maui*.1.2.2.617*.nupkg"
-REM set "file_mask=AppoMobi.Maui.DrawnUi.1.2.2.617*.*nupkg"
+REM set "file_mask=DrawnUi.Maui*.1.2.2.626*.nupkg"
+set "file_mask=AppoMobi.Maui.DrawnUi.1.2.2.626*.*nupkg"
 
 REM Loop through each package file in the source directory
 for %%f in ("%source_dir%\%file_mask%") do (

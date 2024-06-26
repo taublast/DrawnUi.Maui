@@ -1066,7 +1066,10 @@ namespace DrawnUi.Maui.Controls
 
                         RootLayout.RemoveSubView(screenshot);
 
-                        screenshot?.Dispose();
+                        Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                        {
+                            screenshot?.Dispose();
+                        });
                     }
                 }
 
