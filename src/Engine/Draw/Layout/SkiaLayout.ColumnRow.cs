@@ -299,7 +299,10 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 var maybeSecondPass = Type == LayoutType.Row &&
-                                      (float.IsInfinity(rectForChild.Bottom) || float.IsInfinity(rectForChild.Top));
+                                      (float.IsInfinity(rectForChild.Bottom) || float.IsInfinity(rectForChild.Top))
+                                      || Type == LayoutType.Column &&
+                                      (float.IsInfinity(rectForChild.Right) || float.IsInfinity(rectForChild.Left));
+
                 List<SecondPassArrange> listSecondPass = new();
 
                 //measure
@@ -391,6 +394,10 @@ namespace DrawnUi.Maui.Draw
                             else
                             {
                                 measured = MeasureAndArrangeCell(rectFitChild, cell, child, scale);
+                                if (child.Tag == "First")
+                                {
+                                    var stop = 1;
+                                }
                                 if (maybeSecondPass) //has infinity in destination
                                 {
                                     if (Type == LayoutType.Column && child.HorizontalOptions != LayoutOptions.Start)
