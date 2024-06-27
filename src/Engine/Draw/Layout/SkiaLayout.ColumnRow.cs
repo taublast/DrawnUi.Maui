@@ -49,6 +49,7 @@ namespace DrawnUi.Maui.Draw
         {
             if (!measured.IsEmpty)
             {
+
                 child.Arrange(cell.Area, measured.Units.Width, measured.Units.Height, scale);
 
                 var maybeArranged = child.Destination;
@@ -73,7 +74,13 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
+        /// <summary>
+        /// Cell.Area contains the area for layout
+        /// </summary>
+        /// <param name="cell"></param>
+        /// <param name="child"></param>
+        /// <param name="scale"></param>
+        public record SecondPassArrange(ControlInStack Cell, SkiaControl Child, float Scale);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected float GetSpacingForIndex(int forIndex, float scale)
@@ -291,6 +298,10 @@ namespace DrawnUi.Maui.Draw
                     template = ChildrenFactory.GetTemplateInstance();
                 }
 
+                var maybeSecondPass = Type == LayoutType.Row &&
+                                      (float.IsInfinity(rectForChild.Bottom) || float.IsInfinity(rectForChild.Top));
+                List<SecondPassArrange> listSecondPass = new();
+
                 //measure
                 //left to right, top to bottom
                 for (var row = 0; row < layoutStructure.MaxRows; row++)
@@ -380,6 +391,18 @@ namespace DrawnUi.Maui.Draw
                             else
                             {
                                 measured = MeasureAndArrangeCell(rectFitChild, cell, child, scale);
+                                if (maybeSecondPass) //has infinity in destination
+                                {
+                                    if (Type == LayoutType.Column && child.HorizontalOptions != LayoutOptions.Start)
+                                    {
+                                        listSecondPass.Add(new(cell, child, scale));
+                                    }
+                                    else
+                                    if (Type == LayoutType.Row && child.VerticalOptions != LayoutOptions.Start)
+                                    {
+                                        listSecondPass.Add(new(cell, child, scale));
+                                    }
+                                }
                             }
 
                             if (!measured.IsEmpty)
@@ -411,6 +434,33 @@ namespace DrawnUi.Maui.Draw
                     rectForChild.Left = 0; //reset to start
 
                 }//end of iterate rows
+
+                //second layout pass for if we had infinity
+                foreach (var secondPass in listSecondPass)
+                {
+                    if (float.IsInfinity(secondPass.Cell.Area.Bottom))
+                    {
+                        secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top, secondPass.Cell.Area.Right, secondPass.Cell.Area.Top + stackHeight);
+                    }
+                    else
+                    if (float.IsInfinity(secondPass.Cell.Area.Top))
+                    {
+                        secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Bottom - stackHeight, secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
+                    }
+
+                    if (float.IsInfinity(secondPass.Cell.Area.Right))
+                    {
+                        secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top, secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
+                    }
+                    else
+                    if (float.IsInfinity(secondPass.Cell.Area.Left))
+                    {
+                        secondPass.Cell.Area = new(secondPass.Cell.Area.Right - stackWidth, secondPass.Cell.Area.Top, secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
+                    }
+
+                    LayoutCell(secondPass.Child.MeasuredSize, secondPass.Cell, secondPass.Child, secondPass.Scale);
+                }
+
 
                 if (IsTemplated && useOneTemplate)
                 {
@@ -528,325 +578,6 @@ namespace DrawnUi.Maui.Draw
 
             return structure;
         }
-
-        //2 passes for FILL LAYOUT OPTIONS
-        //not using this as fps drops
-        /*
-    case LayoutType.Column:
-    case LayoutType.Row:
-
-        if (ViewsMaster.GetChildrenCount() > 0)
-        {
-            float AddSpacing(int pos)
-            {
-                var spacing = 0.0f;
-                if (pos > 0)
-                {
-                    spacing = (float)(Spacing * scale);
-                }
-                return spacing;
-            }
-
-            SKRect rectForChild = rectForChildrenPixels.Clone();
-
-            var column = 0;
-            var row = 0;
-            var rows = new List<List<ControlInStack>>();
-            var columns = new List<ControlInStack>();
-            int maxColumns = MaxColumns; // New MaxColumns property
-            int maxRows = MaxRows; // New MaxRows property
-
-            for (int index = 0; index < ViewsMaster.GetChildrenCount(); index++)
-            {
-                // vertical stack or if maxColumns is exceeded
-                if (Type == LayoutType.Column && maxColumns < 1 || (maxColumns > 0 && column >= maxColumns) || LineBreaks.Contains(index))
-                {
-                    if (index > 0)
-                    {
-                        //insert a vbreak between all children
-                        rows.Add(columns);
-                        columns = new();
-                        column = 0;
-                        row++;
-                    }
-                }
-
-                // If maxRows is reached and exceeded, break the loop
-                if (maxRows > 0 && row >= maxRows)
-                {
-                    break;
-                }
-
-                columns.Add(new ControlInStack { ControlIndex = index });
-                column++;
-            }
-
-            rows.Add(columns);
-            StackStructure = rows;
-
-            SkiaControl template = null;
-            if (IsTemplated)
-            {
-                template = ViewsMaster.GetTemplateInstance();
-            }
-
-            var stackHeight = 0.0f;
-            var stackWidth = 0.0f;
-            var maxHeight = 0.0f;
-            var maxWidth = 0.0f;
-            bool hasFills = false;
-
-            var takenHeight = 0f;
-            var takenWidth = 0f;
-
-            //PASS 1
-            for (row = 0; row < rows.Count; row++)
-            {
-                maxHeight = 0.0f; //max row height
-                rectForChild.Top += AddSpacing(row);
-
-                stackWidth = 0.0f;
-                var columnsCount = rows[row].Count;
-
-                if (!DynamicColumns && columnsCount < maxColumns)
-                {
-                    columnsCount = Math.Min(1, MaxColumns);
-                }
-
-                var widthPerColumn = (float)(columnsCount > 1 ?
-                    (rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount :
-                    rectForChildrenPixels.Width);
-
-                for (column = 0; column < columnsCount; column++)
-                {
-                    rectForChild.Left += AddSpacing(column);
-
-                    var rectFitChild = new SKRect(rectForChild.Left, rectForChild.Top, rectForChild.Left + widthPerColumn, rectForChild.Bottom);
-
-                    var cell = rows[row][column];
-
-                    var child = ViewsMaster.GetChildAt(cell.ControlIndex, template);
-
-                    //Trace.WriteLine($"[PASS 1] LAYOUT - {child.Tag}");
-
-                    if (child == null)
-                    {
-                        ContentSize = ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
-                        widthConstraint = AdaptWidthContraintToContentRequest(widthConstraint, ContentSize, constraintLeft + constraintRight);
-                        heightConstraint = AdaptHeightContraintToContentRequest(heightConstraint, ContentSize, constraintTop + constraintBottom);
-                        return SetMeasured(widthConstraint, heightConstraint, scale);
-                    }
-                    else
-                    {
-                        //reset calculated stuff as this might be a template being reused
-                        if (child is SkiaControl control)
-                        {
-                            control.InvalidateInternal();
-                        }
-                    }
-
-                    if (
-                        (Type == LayoutType.Row && child.HorizontalOptions.Alignment == LayoutAlignment.Fill && child.WidthRequest < 0)
-                        ||
-                        (Type == LayoutType.Column && child.VerticalOptions.Alignment == LayoutAlignment.Fill && child.HeightRequest < 0)
-                        )
-                    {
-                        hasFills = true;
-                        cell.Tmp = rectFitChild;
-                        cell.Expands = true;
-                        continue;
-                    }
-
-                    cell.Expands = false;
-
-                    var measured = MeasureChild(child,
-                        rectFitChild.Width, rectFitChild.Height,
-                    scale);
-
-                    cell.Measured = ScaledSize.FromPixels(measured, scale);
-
-                    if (measured != SKSize.Empty)
-                    {
-                        child.Arrange(rectFitChild, measured.Width, measured.Height, scale);
-
-                        var maybeArranged = child.Destination;
-
-                        var arranged = new SKRect(rectFitChild.Left, rectFitChild.Top,
-                                rectFitChild.Left + cell.Measured.Pixels.Width,
-                                rectFitChild.Top + cell.Measured.Pixels.Height);
-
-                        if (float.IsNormal(maybeArranged.Height))
-                        {
-                            arranged.Top = maybeArranged.Top;
-                            arranged.Bottom = maybeArranged.Bottom;
-                        }
-                        if (float.IsNormal(maybeArranged.Width))
-                        {
-                            arranged.Left = maybeArranged.Left;
-                            arranged.Right = maybeArranged.Right;
-                        }
-
-                        cell.Destination = arranged;
-
-                        var width = measured.Width;
-                        var height = measured.Height;
-
-                        stackWidth += width + AddSpacing(column);
-
-                        if (measured.Height > maxHeight)
-                            maxHeight = height;
-
-                        //offset -->
-                        rectForChild.Left += (float)(width);
-                    }
-
-                }//end of iterate columns
-
-                if (stackWidth > maxWidth)
-                    maxWidth = stackWidth;
-
-                stackHeight += maxHeight + AddSpacing(row);
-                rectForChild.Top += (float)(maxHeight);
-
-                rectForChild.Left = 0; //reset to start
-
-            }//end of iterate rows
-
-            //PASS 2
-            if (hasFills)
-            {
-                rectForChild = rectForChildrenPixels.Clone();
-
-                var offsetMoveY = 0f;
-
-                for (row = 0; row < rows.Count; row++)
-                {
-                    var offsetMoveX = 0f;
-
-                    rectForChild.Top += AddSpacing(row);
-                    stackWidth = 0.0f;
-                    maxHeight = 0.0f;
-
-                    var columnsCount = rows[row].Count;
-
-                    if (!DynamicColumns && columnsCount < maxColumns)
-                    {
-                        columnsCount = Math.Min(1, MaxColumns);
-                    }
-
-                    var widthPerColumn = (float)(columnsCount > 1 ?
-                        (rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount :
-                        rectForChildrenPixels.Width);
-
-                    for (column = 0; column < columnsCount; column++)
-                    {
-
-                        var cell = rows[row][column];
-
-                        var child = ViewsMaster.GetChildAt(cell.ControlIndex, template);
-
-                        if (!cell.Expands)
-                        {
-                            if (offsetMoveY > 0 || offsetMoveX > 0)
-                            {
-                                //newly filled made us move
-                                var itBecaime = new SKRect(cell.Destination.Left + offsetMoveX, cell.Destination.Top + offsetMoveY,
-                                    cell.Destination.Right + offsetMoveX, cell.Destination.Bottom + offsetMoveY);
-                                cell.Destination = itBecaime;
-                            }
-                            rectForChild.Left += cell.Measured.Pixels.Width + AddSpacing(column);
-
-                            //usual end of row
-                            stackWidth += cell.Measured.Pixels.Width + AddSpacing(column);
-                            maxHeight = cell.Measured.Pixels.Height;
-                            continue;
-                        }
-
-                        var availableWidth = rectForChildrenPixels.Width -
-                                                 (rectForChild.Left - rectForChildrenPixels.Left)
-                                             - CalculateTakenWidthRight(row, column, (float)(Spacing * scale));
-
-                        var availableHeight = rectForChildrenPixels.Height -
-                                              (rectForChild.Top - rectForChildrenPixels.Top)
-                                              - CalculateTakenHeightBelow(row, (float)(Spacing * scale));
-
-                        //Trace.WriteLine($"[PASS 2] LAYOUT - {child.Tag}");
-
-                        var measured = MeasureChild(child,
-                            availableWidth, availableHeight, scale);
-
-                        cell.Measured = ScaledSize.FromPixels(measured, scale);
-
-                        if (measured != SKSize.Empty)
-                        {
-                            //child.InvalidateChildren();
-                            child.Arrange(new SKRect(rectForChild.Left, rectForChild.Top, rectForChild.Left + availableWidth, rectForChild.Top + availableHeight),
-                                measured.Width, measured.Height, scale);
-
-                            //child.InvalidateChildren();
-
-                            var maybeArranged = child.Destination;
-
-                            var arranged = new SKRect(cell.Tmp.Left, cell.Tmp.Top,
-                                    cell.Tmp.Left + cell.Measured.Pixels.Width,
-                                    cell.Tmp.Top + cell.Measured.Pixels.Height);
-
-                            if (float.IsNormal(maybeArranged.Height))
-                            {
-                                arranged.Top = maybeArranged.Top;
-                                arranged.Bottom = maybeArranged.Bottom;
-                            }
-                            if (float.IsNormal(maybeArranged.Width))
-                            {
-                                arranged.Left = maybeArranged.Left;
-                                arranged.Right = maybeArranged.Right;
-                            }
-
-                            cell.Destination = arranged;
-
-                            var width = measured.Width;
-                            var height = measured.Height;
-
-                            offsetMoveY += height;
-                            offsetMoveX += width;
-
-                            stackWidth += width + AddSpacing(column);
-
-                            if (measured.Height > maxHeight)
-                                maxHeight = height;
-
-                            //offset -->
-                            rectForChild.Left += (float)(width);
-                        }
-                    }//end of iterate columns
-
-                    if (stackWidth > maxWidth)
-                        maxWidth = stackWidth;
-
-                    stackHeight += maxHeight + AddSpacing(row);
-                    rectForChild.Top += (float)(maxHeight);
-                    rectForChild.Left = 0; //reset to start
-
-                }//end of iterate rows
-
-            }
-
-            if (IsTemplated)
-            {
-                ViewsMaster.ReleaseView(template);
-            }
-
-            ContentSize = ScaledSize.FromPixels(maxWidth, stackHeight, scale);
-
-            widthConstraint = AdaptWidthContraintToContentRequest(widthConstraint, ContentSize, constraintLeft + constraintRight);
-            heightConstraint = AdaptHeightContraintToContentRequest(heightConstraint, ContentSize, constraintBottom + constraintTop);
-
-            childrenmeasured = true;
-        }
-
-        break;
-        */
-
 
 
         #endregion

@@ -4731,7 +4731,8 @@ namespace DrawnUi.Maui.Draw
                 {
                     var kill = _renderObjectPrevious;
                     _renderObjectPrevious = value;
-                    kill?.Dispose();
+                    if (kill != null && UsingCacheType != SkiaCacheType.Image && UsingCacheType == SkiaCacheType.ImageComposite)
+                        DisposeObject(kill);
                 }
             }
         }
@@ -5009,9 +5010,17 @@ namespace DrawnUi.Maui.Draw
 
                 if (RenderObjectPrevious != null && RenderObjectPreviousNeedsUpdate)
                 {
-                    DisposeObject(RenderObjectPrevious);
+                    var kill = RenderObjectPrevious;
                     RenderObjectPrevious = null;
                     RenderObjectPreviousNeedsUpdate = false;
+                    if (kill != null)
+                    {
+
+                        Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                        {
+                            kill.Dispose();
+                        });
+                    }
                 }
 
                 if (cache != null)
@@ -5555,7 +5564,10 @@ namespace DrawnUi.Maui.Draw
                 }
                 if (usingCacheType != SkiaCacheType.ImageDoubleBuffered && usingCacheType != SkiaCacheType.ImageComposite)
                 {
-                    oldObject.Dispose();
+                    Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                    {
+                        oldObject.Dispose();
+                    });
                 }
             }
 
