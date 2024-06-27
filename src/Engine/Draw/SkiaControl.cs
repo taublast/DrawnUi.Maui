@@ -5015,7 +5015,6 @@ namespace DrawnUi.Maui.Draw
                     RenderObjectPreviousNeedsUpdate = false;
                     if (kill != null)
                     {
-
                         Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
                         {
                             kill.Dispose();
@@ -5531,13 +5530,8 @@ namespace DrawnUi.Maui.Draw
 
             if (RenderObject != null && UsingCacheType != SkiaCacheType.ImageDoubleBuffered)
             {
-                //RenderObject = null;
-                throw new Exception("RenderObject already exists for CreateRenderingObjectAndPaint! Need to dispose and assign null to it before.");
-            }
-
-            if (IsCacheImage && !WillClipBounds)
-            {
-                throw new Exception("WillClipBounds is required to be TRUE for caching as image.");
+                //we might come here with an existing RenderingObject if UseRenderingObject returned False
+                RenderObject = null;
             }
 
             RenderObjectNeedsUpdate = false;
@@ -5556,6 +5550,12 @@ namespace DrawnUi.Maui.Draw
             }
 
             var created = CreateRenderingObject(context, recordingArea, oldObject, action);
+
+            if (created == null)
+            {
+                return;
+            }
+
             if (oldObject != null)
             {
                 if (created.SurfaceIsRecycled)
