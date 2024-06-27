@@ -745,13 +745,13 @@ namespace DrawnUi.Maui.Draw
 
             _spans.CollectionChanged -= OnCollectionChanged;
 
-            PaintDefault.Typeface = null;  //preserve cached font from disposing
+            PaintDefault.Typeface = SKTypeface.Default;  //preserve cached font from disposing
             PaintDefault.Dispose();
 
-            PaintStroke.Typeface = null; //preserve cached font from disposing
+            PaintStroke.Typeface = SKTypeface.Default; //preserve cached font from disposing
             PaintStroke.Dispose();
 
-            PaintShadow.Typeface = null;  //preserve cached font from disposing
+            PaintShadow.Typeface = SKTypeface.Default;  //preserve cached font from disposing
             PaintShadow.Dispose();
 
             PaintDeco.Dispose();
@@ -2750,7 +2750,7 @@ namespace DrawnUi.Maui.Draw
             nameof(TypeFace),
             typeof(SKTypeface),
             typeof(SkiaLabel),
-            defaultValue: null,
+            defaultValue: SKTypeface.Default,
             propertyChanged: NeedUpdateFont);
 
         public SKTypeface TypeFace

@@ -314,7 +314,7 @@ public partial class SkiaFontManager
             {
 
                 if (stream == null)
-                    return null;
+                    return SKTypeface.Default;
 
                 font = SKTypeface.FromStream(stream);
                 if (font != null)
@@ -325,6 +325,9 @@ public partial class SkiaFontManager
             }
 
         }
+
+        if (font == null)
+            font = SKTypeface.Default;
 
         return font;
 

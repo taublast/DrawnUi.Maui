@@ -109,11 +109,21 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
 
         if (HasSetFont || AutoFindFont || defaultPaint == null)
         {
-            Paint.Typeface = TypeFace;
+            if (TypeFace != null)
+            {
+                Paint.Typeface = TypeFace;
+            }
+            else
+            {
+                Paint.Typeface = SKTypeface.Default;
+            }
         }
         else
         {
-            Paint.Typeface = defaultPaint.Typeface;
+            if (defaultPaint.Typeface != null)
+                Paint.Typeface = defaultPaint.Typeface;
+            else
+                Paint.Typeface = SKTypeface.Default;
         }
 
         if (defaultPaint != null)
@@ -326,7 +336,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
 
         if (Paint != null)
         {
-            Paint.Typeface = null; //do not sipose typeface that can be cached and reused
+            Paint.Typeface = SKTypeface.Default; //do not sipose typeface that can be cached and reused
             Paint.Dispose();
         }
 
@@ -466,7 +476,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
     private Color _backgroundColor = Colors.Transparent;
     private Color _paragraphColor = Colors.Transparent;
     private bool _autoFindFont;
-    private SKTypeface _typeFace;
+    private SKTypeface _typeFace = SKTypeface.Default;
     private bool _needShape;
 
     public string FontFamily
