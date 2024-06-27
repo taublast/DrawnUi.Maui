@@ -16,10 +16,8 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's new
 
-* New: SvgSpan for SkiaLabel.
-* Critical fix for Release builds native crash while using ImageDoubleBuffered cache.
-* Fixes for: gestures, SkiaMarkdownLabel, SkiaDrawer, SkiaLayout, Canvas and more.
-* Added real published apps in the repo Readme.
+* `SkiaLayout` Column/Row uses 2 layout passes when needed, can now use full alignement options inside.
+* Critical fixes for Release builds.
 
 ## Demo Apps
 
@@ -589,6 +587,11 @@ It will render a mask over its children when hovered, think of it as an inverted
 * Binding RelativeSource with FindAncestorBindingContext not working yet.
 
 ## Previously
+
+* New: SvgSpan for SkiaLabel.
+* Critical fix for Release builds native crash while using ImageDoubleBuffered cache.
+* Fixes for: gestures, SkiaMarkdownLabel, SkiaDrawer, SkiaLayout, Canvas and more.
+* Added real published apps in the repo Readme.
 
 * In Sandbox project we have new demos with features: Markdown, Xaml2Pdf. Note we could soon write tagged Pdfs when SkiaSharp appropriate nuget comes out.
 * `SkiaMarkdownLabel` now more colors options, supports bullet/numbered lists and code.
