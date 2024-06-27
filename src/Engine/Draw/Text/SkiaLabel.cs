@@ -454,34 +454,34 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed || IsDisposing)
                 return ScaledSize.Default;
 
-            ReplaceFont();
-
             //background measuring or invisible or self measure from draw because layout will never pass -1
             if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
             {
                 return MeasuredSize;
             }
 
-            var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-            if (request.IsSame)
-            {
-                return MeasuredSize;
-            }
-
-            SetupDefaultPaint(scale);
-
-            if (PaintDefault.Typeface == null)
-            {
-                UpdateFont();
-                return MeasuredSize;
-            }
-
-            var constraints = GetMeasuringConstraints(request);
-
             IsMeasuring = true;
 
             try
             {
+                var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
+                if (request.IsSame)
+                {
+                    return MeasuredSize;
+                }
+
+                ReplaceFont();
+
+                SetupDefaultPaint(scale);
+
+                if (PaintDefault.Typeface == null)
+                {
+                    UpdateFont();
+                    return MeasuredSize;
+                }
+
+                var constraints = GetMeasuringConstraints(request);
+
                 var textWidthPixels = 0f;
                 var textHeightPixels = 0f;
 
@@ -1458,9 +1458,10 @@ namespace DrawnUi.Maui.Draw
 
         protected void ReplaceFont()
         {
-            if (_replaceFont != null)
+            var newFont = _replaceFont;
+            if (newFont != null)
             {
-                TypeFace = _replaceFont;
+                TypeFace = newFont;
                 _replaceFont = null;
                 OnFontUpdated();
             }
@@ -1811,12 +1812,14 @@ namespace DrawnUi.Maui.Draw
             if (paint == null)
                 throw new ArgumentNullException(nameof(paint));
 
-            using var font = paint.ToFont();
+            var font = paint.ToFont();
+
             if (font != null && shaper.Typeface != null)
             {
                 font.Typeface = shaper.Typeface;
                 // shape the text
                 var result = shaper.Shape(text, x, y, paint);
+
                 return result;
             }
 
@@ -1883,7 +1886,7 @@ namespace DrawnUi.Maui.Draw
 
             if (needsShaping)
             {
-                using var shaper = new SKShaper(paint.Typeface);
+                var shaper = new SKShaper(paint.Typeface);
                 var result = GetShapedText(shaper, text, 0, 0, paint);
                 if (result == null)
                 {
