@@ -391,7 +391,12 @@ public class SkiaMarkdownLabel : SkiaLabel
         var currentIndex = 0;
         var spanStart = 0;
         var spanData = new List<(string Text, SKTypeface Typeface, int Symbol, bool shape)>();
-        SKTypeface originalTypeFace = TypeFace;
+        var originalTypeFace = TypeFace;
+        if (originalTypeFace == null)
+        {
+            originalTypeFace = SKTypeface.Default;
+        }
+
         SKTypeface currentTypeFace = originalTypeFace;
         bool needShape = false;
 
@@ -429,7 +434,8 @@ public class SkiaMarkdownLabel : SkiaLabel
                 }
             }
             //maybe switch back to original font if possible
-            else if (!isStandardSymbol && currentTypeFace != originalTypeFace)
+            else
+            if (!isStandardSymbol && currentTypeFace != originalTypeFace)
             {
                 var glyphInOriginal = SkiaLabel.GetGlyphs(glyphText, originalTypeFace).First();
                 if (glyphInOriginal.IsAvailable)

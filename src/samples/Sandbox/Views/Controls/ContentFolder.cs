@@ -123,7 +123,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
         }
         catch (Exception e)
         {
-            Console.WriteLine($"[SkiaLottie] LoadSource failed to load animation {fileName}");
+            Console.WriteLine($"[ContentFolder] LoadSource failed to load animation {fileName}");
             Console.WriteLine(e);
             return null;
         }

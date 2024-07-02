@@ -4,14 +4,14 @@ using System.Numerics;
 
 namespace DrawnUi.Maui.Draw;
 
-public struct UnderdampedSpringTimingParameters : IDampingTimingParameters
+public struct UnderdampedSpringTimingVectorParameters : IDampingTimingVectorParameters
 {
     private readonly Spring spring;
     private readonly Vector2 displacement;
     private readonly Vector2 initialVelocity;
     private readonly float threshold;
 
-    public UnderdampedSpringTimingParameters(Spring spring, Vector2 displacement, Vector2 initialVelocity, float threshold)
+    public UnderdampedSpringTimingVectorParameters(Spring spring, Vector2 displacement, Vector2 initialVelocity, float threshold)
     {
         this.spring = spring;
         this.displacement = displacement;

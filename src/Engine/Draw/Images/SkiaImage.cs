@@ -122,11 +122,11 @@ public class SkiaImage : SkiaControl
         nameof(Aspect),
         typeof(TransformAspect),
         typeof(SkiaImage),
-        TransformAspect.AspectFitFill,
+        TransformAspect.AspectCover,
         propertyChanged: NeedInvalidateMeasure);
 
     /// <summary>
-    /// Apspect to render image with, default is AspectFitFill. 
+    /// Apspect to render image with, default is AspectCover. 
     /// </summary>
     public TransformAspect Aspect
     {
@@ -358,15 +358,23 @@ public class SkiaImage : SkiaControl
     /// You would want to set InstancedBitmap prop for a usual approach.
     /// </summary>
     /// <param name="bitmap"></param>
-    public LoadedImageSource SetBitmapInternal(SKBitmap bitmap)
+    public LoadedImageSource SetBitmapInternal(SKBitmap bitmap, bool protectFromDispose = false)
     {
-        return SetImage(new LoadedImageSource(bitmap));
+        return SetImage(new LoadedImageSource(bitmap)
+        {
+            ProtectFromDispose = protectFromDispose
+        });
     }
 
-    public LoadedImageSource SetImageInternal(SKImage image)
+    public LoadedImageSource SetImageInternal(SKImage image, bool protectFromDispose = false)
     {
-        return SetImage(new LoadedImageSource(image));
+        return SetImage(new LoadedImageSource(image)
+        {
+            ProtectFromDispose = protectFromDispose
+        });
     }
+
+
 
     private bool _IsLoading;
     public bool IsLoading
@@ -401,8 +409,13 @@ public class SkiaImage : SkiaControl
 
     public event EventHandler OnCleared;
 
+    protected virtual async Task<SKBitmap> LoadImageManagedAsync(ImageSource source, CancellationTokenSource cancel,
+        LoadPriority priority = LoadPriority.Normal)
+    {
+        return await SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel, priority);
+    }
 
-    public void SetImageSource(ImageSource source)
+    public virtual void SetImageSource(ImageSource source)
     {
         //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
         if (IsDisposing || IsDisposed)
@@ -464,7 +477,7 @@ public class SkiaImage : SkiaControl
                                 try
                                 {
                                     //bitmap = await SkiaImageManager.LoadImageOnPlatformAsync(source, cancel.Token);
-                                    bitmap = await SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel);
+                                    bitmap = await LoadImageManagedAsync(source, cancel);
 
                                     if (IsDisposing || IsDisposed)
                                     {
@@ -1121,8 +1134,6 @@ propertyChanged: NeedChangeColorFIlter);
         if (IsDisposing || IsDisposed)
             return;
 
-
-
         LoadSourceIfNeeded();
 
         var apply = ApplyNewSource;
@@ -1148,7 +1159,8 @@ propertyChanged: NeedChangeColorFIlter);
                     if (NeedAutoSize)
                     {
                         Invalidate(); //resize on next frame
-                        return;
+                        if (LoadedSource == null)
+                            return;
                     }
 
                     if (DrawingRect == SKRect.Empty || source == null)
@@ -1305,7 +1317,7 @@ propertyChanged: NeedChangeColorFIlter);
 
     public ScaledRect SourceImageSize { get; protected set; }
 
-    private void SetAspectScale(int pxWidth, int pxHeight, SKRect dest, TransformAspect stretch, float scale)
+    protected void SetAspectScale(int pxWidth, int pxHeight, SKRect dest, TransformAspect stretch, float scale)
     {
         var scaled = RescaleAspect(pxWidth, pxHeight, dest, stretch);
 

@@ -15,8 +15,8 @@ public partial class SkiaImageManager
     public async Task<SKBitmap> GetSKBitmapFromStreamImageSource(StreamImageSource streamImageSource)
     {
         var stream = await streamImageSource.Stream(default);
-        var skStream = new SKManagedStream(stream);
-        var codec = SKCodec.Create(skStream);
+        var data = SKData.Create(stream);
+        using var codec = SKCodec.Create(data);
         var skBitmap = new SKBitmap(codec.Info);
 
         //codec.(skBitmap.Info, skBitmap.GetPixels(), skBitmap.RowBytes, 0, 0);

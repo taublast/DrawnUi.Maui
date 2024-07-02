@@ -484,8 +484,8 @@ public class SkiaCarousel : SnappingLayout
                 if (Bounces)
                 {
                     var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
-                    _animatorSpring.Initialize(end, displacement, velocity, spring, 0.5f);
-                    _animatorSpring.Start();
+                    VectorAnimatorSpring.Initialize(end, displacement, velocity, spring, 0.5f);
+                    VectorAnimatorSpring.Start();
                 }
                 else
                 {
@@ -578,9 +578,9 @@ public class SkiaCarousel : SnappingLayout
         {
 
 
-            if (_animatorSpring == null)
+            if (VectorAnimatorSpring == null)
             {
-                _animatorSpring = new(this)
+                VectorAnimatorSpring = new(this)
                 {
                     OnStart = () =>
                     {
@@ -1118,7 +1118,7 @@ public class SkiaCarousel : SnappingLayout
             IsUserFocused = true;
             IsUserPanning = false;
 
-            _animatorSpring?.Stop();
+            VectorAnimatorSpring?.Stop();
 
             VelocityAccumulator.Clear();
 

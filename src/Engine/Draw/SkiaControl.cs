@@ -369,8 +369,15 @@ namespace DrawnUi.Maui.Draw
                     ReportHotreloadChildRemoved(control);
                 });
 
-            control.SetParent(null);
-            OnChildRemoved(control);
+            try
+            {
+                control.SetParent(null);
+                OnChildRemoved(control);
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
         }
 
 
@@ -1457,10 +1464,14 @@ namespace DrawnUi.Maui.Draw
             CalculateSizeRequest();
         }
 
-        public static readonly BindableProperty ParentProperty = BindableProperty.Create(nameof(Parent),
-        typeof(IDrawnBase),
-        typeof(SkiaControl),
-        null, propertyChanged: OnControlParentChanged);
+
+        public static readonly BindableProperty ParentProperty = BindableProperty.Create(
+            nameof(Parent),
+            typeof(IDrawnBase),
+            typeof(SkiaControl),
+            default(IDrawnBase),
+            propertyChanged: OnControlParentChanged);
+
         /// <summary>
         /// Do not set this directly if you don't know what you are doing, use SetParent()
         /// </summary>
@@ -1469,6 +1480,7 @@ namespace DrawnUi.Maui.Draw
             get { return (IDrawnBase)GetValue(ParentProperty); }
             set { SetValue(ParentProperty, value); }
         }
+
 
 
         #region View
@@ -3105,14 +3117,10 @@ namespace DrawnUi.Maui.Draw
 
         protected bool WasMeasured;
 
-
-
         protected virtual void OnDrawingSizeChanged()
         {
 
         }
-
-
 
         protected virtual void AdaptCachedLayout(SKRect destination, float scale)
         {
@@ -3242,6 +3250,7 @@ namespace DrawnUi.Maui.Draw
             //so we must offset the coordinates to match the current drawing rect
             if (accountForCache)
             {
+                /*
                 if (UsingCacheType == SkiaCacheType.ImageComposite)
                 {
                     if (RenderObjectPrevious != null)
@@ -3255,6 +3264,7 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
                 else
+                */
                 {
                     if (RenderObject != null)
                     {
@@ -3438,6 +3448,11 @@ namespace DrawnUi.Maui.Draw
 
             //var oldDestination = Destination;
             var layout = CalculateLayout(arrangingFor, widthRequest, heightRequest, scale);
+            bool layoutChanged = false;
+            if (!CompareRects(layout, ArrangedDestination, 0.5f))
+            {
+                layoutChanged = true;
+            }
 
             var oldDrawingRect = this.DrawingRect;
 
@@ -3454,18 +3469,15 @@ namespace DrawnUi.Maui.Draw
             _lastArrangedHeight = heightRequest;
             _lastArrangedWidth = widthRequest;
 
-            OnLayoutChanged();
-
-            if (!AreEqual(oldDrawingRect.Height, DrawingRect.Height, 1)
-                || !AreEqual(oldDrawingRect.Width, DrawingRect.Width, 1))
+            if (!AreEqual(oldDrawingRect.Height, DrawingRect.Height, 0.5)
+                || !AreEqual(oldDrawingRect.Width, DrawingRect.Width, 0.5))
             {
                 OnDrawingSizeChanged();
+                layoutChanged = true;
             }
 
-            //if (!CompareRects(oldDestination, Destination)) //layout can be same but offset might have been changed
-            //{
-            //    OnLayoutChanged();
-            //}
+            if (layoutChanged)
+                OnLayoutChanged();
 
             IsLayoutDirty = false;
         }
@@ -4052,7 +4064,7 @@ namespace DrawnUi.Maui.Draw
         public ScaledSize MeasuredSize { get; set; } = new();
 
 
-        public bool NeedAutoSize
+        public virtual bool NeedAutoSize
         {
             get
             {

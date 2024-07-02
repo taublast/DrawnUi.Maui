@@ -27,6 +27,18 @@ namespace DrawnUi.Maui.Controls
     /// </summary>
     public partial class SkiaShell : DrawnUiBasePage, IDisposable
     {
+        public class SkiaShellNavigationArgs : EventArgs
+        {
+            public SkiaShellNavigationArgs(SkiaControl view, ShellNavigationSource source)
+            {
+                View = view;
+                Source = source;
+            }
+
+            public SkiaControl View { get; }
+            public ShellNavigationSource Source { get; }
+        }
+
         public void Dispose()
         {
             Super.InsetsChanged += OnInsetsChanged;
@@ -51,6 +63,37 @@ namespace DrawnUi.Maui.Controls
 #endif
             }
         }
+
+        #region EVENTS
+
+        public event EventHandler<SkiaShellNavigationArgs> NavigatedView;
+
+        public event EventHandler<ShellNavigatedEventArgs> Navigated;
+
+        public event EventHandler<ShellNavigatingEventArgs> Navigating;
+
+        protected virtual void OnNavigatedView(SkiaShellNavigationArgs e)
+        {
+            Debug.WriteLine($"[SHELL] NAVIGATED VIEW {e.View} ({e.Source})");
+
+            this.NavigatedView?.Invoke(this, e);
+        }
+
+        protected virtual void OnNavigated(ShellNavigatedEventArgs e)
+        {
+            Debug.WriteLine($"[SHELL] NAVIGATED {e.Previous.Location} => {e.Current.Location} ({e.Source}), current {CurrentRoute}");
+
+            this.Navigated?.Invoke(this, e);
+        }
+
+        protected virtual void OnNavigating(ShellNavigatingEventArgs e)
+        {
+            Debug.WriteLine($"[SHELL] NAVIGATING {e.Current.Location} => {e.Target.Location} ({e.Source}), current {CurrentRoute}");
+
+            this.Navigating?.Invoke(this, e);
+        }
+
+        #endregion
 
         //public static readonly BindableProperty CanvasProperty = BindableProperty.Create(
         //    nameof(Canvas),
@@ -163,10 +206,11 @@ namespace DrawnUi.Maui.Controls
         /// Gets the topmost visible view:
         /// if no popups and modals are open then return NavigationLayout
         /// otherwise return the topmost popup or modal
-        /// depending which ZIndexModals or ZIndexPopups is higher
+        /// depending which ZIndexModals or ZIndexPopups is higher.
+        /// If pushed view is inside a shell wrapper will return the wrapper.
         /// </summary>
         /// <returns></returns>
-        public SkiaControl GetTopmostView()
+        public SkiaControl GetTopmostViewInternal()
         {
 
             SkiaControl topmost = null;
@@ -193,6 +237,34 @@ namespace DrawnUi.Maui.Controls
             }
 
             return topmost;
+        }
+
+        /// <summary>
+        /// Gets the topmost visible view:
+        /// if no popups and modals are open then return NavigationLayout
+        /// otherwise return the topmost popup or modal
+        /// depending which ZIndexModals or ZIndexPopups is higher.
+        /// If view is inside a shell wrapper will return just the view.
+        /// </summary>
+        /// <returns></returns>
+        public SkiaControl GetTopmostView()
+        {
+            var topView = GetTopmostViewInternal();
+
+            if (topView is ModalWrapper modal)
+            {
+                if (modal.Content is SkiaDrawer drawer)
+                    return drawer.Content;
+
+                return modal.Content;
+            }
+
+            if (topView is PopupWrapper popup)
+            {
+                return popup.Content;
+            }
+
+            return topView;
         }
 
         #region SCREENS
@@ -644,6 +716,8 @@ namespace DrawnUi.Maui.Controls
                         await Task.Delay(20); //switch thread, wait until drawer animation completes
                     }
 
+                    OnNavigatedView(new(modalWrapper.Drawer.Content, ShellNavigationSource.Push));
+
                     return modalWrapper.Drawer.Content;
                 }
                 catch (Exception e)
@@ -693,6 +767,8 @@ namespace DrawnUi.Maui.Controls
                         //animated to closed
                         _pushModalWasOpen = false;
                         await RemoveModal(control.Parent as SkiaControl, true);
+
+                        OnNavigatedView(new(control, ShellNavigationSource.Pop));
                     }
                 }
 
@@ -846,10 +922,11 @@ namespace DrawnUi.Maui.Controls
 
                 }
 
-                return removed;
             }
 
-            return null;
+            OnNavigatedView(new(removed, ShellNavigationSource.Pop));
+
+            return removed;
         }
 
         async Task RemoveModal(SkiaControl control, bool animated)
@@ -864,7 +941,14 @@ namespace DrawnUi.Maui.Controls
                     {
                         if (modalWrapper.Drawer != null && modalWrapper.Drawer.Content is SkiaControl removed)
                         {
-                            RemoveFromCurrentRouteNodes(removed);
+                            try
+                            {
+                                RemoveFromCurrentRouteNodes(removed);
+                            }
+                            catch (Exception e)
+                            {
+                                Super.Log(e);
+                            }
 
                             try
                             {
@@ -902,6 +986,7 @@ namespace DrawnUi.Maui.Controls
                     {
                         control.Dispose();
                     });
+
                 }
             }
             catch (Exception e)
@@ -932,6 +1017,9 @@ namespace DrawnUi.Maui.Controls
                     if (removed != null && !animated)
                     {
                         await RemoveModal(modal, animated);
+
+                        OnNavigatedView(new(modal, ShellNavigationSource.Pop));
+
                         return modal;
                     }
                     else
@@ -940,6 +1028,7 @@ namespace DrawnUi.Maui.Controls
                     }
 
                     //RootLayout?.Update();
+                    OnNavigatedView(new(removed, ShellNavigationSource.Pop));
 
                     return removed;
                 }
@@ -1208,7 +1297,7 @@ namespace DrawnUi.Maui.Controls
             lock (_lockLayers)
             {
 
-                var newTopmost = GetTopmostView();
+                var newTopmost = GetTopmostViewInternal();
 
                 if (_topmost != newTopmost)
                 {
@@ -1217,7 +1306,7 @@ namespace DrawnUi.Maui.Controls
                         dissapeared = null;
                     }
                     SetupDisappeared(_topmost);
-                    _topmost = GetTopmostView();
+                    _topmost = GetTopmostViewInternal();
                     SetupAppeared(_topmost);
                 }
 
@@ -1296,6 +1385,9 @@ namespace DrawnUi.Maui.Controls
                         //popup disposed inside
                         await Popups.Close(popup, animated);
                     }
+
+                    OnNavigatedView(new(popup, ShellNavigationSource.Pop));
+
                     OnLayersChanged();
                 }
                 finally
@@ -1323,6 +1415,10 @@ namespace DrawnUi.Maui.Controls
             Color backgroundColor = null,
             SKPoint? pixelsScaleInFrom = null)
         {
+            OnNavigating(new ShellNavigatingEventArgs(CurrentRoute.ToString(),
+                OrderedRoute,
+                ShellNavigationSource.Push, false));
+
             await AwaitNavigationLock();
 
             if (backgroundColor == null)
@@ -1379,6 +1475,9 @@ namespace DrawnUi.Maui.Controls
                         }
                         */
                         taskCompletionSource.SetResult(popup);
+
+                        OnNavigatedView(new(popup, ShellNavigationSource.Push));
+
                     }
                     catch (Exception e)
                     {
@@ -1709,15 +1808,25 @@ namespace DrawnUi.Maui.Controls
             ParsedRoute startupRoute = null;
             if (!string.IsNullOrEmpty(route))
             {
+                OnNavigating(new ShellNavigatingEventArgs(CurrentRoute.ToString(),
+                    OrderedRoute,
+                    ShellNavigationSource.Insert, false));
 
                 //we support  a route with subroutes for startup ex: "//main/chats?id-123"
-                GoToAsync(route, false);
-
-                //todo move this!!!
-                this.Navigated?.Invoke(this, new ShellNavigatedEventArgs(
-                    previous: "",
-                    OrderedRoute,
-                    ShellNavigationSource.Insert));
+                GoToAsync(route, false).ContinueWith(task =>
+                {
+                    if (task.IsCompletedSuccessfully)
+                    {
+                        OnNavigated(new ShellNavigatedEventArgs(
+                            previous: "",
+                            OrderedRoute,
+                            ShellNavigationSource.Insert));
+                    }
+                    else if (task.IsFaulted)
+                    {
+                        Super.Log(task.Exception);
+                    }
+                });
             }
 
             OnStarted();
@@ -2359,9 +2468,6 @@ namespace DrawnUi.Maui.Controls
             Trace.WriteLine($"[FastShell] Unsupported URI {route}");
         }
 
-        public event EventHandler<ShellNavigatedEventArgs> Navigated;
-
-        public event EventHandler<ShellNavigatingEventArgs> Navigating;
 
         public void UpdateLayout()
         {

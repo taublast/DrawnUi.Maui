@@ -247,9 +247,9 @@ namespace DrawnUi.Maui.Controls
         {
             CurrentSnap = new(-1, -1);
 
-            if (_animatorSpring == null)
+            if (VectorAnimatorSpring == null)
             {
-                _animatorSpring = new(this)
+                VectorAnimatorSpring = new(this)
                 {
                     OnStart = () =>
                     {
@@ -613,7 +613,7 @@ namespace DrawnUi.Maui.Controls
                 IsUserFocused = true;
                 IsUserPanning = false;
 
-                _animatorSpring.Stop();
+                VectorAnimatorSpring.Stop();
                 VelocityAccumulator.Clear();
 
                 _panningOffset = new((float)TranslationX, (float)TranslationY);

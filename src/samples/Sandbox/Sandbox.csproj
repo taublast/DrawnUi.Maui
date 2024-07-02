@@ -102,6 +102,8 @@
 
     <None Remove="Resources\Images\" />
 
+    <None Remove="Resources\Raw\Anims\hair.webp" />
+
     <None Remove="Resources\Raw\baboon.jpg" />
 
     <None Remove="Resources\Raw\dotnet_bot.png" />
@@ -196,6 +198,10 @@
       <Compile Update="Views\MainPageDrawnSpans.xaml.cs">
         <DependentUpon>MainPageDrawnSpans.xaml</DependentUpon>
       </Compile>
+ 
+      <Compile Update="Views\MainPageGif.xaml.cs">
+        <DependentUpon>MainPageGif.xaml</DependentUpon>
+      </Compile>
              
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
@@ -280,6 +286,9 @@
 
   <ItemGroup>
     <MauiXaml Update="Views\MainPageDrawnSpans.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\MainPageGif.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

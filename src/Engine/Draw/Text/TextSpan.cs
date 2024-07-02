@@ -336,8 +336,9 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
 
         if (Paint != null)
         {
-            Paint.Typeface = SKTypeface.Default; //do not sipose typeface that can be cached and reused
+            Paint.Typeface = SKTypeface.Default; //do not dipose typeface that could be cached and reused
             Paint.Dispose();
+            Paint = null;
         }
 
         CommandTapped = null;

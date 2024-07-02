@@ -1,13 +1,11 @@
-﻿using System.Numerics;
+﻿namespace DrawnUi.Maui.Draw;
 
-namespace DrawnUi.Maui.Draw;
-
-public class SkiaSpringWithVelocityAnimator : SkiaVectorAnimator
+public class SpringWithVelocityAnimator : SkiaValueAnimator
 {
 
-    Vector2 Origin { get; set; }
+    float Origin { get; set; }
 
-    public void Initialize(Vector2 restOffset, Vector2 position, Vector2 velocity, Spring spring, float thresholdStop = 0.5f)
+    public void Initialize(float restOffset, float position, float velocity, Spring spring, float thresholdStop = 0.5f)
     {
         Origin = restOffset;
 
@@ -22,15 +20,15 @@ public class SkiaSpringWithVelocityAnimator : SkiaVectorAnimator
 
         if (secs > Parameters.DurationSecs)
         {
-            Vector = Origin;
+            mValue = Origin;
             return true;
         }
 
-        Vector = Origin + Parameters.ValueAt(secs);
+        mValue = Origin + Parameters.ValueAt(secs);
         return false;
     }
 
-    public SkiaSpringWithVelocityAnimator(IDrawnBase parent) : base(parent)
+    public SpringWithVelocityAnimator(IDrawnBase parent) : base(parent)
     {
     }
 }
