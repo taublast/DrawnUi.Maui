@@ -17,7 +17,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 ## What's new
 
 * `SkiaScroll` fixed scrolling vertically + horizontally at the same time (`Orientation="Both"`).
-* `SkiaShell` added event NavigatedView reports popups too.
+* `SkiaShell` Navigated and Navigating events now report popups too.
 * `SkiaMediaImage` a subclassed `SkiaImage` for displaying any kind of images (image/animated gif/more..)
 * `SkiaGif` a dedicated lightweight GIF-player with playback control properties. See Sandbox project.
 * Fixed gestures inside `ImageCacheComposite` cache. 
