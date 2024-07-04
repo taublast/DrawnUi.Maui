@@ -9,6 +9,13 @@ namespace DrawnUi.Maui.Infrastructure
     public partial class Files
     {
 
+
+        #region Resources
+
+
+
+        #endregion
+
         public static bool PermissionsOk { get; set; }
 
         public static async void CheckPermissionsAsync(Action onSuccess = null)
@@ -23,7 +30,7 @@ namespace DrawnUi.Maui.Infrastructure
             }
 
 #if WINDOWS
-		// Windows
+            // Windows
 
 #elif ANDROID || IOS
 

@@ -183,7 +183,7 @@ public class SnappingLayout : SkiaLayout
 
     protected bool ScrollLocked { get; set; }
 
-    protected SkiaSpringWithVelocityAnimator _animatorSpring;
+    protected SpringWithVelocityVectorAnimator VectorAnimatorSpring;
 
     protected RangeVectorAnimator _animatorRange;
     private Vector2 _currentPosition;
@@ -217,7 +217,7 @@ public class SnappingLayout : SkiaLayout
 
         if (animate && Height > 0)
         {
-            _animatorSpring?.Stop();
+            VectorAnimatorSpring?.Stop();
 
             var start = new Vector2((float)TranslationX, (float)TranslationY);
             var end = new Vector2((float)targetOffset.X, (float)targetOffset.Y);
@@ -234,9 +234,9 @@ public class SnappingLayout : SkiaLayout
                 if (Bounces)
                 {
                     var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
-                    _animatorSpring.Initialize(end, displacement, velocity, spring);
+                    VectorAnimatorSpring.Initialize(end, displacement, velocity, spring);
 
-                    _animatorSpring.Start();
+                    VectorAnimatorSpring.Start();
                 }
                 else
                 {

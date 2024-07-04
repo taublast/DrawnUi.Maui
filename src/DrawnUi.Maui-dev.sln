@@ -6,9 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3EEA7F62-9878-451E-A506-28AB7C5DEEB8}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
+		..\dev\github_uploadnugets.bat = ..\dev\github_uploadnugets.bat
+		..\dev\movenugets.bat = ..\dev\movenugets.bat
+		..\dev\nuget_uploadnugets.bat = ..\dev\nuget_uploadnugets.bat
 		..\README.md = ..\README.md
 		ToDo.txt = ToDo.txt
-		..\dev\uploadnugets.bat = ..\dev\uploadnugets.bat
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui", "Engine\DrawnUi.Maui.csproj", "{D76B6239-94A0-482C-A0FF-A764017B7393}"

@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <views:BasePage
-    x:Class="MauiNet8.MainPageDev"
+    x:Class="Sandbox.Views.MainPageGif"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:mauiNet8="using:MauiNet8"
+    xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
-    xmlns:xaml2Pdf="clr-namespace:Sandbox.Views.Xaml2Pdf"
     BackgroundColor="Black">
 
     <draw:Canvas
@@ -21,7 +22,6 @@
 
         <draw:SkiaLayout
             HorizontalOptions="Fill"
-            Tag="Wrapper"
             VerticalOptions="Fill">
 
             <draw:SkiaScroll
@@ -41,7 +41,7 @@
                         FontSize="15"
                         HorizontalOptions="Center"
                         HorizontalTextAlignment="Center"
-                        Text="`SkiaMediaImage` (at the top) is a subclassed `SkiaImage` for displaying any kind of image, while `SkiaGif` (the second control) is a dedicated lightweight GIF-player."
+                        Text="`SkiaMediaImage` (at the top) is a subclassed `SkiaImage` for displaying any kind of images, while `SkiaGif` (the second control) is a dedicated lightweight GIF-player."
                         TextColor="White"
                         UseCache="Operations" />
 
@@ -58,7 +58,7 @@
 
             </draw:SkiaScroll>
 
-            <!--<controls:ButtonToRoot />-->
+            <controls:ButtonToRoot />
 
             <draw:SkiaLabelFps
                 Margin="0,0,4,24"

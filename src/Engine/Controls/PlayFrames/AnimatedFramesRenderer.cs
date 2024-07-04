@@ -6,17 +6,17 @@
 /// </summary>
 public class AnimatedFramesRenderer : SkiaControl
 {
-    protected RangeAnimator Animator;
+    public RangeAnimator Animator { protected set; get; }
 
-    protected bool PlayWhenAvailable;
+    public bool PlayWhenAvailable { protected set; get; }
 
-    private bool wasLayout;
+    private bool _wasLayout;
 
     protected bool WasPlayingBeforeVisibilityChanged;
 
     protected bool WasStarted;
 
-    protected bool CanPlay => wasLayout && CheckCanStartAnimator();
+    protected bool CanPlay => (_wasLayout || IsStandalone) && CheckCanStartAnimator();
 
 
     public bool IsPlaying
@@ -59,15 +59,22 @@ public class AnimatedFramesRenderer : SkiaControl
     protected virtual void RenderFrame(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
     { }
 
+    protected bool IsStandalone { get; set; }
+
     protected override void OnLayoutChanged()
     {
         base.OnLayoutChanged();
 
-        wasLayout = true;
+        _wasLayout = true;
 
         InitializeAnimator();
 
-        if (PlayWhenAvailable)
+        PlayIfNeeded();
+    }
+
+    public void PlayIfNeeded()
+    {
+        if (PlayWhenAvailable && Animator != null)
         {
             PlayWhenAvailable = false;
             if (Animator != null)
@@ -90,10 +97,15 @@ public class AnimatedFramesRenderer : SkiaControl
     //    }
     //}
 
+    protected virtual SkiaControl GetAnimatorParent()
+    {
+        return this;
+    }
+
     public void InitializeAnimator()
     {
         if (Animator == null)
-            Animator = new RangeAnimator(this)
+            Animator = new RangeAnimator(GetAnimatorParent())
             {
                 OnUpdated = OnAnimatorUpdated,
                 OnStart = () =>
@@ -115,7 +127,8 @@ public class AnimatedFramesRenderer : SkiaControl
 
         OnAnimatorInitializing();
 
-        if (AutoPlay && CheckCanStartAnimator()) Start();
+        if (AutoPlay && CheckCanStartAnimator())
+            Start();
     }
 
     protected virtual void OnAnimatorInitializing()
@@ -146,17 +159,20 @@ public class AnimatedFramesRenderer : SkiaControl
         Update();
     }
 
-    public void Start(int delayMs = 0)
+    public virtual void Start(int delayMs = 0)
     {
+        if (Animator.IsRunning)
+        {
+            Animator.Stop();
+        }
+
         if (CanPlay)
         {
-            if (Animator.IsRunning)
-                Animator.Stop();
-
             OnAnimatorStarting();
             Animator.Start(delayMs);
         }
-        else
+
+        if (!Animator.IsRunning)
         {
             PlayWhenAvailable = true;
         }
@@ -201,6 +217,20 @@ public class AnimatedFramesRenderer : SkiaControl
         base.OnDisposing();
     }
 
+    protected virtual void ApplySpeed()
+    {
+
+    }
+
+    protected virtual void ApplyDefaultFrame()
+    {
+        if (!IsPlaying)
+        {
+            if (Animator != null)
+                Seek((int)DefaultFrame);
+        }
+    }
+
     #region EVENTS
 
     /// <summary>
@@ -214,6 +244,35 @@ public class AnimatedFramesRenderer : SkiaControl
 
 
     #region PROPERTIES
+
+    public static readonly BindableProperty DefaultFrameProperty = BindableProperty.Create(nameof(DefaultFrame),
+        typeof(int),
+        typeof(AnimatedFramesRenderer),
+        0, propertyChanged: (b, o, n) =>
+        {
+            if (b is AnimatedFramesRenderer control) control.ApplyDefaultFrame();
+        });
+
+
+    public int DefaultFrame
+    {
+        get => (int)GetValue(DefaultFrameProperty);
+        set => SetValue(DefaultFrameProperty, value);
+    }
+
+    public static readonly BindableProperty SpeedRatioProperty = BindableProperty.Create(nameof(SpeedRatio),
+        typeof(double),
+        typeof(AnimatedFramesRenderer),
+        1.0, propertyChanged: (b, o, n) =>
+        {
+            if (b is AnimatedFramesRenderer control) control.ApplySpeed();
+        });
+
+    public double SpeedRatio
+    {
+        get => (double)GetValue(SpeedRatioProperty);
+        set => SetValue(SpeedRatioProperty, value);
+    }
 
     public static readonly BindableProperty RepeatProperty = BindableProperty.Create(nameof(Repeat),
         typeof(int),

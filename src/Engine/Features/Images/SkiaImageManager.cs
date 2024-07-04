@@ -456,7 +456,6 @@ public partial class SkiaImageManager : IDisposable
 
                 SKBitmap bitmap = await LoadImageOnPlatformAsync(queueItem.Source, queueItem.Cancel.Token);
 
-
                 // Add the loaded bitmap to the context cache
                 if (bitmap != null)
                 {
@@ -495,14 +494,18 @@ public partial class SkiaImageManager : IDisposable
                 {
                     //might happen when task was canceled
                     //TraceLog($"ImageLoadManager: BITMAP NULL for {queueItem.Source}");
-                    throw new OperationCanceledException("Platform bitmap returned null");
+                    //throw new OperationCanceledException("Platform bitmap returned null");
+
+                    queueItem.Task.TrySetCanceled();
+
+                    FreedQueuedItem(queueItem);
                 }
 
 
             }
             catch (Exception ex)
             {
-                TraceLog($"ImageLoadManager: Exception {ex}");
+                //TraceLog($"ImageLoadManager: Exception {ex}");
 
                 if (ex is OperationCanceledException || ex is System.Threading.Tasks.TaskCanceledException)
                 {
@@ -513,15 +516,7 @@ public partial class SkiaImageManager : IDisposable
                     queueItem.Task.TrySetException(ex);
                 }
 
-                if (queueItem.Source is UriImageSource sourceUri)
-                {
-                    _trackLoadingBitmapsUris.TryRemove(sourceUri.Uri.ToString(), out _);
-                }
-                else
-                if (queueItem.Source is FileImageSource sourceFile)
-                {
-                    _trackLoadingBitmapsUris.TryRemove(sourceFile.File, out _);
-                }
+                FreedQueuedItem(queueItem);
             }
             finally
             {
@@ -531,6 +526,18 @@ public partial class SkiaImageManager : IDisposable
         }
     }
 
+    void FreedQueuedItem(QueueItem queueItem)
+    {
+        if (queueItem.Source is UriImageSource sourceUri)
+        {
+            _trackLoadingBitmapsUris.TryRemove(sourceUri.Uri.ToString(), out _);
+        }
+        else
+        if (queueItem.Source is FileImageSource sourceFile)
+        {
+            _trackLoadingBitmapsUris.TryRemove(sourceFile.File, out _);
+        }
+    }
 
     public bool IsDisposed { get; protected set; }
 

@@ -562,14 +562,6 @@ public partial class SkiaCamera : SkiaControl
                         FrameAquired = true;
                         OnNewFrameSet(Display.SetImageInternal(image.Image));
                     }
-                    else
-                    {
-                        Debug.WriteLine("[SkiaCamera] No image");
-                        // just display the previous frame if any
-                        // commented out below, left for reference
-                        //if (Display.LoadedSource != null)
-                        //    Display.SetImageInternal(null);
-                    }
                 }
 
             }

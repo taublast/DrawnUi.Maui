@@ -1574,6 +1574,17 @@ namespace DrawnUi.Maui.Views
 
         private volatile bool dirtyChilrenProcessing;
 
+        protected void CommitInvalidations()
+        {
+            SwapInvalidations();
+            var invalidations = GetFrontInvalidations();
+            foreach (var invalidation in invalidations)
+            {
+                invalidation.Key.Invoke();
+            }
+            invalidations.Clear();
+        }
+
         protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {
             ++renderedFrames;
@@ -1618,13 +1629,7 @@ namespace DrawnUi.Maui.Views
 
                     FPS = CanvasFps;
 
-                    SwapInvalidations();
-                    var invalidations = GetFrontInvalidations();
-                    foreach (var invalidation in invalidations)
-                    {
-                        invalidation.Key.Invoke();
-                    }
-                    invalidations.Clear();
+                    CommitInvalidations();
 
                     while (ExecuteBeforeDraw.TryDequeue(out Action action))
                     {

@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace DrawnUi.Maui.Draw;
 
-public struct LinearInterpolationTimingParameters : ITimingParameters
+public struct LinearInterpolationTimingParameters : ITimingVectorParameters
 {
     private readonly Vector2 start;
     private readonly Vector2 end;

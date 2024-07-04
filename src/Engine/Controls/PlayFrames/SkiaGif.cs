@@ -1,135 +1,263 @@
-﻿namespace DrawnUi.Maui.Controls;
+﻿using DrawnUi.Maui.Features.Images;
+using System.Collections.Concurrent;
+using System.Text;
 
-/// <summary>
-///     In heavy TODO state
-/// </summary>
-public class SkiaGif : SkiaImage
+namespace DrawnUi.Maui.Controls;
+
+
+public class SkiaGif : AnimatedFramesRenderer
 {
-    protected GifAnimator Animator { get; } = new();
+    public SkiaImage Display { get; protected set; }
 
-    public class GifAnimation : IDisposable
+    /// <summary>
+    /// For standalone use
+    /// </summary>
+    public SkiaGif()
     {
-        protected object LockFrames = new();
-
-        protected SKBitmap[] Frames { get; set; }
-
-        protected int Width { get; set; }
-
-        protected int Height { get; set; }
-
-        protected int DurationMs { get; set; }
-
-        protected int[] FramesPositionsMs { get; set; }
-
-        public bool IsDisposed { get; set; }
-
-        public virtual void Dispose()
+        this.Display = new()
         {
-            if (!IsDisposed)
-            {
-                IsDisposed = true;
+            LoadSourceOnFirstDraw = false,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        };
 
-                lock (LockFrames)
-                {
-                    if (Frames != null)
-                        foreach (var frame in Frames)
-                            frame.Dispose();
-                    Frames = null;
-                }
-            }
+        Display.SetParent(this);
+    }
+
+    protected virtual void LayoutDisplay()
+    {
+        Display.HorizontalOptions = this.NeedAutoWidth ? LayoutOptions.Start : LayoutOptions.Fill;
+        Display.VerticalOptions = this.NeedAutoHeight ? LayoutOptions.Start : LayoutOptions.Fill;
+    }
+
+    protected override void InvalidateMeasure()
+    {
+        if (Display != null && !IsStandalone)
+        {
+            LayoutDisplay();
+        }
+        base.InvalidateMeasure();
+    }
+
+    /// <summary>
+    /// For building custom controls
+    /// </summary>
+    /// <param name="display"></param>
+    public SkiaGif(SkiaImage display)
+    {
+        IsStandalone = true;
+        this.Display = display;
+    }
+
+    protected override SkiaControl GetAnimatorParent()
+    {
+        if (IsStandalone)
+        {
+            return Display;
         }
 
-        public void Render(SKCanvas canvas, SKRect destination, int frame)
+        return base.GetAnimatorParent();
+    }
+
+    protected override void RenderFrame(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    {
+        DrawViews(ctx, destination, scale); //just draw our Display
+    }
+
+    /// <summary>
+    /// invoked by internal animator
+    /// </summary>
+    /// <param name="value"></param>
+    protected override void OnAnimatorUpdated(double value)
+    {
+        base.OnAnimatorUpdated(value);
+
+        Seek(value);
+    }
+
+    /// <summary>
+    /// called by Seek
+    /// </summary>
+    /// <param name="frame"></param>
+    protected override void OnAnimatorSeeking(double time)
+    {
+        if (Animation != null)
         {
-            // Get the bitmap and center it
-            var bitmap = Frames[frame];
-            canvas.DrawBitmap(bitmap, destination); //, BitmapStretch.Uniform);
+            var frame = Animation.GetFrameNumber(time);
+            Animation.SeekFrame(frame);
+            Display.SetBitmapInternal(Animation.Frame, true);
         }
+        base.OnAnimatorSeeking(time);
+    }
 
-        /// <summary>
-        ///     Position 0.0 -> 0.1
-        /// </summary>
-        /// <param name="canvas"></param>
-        /// <param name="destination"></param>
-        /// <param name="position"></param>
-        public void Render(SKCanvas canvas, SKRect destination, float position)
+    protected override void OnAnimatorInitializing()
+    {
+        if (Animation != null)
         {
-            //todo calculate frame number upon position:
-            var frame = 0;
+            ApplySpeed();
 
-            Render(canvas, destination, frame);
+            Animator.mValue = 0;
+            Animator.mMinValue = 0;
+            Animator.mMaxValue = Animation.DurationMs;
+            Animator.Distance = Animator.mMaxValue - Animator.mMinValue;
         }
+    }
 
-        public void LoadFromStream(Stream stream)
+    protected override void ApplySpeed()
+    {
+        if (Animation == null)
+            return;
+
+        var speed = 1.0;
+        if (SpeedRatio < 1)
+            speed = Animation.DurationMs * (1 + SpeedRatio);
+        else
+            speed = Animation.DurationMs / SpeedRatio;
+        Animator.Speed = speed;
+    }
+
+    public GifAnimation _animation;
+    public GifAnimation Animation
+    {
+        get => _animation;
+
+        set
         {
-            SKBitmap[] bitmaps;
-            int height, width, frameCount, totalDuration = 0;
-            int[] durations;
-            int[] accumulatedDurations;
-
-            using var skStream = new SKManagedStream(stream);
-            using var codec = SKCodec.Create(skStream);
-            width = codec.Info.Width;
-            height = codec.Info.Height;
-
-            // Get info and allocate source bitmaps
-            frameCount = codec.FrameCount;
-            bitmaps = new SKBitmap[frameCount];
-            durations = new int[frameCount];
-            accumulatedDurations = new int[frameCount];
-
-            // Note: There's also a RepetitionCount property of SKCodec not used here
-
-            // Loop through the frames
-            for (var frame = 0; frame < frameCount; frame++)
+            if (_animation != value)
             {
-                // From the FrameInfo collection, get the duration of each frame
-                durations[frame] = codec.FrameInfo[frame].Duration;
-
-                // Create a full-color bitmap for each frame
-                var imageInfo = new SKImageInfo(width, height);
-                bitmaps[frame] = new SKBitmap(imageInfo);
-
-                // Get the address of the pixels in that bitmap
-                var pointer = bitmaps[frame].GetPixels();
-
-                // Create an SKCodecOptions value to specify the frame
-                SKCodecOptions codecOptions = new(frame); // SKCodecOptions(frame, false);
-
-                // Copy pixels from the frame into the bitmap
-                codec.GetPixels(imageInfo, pointer, codecOptions);
-            }
-
-            // Calculate total duration
-            for (var frame = 0; frame < durations.Length; frame++) totalDuration += durations[frame];
-
-            // Calculate the accumulated durations 
-            for (var frame = 0; frame < durations.Length; frame++)
-                accumulatedDurations[frame] = durations[frame] +
-                                              (frame == 0 ? 0 : accumulatedDurations[frame - 1]);
-
-            lock (LockFrames)
-            {
-                if (!IsDisposed)
-                {
-                    var kill = Frames;
-                    Frames = bitmaps;
-                    Width = width;
-                    Height = height;
-                    DurationMs = totalDuration;
-                    FramesPositionsMs = accumulatedDurations;
-
-                    if (kill != Frames && kill != null)
-                        Tasks.StartDelayed(TimeSpan.FromSeconds(2), () =>
-                        {
-                            foreach (var frame in kill) frame.Dispose();
-                        });
-                }
+                _animation = value;
+                OnPropertyChanged();
             }
         }
     }
 
+    private readonly object _lockSource = new();
 
-    public class GifAnimator : AnimatedFramesRenderer
-    { }
+
+    public void SetAnimation(GifAnimation animation, bool disposePrevious)
+    {
+        lock (_lockSource)
+        {
+            if (animation == null || animation == Animation || IsDisposed) return;
+
+            var wasPlaying = IsPlaying;
+            GifAnimation kill = null;
+
+            if (wasPlaying)
+            {
+                kill = Animation;
+                Stop();
+            }
+
+            Animation = animation;
+
+            Debug.WriteLine($"[SkiaGif] Loaded animation: Duration:{Animation.DurationMs} Frames:  Fps:{Animation.TotalFrames}");
+
+            InitializeAnimator(); //autoplay applied inside
+
+            OnAnimatorSeeking(DefaultFrame);
+
+            if (wasPlaying && !IsPlaying)
+                Start();
+
+            if (kill != null && disposePrevious)
+                Tasks.StartDelayed(TimeSpan.FromSeconds(2), () => { kill.Dispose(); });
+
+            Invalidate();
+
+            Monitor.PulseAll(_lockSource);
+        }
+    }
+
+    public override void Start(int delayMs = 0)
+    {
+        if (this.Animation?.TotalFrames > 0)
+            base.Start(delayMs);
+    }
+
+    private readonly SemaphoreSlim _semaphoreLoadFile = new(1, 1);
+
+    private static void ApplySourceProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaGif control)
+            Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(1), async () =>
+            {
+                var animation = await control.LoadSource(control.Source);
+                if (animation != null) control.SetAnimation(animation, true);
+            });
+    }
+
+    /// <summary>
+    /// This is not replacing current animation, only pre-loading! Use SetAnimation after that if needed.
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <returns>
+    public async Task<GifAnimation> LoadSource(string fileName)
+    {
+        if (string.IsNullOrEmpty(fileName))
+            return null;
+
+        await _semaphoreLoadFile.WaitAsync();
+
+        try
+        {
+            GifAnimation animation = new();
+            {
+                if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri) && uri.Scheme != "file")
+                {
+                    var client = Super.Services.CreateLoadImagesHttpClient();
+                    using var dataStream = await client.GetStreamAsync(uri);
+                    animation.LoadFromStream(dataStream);
+                }
+                else
+                {
+                    if (fileName.SafeContainsInLower(SkiaImageManager.NativeFilePrefix))
+                    {
+                        var fullFilename = fileName.Replace(SkiaImageManager.NativeFilePrefix, "");
+                        using var stream = new FileStream(fullFilename, FileMode.Open);
+                        animation.LoadFromStream(stream);
+                    }
+                    else
+                    {
+                        using var stream = await FileSystem.OpenAppPackageFileAsync(fileName);
+                        using var reader = new StreamReader(stream);
+                        animation.LoadFromStream(stream);
+                    }
+
+                }
+            }
+
+            if (animation.TotalFrames > 0)
+            {
+                return animation;
+            }
+
+            return null;
+        }
+        catch (Exception e)
+        {
+            Trace.WriteLine($"[SkiaLottie] LoadSource failed to load animation {fileName}");
+            Trace.WriteLine(e);
+            return null;
+        }
+        finally
+        {
+            _semaphoreLoadFile.Release();
+        }
+    }
+
+
+    public static readonly BindableProperty SourceProperty = BindableProperty.Create(nameof(Source),
+        typeof(string),
+        typeof(SkiaGif),
+        string.Empty,
+        propertyChanged: ApplySourceProperty);
+
+
+    public string Source
+    {
+        get => (string)GetValue(SourceProperty);
+        set => SetValue(SourceProperty, value);
+    }
+
 }

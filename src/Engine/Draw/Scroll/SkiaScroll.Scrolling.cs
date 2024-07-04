@@ -191,9 +191,9 @@ public partial class SkiaScroll
 
     protected virtual void InitializeScroller(float scale)
     {
-        if (_animatorBounce == null)
+        if (_vectorAnimatorBounceY == null)
         {
-            _animatorBounce = new(this)
+            _vectorAnimatorBounceY = new(this)
             {
                 OnStart = () =>
                 {
@@ -204,29 +204,31 @@ public partial class SkiaScroll
                     UpdateLoadingLock(false);
                     IsSnapping = false;
                 },
-                OnVectorUpdated = (value) =>
+                OnUpdated = (value) =>
                 {
-                    if (Orientation == ScrollOrientation.Vertical)
-                    {
-                        ViewportOffsetY = value.Y; //not clamped
-                    }
-                    else
-                    if (Orientation == ScrollOrientation.Horizontal)
-                    {
-                        ViewportOffsetX = value.X;
-                    }
-                    else
-                    {
-                        ViewportOffsetX = value.X;
-                        ViewportOffsetY = value.Y;
-                    }
+                    ViewportOffsetY = (float)value; //not clamped
                 }
             };
 
-            _animatorFling = new(this)
+            _vectorAnimatorBounceX = new(this)
             {
-                //					Friction = FrictionScrolled,
-                //					Scale = scale,
+                OnStart = () =>
+                {
+
+                },
+                OnStop = () =>
+                {
+                    UpdateLoadingLock(false);
+                    IsSnapping = false;
+                },
+                OnUpdated = (value) =>
+                {
+                    ViewportOffsetX = (float)value; //not clamped
+                }
+            };
+
+            _animatorFlingX = new(this)
+            {
                 OnStart = () =>
                 {
                     //_isSnapping = false;
@@ -237,10 +239,30 @@ public partial class SkiaScroll
                     //_isSnapping = false;
                     OnScrollerStopped();
                 },
-                OnVectorUpdated = (value) =>
+                OnUpdated = (value) =>
                 {
-                    var clamped = ClampOffset(value.X, value.Y);
+                    var clamped = ClampOffset((float)value, 0);
                     ViewportOffsetX = clamped.X;
+
+                    OnScrollerUpdated();
+                }
+            };
+
+            _animatorFlingY = new(this)
+            {
+                OnStart = () =>
+                {
+                    //_isSnapping = false;
+                    OnScrollerStarted();
+                },
+                OnStop = () =>
+                {
+                    //_isSnapping = false;
+                    OnScrollerStopped();
+                },
+                OnUpdated = (value) =>
+                {
+                    var clamped = ClampOffset(0, (float)value);
                     ViewportOffsetY = clamped.Y;
 
                     OnScrollerUpdated();
@@ -266,9 +288,13 @@ public partial class SkiaScroll
             };
         }
 
-        if (_animatorBounce.IsRunning)
+        if (_vectorAnimatorBounceY.IsRunning)
         {
-            _animatorBounce.Stop();
+            _vectorAnimatorBounceY.Stop();
+        }
+        if (_vectorAnimatorBounceX.IsRunning)
+        {
+            _vectorAnimatorBounceX.Stop();
         }
 
         SetDetectIndexChildPoint(TrackIndexPosition);
@@ -333,8 +359,19 @@ public partial class SkiaScroll
 
     protected virtual void OnScrollerStarted()
     {
-        UpdateLoadingLock(_animatorFling.Parameters.InitialVelocity);
+        UpdateLoadingLock(new Vector2(
+            _animatorFlingX.Parameters.InitialVelocity,
+            _animatorFlingY.Parameters.InitialVelocity)
+        );
     }
+
+    protected virtual void OnScrollerUpdated()
+    {
+        UpdateLoadingLock(new Vector2(
+            _animatorFlingX.CurrentVelocity,
+            _animatorFlingY.CurrentVelocity));
+    }
+
 
     protected virtual void OnScrollerStopped()
     {
@@ -351,38 +388,44 @@ public partial class SkiaScroll
             //scroll ended prematurely by our intent because it would end past the bounds
             if (Bounces)
             {
-                if (_animatorFling.SelfFinished && _changeSpeed != null)
+
+                void BounceIfNeeded(ScrollFlingAnimator animator)
                 {
-                    var remainingVelocity = _animatorFling.Parameters.VelocityAt(_animatorFling.Speed);
-                    var velocityX = remainingVelocity.X;
-                    if (Math.Abs(remainingVelocity.X) > MaxBounceVelocity)
+                    if (animator.SelfFinished)
                     {
-                        velocityX = Math.Sign(remainingVelocity.X) * MaxBounceVelocity;
+                        var remainingVelocity = animator.Parameters.VelocityAt(animator.Speed);
+
+                        var velocity = remainingVelocity;
+
+                        if (Math.Abs(remainingVelocity) > MaxBounceVelocity)
+                        {
+                            velocity = Math.Sign(remainingVelocity) * MaxBounceVelocity;
+                        }
+
+                        //Bounce(new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY), _axis, new Vector2(velocityX, velocityY));
+
+                        if (animator == _animatorFlingY)
+                        {
+                            BounceY((float)ViewportOffsetY, _axis.Y, velocity);
+                        }
+                        else
+                        if (animator == _animatorFlingX)
+                        {
+                            BounceX((float)ViewportOffsetX, _axis.X, velocity);
+                        }
                     }
-
-                    var velocityY = remainingVelocity.Y;
-                    if (Math.Abs(remainingVelocity.Y) > MaxBounceVelocity)
-                    {
-                        velocityY = Math.Sign(remainingVelocity.Y) * MaxBounceVelocity;
-                    }
-
-                    //Super.Log("OnScrollerStopped Bouncing..");
-                    Bounce(new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY), _axis, new Vector2(velocityX, velocityY));
-
-
                 }
-                else
+
+                if (_changeSpeed != null)
                 {
-                    var whut = 1;
+                    BounceIfNeeded(_animatorFlingY);
+                    BounceIfNeeded(_animatorFlingX);
                 }
+
             }
         }
     }
 
-    protected virtual void OnScrollerUpdated()
-    {
-        UpdateLoadingLock(_animatorFling.CurrentVelocity);
-    }
 
 
     public virtual void ExecuteDelayedScrollOrders()
@@ -432,7 +475,47 @@ public partial class SkiaScroll
         Canceled,
     }
 
+    void BounceX(float offsetFrom, float offsetTo, float velocity)
+    {
+        //Super.Log($"[SCROLL] {this.Tag} *BOUNCE* to {offsetTo.Y} v {velocity.Y}..");
 
+        var displacement = offsetFrom - offsetTo;
+
+        //Debug.WriteLine($"[BOUNCE] {offsetFrom} - {offsetTo} with {velocity}");
+
+        if (displacement != 0)
+        {
+            var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
+            _vectorAnimatorBounceX.Initialize(offsetTo, displacement, velocity, spring);
+            _vectorAnimatorBounceX.Start();
+        }
+        else
+        {
+            IsSnapping = false;
+        }
+    }
+
+    void BounceY(float offsetFrom, float offsetTo, float velocity)
+    {
+        //Super.Log($"[SCROLL] {this.Tag} *BOUNCE* to {offsetTo.Y} v {velocity.Y}..");
+
+        var displacement = offsetFrom - offsetTo;
+
+        //Debug.WriteLine($"[BOUNCE] {offsetFrom} - {offsetTo} with {velocity}");
+
+        if (displacement != 0)
+        {
+            var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
+            _vectorAnimatorBounceY.Initialize(offsetTo, displacement, velocity, spring);
+            _vectorAnimatorBounceY.Start();
+        }
+        else
+        {
+            IsSnapping = false;
+        }
+    }
+
+    /*
     void Bounce(Vector2 offsetFrom, Vector2 offsetTo, Vector2 velocity)
     {
         //Super.Log($"[SCROLL] {this.Tag} *BOUNCE* to {offsetTo.Y} v {velocity.Y}..");
@@ -444,14 +527,15 @@ public partial class SkiaScroll
         if (displacement != Vector2.Zero)
         {
             var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
-            _animatorBounce.Initialize(offsetTo, displacement, velocity, spring);
-            _animatorBounce.Start();
+            _vectorAnimatorBounce.Initialize(offsetTo, displacement, velocity, spring);
+            _vectorAnimatorBounce.Start();
         }
         else
         {
             IsSnapping = false;
         }
     }
+    */
 
     /// <summary>
     /// This uses whole viewport size, do not use this for snapping
@@ -633,6 +717,116 @@ public partial class SkiaScroll
         DecelerationRatio = (float)friction / 100f; // 0.2 => 0.002
     }
 
+    public virtual bool StartToFlingFrom(ScrollFlingAnimator animator, float from, float velocity)
+    {
+        var contentOffset = from;
+
+        animator.Initialize(contentOffset, velocity, 1f - DecelerationRatio);
+
+        if (PrepareToFlingAfterInitialized(animator))
+        {
+            animator.RunAsync(null).ConfigureAwait(false);
+            return true;
+        }
+
+        return false;
+    }
+
+    protected virtual async Task<bool> FlingFrom(ScrollFlingAnimator animator, float from, float velocity)
+    {
+        //todo - add cancellation support
+
+        //	Trace.WriteLine($"[FLING] velocity {velocity}");
+
+        var contentOffset = from;// new float((float)ViewportOffsetX, (float)ViewportOffsetY);
+
+        animator.Initialize(contentOffset, velocity, 1f - DecelerationRatio);
+
+        return await FlingAfterInitialized(animator);
+    }
+
+    protected virtual async Task<bool> FlingToAuto(ScrollFlingAnimator animator, float from, float to, float changeSpeedSecs = 0)
+    {
+        var velocity = animator.Parameters.VelocityToZero(from, to, changeSpeedSecs);
+
+        animator.Initialize(from, velocity, 1f - DecelerationRatio);
+
+        if (changeSpeedSecs > 0)
+            animator.Speed = changeSpeedSecs;
+
+        return await FlingAfterInitialized(animator);
+    }
+
+    protected virtual async Task<bool> FlingTo(ScrollFlingAnimator animator, float from, float to, float timeSeconds)
+    {
+        var velocity = animator.Parameters.VelocityTo(from, to, timeSeconds);
+
+        animator.Initialize(from, velocity, 1f - DecelerationRatio);
+
+        animator.Speed = timeSeconds;
+
+        return await FlingAfterInitialized(animator);
+    }
+
+    protected virtual bool PrepareToFlingAfterInitialized(ScrollFlingAnimator animator)
+    {
+        var destination = animator.Parameters.Destination;
+        bool offsetOk = true;
+
+        var destinationPoint = SKPoint.Empty;
+        if (animator == _animatorFlingX)
+        {
+            destinationPoint = new SKPoint(destination, 0);
+            offsetOk = OffsetOk(new(destination, 0));
+        }
+        else
+        if (animator == _animatorFlingY)
+        {
+            destinationPoint = new SKPoint(0, destination);
+            offsetOk = OffsetOk(new(0, destination));
+        }
+
+        _changeSpeed = null;
+
+        if (!offsetOk) //detected that scroll will end past the bounds
+        {
+            var contentRect = new SKRect(0, 0, ptsContentWidth, ptsContentHeight);
+            var closestPoint = GetClosestSidePoint(destinationPoint, contentRect, Viewport.Units.Size);
+
+            if (animator == _animatorFlingX)
+            {
+                _axis = _axis with { X = closestPoint.X };
+                _changeSpeed = animator.Parameters.DurationToValue(closestPoint.X);
+                animator.Speed = _changeSpeed.Value;
+            }
+            else
+            if (animator == _animatorFlingY)
+            {
+                _axis = _axis with { Y = closestPoint.Y };
+                _changeSpeed = animator.Parameters.DurationToValue(closestPoint.Y);
+                animator.Speed = _changeSpeed.Value;
+            }
+        }
+
+        return animator.Speed > 0;
+    }
+
+    protected async Task<bool> FlingAfterInitialized(ScrollFlingAnimator animator)
+    {
+
+        if (PrepareToFlingAfterInitialized(animator))
+        {
+            await animator.RunAsync(null);
+
+            IsSnapping = false;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /*
 
     public virtual bool StartToFlingFrom(Vector2 from, Vector2 velocity)
     {
@@ -721,6 +915,7 @@ public partial class SkiaScroll
         return false;
     }
 
+    */
 
 
     /// <summary>

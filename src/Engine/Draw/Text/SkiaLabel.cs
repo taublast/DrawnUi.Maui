@@ -56,18 +56,23 @@ namespace DrawnUi.Maui.Draw
         public override void ApplyBindingContext()
         {
             base.ApplyBindingContext();
-
-            for (int i = 0; i < Spans.Count; i++)
-                SetInheritedBindingContext(Spans[i], BindingContext);
+            lock (_spanLock)
+            {
+                for (int i = 0; i < Spans.Count; i++)
+                    SetInheritedBindingContext(Spans[i], BindingContext);
+            }
         }
 
         public override string ToString()
         {
-            if (Spans.Count > 0)
+            lock (_spanLock)
             {
-                return string.Concat(Spans.Select(span => span.Text));
+                if (Spans.Count > 0)
+                {
+                    return string.Concat(Spans.Select(span => span.Text));
+                }
+                return this.Text;
             }
-            return this.Text;
         }
 
         #region SPANS
@@ -737,31 +742,40 @@ namespace DrawnUi.Maui.Draw
             return (limit, resultWidth);
         }
 
+        private readonly object _spanLock = new object();
 
         public override void OnDisposing()
         {
-            //todo check spans disposing!!!!
-            Spans.Clear();
+            if (_spans != null)
+            {
+                lock (_spanLock)
+                {
+                    _spans.CollectionChanged -= OnCollectionChanged;
+                    foreach (var span in _spans)
+                    {
+                        span.Dispose();
+                    }
+                    _spans.Clear();
+                }
+            }
 
-            _spans.CollectionChanged -= OnCollectionChanged;
-
-            PaintDefault.Typeface = SKTypeface.Default;  //preserve cached font from disposing
-            PaintDefault.Dispose();
-
-            PaintStroke.Typeface = SKTypeface.Default; //preserve cached font from disposing
-            PaintStroke.Dispose();
-
-            PaintShadow.Typeface = SKTypeface.Default;  //preserve cached font from disposing
-            PaintShadow.Dispose();
-
-            PaintDeco.Dispose();
-
-            _spans.CollectionChanged -= OnCollectionChanged;
+            DisposePaint(ref PaintDefault);
+            DisposePaint(ref PaintStroke);
+            DisposePaint(ref PaintShadow);
+            DisposePaint(ref PaintDeco);
 
             base.OnDisposing();
         }
 
-
+        private void DisposePaint(ref SKPaint paint)
+        {
+            if (paint != null)
+            {
+                paint.Typeface = SKTypeface.Default;  // Preserve cached font from disposing
+                paint.Dispose();
+                paint = null;
+            }
+        }
 
         public int LinesCount { get; protected set; } = 1;
 
@@ -912,9 +926,26 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void SetupDefaultPaint(float scale)
         {
+            if (PaintDefault == null)
+            {
+                Super.Log("UNEXPECTED PaintDefault is null!");
+                PaintDefault = new SKPaint
+                {
+                    IsAntialias = true,
+                    IsDither = true
+                };
+            }
+
             PaintDefault.TextSize = (float)Math.Round(FontSize * scale);
             PaintDefault.StrokeWidth = 0;
-            PaintDefault.Typeface = this.TypeFace;
+            PaintDefault.Typeface = this.TypeFace ?? SKTypeface.Default;
+
+            if (PaintDefault.Typeface == null)
+            {
+                Super.Log("UNEXPECTED Typeface is still null!");
+                PaintDefault.Typeface = SKTypeface.Default; //please do not crash
+            }
+
             PaintDefault.FakeBoldText = (this.FontAttributes & FontAttributes.Bold) != 0;
             //todo italic etc
         }
@@ -1442,15 +1473,25 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual async void UpdateFont()
         {
-            if (
-                (TypeFace == null && !string.IsNullOrEmpty(_fontFamily)) ||
-                _fontFamily != FontFamily || _fontWeight != FontWeight
+            if ((TypeFace == null && !string.IsNullOrEmpty(_fontFamily))
+                || _fontFamily != FontFamily
+                || _fontWeight != FontWeight
                 || (_fontFamily == null && TypeFace == null))
             {
                 _fontFamily = FontFamily;
                 _fontWeight = FontWeight;
 
-                _replaceFont = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
+                var replaceFont = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
+
+                if (replaceFont == null)
+                {
+                    Super.Log($"Failed to load font {_fontFamily} with weight {_fontWeight}. Using default.");
+                    _replaceFont = SKTypeface.Default;
+                }
+                else
+                {
+                    _replaceFont = replaceFont;
+                }
             }
 
             InvalidateText();

@@ -57,12 +57,33 @@ public partial class SkiaShell
         {
             if (Content != null && _animated && IsVisibleInViewTree())
             {
-                await Task.WhenAll(
-                    Content.FadeToAsync(0, PopupsAnimationSpeed),
-                    Content.ScaleToAsync(0, 0, PopupsAnimationSpeed));
+                var cts = new CancellationTokenSource();
+                var timeoutTask = Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
+
+                try
+                {
+                    var animate = Task.WhenAll(
+                        Content.FadeToAsync(0, PopupsAnimationSpeed, null, cts),
+                        Content.ScaleToAsync(0, 0, PopupsAnimationSpeed, null, cts));
+
+                    var completedTask = await Task.WhenAny(animate, timeoutTask);
+                    if (completedTask == timeoutTask)
+                    {
+                        await cts.CancelAsync();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Super.Log(e);
+                }
+                finally
+                {
+                    cts.Dispose();
+                }
+
+                await _shell.Popups.Close(this, _animated);
             }
 
-            await _shell.Popups.Close(this, _animated);
         }
 
         protected override void OnLayoutReady()

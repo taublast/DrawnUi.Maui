@@ -28,24 +28,21 @@
             <draw:SkiaScroll
                 BackgroundColor="Black"
                 HorizontalOptions="Fill"
+                Orientation="Both"
                 VerticalOptions="Fill">
 
                 <draw:SkiaLayout
-                    BackgroundColor="Blue"
-                    HorizontalOptions="Fill"
+                    BackgroundColor="DimGray"
+                    HeightRequest="1500"
                     Tag="Content"
-                    Type="Column">
-
-                    <draw:SkiaShape HorizontalOptions="Fill">
-
-                    </draw:SkiaShape>
+                    UseCache="Image"
+                    WidthRequest="1500">
 
                     <draw:SkiaImage
-                        Aspect="AspectCover"
-                        HeightRequest="3000"
                         HorizontalOptions="Fill"
-                        Source="https://4.img-dpreview.com/files/p/TS1200x900~sample_galleries/1330372094/0455063184.jpg"
-                        UseCache="Image" />
+                        RescalingQuality="None"
+                        Source="Images/dungeon.jpg"
+                        VerticalOptions="Fill" />
 
                 </draw:SkiaLayout>
 

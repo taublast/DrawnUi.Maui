@@ -608,14 +608,12 @@ namespace DrawnUi.Maui.Draw
 
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
-
             if (args.Type == TouchActionResult.Down)
             {
                 lockHeader = false;
                 inContact = true;
             }
-            else
-            if (args.Type == TouchActionResult.Up)
+            else if (args.Type == TouchActionResult.Up)
             {
                 lockHeader = false;
                 inContact = false;
@@ -644,422 +642,326 @@ namespace DrawnUi.Maui.Draw
                 ResetPan();
             }
 
-            //lock (LockIterateListeners)
+            bool passedToChildren = false;
+            ISkiaGestureListener PassToChildren()
             {
-                bool passedToChildren = false;
-                ISkiaGestureListener PassToChildren()
-                {
-                    passedToChildren = true;
+                passedToChildren = true;
+                return base.ProcessGestures(args, apply);
+            }
 
-                    return base.ProcessGestures(args, apply);
+            bool wrongDirection = false;
+            if (IgnoreWrongDirection && args.Type == TouchActionResult.Panning)
+            {
+                var panDirection = DirectionType.Vertical;
+                if (Math.Abs(args.Event.Distance.Delta.X) > Math.Abs(args.Event.Distance.Delta.Y))
+                {
+                    panDirection = DirectionType.Horizontal;
                 }
-
-                bool wrongDirection = false;
-                if (IgnoreWrongDirection && args.Type == TouchActionResult.Panning)
+                if (Orientation == ScrollOrientation.Vertical && panDirection != DirectionType.Vertical)
                 {
-                    //first panning gesture..
-                    var panDirection = DirectionType.Vertical;
-                    if (Math.Abs(args.Event.Distance.Delta.X) > Math.Abs(args.Event.Distance.Delta.Y))
-                    {
-                        panDirection = DirectionType.Horizontal;
-                    }
-                    //var panDirection = GetDirectionType(_panningStartOffsetPts, moveTo, 0.9f);
-                    if (Orientation == ScrollOrientation.Vertical && panDirection != DirectionType.Vertical)
-                    {
-                        wrongDirection = true;
-                    }
-                    if (Orientation == ScrollOrientation.Horizontal && panDirection != DirectionType.Horizontal)
-                    {
-                        wrongDirection = true;
-                    }
+                    wrongDirection = true;
                 }
-
-                if (!IsUserPanning || wrongDirection ||
-                    args.Type == TouchActionResult.Up
-                    || args.Type == TouchActionResult.Tapped
-                    || !RespondsToGestures)
-                //&& args.Action != TouchActionResult.Tapped && args.Action != TouchActionResult.LongPressing)
+                if (Orientation == ScrollOrientation.Horizontal && panDirection != DirectionType.Horizontal)
                 {
-                    var childConsumed = PassToChildren();
-                    if (childConsumed != null)
+                    wrongDirection = true;
+                }
+            }
+
+            if (!IsUserPanning || wrongDirection || args.Type == TouchActionResult.Up || args.Type == TouchActionResult.Tapped || !RespondsToGestures)
+            {
+                var childConsumed = PassToChildren();
+                if (childConsumed != null)
+                {
+                    if (args.Type == TouchActionResult.Panning)
                     {
-                        if (args.Type == TouchActionResult.Panning)
-                        {
-                            ChildWasPanning = true;
-                        }
-                        else
-                        if (args.Type == TouchActionResult.Tapped)
-                        {
-                            ChildWasTapped = true;
-                        }
-
-                        if (args.Type != TouchActionResult.Up)
-                            return childConsumed;
+                        ChildWasPanning = true;
                     }
-                    else
+                    else if (args.Type == TouchActionResult.Tapped)
                     {
-                        ChildWasPanning = false;
+                        ChildWasTapped = true;
                     }
-                }
-
-                ISkiaGestureListener consumed = null;
-                if (Orientation == ScrollOrientation.Vertical || Orientation == ScrollOrientation.Both)
-                {
-                    VelocityY = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
-                }
-                if (Orientation == ScrollOrientation.Horizontal || Orientation == ScrollOrientation.Both)
-                {
-                    VelocityX = (float)(args.Event.Distance.Velocity.X / RenderingScale);
-                }
-
-                //Debug.WriteLine($"[SkiaScroll] {this.Tag} processing {args.Action}..");
-
-
-
-                var hadNumberOfTouches = lastNumberOfTouches;
-                lastNumberOfTouches = args.Event.NumberOfTouches;
-
-                //----------------------------------------------------------------------
-                if (args.Type == TouchActionResult.Wheel && !ZoomLocked)
-                //----------------------------------------------------------------------
-                {
-                    IsUserFocused = true;
-                    //todo cmon this todo is here almost a year
-                    var zoomed = SetZoom(args.Event.Wheel.Scale);
-                    consumed = this;
+                    if (args.Type != TouchActionResult.Up)
+                        return childConsumed;
                 }
                 else
-                if (args.Event.NumberOfTouches < 2 && hadNumberOfTouches < 2)
                 {
-                    switch (args.Type)
-                    {
+                    ChildWasPanning = false;
+                }
+            }
 
-                    //----------------------------------------------------------------------
-                    case TouchActionResult.Tapped:
-                    case TouchActionResult.LongPressing:
-                    //----------------------------------------------------------------------
+            ISkiaGestureListener consumed = null;
+            if (Orientation == ScrollOrientation.Vertical || Orientation == ScrollOrientation.Both)
+            {
+                VelocityY = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
+            }
+            if (Orientation == ScrollOrientation.Horizontal || Orientation == ScrollOrientation.Both)
+            {
+                VelocityX = (float)(args.Event.Distance.Velocity.X / RenderingScale);
+            }
 
-                    if (!passedToChildren)
+            var hadNumberOfTouches = lastNumberOfTouches;
+            lastNumberOfTouches = args.Event.NumberOfTouches;
+
+            if (args.Type == TouchActionResult.Wheel && !ZoomLocked)
+            {
+                IsUserFocused = true;
+                var zoomed = SetZoom(args.Event.Wheel.Scale);
+                consumed = this;
+            }
+            else if (args.Event.NumberOfTouches < 2 && hadNumberOfTouches < 2)
+            {
+                switch (args.Type)
+                {
+                case TouchActionResult.Tapped:
+                case TouchActionResult.LongPressing:
+                if (!passedToChildren)
+                {
+                    _panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
+                    consumed = PassToChildren();
+                }
+                break;
+
+                case TouchActionResult.Panning when RespondsToGestures:
+                bool canPan = !ScrollLocked;
+                if (Orientation == ScrollOrientation.Vertical)
+                {
+                    canPan &= Math.Abs(VelocityY) > ScrollVelocityThreshold;
+                }
+                else if (Orientation == ScrollOrientation.Horizontal)
+                {
+                    canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold;
+                }
+                else if (Orientation == ScrollOrientation.Both)
+                {
+                    canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold || Math.Abs(VelocityY) > ScrollVelocityThreshold;
+                }
+
+                if (lockHeader && !CanScrollUsingHeader)
+                {
+                    canPan = false;
+                }
+
+                if (canPan)
+                {
+                    bool checkOverscroll = true;
+
+                    if (!IsUserFocused)
                     {
-                        _panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
-                        consumed = PassToChildren();
+                        ResetPan();
+                        checkOverscroll = false;
                     }
-                    break;
 
-                    //----------------------------------------------------------------------
-                    case TouchActionResult.Panning when RespondsToGestures:
-                    //----------------------------------------------------------------------
+                    IsUserPanning = true;
 
-                    bool canPan = !ScrollLocked;
-                    if (Orientation == ScrollOrientation.Vertical)
-                    {
-                        canPan &= Math.Abs(VelocityY) > ScrollVelocityThreshold;
-                    }
-                    else
-                    if (Orientation == ScrollOrientation.Horizontal)
-                    {
-                        canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold;
-                    }
-                    else
-                    if (Orientation == ScrollOrientation.Both)
-                    {
-                        canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold || Math.Abs(VelocityY) > ScrollVelocityThreshold;
-                    }
+                    var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDIstancePanned;
+                    var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDIstancePanned;
 
-                    if (lockHeader && !CanScrollUsingHeader)
+                    var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.9f;
+                    var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.9f;
+
+                    _panningLastDelta = new Vector2(interpolatedMoveToX, interpolatedMoveToY);
+
+                    var moveTo = new Vector2(
+                        (float)Math.Round(_panningCurrentOffsetPts.X + interpolatedMoveToX),
+                        (float)Math.Round(_panningCurrentOffsetPts.Y + interpolatedMoveToY));
+
+                    _panningCurrentOffsetPts = moveTo;
+
+                    if (IgnoreWrongDirection && wrongDirection)
                     {
-                        canPan = false;
+                        IsUserPanning = false;
+                        IsUserFocused = false;
+                        return null;
                     }
 
-                    if (canPan)
+                    VelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY));
+
+                    var clamped = ClampOffset(moveTo.X, moveTo.Y);
+
+                    if (!Bounces && checkOverscroll)
                     {
-                        //Trace.WriteLine($"[PAN] {Tag} VY:{VelocityY:0.00}");
-
-                        bool checkOverscroll = true;
-
-                        if (!IsUserFocused)
+                        if (!AreEqual(clamped.X, moveTo.X, 1) && !AreEqual(clamped.Y, moveTo.Y, 1))
                         {
-                            ResetPan();
-                            //CancelChildrenGestures();
-                            checkOverscroll = false; //do not check overscroll if we just got focus
-                        }
-
-                        IsUserPanning = true;
-
-                        var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDIstancePanned;
-                        var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDIstancePanned;
-
-                        var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.9f;
-                        var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.9f;
-
-                        //Debug.WriteLine($"[S] {interpolatedMoveToY} / {movedPtsY} pts");
-
-                        _panningLastDelta = new Vector2(
-                            interpolatedMoveToX, interpolatedMoveToY);
-
-                        var moveTo = new Vector2(
-                            (float)Math.Round(_panningCurrentOffsetPts.X + interpolatedMoveToX),
-                            (float)Math.Round(_panningCurrentOffsetPts.Y + interpolatedMoveToY));
-
-                        _panningCurrentOffsetPts = moveTo;
-
-                        /*
-                          var threshold = 0f;
-                           if (!IsUserPanning)
-                           {
-                               //apply starting thresold to first panning only
-                               //threshold = Canvas.FirstPanThreshold * RenderingScale;
-                           }
-
-                           IsUserPanning = true;
-
-                           var movedPtsY = ((args.Event.Distance.Delta.Y - threshold * Math.Sign(args.Event.Distance.Delta.Y)) / RenderingScale) * ChangeDIstancePanned;
-                           var movedPtsX = ((args.Event.Distance.Delta.X - threshold * Math.Sign(args.Event.Distance.Delta.X)) / RenderingScale) * ChangeDIstancePanned;
-
-                           var interpolatedMoveToX = movedPtsX;//_panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.985f;
-                           var interpolatedMoveToY = movedPtsX;//_panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.985f;
-
-                           _panningLastDelta = new Vector2(
-                               interpolatedMoveToX, interpolatedMoveToY);
-
-                           var moveTo = new Vector2(
-                               (float)Math.Round(_panningCurrentOffsetPts.X + interpolatedMoveToX),
-                               (float)Math.Round(_panningCurrentOffsetPts.Y + interpolatedMoveToY));
-
-                           _panningCurrentOffsetPts = moveTo;
-                         */
-
-                        //if the panning is not in the same direction as the scroll and we havn't started panning yet,
-                        //do not consume gesture and return
-                        if (IgnoreWrongDirection && wrongDirection)// && !wasPanning)
-                        {
-                            IsUserPanning = false;
-                            IsUserFocused = false;
                             return null;
                         }
+                    }
 
-                        //record velocity
-                        VelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY));
+                    ViewportOffsetX = clamped.X;
+                    ViewportOffsetY = clamped.Y;
 
-                        var clamped = ClampOffset(moveTo.X, moveTo.Y);
+                    IsUserPanning = true;
+                    _lastVelocity = new Vector2(VelocityX, VelocityY);
 
-                        //if bounce is disabled, and we are overscrolling, do not consume gesture and return
-                        if (!Bounces && checkOverscroll)
+                    consumed = this;
+                }
+                break;
+
+                case TouchActionResult.Up when RespondsToGestures:
+                if ((!ChildWasTapped || OverScrolled) && (!ChildWasPanning || IsUserPanning))
+                {
+                    if (apply.alreadyConsumed != null)
+                    {
+                        if (CheckNeedToSnap())
+                            Snap(SystemAnimationTimeSecs);
+                        return null;
+                    }
+
+                    bool canSwipe = true;
+                    if (lockHeader && !CanScrollUsingHeader)
+                    {
+                        canSwipe = false;
+                    }
+
+                    if (!ScrollLocked && canSwipe)
+                    {
+                        var finalVelocity = VelocityAccumulator.CalculateFinalVelocity(this.MaxVelocity);
+
+                        bool fling = false;
+                        bool swipe = false;
+
+                        if (!OverScrolled || Orientation == ScrollOrientation.Both)
                         {
-                            if (!AreEqual(clamped.X, moveTo.X, 1) && !AreEqual(clamped.Y, moveTo.Y, 1))
+                            var mainDirection = GetDirectionType(new Vector2(finalVelocity.X, finalVelocity.Y), DirectionType.None, 0.9f);
+
+                            if (Orientation != ScrollOrientation.Both && !IsUserPanning)
                             {
-                                return null;
+                                if (IgnoreWrongDirection)
+                                {
+                                    if (Orientation == ScrollOrientation.Vertical && mainDirection != DirectionType.Vertical)
+                                    {
+                                        return null;
+                                    }
+                                    if (Orientation == ScrollOrientation.Horizontal && mainDirection != DirectionType.Horizontal)
+                                    {
+                                        return null;
+                                    }
+                                }
+                            }
+
+                            var swipeThreshold = ThesholdSwipeOnUp * RenderingScale;
+                            if ((Orientation == ScrollOrientation.Both
+                                || (Orientation == ScrollOrientation.Vertical && mainDirection == DirectionType.Vertical)
+                                || (Orientation == ScrollOrientation.Horizontal && mainDirection == DirectionType.Horizontal))
+                                && (Math.Abs(finalVelocity.X) > swipeThreshold || Math.Abs(finalVelocity.Y) > swipeThreshold))
+                            {
+                                swipe = true;
                             }
                         }
 
-                        //update current panning offset
-                        //if (smooth)
-                        //{
-                        //    _panningCurrentOffsetPts.X = moveTo.X;
-                        //    _panningCurrentOffsetPts.Y = moveTo.Y;
-                        //}
-                        //_panningCurrentOffsetPts = clamped;
-
-
-                        if (Orientation == ScrollOrientation.Vertical)
+                        if (OverScrolled || swipe)
                         {
-                            ViewportOffsetY = clamped.Y;
+                            IsUserPanning = false;
+
+                            bool bounceX = false, bounceY = false;
+                            if (OverScrolled)
+                            {
+                                var contentRect = new SKRect(0, 0, ptsContentWidth, ptsContentHeight);
+                                var closestPoint = GetClosestSidePoint(new SKPoint((float)InternalViewportOffset.Units.X, (float)InternalViewportOffset.Units.Y), contentRect, Viewport.Units.Size);
+
+                                var axis = new Vector2(closestPoint.X, closestPoint.Y);
+
+                                var velocityY = finalVelocity.Y * ChangeVelocityScrolled;
+                                var velocityX = finalVelocity.X * ChangeVelocityScrolled;
+
+                                if (Math.Abs(velocityX) > MaxBounceVelocity)
+                                {
+                                    velocityX = Math.Sign(velocityX) * MaxBounceVelocity;
+                                }
+
+                                if (Math.Abs(velocityY) > MaxBounceVelocity)
+                                {
+                                    velocityY = Math.Sign(velocityY) * MaxBounceVelocity;
+                                }
+
+                                if (OverscrollDistance.Y != 0)
+                                {
+                                    bounceY = true;
+                                    BounceY(InternalViewportOffset.Units.Y,
+                                        axis.Y, velocityY);
+                                }
+
+                                if (OverscrollDistance.X != 0)
+                                {
+                                    bounceX = true;
+                                    BounceX(InternalViewportOffset.Units.X,
+                                        axis.X, velocityX);
+                                }
+
+                                fling = true;
+                            }
+
+                            if (Orientation != ScrollOrientation.Neither)
+                            {
+                                if (!Bounces)
+                                {
+                                    if (Orientation == ScrollOrientation.Vertical && !bounceY)
+                                    {
+                                        if ((AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Bottom, 1) && finalVelocity.Y > 0) ||
+                                        (AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Top, 1) && finalVelocity.Y < 0))
+                                            return null;
+                                    }
+                                    if (Orientation == ScrollOrientation.Horizontal && !bounceX)
+                                    {
+                                        if ((AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Right, 1) && finalVelocity.X > 0) ||
+                                         (AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Left, 1) && finalVelocity.X < 0))
+                                            return null;
+                                    }
+                                }
+
+                                var velocityY = finalVelocity.Y * ChangeVelocityScrolled;
+                                var velocityX = finalVelocity.X * ChangeVelocityScrolled;
+
+                                if (Math.Abs(velocityX) > _minVelocity && !bounceX)
+                                {
+                                    IsUserFocused = false;
+                                    fling = StartToFlingFrom(_animatorFlingX, ViewportOffsetX, velocityX);
+                                }
+
+                                if (Math.Abs(velocityY) > _minVelocity && !bounceY)
+                                {
+                                    IsUserFocused = false;
+                                    fling = StartToFlingFrom(_animatorFlingY, ViewportOffsetY, velocityY);
+                                }
+                            }
+
+                            if (fling)
+                            {
+                                WasSwiping = true;
+                                consumed = this;
+                                passedToChildren = true;
+                            }
                         }
-                        else
-                        if (Orientation == ScrollOrientation.Horizontal)
-                        {
-                            ViewportOffsetX = clamped.X;
-                        }
-                        else
-                        {
-                            ViewportOffsetY = clamped.Y;
-                            ViewportOffsetX = clamped.X;
-                        }
 
-                        IsUserPanning = true;
-                        _lastVelocity = new Vector2(VelocityX, VelocityY);
+                        IsUserFocused = false;
+                        IsUserPanning = false;
 
-                        consumed = this;
-                    }
-
-                    break;
-
-                    //----------------------------------------------------------------------
-                    case TouchActionResult.Up when RespondsToGestures:
-                    //----------------------------------------------------------------------
-
-                    if ((!ChildWasTapped || OverScrolled) && (!ChildWasPanning || IsUserPanning)) //should we swipe?
-                    {
-                        if (apply.alreadyConsumed != null)
+                        if (!fling)
                         {
                             if (CheckNeedToSnap())
                                 Snap(SystemAnimationTimeSecs);
-                            return null;
-                        }
-
-                        bool canSwipe = true;
-                        if (lockHeader && !CanScrollUsingHeader)
-                        {
-                            canSwipe = false;
-                        }
-
-                        if (!ScrollLocked && canSwipe)
-                        {
-                            var finalVelocity = VelocityAccumulator.CalculateFinalVelocity(this.MaxVelocity);
-
-                            //beware every control received UP even out of bounds
-                            //so we track if its ours
-                            bool fling = false;
-                            bool swipe = false;
-
-                            //Super.Log($"[SCROLL] {this.Tag} *UP* over {OverScrolled} IsUserPanning {IsUserPanning} {VelocityY}..");
-
-                            if (!OverScrolled)
+                            else
                             {
-                                //first panning gesture..
-                                var mainDirection = GetDirectionType(new Vector2(finalVelocity.X, finalVelocity.Y), DirectionType.None, 0.9f);
-
-                                if (!IsUserPanning)
-                                {
-                                    //if the panning is not in the same direction as the scroll and we havn't started panning yet,
-                                    //do not consume gesture and return
-                                    if (IgnoreWrongDirection)
-                                    {
-                                        if (Orientation == ScrollOrientation.Vertical && mainDirection != DirectionType.Vertical)
-                                        {
-                                            return null;
-                                        }
-                                        if (Orientation == ScrollOrientation.Horizontal && mainDirection != DirectionType.Horizontal)
-                                        {
-                                            return null;
-                                        }
-                                    }
-                                }
-
-                                var swipeThreshold = ThesholdSwipeOnUp * RenderingScale;
-                                if (((Orientation == ScrollOrientation.Vertical && mainDirection == DirectionType.Vertical) ||
-                                     (Orientation == ScrollOrientation.Horizontal && mainDirection == DirectionType.Horizontal) ||
-                                     Orientation == ScrollOrientation.Both)
-                                    && (Math.Abs(finalVelocity.X) > swipeThreshold || Math.Abs(finalVelocity.Y) > swipeThreshold))
-                                {
-                                    //Debug.WriteLine($"[SWIPE] velocity {Math.Abs(finalVelocity.Y)} ({Math.Abs(finalVelocity.Y / RenderingScale)})");
-
-                                    swipe = true;
-                                }
+                                _destination = SKRect.Empty;
                             }
-
-                            if (OverScrolled || swipe)
-                            {
-                                //Super.Log("UP swiping..");
-                                IsUserPanning = false;
-
-                                if (OverScrolled)// && CalculateOverscrollDistance(ViewportOffsetX, ViewportOffsetY) != Vector2.Zero) 
-                                {
-
-                                    //go back to bounds
-                                    var contentRect = new SKRect(0, 0, ptsContentWidth, ptsContentHeight);
-                                    var closestPoint = GetClosestSidePoint(new SKPoint((float)InternalViewportOffset.Units.X, (float)InternalViewportOffset.Units.Y), contentRect, Viewport.Units.Size);
-
-                                    var axis = new Vector2(closestPoint.X, closestPoint.Y); //bug is here, incorrect axis !
-
-                                    var velocityY = finalVelocity.Y * ChangeVelocityScrolled;
-                                    var velocityX = finalVelocity.X * ChangeVelocityScrolled;
-
-                                    if (Math.Abs(velocityX) > MaxBounceVelocity)
-                                    {
-                                        velocityX = Math.Sign(velocityX) * MaxBounceVelocity;
-                                    }
-
-                                    if (Math.Abs(velocityY) > MaxBounceVelocity)
-                                    {
-                                        velocityY = Math.Sign(velocityY) * MaxBounceVelocity;
-                                    }
-
-
-                                    Bounce(new Vector2((float)InternalViewportOffset.Units.X, (float)InternalViewportOffset.Units.Y),
-                                    axis, new(velocityX, velocityY));
-
-                                    fling = true;
-                                }
-                                else
-                                if (Orientation != ScrollOrientation.Neither)
-                                {
-                                    //if bounce is disabled, and we are overscrolling, do not consume gesture and return
-                                    if (!Bounces)
-                                    {
-                                        if (Orientation == ScrollOrientation.Vertical)
-                                        {
-                                            if ((AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Bottom, 1) && finalVelocity.Y > 0) ||
-                                            (AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Top, 1) && finalVelocity.Y < 0))
-                                                return null;
-                                        }
-                                        if (Orientation == ScrollOrientation.Horizontal)
-                                        {
-                                            if ((AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Right, 1) && finalVelocity.X > 0) ||
-                                             (AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Left, 1) && finalVelocity.X < 0))
-                                                return null;
-                                        }
-                                    }
-
-                                    var velocityY = finalVelocity.Y * ChangeVelocityScrolled;
-                                    var velocityX = finalVelocity.X * ChangeVelocityScrolled;
-
-                                    if (Math.Abs(velocityY) > _minVelocity || Math.Abs(velocityX) > _minVelocity)
-                                    {
-                                        IsUserFocused = false; //need set this for snap to work if fling would not last due to low speed
-                                        // SCROLL !!!!!
-                                        fling = StartToFlingFrom(new Vector2((float)ViewportOffsetX, (float)ViewportOffsetY), new(velocityX, velocityY));
-                                    }
-                                }
-
-                                if (fling)
-                                {
-                                    WasSwiping = true;
-                                    consumed = this;
-                                    passedToChildren = true;
-                                }
-                            }
-
-                            IsUserFocused = false;
-                            IsUserPanning = false;
-
-                            if (!fling)
-                            {
-                                if (CheckNeedToSnap())
-                                    Snap(SystemAnimationTimeSecs);
-                                else
-                                {
-                                    //scroling stopped
-                                    //force positionviewport for pixelsnap etc
-                                    _destination = SKRect.Empty;
-                                    //Update();
-                                }
-                            }
-
                         }
-
-                        break;
                     }
-
                     break;
-
-                    }
                 }
-
-                if (consumed != null || IsUserPanning)// || args.Event.NumberOfTouches > 1)
-                {
-                    //Debug.WriteLine($"[SCROLL] Consumed");
-                    return consumed ?? this;
+                break;
                 }
-
-                //return PassGesturesToContent(type, args, args.Action, thisOffset);
-
-                if (!passedToChildren)
-                    return PassToChildren();
-
-                return null;
             }
+
+            if (consumed != null || IsUserPanning)
+            {
+                return consumed ?? this;
+            }
+
+            if (!passedToChildren)
+                return PassToChildren();
+
+            return null;
         }
+
 
         public virtual bool OnFocusChanged(bool focus)
         {
@@ -1067,13 +969,19 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        SkiaSpringWithVelocityAnimator _animatorBounce;
+        SpringWithVelocityAnimator _vectorAnimatorBounceX;
+
+        SpringWithVelocityAnimator _vectorAnimatorBounceY;
 
         /// <summary>
         /// Fling with deceleration
         /// </summary>
-        protected ScrollFlingAnimator _animatorFling;
+        protected ScrollFlingAnimator _animatorFlingX;
 
+        /// <summary>
+        /// Fling with deceleration
+        /// </summary>
+        protected ScrollFlingAnimator _animatorFlingY;
 
         /// <summary>
         /// Direct scroller for ordered scroll, snap etc
@@ -1103,8 +1011,12 @@ namespace DrawnUi.Maui.Draw
         {
             _scrollerX?.Stop();
             _scrollerY?.Stop();
-            _animatorFling?.Stop();
-            _animatorBounce?.Stop();
+
+            _animatorFlingX?.Stop();
+            _animatorFlingY?.Stop();
+
+            _vectorAnimatorBounceX?.Stop();
+            _vectorAnimatorBounceY?.Stop();
 
             VelocityTrackerPan.Clear();
             VelocityTrackerScale.Clear();
@@ -1866,8 +1778,12 @@ namespace DrawnUi.Maui.Draw
                          || IsUserFocused
                          || OrderedScrollTo.IsValid //already scrolling somewhere
                          || this.SnapToChildren == SnapToChildrenType.Disabled
-                         || _animatorBounce.IsRunning
-                         || _animatorFling.IsRunning && (Math.Abs(_animatorFling.CurrentVelocity.Y) > _minVelocitySnap || Math.Abs(_animatorFling.CurrentVelocity.X) > _minVelocitySnap));
+                         || _vectorAnimatorBounceY.IsRunning || _vectorAnimatorBounceX.IsRunning
+                         || _animatorFlingX.IsRunning && (Math.Abs(_animatorFlingX.CurrentVelocity) > _minVelocitySnap
+                        || _animatorFlingY.IsRunning && (Math.Abs(_animatorFlingY.CurrentVelocity) > _minVelocitySnap
+                        || Math.Abs(_animatorFlingY.CurrentVelocity) > _minVelocitySnap)
+                        || Math.Abs(_animatorFlingX.CurrentVelocity) > _minVelocitySnap)
+                        );
 
             //Trace.WriteLine($"CheckNeedToSnap {ret}");
 
@@ -1929,7 +1845,8 @@ namespace DrawnUi.Maui.Draw
 
                             Snapped = true;
 
-                            _animatorFling.Stop();
+                            _animatorFlingX.Stop();
+                            _animatorFlingY.Stop();
 
                             ScrollTo(ViewportOffsetX, needOffsetY / layout.RenderingScale, AutoScrollingSpeedMs);
 
@@ -1968,7 +1885,8 @@ namespace DrawnUi.Maui.Draw
                         {
                             Snapped = true;
 
-                            _animatorFling.Stop();
+                            _animatorFlingX.Stop();
+                            _animatorFlingY.Stop();
 
                             ScrollTo(needOffsetX / layout.RenderingScale, ViewportOffsetY, AutoScrollingSpeedMs);
 
@@ -2368,7 +2286,8 @@ namespace DrawnUi.Maui.Draw
             if (!IsSnapping)
                 Snapped = false;
 
-            var isScroling = _animatorFling.IsRunning || _animatorBounce.IsRunning
+            var isScroling = _animatorFlingY.IsRunning || _animatorFlingX.IsRunning ||
+                             _vectorAnimatorBounceY.IsRunning || _vectorAnimatorBounceX.IsRunning
                                                       || _scrollerX.IsRunning || _scrollerY.IsRunning || IsUserPanning;
 
             ContentAvailableSpace = GetContentAvailableRect(destination);

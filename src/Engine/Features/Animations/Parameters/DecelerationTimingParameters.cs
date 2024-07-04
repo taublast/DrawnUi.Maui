@@ -1,125 +1,95 @@
-﻿// Credits to https://github.com/super-ultra
+﻿using System.Runtime.CompilerServices;
 
-using System.Numerics;
-using System.Runtime.CompilerServices;
-
-namespace DrawnUi.Maui.Draw;
-
-
-public class DecelerationTimingParameters : ITimingParameters
+namespace DrawnUi.Maui.Draw
 {
-
-    public Vector2 InitialValue { get; set; }
-    public Vector2 InitialVelocity { get; set; }
-    public float DecelerationRate { get; protected set; }
-    public float DecelerationK { get; protected set; }
-    public float Threshold { get; set; }
-
-    public DecelerationTimingParameters(Vector2 initialValue, Vector2 initialVelocity, float decelerationRate, float threshold)
+    public class DecelerationTimingParameters : ITimingParameters
     {
+        public float InitialValue { get; set; }
+        public float InitialVelocity { get; set; }
+        public float DecelerationRate { get; protected set; }
+        public float DecelerationK { get; protected set; }
+        public float Threshold { get; set; }
 
-        if (decelerationRate <= 0 || decelerationRate >= 1)
+        public DecelerationTimingParameters(float initialValue, float initialVelocity, float decelerationRate, float threshold)
         {
-            throw new ArgumentOutOfRangeException(nameof(decelerationRate), "Deceleration rate must be greater than 0 and less than 1.");
+            if (decelerationRate <= 0 || decelerationRate >= 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(decelerationRate), "Deceleration rate must be greater than 0 and less than 1.");
+            }
+
+            InitialValue = initialValue;
+            InitialVelocity = initialVelocity;
+            Threshold = threshold;
+            DecelerationRate = decelerationRate;
+            DecelerationK = 1000 * (float)Math.Log(DecelerationRate);
         }
 
-        InitialValue = initialValue;
-        InitialVelocity = initialVelocity;
-        Threshold = threshold;
-        DecelerationRate = decelerationRate;
-        DecelerationK = 1000 * (float)Math.Log(DecelerationRate);
-    }
-
-    public Vector2 Destination
-    {
-        get
+        public float Destination
         {
-            return InitialValue - InitialVelocity / DecelerationK;
+            get
+            {
+                return InitialVelocity == 0 ? InitialValue : InitialValue - InitialVelocity / DecelerationK;
+            }
         }
-    }
 
-    public float DurationSecs
-    {
-        get
+        public float DurationSecs
         {
-            if (InitialVelocity.Length() == 0)
-                return 0;
+            get
+            {
+                if (InitialVelocity == 0)
+                    return 0;
 
-            return (float)Math.Log(-DecelerationK * Threshold / InitialVelocity.Length()) / DecelerationK;
+                float divisor = -DecelerationK * Threshold / Math.Abs(InitialVelocity);
+                return divisor <= 0 ? 0 : (float)Math.Log(divisor) / DecelerationK;
+            }
         }
-    }
 
-    /// <summary>
-    /// time is in seconds
-    /// </summary>
-    /// <param name="offsetSecs"></param>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2 ValueAt(float offsetSecs)
-    {
-        float time = offsetSecs;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float ValueAt(float offsetSecs)
+        {
+            if (DecelerationK == 0) return InitialValue;
 
-        float factor = (float)((Math.Pow(DecelerationRate, (float)(1000 * time)) - 1) / DecelerationK);
-        return InitialValue + InitialVelocity * factor;
-    }
+            float time = offsetSecs;
+            float factor = (float)((Math.Pow(DecelerationRate, 1000 * time) - 1) / DecelerationK);
+            return InitialValue + InitialVelocity * factor;
+        }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2 VelocityAt(double time)
-    {
-        return InitialVelocity * (float)Math.Pow(DecelerationRate, (float)(1000 * time));
-    }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float VelocityAt(double time)
+        {
+            return InitialVelocity * (float)Math.Pow(DecelerationRate, 1000 * time);
+        }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public double DurationToValue(float value)
+        {
+            if (DecelerationK == 0 || InitialVelocity == 0) return 0;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public double DurationToValue(Vector2 value)
-    {
-        //if (DistanceToSegment(value, InitialValue, Destination) >= Threshold)
-        //    return null;
+            float distance = Math.Abs(value - InitialValue);
+            return distance == 0 ? 0 : Math.Log(1 + DecelerationK * distance / Math.Abs(InitialVelocity)) / DecelerationK;
+        }
 
-        return Math.Log(1 + DecelerationK * (value - InitialValue).Length() / InitialVelocity.Length()) / DecelerationK;
-    }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float VelocityTo(float startingPoint, float targetPoint, double time)
+        {
+            float factor = (float)(Math.Pow(DecelerationRate, 1000 * time) - 1);
+            return factor == 0 ? 0 : (targetPoint - startingPoint) * DecelerationK / factor;
+        }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2 VelocityTo(Vector2 startingPoint, Vector2 targetPoint, double time)
-    {
-        float factor = (float)(Math.Pow(DecelerationRate, 1000 * time) - 1);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float VelocityToZero(float startingPoint, float targetPoint, float maxTimeSecs = 0, float epsilon = 1e-6f)
+        {
+            float distance = targetPoint - startingPoint;
+            float distanceMagnitude = Math.Abs(distance);
 
-        return (targetPoint - startingPoint) * DecelerationK / factor;
-    }
+            if (distanceMagnitude == 0 || DecelerationK == 0) return 0;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Vector2 VelocityToZero(Vector2 startingPoint, Vector2 targetPoint, float maxTimeSecs = 0, float epsilon = 1e-6f)
-    {
-        Vector2 distance = targetPoint - startingPoint;
-        float distanceMagnitude = distance.Length();
+            float optimalTime = (float)(Math.Log(epsilon) - Math.Log(distanceMagnitude)) / DecelerationK;
 
-        // Calculate the time at which the velocity will be epsilon
-        float optimalTime = (float)(Math.Log(epsilon) - Math.Log(distanceMagnitude)) / DecelerationK;
+            if (maxTimeSecs > 0 && optimalTime > maxTimeSecs)
+                optimalTime = maxTimeSecs;
 
-        if (maxTimeSecs > 0 && optimalTime > maxTimeSecs)
-            optimalTime = maxTimeSecs;
-
-        // Calculate the initial velocity needed to reach the target point in optimalTime
-        Vector2 initialVelocity = VelocityTo(startingPoint, targetPoint, optimalTime);
-
-        return initialVelocity;
-    }
-
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float DistanceToSegment(Vector2 point, Vector2 segmentStart, Vector2 segmentEnd)
-    {
-        Vector2 segment = segmentEnd - segmentStart;
-        Vector2 v = point - segmentStart;
-        float t = Vector2.Dot(v, segment) / Vector2.Dot(segment, segment);
-
-        if (t <= 0)
-            return Vector2.Distance(point, segmentStart);
-        if (t >= 1)
-            return Vector2.Distance(point, segmentEnd);
-
-        Vector2 projection = segmentStart + t * segment;
-        return Vector2.Distance(point, projection);
+            return VelocityTo(startingPoint, targetPoint, optimalTime);
+        }
     }
 }

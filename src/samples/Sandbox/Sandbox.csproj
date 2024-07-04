@@ -102,6 +102,8 @@
 
     <None Remove="Resources\Images\" />
 
+    <None Remove="Resources\Raw\Anims\hair.webp" />
+
     <None Remove="Resources\Raw\baboon.jpg" />
 
     <None Remove="Resources\Raw\dotnet_bot.png" />
@@ -180,9 +182,9 @@
 
     <!--production-->
     <ItemGroup Condition="'$(UseNuget)' == 'true'">
-      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.2.7" />
-      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.2.7" />
-      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.2.7" />
+      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.3.4" />
+      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.3.4" />
+      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.3.4" />
     </ItemGroup>
 
     <ItemGroup>
@@ -195,6 +197,10 @@
  
       <Compile Update="Views\MainPageDrawnSpans.xaml.cs">
         <DependentUpon>MainPageDrawnSpans.xaml</DependentUpon>
+      </Compile>
+ 
+      <Compile Update="Views\MainPageGif.xaml.cs">
+        <DependentUpon>MainPageGif.xaml</DependentUpon>
       </Compile>
              
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
@@ -280,6 +286,9 @@
 
   <ItemGroup>
     <MauiXaml Update="Views\MainPageDrawnSpans.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\MainPageGif.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

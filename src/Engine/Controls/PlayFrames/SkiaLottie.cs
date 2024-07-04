@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using DrawnUi.Maui.Features.Images;
+using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Net;
@@ -48,16 +49,25 @@ public class SkiaLottie : AnimatedFramesRenderer
 
     protected override void OnAnimatorSeeking(double frame)
     {
-        if (LottieAnimation != null)
+        if (Animation != null)
         {
             if (frame < 0)
             {
-                frame = LottieAnimation.OutPoint;
+                frame = Animation.OutPoint;
             }
-            LottieAnimation.SeekFrame(frame);
+            Animation.SeekFrame(frame);
         }
 
         base.OnAnimatorSeeking(frame);
+    }
+
+    protected override void ApplyDefaultFrame()
+    {
+        if (!IsPlaying)
+        {
+            if (Animator != null && !IsOn)
+                Seek((int)DefaultFrame);
+        }
     }
 
     private static void ApplyDefaultFrameWhenOnProperty(BindableObject bindable, object oldvalue, object newvalue)
@@ -65,15 +75,6 @@ public class SkiaLottie : AnimatedFramesRenderer
         if (bindable is SkiaLottie control && !control.IsPlaying)
         {
             if (control.Animator != null && control.IsOn)
-                control.Seek((int)newvalue);
-        }
-    }
-
-    private static void ApplyDefaultFrameProperty(BindableObject bindable, object oldvalue, object newvalue)
-    {
-        if (bindable is SkiaLottie control && !control.IsPlaying)
-        {
-            if (control.Animator != null && !control.IsOn)
                 control.Seek((int)newvalue);
         }
     }
@@ -96,6 +97,25 @@ public class SkiaLottie : AnimatedFramesRenderer
         }
     }
 
+    private readonly object _lockSource = new();
+    private Animation _animation;
+
+    private readonly SemaphoreSlim _semaphoreLoadFile = new(1, 1);
+
+    public Animation Animation
+    {
+        get => _animation;
+
+        set
+        {
+            if (_animation != value)
+            {
+                _animation = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
     public static readonly BindableProperty ApplyIsOnWhenNotPlayingProperty = BindableProperty.Create(nameof(ApplyIsOnWhenNotPlaying),
     typeof(bool),
     typeof(SkiaLottie),
@@ -104,21 +124,6 @@ public class SkiaLottie : AnimatedFramesRenderer
     {
         get { return (bool)GetValue(ApplyIsOnWhenNotPlayingProperty); }
         set { SetValue(ApplyIsOnWhenNotPlayingProperty, value); }
-    }
-
-
-    public static readonly BindableProperty DefaultFrameProperty = BindableProperty.Create(nameof(DefaultFrame),
-        typeof(int),
-        typeof(SkiaLottie),
-        0, propertyChanged: ApplyDefaultFrameProperty
-    );
-    /// <summary>
-    /// For the case IsOn = False. What frame should we display at start or when stopped. 0 (START) is default, can specify other number. if value is less than 0 then will seek to the last available frame (END).
-    /// </summary>
-    public int DefaultFrame
-    {
-        get => (int)GetValue(DefaultFrameProperty);
-        set => SetValue(DefaultFrameProperty, value);
     }
 
     public static readonly BindableProperty IsOnProperty = BindableProperty.Create(nameof(IsOn),
@@ -145,50 +150,11 @@ public class SkiaLottie : AnimatedFramesRenderer
         set => SetValue(DefaultFrameWhenOnProperty, value);
     }
 
-    public static readonly BindableProperty SpeedRatioProperty = BindableProperty.Create(nameof(SpeedRatio),
-        typeof(double),
-        typeof(SkiaLottie),
-        1.0, propertyChanged: (b, o, n) =>
-        {
-            if (b is SkiaLottie control) control.ApplySpeed();
-        });
-
     public static readonly BindableProperty ColorTintProperty = BindableProperty.Create(
         nameof(ColorTint),
         typeof(Color),
         typeof(SkiaLottie),
         Colors.Transparent, propertyChanged: ApplySourceProperty);
-
-    public static readonly BindableProperty SourceProperty = BindableProperty.Create(nameof(Source),
-        typeof(string),
-        typeof(SkiaLottie),
-        string.Empty,
-        propertyChanged: ApplySourceProperty);
-
-    private readonly object _lockSource = new();
-    private Animation _lottieAnimation;
-
-    private readonly SemaphoreSlim _semaphoreLoadFile = new(1, 1);
-
-    public Animation LottieAnimation
-    {
-        get => _lottieAnimation;
-
-        set
-        {
-            if (_lottieAnimation != value)
-            {
-                _lottieAnimation = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    public double SpeedRatio
-    {
-        get => (double)GetValue(SpeedRatioProperty);
-        set => SetValue(SpeedRatioProperty, value);
-    }
 
     public Color ColorTint
     {
@@ -196,11 +162,19 @@ public class SkiaLottie : AnimatedFramesRenderer
         set => SetValue(ColorTintProperty, value);
     }
 
+    public static readonly BindableProperty SourceProperty = BindableProperty.Create(nameof(Source),
+        typeof(string),
+        typeof(SkiaLottie),
+        string.Empty,
+        propertyChanged: ApplySourceProperty);
+
+
     public string Source
     {
         get => (string)GetValue(SourceProperty);
         set => SetValue(SourceProperty, value);
     }
+
 
     protected override void RenderFrame(SkiaDrawingContext ctx, SKRect destination, float scale,
         object arguments)
@@ -208,7 +182,7 @@ public class SkiaLottie : AnimatedFramesRenderer
         if (IsDisposing || IsDisposed)
             return;
 
-        if (LottieAnimation is Animation lottie)
+        if (Animation is Animation lottie)
             lock (_lockSource)
             {
                 lottie.Render(ctx.Canvas, DrawingRect);
@@ -217,7 +191,7 @@ public class SkiaLottie : AnimatedFramesRenderer
     }
 
     /// <summary>
-    ///     This is not replacing current animation, use SetAnimation for that.
+    /// This is not replacing current animation, only pre-loading! Use SetAnimation after that if needed.
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns>
@@ -239,8 +213,10 @@ public class SkiaLottie : AnimatedFramesRenderer
             {
                 if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri) && uri.Scheme != "file")
                 {
-                    var client = new WebClient();
-                    var data = await client.DownloadDataTaskAsync(uri);
+                    var client = Super.Services.CreateLoadImagesHttpClient();
+                    var data = await client.GetByteArrayAsync(uri);
+                    //var client = new WebClient();
+                    //var data = await client.DownloadDataTaskAsync(uri);
                     json = Encoding.UTF8.GetString(data);
                 }
                 else
@@ -345,18 +321,22 @@ public class SkiaLottie : AnimatedFramesRenderer
     {
         lock (_lockSource)
         {
-            if (animation == null || animation == LottieAnimation || IsDisposed) return;
+            if (animation == null || animation == Animation || IsDisposed) return;
 
             var wasPlaying = IsPlaying;
             Animation kill = null;
 
             if (wasPlaying)
             {
-                kill = LottieAnimation;
+                kill = Animation;
                 Stop();
             }
 
-            LottieAnimation = animation;
+            Animation = animation;
+
+            //Debug.WriteLine($"[SkiaLottie] Loaded animation: Version:{Animation.Version} Duration:{Animation.Duration} Fps:{Animation.Fps} InPoint:{Animation.InPoint} OutPoint:{Animation.OutPoint}");
+
+            InitializeAnimator(); //autoplay applied inside
 
             if (IsOn)
             {
@@ -367,17 +347,14 @@ public class SkiaLottie : AnimatedFramesRenderer
                 OnAnimatorSeeking(DefaultFrame);
             }
 
-            //Debug.WriteLine($"[SkiaLottie] Loaded animation: Version:{Animation.Version} Duration:{Animation.Duration} Fps:{Animation.Fps} InPoint:{Animation.InPoint} OutPoint:{Animation.OutPoint}");
-
-            InitializeAnimator(); //autoplay applied inside
-
             if (wasPlaying && !IsPlaying) Start();
 
             if (kill != null && disposePrevious)
                 Tasks.StartDelayed(TimeSpan.FromSeconds(2), () => { kill.Dispose(); });
 
-            Monitor.PulseAll(_lockSource);
+            Invalidate();
 
+            Monitor.PulseAll(_lockSource);
         }
     }
 
@@ -393,10 +370,10 @@ public class SkiaLottie : AnimatedFramesRenderer
         {
             base.OnDisposing();
 
-            if (LottieAnimation != null)
+            if (Animation != null)
             {
-                Free(LottieAnimation);
-                LottieAnimation = null;
+                Free(Animation);
+                Animation = null;
             }
 
             Monitor.PulseAll(_lockSource);
@@ -407,63 +384,63 @@ public class SkiaLottie : AnimatedFramesRenderer
     {
         base.OnAnimatorUpdated(value);
 
-        if (LottieAnimation != null)
+        if (Animation != null)
         {
-            LottieAnimation.SeekFrame(value);
+            Animation.SeekFrame(value);
             Update();
         }
     }
 
-    protected virtual void ApplySpeed()
+    protected override void ApplySpeed()
     {
-        if (LottieAnimation == null)
+        if (Animation == null)
             return;
 
         var speed = 1.0;
         if (SpeedRatio < 1)
-            speed = LottieAnimation.Duration.TotalMilliseconds * (1 + SpeedRatio);
+            speed = Animation.Duration.TotalMilliseconds * (1 + SpeedRatio);
         else
-            speed = LottieAnimation.Duration.TotalMilliseconds / SpeedRatio;
+            speed = Animation.Duration.TotalMilliseconds / SpeedRatio;
         Animator.Speed = speed;
     }
 
     protected override void OnAnimatorInitializing()
     {
-        if (LottieAnimation != null)
+        if (Animation != null)
         {
             ApplySpeed();
 
-            Animator.mValue = LottieAnimation.InPoint;
-            Animator.mMinValue = LottieAnimation.InPoint;
-            Animator.mMaxValue = LottieAnimation.OutPoint;
+            Animator.mValue = Animation.InPoint;
+            Animator.mMinValue = Animation.InPoint;
+            Animator.mMaxValue = Animation.OutPoint;
             Animator.Distance = Animator.mMaxValue - Animator.mMinValue;
         }
     }
 
     protected override bool CheckCanStartAnimator()
     {
-        return LottieAnimation != null;
+        return Animation != null;
     }
 
     protected override void OnAnimatorStarting()
     {
-        Animator.SetValue(LottieAnimation.InPoint);
+        Animator.SetValue(Animation.InPoint);
     }
 
     public virtual void GoToStart()
     {
-        if (LottieAnimation != null)
+        if (Animation != null)
         {
-            LottieAnimation.Seek(0.0);
+            Animation.Seek(0.0);
             Update();
         }
     }
 
     public virtual void GoToEnd()
     {
-        if (LottieAnimation != null)
+        if (Animation != null)
         {
-            LottieAnimation.Seek(100.0);
+            Animation.Seek(100.0);
             Update();
         }
     }

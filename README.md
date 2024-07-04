@@ -16,8 +16,14 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's new
 
-* `SkiaLayout` Column/Row uses 2 layout passes when needed, can now use full alignement options inside.
-* Critical fixes for Release builds.
+* `SkiaScroll` fixed scrolling vertically + horizontally at the same time (`Orientation="Both"`).
+* `SkiaShell` Navigated and Navigating events now report popups too.
+* `SkiaMediaImage` a subclassed `SkiaImage` for displaying any kind of images (image/animated gif/more..)
+* `SkiaGif` a dedicated lightweight GIF-player with playback control properties. See Sandbox project.
+* Fixed gestures inside `ImageCacheComposite` cache. 
+* Fixed bug `SkiaShell` navigation gets locked when spamming popups.
+* Layout optimizations.
+* Nuget 1.2.3.4
 
 ## Demo Apps
 
@@ -68,7 +74,8 @@ ___Please star ⭐ if you like it!___
 	* __SkiaTabsSelector__ create top and bottom tabs
 	* __SkiaViewSwitcher__ switch your views, pop, push and slide	
 	* __SkiaLottie__ with tint customization
-	* __SkiaGif__ _soon_
+	* __SkiaGif__ a dedicated lightweight GIF-player with playback properties
+	* __SkiaMediaImage__ a subclassed `SkiaImage` for displaying any kind of images (image/animated gif/more..)
 	* __SkiaRive__ (actually Windows only)
 	* __SkiaButton__ include anything inside, text, images etc
 	* __SkiaSlider__ incuding range selction capability
@@ -587,6 +594,9 @@ It will render a mask over its children when hovered, think of it as an inverted
 * Binding RelativeSource with FindAncestorBindingContext not working yet.
 
 ## Previously
+
+* `SkiaLayout` Column/Row uses 2 layout passes when needed, can now use full alignment  options inside.
+* Critical fixes for Release builds.
 
 * New: SvgSpan for SkiaLabel.
 * Critical fix for Release builds native crash while using ImageDoubleBuffered cache.
