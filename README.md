@@ -1,4 +1,6 @@
 # DrawnUI for .NET MAUI
+![NuGet Downloads](https://img.shields.io/nuget/dt/AppoMobi.Maui.DrawnUi.svg)
+![Build Status](https://github.com/taublast/DrawnUi.Maui/actions/workflows/build.yml/badge.svg)
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. Plug any existing and unique SkiaSharp code into MAUI layout!
 
