@@ -24,6 +24,8 @@ namespace UnitTests
             ObservableCollection<int> itemsSource = null;
             layout.ItemsSource = itemsSource;
             layout.ItemTemplate = new DataTemplate(() => new SkiaControl());
+
+            layout.CommitInvalidations();
             layout.Measure(100, 100, 1);
 
             Assert.True(LayoutStructureCorrespondsToItemsSource(itemsSource, layout));
@@ -40,6 +42,8 @@ namespace UnitTests
             var itemsSource = new ObservableCollection<int>();
             layout.ItemsSource = itemsSource;
             layout.ItemTemplate = new DataTemplate(() => new SkiaControl());
+
+            layout.CommitInvalidations();
             layout.Measure(100, 100, 1);
 
             Assert.True(LayoutStructureCorrespondsToItemsSource(itemsSource, layout));
@@ -56,6 +60,8 @@ namespace UnitTests
             var itemsSource = new ObservableCollection<int>() { 1, 2, 3, 4, 5 };
             layout.ItemsSource = itemsSource;
             layout.ItemTemplate = new DataTemplate(() => new SkiaControl());
+
+            layout.CommitInvalidations();
             layout.Measure(100, 100, 1);
 
             Assert.True(LayoutStructureCorrespondsToItemsSource(itemsSource, layout));
@@ -71,6 +77,7 @@ namespace UnitTests
             var childRef = new WeakReference(image);
 
             var destination = new SKRect(0, 0, 100, 100);
+            layout.CommitInvalidations();
             layout.Measure(destination.Width, destination.Height, 1);
             var picture = RenderWithOperationsContext(destination, (ctx) =>
             {
@@ -109,6 +116,7 @@ namespace UnitTests
             var layout = CreateAbsoluteLayoutSampleWIthChildren();
 
             var destination = new SKRect(0, 0, 100, float.PositiveInfinity);
+            layout.CommitInvalidations();
             layout.Measure(destination.Width, destination.Height, 1);
 
             //prepare DrawingRect

@@ -421,17 +421,31 @@ namespace DrawnUi.Maui.Draw
 
         }
 
+        /// <summary>
+        /// Apply all postponed invalidation other logic that was postponed until the first draw for optimization. Use this for special code-behind cases, like tests etc, if you cannot wait until the first Draw(). In this version this affects ItemsSource only.
+        /// </summary>
+        public void CommitInvalidations()
+        {
+            foreach (var invalidation in PostponedInvalidations)
+            {
+                invalidation.Value.Invoke();
+            }
+            PostponedInvalidations.Clear();
+        }
+
         public virtual void SuperViewChanged()
         {
             if (Superview != null)
             {
-                foreach (var invalidation in PostponedInvalidations)
-                {
-                    invalidation.Value.Invoke();
-                }
-                PostponedInvalidations.Clear();
+                CommitInvalidations();
             }
         }
+
+        /// <summary>
+        /// Used for optimization process, for example, to avid changing ItemSource several times before the first draw.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="action"></param>
         public void PostponeInvalidation(string key, Action action)
         {
             if (Superview == null)
@@ -444,6 +458,7 @@ namespace DrawnUi.Maui.Draw
                 Superview.PostponeInvalidation(this, action);
             }
         }
+
         readonly Dictionary<string, Action> PostponedInvalidations = new();
 
         /// <summary>
