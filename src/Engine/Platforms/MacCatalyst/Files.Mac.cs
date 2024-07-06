@@ -1,10 +1,29 @@
-﻿namespace DrawnUi.Maui.Infrastructure
+﻿using Foundation;
+
+namespace DrawnUi.Maui.Infrastructure
 {
     public partial class Files
     {
         public static void RefreshSystem(FileDescriptor file)
         {
 
+        }
+
+        public static List<string> ListAssets(string subfolder)
+        {
+            NSBundle mainBundle = NSBundle.MainBundle;
+            string resourcesPath = mainBundle.ResourcePath;
+            string subfolderPath = Path.Combine(resourcesPath, subfolder);
+
+            if (Directory.Exists(subfolderPath))
+            {
+                string[] files = Directory.GetFiles(subfolderPath);
+                return files.Select(Path.GetFileName).ToList();
+            }
+            else
+            {
+                return new List<string>();
+            }
         }
 
         public static string GetPublicDirectory()

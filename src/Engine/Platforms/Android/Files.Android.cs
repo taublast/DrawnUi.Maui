@@ -1,4 +1,5 @@
-﻿using Android.Media;
+﻿using Android.Content.Res;
+using Android.Media;
 
 namespace DrawnUi.Maui.Infrastructure
 {
@@ -20,6 +21,16 @@ namespace DrawnUi.Maui.Infrastructure
         //        .GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads)
         //        .AbsolutePath;
         //}
+
+        /// <summary>
+        /// tries to get all resources from assets folder Resources/Raw/{subfolder}
+        /// </summary>
+        /// <returns></returns>
+        public static List<string> ListAssets(string subfolder)
+        {
+            AssetManager assets = Platform.AppContext.Assets;
+            return assets.List(subfolder).ToList();
+        }
 
         public static void Share(string message, IEnumerable<string> fullFilenames)
         {

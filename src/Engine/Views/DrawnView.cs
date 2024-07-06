@@ -2416,6 +2416,7 @@ namespace DrawnUi.Maui.Views
         }
         ISkiaGestureListener _focusedChild;
         private ISkiaDrawable _canvasView;
+        private bool _wasBusy;
 
         /// <summary>
         /// 
@@ -2464,14 +2465,16 @@ namespace DrawnUi.Maui.Views
                 {
                     if (CanvasView != null)
                     {
-                        if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
+                        if (CanDraw && !CanvasView.IsDrawing && !_isWaiting)  //passed checks //
                         {
+                            _wasBusy = false;
                             _isWaiting = true;
                             InvalidatedCanvas++;
                             MainThread.BeginInvokeOnMainThread(async () =>
                             {
                                 try
                                 {
+#if !WINDOWS
                                     //cap fps around 120fps
                                     var nowNanos = Super.GetCurrentTimeNanos();
                                     var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
@@ -2479,7 +2482,7 @@ namespace DrawnUi.Maui.Views
 
                                     var needWait =
                                         Super.CapMicroSecs
-#if IOS || MACCATALYST  
+#if IOS || MACCATALYST
                                 * 2 // apple is double buffered                             
 #endif
                                         - elapsedMicros;
@@ -2490,6 +2493,10 @@ namespace DrawnUi.Maui.Views
                                     if (ms < 1)
                                         ms = 1;
                                     await Task.Delay(ms);
+#else
+                                    await Task.Delay(1);
+#endif
+
                                     CanvasView?.Update(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
                                 }
                                 catch (Exception e)
@@ -2499,10 +2506,18 @@ namespace DrawnUi.Maui.Views
                                 finally
                                 {
                                     _isWaiting = false;
+                                    if (_wasBusy)
+                                    {
+                                        Update();
+                                    }
                                 }
 
                             });
                             return;
+                        }
+                        else
+                        {
+                            _wasBusy = true;
                         }
                     }
                     OrderedDraw = false;

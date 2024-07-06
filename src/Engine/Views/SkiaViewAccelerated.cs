@@ -172,6 +172,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         {
             _nanos = nanos;
             IsDrawing = true;
+
             InvalidateSurface();
         }
     }
