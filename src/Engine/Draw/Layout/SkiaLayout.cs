@@ -1288,13 +1288,6 @@ namespace DrawnUi.Maui.Draw
 
             }
 
-            //if (newvalue is IList newList)
-            //{
-            //	foreach (var context in newList)
-            //	{
-            //		//todo
-            //	}
-            //}
 
             if (newvalue is INotifyCollectionChanged newCollection)
             {
@@ -1302,9 +1295,7 @@ namespace DrawnUi.Maui.Draw
                 newCollection.CollectionChanged += skiaControl.ItemsSourceCollectionChanged;
             }
 
-            skiaControl.PostponeInvalidation(nameof(OnItemSourceChanged), skiaControl.OnItemSourceChanged);
-
-            //skiaControl.OnItemSourceChanged();
+            skiaControl.OnItemSourceChanged();
         }
 
         private static void NeedUpdateItemsSource(BindableObject bindable, object oldvalue, object newvalue)
@@ -1313,8 +1304,8 @@ namespace DrawnUi.Maui.Draw
 
             skiaControl.PostponeInvalidation(nameof(UpdateItemsSource), skiaControl.UpdateItemsSource);
 
-            //skiaControl.OnItemSourceChanged();
-            //skiaControl.Invalidate();
+            skiaControl.Update();
+
         }
 
         void UpdateItemsSource()
@@ -1326,8 +1317,8 @@ namespace DrawnUi.Maui.Draw
 
         public override void OnItemTemplateChanged()
         {
-            PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
-            //OnItemSourceChanged();
+            //PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
+            OnItemSourceChanged();
         }
 
         public bool ApplyNewItemsSource { get; set; }

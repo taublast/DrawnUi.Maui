@@ -4332,9 +4332,17 @@ namespace DrawnUi.Maui.Draw
             {
                 Update();
             }
-            foreach (var view in Views) //will crash? why adapter nor used??
+
+            try
             {
-                view.OnSuperviewShouldRenderChanged(state);
+                foreach (var view in Views.ToList())
+                {
+                    view.OnSuperviewShouldRenderChanged(state);
+                }
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
             }
         }
 
@@ -5259,7 +5267,7 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                if (NeedUpdate) //someone changed us while rendering inner content
+                if (NeedUpdate || RenderObjectNeedsUpdate) //someone changed us while rendering inner content
                 {
                     Update(); //kick
                 }

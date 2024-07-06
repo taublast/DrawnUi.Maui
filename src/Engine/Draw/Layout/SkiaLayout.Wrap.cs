@@ -46,12 +46,12 @@ namespace DrawnUi.Maui.Draw
 
                 //PASS 1 - VISIBILITY
                 //we need this pass before drawing to recycle views that became hidden
-                var viewsTotal = 0;
+                var currentIndex = -1;
                 foreach (var cell in structure.GetChildrenAsSpans())
                 {
-                    viewsTotal++;
-                    viewsTotal++;
-                    if (cell.Destination == SKRect.Empty)
+                    currentIndex++;
+
+                    if (cell.Destination == SKRect.Empty || cell.Measured.Pixels.IsEmpty)
                     {
                         cell.IsVisible = false;
                     }
