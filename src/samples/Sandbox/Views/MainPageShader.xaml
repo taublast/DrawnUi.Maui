@@ -99,7 +99,7 @@
                         <!--  this will work on accelerated canvas only in skiasharp 2.88  -->
                         <!--  use 3.0 for cpu support  -->
                         <controls:ContentFolder
-                            BacksideSource="Images/leather.jpg"
+                            SecondarySource="Images/leather.jpg"
                             VerticalMargin="{Binding Source={x:Reference Texture}, Path=Margins.Top}">
 
                             <!--this cache will be used by our folder custom control-->

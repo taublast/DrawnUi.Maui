@@ -1,10 +1,6 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿using System.ComponentModel;
 
-public class ShaderAnimatedEffect : SkiaShaderEffect
-{
-
-}
-
+namespace DrawnUi.Maui.Draw;
 
 
 public class StateEffect : SkiaEffect, IStateEffect
@@ -80,7 +76,12 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     {
         if (_paintWithShader == null)
         {
-            _paintWithShader = new SKPaint();
+            _paintWithShader = new SKPaint()
+            {
+                //todo check how if this affect anything after upcoming skiasharp3 fix
+                //FilterQuality = SKFilterQuality.High,
+                //IsDither = true
+            };
         }
 
         SKImage source = Parent.RenderObject.Image;
@@ -88,6 +89,23 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         _paintWithShader.Shader = CreateShader(ctx, destination, source);
 
         ctx.Canvas.DrawRect(destination, _paintWithShader);
+    }
+
+    protected SKShader PrimaryTexture;
+    private SKImage _lastSource;
+
+    protected virtual SKShader CompilePrimaryTexture(SKImage source)
+    {
+        //if (_lastSource == null && source != null) //snapshot changed
+        if (source != _lastSource && source != null) //snapshot changed
+        {
+            _lastSource = source;
+            var dispose = PrimaryTexture;
+            PrimaryTexture = source.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+            if (dispose != PrimaryTexture)
+                dispose?.Dispose();
+        }
+        return PrimaryTexture;
     }
 
     public virtual SKShader CreateShader(SkiaDrawingContext ctx, SKRect destination, SKImage source)
@@ -98,9 +116,10 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         //step 3: prepare uniforms to pass, including those textures
         //step 4: with all above create an SKShader to use in SKPaint
 
-        if (CompiledShader == null)
+        if (CompiledShader == null || _hasNewShader)
         {
             CompileShader();
+            _hasNewShader = false;
         }
 
         if (NeedApply)
@@ -110,9 +129,8 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
                 source = CreateSnapshot(ctx, destination);
             }
 
-            //if textures didn't change.. use previous?
             var killTextures = TexturesUniforms;
-            TexturesUniforms = CreateTexturesUniforms(ctx, destination, source);
+            TexturesUniforms = CreateTexturesUniforms(ctx, destination, CompilePrimaryTexture(source));
 
 #if SKIA3
             if (Parent != null && killTextures != null)
@@ -160,12 +178,10 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         return uniforms;
     }
 
-    protected virtual SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKImage snapshot)
+    protected virtual SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader texture1)
     {
-        if (snapshot != null)
+        if (texture1 != null)
         {
-            var texture1 = snapshot
-                .ToShader();
             //.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
             return new SKRuntimeEffectChildren(CompiledShader)
             {
@@ -187,16 +203,32 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         CompiledShader = SkSl.Compile(shaderCode);
     }
 
-    public static readonly BindableProperty ShaderFilenameProperty = BindableProperty.Create(nameof(ShaderSource),
-        typeof(string),
-        typeof(SkiaShaderEffect),
-        string.Empty, propertyChanged: NeedUpdate);
-    public string ShaderSource
+    protected virtual void ApplyShaderSource()
     {
-        get { return (string)GetValue(ShaderFilenameProperty); }
-        set { SetValue(ShaderFilenameProperty, value); }
+        _hasNewShader = true;
+        Update();
     }
 
+    private bool _hasNewShader;
+
+    public static readonly BindableProperty ShaderSourceProperty = BindableProperty.Create(nameof(ShaderSource),
+        typeof(string),
+        typeof(SkiaShaderEffect),
+        string.Empty, propertyChanged: NeedChangeSource);
+
+    private static void NeedChangeSource(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (bindable is SkiaShaderEffect control)
+        {
+            control.ApplyShaderSource();
+        }
+    }
+
+    public string ShaderSource
+    {
+        get { return (string)GetValue(ShaderSourceProperty); }
+        set { SetValue(ShaderSourceProperty, value); }
+    }
 
 
     public override void Update()
@@ -210,6 +242,8 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         else
             kill?.Dispose();
 
+        //Parent?.Repaint();
+
         base.Update();
     }
 
@@ -217,12 +251,15 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     {
         Shader?.Dispose();
         Shader = null;
+        _lastSource = null;
 
         CompiledShader?.Dispose();
 #if SKIA3
         TexturesUniforms?.Dispose();
 #endif
         _paintWithShader?.Dispose();
+
+        PrimaryTexture?.Dispose();
 
         base.OnDisposing();
     }

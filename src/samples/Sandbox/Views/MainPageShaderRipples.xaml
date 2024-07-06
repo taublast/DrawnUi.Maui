@@ -35,7 +35,7 @@
                            Preset="BlackAndWhite" />
 
                     <controls:MultiRippleWithTouchEffect 
-                        BacksideSource="Images/maui1.png"/>
+                        SecondarySource="Images/maui1.png"/>
 
                 </draw:SkiaControl.VisualEffects>
                 

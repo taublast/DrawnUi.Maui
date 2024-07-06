@@ -27,6 +27,7 @@
     <PackageTags>maui drawnui skia skiasharp draw ui</PackageTags>
     <Authors>Nick Kovalsky aka AppoMobi</Authors>
     <Copyright>(c) AppoMobi, 2023 - present day</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon128.png</PackageIcon>
     <PackageProjectUrl>https://github.com/taublast/DrawnUi.Maui</PackageProjectUrl>
     <!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
