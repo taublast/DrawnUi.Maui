@@ -32,8 +32,11 @@ namespace DrawnUi.Maui.Draw
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]
     public partial class SkiaControl : VisualElement,
-        IHasAfterEffects, ISkiaControl,
-        IVisualTreeElement, IReloadHandler, IHotReloadableView
+        IHasAfterEffects,
+        ISkiaControl,
+        IVisualTreeElement,
+        IReloadHandler,
+        IHotReloadableView
     {
         public SkiaControl()
         {
@@ -1479,6 +1482,21 @@ namespace DrawnUi.Maui.Draw
             CalculateSizeRequest();
         }
 
+        public static readonly BindableProperty ClipFromProperty = BindableProperty.Create(
+            nameof(ClipFrom),
+            typeof(SkiaControl),
+            typeof(SkiaControl),
+            default(SkiaControl),
+            propertyChanged: OnControlClipFromChanged);
+
+        /// <summary>
+        /// Use clipping area from another control
+        /// </summary>
+        public new SkiaControl ClipFrom
+        {
+            get { return (SkiaControl)GetValue(ClipFromProperty); }
+            set { SetValue(ClipFromProperty, value); }
+        }
 
         public static readonly BindableProperty ParentProperty = BindableProperty.Create(
             nameof(Parent),
@@ -1538,6 +1556,14 @@ namespace DrawnUi.Maui.Draw
 
             Superview?.SetViewTreeVisibilityByParent(this, newvalue);
 
+            if (!newvalue)
+            {
+                if (this.UsingCacheType == SkiaCacheType.GPU)
+                {
+                    RenderObject = null;
+                }
+            }
+
             if (!IsVisible)
             {
                 //though shell not pass
@@ -1565,6 +1591,10 @@ namespace DrawnUi.Maui.Draw
         {
             if (!newvalue)
             {
+                if (this.UsingCacheType == SkiaCacheType.GPU)
+                {
+                    RenderObject = null;
+                }
                 //DestroyRenderingObject();
             }
             // need to this to:
@@ -1591,6 +1621,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual void OnDisposing()
         {
+            ClippedBy = null;
             Disposing?.Invoke(this, null);
             Superview?.UnregisterGestureListener(this as ISkiaGestureListener);
             Superview?.UnregisterAllAnimatorsByParent(this);
@@ -2256,6 +2287,13 @@ namespace DrawnUi.Maui.Draw
         }
 
 
+        private static void OnControlClipFromChanged(BindableObject bindable, object oldvalue, object newvalue)
+        {
+            if (bindable is SkiaControl control)
+            {
+                control.ClippedBy = newvalue as SkiaControl;
+            }
+        }
 
         private static void OnControlParentChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
@@ -2801,6 +2839,7 @@ namespace DrawnUi.Maui.Draw
 
         public Action<SKPath, SKRect> Clipping { get; set; }
 
+        public SkiaControl ClippedBy { get; set; }
 
 
         /// <summary>
@@ -4332,9 +4371,17 @@ namespace DrawnUi.Maui.Draw
             {
                 Update();
             }
-            foreach (var view in Views) //will crash? why adapter nor used??
+
+            try
             {
-                view.OnSuperviewShouldRenderChanged(state);
+                foreach (var view in Views.ToList())
+                {
+                    view.OnSuperviewShouldRenderChanged(state);
+                }
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
             }
         }
 
@@ -4787,7 +4834,7 @@ namespace DrawnUi.Maui.Draw
                         if (_renderObject != null) //if we already have something in actual cache then
                         {
                             if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
-                                || UsingCacheType == SkiaCacheType.Image //to just reuse same surface
+                                //|| UsingCacheType == SkiaCacheType.Image //to just reuse same surface
                                 || UsingCacheType == SkiaCacheType.ImageComposite)
                             {
                                 RenderObjectPrevious = _renderObject; //send it to back for special cases
@@ -4860,14 +4907,21 @@ namespace DrawnUi.Maui.Draw
          bool useClipping,
          Action<SkiaDrawingContext> draw)
         {
-            bool isClipping = (WillClipBounds || Clipping != null) && useClipping;
+            bool isClipping = (WillClipBounds || Clipping != null || ClippedBy != null) && useClipping;
 
             if (isClipping)
             {
                 _preparedClipBounds ??= new SKPath();
                 _preparedClipBounds.Reset();
-                _preparedClipBounds.AddRect(destination);
-                Clipping?.Invoke(_preparedClipBounds, destination);
+                if (ClippedBy != null)
+                {
+                    ClippedBy.CreateClip(null, true, _preparedClipBounds);
+                }
+                else
+                {
+                    _preparedClipBounds.AddRect(destination);
+                    Clipping?.Invoke(_preparedClipBounds, destination);
+                }
             }
 
             bool applyOpacity = useOpacity && Opacity < 1;
@@ -4883,14 +4937,16 @@ namespace DrawnUi.Maui.Draw
 
                 _paintWithOpacity.Color = SKColors.White.WithAlpha((byte)(0xFF * Opacity));
 
+                var restore = 0;
+
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {
                     CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
-                    ctx.Canvas.SaveLayer(_paintWithOpacity);
+                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
                 }
                 else
                 {
-                    ctx.Canvas.Save();
+                    restore = ctx.Canvas.Save();
                 }
 
                 if (needTransform)
@@ -4900,11 +4956,12 @@ namespace DrawnUi.Maui.Draw
 
                 if (isClipping)
                 {
-                    ctx.Canvas.ClipPath(_preparedClipBounds, SKClipOperation.Intersect, true);
+                    ClipSmart(ctx.Canvas, _preparedClipBounds);
                 }
 
                 draw(ctx);
-                ctx.Canvas.Restore();
+
+                ctx.Canvas.RestoreToCount(restore);
             }
             else
             {
@@ -4975,7 +5032,63 @@ namespace DrawnUi.Maui.Draw
             ctx.Canvas.SetMatrix(drawingMatrix);
         }
 
+        public static bool IsSimpleRectangle(SKPath path)
+        {
+            if (path == null)
+                return false;
 
+            if (path.VerbCount != 5)
+                return false;
+
+            var iterator = path.CreateRawIterator();
+            var points = new SKPoint[4];
+            int lineToCount = 0;
+            bool moveToFound = false;
+
+            SKPathVerb verb;
+            while ((verb = iterator.Next(points)) != SKPathVerb.Done)
+            {
+                switch (verb)
+                {
+                case SKPathVerb.Move:
+                if (moveToFound)
+                    return false; // Multiple MoveTo commands
+                moveToFound = true;
+                break;
+
+                case SKPathVerb.Line:
+                if (lineToCount < 4)
+                {
+                    lineToCount++;
+                }
+                else
+                {
+                    return false; // More than 4 LineTo commands
+                }
+                break;
+
+                case SKPathVerb.Close:
+                return lineToCount == 4; // Ensure we have exactly 4 LineTo commands before Close
+
+                default:
+                return false; // Any other command invalidates the rectangle check
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Use antialiasing if path is not rectangle
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="path"></param>
+        /// <param name="operation"></param>
+        public static void ClipSmart(SKCanvas canvas, SKPath path, SKClipOperation operation = SKClipOperation.Intersect)
+        {
+            bool isRectangle = IsSimpleRectangle(path);
+            canvas.ClipPath(path, operation, !isRectangle); // Disable anti-aliasing if it's a rectangle
+        }
 
 
         public virtual bool NeedMeasure
@@ -5259,7 +5372,7 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                if (NeedUpdate) //someone changed us while rendering inner content
+                if (NeedUpdate || RenderObjectNeedsUpdate) //someone changed us while rendering inner content
                 {
                     Update(); //kick
                 }
@@ -5399,7 +5512,7 @@ namespace DrawnUi.Maui.Draw
                                 grContext = accelerated.GRContext;
                                 //hardware accelerated
                                 surface = SKSurface.Create(accelerated.GRContext,
-                                    true,
+                                    false,
                                     cacheSurfaceInfo);
                             }
                         }
@@ -5571,7 +5684,8 @@ namespace DrawnUi.Maui.Draw
                 oldObject = RenderObject;
             }
             else
-            if (usingCacheType == SkiaCacheType.Image || usingCacheType == SkiaCacheType.ImageComposite)
+            if (usingCacheType == SkiaCacheType.Image
+            || usingCacheType == SkiaCacheType.ImageComposite)
             {
                 oldObject = RenderObjectPrevious;
             }
@@ -5638,6 +5752,9 @@ namespace DrawnUi.Maui.Draw
         }
 
         private bool _wasDrawn;
+        /// <summary>
+        /// Signals if this control was drawn on canvas one time at least, it will be set by Paint method. 
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public bool WasDrawn
         {
@@ -5665,9 +5782,10 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        public virtual SKPath CreateClip(object arguments, bool usePosition)
+        public virtual SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
         {
-            var path = new SKPath();
+            path ??= new SKPath();
+
             if (usePosition)
             {
                 path.AddRect(DrawingRect);
@@ -5680,6 +5798,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         private bool _RenderObjectPreviousNeedsUpdate;
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool RenderObjectPreviousNeedsUpdate
         {
             get
@@ -5699,6 +5818,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// Should delete RenderObject when starting new frame rendering
         /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool RenderObjectNeedsUpdate
         {
             get
@@ -5734,6 +5854,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool HasTransform
         {
             get
@@ -5748,6 +5869,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool IsDistorted
         {
             get
@@ -5844,6 +5966,7 @@ namespace DrawnUi.Maui.Draw
             return count;
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual bool UsesRenderingTree
         {
             get
@@ -5877,9 +6000,9 @@ namespace DrawnUi.Maui.Draw
         public bool Invalidated { get; set; } = true;
 
         /// <summary>
-        /// For internal use
+        /// For internal use, set by Update method
         /// </summary>
-
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool NeedUpdate
         {
             get
@@ -5901,10 +6024,11 @@ namespace DrawnUi.Maui.Draw
 
 
 
-
-
         DrawnView _superview;
-
+        /// <summary>
+        /// Our canvas
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public DrawnView Superview
         {
             get
@@ -5932,6 +6056,10 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        /// <summary>
+        /// For virtualization
+        /// </summary>
+        /// <returns></returns>
         public virtual ScaledRect GetOnScreenVisibleArea()
         {
             if (this.UsingCacheType != SkiaCacheType.None)
@@ -5979,6 +6107,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         //protected SkiaControl DirtyChild { get; set; }
 
+
         protected readonly ControlsTracker DirtyChildren = new();
 
         //protected readonly ConcurrentBag<SkiaControl> DirtyChildren = new();
@@ -5995,6 +6124,7 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// Used to check whether to apply IsClippedToBounds property
         /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual bool WillClipBounds
         {
             get
@@ -6004,6 +6134,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual bool WillClipEffects
         {
             get
@@ -6030,6 +6161,9 @@ namespace DrawnUi.Maui.Draw
             Parent?.UpdateByChild(this);
         }
 
+        /// <summary>
+        /// Main method to invalidate cache and invoke rendering
+        /// </summary>
         public virtual void Update()
         {
             InvalidateCache();
@@ -6039,6 +6173,9 @@ namespace DrawnUi.Maui.Draw
             Updated?.Invoke(this, null);
         }
 
+        /// <summary>
+        /// Triggered by Update method
+        /// </summary>
         public event EventHandler Updated;
 
         public static MemoryStream StreamFromString(string value)
@@ -6056,7 +6193,10 @@ namespace DrawnUi.Maui.Draw
             return units / GetDensity();
         }
 
-
+        /// <summary>
+        /// For internal use
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public SKRect Destination { get; protected set; }
 
         protected SKPaint PaintSystem { get; set; }
@@ -6153,11 +6293,11 @@ namespace DrawnUi.Maui.Draw
 
             var saved = canvas.Save();
 
-            canvas.ClipPath(clip, SKClipOperation.Intersect, true);
+            ClipSmart(canvas, clip);
 
             draw();
 
-            canvas.Restore();
+            canvas.RestoreToCount(saved);
         }
 
 
@@ -6184,7 +6324,9 @@ namespace DrawnUi.Maui.Draw
             InvalidateParent();
         }
 
-
+        /// <summary>
+        /// Summing up Margins and AddMargin.. properties
+        /// </summary>
         public virtual void CalculateMargins()
         {
             //use Margin property as starting point
@@ -6356,6 +6498,10 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        /// <summary>
+        /// Is using ItemTemplate or no
+        /// </summary>
         public virtual bool IsTemplated
         {
             get

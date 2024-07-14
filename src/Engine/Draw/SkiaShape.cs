@@ -360,6 +360,8 @@ namespace DrawnUi.Maui.Draw
 
         protected SKRoundRect DrawRoundedRect { get; set; }
 
+        SKPath ClipContentPath { get; set; } = new();
+
         public override void OnDisposing()
         {
 
@@ -371,6 +373,7 @@ namespace DrawnUi.Maui.Draw
             DrawPathAligned?.Dispose();
             DrawRoundedRect?.Dispose();
             DrawPathShape?.Dispose();
+            ClipContentPath?.Dispose();
 
             base.OnDisposing();
         }
@@ -384,8 +387,10 @@ namespace DrawnUi.Maui.Draw
             };
         }
 
-        public override SKPath CreateClip(object arguments, bool usePosition)
+        public override SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
         {
+            path ??= new SKPath();
+
             var strokeAwareSize = MeasuredStrokeAwareSize;
             var strokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize;
 
@@ -402,8 +407,6 @@ namespace DrawnUi.Maui.Draw
                 strokeAwareChildrenSize = new(offsetToZero.X, offsetToZero.Y,
                     strokeAwareChildrenSize.Width + offsetToZero.X, strokeAwareChildrenSize.Height + offsetToZero.Y);
             }
-
-            var path = new SKPath();
 
             switch (Type)
             {
@@ -685,15 +688,16 @@ namespace DrawnUi.Maui.Draw
 
                         if (ClipBackgroundColor)
                         {
-                            using var clip = new SKPath();
-                            using var clipContent = CreateClip(arguments, true);
-                            clip.AddPath(clipContent);
-                            var saved = ctx.Canvas.Save();
-                            ctx.Canvas.ClipPath(clip, SKClipOperation.Difference, true);
+                            ClipContentPath ??= new();
+                            ClipContentPath.Reset();
+                            CreateClip(arguments, true, ClipContentPath);
 
+                            var saved = ctx.Canvas.Save();
+
+                            ClipSmart(ctx.Canvas, ClipContentPath, SKClipOperation.Difference);
                             render();
 
-                            ctx.Canvas.Restore();
+                            ctx.Canvas.RestoreToCount(saved);
                         }
                         else
                         {
@@ -728,17 +732,20 @@ namespace DrawnUi.Maui.Draw
             });
 
             //draw children views clipped with shape
-            using var clip = new SKPath();
-            using var clipContent = CreateClip(arguments, true);
-            clip.AddPath(clipContent);
+            ClipContentPath ??= new();
+            ClipContentPath.Reset();
+
+            CreateClip(arguments, true, ClipContentPath);
+
             var saved = ctx.Canvas.Save();
-            ctx.Canvas.ClipPath(clip, SKClipOperation.Intersect, true);
+
+            ClipSmart(ctx.Canvas, ClipContentPath);
 
             var rectForChildren = ContractPixelsRect(strokeAwareChildrenSize, scale, Padding);
 
             DrawViews(ctx, rectForChildren, scale);
 
-            ctx.Canvas.Restore();
+            ctx.Canvas.RestoreToCount(saved);
 
             //last pass for stroke over background or children
             if (willStroke)

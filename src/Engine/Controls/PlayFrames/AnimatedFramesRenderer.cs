@@ -127,9 +127,14 @@ public class AnimatedFramesRenderer : SkiaControl
 
         OnAnimatorInitializing();
 
-        if (AutoPlay && CheckCanStartAnimator())
+        if (_delayedPlay || AutoPlay && CheckCanStartAnimator())
+        {
+            _delayedPlay = false;
             Start();
+        }
     }
+
+    bool _delayedPlay;
 
     protected virtual void OnAnimatorInitializing()
     { }
@@ -161,6 +166,13 @@ public class AnimatedFramesRenderer : SkiaControl
 
     public virtual void Start(int delayMs = 0)
     {
+
+        if (Animator == null)
+        {
+            _delayedPlay = true;
+            return;
+        }
+
         if (Animator.IsRunning)
         {
             Animator.Stop();

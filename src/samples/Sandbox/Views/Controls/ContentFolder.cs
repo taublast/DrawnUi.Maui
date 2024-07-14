@@ -27,43 +27,43 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
         set { SetValue(VerticalMarginProperty, value); }
     }
 
-    public static readonly BindableProperty BacksideSourceProperty = BindableProperty.Create(
-        nameof(BacksideSource),
+    public static readonly BindableProperty SecondarySourceProperty = BindableProperty.Create(
+        nameof(SecondarySource),
         typeof(string),
         typeof(ContentFolder),
         defaultValue: null,
         propertyChanged: ApplySourceProperty);
 
-    public string BacksideSource
+    public string SecondarySource
     {
-        get { return (string)GetValue(BacksideSourceProperty); }
-        set { SetValue(BacksideSourceProperty, value); }
+        get { return (string)GetValue(SecondarySourceProperty); }
+        set { SetValue(SecondarySourceProperty, value); }
     }
 
     private static void ApplySourceProperty(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (oldvalue != newvalue && bindable is ContentFolder control)
         {
-            control.ApplyBacksideSource((string)newvalue);
+            control.ApplySecondarySource((string)newvalue);
         }
     }
 
-    public void SetBackside(SKImage image)
+    public void SetSecondary(SKImage image)
     {
-        var dispose = _imageBackside;
-        _imageBackside = image;
-        if (dispose != _imageBackside)
+        var dispose = _imageSecondary;
+        _imageSecondary = image;
+        if (dispose != _imageSecondary)
             dispose?.Dispose();
 
         UpdateTextures();
     }
 
-    void ApplyBacksideSource(string source)
+    void ApplySecondarySource(string source)
     {
         Task.Run(async () =>
         {
             var background = await LoadSource(source);
-            SetBackside(background);
+            SetSecondary(background);
         });
     }
 
@@ -73,7 +73,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
     {
         base.OnLayoutChanged();
 
-        ApplyBacksideSource(this.BacksideSource);
+        ApplySecondarySource(this.SecondarySource);
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
         _textureFront?.Dispose();
         _textureBack?.Dispose();
 
-        _imageBackside?.Dispose();
+        _imageSecondary?.Dispose();
 
         base.OnDisposing();
     }
@@ -195,7 +195,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
                 _textureFront = front.ToShader();
                 if (back != null)
                 {
-                    _textureBack = _imageBackside.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+                    _textureBack = _imageSecondary.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
                 }
             }
 
@@ -240,7 +240,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
             var cache = content.RenderObject;
             if (_compiledShader != null && cache is { Image: not null })
             {
-                BuildTextures(cache.Image, _imageBackside);
+                BuildTextures(cache.Image, _imageSecondary);
             }
         }
     }
@@ -296,7 +296,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
     /// </summary>
     private SKRuntimeEffectChildren _passTextures;
 
-    private SKImage _imageBackside;
+    private SKImage _imageSecondary;
     protected Vector2 _offset;
     protected Vector2 _origin;
 

@@ -13,14 +13,14 @@ public partial class SmallButton : SkiaButton
     /// Clip effects with rounded rect of the frame inside
     /// </summary>
     /// <returns></returns>
-    public override SKPath CreateClip(object arguments, bool usePosition)
+    public override SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
     {
         if (MainFrame != null)
         {
-            return MainFrame.CreateClip(arguments, usePosition);
+            return MainFrame.CreateClip(arguments, usePosition, path);
         }
 
-        return base.CreateClip(arguments, usePosition);
+        return base.CreateClip(arguments, usePosition, path);
     }
 
     async void AnimatePress(SkiaControl icon)

@@ -134,11 +134,11 @@ public class ChainDropShadowsEffect : BaseChainedEffect
                 (float)shadow.Blur, (float)shadow.Blur,
                 shadow.Color.ToSKColor());
 
-                ctx.Canvas.SaveLayer(Paint);
+                var saved = ctx.Canvas.SaveLayer(Paint);
 
                 drawControl(ctx);
 
-                ctx.Canvas.Restore();
+                ctx.Canvas.RestoreToCount(saved);
             }
 
             return ChainEffectResult.Create(false);

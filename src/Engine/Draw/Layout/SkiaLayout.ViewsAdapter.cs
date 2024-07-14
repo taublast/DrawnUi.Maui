@@ -86,10 +86,10 @@ public class ViewsAdapter : IDisposable
                 {
                     if (_dicoCellsInUse.TryGetValue(index, out SkiaControl hiddenView))
                     {
-                        if (hiddenView is ISkiaCell notify)
-                        {
-                            notify.OnDisappeared();
-                        }
+                        //if (hiddenView is ISkiaCell notify)
+                        //{
+                        //    notify.OnDisappeared();
+                        //}
 
                         _dicoCellsInUse.Remove(index);
                         ReleaseView(hiddenView);
@@ -248,10 +248,10 @@ public class ViewsAdapter : IDisposable
 
                         //Debug.WriteLine($"[InUse] {_dicoCellsInUse.Keys.Select(k => k.ToString()).Aggregate((current, next) => $"{current},{next}")}");
 
-                        if (view is ISkiaCell notify)
-                        {
-                            notify.OnAppearing();
-                        }
+                        //if (view is ISkiaCell notify)
+                        //{
+                        //    notify.OnAppearing();
+                        //}
                     }
 
                     return view;

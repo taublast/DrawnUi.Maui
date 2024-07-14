@@ -5,14 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:mauiNet8="using:MauiNet8"
     xmlns:views="clr-namespace:Sandbox.Views"
-    xmlns:xaml2Pdf="clr-namespace:Sandbox.Views.Xaml2Pdf"
+    x:Name="ThisPage"
     BackgroundColor="Black">
 
     <draw:Canvas
-        Margin="0,32,0,0"
-        BackgroundColor="Black"
         Gestures="Enabled"
         HardwareAcceleration="Enabled"
         HorizontalOptions="Fill"
@@ -24,41 +21,104 @@
             Tag="Wrapper"
             VerticalOptions="Fill">
 
-            <draw:SkiaScroll
+            <draw:SkiaLayout
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill">
 
-                <draw:SkiaLayout
-                    Padding="20,20,20,20"
+                <draw:SkiaScroll
+                    BackgroundColor="Black"
                     HorizontalOptions="Fill"
-                    Spacing="20"
-                    Type="Column"
-                    UseCache="None">
+                    VerticalOptions="Fill">
 
-                    <draw:SkiaMarkdownLabel
-                        Margin="16,0"
-                        FontFamily="OpenSansRegular"
-                        FontSize="15"
-                        HorizontalOptions="Center"
-                        HorizontalTextAlignment="Center"
-                        Text="`SkiaMediaImage` (at the top) is a subclassed `SkiaImage` for displaying any kind of image, while `SkiaGif` (the second control) is a dedicated lightweight GIF-player."
-                        TextColor="White"
-                        UseCache="Operations" />
 
-                    <draw:SkiaMediaImage
-                        HorizontalOptions="Center"
-                        Source="Anims/look.webp" />
-
-                    <draw:SkiaGif
+                    <draw:SkiaLayout
+                        BackgroundColor="Blue"
                         HorizontalOptions="Fill"
-                        Repeat="-1"
-                        Source="Anims/hair.webp" />
+                        Tag="Content"
+                        Type="Column">
 
-                </draw:SkiaLayout>
 
-            </draw:SkiaScroll>
 
-            <!--<controls:ButtonToRoot />-->
+
+                        <!--<controls:AnimatedShaderTransition
+                            BackgroundColor="Black"
+                            ControlFrom="{x:Reference GoFrom}"
+                            ControlTo="{x:Reference GoTo}"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"/>-->
+
+
+
+                        <!--  Simulating view switcher  -->
+                        <draw:SkiaLayout
+                            HeightRequest="350"
+                            HorizontalOptions="Fill"
+                            Tag="Switcher">
+
+                            <!--  simulating a view that would show, drawing below  -->
+                            <draw:SkiaImage
+                                x:Name="GoTo"
+                                Aspect="AspectCover"
+                                HorizontalOptions="Fill"
+                                LoadSourceOnFirstDraw="False"
+                                Source="Images/nico.jpg"
+                                UseCache="Image"
+                                VerticalOptions="Fill" />
+
+                            <!--  simulating a view that is actually active in view switcher  -->
+                            <draw:SkiaLayout
+                                BackgroundColor="Red"
+                                HorizontalOptions="Fill"
+                                Tag="Front"
+                                Type="Column"
+                                VerticalOptions="Fill">
+
+                                <draw:SkiaControl.VisualEffects>
+
+                                    <controls:ShaderTransitionEffect
+                                        SecondarySource="Images/maui1.png"
+                                        ShaderSource="{Binding Source={x:Reference ThisPage}, Path=FullShaderPath}" />
+
+                                </draw:SkiaControl.VisualEffects>
+
+                                <draw:SkiaImage
+                                    Aspect="AspectCover"
+                                    HeightRequest="250"
+                                    HorizontalOptions="Fill"
+                                    LoadSourceOnFirstDraw="False"
+                                    Source="Images/8.jpg"
+                                    UseCache="Image" />
+
+                                <draw:SkiaMarkdownLabel
+                                    Margin="16,0"
+                                    FontFamily="OpenSansRegular"
+                                    FontSize="14"
+                                    HorizontalOptions="Center"
+                                    HorizontalTextAlignment="Center"
+                                    Text="Shader transitions with SkiaSharp 3 preview 😋 _#dotnetmaui_"
+                                    TextColor="White"
+                                    UseCache="Image" />
+
+                                <draw:SkiaButton
+                                    WidthRequest="150"
+                                    CornerRadius="8"
+                                    HorizontalOptions="Center"
+                                    Tapped="SkiaButton_OnTapped"
+                                    Text="{Binding Source={x:Reference ThisPage}, Path=ShaderFile}"
+                                    TextColor="White"
+                                    TintColor="CornflowerBlue" />
+
+                            </draw:SkiaLayout>
+                        </draw:SkiaLayout>
+                    </draw:SkiaLayout>
+
+                </draw:SkiaScroll>
+
+
+
+            </draw:SkiaLayout>
+
+            <controls:ButtonToRoot />
 
             <draw:SkiaLabelFps
                 Margin="0,0,4,24"

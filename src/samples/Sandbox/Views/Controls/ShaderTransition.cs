@@ -3,11 +3,6 @@ using DrawnUi.Maui.Infrastructure;
 
 namespace Sandbox.Views.Controls;
 
-public class ShaderTransitionEffect : ShaderAnimatedEffect
-{
-
-}
-
 public class TestLoopEffect : SkiaShaderEffect, IStateEffect, ISkiaGestureProcessor
 {
 
@@ -53,7 +48,7 @@ public class TestLoopEffect : SkiaShaderEffect, IStateEffect, ISkiaGestureProces
         return uniforms;
     }
 
-    protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKImage snapshot)
+    protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader texture1)
     {
         if (ControlTo == null || ControlTo.RenderObject == null)
         {
@@ -64,9 +59,9 @@ public class TestLoopEffect : SkiaShaderEffect, IStateEffect, ISkiaGestureProces
 
         var snapshot2 = ControlTo.RenderObject.Image;
 
-        if (snapshot != null && snapshot2 != null)
+        if (texture1 != null && snapshot2 != null)
         {
-            var texture1 = snapshot.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+            //var texture1 = snapshot.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
             var texture2 = snapshot2.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
 
             return new SKRuntimeEffectChildren(CompiledShader)

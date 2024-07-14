@@ -90,7 +90,14 @@ public partial class SkiaFontManager
             return SKTypeface.Default;
         }
         var alias = GetRegisteredAlias(fontFamily, fontWeight);
-        return await GetFont(alias);
+        var font = await GetFont(alias);
+
+        //safety check to avoid any chance of crash split_config.arm64_v8a.apk!libSkiaSharp.so (sk_font_set_typeface+60)
+        if (font == null)
+        {
+            return SKTypeface.Default;
+        }
+        return font;
     }
 
     /// <summary>

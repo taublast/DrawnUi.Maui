@@ -181,20 +181,28 @@ public partial class SkiaDecoratedGrid : SkiaLayout
         base.OnLayoutChanged();
 
         UpdateLines();
+    }
 
+    protected override void PostArrange(SKRect destination, float widthRequest, float heightRequest, float scale)
+    {
+        base.PostArrange(destination, widthRequest, heightRequest, scale);
+
+        if (ContainerLines == null)
+        {
+            CreateLines();
+        }
     }
 
     protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
     {
         base.Draw(context, destination, scale);
 
-        //if (ContainerLines == null)
-        //{
-        //    CreateLines();
-        //}
+
 
         if (ContainerLines != null)
+        {
             ContainerLines.Render(context, GetDrawingRectForChildren(Destination, scale), scale);
+        }
 
         FinalizeDrawingWithRenderObject(context, scale);
     }

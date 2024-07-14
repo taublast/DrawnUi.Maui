@@ -481,6 +481,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (PaintDefault.Typeface == null)
                 {
+                    PaintDefault.Typeface = SKTypeface.Default;
                     UpdateFont();
                     return MeasuredSize;
                 }
@@ -498,6 +499,10 @@ namespace DrawnUi.Maui.Draw
                 UpdateFontMetrics(PaintDefault);
 
                 var usePaint = PaintDefault;
+                if (PaintDefault.Typeface == null)
+                {
+                    PaintDefault.Typeface = SKTypeface.Default;
+                }
 
                 if (Spans.Count == 0)
                 {
@@ -769,11 +774,18 @@ namespace DrawnUi.Maui.Draw
 
         private void DisposePaint(ref SKPaint paint)
         {
-            if (paint != null)
+            try
             {
-                paint.Typeface = SKTypeface.Default;  // Preserve cached font from disposing
-                paint.Dispose();
-                paint = null;
+                if (paint != null)
+                {
+                    paint.Typeface = SKTypeface.Default;  // Preserve cached font from disposing
+                    paint.Dispose();
+                    paint = null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
         }
 
@@ -1505,6 +1517,10 @@ namespace DrawnUi.Maui.Draw
                 TypeFace = newFont;
                 _replaceFont = null;
                 OnFontUpdated();
+            }
+            if (TypeFace == null)
+            {
+                TypeFace = SKTypeface.Default;
             }
         }
 

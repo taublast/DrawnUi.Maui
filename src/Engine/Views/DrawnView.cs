@@ -11,6 +11,14 @@ namespace DrawnUi.Maui.Views
     [ContentProperty("Children")]
     public partial class DrawnView : ContentView, IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
+
+        public class DiagnosticData
+        {
+            public int LayersSaved { get; set; }
+        }
+
+        public DiagnosticData Diagnostics = new();
+
         public virtual void Update()
         {
             if (!Super.EnableRendering)
@@ -1049,9 +1057,10 @@ namespace DrawnUi.Maui.Views
 
         public Action<SKPath, SKRect> Clipping { get; set; }
 
-        public virtual SKPath CreateClip(object arguments, bool usePosition)
+        public virtual SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
         {
-            var path = new SKPath();
+            path ??= new SKPath();
+
             if (usePosition)
             {
                 path.AddRect(DrawingRect);
@@ -1589,20 +1598,11 @@ namespace DrawnUi.Maui.Views
         {
             ++renderedFrames;
 
-
-            //if (CanvasView is SkiaViewAccelerated accelerated)
-            //{
-            //    var c = accelerated.GRContext;
-            //    Console.WriteLine($"[FRAME] {++renderedFrames} {c} {destination.Width}x{destination.Height} at {scale}");
-            //}
+            //Debug.WriteLine($"[DRAW] {Tag}");
 
             DisposeDisposables();
 
-            //Trace.WriteLine($"[1] {destination.Width}x{destination.Height} at {scale}");
-
-            if (IsDisposed || UpdateLocked
-                           //|| Super.StopRenderingInBackground
-                           )
+            if (IsDisposed || UpdateLocked)
             {
                 return;
             }
@@ -1625,7 +1625,6 @@ namespace DrawnUi.Maui.Views
                     DrawingThreads++;
 
                     FrameTime = CanvasView.FrameTime;
-                    //context.FrameTimeNanos = FrameTime;
 
                     FPS = CanvasFps;
 
@@ -2416,6 +2415,7 @@ namespace DrawnUi.Maui.Views
         }
         ISkiaGestureListener _focusedChild;
         private ISkiaDrawable _canvasView;
+        private bool _wasBusy;
 
         /// <summary>
         /// 
@@ -2464,14 +2464,16 @@ namespace DrawnUi.Maui.Views
                 {
                     if (CanvasView != null)
                     {
-                        if (!CanvasView.IsDrawing && CanDraw && !_isWaiting)  //passed checks
+                        if (CanDraw && !CanvasView.IsDrawing && !_isWaiting)  //passed checks //
                         {
+                            _wasBusy = false;
                             _isWaiting = true;
                             InvalidatedCanvas++;
                             MainThread.BeginInvokeOnMainThread(async () =>
                             {
                                 try
                                 {
+#if !WINDOWS
                                     //cap fps around 120fps
                                     var nowNanos = Super.GetCurrentTimeNanos();
                                     var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
@@ -2479,7 +2481,7 @@ namespace DrawnUi.Maui.Views
 
                                     var needWait =
                                         Super.CapMicroSecs
-#if IOS || MACCATALYST  
+#if IOS || MACCATALYST
                                 * 2 // apple is double buffered                             
 #endif
                                         - elapsedMicros;
@@ -2490,6 +2492,10 @@ namespace DrawnUi.Maui.Views
                                     if (ms < 1)
                                         ms = 1;
                                     await Task.Delay(ms);
+#else
+                                    await Task.Delay(1);
+#endif
+
                                     CanvasView?.Update(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
                                 }
                                 catch (Exception e)
@@ -2499,10 +2505,18 @@ namespace DrawnUi.Maui.Views
                                 finally
                                 {
                                     _isWaiting = false;
+                                    if (_wasBusy)
+                                    {
+                                        Update();
+                                    }
                                 }
 
                             });
                             return;
+                        }
+                        else
+                        {
+                            _wasBusy = true;
                         }
                     }
                     OrderedDraw = false;

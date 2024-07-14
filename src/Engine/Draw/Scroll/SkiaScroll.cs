@@ -914,12 +914,14 @@ namespace DrawnUi.Maui.Draw
                                 if (Math.Abs(velocityX) > _minVelocity && !bounceX)
                                 {
                                     IsUserFocused = false;
+                                    _vectorAnimatorBounceX.Stop();
                                     fling = StartToFlingFrom(_animatorFlingX, ViewportOffsetX, velocityX);
                                 }
 
                                 if (Math.Abs(velocityY) > _minVelocity && !bounceY)
                                 {
                                     IsUserFocused = false;
+                                    _vectorAnimatorBounceY.Stop();
                                     fling = StartToFlingFrom(_animatorFlingY, ViewportOffsetY, velocityY);
                                 }
                             }
@@ -2615,17 +2617,20 @@ namespace DrawnUi.Maui.Draw
                 var posX = (float)Math.Round(ViewportOffsetX * _zoomedScale);
                 var posY = (float)Math.Round(ViewportOffsetY * _zoomedScale);
 
+                //var posX = (float)(ViewportOffsetX * _zoomedScale);
+                //var posY = (float)(ViewportOffsetY * _zoomedScale);
+
                 var needReposition =
                                      _updatedViewportForPixY != posY
                                  || _updatedViewportForPixX != posX
-                                 || _destination != Destination;
+                                 || _destination != destination;
 
                 //reposition viewport (scroll)
                 if (needReposition)
                 {
                     _updatedViewportForPixX = posX;
                     _updatedViewportForPixY = posY;
-                    _destination = Destination;
+                    _destination = destination;
 
                     PositionViewport(DrawingRect, new(posX, posY), _zoomedScale, (float)scale);
 

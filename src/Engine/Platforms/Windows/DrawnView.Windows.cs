@@ -1,5 +1,6 @@
-﻿using Microsoft.Maui.Platform;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Platform;
+using Microsoft.Maui.Platform;
 using System.Runtime.CompilerServices;
 using Visibility = Microsoft.UI.Xaml.Visibility;
 
@@ -38,8 +39,10 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
+#if !LEGACY
             Super.OnFrame -= OnSuperFrame;
             Super.OnFrame += OnSuperFrame;
+#endif
         }
 
         protected virtual void PlatformHardwareAccelerationChanged()
@@ -47,6 +50,37 @@ namespace DrawnUi.Maui.Views
 
         }
 
+
+
+
+#if LEGACY
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool CheckCanDraw()
+        {
+            if (UpdateLocked && StopDrawingWhenUpdateIsLocked)
+                return false;
+
+            return CanvasView != null
+                   && !IsRendering
+                   && IsDirty
+                   && IsVisible;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void UpdatePlatform()
+        {
+            IsDirty = true;
+            if (!OrderedDraw && CheckCanDraw())
+            {
+                OrderedDraw = true;
+                InvalidateCanvas();
+            }
+        }
+
+
+
+#else
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void UpdatePlatform()
         {
@@ -64,6 +98,8 @@ namespace DrawnUi.Maui.Views
                && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
                && IsVisible && Super.EnableRendering;
         }
+
+#endif
 
         private long test;
         private void OnSuperFrame(object sender, EventArgs e)

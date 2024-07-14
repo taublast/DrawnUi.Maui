@@ -26,7 +26,7 @@ public class SkiaHoverMask : SkiaShape
                     using var clipContent = CreateClip(arguments, true);
                     clipInsideParent.AddPath(clipContent);
 
-                    ctx.Canvas.ClipPath(clipInsideParent, SKClipOperation.Difference, true);
+                    ClipSmart(ctx.Canvas, clipInsideParent, SKClipOperation.Difference);
 
                     //paint this taking viewport dimensions
                     ctx.Canvas.DrawRect(Parent.DrawingRect, paint);
@@ -35,7 +35,7 @@ public class SkiaHoverMask : SkiaShape
 
                     //todo add stroke property?
 
-                    ctx.Canvas.Restore();
+                    ctx.Canvas.RestoreToCount(saved);
                 }
             }
 

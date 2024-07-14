@@ -1,4 +1,6 @@
-﻿namespace DrawnUi.Maui.Infrastructure
+﻿using Windows.Storage;
+
+namespace DrawnUi.Maui.Infrastructure
 {
     public partial class Files
     {
@@ -10,6 +12,14 @@
         public static string GetPublicDirectory()
         {
             return Windows.Storage.KnownFolders.DocumentsLibrary.Path;
+        }
+
+        public static List<string> ListAssets(string sub)
+        {
+            StorageFolder installFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            StorageFolder subfolder = installFolder.GetFolderAsync(sub).GetAwaiter().GetResult();
+            IReadOnlyList<StorageFile> files = subfolder.GetFilesAsync().GetAwaiter().GetResult();
+            return files.Select(f => f.Name).ToList();
         }
 
         public static void Share(string message, IEnumerable<string> fullFilenames)

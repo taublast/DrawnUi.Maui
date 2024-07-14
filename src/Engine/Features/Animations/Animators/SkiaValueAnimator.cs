@@ -23,7 +23,6 @@ public class SkiaValueAnimator : AnimatorBase
             this.tcs?.TrySetCanceled();
         }
         cancellationTokenRegistration.Dispose();
-
     }
 
     public virtual async Task RunAsync(Action initialize, CancellationToken cancellationToken = default)
@@ -34,16 +33,16 @@ public class SkiaValueAnimator : AnimatorBase
         }
 
         this.tcs = new TaskCompletionSource<bool>();
-
         this.cancellationTokenRegistration = cancellationToken.Register(() =>
         {
-            if (this.IsRunning)
-            {
-                this.Stop();
-            }
+            //if (this.IsRunning)
+            //{
+            //    this.Stop();
+            //}
         });
 
         initialize?.Invoke();
+
         Start();
 
         await this.tcs.Task;

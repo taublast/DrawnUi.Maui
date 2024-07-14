@@ -980,6 +980,10 @@ namespace DrawnUi.Maui.Draw
             {
                 SetupRenderingWithComposition(ctx, destination);
             }
+            else
+            {
+                DirtyChildren.Clear();
+            }
 
             base.Paint(ctx, destination, scale, arguments);
 
@@ -993,16 +997,10 @@ namespace DrawnUi.Maui.Draw
                 drawnChildrenCount = DrawViews(ctx, rectForChildren, scale);
             }
             else
-            //grid
             if (Type == LayoutType.Grid) //todo add optimization for OptimizeRenderingViewport
             {
                 drawnChildrenCount = DrawChildrenGrid(ctx, rectForChildren, scale);
             }
-            //else
-            //if (Type == LayoutType.Row || Type == LayoutType.Column)
-            //{
-            //    drawnChildrenCount = DrawChildrenStack(ctx, rectForChildren, scale);
-            //}
             else
             //stacklayout
             if (IsStack)
@@ -1288,13 +1286,6 @@ namespace DrawnUi.Maui.Draw
 
             }
 
-            //if (newvalue is IList newList)
-            //{
-            //	foreach (var context in newList)
-            //	{
-            //		//todo
-            //	}
-            //}
 
             if (newvalue is INotifyCollectionChanged newCollection)
             {
@@ -1302,9 +1293,7 @@ namespace DrawnUi.Maui.Draw
                 newCollection.CollectionChanged += skiaControl.ItemsSourceCollectionChanged;
             }
 
-            skiaControl.PostponeInvalidation(nameof(OnItemSourceChanged), skiaControl.OnItemSourceChanged);
-
-            //skiaControl.OnItemSourceChanged();
+            skiaControl.OnItemSourceChanged();
         }
 
         private static void NeedUpdateItemsSource(BindableObject bindable, object oldvalue, object newvalue)
@@ -1313,8 +1302,8 @@ namespace DrawnUi.Maui.Draw
 
             skiaControl.PostponeInvalidation(nameof(UpdateItemsSource), skiaControl.UpdateItemsSource);
 
-            //skiaControl.OnItemSourceChanged();
-            //skiaControl.Invalidate();
+            skiaControl.Update();
+
         }
 
         void UpdateItemsSource()
@@ -1326,8 +1315,8 @@ namespace DrawnUi.Maui.Draw
 
         public override void OnItemTemplateChanged()
         {
-            PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
-            //OnItemSourceChanged();
+            //PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
+            OnItemSourceChanged();
         }
 
         public bool ApplyNewItemsSource { get; set; }
@@ -1516,9 +1505,8 @@ namespace DrawnUi.Maui.Draw
                     GetTemplatesPoolLimit(),
                     GetTemplatesPoolPrefill());
 
-                // Invalidate();
-
-                // return;
+                Invalidate();
+                return;
             }
 
             break;

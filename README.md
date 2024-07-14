@@ -18,14 +18,11 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's new
 
-* `SkiaScroll` fixed scrolling vertically + horizontally at the same time (`Orientation="Both"`).
-* `SkiaShell` Navigated and Navigating events now report popups too.
-* `SkiaMediaImage` a subclassed `SkiaImage` for displaying any kind of images (image/animated gif/more..)
-* `SkiaGif` a dedicated lightweight GIF-player with playback control properties. See Sandbox project.
-* Fixed gestures inside `ImageCacheComposite` cache. 
-* Fixed bug `SkiaShell` navigation gets locked when spamming popups.
-* Layout optimizations.
-* Nuget 1.2.3.4
+* Breaking ``ISkiaCell`` changed, check out demo app FestCellWithBanner new usage.
+* Android loop changed along with its OpenGL renderer.
+* Gestures fix: will not trigger Tapped after raised Longpressing.
+* Other fixes.
+* Nuget 1.2.3.6
 
 ## Demo Apps
 
@@ -597,6 +594,15 @@ It will render a mask over its children when hovered, think of it as an inverted
 
 ## Previously
 
+* `SkiaScroll` fixed scrolling vertically + horizontally at the same time (`Orientation="Both"`).
+* `SkiaShell` Navigated and Navigating events now report popups too.
+* `SkiaMediaImage` a subclassed `SkiaImage` for displaying any kind of images (image/animated gif/more..)
+* `SkiaGif` a dedicated lightweight GIF-player with playback control properties. See Sandbox project.
+* Fixed gestures inside `ImageCacheComposite` cache. 
+* Fixed bug `SkiaShell` navigation gets locked when spamming popups.
+* Layout optimizations.
+* Nuget 1.2.3.4
+* 
 * `SkiaLayout` Column/Row uses 2 layout passes when needed, can now use full alignment  options inside.
 * Critical fixes for Release builds.
 
