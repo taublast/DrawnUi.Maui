@@ -131,12 +131,12 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
             bool isDirty = OnDraw.Invoke(paintArgs.Surface, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
 
 #if ANDROID
-            if (maybeLowEnd && FPS > 160)
+            if (maybeLowEnd && FPS > 60)
             {
                 maybeLowEnd = false;
             }
 
-            if (maybeLowEnd && isDirty && _fps < 55) //kick refresh for low-end devices
+            if (maybeLowEnd && isDirty && _fps < 30) //kick refresh for low-end devices
             {
                 InvalidateSurface();
                 return;

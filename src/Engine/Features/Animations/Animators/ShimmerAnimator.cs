@@ -92,7 +92,7 @@ public class ShimmerAnimator : RenderingAnimator
 
                     canvas.DrawRect(rect, Paint);
 
-                    canvas.Restore();
+                    canvas.RestoreToCount(saved);
                 }
             });
 

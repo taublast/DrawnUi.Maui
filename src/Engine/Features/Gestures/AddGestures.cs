@@ -68,6 +68,20 @@ public static partial class AddGestures
             if (_parent == null || !_parent.CanDraw)
                 return null;
 
+
+            if (args.Type == TouchActionResult.LongPressing)
+            {
+                var command = GetCommandLongPressing(_parent);
+                if (command != null)
+                {
+                    var parameter = GetCommandLongPressingParameter(_parent);
+                    if (parameter == null)
+                        parameter = _parent.BindingContext;
+                    command?.Execute(parameter);
+                    return this;
+                }
+            }
+            else
             if (args.Type == TouchActionResult.Tapped)
             {
                 var anim = GetAnimationTapped(_parent);
@@ -104,19 +118,6 @@ public static partial class AddGestures
                 {
                     var parameter = GetCommandTappedParameter(_parent);
                     //Trace.WriteLine($"[CommandTapped] ctx - {_parent.BindingContext} - {parameter}");
-                    if (parameter == null)
-                        parameter = _parent.BindingContext;
-                    command?.Execute(parameter);
-                    return this;
-                }
-            }
-            else
-            if (args.Type == TouchActionResult.LongPressing)
-            {
-                var command = GetCommandLongPressing(_parent);
-                if (command != null)
-                {
-                    var parameter = GetCommandLongPressingParameter(_parent);
                     if (parameter == null)
                         parameter = _parent.BindingContext;
                     command?.Execute(parameter);

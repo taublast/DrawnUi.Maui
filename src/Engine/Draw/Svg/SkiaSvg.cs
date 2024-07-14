@@ -914,11 +914,11 @@ namespace DrawnUi.Maui.Draw
 
                     var saved = canvas.Save();
 
-                    canvas.ClipPath(path, SKClipOperation.Intersect, true);
+                    ClipSmart(canvas, path);
 
                     canvas.DrawPicture(picture, display.Left, display.Top, paint);
 
-                    canvas.Restore();
+                    canvas.RestoreToCount(saved);
                 }
             }
             else
@@ -1147,11 +1147,11 @@ namespace DrawnUi.Maui.Draw
                             }
 
                             var saved = ctx.Canvas.Save();
-                            ctx.Canvas.ClipPath(clipPath, SKClipOperation.Intersect, true);
+                            ClipSmart(ctx.Canvas, clipPath);
 
                             ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
 
-                            ctx.Canvas.Restore();
+                            ctx.Canvas.RestoreToCount(saved);
 
                             clipPath.Dispose();
                         }

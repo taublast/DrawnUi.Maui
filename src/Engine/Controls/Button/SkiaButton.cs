@@ -78,7 +78,7 @@ public class SkiaButton : SkiaLayout, ISkiaGestureListener
     /// Clip effects with rounded rect of the frame inside
     /// </summary>
     /// <returns></returns>
-    public override SKPath CreateClip(object arguments, bool usePosition)
+    public override SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
     {
         if (MainFrame != null)
         {

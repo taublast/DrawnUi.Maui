@@ -980,6 +980,10 @@ namespace DrawnUi.Maui.Draw
             {
                 SetupRenderingWithComposition(ctx, destination);
             }
+            else
+            {
+                DirtyChildren.Clear();
+            }
 
             base.Paint(ctx, destination, scale, arguments);
 
@@ -993,16 +997,10 @@ namespace DrawnUi.Maui.Draw
                 drawnChildrenCount = DrawViews(ctx, rectForChildren, scale);
             }
             else
-            //grid
             if (Type == LayoutType.Grid) //todo add optimization for OptimizeRenderingViewport
             {
                 drawnChildrenCount = DrawChildrenGrid(ctx, rectForChildren, scale);
             }
-            //else
-            //if (Type == LayoutType.Row || Type == LayoutType.Column)
-            //{
-            //    drawnChildrenCount = DrawChildrenStack(ctx, rectForChildren, scale);
-            //}
             else
             //stacklayout
             if (IsStack)
@@ -1507,9 +1505,8 @@ namespace DrawnUi.Maui.Draw
                     GetTemplatesPoolLimit(),
                     GetTemplatesPoolPrefill());
 
-                // Invalidate();
-
-                // return;
+                Invalidate();
+                return;
             }
 
             break;

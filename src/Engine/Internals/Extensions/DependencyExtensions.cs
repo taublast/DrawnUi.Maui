@@ -9,6 +9,7 @@ using Microsoft.Maui.LifecycleEvents;
 using Microsoft.Maui.Platform;
 using Polly;
 using Polly.Timeout;
+using SkiaSharp.Views.Maui.Controls.Compatibility;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using System.Net;
 using System.Net.Http.Headers;
@@ -57,6 +58,11 @@ public static class DependencyExtensions
         builder.ConfigureMauiHandlers(handlers =>
         {
 #if ANDROID
+
+#if !SKIA3
+            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(FixedSKGLViewRenderer));
+#endif
+
             handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));

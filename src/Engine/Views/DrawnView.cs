@@ -11,6 +11,14 @@ namespace DrawnUi.Maui.Views
     [ContentProperty("Children")]
     public partial class DrawnView : ContentView, IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
+
+        public class DiagnosticData
+        {
+            public int LayersSaved { get; set; }
+        }
+
+        public DiagnosticData Diagnostics = new();
+
         public virtual void Update()
         {
             if (!Super.EnableRendering)
@@ -1049,9 +1057,10 @@ namespace DrawnUi.Maui.Views
 
         public Action<SKPath, SKRect> Clipping { get; set; }
 
-        public virtual SKPath CreateClip(object arguments, bool usePosition)
+        public virtual SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
         {
-            var path = new SKPath();
+            path ??= new SKPath();
+
             if (usePosition)
             {
                 path.AddRect(DrawingRect);
@@ -1589,20 +1598,11 @@ namespace DrawnUi.Maui.Views
         {
             ++renderedFrames;
 
-
-            //if (CanvasView is SkiaViewAccelerated accelerated)
-            //{
-            //    var c = accelerated.GRContext;
-            //    Console.WriteLine($"[FRAME] {++renderedFrames} {c} {destination.Width}x{destination.Height} at {scale}");
-            //}
+            //Debug.WriteLine($"[DRAW] {Tag}");
 
             DisposeDisposables();
 
-            //Trace.WriteLine($"[1] {destination.Width}x{destination.Height} at {scale}");
-
-            if (IsDisposed || UpdateLocked
-                           //|| Super.StopRenderingInBackground
-                           )
+            if (IsDisposed || UpdateLocked)
             {
                 return;
             }
@@ -1625,7 +1625,6 @@ namespace DrawnUi.Maui.Views
                     DrawingThreads++;
 
                     FrameTime = CanvasView.FrameTime;
-                    //context.FrameTimeNanos = FrameTime;
 
                     FPS = CanvasFps;
 

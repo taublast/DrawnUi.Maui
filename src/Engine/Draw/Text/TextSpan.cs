@@ -182,9 +182,11 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         get => _typeFace;
         set
         {
-            if (Equals(value, _typeFace)) return;
-            _typeFace = value;
-            OnPropertyChanged();
+            if (_typeFace != value)
+            {
+                _typeFace = value;
+                OnPropertyChanged();
+            }
         }
     }
 
@@ -334,12 +336,20 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
     {
         Parent = null;
 
-        if (Paint != null)
+        try
         {
-            Paint.Typeface = SKTypeface.Default; //do not dipose typeface that could be cached and reused
-            Paint.Dispose();
-            Paint = null;
+            if (Paint != null)
+            {
+                Paint.Typeface = SKTypeface.Default; //do not dipose typeface that could be cached and reused
+                Paint.Dispose();
+                Paint = null;
+            }
         }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
 
         CommandTapped = null;
         Tapped = null;
@@ -436,7 +446,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         Paint = new()
         {
             IsAntialias = true,
-            Typeface = TypeFace
+            Typeface = _typeFace
         };
     }
 

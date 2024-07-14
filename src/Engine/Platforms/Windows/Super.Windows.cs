@@ -33,7 +33,7 @@ namespace DrawnUi.Maui.Draw
 
         static Looper Looper { get; set; }
 
-        public static EventHandler OnFrame;
+        public static event EventHandler OnFrame;
 
         /// <summary>
         /// Opens web link in native browser

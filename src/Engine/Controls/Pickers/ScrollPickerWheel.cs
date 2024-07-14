@@ -176,7 +176,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
 
             var ret = base.DrawChild(context, dest, child, scale);
 
-            context.Canvas.Restore();
+            context.Canvas.RestoreToCount(saved);
 
             return true;
         }

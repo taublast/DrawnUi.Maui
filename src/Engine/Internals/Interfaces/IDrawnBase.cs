@@ -40,7 +40,7 @@ public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
     /// If applyPosition is false will create clip without using drawing posiition, like if was drawing at 0,0.
     /// </summary>
     /// <returns></returns>
-    SKPath CreateClip(object arguments, bool usePosition);
+    SKPath CreateClip(object arguments, bool usePosition, SKPath path = null);
 
     bool RegisterAnimator(ISkiaAnimator animator);
 

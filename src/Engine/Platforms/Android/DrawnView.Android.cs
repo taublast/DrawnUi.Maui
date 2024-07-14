@@ -82,7 +82,7 @@ namespace DrawnUi.Maui.Views
 
         protected virtual void DisposePlatform()
         {
-            Super.ChoreographerCallback -= OnChoreographer;
+            Super.OnFrame -= OnChoreographer;
         }
 
         object lockFrame = new();
@@ -113,8 +113,8 @@ namespace DrawnUi.Maui.Views
 
         public virtual void SetupRenderingLoop()
         {
-            Super.ChoreographerCallback -= OnChoreographer;
-            Super.ChoreographerCallback += OnChoreographer;
+            Super.OnFrame -= OnChoreographer;
+            Super.OnFrame += OnChoreographer;
         }
 
         protected virtual void PlatformHardwareAccelerationChanged()

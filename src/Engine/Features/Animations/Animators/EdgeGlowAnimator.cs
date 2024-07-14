@@ -56,12 +56,13 @@ public class EdgeGlowAnimator : RenderingAnimator
                         clipContent.Offset((float)(control.TranslationX * scale), (float)(control.TranslationY * scale));
                         clipInsideParent.AddPath(clipContent);
 
-                        context.Canvas.Save();
-                        context.Canvas.ClipPath(clipInsideParent, SKClipOperation.Intersect, true);
+                        var count = context.Canvas.Save();
+
+                        SkiaControl.ClipSmart(context.Canvas, clipInsideParent);
 
                         Draw();
 
-                        context.Canvas.Restore();
+                        context.Canvas.RestoreToCount(count);
                     }
                 }
                 else

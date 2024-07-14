@@ -58,10 +58,12 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
                 {
                     ApplyControlClipping(control, clipInsideParent, selfDrawingLocation);
 
-                    context.Canvas.Save();
-                    context.Canvas.ClipPath(clipInsideParent, SKClipOperation.Intersect, true);
+                    var count = context.Canvas.Save();
+
+                    SkiaControl.ClipSmart(context.Canvas, clipInsideParent);
                     draw();
-                    context.Canvas.Restore();
+
+                    context.Canvas.RestoreToCount(count);
                 }
             }
             else
@@ -101,5 +103,6 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
             clipContent.Offset((float)(control.TranslationX * control.RenderingScale), (float)(control.TranslationY * control.RenderingScale));
             clipInsideParent.AddPath(clipContent);
         }
+        clipContent.Dispose();
     }
 }

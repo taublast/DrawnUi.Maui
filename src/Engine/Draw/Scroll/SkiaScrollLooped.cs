@@ -368,7 +368,7 @@ public class SkiaScrollLooped : SkiaScroll
 
                                 DrawViews(context, childRect, zoomedScale, debug);
 
-                                context.Canvas.Restore();
+                                context.Canvas.RestoreToCount(count);
                             }
                             else
                             {

@@ -14,9 +14,12 @@ public partial class Super
     public static Android.App.Activity MainActivity { get; set; }
 
     private static FrameCallback _frameCallback;
+
     static bool _loopStarting = false;
     static bool _loopStarted = false;
-    public static event EventHandler ChoreographerCallback;
+
+    public static event EventHandler OnFrame;
+    static Looper Looper { get; set; }
 
     public static void Init(Android.App.Activity activity)
     {
@@ -48,36 +51,61 @@ public partial class Super
 
         VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
 
+        bool isRendering = false;
+        object lockFrane = new();
+
+        /*
         Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
         {
             _frameCallback = new FrameCallback((nanos) =>
             {
-                ChoreographerCallback?.Invoke(null, null);
+                if (isRendering)
+                    return;
+                isRendering = true;
+                OnFrame?.Invoke(null, null);
                 Choreographer.Instance.PostFrameCallback(_frameCallback);
+                isRendering = false;
             });
 
             while (!_loopStarted)
             {
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    if (_loopStarting)
-                        return;
-                    _loopStarting = true;
-
-                    if (MainThread.IsMainThread) //Choreographer is available
+                    lock (lockFrane)
                     {
-                        if (!_loopStarted)
+                        if (_loopStarting)
+                            return;
+
+                        _loopStarting = true;
+
+                        if (MainThread.IsMainThread) // Choreographer is available
                         {
-                            _loopStarted = true;
-                            Choreographer.Instance.PostFrameCallback(_frameCallback);
+                            if (!_loopStarted)
+                            {
+                                _loopStarted = true;
+                                Choreographer.Instance.PostFrameCallback(_frameCallback);
+                            }
                         }
+
+                        _loopStarting = false;
                     }
-                    _loopStarting = false;
                 });
+
+                if (_loopStarted)
+                    break;
+
                 await Task.Delay(100);
             }
+
+        });
+        */
+
+        Looper = new(() =>
+        {
+            OnFrame?.Invoke(null, null);
         });
 
+        Looper.StartOnMainThread(120);
     }
 
 

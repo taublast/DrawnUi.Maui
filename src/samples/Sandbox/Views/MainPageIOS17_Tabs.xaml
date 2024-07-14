@@ -31,7 +31,7 @@
                 <![CDATA[ 
                                  
 <?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
  viewBox="0 0 576 512" style="enable-background:new 0 0 576 512;" xml:space="preserve">
 <style type="text/css">
 .st0{fill:none;stroke:#000000;stroke-width:30;stroke-miterlimit:10;}
@@ -115,10 +115,9 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                 RowDefinitions="0,80,*"
                 Spacing="0"
                 Type="Grid"
-                UseCache="ImageComposite"
                 VerticalOptions="Fill">
 
-                <draw:SkiaMarkdownLabel
+                <!--<draw:SkiaMarkdownLabel
                     FontSize="20"
                     HorizontalOptions="Center"
                     HorizontalTextAlignment="Center"
@@ -127,7 +126,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                     TextColor="#ABABAB"
                     TranslationY="0"
                     UseCache="Operations"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center" />-->
 
                 <!--  TABS HEADER  -->
                 <draw:SkiaShape
@@ -135,7 +134,7 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                     Margin="16,16,16,0"
                     CornerRadius="24"
                     HorizontalOptions="Fill"
-                    UseCache="ImageDoubleBuffered">
+                    UseCache="GPU">
 
                     <!--  Custom drawn control linked to the content SkiaCarousel  -->
                     <!--  draws top-ZIndex child with a dinamically positionned clip  -->

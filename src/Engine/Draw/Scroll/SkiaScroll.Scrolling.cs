@@ -486,6 +486,7 @@ public partial class SkiaScroll
         if (displacement != 0)
         {
             var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
+            _animatorFlingX.Stop();
             _vectorAnimatorBounceX.Initialize(offsetTo, displacement, velocity, spring);
             _vectorAnimatorBounceX.Start();
         }
@@ -505,6 +506,7 @@ public partial class SkiaScroll
 
         if (displacement != 0)
         {
+            _animatorFlingY.Stop();
             var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
             _vectorAnimatorBounceY.Initialize(offsetTo, displacement, velocity, spring);
             _vectorAnimatorBounceY.Start();
