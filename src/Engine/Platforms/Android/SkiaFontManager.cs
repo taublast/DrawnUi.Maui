@@ -3,7 +3,7 @@
     public partial class SkiaFontManager
     {
 
-        public async Task<SKTypeface> GetFont(string alias)
+        public SKTypeface GetFont(string alias)
         {
 
             if (Fonts.TryGetValue(alias, out var existing))
@@ -21,7 +21,7 @@
                     var realName = registrar.GetFont(alias);
                     if (!string.IsNullOrEmpty(realName))
                     {
-                        using (Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(realName))
+                        using (Stream fileStream = FileSystem.Current.OpenAppPackageFileAsync(realName).GetAwaiter().GetResult())
                         {
                             font = SKTypeface.FromStream(fileStream);
                         }
@@ -41,7 +41,9 @@
                 {
                     throw new Exception($"[SKIA] Couldn't create font {alias}");
                 }
-                font = SKTypeface.CreateDefault();
+
+                font = SkiaFontManager.DefaultTypeface;
+
                 Trace.WriteLine($"[SKIA] Couldn't create font {alias}");
             }
             else

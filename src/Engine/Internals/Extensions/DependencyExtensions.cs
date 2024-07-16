@@ -136,9 +136,7 @@ public static class DependencyExtensions
 
         Super.OnNativeAppCreated += (s, a) =>
         {
-
             Super.App = Super.Services.GetRequiredService<IApplication>();
-
 
             //bug: if you uncomment this you get constant GC collects on android
             //just for refreshing an empty skiasharp view with nothing there

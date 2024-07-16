@@ -4,6 +4,47 @@ namespace DrawnUi.Maui.Draw;
 
 public partial class SkiaFontManager
 {
+    static SkiaFontManager()
+    {
+        DefaultTypeface = SKTypeface.CreateDefault();
+    }
+
+    public bool Initialized { get; set; }
+
+    public static SKTypeface DefaultTypeface { get; }
+
+    private object _lockInitialization = new();
+
+    public void Initialize()
+    {
+        if (!Initialized)
+        {
+            lock (_lockInitialization)
+            {
+                var instance = FontRegistrar as FontRegistrar;
+                var type = instance.GetType();
+                var fields = type.GetAllHiddenFields();
+                var field = fields.First(x => x.Name == "_nativeFonts");
+                var fonts = (Dictionary<string, (string Filename, string? Alias)>)field.GetValue(instance);
+                foreach (var data in fonts)
+                {
+                    var file = data.Value.Filename;
+                    using (Stream fileStream = FileSystem.Current.OpenAppPackageFileAsync(file).GetAwaiter().GetResult())
+                    {
+                        var font = SKTypeface.FromStream(fileStream);
+                        if (font == null)
+                        {
+                            throw new ApplicationException($"Failed to load font {file}");
+                        }
+                        Fonts[data.Value.Alias] = font;
+                    }
+                }
+
+                Initialized = true;
+            }
+        }
+    }
+
     public static bool ThrowIfFailedToCreateFont = true;
 
     static SKFontManager _SKFontManager;
@@ -43,7 +84,7 @@ public partial class SkiaFontManager
 
 #if (!ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
-    public async Task<SKTypeface> GetFont(string alias)
+    public SKTypeface GetFont(string alias)
     {
         throw new NotImplementedException();
     }
@@ -83,19 +124,19 @@ public partial class SkiaFontManager
         return alias;
     }
 
-    public async Task<SKTypeface> GetFont(string fontFamily, int fontWeight)
+    public SKTypeface GetFont(string fontFamily, int fontWeight)
     {
         if (string.IsNullOrEmpty(fontFamily))
         {
-            return SKTypeface.Default;
+            return SkiaFontManager.DefaultTypeface;
         }
         var alias = GetRegisteredAlias(fontFamily, fontWeight);
-        var font = await GetFont(alias);
+        var font = GetFont(alias);
 
         //safety check to avoid any chance of crash split_config.arm64_v8a.apk!libSkiaSharp.so (sk_font_set_typeface+60)
         if (font == null)
         {
-            return SKTypeface.Default;
+            return SkiaFontManager.DefaultTypeface;
         }
         return font;
     }
@@ -266,9 +307,9 @@ public partial class SkiaFontManager
                             font = SKTypeface.FromStream(fileStream);
 
                             if (font == null)
-                                font = SKTypeface.CreateDefault();
-                        }
+                                font = DefaultTypeface;
 
+                        }
 
                     }
                 }
@@ -297,7 +338,7 @@ public partial class SkiaFontManager
             return font;
         }
 
-        return SKTypeface.Default;
+        return SkiaFontManager.DefaultTypeface;
     }
 
     public SKTypeface GetEmbeededFont(string filename, Assembly assembly, string alias = null)
@@ -321,7 +362,7 @@ public partial class SkiaFontManager
             {
 
                 if (stream == null)
-                    return SKTypeface.Default;
+                    return SkiaFontManager.DefaultTypeface;
 
                 font = SKTypeface.FromStream(stream);
                 if (font != null)
@@ -334,7 +375,7 @@ public partial class SkiaFontManager
         }
 
         if (font == null)
-            font = SKTypeface.Default;
+            font = SkiaFontManager.DefaultTypeface;
 
         return font;
 

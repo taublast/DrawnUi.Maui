@@ -49,7 +49,7 @@ public partial class Super
             Super.StatusBarHeight = 0;
         }
 
-        VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
+        //VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
 
         bool isRendering = false;
         object lockFrane = new();
@@ -99,6 +99,8 @@ public partial class Super
 
         });
         */
+
+        InitShared();
 
         Looper = new(() =>
         {

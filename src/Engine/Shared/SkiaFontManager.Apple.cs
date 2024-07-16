@@ -5,7 +5,7 @@ namespace DrawnUi.Maui.Draw
     public partial class SkiaFontManager
     {
 
-        public async Task<SKTypeface> GetFont(string alias)
+        public SKTypeface GetFont(string alias)
         {
             if (Fonts.TryGetValue(alias, out var existing))
             {
@@ -27,7 +27,7 @@ namespace DrawnUi.Maui.Draw
                         x.Filename == alias
                         || x.Alias == alias);
 
-                    using (Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(registered.Filename))
+                    using (Stream fileStream = FileSystem.Current.OpenAppPackageFileAsync(registered.Filename).GetAwaiter().GetResult())
                     {
                         font = SKTypeface.FromStream(fileStream);
                     }
@@ -46,7 +46,7 @@ namespace DrawnUi.Maui.Draw
                     throw new Exception($"[SKIA] Couldn't create font {alias}");
                 }
 
-                font = SKTypeface.CreateDefault();
+                font = DefaultTypeface;
                 Trace.WriteLine($"[SKIA] Couldn't create font {alias}");
             }
             else

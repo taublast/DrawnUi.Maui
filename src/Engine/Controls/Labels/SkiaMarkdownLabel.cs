@@ -385,17 +385,18 @@ public class SkiaMarkdownLabel : SkiaLabel
     protected virtual void AddTextSpan(string text, Action<TextSpan> modifySpan = null)
     {
         if (TypeFace == null) //might happen early in cycle when set via Styles
-            return;
+            ReplaceFont();
 
-        //var text = literal.Content.ToStringSafe();
+        if (TypeFace == null)
+        {
+            Super.Log("TYPEFACE NULL");
+            return; //do not crash please
+        }
+
+        var originalTypeFace = TypeFace; //cannot be null 
         var currentIndex = 0;
         var spanStart = 0;
         var spanData = new List<(string Text, SKTypeface Typeface, int Symbol, bool shape)>();
-        var originalTypeFace = TypeFace;
-        if (originalTypeFace == null)
-        {
-            originalTypeFace = SKTypeface.Default;
-        }
 
         SKTypeface currentTypeFace = originalTypeFace;
         bool needShape = false;
