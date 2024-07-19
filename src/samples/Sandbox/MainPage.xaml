@@ -37,7 +37,7 @@
                         Spacing="0"
                         Tag="ScrollContent"
                         Type="Column"
-                        UseCache="None">
+                        UseCache="ImageComposite">
 
                         <!--
                             we set ImageDoubleBuffered to be able to fast redraw
@@ -89,6 +89,7 @@
                         </draw:SkiaImage>
 
                         <controls:SliderColor
+                            UseCache="Operations"
                             x:Name="Slider"
                             Margin="0,-16,0,16"
                             DefaultColor="Red"
@@ -105,6 +106,7 @@
                             if you have effects sometimes
                             might need to cache with area around
                         -->
+                        <!--  TEXT cached image  -->
                         <draw:SkiaLayout
                             Margin="0,-10,0,0"
                             Padding="10"
@@ -127,6 +129,7 @@
                             </draw:SkiaLabel>
                         </draw:SkiaLayout>
 
+                        <!--  BUTTONS cached ImageComposite  -->
                         <draw:SkiaLayout
                             x:Name="Buttons"
                             HorizontalOptions="Center"
@@ -135,7 +138,7 @@
                             Split="0"
                             Tag="Buttons"
                             Type="Wrap"
-                            UseCache="ImageComposite">
+                            UseCache="Operations">
 
                             <draw:SkiaLayout.ItemTemplate>
                                 <DataTemplate x:DataType="sandbox:MainPageVariant">
