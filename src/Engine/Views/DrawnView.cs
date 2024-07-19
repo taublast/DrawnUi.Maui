@@ -25,7 +25,7 @@ namespace DrawnUi.Maui.Views
 				return;
 
 #if ONPLATFORM
-            UpdatePlatform();
+			UpdatePlatform();
 #endif
 		}
 
@@ -95,7 +95,7 @@ namespace DrawnUi.Maui.Views
 			Update();
 		}
 
-		public ScaledRect GetOnScreenVisibleArea(float inflateByPixels = 0)
+		public virtual ScaledRect GetOnScreenVisibleArea(float inflateByPixels = 0)
 		{
 			var bounds = new SKRect(0 - inflateByPixels, 0 - inflateByPixels, (int)(Width * RenderingScale + inflateByPixels), (int)(Height * RenderingScale + inflateByPixels));
 
@@ -115,7 +115,7 @@ namespace DrawnUi.Maui.Views
 				DestroySkiaView();
 
 #if ONPLATFORM
-                DisposePlatform();
+				DisposePlatform();
 #endif
 			}
 			else
@@ -124,7 +124,7 @@ namespace DrawnUi.Maui.Views
 
 #if ONPLATFORM
 
-                SetupRenderingLoop();
+				SetupRenderingLoop();
 
 #endif
 			}
@@ -735,7 +735,7 @@ namespace DrawnUi.Maui.Views
 			DestroySkiaView();
 
 #if ONPLATFORM
-            PlatformHardwareAccelerationChanged();
+			PlatformHardwareAccelerationChanged();
 #endif
 
 			if (IsUsingHardwareAcceleration)
@@ -1431,7 +1431,7 @@ namespace DrawnUi.Maui.Views
 		public virtual void OnDisposing()
 		{
 #if ONPLATFORM
-            DisposePlatform();
+			DisposePlatform();
 #endif
 
 			DeviceDisplay.Current.MainDisplayInfoChanged -= OnMainDisplayInfoChanged;
@@ -2439,9 +2439,9 @@ namespace DrawnUi.Maui.Views
 
 #if ANDROID || WINDOWS
 
-                if (NeedCheckParentVisibility)
-                    CheckElementVisibility(this);
-                Continue();
+				if (NeedCheckParentVisibility)
+					CheckElementVisibility(this);
+				Continue();
 
 #else
 				MainThread.BeginInvokeOnMainThread(() =>
@@ -2493,7 +2493,7 @@ namespace DrawnUi.Maui.Views
 										ms = 1;
 									await Task.Delay(ms);
 #else
-                                    await Task.Delay(1);
+									await Task.Delay(1);
 #endif
 
 									CanvasView?.Update(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
