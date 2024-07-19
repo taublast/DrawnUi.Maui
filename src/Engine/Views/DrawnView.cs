@@ -2558,6 +2558,11 @@ namespace DrawnUi.Maui.Views
 
 #endif
 
+		public virtual void ClipSmart(SKCanvas canvas, SKPath path, SKClipOperation operation = SKClipOperation.Intersect)
+		{
+			canvas.ClipPath(path, operation, false);
+		}
+
 
 	}
 

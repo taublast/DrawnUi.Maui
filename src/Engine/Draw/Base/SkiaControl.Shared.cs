@@ -4671,17 +4671,20 @@ namespace DrawnUi.Maui.Draw
 		}
 
 		/// <summary>
-		/// Use antialiasing if path is not rectangle
+		/// Use antialiasing from ShouldClipAntialiased
 		/// </summary>
 		/// <param name="canvas"></param>
 		/// <param name="path"></param>
 		/// <param name="operation"></param>
-		public static void ClipSmart(SKCanvas canvas, SKPath path, SKClipOperation operation = SKClipOperation.Intersect)
+		public virtual void ClipSmart(SKCanvas canvas, SKPath path, SKClipOperation operation = SKClipOperation.Intersect)
 		{
-			bool isRectangle = IsSimpleRectangle(path);
-			canvas.ClipPath(path, operation, !isRectangle); // Disable anti-aliasing if it's a rectangle
+			canvas.ClipPath(path, operation, ShouldClipAntialiased);
 		}
 
+		/// <summary>
+		/// This is not a static bindable property. Can be set manually or by control, for example SkiaShape sets this to true for non-rectangular shapes, or rounded corners..
+		/// </summary>
+		public bool ShouldClipAntialiased { get; set; }
 
 		public virtual bool NeedMeasure
 		{

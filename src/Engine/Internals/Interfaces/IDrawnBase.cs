@@ -34,6 +34,15 @@ public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
 	void InvalidateParents();
 
 	/// <summary>
+	/// Clip using internal custom settings of the control
+	/// </summary>
+	/// <param name="canvas"></param>
+	/// <param name="path"></param>
+	/// <param name="operation"></param>
+	public void ClipSmart(SKCanvas canvas, SKPath path, SKClipOperation operation = SKClipOperation.Intersect);
+
+
+	/// <summary>
 	/// Creates a new disposable SKPath for clipping content according to the control shape and size.
 	/// Create this control clip for painting content.
 	/// Pass arguments if you want to use some time-frozen data for painting at any time from any thread..
