@@ -103,7 +103,8 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
             Paint = new()
             {
                 IsAntialias = true,
-                IsDither = true
+                IsDither = true,
+                Typeface = SkiaFontManager.DefaultTypeface
             };
         };
 
@@ -113,17 +114,11 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
             {
                 Paint.Typeface = TypeFace;
             }
-            else
-            {
-                Paint.Typeface = SKTypeface.Default;
-            }
         }
         else
         {
             if (defaultPaint.Typeface != null)
                 Paint.Typeface = defaultPaint.Typeface;
-            else
-                Paint.Typeface = SKTypeface.Default;
         }
 
         if (defaultPaint != null)
@@ -336,20 +331,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
     {
         Parent = null;
 
-        try
-        {
-            if (Paint != null)
-            {
-                Paint.Typeface = SKTypeface.Default; //do not dipose typeface that could be cached and reused
-                Paint.Dispose();
-                Paint = null;
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
-
+        Paint?.Dispose();
 
         CommandTapped = null;
         Tapped = null;
@@ -366,7 +348,6 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
     /// Relative to DrawingRect
     /// </summary>
     public readonly List<SKRect> Rects = new();
-
 
 
     private ICommand _commandTapped;
@@ -441,7 +422,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
 
     public TextSpan()
     {
-        _typeFace = SKTypeface.Default;
+        _typeFace = SkiaFontManager.DefaultTypeface;
 
         Paint = new()
         {
@@ -452,19 +433,17 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
 
     protected bool _fontAutoSet;
 
-    protected virtual async void UpdateFont()
+    protected virtual void UpdateFont()
     {
         LineSpacing = (float)LineHeight;// * 1.2f;
 
-        var font = await SkiaFontManager.Instance.GetFont(FontFamily, FontWeight);
+        var font = SkiaFontManager.Instance.GetFont(FontFamily, FontWeight);
 
         _fontFamily = FontFamily;
         _fontWeight = FontWeight;
 
         //since we reuse fonts from cached dictionnary never dispose previous font
         TypeFace = font;
-
-
 
         Invalidate();
     }
@@ -487,7 +466,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
     private Color _backgroundColor = Colors.Transparent;
     private Color _paragraphColor = Colors.Transparent;
     private bool _autoFindFont;
-    private SKTypeface _typeFace = SKTypeface.Default;
+    private SKTypeface _typeFace = SkiaFontManager.DefaultTypeface;
     private bool _needShape;
 
     public string FontFamily

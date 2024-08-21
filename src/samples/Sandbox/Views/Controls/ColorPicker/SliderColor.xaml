@@ -11,7 +11,7 @@
     SliderHeight="35"
     Tag="SliderFun"
     Type="Column"
-    UseCache="Operations">
+    UseCache="ImageDoubleBuffered">
 
     <draw:SkiaSlider.Resources>
         <ResourceDictionary>

@@ -182,9 +182,9 @@
 
     <!--production-->
     <ItemGroup Condition="'$(UseNuget)' == 'true'">
-      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.3.6" />
-      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.3.6" />
-      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.3.6" />
+      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.3.7" />
+      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.3.7" />
+      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.3.7" />
     </ItemGroup>
 
     <ItemGroup>

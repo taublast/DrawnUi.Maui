@@ -1,15 +1,21 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Maui;
+using Microsoft.Maui.Controls;
+using System.Diagnostics;
 
 namespace DrawnUi.Maui.Draw
 {
     public partial class SkiaFontManager
     {
 
+
         SemaphoreSlim _semaphore = new(1, 1);
 
-        public async Task<SKTypeface> GetFont(string alias)
+        public SKTypeface GetFont(string alias)
         {
-            await _semaphore.WaitAsync();
+            if (!Initialized)
+            {
+                return DefaultTypeface;
+            }
 
             try
             {
@@ -34,7 +40,7 @@ namespace DrawnUi.Maui.Draw
                             x.Filename == alias
                             || x.Alias == alias);
 
-                        using (Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(registered.Filename))
+                        using (Stream fileStream = FileSystem.Current.OpenAppPackageFileAsync(registered.Filename).GetAwaiter().GetResult())
                         {
                             font = SKTypeface.FromStream(fileStream);
                         }
@@ -52,7 +58,9 @@ namespace DrawnUi.Maui.Draw
                     {
                         throw new Exception($"[SKIA] Couldn't create font {alias}");
                     }
-                    font = SKTypeface.CreateDefault();
+
+                    font = DefaultTypeface;
+
                     Trace.WriteLine($"[SKIA] Couldn't create font {alias}");
                 }
                 else
@@ -66,7 +74,7 @@ namespace DrawnUi.Maui.Draw
             }
             finally
             {
-                _semaphore.Release();
+
             }
         }
 

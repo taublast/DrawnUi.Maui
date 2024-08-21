@@ -138,6 +138,11 @@ public partial class Super
         }
     }
 
+    protected static void InitShared()
+    {
+        SkiaFontManager.Instance.Initialize();
+    }
+
     public static bool EnableRendering
     {
         get => enableRendering;

@@ -16,7 +16,7 @@ public static class SkSl
 
     public static string LoadFromResources(string fileName)
     {
-        using var stream = FileSystem.OpenAppPackageFileAsync(fileName).Result;
+        using var stream = FileSystem.OpenAppPackageFileAsync(fileName).GetAwaiter().GetResult();
         using var reader = new StreamReader(stream);
         var json = reader.ReadToEnd();
         return json;

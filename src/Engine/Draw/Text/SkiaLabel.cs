@@ -193,128 +193,6 @@ namespace DrawnUi.Maui.Draw
             canvas.DrawText(text, (int)Math.Round(x), (int)Math.Round(y), paint);
         }
 
-        #region RASTERIZE - NOT USED
-
-        /*
-
-        public static void DrawRasterizedText(SKCanvas canvas, float x, float y, string text, SKPaint textPaint, SKColor colorOutline)
-        {
-            using (var imageText = RasterizeText(text, textPaint, colorOutline))
-            {
-
-                var imageY = y - imageText.Height + 1;
-
-                var padding = 0;
-
-                if (colorOutline.Alpha != 0)
-                    padding = 2;
-
-                canvas.DrawImage(imageText, x - padding, imageY - padding);
-            }
-        }
-
-        public static SKImage RasterizeText(string text, SKPaint paint, SKColor colorOutline)
-        {
-
-            using (var paintStrokeBigger = new SKPaint())
-            using (var paintBigger = new SKPaint
-            {
-                TextSize = paint.TextSize * _scaleResampleText,
-                Color = paint.Color,
-                StrokeWidth = paint.StrokeWidth,
-                IsStroke = paint.IsStroke,
-                IsAntialias = paint.IsAntialias,
-                Typeface = paint.Typeface,
-            })
-            {
-                float paddingY = 0;
-                float paddingX = 0;
-
-                SKRect bounds = new SKRect();
-                MeasureText(paint, text, ref bounds);
-
-                SKRect boundsBigger = new SKRect();
-                MeasureText(paintBigger, text, ref boundsBigger);
-
-                if (colorOutline.Alpha != 0)
-                {
-                    paintStrokeBigger.TextSize = paint.TextSize * _scaleResampleText;
-                    paintStrokeBigger.Color = colorOutline;
-                    paintStrokeBigger.StrokeWidth = 4.5f * _scaleResampleText;
-                    paintStrokeBigger.IsStroke = true;
-                    paintStrokeBigger.IsAntialias = paint.IsAntialias;
-                    paintStrokeBigger.Typeface = paint.Typeface;
-
-                    SKRect boundsBiggerStroke = new SKRect();
-                    MeasureText(paintStrokeBigger, text, ref boundsBiggerStroke);
-
-                    paddingY = 4f * _scaleResampleText;
-                    paddingX = 4f * _scaleResampleText;
-
-
-                }
-
-
-                var height = paint.TextSize + paddingY / _scaleResampleText * 2;
-                var width = bounds.Width + paddingX / _scaleResampleText * 2;
-                var info = new SKImageInfo((int)width, (int)height);
-
-                var infoBigger = new SKImageInfo((int)(width * _scaleResampleText), (int)(height * _scaleResampleText));
-
-                using (var surfaceBigger = SKSurface.Create(infoBigger))
-                {
-                    SKCanvas canvasRasterizedText = surfaceBigger.Canvas;
-
-                    canvasRasterizedText.Clear();
-
-                    if (colorOutline.Alpha != 0)
-                    {
-                        canvasRasterizedText.DrawText(text, 0 + paddingX, infoBigger.Height - paddingY, paintStrokeBigger);
-                    }
-
-                    canvasRasterizedText.DrawText(text, 0 + paddingX, infoBigger.Height - paddingY, paintBigger);
-
-                    canvasRasterizedText.Flush();
-                    using (var srcImg = surfaceBigger.Snapshot())
-                    {
-                        //downsample
-                        using (var surface = SKSurface.Create(info))
-                        using (var paintRescale = new SKPaint())
-                        {
-                            // high quality with antialiasing
-                            paintRescale.IsAntialias = true;
-                            paintRescale.FilterQuality = SKFilterQuality.High;
-
-
-                            // draw the bitmap to fill the surface
-                            surface.Canvas.DrawImage(srcImg, new SKRectI(0, 0, info.Width, info.Height), paintRescale);
-
-
-                            //paintRescale.FilterQuality = SKFilterQuality.High;
-                            //paintRescale.IsAntialias = false;
-                            //paintRescale.IsDither = false;
-
-
-                            //var kernelSize = new SKSizeI(3, 3);
-                            //var kernelOffset = new SKPointI(1, 1);
-                            //paintRescale.ImageFilter = SKImageFilter.CreateMatrixConvolution(
-                            //    kernelSize, KernelSharpen, 1.0f, 0f, kernelOffset, SKShaderTileMode.Clamp, false, null,null ); //1f, 0f, new SKPointI(1, 1),
-
-
-                            surface.Canvas.Flush();
-
-                            return surface.Snapshot();
-                        }
-                    }
-                }
-            }
-
-
-        }
-        */
-
-        #endregion
-
         public double Sharpen { get; set; }
 
         private static float _scaleResampleText = 1.0f;
@@ -456,6 +334,12 @@ namespace DrawnUi.Maui.Draw
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
+            if (Tag == "LabelTitle")
+            {
+                var check = this.Text;
+                var check2 = this.TypeFace;
+            }
+
             if (IsDisposed || IsDisposing)
                 return ScaledSize.Default;
 
@@ -477,14 +361,10 @@ namespace DrawnUi.Maui.Draw
 
                 ReplaceFont();
 
-                SetupDefaultPaint(scale);
+                if (TypeFace == null)
+                    return MeasuredSize; //would be totally unexpected 
 
-                if (PaintDefault.Typeface == null)
-                {
-                    PaintDefault.Typeface = SKTypeface.Default;
-                    UpdateFont();
-                    return MeasuredSize;
-                }
+                SetupDefaultPaint(scale);
 
                 var constraints = GetMeasuringConstraints(request);
 
@@ -499,17 +379,15 @@ namespace DrawnUi.Maui.Draw
                 UpdateFontMetrics(PaintDefault);
 
                 var usePaint = PaintDefault;
-                if (PaintDefault.Typeface == null)
-                {
-                    PaintDefault.Typeface = SKTypeface.Default;
-                }
 
                 if (Spans.Count == 0)
                 {
                     bool needsShaping = false;
 
                     string text = null;
+
                     Glyphs = GetGlyphs(Text, PaintDefault.Typeface);
+
                     if (AutoFindFont)
                     {
                         if (Glyphs != null && Glyphs.Count > 0)
@@ -764,30 +642,15 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
-            DisposePaint(ref PaintDefault);
-            DisposePaint(ref PaintStroke);
-            DisposePaint(ref PaintShadow);
-            DisposePaint(ref PaintDeco);
+
+            PaintDefault?.Dispose();
+            PaintStroke?.Dispose();
+            PaintShadow?.Dispose();
+            PaintDeco?.Dispose();
 
             base.OnDisposing();
         }
 
-        private void DisposePaint(ref SKPaint paint)
-        {
-            try
-            {
-                if (paint != null)
-                {
-                    paint.Typeface = SKTypeface.Default;  // Preserve cached font from disposing
-                    paint.Dispose();
-                    paint = null;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
 
         public int LinesCount { get; protected set; } = 1;
 
@@ -950,13 +813,7 @@ namespace DrawnUi.Maui.Draw
 
             PaintDefault.TextSize = (float)Math.Round(FontSize * scale);
             PaintDefault.StrokeWidth = 0;
-            PaintDefault.Typeface = this.TypeFace ?? SKTypeface.Default;
-
-            if (PaintDefault.Typeface == null)
-            {
-                Super.Log("UNEXPECTED Typeface is still null!");
-                PaintDefault.Typeface = SKTypeface.Default; //please do not crash
-            }
+            PaintDefault.Typeface = this.TypeFace ?? SkiaFontManager.DefaultTypeface;
 
             PaintDefault.FakeBoldText = (this.FontAttributes & FontAttributes.Bold) != 0;
             //todo italic etc
@@ -1483,22 +1340,22 @@ namespace DrawnUi.Maui.Draw
             NeedMeasure = true;
         }
 
-        protected virtual async void UpdateFont()
+        protected virtual void UpdateFont()
         {
-            if ((TypeFace == null && !string.IsNullOrEmpty(_fontFamily))
-                || _fontFamily != FontFamily
+            if (_fontFamily != FontFamily
                 || _fontWeight != FontWeight
-                || (_fontFamily == null && TypeFace == null))
+                || _fontFamily == null
+                || TypeFace == null)
             {
                 _fontFamily = FontFamily;
                 _fontWeight = FontWeight;
 
-                var replaceFont = await SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
+                var replaceFont = SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
 
                 if (replaceFont == null)
                 {
                     Super.Log($"Failed to load font {_fontFamily} with weight {_fontWeight}. Using default.");
-                    _replaceFont = SKTypeface.Default;
+                    _replaceFont = SkiaFontManager.DefaultTypeface;
                 }
                 else
                 {
@@ -1512,15 +1369,21 @@ namespace DrawnUi.Maui.Draw
         protected void ReplaceFont()
         {
             var newFont = _replaceFont;
-            if (newFont != null)
+            bool updated = false;
+            if (newFont != null) //new legal font
             {
                 TypeFace = newFont;
+                updated = true;
+            }
+            if (TypeFace == null) //unacceptable state
+            {
+                TypeFace = SkiaFontManager.DefaultTypeface; ;
+                updated = true;
+            }
+            if (updated) //update
+            {
                 _replaceFont = null;
                 OnFontUpdated();
-            }
-            if (TypeFace == null)
-            {
-                TypeFace = SKTypeface.Default;
             }
         }
 
@@ -1885,10 +1748,12 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-
-
         public static List<UsedGlyph> GetGlyphs(string text, SKTypeface typeface)
         {
+
+            if (typeface == null)
+                typeface = SkiaFontManager.DefaultTypeface;
+
             var glyphIds = typeface.GetGlyphs(text);
             var results = new List<UsedGlyph>(glyphIds.Length);
             int glyphIndex = 0;
@@ -1935,7 +1800,9 @@ namespace DrawnUi.Maui.Draw
             if (string.IsNullOrEmpty(text))
                 return (0.0f, null);
 
-            var glyphs = GetGlyphs(text, paint.Typeface);
+            var paintTypeface = paint.Typeface ?? SkiaFontManager.DefaultTypeface;
+
+            var glyphs = GetGlyphs(text, paintTypeface);
 
             var positions = new List<LineGlyph>();
             float value = 0.0f;
@@ -1943,7 +1810,7 @@ namespace DrawnUi.Maui.Draw
 
             if (needsShaping)
             {
-                var shaper = new SKShaper(paint.Typeface);
+                var shaper = new SKShaper(paintTypeface);
                 var result = GetShapedText(shaper, text, 0, 0, paint);
                 if (result == null)
                 {
@@ -2036,73 +1903,6 @@ namespace DrawnUi.Maui.Draw
             return (simpleValue, null);
         }
 
-
-
-        #region Glyphs availability
-
-
-
-        public static readonly Dictionary<UnicodeCategory, string> FallbackFonts = new Dictionary<UnicodeCategory, string>
-        {
-            { UnicodeCategory.UppercaseLetter, "Noto Sans" },
-            { UnicodeCategory.LowercaseLetter, "Noto Sans" },
-            { UnicodeCategory.OtherLetter, "Noto Sans Arabic" },
-            { UnicodeCategory.MathSymbol, "Noto Sans Symbols" },
-            { UnicodeCategory.CurrencySymbol, "Noto Sans Symbols" },
-            { UnicodeCategory.ModifierSymbol, "Noto Sans Symbols" },
-        };
-
-        public static string GetFallbackFontName(char character, SKTypeface currentTypeface)
-        {
-            // Determine the Unicode category of the character
-            UnicodeCategory unicodeCategory = char.GetUnicodeCategory(character);
-
-            // Check if the current typeface supports the character
-            var glyphIndices = currentTypeface.GetGlyphs(character.ToString());
-            if (glyphIndices.Length > 0 && glyphIndices[0] != 0)
-            {
-                // Glyph exists in the current font
-                return null;
-            }
-
-            // Glyph doesn't exist, need to find an appropriate fallback
-            if (FallbackFonts.TryGetValue(unicodeCategory, out string fallbackFont))
-            {
-                return fallbackFont;
-            }
-
-            // General fallback if no specific font found
-            return "Noto Sans";
-        }
-
-        protected static Dictionary<(char, SKTypeface), bool> GlyphAvailabilityCache = new Dictionary<(char, SKTypeface), bool>();
-
-
-
-        //public static List<bool> AreAllGlyphsAvailable(string text, SKTypeface typeface)
-        //{
-        //    var glyphIds = typeface.GetGlyphs(text);
-        //    var results = new List<bool>(text.Length);
-
-        //    for (int i = 0; i < text.Length; i++)
-        //    {
-        //        if (text[i] == '\r' || text[i] == '\n' || glyphIds[i] != 0)
-        //        {
-        //            results.Add(true);
-        //        }
-        //        else
-        //        {
-        //            results.Add(false);  // Glyph is missing
-        //        }
-        //    }
-
-        //    return results;
-        //}
-
-
-
-
-        #endregion
 
         List<string> SplitLineToWords(string line, char space)
         {
@@ -2807,7 +2607,7 @@ namespace DrawnUi.Maui.Draw
             nameof(TypeFace),
             typeof(SKTypeface),
             typeof(SkiaLabel),
-            defaultValue: SKTypeface.Default,
+            defaultValue: null,
             propertyChanged: NeedUpdateFont);
 
         public SKTypeface TypeFace

@@ -1,18 +1,17 @@
 ﻿using DrawnUi.Maui.Draw;
 using DrawnUi.Maui.Infrastructure.Xaml;
-using Microsoft.Maui.Controls.Shapes;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using Color = Microsoft.Maui.Graphics.Color;
-using Path = Microsoft.Maui.Controls.Shapes.Path;
+using System.Linq;
+
 
 namespace DrawnUi.Maui.Draw
 {
     /// <summary>
     /// Implements ISkiaGestureListener to pass gestures to children
     /// </summary>
-    public class SkiaShape : ContentLayout//SkiaControl, ISkiaGestureListener //
+    public partial class SkiaShape : ContentLayout
     {
         public override void ApplyBindingContext()
         {
@@ -118,19 +117,7 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(
-            nameof(CornerRadius),
-            typeof(CornerRadius),
-            typeof(SkiaShape),
-            default(CornerRadius),
-            propertyChanged: NeedInvalidateMeasure);
 
-        [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.CornerRadiusTypeConverter))]
-        public CornerRadius CornerRadius
-        {
-            get { return (CornerRadius)GetValue(CornerRadiusProperty); }
-            set { SetValue(CornerRadiusProperty, value); }
-        }
 
         public static readonly BindableProperty StrokeWidthProperty = BindableProperty.Create(
             nameof(StrokeWidth),
@@ -145,18 +132,7 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(StrokeWidthProperty, value); }
         }
 
-        public static readonly BindableProperty StrokePathProperty = BindableProperty.Create(
-            nameof(StrokePath),
-            typeof(double[]),
-            typeof(SkiaShape),
-            null);
 
-        [TypeConverter(typeof(StringToDoubleArrayTypeConverter))]
-        public double[] StrokePath
-        {
-            get { return (double[])GetValue(StrokePathProperty); }
-            set { SetValue(StrokePathProperty, value); }
-        }
 
 
         public static readonly BindableProperty StrokeCapProperty = BindableProperty.Create(
@@ -172,18 +148,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(StrokeCapProperty, value); }
         }
 
-        public static readonly BindableProperty StrokeColorProperty = BindableProperty.Create(
-            nameof(StrokeColor),
-            typeof(Color),
-            typeof(SkiaShape),
-            Colors.Transparent,
-            propertyChanged: NeedDraw);
-
-        public Color StrokeColor
-        {
-            get { return (Color)GetValue(StrokeColorProperty); }
-            set { SetValue(StrokeColorProperty, value); }
-        }
 
 
 
@@ -293,7 +257,7 @@ namespace DrawnUi.Maui.Draw
             var strokeAwareChildrenSize = strokeAwareSize;
             ContractPixelsRect(strokeAwareChildrenSize, scale, Padding);
 
-            var willStroke = StrokeColor != Colors.Transparent && StrokeWidth > 0;
+            var willStroke = StrokeColor != TransparentColor && StrokeWidth > 0;
             float pixelsStrokeWidth = 0;
             float halfStroke = 0;
 
@@ -345,9 +309,17 @@ namespace DrawnUi.Maui.Draw
 
         public SKPath DrawPathAligned { get; } = new();
 
-        protected SKRect MeasuredStrokeAwareChildrenSize { get; set; }
+        public SKRect MeasuredStrokeAwareChildrenSize { get; protected set; }
 
-        protected SKRect MeasuredStrokeAwareSize { get; set; }
+        public SKRect MeasuredStrokeAwareSize { get; protected set; }
+
+        public double BorderWithPixels
+        {
+            get
+            {
+                return (DrawingRect.Width - MeasuredStrokeAwareChildrenSize.Width);
+            }
+        }
 
         protected SKPaint RenderingPaint { get; set; }
 
@@ -410,11 +382,14 @@ namespace DrawnUi.Maui.Draw
 
             switch (Type)
             {
+
             case ShapeType.Path:
+            ShouldClipAntialiased = true;
             path.AddPath(DrawPathResized);
             break;
 
             case ShapeType.Circle:
+            ShouldClipAntialiased = true;
             path.AddCircle(
                 (float)Math.Round(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
                 (float)Math.Round(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
@@ -423,6 +398,8 @@ namespace DrawnUi.Maui.Draw
             break;
 
             case ShapeType.Ellipse:
+            ShouldClipAntialiased = true;
+
             path.AddOval(strokeAwareChildrenSize);
             break;
 
@@ -430,6 +407,8 @@ namespace DrawnUi.Maui.Draw
             default:
             if (CornerRadius != default)
             {
+                ShouldClipAntialiased = true;
+
                 //path.AddRect(strokeAwareChildrenSize);
 
                 var scaledRadiusLeftTop = (float)(CornerRadius.TopLeft * RenderingScale);
@@ -460,7 +439,11 @@ namespace DrawnUi.Maui.Draw
 
             }
             else
+            {
+                ShouldClipAntialiased = false;
                 path.AddRect(strokeAwareChildrenSize);
+
+            }
 
             break;
             }
@@ -482,7 +465,7 @@ namespace DrawnUi.Maui.Draw
             case ShapeType.Rectangle:
             if (CornerRadius != default)
             {
-                if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
+                if (StrokeWidth == 0 || StrokeColor == TransparentColor)
                 {
                     paint.IsAntialias = true;
                 }
@@ -498,7 +481,7 @@ namespace DrawnUi.Maui.Draw
             break;
 
             case ShapeType.Circle:
-            if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
+            if (StrokeWidth == 0 || StrokeColor == TransparentColor)
             {
                 paint.IsAntialias = true;
             }
@@ -507,7 +490,7 @@ namespace DrawnUi.Maui.Draw
             break;
 
             case ShapeType.Ellipse:
-            if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
+            if (StrokeWidth == 0 || StrokeColor == TransparentColor)
             {
                 paint.IsAntialias = true;
             }
@@ -519,7 +502,7 @@ namespace DrawnUi.Maui.Draw
             break;
 
             case ShapeType.Path:
-            if (StrokeWidth == 0 || StrokeColor == Colors.Transparent)
+            if (StrokeWidth == 0 || StrokeColor == TransparentColor)
             {
                 paint.IsAntialias = true;
             }
@@ -549,7 +532,7 @@ namespace DrawnUi.Maui.Draw
 
             //we gonna set stroke On only when drawing the last pass
             //otherwise stroke antialiasing will not work
-            var willStroke = StrokeColor != Colors.Transparent && StrokeWidth > 0;
+            var willStroke = StrokeColor != TransparentColor && StrokeWidth > 0;
             float pixelsStrokeWidth = (float)Math.Round(StrokeWidth * scale);
 
             RenderingPaint ??= new SKPaint()
@@ -718,7 +701,7 @@ namespace DrawnUi.Maui.Draw
                 //if gradient opacity is not 1, then we need to fill with background color first
                 //then on top draw semi-transparent gradient
                 if (FillGradient?.Opacity != 1
-                    && BackgroundColor != null && BackgroundColor != Colors.Transparent)
+                    && BackgroundColor != null && BackgroundColor != TransparentColor)
                 {
                     RenderingPaint.Color = BackgroundColor.ToSKColor();
                     RenderingPaint.Shader = null;

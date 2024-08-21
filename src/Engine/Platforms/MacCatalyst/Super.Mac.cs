@@ -128,6 +128,8 @@ namespace DrawnUi.Maui.Draw
 
                 Super.NavBarHeight = 47; //manual
 
+            InitShared();
+
             if (UseDisplaySync)
             {
 

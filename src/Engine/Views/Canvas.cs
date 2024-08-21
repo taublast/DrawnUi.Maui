@@ -130,16 +130,26 @@ public class Canvas : DrawnView, IGestureListener
         Size ret;
         NeedCheckParentVisibility = true;
 
+        ret = base.MeasureOverride(widthConstraint, heightConstraint);
+        NeedMeasure = false;
+        Update();
+
         if (NeedAutoSize)
         {
-            ret = AdaptSizeToContentIfNeeded(widthConstraint, heightConstraint, NeedMeasure);
+            var measured = AdaptSizeToContentIfNeeded(widthConstraint, heightConstraint, NeedMeasure);
+
+            if (double.IsFinite(measured.Width))
+                ret.Width = measured.Width;
+
+            if (double.IsFinite(measured.Height))
+                ret.Height = measured.Height;
         }
         else
         {
-            ret = base.MeasureOverride(widthConstraint, heightConstraint);
-            NeedMeasure = false;
-            Update();
+            //ret = base.MeasureOverride(widthConstraint, heightConstraint);
+            //NeedMeasure = false;
         }
+
 
         _lastMeasureConstraints = new(widthConstraint, heightConstraint);
         _lastMeasureResult = ret;
