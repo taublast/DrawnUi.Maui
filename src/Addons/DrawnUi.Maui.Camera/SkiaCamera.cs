@@ -1506,17 +1506,17 @@ public partial class SkiaCamera : SkiaControl
         set { SetValue(ZoomLimitMaxProperty, value); }
     }
 
-    public static readonly BindableProperty BlackColorProperty = BindableProperty.Create(
-        nameof(BlackColor),
-        typeof(Color),
-        typeof(SkiaCamera),
-        Colors.Black);
+    //public static readonly BindableProperty BlackColorProperty = BindableProperty.Create(
+    //    nameof(BlackColor),
+    //    typeof(Color),
+    //    typeof(SkiaCamera),
+    //    Colors.Black);
 
-    public Color BlackColor
-    {
-        get { return (Color)GetValue(BlackColorProperty); }
-        set { SetValue(BlackColorProperty, value); }
-    }
+    //public Color BlackColor
+    //{
+    //    get { return (Color)GetValue(BlackColorProperty); }
+    //    set { SetValue(BlackColorProperty, value); }
+    //}
 
     private static void NeedSetZoom(BindableObject bindable, object oldvalue, object newvalue)
     {
@@ -1536,17 +1536,17 @@ public partial class SkiaCamera : SkiaControl
         }
     }
 
-    public static readonly BindableProperty WhiteColorProperty = BindableProperty.Create(
-        nameof(WhiteColor),
-        typeof(Color),
-        typeof(SkiaCamera),
-        Colors.White);
+    //public static readonly BindableProperty WhiteColorProperty = BindableProperty.Create(
+    //    nameof(WhiteColor),
+    //    typeof(Color),
+    //    typeof(SkiaCamera),
+    //    Colors.White);
 
-    public Color WhiteColor
-    {
-        get { return (Color)GetValue(WhiteColorProperty); }
-        set { SetValue(WhiteColorProperty, value); }
-    }
+    //public Color WhiteColor
+    //{
+    //    get { return (Color)GetValue(WhiteColorProperty); }
+    //    set { SetValue(WhiteColorProperty, value); }
+    //}
 
     public static readonly BindableProperty DisplayModeProperty = BindableProperty.Create(
         nameof(DisplayMode),

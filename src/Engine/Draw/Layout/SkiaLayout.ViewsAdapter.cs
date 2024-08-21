@@ -451,6 +451,12 @@ public class ViewsAdapter : IDisposable
 					AddedMore = 0;
 				}
 
+				if (dataContexts.Count == 0)
+				{
+					TemplatesAvailable();
+					return;
+				}
+
 				if (_parent.InitializeTemplatesInBackgroundDelay > 0)
 				{
 					//postpone initialization to be executed in background

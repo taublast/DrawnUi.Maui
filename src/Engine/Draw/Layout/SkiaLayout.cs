@@ -836,7 +836,8 @@ namespace DrawnUi.Maui.Draw
 
 					if (IsTemplated)
 					{
-						if (ChildrenFactory.TemplatesInvalidated && !ChildrenFactory.TemplesInvalidating)
+						if (ChildrenFactory.TemplatesInvalidated
+						&& !ChildrenFactory.TemplesInvalidating)
 						{
 							ChildrenFactory.TemplesInvalidating = true;
 							ApplyNewItemsSource = false;

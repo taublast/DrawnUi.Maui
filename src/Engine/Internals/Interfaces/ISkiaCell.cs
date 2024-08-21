@@ -2,5 +2,5 @@
 
 public interface ISkiaCell
 {
-    public void OnScrolled();
+	public void OnScrolled();
 }
