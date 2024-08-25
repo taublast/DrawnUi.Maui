@@ -18,11 +18,8 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's new
 
-* Breaking ``ISkiaCell`` changed, check out demo app FestCellWithBanner new usage.
-* Android loop changed along with its OpenGL renderer.
-* Gestures fix: will not trigger Tapped after raised Longpressing.
-* Other fixes.
-* Nuget 1.2.3.6
+* Canvas auto-size fix
+* Nuget 1.2.3.8
 
 ## Demo Apps
 
@@ -593,6 +590,11 @@ It will render a mask over its children when hovered, think of it as an inverted
 * Binding RelativeSource with FindAncestorBindingContext not working yet.
 
 ## Previously
+
+* Breaking ``ISkiaCell`` changed, check out demo app FestCellWithBanner new usage.
+* Android loop changed along with its OpenGL renderer.
+* Gestures fix: will not trigger Tapped after raised Longpressing.
+* Nuget 1.2.3.6
 
 * `SkiaScroll` fixed scrolling vertically + horizontally at the same time (`Orientation="Both"`).
 * `SkiaShell` Navigated and Navigating events now report popups too.
