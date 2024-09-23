@@ -47,6 +47,13 @@ public class CachedObject : IDisposable
                 var x = (float)Math.Round(destination.Left - Bounds.Left);
                 var y = (float)Math.Round(destination.Top - Bounds.Top);
 
+                if (Type == SkiaCacheType.OperationsFull)
+                {
+                    var stop = 1;
+                    //x = (float)Math.Round(RecordingArea.Left);
+                    //y = (float)Math.Round(RecordingArea.Top);
+                }
+
                 canvas.DrawPicture(Picture, x, y, paint);
             }
             else
@@ -67,19 +74,23 @@ public class CachedObject : IDisposable
         }
     }
 
-    public CachedObject(SkiaCacheType type, SKPicture picture, SKRect bounds)
+    public CachedObject(SkiaCacheType type, SKPicture picture, SKRect bounds, SKRect recordingArea)
     {
         Type = type;
         Bounds = bounds;
+        RecordingArea = recordingArea;
         Picture = picture;
     }
 
-    public CachedObject(SkiaCacheType type, SKSurface surface, SKRect bounds)
+    public CachedObject(SkiaCacheType type, SKSurface surface, SKRect bounds, SKRect recordingArea)
     {
         Type = type;
         Surface = surface;
         Bounds = bounds;
+        RecordingArea = recordingArea;
         Image = surface.Snapshot();
+
+
     }
 
     /// <summary>
@@ -92,6 +103,8 @@ public class CachedObject : IDisposable
     public SKImage Image { get; set; }
 
     public SKRect Bounds { get; set; }
+
+    public SKRect RecordingArea { get; set; }
 
     public SkiaCacheType Type { get; protected set; }
 

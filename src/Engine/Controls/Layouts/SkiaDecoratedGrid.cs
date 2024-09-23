@@ -197,8 +197,6 @@ public partial class SkiaDecoratedGrid : SkiaLayout
     {
         base.Draw(context, destination, scale);
 
-
-
         if (ContainerLines != null)
         {
             ContainerLines.Render(context, GetDrawingRectForChildren(Destination, scale), scale);

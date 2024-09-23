@@ -246,7 +246,17 @@
                     Rotation="-45"
                     TextColor="White"
                     VerticalOptions="End"
-                    ZIndex="100" />
+                    ZIndex="100" >
+                    <!--<draw:SkiaControl.VisualEffects>
+
+                        <draw:DropShadowEffect
+                            Blur="2"
+                            X="2"
+                            Y="2"
+                            Color="#ccFFFFFF" />
+
+                    </draw:SkiaControl.VisualEffects>-->
+                </draw:SkiaLabelFps>
 
             </draw:SkiaLayout>
 

@@ -26,6 +26,9 @@
 
 
             <draw:SkiaScroll
+                ZoomLocked="False"
+                ZoomMax="3"
+                ZoomMin="1"
                 BackgroundColor="Black"
                 HorizontalOptions="Fill"
                 Orientation="Both"

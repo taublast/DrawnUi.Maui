@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageCarousels 
+    public partial class MainPageCarousels
     {
 
         public MainPageCarousels()
@@ -20,7 +20,7 @@
             }
         }
 
-        private void SkiaButton_Tapped(object sender, AppoMobi.Maui.Gestures.TouchActionEventArgs e)
+        private void SkiaButton_Tapped(object sender, SkiaGesturesParameters skiaGesturesParameters)
         {
             //MainCarousel.ChildrenFactory.PrintDebugVisible();
         }

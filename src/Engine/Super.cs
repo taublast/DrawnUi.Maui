@@ -37,6 +37,8 @@ public partial class Super
         //});
     }
 
+    public static bool Multithreaded = false;
+
 #if (!ONPLATFORM)
 
     protected static void SetupFrameLooper()
@@ -49,7 +51,7 @@ public partial class Super
     /// <summary>
     /// Can optionally disable hardware-acceleration with this flag, for example on iOS you would want to avoid creating many metal views.
     /// </summary>
-    public static bool CanUseHardwareAcceleration = true;
+    public static bool CanUseHardwareAcceleration = false;
 
     /// <summary>
     /// Display xaml page creation exception

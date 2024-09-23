@@ -134,6 +134,14 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
         }
     }
 
+    public override bool CanUseCacheDoubleBuffering
+    {
+        get
+        {
+            return false; // we cannot make surface snapshots in background yet with current renderers
+        }
+    }
+
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
     {
         if (IsDisposed || IsDisposing)
@@ -186,6 +194,7 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
                 }
                 else
                 {
+
                     SKImage snapshot;
                     if (UseContext)
                     {
@@ -208,6 +217,7 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
                         Snapshot = snapshot;
                         kill?.Dispose();
                     }
+
                 }
             }
 
