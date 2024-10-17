@@ -1,9 +1,10 @@
 using AppoMobi.Specials;
+using SKBitmap = SkiaSharp.SKBitmap;
 
 namespace Sandbox.Views.Controls;
 
 /// <summary>
-/// Base shader effect class that has 2 input textures
+/// Base shader effect class that has 2 input textures. 
 /// </summary>
 public class ShaderDoubleTexturesEffect : SkiaShaderEffect
 {
@@ -12,24 +13,32 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
         return !(Parent == null || Parent.DrawingRect.Width <= 0 || Parent.DrawingRect.Height <= 0);
     }
 
-    #region SecondaryTexture
+    protected override void OnDisposing()
+    {
+        base.OnDisposing();
 
-    #region FromFile
+        SecondaryTexture?.Dispose();
+        LoadedSecondaryBitmap?.Dispose();
+
+        LoadedPrimaryBitmap?.Dispose();
+        ResizedPrimaryImage?.Dispose();
+
+        DetachFrom();
+        DetachTo();
+    }
 
     protected SKShaderTileMode TilingSecondaryTexture = SKShaderTileMode.Mirror;
 
-    protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader texture1)
+    protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader primaryTexture)
     {
-        var texture2 = GetSecondaryTexture();
+        var secondaryTexture = GetSecondaryTexture();
 
-        if (texture1 != null && texture2 != null)
+        if (primaryTexture != null && secondaryTexture != null)
         {
-            //var texture1 = snapshot.ToShader();
-
             return new SKRuntimeEffectChildren(CompiledShader)
             {
-                { "iImage1", texture1 }, //main
-                { "iImage2", texture2 } //secondary
+                { "iImage1", primaryTexture }, //main
+                { "iImage2", secondaryTexture } //secondary
             };
         }
         else
@@ -39,6 +48,255 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
             };
         }
     }
+
+    //normally primary texture comes from the parent control
+    //but here we add props to have it from file or
+    //from another control
+    #region PrimaryTexture
+
+
+    protected override SKImage GetPrimaryTextureImage(SkiaDrawingContext ctx, SKRect destination)
+    {
+        if (ControlFrom != null)
+        {
+            return _controlFrom.RenderObject?.Image;
+        }
+
+        if (PrimarySource != null)
+        {
+            if (!_primarySourceBitmapResized && ParentReady() && LoadedPrimaryBitmap != null)
+            {
+                ResizePrimaryLoadedBitmap();
+            }
+            return ResizedPrimaryImage;
+        }
+
+        return base.GetPrimaryTextureImage(ctx, destination);
+    }
+
+    #region FromControl
+
+    SkiaControl _controlFrom;
+
+    void ApplyControlFrom(SkiaControl control)
+    {
+        if (_controlFrom == control)
+            return;
+
+        DetachFrom();
+        _controlFrom = control;
+    }
+
+    void DetachFrom()
+    {
+        if (_controlFrom != null)
+        {
+            _controlFrom = null;
+        }
+    }
+
+    private static void ApplyControlFromProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (oldvalue != newvalue && bindable is ShaderDoubleTexturesEffect control)
+        {
+            control.ApplyControlFrom(newvalue as SkiaControl);
+        }
+    }
+
+    public static readonly BindableProperty ControlFromProperty = BindableProperty.Create(
+        nameof(ControlFrom),
+        typeof(SkiaControl), typeof(ShaderDoubleTexturesEffect),
+        null,
+        propertyChanged: ApplyControlFromProperty);
+
+    public SkiaControl ControlFrom
+    {
+        get { return (SkiaControl)GetValue(ControlFromProperty); }
+        set { SetValue(ControlFromProperty, value); }
+    }
+
+
+
+    #endregion
+
+    #region FromFile
+
+    public static readonly BindableProperty PrimarySourceProperty = BindableProperty.Create(
+        nameof(PrimarySource),
+        typeof(string),
+        typeof(ShaderDoubleTexturesEffect),
+        defaultValue: null,
+        propertyChanged: ApplyPrimarySourceProperty);
+
+    public string PrimarySource
+    {
+        get { return (string)GetValue(PrimarySourceProperty); }
+        set { SetValue(PrimarySourceProperty, value); }
+    }
+
+    private static void ApplyPrimarySourceProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (oldvalue != newvalue && bindable is ShaderDoubleTexturesEffect control)
+        {
+            control.ApplyPrimarySource((string)newvalue);
+        }
+    }
+
+    void ApplyPrimarySource(string source)
+    {
+        Task.Run(async () =>
+        {
+            await LoadPrimarySource(source);
+            if (ParentReady() && LoadedPrimaryBitmap != null)
+            {
+                ResizePrimaryLoadedBitmap();
+            }
+        });
+    }
+
+    public void ResizePrimaryLoadedBitmap()
+    {
+        SKImage image = null;
+
+        var kill = ResizedPrimaryImage;
+
+        if (LoadedPrimaryBitmap != null)
+        {
+            _primarySourceBitmapResized = true;
+
+            var outRect = Parent.DrawingRect;
+            var info = new SKImageInfo((int)outRect.Width, (int)outRect.Height);
+            var resizedBitmap = new SKBitmap(info);
+            using (var canvas = new SKCanvas(resizedBitmap))
+            {
+                var rect = new SKRect(0, 0, (int)outRect.Width, (int)outRect.Height);
+                //resize source to apply higher quality and have it antialised
+                using var bmp = LoadedPrimaryBitmap.Resize(new SKSizeI((int)rect.Width, (int)rect.Height), SKFilterQuality.High);
+
+                canvas.DrawBitmap(bmp, rect);
+                canvas.Flush();
+            }
+
+            ResizedPrimaryImage = SKImage.FromBitmap(resizedBitmap);
+
+            if (kill != null)
+            {
+                Tasks.StartDelayed(TimeSpan.FromSeconds(2.5), () =>
+                {
+                    kill.Dispose();
+                });
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// Loaded from file
+    /// </summary>
+    protected SKImage ResizedPrimaryImage { get; set; }
+    protected SKBitmap LoadedPrimaryBitmap { get; set; }
+    private readonly SemaphoreSlim _semaphoreLoadPrimaryFile = new(1, 1);
+    private bool _primarySourceBitmapResized;
+
+    /// <summary>
+    /// Loading from local files only
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <returns>
+    public async Task LoadPrimarySource(string fileName)
+    {
+        if (string.IsNullOrEmpty(fileName))
+            return;
+
+        await _semaphoreLoadPrimaryFile.WaitAsync();
+
+        try
+        {
+            var kill = LoadedPrimaryBitmap;
+
+
+            if (fileName.SafeContainsInLower("file://"))
+            {
+                var fullFilename = fileName.Replace("file://", "", StringComparison.InvariantCultureIgnoreCase);
+                using var stream = new FileStream(fullFilename, System.IO.FileMode.Open);
+                LoadedPrimaryBitmap = SKBitmap.Decode(stream);
+            }
+            else
+            {
+                using var stream = await FileSystem.OpenAppPackageFileAsync(fileName);
+                LoadedPrimaryBitmap = SKBitmap.Decode(stream);
+            }
+
+            _primarySourceBitmapResized = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"LoadSource failed to load {fileName}");
+            Console.WriteLine(e);
+            return;
+        }
+        finally
+        {
+            _semaphoreLoadPrimaryFile.Release();
+        }
+    }
+
+    #endregion
+
+
+    #endregion
+
+    #region SecondaryTexture
+
+    protected virtual SKShader GetSecondaryTexture()
+    {
+        if (!_secondarySourceSet && ParentReady())
+        {
+            if (ControlTo != null)
+            {
+                ImportCacheTo();
+            }
+            else
+            {
+                ResizeSecondaryLoadedBitmapAndCompileTexture();
+            }
+        }
+
+        return SecondaryTexture;
+    }
+
+    /// <summary>
+    /// Flag set my CompileSecondaryTexture
+    /// </summary>
+    private bool _secondarySourceSet;
+
+    /// <summary>
+    /// Will be normally set by CompileSecondaryTexture
+    /// </summary>
+    protected SKShader SecondaryTexture;
+
+    public void CompileSecondaryTexture(SKImage image)
+    {
+        var dispose = SecondaryTexture;
+
+        if (image != null)
+        {
+            SecondaryTexture = image.ToShader(TilingSecondaryTexture, TilingSecondaryTexture);
+        }
+
+        if (dispose != SecondaryTexture)
+            dispose?.Dispose();
+
+        _secondarySourceSet = true;
+
+        Update();
+    }
+
+    #region FromFile
+
+    protected SKBitmap LoadedSecondaryBitmap;
+    private readonly SemaphoreSlim _semaphoreLoadSecondaryFile = new(1, 1);
+
 
     public static readonly BindableProperty SecondarySourceProperty = BindableProperty.Create(
         nameof(SecondarySource),
@@ -65,77 +323,51 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
     {
         Task.Run(async () =>
         {
-            await LoadSource(source);
-            if (ParentReady() && _loadedReflectionBitmap != null)
+            await LoadSecondarySource(source);
+            if (ParentReady() && LoadedSecondaryBitmap != null)
             {
-                CompileSecondaryTexture();
+                ResizeSecondaryLoadedBitmapAndCompileTexture();
             }
 
         });
     }
 
-    private bool _secondarySourceSet;
-
-    public void CompileSecondaryTexture()
+    public void ResizeSecondaryLoadedBitmapAndCompileTexture()
     {
         SKImage image = null;
 
-        if (_loadedReflectionBitmap != null)
+        if (LoadedSecondaryBitmap != null)
         {
             var outRect = Parent.DrawingRect;
             var info = new SKImageInfo((int)outRect.Width, (int)outRect.Height);
             var resizedBitmap = new SKBitmap(info);
             using (var canvas = new SKCanvas(resizedBitmap))
             {
-                // This will stretch the original image to fill the new size
                 var rect = new SKRect(0, 0, (int)outRect.Width, (int)outRect.Height);
-                canvas.DrawBitmap(_loadedReflectionBitmap, rect);
+                using var bmp = LoadedSecondaryBitmap.Resize(new SKSizeI((int)rect.Width, (int)rect.Height), SKFilterQuality.High);
+
+                canvas.DrawBitmap(bmp, rect);
                 canvas.Flush();
             }
 
             image = SKImage.FromBitmap(resizedBitmap);
         }
 
-        var dispose = SecondaryTexture;
-
-        if (image != null)
-        {
-            SecondaryTexture = image.ToShader(TilingSecondaryTexture, TilingSecondaryTexture);
-        }
-
-        if (dispose != SecondaryTexture)
-            dispose?.Dispose();
-
-        _secondarySourceSet = true;
-
-        Update();
+        CompileSecondaryTexture(image);
     }
 
-    protected SKShader SecondaryTexture;
-
-    protected virtual SKShader GetSecondaryTexture()
-    {
-        if (!_secondarySourceSet && ParentReady())
-        {
-            CompileSecondaryTexture();
-        }
-        return SecondaryTexture;
-    }
-
-
-    private SemaphoreSlim _semaphoreLoadFile = new(1, 1);
 
     /// <summary>
     /// Loading from local files only
     /// </summary>
     /// <param name="fileName"></param>
     /// <returns>
-    public async Task LoadSource(string fileName)
+    public async Task LoadSecondarySource(string fileName)
     {
         if (string.IsNullOrEmpty(fileName))
             return;
 
-        await _semaphoreLoadFile.WaitAsync();
+        await _semaphoreLoadSecondaryFile.WaitAsync();
 
         try
         {
@@ -143,12 +375,12 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
             {
                 var fullFilename = fileName.Replace("file://", "", StringComparison.InvariantCultureIgnoreCase);
                 using var stream = new FileStream(fullFilename, System.IO.FileMode.Open);
-                _loadedReflectionBitmap = SKBitmap.Decode(stream);
+                LoadedSecondaryBitmap = SKBitmap.Decode(stream);
             }
             else
             {
                 using var stream = await FileSystem.OpenAppPackageFileAsync(fileName);
-                _loadedReflectionBitmap = SKBitmap.Decode(stream);
+                LoadedSecondaryBitmap = SKBitmap.Decode(stream);
             }
 
             _secondarySourceSet = false;
@@ -162,22 +394,79 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
         }
         finally
         {
-            _semaphoreLoadFile.Release();
+            _semaphoreLoadSecondaryFile.Release();
         }
     }
 
-    protected override void OnDisposing()
-    {
-        base.OnDisposing();
+    #endregion
 
-        SecondaryTexture?.Dispose();
-        _loadedReflectionBitmap?.Dispose();
+    #region FromControl
+
+    SkiaControl _controlTo;
+
+    protected void ImportCacheTo()
+    {
+        if (_controlTo?.RenderObject?.Image == null || !ParentReady())
+            return;
+
+        CompileSecondaryTexture(_controlTo.RenderObject.Image);
     }
 
-    SKBitmap _loadedReflectionBitmap;
+    private void OnCacheCreatedTo(object sender, CachedObject e)
+    {
+        ImportCacheTo();
+    }
+
+    void ApplyControlTo(SkiaControl control)
+    {
+        if (_controlTo == control)
+            return;
+
+        DetachTo();
+        _controlTo = control;
+        if (_controlTo != null)
+        {
+            _controlTo.CreatedCache += OnCacheCreatedTo;
+            ImportCacheTo();
+        }
+    }
+
+    void DetachTo()
+    {
+        if (_controlTo != null)
+        {
+            _controlTo.CreatedCache -= OnCacheCreatedTo;
+            _controlTo = null;
+        }
+    }
+
+    private static void ApplyControlToProperty(BindableObject bindable, object oldvalue, object newvalue)
+    {
+        if (oldvalue != newvalue && bindable is ShaderDoubleTexturesEffect control)
+        {
+            control.ApplyControlTo(newvalue as SkiaControl);
+        }
+    }
+
+    public static readonly BindableProperty ControlToProperty = BindableProperty.Create(
+        nameof(ControlTo),
+        typeof(SkiaControl), typeof(ShaderDoubleTexturesEffect),
+        null,
+        propertyChanged: ApplyControlToProperty);
+
+    public SkiaControl ControlTo
+    {
+        get { return (SkiaControl)GetValue(ControlToProperty); }
+        set { SetValue(ControlToProperty, value); }
+    }
+
+
+
+    #endregion
 
     #endregion
 
 
-    #endregion
+
+
 }

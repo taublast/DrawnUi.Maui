@@ -407,6 +407,18 @@ public class SnappingLayout : SkiaLayout
     }
 
 
+    public static readonly BindableProperty TransitionDirectionProperty = BindableProperty.Create(
+        nameof(TransitionDirection),
+        typeof(LinearDirectionType),
+        typeof(SnappingLayout),
+        LinearDirectionType.Forward, BindingMode.OneWayToSource);
+
+    public LinearDirectionType TransitionDirection
+    {
+        get { return (LinearDirectionType)GetValue(TransitionDirectionProperty); }
+        set { SetValue(TransitionDirectionProperty, value); }
+    }
+
     public static readonly BindableProperty InTransitionProperty = BindableProperty.Create(
         nameof(InTransition),
         typeof(bool),

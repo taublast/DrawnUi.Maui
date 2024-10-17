@@ -44,11 +44,11 @@
                             the whole scroll even if image drawing with new effects might be slow
                         -->
                         <draw:SkiaImage
-                            draw:AddGestures.AnimationTapped="Shimmer"
                             Aspect="AspectFit"
                             HeightRequest="185"
                             HorizontalOptions="Center"
                             LoadSourceOnFirstDraw="False"
+                            RescalingQuality="Medium"
                             SemanticProperties.Description="dot net maui drawn ui"
                             SemanticProperties.Hint="image of a car"
                             Source="car.png"
@@ -89,7 +89,6 @@
                         </draw:SkiaImage>
 
                         <controls:SliderColor
-                            UseCache="Operations"
                             x:Name="Slider"
                             Margin="0,-16,0,16"
                             DefaultColor="Red"
@@ -100,6 +99,7 @@
                             SelectedColor="{Binding SelectedColor}"
                             Step="0.001"
                             Tag="Slider"
+                            UseCache="Operations"
                             WidthRequest="200" />
 
                         <!--
@@ -246,7 +246,7 @@
                     Rotation="-45"
                     TextColor="White"
                     VerticalOptions="End"
-                    ZIndex="100" >
+                    ZIndex="100">
                     <!--<draw:SkiaControl.VisualEffects>
 
                         <draw:DropShadowEffect

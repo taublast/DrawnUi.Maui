@@ -2928,7 +2928,7 @@ namespace DrawnUi.Maui.Draw
         protected virtual void AdaptCachedLayout(SKRect destination, float scale)
         {
             //adapt cache to current request
-            var newDestination = ArrangedDestination;//.Clone();
+            var newDestination = ArrangedDestination;
             newDestination.Offset(destination.Left, destination.Top);
 
             Destination = newDestination;
@@ -3435,6 +3435,11 @@ namespace DrawnUi.Maui.Draw
             return ScaledSize.FromPixels(maxWidth, maxHeight, widthCut, heightCut, scale);
         }
 
+        protected virtual bool BindingContextLocked()
+        {
+            return false;
+        }
+
         public virtual void ApplyBindingContext()
         {
 
@@ -3450,7 +3455,6 @@ namespace DrawnUi.Maui.Draw
 
             if (FillGradient != null)
                 FillGradient.BindingContext = BindingContext;
-
         }
 
         protected bool BindingContextWasSet { get; set; }
@@ -4991,14 +4995,6 @@ namespace DrawnUi.Maui.Draw
             {
                 DrawWithClipAndTransforms(ctx, destination, destination, true, true, (ctx) =>
                 {
-                    if (_paintWithOpacity == null)
-                    {
-                        _paintWithOpacity = new SKPaint();
-                    }
-
-                    _paintWithOpacity.Color = SKColors.White;
-                    _paintWithOpacity.IsAntialias = true;
-                    _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
 
                     if (EffectPostRenderer != null)
                     {
@@ -5006,6 +5002,15 @@ namespace DrawnUi.Maui.Draw
                     }
                     else
                     {
+                        if (_paintWithOpacity == null)
+                        {
+                            _paintWithOpacity = new SKPaint();
+                        }
+
+                        _paintWithOpacity.Color = SKColors.White;
+                        _paintWithOpacity.IsAntialias = true;
+                        _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
+
                         cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
                     }
                 });

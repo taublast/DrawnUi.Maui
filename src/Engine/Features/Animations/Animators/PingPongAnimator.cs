@@ -7,13 +7,17 @@ public class PingPongAnimator : RangeAnimator
         Repeat = -1;
     }
 
+    public Action OnCycleFInished { get; set; }
+
     protected override bool FinishedRunning()
     {
+        OnCycleFInished?.Invoke();
+
         if (Repeat < 0) //forever
         {
             (mMaxValue, mMinValue) = (mMinValue, mMaxValue);
             Distance = mMaxValue - mMinValue;
-            
+
             mValue = mMinValue;
             mLastFrameTime = 0;
             mStartFrameTime = 0;
@@ -25,7 +29,7 @@ public class PingPongAnimator : RangeAnimator
 
             (mMaxValue, mMinValue) = (mMinValue, mMaxValue);
             Distance = mMaxValue - mMinValue;
-            
+
             mValue = mMinValue;
             mLastFrameTime = 0;
             mStartFrameTime = 0;

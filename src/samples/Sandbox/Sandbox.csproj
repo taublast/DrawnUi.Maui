@@ -112,6 +112,10 @@
 
     <None Remove="Resources\Raw\Images\glass2.jpg" />
 
+    <None Remove="Resources\Raw\Images\hugrobot2.jpg" />
+
+    <None Remove="Resources\Raw\Images\monkey1.jpg" />
+
     <None Remove="Resources\Raw\Lottie\cross.json" />
 
     <None Remove="Resources\Raw\Lottie\Loader.json" />
@@ -188,6 +192,10 @@
     </ItemGroup>
 
     <ItemGroup>
+ 
+      <Compile Update="MainPageDev2.xaml.cs">
+        <DependentUpon>MainPageDev2.xaml</DependentUpon>
+      </Compile>
  
       <Compile Update="Resources\Strings\ResStrings.Designer.cs">
         <DesignTime>True</DesignTime>
@@ -281,6 +289,13 @@
     <MauiAsset Update="Resources\Raw\Svg\dotnet_bot.svg">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
+  </ItemGroup>
+ 
+
+  <ItemGroup>
+    <MauiXaml Update="MainPageDev2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
  
 

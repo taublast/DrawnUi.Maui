@@ -72,7 +72,11 @@
     <Compile Remove="Internals\Helpers\3D\**" />
   </ItemGroup>
 
-  
+  <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
+    <Compile Remove="Platforms\Android\Legacy\**" />
+  </ItemGroup>
+
+
   <ItemGroup>
     <None Include="..\..\icon128.png">
 	    <Pack>True</Pack>

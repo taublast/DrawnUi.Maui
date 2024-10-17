@@ -1,4 +1,3 @@
-using AppoMobi.Maui.Gestures;
 using DrawnUi.Maui.Infrastructure;
 
 namespace Sandbox.Views.Controls;
@@ -48,7 +47,7 @@ public class TestLoopEffect : SkiaShaderEffect, IStateEffect, ISkiaGestureProces
         return uniforms;
     }
 
-    protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader texture1)
+    protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader primaryTexture)
     {
         if (ControlTo == null || ControlTo.RenderObject == null)
         {
@@ -59,14 +58,14 @@ public class TestLoopEffect : SkiaShaderEffect, IStateEffect, ISkiaGestureProces
 
         var snapshot2 = ControlTo.RenderObject.Image;
 
-        if (texture1 != null && snapshot2 != null)
+        if (primaryTexture != null && snapshot2 != null)
         {
             //var texture1 = snapshot.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
             var texture2 = snapshot2.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
 
             return new SKRuntimeEffectChildren(CompiledShader)
             {
-                { "iImage1", texture1 },
+                { "iImage1", primaryTexture },
                 { "iImage2", texture2 }
             };
         }
@@ -142,56 +141,6 @@ public class TestLoopEffect : SkiaShaderEffect, IStateEffect, ISkiaGestureProces
     }
 }
 
-
-
-public class TestShaderEffect : SkiaShaderEffect
-{
-
-    public static readonly BindableProperty ProgressProperty = BindableProperty.Create(nameof(Progress),
-    typeof(double),
-    typeof(TestShaderEffect),
-    0.0);
-    public double Progress
-    {
-        get { return (double)GetValue(ProgressProperty); }
-        set { SetValue(ProgressProperty, value); }
-    }
-
-}
-
-public class AnimatedShaderTransition : ShaderTransition
-{
-    public AnimatedShaderTransition()
-    {
-        //  "transitions/fade.sksl";
-        //  "transitions/doorway.sksl";
-        //ShaderFilename = "transitions/cube.sksl";
-        //ShaderFilename = "transitions/crosswarp.sksl";
-        ShaderFilename = "transitions/new.sksl";
-
-    }
-
-    private PingPongAnimator _animator;
-
-    protected override void OnLayoutReady()
-    {
-        base.OnLayoutReady();
-
-        if (_animator == null)
-        {
-            _animator = new(this);
-
-            _animator.Start((v) =>
-            {
-                this.Progress = v;
-                Update();
-            }, 0, 1, 3500);
-        }
-
-    }
-
-}
-
 public class ShaderTransition : SkiaControl
 {
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
@@ -237,11 +186,32 @@ public class ShaderTransition : SkiaControl
     private SKRuntimeEffectChildren _passTextures;
 
     public double Progress { get; set; }
-    public string ShaderFilename { get; set; }
+
+    public string ShaderFilename
+    {
+        get => _shaderFilename;
+        set
+        {
+            if (value == _shaderFilename)
+                return;
+
+            _shaderFilename = value;
+            OnPropertyChanged();
+            Recompile();
+        }
+    }
+
+
     void CreateShader()
     {
-        string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/{ShaderFilename}");
+        string shaderCode = SkSl.LoadFromResources($"{ShaderFilename}");
         _compiledShader = SkSl.Compile(shaderCode);
+    }
+
+    public void Recompile()
+    {
+        _needRecompile = true;
+        UpdateTextures();
     }
 
     public static readonly BindableProperty ControlFromProperty = BindableProperty.Create(
@@ -286,7 +256,7 @@ public class ShaderTransition : SkiaControl
         if (_controlFrom != null)
         {
             _controlFrom.CreatedCache += OnCacheCreatedFrom;
-            _controlFrom.DelegateDrawCache += DrawContentImageFrom;
+            //_controlFrom.DelegateDrawCache += DrawContentImageFrom;
         }
     }
 
@@ -307,9 +277,12 @@ public class ShaderTransition : SkiaControl
         if (_controlTo != null)
         {
             _controlTo.CreatedCache += OnCacheCreatedTo;
-            _controlTo.DelegateDrawCache += DrawContentImageTo;
+            //_controlTo.DelegateDrawCache += DrawContentImageTo;
         }
     }
+
+    private bool _needRecompile;
+    private string _shaderFilename;
 
     public override void OnDisposing()
     {
@@ -320,14 +293,14 @@ public class ShaderTransition : SkiaControl
 
         _compiledShader?.Dispose();
         _passTextures?.Dispose();
-
     }
+
     void DetachFrom()
     {
         if (_controlFrom != null)
         {
             _controlFrom.CreatedCache -= OnCacheCreatedFrom;
-            _controlFrom.DelegateDrawCache -= DrawContentImageFrom;
+            //_controlFrom.DelegateDrawCache -= DrawContentImageFrom;
             _controlFrom = null;
         }
     }
@@ -337,21 +310,23 @@ public class ShaderTransition : SkiaControl
         if (_controlTo != null)
         {
             _controlTo.CreatedCache -= OnCacheCreatedTo;
-            _controlTo.DelegateDrawCache -= DrawContentImageTo;
+            //_controlTo.DelegateDrawCache -= DrawContentImageTo;
             _controlTo = null;
         }
     }
 
-    private void DrawContentImageFrom(CachedObject arg1, SkiaDrawingContext arg2, SKRect arg3)
-    { }
-    private void DrawContentImageTo(CachedObject arg1, SkiaDrawingContext arg2, SKRect arg3)
-    {
+    //private void DrawContentImageTo(CachedObject arg1, SkiaDrawingContext arg2, SKRect arg3)
+    //{
 
-    }
+    //}
     private void OnCacheCreatedTo(object sender, CachedObject e)
     {
         UpdateTextures();
     }
+
+    //private void DrawContentImageFrom(CachedObject arg1, SkiaDrawingContext arg2, SKRect arg3)
+    //{ }
+
     private void OnCacheCreatedFrom(object sender, CachedObject e)
     {
         UpdateTextures();
@@ -365,6 +340,13 @@ public class ShaderTransition : SkiaControl
                 || _controlFrom.RenderObject == null || _controlFrom.RenderObject.Image == null
                 || _controlTo.RenderObject == null || _controlTo.RenderObject.Image == null)
             return;
+
+        if (_needRecompile)
+        {
+            _needRecompile = false;
+            _compiledShader?.Dispose();
+            _compiledShader = null;
+        }
 
         if (_compiledShader == null)
         {

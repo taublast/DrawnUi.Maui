@@ -15,11 +15,11 @@ namespace MauiNet8;
 
 
 
-public partial class MainPageDev : BasePage
+public partial class MainPageDev2 : BasePage
 {
     private readonly List<string> _shaders;
 
-    public MainPageDev()
+    public MainPageDev2()
     {
         try
         {
@@ -42,24 +42,6 @@ public partial class MainPageDev : BasePage
     }
 
     public ObservableRangeCollection<string> Items { get; } = new();
-
-    private int _SelectedIndex;
-    public int SelectedIndex
-    {
-        get
-        {
-            return _SelectedIndex;
-        }
-        set
-        {
-            if (_SelectedIndex != value)
-            {
-                _SelectedIndex = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
 
     void Test()
     {

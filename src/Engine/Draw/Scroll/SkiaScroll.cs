@@ -613,7 +613,8 @@ namespace DrawnUi.Maui.Draw
                 lockHeader = false;
                 inContact = true;
             }
-            else if (args.Type == TouchActionResult.Up)
+            else
+            if (args.Type == TouchActionResult.Up)
             {
                 lockHeader = false;
                 inContact = false;
@@ -621,9 +622,7 @@ namespace DrawnUi.Maui.Draw
 
             var preciseStop = false;
             ContentGesturesHit = false;
-
             var thisOffset = TranslateInputCoords(apply.childOffset);
-
             if (Content != null && Header != null)
             {
                 var x = args.Event.Location.X + thisOffset.X;
@@ -649,23 +648,38 @@ namespace DrawnUi.Maui.Draw
                 return base.ProcessGestures(args, apply);
             }
 
+
             bool wrongDirection = false;
-            if (IgnoreWrongDirection && args.Type == TouchActionResult.Panning)
+
+            if (args.Type == TouchActionResult.Panning)
             {
-                var panDirection = DirectionType.Vertical;
-                if (Math.Abs(args.Event.Distance.Delta.X) > Math.Abs(args.Event.Distance.Delta.Y))
+                if (args.Event.Manipulation != null && !ZoomLocked) //todo not only panning?
                 {
-                    panDirection = DirectionType.Horizontal;
+                    IsUserFocused = true;
+                    var scale = args.Event.Manipulation.Scale + this.ViewportZoom;
+                    Debug.WriteLine($"Scale: {scale}");
+                    var zoomed = SetZoom(scale);
                 }
-                if (Orientation == ScrollOrientation.Vertical && panDirection != DirectionType.Vertical)
+
+
+                if (IgnoreWrongDirection)
                 {
-                    wrongDirection = true;
-                }
-                if (Orientation == ScrollOrientation.Horizontal && panDirection != DirectionType.Horizontal)
-                {
-                    wrongDirection = true;
+                    var panDirection = DirectionType.Vertical;
+                    if (Math.Abs(args.Event.Distance.Delta.X) > Math.Abs(args.Event.Distance.Delta.Y))
+                    {
+                        panDirection = DirectionType.Horizontal;
+                    }
+                    if (Orientation == ScrollOrientation.Vertical && panDirection != DirectionType.Vertical)
+                    {
+                        wrongDirection = true;
+                    }
+                    if (Orientation == ScrollOrientation.Horizontal && panDirection != DirectionType.Horizontal)
+                    {
+                        wrongDirection = true;
+                    }
                 }
             }
+
 
             if (!IsUserPanning || wrongDirection || args.Type == TouchActionResult.Up || args.Type == TouchActionResult.Tapped || !RespondsToGestures)
             {
@@ -2106,6 +2120,51 @@ namespace DrawnUi.Maui.Draw
             ViewportZoom = zoom;
             return true;
         }
+
+        /*
+        public bool SetZoom(double zoom)
+        {
+            if (ZoomLocked)
+                return false;
+
+            Debug.WriteLine($"[ZOOM] {zoom:0.000}");
+
+            if (zoom < ZoomMin)
+                zoom = ZoomMin;
+            else if (zoom > ZoomMax)
+                zoom = ZoomMax;
+
+            // Calculate viewport center in screen coordinates
+            var viewportCenterScreen = new SKPoint((float)(Width / 2), (float)(Height / 2));
+
+            // Current content scale
+            var scale = RenderingScale; // Assuming RenderingScale is your base scale factor
+            var currentContentScale = (float)(scale * ViewportZoom);
+
+            // Current content offset in pixels
+            var contentOffsetPixels = new SKPoint(
+                ViewportOffsetX * currentContentScale,
+                ViewportOffsetY * currentContentScale);
+
+            // Content coordinates of the center before zooming
+            var contentCenterBeforeZoom = new SKPoint(
+                (viewportCenterScreen.X - contentOffsetPixels.X) / currentContentScale,
+                (viewportCenterScreen.Y - contentOffsetPixels.Y) / currentContentScale);
+
+            // Update the zoom level
+            ZoomScaleInternal = zoom;
+            ViewportZoom = zoom;
+
+            // New content scale
+            var newContentScale = (float)(scale * ViewportZoom);
+
+            // Adjust offsets to keep the content centered
+            ViewportOffsetX = ((viewportCenterScreen.X - (contentCenterBeforeZoom.X * newContentScale)) / newContentScale);
+            ViewportOffsetY = ((viewportCenterScreen.Y - (contentCenterBeforeZoom.Y * newContentScale)) / newContentScale);
+
+            return true;
+        }
+        */
 
         /// <summary>
         /// We might have difference between pinch scale and manually set zoom. 

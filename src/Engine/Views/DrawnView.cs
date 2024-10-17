@@ -1338,7 +1338,7 @@ namespace DrawnUi.Maui.Views
 
         private bool OnDrawSurface(SKSurface surface, SKRect rect)
         {
-            //lock (LockDraw)
+            lock (LockDraw)
             {
 
                 if (!OnStartRendering(surface.Canvas))

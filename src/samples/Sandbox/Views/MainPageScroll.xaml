@@ -26,25 +26,26 @@
 
 
             <draw:SkiaScroll
-                ZoomLocked="False"
-                ZoomMax="3"
-                ZoomMin="1"
                 BackgroundColor="Black"
                 HorizontalOptions="Fill"
                 Orientation="Both"
-                VerticalOptions="Fill">
+                VerticalOptions="Fill"
+                ZoomLocked="False"
+                ZoomMax="3"
+                ZoomMin="1">
 
                 <draw:SkiaLayout
                     BackgroundColor="DimGray"
                     HeightRequest="1500"
                     Tag="Content"
-                    UseCache="Image"
+                    UseCache="None"
                     WidthRequest="1500">
 
                     <draw:SkiaImage
                         HorizontalOptions="Fill"
                         RescalingQuality="None"
                         Source="Images/dungeon.jpg"
+                        UseCache="Image"
                         VerticalOptions="Fill" />
 
                 </draw:SkiaLayout>
