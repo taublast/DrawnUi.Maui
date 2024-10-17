@@ -76,7 +76,7 @@ public class AnimatedShaderTransition : ShaderTransition, ISkiaGestureListener
         {
             _animator = new(this)
             {
-                OnCycleFInished = () =>
+                CycleFInished = () =>
                 {
                     if (PlayingType == PlayType.Random)
                     {

@@ -129,7 +129,7 @@ public class SnappingLayout : SkiaLayout
     }
 
     /// <summary>
-    /// Part of the distance between snap points the velocity need to cover to trigger going to the next snap point
+    /// 0.2 - Part of the distance between snap points the velocity need to cover to trigger going to the next snap point. NOT a bindable property (yet).
     /// </summary>
     public double SnapDistanceRatio { get; set; } = 0.2;
 
@@ -146,28 +146,20 @@ public class SnappingLayout : SkiaLayout
         Vector2 projectionAnchor = SelectNextAnchor(origin, velocity);
 
         // Calculate the distance between the origin and the projectionAnchor
-        float distance = Vector2.Distance(origin, projectionAnchor);
+        //float distance = Vector2.Distance(origin, projectionAnchor);
 
         // Calculate the projected position along the direction of the velocity
-        Vector2 projectedPosition = origin + velocity;
+        //Vector2 projectedPosition = origin + velocity;
 
         // Calculate the distance to the anchor in the opposite direction
-        Vector2 oppositeAnchor = SelectNextAnchor(origin, -velocity);
-        float oppositeDistance = Vector2.Distance(origin, oppositeAnchor);
+        //Vector2 oppositeAnchor = SelectNextAnchor(origin, -velocity);
+        //float oppositeDistance = Vector2.Distance(origin, oppositeAnchor);
 
-        Vector2 targetAnchor;
-        if (Vector2.Distance(origin, projectedPosition) <= distance * SnapDistanceRatio && oppositeDistance < distance)
-        {
-            targetAnchor = oppositeAnchor;
-        }
-        else
-        {
-            targetAnchor = projectionAnchor;
-        }
+        //var targetAnchor = projectionAnchor;
 
-        if (Vector2.Distance(location, targetAnchor) >= 0.5) //todo move threshold to options
+        if (Vector2.Distance(location, projectionAnchor) >= 0.5) //todo move threshold to options
         {
-            ScrollToOffset(targetAnchor, velocity, CanAnimate);
+            ScrollToOffset(projectionAnchor, velocity, CanAnimate);
         }
 
         UpdateReportedPosition();
@@ -185,7 +177,7 @@ public class SnappingLayout : SkiaLayout
 
     protected SpringWithVelocityVectorAnimator VectorAnimatorSpring;
 
-    protected RangeVectorAnimator _animatorRange;
+    protected RangeVectorAnimator AnimatorRange;
     private Vector2 _currentPosition;
 
     protected Vector2 CurrentSnap { get; set; } = new(-1, -1);
@@ -251,8 +243,9 @@ public class SnappingLayout : SkiaLayout
                     {
                         speed *= (Math.Abs(end.X - start.X) / Height);
                     }
-                    _animatorRange.Initialize(start, end, (float)speed, Easing.CubicInOut);
-                    _animatorRange.Start();
+
+                    AnimatorRange.Initialize(start, end, (float)speed, Easing.CubicInOut);
+                    AnimatorRange.Start();
                 }
             }
 

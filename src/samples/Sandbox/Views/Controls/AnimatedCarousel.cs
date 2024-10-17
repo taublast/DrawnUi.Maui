@@ -25,6 +25,84 @@ public class AnimatedCarousel : CarouselWithTransitions
         ShaderFile = "fade.sksl"; //default
     }
 
+    protected override void OnChildrenInitialized()
+    {
+        base.OnChildrenInitialized();
+
+        SetupAnimator();
+    }
+
+    private PingPongAnimator _animator;
+
+    void SetupAnimator()
+    {
+        if (!ChildrenInitialized)
+            return;
+
+        if (_animator != null)
+        {
+            _animator.Stop();
+            _animator.Dispose();
+            _animator = null;
+        }
+
+        if (_animator == null)
+        {
+            _animator = new(this)
+            {
+                CycleFInished = () =>
+                {
+
+
+                    if (PlayingType == PlayType.Random)
+                    {
+                        ShaderFile = GettRandomShader();
+                    }
+                    else
+                    if (PlayingType == PlayType.Next)
+                    {
+                        ShaderFile = GetNextShader();
+                    }
+
+                    if (SelectedIndex < MaxIndex)
+                    {
+                        this.SelectedIndex++;
+                    }
+                    else
+                    {
+                        this.SelectedIndex = 0;
+                    }
+                }
+            };
+
+            _animator.Start((v) =>
+            {
+
+            }, 0, 1, (uint)DurationMs);
+        }
+
+    }
+
+
+    public static readonly BindableProperty DurationMsProperty = BindableProperty.Create(nameof(DurationMsProperty),
+        typeof(double),
+        typeof(AnimatedCarousel),
+        3500.0,
+        propertyChanged: (b, o, n) =>
+        {
+            if (b is AnimatedCarousel control)
+            {
+                control.SetupAnimator();
+            }
+        });
+
+    public double DurationMs
+    {
+        get { return (double)GetValue(DurationMsProperty); }
+        set { SetValue(DurationMsProperty, value); }
+    }
+
+
     protected override void OnFromToChanged()
     {
         base.OnFromToChanged();

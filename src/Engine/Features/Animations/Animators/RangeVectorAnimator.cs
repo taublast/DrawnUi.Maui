@@ -47,7 +47,7 @@ public class RangeVectorAnimator : SkiaVectorAnimator
     {
         var secs = deltaFromStart / 1_000_000_000.0f;
 
-        if (secs > Parameters.DurationSecs)
+        if (secs >= Parameters.DurationSecs)
         {
             Vector = _end; //Parameters.ValueAt(Parameters.DurationSecs);
             return true;
