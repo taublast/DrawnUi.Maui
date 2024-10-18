@@ -2946,10 +2946,7 @@ namespace DrawnUi.Maui.Draw
         {
             base.ApplyBindingContext();
 
-            if (this.Content != null && Content.BindingContext == null) //todo remove this last condition!
-            {
-                Content.BindingContext = BindingContext;
-            }
+            Content?.SetInheritedBindingContext(BindingContext);
         }
 
         /// <summary>

@@ -3435,17 +3435,26 @@ namespace DrawnUi.Maui.Draw
             return ScaledSize.FromPixels(maxWidth, maxHeight, widthCut, heightCut, scale);
         }
 
-        protected virtual bool BindingContextLocked()
+        /// <summary>
+        /// This is to be called by layouts to propagate their binding context to children.
+        /// By overriding this method any child could deny a new context or use any other custom logic.
+        /// To force new context for child parent would set child's BindingContext directly skipping the use of this method.
+        /// </summary>
+        /// <param name="context"></param>
+        public virtual void SetInheritedBindingContext(object context)
         {
-            return false;
+            BindingContext ??= context; //only if existing is null
         }
 
+        /// <summary>
+        /// https://github.com/taublast/DrawnUi.Maui/issues/92#issuecomment-2408805077
+        /// </summary>
         public virtual void ApplyBindingContext()
         {
 
             foreach (var content in this.Views)
             {
-                content.BindingContext = BindingContext;
+                content.SetInheritedBindingContext(BindingContext);
             }
 
             foreach (var content in this.VisualEffects)
@@ -5976,24 +5985,17 @@ namespace DrawnUi.Maui.Draw
                 if (parent == null)
                 {
                     Parent = null;
+                    //todo maybe enable to avoid potential memory leaks
+                    //todo investigate perf when enabled
                     //BindingContext = null;
-
-                    //this.SizeChanged -= OnFormsSizeChanged;
                     return;
                 }
 
-                //if (!parent.Views.Contains(this)) //Slow A
+                parent.Views.Add(this);
+                if (parent is SkiaControl skiaParent2)
                 {
-                    parent.Views.Add(this);
-                    if (parent is SkiaControl skiaParent)
-                    {
-                        skiaParent.InvalidateViewsList();
-                    }
+                    skiaParent2.InvalidateViewsList();
                 }
-                //else
-                //{
-                //    var stop = 1;
-                //}
 
                 Parent = parent;
 
@@ -6004,8 +6006,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (parent is IDrawnBase control)
                 {
-                    if (BindingContext == null)
-                        BindingContext = control.BindingContext;
+                    SetInheritedBindingContext(control.BindingContext);
                 }
 
                 InvalidateInternal();

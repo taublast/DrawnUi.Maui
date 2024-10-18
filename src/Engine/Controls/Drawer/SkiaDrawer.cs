@@ -21,10 +21,7 @@ namespace DrawnUi.Maui.Controls
 
         public override void ApplyBindingContext()
         {
-            if (this.Content != null)
-            {
-                Content.BindingContext = this.BindingContext;
-            }
+            Content?.SetInheritedBindingContext(this.BindingContext);
 
             base.ApplyBindingContext();
         }

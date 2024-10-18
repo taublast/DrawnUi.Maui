@@ -710,7 +710,7 @@ namespace DrawnUi.Maui.Controls
                 try
                 {
                     var content = page as SkiaControl;
-                    modalWrapper.BindingContext = content.BindingContext;
+                    modalWrapper.SetInheritedBindingContext(content.BindingContext);
                     modalWrapper.WrapContent(content);
 
                     if (modalWrapper.Content is SkiaDrawer drawer)

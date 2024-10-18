@@ -2021,7 +2021,7 @@ namespace DrawnUi.Maui.Views
 
             foreach (var view in this.Views)
             {
-                view.BindingContext = BindingContext;
+                view.SetInheritedBindingContext(BindingContext);
             }
         }
 
