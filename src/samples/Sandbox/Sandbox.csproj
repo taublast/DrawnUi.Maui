@@ -193,9 +193,6 @@
 
     <ItemGroup>
  
-      <Compile Update="MainPageDev2.xaml.cs">
-        <DependentUpon>MainPageDev2.xaml</DependentUpon>
-      </Compile>
  
       <Compile Update="Resources\Strings\ResStrings.Designer.cs">
         <DesignTime>True</DesignTime>
@@ -203,13 +200,7 @@
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
  
-      <Compile Update="Views\MainPageDrawnSpans.xaml.cs">
-        <DependentUpon>MainPageDrawnSpans.xaml</DependentUpon>
-      </Compile>
- 
-      <Compile Update="Views\MainPageGif.xaml.cs">
-        <DependentUpon>MainPageGif.xaml</DependentUpon>
-      </Compile>
+   
              
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
@@ -218,6 +209,9 @@
     
     </ItemGroup>
  
+    <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+      <Compile Remove="Views\Controls\Shaders\**" />
+    </ItemGroup> x/zz.'as
   
     <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
@@ -228,7 +222,14 @@
     <Compile Remove="Views\Controls\ShaderTransition.cs" />
     <Compile Remove="Views\MainPageShaderRipples.xaml.cs" />
     <MauiXaml Remove="Views\MainPageShaderRipples.xaml" />
+    <Compile Remove="Views\MainPageShader.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageShader.xaml" />
+    <Compile Remove="MainPageDev.xaml.cs" />
+    <MauiXaml Remove="MainPageDev.xaml" />
+    <Compile Remove="MainPageDev2.xaml.cs" />
+    <MauiXaml Remove="MainPageDev2.xaml" />
     </ItemGroup>
+
  
 
   <ItemGroup>
@@ -291,12 +292,7 @@
     </MauiAsset>
   </ItemGroup>
  
-
-  <ItemGroup>
-    <MauiXaml Update="MainPageDev2.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-  </ItemGroup>
+ 
  
 
  
