@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <UseSkiaSharp3>true</UseSkiaSharp3>
+    <UseSkiaSharp3>false</UseSkiaSharp3>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
