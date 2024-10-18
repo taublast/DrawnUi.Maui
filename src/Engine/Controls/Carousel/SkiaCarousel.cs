@@ -553,11 +553,11 @@ public class SkiaCarousel : SnappingLayout
                     if (speed > maxSpeed)
                         speed = maxSpeed;
 
-                    if (ConstantSpeedMs > 0)
+                    if (LinearSpeedMs > 0)
                     {
                         var ratio = Math.Abs(end.X - start.X) / CellSize.Pixels.Width;
 
-                        speed = ratio * ConstantSpeedMs / 1000.0;
+                        speed = ratio * LinearSpeedMs / 1000.0;
                     }
 
                     //Debug.WriteLine($"Will snap:{start} -> {end}");
@@ -1113,19 +1113,21 @@ public class SkiaCarousel : SnappingLayout
     }
 
 
-    public static readonly BindableProperty ConstantSpeedMsProperty = BindableProperty.Create(
-        nameof(ConstantSpeedMs),
+    public static readonly BindableProperty LinearSpeedMsProperty = BindableProperty.Create(
+        nameof(LinearSpeedMs),
         typeof(double),
         typeof(SkiaCarousel),
         0.0);
 
     /// <summary>
-    ///  If set will be used for automatic scrolls instead of manual velocity, for non-bouncing only
+    /// How long would a whole auto-sliding take, if `Bounces` is `False`.
+    /// If set (>0) will be used for automatic scrolls instead of using manual velocity.
+    /// For bouncing carousel 
     /// </summary>
-    public double ConstantSpeedMs
+    public double LinearSpeedMs
     {
-        get { return (double)GetValue(ConstantSpeedMsProperty); }
-        set { SetValue(ConstantSpeedMsProperty, value); }
+        get { return (double)GetValue(LinearSpeedMsProperty); }
+        set { SetValue(LinearSpeedMsProperty, value); }
     }
 
     private int _LastIndex;
@@ -1226,6 +1228,8 @@ public class SkiaCarousel : SnappingLayout
     {
         bool passedToChildren = false;
 
+        //        Debug.WriteLine($"[Carousel] {args.Type}");
+
         //Super.Log($"[CAROUSEL] {this.Tag} Got {args.Action}..");
 
         //var thisOffset = TranslateInputCoords(apply.childOffset);
@@ -1257,7 +1261,6 @@ public class SkiaCarousel : SnappingLayout
 
         if (!RespondsToGestures)
             return null;
-
 
         void ResetPan()
         {
@@ -1341,11 +1344,12 @@ public class SkiaCarousel : SnappingLayout
                 break;
 
             case TouchActionResult.Up:
+                //Debug.WriteLine($"[Carousel] {args.Type} {IsUserFocused} {IsUserPanning} {InTransition}");
 
                 if (IsUserFocused)
                 {
 
-                    if (IsUserPanning) //|| Math.Abs(velocity) > 30)
+                    if (IsUserPanning || InTransition)
                     {
                         consumed = this;
 

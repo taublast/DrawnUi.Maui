@@ -479,6 +479,8 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name=""></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
+        //Debug.WriteLine($"[Canvas] {type}");
+
         var args = SkiaGesturesParameters.Create(touchAction, args1);
 
         if (args.Type == TouchActionResult.Panning)

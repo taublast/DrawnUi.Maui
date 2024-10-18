@@ -17,9 +17,12 @@ public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, 
 
     #region IStateEffect
 
+    /// <summary>
+    /// Will be invoked before actually painting but after gestures processing and other internal calculations. By SkiaControl.OnBeforeDrawing method. Beware if you call Update() inside will never stop updating.
+    /// </summary>
     public virtual void UpdateState()
     {
-        base.Update();
+
     }
 
     public override void Attach(SkiaControl parent)

@@ -56,51 +56,54 @@ public class CarouselWithTransitions : SkiaCarousel
 
     protected override void OnScrollProgressChanged()
     {
-
-        var currentIndex = 0;
-        if (ScrollProgress > 0)
-            currentIndex = (int)Math.Floor((MaxIndex) * this.ScrollProgress);
-
-        var progress = this.TransitionProgress;
-
-        if (IndexFrom != currentIndex)
+        if (ScrollProgress >= 0 && ScrollProgress <= 1) //ignore bouncing
         {
-            if (currentIndex < MaxIndex)
+            var currentIndex = 0;
+            if (ScrollProgress > 0)
+                currentIndex = (int)Math.Floor((MaxIndex) * this.ScrollProgress);
+
+            var progress = this.TransitionProgress;
+
+            if (IndexFrom != currentIndex)
             {
-                IndexTo = currentIndex + 1;
-                IndexFrom = currentIndex;
-
-                if (IndexToLast != IndexTo || IndexFromLast != IndexFrom)
+                if (currentIndex < MaxIndex)
                 {
-                    IndexToLast = IndexTo;
-                    IndexFromLast = IndexFrom;
+                    IndexTo = currentIndex + 1;
+                    IndexFrom = currentIndex;
 
-                    var viewFrom = ChildrenFactory.GetChildAt(IndexFrom);
-                    var viewTo = ChildrenFactory.GetChildAt(IndexTo);
-
-                    if (viewFrom == null || viewTo == null)
+                    if (IndexToLast != IndexTo || IndexFromLast != IndexFrom)
                     {
-                        throw new ApplicationException("Unexpected null");
+                        IndexToLast = IndexTo;
+                        IndexFromLast = IndexFrom;
+
+                        var viewFrom = ChildrenFactory.GetChildAt(IndexFrom);
+                        var viewTo = ChildrenFactory.GetChildAt(IndexTo);
+
+                        if (viewFrom == null || viewTo == null)
+                        {
+                            throw new ApplicationException("Unexpected null");
+                        }
+
+                        Effect.ControlFrom = viewFrom;
+                        Effect.ControlTo = viewTo;
+
+                        //Debug.WriteLine($"Set new sources {IndexFrom} ({viewFrom.BindingContext}) <=> {IndexTo} ({viewTo.BindingContext}) at progress {progress:0.00}, scroll {ScrollProgress:0.00}");
                     }
 
-                    Effect.ControlFrom = viewFrom;
-                    Effect.ControlTo = viewTo;
-
-                    //Debug.WriteLine($"Set new sources {IndexFrom} ({viewFrom.BindingContext}) <=> {IndexTo} ({viewTo.BindingContext}) at progress {progress:0.00}, scroll {ScrollProgress:0.00}");
+                }
+                else
+                {
+                    progress = 1.0;
                 }
 
-            }
-            else
-            {
-                progress = 1.0;
+                OnFromToChanged();
             }
 
-            OnFromToChanged();
+            Effect.Progress = progress;
+
+            Effect.Update();
         }
 
-        Effect.Progress = progress;
-
-        Effect.Update();
     }
 
     //to skip default slides animation via translation, not calling base

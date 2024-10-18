@@ -38,12 +38,11 @@
                         Tag="Content"
                         Type="Column">
 
-                        <!---->
+                        <!--    -->
                         <controls:AnimatedCarousel
                             x:Name="MainCarousel"
-                            ConstantSpeedMs="1000"
+                            AnimatorSpeedMs="1750"
                             BackgroundColor="DarkOliveGreen"
-                            Bounces="False"
                             HeightRequest="300"
                             HorizontalOptions="Fill"
                             SelectedIndex="{Binding SelectedIndex}"

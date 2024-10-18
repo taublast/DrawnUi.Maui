@@ -11,6 +11,8 @@ public enum PlayType
     Random
 }
 
+public record Transition(string Name, string Source, int Speed);
+
 /// <summary>
 /// Subclassed CarouselWithTransitions to add automation to transitions,
 /// totally specific to this demo case
@@ -20,9 +22,94 @@ public class AnimatedCarousel : CarouselWithTransitions
 
     public AnimatedCarousel()
     {
-        _shaders = Files.ListAssets(path);
+        //_shaders = Files.ListAssets(path); //not using this, will provide a limited list below:
 
-        ShaderFile = "fade.sksl"; //default
+        //some adapted shaders from https://github.com/gl-transitions/gl-transitions
+        _transitions = new List<Transition>
+        {
+            //pointless
+            //new("Bookflip", "bookflip.sksl", 1500),
+            //new("Bounce", "bounce.sksl", 1500),
+
+            new("Bow Tie Horizontal", "bowtiehorizontal.sksl", 750),
+            new("Bow Tie Vertical", "bowtievertical.sksl", 750),
+          
+            //bugs
+            //new("Butterfly Waves Crawler", "butterflywavescrawler.sksl", 250),
+            
+            new("Circlecrop", "circlecrop.sksl", 1500),
+
+            new("Circleopen", "circleopen.sksl", 750),
+
+            new("Colorphase", "colorphase.sksl", 750),
+
+            new("Cross-hatch", "crosshatch.sksl", 1000),
+
+            new("Cross-warp", "crosswarp.sksl", 750),
+
+            new("Cross-zoom", "crosszoom.sksl", 750),
+
+            //bugs
+            new("Cube", "cube.sksl", 750),
+
+            new("Doorway", "doorway.sksl", 750),
+
+            new("Dreamy", "dreamy.sksl", 750),
+
+            new("Dreamy Zoom", "dreamyzoom.sksl", 750),
+
+            new("Edge", "edgetransition.sksl", 750),
+
+            new("Fade", "fade.sksl", 500),
+
+            new("Fade Color", "fadecolor.sksl", 750),
+
+            new("Fade Grayscale", "fadegrayscale.sksl", 750),
+
+            new("Film Burn", "filmburn.sksl", 1250),
+
+            new("Fly Eye", "flyeye.sksl", 1000),
+
+            new("Heart", "heart.sksl", 750),
+
+            new("Kaleidoscope", "kaleidoscope.sksl", 1000),
+
+            new("Morph", "morph.sksl", 500),
+
+            new("Mosaic", "mosaic.sksl", 750),
+
+            new("Page Curl", "pagecurl.sksl", 1000),
+
+            new("Pixelize", "pixelize.sksl", 1000),
+
+            new("Rolls", "rolls.sksl", 750),
+
+            new("Scale In", "scalein.sksl", 750),
+
+            new("Swirl", "swirl.sksl", 1250),
+
+            new("Tangent Motion Blur", "tangentmotionblur.sksl", 1000),
+
+            new("Tv Static", "tvstatic.sksl", 750),
+
+            new("Waterdrop", "waterdrop.sksl", 750),
+
+            new("Wind", "wind.sksl", 750),
+
+            new("Window Blinds", "windowblinds.sksl", 750),
+
+            new("Window Slice", "windowslice.sksl", 1000),
+
+            new("Wipe Down", "wipedown.sksl", 750),
+
+            new("Wipe Left", "wipeleft.sksl", 750),
+
+            new("Wipe Right", "wiperight.sksl", 750),
+
+            new("Wipe Up", "wipeup.sksl", 750)
+        };
+
+        SetTransition(_transitions.First(x => x.Name == "Page Curl"));
     }
 
     protected override void OnChildrenInitialized()
@@ -32,7 +119,8 @@ public class AnimatedCarousel : CarouselWithTransitions
         SetupAnimator();
     }
 
-    private PingPongAnimator _animator;
+    private RangeAnimator _animator;
+    private LinearDirectionType animatingTo;
 
     void SetupAnimator()
     {
@@ -46,48 +134,67 @@ public class AnimatedCarousel : CarouselWithTransitions
             _animator = null;
         }
 
-        if (_animator == null)
+        if (_animator == null && AnimatorSpeedMs > 0)
         {
             _animator = new(this)
             {
                 CycleFInished = () =>
                 {
-
-
+                    //every 
                     if (PlayingType == PlayType.Random)
                     {
-                        ShaderFile = GettRandomShader();
+                        SetTransition(GettRandomShader());
                     }
                     else
                     if (PlayingType == PlayType.Next)
                     {
-                        ShaderFile = GetNextShader();
+                        SetTransition(GetNextShader());
                     }
 
-                    if (SelectedIndex < MaxIndex)
+                    //ping-pong-looping SelectedIndex
+                    var index = SelectedIndex;
+                    if (animatingTo == LinearDirectionType.Forward)
                     {
-                        this.SelectedIndex++;
+                        index++;
+                        if (index > MaxIndex)
+                        {
+                            animatingTo = LinearDirectionType.Backward;
+                            index -= 2;
+                        }
                     }
                     else
                     {
-                        this.SelectedIndex = 0;
+                        index--;
+                        if (index < 0)
+                        {
+                            animatingTo = LinearDirectionType.Forward;
+                            index = 1;
+                        }
                     }
+                    SelectedIndex = index;
+
+                    SetupAnimator();
                 }
             };
 
             _animator.Start((v) =>
             {
 
-            }, 0, 1, (uint)DurationMs);
+            }, 0, 1, (uint)AnimatorSpeedMs);
         }
 
     }
 
+    public void SetTransition(Transition transition)
+    {
+        ShaderFile = transition.Source;
+        LinearSpeedMs = transition.Speed;
+    }
 
-    public static readonly BindableProperty DurationMsProperty = BindableProperty.Create(nameof(DurationMsProperty),
+    public static readonly BindableProperty AnimatorSpeedMsProperty = BindableProperty.Create(nameof(AnimatorSpeedMsProperty),
         typeof(double),
         typeof(AnimatedCarousel),
-        3500.0,
+        0.0,
         propertyChanged: (b, o, n) =>
         {
             if (b is AnimatedCarousel control)
@@ -96,27 +203,15 @@ public class AnimatedCarousel : CarouselWithTransitions
             }
         });
 
-    public double DurationMs
+    /// <summary>
+    /// If you set this higher than 0 will have an animator running ping-pong through slides.
+    /// </summary>
+    public double AnimatorSpeedMs
     {
-        get { return (double)GetValue(DurationMsProperty); }
-        set { SetValue(DurationMsProperty, value); }
+        get { return (double)GetValue(AnimatorSpeedMsProperty); }
+        set { SetValue(AnimatorSpeedMsProperty, value); }
     }
 
-
-    protected override void OnFromToChanged()
-    {
-        base.OnFromToChanged();
-
-        if (PlayingType == PlayType.Random)
-        {
-            ShaderFile = GettRandomShader();
-        }
-        else
-        if (PlayingType == PlayType.Next)
-        {
-            ShaderFile = GetNextShader();
-        }
-    }
 
     /// <summary>
     /// overrided to track selected image filename
@@ -162,7 +257,8 @@ public class AnimatedCarousel : CarouselWithTransitions
 
     #region Select transition
 
-    private readonly List<string> _shaders;
+    private readonly List<Transition> _transitions;
+    //private readonly List<string> _shaders;
 
     protected PlayType PlayingType { get; set; }
 
@@ -214,25 +310,25 @@ public class AnimatedCarousel : CarouselWithTransitions
 
     async void SelectFIle()
     {
-        if (_shaders.Count > 1)
+        if (_transitions.Count > 1)
         {
             if (options == null)
             {
-                options = _shaders.Select(name => new SelectableAction
+                options = _transitions.Select(x => new SelectableAction
                 {
                     Action = async () =>
                     {
                         PlayingType = PlayType.Default;
-                        ShaderFile = name;
+                        SetTransition(x);
                     },
-                    Title = name
+                    Title = x.Name
                 }).ToList();
                 options.Insert(0, new SelectableAction()
                 {
                     Action = async () =>
                     {
                         PlayingType = PlayType.Random;
-                        ShaderFile = GettRandomShader();
+                        SetTransition(GettRandomShader());
                     },
                     Title = "Loop All Random"
                 });
@@ -241,7 +337,7 @@ public class AnimatedCarousel : CarouselWithTransitions
                     Action = async () =>
                     {
                         PlayingType = PlayType.Next;
-                        ShaderFile = GetNextShader();
+                        SetTransition(GetNextShader());
                     },
                     Title = "Loop All"
                 });
@@ -254,20 +350,20 @@ public class AnimatedCarousel : CarouselWithTransitions
 
     private int _loopIndex;
 
-    string GetNextShader()
+    Transition GetNextShader()
     {
         _loopIndex++;
-        if (_loopIndex > _shaders.Count - 1)
+        if (_loopIndex > _transitions.Count - 1)
         {
             _loopIndex = 0;
         }
-        return _shaders[_loopIndex];
+        return _transitions[_loopIndex];
     }
 
-    string GettRandomShader()
+    Transition GettRandomShader()
     {
-        var index = Random.Next(_shaders.Count - 1);
-        return _shaders[index];
+        var index = Random.Next(_transitions.Count - 1);
+        return _transitions[index];
     }
 
     public async Task<ISelectableOption> PresentSelection(IEnumerable<ISelectableOption> options,
