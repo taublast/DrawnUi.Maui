@@ -49,6 +49,18 @@ float cylinderAngle ;
 
 float cylinderRadius ;
 
+
+ 
+vec4 getFlippedFromColor(vec2 uv) {
+    vec2 adjustedUV = float2(uv.x, 1.0 - uv.y);
+    return getFromColor(adjustedUV);
+}
+
+vec4 getFlippedToColor(vec2 uv) {
+    vec2 adjustedUV = float2(uv.x, 1.0 - uv.y);
+    return getToColor(adjustedUV);
+}
+
 vec3 hitPoint(float hitAngle, float yc, vec3 point, mat3 rrotation)
 {
         float hitPoint = hitAngle / (2.0 * PI);
@@ -83,12 +95,12 @@ vec4 seeThrough(float yc, vec2 p, mat3 rotation, mat3 rrotation)
         vec3 point = hitPoint(hitAngle, yc, rotation * vec3(p, 1.0), rrotation);
         if (yc <= 0.0 && (point.x < 0.0 || point.y < 0.0 || point.x > 1.0 || point.y > 1.0))
         {
-            return getToColor(p);
+            return getFlippedToColor(p);
         }
 
-        if (yc > 0.0) return getFromColor(p);
+        if (yc > 0.0) return getFlippedFromColor(p);
 
-        vec4 color = getFromColor(point.xy);
+        vec4 color = getFlippedFromColor(point.xy);
         vec4 tcolor = vec4(0.0);
 
         return antiAlias(color, tcolor, distanceToEdge(point));
@@ -111,7 +123,7 @@ vec4 seeThroughWithShadow(float yc, vec2 p, vec3 point, mat3 rotation, mat3 rrot
 
 vec4 backside(float yc, vec3 point)
 {
-        vec4 color = getFromColor(point.xy);
+        vec4 color = getFlippedFromColor(point.xy);
         float gray = (color.r + color.b + color.g) / 15.0;
         gray += (8.0 / 10.0) * (pow(1.0 - abs(yc / cylinderRadius), 2.0 / 10.0) / 2.0 + (5.0 / 10.0));
         color.rgb = vec3(gray);
@@ -138,12 +150,13 @@ vec4 behindSurface(vec2 p, float yc, vec3 point, mat3 rrotation)
         {
                 shado = 0.0;
         }
-        return vec4(getToColor(p).rgb - shado, 1.0);
+        return vec4(getFlippedToColor(p).rgb - shado, 1.0);
 }
 
 vec4 transition(vec2 p) {
 
   const float angle = 100.0 * PI / 180.0;
+
         float c = cos(-angle);
         float s = sin(-angle);
 
@@ -172,7 +185,7 @@ vec4 transition(vec2 p) {
         if (yc > cylinderRadius)
         {
                 // Flat surface
-                return getFromColor(p);
+                return getFlippedFromColor(p);
         }
 
         float hitAngle = (acos(yc / cylinderRadius) + cylinderAngle) - PI;
@@ -202,7 +215,7 @@ vec4 transition(vec2 p) {
         }
         else
         {
-                otherColor = getFromColor(p);
+                otherColor = getFlippedFromColor(p);
         }
 
         color = antiAlias(color, otherColor, cylinderRadius - abs(yc));
@@ -222,7 +235,6 @@ half4 main(float2 fragCoord) {
 
     // Normalize the coordinates
     float2 normCoord = (fragCoord - iOffset) / iResolution;
-    normCoord.y = 1.0 - normCoord.y;
     half4 fragColor = transition(normCoord);
     return fragColor;
 }

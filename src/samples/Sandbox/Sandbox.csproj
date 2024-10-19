@@ -150,7 +150,25 @@
 
     <None Remove="Resources\Raw\Shaders\transfade.sksl" />
 
+    <None Remove="Resources\Raw\Shaders\transitions\linearblur.sksl" />
+
     <None Remove="Resources\Raw\Shaders\transitions\pagecurl.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\pagecurlbtm.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\radial.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\rectangle.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\rectanglecrop.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\squeeze.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\squeezewire.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\stereoviewer.sksl" />
+
+    <None Remove="Resources\Raw\Shaders\transitions\swap.sksl" />
 
     <None Remove="Resources\Raw\Shaders\transitions\_template.sksl" />
 
@@ -281,6 +299,33 @@
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\transdoorway.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\pagecurlbtm.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\stereoviewer.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\rectanglecrop.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\rectangle.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\radial.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\squeezewire.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\swap.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\squeeze.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\linearblur.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\transitions\_template.sksl">
