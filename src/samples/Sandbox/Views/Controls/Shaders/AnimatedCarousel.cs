@@ -1,5 +1,4 @@
 using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Infrastructure;
 using DrawnUi.Maui.Internals;
 
 namespace Sandbox.Views.Controls;
@@ -32,11 +31,11 @@ public class AnimatedCarousel : CarouselWithTransitions
             //new("Bounce", "bounce.sksl", 1500),
 
             new("Bow Tie Horizontal", "bowtiehorizontal.sksl", 750),
+
             new("Bow Tie Vertical", "bowtievertical.sksl", 750),
-          
-            //bugs
-            //new("Butterfly Waves Crawler", "butterflywavescrawler.sksl", 250),
-            
+
+            new("Butterfly Waves Crawler", "butterflywavescrawler.sksl", 1500),
+
             new("Circlecrop", "circlecrop.sksl", 1500),
 
             new("Circleopen", "circleopen.sksl", 750),
@@ -109,7 +108,9 @@ public class AnimatedCarousel : CarouselWithTransitions
             new("Wipe Up", "wipeup.sksl", 750)
         };
 
-        SetTransition(_transitions.First(x => x.Name == "Page Curl"));
+        SetTransition(_transitions.First(x => x.Name == "Cube"));
+
+        //SetTransition(_transitions.First(x => x.Name == "Page Curl"));
     }
 
     protected override void OnChildrenInitialized()

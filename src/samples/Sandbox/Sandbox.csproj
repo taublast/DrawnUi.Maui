@@ -152,6 +152,8 @@
 
     <None Remove="Resources\Raw\Shaders\transitions\pagecurl.sksl" />
 
+    <None Remove="Resources\Raw\Shaders\transitions\_template.sksl" />
+
     <None Remove="Resources\Raw\Space\Sprites\glass.jpg" />
 
     <None Remove="Resources\Raw\Svg\dotnet_bot.svg" />
@@ -279,6 +281,9 @@
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\transdoorway.sksl">
+      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </MauiAsset>
+    <MauiAsset Update="Resources\Raw\Shaders\transitions\_template.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\transitions\pagecurl.sksl">
