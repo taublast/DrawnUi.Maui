@@ -12,6 +12,8 @@ namespace DrawnUi.Maui.Camera;
 public partial class SkiaCamera : SkiaControl
 {
 
+    public override bool CanUseCacheDoubleBuffering => false;
+
 #if (!ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
 
     public virtual void SetZoom(double value)
@@ -276,33 +278,33 @@ public partial class SkiaCamera : SkiaControl
 
                 switch (captured.Orientation)
                 {
-                case 180:
-                using (var surface = new SKCanvas(bitmap))
-                {
-                    surface.RotateDegrees(180, bitmap.Width / 2.0f, bitmap.Height / 2.0f);
-                    surface.DrawBitmap(bitmap.Copy(), 0, 0);
-                }
-                return bitmap;
-                case 270:
-                rotated = new SKBitmap(bitmap.Height, bitmap.Width);
-                using (var surface = new SKCanvas(rotated))
-                {
-                    surface.Translate(rotated.Width, 0);
-                    surface.RotateDegrees(90);
-                    surface.DrawBitmap(bitmap, 0, 0);
-                }
-                return rotated;
-                case 90:
-                rotated = new SKBitmap(bitmap.Height, bitmap.Width);
-                using (var surface = new SKCanvas(rotated))
-                {
-                    surface.Translate(0, rotated.Height);
-                    surface.RotateDegrees(270);
-                    surface.DrawBitmap(bitmap, 0, 0);
-                }
-                return rotated;
-                default:
-                return bitmap;
+                    case 180:
+                        using (var surface = new SKCanvas(bitmap))
+                        {
+                            surface.RotateDegrees(180, bitmap.Width / 2.0f, bitmap.Height / 2.0f);
+                            surface.DrawBitmap(bitmap.Copy(), 0, 0);
+                        }
+                        return bitmap;
+                    case 270:
+                        rotated = new SKBitmap(bitmap.Height, bitmap.Width);
+                        using (var surface = new SKCanvas(rotated))
+                        {
+                            surface.Translate(rotated.Width, 0);
+                            surface.RotateDegrees(90);
+                            surface.DrawBitmap(bitmap, 0, 0);
+                        }
+                        return rotated;
+                    case 90:
+                        rotated = new SKBitmap(bitmap.Height, bitmap.Width);
+                        using (var surface = new SKCanvas(rotated))
+                        {
+                            surface.Translate(0, rotated.Height);
+                            surface.RotateDegrees(270);
+                            surface.DrawBitmap(bitmap, 0, 0);
+                        }
+                        return rotated;
+                    default:
+                        return bitmap;
                 }
             }
         }

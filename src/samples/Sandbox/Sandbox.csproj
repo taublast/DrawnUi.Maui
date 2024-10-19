@@ -112,6 +112,10 @@
 
     <None Remove="Resources\Raw\Images\glass2.jpg" />
 
+    <None Remove="Resources\Raw\Images\hugrobot2.jpg" />
+
+    <None Remove="Resources\Raw\Images\monkey1.jpg" />
+
     <None Remove="Resources\Raw\Lottie\cross.json" />
 
     <None Remove="Resources\Raw\Lottie\Loader.json" />
@@ -189,19 +193,14 @@
 
     <ItemGroup>
  
+ 
       <Compile Update="Resources\Strings\ResStrings.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
  
-      <Compile Update="Views\MainPageDrawnSpans.xaml.cs">
-        <DependentUpon>MainPageDrawnSpans.xaml</DependentUpon>
-      </Compile>
- 
-      <Compile Update="Views\MainPageGif.xaml.cs">
-        <DependentUpon>MainPageGif.xaml</DependentUpon>
-      </Compile>
+   
              
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
@@ -210,6 +209,9 @@
     
     </ItemGroup>
  
+    <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+      <Compile Remove="Views\Controls\Shaders\**" />
+    </ItemGroup>
   
     <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
@@ -220,7 +222,14 @@
     <Compile Remove="Views\Controls\ShaderTransition.cs" />
     <Compile Remove="Views\MainPageShaderRipples.xaml.cs" />
     <MauiXaml Remove="Views\MainPageShaderRipples.xaml" />
+    <Compile Remove="Views\MainPageShader.xaml.cs" />
+    <MauiXaml Remove="Views\MainPageShader.xaml" />
+    <Compile Remove="MainPageDev.xaml.cs" />
+    <MauiXaml Remove="MainPageDev.xaml" />
+    <Compile Remove="MainPageDev2.xaml.cs" />
+    <MauiXaml Remove="MainPageDev2.xaml" />
     </ItemGroup>
+
  
 
   <ItemGroup>
@@ -282,6 +291,8 @@
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
   </ItemGroup>
+ 
+ 
  
 
  

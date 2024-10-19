@@ -193,13 +193,7 @@
                 TranslationY="50"
                 VerticalOptions="Start" />
 
-            <!--<draw:SkiaButton
-                Margin="10"
-                HorizontalOptions="End"
-                Tapped="SkiaButton_Tapped"
-                Text="Kill"
-                TranslationY="100"
-                VerticalOptions="Start" />-->
+ 
 
             <draw:SkiaLabel
                 Margin="16"

@@ -9,11 +9,16 @@ using Microsoft.Maui.LifecycleEvents;
 using Microsoft.Maui.Platform;
 using Polly;
 using Polly.Timeout;
-using SkiaSharp.Views.Maui.Controls.Compatibility;
+
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Authentication;
+
+#if !SKIA3
+using SkiaSharp.Views.Maui.Controls.Compatibility;
+#endif
+
 
 namespace DrawnUi.Maui.Draw;
 

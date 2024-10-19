@@ -22,6 +22,26 @@ public class SkiaCarousel : SnappingLayout
 
     public override bool WillClipBounds => true;
 
+    protected virtual void RenderVisibleChild(
+        SkiaControl view, Vector2 position,
+        SkiaDrawingContext context, SKRect destination, float scale)
+    {
+        view.OptionalOnBeforeDrawing(); //draw even hidden neighboors to be able to preload stuff
+        if (view.CanDraw)
+        {
+            view.LockUpdate(true);
+            AnimateVisibleChild(view, position);
+            view.LockUpdate(false);
+            view.Render(context, destination, scale);
+        }
+    }
+
+    protected virtual void AnimateVisibleChild(
+        SkiaControl view, Vector2 position)
+    {
+        view.TranslationX = position.X;
+        view.TranslationY = position.Y;
+    }
 
     public override void ScrollToNearestAnchor(Vector2 location, Vector2 velocity)
     {
@@ -87,6 +107,26 @@ public class SkiaCarousel : SnappingLayout
 
     #region METHODS
 
+
+    /// <summary>
+    /// Will translate child and raise appearing/disappearing events
+    /// </summary>
+    /// <param name="currentPosition"></param>
+    public override void ApplyPosition(Vector2 currentPosition)
+    {
+        CurrentPosition = currentPosition;
+
+        //Debug.WriteLine($"CurrentPosition {currentPosition}");
+
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            InTransition = !CheckTransitionEnded();
+        });
+
+        Update();
+    }
+
+
     public virtual void ApplyIndex(bool instant = false)
     {
         if (SelectedIndex >= 0 && SelectedIndex < SnapPoints.Count)
@@ -147,6 +187,11 @@ public class SkiaCarousel : SnappingLayout
         }
     }
 
+    protected virtual void OnScrollProgressChanged()
+    {
+
+    }
+
     protected override int RenderViewsList(IEnumerable<SkiaControl> skiaControls, SkiaDrawingContext context, SKRect destination, float scale,
         bool debug = false)
     {
@@ -167,8 +212,16 @@ public class SkiaCarousel : SnappingLayout
                 progress = CurrentPosition.X;
             }
 
-            this.ScrollProgress = progress / progressMax;
-            //Trace.WriteLine($"[C] Progress {ScrollProgress:0.0}");
+            LastScrollProgress = ScrollProgress;
+            ScrollProgress = progress / progressMax;
+
+            if (ScrollProgress != LastScrollProgress)
+            {
+                TransitionDirection = ScrollProgress > LastScrollProgress ?
+                    LinearDirectionType.Forward
+                    : LinearDirectionType.Backward;
+                OnScrollProgressChanged();
+            }
 
             var childrenCount = ChildrenFactory.GetChildrenCount();
 
@@ -179,7 +232,7 @@ public class SkiaCarousel : SnappingLayout
             for (int index = 0; index < childrenCount; index++)
             {
                 bool wasUsed = false;
-                var position = CalculateChildPosition(CurrentPosition, index);
+                var position = CalculateChildPosition(CurrentPosition, index, childrenCount);
                 if (position.OnScreen || position.NextToScreen)
                 {
                     var cell = new ControlInStack()
@@ -220,16 +273,7 @@ public class SkiaCarousel : SnappingLayout
 
                 if (cell.IsVisible || this.PreloadNeighboors)
                 {
-                    view.OptionalOnBeforeDrawing(); //draw even hidden neighboors to be able to preload stuff
-                    if (view.CanDraw)
-                    {
-                        view.LockUpdate(true);
-                        view.TranslationX = cell.Offset.X;
-                        view.TranslationY = cell.Offset.Y;
-                        view.LockUpdate(false);
-                        view.Render(context, destination, scale);
-                    }
-
+                    RenderVisibleChild(view, cell.Offset, context, destination, scale);
                 }
 
                 if (cell.IsVisible) //but handle gestures only for visible views
@@ -261,7 +305,7 @@ public class SkiaCarousel : SnappingLayout
 
     private double _ScrollAmount;
     /// <summary>
-    /// Scroll amount from 0 to 1 of the current (SelectedIndex) slide. Another similar but different property would be ScrollProgress.
+    /// Scroll amount from 0 to 1 of the current (SelectedIndex) slide. Another similar but different property would be ScrollProgress. This is not linear as SelectedIndex changes earlier than 0 or 1 are attained.
     /// </summary>
     public double ScrollAmount
     {
@@ -275,6 +319,7 @@ public class SkiaCarousel : SnappingLayout
             {
                 _ScrollAmount = value;
                 OnPropertyChanged();
+                //Debug.WriteLine($"ScrollAmount {value:0.000}");
             }
         }
     }
@@ -297,9 +342,39 @@ public class SkiaCarousel : SnappingLayout
             {
                 _ScrollProgress = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(TransitionProgress));
+                //Debug.WriteLine($"ScrollAmount {value / 3.0:0.000}");
             }
         }
     }
+
+    protected double LastScrollProgress { get; set; }
+
+    public double TransitionProgress
+    {
+        get
+        {
+            if (MaxIndex < 1)
+                return 0.0;
+
+            int numberOfTransitions = MaxIndex;
+            double scaledProgress = ScrollProgress * numberOfTransitions;
+            double value = scaledProgress - Math.Floor(scaledProgress);
+
+            //if (value == 0 && TransitionDirection == LinearDirectionType.Forward) value = 1.0;
+
+            //if (TransitionDirection == LinearDirectionType.Backward)
+            //    value = 1.0 - value;
+
+            //Debug.WriteLine($"TransitionAmount {value:0.00} scroll {ScrollProgress:0.00}");
+
+            return value;
+
+
+        }
+    }
+
+
 
     protected void AdaptTemplate(SkiaControl skiaControl)
     {
@@ -390,7 +465,7 @@ public class SkiaCarousel : SnappingLayout
 
     #region ENGINE
 
-    protected (Vector2 Offset, bool OnScreen, bool NextToScreen) CalculateChildPosition(Vector2 currentPosition, int index)
+    protected virtual (Vector2 Offset, bool OnScreen, bool NextToScreen) CalculateChildPosition(Vector2 currentPosition, int index, int childrenCount)
     {
         var childPos = SnapPoints[index];
         float newX = 0;
@@ -403,49 +478,17 @@ public class SkiaCarousel : SnappingLayout
         if (IsVertical)
         {
             newY = (currentPosition.Y + Math.Abs(childPos.Y));
-
-            if (newY + SidesOffset * 2 > Height - 1 || newY + (Height - SidesOffset * 2) + SidesOffset * 2 < 1)
-            {
-                isVisible = false;
-                if (Math.Abs(newY) - Width - SidesOffset - Spacing <= nextToScreenOffset)
-                {
-                    nextToScreen = true;
-                }
-            }
+            isVisible = newY + SidesOffset * 2 <= Height && newY + (Height - SidesOffset * 2) + SidesOffset * 2 >= 0;
+            nextToScreen = Math.Abs(newY) - Width - SidesOffset - Spacing <= nextToScreenOffset;
         }
         else
         {
             newX = (currentPosition.X + Math.Abs(childPos.X));
-            if (newX + SidesOffset * 1 > Width - 1 || newX + (Width - SidesOffset * 1) + SidesOffset * 1 < 1)
-            {
-                isVisible = false;
-                if (Math.Abs(newX) - Width - SidesOffset - Spacing <= nextToScreenOffset)
-                {
-                    nextToScreen = true;
-                }
-            }
+            isVisible = newX + SidesOffset * 2 <= Width && newX + (Width - SidesOffset * 2) + SidesOffset * 2 >= 0;
+            nextToScreen = Math.Abs(newX) - Width - SidesOffset - Spacing <= nextToScreenOffset;
         }
 
         return (new Vector2(newX, newY), isVisible, nextToScreen);
-    }
-
-
-
-
-    /// <summary>
-    /// Will translate child child and raise appearing/disappearing events
-    /// </summary>
-    /// <param name="currentPosition"></param>
-    public override void ApplyPosition(Vector2 currentPosition)
-    {
-        CurrentPosition = currentPosition;
-
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            InTransition = !CheckTransitionEnded();
-        });
-
-        Update();
     }
 
 
@@ -466,7 +509,7 @@ public class SkiaCarousel : SnappingLayout
             var start = CurrentSnap;
             var end = new Vector2((float)targetOffset.X, (float)targetOffset.Y);
 
-            var atSnapPoint = SnapPoints.Any(x => x.X == CurrentSnap.X && x.Y == CurrentSnap.Y);
+            //var atSnapPoint = SnapPoints.Any(x => x.X == CurrentSnap.X && x.Y == CurrentSnap.Y);
 
             var displacement = start - end;
 
@@ -475,17 +518,18 @@ public class SkiaCarousel : SnappingLayout
 
             if (displacement != Vector2.Zero)
             {
-                if (atSnapPoint && !ThresholdOk(displacement))
-                {
-                    //Debug.WriteLine("[CAROUSEL] threshold low");
-                    return false;
-                }
+                //if (atSnapPoint && !ThresholdOk(displacement))
+                //{
+                //    //Debug.WriteLine("[CAROUSEL] threshold low");
+                //    return false;
+                //}
 
                 if (Bounces)
                 {
                     var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
                     VectorAnimatorSpring.Initialize(end, displacement, velocity, spring, 0.5f);
                     VectorAnimatorSpring.Start();
+                    _isSnapping = end;
                 }
                 else
                 {
@@ -509,8 +553,18 @@ public class SkiaCarousel : SnappingLayout
                     if (speed > maxSpeed)
                         speed = maxSpeed;
 
-                    _animatorRange.Initialize(start, end, (float)speed, Easing.Linear);
-                    _animatorRange.Start();
+                    if (LinearSpeedMs > 0)
+                    {
+                        var ratio = Math.Abs(end.X - start.X) / CellSize.Pixels.Width;
+
+                        speed = ratio * LinearSpeedMs / 1000.0;
+                    }
+
+                    //Debug.WriteLine($"Will snap:{start} -> {end}");
+
+                    _isSnapping = end;
+                    AnimatorRange.Initialize(start, end, (float)speed, Easing.Linear);
+                    AnimatorRange.Start();
                 }
             }
             else
@@ -537,7 +591,7 @@ public class SkiaCarousel : SnappingLayout
         else
         if (CanDraw)
         {
-            //Debug.WriteLine("[CAROUSEL] setting offset");
+            //Debug.WriteLine($"[ScrollToOffset] setting offset {targetOffset}");
             ApplyPosition(targetOffset);
         }
 
@@ -545,6 +599,9 @@ public class SkiaCarousel : SnappingLayout
         UpdateReportedPosition();
         return true;
     }
+
+
+    private Vector2? _isSnapping;
 
     bool ThresholdOk(Vector2 displacement)
     {
@@ -561,9 +618,11 @@ public class SkiaCarousel : SnappingLayout
         if (Parent == null)
             return;
 
-        Viewport = Parent.DrawingRect;
+        SetupViewport();
 
-        InitializeChildren();
+        //Viewport = Parent.DrawingRect;
+
+        //InitializeChildren();
 
         base.ApplyOptions();
     }
@@ -593,9 +652,14 @@ public class SkiaCarousel : SnappingLayout
                     OnVectorUpdated = (value) =>
                     {
                         ApplyPosition(value);
-                    }
+                    },
+                    Finished = () =>
+                    {
+                        _isSnapping = null;
+                    },
+
                 };
-                _animatorRange = new(this)
+                AnimatorRange = new(this)
                 {
                     OnVectorUpdated = (value) =>
                     {
@@ -604,7 +668,12 @@ public class SkiaCarousel : SnappingLayout
                     OnStop = () =>
                     {
                         Stopped?.Invoke(this, _appliedPosition);
-                    }
+                    },
+                    Finished = () =>
+                    {
+                        _isSnapping = null;
+                    },
+
                 };
             }
 
@@ -692,7 +761,64 @@ public class SkiaCarousel : SnappingLayout
         AdaptChildren();
     }
 
+
+    bool viewportSet;
+
+    protected override void OnLayoutChanged()
+    {
+        base.OnLayoutChanged();
+
+        SetupViewport();
+    }
+
+    protected void SetupViewport()
+    {
+        if (Parent != null)
+        {
+            Viewport = DrawingRect;// Parent.DrawingRect;
+
+            if (!viewportSet)// !CompareRects(Viewport, _lastViewport, 0.5f))
+            {
+                viewportSet = true;
+                _lastViewport = Viewport;
+                Init();
+            }
+
+            if (DynamicSize && SelectedIndex >= 0)
+            {
+                if (!ChildrenInitialized)
+                {
+                    InitializeChildren();
+                }
+                ApplyDynamicSize(SelectedIndex);
+            }
+            else
+            {
+                InitializeChildren();
+            }
+        }
+    }
+
+
     protected bool ChildrenInitialized;
+
+    private int _MaxIndex;
+    public int MaxIndex
+    {
+        get
+        {
+            return _MaxIndex;
+        }
+        set
+        {
+            if (_MaxIndex != value)
+            {
+                _MaxIndex = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
 
     /// <summary>
     /// We expect this to be called after this alyout is invalidated
@@ -707,6 +833,9 @@ public class SkiaCarousel : SnappingLayout
         ChildrenInitialized = true;
 
         var childrenCount = ChildrenFactory.GetChildrenCount();
+
+        MaxIndex = childrenCount - 1;
+
         InitializeItemsVisibility(childrenCount, true);
 
         var snapPoints = new List<Vector2>();
@@ -726,8 +855,9 @@ public class SkiaCarousel : SnappingLayout
             snapPoints.Add(new Vector2(-position.X, -position.Y));
 
             currentPosition += (IsVertical ? cellSize.Height : cellSize.Width);
-
         }
+
+        CellSize = ScaledSize.FromUnits(cellSize.Width, cellSize.Height, RenderingScale);
 
         SnapPoints = snapPoints;
 
@@ -743,8 +873,16 @@ public class SkiaCarousel : SnappingLayout
         {
             ApplyIndex(true);
         }
+
+        OnChildrenInitialized();
     }
 
+    protected virtual void OnChildrenInitialized()
+    {
+
+    }
+
+    public ScaledSize CellSize { get; set; }
 
     /// <summary>
     /// Set children layout options according to our settings. Not used for template case.
@@ -889,6 +1027,9 @@ public class SkiaCarousel : SnappingLayout
         typeof(SkiaCarousel),
         false, propertyChanged: NeedApplyOptions);
 
+    /// <summary>
+    /// UNIMPLEMENTED YET
+    /// </summary>
     public bool IsLooped
     {
         get { return (bool)GetValue(IsLoopedProperty); }
@@ -911,39 +1052,6 @@ public class SkiaCarousel : SnappingLayout
         set { SetValue(IsVerticalProperty, value); }
     }
 
-
-
-    bool viewportSet;
-
-    protected override void OnLayoutChanged()
-    {
-        base.OnLayoutChanged();
-
-        if (Parent != null)
-        {
-            Viewport = Parent.DrawingRect;
-
-            if (!viewportSet)// !CompareRects(Viewport, _lastViewport, 0.5f))
-            {
-                viewportSet = true;
-                _lastViewport = Viewport;
-                Init();
-            }
-
-            if (DynamicSize && SelectedIndex >= 0)
-            {
-                if (!ChildrenInitialized)
-                {
-                    InitializeChildren();
-                }
-                ApplyDynamicSize(SelectedIndex);
-            }
-            else
-            {
-                InitializeChildren();
-            }
-        }
-    }
 
 
     protected virtual void ApplyDynamicSize(int index)
@@ -984,14 +1092,17 @@ public class SkiaCarousel : SnappingLayout
     {
         SelectedIndexChanged?.Invoke(this, index);
 
-        if (!LayoutReady)
+        if (!LayoutReady || _isSnapping != null)
             return;
 
-        ApplyIndex();
 
         if (!ChildrenInitialized)
         {
             InitializeChildren();
+        }
+        else
+        {
+            ApplyIndex();
         }
 
         if (DynamicSize && SelectedIndex >= 0)
@@ -1000,6 +1111,42 @@ public class SkiaCarousel : SnappingLayout
         }
 
     }
+
+
+    public static readonly BindableProperty LinearSpeedMsProperty = BindableProperty.Create(
+        nameof(LinearSpeedMs),
+        typeof(double),
+        typeof(SkiaCarousel),
+        0.0);
+
+    /// <summary>
+    /// How long would a whole auto-sliding take, if `Bounces` is `False`.
+    /// If set (>0) will be used for automatic scrolls instead of using manual velocity.
+    /// For bouncing carousel 
+    /// </summary>
+    public double LinearSpeedMs
+    {
+        get { return (double)GetValue(LinearSpeedMsProperty); }
+        set { SetValue(LinearSpeedMsProperty, value); }
+    }
+
+    private int _LastIndex;
+    public int LastIndex
+    {
+        get
+        {
+            return _LastIndex;
+        }
+        set
+        {
+            if (_LastIndex != value)
+            {
+                _LastIndex = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
 
     public static readonly BindableProperty SelectedIndexProperty = BindableProperty.Create(
         nameof(SelectedIndex),
@@ -1010,6 +1157,7 @@ public class SkiaCarousel : SnappingLayout
         {
             if (b is SkiaCarousel control)
             {
+                control.LastIndex = (int)o;
                 control.OnSelectedIndexChanged((int)n);
             }
         });
@@ -1080,6 +1228,8 @@ public class SkiaCarousel : SnappingLayout
     {
         bool passedToChildren = false;
 
+        //        Debug.WriteLine($"[Carousel] {args.Type}");
+
         //Super.Log($"[CAROUSEL] {this.Tag} Got {args.Action}..");
 
         //var thisOffset = TranslateInputCoords(apply.childOffset);
@@ -1112,14 +1262,14 @@ public class SkiaCarousel : SnappingLayout
         if (!RespondsToGestures)
             return null;
 
-
         void ResetPan()
         {
             IsUserFocused = true;
             IsUserPanning = false;
 
-            VectorAnimatorSpring?.Stop();
+            AnimatorRange.Stop();
 
+            VectorAnimatorSpring?.Stop();
             VelocityAccumulator.Clear();
 
             _panningOffset = CurrentPosition;
@@ -1128,93 +1278,95 @@ public class SkiaCarousel : SnappingLayout
 
         switch (args.Type)
         {
-        case TouchActionResult.Down:
+            case TouchActionResult.Down:
 
-        //        if (!IsUserFocused) //first finger down
-        if (args.Event.NumberOfTouches == 1) //first finger down
-        {
-            ResetPan();
-        }
+                //        if (!IsUserFocused) //first finger down
+                if (args.Event.NumberOfTouches == 1) //first finger down
+                {
+                    ResetPan();
+                }
 
-        consumed = this;
-
-        break;
-
-        case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
-
-        if (!IsUserPanning)
-        {
-            //first pan
-            if (args.Event.Distance.Total.X == 0 || Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) || Math.Abs(args.Event.Distance.Total.X) < 2)
-            {
-                return null;
-            }
-        }
-
-        if (!IsUserFocused)
-        {
-            ResetPan();
-        }
-
-        //todo add direction
-        //this.IgnoreWrongDirection
-
-        IsUserPanning = true;
-
-        var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
-        var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
-
-        Vector2 velocity;
-        float useVelocity = 0;
-        if (!IsVertical)
-        {
-            useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
-            velocity = new(useVelocity, 0);
-        }
-        else
-        {
-            useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
-            velocity = new(0, useVelocity);
-        }
-
-        //record velocity
-        VelocityAccumulator.CaptureVelocity(velocity);
-
-        //saving non clamped
-        _panningOffset.X = x;
-        _panningOffset.Y = y;
-
-
-        var clamped = ClampOffset((float)x, (float)y, Bounces);
-
-        //Debug.WriteLine($"[CAROUSEL] Panning: {_panningOffset:0} / {clamped:0}");
-        ApplyPosition(clamped);
-
-        consumed = this;
-        break;
-
-        case TouchActionResult.Up:
-
-        if (IsUserFocused)
-        {
-
-            if (IsUserPanning) //|| Math.Abs(velocity) > 30)
-            {
                 consumed = this;
 
-                var final = VelocityAccumulator.CalculateFinalVelocity(500);
+                break;
 
-                //animate
-                CurrentSnap = CurrentPosition;
-                ScrollToNearestAnchor(CurrentSnap, final);
-            }
+            case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
 
-            IsUserPanning = false;
-            IsUserFocused = false;
+                if (!IsUserPanning)
+                {
+                    //first pan
+                    if (args.Event.Distance.Total.X == 0 || Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) || Math.Abs(args.Event.Distance.Total.X) < 2)
+                    {
+                        return null;
+                    }
+                }
 
-        }
+                if (!IsUserFocused)
+                {
+                    ResetPan();
+                }
 
-        break;
+                //todo add direction
+                //this.IgnoreWrongDirection
+
+                IsUserPanning = true;
+
+                var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
+                var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
+
+                Vector2 velocity;
+                float useVelocity = 0;
+                if (!IsVertical)
+                {
+                    useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
+                    velocity = new(useVelocity, 0);
+                }
+                else
+                {
+                    useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
+                    velocity = new(0, useVelocity);
+                }
+
+                //record velocity
+                VelocityAccumulator.CaptureVelocity(velocity);
+
+                //saving non clamped
+                _panningOffset.X = x;
+                _panningOffset.Y = y;
+
+
+                var clamped = ClampOffset((float)x, (float)y, Bounces);
+
+                //Debug.WriteLine($"[CAROUSEL] Panning: {_panningOffset:0} / {clamped:0}");
+                ApplyPosition(clamped);
+
+                consumed = this;
+                break;
+
+            case TouchActionResult.Up:
+                //Debug.WriteLine($"[Carousel] {args.Type} {IsUserFocused} {IsUserPanning} {InTransition}");
+
+                if (IsUserFocused)
+                {
+
+                    if (IsUserPanning || InTransition)
+                    {
+                        consumed = this;
+
+                        var final = VelocityAccumulator.CalculateFinalVelocity(500);
+
+                        //animate
+                        CurrentSnap = CurrentPosition;
+
+                        ScrollToNearestAnchor(CurrentSnap, final);
+                    }
+
+                    IsUserPanning = false;
+                    IsUserFocused = false;
+
+                }
+
+                break;
         }
 
         if (consumed != null || IsUserPanning)

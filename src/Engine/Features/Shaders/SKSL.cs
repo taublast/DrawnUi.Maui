@@ -22,7 +22,14 @@ public static class SkSl
         return json;
     }
 
-    public static SKRuntimeEffect Compile(string shaderCode)
+    /// <summary>
+    /// Will compile your SKSL shader code into SKRuntimeEffect.
+    /// The filename parameter is used for debugging purposes only
+    /// </summary>
+    /// <param name="shaderCode"></param>
+    /// <param name="filename"></param>
+    /// <returns></returns>
+    public static SKRuntimeEffect Compile(string shaderCode, string filename = null)
     {
         string errors;
 #if SKIA3
@@ -34,11 +41,13 @@ public static class SkSl
         {
             ThrowCompilationError(shaderCode, errors);
         }
-        Debug.WriteLine($"[SKSL] Compiled shader code!");
+
+        Debug.WriteLine($"[SKSL] Compiled shader {filename}!");
+
         return effect;
     }
 
-    static void ThrowCompilationError(string shaderCode, string errors)
+    static void ThrowCompilationError(string shaderCode, string errors, string filename = null)
     {
         // Regular expression to find the line number in the error message
         var regex = new Regex(@"error: (\d+):");
@@ -63,6 +72,11 @@ public static class SkSl
         }
         if (!string.IsNullOrEmpty(error))
         {
+            if (!string.IsNullOrEmpty(filename))
+            {
+                throw new ApplicationException($"Shader compilation of '{filename}' failed:{Environment.NewLine}{errors}{Environment.NewLine}" + error);
+            }
+
             throw new ApplicationException($"Shader compilation failed:{Environment.NewLine}{errors}{Environment.NewLine}" + error);
         }
     }

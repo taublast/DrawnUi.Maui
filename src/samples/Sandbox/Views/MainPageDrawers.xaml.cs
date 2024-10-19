@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageDrawers 
+    public partial class MainPageDrawers
     {
 
         public MainPageDrawers()
@@ -21,9 +21,9 @@
             }
         }
 
-        private void SkiaButton_Tapped(object sender, AppoMobi.Maui.Gestures.TouchActionEventArgs e)
+        private void SkiaButton_Tapped(object sender, SkiaGesturesParameters skiaGesturesParameters)
         {
-            Drawer.Dispose();
+
         }
     }
 }

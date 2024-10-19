@@ -2,9 +2,6 @@ using AppoMobi.Maui.Gestures;
 
 namespace Sandbox.Views.Controls;
 
-/// <summary>
-/// Will animate from Parent control to Secondary then call TransitionEnded event that could make Parent invisible, dispose, whatever.
-/// </summary>
 public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, ISkiaGestureProcessor
 {
 
@@ -15,29 +12,17 @@ public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, 
 
     public event EventHandler TransitionEnded;
 
-    bool _initialized;
+
     private PointF _mouse;
 
     #region IStateEffect
 
-    public void UpdateState()
+    /// <summary>
+    /// Will be invoked before actually painting but after gestures processing and other internal calculations. By SkiaControl.OnBeforeDrawing method. Beware if you call Update() inside will never stop updating.
+    /// </summary>
+    public virtual void UpdateState()
     {
-        if (Parent != null && !_initialized && Parent.IsLayoutReady)
-        {
-            _initialized = true;
-            if (_animator == null)
-            {
-                _animator = new(Parent);
 
-                _animator.Start((v) =>
-                {
-                    this.Progress = v;
-                    Update();
-                }, 0, 1, 3500);
-            }
-        }
-
-        base.Update();
     }
 
     public override void Attach(SkiaControl parent)
@@ -57,33 +42,12 @@ public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, 
     {
         _mouse = args.Event.Location;
 
-        if (args.Type == TouchActionResult.Down && _initialized)
-        {
-
-            //var ripple = CreateRipple(_mouse);
-
-            ////run new animator for every Down
-            ////we use this helper task so that every new rangeanimator is disposed properly at the end
-            //Task.Run(async () =>
-            //{
-            //    await Parent.AnimateRangeAsync((v) =>
-            //    {
-            //        ripple.Progress = v;
-            //        Update();
-            //    }, 0, 1, 4500);
-
-            //    RemoveRipple(ripple.Uid);
-
-            //}).ConfigureAwait(false);
-
-        }
-
         return null;
     }
 
     #endregion
 
-    void ApplyReflectionSourceControl(SkiaControl control)
+    void ApplyTargetControl(SkiaControl control)
     {
         if (_controlSource == control)
             return;
@@ -99,7 +63,7 @@ public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, 
     public static readonly BindableProperty TargetProperty = BindableProperty.Create(
         nameof(Target),
         typeof(SkiaControl),
-        typeof(ShaderTransitionEffect),
+        typeof(ShaderAnimatedTransitionEffect),
         defaultValue: null,
         propertyChanged: ApplyTargetProperty);
 
@@ -115,7 +79,7 @@ public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, 
     {
         if (oldvalue != newvalue && bindable is ShaderTransitionEffect control)
         {
-            control.ApplyReflectionSourceControl((SkiaControl)newvalue);
+            control.ApplyTargetControl((SkiaControl)newvalue);
         }
     }
 
@@ -180,9 +144,9 @@ public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, 
 
     #endregion
 
-    #region PROGRESS ANIMATOR
+    #region PROGRESS  
 
-    private PingPongAnimator _animator;
+
 
     public double Progress { get; set; }
 
@@ -199,5 +163,8 @@ public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, 
     }
 
     #endregion
+
+
+
 
 }

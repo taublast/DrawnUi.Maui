@@ -31,7 +31,6 @@ using Trace = System.Diagnostics.Trace;
 
 namespace DrawnUi.Maui.Camera;
 
-
 public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvailableListener, INativeCamera
 {
     public void SetZoom(float zoom)
@@ -904,22 +903,22 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
                 switch (FormsControl.CapturePhotoQuality)
                 {
-                case CaptureQuality.Max:
-                selectedSize = validSizes.First();
-                break;
+                    case CaptureQuality.Max:
+                        selectedSize = validSizes.First();
+                        break;
 
-                case CaptureQuality.Medium:
-                selectedSize = validSizes[validSizes.Count / 3];
-                break;
+                    case CaptureQuality.Medium:
+                        selectedSize = validSizes[validSizes.Count / 3];
+                        break;
 
-                case CaptureQuality.Low:
-                selectedSize = validSizes.Last();
-                break;
+                    case CaptureQuality.Low:
+                        selectedSize = validSizes.Last();
+                        break;
 
-                default:
-                //todo: handle case of Preview
-                selectedSize = new(1, 1);
-                break;
+                    default:
+                        //todo: handle case of Preview
+                        selectedSize = new(1, 1);
+                        break;
                 }
 
                 CaptureWidth = selectedSize.Width;
@@ -1082,15 +1081,15 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 {
                     switch (value)
                     {
-                    case CameraProcessorState.Enabled:
-                    FormsControl.State = CameraState.On;
-                    break;
-                    case CameraProcessorState.Error:
-                    FormsControl.State = CameraState.Error;
-                    break;
-                    default:
-                    FormsControl.State = CameraState.Off;
-                    break;
+                        case CameraProcessorState.Enabled:
+                            FormsControl.State = CameraState.On;
+                            break;
+                        case CameraProcessorState.Error:
+                            FormsControl.State = CameraState.Error;
+                            break;
+                        default:
+                            FormsControl.State = CameraState.Off;
+                            break;
                     }
                 }
             }
@@ -1756,22 +1755,22 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
             switch (FormsControl.DeviceRotation)
             {
-            case 90:
-            FormsControl.CameraDevice.Meta.Orientation = 8;
-            //newexif.SetAttribute(ExifInterface.TagOrientation, "6");
-            break;
-            case 270:
-            FormsControl.CameraDevice.Meta.Orientation = 6;
-            //newexif.SetAttribute(ExifInterface.TagOrientation, "8");
-            break;
-            case 180:
-            FormsControl.CameraDevice.Meta.Orientation = 3;
-            //newexif.SetAttribute(ExifInterface.TagOrientation, "3");
-            break;
-            default:
-            FormsControl.CameraDevice.Meta.Orientation = 1;
-            //newexif.SetAttribute(ExifInterface.TagOrientation, "1");
-            break;
+                case 90:
+                    FormsControl.CameraDevice.Meta.Orientation = 8;
+                    //newexif.SetAttribute(ExifInterface.TagOrientation, "6");
+                    break;
+                case 270:
+                    FormsControl.CameraDevice.Meta.Orientation = 6;
+                    //newexif.SetAttribute(ExifInterface.TagOrientation, "8");
+                    break;
+                case 180:
+                    FormsControl.CameraDevice.Meta.Orientation = 3;
+                    //newexif.SetAttribute(ExifInterface.TagOrientation, "3");
+                    break;
+                default:
+                    FormsControl.CameraDevice.Meta.Orientation = 1;
+                    //newexif.SetAttribute(ExifInterface.TagOrientation, "1");
+                    break;
             }
 
             var outImage = new CapturedImage()

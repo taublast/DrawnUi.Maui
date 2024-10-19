@@ -10,6 +10,8 @@ public struct UsedGlyph
 
     public bool IsAvailable { get; set; }
 
+
+
     public bool IsNumber()
     {
         // This will only work correctly if Text is a single character.

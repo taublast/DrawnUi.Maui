@@ -3,6 +3,8 @@ namespace DrawnUi.Maui.Controls;
 
 public class SkiaMediaImage : SkiaImage
 {
+    //public override bool CanUseCacheDoubleBuffering => false;
+
     protected override void OnLayoutChanged()
     {
         base.OnLayoutChanged();

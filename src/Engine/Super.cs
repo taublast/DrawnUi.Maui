@@ -37,6 +37,8 @@ public partial class Super
         //});
     }
 
+    public static bool Multithreaded = false;
+
 #if (!ONPLATFORM)
 
     protected static void SetupFrameLooper()
@@ -322,26 +324,26 @@ public partial class Super
         window.Y = y;
 
 #else
-        
+
         var platformWindow = window.Handler?.PlatformView as UIKit.UIWindow;
-        MainThread.BeginInvokeOnMainThread(()=>
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            var frame = new CoreGraphics.CGRect(x, y,platformWindow.Frame.Width,platformWindow.Frame.Height);
-            
+            var frame = new CoreGraphics.CGRect(x, y, platformWindow.Frame.Width, platformWindow.Frame.Height);
+
             platformWindow.Frame = frame;
-            
+
             var windowScene = UIKit.UIApplication.SharedApplication.ConnectedScenes.ToArray().First() as UIKit.UIWindowScene;
-            
+
             platformWindow.WindowScene.KeyWindow.Frame = frame;
-            
+
             windowScene.RequestGeometryUpdate(
                 new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
                 error =>
                 {
-                    var stopp=1;
+                    var stopp = 1;
                 });
         });
-        
+
 #endif
 
 #if WINDOWS
@@ -364,25 +366,25 @@ public partial class Super
                     //windowScene.SizeRestrictions.AllowsFullScreen = false;
                     //windowScene.SizeRestrictions.MinimumSize = new(width, height);
                     //windowScene.SizeRestrictions.MaximumSize = new(width, height);
-                    
+
                     var scale = windowScene.Screen.Scale;
-                    
+
                     // Tasks.StartDelayed(TimeSpan.FromSeconds(3),()=>
                     // {
-                        //todo move to view appeared etc
-                        // MainThread.BeginInvokeOnMainThread(()=>
-                        // {
-                        //     windowScene.RequestGeometryUpdate(
-                        //         new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
-                        //         error =>
-                        //         {
-                        //             var stopp=1;
-                        //         });
-                        //     
-                        //});
-                        
-                   // });
-                    
+                    //todo move to view appeared etc
+                    // MainThread.BeginInvokeOnMainThread(()=>
+                    // {
+                    //     windowScene.RequestGeometryUpdate(
+                    //         new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
+                    //         error =>
+                    //         {
+                    //             var stopp=1;
+                    //         });
+                    //     
+                    //});
+
+                    // });
+
                 }
 
             }

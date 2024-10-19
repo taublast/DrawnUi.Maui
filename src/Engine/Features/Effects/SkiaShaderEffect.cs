@@ -2,19 +2,9 @@
 
 namespace DrawnUi.Maui.Draw;
 
-
-public class StateEffect : SkiaEffect, IStateEffect
-{
-    public virtual void UpdateState()
-    {
-
-    }
-}
-
-
 public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
 {
-    protected SKPaint _paintWithShader;
+    protected SKPaint PaintWithShader;
 
     public static readonly BindableProperty UseContextProperty = BindableProperty.Create(nameof(UseContext),
         typeof(bool),
@@ -47,7 +37,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     }
 
     /// <summary>
-    /// Create snapshot from the current parent drawing state to use as input texture for the shader
+    /// Create snapshot from the current parent control drawing state to use as input texture for the shader
     /// </summary>
     /// <param name="ctx"></param>
     /// <param name="destination"></param>
@@ -72,11 +62,26 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     }
 
 
+    protected virtual SKImage GetPrimaryTextureImage(SkiaDrawingContext ctx, SKRect destination)
+    {
+        if (Parent?.RenderObject?.Image == null && AutoCreateInputTexture)
+        {
+            return CreateSnapshot(ctx, destination);
+        }
+
+        return Parent?.RenderObject?.Image;
+    }
+
+    /// <summary>
+    /// EffectPostRenderer
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <param name="destination"></param>
     public virtual void Render(SkiaDrawingContext ctx, SKRect destination)
     {
-        if (_paintWithShader == null)
+        if (PaintWithShader == null)
         {
-            _paintWithShader = new SKPaint()
+            PaintWithShader = new SKPaint()
             {
                 //todo check how if this affect anything after upcoming skiasharp3 fix
                 //FilterQuality = SKFilterQuality.High,
@@ -84,11 +89,11 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
             };
         }
 
-        SKImage source = Parent.RenderObject.Image;
+        SKImage source = GetPrimaryTextureImage(ctx, destination);
 
-        _paintWithShader.Shader = CreateShader(ctx, destination, source);
+        PaintWithShader.Shader = CreateShader(ctx, destination, source);
 
-        ctx.Canvas.DrawRect(destination, _paintWithShader);
+        ctx.Canvas.DrawRect(destination, PaintWithShader);
     }
 
     protected SKShader PrimaryTexture;
@@ -124,7 +129,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
 
         if (NeedApply)
         {
-            if (source == null)
+            if (source == null && AutoCreateInputTexture)
             {
                 source = CreateSnapshot(ctx, destination);
             }
@@ -178,14 +183,14 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         return uniforms;
     }
 
-    protected virtual SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader texture1)
+    protected virtual SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader primaryTexture)
     {
-        if (texture1 != null)
+        if (primaryTexture != null)
         {
             //.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
             return new SKRuntimeEffectChildren(CompiledShader)
             {
-                { "iImage1", texture1 },
+                { "iImage1", primaryTexture },
                 //{ "iImage2", _texture2 }
             };
         }
@@ -200,7 +205,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     protected virtual void CompileShader()
     {
         string shaderCode = SkSl.LoadFromResources(ShaderSource);
-        CompiledShader = SkSl.Compile(shaderCode);
+        CompiledShader = SkSl.Compile(shaderCode, ShaderSource);
     }
 
     protected virtual void ApplyShaderSource()
@@ -216,7 +221,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         typeof(SkiaShaderEffect),
         string.Empty, propertyChanged: NeedChangeSource);
 
-    private static void NeedChangeSource(BindableObject bindable, object oldvalue, object newvalue)
+    protected static void NeedChangeSource(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is SkiaShaderEffect control)
         {
@@ -257,7 +262,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
 #if SKIA3
         TexturesUniforms?.Dispose();
 #endif
-        _paintWithShader?.Dispose();
+        PaintWithShader?.Dispose();
 
         PrimaryTexture?.Dispose();
 

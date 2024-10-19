@@ -9,6 +9,8 @@ public class SkiaGif : AnimatedFramesRenderer
 {
     public SkiaImage Display { get; protected set; }
 
+    //public override bool CanUseCacheDoubleBuffering => false;
+
     /// <summary>
     /// For standalone use
     /// </summary>

@@ -51,7 +51,7 @@ public class Looper : IDisposable
                         return;
                     _loopStarting = true;
 
-                    if (MainThread.IsMainThread) //Choreographer is available
+                    if (MainThread.IsMainThread)
                     {
                         if (!_loopStarted)
                         {

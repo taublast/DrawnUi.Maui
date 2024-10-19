@@ -37,6 +37,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.Camera", "Addo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeMauiApp", "..\..\AppoMobi.Maui.DrawnUi.Demo\src\Usual\SomeMauiApp.csproj", "{F71645D2-F7AF-4C1C-9509-D01692622110}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawFrameInMaui", "..\..\DrawFrameInMaui\DrawFrameInMaui.csproj", "{09FF4C40-E913-4148-B965-B5475DFD3B53}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppoMobi.Maui.DrawnUi.Demo", "..\..\AppoMobi.Maui.DrawnUi.Demo\src\AllDrawn\AppoMobi.Maui.DrawnUi.Demo.csproj", "{9DCB6C22-2F92-4D59-B23E-0AD6EC233D1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,18 @@ Global
 		{F71645D2-F7AF-4C1C-9509-D01692622110}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F71645D2-F7AF-4C1C-9509-D01692622110}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F71645D2-F7AF-4C1C-9509-D01692622110}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{09FF4C40-E913-4148-B965-B5475DFD3B53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09FF4C40-E913-4148-B965-B5475DFD3B53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09FF4C40-E913-4148-B965-B5475DFD3B53}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{09FF4C40-E913-4148-B965-B5475DFD3B53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09FF4C40-E913-4148-B965-B5475DFD3B53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09FF4C40-E913-4148-B965-B5475DFD3B53}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{9DCB6C22-2F92-4D59-B23E-0AD6EC233D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DCB6C22-2F92-4D59-B23E-0AD6EC233D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DCB6C22-2F92-4D59-B23E-0AD6EC233D1F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{9DCB6C22-2F92-4D59-B23E-0AD6EC233D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DCB6C22-2F92-4D59-B23E-0AD6EC233D1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DCB6C22-2F92-4D59-B23E-0AD6EC233D1F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +118,8 @@ Global
 		{1F524822-400E-4801-AE05-4B3A14B603AD} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
 		{D4FC0BDB-3FE8-49C9-8B76-53C83128B899} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
 		{F71645D2-F7AF-4C1C-9509-D01692622110} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
+		{09FF4C40-E913-4148-B965-B5475DFD3B53} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
+		{9DCB6C22-2F92-4D59-B23E-0AD6EC233D1F} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08E673B7-06BF-468C-8D6C-2D1AA8E4A8CA}

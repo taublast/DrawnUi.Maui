@@ -1,8 +1,4 @@
-﻿using AppoMobi.Maui.Gestures;
-using AppoMobi.Specials;
-using DrawnUi.Maui.Infrastructure;
-using DrawnUi.Maui.Views;
-using Sandbox;
+﻿using Sandbox;
 using Sandbox.Views;
 
 namespace MauiNet8;

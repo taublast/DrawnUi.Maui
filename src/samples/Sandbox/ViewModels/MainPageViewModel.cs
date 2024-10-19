@@ -1,6 +1,4 @@
 ﻿using AppoMobi.Specials;
-using DrawnUi.Maui;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
@@ -22,7 +20,7 @@ namespace Sandbox
                 {
                     _selectedColor = value;
                     OnPropertyChanged();
-                    Debug.WriteLine($"Tint {value}");
+                    //Debug.WriteLine($"Tint {value}");
                 }
             }
         }

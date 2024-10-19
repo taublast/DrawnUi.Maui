@@ -72,8 +72,20 @@ public class SkiaValueAnimator : AnimatorBase
 
     }
 
+    /// <summary>
+    /// Animator self finished a cycle, might still repeat
+    /// </summary>
+    public Action CycleFInished { get; set; }
+
+    /// <summary>
+    /// Animator self finished running without being stopped manually
+    /// </summary>
+    public Action Finished { get; set; }
+
     protected virtual bool FinishedRunning()
     {
+        CycleFInished?.Invoke();
+
         bool finished = true;
         if (Repeat < 0) //forever
         {
@@ -93,6 +105,7 @@ public class SkiaValueAnimator : AnimatorBase
         else
         {
             Stop();
+            Finished?.Invoke();
         }
         return finished;
     }
