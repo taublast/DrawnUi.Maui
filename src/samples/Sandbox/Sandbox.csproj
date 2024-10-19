@@ -211,7 +211,7 @@
  
     <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
       <Compile Remove="Views\Controls\Shaders\**" />
-    </ItemGroup> x/zz.'as
+    </ItemGroup>
   
     <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
