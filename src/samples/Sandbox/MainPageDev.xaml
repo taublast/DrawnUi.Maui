@@ -114,7 +114,7 @@
 
                         </controls:AnimatedCarousel>
 
-                        <draw:SkiaLabel
+                        <!--<draw:SkiaLabel
                             BackgroundColor="Green"
                             FontAttributes="Bold"
                             HeightRequest="50"
@@ -122,10 +122,10 @@
                             HorizontalTextAlignment="Center"
                             Text="{Binding Source={x:Reference MainCarousel}, Path=SelectedString}"
                             TextColor="White"
-                            VerticalTextAlignment="Center" />
+                            VerticalTextAlignment="Center" />-->
 
                         <draw:SkiaLabel
-                            BackgroundColor="Green"
+                            BackgroundColor="Black"
                             FontAttributes="Bold"
                             HeightRequest="50"
                             HorizontalOptions="Fill"
