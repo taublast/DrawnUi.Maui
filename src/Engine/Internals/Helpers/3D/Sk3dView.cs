@@ -1,13 +1,40 @@
-﻿using Markdig.Extensions.Tables;
-using Microsoft.Maui.Devices.Sensors;
+﻿namespace DrawnUi.Maui.Draw;
+
+/*
+  public void RotateXDegrees(float degrees)
+   {
+       var rotation = SKMatrix44.CreateRotationDegrees(1, 0, 0, degrees);
+       matrix44 = rotation.PreConcat(matrix44);
+   }
+
+   public void RotateYDegrees(float degrees)
+   {
+       var rotation = SKMatrix44.CreateRotationDegrees(0, 1, 0, degrees);
+       matrix44 = rotation.PreConcat(matrix44);
+   }
+
+   public void RotateZDegrees(float degrees)
+   {
+       var rotation = SKMatrix44.CreateRotationDegrees(0, 0, 1, degrees);
+       matrix44 = rotation.PreConcat(matrix44);
+   }
+ */
+
 using SkiaSharp;
 using System.Numerics;
-using static Microsoft.Maui.ApplicationModel.Permissions;
-
-namespace DrawnUi.Maui.Draw;
 
 public class Sk3dView
 {
+    private Matrix4x4 matrix44;
+    private Vector3 cameraPosition;
+    private Vector3 cameraTarget;
+    private Vector3 cameraUp;
+
+    private float cameraRotationX = 0;
+    private float cameraRotationY = 0;
+    private float cameraRotationZ = 0;
+
+    private float cameraTranslationZ = 0;
 
     public Sk3dView()
     {
@@ -16,113 +43,149 @@ public class Sk3dView
 
     public void Reset()
     {
-        fCamera = new();
-        fRec = new();
+        matrix44 = Matrix4x4.Identity;
+        cameraRotationX = 0;
+        cameraRotationY = 0;
+        cameraRotationZ = 0;
+
+        //        cameraPosition = new Vector3(0, 0, -1);
+        cameraTarget = new Vector3(0, 0, 0);
+        cameraUp = new Vector3(0, 1, 0);
     }
 
-    const float inchesToPoints = 72.0f;
-    static readonly float SK_ScalarPI = (float)Math.PI;
-
-    internal class Rec
+    public void RotateXDegrees(float degrees)
     {
-        public Rec()
-        {
-            fMatrix = SKMatrix44.Identity;
-        }
-        //disabled, do not need save/restore public - Rec fNext;
-        public SKMatrix44 fMatrix;
-    };
-
-    internal Rec fRec;
-    internal SkCamera3D fCamera;
-
-    public void SetCameraLocation(float x, float y, float z)
-    {
-        // the camera location is passed in inches, set in pt
-        float lz = z * inchesToPoints;
-        fCamera.fLocation = new(x * inchesToPoints, y * inchesToPoints, lz);
-        fCamera.fObserver = new(0, 0, lz);
-        fCamera.Update();
+        cameraRotationX -= degrees / 360.0f;
     }
 
-    public float GetCameraLocationX()
+    public void RotateYDegrees(float degrees)
     {
-        return fCamera.fLocation.X / inchesToPoints;
+        cameraRotationY += degrees / 360.0f;
     }
 
-    public float GetCameraLocationY()
+    public void RotateZDegrees(float degrees)
     {
-        return fCamera.fLocation.Y / inchesToPoints;
-    }
-
-    public float GetCameraLocationZ()
-    {
-        return fCamera.fLocation.X / inchesToPoints;
+        cameraRotationZ += degrees;
     }
 
     public void Translate(float x, float y, float z)
     {
-        var preTranslate = SKMatrix44.CreateTranslation(x, y, z);
-        fRec.fMatrix.PreConcat(preTranslate); //todo check if need use return value
-    }
+        cameraTranslationZ = z;
 
-    public void RotateX(float deg)
-    {
-        var preRotate = SKMatrix44.CreateRotation(1, 0, 0, deg * SK_ScalarPI / 180f);
-        fRec.fMatrix.PreConcat(preRotate); //todo check if need use return value
-
-        //fRec->fMatrix.preConcat(SkM44::Rotate({ 1, 0, 0}, deg* SK_ScalarPI / 180));
-    }
-
-    public void RotateY(float deg)
-    {
-        var preRotate = SKMatrix44.CreateRotation(0, -1, 0, deg * SK_ScalarPI / 180f);
-        fRec.fMatrix.PreConcat(preRotate); //todo check if need use return value
-
-        //fRec->fMatrix.preConcat(SkM44::Rotate({ 0,-1, 0}, deg* SK_ScalarPI / 180));
-    }
-
-    public void RotateZ(float deg)
-    {
-        var preRotate = SKMatrix44.CreateRotation(0, 0, 1, deg * SK_ScalarPI / 180f);
-        fRec.fMatrix.PreConcat(preRotate); //todo check if need use return value
-
-        //fRec->fMatrix.preConcat(SkM44::Rotate({ 0, 0, 1}, deg* SK_ScalarPI / 180));
-    }
-
-    public void RotateXDegrees(float deg)
-    {
-        var preRotate = SKMatrix44.CreateRotationDegrees(1, 0, 0, deg);
-        var check = fRec.fMatrix.PreConcat(preRotate); //todo check if need use return value
-        var test = check == fRec.fMatrix;
-
-    }
-
-    public void RotateYDegrees(float deg)
-    {
-        var preRotate = SKMatrix44.CreateRotationDegrees(0, -1, 0, deg);
-        fRec.fMatrix.PreConcat(preRotate); //todo check if need use return value
-    }
-
-    public void RotateZDegrees(float deg)
-    {
-        var preRotate = SKMatrix44.CreateRotationDegrees(0, 0, 1, deg);
-        fRec.fMatrix.PreConcat(preRotate); //todo check if need use return value
-    }
-
-    public float DotWithNormal(float x, float y, float z)
-    {
-        SkPatch3D patch = new();
-        patch.Transform(fRec.fMatrix);
-        return patch.DotWith(x, y, z);
+        //var translation = Matrix4x4.CreateTranslation(x, y, z);
+        // matrix44 = translation * matrix44;
     }
 
     public SKMatrix GetMatrix()
     {
-        SkPatch3D patch = new();
-        patch.Transform(fRec.fMatrix);
-        return fCamera.PatchToMatrix(patch);
+        var viewMatrix = CreateViewMatrix();
+        var projectionMatrix = CreateProjectionMatrix();
+        var mvpMatrix = viewMatrix * projectionMatrix;
+
+        return ConvertToSKMatrix(mvpMatrix);
+    }
+
+
+    private Matrix4x4 CreateViewMatrix()
+    {
+
+        // Apply camera rotations to the camera's orientation
+        var rotationX = Matrix4x4.CreateRotationX(SkiaControl.DegreesToRadians(cameraRotationX));
+        var rotationY = Matrix4x4.CreateRotationY(SkiaControl.DegreesToRadians(cameraRotationY));
+        var rotationZ = Matrix4x4.CreateRotationZ(SkiaControl.DegreesToRadians(cameraRotationZ));
+
+        // Combine rotations
+        var rotationMatrix = rotationY * rotationX * rotationZ;
+
+        // Apply rotations to camera direction
+        var forward = Vector3.Transform(new Vector3(0, 0, -1), rotationMatrix);
+
+        cameraPosition = new Vector3(0, 1 + cameraTranslationZ, 1);
+
+        // Update camera target
+        cameraTarget = cameraPosition + forward;
+
+        // Update cameraUp
+        cameraUp = Vector3.Transform(new Vector3(0, 1, 0), rotationMatrix);
+
+        // Create the view matrix
+        var viewMatrix = Matrix4x4.CreateLookAt(cameraPosition, cameraTarget, cameraUp);
+
+        return viewMatrix;
+    }
+
+
+    private Matrix4x4 CreateProjectionMatrix()
+    {
+        float fieldOfView = MathF.PI / 2;
+        float aspectRatio = 1.0f;
+        float nearPlane = 0.1f;
+        float farPlane = 1f;
+
+        if (fieldOfView == 0 || float.IsInfinity(fieldOfView))
+        {
+            fieldOfView = MathF.PI / 2;
+        }
+
+        return Matrix4x4.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlane, farPlane);
+    }
+
+
+    private SKMatrix ConvertToSKMatrix(Matrix4x4 m)
+    {
+        //return new SKMatrix(
+        //m.M00, 
+        //m.m10, 
+        //m.m30, 
+        //m.m01, 
+        //m.m11, 
+        //m.m31, 
+        //m.m03, 
+        //m.m13, 
+        //m.m33);
+
+        //-m.M11,
+        //-m.M21,
+        //-m.M41,
+        //m.M12,
+        //m.M22,
+        //m.M42,
+        //m.M14,
+        //m.M24,
+        //m.M44);
+
+        // Extract the relevant elements for the 3x3 matrix
+        float m00 = m.M11; // ScaleX
+        float m01 = m.M21; // SkewX
+        float m02 = m.M41; // Translation X
+        float m10 = m.M21; // SkewY
+        float m11 = m.M22; // ScaleY
+        float m12 = m.M24; // Translation Y
+        float m20 = m.M41; // Perspective X
+        float m21 = m.M24; // Perspective Y
+        float m22 = m.M44; // Perspective W
+
+
+        // Create the SKMatrix
+        SKMatrix matrix = new SKMatrix
+        {
+            ScaleX = m00,
+            SkewX = m01,
+            TransX = m02,
+            SkewY = m10,
+            ScaleY = m11,
+            TransY = m12,
+            Persp0 = m20,
+            Persp1 = m21,
+            Persp2 = m22
+        };
+
+        return matrix;
     }
 }
+
+
+
+
 
 

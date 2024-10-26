@@ -180,4 +180,95 @@ public class SkCamera3D
     }
 }
 
+public class SkCamera3D2
+{
+    public Vector3 Position;   // Camera position in world space
+    public Vector3 Forward;    // Forward direction vector
+    public Vector3 Up;         // Up direction vector
+
+    private bool needToUpdate;
+    private SKMatrix44 viewMatrix;
+
+    public SkCamera3D2()
+    {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        Position = new Vector3(0, 0, -10);  // Position the camera back along the Z-axis
+        Forward = new Vector3(0, 0, 1);     // Looking towards positive Z
+        Up = new Vector3(0, 1, 0);          // Up is positive Y
+        needToUpdate = true;
+        viewMatrix = SKMatrix44.CreateIdentity();
+    }
+
+    public void RotateXDegrees(float degrees)
+    {
+        Rotate(degrees, 0, 0);
+    }
+
+    public void RotateYDegrees(float degrees)
+    {
+        Rotate(0, degrees, 0);
+    }
+
+    public void RotateZDegrees(float degrees)
+    {
+        Rotate(0, 0, degrees);
+    }
+
+    private void Rotate(float degreesX, float degreesY, float degreesZ)
+    {
+        // Convert degrees to radians
+        float radiansX = SkiaControl.DegreesToRadians(degreesX);
+        float radiansY = SkiaControl.DegreesToRadians(degreesY);
+        float radiansZ = SkiaControl.DegreesToRadians(degreesZ);
+
+        // Create rotation quaternions
+        var rotationX = Quaternion.CreateFromAxisAngle(Vector3.UnitX, radiansX);
+        var rotationY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, radiansY);
+        var rotationZ = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, radiansZ);
+
+        // Combine rotations (order matters)
+        var combinedRotation = rotationZ * rotationY * rotationX;
+
+        // Rotate the camera's forward and up vectors
+        Forward = Vector3.Transform(Forward, combinedRotation);
+        Up = Vector3.Transform(Up, combinedRotation);
+
+        needToUpdate = true;
+    }
+
+    public void Update()
+    {
+        if (needToUpdate)
+        {
+            DoUpdate();
+        }
+    }
+
+    private void DoUpdate()
+    {
+        // Calculate the view matrix using the camera's position, target, and up vector
+        Vector3 target = Position + Forward;
+        var viewMatrix4x4 = Matrix4x4.CreateLookAt(Position, target, Up);
+
+        // Convert Matrix4x4 to SKMatrix44
+        viewMatrix = new SKMatrix44(
+            viewMatrix4x4.M11, viewMatrix4x4.M12, viewMatrix4x4.M13, viewMatrix4x4.M14,
+            viewMatrix4x4.M21, viewMatrix4x4.M22, viewMatrix4x4.M23, viewMatrix4x4.M24,
+            viewMatrix4x4.M31, viewMatrix4x4.M32, viewMatrix4x4.M33, viewMatrix4x4.M34,
+            viewMatrix4x4.M41, viewMatrix4x4.M42, viewMatrix4x4.M43, viewMatrix4x4.M44);
+
+        needToUpdate = false;
+    }
+
+    public SKMatrix44 GetViewMatrix44()
+    {
+        Update();
+        return viewMatrix;
+    }
+}
+
 

@@ -984,21 +984,21 @@ namespace DrawnUi.Maui.Draw
         {
             switch (LockChildrenGestures)
             {
-            case LockTouch.Enabled:
-            return true;
-
-            case LockTouch.Disabled:
-            break;
-
-            case LockTouch.PassTap:
-            if (action != TouchActionResult.Tapped)
+                case LockTouch.Enabled:
                 return true;
-            break;
 
-            case LockTouch.PassTapAndLongPress:
-            if (action != TouchActionResult.Tapped && action != TouchActionResult.LongPressing)
-                return true;
-            break;
+                case LockTouch.Disabled:
+                break;
+
+                case LockTouch.PassTap:
+                if (action != TouchActionResult.Tapped)
+                    return true;
+                break;
+
+                case LockTouch.PassTapAndLongPress:
+                if (action != TouchActionResult.Tapped && action != TouchActionResult.LongPressing)
+                    return true;
+                break;
             }
 
             return false;
@@ -2505,6 +2505,15 @@ namespace DrawnUi.Maui.Draw
 
         //todo check adapt for MAUI
 
+        public static float DegreesToRadians(float value)
+        {
+            return (float)((value * Math.PI) / 180);
+        }
+        public static float RadiansToDegrees(float value)
+        {
+            return (float)(value * 180 / Math.PI);
+        }
+
         public static double DegreesToRadians(double value)
         {
             return ((value * Math.PI) / 180);
@@ -2677,93 +2686,93 @@ namespace DrawnUi.Maui.Draw
             switch (layoutHorizontal.Alignment)
             {
 
-            case LayoutAlignment.Center when float.IsFinite(availableWidth):
-            {
-                left += (float)Math.Round(availableWidth / 2.0f - useMaxWidth / 2.0f);
-                right = left + useMaxWidth;
+                case LayoutAlignment.Center when float.IsFinite(availableWidth):
+                    {
+                        left += (float)Math.Round(availableWidth / 2.0f - useMaxWidth / 2.0f);
+                        right = left + useMaxWidth;
 
-                if (left < destination.Left)
-                {
-                    left = destination.Left;
-                    right = left + useMaxWidth;
-                }
+                        if (left < destination.Left)
+                        {
+                            left = destination.Left;
+                            right = left + useMaxWidth;
+                        }
 
-                if (right > destination.Right)
-                {
-                    right = destination.Right;
-                }
+                        if (right > destination.Right)
+                        {
+                            right = destination.Right;
+                        }
 
-                break;
-            }
-            case LayoutAlignment.End when float.IsFinite(destination.Right):
-            {
-                right = destination.Right;
-                left = right - useMaxWidth;
-                if (left < destination.Left)
-                {
-                    left = destination.Left;
-                }
+                        break;
+                    }
+                case LayoutAlignment.End when float.IsFinite(destination.Right):
+                    {
+                        right = destination.Right;
+                        left = right - useMaxWidth;
+                        if (left < destination.Left)
+                        {
+                            left = destination.Left;
+                        }
 
-                break;
-            }
-            case LayoutAlignment.Fill:
-            case LayoutAlignment.Start:
-            default:
-            {
-                right = left + useMaxWidth;
-                if (right > destination.Right)
-                {
-                    right = destination.Right;
-                }
+                        break;
+                    }
+                case LayoutAlignment.Fill:
+                case LayoutAlignment.Start:
+                default:
+                    {
+                        right = left + useMaxWidth;
+                        if (right > destination.Right)
+                        {
+                            right = destination.Right;
+                        }
 
-                break;
-            }
+                        break;
+                    }
             }
 
             // VerticalOptions
             switch (layoutVertical.Alignment)
             {
 
-            case LayoutAlignment.Center when float.IsFinite(availableHeight):
-            {
-                top += (float)Math.Round(availableHeight / 2.0f - useMaxHeight / 2.0f);
+                case LayoutAlignment.Center when float.IsFinite(availableHeight):
+                    {
+                        top += (float)Math.Round(availableHeight / 2.0f - useMaxHeight / 2.0f);
+                        bottom = top + useMaxHeight;
+
+                        if (top < destination.Top)
+                        {
+                            top = destination.Top;
+                            bottom = top + useMaxHeight;
+                        }
+
+                        else if (bottom > destination.Bottom)
+                        {
+                            bottom = destination.Bottom;
+                            top = bottom - useMaxHeight;
+                        }
+
+                        break;
+                    }
+                case LayoutAlignment.End when float.IsFinite(destination.Bottom):
+                    {
+                        bottom = destination.Bottom;
+                        top = bottom - useMaxHeight;
+                        if (top < destination.Top)
+                        {
+                            top = destination.Top;
+                        }
+
+                        break;
+                    }
+                case LayoutAlignment.Start:
+                case LayoutAlignment.Fill:
+                default:
+
                 bottom = top + useMaxHeight;
-
-                if (top < destination.Top)
-                {
-                    top = destination.Top;
-                    bottom = top + useMaxHeight;
-                }
-
-                else if (bottom > destination.Bottom)
+                if (bottom > destination.Bottom)
                 {
                     bottom = destination.Bottom;
-                    top = bottom - useMaxHeight;
                 }
-
                 break;
-            }
-            case LayoutAlignment.End when float.IsFinite(destination.Bottom):
-            {
-                bottom = destination.Bottom;
-                top = bottom - useMaxHeight;
-                if (top < destination.Top)
-                {
-                    top = destination.Top;
-                }
-
-                break;
-            }
-            case LayoutAlignment.Start:
-            case LayoutAlignment.Fill:
-            default:
-
-            bottom = top + useMaxHeight;
-            if (bottom > destination.Bottom)
-            {
-                bottom = destination.Bottom;
-            }
-            break;
 
             }
 
@@ -4619,8 +4628,9 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.RotateXDegrees(CameraAngleX);
                 Helper3d.RotateYDegrees(CameraAngleY);
                 Helper3d.RotateZDegrees(CameraAngleZ);
-                if (CameraTranslationZ != 0)
-                    Helper3d.Translate(0, 0, CameraTranslationZ);
+
+                //if (CameraTranslationZ != 0)
+                Helper3d.Translate(0, 0, CameraTranslationZ);
 
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.GetMatrix());
 #else
@@ -4628,7 +4638,7 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.RotateXDegrees(CameraAngleX);
                 Helper3d.RotateYDegrees(CameraAngleY);
                 Helper3d.RotateZDegrees(CameraAngleZ);
-                if (CameraTranslationZ != 0) Helper3d.TranslateZ(CameraTranslationZ);
+                Helper3d.TranslateZ(CameraTranslationZ);
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
                 Helper3d.Restore();
 #endif
@@ -4658,28 +4668,28 @@ namespace DrawnUi.Maui.Draw
             {
                 switch (verb)
                 {
-                case SKPathVerb.Move:
-                if (moveToFound)
-                    return false; // Multiple MoveTo commands
-                moveToFound = true;
-                break;
+                    case SKPathVerb.Move:
+                    if (moveToFound)
+                        return false; // Multiple MoveTo commands
+                    moveToFound = true;
+                    break;
 
-                case SKPathVerb.Line:
-                if (lineToCount < 4)
-                {
-                    lineToCount++;
-                }
-                else
-                {
-                    return false; // More than 4 LineTo commands
-                }
-                break;
+                    case SKPathVerb.Line:
+                    if (lineToCount < 4)
+                    {
+                        lineToCount++;
+                    }
+                    else
+                    {
+                        return false; // More than 4 LineTo commands
+                    }
+                    break;
 
-                case SKPathVerb.Close:
-                return lineToCount == 4; // Ensure we have exactly 4 LineTo commands before Close
+                    case SKPathVerb.Close:
+                    return lineToCount == 4; // Ensure we have exactly 4 LineTo commands before Close
 
-                default:
-                return false; // Any other command invalidates the rectangle check
+                    default:
+                    return false; // Any other command invalidates the rectangle check
                 }
             }
 
@@ -5734,37 +5744,37 @@ namespace DrawnUi.Maui.Draw
 
                 switch (gradient.Type)
                 {
-                case GradientType.Sweep:
+                    case GradientType.Sweep:
 
-                //float sweep = (float)Value3;//((float)this.Variable1 % (float)this.Variable2 / 100F) * 360.0F;
+                    //float sweep = (float)Value3;//((float)this.Variable1 % (float)this.Variable2 / 100F) * 360.0F;
 
-                return SKShader.CreateSweepGradient(
-                     new SKPoint(destination.Left + destination.Width / 2.0f,
-                        destination.Top + destination.Height / 2.0f),
-                    colors.ToArray(),
-                    colorPositions,
-                    gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
+                    return SKShader.CreateSweepGradient(
+                         new SKPoint(destination.Left + destination.Width / 2.0f,
+                            destination.Top + destination.Height / 2.0f),
+                        colors.ToArray(),
+                        colorPositions,
+                        gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
 
-                case GradientType.Circular:
-                return SKShader.CreateRadialGradient(
-                    new SKPoint(destination.Left + destination.Width / 2.0f,
-                        destination.Top + destination.Height / 2.0f),
-                    Math.Max(destination.Width, destination.Height) / 2.0f,
-                    colors.ToArray(),
-                    colorPositions,
-                    gradient.TileMode);
+                    case GradientType.Circular:
+                    return SKShader.CreateRadialGradient(
+                        new SKPoint(destination.Left + destination.Width / 2.0f,
+                            destination.Top + destination.Height / 2.0f),
+                        Math.Max(destination.Width, destination.Height) / 2.0f,
+                        colors.ToArray(),
+                        colorPositions,
+                        gradient.TileMode);
 
-                case GradientType.Linear:
-                default:
-                return SKShader.CreateLinearGradient(
-                    new SKPoint(destination.Left + destination.Width * gradient.StartXRatio,
-                        destination.Top + destination.Height * gradient.StartYRatio),
-                    new SKPoint(destination.Left + destination.Width * gradient.EndXRatio,
-                        destination.Top + destination.Height * gradient.EndYRatio),
-                    colors.ToArray(),
-                    colorPositions,
-                    gradient.TileMode);
-                break;
+                    case GradientType.Linear:
+                    default:
+                    return SKShader.CreateLinearGradient(
+                        new SKPoint(destination.Left + destination.Width * gradient.StartXRatio,
+                            destination.Top + destination.Height * gradient.StartYRatio),
+                        new SKPoint(destination.Left + destination.Width * gradient.EndXRatio,
+                            destination.Top + destination.Height * gradient.EndYRatio),
+                        colors.ToArray(),
+                        colorPositions,
+                        gradient.TileMode);
+                    break;
                 }
 
             }
@@ -6119,14 +6129,14 @@ namespace DrawnUi.Maui.Draw
             {
                 switch (e.Action)
                 {
-                case NotifyCollectionChangedAction.Add:
-                control.OnItemTemplateChanged();
-                break;
+                    case NotifyCollectionChangedAction.Add:
+                    control.OnItemTemplateChanged();
+                    break;
 
-                case NotifyCollectionChangedAction.Reset:
-                case NotifyCollectionChangedAction.Remove:
-                control.OnItemTemplateChanged();
-                break;
+                    case NotifyCollectionChangedAction.Reset:
+                    case NotifyCollectionChangedAction.Remove:
+                    control.OnItemTemplateChanged();
+                    break;
                 }
             }
         }
@@ -6242,21 +6252,21 @@ namespace DrawnUi.Maui.Draw
 
             switch (e.Action)
             {
-            case NotifyCollectionChangedAction.Add:
-            foreach (SkiaControl newChildren in e.NewItems)
-            {
-                AddOrRemoveView(newChildren, true);
-            }
-            break;
+                case NotifyCollectionChangedAction.Add:
+                foreach (SkiaControl newChildren in e.NewItems)
+                {
+                    AddOrRemoveView(newChildren, true);
+                }
+                break;
 
-            case NotifyCollectionChangedAction.Reset:
-            case NotifyCollectionChangedAction.Remove:
-            foreach (SkiaControl oldChildren in e.OldItems ?? Array.Empty<SkiaControl>())
-            {
-                AddOrRemoveView(oldChildren, false);
-            }
+                case NotifyCollectionChangedAction.Reset:
+                case NotifyCollectionChangedAction.Remove:
+                foreach (SkiaControl oldChildren in e.OldItems ?? Array.Empty<SkiaControl>())
+                {
+                    AddOrRemoveView(oldChildren, false);
+                }
 
-            break;
+                break;
             }
 
             Update();
@@ -6278,54 +6288,54 @@ namespace DrawnUi.Maui.Draw
 
             switch (stretch)
             {
-            case TransformAspect.None:
-            break;
+                case TransformAspect.None:
+                break;
 
-            case TransformAspect.Fit:
-            aspectX = dest.Width < width ? dest.Width / width : 1;
-            aspectY = dest.Height < height ? dest.Height / height : 1;
-            break;
+                case TransformAspect.Fit:
+                aspectX = dest.Width < width ? dest.Width / width : 1;
+                aspectY = dest.Height < height ? dest.Height / height : 1;
+                break;
 
-            case TransformAspect.Fill:
-            aspectX = width < dest.Width ? s1 : 1;
-            aspectY = height < dest.Height ? s2 : 1;
-            break;
+                case TransformAspect.Fill:
+                aspectX = width < dest.Width ? s1 : 1;
+                aspectY = height < dest.Height ? s2 : 1;
+                break;
 
-            case TransformAspect.AspectFit:
-            aspectX = Math.Min(s1, s2);
-            aspectY = aspectX;
-            break;
-
-            case TransformAspect.AspectFill:
-            aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
-            aspectY = aspectX;
-            break;
-
-            case TransformAspect.Cover:
-            aspectX = s1;
-            aspectY = s2;
-            break;
-
-            case TransformAspect.AspectCover:
-            aspectX = Math.Max(s1, s2);
-            aspectY = aspectX;
-            break;
-
-            case TransformAspect.AspectFitFill:
-            var imageAspect = width / height;
-            var viewportAspect = dest.Width / dest.Height;
-
-            if (imageAspect > viewportAspect) // Image is wider than viewport
-            {
-                aspectX = dest.Width / width;
+                case TransformAspect.AspectFit:
+                aspectX = Math.Min(s1, s2);
                 aspectY = aspectX;
-            }
-            else // Image is taller than viewport
-            {
-                aspectY = dest.Height / height;
-                aspectX = aspectY;
-            }
-            break;
+                break;
+
+                case TransformAspect.AspectFill:
+                aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
+                aspectY = aspectX;
+                break;
+
+                case TransformAspect.Cover:
+                aspectX = s1;
+                aspectY = s2;
+                break;
+
+                case TransformAspect.AspectCover:
+                aspectX = Math.Max(s1, s2);
+                aspectY = aspectX;
+                break;
+
+                case TransformAspect.AspectFitFill:
+                var imageAspect = width / height;
+                var viewportAspect = dest.Width / dest.Height;
+
+                if (imageAspect > viewportAspect) // Image is wider than viewport
+                {
+                    aspectX = dest.Width / width;
+                    aspectY = aspectX;
+                }
+                else // Image is taller than viewport
+                {
+                    aspectY = dest.Height / height;
+                    aspectX = aspectY;
+                }
+                break;
             }
 
             return (aspectX, aspectY);
