@@ -6,24 +6,19 @@ uniform float2 iOffset; // Top-left corner of DrawingRect
 uniform float2 iResolution; // Viewport resolution (pixels)
 uniform float2 iImageResolution; // iImage1 resolution (pixels)
 
+//In GLSL, the texture coordinate origin is at the bottom-left corner, 
+//whereas in SKSL the origin is at the top-left corner.
+
 vec4 getFromColor(vec2 uv) {
-    // Adjust UV coordinates to match the image resolution
-    vec2 adjustedUV = uv * iImageResolution;
+ // Flip the Y-coordinate and adjust UV coordinates
+    vec2 adjustedUV = float2(uv.x, 1.0 - uv.y) * iImageResolution;
     return iImage1.eval(adjustedUV);
 }
 
 vec4 getToColor(vec2 uv) {
-    // Adjust UV coordinates to match the image resolution
-    vec2 adjustedUV = uv * iImageResolution;
+    // Flip the Y-coordinate and adjust UV coordinates
+    vec2 adjustedUV = float2(uv.x, 1.0 - uv.y) * iImageResolution;
     return iImage2.eval(adjustedUV);
 }
 
-//here goes the third party script with "transition" function etc
-
-
-half4 main(float2 fragCoord) {
-    // Normalize the coordinates
-    float2 normCoord = (fragCoord - iOffset) / iResolution;
-    half4 fragColor = transition(normCoord);
-    return fragColor;
-}
+//script-goes-here

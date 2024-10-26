@@ -1,5 +1,4 @@
 using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Infrastructure;
 using DrawnUi.Maui.Internals;
 
 namespace Sandbox.Views.Controls;
@@ -33,83 +32,56 @@ public class AnimatedCarousel : CarouselWithTransitions
 
             new("Bow Tie Horizontal", "bowtiehorizontal.sksl", 750),
             new("Bow Tie Vertical", "bowtievertical.sksl", 750),
-          
-            //bugs
-            //new("Butterfly Waves Crawler", "butterflywavescrawler.sksl", 250),
-            
-            new("Circlecrop", "circlecrop.sksl", 1500),
-
-            new("Circleopen", "circleopen.sksl", 750),
-
-            new("Colorphase", "colorphase.sksl", 750),
-
+            new("Butterfly Waves Crawler", "butterflywavescrawler.sksl", 1500),
+            new("Circle Crop", "circlecrop.sksl", 1500),
+            new("Circle Open", "circleopen.sksl", 750),
+            new("Color Phase", "colorphase.sksl", 750),
             new("Cross-hatch", "crosshatch.sksl", 1000),
-
             new("Cross-warp", "crosswarp.sksl", 750),
-
             new("Cross-zoom", "crosszoom.sksl", 750),
-
-            //bugs
             new("Cube", "cube.sksl", 750),
-
             new("Doorway", "doorway.sksl", 750),
-
             new("Dreamy", "dreamy.sksl", 750),
-
             new("Dreamy Zoom", "dreamyzoom.sksl", 750),
-
             new("Edge", "edgetransition.sksl", 750),
-
             new("Fade", "fade.sksl", 500),
-
             new("Fade Color", "fadecolor.sksl", 750),
-
             new("Fade Grayscale", "fadegrayscale.sksl", 750),
-
             new("Film Burn", "filmburn.sksl", 1250),
-
             new("Fly Eye", "flyeye.sksl", 1000),
-
             new("Heart", "heart.sksl", 750),
-
             new("Kaleidoscope", "kaleidoscope.sksl", 1000),
-
+            new("Linear Blur", "linearblur.sksl", 750),
             new("Morph", "morph.sksl", 500),
-
             new("Mosaic", "mosaic.sksl", 750),
-
-            new("Page Curl", "pagecurl.sksl", 1000),
-
+            new("Page Curl", "pagecurlbtm.sksl", 1000),
+            new("Page Curl Top", "pagecurl.sksl", 1000),
             new("Pixelize", "pixelize.sksl", 1000),
-
+            new("Radial", "radial.sksl", 750),
+            new("Rectangle", "rectangle.sksl", 750),
+            new("Rectangle Crop", "rectanglecrop.sksl", 750),
             new("Rolls", "rolls.sksl", 750),
-
             new("Scale In", "scalein.sksl", 750),
-
+            new("Squeeze", "squeeze.sksl", 1250),
+            new("Squeeze Wire", "squeezewire.sksl", 1250),
+            new("Stereo Viewer", "stereoviewer.sksl", 1250),
+            new("Swap", "swap.sksl", 1250),
             new("Swirl", "swirl.sksl", 1250),
-
             new("Tangent Motion Blur", "tangentmotionblur.sksl", 1000),
-
             new("Tv Static", "tvstatic.sksl", 750),
-
             new("Waterdrop", "waterdrop.sksl", 750),
-
             new("Wind", "wind.sksl", 750),
-
             new("Window Blinds", "windowblinds.sksl", 750),
-
             new("Window Slice", "windowslice.sksl", 1000),
-
             new("Wipe Down", "wipedown.sksl", 750),
-
             new("Wipe Left", "wipeleft.sksl", 750),
-
             new("Wipe Right", "wiperight.sksl", 750),
-
             new("Wipe Up", "wipeup.sksl", 750)
         };
 
-        SetTransition(_transitions.First(x => x.Name == "Page Curl"));
+        SetTransition(_transitions.First(x => x.Name == "Cube"));
+
+        //SetTransition(_transitions.First(x => x.Name == "Page Curl"));
     }
 
     protected override void OnChildrenInitialized()

@@ -3,11 +3,7 @@ using AppoMobi.Specials;
 using DrawnUi.Maui.Infrastructure;
 using DrawnUi.Maui.Internals;
 using Sandbox;
-using Sandbox.Resources.Strings;
 using Sandbox.Views;
-using Sandbox.Views.Xaml2Pdf;
-using System.Diagnostics;
-using System.Text;
 
 
 
@@ -33,7 +29,7 @@ public partial class MainPageDev : BasePage
 
             _shaders = Files.ListAssets(path);
 
-
+            BindingContext = this;
         }
         catch (Exception e)
         {
@@ -66,6 +62,51 @@ public partial class MainPageDev : BasePage
         // string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/apple.sksl");
         //var effect = SkSl.Compile(shaderCode);
     }
+
+    private double _SpeedMs = 1750;
+    public double SpeedMs
+    {
+        get
+        {
+            return _SpeedMs;
+        }
+        set
+        {
+            if (_SpeedMs != value)
+            {
+                _SpeedMs = value;
+                OnPropertyChanged();
+                MainCarousel.LinearSpeedMs = SpeedMs;
+            }
+        }
+    }
+
+
+    private bool _AutoPlay;
+    public bool AutoPlay
+    {
+        get
+        {
+            return _AutoPlay;
+        }
+        set
+        {
+            if (_AutoPlay != value)
+            {
+                _AutoPlay = value;
+                OnPropertyChanged();
+                if (value)
+                {
+                    MainCarousel.AnimatorSpeedMs = SpeedMs;
+                }
+                else
+                {
+                    MainCarousel.AnimatorSpeedMs = 0;
+                }
+            }
+        }
+    }
+
 
     async void SelectFIle()
     {

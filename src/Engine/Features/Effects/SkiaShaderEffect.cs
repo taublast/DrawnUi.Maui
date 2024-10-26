@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Maui.Draw;
 
 public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
 {
@@ -106,7 +104,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         {
             _lastSource = source;
             var dispose = PrimaryTexture;
-            PrimaryTexture = source.ToShader(SKShaderTileMode.Repeat, SKShaderTileMode.Repeat);
+            PrimaryTexture = source.ToShader(SKShaderTileMode.Clamp, SKShaderTileMode.Clamp);
             if (dispose != PrimaryTexture)
                 dispose?.Dispose();
         }
@@ -202,24 +200,32 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         }
     }
 
+    protected string _template = null;
+    protected string _templatePlacehodler = "//script-goes-here";
+
     protected virtual void CompileShader()
     {
+        if (!string.IsNullOrEmpty(ShaderTemplate))
+        {
+            if (string.IsNullOrEmpty(_template))
+                _template = SkSl.LoadFromResources(ShaderTemplate);
+        }
         string shaderCode = SkSl.LoadFromResources(ShaderSource);
+        if (!string.IsNullOrEmpty(_template))
+        {
+            shaderCode = _template.Replace(_templatePlacehodler, shaderCode);
+        }
         CompiledShader = SkSl.Compile(shaderCode, ShaderSource);
     }
 
     protected virtual void ApplyShaderSource()
     {
         _hasNewShader = true;
+        _template = null;
         Update();
     }
 
     private bool _hasNewShader;
-
-    public static readonly BindableProperty ShaderSourceProperty = BindableProperty.Create(nameof(ShaderSource),
-        typeof(string),
-        typeof(SkiaShaderEffect),
-        string.Empty, propertyChanged: NeedChangeSource);
 
     protected static void NeedChangeSource(BindableObject bindable, object oldvalue, object newvalue)
     {
@@ -229,12 +235,28 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         }
     }
 
+    public static readonly BindableProperty ShaderSourceProperty = BindableProperty.Create(nameof(ShaderSource),
+        typeof(string),
+        typeof(SkiaShaderEffect),
+        string.Empty, propertyChanged: NeedChangeSource);
+
     public string ShaderSource
     {
         get { return (string)GetValue(ShaderSourceProperty); }
         set { SetValue(ShaderSourceProperty, value); }
     }
 
+
+    public static readonly BindableProperty ShaderTemplateProperty = BindableProperty.Create(nameof(ShaderTemplate),
+        typeof(string),
+        typeof(SkiaShaderEffect),
+        string.Empty, propertyChanged: NeedChangeSource);
+
+    public string ShaderTemplate
+    {
+        get { return (string)GetValue(ShaderTemplateProperty); }
+        set { SetValue(ShaderTemplateProperty, value); }
+    }
 
     public override void Update()
     {

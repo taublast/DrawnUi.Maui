@@ -27,7 +27,7 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
         DetachTo();
     }
 
-    protected SKShaderTileMode TilingSecondaryTexture = SKShaderTileMode.Mirror;
+    protected SKShaderTileMode TilingSecondaryTexture = SKShaderTileMode.Clamp;
 
     protected override SKRuntimeEffectChildren CreateTexturesUniforms(SkiaDrawingContext ctx, SKRect destination, SKShader primaryTexture)
     {

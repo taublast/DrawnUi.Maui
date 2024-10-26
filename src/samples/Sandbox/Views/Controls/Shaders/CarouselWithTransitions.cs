@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Numerics;
 
 namespace Sandbox.Views.Controls;
@@ -12,7 +11,8 @@ public class CarouselWithTransitions : SkiaCarousel
     {
         Effect = new()
         {
-            ShaderSource = ShaderFilename
+            ShaderSource = ShaderFilename,
+            ShaderTemplate = @"Shaders\transitions\_template.sksl"
         };
     }
 
@@ -53,6 +53,8 @@ public class CarouselWithTransitions : SkiaCarousel
     {
 
     }
+
+
 
     protected override void OnScrollProgressChanged()
     {
