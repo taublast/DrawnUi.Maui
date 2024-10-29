@@ -67,19 +67,6 @@ public abstract class StackLayoutStructure
     /// </summary>
     public abstract ScaledSize Build(SKRect rectForChildrenPixels, float scale);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected virtual ScaledSize MeasureAndArrangeCell(SKRect destination, ControlInStack cell, SkiaControl child, float scale)
-    {
-        cell.Area = destination;
-
-        var measured = _layout.MeasureChild(child, cell.Area.Width, cell.Area.Height, scale);
-
-        cell.Measured = measured;
-
-        LayoutCell(measured, cell, child, scale);
-
-        return measured;
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected virtual ScaledSize MeasureCell(SKRect destination,
@@ -95,50 +82,52 @@ public abstract class StackLayoutStructure
         return measured;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected virtual ScaledSize LayoutCell(
-        ControlInStack cell, SkiaControl child,
-        float scale)
-    {
-        var measured = cell.Measured;
+    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+    //protected virtual ScaledSize LayoutCell(
+    //    ControlInStack cell, SkiaControl child,
+    //    float scale)
+    //{
+    //    var measured = cell.Measured;
 
-        LayoutCell(measured, cell, child, scale);
+    //    _layout.LayoutCell(measured, cell, child, scale);
 
-        return measured;
-    }
+    //    return measured;
+    //}
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    protected virtual void LayoutCell(
-        ScaledSize measured,
-        ControlInStack cell,
-        SkiaControl child,
-        float scale)
-    {
-        if (!measured.IsEmpty)
-        {
-            child.Arrange(cell.Area, measured.Units.Width, measured.Units.Height, scale);
+    //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+    //protected virtual void LayoutCell(
+    //    ScaledSize measured,
+    //    ControlInStack cell,
+    //    SkiaControl child,
+    //    float scale)
+    //{
+    //    if (!measured.IsEmpty)
+    //    {
+    //        child.Arrange(cell.Area, measured.Units.Width, measured.Units.Height, scale);
 
-            var maybeArranged = child.Destination;
+    //        var maybeArranged = child.Destination;
 
-            var arranged =
-                new SKRect(cell.Area.Left, cell.Area.Top,
-                    cell.Area.Left + cell.Measured.Pixels.Width,
-                    cell.Area.Top + cell.Measured.Pixels.Height);
+    //        var arranged =
+    //            new SKRect(cell.Area.Left, cell.Area.Top,
+    //                cell.Area.Left + cell.Measured.Pixels.Width,
+    //                cell.Area.Top + cell.Measured.Pixels.Height);
 
-            if (float.IsNormal(maybeArranged.Height))
-            {
-                arranged.Top = maybeArranged.Top;
-                arranged.Bottom = maybeArranged.Bottom;
-            }
-            if (float.IsNormal(maybeArranged.Width))
-            {
-                arranged.Left = maybeArranged.Left;
-                arranged.Right = maybeArranged.Right;
-            }
+    //        if (float.IsNormal(maybeArranged.Height))
+    //        {
+    //            arranged.Top = maybeArranged.Top;
+    //            arranged.Bottom = maybeArranged.Bottom;
+    //        }
+    //        if (float.IsNormal(maybeArranged.Width))
+    //        {
+    //            arranged.Left = maybeArranged.Left;
+    //            arranged.Right = maybeArranged.Right;
+    //        }
 
-            cell.Destination = arranged;
-        }
-    }
+    //        cell.Destination = arranged;
+
+    //        cell.Layout = arranged;
+    //    }
+    //}
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual float GetSpacingForIndex(int forIndex, float scale)
