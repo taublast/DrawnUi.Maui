@@ -173,6 +173,24 @@ public partial class Super
         }
     }
 
+    private static bool _fontSubPixels = true;
+    /// <summary>
+    /// Enables sub-pixel font rendering, might provide better antialiasing on some platforms. Default is True;
+    /// </summary>
+    public static bool FontSubPixelRendering
+    {
+        get => _fontSubPixels;
+        set
+        {
+            if (_fontSubPixels != value)
+            {
+                _fontSubPixels = value;
+                NeedGlobalUpdate();
+            }
+        }
+    }
+
+
     public static IApplication App { get; set; }
 
     /// <summary>
