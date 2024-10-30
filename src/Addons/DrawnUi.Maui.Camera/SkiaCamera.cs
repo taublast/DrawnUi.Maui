@@ -756,7 +756,7 @@ public partial class SkiaCamera : SkiaControl
         {
             lastTimeChecked = DateTime.Now;
 
-            Device.BeginInvokeOnMainThread(async () =>
+            MainThread.BeginInvokeOnMainThread(async () =>
             {
                 if (ChecksBusy)
                     return;
@@ -944,7 +944,7 @@ public partial class SkiaCamera : SkiaControl
     //			if (GpsBusy || !App.Native.CheckGpsEnabled())
     //				return;
 
-    //			Device.BeginInvokeOnMainThread(async () =>
+    //			MainThread.BeginInvokeOnMainThread(async () =>
     //			{
     //				// Update the UI
     //				try

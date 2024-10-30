@@ -3,8 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using Color = Microsoft.Maui.Graphics.Color;
 using Font = Microsoft.Maui.Font;
@@ -186,12 +184,7 @@ namespace DrawnUi.Maui.Draw
             DrawTextInternal(canvas, text, x, y, textPaint, scale);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual void DrawTextInternal(SKCanvas canvas, string text, float x, float y, SKPaint paint, float scale)
-        {
-            //canvas.DrawText(text, x, y, paint);
-            canvas.DrawText(text, (int)Math.Round(x), (int)Math.Round(y), paint);
-        }
+
 
         public double Sharpen { get; set; }
 
@@ -334,12 +327,6 @@ namespace DrawnUi.Maui.Draw
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
-            if (Tag == "LabelTitle")
-            {
-                var check = this.Text;
-                var check2 = this.TypeFace;
-            }
-
             if (IsDisposed || IsDisposing)
                 return ScaledSize.Default;
 
@@ -1098,7 +1085,7 @@ namespace DrawnUi.Maui.Draw
                     //draw shaped
                     if (lineSpan.NeedsShaping) //todo add stroke!
                     {
-                        canvas.DrawShapedText(lineSpan.Text,
+                        DrawShapedText(canvas, lineSpan.Text,
                             (float)Math.Round(alignedLineDrawingStartX + offsetX),
                             (float)Math.Round(baselineY),
                             paint);
@@ -1211,6 +1198,79 @@ namespace DrawnUi.Maui.Draw
 
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void DrawTextInternal(SKCanvas canvas, string text, float x, float y, SKPaint paint, float scale)
+        {
+            //canvas.DrawText(text, x, y, paint);
+            using var font = paint.ToFont();
+            font.Edging = Super.FontSubPixelRendering ? SKFontEdging.SubpixelAntialias : SKFontEdging.Antialias;
+            font.Subpixel = Super.FontSubPixelRendering;
+
+            using (var blob = SKTextBlob.Create(text, font))
+            {
+                if (blob != null)
+                    canvas.DrawText(blob, x, y, paint);
+            }
+
+            //canvas.DrawText(text, (int)Math.Round(x), (int)Math.Round(y), paint);
+        }
+
+        #region custom DrawShapedText
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void DrawShapedText(
+            SKCanvas canvas,
+            string text,
+            float x,
+            float y,
+            SKPaint paint)
+        {
+            if (string.IsNullOrEmpty(text) || paint == null)
+                return;
+
+            using (SKShaper shaper = new SKShaper(paint.Typeface))
+                DrawShapedText(canvas, shaper, text, x, y, paint);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void DrawShapedText(
+            SKCanvas canvas,
+            SKShaper shaper,
+            string text,
+            float x,
+            float y,
+            SKPaint paint)
+        {
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            using var font = paint.ToFont();
+            font.Edging = Super.FontSubPixelRendering ? SKFontEdging.SubpixelAntialias : SKFontEdging.Antialias;
+            font.Subpixel = Super.FontSubPixelRendering;
+            font.Typeface = shaper.Typeface;
+
+            SKShaper.Result result = shaper.Shape(text, x, y, paint);
+            using (SKTextBlobBuilder skTextBlobBuilder = new SKTextBlobBuilder())
+            {
+                SKPositionedRunBuffer positionedRunBuffer = skTextBlobBuilder.AllocatePositionedRun(font, result.Codepoints.Length);
+                Span<ushort> glyphSpan = positionedRunBuffer.GetGlyphSpan();
+                Span<SKPoint> positionSpan = positionedRunBuffer.GetPositionSpan();
+                for (int index = 0; index < result.Codepoints.Length; ++index)
+                {
+                    glyphSpan[index] = (ushort)result.Codepoints[index];
+                    positionSpan[index] = result.Points[index];
+                }
+                using (SKTextBlob blob = skTextBlobBuilder.Build())
+                {
+                    if (blob != null)
+                        canvas.DrawText(blob, 0, 0, paint);
+                }
+            }
+
+        }
+
+
+        #endregion
 
         /// <summary>
         /// This is called when CharByChar is enabled
@@ -2387,11 +2447,6 @@ namespace DrawnUi.Maui.Draw
                             lenInsideWord++;
                             cycle = textLine.Substring(posInsideWord, lenInsideWord);
                             MeasureText(paint, cycle, ref bounds);
-
-                            if (textLine == "orange")
-                            {
-                                var stop = 1;
-                            }
 
                             if (Math.Round(bounds.Width) > limitWidth)
                             {

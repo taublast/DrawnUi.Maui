@@ -1,187 +1,213 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-/*
-  public void RotateXDegrees(float degrees)
-   {
-       var rotation = SKMatrix44.CreateRotationDegrees(1, 0, 0, degrees);
-       matrix44 = rotation.PreConcat(matrix44);
-   }
-
-   public void RotateYDegrees(float degrees)
-   {
-       var rotation = SKMatrix44.CreateRotationDegrees(0, 1, 0, degrees);
-       matrix44 = rotation.PreConcat(matrix44);
-   }
-
-   public void RotateZDegrees(float degrees)
-   {
-       var rotation = SKMatrix44.CreateRotationDegrees(0, 0, 1, degrees);
-       matrix44 = rotation.PreConcat(matrix44);
-   }
- */
-
 using SkiaSharp;
-using System.Numerics;
 
+/// <summary>
+/// Under construction, custom implementation of removed API
+/// </summary>
 public class Sk3dView
 {
-    private Matrix4x4 matrix44;
-    private Vector3 cameraPosition;
-    private Vector3 cameraTarget;
-    private Vector3 cameraUp;
-
-    private float cameraRotationX = 0;
-    private float cameraRotationY = 0;
-    private float cameraRotationZ = 0;
-
-    private float cameraTranslationZ = 0;
+    private float _rotationX = 0;
+    private float _rotationY = 0;
+    private float _rotationZ = 0;
+    private float _translationX = 0;
+    private float _translationY = 0;
+    private float _translationZ = 0;
+    private SKMatrix _source;
 
     public Sk3dView()
     {
         Reset();
     }
 
+    protected bool Invalidated;
+    private SKMatrix _matrix;
+
+    private readonly Stack<SKMatrix> _states = new();
+
+    public void Save()
+    {
+        _states.Push(Matrix);
+    }
+
+    public void Restore()
+    {
+        if (_states.TryPop(out var matrix))
+        {
+            _source = matrix;
+            Invalidated = true;
+
+            OnRestore();
+        }
+    }
+
+    public void ApplyToCanvas(SKCanvas canvas)
+    {
+        if (canvas == null)
+            throw new ArgumentNullException(nameof(canvas));
+
+        canvas.Concat(Matrix);
+    }
+
+    /// <summary>
+    /// Resets the current state and clears all saved states
+    /// </summary>
     public void Reset()
     {
-        matrix44 = Matrix4x4.Identity;
-        cameraRotationX = 0;
-        cameraRotationY = 0;
-        cameraRotationZ = 0;
+        _states.Clear();
 
-        //        cameraPosition = new Vector3(0, 0, -1);
-        cameraTarget = new Vector3(0, 0, 0);
-        cameraUp = new Vector3(0, 1, 0);
+        _source = SKMatrix.Identity;
+
+        _rotationX = 0;
+        _rotationY = 0;
+        _rotationZ = 0;
+        _translationX = 0;
+        _translationY = 0;
+        _translationZ = 0;
+
+        Invalidated = true;
+
+        OnReset();
+    }
+
+    protected virtual void OnReset()
+    {
+
+    }
+
+    protected virtual void OnRestore()
+    {
+
     }
 
     public void RotateXDegrees(float degrees)
     {
-        cameraRotationX -= degrees / 360.0f;
+        _rotationX += degrees;
+        Invalidated = true;
     }
 
     public void RotateYDegrees(float degrees)
     {
-        cameraRotationY += degrees / 360.0f;
+        _rotationY += degrees;
+        Invalidated = true;
     }
 
     public void RotateZDegrees(float degrees)
     {
-        cameraRotationZ += degrees;
+        _rotationZ += degrees;
+        Invalidated = true;
+    }
+
+    public void TranslateX(float value)
+    {
+        _translationX += value;
+        Invalidated = true;
+    }
+
+    public void TranslateY(float value)
+    {
+        _translationY += value;
+        Invalidated = true;
+    }
+
+    public void TranslateZ(float value)
+    {
+        _translationZ += value;
+        Invalidated = true;
     }
 
     public void Translate(float x, float y, float z)
     {
-        cameraTranslationZ = z;
+        _translationX += x;
+        _translationY += y;
+        _translationZ += z;
 
-        //var translation = Matrix4x4.CreateTranslation(x, y, z);
-        // matrix44 = translation * matrix44;
+        Invalidated = true;
     }
 
-    public SKMatrix GetMatrix()
+    public SKMatrix Matrix
     {
-        var viewMatrix = CreateViewMatrix();
-        var projectionMatrix = CreateProjectionMatrix();
-        var mvpMatrix = viewMatrix * projectionMatrix;
-
-        return ConvertToSKMatrix(mvpMatrix);
-    }
-
-
-    private Matrix4x4 CreateViewMatrix()
-    {
-
-        // Apply camera rotations to the camera's orientation
-        var rotationX = Matrix4x4.CreateRotationX(SkiaControl.DegreesToRadians(cameraRotationX));
-        var rotationY = Matrix4x4.CreateRotationY(SkiaControl.DegreesToRadians(cameraRotationY));
-        var rotationZ = Matrix4x4.CreateRotationZ(SkiaControl.DegreesToRadians(cameraRotationZ));
-
-        // Combine rotations
-        var rotationMatrix = rotationY * rotationX * rotationZ;
-
-        // Apply rotations to camera direction
-        var forward = Vector3.Transform(new Vector3(0, 0, -1), rotationMatrix);
-
-        cameraPosition = new Vector3(0, 1 + cameraTranslationZ, 1);
-
-        // Update camera target
-        cameraTarget = cameraPosition + forward;
-
-        // Update cameraUp
-        cameraUp = Vector3.Transform(new Vector3(0, 1, 0), rotationMatrix);
-
-        // Create the view matrix
-        var viewMatrix = Matrix4x4.CreateLookAt(cameraPosition, cameraTarget, cameraUp);
-
-        return viewMatrix;
-    }
-
-
-    private Matrix4x4 CreateProjectionMatrix()
-    {
-        float fieldOfView = MathF.PI / 2;
-        float aspectRatio = 1.0f;
-        float nearPlane = 0.1f;
-        float farPlane = 1f;
-
-        if (fieldOfView == 0 || float.IsInfinity(fieldOfView))
+        get
         {
-            fieldOfView = MathF.PI / 2;
-        }
+            if (Invalidated)
+            {
+                _matrix = CreateProjectionMatrix();
 
-        return Matrix4x4.CreatePerspectiveFieldOfView(fieldOfView, aspectRatio, nearPlane, farPlane);
+                Invalidated = false;
+            }
+            return _matrix;
+        }
     }
 
+    /// <summary>
+    /// 2D magic number camera distance 8 inches
+    /// </summary>
+    public float CameraDistance = 576;
 
-    private SKMatrix ConvertToSKMatrix(Matrix4x4 m)
+    private SKMatrix CreateProjectionMatrix()
     {
-        //return new SKMatrix(
-        //m.M00, 
-        //m.m10, 
-        //m.m30, 
-        //m.m01, 
-        //m.m11, 
-        //m.m31, 
-        //m.m03, 
-        //m.m13, 
-        //m.m33);
+        float radX = SkiaControl.DegreesToRadians(_rotationX);
+        float radY = SkiaControl.DegreesToRadians(_rotationY);
+        float radZ = SkiaControl.DegreesToRadians(_rotationZ);
 
-        //-m.M11,
-        //-m.M21,
-        //-m.M41,
-        //m.M12,
-        //m.M22,
-        //m.M42,
-        //m.M14,
-        //m.M24,
-        //m.M44);
+        // Compute sine and cosine of rotation angles
+        float sinX = MathF.Sin(radX);
+        float cosX = MathF.Cos(radX);
+        float sinY = MathF.Sin(radY);
+        float cosY = MathF.Cos(radY);
+        float sinZ = MathF.Sin(radZ);
+        float cosZ = MathF.Cos(radZ);
 
-        // Extract the relevant elements for the 3x3 matrix
-        float m00 = m.M11; // ScaleX
-        float m01 = m.M21; // SkewX
-        float m02 = m.M41; // Translation X
-        float m10 = m.M21; // SkewY
-        float m11 = m.M22; // ScaleY
-        float m12 = m.M24; // Translation Y
-        float m20 = m.M41; // Perspective X
-        float m21 = m.M24; // Perspective Y
-        float m22 = m.M44; // Perspective W
+        // Compute the combined rotation matrix elements
+        float m00 = cosY * cosZ;
+        float m01 = cosY * sinZ;
+        float m02 = -sinY;
+        float m10 = sinX * sinY * cosZ - cosX * sinZ;
+        float m11 = sinX * sinY * sinZ + cosX * cosZ;
+        float m12 = sinX * cosY;
+        float m20 = cosX * sinY * cosZ + sinX * sinZ;
+        float m21 = cosX * sinY * sinZ - sinX * cosZ;
+        float m22 = cosX * cosY;
 
+        // Include translation
+        float tx = -_translationX;
+        float ty = -_translationY;
+        float tz = -_translationZ;
 
-        // Create the SKMatrix
+        // Set camera distance, 2d magic number 8 inches
+        float dz = CameraDistance;
+
+        // Adjust m22 to include _translationZ
+        float m22tz = m22 + tz;
+
+        // pre-compute dividers
+        float m20DivDz = m20 / dz;
+        float m21DivDz = m21 / dz;
+        float m22tzDivDz = m22tz / dz;
+
+        //build new matrix
         SKMatrix matrix = new SKMatrix
         {
-            ScaleX = m00,
-            SkewX = m01,
-            TransX = m02,
-            SkewY = m10,
-            ScaleY = m11,
-            TransY = m12,
-            Persp0 = m20,
-            Persp1 = m21,
-            Persp2 = m22
+            ScaleX = m00 + m20DivDz * tx,
+            SkewX = m01 + m21DivDz * tx,
+            TransX = tx + (m02 + m22tzDivDz * tx),
+
+            SkewY = m10 + m20DivDz * ty,
+            ScaleY = m11 + m21DivDz * ty,
+            TransY = ty + (m12 + m22tzDivDz * ty),
+
+            Persp0 = m20DivDz,
+            Persp1 = m21DivDz,
+            Persp2 = 1f + m22tzDivDz
         };
 
-        return matrix;
+        //combine with pre-saved one
+        //todo not working as original for pre-saved _source
+        //todo original implementation is using Patch
+
+        return matrix.PreConcat(_source);
     }
+
 }
 
 

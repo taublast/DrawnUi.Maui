@@ -97,7 +97,10 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
         </ResourceDictionary>
     </ContentPage.Resources>
 
+    <!--windows hardware acceleretated canvas is opaque 
+    so you need background color here when compiling for skiasharp v3-->
     <draw:Canvas
+        BackgroundColor="#333333"
         x:Name="MainCanvas"
         Gestures="Enabled"
         HardwareAcceleration="Enabled"
@@ -246,7 +249,8 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                             <draw:SkiaLayout
                                 HorizontalOptions="Center"
                                 Split="0"
-                                Type="Wrap"
+                                Tag="TrackMe"
+                                Type="Row"
                                 VerticalOptions="Fill">
 
                                 <draw:SkiaSvg

@@ -30,5 +30,5 @@ public enum LayoutType
     /// <summary>
     /// TODO
     /// </summary>
-    Masonry,
+    //Masonry,
 }

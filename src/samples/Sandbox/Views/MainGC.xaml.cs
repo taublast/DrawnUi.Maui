@@ -62,7 +62,7 @@ namespace Sandbox.Views
                 //{
                 //    // Update the UI
 
-                //    Device.BeginInvokeOnMainThread(() =>
+                //    MainThread.BeginInvokeOnMainThread(() =>
                 //    {
                 //        skiaView.InvalidateSurface();
                 //    });

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -258,9 +252,9 @@ public partial class SkiaControl
                 }
                 else
                 {
-                    needCreateSurface = true;
+
                     var kill = surface;
-                    surface = null;
+
                     var cacheSurfaceInfo = new SKImageInfo(width, height);
 
                     if (usingCacheType == SkiaCacheType.GPU)

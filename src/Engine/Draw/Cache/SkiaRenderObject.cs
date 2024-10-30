@@ -41,36 +41,29 @@ public class CachedObject : IDisposable
         {
             if (Picture != null)
             {
-                //var x = destination.Left - Bounds.Left;
-                //var y = destination.Top - Bounds.Top;
+                var moveY = Bounds.Top - RecordingArea.Top;
+                var moveX = Bounds.Left - RecordingArea.Left;
 
-                var x = (float)Math.Round(destination.Left - Bounds.Left);
-                var y = (float)Math.Round(destination.Top - Bounds.Top);
-
-                if (Type == SkiaCacheType.OperationsFull)
-                {
-                    var stop = 1;
-                    //x = (float)Math.Round(RecordingArea.Left);
-                    //y = (float)Math.Round(RecordingArea.Top);
-                }
+                var x = (float)Math.Round(destination.Left - Bounds.Left + moveX);
+                var y = (float)Math.Round(destination.Top - Bounds.Top + moveY);
 
                 canvas.DrawPicture(Picture, x, y, paint);
             }
             else
             if (Image != null)
             {
-                //var x = destination.Left;
-                //var y = destination.Top;
+                var moveY = Bounds.Top - RecordingArea.Top;
+                var moveX = Bounds.Left - RecordingArea.Left;
 
-                var x = (float)Math.Round(destination.Left);
-                var y = (float)Math.Round(destination.Top);
+                var x = (float)Math.Round(destination.Left + moveX);
+                var y = (float)Math.Round(destination.Top + moveY);
 
                 canvas.DrawImage(Image, x, y, paint);
             }
         }
         catch (Exception e)
         {
-            Super.Log(e); //on windows we had an issue when refreshing image tab 2/2 of demo
+            Super.Log(e);
         }
     }
 

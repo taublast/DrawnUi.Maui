@@ -27,7 +27,7 @@ public class ControlInStack
     public SKRect Area { get; set; }
 
     /// <summary>
-    /// PIXELS
+    /// PIXELS, this is to hold our arranged layout
     /// </summary>
     public SKRect Destination { get; set; }
 

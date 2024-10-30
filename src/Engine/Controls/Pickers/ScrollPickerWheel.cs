@@ -1,7 +1,4 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-
-namespace DrawnUi.Maui.Controls;
+﻿namespace DrawnUi.Maui.Controls;
 
 public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
 {
@@ -131,7 +128,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
             control.Helper3d.Reset();
             control.Helper3d.RotateXDegrees(childViewAngle);
             control.Helper3d.Translate(0, 0, z);
-            var applyMatrix = control.Helper3d.GetMatrix();
+            var applyMatrix = control.Helper3d.Matrix;
 #else
             control.Helper3d.Save();
             control.Helper3d.RotateXDegrees(childViewAngle);
