@@ -3,7 +3,7 @@
 ![NuGet Downloads](https://img.shields.io/nuget/dt/AppoMobi.Maui.DrawnUi.svg)
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. 
-Create and render your custom controls with effects and animations on a hardware-accelerated Skia canvas!
+Create and render your custom controls on a hardware-accelerated Skia canvas, with effects and animations.
 
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
@@ -23,6 +23,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 * Layout children arrangement fixes for `SkiaLayout`
 * Font sub-pixel rendering and better anti-aliasing controlled by `Super.FontSubPixelRendering`
 * `SkiaViewSwitcher` new virtual methods to be overriden `SetupTransitionAnimation` and `ExecuteTransitionAnimation` plus new properties `AnimatePages`, `AnimateTabs`, `TabsAnimationSpeed`, `PagesAnimationSpeed`, `TabsAnimationEasing`, `PagesAnimationEasing`.
+ 
 
 ## Demo Apps
 
