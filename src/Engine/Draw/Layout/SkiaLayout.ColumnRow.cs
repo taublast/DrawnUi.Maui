@@ -50,7 +50,6 @@ namespace DrawnUi.Maui.Draw
         {
             if (!measured.IsEmpty)
             {
-
                 var area = cell.Area;
                 if (child != null)
                 {

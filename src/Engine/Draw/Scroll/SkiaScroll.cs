@@ -2241,10 +2241,6 @@ namespace DrawnUi.Maui.Draw
             {
                 IsMeasuring = false;
                 //measureWatch.Stop();
-                //if (Tag == "Details")
-                //{
-                //    Super.Log($"[Scroll] measured {measureWatch.Elapsed.TotalMilliseconds:0.00}ms");
-                //}
 
             }
 

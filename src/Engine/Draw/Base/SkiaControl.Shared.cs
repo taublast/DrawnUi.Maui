@@ -495,7 +495,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="easing"></param>
         /// <param name="cancel"></param>
         /// <returns></returns>
-        public Task TranslateToAsync(double x, double y, uint length = 250, Easing easing = null, CancellationTokenSource cancel = default)
+        public Task TranslateToAsync(double x, double y, float length = 250, Easing easing = null, CancellationTokenSource cancel = default)
         {
             // Cancel previous animation if it exists and is still running.
             _translateCancelTokenSource?.Cancel();
@@ -2686,7 +2686,7 @@ namespace DrawnUi.Maui.Draw
             switch (layoutHorizontal.Alignment)
             {
 
-                case LayoutAlignment.Center when float.IsFinite(availableWidth):
+                case LayoutAlignment.Center when float.IsFinite(availableWidth) && availableWidth > useMaxWidth:
                     {
                         left += (float)Math.Round(availableWidth / 2.0f - useMaxWidth / 2.0f);
                         right = left + useMaxWidth;
@@ -2704,7 +2704,7 @@ namespace DrawnUi.Maui.Draw
 
                         break;
                     }
-                case LayoutAlignment.End when float.IsFinite(destination.Right):
+                case LayoutAlignment.End when float.IsFinite(destination.Right) && availableWidth > useMaxWidth:
                     {
                         right = destination.Right;
                         left = right - useMaxWidth;
@@ -2733,7 +2733,7 @@ namespace DrawnUi.Maui.Draw
             switch (layoutVertical.Alignment)
             {
 
-                case LayoutAlignment.Center when float.IsFinite(availableHeight):
+                case LayoutAlignment.Center when float.IsFinite(availableHeight) && availableHeight > useMaxHeight:
                     {
                         top += (float)Math.Round(availableHeight / 2.0f - useMaxHeight / 2.0f);
                         bottom = top + useMaxHeight;
@@ -2752,7 +2752,7 @@ namespace DrawnUi.Maui.Draw
 
                         break;
                     }
-                case LayoutAlignment.End when float.IsFinite(destination.Bottom):
+                case LayoutAlignment.End when float.IsFinite(destination.Bottom) && availableHeight > useMaxHeight:
                     {
                         bottom = destination.Bottom;
                         top = bottom - useMaxHeight;
@@ -2938,6 +2938,7 @@ namespace DrawnUi.Maui.Draw
         {
             //adapt cache to current request
             var newDestination = ArrangedDestination;
+
             newDestination.Offset(destination.Left, destination.Top);
 
             Destination = newDestination;
@@ -3228,6 +3229,7 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void PostArrange(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
+            //create area to arrange inside
             SKRect arrangingFor = new(0, 0, destination.Width, destination.Height);
 
             if (!IsLayoutDirty &&
@@ -3259,7 +3261,6 @@ namespace DrawnUi.Maui.Draw
 
             //save to cache
             ArrangedDestination = layout;
-            //ArrangedDrawingRect = GetDrawingRectWithMargins(layout, scale);
 
             AdaptCachedLayout(destination, scale);
 
@@ -4510,8 +4511,6 @@ namespace DrawnUi.Maui.Draw
         public SK3dView Helper3d;
 #endif
 
-
-
         public void DrawWithClipAndTransforms(
          SkiaDrawingContext ctx,
          SKRect destination,
@@ -4632,7 +4631,7 @@ namespace DrawnUi.Maui.Draw
                 //if (CameraTranslationZ != 0)
                 Helper3d.Translate(0, 0, CameraTranslationZ);
 
-                drawingMatrix = drawingMatrix.PostConcat(Helper3d.GetMatrix());
+                drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
 #else
                 Helper3d.Save();
                 Helper3d.RotateXDegrees(CameraAngleX);
@@ -5028,6 +5027,11 @@ namespace DrawnUi.Maui.Draw
                         _paintWithOpacity.Color = SKColors.White;
                         _paintWithOpacity.IsAntialias = true;
                         _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
+
+                        if (Tag == "LabelWelcome")
+                        {
+                            var stop = 1;
+                        }
 
                         cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
                     }

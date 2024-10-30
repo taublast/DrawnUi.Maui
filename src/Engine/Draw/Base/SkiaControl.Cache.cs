@@ -252,9 +252,9 @@ public partial class SkiaControl
                 }
                 else
                 {
-                    needCreateSurface = true;
+
                     var kill = surface;
-                    surface = null;
+
                     var cacheSurfaceInfo = new SKImageInfo(width, height);
 
                     if (usingCacheType == SkiaCacheType.GPU)

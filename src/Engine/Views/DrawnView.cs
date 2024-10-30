@@ -561,18 +561,18 @@ namespace DrawnUi.Maui.Views
             switch (e.DisplayInfo.Rotation)
             {
                 case Microsoft.Maui.Devices.DisplayRotation.Rotation90:
-                    DeviceRotation = 90;
-                    break;
+                DeviceRotation = 90;
+                break;
                 case Microsoft.Maui.Devices.DisplayRotation.Rotation180:
-                    DeviceRotation = 180;
-                    break;
+                DeviceRotation = 180;
+                break;
                 case Microsoft.Maui.Devices.DisplayRotation.Rotation270:
-                    DeviceRotation = 270;
-                    break;
+                DeviceRotation = 270;
+                break;
                 case Microsoft.Maui.Devices.DisplayRotation.Rotation0:
                 default:
-                    DeviceRotation = 0;
-                    break;
+                DeviceRotation = 0;
+                break;
             }
 
             if (Parent != null)
@@ -1211,7 +1211,6 @@ namespace DrawnUi.Maui.Views
         }
 
 
-        //-------------------------------------------------------------
         /// <summary>
         ///  destination in PIXELS, requests in UNITS. resulting Destination prop will be filed in PIXELS.
         /// </summary>
@@ -1220,21 +1219,11 @@ namespace DrawnUi.Maui.Views
         /// <param name="heightRequest">UNITS</param>
         /// <param name="scale"></param>
         public virtual void Arrange(SKRect destination, double widthRequest, double heightRequest, double scale = 1.0)
-        //-------------------------------------------------------------
         {
-
-
             Destination = CalculateLayout(destination, widthRequest, heightRequest, scale);
-
-            if (Destination.Width < 0 || Destination.Height < 0)
-            {
-                var stop = true;
-            }
         }
 
         public ScaledSize MeasuredSize { get; set; } = new();
-
-
 
         public virtual ScaledSize Measure(float widthConstraintPts, float heightConstraintPts)
         {
@@ -2059,33 +2048,33 @@ namespace DrawnUi.Maui.Views
                 {
                     case GradientType.Sweep:
 
-                        return SKShader.CreateSweepGradient(
-                             new SKPoint(destination.Left + destination.Width / 2.0f,
-                                destination.Top + destination.Height / 2.0f),
-                            colors.ToArray(),
-                            colorPositions,
-                            gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
+                    return SKShader.CreateSweepGradient(
+                         new SKPoint(destination.Left + destination.Width / 2.0f,
+                            destination.Top + destination.Height / 2.0f),
+                        colors.ToArray(),
+                        colorPositions,
+                        gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
 
                     case GradientType.Circular:
-                        return SKShader.CreateRadialGradient(
-                            new SKPoint(destination.Left + destination.Width / 2.0f,
-                                destination.Top + destination.Height / 2.0f),
-                            Math.Max(destination.Width, destination.Height) / 2.0f,
-                            colors.ToArray(),
-                            colorPositions,
-                            gradient.TileMode);
+                    return SKShader.CreateRadialGradient(
+                        new SKPoint(destination.Left + destination.Width / 2.0f,
+                            destination.Top + destination.Height / 2.0f),
+                        Math.Max(destination.Width, destination.Height) / 2.0f,
+                        colors.ToArray(),
+                        colorPositions,
+                        gradient.TileMode);
 
                     case GradientType.Linear:
                     default:
-                        return SKShader.CreateLinearGradient(
-                            new SKPoint(destination.Left + destination.Width * gradient.StartXRatio,
-                                destination.Top + destination.Height * gradient.StartYRatio),
-                            new SKPoint(destination.Left + destination.Width * gradient.EndXRatio,
-                                destination.Top + destination.Height * gradient.EndYRatio),
-                            colors.ToArray(),
-                            colorPositions,
-                            gradient.TileMode);
-                        break;
+                    return SKShader.CreateLinearGradient(
+                        new SKPoint(destination.Left + destination.Width * gradient.StartXRatio,
+                            destination.Top + destination.Height * gradient.StartYRatio),
+                        new SKPoint(destination.Left + destination.Width * gradient.EndXRatio,
+                            destination.Top + destination.Height * gradient.EndYRatio),
+                        colors.ToArray(),
+                        colorPositions,
+                        gradient.TileMode);
+                    break;
                 }
 
             }
@@ -2265,21 +2254,21 @@ namespace DrawnUi.Maui.Views
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (SkiaControl newChildren in e.NewItems)
-                    {
-                        newChildren.SetParent(this);
-                    }
+                foreach (SkiaControl newChildren in e.NewItems)
+                {
+                    newChildren.SetParent(this);
+                }
 
-                    break;
+                break;
 
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (SkiaControl oldChildren in e.OldItems ?? new SkiaControl[0])
-                    {
-                        oldChildren.SetParent(null);
-                    }
+                foreach (SkiaControl oldChildren in e.OldItems ?? new SkiaControl[0])
+                {
+                    oldChildren.SetParent(null);
+                }
 
-                    break;
+                break;
             }
 
             Update();

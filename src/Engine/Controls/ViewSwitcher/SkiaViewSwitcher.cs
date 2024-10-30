@@ -2,10 +2,20 @@
 
 using DrawnUi.Maui.Infrastructure.Enums;
 using Microsoft.Maui.Controls.Shapes;
-using System.Diagnostics;
 
 namespace DrawnUi.Maui.Controls
 {
+    /*
+        public interface INavigationTransitionAnimation
+        {
+            public Task Setup(DoubleViewTransitionType doubleViewTransitionType,
+                SkiaControl previousVisibleView, SkiaControl newVisibleView);
+
+            public Task Execute(DoubleViewTransitionType doubleViewTransitionType,
+                SkiaControl previousVisibleView, SkiaControl newVisibleView);
+        }
+        */
+
     /// <summary>
     /// Display and hide views, eventually animating them
     /// </summary>
@@ -440,7 +450,7 @@ namespace DrawnUi.Maui.Controls
         public async Task PopTabToRoot()
         {
 
-            while (_isApplyingIdex)
+            while (IsApplyingIdex)
             {
                 await Task.Delay(10);
             }
@@ -528,7 +538,7 @@ namespace DrawnUi.Maui.Controls
 
             ClearChildren();
 
-            previousVisibleViewIndex = -1;
+            PreviousVisibleViewIndex = -1;
             PreviousVisibleView = null;
         }
 
@@ -589,25 +599,41 @@ namespace DrawnUi.Maui.Controls
             set { SetValue(NavigationBusyProperty, value); }
         }
 
-        public static readonly BindableProperty AnimationSpeedProperty = BindableProperty.Create(nameof(AnimationSpeed),
-            typeof(int), typeof(SkiaViewSwitcher), 250);
-        public int AnimationSpeed
+        public static readonly BindableProperty TabsAnimationSpeedProperty = BindableProperty.Create(nameof(TabsAnimationSpeed),
+            typeof(int), typeof(SkiaViewSwitcher), 150);
+        public int TabsAnimationSpeed
         {
-            get { return (int)GetValue(AnimationSpeedProperty); }
-            set { SetValue(AnimationSpeedProperty, value); }
+            get { return (int)GetValue(TabsAnimationSpeedProperty); }
+            set { SetValue(TabsAnimationSpeedProperty, value); }
         }
 
-        public static readonly BindableProperty AnimationEasingProperty = BindableProperty.Create(nameof(AnimationEasing),
-            typeof(Easing), typeof(SkiaViewSwitcher), Custom);
-        public Easing AnimationEasing
+        public static readonly BindableProperty PagesAnimationSpeedProperty = BindableProperty.Create(nameof(PagesAnimationSpeed),
+            typeof(int), typeof(SkiaViewSwitcher), 200);
+        public int PagesAnimationSpeed
         {
-            get { return (Easing)GetValue(AnimationEasingProperty); }
-            set { SetValue(AnimationEasingProperty, value); }
+            get { return (int)GetValue(PagesAnimationSpeedProperty); }
+            set { SetValue(PagesAnimationSpeedProperty, value); }
+        }
+
+        public static readonly BindableProperty TabsAnimationEasingProperty = BindableProperty.Create(nameof(TabsAnimationEasing),
+            typeof(Easing), typeof(SkiaViewSwitcher), Custom);
+        public Easing TabsAnimationEasing
+        {
+            get { return (Easing)GetValue(TabsAnimationEasingProperty); }
+            set { SetValue(TabsAnimationEasingProperty, value); }
+        }
+
+        public static readonly BindableProperty PagesAnimationEasingProperty = BindableProperty.Create(nameof(PagesAnimationEasing),
+            typeof(Easing), typeof(SkiaViewSwitcher), Easing.Linear);
+        public Easing PagesAnimationEasing
+        {
+            get { return (Easing)GetValue(PagesAnimationEasingProperty); }
+            set { SetValue(PagesAnimationEasingProperty, value); }
         }
 
         public static readonly Easing Custom = new Easing((x) => (x - 1) * (x - 1) * ((_sideCoeff + 1) * (x - 1) + _sideCoeff) + 1);
 
-        int previousVisibleViewIndex = -1;
+        protected int PreviousVisibleViewIndex = -1;
 
         public NavigationStackEntry PreviousVisibleView
         {
@@ -703,10 +729,10 @@ namespace DrawnUi.Maui.Controls
         {
             await SemaphoreNavigationStack.WaitAsync();
 
-            if (_isApplyingIdex)
+            if (IsApplyingIdex)
                 return;
 
-            _isApplyingIdex = true;
+            IsApplyingIdex = true;
 
             try
             {
@@ -734,12 +760,12 @@ namespace DrawnUi.Maui.Controls
                     }
                     catch (Exception e)
                     {
-                        _isApplyingIdex = false;
+                        IsApplyingIdex = false;
                         Trace.WriteLine(e);
                     }
                     finally
                     {
-                        _isApplyingIdex = false;
+                        IsApplyingIdex = false;
                     }
                 }
                 if (applyMe != null)
@@ -788,14 +814,148 @@ namespace DrawnUi.Maui.Controls
         //	paint.Shader = shader;
         //}
 
-        float _fadeOpacity;
-
-        bool firstViewAppreared;
-        private bool _isApplyingIdex;
-        private async Task ApplySelectedIndex(OrderedIndex index)
+        protected virtual async Task SetupTransitionAnimation(
+            DoubleViewTransitionType doubleViewTransitionType,
+            SkiaControl previousVisibleView, SkiaControl newVisibleView)
         {
+            var translateTo = this.Width;
+
+            switch (doubleViewTransitionType)
+            {
+                case DoubleViewTransitionType.Pop:
+                //from left to right
+                break;
+
+                case DoubleViewTransitionType.Push:
+                previousVisibleView.ZIndex = -1;
+                newVisibleView.ZIndex = 0;
+
+                //from right to left
+                translateTo = this.Width;
+                newVisibleView.Opacity = 0.001;
+                newVisibleView.TranslationX = (float)translateTo;
+                break;
+
+                case DoubleViewTransitionType.SelectRightTab:
+                translateTo = this.Width;
+
+                newVisibleView.ZIndex = 1;
+                previousVisibleView.ZIndex = 0;
+                newVisibleView.Opacity = 0.001;
+                newVisibleView.TranslationX = (float)translateTo * 0.75;
+                break;
+
+                case DoubleViewTransitionType.SelectLeftTab:
+                translateTo = -this.Width;
+
+                newVisibleView.ZIndex = 1;
+                previousVisibleView.ZIndex = 0;
+                newVisibleView.Opacity = 0.001;
+                newVisibleView.TranslationX = (float)translateTo * 0.75;
+                break;
+
+                default:
+                newVisibleView.TranslationX = 0;
+                newVisibleView.TranslationY = 0;
+                newVisibleView.Opacity = 1;
+                break;
+            }
+        }
 
 
+        protected virtual async Task ExecuteTransitionAnimation(
+            DoubleViewTransitionType doubleViewTransitionType,
+            SkiaControl previousVisibleView, SkiaControl newVisibleView)
+        {
+            int speed = TabsAnimationSpeed;
+            Easing easing = TabsAnimationEasing;
+            var translateTo = this.Width;
+
+            switch (doubleViewTransitionType)
+            {
+                case DoubleViewTransitionType.Pop:
+                //from left to right
+                easing = PagesAnimationEasing;
+                speed = PagesAnimationSpeed;
+                Task animateOld1 = previousVisibleView.TranslateToAsync(translateTo, 0, speed, easing);
+                Task animateOld2 = previousVisibleView.FadeToAsync(0.9, speed, easing);
+
+                try
+                {
+                    var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                    await Task.WhenAll(animateOld1, animateOld2).WithCancellation(cancelAnimation.Token);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+                break;
+
+                case DoubleViewTransitionType.Push:
+                easing = PagesAnimationEasing;
+                speed = PagesAnimationSpeed;
+                //from right to left
+                Task in1 = newVisibleView.TranslateToAsync(0, 0, speed, easing);
+                Task in2 = newVisibleView.FadeToAsync(1.0, speed, easing);
+                try
+                {
+                    var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                    await Task.WhenAll(in1, in2).WithCancellation(cancelAnimation.Token).WithCancellation(cancelAnimation.Token);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+                break;
+
+                case DoubleViewTransitionType.SelectLeftTab:
+                translateTo = -this.Width;
+
+                Task animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
+                Task animateNewM = newVisibleView.TranslateToAsync(0, 0, (uint)speed, easing);
+                Task animateNewM1 = newVisibleView.FadeToAsync(1.0, (uint)speed, Easing.Linear);
+
+                try
+                {
+                    var cancelAnimation =
+                        new CancellationTokenSource(TimeSpan.FromSeconds(2));
+
+                    await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+                break;
+
+                case DoubleViewTransitionType.SelectRightTab:
+                translateTo = this.Width;
+
+                animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
+                animateNewM = newVisibleView.TranslateToAsync(0, 0, (uint)speed, easing);
+                animateNewM1 = newVisibleView.FadeToAsync(1.0, (uint)speed, Easing.Linear);
+
+                try
+                {
+                    var cancelAnimation =
+                        new CancellationTokenSource(TimeSpan.FromSeconds(2));
+
+                    await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+                break;
+
+            }
+        }
+
+        protected bool FirstViewAppeared;
+        protected bool IsApplyingIdex;
+
+        protected virtual async Task ApplySelectedIndex(OrderedIndex index)
+        {
             try
             {
                 Superview.FocusedChild = null;
@@ -819,20 +979,17 @@ namespace DrawnUi.Maui.Controls
                     return;
                 }
 
-
-
                 bool shown = false;
+                bool isAnimating = false;
 
-                bool animating = false;
                 var previousVisibleView = PreviousVisibleView;
-
                 TopView = newVisibleView.View;
 
                 void OnViewLoaded(SkiaControl loadedView)
                 {
-                    if (IsRendered || !firstViewAppreared)
+                    if (IsRendered || !FirstViewAppeared)
                     {
-                        firstViewAppreared = true;
+                        FirstViewAppeared = true;
                         SendOnAppearing(loadedView);
                     }
                 }
@@ -879,197 +1036,38 @@ namespace DrawnUi.Maui.Controls
 
                         if (needAnimate && //base flag
                             ((IsPushing || IsPopping) // navigating
-                             || (previousVisibleViewIndex != selectedIndex &&
-                                 previousVisibleViewIndex > -1))) //switching tabs
+                             || (PreviousVisibleViewIndex != selectedIndex &&
+                                 PreviousVisibleViewIndex > -1))) //switching tabs
                         {
 
-                            //todo select navigating animations AND implement POP
-                            animating = true;
+                            isAnimating = true;
 
                             try
                             {
-                                //prepare animation
-                                Action<SKPaint, SKRect> fromViewDraw = null;
-                                Action<SKPaint, SKRect> toViewDraw = null;
-                                int speed = AnimationSpeed;
-                                //int addForLazy = 50;
-                                Easing easing = AnimationEasing;
-                                var translateTo = this.Width;
-
-                                //todo add option;
-                                var transition = TransitionType.SwitchTabsModern;
-
+                                var transitionType = DoubleViewTransitionType.Push;
                                 if (IsPopping)
-                                    transition = TransitionType.Pop;
-                                else if (IsPushing)
-                                    transition = TransitionType.Push;
+                                    transitionType = DoubleViewTransitionType.Pop;
+                                else
+                                if (!IsPushing)
+                                {
+                                    if (selectedIndex > PreviousVisibleViewIndex)
+                                    {
+                                        transitionType = DoubleViewTransitionType.SelectRightTab;
+                                    }
+                                    else
+                                    {
+                                        transitionType = DoubleViewTransitionType.SelectLeftTab;
+                                    }
+                                }
 
                                 //prepare
-
-                                switch (transition)
-                                {
-                                    case TransitionType.Pop:
-                                        easing = Easing.Linear;
-                                        //from left to right
-                                        translateTo = this.Width;
-                                        break;
-                                    case TransitionType.Push:
-
-                                        previousVisibleView.View.ZIndex = -1;
-                                        newVisibleView.View.ZIndex = 0;
-
-                                        easing = Easing.Linear;
-                                        //from right to left
-                                        translateTo = this.Width;
-                                        newVisibleView.View.Opacity = 0.001;
-                                        newVisibleView.View.TranslationX = (float)translateTo;
-                                        break;
-
-                                    //this began bugging when a tab child has transforms,
-                                    //surprisingly looks like somewhere that canvas is not calling Restore
-                                    //when we switch from tab 3 where we have that shape with transforms
-                                    //to other tab at the left
-                                    case TransitionType.SwitchTabsModern:
-
-                                        easing = AnimationEasing;
-                                        speed = AnimationSpeed;
-
-                                        newVisibleView.View.ZIndex = 1;
-                                        previousVisibleView.View.ZIndex = 0;
-
-                                        if (selectedIndex > previousVisibleViewIndex)
-                                        {
-                                            //f===>
-                                            translateTo = this.Width;
-                                            newVisibleView.View.Opacity = 0.001;
-                                            newVisibleView.View.TranslationX = (float)translateTo * 0.75;
-                                            //toViewDraw = FadeInFromRight;
-                                        }
-                                        else
-                                        {
-                                            // <====
-                                            translateTo = -this.Width;
-                                            newVisibleView.View.Opacity = 0.001;
-                                            newVisibleView.View.TranslationX = (float)translateTo * 0.75;
-                                            //toViewDraw = FadeInFromLeft;
-                                        }
-
-
-
-                                        break;
-
-                                    //actually using this for tabs
-                                    case TransitionType.SwitchTabs:
-                                        //easing = _easing;
-                                        easing = AnimationEasing;
-                                        speed = AnimationSpeed;
-                                        if (selectedIndex > previousVisibleViewIndex)
-                                        {
-                                            //from right to left
-                                            translateTo = this.Width;
-                                        }
-                                        else
-                                        {
-                                            //from left to right
-                                            translateTo = -this.Width;
-                                        }
-
-                                        newVisibleView.View.Opacity = 1;
-                                        newVisibleView.View.TranslationX = (float)translateTo;
-                                        break;
-
-                                    default:
-                                        newVisibleView.View.TranslationX = 0;
-                                        newVisibleView.View.TranslationY = 0;
-                                        newVisibleView.View.Opacity = 1;
-                                        break;
-                                }
+                                await SetupTransitionAnimation(transitionType, previousVisibleView.View, newVisibleView.View);
 
                                 ChangeViewVisibility(newVisibleView.View, true);
                                 SendOnLoaded(newVisibleView.View);
 
-                                //await Task.Delay(10); //update native ui
-
                                 //animate
-                                switch (transition)
-                                {
-                                    case TransitionType.Pop:
-
-                                        Task animateOld1 = previousVisibleView.View.TranslateToAsync(translateTo, 0, 250, Easing.Linear);
-                                        Task animateOld2 = previousVisibleView.View.FadeToAsync(0.9, 250, Easing.Linear);
-
-                                        try
-                                        {
-                                            var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                                            await Task.WhenAll(animateOld1, animateOld2).WithCancellation(cancelAnimation.Token);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            Debug.WriteLine(e);
-                                        }
-                                        break;
-
-                                    case TransitionType.Push:
-                                        Task in1 = newVisibleView.View.TranslateToAsync(0, 0, 250, Easing.Linear);
-                                        Task in2 = newVisibleView.View.FadeToAsync(1.0, 250, Easing.Linear);
-                                        try
-                                        {
-                                            var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                                            await Task.WhenAll(in1, in2).WithCancellation(cancelAnimation.Token).WithCancellation(cancelAnimation.Token);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            Debug.WriteLine(e);
-                                        }
-                                        break;
-
-                                    case TransitionType.SwitchTabsModern:
-
-                                        Task animateOldM = previousVisibleView.View.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
-                                        Task animateNewM = newVisibleView.View.TranslateToAsync(0, 0, (uint)speed, easing);
-                                        Task animateNewM1 = newVisibleView.View.FadeToAsync(1.0, (uint)speed, Easing.Linear);
-
-                                        try
-                                        {
-                                            var cancelAnimation =
-                                                new CancellationTokenSource(TimeSpan.FromSeconds(2));
-
-                                            await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
-
-                                            //var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                                            //await newVisibleView.View.AnimateAsync((value) =>
-                                            //{
-
-                                            //	_fadeOpacity = (float)value;
-                                            //	newVisibleView.View.Repaint();
-
-                                            //}, (uint)1000, easing, cancelAnimation);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            Debug.WriteLine(e);
-                                        }
-                                        break;
-
-                                    case TransitionType.SwitchTabs:
-
-                                        Task animateOld = previousVisibleView.View.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
-                                        Task animateNew = newVisibleView.View.TranslateToAsync(0, 0, (uint)speed, easing);
-
-                                        try
-                                        {
-                                            var cancelAnimation =
-                                                new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                                            //PrintDebug();
-                                            await Task.WhenAll(animateOld, animateNew).WithCancellation(cancelAnimation.Token);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            Debug.WriteLine(e);
-                                        }
-                                        break;
-                                }
-
+                                await ExecuteTransitionAnimation(transitionType, previousVisibleView.View, newVisibleView.View);
 
                                 SetNewVisibleViewAsOneVisible();
 
@@ -1095,7 +1093,7 @@ namespace DrawnUi.Maui.Controls
                                 ChangeViewVisibility(newVisibleView.View, true);
                                 ChangeViewVisibility(previousVisibleView.View, false);
 
-                                previousVisibleViewIndex = selectedIndex;
+                                PreviousVisibleViewIndex = selectedIndex;
                                 PreviousVisibleView = newVisibleView;
 
                                 IsPushing = false;
@@ -1113,7 +1111,7 @@ namespace DrawnUi.Maui.Controls
 
                         foreach (var view in Views)
                         {
-                            if (animating && view == previousVisibleView?.View)
+                            if (isAnimating && view == previousVisibleView?.View)
                                 continue;
 
                             if (view == newVisibleView?.View)
@@ -1133,7 +1131,7 @@ namespace DrawnUi.Maui.Controls
 
 
                     PreviousVisibleView = newVisibleView;
-                    previousVisibleViewIndex = selectedIndex;
+                    PreviousVisibleViewIndex = selectedIndex;
 
                 }
 

@@ -1,8 +1,7 @@
 ﻿global using DrawnUi.Maui.Draw;
 global using SkiaSharp;
 using Microsoft.Extensions.Logging;
-
-
+ 
 namespace Sandbox
 {
     public static class MauiProgram
@@ -37,6 +36,7 @@ namespace Sandbox
                     fonts.AddFont("Orbitron-ExtraBold.ttf", "FontGameExtraBold"); //800
                 });
 
+ 
             builder.UseDrawnUi(new()
             {
                 UseDesktopKeyboard = true, //will not work with maui shell on apple!!
