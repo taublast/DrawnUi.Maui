@@ -353,7 +353,7 @@ the parent layout will not take any space at all unless you ask it to `Fill` the
 _!_ Layouts `Column` and `Row`, whether templated or not, 
 will always check if child is out of the visible screen bounds and avoid rendering it in that case.
 That is especially useful when the layout is inside a `SkiaScroll`, this way we always render 
-only the visible part. You can tweak this but setting a `SkiaLayout` property `HiddenAmountToRender` in points, how many of the hidden amount outside the visible bounds should still be rendered. 
+only the visible part. You can tweak this but setting a `SkiaLayout` property `VirtualisationInflated` in points, how many of the hidden amount outside the visible bounds should still be rendered. 
 This system ensures that you can have an infinite-size layout inside a scroll and it will work just fine drawing only the visible area.
 At the same time if you want a `SkiaScroll` to <s>lye</s> communicate to its content that everything is visible on the screen you can set its `VirtualizationEnabled="False"`.
 
