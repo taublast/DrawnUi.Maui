@@ -106,17 +106,28 @@ public partial class SkiaLayout
                 //layout cells in this row for the final height:
                 if (!_layout.IsTemplated)
                 {
-                    //var layoutMaxHeight = float.IsFinite(rectFitChild.Height) ? rectFitChild.Height : maxHeight;
-                    //var layoutHeight = _layout.VerticalOptions == LayoutOptions.Fill
-                    //    ? layoutMaxHeight : maxHeight;
+                    var layoutMaxHeight = float.IsFinite(rectFitChild.Height) ? rectFitChild.Height : maxHeight;
+                    var layoutHeight = _layout.VerticalOptions == LayoutOptions.Fill
+                        ? layoutMaxHeight : maxHeight;
 
                     foreach (var controlInStack in CollectionsMarshal.AsSpan(cellsToLayoutLater))
                     {
-                        controlInStack.Area = new(
-                            controlInStack.Area.Left,
-                            controlInStack.Area.Top,
-                            controlInStack.Area.Left + controlInStack.View.DrawingRect.Width,
-                            controlInStack.Area.Top + controlInStack.View.DrawingRect.Height);
+                        if (_layout.Type == LayoutType.Column || _layout.Type == LayoutType.Row)
+                        {
+                            controlInStack.Area = new(
+                                controlInStack.Area.Left,
+                                controlInStack.Area.Top,
+                                controlInStack.Area.Left + controlInStack.View.DrawingRect.Width,
+                                controlInStack.Area.Top + controlInStack.View.DrawingRect.Height);
+                        }
+                        else
+                        {
+                            controlInStack.Area = new(
+                                controlInStack.Area.Left,
+                                controlInStack.Area.Top,
+                                controlInStack.Area.Right,
+                                controlInStack.Area.Top + layoutHeight);
+                        }
 
                         _layout.LayoutCell(controlInStack.Measured, controlInStack, controlInStack.View, controlInStack.Area, scale);
                     }
