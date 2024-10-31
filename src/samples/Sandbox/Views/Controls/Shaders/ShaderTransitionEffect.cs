@@ -1,5 +1,3 @@
-using AppoMobi.Maui.Gestures;
-
 namespace Sandbox.Views.Controls;
 
 public class ShaderTransitionEffect : ShaderDoubleTexturesEffect, IStateEffect, ISkiaGestureProcessor
