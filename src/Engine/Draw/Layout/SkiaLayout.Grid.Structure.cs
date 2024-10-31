@@ -382,8 +382,12 @@ public partial class SkiaLayout
                 return;
             }
 
-            var availableWidth = cell.IsColumnSpanAuto ? _gridWidthConstraint : AvailableWidth(cell);
-            var availableHeight = cell.IsRowSpanAuto ? _gridHeightConstraint : AvailableHeight(cell);
+            //var availableWidth = cell.IsColumnSpanAuto ? _gridWidthConstraint : AvailableWidth(cell);
+            //var availableHeight = cell.IsRowSpanAuto ? _gridHeightConstraint : AvailableHeight(cell);
+
+            var availableWidth = AvailableWidth(cell);
+            var availableHeight = AvailableHeight(cell);
+
 
             //if (availableWidth > 0 && availableHeight > 0)
             {

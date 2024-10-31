@@ -93,6 +93,54 @@ namespace DrawnUi.Maui.Draw
             #endregion
         }
 
+        #region GRID
+
+        public int GridRow
+        {
+            set
+            {
+                Grid.SetRow(this, value);
+            }
+            get
+            {
+                return Grid.GetRow(this);
+            }
+        }
+        public int GridRowSpan
+        {
+            set
+            {
+                Grid.SetRowSpan(this, value);
+            }
+            get
+            {
+                return Grid.GetRowSpan(this);
+            }
+        }
+        public int GridColumn
+        {
+            set
+            {
+                Grid.SetColumn(this, value);
+            }
+            get
+            {
+                return Grid.GetColumn(this);
+            }
+        }
+        public int GridColumnSpan
+        {
+            set
+            {
+                Grid.SetColumnSpan(this, value);
+            }
+            get
+            {
+                return Grid.GetColumnSpan(this);
+            }
+        }
+
+        #endregion
 
         #region HotReload
 

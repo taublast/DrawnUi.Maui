@@ -226,7 +226,6 @@
         <draw:SkiaLayout
             Padding="16"
             HorizontalOptions="Fill"
-            UseCache="None"
             VerticalOptions="Fill"
             ZIndex="-1">
 
@@ -237,7 +236,7 @@
 
                 <draw:SkiaBackdrop
                     BackgroundColor="#22000000"
-                    Blur="8"
+                    Blur="3"
                     HorizontalOptions="Fill"
                     Tag="Blur"
                     VerticalOptions="Fill"

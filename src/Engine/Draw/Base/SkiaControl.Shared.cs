@@ -327,7 +327,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        /// Used for optimization process, for example, to avid changing ItemSource several times before the first draw.
+        /// Used for optimization process, for example, to avoid changing ItemSource several times before the first draw.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="action"></param>
@@ -3798,7 +3798,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public bool IsMeasuring { get; protected internal set; }
 
-        protected object LockMeasure = new();
+        public object LockMeasure = new();
 
         /// <summary>
         /// Parameters in PIXELS. sets IsLayoutDirty = true;
@@ -4086,8 +4086,13 @@ namespace DrawnUi.Maui.Draw
         public virtual void OptionalOnBeforeDrawing()
         {
             Superview?.UpdateRenderingChains(this);
-        }
 
+            if (NeedRemeasuring)
+            {
+                NeedRemeasuring = false;
+                Invalidate();
+            }
+        }
 
         /// <summary>
         /// do not ever erase background
@@ -4281,11 +4286,12 @@ namespace DrawnUi.Maui.Draw
 
             ExecutePostAnimators(context, scale);
 
-            if (NeedRemeasuring)
+            if (NeedRemeasuring || NeedMeasure)
             {
                 NeedRemeasuring = false;
+                InvalidateMeasure();
             }
-
+            else
             if (UsesCacheDoubleBuffering
                 && RenderObject != null)
             {
@@ -5531,8 +5537,8 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaControl control)
             {
-                control.Update();
                 //control.PostponeInvalidation(nameof(Update), control.Update);
+                control.Update();
             }
         }
 
