@@ -22,6 +22,7 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 * Nuget 1.2.4.7
 * Transforms properties names changed to correspond to standart MAUI
 * SkiaButton new actions to be used from code-behind
+* SkiaSvg ContentProperty set to SvgString
 * Animators start cancellation fix
 * BindingContext propagation fixes and tuning
 * Fix XAML hotreload break due to fontattributes and add Italic
