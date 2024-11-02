@@ -576,10 +576,10 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
             {
                 Logger.Log(LogLevel.Warning, "Unexpected error: DataChangedEventArgs can not be null");
             }
-            else if (e.Cancelled)
-            {
-                Logger.Log(LogLevel.Warning, "Fetching data was cancelled.");
-            }
+            //else if (e.Cancelled)
+            //{
+            //    Logger.Log(LogLevel.Warning, "Fetching data was cancelled.");
+            //}
             else if (e.Error is WebException)
             {
                 Logger.Log(LogLevel.Warning, $"A WebException occurred. Do you have internet? Exception: {e.Error?.Message}", e.Error);

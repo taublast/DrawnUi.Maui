@@ -6,6 +6,7 @@ namespace DrawnUi.Maui.Draw;
 public partial class SkiaControl
 {
 
+
     private readonly LimitedQueue<Action> _offscreenCacheRenderingQueue = new(1);
 
     public static readonly BindableProperty UseCacheProperty = BindableProperty.Create(nameof(UseCache),

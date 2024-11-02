@@ -64,12 +64,6 @@ public class MainPageBugCode : BasePageWithCanvas
                                 BackgroundColor = Colors.Yellow,
                                 Margin=new Thickness(0),
                                 Type = LayoutType.Grid,
-                                ColumnDefinitions = new ColumnDefinitionCollection()
-                                {
-                                    new ColumnDefinition(new GridLength(10,GridUnitType.Absolute)),
-                                    new ColumnDefinition(new GridLength(1,GridUnitType.Star)),
-                                    new ColumnDefinition(new GridLength(1,GridUnitType.Auto)),
-                                },
                                 RowDefinitions = new RowDefinitionCollection()
                                 {
                                     new RowDefinition(new GridLength(50,GridUnitType.Absolute)),
@@ -79,31 +73,27 @@ public class MainPageBugCode : BasePageWithCanvas
                                 {
                                     new SkiaLabel()
                                     {
-                                        GridColumn = 1,
                                         Text = "Star",
                                         HeightRequest = 40,
                                         BackgroundColor = Colors.Red,
                                         HorizontalOptions = LayoutOptions.Fill,
-                                    },
+                                    }.WithColumn(1),
                                     new SkiaLabel()
                                     {
-                                        GridColumn = 2,
                                         Text = "Auto",
                                         HeightRequest = 40,
                                         BackgroundColor = Colors.Orange,
                                         HorizontalOptions = LayoutOptions.Start,
-                                    },
+                                    }.WithColumn(2),
                                     new SkiaLabel()
                                     {
-                                        GridColumnSpan = 3,
-                                        GridRow = 1,
                                         Text = "Ahahahahahahaa",
                                         HeightRequest = 40,
                                         BackgroundColor = Colors.Green,
                                         HorizontalOptions = LayoutOptions.Center,
-                                    },
+                                    }.WithRow(1).WithColumnSpan(3),
                                 }
-                            },
+                            }.WithColumnDefinitions("10, *, Auto"),
 
 
                         }

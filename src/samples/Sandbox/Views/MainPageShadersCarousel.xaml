@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <views:BasePage
-    x:Class="MauiNet8.MainPageDev"
+    x:Class="MauiNet8.MainPageShadersCarousel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:carousel="clr-namespace:Sandbox.Views.Controls.Carousel"
@@ -123,14 +123,11 @@
                                 <!--  carousel indicators  -->
                                 <carousel:CustomIndicators
                                     Margin="12,8"
-                                    BackgroundColor="Transparent"
-                                    HorizontalOptions="Center"
-                                    IsVisible="True"
+                                    HorizontalOptions="End"
                                     SelectedIndex="{Binding Source={x:Reference MainCarousel}, Path=SelectedIndex}"
                                     Spacing="6"
                                     Tag="Indicators"
                                     TotalEnabled="{Binding Source={x:Reference MainCarousel}, Path=ChildrenTotal}"
-                                    TranslationY="0"
                                     UseCache="Operations"
                                     VerticalOptions="End"
                                     ZIndex="2" />

@@ -1553,8 +1553,8 @@ namespace DrawnUi.Maui.Controls
 
                 if (pixelsScaleInFrom != null)
                 {
-                    content.TransformPivotPointX = pixelsScaleInFrom.Value.X / RootLayout.MeasuredSize.Pixels.Width;
-                    content.TransformPivotPointY = pixelsScaleInFrom.Value.Y / RootLayout.MeasuredSize.Pixels.Height;
+                    content.AnchorX = pixelsScaleInFrom.Value.X / RootLayout.MeasuredSize.Pixels.Width;
+                    content.AnchorY = pixelsScaleInFrom.Value.Y / RootLayout.MeasuredSize.Pixels.Height;
                 }
 
                 await Popups.Open(control, animated);

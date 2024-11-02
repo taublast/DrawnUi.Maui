@@ -17,12 +17,12 @@
     <DefineConstants>$(DefineConstants);ONPLATFORM</DefineConstants>
   </PropertyGroup>
 
-<ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
-    <PackageReference Include="BruTile" Version="5.0.6" />
-    <PackageReference Include="Mapsui.ArcGIS" Version="5.0.0-beta.1" />
-    <PackageReference Include="Mapsui.Extensions" Version="5.0.0-beta.1" />
-    <PackageReference Include="BruTile.MbTiles" Version="5.0.6" />
-    <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.1" />
+<ItemGroup>
+    <!--<PackageReference Include="BruTile" Version="5.0.6" />-->
+    <PackageReference Include="BruTile.MbTiles" Version="6.0.0-beta.3" />
+    <PackageReference Include="Mapsui.ArcGIS" Version="5.0.0-beta.4" />
+    <PackageReference Include="Mapsui.Extensions" Version="5.0.0-beta.4" />
+    <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.4" />
 </ItemGroup>    
 
   <PropertyGroup>
@@ -54,7 +54,7 @@
 
   <!--production-->
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.4.4" />
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.4.6" />
   </ItemGroup>
 
 </Project>

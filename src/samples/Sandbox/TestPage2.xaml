@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage
+    x:Class="MauiNet8.TestPage2"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="using:Sandbox.Views.Controls"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Collections"
+    xmlns:sandbox="clr-namespace:Sandbox"
+    xmlns:views="clr-namespace:Sandbox.Views"
+    x:DataType="sandbox:MainPageViewModel"
+    BackgroundColor="#000000">
+
+
+    <!--  tried without definitions, same..  -->
+    <Grid RowDefinitions="80,*">
+
+
+        <draw:Canvas
+            x:Name="Canvas"
+            Grid.Row="1"
+            Gestures="Enabled"
+            HeightRequest="60">
+            <!--  one from the Sandbox project  -->
+            <controls:SliderColor HeightRequest="50" />
+        </draw:Canvas>
+
+    </Grid>
+
+</views:BasePage>

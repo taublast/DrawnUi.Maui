@@ -41,7 +41,7 @@ namespace DrawnUi.Maui.Draw
 
             //some VisualElement props will not call this method so we would override them as new
 
-            if (propertyName.IsEither(nameof(ZIndex)))
+            if (propertyName == nameof(ZIndex))
             {
                 Parent?.InvalidateViewsList();
                 Repaint();
@@ -51,6 +51,8 @@ namespace DrawnUi.Maui.Draw
                     nameof(Opacity),
                     nameof(TranslationX), nameof(TranslationY),
                     nameof(Rotation),
+                    nameof(AnchorX), nameof(AnchorY),
+                    nameof(RotationX), nameof(RotationY),
                     nameof(ScaleX), nameof(ScaleY)
                 ))
             {
@@ -81,66 +83,9 @@ namespace DrawnUi.Maui.Draw
 
                 InvalidateMeasure();
             }
-            else
-            if (propertyName.IsEither(
-                    nameof(AnchorX), nameof(AnchorY),
-                    nameof(RotationX), nameof(RotationY)))
-            {
-                //todo add option not to throw?..
-                throw new NotImplementedException("DrawnUi is not using this Maui VisualElement property.");
-            }
 
             #endregion
         }
-
-        #region GRID
-
-        public int GridRow
-        {
-            set
-            {
-                Grid.SetRow(this, value);
-            }
-            get
-            {
-                return Grid.GetRow(this);
-            }
-        }
-        public int GridRowSpan
-        {
-            set
-            {
-                Grid.SetRowSpan(this, value);
-            }
-            get
-            {
-                return Grid.GetRowSpan(this);
-            }
-        }
-        public int GridColumn
-        {
-            set
-            {
-                Grid.SetColumn(this, value);
-            }
-            get
-            {
-                return Grid.GetColumn(this);
-            }
-        }
-        public int GridColumnSpan
-        {
-            set
-            {
-                Grid.SetColumnSpan(this, value);
-            }
-            get
-            {
-                return Grid.GetColumnSpan(this);
-            }
-        }
-
-        #endregion
 
         #region HotReload
 

@@ -19,11 +19,15 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's New
 
-* Nuget 1.2.4.4
-* Layout children arrangement fixes for `SkiaLayout`
-* Font sub-pixel rendering and better anti-aliasing controlled by `Super.FontSubPixelRendering`
-* `SkiaViewSwitcher` new virtual methods to be overriden `SetupTransitionAnimation` and `ExecuteTransitionAnimation` plus new properties `AnimatePages`, `AnimateTabs`, `TabsAnimationSpeed`, `PagesAnimationSpeed`, `TabsAnimationEasing`, `PagesAnimationEasing`.
- 
+* Nuget 1.2.4.7
+* Transforms properties names changed to correspond to standart MAUI
+* SkiaButton new actions to be used from code-behind
+* Animators start cancellation fix
+* BindingContext propagation fixes and tuning
+* Fix XAML hotreload break due to fontattributes and add Italic
+* Layout fixes, grid code-behind extension methods
+* Grid layout fixes: gestures hitbox, Auto definition measurement
+* Third-party nugets updated 
 
 ## Demo Apps
 
@@ -95,8 +99,8 @@ ___Please star ⭐ if you like it!___
 	* ScaleX
 	* ScaleY
 	* Rotation
-	* CameraAngleX
-	* CameraAngleY
+	* RotationX
+	* RotationY
 	* CameraAngleZ
 	* SkewX
 	* SkewY
@@ -299,17 +303,17 @@ then just redrawn.
 
 * TranslationX
 * TranslationY
+* TranslationZ
 * ScaleX
 * ScaleY
 * Rotation
-* CameraAngleX
-* CameraAngleY
-* CameraAngleZ
+* RotationX
+* RotationY
+* RotationZ
 * SkewX
 * SkewY
 * Perspective1
 * Perspective2
-
 
 ### Animations
 

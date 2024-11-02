@@ -832,6 +832,8 @@ public class SkiaCarousel : SnappingLayout
 
         MaxIndex = childrenCount - 1;
 
+        ChildrenTotal = childrenCount;
+
         InitializeItemsVisibility(childrenCount, true);
 
         var snapPoints = new List<Vector2>();
@@ -875,7 +877,7 @@ public class SkiaCarousel : SnappingLayout
 
     protected virtual void OnChildrenInitialized()
     {
-
+        OnScrollProgressChanged();
     }
 
     public ScaledSize CellSize { get; set; }
@@ -1159,6 +1161,21 @@ public class SkiaCarousel : SnappingLayout
         });
 
     /// <summary>
+    /// Can be used for indicators
+    /// </summary>
+    public int ChildrenTotal
+    {
+        get { return (int)GetValue(ChildrenTotalProperty); }
+        set { SetValue(ChildrenTotalProperty, value); }
+    }
+
+    public static readonly BindableProperty ChildrenTotalProperty = BindableProperty.Create(
+        nameof(ChildrenTotal),
+        typeof(int),
+        typeof(SkiaCarousel),
+        0, BindingMode.OneWayToSource);
+
+    /// <summary>
     /// Zero-based index of the currently selected slide
     /// </summary>
     public int SelectedIndex
@@ -1274,95 +1291,95 @@ public class SkiaCarousel : SnappingLayout
 
         switch (args.Type)
         {
-        case TouchActionResult.Down:
+            case TouchActionResult.Down:
 
-        //        if (!IsUserFocused) //first finger down
-        if (args.Event.NumberOfTouches == 1) //first finger down
-        {
-            ResetPan();
-        }
-
-        consumed = this;
-
-        break;
-
-        case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
-
-        if (!IsUserPanning)
-        {
-            //first pan
-            if (args.Event.Distance.Total.X == 0 || Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) || Math.Abs(args.Event.Distance.Total.X) < 2)
+            //        if (!IsUserFocused) //first finger down
+            if (args.Event.NumberOfTouches == 1) //first finger down
             {
-                return null;
-            }
-        }
-
-        if (!IsUserFocused)
-        {
-            ResetPan();
-        }
-
-        //todo add direction
-        //this.IgnoreWrongDirection
-
-        IsUserPanning = true;
-
-        var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
-        var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
-
-        Vector2 velocity;
-        float useVelocity = 0;
-        if (!IsVertical)
-        {
-            useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
-            velocity = new(useVelocity, 0);
-        }
-        else
-        {
-            useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
-            velocity = new(0, useVelocity);
-        }
-
-        //record velocity
-        VelocityAccumulator.CaptureVelocity(velocity);
-
-        //saving non clamped
-        _panningOffset.X = x;
-        _panningOffset.Y = y;
-
-
-        var clamped = ClampOffset((float)x, (float)y, Bounces);
-
-        //Debug.WriteLine($"[CAROUSEL] Panning: {_panningOffset:0} / {clamped:0}");
-        ApplyPosition(clamped);
-
-        consumed = this;
-        break;
-
-        case TouchActionResult.Up:
-        //Debug.WriteLine($"[Carousel] {args.Type} {IsUserFocused} {IsUserPanning} {InTransition}");
-
-        if (IsUserFocused)
-        {
-
-            if (IsUserPanning || InTransition)
-            {
-                consumed = this;
-
-                var final = VelocityAccumulator.CalculateFinalVelocity(500);
-
-                //animate
-                CurrentSnap = CurrentPosition;
-
-                ScrollToNearestAnchor(CurrentSnap, final);
+                ResetPan();
             }
 
-            IsUserPanning = false;
-            IsUserFocused = false;
+            consumed = this;
 
-        }
+            break;
 
-        break;
+            case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
+
+            if (!IsUserPanning)
+            {
+                //first pan
+                if (args.Event.Distance.Total.X == 0 || Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) || Math.Abs(args.Event.Distance.Total.X) < 2)
+                {
+                    return null;
+                }
+            }
+
+            if (!IsUserFocused)
+            {
+                ResetPan();
+            }
+
+            //todo add direction
+            //this.IgnoreWrongDirection
+
+            IsUserPanning = true;
+
+            var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
+            var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
+
+            Vector2 velocity;
+            float useVelocity = 0;
+            if (!IsVertical)
+            {
+                useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
+                velocity = new(useVelocity, 0);
+            }
+            else
+            {
+                useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
+                velocity = new(0, useVelocity);
+            }
+
+            //record velocity
+            VelocityAccumulator.CaptureVelocity(velocity);
+
+            //saving non clamped
+            _panningOffset.X = x;
+            _panningOffset.Y = y;
+
+
+            var clamped = ClampOffset((float)x, (float)y, Bounces);
+
+            //Debug.WriteLine($"[CAROUSEL] Panning: {_panningOffset:0} / {clamped:0}");
+            ApplyPosition(clamped);
+
+            consumed = this;
+            break;
+
+            case TouchActionResult.Up:
+            //Debug.WriteLine($"[Carousel] {args.Type} {IsUserFocused} {IsUserPanning} {InTransition}");
+
+            if (IsUserFocused)
+            {
+
+                if (IsUserPanning || InTransition)
+                {
+                    consumed = this;
+
+                    var final = VelocityAccumulator.CalculateFinalVelocity(500);
+
+                    //animate
+                    CurrentSnap = CurrentPosition;
+
+                    ScrollToNearestAnchor(CurrentSnap, final);
+                }
+
+                IsUserPanning = false;
+                IsUserFocused = false;
+
+            }
+
+            break;
         }
 
         if (consumed != null || IsUserPanning)

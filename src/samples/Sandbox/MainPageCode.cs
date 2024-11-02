@@ -19,7 +19,7 @@ namespace Sandbox
 
             // the "3D camera"
 #if SKIA3
-              var view = new Sk3dView();
+            var view = new Sk3dView();
 #else
             var view = new SK3dView();
 #endif
@@ -136,10 +136,10 @@ namespace Sandbox
                                 BackgroundColor = Colors.DodgerBlue,
                                 ZIndex=-1,
                                 CornerRadius = 16,
-                                CameraAngleX = 16,
-                                CameraAngleY = 20,
-                                CameraAngleZ = 6,
-                                CameraTranslationZ = 0,
+                                RotationX = 16,
+                                RotationY = 20,
+                                RotationZ = 6,
+                                TranslationZ = 0,
                                 Tag="Shape",
                                 WidthRequest = 150,
                                 HeightRequest = 150,

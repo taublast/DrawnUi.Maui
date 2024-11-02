@@ -7,9 +7,10 @@
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
-    BackgroundColor="Black">
+>
 
     <draw:Canvas
+        BackgroundColor="Black"
         Gestures="Enabled"
         HardwareAcceleration="Enabled"
         HorizontalOptions="Fill"

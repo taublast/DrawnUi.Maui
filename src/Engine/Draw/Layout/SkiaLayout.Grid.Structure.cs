@@ -5,6 +5,64 @@ using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Draw;
 
+public static class GridExtensions
+{
+    public static T WithRow<T>(this T view, int row) where T : SkiaControl
+    {
+        Grid.SetRow(view, row);
+        return view;
+    }
+
+    public static T WithColumn<T>(this T view, int column) where T : SkiaControl
+    {
+        Grid.SetColumn(view, column);
+        return view;
+    }
+
+    public static T WithRowSpan<T>(this T view, int rowSpan) where T : SkiaControl
+    {
+        Grid.SetRowSpan(view, rowSpan);
+        return view;
+    }
+
+    public static T WithColumnSpan<T>(this T view, int columnSpan) where T : SkiaControl
+    {
+        Grid.SetColumnSpan(view, columnSpan);
+        return view;
+    }
+
+    public static SkiaLayout WithColumnDefinitions(this SkiaLayout grid, string columnDefinitions)
+    {
+        var converter = new ColumnDefinitionCollectionTypeConverter();
+
+        if (converter.CanConvertFrom(typeof(string)))
+        {
+            var columns = (ColumnDefinitionCollection)converter.ConvertFromInvariantString(columnDefinitions);
+            grid.ColumnDefinitions = columns;
+        }
+        else
+        {
+            throw new InvalidOperationException("ColumnDefinitionCollectionTypeConverter cannot convert from string.");
+        }
+        return grid;
+    }
+    public static SkiaLayout WithRowDefinitions(this SkiaLayout grid, string definitions)
+    {
+        var converter = new ColumnDefinitionCollectionTypeConverter();
+
+        if (converter.CanConvertFrom(typeof(string)))
+        {
+            var defs = (RowDefinitionCollection)converter.ConvertFromInvariantString(definitions);
+            grid.RowDefinitions = defs;
+        }
+        else
+        {
+            throw new InvalidOperationException("RowDefinitionCollectionTypeConverter cannot convert from string.");
+        }
+        return grid;
+    }
+}
+
 public partial class SkiaLayout
 {
     public class SkiaGridStructure
