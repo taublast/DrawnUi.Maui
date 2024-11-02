@@ -8,7 +8,23 @@ namespace DrawnUi.Maui.Draw
 
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
     {
+        public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
+        {
+            if (this.IsStack)
+            {
+                bool inside = false;
+                if (child.Control != null && !child.Control.IsDisposing && !child.Control.IsDisposed &&
+                    !child.Control.InputTransparent && child.Control.CanDraw)
+                {
+                    var transformed = child.Control.ApplyTransforms(child.Rect); //instead of HitRect
+                    inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
+                }
 
+                return inside;
+            }
+
+            return base.IsGestureForChild(child, point);
+        }
 
         public override void ApplyBindingContext()
         {
