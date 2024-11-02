@@ -353,7 +353,7 @@ the parent layout will not take any space at all unless you ask it to `Fill` the
 _!_ Layouts `Column` and `Row`, whether templated or not, 
 will always check if child is out of the visible screen bounds and avoid rendering it in that case.
 That is especially useful when the layout is inside a `SkiaScroll`, this way we always render 
-only the visible part. You can tweak this but setting a `SkiaLayout` property `HiddenAmountToRender` in points, how many of the hidden amount outside the visible bounds should still be rendered. 
+only the visible part. You can tweak this but setting a `SkiaLayout` property `VirtualisationInflated` in points, how many of the hidden amount outside the visible bounds should still be rendered. 
 This system ensures that you can have an infinite-size layout inside a scroll and it will work just fine drawing only the visible area.
 At the same time if you want a `SkiaScroll` to <s>lye</s> communicate to its content that everything is visible on the screen you can set its `VirtualizationEnabled="False"`.
 
@@ -362,6 +362,25 @@ using `MarginLeft`, `MarginTop`, `MarginRight`, `MarginBottom` properties, -1.0 
 if set they will override the specific value from `Margin`, and the result would be accessible via `Margins` read-only bindable static property.  
 Even more, sometimes you might want to bind your code to `AddMarginTop`, `AddMarginLeft`, `AddMarginRight`, `AddMarginBottom`..  
 When designing custom controls please use `Margins` property to read the final margin value.
+
+##### BindingCotext propagation in layout
+
+When a parent has children attached it sets their binding content to its own by calling `SetInheritedBindingContext` of the child ONLY if chil's BindingContext is actually null. So when the Parent property of the child gets set to null this child BindingContext is set to null too.   
+
+Any `SkiaControl` implements `public virtual void SetInheritedBindingContext(object context)` that you can override to prohibit changing binding context or apply any other logic.
+
+Another case is when the control `BindingContext` changes for any reason, `public virtual void ApplyBindingContext()` method is invoked. Layouts override it to implement an additional logic to modify or not its children `BindingContext`. Some view containers use the following logic:
+
+```csharp
+public override void ApplyBindingContext()
+        {
+            base.ApplyBindingContext();
+
+			//preserve child context
+            if (Content?.BindingContext == null)
+                Content?.SetInheritedBindingContext(BindingContext);
+        }
+```
 
 #### Loading sources
 
@@ -541,6 +560,34 @@ This lets one to create custom controls that can react to scrolling and other ev
 ### `SkiaSvg`
 
 `SkiaSvg` is a control that renders svg files. It can't tint the svg with a color or gradient, and apply some transforms to it.
+
+You can set the svg as string via `SvgString` property, or same is by including the string data as XAML content:
+
+```xml
+    <draw:SkiaSvg
+        HeightRequest="110"
+        HorizontalOptions="Center"
+        LockRatio="1"
+        Opacity="0.5"
+        TintColor="{StaticResource Gray950}"
+        UseCache="Operations"
+        VerticalOptions="Center"
+        ZIndex="-1">
+        <![CDATA[                                      
+        <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 0H5C2.243 0 0 2.243 0 5V13C0 15.757 2.243 18 5 18H15C17.757 18 20 15.757 20 13V5C20 2.243 17.757 0 15 0ZM5 2H15C16.654 2 18 3.346 18 5V9.58594L14.417 6.00293C13.636 5.22193 12.364 5.22193 11.583 6.00293L7 10.5859L6.41701 10.0029C5.63601 9.22193 4.36399 9.22193 3.58299 10.0029L2 11.5859V5C2 3.346 3.346 2 5 2ZM4.5 6C4.5 5.172 5.172 4.5 6 4.5C6.828 4.5 7.5 5.172 7.5 6C7.5 6.828 6.828 7.5 6 7.5C5.172 7.5 4.5 6.828 4.5 6Z" fill="#41416E"/>
+        </svg>
+        ]]>
+    </draw:SkiaSvg>
+```
+or just set the property directly, code-behind example:
+
+```csharp
+var control = new SkiaSvg()
+{
+    SvgString = "<svg... whatever..></svg>"
+}
+```
 
 
 ### `SkiaLabel`

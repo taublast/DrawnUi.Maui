@@ -1167,6 +1167,10 @@ namespace DrawnUi.Maui.Draw
                             {
                                 if (args.Type == TouchActionResult.Tapped && CommandChildTapped != null)
                                 {
+                                    if (Tag == "StackItemsV")
+                                    {
+                                        var stop = child.Control.BindingContext;
+                                    }
                                     CommandChildTapped.Execute(child);
                                 }
                                 //Trace.WriteLine($"[HIT] for cell {i} at Y {y:0.0}");
@@ -3453,7 +3457,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="context"></param>
         public virtual void SetInheritedBindingContext(object context)
         {
-            BindingContext ??= context; //only if existing is null
+            BindingContext = context;
         }
 
         /// <summary>
@@ -6003,9 +6007,7 @@ namespace DrawnUi.Maui.Draw
                 if (parent == null)
                 {
                     Parent = null;
-                    //todo maybe enable to avoid potential memory leaks
-                    //todo investigate perf when enabled
-                    //BindingContext = null;
+                    SetInheritedBindingContext(null);
                     return;
                 }
 
@@ -6024,7 +6026,8 @@ namespace DrawnUi.Maui.Draw
 
                 if (parent is IDrawnBase control)
                 {
-                    SetInheritedBindingContext(control.BindingContext);
+                    if (this.BindingContext == null)
+                        SetInheritedBindingContext(control.BindingContext);
                 }
 
                 InvalidateInternal();
