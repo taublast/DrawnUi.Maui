@@ -365,7 +365,7 @@ When designing custom controls please use `Margins` property to read the final m
 
 ##### BindingCotext propagation in layout
 
-When a parent has children attached it sets their binding content to its own by calling `SetInheritedBindingContext` of the child ONLY if chil's BindingContext is actually null. So when the Parent property of the child gets set to null this child BindingContext is set to null too.   
+When a parent has children attached it sets their binding content to its own by calling `SetInheritedBindingContext` of the child ONLY if child's BindingContext is actually null. So when the Parent property of the child gets set to null this child BindingContext is set to null too.   
 
 Any `SkiaControl` implements `public virtual void SetInheritedBindingContext(object context)` that you can override to prohibit changing binding context or apply any other logic.
 
@@ -588,6 +588,14 @@ var control = new SkiaSvg()
     SvgString = "<svg... whatever..></svg>"
 }
 ```
+
+Other properties of interest may be: `Zoom`, `ZoomX`, `Zoomy`, `VerticalOffset`, `HorizontalOffset`, `HorizontalAlignment` and more..
+
+You can also apply a gradient to your svg, either like to any control with a VisualEffect (see VisualEffects) or by using following properties to apply a linear gradient:
+
+UseGradient, StartXRatio, EndXRatio, StartYRatio, EndYRatio, StartColor, EndColor, GradientBlendMode
+
+
 
 
 ### `SkiaLabel`
