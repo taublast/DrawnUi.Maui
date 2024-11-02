@@ -14,7 +14,7 @@ namespace DrawnUi
         {
             UpdateApplicationEvent?.Invoke(types); //i'm saving my page and this triggers around 5 times intead on 1, Type inside is same, of the page in question.
 
-            Super.NeedGlobalUpdate();
+            //Super.NeedGlobalUpdate();
         }
 
     }

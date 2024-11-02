@@ -1,8 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using System.Windows.Input;
-
-
-namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Maui.Draw;
 
 /// <summary>
 /// Button-like control, can include any content inside. It's either you use default content (todo templates?..)
@@ -10,19 +6,19 @@ namespace DrawnUi.Maui.Draw;
 /// </summary>
 public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 {
-	public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(
-		nameof(CornerRadius),
-		typeof(CornerRadius),
-		typeof(SkiaButton),
-		default(CornerRadius),
-		propertyChanged: NeedApplyProperties);
+    public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(
+        nameof(CornerRadius),
+        typeof(CornerRadius),
+        typeof(SkiaButton),
+        new CornerRadius(8),
+        propertyChanged: NeedApplyProperties);
 
-	[System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.CornerRadiusTypeConverter))]
-	public CornerRadius CornerRadius
-	{
-		get { return (CornerRadius)GetValue(CornerRadiusProperty); }
-		set { SetValue(CornerRadiusProperty, value); }
-	}
+    [System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.CornerRadiusTypeConverter))]
+    public CornerRadius CornerRadius
+    {
+        get { return (CornerRadius)GetValue(CornerRadiusProperty); }
+        set { SetValue(CornerRadiusProperty, value); }
+    }
 
 
 }

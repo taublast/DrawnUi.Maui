@@ -1,7 +1,6 @@
 ﻿//Adapted code from the Xamarin.Forms Grid implementation
 
 using DrawnUi.Maui.Infrastructure.Xaml;
-using System.Collections.Immutable;
 using System.ComponentModel;
 
 namespace DrawnUi.Maui.Draw;
@@ -68,6 +67,8 @@ public partial class SkiaLayout
 
             foreach (var child in cells)
             {
+                child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
+
                 if (!child.CanDraw)
                     continue;
 

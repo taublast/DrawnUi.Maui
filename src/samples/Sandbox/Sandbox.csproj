@@ -199,18 +199,33 @@
     <!--for development-->
     <ItemGroup Condition="'$(UseNuget)' != 'true'">
       <ProjectReference Include="..\..\Addons\DrawnUi.Maui.Game\DrawnUi.Maui.Game.csproj" />
-      <ProjectReference Condition="'$(UseSkiaSharp3)' != 'true'" Include="..\..\Addons\DrawnUi.Maui.MapsUi\src\DrawnUi.Maui.MapsUi.csproj" />
+      <ProjectReference Include="..\..\Addons\DrawnUi.Maui.MapsUi\src\DrawnUi.Maui.MapsUi.csproj" />
       <ProjectReference Include="..\..\Addons\DrawnUi.MauiGraphics\DrawnUi.MauiGraphics.csproj" />
     </ItemGroup>
 
     <!--production-->
     <ItemGroup Condition="'$(UseNuget)' == 'true'">
-      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.4.4" />
-      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.4.4" />
-      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.4.4" />
+      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.4.5" />
+      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.4.5" />
+      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.4.5" />
     </ItemGroup>
 
     <ItemGroup>
+ 
+ 
+      <Compile Update="Views\MainPageShadersCarousel.xaml.cs">
+        <DependentUpon>MainPageShadersCarousel.xaml</DependentUpon>
+      </Compile>
+ 
+ 
+      <Compile Update="TestPage2.xaml.cs">
+        <DependentUpon>TestPage2.xaml</DependentUpon>
+      </Compile>
+ 
+ 
+      <Compile Update="TestPage.xaml.cs">
+        <DependentUpon>TestPage.xaml</DependentUpon>
+      </Compile>
  
  
       <Compile Update="Resources\Strings\ResStrings.Designer.cs">
@@ -228,17 +243,13 @@
     
     </ItemGroup>
  
-    <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
-      <Compile Remove="Views\Controls\Shaders\**" />
-    </ItemGroup>
-  
-    <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
-    <Compile Remove="Views\MainPageMapsUi.xaml.cs" />
-    <MauiXaml Remove="Views\MainPageMapsUi.xaml" />
-    </ItemGroup>
+
 
     <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
+      <Compile Remove="Views\Controls\Shaders\**" />
     <Compile Remove="Views\Controls\ShaderTransition.cs" />
+      <Compile Remove="Views\MainPageShadersCarousel.xaml.cs" />
+      <MauiXaml Remove="Views\MainPageShadersCarousel.xaml" />
     <Compile Remove="Views\MainPageShaderRipples.xaml.cs" />
     <MauiXaml Remove="Views\MainPageShaderRipples.xaml" />
     <Compile Remove="Views\MainPageShader.xaml.cs" />
@@ -340,7 +351,8 @@
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
   </ItemGroup>
- 
+
+
  
  
 

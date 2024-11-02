@@ -10,30 +10,32 @@ public class MultiRippleWithTouchEffect : ShaderDoubleTexturesEffect, IStateEffe
         ShaderSource = "Shaders/ripples.sksl";
     }
 
-    bool _initialized;
+    protected bool Initialized { get; set; }
+
     private PointF _mouse;
 
     #region IStateEffect
 
-    void IStateEffect.UpdateState()
+    /// <summary>
+    /// Will be invoked before actually painting but after gestures processing and other internal calculations. By SkiaControl.OnBeforeDrawing method. Beware if you call Update() inside will never stop updating.
+    /// </summary>
+    public virtual void UpdateState()
     {
-        if (Parent != null && !_initialized && Parent.IsLayoutReady)
+        if (Parent != null && !Initialized && Parent.IsLayoutReady)
         {
-            _initialized = true;
+            Initialized = true;
         }
 
-        base.Update();
     }
 
     public override void Attach(SkiaControl parent)
     {
         base.Attach(parent);
 
-        (this as IStateEffect).UpdateState();
+        UpdateState();
     }
 
     #endregion
-
 
     protected override SKRuntimeEffectUniforms CreateUniforms(SKRect destination)
     {
@@ -112,7 +114,7 @@ public class MultiRippleWithTouchEffect : ShaderDoubleTexturesEffect, IStateEffe
     {
         _mouse = args.Event.Location;
 
-        if (args.Type == TouchActionResult.Down && _initialized)
+        if (args.Type == TouchActionResult.Down && Initialized)
         {
 
             var ripple = CreateRipple(_mouse);

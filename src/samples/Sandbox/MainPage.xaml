@@ -12,6 +12,7 @@
     BackgroundColor="#000000">
 
     <Grid
+        BackgroundColor="Red"
         HorizontalOptions="Fill"
         VerticalOptions="Fill">
 

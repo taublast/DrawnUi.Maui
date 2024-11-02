@@ -63,6 +63,7 @@
             <draw:Canvas
                 x:Name="MainCanvas"
                 Margin="0,0,0,32"
+                BackgroundColor="White"
                 Gestures="Enabled"
                 HardwareAcceleration="Enabled"
                 HorizontalOptions="Fill">

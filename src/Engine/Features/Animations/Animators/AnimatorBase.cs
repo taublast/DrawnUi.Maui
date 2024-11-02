@@ -1,7 +1,4 @@
-﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
-
-namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Maui.Draw;
 
 public class AnimatorBase : ISkiaAnimator
 {
@@ -81,7 +78,21 @@ public class AnimatorBase : ISkiaAnimator
     }
 
 
+    private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+    private readonly object _cancellationLock = new object();
 
+    public virtual void Cancel()
+    {
+        lock (_cancellationLock)
+        {
+            if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
+            {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+            }
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+    }
 
     private bool isStarting;
 
@@ -90,12 +101,15 @@ public class AnimatorBase : ISkiaAnimator
         if (isStarting)
             return;
 
+        Cancel();
+        var token = _cancellationTokenSource.Token;
+
         isStarting = true;
 
         if (delayMs > 0)
         {
             runDelayMs = delayMs;
-            Tasks.StartDelayed(TimeSpan.FromMilliseconds(delayMs), () =>
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(delayMs), token, () =>
             {
                 isStarting = false;
                 Start();

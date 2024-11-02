@@ -1,6 +1,4 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Infrastructure.Helpers;
-using System.Diagnostics;
+﻿using DrawnUi.Maui.Infrastructure.Helpers;
 using System.Numerics;
 using System.Windows.Input;
 
@@ -21,7 +19,8 @@ namespace DrawnUi.Maui.Controls
 
         public override void ApplyBindingContext()
         {
-            Content?.SetInheritedBindingContext(this.BindingContext);
+            if (Content.BindingContext == null)
+                Content?.SetInheritedBindingContext(this.BindingContext);
 
             base.ApplyBindingContext();
         }
@@ -312,27 +311,27 @@ namespace DrawnUi.Maui.Controls
             switch (this.Direction)
             {
                 case DrawerDirection.FromLeft:
-                    if (AmplitudeSize >= 0)
-                        headerSize = amplitudeSize >= 0 ? width - amplitudeSize : width;
-                    return new Vector2((float)(-(width - headerSize)), 0);
+                if (AmplitudeSize >= 0)
+                    headerSize = amplitudeSize >= 0 ? width - amplitudeSize : width;
+                return new Vector2((float)(-(width - headerSize)), 0);
 
                 case DrawerDirection.FromRight:
-                    if (AmplitudeSize >= 0)
-                        headerSize = amplitudeSize >= 0 ? width - amplitudeSize : width;
-                    return new Vector2((float)(width - headerSize), 0);
+                if (AmplitudeSize >= 0)
+                    headerSize = amplitudeSize >= 0 ? width - amplitudeSize : width;
+                return new Vector2((float)(width - headerSize), 0);
 
                 case DrawerDirection.FromBottom:
-                    if (AmplitudeSize >= 0)
-                        headerSize = amplitudeSize >= 0 ? height - amplitudeSize : height;
-                    return new Vector2(0, (float)(height - headerSize));
+                if (AmplitudeSize >= 0)
+                    headerSize = amplitudeSize >= 0 ? height - amplitudeSize : height;
+                return new Vector2(0, (float)(height - headerSize));
 
                 case DrawerDirection.FromTop:
-                    if (AmplitudeSize >= 0)
-                        headerSize = amplitudeSize >= 0 ? height - amplitudeSize : height;
-                    return new Vector2(0, (float)(-(height - headerSize)));
+                if (AmplitudeSize >= 0)
+                    headerSize = amplitudeSize >= 0 ? height - amplitudeSize : height;
+                return new Vector2(0, (float)(-(height - headerSize)));
 
                 default:
-                    return Vector2.Zero;
+                return Vector2.Zero;
             }
         }
 
@@ -356,11 +355,11 @@ namespace DrawnUi.Maui.Controls
             {
                 case DrawerDirection.FromLeft:
                 case DrawerDirection.FromRight:
-                    return new Vector2(-velocity * Math.Sign(displacement.X), 0);
+                return new Vector2(-velocity * Math.Sign(displacement.X), 0);
 
                 case DrawerDirection.FromTop:
                 case DrawerDirection.FromBottom:
-                    return new Vector2(0, -velocity * Math.Sign(displacement.Y));
+                return new Vector2(0, -velocity * Math.Sign(displacement.Y));
             }
 
             return base.GetAutoVelocity(displacement);
@@ -371,38 +370,38 @@ namespace DrawnUi.Maui.Controls
             switch (this.Direction)
             {
                 case DrawerDirection.FromLeft:
-                    return new SKRect(
-                        SnapPoints[1].X,
-                        SnapPoints[0].Y,
-                        SnapPoints[0].X,
-                        SnapPoints[1].Y
-                    );
+                return new SKRect(
+                    SnapPoints[1].X,
+                    SnapPoints[0].Y,
+                    SnapPoints[0].X,
+                    SnapPoints[1].Y
+                );
 
                 case DrawerDirection.FromRight:
-                    return new SKRect(
-                        SnapPoints[0].X,
-                        SnapPoints[0].Y,
-                        SnapPoints[1].X,
-                        SnapPoints[1].Y
-                    );
+                return new SKRect(
+                    SnapPoints[0].X,
+                    SnapPoints[0].Y,
+                    SnapPoints[1].X,
+                    SnapPoints[1].Y
+                );
 
 
                 case DrawerDirection.FromTop:
-                    return new SKRect(
-                        SnapPoints[0].X,
-                        SnapPoints[1].Y,
-                        SnapPoints[1].X,
-                        SnapPoints[0].Y
-                    );
+                return new SKRect(
+                    SnapPoints[0].X,
+                    SnapPoints[1].Y,
+                    SnapPoints[1].X,
+                    SnapPoints[0].Y
+                );
 
                 case DrawerDirection.FromBottom:
                 default:
-                    return new SKRect(
-                        SnapPoints[0].X,
-                        SnapPoints[0].Y,
-                        SnapPoints[1].X,
-                        SnapPoints[1].Y
-                    );
+                return new SKRect(
+                    SnapPoints[0].X,
+                    SnapPoints[0].Y,
+                    SnapPoints[1].X,
+                    SnapPoints[1].Y
+                );
 
             }
 
@@ -635,201 +634,201 @@ namespace DrawnUi.Maui.Controls
                     //---------------------------------------------------------------------------------------------------------
                     case TouchActionResult.Tapped:
                     case TouchActionResult.LongPressing:
-                        //---------------------------------------------------------------------------------------------------------
+                    //---------------------------------------------------------------------------------------------------------
 
-                        consumed = this;
-                        break;
+                    consumed = this;
+                    break;
 
                     //---------------------------------------------------------------------------------------------------------
                     case TouchActionResult.Down:
-                        //---------------------------------------------------------------------------------------------------------
-                        if (args.Event.NumberOfTouches == 1) //first finger down
-                        {
-                            ResetPan();
-                        }
+                    //---------------------------------------------------------------------------------------------------------
+                    if (args.Event.NumberOfTouches == 1) //first finger down
+                    {
+                        ResetPan();
+                    }
 
-                        consumed = this;
+                    consumed = this;
 
-                        break;
+                    break;
 
                     //---------------------------------------------------------------------------------------------------------
                     case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
-                        //---------------------------------------------------------------------------------------------------------
+                    //---------------------------------------------------------------------------------------------------------
 
-                        var direction = DirectionType.None;
-                        bool lockBounce = false;
+                    var direction = DirectionType.None;
+                    bool lockBounce = false;
 
-                        // Determine if the gesture is panning towards an existing snap point
-                        if (Direction == DrawerDirection.FromLeft)
+                    // Determine if the gesture is panning towards an existing snap point
+                    if (Direction == DrawerDirection.FromLeft)
+                    {
+                        direction = DirectionType.Horizontal;
+                        if (args.Event.Distance.Delta.X > 0)
+                            // horizontal, lock if panning to right and we are already at SnapPoints[0]
+                            lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
+                    }
+                    else if (Direction == DrawerDirection.FromRight)
+                    {
+                        direction = DirectionType.Horizontal;
+                        if (args.Event.Distance.Delta.X < 0)
+                            // horizontal, lock if panning to left and we are already at SnapPoints[0]
+                            lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
+                    }
+                    else if (Direction == DrawerDirection.FromBottom)
+                    {
+                        direction = DirectionType.Vertical;
+                        if (args.Event.Distance.Delta.Y < 0)
+                            // vertical, lock if panning to top and we are already at SnapPoints[0]
+                            lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
+                    }
+                    else if (Direction == DrawerDirection.FromTop)
+                    {
+                        direction = DirectionType.Vertical;
+                        if (args.Event.Distance.Delta.Y > 0)
+                            // vertical, lock if panning to bottom and we are already at SnapPoints[1]
+                            lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[1], 1);
+                    }
+
+                    if (!IsUserFocused)
+                    {
+                        ResetPan();
+                        _panningOffset = new(_panningOffset.X - args.Event.Distance.Delta.X / RenderingScale, _panningOffset.Y - args.Event.Distance.Delta.Y / RenderingScale);
+                    }
+
+                    var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
+                    var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
+
+
+                    if (!IsUserPanning) //for the first panning move only
+                    {
+                        var mainDirection = GetDirectionType(_panningOffset, new Vector2(x, y), 0.9f);
+
+                        if (direction == DirectionType.None || mainDirection != direction && IgnoreWrongDirection)
                         {
-                            direction = DirectionType.Horizontal;
-                            if (args.Event.Distance.Delta.X > 0)
-                                // horizontal, lock if panning to right and we are already at SnapPoints[0]
-                                lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
-                        }
-                        else if (Direction == DrawerDirection.FromRight)
-                        {
-                            direction = DirectionType.Horizontal;
-                            if (args.Event.Distance.Delta.X < 0)
-                                // horizontal, lock if panning to left and we are already at SnapPoints[0]
-                                lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
-                        }
-                        else if (Direction == DrawerDirection.FromBottom)
-                        {
-                            direction = DirectionType.Vertical;
-                            if (args.Event.Distance.Delta.Y < 0)
-                                // vertical, lock if panning to top and we are already at SnapPoints[0]
-                                lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
-                        }
-                        else if (Direction == DrawerDirection.FromTop)
-                        {
-                            direction = DirectionType.Vertical;
-                            if (args.Event.Distance.Delta.Y > 0)
-                                // vertical, lock if panning to bottom and we are already at SnapPoints[1]
-                                lockBounce = AreVectorsEqual(CurrentPosition, SnapPoints[1], 1);
-                        }
-
-                        if (!IsUserFocused)
-                        {
-                            ResetPan();
-                            _panningOffset = new(_panningOffset.X - args.Event.Distance.Delta.X / RenderingScale, _panningOffset.Y - args.Event.Distance.Delta.Y / RenderingScale);
-                        }
-
-                        var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
-                        var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
-
-
-                        if (!IsUserPanning) //for the first panning move only
-                        {
-                            var mainDirection = GetDirectionType(_panningOffset, new Vector2(x, y), 0.9f);
-
-                            if (direction == DirectionType.None || mainDirection != direction && IgnoreWrongDirection)
-                            {
-                                break; //ignore this gesture
-                            }
-
-                            IsUserPanning = true;
+                            break; //ignore this gesture
                         }
 
-                        if (IsUserPanning)
+                        IsUserPanning = true;
+                    }
+
+                    if (IsUserPanning)
+                    {
+
+                        Vector2 velocity;
+                        float useVelocity = 0;
+                        if (direction == DirectionType.Horizontal)
                         {
-
-                            Vector2 velocity;
-                            float useVelocity = 0;
-                            if (direction == DirectionType.Horizontal)
-                            {
-                                useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
-                                velocity = new(useVelocity, 0);
-                                y = 0;
-                            }
-                            else
-                            {
-                                useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
-                                velocity = new(0, useVelocity);
-                                x = 0;
-                            }
-                            //record velocity
-                            VelocityAccumulator.CaptureVelocity(velocity);
-
-                            //saving non clamped
-                            _panningOffset.X = x;
-                            _panningOffset.Y = y;
-
-                            // Allow bouncing only if Bounces is true and we are not panning towards an existing snap point
-                            bool shouldBounce = Bounces && !lockBounce;
-
-                            var clamped = ClampOffset((float)x, (float)y, shouldBounce);
-
-                            if (!Bounces && lockBounce) //if we reached side and boucing is off we cannot drag further so maybe pass pan to parent
-                            {
-                                if (AreEqual(clamped.X, 0, 1) && AreEqual(clamped.Y, 0, 1))
-                                {
-                                    var verticalMove = DrawerDirection.FromBottom;
-                                    if (args.Event.Distance.Delta.Y < 0)
-                                        verticalMove = DrawerDirection.FromTop;
-
-                                    var horizontalMove = DrawerDirection.FromLeft;
-                                    if (args.Event.Distance.Delta.X < 0)
-                                        horizontalMove = DrawerDirection.FromRight;
-
-                                    if ((direction == DirectionType.Vertical && Direction == verticalMove)
-                                        || (direction == DirectionType.Horizontal && Direction == horizontalMove))
-                                    {
-                                        IsUserPanning = false;
-                                        return null;
-                                    }
-
-                                }
-                            }
-
-                            ApplyPosition(clamped);
-                            consumed = this;
-                            //var clamped = ClampOffset((float)x, (float)y, Bounces);                   
-
+                            useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
+                            velocity = new(useVelocity, 0);
+                            y = 0;
                         }
                         else
                         {
-                            return null;
+                            useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
+                            velocity = new(0, useVelocity);
+                            x = 0;
+                        }
+                        //record velocity
+                        VelocityAccumulator.CaptureVelocity(velocity);
+
+                        //saving non clamped
+                        _panningOffset.X = x;
+                        _panningOffset.Y = y;
+
+                        // Allow bouncing only if Bounces is true and we are not panning towards an existing snap point
+                        bool shouldBounce = Bounces && !lockBounce;
+
+                        var clamped = ClampOffset((float)x, (float)y, shouldBounce);
+
+                        if (!Bounces && lockBounce) //if we reached side and boucing is off we cannot drag further so maybe pass pan to parent
+                        {
+                            if (AreEqual(clamped.X, 0, 1) && AreEqual(clamped.Y, 0, 1))
+                            {
+                                var verticalMove = DrawerDirection.FromBottom;
+                                if (args.Event.Distance.Delta.Y < 0)
+                                    verticalMove = DrawerDirection.FromTop;
+
+                                var horizontalMove = DrawerDirection.FromLeft;
+                                if (args.Event.Distance.Delta.X < 0)
+                                    horizontalMove = DrawerDirection.FromRight;
+
+                                if ((direction == DirectionType.Vertical && Direction == verticalMove)
+                                    || (direction == DirectionType.Horizontal && Direction == horizontalMove))
+                                {
+                                    IsUserPanning = false;
+                                    return null;
+                                }
+
+                            }
                         }
 
-                        break;
+                        ApplyPosition(clamped);
+                        consumed = this;
+                        //var clamped = ClampOffset((float)x, (float)y, Bounces);                   
+
+                    }
+                    else
+                    {
+                        return null;
+                    }
+
+                    break;
 
                     //---------------------------------------------------------------------------------------------------------
                     case TouchActionResult.Up:
-                        //---------------------------------------------------------------------------------------------------------
+                    //---------------------------------------------------------------------------------------------------------
 
-                        direction = DirectionType.None;
-                        var Velocity = Vector2.Zero;
+                    direction = DirectionType.None;
+                    var Velocity = Vector2.Zero;
 
-                        Velocity = VelocityAccumulator.CalculateFinalVelocity(500);
-                        //Velocity = new((float)(args.Event.Distance.Velocity.X / RenderingScale), (float)(args.Event.Distance.Velocity.Y / RenderingScale));
+                    Velocity = VelocityAccumulator.CalculateFinalVelocity(500);
+                    //Velocity = new((float)(args.Event.Distance.Velocity.X / RenderingScale), (float)(args.Event.Distance.Velocity.Y / RenderingScale));
 
-                        if (IsUserPanning)
+                    if (IsUserPanning)
+                    {
+                        bool rightDirection = false;
+
+                        switch (this.Direction)
                         {
-                            bool rightDirection = false;
-
-                            switch (this.Direction)
-                            {
-                                case DrawerDirection.FromLeft:
-                                case DrawerDirection.FromRight:
-                                    direction = DirectionType.Horizontal;
-                                    if (GetDirectionType(Velocity, direction, 0.9f) == direction)
-                                    {
-                                        rightDirection = true;
-                                    }
-                                    Velocity.Y = 0; //be clean
-                                    break;
-                                case DrawerDirection.FromBottom:
-                                case DrawerDirection.FromTop:
-                                    direction = DirectionType.Vertical;
-                                    if (GetDirectionType(Velocity, direction, 0.9f) == direction)
-                                    {
-                                        rightDirection = true;
-                                    }
-                                    Velocity.X = 0; //be clean
-                                    break;
-                            }
-
-                            //animate, only but if velociy is according drawer direction
-                            if (!IgnoreWrongDirection)
+                            case DrawerDirection.FromLeft:
+                            case DrawerDirection.FromRight:
+                            direction = DirectionType.Horizontal;
+                            if (GetDirectionType(Velocity, direction, 0.9f) == direction)
                             {
                                 rightDirection = true;
                             }
-                            if (rightDirection || CheckNeedToSnap())
+                            Velocity.Y = 0; //be clean
+                            break;
+                            case DrawerDirection.FromBottom:
+                            case DrawerDirection.FromTop:
+                            direction = DirectionType.Vertical;
+                            if (GetDirectionType(Velocity, direction, 0.9f) == direction)
                             {
-                                CurrentSnap = new Vector2((float)TranslationX, (float)TranslationY);
-                                ScrollToNearestAnchor(new Vector2((float)TranslationX, (float)TranslationY), Velocity);
-
-                                consumed = this;
+                                rightDirection = true;
                             }
-
-                            IsUserPanning = false;
-                            IsUserFocused = false;
+                            Velocity.X = 0; //be clean
+                            break;
                         }
 
-                        _inContact = false;
+                        //animate, only but if velociy is according drawer direction
+                        if (!IgnoreWrongDirection)
+                        {
+                            rightDirection = true;
+                        }
+                        if (rightDirection || CheckNeedToSnap())
+                        {
+                            CurrentSnap = new Vector2((float)TranslationX, (float)TranslationY);
+                            ScrollToNearestAnchor(new Vector2((float)TranslationX, (float)TranslationY), Velocity);
 
-                        break;
+                            consumed = this;
+                        }
+
+                        IsUserPanning = false;
+                        IsUserFocused = false;
+                    }
+
+                    _inContact = false;
+
+                    break;
                 }
 
                 if (consumed != null || IsUserPanning)// || args.Event.NumberOfTouches > 1)

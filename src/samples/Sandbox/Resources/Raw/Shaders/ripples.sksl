@@ -14,7 +14,8 @@ uniform float  progresses[10];   // Array for multiple animation progresses (0.0
 This shader is ported from the original Apple shader presented at WWDC 2024.
 For more details, see the session here: https://developer.apple.com/videos/play/wwdc2024/10151/
 Credit to Apple for the original implementation.
-Credits to Raouf Rahiche for the GLSL version that was used to create this SKSL.
+Credits to Raouf Rahiche for the GLSL single ripple version that was used to create this SKSL.
+SKSL port + multi-ripples + reflection by Nick Kovalsky
 */
 
 

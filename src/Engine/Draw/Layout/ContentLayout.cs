@@ -1,6 +1,4 @@
-﻿using DrawnUi.Maui.Draw;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -187,7 +185,10 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
     {
         base.ApplyBindingContext();
 
-        Content?.SetInheritedBindingContext(BindingContext);
+        if (Content?.BindingContext == null)
+        {
+            Content?.SetInheritedBindingContext(BindingContext);
+        }
     }
 
     protected virtual void SetContent(SkiaControl view)

@@ -1,5 +1,3 @@
-using AppoMobi.Maui.Gestures;
-
 namespace Sandbox.Views.Controls;
 
 public partial class SmallButton : SkiaButton
@@ -37,14 +35,12 @@ public partial class SmallButton : SkiaButton
     }
 
 
-    public override void OnUp()
+    public override void OnUp(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         this.ScaleToAsync(1.0, 1.0, 32, Easing.SpringOut);
 
-        base.OnUp();
+        base.OnUp(args, apply);
     }
-
-
 
     SkiaLabel MainLabel;
     SkiaShape MainFrame;

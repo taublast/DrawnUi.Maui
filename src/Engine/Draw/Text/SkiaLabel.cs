@@ -10,32 +10,23 @@ using PropertyChangingEventArgs = Microsoft.Maui.Controls.PropertyChangingEventA
 
 namespace DrawnUi.Maui.Draw
 {
-
     //todo
+
     //public enum UseRotationDirection
     //{
-    //    None,
-    //    UpsideDown,
-    //    All
+    //    Horizontal,
+    //    Vertical,
+    //    UsePath
     //}
 
-    //todo
-    //1 draw visible paragraphs only
-    // drawing only paragraphs visible in viewport and
-    // caching paragraphs rendering one by one suing Operations cache type.
-
-    //2 direction of the text to be able to draw it vertically 
-
-    //3 accesibility features
-
-    //4 textspan with any skiacontrol, this way the text will embrace images etc line in text editor
+    //todo add accesibility features
 
 
     [ContentProperty("Spans")]
     public partial class SkiaLabel : SkiaControl, ISkiaGestureListener, IText
     {
         /// <summary>
-        /// TODO IText
+        /// TODO IText?
         /// </summary>
         public Font Font { get; }
 
@@ -803,7 +794,7 @@ namespace DrawnUi.Maui.Draw
             PaintDefault.Typeface = this.TypeFace ?? SkiaFontManager.DefaultTypeface;
 
             PaintDefault.FakeBoldText = (this.FontAttributes & FontAttributes.Bold) != 0;
-            //todo italic etc
+            PaintDefault.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
         }
 
         public void DrawLines(SkiaDrawingContext ctx,
@@ -1205,6 +1196,9 @@ namespace DrawnUi.Maui.Draw
             using var font = paint.ToFont();
             font.Edging = Super.FontSubPixelRendering ? SKFontEdging.SubpixelAntialias : SKFontEdging.Antialias;
             font.Subpixel = Super.FontSubPixelRendering;
+
+            //todo instead of setting in skpaint upper
+            //font.Embolden = (this.FontAttributes & FontAttributes.Bold) != 0;
 
             using (var blob = SKTextBlob.Create(text, font))
             {
@@ -2615,7 +2609,7 @@ namespace DrawnUi.Maui.Draw
         FontAttributes.None,
         propertyChanged: NeedUpdateFont);
 
-        [TypeConverter(typeof(Microsoft.Maui.Controls.FontAttributesConverter))]
+        [TypeConverter(typeof(DrawnFontAttributesConverter))]
         public FontAttributes FontAttributes
         {
             get { return (FontAttributes)GetValue(FontAttributesProperty); }

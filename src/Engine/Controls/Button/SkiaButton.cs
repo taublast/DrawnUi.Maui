@@ -1,5 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 
 namespace DrawnUi.Maui.Draw;
@@ -133,6 +132,8 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         //todo check we are inside mainframe OR inside the rect accounting for margins
 
+        Pressed?.Invoke(this, args);
+
         if (this.ApplyEffect != SkiaTouchAnimation.None)
         {
             var control = this as SkiaControl;
@@ -157,11 +158,10 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         return true;
     }
 
-    public virtual void OnUp()
+    public virtual void OnUp(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-
+        Released?.Invoke(this, args);
     }
-
 
     public virtual bool OnTapped(SkiaGesturesParameters args, SKPoint childOffset)
     {
@@ -173,6 +173,11 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             {
                 ret = true;
                 Tapped?.Invoke(this, args);
+            }
+            if (Clicked != null)
+            {
+                ret = true;
+                Clicked(this, args);
             }
             if (CommandTapped != null)
             {
@@ -210,7 +215,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             //});
             hadDown = false; //todo track multifingers
             Up?.Invoke(this, args);
-            OnUp();
+            OnUp(args, apply);
         }
 
         if (args.Type == TouchActionResult.Down)
@@ -277,6 +282,20 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public event EventHandler<SkiaGesturesParameters> Tapped;
 
+    /// <summary>
+    /// Occurs when the button is clicked/tapped (Tapped event).
+    /// </summary>
+    public Action<SkiaButton, SkiaGesturesParameters> Clicked;
+
+    /// <summary>
+    /// Occurs when the button is released (Up event).
+    /// </summary>
+    public Action<SkiaButton, SkiaGesturesParameters> Released;
+
+    /// <summary>
+    /// Occurs when the button is pressed (Down event).
+    /// </summary>
+    public Action<SkiaButton, SkiaGesturesParameters> Pressed;
 
     private long _TotalTapped;
     public long TotalTapped

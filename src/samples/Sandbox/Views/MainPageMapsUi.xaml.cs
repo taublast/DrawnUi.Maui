@@ -3,7 +3,6 @@ using BruTile;
 using BruTile.Cache;
 using BruTile.Predefined;
 using BruTile.Web;
-using DrawnUi.Maui.MapsUi;
 using Mapsui;
 using Mapsui.Extensions;
 using Mapsui.Projections;
@@ -69,7 +68,7 @@ namespace Sandbox.Views
                 var source = new HttpTileSource(new GlobalSphericalMercator(),
                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                     new[] { "a", "b", "c" }, name: "OpenStreetMap",
-                    attribution: OpenStreetMapAttribution, userAgent: userAgent, persistentCache: DefaultCache);
+                    attribution: OpenStreetMapAttribution);
 
                 return source;
             }

@@ -28,7 +28,8 @@ namespace DrawnUi.Maui.Controls
 
             foreach (var view in this.Views)
             {
-                view.SetInheritedBindingContext(BindingContext);
+                if (view.BindingContext == null)
+                    view.SetInheritedBindingContext(BindingContext);
             }
         }
 

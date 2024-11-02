@@ -114,8 +114,8 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
 
             var scroll = (SkiaScroll)Parent;
 
-            var centerX = dest.Left + dest.Width * (float)TransformPivotPointX;
-            var centerY = dest.Top + dest.Height * (float)TransformPivotPointY;
+            var centerX = dest.Left + dest.Width * (float)AnchorX;
+            var centerY = dest.Top + dest.Height * (float)AnchorY;
 
             var centerViewportY = scroll.Destination.Top + scroll.Viewport.Pixels.MidY;
 

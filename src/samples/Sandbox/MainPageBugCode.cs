@@ -47,6 +47,64 @@ public class MainPageBugCode : BasePageWithCanvas
 
             Content = new SkiaLayout()
             {
+                VerticalOptions = LayoutOptions.Fill,
+                HorizontalOptions = LayoutOptions.Fill,
+                BackgroundColor = Colors.Bisque,
+                Children = new List<SkiaControl>()
+                {
+                    new SkiaLayout()
+                    {
+                        HeightRequest = 200,
+                        BackgroundColor = Colors.Green,
+                        Children = new List<SkiaControl>()
+                        {
+                            new SkiaLayout()
+                            {
+                                ColumnSpacing = 0,
+                                BackgroundColor = Colors.Yellow,
+                                Margin=new Thickness(0),
+                                Type = LayoutType.Grid,
+                                RowDefinitions = new RowDefinitionCollection()
+                                {
+                                    new RowDefinition(new GridLength(50,GridUnitType.Absolute)),
+                                    new RowDefinition(new GridLength(1,GridUnitType.Star)),
+                                },
+                                Children = new List<SkiaControl>()
+                                {
+                                    new SkiaLabel()
+                                    {
+                                        Text = "Star",
+                                        HeightRequest = 40,
+                                        BackgroundColor = Colors.Red,
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                    }.WithColumn(1),
+                                    new SkiaLabel()
+                                    {
+                                        Text = "Auto",
+                                        HeightRequest = 40,
+                                        BackgroundColor = Colors.Orange,
+                                        HorizontalOptions = LayoutOptions.Start,
+                                    }.WithColumn(2),
+                                    new SkiaLabel()
+                                    {
+                                        Text = "Ahahahahahahaa",
+                                        HeightRequest = 40,
+                                        BackgroundColor = Colors.Green,
+                                        HorizontalOptions = LayoutOptions.Center,
+                                    }.WithRow(1).WithColumnSpan(3),
+                                }
+                            }.WithColumnDefinitions("10, *, Auto"),
+
+
+                        }
+                    }
+
+                }
+            }
+
+            /*
+            Content = new SkiaLayout()
+            {
                 Tag = "Bugged",
                 Padding = new Thickness(0),
                 Type = LayoutType.Wrap,
@@ -82,6 +140,7 @@ public class MainPageBugCode : BasePageWithCanvas
 
                 }
             }
+            */
         };
     }
 

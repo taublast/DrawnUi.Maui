@@ -56,9 +56,42 @@ public class CarouselWithTransitions : SkiaCarousel
 
 
 
+    public virtual void SetupFromTo()
+    {
+        IndexToLast = IndexTo;
+        IndexFromLast = IndexFrom;
+
+        var viewFrom = ChildrenFactory.GetChildAt(IndexFrom);
+        var viewTo = ChildrenFactory.GetChildAt(IndexTo);
+
+        if (viewFrom == null || viewTo == null)
+        {
+            throw new ApplicationException("Unexpected null");
+        }
+
+        Effect.ControlFrom = viewFrom;
+        Effect.ControlTo = viewTo;
+
+        //Debug.WriteLine($"Set new sources {IndexFrom} ({viewFrom.BindingContext}) <=> {IndexTo} ({viewTo.BindingContext}) at progress {progress:0.00}, scroll {ScrollProgress:0.00}");
+    }
+
+    private bool initialized;
+
+    protected override void OnChildrenInitialized()
+    {
+
+        IndexFrom = -1;
+        IndexTo = -1;
+        IndexFromLast = -1;
+        IndexToLast = -1;
+        initialized = false;
+
+        base.OnChildrenInitialized();
+    }
+
     protected override void OnScrollProgressChanged()
     {
-        if (ScrollProgress >= 0 && ScrollProgress <= 1) //ignore bouncing
+        if (!initialized || ScrollProgress >= 0 && ScrollProgress <= 1) //ignore bouncing
         {
             var currentIndex = 0;
             if (ScrollProgress > 0)
@@ -66,7 +99,7 @@ public class CarouselWithTransitions : SkiaCarousel
 
             var progress = this.TransitionProgress;
 
-            if (IndexFrom != currentIndex)
+            if (IndexFrom != currentIndex || !initialized)
             {
                 if (currentIndex < MaxIndex)
                 {
@@ -75,21 +108,7 @@ public class CarouselWithTransitions : SkiaCarousel
 
                     if (IndexToLast != IndexTo || IndexFromLast != IndexFrom)
                     {
-                        IndexToLast = IndexTo;
-                        IndexFromLast = IndexFrom;
-
-                        var viewFrom = ChildrenFactory.GetChildAt(IndexFrom);
-                        var viewTo = ChildrenFactory.GetChildAt(IndexTo);
-
-                        if (viewFrom == null || viewTo == null)
-                        {
-                            throw new ApplicationException("Unexpected null");
-                        }
-
-                        Effect.ControlFrom = viewFrom;
-                        Effect.ControlTo = viewTo;
-
-                        //Debug.WriteLine($"Set new sources {IndexFrom} ({viewFrom.BindingContext}) <=> {IndexTo} ({viewTo.BindingContext}) at progress {progress:0.00}, scroll {ScrollProgress:0.00}");
+                        SetupFromTo();
                     }
 
                 }
@@ -101,6 +120,8 @@ public class CarouselWithTransitions : SkiaCarousel
                 OnFromToChanged();
             }
 
+            initialized = true;
+
             Effect.Progress = progress;
 
             Effect.Update();
@@ -108,10 +129,13 @@ public class CarouselWithTransitions : SkiaCarousel
 
     }
 
+
+
     //to skip default slides animation via translation, not calling base
     protected override void AnimateVisibleChild(SkiaControl view, Vector2 position)
     {
     }
+
 
     private int IndexFrom = -1;
     private int IndexTo = -1;

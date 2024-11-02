@@ -1,4 +1,5 @@
 using AppoMobi.Specials;
+using System.Diagnostics;
 using SKBitmap = SkiaSharp.SKBitmap;
 
 namespace Sandbox.Views.Controls;
@@ -408,6 +409,8 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
     {
         if (_controlTo?.RenderObject?.Image == null || !ParentReady())
             return;
+
+        Debug.WriteLine($"ImportCacheTo {_controlTo.BindingContext}");
 
         CompileSecondaryTexture(_controlTo.RenderObject.Image);
     }

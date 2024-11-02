@@ -327,7 +327,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        /// Used for optimization process, for example, to avid changing ItemSource several times before the first draw.
+        /// Used for optimization process, for example, to avoid changing ItemSource several times before the first draw.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="action"></param>
@@ -1036,7 +1036,7 @@ namespace DrawnUi.Maui.Draw
             if (child.Control != null && !child.Control.IsDisposing && !child.Control.IsDisposed &&
             !child.Control.InputTransparent && child.Control.CanDraw)
             {
-                var transformed = child.Control.ApplyTransforms(child.Rect);//todo HitRect
+                var transformed = child.Control.ApplyTransforms(child.HitRect);
                 inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
             }
 
@@ -1167,6 +1167,10 @@ namespace DrawnUi.Maui.Draw
                             {
                                 if (args.Type == TouchActionResult.Tapped && CommandChildTapped != null)
                                 {
+                                    if (Tag == "StackItemsV")
+                                    {
+                                        var stop = child.Control.BindingContext;
+                                    }
                                     CommandChildTapped.Execute(child);
                                 }
                                 //Trace.WriteLine($"[HIT] for cell {i} at Y {y:0.0}");
@@ -1956,75 +1960,47 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public static readonly BindableProperty CameraAngleXProperty
-            = BindableProperty.Create(nameof(CameraAngleX),
-                typeof(float), typeof(SkiaControl),
-                0.0f, propertyChanged: NeedRepaint);
 
-        public float CameraAngleX
+        public static readonly BindableProperty TranslationZProperty
+            = BindableProperty.Create(nameof(TranslationZ),
+                typeof(double), typeof(SkiaControl),
+                0.0, propertyChanged: NeedRepaint);
+        /// <summary>
+        /// Gets or sets Z-perspective translation. This is a bindable property.
+        /// </summary>
+        /// <remarks>Rotation is applied relative to <see cref="AnchorX"/> and <see cref="AnchorY" />.</remarks>
+        public double TranslationZ
         {
             get
             {
-                return (float)GetValue(CameraAngleXProperty);
+                return (double)GetValue(TranslationZProperty);
             }
             set
             {
-                SetValue(CameraAngleXProperty, value);
+                SetValue(TranslationZProperty, value);
             }
         }
 
-        public static readonly BindableProperty CameraAngleYProperty
-            = BindableProperty.Create(nameof(CameraAngleY),
-                typeof(float), typeof(SkiaControl),
-                0.0f, propertyChanged: NeedRepaint);
+        public static readonly BindableProperty RotationZProperty
+            = BindableProperty.Create(nameof(RotationZ),
+                typeof(double), typeof(SkiaControl),
+                0.0, propertyChanged: NeedRepaint);
 
-        public float CameraAngleY
+        /// <summary>
+        /// Gets or sets the rotation (in degrees) about the Z-axis (perspective rotation) when the element is rendered. This is a bindable property.
+        /// </summary>
+        /// <remarks>Rotation is applied relative to <see cref="AnchorX"/> and <see cref="AnchorY" />.</remarks>
+        public double RotationZ
         {
             get
             {
-                return (float)GetValue(CameraAngleYProperty);
+                return (double)GetValue(RotationZProperty);
             }
             set
             {
-                SetValue(CameraAngleYProperty, value);
+                SetValue(RotationZProperty, value);
             }
         }
-
-        public static readonly BindableProperty CameraAngleZProperty
-            = BindableProperty.Create(nameof(CameraAngleZ),
-                typeof(float), typeof(SkiaControl),
-                0.0f, propertyChanged: NeedRepaint);
-
-        public float CameraAngleZ
-        {
-            get
-            {
-                return (float)GetValue(CameraAngleZProperty);
-            }
-            set
-            {
-                SetValue(CameraAngleZProperty, value);
-            }
-        }
-
-        public static readonly BindableProperty CameraTranslationZProperty
-            = BindableProperty.Create(nameof(CameraTranslationZ),
-                typeof(float), typeof(SkiaControl),
-                0.0f, propertyChanged: NeedRepaint);
-
-        public float CameraTranslationZ
-        {
-            get
-            {
-                return (float)GetValue(CameraTranslationZProperty);
-            }
-            set
-            {
-                SetValue(CameraTranslationZProperty, value);
-            }
-        }
-
-
 
         //public new static readonly BindableProperty VerticalOptionsProperty = BindableProperty.Create(nameof(VerticalOptions),
         //    typeof(LayoutOptions),
@@ -2087,38 +2063,38 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public static readonly BindableProperty TransformPivotPointXProperty
-        = BindableProperty.Create(nameof(TransformPivotPointX),
-        typeof(double), typeof(SkiaControl),
-        0.5, propertyChanged: NeedRepaint);
-        public double TransformPivotPointX
-        {
-            get
-            {
-                return (double)GetValue(TransformPivotPointXProperty);
-            }
-            set
-            {
-                SetValue(TransformPivotPointXProperty, value);
-            }
-        }
+        //public static readonly BindableProperty TransformPivotPointXProperty
+        //= BindableProperty.Create(nameof(TransformPivotPointX),
+        //typeof(double), typeof(SkiaControl),
+        //0.5, propertyChanged: NeedRepaint);
+        //public double TransformPivotPointX
+        //{
+        //    get
+        //    {
+        //        return (double)GetValue(TransformPivotPointXProperty);
+        //    }
+        //    set
+        //    {
+        //        SetValue(TransformPivotPointXProperty, value);
+        //    }
+        //}
 
-        public static readonly BindableProperty TransformPivotPointYProperty
-        = BindableProperty.Create(nameof(TransformPivotPointY),
-        typeof(double), typeof(SkiaControl),
-        0.5, propertyChanged: NeedRepaint);
+        //public static readonly BindableProperty TransformPivotPointYProperty
+        //= BindableProperty.Create(nameof(TransformPivotPointY),
+        //typeof(double), typeof(SkiaControl),
+        //0.5, propertyChanged: NeedRepaint);
 
-        public double TransformPivotPointY
-        {
-            get
-            {
-                return (double)GetValue(TransformPivotPointYProperty);
-            }
-            set
-            {
-                SetValue(TransformPivotPointYProperty, value);
-            }
-        }
+        //public double TransformPivotPointY
+        //{
+        //    get
+        //    {
+        //        return (double)GetValue(TransformPivotPointYProperty);
+        //    }
+        //    set
+        //    {
+        //        SetValue(TransformPivotPointYProperty, value);
+        //    }
+        //}
 
 
         private static void OnControlClipFromChanged(BindableObject bindable, object oldvalue, object newvalue)
@@ -3453,7 +3429,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="context"></param>
         public virtual void SetInheritedBindingContext(object context)
         {
-            BindingContext ??= context; //only if existing is null
+            BindingContext = context;
         }
 
         /// <summary>
@@ -3461,7 +3437,6 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual void ApplyBindingContext()
         {
-
             foreach (var content in this.Views)
             {
                 content.SetInheritedBindingContext(BindingContext);
@@ -3798,7 +3773,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public bool IsMeasuring { get; protected internal set; }
 
-        protected object LockMeasure = new();
+        public object LockMeasure = new();
 
         /// <summary>
         /// Parameters in PIXELS. sets IsLayoutDirty = true;
@@ -4086,8 +4061,13 @@ namespace DrawnUi.Maui.Draw
         public virtual void OptionalOnBeforeDrawing()
         {
             Superview?.UpdateRenderingChains(this);
-        }
 
+            if (NeedRemeasuring)
+            {
+                NeedRemeasuring = false;
+                Invalidate();
+            }
+        }
 
         /// <summary>
         /// do not ever erase background
@@ -4281,11 +4261,12 @@ namespace DrawnUi.Maui.Draw
 
             ExecutePostAnimators(context, scale);
 
-            if (NeedRemeasuring)
+            if (NeedRemeasuring || NeedMeasure)
             {
                 NeedRemeasuring = false;
+                InvalidateMeasure();
             }
-
+            else
             if (UsesCacheDoubleBuffering
                 && RenderObject != null)
             {
@@ -4546,6 +4527,7 @@ namespace DrawnUi.Maui.Draw
                 _paintWithOpacity ??= new SKPaint
                 {
                     IsAntialias = IsDistorted,
+                    IsDither = IsDistorted,
                     FilterQuality = IsDistorted ? SKFilterQuality.Medium : SKFilterQuality.None
                 };
 
@@ -4590,11 +4572,11 @@ namespace DrawnUi.Maui.Draw
             var moveX = (int)Math.Round(UseTranslationX * RenderingScale);
             var moveY = (int)Math.Round(UseTranslationY * RenderingScale);
 
-            float pivotX = (float)(destination.Left + destination.Width * TransformPivotPointX);
-            float pivotY = (float)(destination.Top + destination.Height * TransformPivotPointY);
+            float pivotX = (float)(destination.Left + destination.Width * AnchorX);
+            float pivotY = (float)(destination.Top + destination.Height * AnchorY);
 
-            var centerX = moveX + destination.Left + destination.Width * TransformPivotPointX;
-            var centerY = moveY + destination.Top + destination.Height * TransformPivotPointY;
+            var centerX = moveX + destination.Left + destination.Width * AnchorX;
+            var centerY = moveY + destination.Top + destination.Height * AnchorY;
 
             var skewX = SkewX > 0 ? (float)Math.Tan(Math.PI * SkewX / 180f) : 0f;
             var skewY = SkewY > 0 ? (float)Math.Tan(Math.PI * SkewY / 180f) : 0f;
@@ -4619,35 +4601,40 @@ namespace DrawnUi.Maui.Draw
 
             var drawingMatrix = SKMatrix.CreateTranslation((float)-pivotX, (float)-pivotY).PostConcat(matrixTransforms);
 
-            if (CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0)
+            if (draw3d || RotationX != 0 || RotationY != 0 || RotationZ != 0 || TranslationZ != 0)
             {
+                draw3d = true;
+
                 Helper3d ??= new();
 #if SKIA3
                 Helper3d.Reset();
-                Helper3d.RotateXDegrees(CameraAngleX);
-                Helper3d.RotateYDegrees(CameraAngleY);
-                Helper3d.RotateZDegrees(CameraAngleZ);
-
-                //if (CameraTranslationZ != 0)
-                Helper3d.Translate(0, 0, CameraTranslationZ);
+                Helper3d.RotateXDegrees((float)RotationX);
+                Helper3d.RotateYDegrees((float)RotationY);
+                Helper3d.RotateZDegrees((float)RotationZ);
+                Helper3d.Translate(0, 0, (float)TranslationZ);
 
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
 #else
                 Helper3d.Save();
-                Helper3d.RotateXDegrees(CameraAngleX);
-                Helper3d.RotateYDegrees(CameraAngleY);
-                Helper3d.RotateZDegrees(CameraAngleZ);
-                Helper3d.TranslateZ(CameraTranslationZ);
+                Helper3d.RotateXDegrees((float)RotationX);
+                Helper3d.RotateYDegrees((float)RotationY);
+                Helper3d.RotateZDegrees((float)RotationZ);
+                Helper3d.TranslateZ((float)TranslationZ);
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
                 Helper3d.Restore();
 #endif
+
+                draw3d = !(RotationX != 0 || RotationY != 0 || RotationZ != 0 || TranslationZ != 0);
             }
+
 
             drawingMatrix = drawingMatrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY))
                                           .PostConcat(ctx.Canvas.TotalMatrix);
 
             ctx.Canvas.SetMatrix(drawingMatrix);
         }
+
+        private bool draw3d;
 
         public static bool IsSimpleRectangle(SKPath path)
         {
@@ -4978,8 +4965,8 @@ namespace DrawnUi.Maui.Draw
                                          || ScaleY != 1f || ScaleX != 1f
                                          || Perspective1 != 0f || Perspective2 != 0f
                                          || SkewX != 0 || SkewY != 0
-                                         || Rotation != 0
-                                         || CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0;
+                                         || Rotation != 0 || TranslationZ != 0
+                                         || RotationX != 0 || RotationY != 0 || RotationZ != 0;
             }
         }
 
@@ -4991,8 +4978,8 @@ namespace DrawnUi.Maui.Draw
                 return
                     Rotation != 0 || ScaleY != 1f || ScaleX != 1f
                     || Perspective1 != 0f || Perspective2 != 0f
-                    || SkewX != 0 || SkewY != 0
-                    || CameraAngleX != 0 || CameraAngleY != 0 || CameraAngleZ != 0;
+                    || SkewX != 0 || SkewY != 0 || TranslationZ != 0
+                    || RotationX != 0 || RotationY != 0 || RotationZ != 0;
             }
         }
 
@@ -5026,12 +5013,8 @@ namespace DrawnUi.Maui.Draw
 
                         _paintWithOpacity.Color = SKColors.White;
                         _paintWithOpacity.IsAntialias = true;
+                        _paintWithOpacity.IsDither = IsDistorted;
                         _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
-
-                        if (Tag == "LabelWelcome")
-                        {
-                            var stop = 1;
-                        }
 
                         cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
                     }
@@ -5531,8 +5514,8 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaControl control)
             {
-                control.Update();
                 //control.PostponeInvalidation(nameof(Update), control.Update);
+                control.Update();
             }
         }
 
@@ -5998,9 +5981,7 @@ namespace DrawnUi.Maui.Draw
                 if (parent == null)
                 {
                     Parent = null;
-                    //todo maybe enable to avoid potential memory leaks
-                    //todo investigate perf when enabled
-                    //BindingContext = null;
+                    SetInheritedBindingContext(null);
                     return;
                 }
 
@@ -6019,7 +6000,8 @@ namespace DrawnUi.Maui.Draw
 
                 if (parent is IDrawnBase control)
                 {
-                    SetInheritedBindingContext(control.BindingContext);
+                    if (this.BindingContext == null)
+                        SetInheritedBindingContext(control.BindingContext);
                 }
 
                 InvalidateInternal();

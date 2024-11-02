@@ -12,22 +12,26 @@ if "%~1"=="" (
 REM Define the source directory for the packages
 set "source_dir=E:\Nugets"
 
-REM Define the file mask for the packages
-set "file_mask=DrawnUi.Maui*.1.2.4.1*.nupkg"
-REM set "file_mask=AppoMobi.Maui.DrawnUi.1.2.4.1*.*nupkg"
+REM Define the list of file masks for the packages
+set "mask[1]=DrawnUi.Maui*.1.2.4.7*.nupkg"
+set "mask[2]=AppoMobi.Maui.DrawnUi.1.2.4.7*.*nupkg"
+set "mask_count=2"
 
-REM Loop through each package file in the source directory
-for %%f in ("%source_dir%\%file_mask%") do (
-    echo Uploading %%f to NUGET.ORG with API key.
-    nuget push %%f -Source https://api.nuget.org/v3/index.json -ApiKey %APIKEY%
-    if errorlevel 1 (
-        echo An error occurred while uploading %%f.
-    ) else (
-        echo %%f uploaded successfully.
+REM Loop through each file mask
+for /L %%i in (1,1,%mask_count%) do (
+    set "file_mask=!mask[%%i]!"
+    echo Using file mask "!file_mask!"
+    REM Loop through each package file matching the mask in the source directory
+    for %%f in ("!source_dir!\!file_mask!") do (
+        echo Uploading "%%f" to NUGET.ORG with API key.
+        nuget push "%%f" -Source https://api.nuget.org/v3/index.json -ApiKey %APIKEY%
+        if errorlevel 1 (
+            echo An error occurred while uploading "%%f".
+        ) else (
+            echo "%%f" uploaded successfully.
+        )
     )
 )
 
 pause
 endlocal
-
- 
