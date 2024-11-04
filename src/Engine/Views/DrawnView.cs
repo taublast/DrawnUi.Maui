@@ -651,15 +651,14 @@ namespace DrawnUi.Maui.Views
 
         protected void FixDensity()
         {
-            if (RenderingScale <= 0.0)
+            if (_renderingScale <= 0.0)
             {
-                RenderingScale = (float)GetDensity();
-
-                if (RenderingScale <= 0.0)
+                var scale = (float)GetDensity();
+                if (scale <= 0.0)
                 {
-                    RenderingScale = (float)(CanvasView.CanvasSize.Width / this.Width);
+                    scale = (float)(CanvasView.CanvasSize.Width / this.Width);
                 }
-                OnDensityChanged();
+                RenderingScale = scale;
             }
         }
 
@@ -999,13 +998,6 @@ namespace DrawnUi.Maui.Views
 
             return (startPoint.x, startPoint.y, endPoint.x, endPoint.y);
         }
-
-
-        public virtual void OnDensityChanged()
-        {
-            Update(); //todo for children!!!!!
-        }
-
 
         #region DISPOSE BY XAMARIN FORMS
 
@@ -1842,7 +1834,22 @@ namespace DrawnUi.Maui.Views
 
         public static readonly BindableProperty RenderingScaleProperty = BindableProperty.Create(nameof(RenderingScale), typeof(float), typeof(DrawnView),
             -1.0f,
-            propertyChanged: RedrawCanvas);
+            propertyChanged: (b, o, n) =>
+            {
+                var control = b as DrawnView;
+                {
+                    if (control != null && !control.IsDisposed)
+                    {
+                        control.OnDensityChanged();
+                    }
+                }
+            });
+
+        public virtual void OnDensityChanged()
+        {
+            Update(); //todo for children!!!!!
+        }
+
         public float RenderingScale
         {
             get
@@ -1856,10 +1863,12 @@ namespace DrawnUi.Maui.Views
             }
             set
             {
+                _renderingScale = value;
                 SetValue(RenderingScaleProperty, value);
             }
         }
 
+        private float _renderingScale = -1;
 
         private static void OnHardwareModeChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
@@ -1989,7 +1998,6 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-        //static int countRedraws = 0;
         protected static void RedrawCanvas(BindableObject bindable, object oldvalue, object newvalue)
         {
 
@@ -2001,7 +2009,6 @@ namespace DrawnUi.Maui.Views
                 }
             }
         }
-
 
         protected override void OnBindingContextChanged()
         {
