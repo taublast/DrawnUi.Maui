@@ -19,16 +19,11 @@ https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b
 
 ## What's New
 
-* Nuget 1.2.4.7
-* Transforms properties names changed to correspond to standart MAUI
-* SkiaButton new actions to be used from code-behind
-* SkiaSvg ContentProperty set to SvgString
-* Animators start cancellation fix
-* BindingContext propagation fixes and tuning
-* Fix XAML hotreload break due to fontattributes and add Italic
-* Layout fixes, grid code-behind extension methods
-* Grid layout fixes: gestures hitbox, Auto definition measurement
-* Third-party nugets updated 
+* Nuget 1.2.4.8
+* Implemented `Background` property inside `SkiaControl`. You can use MAUI usual syntax for gradients and solid color backgrounds.
+* Fixed an old bug with RenderingScale setter never being called, removed linked random native crash.
+* Fixed thumb location when clicked on trail of a `SkiaSlider`.
+* Changed grid col/row default definitions to `Auto` fixing layout bug. Can change this via `DefaultRowDefinition` and `DefaultColumnDefinition` if needed.
 
 ## Demo Apps
 
@@ -108,22 +103,6 @@ ___Please star ⭐ if you like it!___
 	* Perspective1
 	* Perspective2
 
-## Published Apps powered by DrawnUI For .Net MAUI
-
-### Bug ID: Insect Identifier AI
-
-_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
-
-GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
-
-### Racebox
-
-_MAUI pages with canvases, custom navigation. All scrolls, cells collections, maps, buttons, labels and custom controls are drawn._
-
-iOS: https://apps.apple.com/us/app/racebox-vehicle-dynamics/id6444165250  
-GooglePlay: https://play.google.com/store/apps/details?id=com.raceboxcompanion.app
-
-
  ## Development Notes
 
 * All files to be consumed (images etc) must be placed inside the MAUI app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
@@ -175,6 +154,11 @@ As you can see in this example the Maui view `Canvas` will adapt its size to dra
 
 Please check the demo app, it contains many examples of usage.
 
+#### Important differences between DrawnUI and Xamarin.Forms/Maui layouts:
+
+* `HorizontalOptions` and `VerticalOptions` defaults are not `Fill` but `Start`. Request size explicitly or set some options to `Fill`, otherwise your control will take zero space.
+* `Grid` layout type default Row- and ColumnSpacing are not 8 but 1.
+
 ### MAUI Controls Replication
 
 #### Draw a line or reserve space
@@ -197,6 +181,11 @@ Use a simple `SkiaControl` with height and background color set. For complex sha
 #### Simulate MAUI StackLayout with a BidableLayout.ItemTemplate 
 
 `SkiaScroll` with `Virtualisation`=`Disabled` + `SkiaLayout` of type `Column`/`Row` (`ItemTemplate`=...) do not forget to cache your cell template. 
+
+## MAUI Compatibility Limitations
+
+* Binding RelativeSource with FindAncestorBindingContext not working yet.
+
 
 ## Images
 
@@ -649,11 +638,25 @@ Actually for Windows only, this plays and controls Rive animation files. Other p
 A control deriving from SkiaShape that can be used to create hover effects. 
 It will render a mask over its children when hovered, think of it as an inverted shape.
 
-## MAUI Compatibility Limitations
-
-* Binding RelativeSource with FindAncestorBindingContext not working yet.
 
 ### Docs under construction
+
+
+## Published Apps powered by DrawnUI For .Net MAUI
+
+### Bug ID: Insect Identifier AI
+
+_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
+
+GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
+
+### Racebox
+
+_MAUI pages with canvases, custom navigation. All scrolls, cells collections, maps, buttons, labels and custom controls are drawn._
+
+iOS: https://apps.apple.com/us/app/racebox-vehicle-dynamics/id6444165250  
+GooglePlay: https://play.google.com/store/apps/details?id=com.raceboxcompanion.app
+
 
 
  

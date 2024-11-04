@@ -28,7 +28,39 @@
                 Tag="Wrapper"
                 VerticalOptions="Fill">
  
-                <draw:SkiaShape
+                <draw:SkiaLabel
+                    VerticalOptions="Center"
+                    DropShadowColor="#33333333"
+                    DropShadowSize="4"
+                    FontFamily="FontTextTitle"
+                    FontSize="44"
+                    HorizontalOptions="Center"
+                    StrokeColor="White"
+                    StrokeWidth="2"
+                    Text="Sandbox"
+                    UseCache="None">
+                    <draw:SkiaLabel.FillGradient>
+
+                        <draw:SkiaGradient
+                            EndXRatio="0"
+                            EndYRatio="1"
+                            StartXRatio="0"
+                            StartYRatio="0"
+                            Type="Linear">
+                            <draw:SkiaGradient.Colors>
+                                <Color>White</Color>
+                                <Color>Yellow</Color>
+                                <Color>Orange</Color>
+                                <Color>Red</Color>
+                                <Color>DarkRed</Color>
+                            </draw:SkiaGradient.Colors>
+                        </draw:SkiaGradient>
+
+                    </draw:SkiaLabel.FillGradient>
+                </draw:SkiaLabel>
+
+
+                <!--<draw:SkiaShape
                     BackgroundColor="White"
                     VerticalOptions="Center"
                     StrokeWidth="0"
@@ -56,7 +88,7 @@
                         VerticalOptions="Center"
                         Type="Path" />
 
-                </draw:SkiaShape>
+                </draw:SkiaShape>-->
 
                 <draw:SkiaLabelFps
                     Margin="0,0,4,24"

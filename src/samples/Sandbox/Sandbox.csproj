@@ -213,6 +213,11 @@
     <ItemGroup>
  
  
+      <Compile Update="TestPageGridIssue.xaml.cs">
+        <DependentUpon>TestPageGridIssue.xaml</DependentUpon>
+      </Compile>
+ 
+ 
       <Compile Update="Views\MainPageShadersCarousel.xaml.cs">
         <DependentUpon>MainPageShadersCarousel.xaml</DependentUpon>
       </Compile>
@@ -350,6 +355,14 @@
     <MauiAsset Update="Resources\Raw\Svg\dotnet_bot.svg">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
+  </ItemGroup>
+
+ 
+
+  <ItemGroup>
+    <MauiXaml Update="TestPageGridIssue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
 

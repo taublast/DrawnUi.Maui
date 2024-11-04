@@ -449,10 +449,10 @@ namespace DrawnUi.Maui.Draw
 
 
         protected virtual void PaintBackground(SkiaDrawingContext ctx,
-            SKRect outRect,
-            SKPoint[] radii,
-            float minSize,
-            SKPaint paint)
+           SKRect outRect,
+           SKPoint[] radii,
+           float minSize,
+           SKPaint paint)
         {
             paint.BlendMode = this.FillBlendMode;
 
@@ -697,22 +697,6 @@ namespace DrawnUi.Maui.Draw
                 {
                     PaintBackground(ctx, outRect, radii, minSize, RenderingPaint);
                 }
-                /*
-                var hasBackgroundColor = SetupBackgroundPaint(RenderingPaint, outRect);
-
-                //add gradient
-                //if gradient opacity is not 1, then we need to fill with background color first
-                //then on top draw semi-transparent gradient
-                if (FillGradient?.Opacity != 1 && hasBackgroundColor)
-                {
-                    //paint solid color
-                    PaintBackground(ctx, outRect, radii, minSize, RenderingPaint);
-                }
-
-                //render gradient
-                if (SetupGradient(RenderingPaint, FillGradient, outRect))
-                    PaintBackground(ctx, outRect, radii, minSize, RenderingPaint);
-                */
             });
 
             //draw children views clipped with shape
