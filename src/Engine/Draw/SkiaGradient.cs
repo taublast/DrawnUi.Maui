@@ -3,9 +3,10 @@ using System.Collections.Specialized;
 
 namespace DrawnUi.Maui.Draw;
 
-public class SkiaGradient : BindableObject, ICloneable
+public partial class SkiaGradient : BindableObject, ICloneable
 {
     public ISkiaControl Parent { get; set; }
+
     public object Clone()
     {
         return new SkiaGradient
@@ -31,11 +32,7 @@ public class SkiaGradient : BindableObject, ICloneable
         }
     }
 
-    //-------------------------------------------------------------
-    // Type
-    //-------------------------------------------------------------
-    private const string nameType = "Type";
-    public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameType, typeof(GradientType), typeof(SkiaGradient),
+    public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type), typeof(GradientType), typeof(SkiaGradient),
         GradientType.None,
         propertyChanged: RedrawCanvas);
     public GradientType Type
@@ -44,9 +41,6 @@ public class SkiaGradient : BindableObject, ICloneable
         set { SetValue(TypeProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // BlendMode
-    //-------------------------------------------------------------
     public static readonly BindableProperty BlendModeProperty = BindableProperty.Create(nameof(BlendMode),
         typeof(SKBlendMode), typeof(SkiaGradient),
         SKBlendMode.SrcOver,
@@ -57,9 +51,6 @@ public class SkiaGradient : BindableObject, ICloneable
         set { SetValue(BlendModeProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // TileMode
-    //-------------------------------------------------------------
     public static readonly BindableProperty TileModeProperty = BindableProperty.Create(nameof(TileMode), typeof(SKShaderTileMode), typeof(SkiaGradient),
         SKShaderTileMode.Clamp,
         propertyChanged: RedrawCanvas);
@@ -69,11 +60,8 @@ public class SkiaGradient : BindableObject, ICloneable
         set { SetValue(TileModeProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // Light
-    //-------------------------------------------------------------
-    private const string nameLight = "Light";
-    public static readonly BindableProperty LightProperty = BindableProperty.Create(nameLight, typeof(double), typeof(SkiaGradient), 1.0,
+
+    public static readonly BindableProperty LightProperty = BindableProperty.Create(nameof(Light), typeof(double), typeof(SkiaGradient), 1.0,
         propertyChanged: RedrawCanvas);
     public double Light
     {
@@ -81,9 +69,6 @@ public class SkiaGradient : BindableObject, ICloneable
         set { SetValue(LightProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // Opacity
-    //-------------------------------------------------------------
     public static readonly BindableProperty OpacityProperty = BindableProperty.Create(nameof(Opacity),
         typeof(float), typeof(SkiaGradient),
         1.0f,
@@ -94,12 +79,7 @@ public class SkiaGradient : BindableObject, ICloneable
         set { SetValue(OpacityProperty, value); }
     }
 
-
-    //-------------------------------------------------------------
-    // StartXRatio
-    //-------------------------------------------------------------
-    private const string nameStartXRatio = "StartXRatio";
-    public static readonly BindableProperty StartXRatioProperty = BindableProperty.Create(nameStartXRatio, typeof(float), typeof(SkiaGradient), 0.1f,
+    public static readonly BindableProperty StartXRatioProperty = BindableProperty.Create(nameof(StartXRatio), typeof(float), typeof(SkiaGradient), 0.1f,
         propertyChanged: RedrawCanvas);
     public float StartXRatio
     {
@@ -107,11 +87,7 @@ public class SkiaGradient : BindableObject, ICloneable
         set { SetValue(StartXRatioProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // StartYRatio
-    //-------------------------------------------------------------
-    private const string nameStartYRatio = "StartYRatio";
-    public static readonly BindableProperty StartYRatioProperty = BindableProperty.Create(nameStartYRatio, typeof(float), typeof(SkiaGradient), 1.0f,
+    public static readonly BindableProperty StartYRatioProperty = BindableProperty.Create(nameof(StartYRatio), typeof(float), typeof(SkiaGradient), 1.0f,
         propertyChanged: RedrawCanvas);
     public float StartYRatio
     {
@@ -119,11 +95,7 @@ public class SkiaGradient : BindableObject, ICloneable
         set { SetValue(StartYRatioProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // EndXRatio
-    //-------------------------------------------------------------
-    private const string nameEndXRatio = "EndXRatio";
-    public static readonly BindableProperty EndXRatioProperty = BindableProperty.Create(nameEndXRatio, typeof(float), typeof(SkiaGradient), 0.5f,
+    public static readonly BindableProperty EndXRatioProperty = BindableProperty.Create(nameof(EndXRatio), typeof(float), typeof(SkiaGradient), 0.5f,
         propertyChanged: RedrawCanvas);
     public float EndXRatio
     {
@@ -131,11 +103,7 @@ public class SkiaGradient : BindableObject, ICloneable
         set { SetValue(EndXRatioProperty, value); }
     }
 
-    //-------------------------------------------------------------
-    // EndYRatio
-    //-------------------------------------------------------------
-    private const string nameEndYRatio = "EndYRatio";
-    public static readonly BindableProperty EndYRatioProperty = BindableProperty.Create(nameEndYRatio, typeof(float), typeof(SkiaGradient), 0.0f,
+    public static readonly BindableProperty EndYRatioProperty = BindableProperty.Create(nameof(EndYRatio), typeof(float), typeof(SkiaGradient), 0.0f,
         propertyChanged: RedrawCanvas);
     public float EndYRatio
     {
@@ -205,7 +173,6 @@ public class SkiaGradient : BindableObject, ICloneable
 
     #endregion
 
-
     #region COLOR POSITIONS
 
 
@@ -267,8 +234,5 @@ public class SkiaGradient : BindableObject, ICloneable
     }
 
     #endregion
-
-
-
 
 }

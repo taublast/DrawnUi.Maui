@@ -226,45 +226,30 @@ namespace DrawnUi.Maui.Draw
         /// <param name="destination"></param>
         public bool SetupGradient(SKPaint paint, SkiaGradient gradient, SKRect destination)
         {
-
-
-            if (gradient != null && paint != null)
+            if (paint != null)
             {
-                if (paint.Color.Alpha == 0)
+                if (gradient != null)
                 {
-                    paint.Color = SKColor.FromHsl(0, 0, 0);
+                    if (paint.Color.Alpha == 0)
+                    {
+                        paint.Color = SKColor.FromHsl(0, 0, 0);
+                    }
+
+                    paint.Color = SKColors.White;
+                    paint.BlendMode = gradient.BlendMode;
+
+                    var kill = paint.Shader;
+                    paint.Shader = CreateGradient(destination, gradient);
+                    kill?.Dispose();
+
+                    return true;
                 }
-
-                paint.Color = SKColors.White;
-                paint.BlendMode = gradient.BlendMode;
-
-                var kill = paint.Shader;
-                paint.Shader = CreateGradient(destination, gradient);
-                kill?.Dispose();
-
-                return true;
-
-                //if (LastGradient == null || LastGradient.Gradient != gradient ||
-                //    LastGradient.Destination != destination)
-                //{
-                //    var kill = LastGradient;
-                //    LastGradient = new()
-                //    {
-                //        Shader = CreateGradient(destination, gradient),
-                //        Destination = destination,
-                //        Gradient = gradient
-                //    };
-                //    kill?.Dispose();
-                //}
-
-                //var old = paint.Shader;
-                //paint.Shader = LastGradient.Shader;
-                //if (old != paint.Shader)
-                //{
-                //    old?.Dispose();
-                //}
-
-                //return true;
+                else
+                {
+                    var kill = paint.Shader;
+                    paint.Shader = null;
+                    kill?.Dispose();
+                }
             }
 
             return false;

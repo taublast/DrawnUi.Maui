@@ -1,5 +1,4 @@
 ﻿using DrawnUi.Maui.Infrastructure.Enums;
-using DrawnUi.Maui.Infrastructure.Extensions;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -2013,78 +2012,6 @@ namespace DrawnUi.Maui.Views
                 view.SetInheritedBindingContext(BindingContext);
             }
         }
-
-        #region GRADIENTS
-
-        public SKShader CreateGradientAsShader(SKRect destination, SkiaGradient gradient)
-        {
-            if (gradient != null && gradient.Type != GradientType.None)
-            {
-                var colors = new List<SKColor>();
-                foreach (var color in gradient.Colors)
-                {
-                    var usingColor = color;
-                    if (gradient.Light < 1.0)
-                    {
-                        usingColor = usingColor.MakeDarker(100 - gradient.Light * 100);
-                    }
-                    else if (gradient.Light > 1.0)
-                    {
-                        usingColor = usingColor.MakeLighter(gradient.Light * 100 - 100);
-                    }
-
-                    var newAlpha = usingColor.Alpha * gradient.Opacity;
-                    usingColor = usingColor.WithAlpha(newAlpha);
-                    colors.Add(usingColor.ToSKColor());
-                }
-
-                float[] colorPositions = null;
-                if (gradient.ColorPositions?.Count == colors.Count)
-                {
-                    colorPositions = gradient.ColorPositions.Select(x => (float)x).ToArray();
-                }
-
-                switch (gradient.Type)
-                {
-                    case GradientType.Sweep:
-
-                    return SKShader.CreateSweepGradient(
-                         new SKPoint(destination.Left + destination.Width / 2.0f,
-                            destination.Top + destination.Height / 2.0f),
-                        colors.ToArray(),
-                        colorPositions,
-                        gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
-
-                    case GradientType.Circular:
-                    return SKShader.CreateRadialGradient(
-                        new SKPoint(destination.Left + destination.Width / 2.0f,
-                            destination.Top + destination.Height / 2.0f),
-                        Math.Max(destination.Width, destination.Height) / 2.0f,
-                        colors.ToArray(),
-                        colorPositions,
-                        gradient.TileMode);
-
-                    case GradientType.Linear:
-                    default:
-                    return SKShader.CreateLinearGradient(
-                        new SKPoint(destination.Left + destination.Width * gradient.StartXRatio,
-                            destination.Top + destination.Height * gradient.StartYRatio),
-                        new SKPoint(destination.Left + destination.Width * gradient.EndXRatio,
-                            destination.Top + destination.Height * gradient.EndYRatio),
-                        colors.ToArray(),
-                        colorPositions,
-                        gradient.TileMode);
-                    break;
-                }
-
-            }
-
-            return null;
-        }
-
-
-
-        #endregion
 
         #region SUBVIEWS
 

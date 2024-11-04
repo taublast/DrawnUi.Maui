@@ -5298,24 +5298,71 @@ namespace DrawnUi.Maui.Draw
         private SKPath clipPreviousCachePath = new();
 
         /// <summary>
-        /// Pixels, if you see no Scale parameter
+        /// Applies Background and BackgroundColor properties to paint inside destination. Returns false if there is nothing to paint painted.
+        /// </summary>
+        /// <param name="paint"></param>
+        /// <param name="destination"></param>
+        /// <returns></returns>
+        protected virtual bool SetupBackgroundPaint(SKPaint paint, SKRect destination)
+        {
+            if (paint == null)
+                return false;
+
+            var color = this.BackgroundColor;
+            var gradient = FillGradient;
+
+            if (Background != null)
+            {
+                if (Background is SolidColorBrush solid)
+                {
+                    if (solid.Color != null)
+                        color = solid.Color;
+                }
+                else
+                if (Background is GradientBrush gradientBrush)
+                {
+                    gradient = SkiaGradient.FromBrush(gradientBrush);
+                }
+            }
+            else
+            {
+                if (BackgroundColor != null)
+                {
+                    color = BackgroundColor;
+                }
+            }
+
+            if ((color == null || color.Alpha == 0) && gradient == null) return false;
+
+            var backgroundColor = SKColors.Black; //used for gradient shader background
+            if (color != null)
+                backgroundColor = color.ToSKColor();
+
+            paint.Color = backgroundColor;
+            paint.Style = SKPaintStyle.StrokeAndFill;
+            paint.BlendMode = this.FillBlendMode;
+
+            SetupGradient(paint, gradient, destination);
+
+            return true;
+        }
+
+        /// <summary>
+        /// destination in pixels, if you see no Scale parameter
         /// </summary>
         /// <param name="canvas"></param>
         /// <param name="destination"></param>
         public virtual void PaintTintBackground(SKCanvas canvas, SKRect destination)
         {
-            if (BackgroundColor != null && BackgroundColor != TransparentColor)
+            if (PaintSystem == null)
             {
-                if (PaintSystem == null)
-                {
-                    PaintSystem = new SKPaint();
-                }
-                PaintSystem.Style = SKPaintStyle.StrokeAndFill;
-                PaintSystem.Color = BackgroundColor.ToSKColor();
-                PaintSystem.BlendMode = this.FillBlendMode;
+                PaintSystem = new();
+            }
 
-                SetupGradient(PaintSystem, FillGradient, destination);
+            var needPaint = SetupBackgroundPaint(PaintSystem, destination);
 
+            if (needPaint)
+            {
                 //clip upon ImageComposite
                 if (IsRenderingWithComposition)
                 {
@@ -5340,7 +5387,6 @@ namespace DrawnUi.Maui.Draw
                     canvas.DrawRect(destination, PaintSystem);
                 }
             }
-
         }
 
         protected SKPath CombineClipping(SKPath add, SKPath path)
@@ -5743,13 +5789,29 @@ namespace DrawnUi.Maui.Draw
                         gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
 
                     case GradientType.Circular:
-                    return SKShader.CreateRadialGradient(
-                        new SKPoint(destination.Left + destination.Width / 2.0f,
-                            destination.Top + destination.Height / 2.0f),
-                        Math.Max(destination.Width, destination.Height) / 2.0f,
+                    case GradientType.Oval:
+                    var halfX = gradient.StartXRatio * destination.Width;
+                    var halfY = gradient.StartYRatio * destination.Height;
+                    if (gradient.Type == GradientType.Circular)
+                        return SKShader.CreateRadialGradient(
+                            new SKPoint(destination.Left + halfX, destination.Top + halfY),
+                            Math.Min(destination.Width / 2f, destination.Height / 2f),
+                            colors.ToArray(),
+                            colorPositions,
+                            gradient.TileMode
+                        );
+                    var shader = SKShader.CreateRadialGradient(
+                        new SKPoint(destination.Left + halfX, destination.Top + halfY),
+                        Math.Max(destination.Width / 2f, destination.Height / 2f),
                         colors.ToArray(),
                         colorPositions,
-                        gradient.TileMode);
+                        gradient.TileMode
+                    );
+                    // Create a scaling matrix centered around the gradient's origin point
+                    float scaleX = destination.Width >= destination.Height ? 1f : destination.Width / destination.Height;
+                    float scaleY = destination.Height >= destination.Width ? 1f : destination.Height / destination.Width;
+                    var transform = SKMatrix.CreateScale(scaleX, scaleY, destination.Left + halfX, destination.Top + halfY);
+                    return shader.WithLocalMatrix(transform);
 
                     case GradientType.Linear:
                     default:
