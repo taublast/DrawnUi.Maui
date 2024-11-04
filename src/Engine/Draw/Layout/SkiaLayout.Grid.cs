@@ -168,7 +168,7 @@ public partial class SkiaLayout
         nameof(DefaultColumnDefinition),
         typeof(ColumnDefinition),
         typeof(SkiaLayout),
-        new ColumnDefinition(new GridLength(1, GridUnitType.Star)), propertyChanged: Invalidate);
+        new ColumnDefinition(new GridLength(1, GridUnitType.Auto)), propertyChanged: Invalidate);
 
     /// <summary>
     /// Will use this to create a missing but required ColumnDefinition
@@ -184,7 +184,7 @@ public partial class SkiaLayout
         nameof(DefaultRowDefinition),
         typeof(RowDefinition),
         typeof(SkiaLayout),
-        new RowDefinition(new GridLength(1, GridUnitType.Star)), propertyChanged: Invalidate);
+        new RowDefinition(new GridLength(1, GridUnitType.Auto)), propertyChanged: Invalidate);
 
     /// <summary>
     /// Will use this to create a missing but required RowDefinition
