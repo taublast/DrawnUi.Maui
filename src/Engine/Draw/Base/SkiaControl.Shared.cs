@@ -5789,15 +5789,29 @@ namespace DrawnUi.Maui.Draw
                         gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
 
                     case GradientType.Circular:
+                    case GradientType.Oval:
                     var halfX = gradient.StartXRatio * destination.Width;
                     var halfY = gradient.StartYRatio * destination.Height;
-                    return SKShader.CreateRadialGradient(
-                            new SKPoint(destination.Left + halfX,
-                                destination.Top + halfY),
-                            Math.Max(destination.Width / 2f, destination.Height / 2f),
+                    if (gradient.Type == GradientType.Circular)
+                        return SKShader.CreateRadialGradient(
+                            new SKPoint(destination.Left + halfX, destination.Top + halfY),
+                            Math.Min(destination.Width / 2f, destination.Height / 2f),
+                            colors.ToArray(),
+                            colorPositions,
+                            gradient.TileMode
+                        );
+                    var shader = SKShader.CreateRadialGradient(
+                        new SKPoint(destination.Left + halfX, destination.Top + halfY),
+                        Math.Max(destination.Width / 2f, destination.Height / 2f),
                         colors.ToArray(),
                         colorPositions,
-                        gradient.TileMode);
+                        gradient.TileMode
+                    );
+                    // Create a scaling matrix centered around the gradient's origin point
+                    float scaleX = destination.Width >= destination.Height ? 1f : destination.Width / destination.Height;
+                    float scaleY = destination.Height >= destination.Width ? 1f : destination.Height / destination.Width;
+                    var transform = SKMatrix.CreateScale(scaleX, scaleY, destination.Left + halfX, destination.Top + halfY);
+                    return shader.WithLocalMatrix(transform);
 
                     case GradientType.Linear:
                     default:
