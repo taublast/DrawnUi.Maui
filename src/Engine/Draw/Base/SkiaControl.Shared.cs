@@ -1167,10 +1167,6 @@ namespace DrawnUi.Maui.Draw
                             {
                                 if (args.Type == TouchActionResult.Tapped && CommandChildTapped != null)
                                 {
-                                    if (Tag == "StackItemsV")
-                                    {
-                                        var stop = child.Control.BindingContext;
-                                    }
                                     CommandChildTapped.Execute(child);
                                 }
                                 //Trace.WriteLine($"[HIT] for cell {i} at Y {y:0.0}");
@@ -3399,7 +3395,7 @@ namespace DrawnUi.Maui.Draw
                         provideHeight = maxHeight;
                     }
                     measured = MeasureChild(child, provideWidth, provideHeight, scale);
-                    if (maxHeight == 0 || maxWidth == 0)
+                    if (maxHeight <= 0 || maxWidth <= 0 || float.IsInfinity(provideHeight) || float.IsInfinity(provideWidth))
                     {
                         PostProcessMeasuredChild(measured, child, false);
                     }
@@ -3409,11 +3405,11 @@ namespace DrawnUi.Maui.Draw
                 heightCut |= measured.HeightCut;
             }
 
-            if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
+            if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0 && float.IsFinite(rectForChildrenPixels.Width))
             {
                 maxWidth = rectForChildrenPixels.Width;
             }
-            if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
+            if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0 && float.IsFinite(rectForChildrenPixels.Height))
             {
                 maxHeight = rectForChildrenPixels.Height;
             }
@@ -5334,7 +5330,7 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
-            if (color == null || color.Alpha == 0 || gradient == null) return false;
+            if (color == null || color.Alpha <= 0) return false;
 
             paint.Color = color.ToSKColor();
             paint.Style = SKPaintStyle.StrokeAndFill;
