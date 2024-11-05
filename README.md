@@ -17,41 +17,23 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 
-## What's New
-
-* Nuget 1.2.4.8
-* Implemented `Background` property inside `SkiaControl`. You can use MAUI usual syntax for gradients and solid color backgrounds.
-* Fixed an old bug with RenderingScale setter never being called, removed linked random native crash.
-* Fixed thumb location when clicked on trail of a `SkiaSlider`.
-* Changed grid col/row default definitions to `Auto` fixing layout bug. Can change this via `DefaultRowDefinition` and `DefaultColumnDefinition` if needed.
-
-## Demo Apps
-
-* This repo includes a Sandbox project for some custom controls, with playground examples, custom controls, maps etc
-* More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 __Updated with latest nuget!__
-* A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
-* A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
-* For real published apps scroll below Features!
-
- [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
-
-Subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect` when compiled for SkiaSharp v3 preview.
-
-___Please star ⭐ if you like it!___
+___Please star ⭐ if you like it, helps very much!___
 
 ## Features
 
 * __Draw your UI using SkiaSharp with hardware acceleration__
 * __Easily create your controls and animations__
-* __Design in XAML or code-behind__
+* __Design in MAUI XAML or code-behind__
 * __2D and 3D Transforms__
-* __Animations and transforms__ targeting max fps
+* __Animations__ targeting max fps
+* __Visual effects__ for every control
 * __Gestures__ support for panning, scrolling and zooming (_rotation on the roadmap_)
 * __Caching system__ for elements and images
 * __Optimized for performance__, rendering only visible elements, recycling templates etc
 * __Navigate__ on canvas using MAUI familiar Shell techniques 
-
-* __Prebuilt Basic Ui Elements__	
+* __Designed for YOU to create your drawn controls__ with ease !
+* __Port existing native controls to be drawn__ - easy as a pie!
+* __Shipped with pre-built contols:__	
 	* __SkiaControl__ Your lego brick to create anything
 	* __SkiaShape__ Path, Rectangle, Circle, Ellipse, Gauge etc, can wrap other elements to be clipped inside
 	* __SkiaLabel__, multiline with many options like dropshadow, gradients etc
@@ -62,9 +44,6 @@ ___Please star ⭐ if you like it!___
 	* __SkiaHotspot__ to handle gestures in a lazy way
 	* __SkiaBackdrop__ to apply effects to background below, like blur etc
 	* __SkiaMauiElement__ to embed maui controls in your canvas
-	* __and more..__ 
-
-* __Derived custom controls__
 	* __SkiaScrollLooped__ for neverending scrolls
 	* __RefreshIndicator__ can use lottie and anything for your scroll refresh view
     * __SkiaDrawer__ to swipe in and out your controls
@@ -102,6 +81,25 @@ ___Please star ⭐ if you like it!___
 	* SkewY
 	* Perspective1
 	* Perspective2
+
+
+## Demo Apps
+
+* This repo includes a Sandbox project for some custom controls, with playground examples, custom controls, maps etc
+* More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 __Updated with latest nuget!__
+* A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
+* A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
+* For production published apps list - scroll to bottom!
+
+ [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
+
+V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect` when compiled for SkiaSharp v3 preview.
+
+## What's New
+
+* Nuget 1.2.5.1
+* Layout Fill for Infinity fix
+* Background paint fix
 
  ## Development Notes
 
