@@ -71,16 +71,20 @@ ___Please star ⭐ if you like it, helps very much!___
 * Transforms
 	* TranslationX
 	* TranslationY
+	* TranslationZ (none-affine)
 	* ScaleX
 	* ScaleY
 	* Rotation
-	* RotationX
-	* RotationY
-	* CameraAngleZ
+	* RotationX (none-affine)
+	* RotationY (none-affine)
+	* RotationZ (none-affine)
 	* SkewX
 	* SkewY
 	* Perspective1
 	* Perspective2
+
+* Keyboard support for desktop platforms.
+  	* Not just accelerators, but full keyboard support, usage example inside __SpaceShooter__ game below. :)
 
 
 ## Demo Apps
