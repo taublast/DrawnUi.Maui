@@ -464,6 +464,7 @@ public class SkiaCarousel : SnappingLayout
     protected virtual (Vector2 Offset, bool OnScreen, bool NextToScreen) CalculateChildPosition(Vector2 currentPosition, int index, int childrenCount)
     {
         var childPos = SnapPoints[index];
+
         float newX = 0;
         float newY = 0;
         bool isVisible = true;
@@ -1161,6 +1162,16 @@ public class SkiaCarousel : SnappingLayout
         });
 
     /// <summary>
+    /// Zero-based index of the currently selected slide
+    /// </summary>
+    public int SelectedIndex
+    {
+        get { return (int)GetValue(SelectedIndexProperty); }
+        set { SetValue(SelectedIndexProperty, value); }
+    }
+
+
+    /// <summary>
     /// Can be used for indicators
     /// </summary>
     public int ChildrenTotal
@@ -1175,14 +1186,6 @@ public class SkiaCarousel : SnappingLayout
         typeof(SkiaCarousel),
         0, BindingMode.OneWayToSource);
 
-    /// <summary>
-    /// Zero-based index of the currently selected slide
-    /// </summary>
-    public int SelectedIndex
-    {
-        get { return (int)GetValue(SelectedIndexProperty); }
-        set { SetValue(SelectedIndexProperty, value); }
-    }
 
     public static readonly BindableProperty IsRightToLeftProperty = BindableProperty.Create(
         nameof(IsRightToLeft),
@@ -1228,8 +1231,8 @@ public class SkiaCarousel : SnappingLayout
 
     #region GESTURES
 
-    protected bool IsUserFocused { get; set; }
-    protected bool IsUserPanning { get; set; }
+    public bool IsUserFocused { get; protected set; }
+    public bool IsUserPanning { get; protected set; }
 
     protected Vector2 _panningOffset;
     protected Vector2 _panningStartOffset;
@@ -1240,12 +1243,6 @@ public class SkiaCarousel : SnappingLayout
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         bool passedToChildren = false;
-
-        //        Debug.WriteLine($"[Carousel] {args.Type}");
-
-        //Super.Log($"[CAROUSEL] {this.Tag} Got {args.Action}..");
-
-        //var thisOffset = TranslateInputCoords(apply.childOffset);
 
         ISkiaGestureListener PassToChildren()
         {

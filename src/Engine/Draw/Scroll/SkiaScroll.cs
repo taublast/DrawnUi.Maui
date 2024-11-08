@@ -2044,9 +2044,8 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected bool WasSwiping { get; set; }
 
-        protected bool IsUserFocused { get; set; }
-
-        protected bool IsUserPanning { get; set; }
+        public bool IsUserFocused { get; protected set; }
+        public bool IsUserPanning { get; protected set; }
 
         public float VelocityY
         {

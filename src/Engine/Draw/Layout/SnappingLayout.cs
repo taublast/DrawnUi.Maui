@@ -1,7 +1,4 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Infrastructure.Helpers;
-using System.Diagnostics;
+﻿using DrawnUi.Maui.Infrastructure.Helpers;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -13,7 +10,7 @@ public class SnappingLayout : SkiaLayout
 
     public event EventHandler OnViewportReady;
 
-    public event EventHandler<bool> OnTransitionChanged;
+    public event EventHandler<bool> TransitionChanged;
 
     #endregion
 
@@ -422,7 +419,7 @@ public class SnappingLayout : SkiaLayout
             if (b is SnappingLayout control)
             {
                 var changed = (bool)n;
-                control.OnTransitionChanged?.Invoke(control, changed);
+                control.OnTransitionChanged();
                 if (!changed)
                 {
                     control.SendScrolled();
@@ -436,6 +433,10 @@ public class SnappingLayout : SkiaLayout
         set { SetValue(InTransitionProperty, value); }
     }
 
+    protected virtual void OnTransitionChanged()
+    {
+        TransitionChanged?.Invoke(this, InTransition);
+    }
 
     public static readonly BindableProperty RubberDampingProperty = BindableProperty.Create(
         nameof(RubberDamping),

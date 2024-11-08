@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ShadersCarouselDemo.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:carousel="using:ShadersCarouselDemo.Controls.Carousel"
+    xmlns:controls="using:ShadersCarouselDemo.Controls"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:indicators="using:ShadersCarouselDemo.Controls.Carousel.Indicators"
+    xmlns:shadersCarouselDemo="clr-namespace:ShadersCarouselDemo"
+    x:DataType="shadersCarouselDemo:MainPage">
+
+
+    <draw:Canvas
+        BackgroundColor="#512BD4"
+        Gestures="Enabled"
+        HardwareAcceleration="Enabled"
+        HorizontalOptions="Fill"
+        Tag="MainPage"
+        VerticalOptions="Fill">
+
+        <draw:Canvas.Resources>
+            <ResourceDictionary>
+
+                <Style
+                    x:Key="SkiaStyleControlInTable"
+                    TargetType="draw:SkiaControl">
+                    <Setter Property="VerticalOptions" Value="Center" />
+                    <Setter Property="AddMarginLeft" Value="90" />
+                </Style>
+
+                <Style
+                    x:Key="SkiaStyleControLabel"
+                    TargetType="draw:SkiaLabel">
+                    <Setter Property="VerticalOptions" Value="Center" />
+                    <Setter Property="TextColor" Value="White" />
+                </Style>
+
+                <Style
+                    x:Key="SkiaStyleControlContainer"
+                    TargetType="draw:SkiaLayout">
+                    <Setter Property="Padding" Value="8,2" />
+                    <Setter Property="HeightRequest" Value="44" />
+                    <Setter Property="HorizontalOptions" Value="Fill" />
+                    <Setter Property="UseCache" Value="Image" />
+                </Style>
+
+            </ResourceDictionary>
+        </draw:Canvas.Resources>
+
+        <draw:SkiaLayout
+            HorizontalOptions="Fill"
+            Tag="Wrapper"
+            VerticalOptions="Fill">
+
+            <draw:SkiaControl.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="0.0" Color="White" />
+                    <GradientStop Offset="0.25" Color="MediumPurple" />
+                    <GradientStop Offset="0.75" Color="Black" />
+                    <GradientStop Offset="1.0" Color="Purple" />
+                </LinearGradientBrush>
+            </draw:SkiaControl.Background>
+
+            <draw:SkiaLayout
+                Margin="2"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
+                <draw:SkiaLabel
+                    DropShadowColor="MediumPurple"
+                    DropShadowSize="1"
+                    FontFamily="FontTextBold"
+                    HorizontalOptions="Center"
+                    Text="Built with DrawnUI for .NET MAUI"
+                    TextColor="#CCFFFFFF"
+                    UseCache="Operations" />
+
+                <draw:SkiaScroll
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+
+                    <draw:SkiaLayout
+                        BackgroundColor="Transparent"
+                        HorizontalOptions="Fill"
+                        Spacing="0"
+                        Tag="Content"
+                        Type="Column"
+                        UseCache="None">
+
+                        <!--  Carousel with indicators  -->
+                        <draw:SkiaLayout HorizontalOptions="Fill">
+
+                            <carousel:DemoCarousel
+                                TransitionChanged="OnTransitionChanged"
+                                x:Name="MainCarousel"
+                                BackgroundColor="DarkOliveGreen"
+                                HeightRequest="350"
+                                HorizontalOptions="Fill"
+                                IsLooped="False"
+                                ItemsSource="{Binding Items}"
+                                SelectedIndex="{Binding SelectedIndex}"
+                                SidesOffset="0"
+                                Spacing="0"
+                                RecyclingTemplate="Enabled"
+                                Tag="Carousel"
+                                VerticalOptions="Start">
+
+                                <draw:SkiaLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="shadersCarouselDemo:SimpleItemViewModel">
+
+                                        <shadersCarouselDemo:Cell UseCache="Image">
+
+                                            <draw:SkiaImage
+                                                x:Name="GoFrom"
+                                                Aspect="AspectCover"
+                                                BackgroundColor="Black"
+                                                HorizontalOptions="Fill"
+                                                LoadSourceOnFirstDraw="False"
+                                                RescalingQuality="None"
+                                                Source="{Binding Banner}"
+                                                VerticalOptions="Fill" />
+
+                                        </shadersCarouselDemo:Cell>
+
+                                    </DataTemplate>
+
+                                </draw:SkiaLayout.ItemTemplate>
+
+                            </carousel:DemoCarousel>
+
+                            <!--  carousel indicators  -->
+                            <indicators:CustomIndicators
+                                Margin="12,8"
+                                BackgroundColor="Transparent"
+                                HorizontalOptions="Center"
+                                IsVisible="True"
+                                SelectedIndex="{Binding Source={x:Reference MainCarousel}, Path=SelectedIndex}"
+                                Spacing="6"
+                                Tag="Indicators"
+                                TotalEnabled="{Binding Source={x:Reference MainCarousel}, Path=ChildrenTotal}"
+                                TranslationY="0"
+                                UseCache="GPU"
+                                VerticalOptions="Start"
+                                ZIndex="2" />
+
+                        </draw:SkiaLayout>
+
+                        <!--<draw:SkiaLabel
+                            BackgroundColor="Black"
+                            DropShadowColor="#33666666"
+                            DropShadowSize="1"
+                            FontAttributes="Italic"
+                            HeightRequest="40"
+                            HorizontalOptions="Fill"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding Source={x:Reference MainCarousel}, Path=SelectedString}"
+                            TextColor="GhostWhite"
+                            VerticalTextAlignment="Center">
+                            <draw:SkiaControl.Background>
+                                <LinearGradientBrush EndPoint="1,0">
+                                    <GradientStop Offset="0.1" Color="#9A90FF" />
+                                    <GradientStop Offset="1.0" Color="#594DD2" />
+                                </LinearGradientBrush>
+                            </draw:SkiaControl.Background>
+                        </draw:SkiaLabel>-->
+
+                        <draw:SkiaLayout
+                            Margin="0,16"
+                            Type="Column"
+                            UseCache="ImageComposite"
+                            WidthRequest="300">
+
+
+                            <!--  Select  -->
+                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                                <draw:SkiaLabel
+                                    HorizontalOptions="Fill"
+                                    Style="{x:StaticResource SkiaStyleControLabel}"
+                                    Text="Transition" />
+
+                                <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlInTable}">
+
+                                    <draw:SkiaShape
+                                        draw:AddGestures.AnimationPressed="Ripple"
+                                        draw:AddGestures.CommandTapped="{Binding Source={x:Reference MainCarousel}, Path=CommandSelectShader}"
+                                        CornerRadius="6"
+                                        HeightRequest="32"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Center">
+
+                                        <draw:SkiaControl.Background>
+                                            <LinearGradientBrush EndPoint="1,0">
+                                                <GradientStop Offset="0.1" Color="#9A90FF" />
+                                                <GradientStop Offset="1.0" Color="#594DD2" />
+                                            </LinearGradientBrush>
+                                        </draw:SkiaControl.Background>
+
+                                        <draw:SkiaLayout
+                                            Margin="12,0"
+                                            HorizontalOptions="Fill"
+                                            UseCache="Image"
+                                            VerticalOptions="Fill">
+
+                                            <draw:SkiaLabel
+                                                DropShadowColor="#66333333"
+                                                DropShadowSize="1"
+                                                FontAttributes="Bold, Italic"
+                                                FontSize="13"
+                                                Text="{Binding Source={x:Reference MainCarousel}, Path=ShaderName}"
+                                                TextColor="White"
+                                                VerticalOptions="Center" />
+
+                                            <draw:SkiaSvg
+                                                HorizontalOptions="End"
+                                                LockRatio="1"
+                                                TintColor="Gainsboro"
+                                                VerticalOptions="Center"
+                                                WidthRequest="12">
+
+                                                <![CDATA[ 
+                                     
+                                                <svg fill="#000000" height="800px" width="800px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	                                                 viewBox="0 0 386.257 386.257" xml:space="preserve">
+                                                <polygon points="0,96.879 193.129,289.379 386.257,96.879 "/>
+                                                </svg>
+                                
+                                                ]]>
+
+                                            </draw:SkiaSvg>
+
+                                        </draw:SkiaLayout>
+
+                                    </draw:SkiaShape>
+
+                                </draw:SkiaLayout>
+
+                            </draw:SkiaLayout>
+
+                            <!--  Speed  -->
+                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                                <draw:SkiaLabel
+                                    HorizontalOptions="Fill"
+                                    Style="{x:StaticResource SkiaStyleControLabel}"
+                                    Text="Speed" />
+                                <controls:DrawnSlider
+                                    End="{Binding SpeedMs, Mode=TwoWay}"
+                                    HorizontalOptions="Fill"
+                                    Max="5.0"
+                                    Min="0.1"
+                                    MinMaxStringFormat="P0"
+                                    Step="1.0"
+                                    Style="{x:StaticResource SkiaStyleControlInTable}" />
+                            </draw:SkiaLayout>
+
+                            <!--  Switch  -->
+                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                                <draw:SkiaLabel
+                                    HorizontalOptions="Fill"
+                                    Style="{x:StaticResource SkiaStyleControLabel}"
+                                    Text="Auto-Play" />
+                                <controls:DrawnSwitch
+                                    IsToggled="{Binding AutoPlay, Mode=TwoWay}"
+                                    Style="{x:StaticResource SkiaStyleControlInTable}"
+                                    TranslationX="-4" />
+                            </draw:SkiaLayout>
+
+                            <!--<draw:SkiaLabel
+                            BackgroundColor="Green"
+                            FontAttributes="Bold"
+                            HeightRequest="50"
+                            HorizontalOptions="Fill"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding Source={x:Reference MainCarousel}, Path=TransitionProgress, StringFormat='{0}'}"
+                            TextColor="White"
+                            VerticalTextAlignment="Center" />-->
+
+                            <!--<draw:SkiaLabel
+                            BackgroundColor="Green"
+                            FontAttributes="Bold"
+                            HeightRequest="50"
+                            HorizontalOptions="Fill"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding Source={x:Reference MainCarousel}, Path=TransitionDirection, StringFormat='TransitionDirection {0}'}"
+                            TextColor="White"
+                            VerticalTextAlignment="Center" />-->
+                        </draw:SkiaLayout>
+
+                    </draw:SkiaLayout>
+
+                </draw:SkiaScroll>
+
+
+
+            </draw:SkiaLayout>
+
+            <!--<controls:ButtonToRoot />-->
+
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
+
+        </draw:SkiaLayout>
+
+    </draw:Canvas>
+
+</ContentPage>

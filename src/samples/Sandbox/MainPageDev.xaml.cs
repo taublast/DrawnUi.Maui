@@ -10,7 +10,6 @@ using Sandbox.Views;
 namespace MauiNet8;
 
 
-
 public partial class MainPageDev : BasePage
 {
     private readonly List<string> _shaders;
@@ -56,56 +55,6 @@ public partial class MainPageDev : BasePage
         }
     }
 
-
-    void Test()
-    {
-        // string shaderCode = SkSl.LoadFromResources($"{MauiProgram.ShadersFolder}/apple.sksl");
-        //var effect = SkSl.Compile(shaderCode);
-    }
-
-    private double _SpeedMs = 1750;
-    public double SpeedMs
-    {
-        get
-        {
-            return _SpeedMs;
-        }
-        set
-        {
-            if (_SpeedMs != value)
-            {
-                _SpeedMs = value;
-                OnPropertyChanged();
-                MainCarousel.LinearSpeedMs = SpeedMs;
-            }
-        }
-    }
-
-
-    private bool _AutoPlay;
-    public bool AutoPlay
-    {
-        get
-        {
-            return _AutoPlay;
-        }
-        set
-        {
-            if (_AutoPlay != value)
-            {
-                _AutoPlay = value;
-                OnPropertyChanged();
-                if (value)
-                {
-                    MainCarousel.AnimatorSpeedMs = SpeedMs;
-                }
-                else
-                {
-                    MainCarousel.AnimatorSpeedMs = 0;
-                }
-            }
-        }
-    }
 
 
     async void SelectFIle()
