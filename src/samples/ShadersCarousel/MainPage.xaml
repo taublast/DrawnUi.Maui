@@ -26,7 +26,7 @@
                     x:Key="SkiaStyleControlInTable"
                     TargetType="draw:SkiaControl">
                     <Setter Property="VerticalOptions" Value="Center" />
-                    <Setter Property="AddMarginLeft" Value="90" />
+                    <Setter Property="AddMarginLeft" Value="100" />
                 </Style>
 
                 <Style
@@ -43,6 +43,7 @@
                     <Setter Property="HeightRequest" Value="44" />
                     <Setter Property="HorizontalOptions" Value="Fill" />
                     <Setter Property="UseCache" Value="Image" />
+                    <Setter Property="WidthRequest" Value="300" />
                 </Style>
 
             </ResourceDictionary>
@@ -130,7 +131,7 @@
                             </carousel:DemoCarousel>
 
                             <!--  carousel indicators  -->
-                            <indicators:CustomIndicators
+                            <!--<indicators:CustomIndicators
                                 Margin="12,8"
                                 BackgroundColor="Transparent"
                                 HorizontalOptions="Center"
@@ -142,7 +143,7 @@
                                 TranslationY="0"
                                 UseCache="GPU"
                                 VerticalOptions="Start"
-                                ZIndex="2" />
+                                ZIndex="2" />-->
 
                         </draw:SkiaLayout>
 
@@ -167,9 +168,8 @@
 
                         <draw:SkiaLayout
                             Margin="0,16"
-                            Type="Column"
-                            UseCache="ImageComposite"
-                            WidthRequest="300">
+                            Type="Wrap"
+                            UseCache="ImageComposite">
 
 
                             <!--  Select  -->
@@ -265,25 +265,18 @@
                                     TranslationX="-4" />
                             </draw:SkiaLayout>
 
-                            <!--<draw:SkiaLabel
-                            BackgroundColor="Green"
-                            FontAttributes="Bold"
-                            HeightRequest="50"
-                            HorizontalOptions="Fill"
-                            HorizontalTextAlignment="Center"
-                            Text="{Binding Source={x:Reference MainCarousel}, Path=TransitionProgress, StringFormat='{0}'}"
-                            TextColor="White"
-                            VerticalTextAlignment="Center" />-->
-
-                            <!--<draw:SkiaLabel
-                            BackgroundColor="Green"
-                            FontAttributes="Bold"
-                            HeightRequest="50"
-                            HorizontalOptions="Fill"
-                            HorizontalTextAlignment="Center"
-                            Text="{Binding Source={x:Reference MainCarousel}, Path=TransitionDirection, StringFormat='TransitionDirection {0}'}"
-                            TextColor="White"
-                            VerticalTextAlignment="Center" />-->
+                            <!--  Switch  -->
+                            <draw:SkiaLayout Style="{x:StaticResource SkiaStyleControlContainer}">
+                                <draw:SkiaLabel
+                                    HorizontalOptions="Fill"
+                                    Style="{x:StaticResource SkiaStyleControLabel}"
+                                    Text="Auto-Change" />
+                                <controls:DrawnSwitch
+                                    IsToggled="{Binding AutoLoop, Mode=TwoWay}"
+                                    Style="{x:StaticResource SkiaStyleControlInTable}"
+                                    TranslationX="-4" />
+                            </draw:SkiaLayout>
+                             
                         </draw:SkiaLayout>
 
                     </draw:SkiaLayout>

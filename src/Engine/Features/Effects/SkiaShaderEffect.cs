@@ -141,14 +141,15 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
 #endif
 
             var kill = Shader;
+
             var uniforms = CreateUniforms(destination);
 #if SKIA3 
             Shader = CompiledShader.ToShader(uniforms, TexturesUniforms);
 #else
             Shader = CompiledShader.ToShader(false, uniforms, TexturesUniforms);
 #endif
-            if (kill != null)
-                Parent.DisposeObject(kill);
+            if (kill != null && NeedDisposeShader)
+                Parent?.DisposeObject(kill);
         }
 
         return Shader;
@@ -215,8 +216,13 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         {
             shaderCode = _template.Replace(_templatePlacehodler, shaderCode);
         }
+
+        NeedDisposeShader = string.IsNullOrEmpty(ShaderSource);
+
         CompiledShader = SkSl.Compile(shaderCode, ShaderSource);
     }
+
+    public bool NeedDisposeShader { get; set; }
 
     protected virtual void ApplyShaderSource()
     {

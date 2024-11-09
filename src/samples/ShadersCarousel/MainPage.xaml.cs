@@ -1,5 +1,6 @@
 ﻿using AppoMobi.Specials;
 using DrawnUi.Maui.Draw;
+using ShadersCarouselDemo.Controls.Carousel;
 
 namespace ShadersCarouselDemo
 {
@@ -79,6 +80,32 @@ namespace ShadersCarouselDemo
                 }
             }
         }
+
+        private bool _AutoLoop;
+        public bool AutoLoop
+        {
+            get
+            {
+                return _AutoLoop;
+            }
+            set
+            {
+                if (_AutoLoop != value)
+                {
+                    _AutoLoop = value;
+                    OnPropertyChanged();
+                    if (value)
+                    {
+                        MainCarousel.PlayingType = PlayType.Next;
+                    }
+                    else
+                    {
+                        MainCarousel.PlayingType = PlayType.Default;
+                    }
+                }
+            }
+        }
+
 
         public MainPage()
         {
