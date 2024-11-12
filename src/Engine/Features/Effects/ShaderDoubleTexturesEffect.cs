@@ -408,7 +408,7 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
         if (_controlTo?.RenderObject?.Image == null || !ParentReady())
             return;
 
-        Debug.WriteLine($"ImportCacheTo {_controlTo.BindingContext}");
+        //Debug.WriteLine($"ImportCacheTo {_controlTo.BindingContext}");
 
         CompileSecondaryTexture(_controlTo.RenderObject.Image);
     }

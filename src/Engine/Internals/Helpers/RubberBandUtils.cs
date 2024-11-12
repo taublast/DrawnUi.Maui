@@ -14,17 +14,28 @@ public static class RubberBandUtils
     /// <param name="track"></param>
     /// <param name="coeff"></param>
     /// <returns></returns>
-    public static Vector2 ClampOnTrack(Vector2 point, SKRect track, float coeff = 0.55f)
+    //public static Vector2 ClampOnTrack(Vector2 point, SKRect track, float coeff = 0.55f)
+    //{
+    //    var dims = new Vector2(track.Width, track.Height);
+
+    //    float x = RubberBandClamp(point.X, dims.X, new RangeF(track.Left, track.Right), coeff);
+    //    float y = RubberBandClamp(point.Y, dims.Y, new RangeF(track.Top, track.Bottom), coeff);
+
+    //    //Super.Log($"CLAMPED {point.Y} for {track} to {y}");
+
+    //    return new Vector2(x, y);
+    //}
+
+    public static Vector2 ClampOnTrack(Vector2 point, SKRect track, float coeff = 0.55f, Vector2? customDims = null)
     {
-        var dims = new Vector2(track.Width, track.Height);
+        var dims = customDims ?? new Vector2(track.Width, track.Height);
 
         float x = RubberBandClamp(point.X, dims.X, new RangeF(track.Left, track.Right), coeff);
         float y = RubberBandClamp(point.Y, dims.Y, new RangeF(track.Top, track.Bottom), coeff);
 
-        //Super.Log($"CLAMPED {point.Y} for {track} to {y}");
-
         return new Vector2(x, y);
     }
+
 
     public static Vector2 Clamp(Vector2 point, Vector2 dims, SKRect bounds, float coeff = 0.55f)
     {
@@ -57,6 +68,35 @@ public static class RubberBandUtils
     /// <param name="limits"></param>
     /// <param name="onEmpty"></param>
     /// <returns></returns>
+    //public static float RubberBandClamp(float coord, float dim, RangeF limits, float coeff = 0.275f, float onEmpty = 40f)
+    //{
+    //    if (limits.Start > limits.End)
+    //    {
+    //        return coord;
+    //    }
+
+    //    float clampedCoord = Math.Clamp(coord, limits.Start, limits.End);
+
+    //    var overscroll = 0f;
+    //    if (coord < limits.Start)
+    //    {
+    //        overscroll = -(limits.Start - coord);
+    //    }
+    //    else
+    //    if (coord > limits.End) //уходит выше нуля, тянем вниз напр. 4
+    //    {
+    //        overscroll = coord - limits.End; // работает ок, овер > 0
+    //    }
+
+    //    if (overscroll != 0)
+    //    {
+    //        float sign = Math.Sign(overscroll);
+    //        var rubber = RubberBandClamp(Math.Abs(overscroll), coeff, dim, onEmpty);
+    //        return clampedCoord + sign * rubber;
+    //    }
+
+    //    return clampedCoord;
+    //}
     public static float RubberBandClamp(float coord, float dim, RangeF limits, float coeff = 0.275f, float onEmpty = 40f)
     {
         if (limits.Start > limits.End)
@@ -66,21 +106,23 @@ public static class RubberBandUtils
 
         float clampedCoord = Math.Clamp(coord, limits.Start, limits.End);
 
-        var overscroll = 0f;
+        float overscroll = 0f;
         if (coord < limits.Start)
         {
-            overscroll = -(limits.Start - coord);
+            overscroll = coord - limits.Start;
         }
-        else
-        if (coord > limits.End) //уходит выше нуля, тянем вниз напр. 4
+        else if (coord > limits.End)
         {
-            overscroll = coord - limits.End; // работает ок, овер > 0
+            overscroll = coord - limits.End;
         }
 
         if (overscroll != 0)
         {
             float sign = Math.Sign(overscroll);
-            var rubber = RubberBandClamp(Math.Abs(overscroll), coeff, dim, onEmpty);
+            if (dim == 0)
+                dim = onEmpty;
+
+            var rubber = (1.0f - 1.0f / (Math.Abs(overscroll) * coeff / dim + 1.0f)) * dim;
             return clampedCoord + sign * rubber;
         }
 

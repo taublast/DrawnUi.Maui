@@ -816,6 +816,7 @@ namespace DrawnUi.Maui.Draw
 
             if (StrokeColor.Alpha != 0 && StrokeWidth > 0)
             {
+                PaintStroke.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
                 PaintStroke.TextSize = paintDefault.TextSize * _scaleResampleText;
                 PaintStroke.Color = StrokeColor.ToSKColor();
                 PaintStroke.StrokeWidth = (float)(StrokeWidth * 2 * scale);
@@ -830,6 +831,7 @@ namespace DrawnUi.Maui.Draw
 
             if (this.DropShadowColor.Alpha != 0)
             {
+                PaintShadow.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
                 PaintShadow.TextSize = paintDefault.TextSize * _scaleResampleText;
                 PaintShadow.Color = DropShadowColor.ToSKColor();
                 PaintShadow.StrokeWidth = (float)(this.DropShadowSize * 2 * scale);
@@ -1584,7 +1586,9 @@ namespace DrawnUi.Maui.Draw
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float MeasureTextWidthWithAdvance(SKPaint paint, string text, bool useCache)
         {
-            return paint.MeasureText(text);
+            var bounds = paint.MeasureText(text);
+
+            return bounds;
 
             /*
             ConcurrentDictionary<string, float> typefaceCache = null;
@@ -1947,13 +1951,17 @@ namespace DrawnUi.Maui.Draw
                     pos++;
                 }
 
-                //  System.Diagnostics.Debug.WriteLine($"[LINE M] {value:0.0}");
                 return (value - spacingModifier, positions.ToArray());
             }
 
             var simpleValue = MeasureTextWidthWithAdvance(paint, text, false);
 
-            //System.Diagnostics.Debug.WriteLine($"[LINE S] {simpleValue:0.0}");
+            if (paint.TextSkewX != 0)
+            {
+                float additionalWidth = Math.Abs(paint.TextSkewX) * paint.TextSize;
+                simpleValue += additionalWidth;
+            }
+
             return (simpleValue, null);
         }
 

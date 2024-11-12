@@ -89,6 +89,7 @@ ___Please star ⭐ if you like it, helps very much!___
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 __Updated with latest nuget!__
 * A [dynamic arcade game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter) drawn with this engine, uses preview nuget with SkiaSharp v3.
 * A [drawn CollectionView demo](https://github.com/taublast/SurfAppCompareDrawn) where you could see how simple and profitable it is to convert an existing recycled cells list into a drawn one
+* [Shaders Carousel Demo](https://github.com/taublast/ShadersCarousel/) featuring SkiaSharp v3 capabilities
 * For production published apps list - scroll to bottom!
 
  [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
@@ -97,9 +98,11 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
 ## What's New
 
-* Nuget 1.2.5.1
-* Layout Fill for Infinity fix
-* Background paint fix
+* Nuget 1.2.5.2, preview nuget for SkiaSharp v3: 1.3.54.5-pre
+* SkiaLottie can now tint multiple colors via Colors property
+* SkiaLabel fixes for simulated Italic font attribute affecting shadows and stroke
+* SkiaScroll fix for RefreshView dragging distance
+* Some more
 
  ## Development Notes
 
@@ -625,7 +628,26 @@ public enum DrawTextAlignment
 
 ### `SkiaLottie`
 
-`SkiaLottie` is a control that renders Lottie files. It can even tint some colors inside your animation!
+`SkiaLottie` is a control that renders Lottie files. 
+It can even tint some colors inside your animation!   
+You could fast-tint one color with `ColorTint` property. But if you find yourself in need to tint many colors use `Colors`,
+for example if we wanted to tint 2 distincts colors inside:
+
+```xaml
+ <draw:SkiaLottie
+    AutoPlay="True"
+    HorizontalOptions="Center"
+    WidthRequest="50"
+    LockRatio="1"
+    Repeat="-1"
+    Source="Lottie/Loader.json"
+    VerticalOptions="Center"                        >
+    <draw:SkiaLottie.Colors>
+        <Color>#FF0000</Color>
+        <Color>#FFFFFF</Color>
+    </draw:SkiaLottie.Colors>
+</draw:SkiaLottie>
+```
 
 ### `SkiaRive`
 

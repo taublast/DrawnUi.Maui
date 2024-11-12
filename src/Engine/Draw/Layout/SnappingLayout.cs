@@ -433,6 +433,9 @@ public class SnappingLayout : SkiaLayout
         set { SetValue(InTransitionProperty, value); }
     }
 
+    /// <summary>
+    /// Invokes TransitionChanged event
+    /// </summary>
     protected virtual void OnTransitionChanged()
     {
         TransitionChanged?.Invoke(this, InTransition);

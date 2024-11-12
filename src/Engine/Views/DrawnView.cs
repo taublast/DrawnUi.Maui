@@ -1312,8 +1312,19 @@ namespace DrawnUi.Maui.Views
 
         protected bool WasRendered { get; set; }
 
+        /// <summary>
+        /// OnDrawSurface will call that
+        /// </summary>
         public event EventHandler<SkiaDrawingContext?> WasDrawn;
+
+        /// <summary>
+        /// OnDrawSurface will call that
+        /// </summary>
         public event EventHandler<SkiaDrawingContext?> WillDraw;
+
+        /// <summary>
+        /// OnDrawSurface will call that if never been drawn yet
+        /// </summary>
         public event EventHandler<SkiaDrawingContext?> WillFirstTimeDraw;
 
         private bool OnDrawSurface(SKSurface surface, SKRect rect)
@@ -2593,14 +2604,14 @@ namespace DrawnUi.Maui.Views
 
 #if !ONPLATFORM
 
-		public void CheckElementVisibility(VisualElement element)
-		{
-			NeedCheckParentVisibility = false;
-		}
+        public void CheckElementVisibility(VisualElement element)
+        {
+            NeedCheckParentVisibility = false;
+        }
 
-		protected virtual void OnSizeChanged()
-		{
-		}
+        protected virtual void OnSizeChanged()
+        {
+        }
 
 #endif
 

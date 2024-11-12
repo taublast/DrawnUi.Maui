@@ -15,7 +15,7 @@ public enum SkiaCacheType
     Operations,
 
     /// <summary>
-    /// Create and reuse SKPicture all over the canvas ignoring clipping.
+    /// EXPERIMENTAL! May be bugged. Create and reuse SKPicture all over the canvas ignoring clipping.
     /// Try this first for labels, svg etc. 
     /// Do not use this when dropping shadows or with other effects, better use Bitmap. 
     /// </summary>

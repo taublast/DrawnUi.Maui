@@ -11,7 +11,7 @@ public class SkiaGesturesParameters
         return new SkiaGesturesParameters()
         {
             Type = action,
-            Event = args
+            Event = args//.Clone()
         };
     }
 
