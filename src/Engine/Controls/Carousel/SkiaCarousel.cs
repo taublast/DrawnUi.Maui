@@ -421,28 +421,28 @@ public class SkiaCarousel : SnappingLayout
 
     SemaphoreSlim semaphoreItemSouce = new(1);
 
-    protected async Task ProcessItemsSource()
-    {
-        await semaphoreItemSouce.WaitAsync();
-        try
-        {
-            AdaptItemsSource();
-        }
-        catch (Exception e)
-        {
-            Trace.WriteLine(e);
-        }
-        finally
-        {
-            semaphoreItemSouce.Release();
-        }
+    //protected async Task ProcessItemsSource()
+    //{
+    //    await semaphoreItemSouce.WaitAsync();
+    //    try
+    //    {
+    //        AdaptItemsSource();
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        Trace.WriteLine(e);
+    //    }
+    //    finally
+    //    {
+    //        semaphoreItemSouce.Release();
+    //    }
 
-    }
+    //}
 
-    protected virtual void AdaptItemsSource()
-    {
+    //protected virtual void AdaptItemsSource()
+    //{
 
-    }
+    //}
 
     public override void OnItemSourceChanged()
     {
@@ -464,6 +464,7 @@ public class SkiaCarousel : SnappingLayout
     protected virtual (Vector2 Offset, bool OnScreen, bool NextToScreen) CalculateChildPosition(Vector2 currentPosition, int index, int childrenCount)
     {
         var childPos = SnapPoints[index];
+
         float newX = 0;
         float newY = 0;
         bool isVisible = true;
@@ -810,7 +811,12 @@ public class SkiaCarousel : SnappingLayout
             if (_MaxIndex != value)
             {
                 _MaxIndex = value;
-                OnPropertyChanged();
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsAtStart));
+                    OnPropertyChanged(nameof(IsAtEnd));
+                });
             }
         }
     }
@@ -843,6 +849,11 @@ public class SkiaCarousel : SnappingLayout
 
         for (int index = 0; index < childrenCount; index++)
         {
+            if (!IsTemplated || RecyclingTemplate == RecyclingTemplate.Disabled)
+            {
+                var view = ChildrenFactory.GetChildAt(index);
+                view.InvalidateWithChildren();
+            }
 
             var offset = (float)(index * (-SidesOffset * 2 + Spacing));
 
@@ -863,7 +874,7 @@ public class SkiaCarousel : SnappingLayout
 
         CurrentSnap = new(-1, -1);
 
-        if (SnapPoints.Any() && (SelectedIndex < 0 || SelectedIndex > snapPoints.Count - 1))
+        if (SnapPoints.Any())// && (SelectedIndex < 0 || SelectedIndex > snapPoints.Count - 1))
         {
             SelectedIndex = 0;
         }
@@ -877,6 +888,7 @@ public class SkiaCarousel : SnappingLayout
 
     protected virtual void OnChildrenInitialized()
     {
+        LastScrollProgress = double.NegativeInfinity;
         OnScrollProgressChanged();
     }
 
@@ -1084,11 +1096,65 @@ public class SkiaCarousel : SnappingLayout
         }
     }
 
+    /// <summary>
+    /// Will be updated on MainThread to safely work with bindings,
+    /// this a read-only property returning SelectingIndex in a thread-safe way;
+    /// </summary>
+    public int SafeIndex
+    {
+        get
+        {
+            return SelectedIndex;
+        }
+    }
 
+    public void GoNext()
+    {
+        //todo use IsLooped
+        var index = SelectedIndex;
+        if (index < MaxIndex)
+        {
+            SelectedIndex++;
+        }
+    }
+
+    public virtual void GoPrev()
+    {
+        //todo use IsLooped
+        var index = SelectedIndex;
+        if (index > 0)
+        {
+            SelectedIndex--;
+        }
+    }
+
+    public virtual bool IsAtStart
+    {
+        get
+        {
+            return SelectedIndex == 0;
+        }
+    }
+
+    public virtual bool IsAtEnd
+    {
+        get
+        {
+            return SelectedIndex == MaxIndex;
+        }
+    }
 
     protected virtual void OnSelectedIndexChanged(int index)
     {
         SelectedIndexChanged?.Invoke(this, index);
+
+        //forced to use ui-tread for maui not to randomly crash 
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            OnPropertyChanged(nameof(SafeIndex));
+            OnPropertyChanged(nameof(IsAtStart));
+            OnPropertyChanged(nameof(IsAtEnd));
+        });
 
         if (!LayoutReady || _isSnapping != null)
             return;
@@ -1161,6 +1227,16 @@ public class SkiaCarousel : SnappingLayout
         });
 
     /// <summary>
+    /// Zero-based index of the currently selected slide
+    /// </summary>
+    public int SelectedIndex
+    {
+        get { return (int)GetValue(SelectedIndexProperty); }
+        set { SetValue(SelectedIndexProperty, value); }
+    }
+
+
+    /// <summary>
     /// Can be used for indicators
     /// </summary>
     public int ChildrenTotal
@@ -1175,14 +1251,6 @@ public class SkiaCarousel : SnappingLayout
         typeof(SkiaCarousel),
         0, BindingMode.OneWayToSource);
 
-    /// <summary>
-    /// Zero-based index of the currently selected slide
-    /// </summary>
-    public int SelectedIndex
-    {
-        get { return (int)GetValue(SelectedIndexProperty); }
-        set { SetValue(SelectedIndexProperty, value); }
-    }
 
     public static readonly BindableProperty IsRightToLeftProperty = BindableProperty.Create(
         nameof(IsRightToLeft),
@@ -1228,8 +1296,8 @@ public class SkiaCarousel : SnappingLayout
 
     #region GESTURES
 
-    protected bool IsUserFocused { get; set; }
-    protected bool IsUserPanning { get; set; }
+    public bool IsUserFocused { get; protected set; }
+    public bool IsUserPanning { get; protected set; }
 
     protected Vector2 _panningOffset;
     protected Vector2 _panningStartOffset;
@@ -1240,12 +1308,6 @@ public class SkiaCarousel : SnappingLayout
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         bool passedToChildren = false;
-
-        //        Debug.WriteLine($"[Carousel] {args.Type}");
-
-        //Super.Log($"[CAROUSEL] {this.Tag} Got {args.Action}..");
-
-        //var thisOffset = TranslateInputCoords(apply.childOffset);
 
         ISkiaGestureListener PassToChildren()
         {

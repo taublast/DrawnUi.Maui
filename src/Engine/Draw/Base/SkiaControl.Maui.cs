@@ -30,7 +30,16 @@ namespace DrawnUi.Maui.Draw
 
         protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            base.OnPropertyChanged(propertyName);
+
+            try
+            {
+                base.OnPropertyChanged(propertyName);
+            }
+            catch (Exception e)
+            {
+                //we are avoiding MAUI crashes due concurrent access to properties from different threads
+                Super.Log(e);
+            }
 
             //if (!isApplyingStyle && !string.IsNullOrEmpty(propertyName))
             //{

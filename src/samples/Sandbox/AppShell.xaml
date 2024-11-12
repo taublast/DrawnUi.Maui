@@ -10,7 +10,7 @@
 
     <ShellContent
         Title="Drawn UI"
-        ContentTemplate="{DataTemplate mauiNet8:TestPageGridIssue}"
+        ContentTemplate="{DataTemplate mauiNet8:MainPage}"
         Route="MainPage" />
 
 </Shell>

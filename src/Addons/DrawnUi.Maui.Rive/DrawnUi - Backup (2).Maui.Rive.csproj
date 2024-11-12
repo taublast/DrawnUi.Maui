@@ -5,23 +5,26 @@
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>
     <ImplicitUsings>enable</ImplicitUsings>          
+           
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
-    <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
     <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
   </PropertyGroup>
 
+  <!--WINDOWS-->
+  <ItemGroup Condition="$(TargetFramework.Contains('windows')) == true">
+    <PackageReference Include="AppoMobi.Maui.Rive" Version="1.0.1.2-pre" />
+  </ItemGroup>
+ 
   <PropertyGroup>
-    
     <UseNuget>false</UseNuget>
-
-    <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi demo repository for usage example. Currently only Android is implemented, iOS will be too when i have time.</PackageReleaseNotes>
-    <Title>Camera addon to DrawnUI for .NET MAUI</Title>
-    <PackageId>DrawnUi.Maui.Camera</PackageId>
-    <Description>Camera implementation (temporarily Android only) and preview rendering with SkiaSharp in .NET MAUI</Description>
-    <PackageTags>maui drawnui skia skiasharp draw camera</PackageTags>
+    <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi demo project for usage example. Temporarily Windows only is supported.</PackageReleaseNotes>
+    <Title>Rive addon to DrawnUI for .NET MAUI</Title>
+    <PackageId>DrawnUi.Maui.Rive</PackageId>
+    <Description>SkiaRive DrawnUi control for .NET MAUI (temporarily Windows only is supported)</Description>
+    <PackageTags>maui drawnui skia skiasharp draw rive</PackageTags>
     <Authors>Nick Kovalsky aka AppoMobi</Authors>
     <Copyright>(c) AppoMobi, 2023 - present day</Copyright>
     <PackageProjectUrl>https://github.com/taublast/DrawnUi.Maui</PackageProjectUrl>
@@ -42,9 +45,12 @@
     <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
   </ItemGroup>
 
-    <!--production-->
+  <!--production-->
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.5.2" />
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.5.22" />
   </ItemGroup>
+
+
+ 
 
 </Project>

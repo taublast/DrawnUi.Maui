@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace DrawnUi.Maui.Infrastructure;
 
@@ -22,20 +21,39 @@ public static class SkSl
         return json;
     }
 
+    public static Dictionary<string, SKRuntimeEffect> CompiledCache = new();
+
     /// <summary>
     /// Will compile your SKSL shader code into SKRuntimeEffect.
-    /// The filename parameter is used for debugging purposes only
+    /// The filename parameter is used for debugging and caching. Do not forget to disable caching if you edit/change shader code at runtime.
     /// </summary>
     /// <param name="shaderCode"></param>
     /// <param name="filename"></param>
     /// <returns></returns>
-    public static SKRuntimeEffect Compile(string shaderCode, string filename = null)
+    public static SKRuntimeEffect Compile(string shaderCode, string filename = null, bool useCache = true)
     {
+        SKRuntimeEffect compiled = null;
+
+        if (useCache)
+        {
+            if (string.IsNullOrEmpty(filename))
+            {
+                throw new Exception("SKSL needs a filename to be able to cache shader code.");
+            }
+
+            if (CompiledCache.TryGetValue(filename, out compiled))
+            {
+                Debug.WriteLine($"[SKSL] Using cached shader {filename}!");
+
+                return compiled;
+            }
+        }
+
         string errors;
 #if SKIA3
-        var effect = SKRuntimeEffect.CreateShader(shaderCode, out errors);
+        compiled = SKRuntimeEffect.CreateShader(shaderCode, out errors);
 #else
-        var effect = SKRuntimeEffect.Create(shaderCode, out errors);
+        compiled = SKRuntimeEffect.Create(shaderCode, out errors);
 #endif
         if (!string.IsNullOrEmpty(errors))
         {
@@ -44,7 +62,12 @@ public static class SkSl
 
         Debug.WriteLine($"[SKSL] Compiled shader {filename}!");
 
-        return effect;
+        if (useCache)
+        {
+            CompiledCache[filename] = compiled;
+        }
+
+        return compiled;
     }
 
     static void ThrowCompilationError(string shaderCode, string errors, string filename = null)

@@ -1,8 +1,6 @@
-using AppoMobi.Specials;
-using System.Diagnostics;
 using SKBitmap = SkiaSharp.SKBitmap;
 
-namespace Sandbox.Views.Controls;
+namespace DrawnUi.Maui.Draw;
 
 /// <summary>
 /// Base shader effect class that has 2 input textures. 
@@ -410,7 +408,7 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
         if (_controlTo?.RenderObject?.Image == null || !ParentReady())
             return;
 
-        Debug.WriteLine($"ImportCacheTo {_controlTo.BindingContext}");
+        //Debug.WriteLine($"ImportCacheTo {_controlTo.BindingContext}");
 
         CompileSecondaryTexture(_controlTo.RenderObject.Image);
     }

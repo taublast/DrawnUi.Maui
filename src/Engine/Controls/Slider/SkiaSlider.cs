@@ -421,6 +421,18 @@ public class SkiaSlider : SkiaLayout
         typeof(SkiaSlider),
         true);
 
+    public bool Invert
+    {
+        get { return (bool)GetValue(InvertProperty); }
+        set { SetValue(InvertProperty, value); }
+    }
+
+    public static readonly BindableProperty InvertProperty = BindableProperty.Create(
+        nameof(Invert),
+        typeof(bool),
+        typeof(SkiaSlider),
+        false);
+
     /// <summary>
     /// Will ignore gestures of the wrong direction, like if this Orientation is Horizontal will ignore gestures with vertical direction velocity
     /// </summary>
@@ -468,17 +480,29 @@ public class SkiaSlider : SkiaLayout
                     StepValue = (Max - Min) / (Width + AvailableWidthAdjustment * 2 - SliderHeight);
                 }
 
+                //if (!TouchBusy)
+                //{
+                //    var mask = "{0:" + ValueStringFormat + "}";
+                //    if (EnableRange)
+                //    {
+                //        SetStartOffsetClamped((Start - Min) / StepValue - AvailableWidthAdjustment);
+                //        StartDesc = string.Format(mask, Start).Trim();
+                //    }
+                //    SetEndOffsetClamped((End - Min) / StepValue);
+                //    EndDesc = string.Format(mask, End).Trim();
+                //}
                 if (!TouchBusy)
                 {
                     var mask = "{0:" + ValueStringFormat + "}";
                     if (EnableRange)
                     {
-                        SetStartOffsetClamped((Start - Min) / StepValue - AvailableWidthAdjustment);
+                        StartThumbX = PositionFromValue(Start) - AvailableWidthAdjustment;
                         StartDesc = string.Format(mask, Start).Trim();
                     }
-                    SetEndOffsetClamped((End - Min) / StepValue);
+                    EndThumbX = PositionFromValue(End) + AvailableWidthAdjustment;
                     EndDesc = string.Format(mask, End).Trim();
                 }
+
             }
 
         }
@@ -506,18 +530,7 @@ public class SkiaSlider : SkiaLayout
         return adjustedStep + minValue;
     }
 
-    protected virtual void ConvertOffsetsToValues()
-    {
-        if (EnableRange)
-        {
-            Start = StepValue * (this.StartThumbX + AvailableWidthAdjustment) + Min;
-            End = StepValue * (this.EndThumbX - AvailableWidthAdjustment) + Min;
-        }
-        else
-        {
-            End = StepValue * (this.EndThumbX + AvailableWidthAdjustment) + Min;
-        }
-    }
+
 
 
     protected virtual void RecalculateValues()
@@ -565,44 +578,6 @@ public class SkiaSlider : SkiaLayout
         RecalculateValues();
     }
 
-    void SetStartOffsetClamped(double maybe)
-    {
-        if (maybe < -AvailableWidthAdjustment)
-        {
-            StartThumbX = -AvailableWidthAdjustment;
-        }
-        else
-        if (EnableRange && maybe > (EndThumbX - RangeMin / StepValue))
-        {
-            StartThumbX = EndThumbX - RangeMin / StepValue;
-        }
-        else
-        {
-            StartThumbX = maybe;
-        }
-    }
-
-    void SetEndOffsetClamped(double maybe)
-    {
-        if (maybe < -AvailableWidthAdjustment)
-        {
-            EndThumbX = -AvailableWidthAdjustment;
-        }
-        else
-        if (maybe > (Width + AvailableWidthAdjustment) - SliderHeight)
-        {
-            EndThumbX = (Width + AvailableWidthAdjustment) - SliderHeight;
-        }
-        else
-        if (EnableRange && maybe < (StartThumbX + RangeMin / StepValue))
-        {
-            EndThumbX = StartThumbX + RangeMin / StepValue;
-        }
-        else
-        {
-            EndThumbX = maybe;
-        }
-    }
 
     private volatile bool lockInternal;
 
@@ -703,4 +678,224 @@ public class SkiaSlider : SkiaLayout
 
 
     #endregion
+
+    //protected virtual void ConvertOffsetsToValues()
+    //{
+    //    if (EnableRange)
+    //    {
+    //        Start = StepValue * (this.StartThumbX + AvailableWidthAdjustment) + Min;
+    //        End = StepValue * (this.EndThumbX - AvailableWidthAdjustment) + Min;
+    //    }
+    //    else
+    //    {
+    //        End = StepValue * (this.EndThumbX + AvailableWidthAdjustment) + Min;
+    //    }
+    //}
+
+    //void SetStartOffsetClamped(double maybe)
+    //{
+    //    if (maybe < -AvailableWidthAdjustment)
+    //    {
+    //        StartThumbX = -AvailableWidthAdjustment;
+    //    }
+    //    else
+    //    if (EnableRange && maybe > (EndThumbX - RangeMin / StepValue))
+    //    {
+    //        StartThumbX = EndThumbX - RangeMin / StepValue;
+    //    }
+    //    else
+    //    {
+    //        StartThumbX = maybe;
+    //    }
+    //}
+
+    //void SetEndOffsetClamped(double maybe)
+    //{
+    //    if (maybe < -AvailableWidthAdjustment)
+    //    {
+    //        EndThumbX = -AvailableWidthAdjustment;
+    //    }
+    //    else
+    //    if (maybe > (Width + AvailableWidthAdjustment) - SliderHeight)
+    //    {
+    //        EndThumbX = (Width + AvailableWidthAdjustment) - SliderHeight;
+    //    }
+    //    else
+    //    if (EnableRange && maybe < (StartThumbX + RangeMin / StepValue))
+    //    {
+    //        EndThumbX = StartThumbX + RangeMin / StepValue;
+    //    }
+    //    else
+    //    {
+    //        EndThumbX = maybe;
+    //    }
+    //}
+
+    void SetStartOffsetClamped(double maybe)
+    {
+        double minPosition = GetStartThumbMinPosition();
+        double maxPosition = GetStartThumbMaxPosition();
+
+        if (maybe < minPosition)
+        {
+            StartThumbX = minPosition;
+        }
+        else if (maybe > maxPosition)
+        {
+            StartThumbX = maxPosition;
+        }
+        else
+        {
+            StartThumbX = maybe;
+        }
+    }
+
+    void SetEndOffsetClamped(double maybe)
+    {
+        double minPosition = GetEndThumbMinPosition();
+        double maxPosition = GetEndThumbMaxPosition();
+
+        if (maybe < minPosition)
+        {
+            EndThumbX = minPosition;
+        }
+        else if (maybe > maxPosition)
+        {
+            EndThumbX = maxPosition;
+        }
+        else
+        {
+            EndThumbX = maybe;
+        }
+    }
+
+
+    protected virtual void ConvertOffsetsToValues()
+    {
+        if (EnableRange)
+        {
+            Start = AdjustToStepValue(ValueFromPosition(this.StartThumbX + AvailableWidthAdjustment), Min, Step);
+            End = AdjustToStepValue(ValueFromPosition(this.EndThumbX - AvailableWidthAdjustment), Min, Step);
+        }
+        else
+        {
+            End = AdjustToStepValue(ValueFromPosition(this.EndThumbX + AvailableWidthAdjustment), Min, Step);
+        }
+    }
+
+
+    #region Invert
+
+    private double ValueFromPosition(double position)
+    {
+        double totalLength = Width + AvailableWidthAdjustment - SliderHeight;
+        if (totalLength <= 0) return Min; // Avoid division by zero
+
+        double ratio = position / totalLength;
+        if (Invert)
+        {
+            return Max - ratio * (Max - Min);
+        }
+        else
+        {
+            return Min + ratio * (Max - Min);
+        }
+    }
+
+    private double PositionFromValue(double value)
+    {
+        double totalLength = Width + AvailableWidthAdjustment - SliderHeight;
+        if (totalLength <= 0) return 0; // Avoid division by zero
+
+        double ratio;
+        if (Invert)
+        {
+            ratio = (Max - value) / (Max - Min);
+        }
+        else
+        {
+            ratio = (value - Min) / (Max - Min);
+        }
+        return ratio * totalLength;
+    }
+
+    private double GetStartThumbMinPosition()
+    {
+        if (Invert)
+        {
+            if (EnableRange)
+            {
+                return EndThumbX + RangeMin / StepValue;
+            }
+            else
+            {
+                return -AvailableWidthAdjustment;
+            }
+        }
+        else
+        {
+            return -AvailableWidthAdjustment;
+        }
+    }
+
+    private double GetStartThumbMaxPosition()
+    {
+        if (Invert)
+        {
+            return (Width + AvailableWidthAdjustment) - SliderHeight;
+        }
+        else
+        {
+            if (EnableRange)
+            {
+                return EndThumbX - RangeMin / StepValue;
+            }
+            else
+            {
+                return (Width + AvailableWidthAdjustment) - SliderHeight;
+            }
+        }
+    }
+
+    private double GetEndThumbMinPosition()
+    {
+        if (Invert)
+        {
+            return -AvailableWidthAdjustment;
+        }
+        else
+        {
+            if (EnableRange)
+            {
+                return StartThumbX + RangeMin / StepValue;
+            }
+            else
+            {
+                return -AvailableWidthAdjustment;
+            }
+        }
+    }
+
+    private double GetEndThumbMaxPosition()
+    {
+        if (Invert)
+        {
+            if (EnableRange)
+            {
+                return StartThumbX - RangeMin / StepValue;
+            }
+            else
+            {
+                return (Width + AvailableWidthAdjustment) - SliderHeight;
+            }
+        }
+        else
+        {
+            return (Width + AvailableWidthAdjustment) - SliderHeight;
+        }
+    }
+
+
+    #endregion
+
 }

@@ -44,7 +44,7 @@
 
     <!--production-->
   <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.5.2" />
+    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.5.22" />
   </ItemGroup>
 
 </Project>

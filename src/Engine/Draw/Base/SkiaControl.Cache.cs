@@ -101,7 +101,7 @@ public partial class SkiaControl
                     OnPropertyChanged();
 
                     if (value != null)
-                        CreatedCache?.Invoke(this, value);
+                        OnCacheCreated();
 
                     Monitor.PulseAll(LockDraw);
                 }
@@ -110,6 +110,11 @@ public partial class SkiaControl
         }
     }
     CachedObject _renderObject;
+
+    protected virtual void OnCacheCreated()
+    {
+        CreatedCache?.Invoke(this, RenderObject);
+    }
 
     /// <summary>
     /// Indended to prohibit background rendering, useful for streaming controls like camera, gif etc. SkiaBackdrop has it set to True as well.
@@ -191,8 +196,9 @@ public partial class SkiaControl
             if (UseCache == SkiaCacheType.GPU && !Super.GpuCacheEnabled)
                 return SkiaCacheType.Image;
 
-            if (EffectPostRenderer != null && (UseCache == SkiaCacheType.None || UseCache == SkiaCacheType.Operations))
-                return SkiaCacheType.Image;
+            //if (EffectPostRenderer != null 
+            //    && (UseCache == SkiaCacheType.None || UseCache == SkiaCacheType.Operations))
+            //    return SkiaCacheType.Image;
 
             if (UseCache == SkiaCacheType.None && CanUseCacheDoubleBuffering && Super.Multithreaded && Parent is SkiaControl)
                 return SkiaCacheType.Operations;
@@ -648,6 +654,12 @@ public partial class SkiaControl
                 DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true, true, (ctx) =>
                 {
                     PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
+
+                    if (EffectPostRenderer != null)
+                    {
+                        EffectPostRenderer.Render(ctx, destination);
+                    }
+
                 });
             }
         }

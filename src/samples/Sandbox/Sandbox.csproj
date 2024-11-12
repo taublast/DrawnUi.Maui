@@ -218,11 +218,6 @@
       </Compile>
  
  
-      <Compile Update="Views\MainPageShadersCarousel.xaml.cs">
-        <DependentUpon>MainPageShadersCarousel.xaml</DependentUpon>
-      </Compile>
- 
- 
       <Compile Update="TestPage2.xaml.cs">
         <DependentUpon>TestPage2.xaml</DependentUpon>
       </Compile>

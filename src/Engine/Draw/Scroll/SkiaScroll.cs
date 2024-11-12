@@ -442,25 +442,86 @@ namespace DrawnUi.Maui.Draw
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
+        //protected virtual Vector2 ClampOffsetWithRubberBand(float x, float y)
+        //{
+        //    var clampedElastic = RubberBandUtils.ClampOnTrack(new Vector2(x, y), ContentOffsetBounds, (float)RubberEffect);
+
+        //    if (Orientation == ScrollOrientation.Vertical)
+        //    {
+        //        var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
+        //        return clampedElastic with { X = clampedX };
+        //    }
+        //    else
+        //    if (Orientation == ScrollOrientation.Horizontal)
+        //    {
+        //        var clampedY = Math.Max(ContentOffsetBounds.Top, Math.Min(ContentOffsetBounds.Bottom, y));
+        //        return clampedElastic with { Y = clampedY };
+        //    }
+
+
+        //    return clampedElastic;
+        //}
         protected virtual Vector2 ClampOffsetWithRubberBand(float x, float y)
         {
-            var clampedElastic = RubberBandUtils.ClampOnTrack(new Vector2(x, y), ContentOffsetBounds, (float)RubberEffect);
+            Vector2 clampedElastic = Vector2.Zero;
 
+            bool clamped = false;
+            if (RefreshEnabled)
+            {
+                if (Orientation == ScrollOrientation.Vertical && y > 0) //pulling down
+                {
+                    clamped = true;
+                    float adjusted = (float)(RefreshIndicator.Height * RenderingScale + 1000);
+                    var customDims = new Vector2(ContentOffsetBounds.Width, adjusted);
+                    clampedElastic = RubberBandUtils.ClampOnTrack(
+                        new Vector2(x, y),
+                        ContentOffsetBounds,
+                        (float)RubberEffect,
+                        customDims
+                    );
+                }
+                else
+                if (Orientation == ScrollOrientation.Horizontal && x > 0)//pulling right
+                {
+                    clamped = true;
+                    float adjusted = (float)(RefreshIndicator.Width * RenderingScale + 1000);
+                    var customDims = new Vector2(adjusted, ContentOffsetBounds.Height);
+
+                    clampedElastic = RubberBandUtils.ClampOnTrack(
+                        new Vector2(x, y),
+                        ContentOffsetBounds,
+                        (float)RubberEffect,
+                        customDims
+                    );
+                }
+
+            }
+
+            if (!clamped)
+            {
+                clampedElastic = RubberBandUtils.ClampOnTrack(
+                    new Vector2(x, y),
+                    ContentOffsetBounds,
+                    (float)RubberEffect
+                );
+            }
+
+            // Preserve the clamping in the non-scrolling direction
             if (Orientation == ScrollOrientation.Vertical)
             {
                 var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
                 return clampedElastic with { X = clampedX };
             }
-            else
             if (Orientation == ScrollOrientation.Horizontal)
             {
                 var clampedY = Math.Max(ContentOffsetBounds.Top, Math.Min(ContentOffsetBounds.Bottom, y));
                 return clampedElastic with { Y = clampedY };
             }
 
-
             return clampedElastic;
         }
+
+
 
         public virtual Vector2 ClampOffset(float x, float y, bool strict = false)
         {
@@ -2044,9 +2105,8 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected bool WasSwiping { get; set; }
 
-        protected bool IsUserFocused { get; set; }
-
-        protected bool IsUserPanning { get; set; }
+        public bool IsUserFocused { get; protected set; }
+        public bool IsUserPanning { get; protected set; }
 
         public float VelocityY
         {

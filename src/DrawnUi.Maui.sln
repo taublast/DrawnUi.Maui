@@ -6,11 +6,12 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3EEA7F62-9878-451E-A506-28AB7C5DEEB8}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui", "Engine\DrawnUi.Maui.csproj", "{D76B6239-94A0-482C-A0FF-A764017B7393}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Playground", "Playground", "{0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{22EE9E7A-55C6-4F9F-9878-9376F7BC1DCC}"
 EndProject
@@ -33,8 +34,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.Rive", "Addons\DrawnUi.Maui.Rive\DrawnUi.Maui.Rive.csproj", "{1F524822-400E-4801-AE05-4B3A14B603AD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.Camera", "Addons\DrawnUi.Maui.Camera\DrawnUi.Maui.Camera.csproj", "{D4FC0BDB-3FE8-49C9-8B76-53C83128B899}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeMauiApp", "..\..\AppoMobi.Maui.DrawnUi.Demo\src\Usual\SomeMauiApp.csproj", "{F71645D2-F7AF-4C1C-9509-D01692622110}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,12 +79,6 @@ Global
 		{D4FC0BDB-3FE8-49C9-8B76-53C83128B899}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4FC0BDB-3FE8-49C9-8B76-53C83128B899}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4FC0BDB-3FE8-49C9-8B76-53C83128B899}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F71645D2-F7AF-4C1C-9509-D01692622110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F71645D2-F7AF-4C1C-9509-D01692622110}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F71645D2-F7AF-4C1C-9509-D01692622110}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{F71645D2-F7AF-4C1C-9509-D01692622110}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F71645D2-F7AF-4C1C-9509-D01692622110}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F71645D2-F7AF-4C1C-9509-D01692622110}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,7 +93,6 @@ Global
 		{FF6A6A51-01FC-4CEF-9386-D132AD9EBF18} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
 		{1F524822-400E-4801-AE05-4B3A14B603AD} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
 		{D4FC0BDB-3FE8-49C9-8B76-53C83128B899} = {8B60E2B6-4347-450E-9999-319D8C7697D3}
-		{F71645D2-F7AF-4C1C-9509-D01692622110} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08E673B7-06BF-468C-8D6C-2D1AA8E4A8CA}

@@ -492,7 +492,7 @@ public class ViewsAdapter : IDisposable
 
     public void ContextCollectionChanged(Func<object> template, IList dataContexts, int poolSize, int reserve = 0)
     {
-        if (_templatedViewsPool == null)
+        //if (_templatedViewsPool == null)
         {
             InitializeTemplates(template, dataContexts, poolSize, reserve);
             return;
