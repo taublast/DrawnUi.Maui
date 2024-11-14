@@ -176,8 +176,11 @@ Use a simple `SkiaControl` with height and background color set. For complex sha
 
 #### Simulate MAUI CollectionView
 
-`SkiaScroll` + `SkiaLayout` of type `Column`/`Row` (`ItemTemplate`=...). Set cache of the cell to `ImageDoubleBuffered` or other appropriate. You might also what to order to create `ItemTemplate` in background not to freeze the UI by using `InitializeTemplatesInBackgroundDelay` property.
-
+`SkiaScroll` + `SkiaLayout` of type `Column`/`Row` (`ItemTemplate`=...). Set cache of the cell to `ImageDoubleBuffered` or other appropriate. 
+You might also what to order to create `ItemTemplate` in background not to freeze the UI by using `InitializeTemplatesInBackgroundDelay` property.
+An important property here is `VirtualisationInflated` how mocj of the content outside the visible bounds should still be rendered, better not be 0 to have 
+more recycled cells in use and make scroll more smooth.
+*IMPORTANT:* Remember default layout properties are `Start` and not `Fill` like in standart MAUI.
 
 #### Simulate MAUI StackLayout with a BidableLayout.ItemTemplate 
 

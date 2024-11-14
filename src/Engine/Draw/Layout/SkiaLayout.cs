@@ -243,12 +243,12 @@ namespace DrawnUi.Maui.Draw
         nameof(VirtualisationInflated),
         typeof(double),
         typeof(SkiaLayout),
-        0.0,
+        350.0,
         propertyChanged: NeedInvalidateMeasure);
 
         /// <summary>
         /// How much of the hidden content out of visible bounds should be considered visible for rendering,
-        /// default is 0 pts.
+        /// default is 350 pts.
         /// Basically how much should be expand in every direction of the visible area prior to checking if content falls
         /// into its bounds for rendering controlled with Virtualisation.		
         /// </summary>
@@ -619,12 +619,18 @@ namespace DrawnUi.Maui.Draw
         public override void InvalidateByChild(SkiaControl child)
         {
             if (!NeedAutoSize && child.NeedAutoSize || IsTemplated)
+            {
+                UpdateByChild(child);
                 return;
+            }
 
             if (Type == LayoutType.Absolute)
             {
                 //check if this child changed your size, if not exit
-                //todo
+                if (child.SizeRequest.Width <= this.SizeRequest.Width || child.SizeRequest.Height <= this.SizeRequest.Height)
+                    //DirtyChildren.Add(child);
+                    UpdateByChild(child);
+                return;
             }
 
             base.InvalidateByChild(child);
