@@ -618,7 +618,7 @@ namespace DrawnUi.Maui.Draw
 
         public override void InvalidateByChild(SkiaControl child)
         {
-            if (!NeedAutoSize && child.NeedAutoSize)
+            if (!NeedAutoSize && child.NeedAutoSize || IsTemplated)
                 return;
 
             if (Type == LayoutType.Absolute)
@@ -757,42 +757,42 @@ namespace DrawnUi.Maui.Draw
                     switch (Type)
                     {
                         case LayoutType.Absolute:
-                        ContentSize = MeasureAbsolute(constraints.Content, request.Scale);
-                        break;
+                            ContentSize = MeasureAbsolute(constraints.Content, request.Scale);
+                            break;
 
                         case LayoutType.Grid:
 
-                        ContentSize = MeasureGrid(constraints.Content, request.Scale);
-                        break;
+                            ContentSize = MeasureGrid(constraints.Content, request.Scale);
+                            break;
 
                         case LayoutType.Column:
                         case LayoutType.Row:
-                        if (IsTemplated) //fix threads conflict when templates are initialized in background thread
-                        {
-                            var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
+                            if (IsTemplated) //fix threads conflict when templates are initialized in background thread
+                            {
+                                var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
 
-                            if (!canMeasureTemplates)
-                                return ScaledSize.CreateEmpty(request.Scale);
-                        }
+                                if (!canMeasureTemplates)
+                                    return ScaledSize.CreateEmpty(request.Scale);
+                            }
 
-                        ContentSize = MeasureStack(constraints.Content, request.Scale);
-                        break;
+                            ContentSize = MeasureStack(constraints.Content, request.Scale);
+                            break;
 
                         case LayoutType.Wrap:
-                        if (IsTemplated) //fix threads conflict when templates are initialized in background thread
-                        {
-                            var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
+                            if (IsTemplated) //fix threads conflict when templates are initialized in background thread
+                            {
+                                var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
 
-                            if (!canMeasureTemplates)
-                                return ScaledSize.CreateEmpty(request.Scale);
-                        }
+                                if (!canMeasureTemplates)
+                                    return ScaledSize.CreateEmpty(request.Scale);
+                            }
 
-                        ContentSize = MeasureWrap(constraints.Content, request.Scale);
-                        break;
+                            ContentSize = MeasureWrap(constraints.Content, request.Scale);
+                            break;
 
                         default:
-                        ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height, request.Scale);
-                        break;
+                            ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height, request.Scale);
+                            break;
                     }
                 }
                 else
@@ -1429,40 +1429,40 @@ namespace DrawnUi.Maui.Draw
                 case NotifyCollectionChangedAction.Remove:
                 case NotifyCollectionChangedAction.Replace:
 
-                //if (IsTemplated)
-                //{
-                //    lock (lockMeasure)
-                //    {
-                //        ApplyNewItemsSource = false;
-                //        ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
-                //            GetTemplatesPoolLimit(),
-                //            GetTemplatesPoolPrefill());
+                    //if (IsTemplated)
+                    //{
+                    //    lock (lockMeasure)
+                    //    {
+                    //        ApplyNewItemsSource = false;
+                    //        ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
+                    //            GetTemplatesPoolLimit(),
+                    //            GetTemplatesPoolPrefill());
 
-                //        Invalidate();
-                //    }
-                //    return;
-                //}
+                    //        Invalidate();
+                    //    }
+                    //    return;
+                    //}
 
-                break;
+                    break;
 
                 case NotifyCollectionChangedAction.Reset:
-                ResetScroll();
-                //ClearChildren();
-                //if (args.NewItems != null)
-                //{
-                //	foreach (var newItem in args.NewItems)
-                //	{
-                //		SkiaControl view = CreateControl(ItemTemplate);
-                //		if (view != null)
-                //		{
-                //			view.Parent = this;
-                //			view.BindingContext = newItem;
-                //			Views.Add(view);
-                //		}
-                //	}
-                //}
-                //Invalidate();
-                break;
+                    ResetScroll();
+                    //ClearChildren();
+                    //if (args.NewItems != null)
+                    //{
+                    //	foreach (var newItem in args.NewItems)
+                    //	{
+                    //		SkiaControl view = CreateControl(ItemTemplate);
+                    //		if (view != null)
+                    //		{
+                    //			view.Parent = this;
+                    //			view.BindingContext = newItem;
+                    //			Views.Add(view);
+                    //		}
+                    //	}
+                    //}
+                    //Invalidate();
+                    break;
             }
 
             //PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
