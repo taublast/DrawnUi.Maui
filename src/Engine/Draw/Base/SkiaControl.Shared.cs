@@ -2544,13 +2544,27 @@ namespace DrawnUi.Maui.Draw
             {
                 if (Superview is DrawnView view)
                 {
-                    view.ToBeDisposed.Enqueue(disposable);
+                    try
+                    {
+                        view.ToBeDisposed.Enqueue(disposable);
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
                 }
                 else
                 {
                     Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
                     {
-                        disposable?.Dispose();
+                        try
+                        {
+                            disposable?.Dispose();
+                        }
+                        catch (Exception e)
+                        {
+                            Super.Log(e);
+                        }
                     });
                 }
             }
