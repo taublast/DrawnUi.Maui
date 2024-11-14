@@ -618,7 +618,7 @@ namespace DrawnUi.Maui.Draw
 
         public override void InvalidateByChild(SkiaControl child)
         {
-            if (!NeedAutoSize && child.NeedAutoSize || IsTemplated)
+            if (!NeedAutoSize && child.NeedAutoSize || !NeedAutoSize && IsTemplated)
             {
                 UpdateByChild(child);
                 return;
@@ -628,7 +628,6 @@ namespace DrawnUi.Maui.Draw
             {
                 //check if this child changed your size, if not exit
                 if (child.SizeRequest.Width <= this.SizeRequest.Width || child.SizeRequest.Height <= this.SizeRequest.Height)
-                    //DirtyChildren.Add(child);
                     UpdateByChild(child);
                 return;
             }

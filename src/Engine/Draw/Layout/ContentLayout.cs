@@ -6,6 +6,17 @@ namespace DrawnUi.Maui.Draw;
 public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGestureListener
 {
 
+    public override void InvalidateByChild(SkiaControl child)
+    {
+        if (!NeedAutoSize && child.NeedAutoSize || !NeedAutoSize && IsTemplated)
+        {
+            UpdateByChild(child);
+            return;
+        }
+
+        base.InvalidateByChild(child);
+    }
+
     public override void Invalidate()
     {
         base.Invalidate();
