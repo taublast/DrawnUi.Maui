@@ -295,7 +295,14 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaScroll scroll)
             {
-                scroll.SetIsRefreshing((bool)changed);
+                try
+                {
+                    scroll.SetIsRefreshing((bool)changed);
+                }
+                catch (Exception e)
+                {
+                    Super.Log(e);
+                }
             }
         });
         public bool IsRefreshing
@@ -660,15 +667,20 @@ namespace DrawnUi.Maui.Draw
             return forChild;
         }
 
-        /// <summary>
-        /// panning interpolation to avoid trembling finlgers
-        /// </summary>
-        private const float InterpolationFactor = 0.1f;
-
         private bool inContact;
+
+        protected bool LockGesturesUntilDown;
 
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
+            if (LockGesturesUntilDown)
+            {
+                if (args.Type != TouchActionResult.Down)
+                    return null;
+
+                LockGesturesUntilDown = false;
+            }
+
             if (args.Type == TouchActionResult.Down)
             {
                 lockHeader = false;
@@ -2440,7 +2452,9 @@ namespace DrawnUi.Maui.Draw
                 if (ViewportOffsetX == 0 && ViewportOffsetY == 0)
                 {
                     HideRefreshIndicator();
+                    ScrollTo(0, 0, 0);
                 }
+
             }
 
             OverscrollDistance = CalculateOverscrollDistance(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
@@ -2619,10 +2633,11 @@ namespace DrawnUi.Maui.Draw
 
             if (IsUserPanning)
             {
-                if (RefreshCommand != null && ratio >= 1 && !wasRefreshing && !ScrollLocked)
+                if (!IsRefreshing && RefreshCommand != null && ratio >= 1 && !wasRefreshing && !ScrollLocked)
                 {
-                    SetIsRefreshing(true);
-                    RefreshCommand.Execute(this);
+                    //SetIsRefreshing(true);
+                    //RefreshCommand.Execute(this);
+                    IsRefreshing = true;
                 }
             }
             else
@@ -2659,9 +2674,11 @@ namespace DrawnUi.Maui.Draw
             //lock scrolling at top
             if (state)
             {
+                LockGesturesUntilDown = true;
                 wasRefreshing = true;
                 IsRefreshing = true;
                 ScrollLocked = true;
+                RefreshCommand?.Execute(this);
             }
             else
             {
