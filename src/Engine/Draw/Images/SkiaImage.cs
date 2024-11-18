@@ -1,6 +1,4 @@
 ﻿using DrawnUi.Maui.Infrastructure.Xaml;
-using Microsoft.Maui;
-using System.ComponentModel;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -415,6 +413,8 @@ public class SkiaImage : SkiaControl
         return await SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel, priority);
     }
 
+
+
     public virtual void SetImageSource(ImageSource source)
     {
         //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
@@ -444,7 +444,21 @@ public class SkiaImage : SkiaControl
 
             if (!source.IsEmpty)
             {
-                CancelLoading?.Cancel(); //todo check this out
+                //maybe image is already cached?
+                string uri = SkiaImageManager.GetUriFromImageSource(source);
+                if (uri != null)
+                {
+                    var cachedBitmap = SkiaImageManager.Instance.GetFromCache(uri);
+                    if (cachedBitmap != null)
+                    {
+                        ImageBitmap = new LoadedImageSource(cachedBitmap);
+                        OnSuccess?.Invoke(this, new ContentLoadedEventArgs(uri));
+                        return;
+                    }
+                }
+
+                //okay will load async then
+                CancelLoading?.Cancel();
                 LastSource = source;
                 string url = FrameworkImageSourceConverter.ConvertToString(source);
                 var cancel = new CancellationTokenSource();
@@ -1437,12 +1451,20 @@ propertyChanged: NeedChangeColorFIlter);
 
         if (LoadedSource != null)
         {
-            SetAspectScale(LoadedSource.Width, LoadedSource.Height, constraints.Content, this.Aspect, request.Scale);
+            try
+            {
+                SetAspectScale(LoadedSource.Width, LoadedSource.Height, constraints.Content, this.Aspect, request.Scale);
 
-            if (NeedAutoHeight)
-                height = SourceImageSize.Pixels.Height * this.AspectScale.Y;
-            if (NeedAutoWidth)
-                width = SourceImageSize.Pixels.Width * this.AspectScale.X;
+                if (NeedAutoHeight)
+                    height = SourceImageSize.Pixels.Height * this.AspectScale.Y;
+                if (NeedAutoWidth)
+                    width = SourceImageSize.Pixels.Width * this.AspectScale.X;
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+                AspectScale = SKPoint.Empty;
+            }
         }
         else
         {
@@ -1476,30 +1498,30 @@ propertyChanged: NeedChangeColorFIlter);
 
         switch (horizontal)
         {
-        case DrawImageAlignment.Center:
-        x = (dest.Width - destWidth) / 2.0f;
-        break;
+            case DrawImageAlignment.Center:
+                x = (dest.Width - destWidth) / 2.0f;
+                break;
 
-        case DrawImageAlignment.Start:
-        break;
+            case DrawImageAlignment.Start:
+                break;
 
-        case DrawImageAlignment.End:
-        x = dest.Width - destWidth;
-        break;
+            case DrawImageAlignment.End:
+                x = dest.Width - destWidth;
+                break;
         }
 
         switch (vertical)
         {
-        case DrawImageAlignment.Center:
-        y = (dest.Height - destHeight) / 2.0f;
-        break;
+            case DrawImageAlignment.Center:
+                y = (dest.Height - destHeight) / 2.0f;
+                break;
 
-        case DrawImageAlignment.Start:
-        break;
+            case DrawImageAlignment.Start:
+                break;
 
-        case DrawImageAlignment.End:
-        y = dest.Height - destHeight;
-        break;
+            case DrawImageAlignment.End:
+                y = dest.Height - destHeight;
+                break;
         }
 
         x += dest.Left;
