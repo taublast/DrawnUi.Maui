@@ -1,19 +1,29 @@
-name: Close Inactive Issues
+name: Manage Inactive Issues
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
 
 jobs:
-  close_inactive_issues:
+  manage_inactive_issues:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/stale@v8
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          stale-issue-message: 'This issue has been automatically closed due to inactivity.'
-          days-before-stale: 10
-          days-before-close: 0
-          stale-issue-label: 'more-info-needed'
-          only-labels: 'more-info-needed'
-          operations-per-run: 30
+          stale-issue-message: |
+            :hourglass_flowing_sand: This issue has been inactive for 7 days. If no additional information is provided within the next 3 days, it will be closed automatically.
+          close-issue-message: |
+            :warning: Closing this issue due to no response in the last 10 days. Feel free to reopen it or create a new issue if you have more information.
+          days-before-stale: 7        # Days of inactivity before marking as stale
+          days-before-close: 3        # Days after marking as stale before closing
+          stale-issue-label: 'more-info-needed'  # Label to identify issues needing more info
+          only-labels: 'more-info-needed'        # Only process issues with this label
+          operations-per-run: 30      # Adjust as needed to handle more issues
+          mark-issue-as-stale: true   # Mark the issue as stale
+          close-issue: true           # Enable issue closing
+          stale-pr-label: ''          # Leave empty if not handling pull requests
+          stale-issue-message: |
+            :hourglass_flowing_sand: Additional information has been requested to identify the issue, though the thread has been inactive for 7 days. If no additional information is provided within the next 3 days, it will be closed automatically.
+          close-issue-message: |
+            :warning: Closing this issue due to no response in the last 10 days. Feel free to reopen it or create a new issue if you have more information.
