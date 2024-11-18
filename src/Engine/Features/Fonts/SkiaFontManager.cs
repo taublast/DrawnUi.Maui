@@ -15,6 +15,11 @@ public partial class SkiaFontManager
 
     private object _lockInitialization = new();
 
+    private void ThrowIfFontNotFound(string filename)
+    {
+        throw new ApplicationException($"DrawnUI failed to load font {filename}");
+    }
+
     public void Initialize()
     {
         if (!Initialized)
@@ -26,20 +31,28 @@ public partial class SkiaFontManager
                 var fields = type.GetAllHiddenFields();
                 var field = fields.First(x => x.Name == "_nativeFonts");
                 var fonts = (Dictionary<string, (string Filename, string? Alias)>)field.GetValue(instance);
+
                 foreach (var data in fonts)
                 {
                     var file = data.Value.Filename;
-                    using (Stream fileStream = FileSystem.Current.OpenAppPackageFileAsync(file).GetAwaiter().GetResult())
+                    try
                     {
-                        var font = SKTypeface.FromStream(fileStream);
-                        if (font == null)
+                        using (Stream fileStream = FileSystem.Current.OpenAppPackageFileAsync(file).GetAwaiter().GetResult())
                         {
-                            throw new ApplicationException($"Failed to load font {file}");
+                            var font = SKTypeface.FromStream(fileStream);
+                            if (font == null)
+                            {
+                                ThrowIfFontNotFound(file);
+                            }
+                            Fonts[data.Value.Alias] = font;
                         }
-                        Fonts[data.Value.Alias] = font;
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                        ThrowIfFontNotFound(file);
                     }
                 }
-
                 Initialized = true;
             }
         }
