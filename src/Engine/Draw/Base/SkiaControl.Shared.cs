@@ -3198,8 +3198,6 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         public virtual void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
-
-
             if (!PreArrange(destination, widthRequest, heightRequest, scale))
             {
                 DrawingRect = SKRect.Empty;
@@ -5345,6 +5343,11 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
+            if (gradient != null && color == null)
+            {
+                color = Colors.Black;
+            }
+
             if (color == null || color.Alpha <= 0) return false;
 
             paint.Color = color.ToSKColor();
@@ -5355,6 +5358,7 @@ namespace DrawnUi.Maui.Draw
 
             return true;
         }
+
 
         /// <summary>
         /// destination in pixels, if you see no Scale parameter

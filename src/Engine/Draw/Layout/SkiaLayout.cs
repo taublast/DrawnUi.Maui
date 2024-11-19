@@ -624,18 +624,8 @@ namespace DrawnUi.Maui.Draw
                 return;
             }
 
-            if (Type == LayoutType.Absolute)
-            {
-                //check if this child changed your size, if not exit
-                if (child.SizeRequest.Width <= this.SizeRequest.Width || child.SizeRequest.Height <= this.SizeRequest.Height)
-                    UpdateByChild(child);
-                return;
-            }
-
             base.InvalidateByChild(child);
         }
-
-        //protected object lockMeasure = new();
 
         SemaphoreSlim semaphoreItemTemplates = new(1);
 
@@ -1119,8 +1109,6 @@ namespace DrawnUi.Maui.Draw
 
 
         #endregion
-
-        public Action<SKPath, SKRect> ClipCustom;
 
         #region ItemsSource
 

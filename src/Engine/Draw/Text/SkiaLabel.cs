@@ -1158,7 +1158,6 @@ namespace DrawnUi.Maui.Draw
 
                             charIndex++;
                         }
-
                     }
                     else
                     //fast code without characters positions
@@ -3229,7 +3228,53 @@ namespace DrawnUi.Maui.Draw
         }
 
         #endregion
-    }
 
+        protected override bool SetupBackgroundPaint(SKPaint paint, SKRect destination)
+        {
+            if (paint == null)
+                return false;
+
+            var color = this.BackgroundColor;
+            var gradient = FillGradient;
+
+            if (Background != null)
+            {
+                if (Background is SolidColorBrush solid)
+                {
+                    if (solid.Color != null)
+                        color = solid.Color;
+                }
+                else
+                if (Background is GradientBrush gradientBrush)
+                {
+                    gradient = SkiaGradient.FromBrush(gradientBrush);
+                    if (color == null)
+                        color = Colors.Black;
+                }
+            }
+            else
+            {
+                if (BackgroundColor != null)
+                {
+                    color = BackgroundColor;
+                }
+            }
+
+            //if (gradient != null && color == null)
+            //{
+            //    color = Colors.Black;
+            //}
+
+            if (color == null || color.Alpha <= 0) return false;
+
+            paint.Color = color.ToSKColor();
+            paint.Style = SKPaintStyle.StrokeAndFill;
+            paint.BlendMode = this.FillBlendMode;
+
+            SetupGradient(paint, gradient, destination);
+
+            return true;
+        }
+    }
 
 }

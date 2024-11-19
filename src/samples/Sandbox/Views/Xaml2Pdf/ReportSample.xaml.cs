@@ -9,25 +9,20 @@ public partial class ReportSample : SkiaLayout
         InitializeComponent();
     }
 
-    private bool _AllImagesLoaded;
+    private int imagesLoaded = 0;
+
+
     public bool AllImagesLoaded
     {
         get
         {
-            return _AllImagesLoaded;
-        }
-        set
-        {
-            if (_AllImagesLoaded != value)
-            {
-                _AllImagesLoaded = value;
-                OnPropertyChanged();
-            }
+            return imagesLoaded > 0;
         }
     }
 
     private void SkiaImage_OnOnSuccess(object sender, ContentLoadedEventArgs e)
     {
-        AllImagesLoaded = true;
+        imagesLoaded++;
+        OnPropertyChanged(nameof(AllImagesLoaded));
     }
 }

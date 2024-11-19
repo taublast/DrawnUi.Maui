@@ -76,147 +76,147 @@ public class SkiaSlider : SkiaLayout
         {
             case TouchActionResult.Down:
 
-            if (args.Event.NumberOfTouches < 2)
-            {
-                ResetPan();
-            }
-
-            var thisOffset = TranslateInputCoords(apply.childOffset);
-
-            var x = args.Event.Location.X + thisOffset.X;
-            var y = args.Event.Location.Y + thisOffset.Y;
-
-            var relativeX = x - LastDrawnAt.Left; //inside this control
-            var relativeY = y - LastDrawnAt.Top; //inside this control
-
-            var locationX = relativeX / RenderingScale; //from pix to pts
-            var locationY = relativeY / RenderingScale; //from pix to pts
-
-            if (EnableRange && locationX >= StartThumbX - moreHotspotSize &&
-                locationX <= StartThumbX + SliderHeight + moreHotspotSize)
-            {
-                touchArea = RangeZone.Start;
-            }
-            else
-            if (locationX >= EndThumbX - moreHotspotSize &&
-                locationX <= EndThumbX + SliderHeight + moreHotspotSize)
-            {
-                touchArea = RangeZone.End;
-            }
-            else
-            {
-                touchArea = RangeZone.Unknown;
-            }
-
-            bool onTrail = true;
-            if (Trail != null)
-            {
-                var trailOffset = Trail.TranslateInputCoords(thisOffset);
-                onTrail = Trail.HitIsInside(args.Event.Location.X + trailOffset.X, args.Event.Location.Y + trailOffset.Y);
-            }
-            if (onTrail || touchArea == RangeZone.Start || touchArea == RangeZone.End)
-                IsPressed = true;
-
-            if (touchArea == RangeZone.Unknown && ClickOnTrailEnabled)
-            {
-                //clicked on trail maybe
-
-                if (onTrail)
+                if (args.Event.NumberOfTouches < 2)
                 {
-                    var halfThumb = SliderHeight / 2f;
+                    ResetPan();
+                }
 
-                    if (EnableRange)
+                var thisOffset = TranslateInputCoords(apply.childOffset);
+
+                var x = args.Event.Location.X + thisOffset.X;
+                var y = args.Event.Location.Y + thisOffset.Y;
+
+                var relativeX = x - LastDrawnAt.Left; //inside this control
+                var relativeY = y - LastDrawnAt.Top; //inside this control
+
+                var locationX = relativeX / RenderingScale; //from pix to pts
+                var locationY = relativeY / RenderingScale; //from pix to pts
+
+                if (EnableRange && locationX >= StartThumbX - moreHotspotSize &&
+                    locationX <= StartThumbX + SliderHeight + moreHotspotSize)
+                {
+                    touchArea = RangeZone.Start;
+                }
+                else
+                if (locationX >= EndThumbX - moreHotspotSize &&
+                    locationX <= EndThumbX + SliderHeight + moreHotspotSize)
+                {
+                    touchArea = RangeZone.End;
+                }
+                else
+                {
+                    touchArea = RangeZone.Unknown;
+                }
+
+                bool onTrail = true;
+                if (Trail != null)
+                {
+                    var trailOffset = Trail.TranslateInputCoords(thisOffset);
+                    onTrail = Trail.HitIsInside(args.Event.Location.X + trailOffset.X, args.Event.Location.Y + trailOffset.Y);
+                }
+                if (onTrail || touchArea == RangeZone.Start || touchArea == RangeZone.End)
+                    IsPressed = true;
+
+                if (touchArea == RangeZone.Unknown && ClickOnTrailEnabled)
+                {
+                    //clicked on trail maybe
+
+                    if (onTrail)
                     {
-                        var half = (Width + AvailableWidthAdjustment) / 2.0;
+                        var halfThumb = SliderHeight / 2f;
 
-                        if (locationX > half)
+                        if (EnableRange)
+                        {
+                            var half = (Width + AvailableWidthAdjustment) / 2.0;
+
+                            if (locationX > half)
+                            {
+                                MoveEndThumbHere(locationX - halfThumb);
+                            }
+                            else
+                            if (locationX <= half)
+                            {
+                                MoveStartThumbHere(locationX - halfThumb);
+                            }
+                        }
+                        else
                         {
                             MoveEndThumbHere(locationX - halfThumb);
                         }
-                        else
-                        if (locationX <= half)
-                        {
-                            MoveStartThumbHere(locationX - halfThumb);
-                        }
                     }
-                    else
-                    {
-                        MoveEndThumbHere(locationX - halfThumb);
-                    }
+
                 }
-
-            }
-
-            if (touchArea == RangeZone.Start)
-            {
-                consumed = this;
-                lastTouchX = StartThumbX;
-            }
-            else
-            if (touchArea == RangeZone.End)
-            {
-                consumed = this;
-                lastTouchX = EndThumbX;
-            }
-
-            break;
-
-            case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
-
-            //filter correct direction so we could scroll below the control in another direction:
-            if (!IsUserPanning && IgnoreWrongDirection)
-            {
-                //first panning gesture..
-                var panDirection = GetDirectionType(_panningStartOffsetPts, new Vector2(_panningStartOffsetPts.X + args.Event.Distance.Total.X, _panningStartOffsetPts.Y + args.Event.Distance.Total.Y), 0.8f);
-
-                if (Orientation == OrientationType.Vertical && panDirection != DirectionType.Vertical)
-                {
-                    return null;
-                }
-                if (Orientation == OrientationType.Horizontal && panDirection != DirectionType.Horizontal)
-                {
-                    return null;
-                }
-            }
-
-
-            IsUserPanning = true;
-
-
-            //synch this 
-            if (touchArea == RangeZone.Start)
-                lastTouchX = StartThumbX;
-            else
-            if (touchArea == RangeZone.End)
-                lastTouchX = EndThumbX;
-
-
-            if (touchArea != RangeZone.Unknown)
-            {
-                TouchBusy = true;
 
                 if (touchArea == RangeZone.Start)
                 {
-                    var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;//args.TotalDistance.X;
-                    SetStartOffsetClamped(maybe);
+                    consumed = this;
+                    lastTouchX = StartThumbX;
                 }
                 else
                 if (touchArea == RangeZone.End)
                 {
-                    var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;
-                    SetEndOffsetClamped(maybe);
+                    consumed = this;
+                    lastTouchX = EndThumbX;
                 }
 
-                RecalculateValues();
-            }
+                break;
 
-            consumed = this;
-            break;
+            case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
+
+                //filter correct direction so we could scroll below the control in another direction:
+                if (!IsUserPanning && IgnoreWrongDirection)
+                {
+                    //first panning gesture..
+                    var panDirection = GetDirectionType(_panningStartOffsetPts, new Vector2(_panningStartOffsetPts.X + args.Event.Distance.Total.X, _panningStartOffsetPts.Y + args.Event.Distance.Total.Y), 0.8f);
+
+                    if (Orientation == OrientationType.Vertical && panDirection != DirectionType.Vertical)
+                    {
+                        return null;
+                    }
+                    if (Orientation == OrientationType.Horizontal && panDirection != DirectionType.Horizontal)
+                    {
+                        return null;
+                    }
+                }
+
+
+                IsUserPanning = true;
+
+
+                //synch this 
+                if (touchArea == RangeZone.Start)
+                    lastTouchX = StartThumbX;
+                else
+                if (touchArea == RangeZone.End)
+                    lastTouchX = EndThumbX;
+
+
+                if (touchArea != RangeZone.Unknown)
+                {
+                    TouchBusy = true;
+
+                    if (touchArea == RangeZone.Start)
+                    {
+                        var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;//args.TotalDistance.X;
+                        SetStartOffsetClamped(maybe);
+                    }
+                    else
+                    if (touchArea == RangeZone.End)
+                    {
+                        var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;
+                        SetEndOffsetClamped(maybe);
+                    }
+
+                    RecalculateValues();
+                }
+
+                consumed = this;
+                break;
 
             case TouchActionResult.Up when args.Event.NumberOfTouches < 2:
-            IsUserPanning = false;
-            IsPressed = false;
-            break;
+                IsUserPanning = false;
+                IsPressed = false;
+                break;
 
         }
 
@@ -496,10 +496,10 @@ public class SkiaSlider : SkiaLayout
                     var mask = "{0:" + ValueStringFormat + "}";
                     if (EnableRange)
                     {
-                        StartThumbX = PositionFromValue(Start) - AvailableWidthAdjustment;
+                        StartThumbX = PositionFromValue(Start) + AvailableWidthAdjustment;
                         StartDesc = string.Format(mask, Start).Trim();
                     }
-                    EndThumbX = PositionFromValue(End) + AvailableWidthAdjustment;
+                    EndThumbX = PositionFromValue(End) - AvailableWidthAdjustment;
                     EndDesc = string.Format(mask, End).Trim();
                 }
 

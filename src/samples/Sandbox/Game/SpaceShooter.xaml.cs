@@ -2,14 +2,12 @@
 // https://www.mooict.com/wpf-c-tutorial-create-a-space-battle-shooter-game-in-visual-studio/7/
 
 global using DrawnUi.Maui.Controls;
-global using SkiaSharp;
+using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using AppoMobi.Maui.Gestures;
 using AppoMobi.Specials;
 using DrawnUi.Maui.Game;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
 
 namespace SpaceShooter.Game;
 

@@ -1,9 +1,32 @@
 ﻿//Adapted code from the Xamarin.Forms Grid implementation
 
-using Microsoft.Maui.Primitives;
 using System.Runtime.CompilerServices;
+using Microsoft.Maui.Primitives;
 
 namespace DrawnUi.Maui.Draw;
+
+public static class FluentExtensions
+{
+
+    public static T With<T>(this T view, Action<T> action) where T : SkiaControl
+    {
+        action?.Invoke(view);
+        return view;
+    }
+
+    public static T CenterX<T>(this T view) where T : SkiaControl
+    {
+        view.HorizontalOptions = LayoutOptions.Center;
+        return view;
+    }
+
+    public static T CenterY<T>(this T view) where T : SkiaControl
+    {
+        view.VerticalOptions = LayoutOptions.Center;
+        return view;
+    }
+
+}
 
 public static class GridExtensions
 {
