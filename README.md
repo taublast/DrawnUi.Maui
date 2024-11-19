@@ -98,10 +98,18 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
 ## What's New
 
-* Nuget 1.2.5.2, preview nuget for SkiaSharp v3: 1.3.54.5-pre
-* SkiaLottie can now tint multiple colors via Colors property
-* SkiaLabel fixes for simulated Italic font attribute affecting shadows and stroke
-* SkiaScroll fix for RefreshView dragging distance
+* Nuget 1.2.9.1 stable for SkiaSharp 2.88.9
+* Pdf helper added
+* Sandbox adapted, added example for multi-page pdf
+* SkiaImageManager fix for non-loading images
+* SkiaImage speed up loading from cached images
+* ContentLayout changed to skialayout fixing padding and margin problem
+* SkiaLayout invalidation and some others fixes
+* SkiaSlider wrong initial position fix
+* Gestures nuget updated
+* Added FluentExtensions
+* Another SkiaScroll fix for RefreshView 
+* Fix crash when disposing from different threads
 * Some more
 
  ## Development Notes
