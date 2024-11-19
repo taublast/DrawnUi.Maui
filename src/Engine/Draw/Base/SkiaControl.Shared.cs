@@ -6020,6 +6020,16 @@ namespace DrawnUi.Maui.Draw
 
         static object lockParent = new();
 
+        /// <summary>
+        /// This is called by SetParent  when parent should be assigned to null.
+        /// Internally this sets BindingContext to null after that. You might want to override this to keep BindngContext even if unattached from Parent, for example in case of recycled cells.
+        /// </summary>
+        public virtual void ClearParent()
+        {
+            Parent = null;
+            SetInheritedBindingContext(null);
+        }
+
         public virtual void SetParent(IDrawnBase parent)
         {
             //lock (lockParent)
@@ -6051,8 +6061,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (parent == null)
                 {
-                    Parent = null;
-                    SetInheritedBindingContext(null);
+                    ClearParent();
                     return;
                 }
 
