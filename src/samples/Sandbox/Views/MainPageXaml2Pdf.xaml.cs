@@ -46,20 +46,21 @@ namespace Sandbox.Views
 
         private void SkiaButton_OnTapped(object sender, SkiaGesturesParameters e)
         {
-            CreatePdf(1240);  // A4 page for 150 DPI
+            _ = CreatePdf(PaperFormat.A4, 150);
         }
 
         private void SkiaButton_OnTapped2(object sender, SkiaGesturesParameters e)
         {
-            CreatePdf(620);  // A6 page for 150 DPI
+            _ = CreatePdf(PaperFormat.A6, 150);
         }
 
-        async Task CreatePdf(float width)
+        async Task CreatePdf(PaperFormat format, int dpi)
         {
             //setup our report to print
             BindableText = "This text came from bindings";
             var vendor = "DrawnUI";
             var filename = GenerateFileName(DateTime.Now, "pdf");
+            var paper = Pdf.GetPaperSizePixels(format, dpi);
 
             var layout = new ReportSample()
             {
@@ -70,13 +71,16 @@ namespace Sandbox.Views
             Files.CheckPermissionsAsync(async () =>
              {
 
+                 //in this example PDF content size is less or equal to the page format.
+                 //in another example we will see how to split a large content into pages
+                 //when we do not for on a single page format
                  try
                  {
                      _lockLogs = true;
                      string fullFilename = null;
                      var subfolder = "Pdf";
                      var scale = 1; //do not change this
-                     var destination = new SKRect(0, 0, width, float.PositiveInfinity);
+                     var destination = new SKRect(0, 0, paper.Width, float.PositiveInfinity);
                      var measured = layout.Measure(destination.Width, destination.Height, scale);
 
                      //prepare DrawingRect
@@ -92,8 +96,6 @@ namespace Sandbox.Views
                      {
                          File.Delete(fullFilename);
                      }
-
-                     var area = new SKRect(layout.DrawingRect.Left, layout.DrawingRect.Top, reportSize.Width, reportSize.Height);
 
                      using (var ms = new MemoryStream())
                      using (var stream = new SKManagedWStream(ms))
@@ -123,8 +125,10 @@ namespace Sandbox.Views
                                  {
                                      await Task.Delay(50);
                                  }
-                                 layout.Render(ctx, new SKRect(0, 0, reportSize.Width, reportSize.Height), scale);
 
+                                 //second rendering required to reflect layout changes
+                                 canvas.Clear(SKColor.Empty);
+                                 layout.Render(ctx, new SKRect(0, 0, reportSize.Width, reportSize.Height), scale);
                              }
                              document.EndPage();
                              document.Close();

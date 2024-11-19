@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage
+    x:Class="MauiNet8.MainPageRepro"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mauiNet8="clr-namespace:MauiNet8"
+    xmlns:sandbox="clr-namespace:Sandbox"
+    xmlns:views="clr-namespace:Sandbox.Views"
+    x:DataType="sandbox:MainPageViewModel"
+    BackgroundColor="#000000">
+
+    <Grid
+        BackgroundColor="Red"
+        HorizontalOptions="Fill"
+        VerticalOptions="Fill">
+
+        <mauiNet8:DebugCanvas
+            BackgroundColor="DarkSlateBlue"
+            Gestures="Enabled"
+            HardwareAcceleration="Enabled"
+            HorizontalOptions="Fill"
+            Tag="Main"
+            VerticalOptions="Fill">
+
+
+
+        </mauiNet8:DebugCanvas>
+
+    </Grid>
+
+</views:BasePage>

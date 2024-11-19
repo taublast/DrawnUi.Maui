@@ -96,7 +96,7 @@
 	</ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.8.1.2" />
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.1.1" />
     <!--for parsing markdown text-->
     <PackageReference Include="Markdig" Version="0.34.0" />
     <!--for caching images-->
@@ -133,6 +133,7 @@
     <AndroidAarLibrary Remove="Controls\Extensions\**" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Features\NewFolder\" />
     <Folder Include="Internals\Handlers\" />
     <Folder Include="Shared\" />
     <Folder Include="Views\Compat\" />

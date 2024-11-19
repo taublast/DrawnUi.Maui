@@ -462,7 +462,20 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 //second layout pass in some cases
-                var autoRect = new SKRect(rectForChildrenPixels.Left, rectForChildrenPixels.Top, rectForChildrenPixels.Left + stackWidth, rectForChildrenPixels.Top + stackHeight);
+                var autoRight = rectForChildrenPixels.Right;
+                if (this.HorizontalOptions != LayoutOptions.Fill)
+                {
+                    autoRight = rectForChildrenPixels.Left + stackWidth;
+                }
+                var autoBottom = rectForChildrenPixels.Bottom;
+                if (this.VerticalOptions != LayoutOptions.Fill)
+                {
+                    autoBottom = rectForChildrenPixels.Top + stackHeight;
+                }
+                var autoRect = new SKRect(
+                    rectForChildrenPixels.Left, rectForChildrenPixels.Top,
+                    autoRight,
+                    autoBottom);
 
                 foreach (var secondPass in listSecondPass)
                 {

@@ -11,7 +11,6 @@
     HorizontalOptions="Fill"
     IsClippedToBounds="True"
     Tag="Game"
-
     VerticalOptions="Fill">
 
     <!--  STARS BACKGROUND  -->
@@ -186,6 +185,7 @@
     <!--  HEALTH BAR  -->
     <game:HealthBar
         x:Name="HealthBar"
+        x:DataType="game:SpaceShooter"
         HeightRequest="4"
         HorizontalOptions="Center"
         Tag="Health"
@@ -194,7 +194,6 @@
         VerticalOptions="End"
         WidthRequest="40"
         ZIndex="6"
-        x:DataType="game:SpaceShooter"
         Value="{Binding Health}" />
 
     <!--  MOTHER EARTH  -->
@@ -212,8 +211,8 @@
 
     <!--  DIALOG  -->
     <draw:SkiaLayout
-        x:DataType="game:SpaceShooter"
         Margin="50"
+        x:DataType="game:SpaceShooter"
         HeightRequest="-1"
         HorizontalOptions="Center"
         IsVisible="{Binding ShowDialog}"
@@ -343,14 +342,15 @@
 
                         <!--  BUTTON  -->
                         <draw:SkiaShape
-                            x:DataType="game:SpaceShooter"
                             draw:AddGestures.CommandTapped="{Binding CommandPressedOk}"
+                            x:DataType="game:SpaceShooter"
                             BackgroundColor="#33000000"
                             CornerRadius="8"
                             HeightRequest="34"
                             HorizontalOptions="Center"
                             StrokeColor="#cc33FF44"
                             StrokeWidth="0.55"
+                            Tag="DialogBtn"
                             WidthRequest="90">
 
                             <draw:SkiaLabel

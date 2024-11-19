@@ -213,6 +213,11 @@
     <ItemGroup>
  
  
+      <Compile Update="MainPageRepro.xaml.cs">
+        <DependentUpon>MainPageRepro.xaml</DependentUpon>
+      </Compile>
+ 
+ 
       <Compile Update="TestPageGridIssue.xaml.cs">
         <DependentUpon>TestPageGridIssue.xaml</DependentUpon>
       </Compile>
@@ -232,6 +237,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>ResStrings.resx</DependentUpon>
+      </Compile>
+ 
+ 
+      <Compile Update="Views\MainPageXaml2PdfPages.xaml.cs">
+        <DependentUpon>MainPageXaml2PdfPages.xaml</DependentUpon>
       </Compile>
  
    
@@ -355,7 +365,13 @@
  
 
   <ItemGroup>
+    <MauiXaml Update="MainPageRepro.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="TestPageGridIssue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\MainPageXaml2PdfPages.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

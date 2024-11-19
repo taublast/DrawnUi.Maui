@@ -243,12 +243,12 @@ namespace DrawnUi.Maui.Draw
         nameof(VirtualisationInflated),
         typeof(double),
         typeof(SkiaLayout),
-        0.0,
+        350.0,
         propertyChanged: NeedInvalidateMeasure);
 
         /// <summary>
         /// How much of the hidden content out of visible bounds should be considered visible for rendering,
-        /// default is 0 pts.
+        /// default is 350 pts.
         /// Basically how much should be expand in every direction of the visible area prior to checking if content falls
         /// into its bounds for rendering controlled with Virtualisation.		
         /// </summary>
@@ -618,19 +618,14 @@ namespace DrawnUi.Maui.Draw
 
         public override void InvalidateByChild(SkiaControl child)
         {
-            if (!NeedAutoSize && child.NeedAutoSize)
-                return;
-
-            if (Type == LayoutType.Absolute)
+            if (!NeedAutoSize && child.NeedAutoSize || !NeedAutoSize && IsTemplated)
             {
-                //check if this child changed your size, if not exit
-                //todo
+                UpdateByChild(child);
+                return;
             }
 
             base.InvalidateByChild(child);
         }
-
-        //protected object lockMeasure = new();
 
         SemaphoreSlim semaphoreItemTemplates = new(1);
 
@@ -757,42 +752,42 @@ namespace DrawnUi.Maui.Draw
                     switch (Type)
                     {
                         case LayoutType.Absolute:
-                        ContentSize = MeasureAbsolute(constraints.Content, request.Scale);
-                        break;
+                            ContentSize = MeasureAbsolute(constraints.Content, request.Scale);
+                            break;
 
                         case LayoutType.Grid:
 
-                        ContentSize = MeasureGrid(constraints.Content, request.Scale);
-                        break;
+                            ContentSize = MeasureGrid(constraints.Content, request.Scale);
+                            break;
 
                         case LayoutType.Column:
                         case LayoutType.Row:
-                        if (IsTemplated) //fix threads conflict when templates are initialized in background thread
-                        {
-                            var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
+                            if (IsTemplated) //fix threads conflict when templates are initialized in background thread
+                            {
+                                var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
 
-                            if (!canMeasureTemplates)
-                                return ScaledSize.CreateEmpty(request.Scale);
-                        }
+                                if (!canMeasureTemplates)
+                                    return ScaledSize.CreateEmpty(request.Scale);
+                            }
 
-                        ContentSize = MeasureStack(constraints.Content, request.Scale);
-                        break;
+                            ContentSize = MeasureStack(constraints.Content, request.Scale);
+                            break;
 
                         case LayoutType.Wrap:
-                        if (IsTemplated) //fix threads conflict when templates are initialized in background thread
-                        {
-                            var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
+                            if (IsTemplated) //fix threads conflict when templates are initialized in background thread
+                            {
+                                var canMeasureTemplates = ChildrenFactory.TemplatesAvailable || force;
 
-                            if (!canMeasureTemplates)
-                                return ScaledSize.CreateEmpty(request.Scale);
-                        }
+                                if (!canMeasureTemplates)
+                                    return ScaledSize.CreateEmpty(request.Scale);
+                            }
 
-                        ContentSize = MeasureWrap(constraints.Content, request.Scale);
-                        break;
+                            ContentSize = MeasureWrap(constraints.Content, request.Scale);
+                            break;
 
                         default:
-                        ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height, request.Scale);
-                        break;
+                            ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height, request.Scale);
+                            break;
                     }
                 }
                 else
@@ -1115,8 +1110,6 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-        public Action<SKPath, SKRect> ClipCustom;
-
         #region ItemsSource
 
         public static readonly BindableProperty InitializeTemplatesInBackgroundDelayProperty = BindableProperty.Create(
@@ -1429,40 +1422,40 @@ namespace DrawnUi.Maui.Draw
                 case NotifyCollectionChangedAction.Remove:
                 case NotifyCollectionChangedAction.Replace:
 
-                //if (IsTemplated)
-                //{
-                //    lock (lockMeasure)
-                //    {
-                //        ApplyNewItemsSource = false;
-                //        ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
-                //            GetTemplatesPoolLimit(),
-                //            GetTemplatesPoolPrefill());
+                    //if (IsTemplated)
+                    //{
+                    //    lock (lockMeasure)
+                    //    {
+                    //        ApplyNewItemsSource = false;
+                    //        ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
+                    //            GetTemplatesPoolLimit(),
+                    //            GetTemplatesPoolPrefill());
 
-                //        Invalidate();
-                //    }
-                //    return;
-                //}
+                    //        Invalidate();
+                    //    }
+                    //    return;
+                    //}
 
-                break;
+                    break;
 
                 case NotifyCollectionChangedAction.Reset:
-                ResetScroll();
-                //ClearChildren();
-                //if (args.NewItems != null)
-                //{
-                //	foreach (var newItem in args.NewItems)
-                //	{
-                //		SkiaControl view = CreateControl(ItemTemplate);
-                //		if (view != null)
-                //		{
-                //			view.Parent = this;
-                //			view.BindingContext = newItem;
-                //			Views.Add(view);
-                //		}
-                //	}
-                //}
-                //Invalidate();
-                break;
+                    ResetScroll();
+                    //ClearChildren();
+                    //if (args.NewItems != null)
+                    //{
+                    //	foreach (var newItem in args.NewItems)
+                    //	{
+                    //		SkiaControl view = CreateControl(ItemTemplate);
+                    //		if (view != null)
+                    //		{
+                    //			view.Parent = this;
+                    //			view.BindingContext = newItem;
+                    //			Views.Add(view);
+                    //		}
+                    //	}
+                    //}
+                    //Invalidate();
+                    break;
             }
 
             //PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);

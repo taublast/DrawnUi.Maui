@@ -1,9 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Maui.Draw;
 
 [ContentProperty("Content")]
-public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGestureListener
+public partial class ContentLayout : SkiaLayout, IVisibilityAware, ISkiaGestureListener
 {
 
     public override void Invalidate()
@@ -13,50 +11,6 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
         Update();
     }
 
-    public override void OnWillDisposeWithChildren()
-    {
-        base.OnWillDisposeWithChildren();
-
-        Content?.Dispose();
-    }
-
-    public virtual bool OnFocusChanged(bool focus)
-    {
-        return false;
-    }
-
-    public virtual void OnAppeared()
-    {
-        if (Content is IVisibilityAware aware)
-        {
-            aware.OnAppeared();
-        }
-    }
-
-    public virtual void OnDisappeared()
-    {
-        if (Content is IVisibilityAware aware)
-        {
-            aware.OnDisappeared();
-        }
-    }
-
-    public virtual void OnDisappearing()
-    {
-        if (Content is IVisibilityAware aware)
-        {
-            aware.OnDisappearing();
-        }
-
-    }
-
-    public virtual void OnAppearing()
-    {
-        if (Content is IVisibilityAware aware)
-        {
-            aware.OnAppearing();
-        }
-    }
 
 
     protected bool IsContentActive
@@ -67,7 +21,7 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
         }
     }
 
-
+    /*
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
         if (IsMeasuring)
@@ -113,6 +67,7 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
 
 
     }
+    */
 
     public ScaledRect Viewport { get; protected set; } = new();
 
@@ -143,13 +98,14 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
         return destination;
     }
 
-
+    /*
     public override ScaledRect GetOnScreenVisibleArea(float inflateByPixels = 0)
     {
         var inflated = DrawingRect;
         inflated.Inflate(inflateByPixels, inflateByPixels);
         return ScaledRect.FromPixels(inflated, RenderingScale);
     }
+
 
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
     {
@@ -171,25 +127,44 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
         return RenderViewsList(drawViews, context, destination, scale);
     }
 
+ public override void SetChildren(IEnumerable<SkiaControl> views)
+       {
+           //do not use subviews as we are using Content property for this control
+
+           return;
+       }
+
+
+
+       public override void ApplyBindingContext()
+       {
+           base.ApplyBindingContext();
+
+           if (Content?.BindingContext == null)
+           {
+               Content?.SetInheritedBindingContext(BindingContext);
+           }
+       }
+
+protected virtual void SetContent(SkiaControl view)
+       {
+           var oldContent = Views.FirstOrDefault(x => x == Content);
+           if (view != oldContent)
+           {
+               if (oldContent != null)
+               {
+                   RemoveSubView(oldContent);
+               }
+               if (view != null)
+               {
+                   AddSubView(view);
+               }
+           }
+       }
+        */
 
     public SKRect ContentAvailableSpace { get; protected set; }
 
-    public override void SetChildren(IEnumerable<SkiaControl> views)
-    {
-        //do not use subviews as we are using Content property for this control
-
-        return;
-    }
-
-    public override void ApplyBindingContext()
-    {
-        base.ApplyBindingContext();
-
-        if (Content?.BindingContext == null)
-        {
-            Content?.SetInheritedBindingContext(BindingContext);
-        }
-    }
 
     protected virtual void SetContent(SkiaControl view)
     {
@@ -251,62 +226,10 @@ public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGesture
         set { SetValue(ContentProperty, value); }
     }
 
-    public static readonly BindableProperty OrientationProperty = BindableProperty.Create(nameof(Orientation), typeof(ScrollOrientation), typeof(ContentLayout),
-        ScrollOrientation.Vertical,
-        propertyChanged: NeedDraw);
-    /// <summary>
-    /// <summary>Gets or sets the scrolling direction of the ScrollView. This is a bindable property.</summary>
-    /// </summary>
-    public ScrollOrientation Orientation
-    {
-        get { return (ScrollOrientation)GetValue(OrientationProperty); }
-        set { SetValue(OrientationProperty, value); }
-    }
-
-    public static readonly BindableProperty ScrollTypeProperty = BindableProperty.Create(nameof(ViewportScrollType), typeof(ViewportScrollType), typeof(ContentLayout),
-        ViewportScrollType.Scrollable,
-        propertyChanged: NeedDraw);
-    /// <summary>
-    /// <summary>Gets or sets the scrolling direction of the ScrollView. This is a bindable property.</summary>
-    /// </summary>
-    public ViewportScrollType ScrollType
-    {
-        get { return (ViewportScrollType)GetValue(ScrollTypeProperty); }
-        set { SetValue(ScrollTypeProperty, value); }
-    }
-
-    public static readonly BindableProperty VirtualizationProperty = BindableProperty.Create(
-        nameof(Virtualisation),
-        typeof(VirtualisationType),
-        typeof(ContentLayout),
-        VirtualisationType.Enabled,
-        propertyChanged: NeedInvalidateMeasure);
-
-    /// <summary>
-    /// Default is Enabled, children get the visible viewport area for rendering and can virtualize.
-    /// </summary>
-    public VirtualisationType Virtualisation
-    {
-        get { return (VirtualisationType)GetValue(VirtualizationProperty); }
-        set { SetValue(VirtualizationProperty, value); }
-    }
-
-
 
 
     #endregion
 
-
-
-    protected override void OnPropertyChanged([CallerMemberName] string propertyName = "")
-    {
-        base.OnPropertyChanged(propertyName);
-
-        if (propertyName == nameof(Orientation))
-        {
-            Invalidate();
-        }
-    }
 
 
 

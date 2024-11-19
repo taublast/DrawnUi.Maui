@@ -1,9 +1,9 @@
-﻿using DrawnUi.Maui.Infrastructure.Enums;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
+using DrawnUi.Maui.Infrastructure.Enums;
 
 namespace DrawnUi.Maui.Views
 {
@@ -560,18 +560,18 @@ namespace DrawnUi.Maui.Views
             switch (e.DisplayInfo.Rotation)
             {
                 case Microsoft.Maui.Devices.DisplayRotation.Rotation90:
-                DeviceRotation = 90;
-                break;
+                    DeviceRotation = 90;
+                    break;
                 case Microsoft.Maui.Devices.DisplayRotation.Rotation180:
-                DeviceRotation = 180;
-                break;
+                    DeviceRotation = 180;
+                    break;
                 case Microsoft.Maui.Devices.DisplayRotation.Rotation270:
-                DeviceRotation = 270;
-                break;
+                    DeviceRotation = 270;
+                    break;
                 case Microsoft.Maui.Devices.DisplayRotation.Rotation0:
                 default:
-                DeviceRotation = 0;
-                break;
+                    DeviceRotation = 0;
+                    break;
             }
 
             if (Parent != null)
@@ -1517,10 +1517,7 @@ namespace DrawnUi.Maui.Views
             }
             catch (Exception e)
             {
-                Super.Log("****************************************************");
                 Super.Log(e);
-                Super.Log("****************************************************");
-                throw e;
             }
         }
 
@@ -2199,21 +2196,21 @@ namespace DrawnUi.Maui.Views
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                foreach (SkiaControl newChildren in e.NewItems)
-                {
-                    newChildren.SetParent(this);
-                }
+                    foreach (SkiaControl newChildren in e.NewItems)
+                    {
+                        newChildren.SetParent(this);
+                    }
 
-                break;
+                    break;
 
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Remove:
-                foreach (SkiaControl oldChildren in e.OldItems ?? new SkiaControl[0])
-                {
-                    oldChildren.SetParent(null);
-                }
+                    foreach (SkiaControl oldChildren in e.OldItems ?? new SkiaControl[0])
+                    {
+                        oldChildren.SetParent(null);
+                    }
 
-                break;
+                    break;
             }
 
             Update();

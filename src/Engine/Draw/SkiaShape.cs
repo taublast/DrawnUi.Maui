@@ -43,12 +43,12 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(PathDataProperty, value); }
         }
 
-        public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type),
+        public static new readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type),
             typeof(ShapeType), typeof(SkiaShape),
             ShapeType.Rectangle,
             propertyChanged: NeedSetType);
 
-        public ShapeType Type
+        public new ShapeType Type
         {
             get { return (ShapeType)GetValue(TypeProperty); }
             set { SetValue(TypeProperty, value); }
@@ -380,68 +380,68 @@ namespace DrawnUi.Maui.Draw
             {
 
                 case ShapeType.Path:
-                ShouldClipAntialiased = true;
-                path.AddPath(DrawPathResized);
-                break;
+                    ShouldClipAntialiased = true;
+                    path.AddPath(DrawPathResized);
+                    break;
 
                 case ShapeType.Circle:
-                ShouldClipAntialiased = true;
-                path.AddCircle(
-                    (float)Math.Round(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
-                    (float)Math.Round(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
-                    Math.Min(strokeAwareChildrenSize.Width, strokeAwareChildrenSize.Height) /
-                    2.0f);
-                break;
+                    ShouldClipAntialiased = true;
+                    path.AddCircle(
+                        (float)Math.Round(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
+                        (float)Math.Round(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
+                        Math.Min(strokeAwareChildrenSize.Width, strokeAwareChildrenSize.Height) /
+                        2.0f);
+                    break;
 
                 case ShapeType.Ellipse:
-                ShouldClipAntialiased = true;
+                    ShouldClipAntialiased = true;
 
-                path.AddOval(strokeAwareChildrenSize);
-                break;
+                    path.AddOval(strokeAwareChildrenSize);
+                    break;
 
                 case ShapeType.Rectangle:
                 default:
-                if (CornerRadius != default)
-                {
-                    ShouldClipAntialiased = true;
-
-                    //path.AddRect(strokeAwareChildrenSize);
-
-                    var scaledRadiusLeftTop = (float)(CornerRadius.TopLeft * RenderingScale);
-                    var scaledRadiusRightTop = (float)(CornerRadius.TopRight * RenderingScale);
-                    var scaledRadiusLeftBottom = (float)(CornerRadius.BottomLeft * RenderingScale);
-                    var scaledRadiusRightBottom = (float)(CornerRadius.BottomRight * RenderingScale);
-                    var rrect = new SKRoundRect(strokeAwareChildrenSize);
-
-                    // Step 3: Calculate the inner rounded rectangle corner radii
-                    float strokeWidth = (float)Math.Floor(Math.Round(StrokeWidth * RenderingScale));
-
-                    float cornerRadiusDifference = (float)strokeWidth / 2.0f;
-
-                    scaledRadiusLeftTop = (float)(Math.Max(scaledRadiusLeftTop - cornerRadiusDifference, 0));
-                    scaledRadiusRightTop = (float)(Math.Max(scaledRadiusRightTop - cornerRadiusDifference, 0));
-                    scaledRadiusLeftBottom = (float)(Math.Max(scaledRadiusLeftBottom - cornerRadiusDifference, 0));
-                    scaledRadiusRightBottom = (float)(Math.Max(scaledRadiusRightBottom - cornerRadiusDifference, 0));
-
-                    rrect.SetRectRadii(strokeAwareChildrenSize, new[]
+                    if (CornerRadius != default)
                     {
+                        ShouldClipAntialiased = true;
+
+                        //path.AddRect(strokeAwareChildrenSize);
+
+                        var scaledRadiusLeftTop = (float)(CornerRadius.TopLeft * RenderingScale);
+                        var scaledRadiusRightTop = (float)(CornerRadius.TopRight * RenderingScale);
+                        var scaledRadiusLeftBottom = (float)(CornerRadius.BottomLeft * RenderingScale);
+                        var scaledRadiusRightBottom = (float)(CornerRadius.BottomRight * RenderingScale);
+                        var rrect = new SKRoundRect(strokeAwareChildrenSize);
+
+                        // Step 3: Calculate the inner rounded rectangle corner radii
+                        float strokeWidth = (float)Math.Floor(Math.Round(StrokeWidth * RenderingScale));
+
+                        float cornerRadiusDifference = (float)strokeWidth / 2.0f;
+
+                        scaledRadiusLeftTop = (float)(Math.Max(scaledRadiusLeftTop - cornerRadiusDifference, 0));
+                        scaledRadiusRightTop = (float)(Math.Max(scaledRadiusRightTop - cornerRadiusDifference, 0));
+                        scaledRadiusLeftBottom = (float)(Math.Max(scaledRadiusLeftBottom - cornerRadiusDifference, 0));
+                        scaledRadiusRightBottom = (float)(Math.Max(scaledRadiusRightBottom - cornerRadiusDifference, 0));
+
+                        rrect.SetRectRadii(strokeAwareChildrenSize, new[]
+                        {
                         new SKPoint(scaledRadiusLeftTop, scaledRadiusLeftTop),
                         new SKPoint(scaledRadiusRightTop, scaledRadiusRightTop),
                         new SKPoint(scaledRadiusRightBottom, scaledRadiusRightBottom),
                         new SKPoint(scaledRadiusLeftBottom, scaledRadiusLeftBottom),
                     });
-                    path.AddRoundRect(rrect);
-                    //path.AddRoundRect(strokeAwareChildrenSize, innerCornerRadius, innerCornerRadius);
+                        path.AddRoundRect(rrect);
+                        //path.AddRoundRect(strokeAwareChildrenSize, innerCornerRadius, innerCornerRadius);
 
-                }
-                else
-                {
-                    ShouldClipAntialiased = false;
-                    path.AddRect(strokeAwareChildrenSize);
+                    }
+                    else
+                    {
+                        ShouldClipAntialiased = false;
+                        path.AddRect(strokeAwareChildrenSize);
 
-                }
+                    }
 
-                break;
+                    break;
             }
 
             return path;
@@ -459,56 +459,56 @@ namespace DrawnUi.Maui.Draw
             switch (Type)
             {
                 case ShapeType.Rectangle:
-                if (CornerRadius != default)
-                {
+                    if (CornerRadius != default)
+                    {
+                        if (StrokeWidth == 0 || StrokeColor == TransparentColor)
+                        {
+                            paint.IsAntialias = true;
+                        }
+
+                        if (DrawRoundedRect == null)
+                            DrawRoundedRect = new();
+                        DrawRoundedRect.SetRectRadii(outRect, radii);
+                        ctx.Canvas.DrawRoundRect(DrawRoundedRect, RenderingPaint);
+                    }
+                    else
+                        ctx.Canvas.DrawRect(outRect, RenderingPaint);
+
+                    break;
+
+                case ShapeType.Circle:
                     if (StrokeWidth == 0 || StrokeColor == TransparentColor)
                     {
                         paint.IsAntialias = true;
                     }
 
-                    if (DrawRoundedRect == null)
-                        DrawRoundedRect = new();
-                    DrawRoundedRect.SetRectRadii(outRect, radii);
-                    ctx.Canvas.DrawRoundRect(DrawRoundedRect, RenderingPaint);
-                }
-                else
-                    ctx.Canvas.DrawRect(outRect, RenderingPaint);
-
-                break;
-
-                case ShapeType.Circle:
-                if (StrokeWidth == 0 || StrokeColor == TransparentColor)
-                {
-                    paint.IsAntialias = true;
-                }
-
-                ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, RenderingPaint);
-                break;
+                    ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, RenderingPaint);
+                    break;
 
                 case ShapeType.Ellipse:
-                if (StrokeWidth == 0 || StrokeColor == TransparentColor)
-                {
-                    paint.IsAntialias = true;
-                }
+                    if (StrokeWidth == 0 || StrokeColor == TransparentColor)
+                    {
+                        paint.IsAntialias = true;
+                    }
 
-                DrawPathShape.Reset();
-                DrawPathShape.AddOval(outRect);
-                ctx.Canvas.DrawPath(DrawPathShape, paint);
+                    DrawPathShape.Reset();
+                    DrawPathShape.AddOval(outRect);
+                    ctx.Canvas.DrawPath(DrawPathShape, paint);
 
-                break;
+                    break;
 
                 case ShapeType.Path:
-                if (StrokeWidth == 0 || StrokeColor == TransparentColor)
-                {
-                    paint.IsAntialias = true;
-                }
+                    if (StrokeWidth == 0 || StrokeColor == TransparentColor)
+                    {
+                        paint.IsAntialias = true;
+                    }
 
 
-                ctx.Canvas.DrawPath(DrawPathAligned, paint);
+                    ctx.Canvas.DrawPath(DrawPathAligned, paint);
 
-                break;
+                    break;
 
-                //case ShapeType.Arc: - has no background
+                    //case ShapeType.Arc: - has no background
             }
         }
 
@@ -616,43 +616,43 @@ namespace DrawnUi.Maui.Draw
                 switch (Type)
                 {
                     case ShapeType.Rectangle:
-                    if (CornerRadius != default)
-                    {
-                        if (DrawRoundedRect == null)
-                            DrawRoundedRect = new();
-                        DrawRoundedRect.SetRectRadii(outRect, radii);
-                        ctx.Canvas.DrawRoundRect(DrawRoundedRect, paint);
-                    }
-                    else
-                        ctx.Canvas.DrawRect(outRect, paint);
+                        if (CornerRadius != default)
+                        {
+                            if (DrawRoundedRect == null)
+                                DrawRoundedRect = new();
+                            DrawRoundedRect.SetRectRadii(outRect, radii);
+                            ctx.Canvas.DrawRoundRect(DrawRoundedRect, paint);
+                        }
+                        else
+                            ctx.Canvas.DrawRect(outRect, paint);
 
-                    break;
+                        break;
 
                     case ShapeType.Circle:
-                    ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, paint);
-                    break;
+                        ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, paint);
+                        break;
 
                     case ShapeType.Ellipse:
-                    DrawPathShape.Reset();
-                    DrawPathShape.AddOval(outRect);
-                    ctx.Canvas.DrawPath(DrawPathShape, paint);
-                    break;
+                        DrawPathShape.Reset();
+                        DrawPathShape.AddOval(outRect);
+                        ctx.Canvas.DrawPath(DrawPathShape, paint);
+                        break;
 
                     case ShapeType.Arc:
-                    DrawPathShape.Reset();
-                    // Start & End Angle for Radial Gauge
-                    var startAngle = (float)Value1;
-                    var sweepAngle = (float)Value2;
-                    DrawPathShape.AddArc(outRect, startAngle, sweepAngle);
-                    ctx.Canvas.DrawPath(DrawPathShape, paint);
-                    break;
+                        DrawPathShape.Reset();
+                        // Start & End Angle for Radial Gauge
+                        var startAngle = (float)Value1;
+                        var sweepAngle = (float)Value2;
+                        DrawPathShape.AddArc(outRect, startAngle, sweepAngle);
+                        ctx.Canvas.DrawPath(DrawPathShape, paint);
+                        break;
 
                     case ShapeType.Path:
-                    DrawPathShape.Reset();
-                    DrawPathShape.AddPath(DrawPathAligned);
-                    ctx.Canvas.DrawPath(DrawPathShape, paint);
+                        DrawPathShape.Reset();
+                        DrawPathShape.AddPath(DrawPathAligned);
+                        ctx.Canvas.DrawPath(DrawPathShape, paint);
 
-                    break;
+                        break;
                 }
 
             }
@@ -773,21 +773,21 @@ namespace DrawnUi.Maui.Draw
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                foreach (SkiaShadow newSkiaPropertyShadow in e.NewItems)
-                {
-                    newSkiaPropertyShadow.Attach(this);
-                }
+                    foreach (SkiaShadow newSkiaPropertyShadow in e.NewItems)
+                    {
+                        newSkiaPropertyShadow.Attach(this);
+                    }
 
-                break;
+                    break;
 
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Remove:
-                foreach (SkiaShadow oldSkiaPropertyShadow in e.OldItems ?? new SkiaShadow[0])
-                {
-                    oldSkiaPropertyShadow.Dettach();
-                }
+                    foreach (SkiaShadow oldSkiaPropertyShadow in e.OldItems ?? new SkiaShadow[0])
+                    {
+                        oldSkiaPropertyShadow.Dettach();
+                    }
 
-                break;
+                    break;
             }
 
             Update();

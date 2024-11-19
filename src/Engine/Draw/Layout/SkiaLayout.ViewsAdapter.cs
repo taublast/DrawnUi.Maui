@@ -492,6 +492,7 @@ public class ViewsAdapter : IDisposable
 
     public void ContextCollectionChanged(Func<object> template, IList dataContexts, int poolSize, int reserve = 0)
     {
+        //todo change this!!!
         //if (_templatedViewsPool == null)
         {
             InitializeTemplates(template, dataContexts, poolSize, reserve);
@@ -499,7 +500,8 @@ public class ViewsAdapter : IDisposable
         }
 
         _templatedViewsPool.MaxSize = poolSize;
-        //        if (layoutChanged)
+
+        lock (lockVisible)
         {
             foreach (var view in _dicoCellsInUse.Values)
             {

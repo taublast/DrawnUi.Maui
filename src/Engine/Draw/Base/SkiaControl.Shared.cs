@@ -1,6 +1,4 @@
-﻿using DrawnUi.Maui.Infrastructure.Extensions;
-
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Numerics;
@@ -8,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Input;
+using DrawnUi.Maui.Infrastructure.Extensions;
 using SKBlendMode = SkiaSharp.SKBlendMode;
 using SKCanvas = SkiaSharp.SKCanvas;
 using SKClipOperation = SkiaSharp.SKClipOperation;
@@ -985,20 +984,20 @@ namespace DrawnUi.Maui.Draw
             switch (LockChildrenGestures)
             {
                 case LockTouch.Enabled:
-                return true;
+                    return true;
 
                 case LockTouch.Disabled:
-                break;
+                    break;
 
                 case LockTouch.PassTap:
-                if (action != TouchActionResult.Tapped)
-                    return true;
-                break;
+                    if (action != TouchActionResult.Tapped)
+                        return true;
+                    break;
 
                 case LockTouch.PassTapAndLongPress:
-                if (action != TouchActionResult.Tapped && action != TouchActionResult.LongPressing)
-                    return true;
-                break;
+                    if (action != TouchActionResult.Tapped && action != TouchActionResult.LongPressing)
+                        return true;
+                    break;
             }
 
             return false;
@@ -2545,13 +2544,27 @@ namespace DrawnUi.Maui.Draw
             {
                 if (Superview is DrawnView view)
                 {
-                    view.ToBeDisposed.Enqueue(disposable);
+                    try
+                    {
+                        view.ToBeDisposed.Enqueue(disposable);
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
                 }
                 else
                 {
                     Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
                     {
-                        disposable?.Dispose();
+                        try
+                        {
+                            disposable?.Dispose();
+                        }
+                        catch (Exception e)
+                        {
+                            Super.Log(e);
+                        }
                     });
                 }
             }
@@ -2739,12 +2752,12 @@ namespace DrawnUi.Maui.Draw
                 case LayoutAlignment.Fill:
                 default:
 
-                bottom = top + useMaxHeight;
-                if (bottom > destination.Bottom)
-                {
-                    bottom = destination.Bottom;
-                }
-                break;
+                    bottom = top + useMaxHeight;
+                    if (bottom > destination.Bottom)
+                    {
+                        bottom = destination.Bottom;
+                    }
+                    break;
 
             }
 
@@ -3185,8 +3198,6 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         public virtual void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
-
-
             if (!PreArrange(destination, widthRequest, heightRequest, scale))
             {
                 DrawingRect = SKRect.Empty;
@@ -4651,27 +4662,27 @@ namespace DrawnUi.Maui.Draw
                 switch (verb)
                 {
                     case SKPathVerb.Move:
-                    if (moveToFound)
-                        return false; // Multiple MoveTo commands
-                    moveToFound = true;
-                    break;
+                        if (moveToFound)
+                            return false; // Multiple MoveTo commands
+                        moveToFound = true;
+                        break;
 
                     case SKPathVerb.Line:
-                    if (lineToCount < 4)
-                    {
-                        lineToCount++;
-                    }
-                    else
-                    {
-                        return false; // More than 4 LineTo commands
-                    }
-                    break;
+                        if (lineToCount < 4)
+                        {
+                            lineToCount++;
+                        }
+                        else
+                        {
+                            return false; // More than 4 LineTo commands
+                        }
+                        break;
 
                     case SKPathVerb.Close:
-                    return lineToCount == 4; // Ensure we have exactly 4 LineTo commands before Close
+                        return lineToCount == 4; // Ensure we have exactly 4 LineTo commands before Close
 
                     default:
-                    return false; // Any other command invalidates the rectangle check
+                        return false; // Any other command invalidates the rectangle check
                 }
             }
 
@@ -5034,6 +5045,8 @@ namespace DrawnUi.Maui.Draw
             SKRect destination, float scale,
             bool debug = false)
         {
+            if (skiaControls == null)
+                return 0;
             var count = 0;
 
             List<SkiaControlWithRect> tree = new();
@@ -5330,6 +5343,11 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
+            if (gradient != null && color == null)
+            {
+                color = Colors.Black;
+            }
+
             if (color == null || color.Alpha <= 0) return false;
 
             paint.Color = color.ToSKColor();
@@ -5340,6 +5358,7 @@ namespace DrawnUi.Maui.Draw
 
             return true;
         }
+
 
         /// <summary>
         /// destination in pixels, if you see no Scale parameter
@@ -5773,51 +5792,51 @@ namespace DrawnUi.Maui.Draw
                 {
                     case GradientType.Sweep:
 
-                    //float sweep = (float)Value3;//((float)this.Variable1 % (float)this.Variable2 / 100F) * 360.0F;
+                        //float sweep = (float)Value3;//((float)this.Variable1 % (float)this.Variable2 / 100F) * 360.0F;
 
-                    return SKShader.CreateSweepGradient(
-                         new SKPoint(destination.Left + destination.Width / 2.0f,
-                            destination.Top + destination.Height / 2.0f),
-                        colors.ToArray(),
-                        colorPositions,
-                        gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
+                        return SKShader.CreateSweepGradient(
+                             new SKPoint(destination.Left + destination.Width / 2.0f,
+                                destination.Top + destination.Height / 2.0f),
+                            colors.ToArray(),
+                            colorPositions,
+                            gradient.TileMode, (float)Value1, (float)(Value1 + Value2));
 
                     case GradientType.Circular:
                     case GradientType.Oval:
-                    var halfX = gradient.StartXRatio * destination.Width;
-                    var halfY = gradient.StartYRatio * destination.Height;
-                    if (gradient.Type == GradientType.Circular)
-                        return SKShader.CreateRadialGradient(
+                        var halfX = gradient.StartXRatio * destination.Width;
+                        var halfY = gradient.StartYRatio * destination.Height;
+                        if (gradient.Type == GradientType.Circular)
+                            return SKShader.CreateRadialGradient(
+                                new SKPoint(destination.Left + halfX, destination.Top + halfY),
+                                Math.Min(destination.Width / 2f, destination.Height / 2f),
+                                colors.ToArray(),
+                                colorPositions,
+                                gradient.TileMode
+                            );
+                        var shader = SKShader.CreateRadialGradient(
                             new SKPoint(destination.Left + halfX, destination.Top + halfY),
-                            Math.Min(destination.Width / 2f, destination.Height / 2f),
+                            Math.Max(destination.Width / 2f, destination.Height / 2f),
                             colors.ToArray(),
                             colorPositions,
                             gradient.TileMode
                         );
-                    var shader = SKShader.CreateRadialGradient(
-                        new SKPoint(destination.Left + halfX, destination.Top + halfY),
-                        Math.Max(destination.Width / 2f, destination.Height / 2f),
-                        colors.ToArray(),
-                        colorPositions,
-                        gradient.TileMode
-                    );
-                    // Create a scaling matrix centered around the gradient's origin point
-                    float scaleX = destination.Width >= destination.Height ? 1f : destination.Width / destination.Height;
-                    float scaleY = destination.Height >= destination.Width ? 1f : destination.Height / destination.Width;
-                    var transform = SKMatrix.CreateScale(scaleX, scaleY, destination.Left + halfX, destination.Top + halfY);
-                    return shader.WithLocalMatrix(transform);
+                        // Create a scaling matrix centered around the gradient's origin point
+                        float scaleX = destination.Width >= destination.Height ? 1f : destination.Width / destination.Height;
+                        float scaleY = destination.Height >= destination.Width ? 1f : destination.Height / destination.Width;
+                        var transform = SKMatrix.CreateScale(scaleX, scaleY, destination.Left + halfX, destination.Top + halfY);
+                        return shader.WithLocalMatrix(transform);
 
                     case GradientType.Linear:
                     default:
-                    return SKShader.CreateLinearGradient(
-                        new SKPoint(destination.Left + destination.Width * gradient.StartXRatio,
-                            destination.Top + destination.Height * gradient.StartYRatio),
-                        new SKPoint(destination.Left + destination.Width * gradient.EndXRatio,
-                            destination.Top + destination.Height * gradient.EndYRatio),
-                        colors.ToArray(),
-                        colorPositions,
-                        gradient.TileMode);
-                    break;
+                        return SKShader.CreateLinearGradient(
+                            new SKPoint(destination.Left + destination.Width * gradient.StartXRatio,
+                                destination.Top + destination.Height * gradient.StartYRatio),
+                            new SKPoint(destination.Left + destination.Width * gradient.EndXRatio,
+                                destination.Top + destination.Height * gradient.EndYRatio),
+                            colors.ToArray(),
+                            colorPositions,
+                            gradient.TileMode);
+                        break;
                 }
 
             }
@@ -6005,6 +6024,16 @@ namespace DrawnUi.Maui.Draw
 
         static object lockParent = new();
 
+        /// <summary>
+        /// This is called by SetParent  when parent should be assigned to null.
+        /// Internally this sets BindingContext to null after that. You might want to override this to keep BindngContext even if unattached from Parent, for example in case of recycled cells.
+        /// </summary>
+        public virtual void ClearParent()
+        {
+            Parent = null;
+            SetInheritedBindingContext(null);
+        }
+
         public virtual void SetParent(IDrawnBase parent)
         {
             //lock (lockParent)
@@ -6036,8 +6065,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (parent == null)
                 {
-                    Parent = null;
-                    SetInheritedBindingContext(null);
+                    ClearParent();
                     return;
                 }
 
@@ -6172,13 +6200,13 @@ namespace DrawnUi.Maui.Draw
                 switch (e.Action)
                 {
                     case NotifyCollectionChangedAction.Add:
-                    control.OnItemTemplateChanged();
-                    break;
+                        control.OnItemTemplateChanged();
+                        break;
 
                     case NotifyCollectionChangedAction.Reset:
                     case NotifyCollectionChangedAction.Remove:
-                    control.OnItemTemplateChanged();
-                    break;
+                        control.OnItemTemplateChanged();
+                        break;
                 }
             }
         }
@@ -6295,20 +6323,20 @@ namespace DrawnUi.Maui.Draw
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                foreach (SkiaControl newChildren in e.NewItems)
-                {
-                    AddOrRemoveView(newChildren, true);
-                }
-                break;
+                    foreach (SkiaControl newChildren in e.NewItems)
+                    {
+                        AddOrRemoveView(newChildren, true);
+                    }
+                    break;
 
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Remove:
-                foreach (SkiaControl oldChildren in e.OldItems ?? Array.Empty<SkiaControl>())
-                {
-                    AddOrRemoveView(oldChildren, false);
-                }
+                    foreach (SkiaControl oldChildren in e.OldItems ?? Array.Empty<SkiaControl>())
+                    {
+                        AddOrRemoveView(oldChildren, false);
+                    }
 
-                break;
+                    break;
             }
 
             Update();
@@ -6331,53 +6359,53 @@ namespace DrawnUi.Maui.Draw
             switch (stretch)
             {
                 case TransformAspect.None:
-                break;
+                    break;
 
                 case TransformAspect.Fit:
-                aspectX = dest.Width < width ? dest.Width / width : 1;
-                aspectY = dest.Height < height ? dest.Height / height : 1;
-                break;
+                    aspectX = dest.Width < width ? dest.Width / width : 1;
+                    aspectY = dest.Height < height ? dest.Height / height : 1;
+                    break;
 
                 case TransformAspect.Fill:
-                aspectX = width < dest.Width ? s1 : 1;
-                aspectY = height < dest.Height ? s2 : 1;
-                break;
+                    aspectX = width < dest.Width ? s1 : 1;
+                    aspectY = height < dest.Height ? s2 : 1;
+                    break;
 
                 case TransformAspect.AspectFit:
-                aspectX = Math.Min(s1, s2);
-                aspectY = aspectX;
-                break;
+                    aspectX = Math.Min(s1, s2);
+                    aspectY = aspectX;
+                    break;
 
                 case TransformAspect.AspectFill:
-                aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
-                aspectY = aspectX;
-                break;
+                    aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
+                    aspectY = aspectX;
+                    break;
 
                 case TransformAspect.Cover:
-                aspectX = s1;
-                aspectY = s2;
-                break;
+                    aspectX = s1;
+                    aspectY = s2;
+                    break;
 
                 case TransformAspect.AspectCover:
-                aspectX = Math.Max(s1, s2);
-                aspectY = aspectX;
-                break;
+                    aspectX = Math.Max(s1, s2);
+                    aspectY = aspectX;
+                    break;
 
                 case TransformAspect.AspectFitFill:
-                var imageAspect = width / height;
-                var viewportAspect = dest.Width / dest.Height;
+                    var imageAspect = width / height;
+                    var viewportAspect = dest.Width / dest.Height;
 
-                if (imageAspect > viewportAspect) // Image is wider than viewport
-                {
-                    aspectX = dest.Width / width;
-                    aspectY = aspectX;
-                }
-                else // Image is taller than viewport
-                {
-                    aspectY = dest.Height / height;
-                    aspectX = aspectY;
-                }
-                break;
+                    if (imageAspect > viewportAspect) // Image is wider than viewport
+                    {
+                        aspectX = dest.Width / width;
+                        aspectY = aspectX;
+                    }
+                    else // Image is taller than viewport
+                    {
+                        aspectY = dest.Height / height;
+                        aspectX = aspectY;
+                    }
+                    break;
             }
 
             return (aspectX, aspectY);

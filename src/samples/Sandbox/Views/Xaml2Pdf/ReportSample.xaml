@@ -5,16 +5,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:strings="clr-namespace:Sandbox.Resources.Strings"
+    HorizontalOptions="Fill"
     Tag="ReportWrapper">
 
     <draw:SkiaShape
         Margin="16"
         Padding="16"
         CornerRadius="8"
+        HorizontalOptions="Fill"
         StrokeColor="Black"
         StrokeWidth="1">
 
         <draw:SkiaLayout
+            HorizontalOptions="Fill"
             Spacing="12"
             Tag="ReportColumn"
             Type="Column">
@@ -26,6 +29,7 @@
             <draw:SkiaMarkdownLabel
                 BackgroundColor="Gainsboro"
                 FontSize="13"
+                HorizontalOptions="Fill"
                 LinkColor="Blue"
                 Text="{x:Static strings:ResStrings.MarkdownTest}"
                 TextColor="Black" />

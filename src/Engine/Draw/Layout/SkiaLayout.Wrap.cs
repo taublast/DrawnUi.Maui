@@ -19,12 +19,6 @@ namespace DrawnUi.Maui.Draw
             return measuredLayout;
         }
 
-        public override void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale)
-        {
-            base.Arrange(destination, widthRequest, heightRequest, scale);
-        }
-
-
         /// <summary>
         /// Renders stack/wrap layout.
         /// Returns number of drawn children.

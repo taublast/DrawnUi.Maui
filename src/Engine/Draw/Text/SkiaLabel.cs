@@ -1,9 +1,9 @@
-﻿using SkiaSharp.HarfBuzz;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using SkiaSharp.HarfBuzz;
 using Color = Microsoft.Maui.Graphics.Color;
 using Font = Microsoft.Maui.Font;
 using PropertyChangingEventArgs = Microsoft.Maui.Controls.PropertyChangingEventArgs;
@@ -321,247 +321,252 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed || IsDisposing)
                 return ScaledSize.Default;
 
-            //background measuring or invisible or self measure from draw because layout will never pass -1
-            if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
+            lock (LockFont)
             {
-                return MeasuredSize;
-            }
 
-            IsMeasuring = true;
-
-            try
-            {
-                var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-                if (request.IsSame)
+                //background measuring or invisible or self measure from draw because layout will never pass -1
+                if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
                 {
                     return MeasuredSize;
                 }
 
-                ReplaceFont();
+                IsMeasuring = true;
 
-                if (TypeFace == null)
-                    return MeasuredSize; //would be totally unexpected 
-
-                SetupDefaultPaint(scale);
-
-                var constraints = GetMeasuringConstraints(request);
-
-                var textWidthPixels = 0f;
-                var textHeightPixels = 0f;
-
-                var width = 0f;
-                var height = 0f;
-
-                //apply default props to default paint
-
-                UpdateFontMetrics(PaintDefault);
-
-                var usePaint = PaintDefault;
-
-                if (Spans.Count == 0)
+                try
                 {
-                    bool needsShaping = false;
-
-                    string text = null;
-
-                    Glyphs = GetGlyphs(Text, PaintDefault.Typeface);
-
-                    if (AutoFindFont)
+                    var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
+                    if (request.IsSame)
                     {
-                        if (Glyphs != null && Glyphs.Count > 0)
-                        {
-                            if (UnicodeNeedsShaping(Glyphs[0].Symbol))
-                            {
-                                needsShaping = true;
-                            }
-                        }
-                        text = Text;
+                        return MeasuredSize;
                     }
-                    else
-                    {
-                        //replace unprintable symbols
-                        if (Glyphs.Count > 0)
-                        {
-                            var textFiltered = "";
 
-                            foreach (var glyph in Glyphs)
+                    ReplaceFont();
+
+                    if (TypeFace == null)
+                        return MeasuredSize; //would be totally unexpected 
+
+                    SetupDefaultPaint(scale);
+
+                    var constraints = GetMeasuringConstraints(request);
+
+                    var textWidthPixels = 0f;
+                    var textHeightPixels = 0f;
+
+                    var width = 0f;
+                    var height = 0f;
+
+                    //apply default props to default paint
+
+                    UpdateFontMetrics(PaintDefault);
+
+                    var usePaint = PaintDefault;
+
+                    if (Spans.Count == 0)
+                    {
+                        bool needsShaping = false;
+
+                        string text = null;
+
+                        Glyphs = GetGlyphs(Text, PaintDefault.Typeface);
+
+                        if (AutoFindFont)
+                        {
+                            if (Glyphs != null && Glyphs.Count > 0)
                             {
-                                if (!glyph.IsAvailable)
+                                if (UnicodeNeedsShaping(Glyphs[0].Symbol))
                                 {
-                                    textFiltered += FallbackCharacter;
-                                }
-                                else
-                                {
-                                    textFiltered += glyph.Text;
+                                    needsShaping = true;
                                 }
                             }
-                            text = textFiltered;
-                        }
-                        else
-                        {
                             text = Text;
                         }
-                    }
-
-                    Lines = SplitLines(text, usePaint,
-                        SKPoint.Empty,
-                        (float)(constraints.Content.Width),
-                        (float)(constraints.Content.Height),
-                        MaxLines, needsShaping, null);
-                }
-                else
-                {
-                    //Measure SPANS
-
-                    SKPoint offset = SKPoint.Empty;
-                    var mergedLines = new List<TextLine>();
-
-
-                    TextLine previousSpanLastLine = null;
-
-                    foreach (var span in Spans.ToList())
-                    {
-                        if (string.IsNullOrEmpty(span.Text))
-                            continue;
-
-                        span.DrawingOffset = offset;
-
-                        var paint = span.SetupPaint(scale, PaintDefault);
-
-                        if (span is IDrawnTextSpan drawn)
-                        {
-                            //todo anything fancy, room for enhancement
-                        }
                         else
                         {
-                            span.CheckGlyphsCanBeRendered(); //will auto-select typeface if needed                        
-                        }
-
-                        var lines = SplitLines(span.TextFiltered,
-                                paint,
-                                offset,
-                                constraints.Content.Width,
-                                constraints.Content.Height,
-                                MaxLines, span.NeedShape, span);
-
-                        if (lines != null && lines.Length > 0)
-                        {
-                            var firstLine = lines.First();
-                            var lastLine = lines.Last();
-
-                            //merge first one
-                            if (previousSpanLastLine != null)
+                            //replace unprintable symbols
+                            if (Glyphs.Count > 0)
                             {
-                                if (mergedLines.Count > 0)
+                                var textFiltered = "";
+
+                                foreach (var glyph in Glyphs)
                                 {
-                                    //remove last, will be replaced by merged
-                                    mergedLines.Remove(previousSpanLastLine);
-                                }
-                                MergeSpansForLines(span, firstLine, previousSpanLastLine);
-                            }
-
-                            previousSpanLastLine = lastLine;
-                            offset = new(lastLine.Width, 0);
-
-                            mergedLines.AddRange(lines);
-                        }
-                        else
-                        {
-                            previousSpanLastLine = null;
-                            offset = SKPoint.Empty;
-                        }
-
-                        //span.Lines = lines;
-
-                    }
-
-                    //last sanity pass
-                    if (!KeepSpacesOnLineBreaks && Spans.Count > 0)
-                    {
-                        var index = 0;
-                        foreach (var line in mergedLines)
-                        {
-                            index++;
-                            if (index == mergedLines.Count) //do not process last line
-                                break;
-
-                            if (line.Value.Right(1) == " ")
-                            {
-                                var span = line.Spans.LastOrDefault();
-                                //if (span.Span != null)
-                                {
-                                    //remove last character from line, from last span and from last charactersposition
-                                    span.Text = span.Text.Substring(0, span.Text.Length - 1);
-                                    line.Value = line.Value.Substring(0, line.Value.Length - 1);
-                                    if (span.Glyphs != null)
+                                    if (!glyph.IsAvailable)
                                     {
-                                        var newArray = span.Glyphs;
-                                        if (!string.IsNullOrEmpty(line.Value))
-                                        {
-                                            //kill last glyph
-                                            line.Width -= span.Size.Width - span.Glyphs[^1].Position;
-                                            Array.Resize(ref newArray, newArray.Length - 1);
-                                        }
-                                        span.Glyphs = newArray;
+                                        textFiltered += FallbackCharacter;
+                                    }
+                                    else
+                                    {
+                                        textFiltered += glyph.Text;
                                     }
                                 }
-
+                                text = textFiltered;
+                            }
+                            else
+                            {
+                                text = Text;
                             }
                         }
-                    }
 
-                    Lines = mergedLines.ToArray();
-                }
-
-                if (Lines != null && Lines.Length > 0)
-                {
-                    LinesCount = Lines.Length;
-                    var addParagraphSpacings = (Lines.Count(x => x.IsNewParagraph) - 1) * SpaceBetweenParagraphs;
-
-                    textWidthPixels = Lines.Max(x => x.Width); //todo width error inside split
-
-                    if (LineHeightUniform)
-                    {
-                        var maxLineHeight = Lines.Max(x => x.Height);
-                        if (LineHeightPixels > maxLineHeight)
-                            maxLineHeight = LineHeightPixels;
-
-                        MeasuredLineHeight = maxLineHeight;
-
-                        textHeightPixels = (float)(maxLineHeight * LinesCount +
-                                                   (LinesCount - 1) * GetSpaceBetweenLines(MeasuredLineHeight) + addParagraphSpacings);
+                        Lines = SplitLines(text, usePaint,
+                            SKPoint.Empty,
+                            (float)(constraints.Content.Width),
+                            (float)(constraints.Content.Height),
+                            MaxLines, needsShaping, null);
                     }
                     else
                     {
-                        textHeightPixels = 0;
+                        //Measure SPANS
 
-                        MeasuredLineHeight = LineHeightPixels;
+                        SKPoint offset = SKPoint.Empty;
+                        var mergedLines = new List<TextLine>();
 
-                        for (int i = 0; i < LinesCount; i++)
+
+                        TextLine previousSpanLastLine = null;
+
+                        foreach (var span in Spans.ToList())
                         {
-                            var lineHeight = Lines[i].Height;
-                            if (LineHeightPixels > lineHeight)
-                                lineHeight = LineHeightPixels;
+                            if (string.IsNullOrEmpty(span.Text))
+                                continue;
 
-                            textHeightPixels += (float)(lineHeight + addParagraphSpacings);
-                            if (i < LinesCount - 1)
-                                textHeightPixels += (float)GetSpaceBetweenLines(lineHeight);
+                            span.DrawingOffset = offset;
+
+                            var paint = span.SetupPaint(scale, PaintDefault);
+
+                            if (span is IDrawnTextSpan drawn)
+                            {
+                                //todo anything fancy, room for enhancement
+                            }
+                            else
+                            {
+                                span.CheckGlyphsCanBeRendered(); //will auto-select typeface if needed                        
+                            }
+
+                            var lines = SplitLines(span.TextFiltered,
+                                    paint,
+                                    offset,
+                                    constraints.Content.Width,
+                                    constraints.Content.Height,
+                                    MaxLines, span.NeedShape, span);
+
+                            if (lines != null && lines.Length > 0)
+                            {
+                                var firstLine = lines.First();
+                                var lastLine = lines.Last();
+
+                                //merge first one
+                                if (previousSpanLastLine != null)
+                                {
+                                    if (mergedLines.Count > 0)
+                                    {
+                                        //remove last, will be replaced by merged
+                                        mergedLines.Remove(previousSpanLastLine);
+                                    }
+                                    MergeSpansForLines(span, firstLine, previousSpanLastLine);
+                                }
+
+                                previousSpanLastLine = lastLine;
+                                offset = new(lastLine.Width, 0);
+
+                                mergedLines.AddRange(lines);
+                            }
+                            else
+                            {
+                                previousSpanLastLine = null;
+                                offset = SKPoint.Empty;
+                            }
+
+                            //span.Lines = lines;
+
                         }
+
+                        //last sanity pass
+                        if (!KeepSpacesOnLineBreaks && Spans.Count > 0)
+                        {
+                            var index = 0;
+                            foreach (var line in mergedLines)
+                            {
+                                index++;
+                                if (index == mergedLines.Count) //do not process last line
+                                    break;
+
+                                if (line.Value.Right(1) == " ")
+                                {
+                                    var span = line.Spans.LastOrDefault();
+                                    //if (span.Span != null)
+                                    {
+                                        //remove last character from line, from last span and from last charactersposition
+                                        span.Text = span.Text.Substring(0, span.Text.Length - 1);
+                                        line.Value = line.Value.Substring(0, line.Value.Length - 1);
+                                        if (span.Glyphs != null)
+                                        {
+                                            var newArray = span.Glyphs;
+                                            if (!string.IsNullOrEmpty(line.Value))
+                                            {
+                                                //kill last glyph
+                                                line.Width -= span.Size.Width - span.Glyphs[^1].Position;
+                                                Array.Resize(ref newArray, newArray.Length - 1);
+                                            }
+                                            span.Glyphs = newArray;
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
+                        Lines = mergedLines.ToArray();
                     }
 
-                    ContentSize = ScaledSize.FromPixels(textWidthPixels, textHeightPixels, scale);
+                    if (Lines != null && Lines.Length > 0)
+                    {
+                        LinesCount = Lines.Length;
+                        var addParagraphSpacings = (Lines.Count(x => x.IsNewParagraph) - 1) * SpaceBetweenParagraphs;
+
+                        textWidthPixels = Lines.Max(x => x.Width); //todo width error inside split
+
+                        if (LineHeightUniform)
+                        {
+                            var maxLineHeight = Lines.Max(x => x.Height);
+                            if (LineHeightPixels > maxLineHeight)
+                                maxLineHeight = LineHeightPixels;
+
+                            MeasuredLineHeight = maxLineHeight;
+
+                            textHeightPixels = (float)(maxLineHeight * LinesCount +
+                                                       (LinesCount - 1) * GetSpaceBetweenLines(MeasuredLineHeight) + addParagraphSpacings);
+                        }
+                        else
+                        {
+                            textHeightPixels = 0;
+
+                            MeasuredLineHeight = LineHeightPixels;
+
+                            for (int i = 0; i < LinesCount; i++)
+                            {
+                                var lineHeight = Lines[i].Height;
+                                if (LineHeightPixels > lineHeight)
+                                    lineHeight = LineHeightPixels;
+
+                                textHeightPixels += (float)(lineHeight + addParagraphSpacings);
+                                if (i < LinesCount - 1)
+                                    textHeightPixels += (float)GetSpaceBetweenLines(lineHeight);
+                            }
+                        }
+
+                        ContentSize = ScaledSize.FromPixels(textWidthPixels, textHeightPixels, scale);
+                    }
+                    else
+                    {
+                        ContentSize = ScaledSize.CreateEmpty(scale);
+                        LinesCount = 0;
+                    }
+
+                    return SetMeasuredAdaptToContentSize(constraints, scale);
                 }
-                else
+                finally
                 {
-                    ContentSize = ScaledSize.CreateEmpty(scale);
-                    LinesCount = 0;
+                    IsMeasuring = false;
                 }
 
-                return SetMeasuredAdaptToContentSize(constraints, scale);
-            }
-            finally
-            {
-                IsMeasuring = false;
             }
 
         }
@@ -711,12 +716,15 @@ namespace DrawnUi.Maui.Draw
 
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
-            base.Paint(ctx, destination, scale, arguments);
+            lock (LockFont)
+            {
+                base.Paint(ctx, destination, scale, arguments);
 
-            var rectForChildren = ContractPixelsRect(destination, scale, Padding);
+                var rectForChildren = ContractPixelsRect(destination, scale, Padding);
 
-            if (Lines != null)
-                DrawLines(ctx, PaintDefault, SKPoint.Empty, Lines, rectForChildren, scale);
+                if (Lines != null)
+                    DrawLines(ctx, PaintDefault, SKPoint.Empty, Lines, rectForChildren, scale);
+            }
         }
 
         protected virtual void SpanPostDraw(
@@ -1150,7 +1158,6 @@ namespace DrawnUi.Maui.Draw
 
                             charIndex++;
                         }
-
                     }
                     else
                     //fast code without characters positions
@@ -1396,30 +1403,39 @@ namespace DrawnUi.Maui.Draw
             NeedMeasure = true;
         }
 
+        protected object LockFont = new();
+
         protected virtual void UpdateFont()
         {
-            if (_fontFamily != FontFamily
-                || _fontWeight != FontWeight
-                || _fontFamily == null
-                || TypeFace == null)
+            if (IsDisposed || IsDisposing)
+                return;
+
+            lock (LockFont)
             {
-                _fontFamily = FontFamily;
-                _fontWeight = FontWeight;
-
-                var replaceFont = SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
-
-                if (replaceFont == null)
+                if (_fontFamily != FontFamily
+                    || _fontWeight != FontWeight
+                    || _fontFamily == null
+                    || TypeFace == null)
                 {
-                    Super.Log($"Failed to load font {_fontFamily} with weight {_fontWeight}. Using default.");
-                    _replaceFont = SkiaFontManager.DefaultTypeface;
+                    _fontFamily = FontFamily;
+                    _fontWeight = FontWeight;
+
+                    var replaceFont = SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
+
+                    if (replaceFont == null)
+                    {
+                        Super.Log($"Failed to load font {_fontFamily} with weight {_fontWeight}. Using default.");
+                        _replaceFont = SkiaFontManager.DefaultTypeface;
+                    }
+                    else
+                    {
+                        _replaceFont = replaceFont;
+                    }
                 }
-                else
-                {
-                    _replaceFont = replaceFont;
-                }
+
+                InvalidateText();
             }
 
-            InvalidateText();
         }
 
         protected void ReplaceFont()
@@ -3212,7 +3228,53 @@ namespace DrawnUi.Maui.Draw
         }
 
         #endregion
-    }
 
+        protected override bool SetupBackgroundPaint(SKPaint paint, SKRect destination)
+        {
+            if (paint == null)
+                return false;
+
+            var color = this.BackgroundColor;
+            var gradient = FillGradient;
+
+            if (Background != null)
+            {
+                if (Background is SolidColorBrush solid)
+                {
+                    if (solid.Color != null)
+                        color = solid.Color;
+                }
+                else
+                if (Background is GradientBrush gradientBrush)
+                {
+                    gradient = SkiaGradient.FromBrush(gradientBrush);
+                    if (color == null)
+                        color = Colors.Black;
+                }
+            }
+            else
+            {
+                if (BackgroundColor != null)
+                {
+                    color = BackgroundColor;
+                }
+            }
+
+            //if (gradient != null && color == null)
+            //{
+            //    color = Colors.Black;
+            //}
+
+            if (color == null || color.Alpha <= 0) return false;
+
+            paint.Color = color.ToSKColor();
+            paint.Style = SKPaintStyle.StrokeAndFill;
+            paint.BlendMode = this.FillBlendMode;
+
+            SetupGradient(paint, gradient, destination);
+
+            return true;
+        }
+    }
 
 }

@@ -1,11 +1,11 @@
-﻿using DrawnUi.Maui.Features.Images;
-using Newtonsoft.Json.Linq;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using DrawnUi.Maui.Features.Images;
+using Newtonsoft.Json.Linq;
 using Animation = SkiaSharp.Skottie.Animation;
 
 namespace DrawnUi.Maui.Controls;
@@ -342,8 +342,7 @@ public class SkiaLottie : AnimatedFramesRenderer
         }
         catch (Exception e)
         {
-            Trace.WriteLine($"[SkiaLottie] LoadSource failed to load animation {fileName}");
-            Trace.WriteLine(e);
+            Super.Log($"[SkiaLottie] LoadSource failed to load animation {fileName}");
             return null;
         }
         finally
@@ -673,32 +672,6 @@ public class SkiaLottie : AnimatedFramesRenderer
     }
 
 
-    private static double GetAlphaFromHex(string hexColor)
-    {
-        if (hexColor.StartsWith("#"))
-            hexColor = hexColor.Substring(1);
-
-        if (hexColor.Length == 8)
-        {
-            var a = int.Parse(hexColor.Substring(0, 2), NumberStyles.HexNumber);
-            return a / 255.0;
-        }
-
-        // Default alpha if not specified
-        return 1.0;
-    }
-
-    private static double GetAlphaFromArray(JToken token)
-    {
-        if (token is JArray arr && arr.Count == 4)
-        {
-            var alpha = arr[3].ToObject<double>();
-            return alpha;
-        }
-
-        // Default alpha if not specified
-        return 1.0;
-    }
 
     public static string ColorToRGBHexString(Color color)
     {

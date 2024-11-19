@@ -4,8 +4,8 @@ All the MAUI-related base SkiaControl implementation.
 Normally other partial code definitions should be framework independent.
 */
 
-using Microsoft.Maui.HotReload;
 using System.Runtime.CompilerServices;
+using Microsoft.Maui.HotReload;
 
 namespace DrawnUi.Maui.Draw
 {
