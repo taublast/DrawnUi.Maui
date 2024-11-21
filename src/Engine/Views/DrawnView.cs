@@ -1638,10 +1638,16 @@ namespace DrawnUi.Maui.Views
                 _processingOffscrenRendering = true;
 
                 var command = _offscreenCacheRenderingQueue.Dequeue();
-                while (!command.Control.IsDisposed && !command.Control.IsDisposing)
+                while (command != null)
                 {
                     try
                     {
+                        if (command.Control.IsDisposed || command.Control.IsDisposing)
+                        {
+                            _offscreenCacheRenderingQueue.Clear();
+                            break;
+                        }
+
                         var action = command.Control.GetOffscreenRenderingAction();
                         action?.Invoke();
 
@@ -2619,6 +2625,4 @@ namespace DrawnUi.Maui.Views
 
 
     }
-
-
 }

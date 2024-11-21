@@ -33,7 +33,7 @@ public class SkiaImage : SkiaControl
         if (kill != null)
         {
             if (SkiaImageManager.ReuseBitmaps)
-                kill.Bitmap = null; //do not dispose shared cached image
+                kill.ProtectBitmapFromDispose = true; //do not dispose shared cached image
             DisposeObject(kill);
         }
 
@@ -322,7 +322,10 @@ public class SkiaImage : SkiaControl
 
         var bitmap = SKBitmap.Decode(pixelArray);
 
-        ImageBitmap = new LoadedImageSource(bitmap);
+        ImageBitmap = new LoadedImageSource(bitmap)
+        {
+            ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
+        };
         //SetImage(new InstancedBitmap(bitmap));
     }
 
@@ -360,7 +363,8 @@ public class SkiaImage : SkiaControl
     {
         return SetImage(new LoadedImageSource(bitmap)
         {
-            ProtectFromDispose = protectFromDispose
+            ProtectFromDispose = protectFromDispose,
+            ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
         });
     }
 
@@ -368,7 +372,8 @@ public class SkiaImage : SkiaControl
     {
         return SetImage(new LoadedImageSource(image)
         {
-            ProtectFromDispose = protectFromDispose
+            ProtectFromDispose = protectFromDispose,
+            ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
         });
     }
 
@@ -451,7 +456,10 @@ public class SkiaImage : SkiaControl
                     var cachedBitmap = SkiaImageManager.Instance.GetFromCache(uri);
                     if (cachedBitmap != null)
                     {
-                        ImageBitmap = new LoadedImageSource(cachedBitmap);
+                        ImageBitmap = new LoadedImageSource(cachedBitmap)
+                        {
+                            ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
+                        };
                         OnSuccess?.Invoke(this, new ContentLoadedEventArgs(uri));
                         return;
                     }
@@ -518,7 +526,10 @@ public class SkiaImage : SkiaControl
                                     if (bitmap != null)
                                     {
                                         CancelLoading?.Cancel();
-                                        ImageBitmap = new LoadedImageSource(bitmap); //at the end will use SetImage(new InstancedBitmap(bitmap));
+                                        ImageBitmap = new LoadedImageSource(bitmap)
+                                        {
+                                            ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
+                                        }; //at the end will use SetImage(new InstancedBitmap(bitmap));
                                         TraceLog($"[SkiaImage] Loaded {source}");
                                         OnSuccess?.Invoke(this, new ContentLoadedEventArgs(url));
                                         OnSourceSuccess();
@@ -1036,6 +1047,7 @@ propertyChanged: NeedChangeColorFIlter);
                 ImagePaint = new()
                 {
                     IsAntialias = true,
+                    IsDither = IsDistorted,
                     FilterQuality = SKFilterQuality.High
                 };
             }

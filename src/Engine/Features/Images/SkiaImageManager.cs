@@ -569,7 +569,7 @@ public partial class SkiaImageManager : IDisposable
         {
             try
             {
-                if (IsLoadingLocked || semaphoreLoad.CurrentCount < 1)
+                if (IsLoadingLocked)
                 {
                     TraceLog($"ImageLoadManager: Loading Locked!");
                     await Task.Delay(50);

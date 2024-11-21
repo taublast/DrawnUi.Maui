@@ -1,9 +1,14 @@
 # DrawnUI for .NET MAUI
 ![License](https://img.shields.io/github/license/taublast/DrawnUi.Maui.svg)
+![NuGet Version](https://img.shields.io/nuget/v/AppoMobi.Maui.DrawnUi.svg)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/AppoMobi.Maui.DrawnUi.svg)
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. 
 Create and render your custom controls on a hardware-accelerated Skia canvas, with effects and animations.
+
+**IMPORTANT UPDATE**
+Reverted SkiaSharp from 2.88.9 to 2.88.9-preview.2.2 
+until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
 
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
@@ -98,18 +103,16 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
 ## What's New
 
-* Nuget 1.2.9.1 stable for SkiaSharp 2.88.9
-* Pdf helper added
-* Sandbox adapted, added example for multi-page pdf
-* SkiaImageManager fix for non-loading images
-* SkiaImage speed up loading from cached images
-* ContentLayout changed to skialayout fixing padding and margin problem
-* SkiaLayout invalidation and some others fixes
-* SkiaSlider wrong initial position fix
-* Gestures nuget updated
-* Added FluentExtensions
-* Another SkiaScroll fix for RefreshView 
-* Fix crash when disposing from different threads
+### Nuget 1.2.9.2  
+for SkiaSharp 2.88.9-preview.2.2 
+
+* Reverted SkiaSharp to 2.88.9-preview.2.2 back from 2.88.9
+until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
+* Antialiasing [issue](https://github.com/taublast/DrawnUi.Maui/issues/122) solved for SkiaShape
+* SkiaImageManager cancelling loads fix
+* Fixed native crash when using Super.ReuseBitmaps
+* SkiaSvg made more GC-friendly
+* Added `WithParent` to FluentExtensions
 * Some more
 
  ## Development Notes
