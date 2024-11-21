@@ -1,9 +1,10 @@
 <Project>
   <!-- Conditional for SkiaSharp 2 -->
   <ItemGroup>
-    <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.9" />
-    <PackageReference Include="SkiaSharp" Version="2.88.9" />
-    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.9" />
-    <PackageReference Include="Svg.Skia" Version="2.0.0.2" />
+      <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.9-preview.2.2" />
+      <PackageReference Include="SkiaSharp" Version="2.88.9-preview.2.2" />
+      <PackageReference Include="SkiaSharp.Skottie" Version="2.88.9-preview.2.2" />
+      <PackageReference Include="Svg.Skia" Version="2.0.0.2" />
+
   </ItemGroup>
 </Project>

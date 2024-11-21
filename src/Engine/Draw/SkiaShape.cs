@@ -533,17 +533,10 @@ namespace DrawnUi.Maui.Draw
 
             RenderingPaint ??= new SKPaint()
             {
-                //IsAntialias = true,
+                IsAntialias = true
             };
 
-            //if (IsDistorted)
-            //{
-            //    RenderingPaint.FilterQuality = SKFilterQuality.Medium;
-            //}
-            //else
-            //{
-            //    RenderingPaint.FilterQuality = SKFilterQuality.None;
-            //}
+            RenderingPaint.IsDither = IsDistorted;
 
             if (BackgroundColor != null)
             {

@@ -4,6 +4,12 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+    <x:String x:Key="SvgAvatarEmpty">
+        <![CDATA[ 
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><g><g id="svg6"><g id="g4"><path id="path2" d="M52,50a2,2,0,0,1-4,0A22,22,0,0,0,28,28.1V23.8a10,10,0,1,0-4,0v4.3A22,22,0,0,0,4,50a2,2,0,0,1-4,0A26,26,0,0,1,17.82,25.34a14,14,0,1,1,16.36,0A26,26,0,0,1,52,50Z" style="fill:#fff"/></g></g></g></svg>
+             ]]>
+    </x:String>
+
     <x:String x:Key="SvgReturn">
         <![CDATA[ 
                                      

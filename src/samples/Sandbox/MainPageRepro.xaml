@@ -3,25 +3,53 @@
     x:Class="MauiNet8.MainPageRepro"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:mauiNet8="clr-namespace:MauiNet8"
     xmlns:sandbox="clr-namespace:Sandbox"
     xmlns:views="clr-namespace:Sandbox.Views"
     x:DataType="sandbox:MainPageViewModel"
     BackgroundColor="#000000">
 
+
+
     <Grid
-        BackgroundColor="Red"
         HorizontalOptions="Fill"
         VerticalOptions="Fill">
 
         <mauiNet8:DebugCanvas
-            BackgroundColor="DarkSlateBlue"
+            x:Name="MainCanvas"
+            BackgroundColor="Transparent"
             Gestures="Enabled"
-            HardwareAcceleration="Enabled"
+            HardwareAcceleration="Disabled"
             HorizontalOptions="Fill"
             Tag="Main"
             VerticalOptions="Fill">
 
+            <draw:SkiaLayout
+                HorizontalOptions="Fill"
+                Tag="Wrapper"
+                VerticalOptions="Fill">
+
+                <draw:SkiaSvg
+                    Background="Black"
+                    HeightRequest="24"
+                    HorizontalOptions="Center"
+                    LockRatio="1"
+                    SvgString="{x:StaticResource SvgReturn}"
+                    TintColor="#ffffff"
+                    VerticalOptions="Center" />
+
+
+                <draw:SkiaLabelFps
+                    Margin="0,0,4,24"
+                    BackgroundColor="DarkRed"
+                    HorizontalOptions="End"
+                    Rotation="-45"
+                    TextColor="White"
+                    VerticalOptions="End"
+                    ZIndex="100" />
+
+            </draw:SkiaLayout>
 
 
         </mauiNet8:DebugCanvas>

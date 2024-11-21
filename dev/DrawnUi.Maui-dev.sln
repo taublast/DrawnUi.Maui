@@ -10,7 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		movenugets.bat = movenugets.bat
 		nuget_uploadnugets.bat = nuget_uploadnugets.bat
 		..\README.md = ..\README.md
-		..\src\ToDo.txt = ..\src\ToDo.txt
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui", "..\src\Engine\DrawnUi.Maui.csproj", "{D76B6239-94A0-482C-A0FF-A764017B7393}"

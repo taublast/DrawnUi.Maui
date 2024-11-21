@@ -240,6 +240,11 @@
       </Compile>
  
  
+      <Compile Update="Views\MainDrawnCells.xaml.cs">
+        <DependentUpon>MainDrawnCells.xaml</DependentUpon>
+      </Compile>
+ 
+ 
       <Compile Update="Views\MainPageXaml2PdfPages.xaml.cs">
         <DependentUpon>MainPageXaml2PdfPages.xaml</DependentUpon>
       </Compile>
@@ -369,6 +374,9 @@
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="TestPageGridIssue.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\MainDrawnCells.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\MainPageXaml2PdfPages.xaml">

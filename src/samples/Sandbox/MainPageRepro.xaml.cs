@@ -19,8 +19,6 @@ public partial class MainPageRepro : BasePage
         }
     }
 
-
-
 }
 
 public class DebugCanvas : Canvas
@@ -29,15 +27,14 @@ public class DebugCanvas : Canvas
 
     public DebugCanvas()
     {
-        var shape = CreateSkiaLine(Colors.White, 10, 10, 100, 100, 5);
-        Children.Add(shape.Item1);
+
     }
 
     protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
     {
         base.Draw(context, destination, scale);
 
-
+        /*
         if (Height > 0 && Width > 0)
         {
             var canvas = context.Canvas;
@@ -66,31 +63,9 @@ public class DebugCanvas : Canvas
 
 
         }
+        */
     }
 
-    private static (SkiaShape, Point) CreateSkiaLine(Color color, double x1, double y1, double x2, double y2, int width = 5)
-    {
-        var distX = x1 - x2;
-        var distY = y1 - y2;
-        var lineDist = Math.Sqrt(distX * distX + distY * distY);
-
-        var lineCenterX = x2 + (distX / 2);
-        var lineCenterY = y2 + (distY / 2);
-        var lineFinalX = lineCenterX - (lineDist / 2);
-
-        var lineRotateAngle = Math.Acos(distX / lineDist) * (180 / Math.PI);
-
-        var line = new SkiaShape()
-        {
-            Type = ShapeType.Rectangle,
-            BackgroundColor = color,
-            WidthRequest = lineDist,
-            HeightRequest = width,
-            Rotation = (distY < 0) ? 360 - lineRotateAngle : lineRotateAngle
-        };
-
-        return (line, new Point(lineFinalX, lineCenterY));
-    }
 
     (SKSurface, SKImage) CreateImage(int width, int height, float renderingScale)
     {
@@ -119,5 +94,7 @@ public class DebugCanvas : Canvas
         var image = surface.Snapshot();
         return (surface, image);
     }
+
+
 
 }

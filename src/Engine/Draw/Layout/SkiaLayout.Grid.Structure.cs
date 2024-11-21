@@ -7,10 +7,15 @@ namespace DrawnUi.Maui.Draw;
 
 public static class FluentExtensions
 {
-
     public static T With<T>(this T view, Action<T> action) where T : SkiaControl
     {
         action?.Invoke(view);
+        return view;
+    }
+
+    public static T WithParent<T>(this T view, IDrawnBase parent) where T : SkiaControl
+    {
+        parent.AddSubView(view);
         return view;
     }
 

@@ -1,8 +1,8 @@
-﻿using DrawnUi.Maui.Features.Images;
-using Svg.Skia;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using DrawnUi.Maui.Features.Images;
+using Svg.Skia;
 
 namespace DrawnUi.Maui.Draw
 {
@@ -472,12 +472,17 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        protected SKPaint RenderingPaint { get; set; }
+
         public override void OnDisposing()
         {
             LoadedString = null;
 
             Svg?.Dispose();
             Svg = null;
+
+            RenderingPaint?.Dispose();
+            RenderingPaint = null;
 
             base.OnDisposing();
         }
@@ -824,29 +829,29 @@ namespace DrawnUi.Maui.Draw
             switch (horizontal)
             {
                 case DrawImageAlignment.Center:
-                x = (dest.Width - bmpWidth) / 2.0f;
-                break;
+                    x = (dest.Width - bmpWidth) / 2.0f;
+                    break;
 
                 case DrawImageAlignment.Start:
-                break;
+                    break;
 
                 case DrawImageAlignment.End:
-                x = dest.Width - bmpWidth;
-                break;
+                    x = dest.Width - bmpWidth;
+                    break;
             }
 
             switch (vertical)
             {
                 case DrawImageAlignment.Center:
-                y = (dest.Height - bmpHeight) / 2.0f;
-                break;
+                    y = (dest.Height - bmpHeight) / 2.0f;
+                    break;
 
                 case DrawImageAlignment.Start:
-                break;
+                    break;
 
                 case DrawImageAlignment.End:
-                y = dest.Height - bmpHeight;
-                break;
+                    y = dest.Height - bmpHeight;
+                    break;
             }
 
             x += dest.Left;
@@ -1085,82 +1090,81 @@ namespace DrawnUi.Maui.Draw
 
             if (Svg != null)// !string.IsNullOrEmpty(LoadedString))
             {
+                RenderingPaint ??= new SKPaint()
+                {
+                    IsAntialias = true
+                };
+                RenderingPaint.IsDither = IsDistorted;
+                RenderingPaint.BlendMode = DefaultBlendMode;
+
                 SKMatrix matrix = CreateSvgMatrix(area, scale);
 
                 SKPath clipPath = null;
 
                 if (TintColor != Colors.Transparent && !UseGradient)
                 {
+                    RenderingPaint.Shader = null;//todo dispose
 
-                    using (var paint = new SKPaint())
-                    {
-                        //drop shadow
-                        AddShadow(paint, scale);
-                        paint.IsAntialias = true;
-                        paint.ColorFilter = SKColorFilter.CreateBlendMode(TintColor.ToSKColor(), SKBlendMode.SrcIn);
+                    AddShadow(RenderingPaint, scale);
+                    RenderingPaint.ColorFilter = SKColorFilter.CreateBlendMode(TintColor.ToSKColor(), SKBlendMode.SrcIn);
 
-                        ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
-                    }
-
+                    ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
                 }
                 else
                 if (UseGradient) //todo use standart gradient property instead
                 {
+                    RenderingPaint.ColorFilter = null; //todo dispose
+
                     ctx.Canvas.DrawPicture(Svg.Picture, ref matrix);
 
-                    //draw gradient rectangle above
-                    using (var paint = new SKPaint())
-                    {
-                        //drop shadow
-                        AddShadow(paint, scale);
-                        paint.IsAntialias = true;
-                        paint.Shader = SKShader.CreateLinearGradient(
-                            new SKPoint(Destination.Width * StartXRatio, Destination.Height * StartYRatio),
-                            new SKPoint(Destination.Width * EndXRatio, Destination.Height * EndYRatio),
-                            new SKColor[]
-                            {
+                    //will draw gradient rectangle above
+
+                    //drop shadow
+                    AddShadow(RenderingPaint, scale);
+                    RenderingPaint.Shader = SKShader.CreateLinearGradient(
+                        new SKPoint(Destination.Width * StartXRatio, Destination.Height * StartYRatio),
+                        new SKPoint(Destination.Width * EndXRatio, Destination.Height * EndYRatio),
+                        new SKColor[]
+                        {
                                     StartColor.ToSKColor(),
                                     EndColor.ToSKColor()
-                            },
-                            null,
-                            SKShaderTileMode.Clamp);
+                        },
+                        null,
+                        SKShaderTileMode.Clamp);
 
-                        paint.BlendMode = GradientBlendMode;
-
-                        ctx.Canvas.DrawRect(Destination, paint);
-                    }
+                    RenderingPaint.BlendMode = GradientBlendMode;
+                    ctx.Canvas.DrawRect(Destination, RenderingPaint);
                 }
                 else
                 {
-                    using (var paint = new SKPaint())
+                    RenderingPaint.Shader = null;//todo dispose
+                    RenderingPaint.ColorFilter = null; //todo dispose
+
+                    //drop shadow
+                    AddShadow(RenderingPaint, scale);
+
+                    //                            paint.ColorFilter = SKColorFilter.CreateBlendMode(BackgroundColors.ToSKColor(), SKBlendMode.SrcIn);
+
+                    if (Clipping != null)
                     {
-                        paint.IsAntialias = true;
-                        //drop shadow
-                        AddShadow(paint, scale);
-
-                        //                            paint.ColorFilter = SKColorFilter.CreateBlendMode(BackgroundColors.ToSKColor(), SKBlendMode.SrcIn);
-
-                        if (Clipping != null)
+                        if (clipPath == null)
                         {
-                            if (clipPath == null)
-                            {
-                                clipPath = new SKPath();
-                                Clipping.Invoke(clipPath, Destination);
-                            }
-
-                            var saved = ctx.Canvas.Save();
-                            ClipSmart(ctx.Canvas, clipPath);
-
-                            ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
-
-                            ctx.Canvas.RestoreToCount(saved);
-
-                            clipPath.Dispose();
+                            clipPath = new SKPath();
+                            Clipping.Invoke(clipPath, Destination);
                         }
-                        else
-                        {
-                            ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, paint);
-                        }
+
+                        var saved = ctx.Canvas.Save();
+                        ClipSmart(ctx.Canvas, clipPath);
+
+                        ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
+
+                        ctx.Canvas.RestoreToCount(saved);
+
+                        clipPath.Dispose();
+                    }
+                    else
+                    {
+                        ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
                     }
                 }
             }

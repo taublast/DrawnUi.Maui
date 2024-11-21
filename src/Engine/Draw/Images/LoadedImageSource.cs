@@ -14,18 +14,28 @@ public class LoadedImageSource : IDisposable
             // Clone the SKBitmap
             var bitmapClone = new SKBitmap(Bitmap.Width, Bitmap.Height, Bitmap.ColorType, Bitmap.AlphaType);
             Bitmap.CopyTo(bitmapClone);
-            return new LoadedImageSource(bitmapClone);
+            return new LoadedImageSource(bitmapClone)
+            {
+                ProtectBitmapFromDispose = this.ProtectBitmapFromDispose,
+                ProtectFromDispose = this.ProtectFromDispose
+            };
         }
         else if (Image != null)
         {
             // Clone the SKImage
             var imageClone = SKImage.FromBitmap(SKBitmap.FromImage(Image));
-            return new LoadedImageSource(imageClone);
+            return new LoadedImageSource(imageClone)
+            {
+                ProtectFromDispose = this.ProtectFromDispose
+            };
         }
         else
         {
             // If there's no image or bitmap, return a new empty instance
-            return new LoadedImageSource();
+            return new LoadedImageSource()
+            {
+                ProtectFromDispose = this.ProtectFromDispose
+            };
         }
     }
 
@@ -36,14 +46,23 @@ public class LoadedImageSource : IDisposable
     /// </summary>
     public bool ProtectFromDispose { get; set; }
 
+    /// <summary>
+    /// Should be set to true for loaded with SkiaImageManager.ReuseBitmaps
+    /// </summary>
+    public bool ProtectBitmapFromDispose { get; set; }
+
     public void Dispose()
     {
         if (!IsDisposed && !ProtectFromDispose)
         {
             IsDisposed = true;
 
-            Bitmap?.Dispose();
+            if (!ProtectBitmapFromDispose)
+            {
+                Bitmap?.Dispose();
+            }
             Bitmap = null;
+
             Image?.Dispose();
             Image = null;
         }

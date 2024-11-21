@@ -1,28 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 namespace Sandbox;
-
-public class ChatMessage : MockChatViewModel.ChatMessageDto, INotifyPropertyChanged
-{
-
-    #region INotifyPropertyChanged
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-    {
-        var changed = PropertyChanged;
-        if (changed == null)
-            return;
-
-        changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-    #endregion
-
-}
 
 public class MockChatViewModel : BindableObject
 {

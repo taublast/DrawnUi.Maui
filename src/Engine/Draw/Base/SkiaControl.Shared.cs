@@ -35,6 +35,8 @@ namespace DrawnUi.Maui.Draw
             Init();
         }
 
+        protected static SKBlendMode DefaultBlendMode = SKBlendMode.SrcOver;
+
         public virtual bool IsVisibleInViewTree()
         {
             var isVisible = IsVisible && !IsDisposed;
@@ -3436,6 +3438,9 @@ namespace DrawnUi.Maui.Draw
         /// <param name="context"></param>
         public virtual void SetInheritedBindingContext(object context)
         {
+            if (IsDisposing)
+                return;
+
             BindingContext = context;
         }
 
@@ -3444,7 +3449,10 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual void ApplyBindingContext()
         {
-            foreach (var content in this.Views)
+            if (IsDisposing)
+                return;
+
+            foreach (var content in this.Views.ToList())
             {
                 content.SetInheritedBindingContext(BindingContext);
             }
@@ -3461,6 +3469,9 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected override void OnBindingContextChanged()
         {
+            if (IsDisposing)
+                return;
+
             BindingContextWasSet = true;
 
             try
