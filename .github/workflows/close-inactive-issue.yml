@@ -22,5 +22,5 @@ jobs:
           operations-per-run: 30      # Adjust as needed to handle more issues
           mark-issue-as-stale: true   # Mark the issue as stale
           close-issue: true           # Enable issue closing
-          stale-pr-label: ''          # Leave empty if not handling pull requests
+          only-issues: true           # Only process issues, not PRs
           exempt-issue-labels: 'pinned,important'  # Optional: Exclude certain labels
