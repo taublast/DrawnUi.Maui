@@ -138,7 +138,7 @@ namespace Sandbox
                                 CornerRadius = 16,
                                 RotationX = 16,
                                 RotationY = 20,
-                                RotationZ = 6,
+                                RotationZ = -6,
                                 TranslationZ = 0,
                                 Tag="Shape",
                                 WidthRequest = 150,

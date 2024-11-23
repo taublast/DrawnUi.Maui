@@ -11,20 +11,58 @@
     x:DataType="sandbox:MainPageViewModel"
     BackgroundColor="#000000">
 
+    <ScrollView>
+        <StackLayout HeightRequest="1000">
 
-    <!--  tried without definitions, same..  -->
-    <Grid RowDefinitions="80,*">
+            <draw:Canvas
+                BackgroundColor="DarkSlateBlue"
+                HorizontalOptions="Fill"
+                Gestures="Lock">
 
+                <draw:SkiaLayout Type="Column">
+                    
+                    
+                    <draw:SkiaLabel
+                        VerticalOptions="Center"
+                        DropShadowColor="#33333333"
+                        DropShadowSize="4"
+                        FontFamily="FontTextTitle"
+                        FontSize="44"
+                        HorizontalOptions="Center"
+                        StrokeColor="White"
+                        StrokeWidth="2"
+                        Text="Sandbox"
+                        UseCache="Image">
+                        <draw:SkiaLabel.FillGradient>
 
-        <draw:Canvas
-            x:Name="Canvas"
-            Grid.Row="1"
-            Gestures="Enabled"
-            HeightRequest="60">
-            <!--  one from the Sandbox project  -->
-            <controls:SliderColor HeightRequest="50" />
-        </draw:Canvas>
+                            <draw:SkiaGradient
+                                EndXRatio="0"
+                                EndYRatio="1"
+                                StartXRatio="0"
+                                StartYRatio="0"
+                                Type="Linear">
+                                <draw:SkiaGradient.Colors>
+                                    <Color>White</Color>
+                                    <Color>Yellow</Color>
+                                    <Color>Orange</Color>
+                                    <Color>Red</Color>
+                                    <Color>DarkRed</Color>
+                                </draw:SkiaGradient.Colors>
+                            </draw:SkiaGradient>
 
-    </Grid>
+                        </draw:SkiaLabel.FillGradient>
+                    </draw:SkiaLabel>
+
+                    <!--  one from the Sandbox project  -->
+                    <controls:SliderColor 
+                        Margin="32,0"
+                        HeightRequest="50" />
+
+                </draw:SkiaLayout>
+
+            </draw:Canvas>
+
+        </StackLayout>
+    </ScrollView>
 
 </views:BasePage>

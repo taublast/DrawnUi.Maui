@@ -1,9 +1,4 @@
-﻿using AppoMobi.Specials;
-using DrawnUi.Maui;
-using Microsoft.Maui.Platform;
-using Sandbox.Views;
-using System.Globalization;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Sandbox
 {
@@ -19,7 +14,8 @@ namespace Sandbox
 
             var mask = "MainPage";
 
-            var xamlResources = this.GetType().Assembly.GetCustomAttributes<XamlResourceIdAttribute>();
+            var xamlResources = this.GetType().Assembly
+                .GetCustomAttributes<XamlResourceIdAttribute>();
 
             MainPages = xamlResources
                 .Where(x => x.Type.Name.Contains(mask)
@@ -66,6 +62,6 @@ namespace Sandbox
         public string Name { get; set; }
     }
 
- 
+
 
 }
