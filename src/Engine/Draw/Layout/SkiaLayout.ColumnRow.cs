@@ -306,10 +306,11 @@ namespace DrawnUi.Maui.Draw
                 var layoutStructure = BuildStackStructure(scale);
 
                 bool useOneTemplate =
+                                    IsTemplated &&
                                        //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
                                        RecyclingTemplate == RecyclingTemplate.Enabled;
 
-                if (IsTemplated && useOneTemplate)
+                if (useOneTemplate)
                 {
                     template = ChildrenFactory.GetTemplateInstance();
                 }
@@ -515,7 +516,7 @@ namespace DrawnUi.Maui.Draw
                         secondPass.Scale);
                 }
 
-                if (IsTemplated && useOneTemplate)
+                if (useOneTemplate)
                 {
                     ChildrenFactory.ReleaseView(template);
                 }
