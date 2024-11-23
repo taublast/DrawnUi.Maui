@@ -1,5 +1,5 @@
-﻿using Microsoft.Maui.Controls.Internals;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.Maui.Controls.Internals;
 using Size = Microsoft.Maui.Graphics.Size;
 
 namespace DrawnUi.Maui.Views;
@@ -49,7 +49,6 @@ public class Canvas : DrawnView, IGestureListener
             }
         }
     }
-
 
     #region LAYOUT & AUTOSIZE
 
@@ -485,8 +484,9 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name=""></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
-        //Super.Log($"[Touch] Canvas got {args.Type}");
-        /*
+        Super.Log($"[Touch] Canvas got {args1.Type} {type}");
+
+#if ANDROID
         if (touchAction == TouchActionResult.Panning)
         {
             //filter micro-gestures
@@ -522,7 +522,19 @@ public class Canvas : DrawnView, IGestureListener
         {
             _isPanning = false;
         }
-        */
+#endif
+
+
+        //lock fix:
+        if (this.Gestures == GesturesMode.Lock)
+        {
+            if (touchAction == TouchActionResult.Up
+                && args1.Type == TouchActionType.Moved &&
+                type == TouchActionType.Cancelled)
+            {
+                touchAction = TouchActionResult.Panning;
+            }
+        }
 
         var args = SkiaGesturesParameters.Create(touchAction, args1);
 
