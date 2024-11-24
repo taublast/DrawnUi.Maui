@@ -96,7 +96,7 @@
 	</ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.1.1" />
+<!--    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.1.1" />-->
     <!--for parsing markdown text-->
     <PackageReference Include="Markdig" Version="0.34.0" />
     <!--for caching images-->
@@ -161,6 +161,10 @@
     <Compile Update="Platforms\Android\Files.Android.cs">
       <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\AppoMobi.Maui.Gestures\src\AppoMobi.Maui.Gestures.csproj" />
   </ItemGroup>
 
 </Project>

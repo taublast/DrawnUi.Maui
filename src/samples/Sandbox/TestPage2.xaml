@@ -16,8 +16,14 @@
 
             <draw:Canvas
                 BackgroundColor="DarkSlateBlue"
+                HardwareAcceleration="Enabled"
                 HorizontalOptions="Fill"
                 Gestures="Lock">
+
+        <draw:SkiaLayout
+                HorizontalOptions="Fill"
+                Tag="Wrapper"
+                VerticalOptions="Fill">
 
                 <draw:SkiaLayout Type="Column">
                     
@@ -59,6 +65,20 @@
                         HeightRequest="50" />
 
                 </draw:SkiaLayout>
+
+              <draw:SkiaLabelFps
+                    Margin="0,0,4,24"
+                    BackgroundColor="DarkRed"
+                    HorizontalOptions="End"
+                    Rotation="-45"
+                    TextColor="White"
+                    VerticalOptions="End"
+                    ForceRefresh="True"
+                    ZIndex="100">
+                   
+                </draw:SkiaLabelFps>
+
+            </draw:SkiaLayout>
 
             </draw:Canvas>
 

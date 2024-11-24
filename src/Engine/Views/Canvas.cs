@@ -484,7 +484,7 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name=""></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
-        Super.Log($"[Touch] Canvas got {args1.Type} {type}");
+        Super.Log($"[Touch] Canvas got {args1.Type} {type} => {touchAction}");
 
 #if ANDROID
         if (touchAction == TouchActionResult.Panning)
@@ -493,6 +493,7 @@ public class Canvas : DrawnView, IGestureListener
             if ((Math.Abs(args1.Distance.Delta.X) < 1 && Math.Abs(args1.Distance.Delta.Y) < 1)
                 || (Math.Abs(args1.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args1.Distance.Velocity.Y / RenderingScale) < 1))
             {
+                //Super.Log($"[Touch] IGNORED");
                 return;
             }
 
@@ -529,10 +530,10 @@ public class Canvas : DrawnView, IGestureListener
         if (this.Gestures == GesturesMode.Lock)
         {
             if (touchAction == TouchActionResult.Up
-                && args1.Type == TouchActionType.Moved &&
-                type == TouchActionType.Cancelled)
+                && (args1.Type == TouchActionType.Moved && type == TouchActionType.Cancelled)) 
             {
-                touchAction = TouchActionResult.Panning;
+                return;
+                //touchAction = TouchActionResult.Panning;
             }
         }
 
@@ -563,6 +564,9 @@ public class Canvas : DrawnView, IGestureListener
             }
 
         }
+
+ ProcessGestures(args);
+ return;
 
         //this is intended to not lose gestures when fps drops and avoid crashes in double-buffering
         PostponeExecutionBeforeDraw(() =>

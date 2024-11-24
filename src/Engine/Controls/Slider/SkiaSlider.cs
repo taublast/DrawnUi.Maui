@@ -38,7 +38,7 @@ public class SkiaSlider : SkiaLayout
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        Super.Log($"[Touch] SLIDER got {args.Type}");
+        //Super.Log($"[Touch] SLIDER got {args.Type}");
 
         bool passedToChildren = false;
 
@@ -185,7 +185,7 @@ public class SkiaSlider : SkiaLayout
                 IsUserPanning = true;
 
 
-                //synch this 
+                //synch this
                 if (touchArea == RangeZone.Start)
                     lastTouchX = StartThumbX;
                 else
@@ -207,6 +207,8 @@ public class SkiaSlider : SkiaLayout
                     {
                         var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;
                         SetEndOffsetClamped(maybe);
+
+                        //Super.Log($"[Touch] SLIDER zone END {maybe}");
                     }
 
                     RecalculateValues();
