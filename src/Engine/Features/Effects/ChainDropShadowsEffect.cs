@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using DrawnUi.Maui.Infrastructure.Xaml;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -14,7 +15,7 @@ public class ChainDropShadowsEffect : BaseChainedEffect
         typeof(ChainDropShadowsEffect),
         defaultValueCreator: (instance) =>
         {
-            var created = new ObservableCollection<SkiaShadow>();
+            var created = new SkiaShadowsCollection();
             ShadowsPropertyChanged(instance, null, created);
             return created;
         },
@@ -79,22 +80,22 @@ public class ChainDropShadowsEffect : BaseChainedEffect
     {
         switch (e.Action)
         {
-        case NotifyCollectionChangedAction.Add:
-        foreach (SkiaShadow newSkiaPropertyShadow in e.NewItems)
-        {
-            newSkiaPropertyShadow.Attach(this);
-        }
+            case NotifyCollectionChangedAction.Add:
+                foreach (SkiaShadow newSkiaPropertyShadow in e.NewItems)
+                {
+                    newSkiaPropertyShadow.Attach(this);
+                }
 
-        break;
+                break;
 
-        case NotifyCollectionChangedAction.Reset:
-        case NotifyCollectionChangedAction.Remove:
-        foreach (SkiaShadow oldSkiaPropertyShadow in e.OldItems ?? new SkiaShadow[0])
-        {
-            oldSkiaPropertyShadow.Dettach();
-        }
+            case NotifyCollectionChangedAction.Reset:
+            case NotifyCollectionChangedAction.Remove:
+                foreach (SkiaShadow oldSkiaPropertyShadow in e.OldItems ?? new SkiaShadow[0])
+                {
+                    oldSkiaPropertyShadow.Dettach();
+                }
 
-        break;
+                break;
         }
 
         Update();

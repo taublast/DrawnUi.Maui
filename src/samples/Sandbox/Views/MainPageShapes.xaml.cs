@@ -3,11 +3,11 @@ using Sandbox.Views;
 
 namespace MauiNet8;
 
-public partial class MainPageRepro : BasePage
+public partial class MainPageShapes : BasePage
 {
     int count = 0;
 
-    public MainPageRepro()
+    public MainPageShapes()
     {
         try
         {

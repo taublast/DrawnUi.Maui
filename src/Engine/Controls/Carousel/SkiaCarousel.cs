@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections.Concurrent;
+using System.Numerics;
 using SkiaControl = DrawnUi.Maui.Draw.SkiaControl;
 
 namespace DrawnUi.Maui.Controls;
@@ -65,7 +66,7 @@ public class SkiaCarousel : SnappingLayout
 
     public event EventHandler<Vector2> Stopped;
 
-    protected Dictionary<int, bool> ItemsVisibility { get; } = new();
+    protected ConcurrentDictionary<int, bool> ItemsVisibility { get; } = new();
 
     void SendVisibility(int index, bool state)
     {
@@ -85,6 +86,8 @@ public class SkiaCarousel : SnappingLayout
             }
         }
     }
+
+
 
     void InitializeItemsVisibility(int count, bool force)
     {
@@ -1355,93 +1358,93 @@ public class SkiaCarousel : SnappingLayout
         {
             case TouchActionResult.Down:
 
-            //        if (!IsUserFocused) //first finger down
-            if (args.Event.NumberOfTouches == 1) //first finger down
-            {
-                ResetPan();
-            }
+                //        if (!IsUserFocused) //first finger down
+                if (args.Event.NumberOfTouches == 1) //first finger down
+                {
+                    ResetPan();
+                }
 
-            consumed = this;
+                consumed = this;
 
-            break;
+                break;
 
             case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
 
-            if (!IsUserPanning)
-            {
-                //first pan
-                if (args.Event.Distance.Total.X == 0 || Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) || Math.Abs(args.Event.Distance.Total.X) < 2)
+                if (!IsUserPanning)
                 {
-                    return null;
+                    //first pan
+                    if (args.Event.Distance.Total.X == 0 || Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) || Math.Abs(args.Event.Distance.Total.X) < 2)
+                    {
+                        return null;
+                    }
                 }
-            }
 
-            if (!IsUserFocused)
-            {
-                ResetPan();
-            }
+                if (!IsUserFocused)
+                {
+                    ResetPan();
+                }
 
-            //todo add direction
-            //this.IgnoreWrongDirection
+                //todo add direction
+                //this.IgnoreWrongDirection
 
-            IsUserPanning = true;
+                IsUserPanning = true;
 
-            var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
-            var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
+                var x = _panningOffset.X + args.Event.Distance.Delta.X / RenderingScale;
+                var y = _panningOffset.Y + args.Event.Distance.Delta.Y / RenderingScale;
 
-            Vector2 velocity;
-            float useVelocity = 0;
-            if (!IsVertical)
-            {
-                useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
-                velocity = new(useVelocity, 0);
-            }
-            else
-            {
-                useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
-                velocity = new(0, useVelocity);
-            }
+                Vector2 velocity;
+                float useVelocity = 0;
+                if (!IsVertical)
+                {
+                    useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
+                    velocity = new(useVelocity, 0);
+                }
+                else
+                {
+                    useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
+                    velocity = new(0, useVelocity);
+                }
 
-            //record velocity
-            VelocityAccumulator.CaptureVelocity(velocity);
+                //record velocity
+                VelocityAccumulator.CaptureVelocity(velocity);
 
-            //saving non clamped
-            _panningOffset.X = x;
-            _panningOffset.Y = y;
+                //saving non clamped
+                _panningOffset.X = x;
+                _panningOffset.Y = y;
 
 
-            var clamped = ClampOffset((float)x, (float)y, Bounces);
+                var clamped = ClampOffset((float)x, (float)y, Bounces);
 
-            //Debug.WriteLine($"[CAROUSEL] Panning: {_panningOffset:0} / {clamped:0}");
-            ApplyPosition(clamped);
+                //Debug.WriteLine($"[CAROUSEL] Panning: {_panningOffset:0} / {clamped:0}");
+                ApplyPosition(clamped);
 
-            consumed = this;
-            break;
+                consumed = this;
+                break;
 
             case TouchActionResult.Up:
-            //Debug.WriteLine($"[Carousel] {args.Type} {IsUserFocused} {IsUserPanning} {InTransition}");
+                //Debug.WriteLine($"[Carousel] {args.Type} {IsUserFocused} {IsUserPanning} {InTransition}");
 
-            if (IsUserFocused)
-            {
-
-                if (IsUserPanning || InTransition)
+                if (IsUserFocused)
                 {
-                    consumed = this;
 
-                    var final = VelocityAccumulator.CalculateFinalVelocity(500);
+                    if (IsUserPanning || InTransition)
+                    {
+                        consumed = this;
 
-                    //animate
-                    CurrentSnap = CurrentPosition;
+                        var final = VelocityAccumulator.CalculateFinalVelocity(500);
 
-                    ScrollToNearestAnchor(CurrentSnap, final);
+                        //animate
+                        CurrentSnap = CurrentPosition;
+
+                        ScrollToNearestAnchor(CurrentSnap, final);
+                    }
+
+                    IsUserPanning = false;
+                    IsUserFocused = false;
+
                 }
 
-                IsUserPanning = false;
-                IsUserFocused = false;
-
-            }
-
-            break;
+                break;
         }
 
         if (consumed != null || IsUserPanning)

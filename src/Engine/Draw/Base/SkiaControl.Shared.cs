@@ -1612,6 +1612,8 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
+
+
         public virtual SKSize GetSizeRequest(float widthConstraint, float heightConstraint, bool insideLayout)
         {
             widthConstraint *= (float)this.WidthRequestRatio;
@@ -3836,6 +3838,8 @@ namespace DrawnUi.Maui.Draw
 
                 OnMeasured();
 
+                InvalidatedParent = false;
+
                 return MeasuredSize;
             }
         }
@@ -4518,14 +4522,20 @@ namespace DrawnUi.Maui.Draw
          bool useClipping,
          Action<SkiaDrawingContext> draw)
         {
-            bool isClipping = (WillClipBounds || Clipping != null || ClippedBy != null) && useClipping;
+            bool isClipping = (WillClipBounds || Clipping != null
+                                              || ClippedBy != null || HasPlatformClip()) && useClipping;
 
 
             if (isClipping)
             {
-
                 _preparedClipBounds ??= new SKPath();
                 _preparedClipBounds.Reset();
+
+                if (HasPlatformClip())
+                {
+                    GetPlatformClip(_preparedClipBounds, destination, RenderingScale);
+                }
+                else
                 if (ClippedBy != null)
                 {
                     ClippedBy.CreateClip(null, true, _preparedClipBounds);
@@ -4628,7 +4638,7 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.Reset();
                 Helper3d.RotateXDegrees((float)RotationX);
                 Helper3d.RotateYDegrees((float)RotationY);
-                Helper3d.RotateZDegrees((float)RotationZ);
+                Helper3d.RotateZDegrees(-(float)RotationZ);
                 Helper3d.Translate(0, 0, (float)TranslationZ);
 
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
@@ -4636,9 +4646,11 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.Save();
                 Helper3d.RotateXDegrees((float)RotationX);
                 Helper3d.RotateYDegrees((float)RotationY);
-                Helper3d.RotateZDegrees((float)RotationZ);
+                Helper3d.RotateZDegrees(-(float)RotationZ);
                 Helper3d.TranslateZ((float)TranslationZ);
+
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
+
                 Helper3d.Restore();
 #endif
 
@@ -4774,54 +4786,26 @@ namespace DrawnUi.Maui.Draw
                 Superview.PostponeExecutionAfterDraw(action);
         }
 
-        /*
-        public async Task ProcessOffscreenCacheRenderingAsync()
-        {
-
-            await semaphoreOffsecreenProcess.WaitAsync();
-
-            _processingOffscrenRendering = true;
-
-            try
-            {
-                Action action = _offscreenCacheRenderingQueue.Pop();
-                if (!IsDisposed && !IsDisposing && action != null)
-                {
-                    try
-                    {
-                        action.Invoke();
-
-                        RenderObject = RenderObjectPreparing;
-                        _renderObjectPreparing = null;
-
-                        Repaint();
-                    }
-                    catch (Exception e)
-                    {
-                        Super.Log(e);
-                    }
-                }
-            }
-            finally
-            {
-                _processingOffscrenRendering = false;
-                semaphoreOffsecreenProcess.Release();
-
-                if (NeedUpdate || _offscreenCacheRenderingQueue.Count > 0) //someone changed us while rendering inner content
-                {
-                    Update(); //kick
-                }
-            }
-
-        }
-        */
 
 
         protected bool NeedRemeasuring;
 
 
-
-
+        protected virtual void PaintWithShadows(SkiaDrawingContext ctx, Action render)
+        {
+            if (PlatformShadow != null)
+            {
+                using var paint = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.Medium };
+                SetupShadow(paint, PlatformShadow, RenderingScale);
+                var saved = ctx.Canvas.SaveLayer(paint);
+                render();
+                ctx.Canvas.RestoreToCount(saved);
+            }
+            else
+            {
+                render();
+            }
+        }
 
 
         protected virtual void PaintWithEffects(
@@ -4830,9 +4814,12 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed || IsDisposing)
                 return;
 
-            void draw(SkiaDrawingContext context)
+            void PaintWithEffectsInternal(SkiaDrawingContext context)
             {
-                Paint(context, destination, scale, arguments);
+                PaintWithShadows(context, () =>
+                {
+                    Paint(context, destination, scale, arguments);
+                });
             }
 
             if (!DisableEffects && VisualEffects.Count > 0)
@@ -4870,7 +4857,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     foreach (var effect in renderers)
                     {
-                        var chainedEffectResult = effect.Draw(destination, ctx, draw);
+                        var chainedEffectResult = effect.Draw(destination, ctx, PaintWithEffectsInternal);
                         if (chainedEffectResult.DrawnControl)
                             hasDrawnControl = true;
                     }
@@ -4878,14 +4865,14 @@ namespace DrawnUi.Maui.Draw
 
                 if (!hasDrawnControl)
                 {
-                    draw(ctx);
+                    PaintWithEffectsInternal(ctx);
                 }
 
                 ctx.Canvas.RestoreToCount(restore);
             }
             else
             {
-                draw(ctx);
+                PaintWithEffectsInternal(ctx);
             }
         }
 
@@ -5882,14 +5869,14 @@ namespace DrawnUi.Maui.Draw
                         Scale = scale,
                         Shadow = shadow
                     };
-                    kill?.Dispose();
+                    DisposeObject(kill);
                 }
 
                 var old = paint.ImageFilter;
                 paint.ImageFilter = LastShadow.Filter;
                 if (old != paint.ImageFilter)
                 {
-                    old?.Dispose();
+                    DisposeObject(old);
                 }
 
                 return true;

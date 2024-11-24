@@ -7,16 +7,17 @@ public partial class MainPage : BasePage
 {
     int count = 0;
 
+    public List<MainPageVariant> ButtonsList { get; }
+
     public MainPage()
     {
         try
         {
+            ButtonsList = App.MainPages;
+
             InitializeComponent();
 
             BindingContext = new MainPageViewModel();
-
-            Buttons.ItemsSource = App.MainPages;
-
         }
         catch (Exception e)
         {

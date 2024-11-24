@@ -1,7 +1,7 @@
 ﻿//Adapted code from the Xamarin.Forms Grid implementation
 
-using DrawnUi.Maui.Infrastructure.Xaml;
 using System.ComponentModel;
+using DrawnUi.Maui.Infrastructure.Xaml;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -12,6 +12,7 @@ public partial class SkiaLayout
 
     public virtual ScaledSize MeasureGrid(SKRect rectForChildrenPixels, float scale)
     {
+        //Trace.WriteLine($"MeasureGrid inside {rectForChildrenPixels}");
 
         var constraints = GetSizeInPoints(rectForChildrenPixels.Size, scale);
 
@@ -65,6 +66,7 @@ public partial class SkiaLayout
 
             List<SkiaControlWithRect> tree = new();
 
+            var cellIndex = 0;
             foreach (var child in cells)
             {
                 child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
@@ -75,6 +77,8 @@ public partial class SkiaLayout
                 //GetCellBoundsFor works with points
                 var cell = GridStructure.GetCellBoundsFor(child, (destination.Left / scale),
                     (destination.Top / scale));
+
+                //Trace.WriteLine($"cell {cellIndex++} rect {cell}");
 
                 //GetCellBoundsFor is in pixels
                 SKRect cellRect = new((float)Math.Round(cell.Left * scale), (float)Math.Round(cell.Top * scale),

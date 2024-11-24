@@ -313,9 +313,6 @@ namespace DrawnUi.Maui.Draw
 
         public List<UsedGlyph> Glyphs { get; protected set; } = new();
 
-        //todo
-        bool AutoFindFont = false;
-
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
             if (IsDisposed || IsDisposing)
@@ -369,20 +366,25 @@ namespace DrawnUi.Maui.Draw
 
                         Glyphs = GetGlyphs(Text, PaintDefault.Typeface);
 
-                        if (AutoFindFont)
+                        if (AutoFont)
                         {
                             if (Glyphs != null && Glyphs.Count > 0)
                             {
-                                if (UnicodeNeedsShaping(Glyphs[0].Symbol))
+                                var first = Glyphs[0].Symbol;
+                                var typeFace = SkiaFontManager.Manager.MatchCharacter(first);
+                                if (typeFace != null)
                                 {
-                                    needsShaping = true;
+                                    //FontDetectedWith = glyph.Symbol;
+                                    needsShaping = SkiaLabel.UnicodeNeedsShaping(first);
+                                    _replaceFont = typeFace;
+                                    ReplaceFont();
                                 }
                             }
                             text = Text;
                         }
                         else
                         {
-                            //replace unprintable symbols
+                            //replace unprintable symbols with fallback
                             if (Glyphs.Count > 0)
                             {
                                 var textFiltered = "";
@@ -1437,6 +1439,8 @@ namespace DrawnUi.Maui.Draw
             }
 
         }
+
+
 
         protected void ReplaceFont()
         {
@@ -2674,6 +2678,21 @@ namespace DrawnUi.Maui.Draw
         {
             get { return (int)GetValue(FontWeightProperty); }
             set { SetValue(FontWeightProperty, value); }
+        }
+
+        public static readonly BindableProperty AutoFontProperty = BindableProperty.Create(
+            nameof(AutoFont),
+            typeof(bool),
+            typeof(SkiaLabel),
+            false, propertyChanged: NeedUpdateFont);
+
+        /// <summary>
+        /// Find and set system font where the first glyph in text is present
+        /// </summary>
+        public bool AutoFont
+        {
+            get { return (bool)GetValue(AutoFontProperty); }
+            set { SetValue(AutoFontProperty, value); }
         }
 
         public static readonly BindableProperty TypeFaceProperty = BindableProperty.Create(

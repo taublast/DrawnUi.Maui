@@ -22,6 +22,10 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty ClearColorProperty = BindableProperty.Create(nameof(ClearColor), typeof(Color), typeof(SkiaControl),
             Colors.Transparent,
             propertyChanged: NeedDraw);
+
+        private SkiaShadow platformShadow;
+        private SKPath platformClip;
+
         public Color ClearColor
         {
             get { return (Color)GetValue(ClearColorProperty); }
@@ -71,6 +75,16 @@ namespace DrawnUi.Maui.Draw
             if (propertyName.IsEither(nameof(BackgroundColor),
                     nameof(IsClippedToBounds)
                 ))
+            {
+                Update();
+            }
+            else
+            if (propertyName == nameof(Shadow))
+            {
+                UpdatePlatformShadow();
+            }
+            else
+            if (propertyName == nameof(Clip))
             {
                 Update();
             }
@@ -287,9 +301,49 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        protected void UpdatePlatformShadow()
+        {
+            if (this.Shadow != null && Shadow.Brush != null)
+            {
+                PlatformShadow = this.Shadow.FromPlatform();
+            }
+            else
+            {
+                PlatformShadow = null;
+            }
+        }
+
+        protected SkiaShadow PlatformShadow
+        {
+            get => platformShadow;
+            set
+            {
+                if (platformShadow != value)
+                {
+                    platformShadow = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private void GetPlatformClip(SKPath path, SKRect destination, float renderingScale)
+        {
+            if (this.Clip != null)
+            {
+                this.Clip.FromPlatform(path, destination, renderingScale);
+            }
+        }
+
+        protected bool HasPlatformClip()
+        {
+            return Clip != null;
+        }
+
         public static float GetDensity()
         {
             return (float)Super.Screen.Density;
         }
+
+
     }
 }

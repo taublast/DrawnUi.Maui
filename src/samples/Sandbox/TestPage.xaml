@@ -27,9 +27,8 @@
                 HorizontalOptions="Fill"
                 Tag="Wrapper"
                 VerticalOptions="Fill">
- 
+
                 <draw:SkiaLabel
-                    VerticalOptions="Center"
                     DropShadowColor="#33333333"
                     DropShadowSize="4"
                     FontFamily="FontTextTitle"
@@ -38,7 +37,8 @@
                     StrokeColor="White"
                     StrokeWidth="2"
                     Text="Sandbox"
-                    UseCache="None">
+                    UseCache="None"
+                    VerticalOptions="Center">
                     <draw:SkiaLabel.FillGradient>
 
                         <draw:SkiaGradient
@@ -98,7 +98,7 @@
                     TextColor="White"
                     VerticalOptions="End"
                     ZIndex="100">
-                   
+
                 </draw:SkiaLabelFps>
 
             </draw:SkiaLayout>

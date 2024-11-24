@@ -1,7 +1,7 @@
 ﻿global using DrawnUi.Maui.Draw;
 global using SkiaSharp;
 using Microsoft.Extensions.Logging;
- 
+
 namespace Sandbox
 {
     public static class MauiProgram
@@ -11,6 +11,14 @@ namespace Sandbox
         public static string Multiline = "This is a single label with a multile text. The label that follows this one will have Spans defined.\r\nAnd a new line comes in. We can adjust space between paragraphs and characters. This text is aligned to Fill Words.\r\nLorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries.";
 
         public static string Testing = "1\r\n2\r\n3";
+
+        public static List<SkiaPoint> PolygonStar
+        {
+            get
+            {
+                return SkiaShape.CreateStarPoints(5);
+            }
+        }
 
         public static MauiApp CreateMauiApp()
         {
@@ -26,6 +34,7 @@ namespace Sandbox
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "FontTextTitle");
                     fonts.AddFont("OpenSans-Regular.ttf", "FontText");
                     fonts.AddFont("NotoColorEmoji-Regular.ttf", "FontEmoji");
 
@@ -36,7 +45,7 @@ namespace Sandbox
                     fonts.AddFont("Orbitron-ExtraBold.ttf", "FontGameExtraBold"); //800
                 });
 
- 
+
             builder.UseDrawnUi(new()
             {
                 UseDesktopKeyboard = true, //will not work with maui shell on apple!!

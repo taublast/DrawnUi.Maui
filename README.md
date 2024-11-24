@@ -107,17 +107,17 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
 ## What's New
 
-### Nuget 1.2.9.2  
+### Nuget 1.2.9.4
 for SkiaSharp 2.88.9-preview.2.2 
 
-* Reverted SkiaSharp to 2.88.9-preview.2.2 back from 2.88.9
-until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
-* Antialiasing [issue](https://github.com/taublast/DrawnUi.Maui/issues/122) solved for SkiaShape
-* SkiaImageManager cancelling loads fix
-* Fixed native crash when using Super.ReuseBitmaps
-* SkiaSvg made more GC-friendly
-* Added `WithParent` to FluentExtensions
-* Some more
+* SkiaShape new Types: Polygon and Line. New property for their Points: Smooth (0-1) to smooth angles.
+* Shapes demo page inside SandBox project.
+* VisualElement Shadow property now supported everywhere as an optional addition to existing shadows. 
+* Removed SkiaImage clipping to better support shadows.
+* SkiaLabel new property AutoFont: Find and set system font where the first glyph in text is present. Useful for some quick unicode rendering like emoji etc.
+* Updated Getsures nuget for correct lock inside MAUI native ScrollView, use Getures="Lock" for Canvas.
+* Fixed controls sometimes not invalidated when canvas suface size changes
+* Other fixes.
 
  ## Development Notes
 

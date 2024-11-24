@@ -9,7 +9,6 @@
 
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!--<DocumentationMarkdown>$(MSBuildProjectDirectory)\Generated.md</DocumentationMarkdown>-->
-
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -62,6 +61,7 @@
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
     <Compile Remove="Platforms\Windows\ViewChainPanel.Windows.cs" />
     <Compile Remove="Controls\Extensions\**" />
+    <Compile Remove="Features\NewFolder\**" />
     <Compile Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   
@@ -92,11 +92,12 @@
     </None>
     <None Include="Platforms\Windows\ViewChainPanel.Windows.cs" />
     <None Remove="Controls\Extensions\**" />
+    <None Remove="Features\NewFolder\**" />
     <None Remove="Platforms\Windows\Controls\**" />
 	</ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.1.1" />
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.2.1" />
     <!--for parsing markdown text-->
     <PackageReference Include="Markdig" Version="0.34.0" />
     <!--for caching images-->
@@ -104,38 +105,39 @@
     <!--core tools-->
     <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.4" />
-    <!--<PackageReference Include="Vsxmd" Version="1.4.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>-->
-    
+      
   </ItemGroup>
 
   <!--ANDROID-->
   <ItemGroup Condition="$(TargetFramework.Contains('android')) == true">
-    <!--native stuff-->
+    <!--native interop helpers-->
     <PackageReference Include="AppoMobi.Maui.Native" Version="1.0.1.0-pre" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="Controls\Extensions\**" />
+    <EmbeddedResource Remove="Features\NewFolder\**" />
     <EmbeddedResource Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
+    
   <ItemGroup>
     <MauiXaml Remove="Controls\Extensions\**" />
+    <MauiXaml Remove="Features\NewFolder\**" />
     <MauiXaml Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
+    
   <ItemGroup>
     <MauiCss Remove="Controls\Extensions\**" />
+    <MauiCss Remove="Features\NewFolder\**" />
     <MauiCss Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAarLibrary Remove="Controls\Extensions\**" />
   </ItemGroup>
+    
   <ItemGroup>
-    <Folder Include="Features\NewFolder\" />
     <Folder Include="Internals\Handlers\" />
-    <Folder Include="Shared\" />
+    <Folder Include="Platforms\Android\NewFolder\" />
     <Folder Include="Views\Compat\" />
   </ItemGroup>
  
@@ -162,5 +164,7 @@
       <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>
     </Compile>
   </ItemGroup>
+
+    
 
 </Project>

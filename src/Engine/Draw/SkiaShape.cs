@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using DrawnUi.Maui.Infrastructure.Xaml;
 
 
 namespace DrawnUi.Maui.Draw
@@ -138,13 +140,14 @@ namespace DrawnUi.Maui.Draw
             SKStrokeCap.Round,
             propertyChanged: NeedDraw);
 
+        /// <summary>
+        /// Affects joint of shapes. Default is KStrokeCap.Round
+        /// </summary>
         public SKStrokeCap StrokeCap
         {
             get { return (SKStrokeCap)GetValue(StrokeCapProperty); }
             set { SetValue(StrokeCapProperty, value); }
         }
-
-
 
 
         public static readonly BindableProperty LayoutChildrenProperty = BindableProperty.Create(
@@ -166,6 +169,9 @@ namespace DrawnUi.Maui.Draw
             SKBlendMode.SrcOver,
             propertyChanged: NeedDraw);
 
+        /// <summary>
+        /// Default is SKBlendMode.SrcOver
+        /// </summary>
         public SKBlendMode StrokeBlendMode
         {
             get { return (SKBlendMode)GetValue(StrokeBlendModeProperty); }
@@ -265,8 +271,7 @@ namespace DrawnUi.Maui.Draw
                 strokeAwareSize =
                     SKRect.Inflate(strokeAwareSize, -halfStroke, -halfStroke);
 
-                strokeAwareChildrenSize =
-                    SKRect.Inflate(strokeAwareSize, -halfStroke, -halfStroke);
+                strokeAwareChildrenSize = strokeAwareSize;
             }
 
             MeasuredStrokeAwareSize = strokeAwareSize;
@@ -387,16 +392,47 @@ namespace DrawnUi.Maui.Draw
                 case ShapeType.Circle:
                     ShouldClipAntialiased = true;
                     path.AddCircle(
-                        (float)Math.Round(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
-                        (float)Math.Round(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
-                        Math.Min(strokeAwareChildrenSize.Width, strokeAwareChildrenSize.Height) /
-                        2.0f);
+                        (float)(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
+                        (float)(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
+                        (float)Math.Floor(Math.Min(strokeAwareChildrenSize.Width, strokeAwareChildrenSize.Height) /
+                                   2.0f) + 0);
                     break;
 
                 case ShapeType.Ellipse:
                     ShouldClipAntialiased = true;
 
                     path.AddOval(strokeAwareChildrenSize);
+                    break;
+
+                case ShapeType.Polygon:
+                    if (Points != null && Points.Count > 0)
+                    {
+                        path.Reset();
+
+                        var scaleX = MeasuredStrokeAwareSize.Width;
+                        var scaleY = MeasuredStrokeAwareSize.Height;
+                        var offsetX = usePosition ? MeasuredStrokeAwareSize.Left : 0;
+                        var offsetY = usePosition ? MeasuredStrokeAwareSize.Top : 0;
+
+                        bool first = true;
+                        foreach (var skiaPoint in Points)
+                        {
+                            var point = new SKPoint(
+                                (float)Math.Round(offsetX + skiaPoint.X * scaleX),
+                                (float)Math.Round(offsetY + skiaPoint.Y * scaleY));
+
+                            if (first)
+                            {
+                                path.MoveTo(point);
+                                first = false;
+                            }
+                            else
+                            {
+                                path.LineTo(point);
+                            }
+                        }
+                        path.Close();
+                    }
                     break;
 
                 case ShapeType.Rectangle:
@@ -476,6 +512,27 @@ namespace DrawnUi.Maui.Draw
 
                     break;
 
+                case ShapeType.Polygon:
+
+                    if (Points != null && Points.Count > 1)
+                    {
+                        DrawPathShape.Reset();
+
+                        paint.StrokeJoin = MapStrokeCapToStrokeJoin(this.StrokeCap);
+
+                        if (SmoothPoints > 0)
+                        {
+                            AddSmoothPath(DrawPathShape, Points, MeasuredStrokeAwareSize, SmoothPoints, true);
+                        }
+                        else
+                        {
+                            AddStraightPath(DrawPathShape, Points, MeasuredStrokeAwareSize, true);
+                        }
+
+                        ctx.Canvas.DrawPath(DrawPathShape, paint);
+                    }
+                    break;
+
                 case ShapeType.Circle:
                     if (StrokeWidth == 0 || StrokeColor == TransparentColor)
                     {
@@ -512,6 +569,24 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        protected virtual SKStrokeJoin MapStrokeCapToStrokeJoin(SKStrokeCap strokeCap)
+        {
+            switch (strokeCap)
+            {
+                case SKStrokeCap.Round:
+                    return SKStrokeJoin.Round;
+                case SKStrokeCap.Square:
+                    return SKStrokeJoin.Bevel;
+                case SKStrokeCap.Butt:
+                default:
+                    return SKStrokeJoin.Miter;
+            }
+        }
+
+        protected override void PaintWithShadows(SkiaDrawingContext ctx, Action render)
+        {
+            render(); //we will handle shadows by ourselves
+        }
 
         protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
         {
@@ -533,7 +608,7 @@ namespace DrawnUi.Maui.Draw
 
             RenderingPaint ??= new SKPaint()
             {
-                IsAntialias = true
+                IsAntialias = true,
             };
 
             RenderingPaint.IsDither = IsDistorted;
@@ -590,7 +665,8 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 paint.Style = SKPaintStyle.Stroke;
-                paint.StrokeCap = this.StrokeCap; //todo full stroke object
+                paint.StrokeCap = this.StrokeCap;
+                paint.StrokeJoin = MapStrokeCapToStrokeJoin(this.StrokeCap);
 
                 if (this.StrokePath != null && StrokePath.Length > 0)
                 {
@@ -625,6 +701,22 @@ namespace DrawnUi.Maui.Draw
                         ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, paint);
                         break;
 
+                    case ShapeType.Line:
+                        if (Points != null && Points.Count > 1)
+                        {
+                            DrawPathShape.Reset();
+                            if (SmoothPoints > 0)
+                            {
+                                AddSmoothPath(DrawPathShape, Points, strokeAwareSize, SmoothPoints, false);
+                            }
+                            else
+                            {
+                                AddStraightPath(DrawPathShape, Points, strokeAwareSize, false);
+                            }
+                            ctx.Canvas.DrawPath(DrawPathShape, paint);
+                        }
+                        break;
+
                     case ShapeType.Ellipse:
                         DrawPathShape.Reset();
                         DrawPathShape.AddOval(outRect);
@@ -646,35 +738,66 @@ namespace DrawnUi.Maui.Draw
                         ctx.Canvas.DrawPath(DrawPathShape, paint);
 
                         break;
+
+                    case ShapeType.Polygon:
+                        if (Points != null && Points.Count > 1)
+                        {
+                            DrawPathShape.Reset();
+
+                            var path = DrawPathShape;
+
+                            if (SmoothPoints > 0)
+                            {
+                                AddSmoothPath(path, Points, strokeAwareSize, SmoothPoints, true);
+                            }
+                            else
+                            {
+                                AddStraightPath(path, Points, strokeAwareSize, true);
+                            }
+
+                            ctx.Canvas.DrawPath(path, RenderingPaint);
+                        }
+                        break;
                 }
 
             }
 
-            void PaintWithShadows(Action render)
+            void PaintWithShadowsInternal(Action render)
             {
+
+                void RenderShadow(SkiaShadow shadow)
+                {
+                    SetupShadow(RenderingPaint, shadow, RenderingScale);
+
+                    if (ClipBackgroundColor)
+                    {
+                        ClipContentPath ??= new();
+                        ClipContentPath.Reset();
+                        CreateClip(arguments, true, ClipContentPath);
+
+                        var saved = ctx.Canvas.Save();
+
+                        ClipSmart(ctx.Canvas, ClipContentPath, SKClipOperation.Difference);
+                        render();
+
+                        ctx.Canvas.RestoreToCount(saved);
+                    }
+                    else
+                    {
+                        render();
+                    }
+                }
+
+                if (PlatformShadow != null)
+                {
+                    RenderShadow(PlatformShadow);
+                }
+                else
                 if (Shadows != null && Shadows.Count > 0)
                 {
                     for (int index = 0; index < Shadows.Count(); index++)
                     {
-                        SetupShadow(RenderingPaint, Shadows[index], RenderingScale);
-
-                        if (ClipBackgroundColor)
-                        {
-                            ClipContentPath ??= new();
-                            ClipContentPath.Reset();
-                            CreateClip(arguments, true, ClipContentPath);
-
-                            var saved = ctx.Canvas.Save();
-
-                            ClipSmart(ctx.Canvas, ClipContentPath, SKClipOperation.Difference);
-                            render();
-
-                            ctx.Canvas.RestoreToCount(saved);
-                        }
-                        else
-                        {
-                            render();
-                        }
+                        RenderShadow(Shadows[index]);
                     }
                 }
                 else
@@ -684,7 +807,7 @@ namespace DrawnUi.Maui.Draw
             }
 
             //background with shadows pass, no stroke
-            PaintWithShadows(() =>
+            PaintWithShadowsInternal(() =>
             {
                 if (SetupBackgroundPaint(RenderingPaint, outRect))
                 {
@@ -715,8 +838,6 @@ namespace DrawnUi.Maui.Draw
             }
 
         }
-
-
 
         #endregion
 
@@ -792,7 +913,7 @@ namespace DrawnUi.Maui.Draw
             typeof(SkiaShape),
             defaultValueCreator: (instance) =>
             {
-                var created = new ObservableCollection<SkiaShadow>();
+                var created = new SkiaShadowsCollection();
                 ShadowsPropertyChanged(instance, null, created);
                 return created;
             },
@@ -821,6 +942,371 @@ namespace DrawnUi.Maui.Draw
 
 
         #endregion
+
+        #region POINTS
+
+        private static object CoercePoints(BindableObject bindable, object value)
+        {
+            if (value is ReadOnlyCollection<SkiaPoint> readonlyCollection)
+            {
+                return new ReadOnlyCollection<SkiaPoint>(readonlyCollection.ToList());
+            }
+
+            return value;
+        }
+
+
+        public static readonly BindableProperty PointsProperty = BindableProperty.Create(
+            nameof(Points),
+            typeof(IList<SkiaPoint>),
+            typeof(SkiaShape),
+            defaultValueCreator: (instance) =>
+            {
+                var created = new ObservableCollection<SkiaPoint>();
+                PointsPropertyChanged(instance, null, created);
+                return created;
+            },
+            validateValue: (bo, v) => v is IList<SkiaPoint>,
+            propertyChanged: NeedDraw,
+            coerceValue: CoercePoints);
+
+        [TypeConverter(typeof(SkiaPointCollectionConverter))]
+        public IList<SkiaPoint> Points
+        {
+            get => (IList<SkiaPoint>)GetValue(PointsProperty);
+            set => SetValue(PointsProperty, value);
+        }
+
+        public static List<SkiaPoint> PolygonStar
+        {
+            get
+            {
+                return CreateStarPoints(5);
+            }
+        }
+
+        private static void PointsPropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SkiaShape control)
+            {
+                if (oldValue is INotifyCollectionChanged oldCollection)
+                {
+                    oldCollection.CollectionChanged -= control.OnPointsCollectionChanged;
+                }
+
+                if (oldValue is IEnumerable<SkiaPoint> oldPoints)
+                {
+                    foreach (var point in oldPoints)
+                    {
+                        point.ParentShape = null;
+                    }
+                }
+
+                if (newValue is IEnumerable<SkiaPoint> newPoints)
+                {
+                    foreach (var point in newPoints)
+                    {
+                        point.ParentShape = control;
+                    }
+                }
+
+                if (newValue is INotifyCollectionChanged newCollection)
+                {
+                    newCollection.CollectionChanged -= control.OnPointsCollectionChanged;
+                    newCollection.CollectionChanged += control.OnPointsCollectionChanged;
+                }
+
+                control.Update();
+            }
+        }
+
+        private void OnPointsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.OldItems != null)
+            {
+                foreach (SkiaPoint oldPoint in e.OldItems)
+                {
+                    oldPoint.ParentShape = null;
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (SkiaPoint newPoint in e.NewItems)
+                {
+                    newPoint.ParentShape = this;
+                }
+            }
+
+            Update();
+        }
+
+
+
+        #endregion
+
+        #region SMOOTH
+
+        public static readonly BindableProperty SmoothPointsProperty = BindableProperty.Create(
+            nameof(SmoothPoints),
+            typeof(float),
+            typeof(SkiaShape),
+            0f, // Default value is 0 (no smoothing)
+            propertyChanged: NeedDraw,
+            coerceValue: (bindable, value) =>
+            {
+                float val = (float)value;
+                return Math.Max(0f, Math.Min(1f, val)); // Clamp between 0 and 1
+            }
+        );
+
+        /// <summary>
+        /// Controls the automatic smoothness between points of Line and Polygon. Ranges from 0.0 (no smoothing) to 1.0.
+        /// Works for sequential points only.
+        /// </summary>
+        public float SmoothPoints
+        {
+            get => (float)GetValue(SmoothPointsProperty);
+            set => SetValue(SmoothPointsProperty, value);
+        }
+
+        private void AddSmoothPath(SKPath path, IList<SkiaPoint> points, SKRect rect, float smoothness, bool isClosed)
+        {
+            if (points == null || points.Count < 2)
+            {
+                return;
+            }
+
+            var scaledPoints = points.Select(p => ScalePoint(p, rect)).ToList();
+
+            if (isClosed)
+            {
+                var firstPoint = scaledPoints[0];
+                var closingPoint = new SKPoint(
+                    (firstPoint.X + scaledPoints[1].X) / 2,
+                    (firstPoint.Y + scaledPoints[1].Y) / 2);
+
+                scaledPoints.RemoveAt(0);
+                scaledPoints.Insert(0, closingPoint);
+                scaledPoints.Add(firstPoint);
+            }
+
+            path.MoveTo(scaledPoints[0]);
+
+            int pointCount = scaledPoints.Count;
+
+            if (isClosed)
+            {
+                for (int i = 0; i < pointCount; i++)
+                {
+                    SmoothPoint(path, scaledPoints, i, smoothness, isClosed);
+                }
+                path.Close();
+            }
+            else
+            {
+                for (int i = 0; i < pointCount; i++)
+                {
+                    if (i == 0 || i == pointCount - 1)
+                    {
+                        path.LineTo(scaledPoints[i]);
+                    }
+                    else
+                    {
+                        SmoothPoint(path, scaledPoints, i, smoothness, isClosed);
+                    }
+                }
+            }
+        }
+
+        private void SmoothPoint(SKPath path, IList<SKPoint> scaledPoints, int i, float smoothness, bool isClosed)
+        {
+            int pointCount = scaledPoints.Count;
+
+            var prev = scaledPoints[(i - 1 + pointCount) % pointCount];
+            var current = scaledPoints[i];
+            var next = scaledPoints[(i + 1) % pointCount];
+
+            if (!isClosed)
+            {
+                if (i == 0)
+                {
+                    path.LineTo(current);
+                    return;
+                }
+                if (i == pointCount - 1)
+                {
+                    path.LineTo(current);
+                    return;
+                }
+            }
+
+            var v1 = new SKPoint(current.X - prev.X, current.Y - prev.Y);
+            var v2 = new SKPoint(next.X - current.X, next.Y - current.Y);
+
+            float lengthV1 = (float)Math.Sqrt(v1.X * v1.X + v1.Y * v1.Y);
+            float lengthV2 = (float)Math.Sqrt(v2.X * v2.X + v2.Y * v2.Y);
+
+            if (lengthV1 == 0 || lengthV2 == 0)
+            {
+                path.LineTo(current);
+                return;
+            }
+
+            v1 = new SKPoint(v1.X / lengthV1, v1.Y / lengthV1);
+            v2 = new SKPoint(v2.X / lengthV2, v2.Y / lengthV2);
+
+            float smoothingRadius = lengthV1 * smoothness * 0.3f;
+            smoothingRadius = Math.Min(smoothingRadius, lengthV1 * 0.5f);
+            smoothingRadius = Math.Min(smoothingRadius, lengthV2 * 0.5f);
+
+            if (smoothingRadius < 0.001f)
+            {
+                path.LineTo(current); // No significant smoothing is needed
+                return;
+            }
+
+            var p1 = new SKPoint(
+                current.X - v1.X * smoothingRadius,
+                current.Y - v1.Y * smoothingRadius);
+
+            var p2 = new SKPoint(
+                current.X + v2.X * smoothingRadius,
+                current.Y + v2.Y * smoothingRadius);
+
+            path.LineTo(p1);
+
+            // quadratic Bezier curve to smooth  angle
+            path.QuadTo(current, p2);
+        }
+
+        private void AddStraightPath(SKPath path, IList<SkiaPoint> points, SKRect rect, bool isClosed)
+        {
+            if (points == null || points.Count < 2)
+            {
+                return;
+            }
+
+            path.MoveTo(ScalePoint(points[0], rect));
+
+            for (int i = 1; i < points.Count; i++)
+            {
+                path.LineTo(ScalePoint(points[i], rect));
+            }
+
+            if (isClosed)
+            {
+                path.Close();
+            }
+        }
+
+        private SKPoint ScalePoint(SkiaPoint point, SKRect rect)
+        {
+            return new SKPoint(
+                (float)Math.Round(rect.Left + point.X * rect.Width),
+                (float)Math.Round(rect.Top + point.Y * rect.Height));
+        }
+
+        #endregion
+
+        public static List<SkiaPoint> CreateStarPoints(int numberOfPoints, double innerRadiusRatio = 0.5)
+        {
+            if (numberOfPoints < 2)
+                throw new ArgumentException("Number of points must be at least 2.", nameof(numberOfPoints));
+            if (innerRadiusRatio <= 0 || innerRadiusRatio >= 1)
+                throw new ArgumentException("Inner radius ratio must be between 0 and 1.", nameof(innerRadiusRatio));
+
+            List<SkiaPoint> points = new List<SkiaPoint>();
+            double angleStep = Math.PI / numberOfPoints;
+            double outerRadius = 1.0;
+            double innerRadius = outerRadius * innerRadiusRatio;
+
+            for (int i = 0; i < numberOfPoints * 2; i++)
+            {
+                double angle = i * angleStep - Math.PI / 2;
+
+                double radius = (i % 2 == 0) ? outerRadius : innerRadius;
+                double x = radius * Math.Cos(angle);
+                double y = radius * Math.Sin(angle);
+
+                points.Add(new SkiaPoint((float)x, (float)y));
+            }
+
+            // Find bounding box
+            var minX = points.Min(p => p.X);
+            var maxX = points.Max(p => p.X);
+            var minY = points.Min(p => p.Y);
+            var maxY = points.Max(p => p.Y);
+
+            var scaleX = 1.0f / (maxX - minX);
+            var scaleY = 1.0f / (maxY - minY);
+
+            var scale = Math.Min(scaleX, scaleY);
+
+            var offsetX = (1.0f - (maxX - minX) * scale) / 2.0f - minX * scale;
+            var offsetY = (1.0f - (maxY - minY) * scale) / 2.0f - minY * scale;
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                var x = points[i].X * scale + offsetX;
+                var y = points[i].Y * scale + offsetY;
+
+                points[i] = new SkiaPoint(x, y);
+            }
+
+            return points;
+        }
+
+        public static List<SkiaPoint> CreateStarPointsCrossed(int numberOfPoints)
+        {
+            if (numberOfPoints < 5 || numberOfPoints % 2 == 0)
+                throw new ArgumentException("Number of points must be an odd number greater than or equal to 5.", nameof(numberOfPoints));
+
+            List<SkiaPoint> points = new List<SkiaPoint>();
+            double angleStep = 2 * Math.PI / numberOfPoints;
+            double radius = 1.0;
+
+            List<SkiaPoint> outerPoints = new List<SkiaPoint>();
+            for (int i = 0; i < numberOfPoints; i++)
+            {
+                double angle = i * angleStep - Math.PI / 2;
+                double x = radius * Math.Cos(angle);
+                double y = radius * Math.Sin(angle);
+                outerPoints.Add(new SkiaPoint((float)x, (float)y));
+            }
+
+            int skip = (numberOfPoints - 1) / 2;
+            for (int i = 0; i < numberOfPoints; i++)
+            {
+                points.Add(outerPoints[(i * skip) % numberOfPoints]);
+            }
+
+            points.Add(points[0]);
+
+            // Find bounding box
+            var minX = points.Min(p => p.X);
+            var maxX = points.Max(p => p.X);
+            var minY = points.Min(p => p.Y);
+            var maxY = points.Max(p => p.Y);
+
+            var scaleX = 1.0f / (maxX - minX);
+            var scaleY = 1.0f / (maxY - minY);
+
+            var scale = Math.Min(scaleX, scaleY);
+
+            var offsetX = (1.0f - (maxX - minX) * scale) / 2.0f - minX * scale;
+            var offsetY = (1.0f - (maxY - minY) * scale) / 2.0f - minY * scale;
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                var x = points[i].X * scale + offsetX;
+                var y = points[i].Y * scale + offsetY;
+
+                points[i] = new SkiaPoint(x, y);
+            }
+
+            return points;
+        }
 
 
     }

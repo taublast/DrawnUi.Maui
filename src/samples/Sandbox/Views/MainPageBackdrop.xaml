@@ -125,10 +125,10 @@
                                 <draw:SkiaLayout>
 
                                     <draw:SkiaBackdrop
-                                        UseContext="True"
                                         Blur="10"
                                         HorizontalOptions="Fill"
                                         Tag="Blur"
+                                        UseContext="True"
                                         VerticalOptions="Fill"
                                         ZIndex="-1" />
 
@@ -150,6 +150,7 @@
                                 </draw:SkiaLayout>
 
                                 <draw:SkiaShape.Shadows>
+
                                     <draw:SkiaShadow
                                         Blur="3"
                                         Opacity="1"

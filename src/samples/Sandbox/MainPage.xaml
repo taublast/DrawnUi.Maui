@@ -8,6 +8,7 @@
     xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Collections"
     xmlns:sandbox="clr-namespace:Sandbox"
     xmlns:views="clr-namespace:Sandbox.Views"
+    x:Name="ThisPage"
     x:DataType="sandbox:MainPageViewModel"
     BackgroundColor="#000000">
 
@@ -55,6 +56,7 @@
                             Source="car.png"
                             Tag="Car"
                             UseCache="ImageDoubleBuffered">
+
                             <draw:SkiaControl.VisualEffects>
 
                                 <!--<draw:BlurEffect Amount="5" />-->
@@ -135,6 +137,7 @@
                             x:Name="Buttons"
                             HorizontalOptions="Center"
                             IsVisible="True"
+                            ItemsSource="{Binding Source={x:Reference ThisPage}, Path=ButtonsList}"
                             Spacing="0"
                             Split="0"
                             Tag="Buttons"
