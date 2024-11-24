@@ -4648,7 +4648,9 @@ namespace DrawnUi.Maui.Draw
                 Helper3d.RotateYDegrees((float)RotationY);
                 Helper3d.RotateZDegrees(-(float)RotationZ);
                 Helper3d.TranslateZ((float)TranslationZ);
+
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
+
                 Helper3d.Restore();
 #endif
 

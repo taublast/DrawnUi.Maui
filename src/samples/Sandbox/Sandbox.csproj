@@ -213,7 +213,7 @@
     <ItemGroup>
  
  
-      <Compile Update="MainPageShapes.xaml.cs">
+      <Compile Update="Views\MainPageShapes.xaml.cs">
         <DependentUpon>MainPageShapes.xaml</DependentUpon>
       </Compile>
  
@@ -370,7 +370,7 @@
  
 
   <ItemGroup>
-    <MauiXaml Update="MainPageShapes.xaml">
+    <MauiXaml Update="Views\MainPageShapes.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="TestPageGridIssue.xaml">

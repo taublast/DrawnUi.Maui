@@ -19,9 +19,4 @@ public enum GesturesMode
     /// Lock input for self, useful inside scroll view, panning controls like slider etc
     /// </summary>
     Lock,
-
-    /// <summary>
-    /// Tries to let other views consume the touch event if this view doesn't handle it
-    /// </summary>
-    Share,
 }

@@ -16,69 +16,68 @@
 
             <draw:Canvas
                 BackgroundColor="DarkSlateBlue"
+                Gestures="Lock"
                 HardwareAcceleration="Enabled"
-                HorizontalOptions="Fill"
-                Gestures="Lock">
+                HorizontalOptions="Fill">
 
-        <draw:SkiaLayout
-                HorizontalOptions="Fill"
-                Tag="Wrapper"
-                VerticalOptions="Fill">
+                <draw:SkiaLayout
+                    HorizontalOptions="Fill"
+                    Tag="Wrapper"
+                    VerticalOptions="Fill">
 
-                <draw:SkiaLayout Type="Column">
-                    
-                    
-                    <draw:SkiaLabel
-                        VerticalOptions="Center"
-                        DropShadowColor="#33333333"
-                        DropShadowSize="4"
-                        FontFamily="FontTextTitle"
-                        FontSize="44"
-                        HorizontalOptions="Center"
-                        StrokeColor="White"
-                        StrokeWidth="2"
-                        Text="Sandbox"
-                        UseCache="Image">
-                        <draw:SkiaLabel.FillGradient>
+                    <draw:SkiaLayout Type="Column">
 
-                            <draw:SkiaGradient
-                                EndXRatio="0"
-                                EndYRatio="1"
-                                StartXRatio="0"
-                                StartYRatio="0"
-                                Type="Linear">
-                                <draw:SkiaGradient.Colors>
-                                    <Color>White</Color>
-                                    <Color>Yellow</Color>
-                                    <Color>Orange</Color>
-                                    <Color>Red</Color>
-                                    <Color>DarkRed</Color>
-                                </draw:SkiaGradient.Colors>
-                            </draw:SkiaGradient>
 
-                        </draw:SkiaLabel.FillGradient>
-                    </draw:SkiaLabel>
+                        <draw:SkiaLabel
+                            DropShadowColor="#33333333"
+                            DropShadowSize="4"
+                            FontFamily="FontTextTitle"
+                            FontSize="44"
+                            HorizontalOptions="Center"
+                            StrokeColor="White"
+                            StrokeWidth="2"
+                            Text="Sandbox"
+                            UseCache="Image"
+                            VerticalOptions="Center">
+                            <draw:SkiaLabel.FillGradient>
 
-                    <!--  one from the Sandbox project  -->
-                    <controls:SliderColor 
-                        Margin="32,0"
-                        HeightRequest="50" />
+                                <draw:SkiaGradient
+                                    EndXRatio="0"
+                                    EndYRatio="1"
+                                    StartXRatio="0"
+                                    StartYRatio="0"
+                                    Type="Linear">
+                                    <draw:SkiaGradient.Colors>
+                                        <Color>White</Color>
+                                        <Color>Yellow</Color>
+                                        <Color>Orange</Color>
+                                        <Color>Red</Color>
+                                        <Color>DarkRed</Color>
+                                    </draw:SkiaGradient.Colors>
+                                </draw:SkiaGradient>
+
+                            </draw:SkiaLabel.FillGradient>
+                        </draw:SkiaLabel>
+
+                        <!--  one from the Sandbox project  -->
+                        <controls:SliderColor
+                            Margin="32,0"
+                            HeightRequest="50" />
+
+                    </draw:SkiaLayout>
+
+                    <draw:SkiaLabelFps
+                        Margin="0,0,4,24"
+                        BackgroundColor="DarkRed"
+                        HorizontalOptions="End"
+                        Rotation="-45"
+                        TextColor="White"
+                        VerticalOptions="End"
+                        ZIndex="100">
+
+                    </draw:SkiaLabelFps>
 
                 </draw:SkiaLayout>
-
-              <draw:SkiaLabelFps
-                    Margin="0,0,4,24"
-                    BackgroundColor="DarkRed"
-                    HorizontalOptions="End"
-                    Rotation="-45"
-                    TextColor="White"
-                    VerticalOptions="End"
-                    ForceRefresh="True"
-                    ZIndex="100">
-                   
-                </draw:SkiaLabelFps>
-
-            </draw:SkiaLayout>
 
             </draw:Canvas>
 

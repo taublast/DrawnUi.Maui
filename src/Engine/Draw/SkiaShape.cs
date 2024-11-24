@@ -271,8 +271,7 @@ namespace DrawnUi.Maui.Draw
                 strokeAwareSize =
                     SKRect.Inflate(strokeAwareSize, -halfStroke, -halfStroke);
 
-                strokeAwareChildrenSize =
-                    SKRect.Inflate(strokeAwareSize, -halfStroke, -halfStroke);
+                strokeAwareChildrenSize = strokeAwareSize;
             }
 
             MeasuredStrokeAwareSize = strokeAwareSize;
@@ -393,10 +392,10 @@ namespace DrawnUi.Maui.Draw
                 case ShapeType.Circle:
                     ShouldClipAntialiased = true;
                     path.AddCircle(
-                        (float)Math.Round(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
-                        (float)Math.Round(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
-                        Math.Min(strokeAwareChildrenSize.Width, strokeAwareChildrenSize.Height) /
-                        2.0f);
+                        (float)(strokeAwareChildrenSize.Left + strokeAwareChildrenSize.Width / 2.0f),
+                        (float)(strokeAwareChildrenSize.Top + strokeAwareChildrenSize.Height / 2.0f),
+                        (float)Math.Floor(Math.Min(strokeAwareChildrenSize.Width, strokeAwareChildrenSize.Height) /
+                                   2.0f) + 0);
                     break;
 
                 case ShapeType.Ellipse:
@@ -419,8 +418,8 @@ namespace DrawnUi.Maui.Draw
                         foreach (var skiaPoint in Points)
                         {
                             var point = new SKPoint(
-                                (float)(offsetX + skiaPoint.X * scaleX),
-                                (float)(offsetY + skiaPoint.Y * scaleY));
+                                (float)Math.Round(offsetX + skiaPoint.X * scaleX),
+                                (float)Math.Round(offsetY + skiaPoint.Y * scaleY));
 
                             if (first)
                             {
@@ -1071,8 +1070,6 @@ namespace DrawnUi.Maui.Draw
             set => SetValue(SmoothPointsProperty, value);
         }
 
-        //OKAY!
-
         private void AddSmoothPath(SKPath path, IList<SkiaPoint> points, SKRect rect, float smoothness, bool isClosed)
         {
             if (points == null || points.Count < 2)
@@ -1179,87 +1176,9 @@ namespace DrawnUi.Maui.Draw
 
             path.LineTo(p1);
 
-            // Draw the quadratic Bezier curve to smooth the angle
+            // quadratic Bezier curve to smooth  angle
             path.QuadTo(current, p2);
         }
-
-        /*
-        private void AddSmoothPath(SKPath path, IList<SkiaPoint> points, SKRect rect, float smoothness, bool isClosed)
-        {
-            if (points == null || points.Count < 2)
-            {
-                return;
-            }
-
-            var scaledPoints = points.Select(p => ScalePoint(p, rect)).ToList();
-
-            // Start the path at the first point
-            path.MoveTo(scaledPoints[0]);
-
-            // Iterate over each point to add smoothing
-            int pointCount = scaledPoints.Count;
-            for (int i = 0; i < pointCount; i++)
-            {
-                // Previous point (wrap around for the first point)
-                var prev = scaledPoints[(i - 1 + pointCount) % pointCount];
-                // Current point
-                var current = scaledPoints[i];
-                // Next point (wrap around for the last point)
-                var next = scaledPoints[(i + 1) % pointCount];
-
-                // Calculate vectors for the segments
-                var v1 = new SKPoint(current.X - prev.X, current.Y - prev.Y);
-                var v2 = new SKPoint(next.X - current.X, next.Y - current.Y);
-
-                float lengthV1 = (float)Math.Sqrt(v1.X * v1.X + v1.Y * v1.Y);
-                float lengthV2 = (float)Math.Sqrt(v2.X * v2.X + v2.Y * v2.Y);
-
-                if (lengthV1 == 0 || lengthV2 == 0)
-                {
-                    // Skip if any segment length is zero
-                    path.LineTo(current);
-                    continue;
-                }
-
-                // Normalize vectors to get direction
-                v1 = new SKPoint(v1.X / lengthV1, v1.Y / lengthV1);
-                v2 = new SKPoint(v2.X / lengthV2, v2.Y / lengthV2);
-
-                // Calculate the radius for smoothing (controlled by smoothness)
-                float smoothingRadius = lengthV1 * smoothness * 0.3f;
-                smoothingRadius = Math.Min(smoothingRadius, lengthV1 * 0.5f);
-                smoothingRadius = Math.Min(smoothingRadius, lengthV2 * 0.5f);
-
-                if (smoothingRadius < 0.001f)
-                {
-                    path.LineTo(current); // No significant smoothing is needed
-                    continue;
-                }
-
-                // Determine points p1 (start of curve) and p2 (end of curve)
-                var p1 = new SKPoint(
-                    current.X - v1.X * smoothingRadius,
-                    current.Y - v1.Y * smoothingRadius);
-
-                var p2 = new SKPoint(
-                    current.X + v2.X * smoothingRadius,
-                    current.Y + v2.Y * smoothingRadius);
-
-                // Draw the line to the beginning of the rounded section
-                path.LineTo(p1);
-
-                // Draw the quadratic Bezier curve to smooth the angle
-                path.QuadTo(current, p2);
-            }
-
-            if (isClosed)
-            {
-                // Close the path properly by adding a line to the starting point to ensure consistent smoothing
-                path.LineTo(scaledPoints[0]);
-                path.Close();
-            }
-        }
-        */
 
         private void AddStraightPath(SKPath path, IList<SkiaPoint> points, SKRect rect, bool isClosed)
         {
@@ -1281,55 +1200,11 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        private float AngleBetween(SKPoint v1, SKPoint v2)
-        {
-            // Calculate the dot product and magnitudes of the vectors
-            float dotProduct = v1.X * v2.X + v1.Y * v2.Y;
-            float magnitudeV1 = (float)Math.Sqrt(v1.X * v1.X + v1.Y * v1.Y);
-            float magnitudeV2 = (float)Math.Sqrt(v2.X * v2.X + v2.Y * v2.Y);
-
-            // Calculate cosine of the angle
-            float cosTheta = dotProduct / (magnitudeV1 * magnitudeV2);
-            // Clamp value between -1 and 1 to handle numerical precision issues
-            cosTheta = Math.Max(-1.0f, Math.Min(1.0f, cosTheta));
-
-            // Return the angle in radians
-            return (float)Math.Acos(cosTheta);
-        }
-
         private SKPoint ScalePoint(SkiaPoint point, SKRect rect)
         {
             return new SKPoint(
-                (float)(rect.Left + point.X * rect.Width),
-                (float)(rect.Top + point.Y * rect.Height));
-        }
-
-        private SKPoint ClampPoint(SKPoint point, SKRect rect)
-        {
-            return new SKPoint(
-                Math.Max(rect.Left, Math.Min(rect.Right, point.X)),
-                Math.Max(rect.Top, Math.Min(rect.Bottom, point.Y)));
-        }
-
-        private SKPoint CalculateCentroid(List<SKPoint> points)
-        {
-            float x = 0, y = 0;
-            int count = points.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                x += points[i].X;
-                y += points[i].Y;
-            }
-
-            return new SKPoint(x / count, y / count);
-        }
-
-        private SKPoint SKPointLerp(SKPoint a, SKPoint b, float t)
-        {
-            return new SKPoint(
-                a.X + (b.X - a.X) * t,
-                a.Y + (b.Y - a.Y) * t);
+                (float)Math.Round(rect.Left + point.X * rect.Width),
+                (float)Math.Round(rect.Top + point.Y * rect.Height));
         }
 
         #endregion
@@ -1343,10 +1218,9 @@ namespace DrawnUi.Maui.Draw
 
             List<SkiaPoint> points = new List<SkiaPoint>();
             double angleStep = Math.PI / numberOfPoints;
-            double outerRadius = 1.0; // Initial outer radius
+            double outerRadius = 1.0;
             double innerRadius = outerRadius * innerRadiusRatio;
 
-            // Generate points centered at (0, 0)
             for (int i = 0; i < numberOfPoints * 2; i++)
             {
                 double angle = i * angleStep - Math.PI / 2;
@@ -1364,18 +1238,14 @@ namespace DrawnUi.Maui.Draw
             var minY = points.Min(p => p.Y);
             var maxY = points.Max(p => p.Y);
 
-            // Compute scale factors to fit into [0,1] range
             var scaleX = 1.0f / (maxX - minX);
             var scaleY = 1.0f / (maxY - minY);
 
-            // Apply uniform scaling to fill the viewport as much as possible without distortion
             var scale = Math.Min(scaleX, scaleY);
 
-            // Calculate offsets to center the star
             var offsetX = (1.0f - (maxX - minX) * scale) / 2.0f - minX * scale;
             var offsetY = (1.0f - (maxY - minY) * scale) / 2.0f - minY * scale;
 
-            // Scale and translate points to fit within [0.0f, 1.0f] range and center them
             for (int i = 0; i < points.Count; i++)
             {
                 var x = points[i].X * scale + offsetX;
@@ -1394,9 +1264,8 @@ namespace DrawnUi.Maui.Draw
 
             List<SkiaPoint> points = new List<SkiaPoint>();
             double angleStep = 2 * Math.PI / numberOfPoints;
-            double radius = 1.0; // Initial radius
+            double radius = 1.0;
 
-            // Generate outer points centered at (0,0)
             List<SkiaPoint> outerPoints = new List<SkiaPoint>();
             for (int i = 0; i < numberOfPoints; i++)
             {
@@ -1406,14 +1275,12 @@ namespace DrawnUi.Maui.Draw
                 outerPoints.Add(new SkiaPoint((float)x, (float)y));
             }
 
-            // Reorder points to create a star with crossing lines
             int skip = (numberOfPoints - 1) / 2;
             for (int i = 0; i < numberOfPoints; i++)
             {
                 points.Add(outerPoints[(i * skip) % numberOfPoints]);
             }
 
-            // Close the shape by adding the first point at the end
             points.Add(points[0]);
 
             // Find bounding box
@@ -1422,18 +1289,14 @@ namespace DrawnUi.Maui.Draw
             var minY = points.Min(p => p.Y);
             var maxY = points.Max(p => p.Y);
 
-            // Compute scale factors to fit into [0,1] range
             var scaleX = 1.0f / (maxX - minX);
             var scaleY = 1.0f / (maxY - minY);
 
-            // Use the minimum scale to ensure the entire star fits within the viewport
             var scale = Math.Min(scaleX, scaleY);
 
-            // Calculate offsets to center the star
             var offsetX = (1.0f - (maxX - minX) * scale) / 2.0f - minX * scale;
             var offsetY = (1.0f - (maxY - minY) * scale) / 2.0f - minY * scale;
 
-            // Scale and translate points to fit within [0.0f, 1.0f] range and center them
             for (int i = 0; i < points.Count; i++)
             {
                 var x = points[i].X * scale + offsetX;

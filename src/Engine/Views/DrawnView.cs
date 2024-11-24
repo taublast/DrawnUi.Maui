@@ -1327,10 +1327,18 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public event EventHandler<SkiaDrawingContext?> WillFirstTimeDraw;
 
+        protected SKRect LastDrawnRect;
+
         private bool OnDrawSurface(SKSurface surface, SKRect rect)
         {
             lock (LockDraw)
             {
+
+                if (LastDrawnRect.Size != rect.Size)
+                {
+                    LastDrawnRect = rect;
+                    NeedMeasure = true;
+                }
 
                 if (!OnStartRendering(surface.Canvas))
                     return UpdateMode == UpdateMode.Constant;
@@ -1747,6 +1755,10 @@ namespace DrawnUi.Maui.Views
                                     destination.Top + (float)Math.Round((Padding.Top) * scale),
                                     destination.Right - (float)Math.Round((Padding.Right) * scale),
                                     destination.Bottom - (float)Math.Round((Padding.Bottom) * scale));
+                                if (NeedMeasure)
+                                {
+                                    child.NeedMeasure = true;
+                                }
                                 child.Render(context, rectForChild, (float)scale);
                             }
                         }

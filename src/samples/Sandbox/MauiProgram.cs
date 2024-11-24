@@ -12,6 +12,14 @@ namespace Sandbox
 
         public static string Testing = "1\r\n2\r\n3";
 
+        public static List<SkiaPoint> PolygonStar
+        {
+            get
+            {
+                return SkiaShape.CreateStarPoints(5);
+            }
+        }
+
         public static MauiApp CreateMauiApp()
         {
             //SkiaImageManager.CacheLongevitySecs = 10;
