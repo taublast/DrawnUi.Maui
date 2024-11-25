@@ -1659,10 +1659,13 @@ namespace DrawnUi.Maui.Views
                         var action = command.Control.GetOffscreenRenderingAction();
                         action?.Invoke();
 
+                        //command.Control.Repaint();
+
                         if (_offscreenCacheRenderingQueue.Count > 0)
                             command = _offscreenCacheRenderingQueue.Dequeue();
                         else
                             break;
+
                     }
                     catch (Exception e)
                     {

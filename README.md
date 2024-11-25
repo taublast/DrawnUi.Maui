@@ -88,6 +88,26 @@ ___Please star ⭐ if you like it, helps very much!___
 	* Perspective2
 
 
+## What's New
+
+### Nuget 1.2.9.6
+for SkiaSharp 2.88.9-preview.2.2 
+* HotFix for SkiaCarousel always setting index at 0 upon initialization.
+* HotFix for random crash accessing disposed LoadedImageSource.
+* [HotFix](https://github.com/taublast/DrawnUi.Maui/issues/136) for loading images from StreamImageSource
+* SkiaShape new Types: Polygon and Line. New property for their Points: Smooth (0-1) to smooth angles.
+* Shapes demo page inside SandBox project.
+* VisualElement Shadow property now supported everywhere as an optional addition to existing shadows. 
+* Removed SkiaImage clipping to better support shadows.
+* SkiaLabel new property AutoFont: Find and set system font where the first glyph in text is present. Useful for some quick unicode rendering like emoji etc.
+* Updated Getsures nuget for correct lock inside MAUI native ScrollView, use Getures="Lock" for Canvas.
+* Fixed controls sometimes not invalidated when canvas suface size changes
+* Other fixes.
+
+## About
+
+[A small article](https://taublast.github.io/posts/MauiJuly/) about the library and why it was created
+
 ## Demo Apps
 
 * This repo includes a Sandbox project for some custom controls, with playground examples, custom controls, maps etc
@@ -100,21 +120,6 @@ ___Please star ⭐ if you like it, helps very much!___
  [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
 
 V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect` when compiled for SkiaSharp v3 preview.
-
-## What's New
-
-### Nuget 1.2.9.5
-for SkiaSharp 2.88.9-preview.2.2 
-
-* [HotFix](https://github.com/taublast/DrawnUi.Maui/issues/136) for loading images from StreamImageSource
-* SkiaShape new Types: Polygon and Line. New property for their Points: Smooth (0-1) to smooth angles.
-* Shapes demo page inside SandBox project.
-* VisualElement Shadow property now supported everywhere as an optional addition to existing shadows. 
-* Removed SkiaImage clipping to better support shadows.
-* SkiaLabel new property AutoFont: Find and set system font where the first glyph in text is present. Useful for some quick unicode rendering like emoji etc.
-* Updated Getsures nuget for correct lock inside MAUI native ScrollView, use Getures="Lock" for Canvas.
-* Fixed controls sometimes not invalidated when canvas suface size changes
-* Other fixes.
 
  ## Development Notes
 
@@ -162,10 +167,42 @@ As you can see in this example the Maui view `Canvas` will adapt its size to dra
 #### Code behind
 
 ```csharp
-	_todo_
+            Canvas = new Canvas()
+            {
+                Gestures = GesturesMode.Enabled,
+                HardwareAcceleration = HardwareAccelerationMode.Enabled,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill,
+                BackgroundColor = Colors.Black,
+                Content = new SkiaLayout()
+                {
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
+                    Children = new List<SkiaControl>()
+                    {
+
+                        new SkiaShape()
+                            {
+                                BackgroundColor = Colors.DodgerBlue,
+                                CornerRadius = 16,
+                                WidthRequest = 150,
+                                HeightRequest = 150,
+                                HorizontalOptions = LayoutOptions.Center,
+                                VerticalOptions = LayoutOptions.Center,
+                                Content = new SkiaLabel()
+                                {
+                                    TextColor = Colors.White,
+                                    HorizontalOptions = LayoutOptions.Center,
+                                    VerticalOptions = LayoutOptions.Center,
+                                    Text="Oyee"
+                                }
+                            }
+                    }
+                }
+            };
 ```
 
-Please check the demo app, it contains many examples of usage.
+Please check the Sandbox and Demo apps, they contain many examples of usage.
 
 #### Important differences between DrawnUI and Xamarin.Forms/Maui layouts:
 

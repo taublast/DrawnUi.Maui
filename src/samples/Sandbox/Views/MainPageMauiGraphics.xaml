@@ -3,14 +3,14 @@
     x:Class="Sandbox.Views.MainPageMauiGraphics"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:aloha="clr-namespace:Sandbox.Views.Aloha"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
+    xmlns:mauiGraphics="clr-namespace:DrawnUi.MauiGraphics;assembly=DrawnUi.MauiGraphics"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
-    xmlns:aloha="clr-namespace:Sandbox.Views.Aloha"
-    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
-    xmlns:mauiGraphics="clr-namespace:DrawnUi.MauiGraphics;assembly=DrawnUi.MauiGraphics"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel">
 
@@ -36,7 +36,7 @@
                 HorizontalOptions="Fill"
                 Tag="Content"
                 VerticalOptions="Fill" />
-            
+
             <draw:SkiaLabel
                 Margin="50,0"
                 Padding="2"
@@ -48,9 +48,9 @@
                 Text="Consume and enhance existing Maui Graphics controls"
                 TextColor="White"
                 VerticalOptions="End" />
-            
-            <controls:ButtonToRoot/>
-           
+
+            <controls:ButtonToRoot />
+
             <draw:SkiaLabelFps
                 Margin="0,0,4,24"
                 BackgroundColor="DarkRed"

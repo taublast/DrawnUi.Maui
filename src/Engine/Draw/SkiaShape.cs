@@ -694,7 +694,6 @@ namespace DrawnUi.Maui.Draw
                         }
                         else
                             ctx.Canvas.DrawRect(outRect, paint);
-
                         break;
 
                     case ShapeType.Circle:

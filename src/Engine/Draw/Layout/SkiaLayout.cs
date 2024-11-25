@@ -216,7 +216,7 @@ namespace DrawnUi.Maui.Draw
         {
             ChildrenFactory = new(this);
 
-            PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
+            PostponeInvalidation(nameof(ResetItemsSource), ResetItemsSource);
             //OnItemSourceChanged();
         }
 
@@ -1116,7 +1116,7 @@ namespace DrawnUi.Maui.Draw
             nameof(InitializeTemplatesInBackgroundDelay),
             typeof(int),
             typeof(SkiaLayout),
-            0, propertyChanged: ItemsSourcePropertyChanged);
+            0, propertyChanged: NeedUpdateItemsSource);
 
         /// <summary>
         /// Whether should initialize templates in background instead of blocking UI thread, default is 0.
@@ -1136,7 +1136,7 @@ namespace DrawnUi.Maui.Draw
             typeof(ItemSizingStrategy),
             typeof(SkiaLayout),
             ItemSizingStrategy.MeasureFirstItem,
-            propertyChanged: ItemsSourcePropertyChanged);
+            propertyChanged: NeedUpdateItemsSource);
 
         public ItemSizingStrategy ItemSizingStrategy
         {
@@ -1147,7 +1147,7 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty ItemTemplatePoolSizeProperty = BindableProperty.Create(nameof(ItemTemplatePoolSize),
         typeof(int),
         typeof(SkiaLayout),
-        -1, propertyChanged: ItemsSourcePropertyChanged);
+        -1, propertyChanged: NeedUpdateItemsSource);
         /// <summary>
         /// Default is -1, the number od template instances will not be less than data collection count. You can manually set to to a specific number to fill your viewport etc. Beware that if you set this to a number that will not be enough to fill the viewport binding contexts will contasntly be changing triggering screen update.
         /// </summary>
@@ -1227,29 +1227,26 @@ namespace DrawnUi.Maui.Draw
             //skiaControl.PostponeInvalidation(nameof(UpdateItemsSource), skiaControl.UpdateItemsSource);
             //skiaControl.Update();
 
-            skiaControl.OnItemSourceChanged();
-        }
-
-        void UpdateItemsSource()
-        {
-            OnItemSourceChanged();
-
-            Invalidate();
+            skiaControl.ResetItemsSource();
         }
 
         public override void OnItemTemplateChanged()
         {
             //PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
-            OnItemSourceChanged();
+            ResetItemsSource();
         }
 
         public bool ApplyNewItemsSource { get; set; }
 
         public virtual void OnItemSourceChanged()
         {
+            ResetItemsSource();
+        }
+
+        public virtual void ResetItemsSource()
+        {
             //if (!string.IsNullOrEmpty(Tag))
             //    Debug.WriteLine($"OnItemSourceChanged {Tag} {IsTemplated} {IsMeasuring}");
-
             if (!IsTemplated || !BindingContextWasSet && ItemsSource == null) //do not create items from templates until the context was changed properly to avoid bugs
             {
                 return;
