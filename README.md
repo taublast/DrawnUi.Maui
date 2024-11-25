@@ -373,7 +373,7 @@ if set they will override the specific value from `Margin`, and the result would
 Even more, sometimes you might want to bind your code to `AddMarginTop`, `AddMarginLeft`, `AddMarginRight`, `AddMarginBottom`..  
 When designing custom controls please use `Margins` property to read the final margin value.
 
-##### BindingCotext propagation in layout
+##### BindingContext propagation in layout
 
 When a parent has children attached it sets their binding content to its own by calling `SetInheritedBindingContext` of the child ONLY if child's BindingContext is actually null. So when the Parent property of the child gets set to null this child BindingContext is set to null too.   
 
