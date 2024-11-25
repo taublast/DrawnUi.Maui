@@ -447,8 +447,16 @@ public class SkiaCarousel : SnappingLayout
 
     //}
 
+    private bool _itemsSourceChangedNeedResetIndex;
+    private bool _loaded;
+
+
     public override void OnItemSourceChanged()
     {
+        _itemsSourceChangedNeedResetIndex = _loaded;
+
+        _loaded = true;
+
         base.OnItemSourceChanged();
 
         AdaptChildren();
@@ -877,7 +885,7 @@ public class SkiaCarousel : SnappingLayout
 
         CurrentSnap = new(-1, -1);
 
-        if (SnapPoints.Any())// && (SelectedIndex < 0 || SelectedIndex > snapPoints.Count - 1))
+        if (SnapPoints.Any() && (_itemsSourceChangedNeedResetIndex || SelectedIndex < 0 || SelectedIndex > snapPoints.Count - 1))
         {
             SelectedIndex = 0;
         }
@@ -886,6 +894,7 @@ public class SkiaCarousel : SnappingLayout
             ApplyIndex(true);
         }
 
+        _itemsSourceChangedNeedResetIndex = false;
         OnChildrenInitialized();
     }
 
@@ -1149,6 +1158,8 @@ public class SkiaCarousel : SnappingLayout
 
     protected virtual void OnSelectedIndexChanged(int index)
     {
+        _itemsSourceChangedNeedResetIndex = false;
+
         SelectedIndexChanged?.Invoke(this, index);
 
         //forced to use ui-tread for maui not to randomly crash 

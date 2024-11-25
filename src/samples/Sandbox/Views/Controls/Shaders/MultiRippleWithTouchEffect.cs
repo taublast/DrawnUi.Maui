@@ -3,7 +3,8 @@ using System.Collections.Concurrent;
 
 namespace Sandbox.Views.Controls;
 
-public class MultiRippleWithTouchEffect : ShaderDoubleTexturesEffect, IStateEffect, ISkiaGestureProcessor
+public class MultiRippleWithTouchEffect : ShaderDoubleTexturesEffect,
+    IStateEffect, ISkiaGestureProcessor
 {
     public MultiRippleWithTouchEffect()
     {

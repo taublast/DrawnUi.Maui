@@ -357,7 +357,7 @@ public class ViewsAdapter : IDisposable
             {
                 lock (_lockTemplates)
                 {
-                    lock (_parent.LockMeasure)
+                    //lock (_parent.LockMeasure) was needed testing two-threaded rendering
                     {
                         TemplesInvalidating = false;
 
