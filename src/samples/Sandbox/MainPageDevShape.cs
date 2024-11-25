@@ -47,76 +47,19 @@ namespace Sandbox
                     HorizontalOptions = LayoutOptions.Fill,
                     Children = new List<SkiaControl>()
                     {
-                        new SkiaShape()
-                        {
-                            SmoothPoints = 0.9f,
-                            VerticalOptions = LayoutOptions.Center,
-                            HorizontalOptions = LayoutOptions.Center,
-                            WidthRequest = 150,
-                            HeightRequest = 150,
-                            Type = ShapeType.Polygon,
-                            StrokeColor = Colors.Black,
-                            StrokeWidth = 3,
-                            StrokeBlendMode = SKBlendMode.SrcIn,
-                            StrokeCap = SKStrokeCap.Round,
-                            Rotation = 0,
-                            BackgroundColor = Colors.Yellow,
-                            //Points = SkiaShape.CreateStarPoints(5, 0.5),
-                            Shadows = new List<SkiaShadow>()
-                            {
 
-                            },
-                            Points = new List<SkiaPoint>()
-                            {
-                                new (0.1f, 0.1f),
-                                new (0.9f, 0.1f),
-                                new (0.8f, 0.9f),
-                                new (0.1f, 0.9f),
-                            },
-                        },
-                        new SkiaShape()
-                        {
-                            IsVisible = false,
-                            Type = ShapeType.Line,
-                            StrokeColor = Colors.Red,
-                            StrokeWidth = 2,
-                            HorizontalOptions = LayoutOptions.Fill,
-                            VerticalOptions = LayoutOptions.Fill,
-                            Points = new List<SkiaPoint>()
-                            {
-                                new (0.2f, 0.8f),
-                                new (0.8f, 0.2f),
-                                new (1.0f, 0.2f),
-                            },
-                        },
-                        new SkiaShape()
-                        {
-                            IsVisible = false,
-                            SmoothPoints = 0.3f,
-                            Type = ShapeType.Line,
-                            StrokeColor = Colors.Green,
-                            StrokeWidth = 2,
-                            HorizontalOptions = LayoutOptions.Fill,
-                            VerticalOptions = LayoutOptions.Fill,
-                            Points = new List<SkiaPoint>()
-                            {
-                                new (0.2f, 0.8f),
-                                new (0.8f, 0.2f),
-                                new (1.0f, 0.2f),
-                            },
-                        },
                         new SkiaImage()
                         {
                             Source="car.png",
-                            WidthRequest = 100,
-                            HeightRequest = 100,
+                            WidthRequest = 150,
+                            HeightRequest = 150,
                             VerticalOptions = LayoutOptions.End,
-                            Margin = 10,
+                            Margin = 24,
                             Shadow = new Shadow()
                             {
-                                Radius = 3,
-                                Brush= Colors.Black,
-                                Offset = new (2,2)
+                                Radius = 8,
+                                Brush= Colors.Purple,
+                                Offset = new (5,5)
                             }
                         }
                     }

@@ -103,9 +103,10 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
 ## What's New
 
-### Nuget 1.2.9.4
+### Nuget 1.2.9.5
 for SkiaSharp 2.88.9-preview.2.2 
 
+* [HotFix](https://github.com/taublast/DrawnUi.Maui/issues/136) for loading images from StreamImageSource
 * SkiaShape new Types: Polygon and Line. New property for their Points: Smooth (0-1) to smooth angles.
 * Shapes demo page inside SandBox project.
 * VisualElement Shadow property now supported everywhere as an optional addition to existing shadows. 

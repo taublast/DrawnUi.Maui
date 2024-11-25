@@ -1,14 +1,4 @@
-﻿using Microsoft.Maui.Storage;
-using Microsoft.UI.Xaml.Media.Imaging;
-using SkiaSharp;
-using System;
-using System.Diagnostics;
-using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Authentication;
-
-
-namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Maui.Draw;
 
 public partial class SkiaImageManager
 {
@@ -145,7 +135,7 @@ public partial class SkiaImageManager
         }
         catch (Exception e)
         {
-            SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync] {e}");
+            Super.Log($"[LoadImageOnPlatformAsync] {e}");
         }
 
         return null;

@@ -8,7 +8,7 @@
     xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Collections"
     xmlns:sandbox="clr-namespace:Sandbox"
     xmlns:views="clr-namespace:Sandbox.Views"
-    x:DataType="sandbox:MainPageViewModel"
+    x:Name="ThisPage"
     BackgroundColor="#000000">
 
     <Grid
@@ -28,37 +28,13 @@
                 Tag="Wrapper"
                 VerticalOptions="Fill">
 
-                <draw:SkiaLabel
-                    DropShadowColor="#33333333"
-                    DropShadowSize="4"
-                    FontFamily="FontTextTitle"
-                    FontSize="44"
+                <draw:SkiaImage
+                    Aspect="AspectFit"
+                    HeightRequest="200"
                     HorizontalOptions="Center"
-                    StrokeColor="White"
-                    StrokeWidth="2"
-                    Text="Sandbox"
-                    UseCache="None"
-                    VerticalOptions="Center">
-                    <draw:SkiaLabel.FillGradient>
-
-                        <draw:SkiaGradient
-                            EndXRatio="0"
-                            EndYRatio="1"
-                            StartXRatio="0"
-                            StartYRatio="0"
-                            Type="Linear">
-                            <draw:SkiaGradient.Colors>
-                                <Color>White</Color>
-                                <Color>Yellow</Color>
-                                <Color>Orange</Color>
-                                <Color>Red</Color>
-                                <Color>DarkRed</Color>
-                            </draw:SkiaGradient.Colors>
-                        </draw:SkiaGradient>
-
-                    </draw:SkiaLabel.FillGradient>
-                </draw:SkiaLabel>
-
+                    SemanticProperties.Description="Image"
+                    Source="{Binding Source={x:Reference ThisPage}, Path=ImageBytes, Converter={StaticResource ByteArrayToImageSourceConverter}}"
+                    WidthRequest="200" />
 
                 <!--<draw:SkiaShape
                     BackgroundColor="White"
