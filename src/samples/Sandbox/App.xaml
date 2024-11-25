@@ -3,7 +3,8 @@
     x:Class="Sandbox.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:xaml="clr-namespace:DrawnUi.Maui.Infrastructure.Xaml;assembly=DrawnUi.Maui">
+    xmlns:xaml="clr-namespace:DrawnUi.Maui.Infrastructure.Xaml;assembly=DrawnUi.Maui"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -13,6 +14,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <xaml:NotConverter x:Key="NotConverter" />
+            <toolkit:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageSourceConverter" />
 
         </ResourceDictionary>
     </Application.Resources>

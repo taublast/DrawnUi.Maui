@@ -1,5 +1,6 @@
 ﻿global using DrawnUi.Maui.Draw;
 global using SkiaSharp;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 
 namespace Sandbox
@@ -30,6 +31,7 @@ namespace Sandbox
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

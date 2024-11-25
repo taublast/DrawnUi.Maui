@@ -319,25 +319,28 @@ public partial class SkiaImageManager : IDisposable
             // 1 Try to get from cache
             var cacheKey = uri;
 
-            var cachedBitmap = _cachingProvider.Get<SKBitmap>(cacheKey);
-            if (cachedBitmap.HasValue)
+            if (!string.IsNullOrEmpty(cacheKey))
             {
-                if (ReuseBitmaps)
+                var cachedBitmap = _cachingProvider.Get<SKBitmap>(cacheKey);
+                if (cachedBitmap.HasValue)
                 {
-                    tcs.TrySetResult(cachedBitmap.Value);
-                }
-                else
-                {
-                    tcs.TrySetResult(cachedBitmap.Value.Copy());
-                }
-                TraceLog($"ImageLoadManager: Returning cached bitmap for UriImageSource {uri}");
+                    if (ReuseBitmaps)
+                    {
+                        tcs.TrySetResult(cachedBitmap.Value);
+                    }
+                    else
+                    {
+                        tcs.TrySetResult(cachedBitmap.Value.Copy());
+                    }
+                    TraceLog($"ImageLoadManager: Returning cached bitmap for UriImageSource {uri}");
 
-                //if (pendingLoads.Any(x => x.Value.Count != 0))
-                //{
-                //    RunProcessQueue();
-                //}
+                    //if (pendingLoads.Any(x => x.Value.Count != 0))
+                    //{
+                    //    RunProcessQueue();
+                    //}
 
-                return tcs.Task;
+                    return tcs.Task;
+                }
             }
             TraceLog($"ImageLoadManager: Not found cached UriImageSource {uri}");
 
