@@ -8,6 +8,30 @@ namespace DrawnUi.Maui.Draw
 
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
     {
+        /// <summary>
+        /// For easier code-behind use
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="apply"></param>
+        /// <returns></returns>
+        public override ISkiaGestureListener OnSkiaGestureEvent(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
+        {
+            if (!CanDraw)
+                return null;
+
+            if (OnGestures != null)
+            {
+                return OnGestures(args, apply);
+            }
+
+            return base.OnSkiaGestureEvent(args, apply);
+        }
+
+        /// <summary>
+        /// Delegate for use instead of calling base.OnSkiaGestureEvent
+        /// </summary>
+        public Func<SkiaGesturesParameters, GestureEventProcessingInfo, ISkiaGestureListener> OnGestures;
+
         public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
         {
             if (this.IsStack)
@@ -977,6 +1001,8 @@ namespace DrawnUi.Maui.Draw
 
             StackStructure?.Clear();
             StackStructureMeasured?.Clear();
+
+            OnGestures = null;
 
             base.OnDisposing();
         }

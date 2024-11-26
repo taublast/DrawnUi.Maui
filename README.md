@@ -90,8 +90,9 @@ ___Please star ⭐ if you like it, helps very much!___
 
 ## What's New
 
-### Nuget 1.2.9.6
+### Nuget 1.2.9.7
 for SkiaSharp 2.88.9-preview.2.2 
+* Added gestures delegate `OnGestures` to SkiaLayout.
 * HotFix for SkiaCarousel always setting index at 0 upon initialization.
 * HotFix for random crash accessing disposed LoadedImageSource.
 * [HotFix](https://github.com/taublast/DrawnUi.Maui/issues/136) for loading images from StreamImageSource
@@ -123,6 +124,7 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
  ## Development Notes
 
+* To compile the v3 version that supports NEW SHADERS you must set `<UseSkiaSharp3>true</UseSkiaSharp3>` inside `Directory.Build.props` file.
 * All files to be consumed (images etc) must be placed inside the MAUI app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
 * Accessibility support is compatible and is on the roadmap.
 
@@ -716,12 +718,6 @@ It will render a mask over its children when hovered, think of it as an inverted
 
 ## Published Apps powered by DrawnUI For .Net MAUI
 
-### Bug ID: Insect Identifier AI
-
-_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
-
-GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
-
 ### Racebox
 
 _MAUI pages with canvases, custom navigation. All scrolls, cells collections, maps, buttons, labels and custom controls are drawn._
@@ -729,6 +725,13 @@ _MAUI pages with canvases, custom navigation. All scrolls, cells collections, ma
 iOS: https://apps.apple.com/us/app/racebox-vehicle-dynamics/id6444165250  
 GooglePlay: https://play.google.com/store/apps/details?id=com.raceboxcompanion.app
 
+### Bug ID: Insect Identifier AI
+
+_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
+
+__Ooops looks like the app API went dead, client maybe abandoned the project due to AI detecting stuff better than dedicated neural networks!__
+
+GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
 
 
- 
+

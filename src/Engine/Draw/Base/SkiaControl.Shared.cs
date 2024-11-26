@@ -5858,19 +5858,14 @@ namespace DrawnUi.Maui.Draw
         {
             if (shadow != null && paint != null)
             {
-
-                if (LastShadow == null || LastShadow.Shadow != shadow ||
-                    LastShadow.Scale != scale)
+                var kill = LastShadow;
+                LastShadow = new()
                 {
-                    var kill = LastShadow;
-                    LastShadow = new()
-                    {
-                        Filter = CreateShadow(shadow, scale),
-                        Scale = scale,
-                        Shadow = shadow
-                    };
-                    DisposeObject(kill);
-                }
+                    Filter = CreateShadow(shadow, scale),
+                    Scale = scale,
+                    Shadow = shadow
+                };
+                DisposeObject(kill);
 
                 var old = paint.ImageFilter;
                 paint.ImageFilter = LastShadow.Filter;

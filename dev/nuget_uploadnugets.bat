@@ -13,8 +13,8 @@ REM Define the source directory for the packages
 set "source_dir=E:\Nugets"
 
 REM Define the list of file masks for the packages
-set "mask[1]=DrawnUi.Maui*.1.2.9.6*.nupkg"
-set "mask[2]=AppoMobi.Maui.DrawnUi.1.2.9.6*.*nupkg"
+set "mask[1]=DrawnUi.Maui*.1.2.9.7*.nupkg"
+set "mask[2]=AppoMobi.Maui.DrawnUi.1.2.9.7*.*nupkg"
 set "mask_count=2"
 
 REM Loop through each file mask
@@ -24,7 +24,7 @@ for /L %%i in (1,1,%mask_count%) do (
     REM Loop through each package file matching the mask in the source directory
     for %%f in ("!source_dir!\!file_mask!") do (
         echo Uploading "%%f" to NUGET.ORG with API key.
-        nuget push "%%f" -Source https://api.nuget.org/v3/index.json -ApiKey %APIKEY%
+        nuget push "%%f" -Source https://api.nuget.org/v3/index.json -ApiKey %APIKEY% -SkipDuplicate
         if errorlevel 1 (
             echo An error occurred while uploading "%%f".
         ) else (
