@@ -96,6 +96,7 @@ ___Please star ⭐ if you like it, helps very much!___
 
 ### Nuget 1.2.9.7
 for SkiaSharp 2.88.9-preview.2.2 
+* [FluentExtensions](https://github.com/taublast/DrawnUi.Maui/blob/main/src/Engine/Internals/Extensions/InternalExtensions.cs) for code-behind
 * Added gestures delegate `OnGestures` to SkiaLayout.
 * HotFix for SkiaCarousel always setting index at 0 upon initialization.
 * HotFix for random crash accessing disposed LoadedImageSource.
@@ -171,6 +172,8 @@ Consume:
 As you can see in this example the Maui view `Canvas` will adapt its size to drawn content and should take 44x44 pts. `LockRatio="1"` tells the engine to take the highest calculated dimension and multiply it by 1, so even if we omitted `HeightRequest` it was set to 44.
 
 #### Code behind
+
+Can use basic [FluentExtensions](https://github.com/taublast/DrawnUi.Maui/blob/main/src/Engine/Internals/Extensions/InternalExtensions.cs) will be adding more
 
 ```csharp
             Canvas = new Canvas()
