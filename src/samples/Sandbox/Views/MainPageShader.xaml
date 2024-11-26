@@ -102,7 +102,7 @@
                             SecondarySource="Images/leather.jpg"
                             VerticalMargin="{Binding Source={x:Reference Texture}, Path=Margins.Top}">
 
-                            <!--this cache will be used by our folder custom control-->
+                            <!--  this cache will be used by our folder custom control  -->
                             <draw:SkiaLayout UseCache="Image">
 
                                 <draw:SkiaImage
@@ -124,7 +124,7 @@
             </draw:SkiaLayout>
 
             <controls:ButtonToRoot />
-            
+
             <draw:SkiaLabel
                 Margin="50,0"
                 Padding="2"
