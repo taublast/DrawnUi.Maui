@@ -4,7 +4,7 @@
 ![NuGet Downloads](https://img.shields.io/nuget/dt/AppoMobi.Maui.DrawnUi.svg)
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. 
-Create and render your custom controls on a hardware-accelerated Skia canvas, with effects and animations.
+Create and render your custom controls on a hardware-accelerated Skia canvas with an improved common MAUI layout system.
 
 **IMPORTANT UPDATE**
 Reverted SkiaSharp from 2.88.9 to 2.88.9-preview.2.2 
@@ -76,16 +76,20 @@ ___Please star ⭐ if you like it, helps very much!___
 * Transforms
 	* TranslationX
 	* TranslationY
+	* TranslationZ (none-affine)
 	* ScaleX
 	* ScaleY
 	* Rotation
-	* RotationX
-	* RotationY
-	* CameraAngleZ
+	* RotationX (none-affine)
+	* RotationY (none-affine)
+	* RotationZ (none-affine)
 	* SkewX
 	* SkewY
 	* Perspective1
 	* Perspective2
+
+* Keyboard support for desktop platforms.
+  	* Not just accelerators, but full keyboard support, usage example inside __SpaceShooter__ game below. :)
 
 
 ## What's New
@@ -97,6 +101,7 @@ for SkiaSharp 2.88.9-preview.2.2
 * Templated layout measurement optimized.
 * HotFix for gestures crash on iOS when targeting ios lower than 18.
 * Nuget targets ios 17.
+ 
 
 ## About
 
@@ -160,6 +165,8 @@ Consume:
 As you can see in this example the Maui view `Canvas` will adapt its size to drawn content and should take 44x44 pts. `LockRatio="1"` tells the engine to take the highest calculated dimension and multiply it by 1, so even if we omitted `HeightRequest` it was set to 44.
 
 #### Code behind
+
+Can use basic [FluentExtensions](https://github.com/taublast/DrawnUi.Maui/blob/main/src/Engine/Internals/Extensions/FluentExtensions.cs) will be adding more
 
 ```csharp
             Canvas = new Canvas()
