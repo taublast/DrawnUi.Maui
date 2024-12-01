@@ -15,12 +15,13 @@ public abstract class StackLayoutStructure
 
     public virtual IEnumerable<SkiaControl> EnumerateViewsForMeasurement()
     {
+        bool standalone = false;
         SkiaControl template = null;
         IReadOnlyList<SkiaControl> views = null;
 
-        bool useOneTemplate = _layout.IsTemplated &&
-                              //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
-                              _layout.RecyclingTemplate == RecyclingTemplate.Enabled;
+        bool useOneTemplate = _layout.IsTemplated;
+        //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
+        //&& _layout.RecyclingTemplate == RecyclingTemplate.Enabled;
 
 
         if (_layout.IsTemplated)
@@ -28,6 +29,7 @@ public abstract class StackLayoutStructure
             //in the other case template will be null and views adapter will get us a fresh template
             if (useOneTemplate)
             {
+                standalone = true;
                 template = _layout.ChildrenFactory.GetTemplateInstance();
             }
             ChildrenCount = _layout.ChildrenFactory.GetChildrenCount();
@@ -58,7 +60,10 @@ public abstract class StackLayoutStructure
 
         if (useOneTemplate)
         {
-            _layout.ChildrenFactory.ReleaseView(template);
+            if (standalone)
+                _layout.ChildrenFactory.ReleaseTemplateInstance(template);
+            else
+                _layout.ChildrenFactory.ReleaseView(template);
         }
     }
 

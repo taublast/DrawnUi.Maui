@@ -90,20 +90,13 @@ ___Please star ⭐ if you like it, helps very much!___
 
 ## What's New
 
-### Nuget 1.2.9.7
+### Nuget 1.2.9.8
 for SkiaSharp 2.88.9-preview.2.2 
-* Added gestures delegate `OnGestures` to SkiaLayout.
-* HotFix for SkiaCarousel always setting index at 0 upon initialization.
-* HotFix for random crash accessing disposed LoadedImageSource.
-* [HotFix](https://github.com/taublast/DrawnUi.Maui/issues/136) for loading images from StreamImageSource
-* SkiaShape new Types: Polygon and Line. New property for their Points: Smooth (0-1) to smooth angles.
-* Shapes demo page inside SandBox project.
-* VisualElement Shadow property now supported everywhere as an optional addition to existing shadows. 
-* Removed SkiaImage clipping to better support shadows.
-* SkiaLabel new property AutoFont: Find and set system font where the first glyph in text is present. Useful for some quick unicode rendering like emoji etc.
-* Updated Getsures nuget for correct lock inside MAUI native ScrollView, use Getures="Lock" for Canvas.
-* Fixed controls sometimes not invalidated when canvas suface size changes
-* Other fixes.
+
+* DisposeObject optimized for background.
+* Templated layout measurement optimized.
+* HotFix for gestures crash on iOS when targeting ios lower than 18.
+* Nuget targets ios 17.
 
 ## About
 

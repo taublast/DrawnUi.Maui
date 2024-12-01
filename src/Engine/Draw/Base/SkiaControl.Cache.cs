@@ -397,12 +397,10 @@ public partial class SkiaControl
                 var kill = RenderObjectPrevious;
                 RenderObjectPrevious = null;
                 RenderObjectPreviousNeedsUpdate = false;
+
                 if (kill != null)
                 {
-                    Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
-                    {
-                        kill.Dispose();
-                    });
+                    DisposeObject(kill);
                 }
             }
 
@@ -725,10 +723,7 @@ public partial class SkiaControl
             }
             if (!UsesCacheDoubleBuffering && usingCacheType != SkiaCacheType.ImageComposite)
             {
-                Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
-                {
-                    oldObject.Dispose();
-                });
+                DisposeObject(oldObject);
             }
         }
 

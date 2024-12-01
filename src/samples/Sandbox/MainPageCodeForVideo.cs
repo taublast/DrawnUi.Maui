@@ -92,7 +92,7 @@ namespace Sandbox
 
                                     var shadow = c.Shadows[0];
                                     shadow.X = 0;
-                                    shadow.X = 0;
+                                    shadow.Y = 0;
 
                                     c.BackgroundColor = Colors.Blue;
 
@@ -109,7 +109,7 @@ namespace Sandbox
 
                                     var shadow = c.Shadows[0];
                                     shadow.X = 2;
-                                    shadow.X = 2;
+                                    shadow.Y = 2;
                                 }
 
                                 if (args.Type == TouchActionResult.Tapped)

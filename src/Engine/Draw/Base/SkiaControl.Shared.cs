@@ -2537,6 +2537,14 @@ namespace DrawnUi.Maui.Draw
             return (startPoint.x, startPoint.y, endPoint.x, endPoint.y);
         }
 
+        public static TimeSpan DisposalDelay = TimeSpan.FromSeconds(3.5);
+
+        public ObjectAliveType IsAlive { get; set; }
+
+        public void DisposeObject()
+        {
+            DisposeObject(this);
+        }
 
         /// <summary>
         /// Dispose with needed delay. 
@@ -2550,7 +2558,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     try
                     {
-                        view.ToBeDisposed.Enqueue(disposable);
+                        view.DisposeObject(disposable);
                     }
                     catch (Exception e)
                     {
@@ -2559,11 +2567,20 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                 {
-                    Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
+                    if (disposable is SkiaControl skia)
+                    {
+                        skia.IsAlive = ObjectAliveType.BeingDisposed;
+                    }
+
+                    Tasks.StartDelayed(DisposalDelay, () =>
                     {
                         try
                         {
                             disposable?.Dispose();
+                            if (disposable is SkiaControl skia)
+                            {
+                                skia.IsAlive = ObjectAliveType.Disposed;
+                            }
                         }
                         catch (Exception e)
                         {
@@ -4002,7 +4019,7 @@ namespace DrawnUi.Maui.Draw
             SizeChanged -= ViewSizeChanged;
 
             //for the double buffering case it's safer to delay
-            Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
+            Tasks.StartDelayed(DisposalDelay, () =>
             {
 
                 RenderObject = null;

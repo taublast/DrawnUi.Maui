@@ -305,13 +305,13 @@ namespace DrawnUi.Maui.Draw
 
                 var layoutStructure = BuildStackStructure(scale);
 
-                bool useOneTemplate =
-                                    IsTemplated &&
-                                       //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
-                                       RecyclingTemplate == RecyclingTemplate.Enabled;
+                bool standalone = false;
+                bool useOneTemplate = IsTemplated && ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
+                                      RecyclingTemplate != RecyclingTemplate.Disabled;
 
                 if (useOneTemplate)
                 {
+                    standalone = true;
                     template = ChildrenFactory.GetTemplateInstance();
                 }
 
@@ -327,6 +327,17 @@ namespace DrawnUi.Maui.Draw
                     var maxWidth = 0.0f;
 
                     var columnsCount = layoutStructure.GetColumnCountForRow(row);
+
+                    var needMeasureAll = true;
+                    if (useOneTemplate)
+                    {
+                        needMeasureAll = RecyclingTemplate == RecyclingTemplate.Disabled ||
+                                         ItemSizingStrategy == ItemSizingStrategy.MeasureAllItems ||
+                                         (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem
+                                          && columnsCount != Split)
+                                         || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem
+                                              && firstCell != null);
+                    }
 
                     if (!DynamicColumns && columnsCount < Split)
                     {
@@ -518,7 +529,19 @@ namespace DrawnUi.Maui.Draw
 
                 if (useOneTemplate)
                 {
-                    ChildrenFactory.ReleaseView(template);
+                    if (standalone)
+                        ChildrenFactory.ReleaseTemplateInstance(template);
+                    else
+                        ChildrenFactory.ReleaseView(template);
+                }
+
+                if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
+                {
+                    stackWidth = rectForChildrenPixels.Width;
+                }
+                if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
+                {
+                    stackHeight = rectForChildrenPixels.Height;
                 }
 
                 return ScaledSize.FromPixels(stackWidth, stackHeight, scale);

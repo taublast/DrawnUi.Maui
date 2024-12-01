@@ -74,12 +74,9 @@ public partial class SkiaShell
                     await _shell.UnfreezeRootLayout(control, animated);
                 }
 
-                control.SetParent(null);
+                control?.DisposeObject();
+                control?.SetParent(null);
 
-                Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
-                {
-                    control?.Dispose();
-                });
             }
             catch (Exception e)
             {
