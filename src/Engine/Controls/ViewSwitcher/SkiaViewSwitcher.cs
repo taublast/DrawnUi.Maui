@@ -824,42 +824,42 @@ namespace DrawnUi.Maui.Controls
             switch (doubleViewTransitionType)
             {
                 case DoubleViewTransitionType.Pop:
-                //from left to right
-                break;
+                    //from left to right
+                    break;
 
                 case DoubleViewTransitionType.Push:
-                previousVisibleView.ZIndex = -1;
-                newVisibleView.ZIndex = 0;
+                    previousVisibleView.ZIndex = -1;
+                    newVisibleView.ZIndex = 0;
 
-                //from right to left
-                translateTo = this.Width;
-                newVisibleView.Opacity = 0.001;
-                newVisibleView.TranslationX = (float)translateTo;
-                break;
+                    //from right to left
+                    translateTo = this.Width;
+                    newVisibleView.Opacity = 0.001;
+                    newVisibleView.TranslationX = (float)translateTo;
+                    break;
 
                 case DoubleViewTransitionType.SelectRightTab:
-                translateTo = this.Width;
+                    translateTo = this.Width;
 
-                newVisibleView.ZIndex = 1;
-                previousVisibleView.ZIndex = 0;
-                newVisibleView.Opacity = 0.001;
-                newVisibleView.TranslationX = (float)translateTo * 0.75;
-                break;
+                    newVisibleView.ZIndex = 1;
+                    previousVisibleView.ZIndex = 0;
+                    newVisibleView.Opacity = 0.001;
+                    newVisibleView.TranslationX = (float)translateTo * 0.75;
+                    break;
 
                 case DoubleViewTransitionType.SelectLeftTab:
-                translateTo = -this.Width;
+                    translateTo = -this.Width;
 
-                newVisibleView.ZIndex = 1;
-                previousVisibleView.ZIndex = 0;
-                newVisibleView.Opacity = 0.001;
-                newVisibleView.TranslationX = (float)translateTo * 0.75;
-                break;
+                    newVisibleView.ZIndex = 1;
+                    previousVisibleView.ZIndex = 0;
+                    newVisibleView.Opacity = 0.001;
+                    newVisibleView.TranslationX = (float)translateTo * 0.75;
+                    break;
 
                 default:
-                newVisibleView.TranslationX = 0;
-                newVisibleView.TranslationY = 0;
-                newVisibleView.Opacity = 1;
-                break;
+                    newVisibleView.TranslationX = 0;
+                    newVisibleView.TranslationY = 0;
+                    newVisibleView.Opacity = 1;
+                    break;
             }
         }
 
@@ -875,79 +875,79 @@ namespace DrawnUi.Maui.Controls
             switch (doubleViewTransitionType)
             {
                 case DoubleViewTransitionType.Pop:
-                //from left to right
-                easing = PagesAnimationEasing;
-                speed = PagesAnimationSpeed;
-                Task animateOld1 = previousVisibleView.TranslateToAsync(translateTo, 0, speed, easing);
-                Task animateOld2 = previousVisibleView.FadeToAsync(0.9, speed, easing);
+                    //from left to right
+                    easing = PagesAnimationEasing;
+                    speed = PagesAnimationSpeed;
+                    Task animateOld1 = previousVisibleView.TranslateToAsync(translateTo, 0, speed, easing);
+                    Task animateOld2 = previousVisibleView.FadeToAsync(0.9, speed, easing);
 
-                try
-                {
-                    var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                    await Task.WhenAll(animateOld1, animateOld2).WithCancellation(cancelAnimation.Token);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-                break;
+                    try
+                    {
+                        var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                        await Task.WhenAll(animateOld1, animateOld2).WithCancellation(cancelAnimation.Token);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                    }
+                    break;
 
                 case DoubleViewTransitionType.Push:
-                easing = PagesAnimationEasing;
-                speed = PagesAnimationSpeed;
-                //from right to left
-                Task in1 = newVisibleView.TranslateToAsync(0, 0, speed, easing);
-                Task in2 = newVisibleView.FadeToAsync(1.0, speed, easing);
-                try
-                {
-                    var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                    await Task.WhenAll(in1, in2).WithCancellation(cancelAnimation.Token).WithCancellation(cancelAnimation.Token);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-                break;
+                    easing = PagesAnimationEasing;
+                    speed = PagesAnimationSpeed;
+                    //from right to left
+                    Task in1 = newVisibleView.TranslateToAsync(0, 0, speed, easing);
+                    Task in2 = newVisibleView.FadeToAsync(1.0, speed, easing);
+                    try
+                    {
+                        var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                        await Task.WhenAll(in1, in2).WithCancellation(cancelAnimation.Token).WithCancellation(cancelAnimation.Token);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                    }
+                    break;
 
                 case DoubleViewTransitionType.SelectLeftTab:
-                translateTo = -this.Width;
+                    translateTo = -this.Width;
 
-                Task animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
-                Task animateNewM = newVisibleView.TranslateToAsync(0, 0, (uint)speed, easing);
-                Task animateNewM1 = newVisibleView.FadeToAsync(1.0, (uint)speed, Easing.Linear);
+                    Task animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
+                    Task animateNewM = newVisibleView.TranslateToAsync(0, 0, (uint)speed, easing);
+                    Task animateNewM1 = newVisibleView.FadeToAsync(1.0, (uint)speed, Easing.Linear);
 
-                try
-                {
-                    var cancelAnimation =
-                        new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                    try
+                    {
+                        var cancelAnimation =
+                            new CancellationTokenSource(TimeSpan.FromSeconds(2));
 
-                    await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-                break;
+                        await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                    }
+                    break;
 
                 case DoubleViewTransitionType.SelectRightTab:
-                translateTo = this.Width;
+                    translateTo = this.Width;
 
-                animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
-                animateNewM = newVisibleView.TranslateToAsync(0, 0, (uint)speed, easing);
-                animateNewM1 = newVisibleView.FadeToAsync(1.0, (uint)speed, Easing.Linear);
+                    animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
+                    animateNewM = newVisibleView.TranslateToAsync(0, 0, (uint)speed, easing);
+                    animateNewM1 = newVisibleView.FadeToAsync(1.0, (uint)speed, Easing.Linear);
 
-                try
-                {
-                    var cancelAnimation =
-                        new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                    try
+                    {
+                        var cancelAnimation =
+                            new CancellationTokenSource(TimeSpan.FromSeconds(2));
 
-                    await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-                break;
+                        await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                    }
+                    break;
 
             }
         }
@@ -1198,7 +1198,7 @@ namespace DrawnUi.Maui.Controls
                 SendOnDisappearing(view.View);
                 if (!view.Preserve && view.View is IDisposable disposable)
                 {
-                    disposable.Dispose();
+                    DisposeObject(disposable);
                 }
             }
             else

@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 
 namespace DrawnUi.Maui.Draw;
-
 /// <summary>
 /// Top level class for working with ItemTemplates. Holds visible views.
 /// </summary>
 public class ViewsAdapter : IDisposable
 {
     public static bool LogEnabled = false;
-
+    public bool IsDisposed;
     private readonly SkiaLayout _parent;
 
     public ViewsAdapter(SkiaLayout parent)
@@ -19,6 +18,8 @@ public class ViewsAdapter : IDisposable
     public void Dispose()
     {
         DisposeViews();
+
+        IsDisposed = true;
     }
 
     object lockVisible = new();
@@ -27,6 +28,9 @@ public class ViewsAdapter : IDisposable
     {
         lock (lockVisible)
         {
+            if (IsDisposed)
+                return;
+
             foreach (var view in _dicoCellsInUse.Values.ToList())
             {
                 view.InvalidateInternal();
@@ -39,6 +43,9 @@ public class ViewsAdapter : IDisposable
     {
         lock (lockVisible)
         {
+            if (IsDisposed)
+                return;
+
             foreach (var view in _dicoCellsInUse.Values)
             {
                 view.Dispose();
@@ -49,6 +56,9 @@ public class ViewsAdapter : IDisposable
 
     protected void DisposeViews()
     {
+        if (IsDisposed)
+            return;
+
         _templatedViewsPool?.Dispose();
         DisposeVisibleViews();
     }
@@ -76,6 +86,9 @@ public class ViewsAdapter : IDisposable
     {
         lock (lockVisible)
         {
+            if (IsDisposed)
+                return;
+
             if (_parent.IsTemplated && _parent.RecyclingTemplate == RecyclingTemplate.Enabled)
             {
                 if (_dicoCellsInUse.ContainsKey(index))
@@ -104,6 +117,9 @@ public class ViewsAdapter : IDisposable
         //todo check how it behaves when sources changes
         //lock (_lockTemplates)
         {
+            if (IsDisposed)
+                return;
+
             view.Parent = _parent;
             if (index == 0 || view.ContextIndex != index)
             //if (view.BindingContext == null || _parent.RecyclingTemplate == RecyclingTemplate.Enabled)
@@ -138,6 +154,9 @@ public class ViewsAdapter : IDisposable
     /// <param name="oversize"></param>
     public void AddMoreToPool(int oversize)
     {
+        if (IsDisposed)
+            return;
+
         if (_templatedViewsPool != null && AddedMore < oversize)
         {
             var add = oversize - AddedMore;
@@ -160,6 +179,10 @@ public class ViewsAdapter : IDisposable
     /// <param name="size"></param>
     public void FillPool(int size, IList context)
     {
+        if (IsDisposed)
+            return;
+
+
         FillPool(size);
 
         if (context == null)
@@ -177,6 +200,9 @@ public class ViewsAdapter : IDisposable
     /// <param name="size"></param>
     public void FillPool(int size)
     {
+        if (IsDisposed)
+            return;
+
         if (size > 0)
         {
             while (_templatedViewsPool.Size < size && _templatedViewsPool.Size < _templatedViewsPool.MaxSize)
@@ -193,6 +219,9 @@ public class ViewsAdapter : IDisposable
 
     public SkiaControl GetChildAt(int index, SkiaControl template = null)
     {
+        if (IsDisposed)
+            return null;
+
         if (index >= 0)
         {
             //lock (lockVisible)
@@ -200,26 +229,26 @@ public class ViewsAdapter : IDisposable
                 if (_parent.IsTemplated)
                 {
 
-                    if (_dicoCellsInUse.TryGetValue(index, out SkiaControl ready))
+                    if (template == null && _dicoCellsInUse.TryGetValue(index, out SkiaControl ready))
                     {
                         if (LogEnabled)
                         {
                             Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} returned a ready view {ready.Uid}");
                         }
 
-                        //#if DEBUG
-                        //                        try
-                        //                        {
-                        //                            if (!object.Equals(_dataContexts[index], ready.BindingContext))
-                        //                            {
-                        //                                Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} ready view has different context!");
-                        //                            }
-                        //                        }
-                        //                        catch (Exception e)
-                        //                        {
-                        //                            Trace.WriteLine(e);
-                        //                        }
-                        //#endif
+#if DEBUG
+                        //try
+                        //{
+                        //    if (!object.Equals(_dataContexts[index], ready.BindingContext))
+                        //    {
+                        //        Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} ready view has different context!");
+                        //    }
+                        //}
+                        //catch (Exception e)
+                        //{
+                        //    Trace.WriteLine(e);
+                        //}
+#endif
 
                         AttachView(ready, index);
                         return ready;
@@ -231,6 +260,20 @@ public class ViewsAdapter : IDisposable
                     {
                         return null;
                     }
+
+#if DEBUG
+                    //try
+                    //{
+                    //    if (!object.Equals(_dataContexts[index], view.BindingContext))
+                    //    {
+                    //        Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} ready view has different context!");
+                    //    }
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    Trace.WriteLine(e);
+                    //}
+#endif
 
                     AttachView(view, index);
 
@@ -251,7 +294,6 @@ public class ViewsAdapter : IDisposable
                     }
 
                     return view;
-
                 }
                 else
                 {
@@ -269,6 +311,10 @@ public class ViewsAdapter : IDisposable
 
     public int GetChildrenCount()
     {
+        if (IsDisposed)
+            return 0;
+
+
         if (!_parent.IsTemplated)
         {
             var children = _parent.GetUnorderedSubviews();
@@ -335,6 +381,7 @@ public class ViewsAdapter : IDisposable
     private float _forScale;
     private int _forSplit;
 
+
     /// <summary>
     /// Main method to initialize templates, can use InitializeTemplatesInBackground as an option. 
     /// </summary>
@@ -344,6 +391,10 @@ public class ViewsAdapter : IDisposable
     /// <param name="reserve">Pre-create number of views to avoid lag spikes later, useful to do in backgound.</param>
     public void InitializeTemplates(Func<object> template, IList dataContexts, int poolSize, int reserve = 0)
     {
+        if (IsDisposed || _parent != null && _parent.IsDisposing)
+            return;
+
+
         {
             //Debug.WriteLine("[CELLS] InitializeTemplates");
             if (template == null)
@@ -357,42 +408,42 @@ public class ViewsAdapter : IDisposable
             {
                 lock (_lockTemplates)
                 {
-                    //lock (_parent.LockMeasure) was needed testing two-threaded rendering
+                    TemplesInvalidating = false;
+
+                    var kill = _templatedViewsPool;
+
+                    _dicoCellsInUse.Clear();
+                    _templatedViewsPool = new TemplatedViewsPool(template, poolSize, (k) =>
                     {
-                        TemplesInvalidating = false;
+                        _parent?.DisposeObject(k);
+                    });
 
-                        var kill = _templatedViewsPool;
+                    FillPool(reserve, dataContexts);
 
-                        _dicoCellsInUse.Clear();
-                        _templatedViewsPool = new TemplatedViewsPool(template, poolSize);
+                    if (kill != null)
+                    {
+                        kill.IsDisposing = true;
 
-                        FillPool(reserve, dataContexts);
-
-                        if (kill != null)
-                        {
-                            //we need a delay here for several threads access, if previous cells are still being drawn. not elegant but.. remains in global todo to find a better way.
-                            Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
-                            {
-                                kill?.Dispose();
-                            });
-                        }
-
-                        if (measure)
-                        {
-                            //Debug.WriteLine($"Measuring upon InitializeFull for {_parent.Tag} for H: {_parent._lastMeasuredForHeight}");
-                            //_parent.MeasureLayout(new(_parent._lastMeasuredForWidth, _parent._lastMeasuredForHeight, _parent.RenderingScale), true);
-                            //_parent.Update();
-                            _parent.Invalidate();
-                        }
-
-                        TemplatesAvailable();
+                        _parent?.DisposeObject(kill);
                     }
 
                     Monitor.PulseAll(_lockTemplates);
-
                 }
 
+                if (measure)
+                {
+                    TemplatesBusy = true;
 
+                    while (_parent.IsMeasuring)
+                    {
+                        await Task.Delay(10);
+                    }
+                    _dataContexts = dataContexts;
+                    TemplatesInvalidated = false; //enable TemplatesAvailable otherwise beackground measure will fail
+                    _parent.MeasureLayout(new(_parent._lastMeasuredForWidth, _parent._lastMeasuredForHeight, _parent.RenderingScale), true);
+                }
+
+                TemplatesAvailable();
             }
 
             void InitializeSoft(bool layoutChanged)
@@ -449,12 +500,6 @@ public class ViewsAdapter : IDisposable
                     AddedMore = 0;
                 }
 
-                if (dataContexts.Count == 0)
-                {
-                    TemplatesAvailable();
-                    return;
-                }
-
                 if (_parent.InitializeTemplatesInBackgroundDelay > 0)
                 {
                     //postpone initialization to be executed in background
@@ -467,7 +512,7 @@ public class ViewsAdapter : IDisposable
 
                             try
                             {
-                                await InitializeFull(_parent.RecyclingTemplate == RecyclingTemplate.Disabled || _parent.NeedAutoSize);
+                                await InitializeFull(_parent.RecyclingTemplate == RecyclingTemplate.Disabled);
                             }
                             catch (Exception e)
                             {
@@ -479,7 +524,7 @@ public class ViewsAdapter : IDisposable
                 }
                 else
                 {
-                    InitializeFull(false).ConfigureAwait(false);
+                    InitializeFull(false);//.ConfigureAwait(false);
                 }
             }
             else
@@ -492,7 +537,6 @@ public class ViewsAdapter : IDisposable
 
     public void ContextCollectionChanged(Func<object> template, IList dataContexts, int poolSize, int reserve = 0)
     {
-        //todo change this!!!
         //if (_templatedViewsPool == null)
         {
             InitializeTemplates(template, dataContexts, poolSize, reserve);
@@ -503,7 +547,7 @@ public class ViewsAdapter : IDisposable
 
         lock (lockVisible)
         {
-            foreach (var view in _dicoCellsInUse.Values)
+            foreach (var view in _dicoCellsInUse.Values.ToList())
             {
                 view.InvalidateChildrenTree();
             }
@@ -591,6 +635,7 @@ public class ViewsAdapter : IDisposable
 
     public SkiaControl GetViewAtIndex(int index, SkiaControl template = null)
     {
+
         //lock (_lockTemplates) //to avoid getting same view for different indexes
         {
 
@@ -638,6 +683,9 @@ public class ViewsAdapter : IDisposable
 
     public void ReleaseView(SkiaControl viewModel, bool reset = false)
     {
+        if (viewModel == null)
+            return;
+
         //lock (_lockTemplates)
         {
             if (reset)
@@ -658,46 +706,66 @@ public class ViewsAdapter : IDisposable
                 throw new InvalidOperationException("Templates have not been initialized.");
             }
 
-            SkiaControl viewModel = _templatedViewsPool.Get();
-
+            SkiaControl viewModel = _templatedViewsPool.GetStandalone();// .Get();
             return viewModel;
+        }
+    }
+    public void ReleaseTemplateInstance(SkiaControl viewModel, bool reset = false)
+    {
+        if (viewModel == null)
+            return;
+
+        //lock (_lockTemplates)
+        {
+            if (reset)
+            {
+                viewModel.SetParent(null);
+                //viewModel.BindingContext = null;
+            }
+            _templatedViewsPool.ReturnStandalone(viewModel);
         }
     }
 
 
-    /// <summary>
-    /// Used by ViewsProvider
-    /// </summary>
-    public class TemplatedViewsPool : IDisposable
+}
+
+/// <summary>
+/// Used by ViewsProvider
+/// </summary>
+public class TemplatedViewsPool : IDisposable
+{
+    private readonly Stack<SkiaControl> _pool;
+    public Func<object> CreateTemplate { get; protected set; }
+    public int MaxSize { get; set; }
+    private readonly object _syncLock = new object();
+    public bool _disposed = false;
+
+    public bool IsDisposing;
+
+    public void Dispose()
     {
-        private readonly Stack<SkiaControl> _pool;
-        public Func<object> CreateTemplate { get; protected set; }
-        public int MaxSize { get; set; }
-        private readonly object _syncLock = new object();
-        private bool _disposed = false;
+        IsDisposing = true;
 
-        public void Dispose()
-        {
-            Dispose(true);
-            //GC.SuppressFinalize(this);
-        }
+        Dispose(true);
+        //GC.SuppressFinalize(this);
+    }
 
-        protected virtual void Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
+    {
+        lock (_syncLock)
         {
+            IsDisposing = true;
+
             if (!_disposed)
             {
                 if (disposing)
                 {
-                    foreach (var viewModel in _pool)
+                    foreach (var control in _pool)
                     {
-                        if (viewModel != null)
+                        if (control != null)
                         {
-                            viewModel.ContextIndex = -1;
-                            viewModel.BindingContext = null;
-                            if (viewModel is IDisposable disposableViewModel)
-                            {
-                                disposableViewModel.Dispose();
-                            }
+                            control.ContextIndex = -1;
+                            control.Dispose();
                         }
                     }
                 }
@@ -705,268 +773,329 @@ public class ViewsAdapter : IDisposable
                 _disposed = true;
             }
         }
+    }
 
-        public TemplatedViewsPool(Func<object> initialViewModel, int maxSize)
-        {
-            CreateTemplate = initialViewModel;
-            MaxSize = maxSize;
-            _pool = new();
-        }
+    public TemplatedViewsPool(Func<object> initialViewModel, int maxSize, Action<IDisposable> dispose)
+    {
+        CreateTemplate = initialViewModel;
+        MaxSize = maxSize;
+        _pool = new();
+        _dispose = dispose;
+    }
 
-        public int Size
+    public int Size
+    {
+        get
         {
-            get
+            lock (_syncLock)
             {
-                //lock (_syncLock)
-                {
-                    return _pool.Count;
-                }
+                return _pool.Count;
             }
         }
+    }
 
-        /// <summary>
-        /// unsafe
-        /// </summary>
-        /// <returns></returns>
-        SkiaControl CreateFromTemplate()
+    /// <summary>
+    /// unsafe
+    /// </summary>
+    /// <returns></returns>
+    SkiaControl CreateFromTemplate()
+    {
+        if (IsDisposing)
+            return null;
+
+        var create = CreateTemplate();
+
+        if (ViewsAdapter.LogEnabled)
+            Trace.WriteLine($"[ViewsAdapter] created new view !");
+
+        if (create is SkiaControl element)
         {
-            var create = CreateTemplate();
-
-            if (LogEnabled)
-                Trace.WriteLine($"[ViewsAdapter] created new view !");
-
-            if (create is SkiaControl element)
-            {
-                return element;
-            }
-            return (SkiaControl)create;
+            return element;
         }
+        return (SkiaControl)create;
+    }
 
-        /// <summary>
-        /// Just create template and save for the future
-        /// </summary>
-        public void Reserve()
+    /// <summary>
+    /// Just create template and save for the future
+    /// </summary>
+    public void Reserve()
+    {
+        //lock (_syncLock)
         {
-            //lock (_syncLock)
+            if (IsDisposing)
+                return;
+
+
+            if (_pool.Count < MaxSize)
             {
-                if (_pool.Count < MaxSize)
-                {
-                    try
-                    {
-                        _pool.Push(CreateFromTemplate());
-                    }
-                    catch (Exception e)
-                    {
-                        Trace.WriteLine(e);
-                        throw;
-                    }
-                }
-            }
-
-        }
-
-        public SkiaControl Get()
-        {
-            //lock (_syncLock)
-            {
-                SkiaControl viewModel = null;
-
                 try
                 {
-                    if (_pool.Count > 0)
-                        viewModel = _pool.Pop();
-                    if (viewModel != null)
-                    {
-                        return viewModel;
-                    }
-
-                    if (_pool.Count < MaxSize)
-                    {
-                        return CreateFromTemplate();
-                    }
-
-                    // Wait and try again if the pool is full
-                    viewModel = _pool.Pop();
-                    while (viewModel != null)
-                    {
-                        System.Threading.Thread.Sleep(10); //todo add cancellation
-                        viewModel = _pool.Pop();
-                    }
+                    _pool.Push(CreateFromTemplate());
                 }
                 catch (Exception e)
                 {
-                    Super.Log(e);
-                    throw e;
+                    Trace.WriteLine(e);
+                    throw;
                 }
-
-
-
-                return viewModel;
             }
-
-
         }
 
+    }
 
-        public void Return(SkiaControl viewModel)
+    public SkiaControl GetStandalone()
+    {
+        lock (_syncLock)
         {
-            //lock (_syncLock)
+            if (IsDisposing)
+                return null;
+
+
+            if (_standalone != null && _standalone.IsDisposing)
             {
-                _pool.Push(viewModel);
+                _standalone = null;
+            }
+
+            var ret = _standalone;
+            if (ret == null)
+            {
+                ret = CreateFromTemplate();
+            }
+            return ret;
+        }
+    }
+
+    public void ReturnStandalone(SkiaControl ret)
+    {
+        lock (_syncLock)
+        {
+            if (IsDisposing)
+                return;
+
+            if (_standalone != null)
+            {
+                var kill = _standalone;
+                _standalone = null;
+
+                _dispose?.Invoke(kill);
+            }
+            if (_standalone == null)
+            {
+                _standalone = ret;
             }
         }
     }
 
+    private SkiaControl _standalone;
+    private readonly Action<IDisposable> _dispose;
 
-    /// <summary>
-    /// To iterate over virtual views
-    /// </summary>
-    public class ViewsIterator : IEnumerable<SkiaControl>, IDisposable
+    public SkiaControl Get()
     {
-        private TemplatedViewsPool _templatedViewsPool;
-        private IList _dataContexts;
-        private IEnumerable<SkiaControl> _views;
-        private DataContextIterator _iterator;
-
-        public bool IsTemplated { get; }
-
-        public TemplatedViewsPool TemplatedViewsPool => _templatedViewsPool;
-        public IList DataContexts => _dataContexts;
-        public IEnumerable<SkiaControl> Views => _views;
-
-        public ViewsIterator(TemplatedViewsPool templatedViewsPool, IList dataContexts)
+        //lock (_syncLock)
         {
-            _templatedViewsPool = templatedViewsPool;
-            _dataContexts = dataContexts;
-            IsTemplated = true;
-        }
+            if (IsDisposing)
+                return null;
 
-        public void SetViews(IEnumerable<SkiaControl> views)
-        {
-            _views = views;
-        }
 
-        public ViewsIterator(IEnumerable<SkiaControl> views)
-        {
-            _views = views;
-            IsTemplated = false;
-        }
+            SkiaControl viewModel = null;
 
-        public IEnumerator<SkiaControl> GetEnumerator()
-        {
-            _iterator = new DataContextIterator(this);
-            return _iterator;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public void Dispose()
-        {
-            if (_iterator != null)
+            try
             {
-                _iterator.Dispose();
-                _iterator = null;
+                if (_pool.Count > 0)
+                    viewModel = _pool.Pop();
+                if (viewModel != null)
+                {
+                    return viewModel;
+                }
+
+                if (_pool.Count < MaxSize)
+                {
+                    return CreateFromTemplate();
+                }
+
+                // Wait and try again if the pool is full
+                viewModel = _pool.Pop();
+                while (viewModel != null)
+                {
+                    System.Threading.Thread.Sleep(10); //todo add cancellation
+                    viewModel = _pool.Pop();
+                }
             }
+            catch (Exception e)
+            {
+                Super.Log(e);
+                throw e;
+            }
+
+
+
+            return viewModel;
         }
+
+
     }
 
 
-    public class DataContextIterator : IEnumerator<SkiaControl>
+    public void Return(SkiaControl viewModel)
     {
-        private readonly ViewsIterator _viewsProvider;
-        private int _currentIndex;
-        private SkiaControl _currentViewModel;
-        private IEnumerator<SkiaControl> _viewEnumerator;
-
-        //added this to use more that 1 view at a time
-        private readonly Queue<SkiaControl> _viewsInUse;
-
-        public DataContextIterator(ViewsIterator viewsProvider)
+        //lock (_syncLock)
         {
-            _viewsProvider = viewsProvider;
-            _currentIndex = -1;
-            _viewsInUse = new Queue<SkiaControl>();
+            if (IsDisposing)
+                return;
 
-            if (!_viewsProvider.IsTemplated)
+
+            _pool.Push(viewModel);
+        }
+    }
+}
+
+
+/// <summary>
+/// To iterate over virtual views
+/// </summary>
+public class ViewsIterator : IEnumerable<SkiaControl>, IDisposable
+{
+    private TemplatedViewsPool _templatedViewsPool;
+    private IList _dataContexts;
+    private IEnumerable<SkiaControl> _views;
+    private DataContextIterator _iterator;
+
+    public bool IsTemplated { get; }
+
+    public TemplatedViewsPool TemplatedViewsPool => _templatedViewsPool;
+    public IList DataContexts => _dataContexts;
+    public IEnumerable<SkiaControl> Views => _views;
+
+    public ViewsIterator(TemplatedViewsPool templatedViewsPool, IList dataContexts)
+    {
+        _templatedViewsPool = templatedViewsPool;
+        _dataContexts = dataContexts;
+        IsTemplated = true;
+    }
+
+    public void SetViews(IEnumerable<SkiaControl> views)
+    {
+        _views = views;
+    }
+
+    public ViewsIterator(IEnumerable<SkiaControl> views)
+    {
+        _views = views;
+        IsTemplated = false;
+    }
+
+    public IEnumerator<SkiaControl> GetEnumerator()
+    {
+        _iterator = new DataContextIterator(this);
+        return _iterator;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+    public void Dispose()
+    {
+        if (_iterator != null)
+        {
+            _iterator.Dispose();
+            _iterator = null;
+        }
+    }
+}
+
+
+public class DataContextIterator : IEnumerator<SkiaControl>
+{
+    private readonly ViewsIterator _viewsProvider;
+    private int _currentIndex;
+    private SkiaControl _currentViewModel;
+    private IEnumerator<SkiaControl> _viewEnumerator;
+
+    //added this to use more that 1 view at a time
+    private readonly Queue<SkiaControl> _viewsInUse;
+
+    public DataContextIterator(ViewsIterator viewsProvider)
+    {
+        _viewsProvider = viewsProvider;
+        _currentIndex = -1;
+        _viewsInUse = new Queue<SkiaControl>();
+
+        if (!_viewsProvider.IsTemplated)
+        {
+            _viewEnumerator = _viewsProvider.Views.GetEnumerator();
+        }
+    }
+
+    public SkiaControl Current => _currentViewModel;
+
+    object IEnumerator.Current => Current;
+
+    public bool MoveNext()
+    {
+        if (_viewsProvider.IsTemplated)
+        {
+
+            // Dequeue and return the oldest view if we're at capacity.
+            if (_viewsInUse.Count >= _viewsProvider.TemplatedViewsPool.MaxSize)
             {
-                _viewEnumerator = _viewsProvider.Views.GetEnumerator();
+                var oldestView = _viewsInUse.Dequeue();
+
+                _viewsProvider.TemplatedViewsPool.Return(oldestView);
             }
+
+            _currentIndex++;
+
+            if (_currentIndex < _viewsProvider.DataContexts.Count)
+            {
+                _currentViewModel = _viewsProvider.TemplatedViewsPool.Get();
+
+                _viewsInUse.Enqueue(_currentViewModel);  // Keep track of the views in use.
+
+                _currentViewModel.ContextIndex = _currentIndex;
+                _currentViewModel.BindingContext = _viewsProvider.DataContexts[_currentIndex];
+                return true;
+            }
+
+
+
+
+            return false;
         }
 
-        public SkiaControl Current => _currentViewModel;
-
-        object IEnumerator.Current => Current;
-
-        public bool MoveNext()
+        bool hasMore = _viewEnumerator.MoveNext();
+        if (hasMore)
         {
-            if (_viewsProvider.IsTemplated)
-            {
-
-                // Dequeue and return the oldest view if we're at capacity.
-                if (_viewsInUse.Count >= _viewsProvider.TemplatedViewsPool.MaxSize)
-                {
-                    var oldestView = _viewsInUse.Dequeue();
-
-                    _viewsProvider.TemplatedViewsPool.Return(oldestView);
-                }
-
-                _currentIndex++;
-
-                if (_currentIndex < _viewsProvider.DataContexts.Count)
-                {
-                    _currentViewModel = _viewsProvider.TemplatedViewsPool.Get();
-
-                    _viewsInUse.Enqueue(_currentViewModel);  // Keep track of the views in use.
-
-                    _currentViewModel.ContextIndex = _currentIndex;
-                    _currentViewModel.BindingContext = _viewsProvider.DataContexts[_currentIndex];
-                    return true;
-                }
-
-
-
-
-                return false;
-            }
-
-            bool hasMore = _viewEnumerator.MoveNext();
-            if (hasMore)
-            {
-                _currentViewModel = _viewEnumerator.Current;
-            }
-            return hasMore;
-
+            _currentViewModel = _viewEnumerator.Current;
         }
+        return hasMore;
 
-        public void Reset()
+    }
+
+    public void Reset()
+    {
+        if (_viewsProvider.IsTemplated)
         {
-            if (_viewsProvider.IsTemplated)
-            {
-                if (_currentIndex >= 0 && _currentIndex < _viewsProvider.DataContexts.Count)
-                {
-                    _viewsProvider.TemplatedViewsPool.Return(_currentViewModel);
-                }
-
-                _currentIndex = -1;
-            }
-            else
-            {
-                _viewEnumerator.Reset();
-            }
-        }
-
-        public void Dispose()
-        {
-            if (_viewsProvider.IsTemplated && _currentIndex >= 0 && _currentIndex < _viewsProvider.DataContexts.Count)
+            if (_currentIndex >= 0 && _currentIndex < _viewsProvider.DataContexts.Count)
             {
                 _viewsProvider.TemplatedViewsPool.Return(_currentViewModel);
             }
+
+            _currentIndex = -1;
+        }
+        else
+        {
+            _viewEnumerator.Reset();
         }
     }
 
-
+    public void Dispose()
+    {
+        if (_viewsProvider.IsTemplated && _currentIndex >= 0 && _currentIndex < _viewsProvider.DataContexts.Count)
+        {
+            _viewsProvider.TemplatedViewsPool.Return(_currentViewModel);
+        }
+    }
 }
+
 

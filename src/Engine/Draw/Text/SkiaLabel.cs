@@ -84,7 +84,7 @@ namespace DrawnUi.Maui.Draw
                         bo.PropertyChanged -= OnItemPropertyChanged;
                         if (newItems == null || newItems != null && !newItems.Contains(bo))
                         {
-                            bo.Dispose();
+                            DisposeObject(bo);
                         }
                     }
                 }
@@ -621,7 +621,7 @@ namespace DrawnUi.Maui.Draw
                     _spans.CollectionChanged -= OnCollectionChanged;
                     foreach (var span in _spans)
                     {
-                        span.Dispose();
+                        DisposeObject(span);
                     }
                     _spans.Clear();
                 }

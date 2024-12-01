@@ -1,6 +1,4 @@
 ﻿using DrawnUi.Maui.Features.Images;
-using System.Collections.Concurrent;
-using System.Text;
 
 namespace DrawnUi.Maui.Controls;
 
@@ -163,7 +161,7 @@ public class SkiaGif : AnimatedFramesRenderer
                 Start();
 
             if (kill != null && disposePrevious)
-                Tasks.StartDelayed(TimeSpan.FromSeconds(2), () => { kill.Dispose(); });
+                DisposeObject(kill);
 
             Invalidate();
 

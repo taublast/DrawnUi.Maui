@@ -349,10 +349,23 @@ public class Canvas : DrawnView, IGestureListener
 
     #endregion
 
+    protected override void OnHandlerChanged()
+    {
+        base.OnHandlerChanged();
+
+        if (Handler!=null)
+        {
+            OnGesturesAttachChanged();
+        }
+    }
+
     #region GESTURES
 
     protected virtual void OnGesturesAttachChanged()
     {
+        if (Handler==null)
+            return;
+
         if (this.Gestures == GesturesMode.Disabled)
         {
             TouchEffect.SetForceAttach(this, false);

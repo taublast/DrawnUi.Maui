@@ -686,6 +686,7 @@ namespace DrawnUi.Maui.Draw
                 var maxHeight = 0.0f;
                 var maxWidth = 0.0f;
 
+                bool standalone = false;
                 if (!ChildrenFactory.TemplatesAvailable)
                 {
                     return ScaledSize.CreateEmpty(scale);
@@ -694,6 +695,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     if (this.ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem)
                     {
+                        standalone = true;
                         var template = ChildrenFactory.GetTemplateInstance();
 
                         var child = ChildrenFactory.GetChildAt(0, template);
@@ -716,7 +718,10 @@ namespace DrawnUi.Maui.Draw
                                 maxHeight = measured.Pixels.Height;
                         }
 
-                        ChildrenFactory.ReleaseView(template);
+                        if (standalone)
+                            ChildrenFactory.ReleaseTemplateInstance(template);
+                        else
+                            ChildrenFactory.ReleaseView(template);
                     }
                     else
                     if (this.ItemSizingStrategy == ItemSizingStrategy.MeasureAllItems

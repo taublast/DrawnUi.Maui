@@ -1,7 +1,7 @@
-﻿using AppoMobi.Maui.Navigation;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using AppoMobi.Maui.Navigation;
 
 namespace DrawnUi.Maui.Controls
 {
@@ -1020,10 +1020,7 @@ namespace DrawnUi.Maui.Controls
                     OnLayersChanged(control);
 
                     control.SetParent(null); //unregister gestures etc
-                    Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
-                    {
-                        control.Dispose();
-                    });
+                    ShellLayout?.DisposeObject(control);
 
                 }
             }
@@ -1193,10 +1190,7 @@ namespace DrawnUi.Maui.Controls
 
                         RootLayout.RemoveSubView(screenshot);
 
-                        Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
-                        {
-                            screenshot?.Dispose();
-                        });
+                        RootLayout.DisposeObject(screenshot);
                     }
                 }
 
@@ -1788,10 +1782,7 @@ namespace DrawnUi.Maui.Controls
                 });
             }
             if (kill != null)
-                Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
-                   {
-                       kill?.Dispose();
-                   });
+                ShellLayout?.DisposeObject(kill);
         }
 
         protected virtual void ReplaceRootLayout(ISkiaControl newLayout)
@@ -1813,10 +1804,7 @@ namespace DrawnUi.Maui.Controls
             ImportRootLayout();
 
             if (kill != null)
-                Tasks.StartDelayed(TimeSpan.FromSeconds(3.5), () =>
-                   {
-                       kill?.Dispose();
-                   });
+                ShellLayout?.DisposeObject(kill);
         }
 
         protected virtual void ImportShellLayout()

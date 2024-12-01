@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks>net8.0;net8.0-android;net8.0-ios17.0;net8.0-maccatalyst17.0</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
@@ -97,7 +97,7 @@
 	</ItemGroup>
     
   <ItemGroup>
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.2.1" />
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.2.5" />
     <!--for parsing markdown text-->
     <PackageReference Include="Markdig" Version="0.34.0" />
     <!--for caching images-->
