@@ -122,7 +122,8 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         if (MainFrame != null)
         {
-            MainFrame.BackgroundColor = this.TintColor;
+            MainFrame.BackgroundColor = this.BackgroundColor;
+            MainFrame.Background = this.Background;
             MainFrame.CornerRadius = this.CornerRadius;
         }
     }
@@ -526,22 +527,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     }
 
 
-
-    public static readonly BindableProperty TintColorProperty = BindableProperty.Create(
-        nameof(TintColor),
-        typeof(Color),
-        typeof(SkiaButton),
-        RedColor,
-        propertyChanged: NeedApplyProperties);
-
-
     protected SKPoint _lastDownPts;
-
-    public Color TintColor
-    {
-        get { return (Color)GetValue(TintColorProperty); }
-        set { SetValue(TintColorProperty, value); }
-    }
 
     public static readonly BindableProperty TextColorProperty = BindableProperty.Create(
         nameof(TextColor),
@@ -577,7 +563,27 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         }
     }
 
+    protected override void OnPropertyChanged(string propertyName = null)
+    {
+        base.OnPropertyChanged(propertyName);
+
+        if (propertyName.IsEither(nameof(Background), nameof(BackgroundColor)))
+        {
+            ApplyProperties();
+        }
+    }
+
     #endregion
 
+    protected override bool SetupBackgroundPaint(SKPaint paint, SKRect destination)
+    {
+        if (MainFrame != null)
+        {
+            //will paint its background instead
+            return false;
+        }
+
+        return base.SetupBackgroundPaint(paint, destination);
+    }
 
 }
