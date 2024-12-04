@@ -33,7 +33,7 @@
             }
         }
 
-        public bool IsParentIndependent { get; set; }
+
 
         public void InvalidateParents()
         {
@@ -103,7 +103,7 @@
         /// <param name="child"></param>
         public virtual void InvalidateByChild(SkiaControl child)
         {
-            DirtyChildren.Add(child);
+            DirtyChildrenTracker.Add(child);
 
             Invalidate();
         }
@@ -125,13 +125,15 @@
             }
         }
 
-        protected readonly ControlsTracker DirtyChildren = new();
+        protected readonly ControlsTracker DirtyChildrenTracker = new();
 
         protected HashSet<SkiaControl> DirtyChildrenInternal { get; set; } = new();
 
         public virtual void UpdateByChild(SkiaControl control)
         {
-            DirtyChildren.Add(control);
+            if (UsingCacheType == SkiaCacheType.ImageComposite)
+                DirtyChildrenTracker.Add(control);
+
             UpdateInternal();
         }
 

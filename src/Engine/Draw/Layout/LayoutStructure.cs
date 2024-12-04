@@ -7,6 +7,11 @@ public class LayoutStructure : DynamicGrid<ControlInStack>
 
     }
 
+    public ControlInStack GetForIndex(int index)
+    {
+        return grid.Values.FirstOrDefault(x => x.ControlIndex == index);
+    }
+
     public LayoutStructure(List<List<ControlInStack>> grid)
     {
         int row = 0;
@@ -15,6 +20,9 @@ public class LayoutStructure : DynamicGrid<ControlInStack>
             var col = 0;
             foreach (var controlInStack in line)
             {
+                controlInStack.Column = col;
+                controlInStack.Row = row;
+
                 Add(controlInStack, col, row);
                 col++;
             }

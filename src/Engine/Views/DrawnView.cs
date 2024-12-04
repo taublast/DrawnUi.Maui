@@ -1513,7 +1513,7 @@ namespace DrawnUi.Maui.Views
 
         long renderedFrames;
 
-                #region DISPOSE STUFF
+        #region DISPOSE STUFF
 
         public void DisposeObject(IDisposable resource)
         {
@@ -1701,10 +1701,10 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-        
+
 
         #endregion
-        
+
 
 
         public void PostponeInvalidation(SkiaControl key, Action action)
@@ -1751,14 +1751,14 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public int DrawingThreads { get; protected set; }
 
-        protected Dictionary<Guid, SkiaControl> DirtyChildren = new();
+        protected Dictionary<Guid, SkiaControl> DirtyChildrenTracker = new();
 
         public void SetChildAsDirty(SkiaControl child)
         {
             if (dirtyChilrenProcessing)
                 return;
 
-            DirtyChildren[child.Uid] = child;
+            DirtyChildrenTracker[child.Uid] = child;
         }
 
         private volatile bool dirtyChilrenProcessing;
@@ -1876,7 +1876,7 @@ namespace DrawnUi.Maui.Views
             ++renderedFrames;
 
             //Debug.WriteLine($"[DRAW] {Tag}");
- 
+
 
             if (IsDisposed || UpdateLocked)
             {
@@ -1944,7 +1944,7 @@ namespace DrawnUi.Maui.Views
                         }
 
                         dirtyChilrenProcessing = true;
-                        foreach (var child in DirtyChildren.Values)
+                        foreach (var child in DirtyChildrenTracker.Values)
                         {
                             if (child != null && !child.IsDisposing)
                             {
@@ -1952,7 +1952,7 @@ namespace DrawnUi.Maui.Views
                                 child?.InvalidateParent();
                             }
                         }
-                        DirtyChildren.Clear();
+                        DirtyChildrenTracker.Clear();
                         dirtyChilrenProcessing = false;
 
                         //notify registered tree final nodes of rendering tree state

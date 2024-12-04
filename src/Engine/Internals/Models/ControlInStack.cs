@@ -49,4 +49,8 @@ public class ControlInStack
     public bool IsVisible { get; set; }
 
     public int ZIndex { get; set; }
+
+    public int Column { get; set; }
+
+    public int Row { get; set; }
 }

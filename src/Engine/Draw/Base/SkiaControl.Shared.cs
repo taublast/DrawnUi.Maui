@@ -5240,6 +5240,15 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        /// <summary>
+        /// Will not invalidate the measurement of parent if True
+        /// </summary>
+        public bool IsParentIndependent { get; set; }
+
+        /// <summary>
+        /// Will not call Update on Parent if True
+        /// </summary>
+        public bool WillNotUpdateParent { get; set; }
 
         protected virtual void UpdateInternal()
         {
@@ -5252,10 +5261,10 @@ namespace DrawnUi.Maui.Draw
             if (UpdateLocked)
                 return;
 
-            if (IsParentIndependent)
-                return;
-
-            Parent?.UpdateByChild(this);
+            if (!WillNotUpdateParent)
+            {
+                Parent?.UpdateByChild(this);
+            }
         }
 
         /// <summary>

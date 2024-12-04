@@ -3,9 +3,9 @@
     x:Class="Sandbox.Views.MainPageDynamicHeightCells"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel"
@@ -30,20 +30,20 @@
         HardwareAcceleration="Enabled"
         HeightRequest="500"
         HorizontalOptions="Fill"
-        VerticalOptions="Start">
+        VerticalOptions="Center">
 
         <draw:SkiaLayout
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
             <draw:SkiaScroll
-                RefreshEnabled="False"
                 x:Name="MainScroll"
                 BackgroundColor="Black"
                 Bounces="True"
-                ChangeDIstancePanned="1.75"
-                FrictionScrolled="0.4"
+                ChangeDIstancePanned="1.2"
+                FrictionScrolled="0.6"
                 HorizontalOptions="Center"
+                RefreshEnabled="False"
                 Scrolled="OnScrolled"
                 VerticalOptions="Fill"
                 WidthRequest="300">
@@ -52,20 +52,21 @@
 
 
                 <!--
+                    for supersmooth like in scrollview scrolling we need to create a "paged" scrollview behaviour
                     idea is to have a maximum number of non recycled cells, like 100.
                     so the cells pool size is 100. when we reach some border, before loadMore or start of page
                     be return 50 cells from the other direction to pool and reuse them all 50 for the up coming page
                     this way we have a lag spike on borders only but smooth scrolling through the existing content
-                
-                    todo this idea remains to be implemented at my free time :)
-                
-                    at the moment the code belows works just like maui bindable.layout + stacklayout what is not so cool
-                    as we need less memory consumption
-                
-                    another method i already verified that works smoothly is to take maui collectioview and use canvases as cells
+                    todo at free time
+                    
+                    Meanwhile:
+                    
+                    RecyclingTemplate="Enabled" !!!
+                    ItemSizingStrategy="MeasureAllItems" same as ListView.UnevenRows = True
                 -->
 
                 <draw:SkiaLayout
+                    VirtualisationInflated="350"
                     x:Name="StackCells"
                     BackgroundColor="White"
                     HorizontalOptions="Fill"
@@ -77,15 +78,24 @@
                     <draw:SkiaLayout.ItemTemplate>
                         <DataTemplate x:DataType="demo:ChatMessage">
 
-                            <draw:SkiaLabel
-                                Margin="8"
-                                Padding="8,4"
-                                BackgroundColor="#8D5BBC"
-                                FontSize="14"
-                                Tag="LabelText"
-                                Text="{Binding Text}"
-                                TextColor="White"
-                                UseCache="Operations" />
+                            <draw:SkiaLayout UseCache="ImageDoubleBuffered">
+
+                                <draw:SkiaShape
+                                    x:Name="MainFrame"
+                                    Margin="8,4"
+                                    Padding="16,10"
+                                    BackgroundColor="#8D5BBC"
+                                    CornerRadius="8">
+
+                                    <draw:SkiaLabel
+                                        FontSize="14"
+                                        Tag="LabelText"
+                                        Text="{Binding Text}"
+                                        TextColor="White" />
+
+                                </draw:SkiaShape>
+
+                            </draw:SkiaLayout>
 
                         </DataTemplate>
 
@@ -95,10 +105,10 @@
 
             </draw:SkiaScroll>
 
-            <controls:ButtonToRoot/>
-            
+            <controls:ButtonToRoot />
+
             <draw:SkiaLabel
-                Margin="8"
+                Margin="8,0,8,50"
                 BackgroundColor="Black"
                 HorizontalOptions="Start"
                 InputTransparent="True"
