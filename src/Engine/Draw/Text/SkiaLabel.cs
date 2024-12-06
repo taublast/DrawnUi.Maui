@@ -1192,6 +1192,11 @@ namespace DrawnUi.Maui.Draw
                     spanIndex++;
                 }
 
+                if (MaxLines > 0 && lineNb == MaxLines)
+                {
+                    break;
+                }
+
                 if (LineHeightUniform)
                     baselineY += (float)(useLineHeight + GetSpaceBetweenLines(useLineHeight));
                 else
