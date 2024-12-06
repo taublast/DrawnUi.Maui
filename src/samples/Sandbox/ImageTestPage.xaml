@@ -21,6 +21,7 @@
 
 
             <draw:SkiaButton
+                Background="DodgerBlue"
                 BackgroundColor="Red"
                 CornerRadius="12"
                 FontSize="18"
@@ -28,7 +29,6 @@
                 HorizontalOptions="Fill"
                 Text="Hello World0"
                 TextColor="White"
-                TintColor="DodgerBlue"
                 UseCache="Image"
                 WidthRequest="-1" />
 

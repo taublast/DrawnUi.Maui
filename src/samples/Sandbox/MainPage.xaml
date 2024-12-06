@@ -161,7 +161,7 @@
                                             Text="{Binding Name}"
                                             TextColor="#ccffffff"
                                             TextStrokeColor="#99FF0000"
-                                            TintColor="{StaticResource ColorPrimary}"
+                                            BackgroundColor="{StaticResource ColorPrimary}"
                                             WidthRequest="150">
                                             <draw:SkiaControl.Triggers>
                                                 <DataTrigger

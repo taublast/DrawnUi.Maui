@@ -21,14 +21,13 @@
 
 
             <draw:SkiaButton
-                BackgroundColor="Red"
+                BackgroundColor="DodgerBlue"
                 CornerRadius="12"
                 FontSize="18"
                 HeightRequest="50"
                 HorizontalOptions="Fill"
                 Text="Hello World0"
                 TextColor="White"
-                TintColor="DodgerBlue"
                 UseCache="Image"
                 WidthRequest="-1" />
 
