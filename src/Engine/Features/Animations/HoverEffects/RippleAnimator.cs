@@ -36,7 +36,10 @@ public class RippleAnimator : RenderingAnimator
 
     public override void Dispose()
     {
-        Paint?.Dispose();
+        if (Parent != null)
+        {
+            Parent.DisposeObject(Paint);
+        }
 
         base.Dispose();
     }

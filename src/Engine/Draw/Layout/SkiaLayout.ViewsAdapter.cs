@@ -120,6 +120,7 @@ public class ViewsAdapter : IDisposable
             if (IsDisposed)
                 return;
 
+            view.IsParentIndependent = true; // uneven rows ultimate fix
             view.Parent = _parent;
             if (index == 0 || view.ContextIndex != index)
             //if (view.BindingContext == null || _parent.RecyclingTemplate == RecyclingTemplate.Enabled)
@@ -859,6 +860,7 @@ public class TemplatedViewsPool : IDisposable
             if (ret == null)
             {
                 ret = CreateFromTemplate();
+                ret.IsParentIndependent = true; //!
             }
             return ret;
         }

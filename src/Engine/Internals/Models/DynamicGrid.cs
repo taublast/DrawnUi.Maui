@@ -4,7 +4,7 @@ namespace DrawnUi.Maui.Draw;
 
 public class DynamicGrid<T>
 {
-    private Dictionary<(int, int), T> grid = new Dictionary<(int, int), T>();
+    protected Dictionary<(int, int), T> grid = new Dictionary<(int, int), T>();
     private Dictionary<int, int> columnCountPerColumn = new Dictionary<int, int>();  // Stores row counts for each column
     private Dictionary<int, int> columnCountPerRow = new Dictionary<int, int>();  // Stores column counts for each row
 

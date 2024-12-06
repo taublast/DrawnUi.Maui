@@ -134,11 +134,16 @@ namespace DrawnUi.Maui.Draw
                     //preload with condition..
                     nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
                 }
+                else
+                {
+                    //List<SkiaControl> dirtyChildren = DirtyChildrenTracker.GetList();
+                    //Debug.WriteLine($"Dirty: {dirtyChildren.Count}");
+                }
 
                 bool smartMeasuring = false;
 
                 /*
-                List<SkiaControl> dirtyChildren = DirtyChildren.GetList();
+                List<SkiaControl> dirtyChildren = DirtyChildrenTracker.GetList();
 
                 if (Superview != null)
                 {
@@ -306,13 +311,14 @@ namespace DrawnUi.Maui.Draw
                 var layoutStructure = BuildStackStructure(scale);
 
                 bool standalone = false;
-                bool useOneTemplate = IsTemplated && ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
+                bool useOneTemplate = IsTemplated && //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
                                       RecyclingTemplate != RecyclingTemplate.Disabled;
 
                 if (useOneTemplate)
                 {
                     standalone = true;
                     template = ChildrenFactory.GetTemplateInstance();
+                    template.IsParentIndependent = true;
                 }
 
                 var maybeSecondPass = true;
@@ -397,7 +403,11 @@ namespace DrawnUi.Maui.Draw
 
                             if (IsTemplated)
                             {
-                                bool needMeasure = (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && columnsCount != Split) || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && firstCell != null);
+                                bool needMeasure =
+                                    needMeasureAll ||
+                                    (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && columnsCount != Split)
+                                    || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && firstCell != null);
+
                                 if (needMeasure)
                                 {
                                     measured = MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels, scale);

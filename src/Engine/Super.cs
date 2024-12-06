@@ -31,13 +31,20 @@ public partial class Super
 {
     static Super()
     {
-        //Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
-        //{
-        //    ProcessBackgroundQueue().ConfigureAwait(false);
-        //});
+
     }
 
+    /// <summary>
+    /// Experimental for dev use. Set OffscreenRenderingAtCanvasLevel to true when this is true.
+    /// Default is False
+    /// </summary>
     public static bool Multithreaded = false;
+
+    /// <summary>
+    /// If set to True will process all ofscreen rendering in one background thread at canvas level, otherwise every control will launch its own background processing thread.
+    /// Default is False
+    /// </summary>
+    public static bool OffscreenRenderingAtCanvasLevel { get; set; }
 
 #if (!ONPLATFORM)
 
@@ -53,52 +60,6 @@ public partial class Super
     /// </summary>
     public static bool CanUseHardwareAcceleration = true;
 
-    /// <summary>
-    /// Display xaml page creation exception
-    /// </summary>
-    /// <param name="view"></param>
-    /// <param name="e"></param>
-    public static void DisplayException(Element view, Exception e)
-    {
-        Trace.WriteLine(e);
-
-        if (view == null)
-            throw e;
-
-        var scroll = new ScrollView()
-        {
-            Content = new Label
-            {
-                Margin = new Thickness(32),
-                TextColor = Colors.Red,
-                Text = $"{e}"
-            }
-        };
-
-        if (view is ContentPage page)
-        {
-            page.Content = scroll;
-        }
-        else
-        if (view is ContentView contentView)
-        {
-            contentView.Content = scroll;
-        }
-        else
-        if (view is Grid grid)
-        {
-            grid.Children.Add(scroll);
-        }
-        else
-        if (view is StackLayout stack)
-        {
-            stack.Children.Add(scroll);
-        }
-        else
-        {
-            throw e;
-        }
-    }
 
     public static void Log(Exception e, [CallerMemberName] string caller = null)
     {
@@ -111,16 +72,6 @@ public partial class Super
 #endif
     }
 
-    public static void Log(string message, [CallerMemberName] string caller = null)
-    {
-        //TODO use ILogger with levels etc
-
-#if WINDOWS
-        Trace.WriteLine(message);
-#else
-        Console.WriteLine(message);
-#endif
-    }
 
     public static void SetLocale(string lang)
     {
@@ -202,29 +153,6 @@ public partial class Super
     private static bool _servicesFromHandler;
 
 
-    public static IServiceProvider Services
-    {
-        get
-        {
-            var services = AppContext?.Services;
-            if (services == null)
-            {
-                services =
-#if WINDOWS10_0_17763_0_OR_GREATER
-            MauiWinUIApplication.Current.Services;
-#elif ANDROID
-            MauiApplication.Current.Services;
-#elif IOS || MACCATALYST
-            MauiUIApplicationDelegate.Current.Services;
-#else
-            null;
-#endif
-            }
-            return services;
-        }
-    }
-
-    public static IMauiContext AppContext => Application.Current?.FindMauiContext();
 
     private static Screen _screen;
     public static Screen Screen
@@ -271,8 +199,7 @@ public partial class Super
     /// </summary>
     public static double BottomTabsHeight { get; set; } = 56;
 
-    public static Color ColorAccent { get; set; } = Colors.Orange;
-    public static Color ColorPrimary { get; set; } = Colors.Gray;
+
 
     public static double MaxFrameLengthMs { get; set; }
 
@@ -289,128 +216,9 @@ public partial class Super
 
     public static Size InitialWindowSize;
 
-#if WINDOWS
-
-    // Win32 API constants and functions
-    private const int GWL_STYLE = -16;
-    private const int WS_THICKFRAME = 0x00040000;
-
-    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
-
-    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-    private static extern int SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
-
-    public static void MakeWindowNonResizable(IntPtr hWnd)
-    {
-        // Get the current window style
-        IntPtr style = GetWindowLongPtr(hWnd, GWL_STYLE);
-
-        // Remove the resize border (thick frame) from the style
-        style = new IntPtr(style.ToInt64() & ~WS_THICKFRAME);
-
-        // Set the modified style
-        SetWindowLongPtr(hWnd, GWL_STYLE, style);
-    }
-
-#endif
 
     static bool _attachedToWindow;
 
-    /// <summary>
-    /// For desktop platforms, will resize app window and eventually lock it from being resized.
-    /// </summary>
-    /// <param name="window"></param>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="isFixed"></param>
-    public static void ResizeWindow(Window window, int width, int height, bool isFixed)
-    {
-
-
-        var disp = DeviceDisplay.Current.MainDisplayInfo;
-        // move to screen center
-        var x = (disp.Width / disp.Density - window.Width) / 2;
-        var y = (disp.Height / disp.Density - window.Height) / 2;
-
-        //this crashes in NET8 for CATALYST so..
-#if !MACCATALYST
-
-        window.Width = width;
-        window.Height = height;
-        window.X = x;
-        window.Y = y;
-
-#else
-
-        var platformWindow = window.Handler?.PlatformView as UIKit.UIWindow;
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            var frame = new CoreGraphics.CGRect(x, y, platformWindow.Frame.Width, platformWindow.Frame.Height);
-
-            platformWindow.Frame = frame;
-
-            var windowScene = UIKit.UIApplication.SharedApplication.ConnectedScenes.ToArray().First() as UIKit.UIWindowScene;
-
-            platformWindow.WindowScene.KeyWindow.Frame = frame;
-
-            windowScene.RequestGeometryUpdate(
-                new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
-                error =>
-                {
-                    var stopp = 1;
-                });
-        });
-
-#endif
-
-#if WINDOWS
-
-        if (isFixed)
-        {
-            var platformWindow = window.Handler?.PlatformView as Microsoft.Maui.MauiWinUIWindow;
-            var hWnd = platformWindow.WindowHandle;
-            MakeWindowNonResizable(hWnd);
-        }
-
-#elif MACCATALYST
-
-        foreach (var scene in UIKit.UIApplication.SharedApplication.ConnectedScenes)
-        {
-            if (scene is UIKit.UIWindowScene windowScene)
-            {
-                if (isFixed)
-                {
-                    //windowScene.SizeRestrictions.AllowsFullScreen = false;
-                    //windowScene.SizeRestrictions.MinimumSize = new(width, height);
-                    //windowScene.SizeRestrictions.MaximumSize = new(width, height);
-
-                    var scale = windowScene.Screen.Scale;
-
-                    // Tasks.StartDelayed(TimeSpan.FromSeconds(3),()=>
-                    // {
-                    //todo move to view appeared etc
-                    // MainThread.BeginInvokeOnMainThread(()=>
-                    // {
-                    //     windowScene.RequestGeometryUpdate(
-                    //         new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
-                    //         error =>
-                    //         {
-                    //             var stopp=1;
-                    //         });
-                    //     
-                    //});
-
-                    // });
-
-                }
-
-            }
-        }
-
-#endif
-
-    }
 
     public static void OnCreated()
     {
@@ -619,5 +427,4 @@ public partial class Super
         }
 
     }
-
 }

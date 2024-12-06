@@ -83,7 +83,7 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
   
-  <PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios'">
+  <PropertyGroup Condition="$(TargetFramework.Contains('ios')) == true">
     <ProvisioningType>manual</ProvisioningType>
   </PropertyGroup>  
 
@@ -216,6 +216,11 @@
     </ItemGroup>
 
     <ItemGroup>
+ 
+ 
+      <Compile Update="View1.xaml.cs">
+        <Generator></Generator>
+      </Compile>
  
  
       <Compile Update="Views\MainPageShapes.xaml.cs">
@@ -375,6 +380,9 @@
  
 
   <ItemGroup>
+    <MauiXaml Update="View1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\MainPageShapes.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

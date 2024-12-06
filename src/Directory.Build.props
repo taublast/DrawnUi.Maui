@@ -5,7 +5,7 @@
 
   <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
     <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi Sandbox project for usage example.</PackageReleaseNotes>
-    <Version>1.2.9.8</Version>
+    <Version>1.2.9.9</Version>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(UseSkiaSharp3)' == 'true'">

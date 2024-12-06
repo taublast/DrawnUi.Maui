@@ -469,10 +469,73 @@ public partial class SkiaControl
 
     public void PushToOffscreenRendering(Action action)
     {
-        _offscreenCacheRenderingQueue.Push(action);
-        Superview?.PushToOffscreenRendering(this);
+        if (Super.OffscreenRenderingAtCanvasLevel)
+        {
+            _offscreenCacheRenderingQueue.Push(action);
+            Superview?.PushToOffscreenRendering(this);
+        }
+        else
+        {
+            _offscreenCacheRenderingQueue.Push(action);
+            if (!_processingOffscrenRendering)
+            {
+                _processingOffscrenRendering = true;
+                Task.Run(async () =>
+                {
+                    await ProcessOffscreenCacheRenderingAsync();
+                }).ConfigureAwait(false);
+            }
+        }
     }
 
+
+
+    private bool _processingOffscrenRendering = false;
+    protected SemaphoreSlim semaphoreOffsecreenProcess = new(1);
+
+    public async Task ProcessOffscreenCacheRenderingAsync()
+    {
+
+        await semaphoreOffsecreenProcess.WaitAsync();
+
+        if (_offscreenCacheRenderingQueue.Count == 0)
+            return;
+
+        _processingOffscrenRendering = true;
+
+        try
+        {
+            Action action = _offscreenCacheRenderingQueue.Pop();
+            while (!IsDisposed && !IsDisposing && action != null)
+            {
+                try
+                {
+                    action.Invoke();
+
+                    if (_offscreenCacheRenderingQueue.Count > 0)
+                        action = _offscreenCacheRenderingQueue.Pop();
+                    else
+                        break;
+                }
+                catch (Exception e)
+                {
+                    Super.Log(e);
+                }
+            }
+
+            //if (NeedUpdate || RenderObjectNeedsUpdate) //someone changed us while rendering inner content
+            //{
+            //    Update(); //kick
+            //}
+
+        }
+        finally
+        {
+            _processingOffscrenRendering = false;
+            semaphoreOffsecreenProcess.Release();
+        }
+
+    }
 
 
 

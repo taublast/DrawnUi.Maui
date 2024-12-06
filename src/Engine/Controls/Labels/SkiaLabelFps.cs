@@ -1,5 +1,4 @@
-﻿using DrawnUi.Maui.Draw;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -8,6 +7,7 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
     public SkiaLabelFps()
     {
         IsParentIndependent = true;
+        WillNotUpdateParent = true;
 
         Tag = "FPS";
         MaxLines = 1;

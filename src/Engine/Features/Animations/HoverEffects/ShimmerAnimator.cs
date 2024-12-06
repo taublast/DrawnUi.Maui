@@ -21,7 +21,10 @@ public class ShimmerAnimator : RenderingAnimator
 
     public override void Dispose()
     {
-        Paint?.Dispose();
+        if (Parent != null)
+        {
+            Parent.DisposeObject(Paint);
+        }
 
         base.Dispose();
     }

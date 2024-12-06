@@ -154,6 +154,7 @@
                                         UseCache="Image">
 
                                         <draw:SkiaButton
+                                            BackgroundColor="{StaticResource ColorPrimary}"
                                             CornerRadius="6"
                                             FontFamily="FontGame"
                                             FontSize="11"
@@ -161,7 +162,6 @@
                                             Text="{Binding Name}"
                                             TextColor="#ccffffff"
                                             TextStrokeColor="#99FF0000"
-                                            TintColor="{StaticResource ColorPrimary}"
                                             WidthRequest="150">
                                             <draw:SkiaControl.Triggers>
                                                 <DataTrigger
