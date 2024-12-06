@@ -6,10 +6,6 @@
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. 
 Create and render your custom controls on a hardware-accelerated Skia canvas with an improved common MAUI layout system.
 
-**IMPORTANT UPDATE**
-Reverted SkiaSharp from 2.88.9 to 2.88.9-preview.2.2 
-until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
-
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 * To use inside a usual MAUI app, consume drawn controls here and there inside `Canvas` views.
@@ -20,9 +16,23 @@ Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 _The current development state is __ALPHA__, features remain to be implemented, documentation incoming._
 
+## What's New
+
+### Nuget 1.2.9.9
+_for SkiaSharp 2.88.9-preview.2.2_
+
+* ImageDoubleBuffered rendering gets faster
+* TextTransform property for SkiaLabel: Lowercase, Uppercase, Titlecase, Phrasecase
+* SkiaButton TinColor removed, applying Background and BackgroundColor to button frame
+* Nuget iOS 17 compatibility restored
+* Some more fixes
+* Still using SkiaSharp 2.88.9-preview.2.2 
+until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
+
+
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 
-___Please star ⭐ if you like it, helps very much!___
+___Please star ⭐ if you like it!___
 
 ## Features
 
@@ -91,17 +101,6 @@ ___Please star ⭐ if you like it, helps very much!___
 * Keyboard support for desktop platforms.
   	* Not just accelerators, but full keyboard support, usage example inside __SpaceShooter__ game below. :)
 
-
-## What's New
-
-### Nuget 1.2.9.8
-for SkiaSharp 2.88.9-preview.2.2 
-
-* DisposeObject optimized for background.
-* Templated layout measurement optimized.
-* HotFix for gestures crash on iOS when targeting ios lower than 18.
-* Nuget targets ios 17.
- 
 
 ## About
 

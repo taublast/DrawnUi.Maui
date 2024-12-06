@@ -83,7 +83,7 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
   
-  <PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios'">
+  <PropertyGroup Condition="$(TargetFramework.Contains('ios')) == true">
     <ProvisioningType>manual</ProvisioningType>
   </PropertyGroup>  
 
