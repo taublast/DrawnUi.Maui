@@ -73,7 +73,7 @@
                     ItemsSource="{Binding Items}"
                     RecyclingTemplate="Enabled"
                     Type="Column"
-                    VirtualisationInflated="350">
+                    VirtualisationInflated="0">
 
                     <draw:SkiaLayout.ItemTemplate>
                         <DataTemplate x:DataType="demo:ChatMessage">
