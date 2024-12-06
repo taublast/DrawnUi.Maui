@@ -1774,14 +1774,28 @@ namespace DrawnUi.Maui.Views
             invalidations.Clear();
         }
 
-        #region BACKGROUND RENDERING
 
+
+
+
+
+        #region BACKGROUND RENDERING
 
         protected object LockStartOffscreenQueue = new();
         private bool _processingOffscrenRendering = false;
 
+        // Holds the incoming commands without blocking
+        private readonly ConcurrentQueue<OffscreenCommand> _incomingCommands = new ConcurrentQueue<OffscreenCommand>();
+
+        // Holds the latest commands for each control (only processed by background thread)
+        private readonly Dictionary<SkiaControl, OffscreenCommand> _offscreenCommands = new();
+
+        protected SemaphoreSlim semaphoreOffscreenProcess = new(1);
+
+        public record OffscreenCommand(SkiaControl Control);
+
         /// <summary>
-        /// Make sure offscreen rendering queue is running
+        /// Ensures offscreen rendering queue is running
         /// </summary>
         public void KickOffscreenCacheRendering()
         {
@@ -1790,60 +1804,73 @@ namespace DrawnUi.Maui.Views
                 if (!_processingOffscrenRendering)
                 {
                     _processingOffscrenRendering = true;
-                    Task.Run(async () => //100% background thread
+                    Task.Run(async () =>
                     {
                         await ProcessOffscreenCacheRenderingAsync();
-
                     }).ConfigureAwait(false);
                 }
             }
         }
 
+        /// <summary>
+        /// Push an offscreen rendering command without blocking the UI thread.
+        /// </summary>
         public void PushToOffscreenRendering(SkiaControl control)
         {
-            _offscreenCacheRenderingQueue.Enqueue(new OffscreenCommand(control));
+            _incomingCommands.Enqueue(new OffscreenCommand(control));
             KickOffscreenCacheRendering();
         }
 
-        public record OffscreenCommand(SkiaControl Control);
-
-        protected SemaphoreSlim semaphoreOffscreenProcess = new(1);
-
-        private readonly Queue<OffscreenCommand> _offscreenCacheRenderingQueue = new();
-
         public async Task ProcessOffscreenCacheRenderingAsync()
         {
-
             await semaphoreOffscreenProcess.WaitAsync();
-
             try
             {
-                if (_offscreenCacheRenderingQueue.Count == 0)
+                // Drain the ConcurrentQueue into a local list
+                var drainedCommands = new List<OffscreenCommand>();
+                while (_incomingCommands.TryDequeue(out var cmd))
+                {
+                    drainedCommands.Add(cmd);
+                }
+
+                // If nothing was drained, we can safely return
+                if (drainedCommands.Count == 0)
                     return;
+
+                lock (_offscreenCommands)
+                {
+                    foreach (var command in drainedCommands)
+                    {
+                        _offscreenCommands[command.Control] = command;
+                    }
+                }
+
+                // Process the latest commands now
+                // Reading dictionary under lock might not be strictly necessary if we trust only this background thread modifies it
+                // but we can snapshot under lock for safety.
+                OffscreenCommand[] toProcess;
+                lock (_offscreenCommands)
+                {
+                    toProcess = _offscreenCommands.Values.ToArray();
+                    _offscreenCommands.Clear(); // We clear after processing to avoid memory growth
+                }
 
                 _processingOffscrenRendering = true;
 
-                var command = _offscreenCacheRenderingQueue.Dequeue();
-                while (command != null)
+                foreach (var command in toProcess)
                 {
                     try
                     {
                         if (command.Control.IsDisposed || command.Control.IsDisposing)
                         {
-                            _offscreenCacheRenderingQueue.Clear();
-                            break;
+                            // If control is no longer valid, skip it.
+                            continue;
                         }
 
                         var action = command.Control.GetOffscreenRenderingAction();
                         action?.Invoke();
 
                         //command.Control.Repaint();
-
-                        if (_offscreenCacheRenderingQueue.Count > 0)
-                            command = _offscreenCacheRenderingQueue.Dequeue();
-                        else
-                            break;
-
                     }
                     catch (Exception e)
                     {
@@ -1851,25 +1878,16 @@ namespace DrawnUi.Maui.Views
                     }
                 }
 
-                //if (NeedUpdate || RenderObjectNeedsUpdate) //someone changed us while rendering inner content
-                //{
-                //    Update(); //kick
-                //}
-                //Update(); //kick
-
-
-
             }
             finally
             {
                 _processingOffscrenRendering = false;
                 semaphoreOffscreenProcess.Release();
             }
-
         }
 
-
         #endregion
+
 
         protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
         {

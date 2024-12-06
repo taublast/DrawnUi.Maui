@@ -1,12 +1,12 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<draw:SkiaLayout     
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<draw:SkiaLayout
+    x:Class="Sandbox.View1"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                 xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-                 x:Class="Sandbox.View1">
- 
-<!--bugged on propose to text DisplayException-->
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw">
 
-        <draw:SkiaLabel Text="{x:StaticResource Unexisting}"/>
+    <!--  bugged on propose to text DisplayException  -->
+
+    <draw:SkiaLabel Text="{x:StaticResource Unexisting}" />
 
 </draw:SkiaLayout>

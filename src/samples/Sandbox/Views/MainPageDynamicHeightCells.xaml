@@ -66,14 +66,14 @@
                 -->
 
                 <draw:SkiaLayout
-                    VirtualisationInflated="350"
                     x:Name="StackCells"
                     BackgroundColor="White"
                     HorizontalOptions="Fill"
                     ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding Items}"
                     RecyclingTemplate="Enabled"
-                    Type="Column">
+                    Type="Column"
+                    VirtualisationInflated="350">
 
                     <draw:SkiaLayout.ItemTemplate>
                         <DataTemplate x:DataType="demo:ChatMessage">

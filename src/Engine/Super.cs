@@ -31,13 +31,20 @@ public partial class Super
 {
     static Super()
     {
-        //Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
-        //{
-        //    ProcessBackgroundQueue().ConfigureAwait(false);
-        //});
+
     }
 
+    /// <summary>
+    /// Experimental for dev use. Set OffscreenRenderingAtCanvasLevel to true when this is true.
+    /// Default is False
+    /// </summary>
     public static bool Multithreaded = false;
+
+    /// <summary>
+    /// If set to True will process all ofscreen rendering in one background thread at canvas level, otherwise every control will launch its own background processing thread.
+    /// Default is False
+    /// </summary>
+    public static bool OffscreenRenderingAtCanvasLevel { get; set; }
 
 #if (!ONPLATFORM)
 
