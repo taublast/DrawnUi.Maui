@@ -1,6 +1,5 @@
 ﻿using Sandbox.Views;
 using Canvas = DrawnUi.Maui.Views.Canvas;
-using TextTransform = DrawnUi.Maui.Draw.TextTransform;
 
 namespace Sandbox
 {
@@ -62,12 +61,13 @@ namespace Sandbox
                                     CornerRadius = 10,
                                     Padding = 10,
                                     BackgroundColor = Colors.White,
-                                    Content = new SkiaMarkdownLabel()
-                                    {
-                                        Text = "hello ppl how are you\r\nNew line comes here\r\nAnd another one too",
-                                        TextTransform = TextTransform.Titlecase,
-                                        MaxLines = 2
-                                    }
+                                    Content = new View1()
+                                    //Content = new SkiaLabel()
+                                    //{
+                                    //    Text = "hello ppl how are you\r\nNew line comes here\r\nAnd another one too",
+                                    //    TextTransform = TextTransform.Titlecase,
+                                    //    MaxLines = 2
+                                    //}
 
                                 }
 

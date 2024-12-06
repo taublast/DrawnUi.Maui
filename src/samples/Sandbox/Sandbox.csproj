@@ -218,6 +218,11 @@
     <ItemGroup>
  
  
+      <Compile Update="View1.xaml.cs">
+        <Generator></Generator>
+      </Compile>
+ 
+ 
       <Compile Update="Views\MainPageShapes.xaml.cs">
         <DependentUpon>MainPageShapes.xaml</DependentUpon>
       </Compile>
@@ -375,6 +380,9 @@
  
 
   <ItemGroup>
+    <MauiXaml Update="View1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\MainPageShapes.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
