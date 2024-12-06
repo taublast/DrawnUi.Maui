@@ -274,7 +274,8 @@ namespace DrawnUi.Maui.Draw
         /// How much of the hidden content out of visible bounds should be considered visible for rendering,
         /// default is 350 pts.
         /// Basically how much should be expand in every direction of the visible area prior to checking if content falls
-        /// into its bounds for rendering controlled with Virtualisation.		
+        /// into its bounds for rendering controlled with Virtualisation.
+        /// The more your cells are smaller the bigger this value should be for better effect.
         /// </summary>
         public double VirtualisationInflated
         {
