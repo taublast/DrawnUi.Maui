@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace DrawnUi.Maui.Draw;
@@ -386,7 +385,8 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
             ParentControl?.Invalidate();
         }
 
-        if (propertyName.IsEither(nameof(FontFamily), nameof(FontWeight)))
+        if (propertyName.IsEither(nameof(FontFamily),
+                nameof(FontWeight)))
         {
             UpdateFont();
         }
@@ -405,13 +405,6 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         {
             HasSetSize = true;
             ParentControl?.Invalidate();
-        }
-
-        if (propertyName.IsEither(
-                nameof(TextColor)))
-        {
-            HasSetColor = true;
-            ParentControl?.Update();
         }
 
         if (propertyName.IsEither(nameof(Text), nameof(AutoFindFont)))
@@ -518,15 +511,22 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         }
     }
 
+    public static readonly BindableProperty TextColorProperty = BindableProperty.Create(
+        nameof(TextColor), typeof(Color), typeof(TextSpan),
+        Colors.GreenYellow,
+        propertyChanged: (b, o, n) =>
+        {
+            if (b is TextSpan c)
+            {
+                c.HasSetColor = true;
+                c.ParentControl?.Update();
+            }
+        });
+
     public Color TextColor
     {
-        get => _textColor;
-        set
-        {
-            if (Equals(value, _textColor)) return;
-            _textColor = value;
-            OnPropertyChanged(nameof(TextColor));
-        }
+        get { return (Color)GetValue(TextColorProperty); }
+        set { SetValue(TextColorProperty, value); }
     }
 
     public Color BackgroundColor
@@ -551,18 +551,26 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         }
     }
 
+    public static readonly BindableProperty FontSizeProperty = BindableProperty.Create(
+        nameof(FontSize),
+        typeof(double),
+        typeof(TextSpan),
+        12.0,
+        propertyChanged: (b, o, n) =>
+        {
+            if (b is TextSpan c)
+            {
+                c.HasSetSize = true;
+                c.ParentControl?.Invalidate();
+                c.OnPropertyChanged(nameof(DebugString));
+            }
+        });
+
     public double FontSize
     {
-        get => _fontSize;
-        set
-        {
-            if (value.Equals(_fontSize)) return;
-            _fontSize = value;
-            OnPropertyChanged(nameof(FontSize));
-            OnPropertyChanged(nameof(DebugString));
-        }
+        get { return (double)GetValue(FontSizeProperty); }
+        set { SetValue(FontSizeProperty, value); }
     }
-
 
     public bool IsItalic
     {
