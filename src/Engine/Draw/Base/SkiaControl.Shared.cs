@@ -1404,6 +1404,15 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(ClipFromProperty, value); }
         }
 
+        public Element NativeParent
+        {
+            get
+            {
+                return base.Parent;
+            }
+        }
+
+ 
         public static readonly BindableProperty ParentProperty = BindableProperty.Create(
             nameof(Parent),
             typeof(IDrawnBase),
@@ -1419,8 +1428,7 @@ namespace DrawnUi.Maui.Draw
             get { return (IDrawnBase)GetValue(ParentProperty); }
             set { SetValue(ParentProperty, value); }
         }
-
-
+ 
 
         #region View
 
@@ -5656,6 +5664,19 @@ namespace DrawnUi.Maui.Draw
             {
                 return Activator.CreateInstance(ItemTemplateType);
             }
+
+            if (ItemTemplate is DataTemplateSelector selector)
+            {
+                //obsolete case for limited compatibility with MAUI
+                var tpl = selector.SelectTemplate(null, this);
+                if (tpl == null)
+                {
+                    throw new ApplicationException("DrawnUI has limited compatibility wih DataTemplateSelector " +
+                                                   "as it is not needed here as you can modify your cell view on the fly, at the same time template selector prohibits enhanced optimizations. Your legacy selector will be called upon first cell creation only with a null context. Kindly consider adapting your code to DrawnUI style.");
+                }
+                return tpl.CreateContent();
+            }
+
             return ItemTemplate.CreateContent();
         }
 
