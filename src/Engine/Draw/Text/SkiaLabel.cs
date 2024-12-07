@@ -374,10 +374,9 @@ namespace DrawnUi.Maui.Draw
                                 var typeFace = SkiaFontManager.Manager.MatchCharacter(first);
                                 if (typeFace != null)
                                 {
-                                    //FontDetectedWith = glyph.Symbol;
                                     needsShaping = SkiaLabel.UnicodeNeedsShaping(first);
-                                    _replaceFont = typeFace;
-                                    ReplaceFont();
+                                    TypeFace = typeFace;
+                                    PaintDefault.Typeface = typeFace;
                                 }
                             }
                             text = TextInternal;
@@ -3113,6 +3112,7 @@ namespace DrawnUi.Maui.Draw
             12.0,
             propertyChanged: NeedUpdateFont);
 
+        [System.ComponentModel.TypeConverter(typeof(FontSizeConverter))]
         public double FontSize
         {
             get { return (double)GetValue(FontSizeProperty); }
