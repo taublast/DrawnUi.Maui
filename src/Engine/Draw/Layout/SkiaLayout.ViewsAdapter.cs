@@ -215,7 +215,7 @@ public class ViewsAdapter : IDisposable
 
     public string GetDebugInfo()
     {
-        return $"Total cells: {PoolSize + _dicoCellsInUse.Count}, using: {_dicoCellsInUse.Count}, in pool: {PoolSize}/{PoolMaxSize}";
+        return $"ItemsSource size {PoolMaxSize}, drawn cells {_dicoCellsInUse.Count}/{PoolSize + _dicoCellsInUse.Count}";
     }
 
     public SkiaControl GetChildAt(int index, SkiaControl template = null)

@@ -287,6 +287,7 @@ namespace DrawnUi.Maui.Draw
         #endregion
 
         #region STACK ROW/GRID
+
         protected List<ISkiaControl> ChildrenGrid { get; set; }
 
 
@@ -389,7 +390,8 @@ namespace DrawnUi.Maui.Draw
         {
             get
             {
-                var output = $"{GetType().Name} Tag {Tag}, ";
+                var output = $"{this.GetType().Name} {Type}, ";
+
                 if (IsTemplated || RenderTree == null)
                     return output + ChildrenFactory.GetDebugInfo();
 
