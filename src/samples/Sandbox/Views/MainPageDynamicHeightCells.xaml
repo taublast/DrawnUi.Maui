@@ -69,7 +69,7 @@
                     x:Name="StackCells"
                     BackgroundColor="White"
                     HorizontalOptions="Fill"
-                    ItemSizingStrategy="MeasureAllItems"
+                    MeasureItemsStrategy="MeasureAll"
                     ItemsSource="{Binding Items}"
                     RecyclingTemplate="Enabled"
                     Type="Column"

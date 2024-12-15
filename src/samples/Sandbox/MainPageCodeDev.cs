@@ -1,4 +1,5 @@
-﻿using Sandbox.Views;
+﻿using AppoMobi.Maui.DrawnUi.Demo.Views.Controls;
+using Sandbox.Views;
 using Canvas = DrawnUi.Maui.Views.Canvas;
 
 namespace Sandbox
@@ -17,6 +18,23 @@ namespace Sandbox
 
 
 
+        public class MyDataTemplateSelector : DataTemplateSelector
+        {
+
+
+            protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
+            {
+                return new DataTemplate(() =>
+                {
+                    return new SkiaLabel()
+                    {
+                        HeightRequest = 32,
+                        BackgroundColor = Colors.Red,
+                        HorizontalOptions = LayoutOptions.Fill
+                    };
+                });
+            }
+        }
 
         public MainPageCodeDev()
         {
@@ -30,52 +48,66 @@ namespace Sandbox
 
         void Build()
         {
+            var itemsSource = Enumerable.Range(1, 12).Select(x => $"{x * 10} m").ToList();
+
+            var selector = new MyDataTemplateSelector();
+
             Canvas?.Dispose();
 
             Canvas = new Canvas()
             {
-                Gestures = GesturesMode.Enabled,
-                HardwareAcceleration = HardwareAccelerationMode.Disabled,
-
+                Gestures = GesturesMode.Lock,
+                HardwareAcceleration = HardwareAccelerationMode.Enabled,
                 VerticalOptions = LayoutOptions.Fill,
                 HorizontalOptions = LayoutOptions.Fill,
-                BackgroundColor = Colors.LightGray,
+                BackgroundColor = Colors.Gray,
 
-                Content = new SkiaLayout()
-                {
-                    VerticalOptions = LayoutOptions.Fill,
-                    HorizontalOptions = LayoutOptions.Fill,
-                    Children = new List<SkiaControl>()
+                //Content = new SkiaLayout()
+                //{
+                //    Type = LayoutType.Column,
+                //    Spacing = 8,
+                //    BackgroundColor = Colors.White,
+                //    HorizontalOptions = LayoutOptions.Fill,
+                //    ItemsSource = itemsSource,
+                //    ItemTemplate = selector
+                //}
+
+                Content =
+
+
+                    new SkiaLayout()
                     {
-                        new SkiaLayout()
+                        Tag = "1",
+                        Type = LayoutType.Column,
+                        BackgroundColor = Colors.Blue,
+                        HorizontalOptions = LayoutOptions.Fill,
+                        Children = new List<SkiaControl>()
                         {
-                            Children = new List<SkiaControl>()
+                            new SkiaMarkdownLabel()
                             {
-                                new SkiaShape()
-                                {
-                                    HorizontalOptions = LayoutOptions.Fill,
-                                    HeightRequest = 128,
-                                    StrokeColor = Colors.Black,
-                                    StrokeWidth = 1,
-                                    Margin = 8,
-                                    CornerRadius = 10,
-                                    Padding = 10,
-                                    BackgroundColor = Colors.White,
-                                    Content = new View1()
-                                    //Content = new SkiaLabel()
-                                    //{
-                                    //    Text = "hello ppl how are you\r\nNew line comes here\r\nAnd another one too",
-                                    //    TextTransform = TextTransform.Titlecase,
-                                    //    MaxLines = 2
-                                    //}
+                                Margin=16,
+                                FontFamily="OpenSansRegular",
+                                FontSize=15,
+                                Text="`CODE` xx",
+                                TextColor=Colors.White,
+                            }.CenterX(),
+                            new WheelPicker()
+                            {
+                                Margin = 100,
+                                Tag = "Picker",
+                                DataSource = itemsSource,
+                                //ItemTemplate = new DataTemplate(() =>
+                                //{
+                                //    return new SkiaLabel()
+                                //    {
+                                //        Text = "???",
+                                //        BackgroundColor = Colors.Yellow
+                                //    };
 
-                                }
-
+                                //})
                             }
                         }
                     }
-                }
-
 
             };
 

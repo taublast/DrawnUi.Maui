@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Input;
 
 namespace DrawnUi.Maui.Draw;
@@ -59,13 +60,13 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
     {
         Glyphs = SkiaLabel.GetGlyphs(Text, TypeFace);
 
-        TextFiltered = "";
+        var sb = new StringBuilder(Text.Length); // Pre-allocate based on input length
 
         foreach (var glyph in Glyphs)
         {
             if (!glyph.IsAvailable)
             {
-                TextFiltered += ((SkiaLabel)Parent).FallbackCharacter;
+                sb.Append(((SkiaLabel)Parent).FallbackCharacter);
 
                 if (AutoFindFont && !_fontAutoSet && TypeFace != null)
                 {
@@ -78,17 +79,21 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
                         _fontAutoSet = true;
                         TypeFace = typeFace;
                         CheckGlyphsCanBeRendered();
-                        break;
+                        return;
                     }
                 }
             }
             else
             {
-                TextFiltered += glyph.Text;
+                ReadOnlySpan<char> glyphSpan = glyph.GetGlyphText();
+                sb.Append(glyphSpan);
             }
         }
 
+        TextFiltered = sb.ToString();
     }
+
+
 
     /// <summary>
     /// Update the paint with current format properties
@@ -328,12 +333,12 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
 
     public virtual void Dispose()
     {
-        Parent = null;
-
         Paint?.Dispose();
 
         CommandTapped = null;
         Tapped = null;
+
+        Parent = null;
     }
 
     /// <summary>

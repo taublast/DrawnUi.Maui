@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Maui.Draw;
 
 public struct RangeF
 {

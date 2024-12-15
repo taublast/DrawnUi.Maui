@@ -165,8 +165,8 @@ namespace DrawnUi.Maui.Views
             ExecuteAfterDraw.Enqueue(action);
         }
 
-        public Queue<Action> ExecuteBeforeDraw { get; } = new(256);
-        public Queue<Action> ExecuteAfterDraw { get; } = new(256);
+        public Queue<Action> ExecuteBeforeDraw { get; } = new(1024);
+        public Queue<Action> ExecuteAfterDraw { get; } = new(1024);
 
         protected Action<SKImage> CallbackScreenshot;
 

@@ -848,8 +848,8 @@ namespace DrawnUi.Maui.Draw
                             var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDIstancePanned;
                             var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDIstancePanned;
 
-                            var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.9f;
-                            var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.9f;
+                            var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.22f;
+                            var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.22f;
 
                             _panningLastDelta = new Vector2(interpolatedMoveToX, interpolatedMoveToY);
 
@@ -2524,6 +2524,8 @@ namespace DrawnUi.Maui.Draw
             }
 
             //POST EVENTS
+
+
             Scrolled?.Invoke(this, InternalViewportOffset);
 
             OnScrolled();
@@ -2749,8 +2751,8 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                var posX = (float)Math.Round(ViewportOffsetX * _zoomedScale);
-                var posY = (float)Math.Round(ViewportOffsetY * _zoomedScale);
+                var posX = (float)(ViewportOffsetX * _zoomedScale);
+                var posY = (float)(ViewportOffsetY * _zoomedScale);
 
                 //var posX = (float)(ViewportOffsetX * _zoomedScale);
                 //var posY = (float)(ViewportOffsetY * _zoomedScale);
@@ -2763,6 +2765,46 @@ namespace DrawnUi.Maui.Draw
                 //reposition viewport (scroll)
                 if (needReposition)
                 {
+
+                    if (Orientation == ScrollOrientation.Vertical)
+                    {
+                        if (posY < _updatedViewportForPixY)
+                        {
+                            IsScrollingDirection = LinearDirectionType.Forward;
+                        }
+                        else
+                        if (posY > _updatedViewportForPixY)
+                        {
+                            IsScrollingDirection = LinearDirectionType.Backward;
+                        }
+                        else
+                        {
+                            IsScrollingDirection = LinearDirectionType.None;
+                        }
+                    }
+                    else
+                    if (Orientation == ScrollOrientation.Horizontal)
+                    {
+                        if (posX < _updatedViewportForPixX)
+                        {
+                            IsScrollingDirection = LinearDirectionType.Forward;
+                        }
+                        else
+                        if (posX > _updatedViewportForPixX)
+                        {
+                            IsScrollingDirection = LinearDirectionType.Backward;
+                        }
+                        else
+                        {
+                            IsScrollingDirection = LinearDirectionType.None;
+                        }
+                    }
+                    else
+                    {
+                        IsScrollingDirection = LinearDirectionType.None;
+                    }
+
+
                     _updatedViewportForPixX = posX;
                     _updatedViewportForPixY = posY;
                     _destination = destination;

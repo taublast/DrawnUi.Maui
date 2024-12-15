@@ -21,6 +21,8 @@ public class ControlInStack
     /// </summary>
     public ScaledSize Measured { get; set; }
 
+    public SKRect Layout { get; set; }
+
     /// <summary>
     /// Available area for Arrange
     /// </summary>
@@ -45,6 +47,8 @@ public class ControlInStack
     /// For internal use by your custom controls
     /// </summary>
     public Vector2 Offset { get; set; }
+
+    public bool WasMeasured { get; set; }
 
     public bool IsVisible { get; set; }
 

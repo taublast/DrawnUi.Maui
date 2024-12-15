@@ -275,7 +275,7 @@ public partial class SkiaLayout
                     if (_layout.IsTemplated)
                     {
                         bool needMeasure =
-                            _layout.ItemSizingStrategy != ItemSizingStrategy.MeasureFirstItem ||
+                            _layout.MeasureItemsStrategy != MeasuringStrategy.MeasureFirst ||
                             _layout.RecyclingTemplate == RecyclingTemplate.Disabled ||
                             measuredCell == null;
 
@@ -296,6 +296,7 @@ public partial class SkiaLayout
                             cell.Area = rectFitChild;
                             cell.Measured = measuredCell.Measured.Clone();
                             cell.Destination = arranged;
+                            cell.WasMeasured = true;
 
                             return cell.Measured;
                         }

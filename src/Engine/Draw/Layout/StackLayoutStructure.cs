@@ -15,21 +15,16 @@ public abstract class StackLayoutStructure
 
     public virtual IEnumerable<SkiaControl> EnumerateViewsForMeasurement()
     {
-        bool standalone = false;
         SkiaControl template = null;
         IReadOnlyList<SkiaControl> views = null;
 
-        bool useOneTemplate = _layout.IsTemplated;
-        //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
-        //&& _layout.RecyclingTemplate == RecyclingTemplate.Enabled;
-
+        bool useOneTemplate = _layout.IsTemplated && //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
+                              _layout.RecyclingTemplate != RecyclingTemplate.Disabled;
 
         if (_layout.IsTemplated)
         {
-            //in the other case template will be null and views adapter will get us a fresh template
             if (useOneTemplate)
             {
-                standalone = true;
                 template = _layout.ChildrenFactory.GetTemplateInstance();
             }
             ChildrenCount = _layout.ChildrenFactory.GetChildrenCount();
@@ -45,7 +40,7 @@ public abstract class StackLayoutStructure
             SkiaControl child = null;
             if (_layout.IsTemplated)
             {
-                child = _layout.ChildrenFactory.GetChildAt(index, template);
+                child = _layout.ChildrenFactory.GetChildAt(index, template, 0, true);
             }
             else
             {
@@ -60,10 +55,11 @@ public abstract class StackLayoutStructure
 
         if (useOneTemplate)
         {
-            if (standalone)
-                _layout.ChildrenFactory.ReleaseTemplateInstance(template);
-            else
-                _layout.ChildrenFactory.ReleaseView(template);
+            _layout.ChildrenFactory.ReleaseTemplateInstance(template);
+        }
+        else if (_layout.IsTemplated)
+        {
+            _layout.ChildrenFactory.ReleaseView(template);
         }
     }
 
@@ -83,6 +79,7 @@ public abstract class StackLayoutStructure
         var measured = _layout.MeasureChild(child, cell.Area.Width, cell.Area.Height, scale);
 
         cell.Measured = measured;
+        cell.WasMeasured = true;
 
         return measured;
     }

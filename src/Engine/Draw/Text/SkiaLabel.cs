@@ -1,8 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Buffers;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text;
 using SkiaSharp.HarfBuzz;
 using Color = Microsoft.Maui.Graphics.Color;
 using Font = Microsoft.Maui.Font;
@@ -11,7 +12,6 @@ using PropertyChangingEventArgs = Microsoft.Maui.Controls.PropertyChangingEventA
 namespace DrawnUi.Maui.Draw
 {
     //todo
-
     //public enum UseRotationDirection
     //{
     //    Horizontal,
@@ -21,10 +21,32 @@ namespace DrawnUi.Maui.Draw
 
     //todo add accesibility features
 
-
     [ContentProperty("Spans")]
     public partial class SkiaLabel : SkiaControl, ISkiaGestureListener, IText
     {
+
+        #region INFRASTRUCTURE
+
+        public override void OnDisposing()
+        {
+            if (_spans != null)
+            {
+                lock (_spanLock)
+                {
+                    _spans.CollectionChanged -= OnCollectionChanged;
+                    foreach (var span in _spans)
+                    {
+                        DisposeObject(span);
+                    }
+                    _spans.Clear();
+                }
+            }
+
+            CleanAllocations();
+
+            base.OnDisposing();
+        }
+
         /// <summary>
         /// TODO IText?
         /// </summary>
@@ -42,6 +64,50 @@ namespace DrawnUi.Maui.Draw
             UpdateFont();
         }
 
+        public override void Invalidate()
+        {
+            ResetTextCalculations(); //force recalc
+
+            base.Invalidate();
+
+            Update();
+        }
+
+        public override void CalculateMargins()
+        {
+            base.CalculateMargins();
+
+            ResetTextCalculations();
+        }
+
+
+
+        protected override void OnLayoutReady()
+        {
+            base.OnLayoutReady();
+
+            if (AutoSize != AutoSizeType.None)
+                Invalidate();
+        }
+
+        public override void OnScaleChanged()
+        {
+            UpdateFont();
+        }
+
+        public override bool CanDraw
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Text))
+                {
+                    return DrawWhenEmpty && base.CanDraw;
+                }
+
+                return base.CanDraw;
+            }
+        }
+
         public override void ApplyBindingContext()
         {
             base.ApplyBindingContext();
@@ -52,17 +118,34 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+
+            if (propertyName.IsEither(nameof(Spans)))
+            {
+                InvalidateMeasure();
+            }
+        }
+
         public override string ToString()
         {
             lock (_spanLock)
             {
                 if (Spans.Count > 0)
                 {
-                    return string.Concat(Spans.Select(span => span.Text));
+                    var sb = new StringBuilder();
+                    foreach (var span in Spans)
+                    {
+                        sb.Append(span.Text);
+                    }
+                    return sb.ToString();
                 }
                 return this.TextInternal;
             }
         }
+
+        #endregion
 
         #region SPANS
 
@@ -132,16 +215,471 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            base.OnPropertyChanged(propertyName);
+        #region PAINT
 
-            if (propertyName.IsEither(nameof(Spans)))
+        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        {
+            lock (LockFont)
             {
-                InvalidateMeasure();
+                base.Paint(ctx, destination, scale, arguments);
+
+                var rectForChildren = ContractPixelsRect(destination, scale, Padding);
+
+                if (GliphsInvalidated)
+                {
+                    //remeasure inside the existing frame
+                    Measure(ArrangedDestination.Width, ArrangedDestination.Height, scale);
+                    ApplyMeasureResult();
+                }
+
+                if (Lines != null)
+                    DrawLines(ctx, PaintDefault, SKPoint.Empty, Lines, rectForChildren, scale);
             }
         }
 
+        protected virtual void SetupDefaultPaint(float scale)
+        {
+            if (PaintDefault == null)
+            {
+                PaintDefault = new SKPaint
+                {
+                    IsAntialias = true,
+                    IsDither = true
+                };
+            }
+
+            PaintDefault.TextSize = (float)Math.Round(FontSize * scale);
+            PaintDefault.StrokeWidth = 0;
+            PaintDefault.Typeface = this.TypeFace ?? SkiaFontManager.DefaultTypeface;
+
+            PaintDefault.FakeBoldText = (this.FontAttributes & FontAttributes.Bold) != 0;
+            PaintDefault.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void DrawTextInternal(SKCanvas canvas, string text, float x, float y, SKPaint paint, float scale)
+        {
+            DrawTextInternal(canvas, text.AsSpan(), x, y, paint, scale);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void DrawTextInternal(SKCanvas canvas, ReadOnlySpan<char> characters, float x, float y, SKPaint paint, float scale)
+        {
+            //canvas.DrawText(text, x, y, paint);
+            using var font = paint.ToFont();
+            font.Edging = Super.FontSubPixelRendering ? SKFontEdging.SubpixelAntialias : SKFontEdging.Antialias;
+            font.Subpixel = Super.FontSubPixelRendering;
+
+            //todo instead of setting in skpaint upper
+            //font.Embolden = (this.FontAttributes & FontAttributes.Bold) != 0;
+
+            using (var blob = SKTextBlob.Create(characters, font))
+            {
+                if (blob != null)
+                    canvas.DrawText(blob, x, y, paint);
+            }
+
+            //canvas.DrawText(text, (int)Math.Round(x), (int)Math.Round(y), paint);
+        }
+
+
+        /// <summary>
+        /// This is called when CharByChar is enabled
+        /// You can override it to apply custom effects to every letter
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="lineIndex"></param>
+        /// <param name="letterIndex"></param>
+        /// <param name="characters"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="paint"></param>
+        /// <param name="paintStroke"></param>
+        /// <param name="paintDropShadow"></param>
+        /// <param name="destination"></param>
+        /// <param name="scale"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected virtual void DrawCharacter(SKCanvas canvas,
+            int lineIndex, int letterIndex,
+            ReadOnlySpan<char> characters, float x, float y, SKPaint paint, SKPaint paintStroke, SKPaint paintDropShadow, SKRect destination, float scale)
+        {
+            DrawText(canvas,
+                x, y,
+                characters,
+                paint, paintStroke, paintDropShadow, scale);
+        }
+
+        public void DrawLines(
+       SkiaDrawingContext ctx,
+       SKPaint paintDefault,
+       SKPoint startOffset,
+       IEnumerable<TextLine> lines,
+       SKRect rectDraw,
+       double scale)
+        {
+            if (paintDefault == null)
+                return;
+
+            const char SpaceChar = ' ';
+
+            paintDefault.Color = TextColor.ToSKColor();
+            paintDefault.BlendMode = this.FillBlendMode;
+
+            var canvas = ctx.Canvas;
+            SKPaint paintStroke = null;
+
+            if (StrokeColor.Alpha != 0 && StrokeWidth > 0)
+            {
+                PaintStroke.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
+                PaintStroke.TextSize = paintDefault.TextSize * _scaleResampleText;
+                PaintStroke.Color = StrokeColor.ToSKColor();
+                PaintStroke.StrokeWidth = (float)(StrokeWidth * 2 * scale);
+                PaintStroke.IsStroke = true;
+                PaintStroke.IsAntialias = paintDefault.IsAntialias;
+                PaintStroke.Typeface = paintDefault.Typeface;
+
+                paintStroke = PaintStroke;
+            }
+
+            SKPaint paintDropShadow = null;
+
+            if (DropShadowColor.Alpha != 0)
+            {
+                PaintShadow.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
+                PaintShadow.TextSize = paintDefault.TextSize * _scaleResampleText;
+                PaintShadow.Color = DropShadowColor.ToSKColor();
+                PaintShadow.StrokeWidth = (float)(DropShadowSize * 2 * scale);
+                PaintShadow.IsStroke = true;
+                PaintShadow.IsAntialias = paintDefault.IsAntialias;
+                PaintShadow.Typeface = paintDefault.Typeface;
+
+                paintDropShadow = PaintShadow;
+            }
+
+            if (!GradientByLines)
+            {
+                SetupGradient(paintDefault, FillGradient, rectDraw);
+                if (paintStroke != null)
+                {
+                    SetupGradient(paintStroke, StrokeGradient, rectDraw);
+                }
+            }
+
+            if (DebugColor != Colors.Transparent)
+            {
+                PaintDeco.Color = DebugColor.ToSKColor();
+                PaintDeco.Style = SKPaintStyle.StrokeAndFill;
+                PaintDeco.StrokeWidth = 0;
+                canvas.DrawRect(rectDraw, PaintDeco);
+            }
+
+            bool baseLineCalculated = false;
+            int lineNb = 0;
+
+            TextLine[] processLines = (lines is TextLine[] arr) ? arr : lines.ToArray();
+
+            // Clear rectangles in spans
+            for (int i = 0; i < Spans.Count; i++)
+            {
+                Spans[i].Rects.Clear();
+            }
+
+            float baselineY = 0;
+            float moveToBaseline = 0f;
+            float useLineHeight = 0f;
+
+            int totalLines = processLines.Length;
+            for (int lineIndex = 0; lineIndex < totalLines; lineIndex++)
+            {
+                var line = processLines[lineIndex];
+
+                if (!baseLineCalculated)
+                {
+                    float PositionBaseline(float calcBaselineY)
+                    {
+                        float diff = (float)(rectDraw.Height - ContentSize.Pixels.Height);
+                        if (VerticalTextAlignment == TextAlignment.End && diff > 0)
+                        {
+                            calcBaselineY += diff;
+                        }
+                        else if (VerticalTextAlignment == TextAlignment.Center && diff > 0)
+                        {
+                            calcBaselineY += diff / 2f;
+                        }
+                        return calcBaselineY;
+                    }
+
+                    if (!LineHeightUniform)
+                    {
+                        useLineHeight = line.Height;
+                        moveToBaseline = useLineHeight - FontMetrics.Descent;
+                        if (lineNb == 0)
+                        {
+                            baselineY += PositionBaseline(rectDraw.Top + moveToBaseline);
+                        }
+                        else
+                        {
+                            baselineY += PositionBaseline(moveToBaseline) + FontMetrics.Descent;
+                        }
+                    }
+                    else
+                    {
+                        useLineHeight = MeasuredLineHeight;
+                        moveToBaseline = useLineHeight - FontMetrics.Descent;
+                        baselineY = PositionBaseline(moveToBaseline + rectDraw.Top);
+                        baseLineCalculated = true;
+                    }
+                }
+
+                lineNb++;
+
+                if (line.IsNewParagraph && lineNb > 1)
+                {
+                    baselineY += (float)SpaceBetweenParagraphs;
+                }
+
+                float alignedLineDrawingStartX = rectDraw.Left;
+                if (lineNb == 1)
+                {
+                    alignedLineDrawingStartX += startOffset.X;
+                }
+
+                float enlargeSpaceCharacter = 0.0f;
+                float fillCharactersOffset = 0.0f;
+
+                if (HorizontalTextAlignment == DrawTextAlignment.Center)
+                {
+                    alignedLineDrawingStartX += (rectDraw.Width - line.Width) / 2.0f;
+                }
+                else if (HorizontalTextAlignment == DrawTextAlignment.End)
+                {
+                    alignedLineDrawingStartX += rectDraw.Width - line.Width;
+                }
+                else if ((HorizontalTextAlignment == DrawTextAlignment.FillWords
+                          || HorizontalTextAlignment == DrawTextAlignment.FillCharacters) && !line.IsLastInParagraph
+                          || HorizontalTextAlignment == DrawTextAlignment.FillWordsFull
+                          || HorizontalTextAlignment == DrawTextAlignment.FillCharactersFull)
+                {
+                    float emptySpace = rectDraw.Width - line.Width;
+                    if (lineNb == 1)
+                    {
+                        emptySpace = rectDraw.Width - (line.Width + startOffset.X);
+                    }
+
+                    if (emptySpace > 0)
+                    {
+                        if (HorizontalTextAlignment == DrawTextAlignment.FillWords
+                            || HorizontalTextAlignment == DrawTextAlignment.FillWordsFull)
+                        {
+                            var valSpan = line.Value.AsSpan();
+                            int spaceCount = 0;
+                            for (int si = 0; si < valSpan.Length; si++)
+                            {
+                                if (valSpan[si] == SpaceChar) spaceCount++;
+                            }
+
+                            if (spaceCount > 0)
+                            {
+                                enlargeSpaceCharacter = emptySpace / spaceCount;
+                            }
+                        }
+                        else if (HorizontalTextAlignment == DrawTextAlignment.FillCharacters
+                                 || HorizontalTextAlignment == DrawTextAlignment.FillCharactersFull)
+                        {
+                            if (line.Value.Length > 1)
+                            {
+                                fillCharactersOffset = emptySpace / (line.Value.Length - 1);
+                            }
+                        }
+                    }
+                }
+
+                if (alignedLineDrawingStartX < rectDraw.Left)
+                    alignedLineDrawingStartX = rectDraw.Left;
+
+                line.Bounds = new SKRect(
+                    alignedLineDrawingStartX,
+                    baselineY - moveToBaseline,
+                    alignedLineDrawingStartX + line.Width,
+                    baselineY - moveToBaseline + useLineHeight);
+
+                if (GradientByLines)
+                {
+                    SetupGradient(paintDefault, FillGradient, line.Bounds);
+                    if (paintStroke != null)
+                    {
+                        SetupGradient(paintStroke, StrokeGradient, line.Bounds);
+                    }
+                }
+
+                float offsetX = 0;
+                int spanCount = line.Spans.Count;
+
+                for (int spanIndex = 0; spanIndex < spanCount; spanIndex++)
+                {
+                    var lineSpan = line.Spans[spanIndex];
+                    var paint = paintDefault;
+                    SKRect rectPrecalculatedSpanBounds = SKRect.Empty;
+
+                    if (lineSpan.Span != null)
+                    {
+                        paint = lineSpan.Span.SetupPaint(scale, paintDefault);
+
+                        //first span can initiate painting line background
+                        if (spanIndex == 0 && lineSpan.Span.ParagraphColor != Colors.Transparent)
+                        {
+                            rectPrecalculatedSpanBounds = new SKRect(
+                                alignedLineDrawingStartX,
+                                line.Bounds.Top,
+                                alignedLineDrawingStartX + rectDraw.Width,
+                                line.Bounds.Bottom + (float)SpaceBetweenParagraphs);
+
+                            PaintDeco.Color = lineSpan.Span.ParagraphColor.ToSKColor();
+                            PaintDeco.Style = SKPaintStyle.StrokeAndFill;
+                            canvas.DrawRect(rectPrecalculatedSpanBounds, PaintDeco);
+                        }
+                    }
+
+                    float offsetAdjustmentX = 0.0f;
+
+                    if (lineSpan.Span is IDrawnTextSpan drawn)
+                    {
+                        float drawnX = (float)Math.Round(alignedLineDrawingStartX + offsetX);
+                        float drawnY;
+
+                        if (drawn.VerticalAlignement == DrawImageAlignment.Center)
+                        {
+                            drawnY = (float)Math.Round(line.Bounds.Bottom - lineSpan.Size.Height
+                                - (line.Bounds.Height - lineSpan.Size.Height) / 2f);
+                        }
+                        else if (drawn.VerticalAlignement == DrawImageAlignment.End)
+                        {
+                            drawnY = (float)Math.Round(line.Bounds.Bottom - lineSpan.Size.Height);
+                        }
+                        else
+                        {
+                            drawnY = (float)Math.Round(line.Bounds.Top);
+                        }
+
+                        SKRect drawnDestination = new SKRect(drawnX, drawnY, drawnX + lineSpan.Size.Width, line.Bounds.Bottom);
+                        drawn.Render(ctx, drawnDestination, (float)scale);
+                    }
+                    else if (lineSpan.NeedsShaping)
+                    {
+                        DrawShapedText(canvas,
+                            lineSpan.Text,
+                            (float)Math.Round(alignedLineDrawingStartX + offsetX),
+                            (float)Math.Round(baselineY),
+                            paint);
+                    }
+                    else if (lineSpan.Glyphs != null)
+                    {
+                        var glyphs = lineSpan.Glyphs;
+                        int glyphCount = glyphs.Length;
+
+                        // Declare charIndex before the local function
+                        int charIndex = 0;
+
+                        float MoveOffsetAdjustmentX(float x, ReadOnlySpan<char> p)
+                        {
+                            if (p.Length == 1)
+                            {
+                                // Adjust only if not first char and we have fillCharactersOffset
+                                if (enlargeSpaceCharacter > 0 && p[0] == SpaceChar)
+                                {
+                                    x += enlargeSpaceCharacter;
+                                }
+                                else if (fillCharactersOffset > 0 && charIndex > 0)
+                                {
+                                    x += fillCharactersOffset;
+                                }
+                            }
+                            return x;
+                        }
+
+                        // If background color is set, precompute final width
+                        if (lineSpan.Span != null && lineSpan.Span.BackgroundColor != Colors.Transparent)
+                        {
+                            float x = offsetAdjustmentX;
+                            for (charIndex = 0; charIndex < glyphCount; charIndex++)
+                            {
+                                x = MoveOffsetAdjustmentX(x, glyphs[charIndex].GetGlyphText());
+                            }
+                            // Reset charIndex after precomputation
+                            charIndex = 0;
+
+                            rectPrecalculatedSpanBounds = new SKRect(
+                                alignedLineDrawingStartX + offsetX,
+                                line.Bounds.Top,
+                                alignedLineDrawingStartX + offsetX + lineSpan.Size.Width + x,
+                                line.Bounds.Top + lineSpan.Size.Height);
+
+                            PaintDeco.Color = lineSpan.Span.BackgroundColor.ToSKColor();
+                            PaintDeco.Style = SKPaintStyle.StrokeAndFill;
+                            canvas.DrawRect(rectPrecalculatedSpanBounds, PaintDeco);
+                        }
+
+                        // Now draw each glyph
+                        charIndex = 0;
+                        for (; charIndex < glyphCount; charIndex++)
+                        {
+                            var glyph = glyphs[charIndex];
+                            offsetAdjustmentX = MoveOffsetAdjustmentX(offsetAdjustmentX, glyph.GetGlyphText());
+
+                            float posX = alignedLineDrawingStartX + offsetX + glyph.Position + offsetAdjustmentX;
+
+                            DrawCharacter(canvas,
+                                lineNb - 1,
+                                charIndex,
+                                glyph.GetGlyphText(),
+                                posX,
+                                baselineY,
+                                paint,
+                                paintStroke,
+                                paintDropShadow,
+                                line.Bounds,
+                                (float)scale);
+                        }
+
+                    }
+                    else
+                    {
+                        DrawText(canvas,
+                            alignedLineDrawingStartX + offsetX,
+                            baselineY,
+                            line.Value,
+                            paintDefault,
+                            paintStroke,
+                            paintDropShadow,
+                            (float)scale);
+                    }
+
+                    offsetX += lineSpan.Size.Width + offsetAdjustmentX;
+
+                    if (lineSpan.Span != null)
+                    {
+                        var lineSpanRect = new SKRect(
+                            alignedLineDrawingStartX + offsetX - (lineSpan.Size.Width + offsetAdjustmentX),
+                            line.Bounds.Top,
+                            alignedLineDrawingStartX + offsetX,
+                            line.Bounds.Top + lineSpan.Size.Height);
+
+                        lineSpan.Span.Rects.Add(lineSpanRect);
+                        SpanPostDraw(canvas, lineSpan.Span, lineSpanRect, baselineY);
+                    }
+                }
+
+                if (MaxLines > 0 && lineNb == MaxLines)
+                {
+                    break;
+                }
+
+                if (LineHeightUniform)
+                    baselineY += (float)(useLineHeight + GetSpaceBetweenLines(useLineHeight));
+                else
+                    baselineY += (float)GetSpaceBetweenLines(useLineHeight);
+            }
+        }
 
         /// <summary>
         /// If strokePaint==null will not stroke
@@ -160,572 +698,30 @@ namespace DrawnUi.Maui.Draw
             SKPaint paintDropShadow,
             float scale)
         {
+            DrawText(canvas, x, y, text.AsSpan(), textPaint, strokePaint, paintDropShadow, scale);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DrawText(SKCanvas canvas, float x, float y,
+            ReadOnlySpan<char> characters,
+            SKPaint textPaint,
+            SKPaint strokePaint,
+            SKPaint paintDropShadow,
+            float scale)
+        {
             if (paintDropShadow != null)
             {
                 var offsetX = (int)(scale * DropShadowOffsetX);
                 var offsetY = (int)(scale * DropShadowOffsetY);
-                DrawTextInternal(canvas, text, x + offsetX, y + offsetY, paintDropShadow, scale);
+                DrawTextInternal(canvas, characters, x + offsetX, y + offsetY, paintDropShadow, scale);
             }
 
             if (strokePaint != null)
             {
-                DrawTextInternal(canvas, text, x, y, strokePaint, scale);
+                DrawTextInternal(canvas, characters, x, y, strokePaint, scale);
             }
 
-            DrawTextInternal(canvas, text, x, y, textPaint, scale);
-        }
-
-
-
-        public double Sharpen { get; set; }
-
-        private static float _scaleResampleText = 1.0f;
-
-
-        public static string Trail = "..";
-
-        protected int RenderLimit = -1;
-
-        protected void ResetTextCalculations()
-        {
-            IsCut = false;
-            NeedMeasure = true;
-            _lastDecomposed = null;
-            RenderLimit = -1;
-        }
-
-        //protected override void OnSizeChanged()
-        //{
-        //	base.OnSizeChanged();
-
-        //	Redraw();
-        //}
-
-
-        public TextLine[] Lines { get; protected set; }
-
-        public float LineHeightPixels { get; protected set; }
-
-        protected float _charMonoWidthPixels;
-
-        void UpdateFontMetrics(SKPaint paint)
-        {
-            FontMetrics = paint.FontMetrics;
-            LineHeightPixels = (float)Math.Round(-FontMetrics.Ascent + FontMetrics.Descent);//PaintText.FontSpacing;
-            _fontUnderline = FontMetrics.UnderlinePosition.GetValueOrDefault();
-
-            if (!string.IsNullOrEmpty(this.MonoForDigits))
-            {
-                _charMonoWidthPixels = MeasureTextWidthWithAdvance(paint, this.MonoForDigits, true);
-            }
-            else
-            {
-                _charMonoWidthPixels = 0;
-            }
-        }
-
-        public SKPaint PaintDefault = new SKPaint
-        {
-            IsAntialias = true,
-            IsDither = true
-        };
-
-        public SKPaint PaintStroke = new SKPaint
-        {
-            IsAntialias = true,
-            IsDither = true
-        };
-
-        public SKPaint PaintShadow = new SKPaint
-        {
-            IsAntialias = true,
-            IsDither = true
-        };
-
-        public SKPaint PaintDeco = new SKPaint
-        {
-
-        };
-
-
-        public void MergeSpansForLines(
-                TextSpan span,
-                TextLine line,
-                TextLine previousSpanLastLine)
-        //merge first line with last from previous span
-        {
-
-            if (string.IsNullOrEmpty(previousSpanLastLine.Value))
-            {
-                return;
-            }
-
-            var spans = previousSpanLastLine.Spans.ToList();
-            if (!string.IsNullOrEmpty(line.Value))
-            {
-                spans.AddRange(line.Spans);
-                line.Width += previousSpanLastLine.Width;
-            }
-            else
-            {
-                line.Width = previousSpanLastLine.Width;
-            }
-
-            if (previousSpanLastLine.Height > line.Height)
-                line.Height = previousSpanLastLine.Height;
-
-            line.Spans = spans;
-
-            line.Value = previousSpanLastLine.Value + line.Value;
-
-            line.IsNewParagraph = previousSpanLastLine.IsNewParagraph;
-            // var lastSpan = previousSpanLastLine.ApplySpans.LastOrDefault();
-
-            /*
-            if (string.IsNullOrEmpty(line.Value))
-            {
-                line.Value = previousSpanLastLine.Value;
-                line.ApplySpans.AddRange(previousSpanLastLine.ApplySpans);
-                line.Glyphs = previousSpanLastLine.Glyphs;
-                line.Width = previousSpanLastLine.Width;
-            }
-            else
-            {
-                line.Value = previousSpanLastLine.Value + line.Value;
-                line.ApplySpans.AddRange(previousSpanLastLine.ApplySpans);
-                line.ApplySpans.Add(ApplySpan.Create(span,
-                    lastSpan.End + 1,
-                    lastSpan.End + line.Glyphs.Length));
-
-                var characterPositions = new List<LineGlyph>();
-                characterPositions.AddRange(previousSpanLastLine.Glyphs);
-                var startAt = previousSpanLastLine.Width;
-                foreach (var glyph in line.Glyphs)
-                {
-                    characterPositions.Add(LineGlyph.Move(glyph, glyph.Position + startAt));
-                }
-                line.Glyphs = characterPositions.ToArray();
-
-                line.Width += previousSpanLastLine.Width;
-            }
-            */
-        }
-
-        public List<UsedGlyph> Glyphs { get; protected set; } = new();
-
-        public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
-        {
-            if (IsDisposed || IsDisposing)
-                return ScaledSize.Default;
-
-            lock (LockFont)
-            {
-
-                //background measuring or invisible or self measure from draw because layout will never pass -1
-                if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0))
-                {
-                    return MeasuredSize;
-                }
-
-                IsMeasuring = true;
-
-                try
-                {
-                    var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-                    if (request.IsSame)
-                    {
-                        return MeasuredSize;
-                    }
-
-                    ReplaceFont();
-
-                    if (TypeFace == null)
-                        return MeasuredSize; //would be totally unexpected 
-
-                    SetupDefaultPaint(scale);
-
-                    var constraints = GetMeasuringConstraints(request);
-
-                    var textWidthPixels = 0f;
-                    var textHeightPixels = 0f;
-
-                    var width = 0f;
-                    var height = 0f;
-
-                    //apply default props to default paint
-
-                    UpdateFontMetrics(PaintDefault);
-
-                    var usePaint = PaintDefault;
-
-                    if (Spans.Count == 0)
-                    {
-                        bool needsShaping = false;
-
-                        string text = null;
-
-                        Glyphs = GetGlyphs(TextInternal, PaintDefault.Typeface);
-
-                        if (AutoFont)
-                        {
-                            if (Glyphs != null && Glyphs.Count > 0)
-                            {
-                                var first = Glyphs[0].Symbol;
-                                var typeFace = SkiaFontManager.Manager.MatchCharacter(first);
-                                if (typeFace != null)
-                                {
-                                    needsShaping = SkiaLabel.UnicodeNeedsShaping(first);
-                                    TypeFace = typeFace;
-                                    PaintDefault.Typeface = typeFace;
-                                }
-                            }
-                            text = TextInternal;
-                        }
-                        else
-                        {
-                            //replace unprintable symbols with fallback
-                            if (Glyphs.Count > 0)
-                            {
-                                var textFiltered = "";
-
-                                foreach (var glyph in Glyphs)
-                                {
-                                    if (!glyph.IsAvailable)
-                                    {
-                                        textFiltered += FallbackCharacter;
-                                    }
-                                    else
-                                    {
-                                        textFiltered += glyph.Text;
-                                    }
-                                }
-                                text = textFiltered;
-                            }
-                            else
-                            {
-                                text = TextInternal;
-                            }
-                        }
-
-                        Lines = SplitLines(text, usePaint,
-                            SKPoint.Empty,
-                            (float)(constraints.Content.Width),
-                            (float)(constraints.Content.Height),
-                            MaxLines, needsShaping, null);
-                    }
-                    else
-                    {
-                        //Measure SPANS
-
-                        SKPoint offset = SKPoint.Empty;
-                        var mergedLines = new List<TextLine>();
-
-
-                        TextLine previousSpanLastLine = null;
-
-                        foreach (var span in Spans.ToList())
-                        {
-                            if (string.IsNullOrEmpty(span.Text))
-                                continue;
-
-                            span.DrawingOffset = offset;
-
-                            var paint = span.SetupPaint(scale, PaintDefault);
-
-                            if (span is IDrawnTextSpan drawn)
-                            {
-                                //todo anything fancy, room for enhancement
-                            }
-                            else
-                            {
-                                span.CheckGlyphsCanBeRendered(); //will auto-select typeface if needed                        
-                            }
-
-                            var lines = SplitLines(span.TextFiltered,
-                                    paint,
-                                    offset,
-                                    constraints.Content.Width,
-                                    constraints.Content.Height,
-                                    MaxLines, span.NeedShape, span);
-
-                            if (lines != null && lines.Length > 0)
-                            {
-                                var firstLine = lines.First();
-                                var lastLine = lines.Last();
-
-                                //merge first one
-                                if (previousSpanLastLine != null)
-                                {
-                                    if (mergedLines.Count > 0)
-                                    {
-                                        //remove last, will be replaced by merged
-                                        mergedLines.Remove(previousSpanLastLine);
-                                    }
-                                    MergeSpansForLines(span, firstLine, previousSpanLastLine);
-                                }
-
-                                previousSpanLastLine = lastLine;
-                                offset = new(lastLine.Width, 0);
-
-                                mergedLines.AddRange(lines);
-                            }
-                            else
-                            {
-                                previousSpanLastLine = null;
-                                offset = SKPoint.Empty;
-                            }
-
-                            //span.Lines = lines;
-
-                        }
-
-                        //last sanity pass
-                        if (!KeepSpacesOnLineBreaks && Spans.Count > 0)
-                        {
-                            var index = 0;
-                            foreach (var line in mergedLines)
-                            {
-                                index++;
-                                if (index == mergedLines.Count) //do not process last line
-                                    break;
-
-                                if (line.Value.Right(1) == Splitter)
-                                {
-                                    var span = line.Spans.LastOrDefault();
-                                    //if (span.Span != null)
-                                    {
-                                        //remove last character from line, from last span and from last charactersposition
-                                        span.Text = span.Text.Substring(0, span.Text.Length - 1);
-                                        line.Value = line.Value.Substring(0, line.Value.Length - 1);
-                                        if (span.Glyphs != null)
-                                        {
-                                            var newArray = span.Glyphs;
-                                            if (!string.IsNullOrEmpty(line.Value))
-                                            {
-                                                //kill last glyph
-                                                line.Width -= span.Size.Width - span.Glyphs[^1].Position;
-                                                Array.Resize(ref newArray, newArray.Length - 1);
-                                            }
-                                            span.Glyphs = newArray;
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
-
-                        Lines = mergedLines.ToArray();
-                    }
-
-                    if (Lines != null && Lines.Length > 0)
-                    {
-                        LinesCount = Lines.Length;
-                        var addParagraphSpacings = (Lines.Count(x => x.IsNewParagraph) - 1) * SpaceBetweenParagraphs;
-
-                        textWidthPixels = Lines.Max(x => x.Width); //todo width error inside split
-
-                        if (LineHeightUniform)
-                        {
-                            var maxLineHeight = Lines.Max(x => x.Height);
-                            if (LineHeightPixels > maxLineHeight)
-                                maxLineHeight = LineHeightPixels;
-
-                            MeasuredLineHeight = maxLineHeight;
-
-                            textHeightPixels = (float)(maxLineHeight * LinesCount +
-                                                       (LinesCount - 1) * GetSpaceBetweenLines(MeasuredLineHeight) + addParagraphSpacings);
-                        }
-                        else
-                        {
-                            textHeightPixels = 0;
-
-                            MeasuredLineHeight = LineHeightPixels;
-
-                            for (int i = 0; i < LinesCount; i++)
-                            {
-                                var lineHeight = Lines[i].Height;
-                                if (LineHeightPixels > lineHeight)
-                                    lineHeight = LineHeightPixels;
-
-                                textHeightPixels += (float)(lineHeight + addParagraphSpacings);
-                                if (i < LinesCount - 1)
-                                    textHeightPixels += (float)GetSpaceBetweenLines(lineHeight);
-                            }
-                        }
-
-                        ContentSize = ScaledSize.FromPixels(textWidthPixels, textHeightPixels, scale);
-                    }
-                    else
-                    {
-                        ContentSize = ScaledSize.CreateEmpty(scale);
-                        LinesCount = 0;
-                    }
-
-                    return SetMeasuredAdaptToContentSize(constraints, scale);
-                }
-                finally
-                {
-                    IsMeasuring = false;
-                }
-
-            }
-
-        }
-
-        public float MeasuredLineHeight { get; protected set; }
-
-
-        public (int Limit, float Width) CutLineToFit(
-            SKPaint paint,
-            string textIn, float maxWidth)
-        {
-            SKRect bounds = new SKRect();
-            var cycle = "";
-            var limit = 0;
-            float resultWidth = 0;
-
-            var tail = string.Empty;
-            if (LineBreakMode == LineBreakMode.TailTruncation)
-                tail = Trail;
-
-            textIn += tail;
-
-            MeasureText(paint, textIn, ref bounds);
-
-            if (bounds.Width > maxWidth && !string.IsNullOrEmpty(textIn))
-            {
-
-                for (int pos = 0; pos < textIn.Length; pos++)
-                {
-                    cycle = textIn.Left(pos + 1).TrimEnd() + tail;
-                    MeasureText(paint, cycle, ref bounds);
-                    if (bounds.Width > maxWidth)
-                        break;
-                    resultWidth = bounds.Width;
-                    limit = pos + 1;
-                }
-            }
-
-            return (limit, resultWidth);
-        }
-
-        private readonly object _spanLock = new object();
-
-        public override void OnDisposing()
-        {
-            if (_spans != null)
-            {
-                lock (_spanLock)
-                {
-                    _spans.CollectionChanged -= OnCollectionChanged;
-                    foreach (var span in _spans)
-                    {
-                        DisposeObject(span);
-                    }
-                    _spans.Clear();
-                }
-            }
-
-
-            PaintDefault?.Dispose();
-            PaintStroke?.Dispose();
-            PaintShadow?.Dispose();
-            PaintDeco?.Dispose();
-
-            base.OnDisposing();
-        }
-
-
-        public int LinesCount { get; protected set; } = 1;
-
-        private int _fontWeight;
-
-        //public override void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale)
-        //{
-
-        //    if (NeedMeasure)
-        //    {
-        //        var adjustedDestination = CalculateLayout(destination, SizeRequest.Width, SizeRequest.Height, scale);
-        //        Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
-
-        //    }
-
-        //    base.Arrange(destination, MeasuredSize.Units.Width, MeasuredSize.Units.Height, scale);
-        //}
-
-        //protected virtual SKRect GetCacheArea()
-        //{
-        //     return new (
-        //         DrawingRect.Left + AdjustCacheAreaPixels.Left,
-        //         DrawingRect.Top+AdjustCacheAreaPixels.Top,
-        //         DrawingRect.Right+AdjustCacheAreaPixels.Right,
-        //         DrawingRect.Bottom+AdjustCacheAreaPixels.Bottom);
-        //}
-
-        protected Thickness AdjustCacheAreaPixels { get; set; }
-
-        /*
-        protected override void Draw(
-            SkiaDrawingContext context,
-            SKRect destination,
-            float scale)
-        {
-
-            RenderingScale = scale;
-
-            Arrange(destination, SizeRequest.Width, SizeRequest.Height, scale);
-
-            if (!CheckIsGhost())
-            {
-                if (UsingCacheType != SkiaCacheType.None)
-                {
-                    if (!UseRenderingObject(context, DrawingRect, scale))
-                    {
-                        //record to cache and paint 
-                        CreateRenderingObjectAndPaint(context, DrawingRect, (ctx) =>
-                        {
-                            Paint(ctx, DrawingRect, scale, CreatePaintArguments());
-                        });
-                    }
-                }
-                else
-                {
-                    DrawWithClipAndTransforms(context, DrawingRect, true, true, (ctx) =>
-                    {
-                        Paint(ctx, DrawingRect, scale, CreatePaintArguments());
-                    });
-                }
-            }
-
-            FinalizeDraw(context, scale);
-        }
-
-        */
-
-        //public override void PaintTintBackground(SKCanvas canvas, SKRect destination)
-        //{
-        //    //overriding to avoid applying fill gradient to background, in this control we use it for text only
-        //    if (BackgroundColor != Colors.Transparent)
-        //    {
-        //        PaintDeco.Color = BackgroundColor.ToSKColor();
-        //        PaintDeco.Style = SKPaintStyle.StrokeAndFill;
-        //        PaintDeco.StrokeWidth = 0;
-        //        canvas.DrawRect(destination, PaintDeco);
-        //    }
-        //}
-
-
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
-        {
-            lock (LockFont)
-            {
-                base.Paint(ctx, destination, scale, arguments);
-
-                var rectForChildren = ContractPixelsRect(destination, scale, Padding);
-
-                if (Lines != null)
-                    DrawLines(ctx, PaintDefault, SKPoint.Empty, Lines, rectForChildren, scale);
-            }
+            DrawTextInternal(canvas, characters, x, y, textPaint, scale);
         }
 
         protected virtual void SpanPostDraw(
@@ -786,446 +782,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected virtual void SetupDefaultPaint(float scale)
-        {
-            if (PaintDefault == null)
-            {
-                Super.Log("UNEXPECTED PaintDefault is null!");
-                PaintDefault = new SKPaint
-                {
-                    IsAntialias = true,
-                    IsDither = true
-                };
-            }
-
-            PaintDefault.TextSize = (float)Math.Round(FontSize * scale);
-            PaintDefault.StrokeWidth = 0;
-            PaintDefault.Typeface = this.TypeFace ?? SkiaFontManager.DefaultTypeface;
-
-            PaintDefault.FakeBoldText = (this.FontAttributes & FontAttributes.Bold) != 0;
-            PaintDefault.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
-        }
-
-        public void DrawLines(SkiaDrawingContext ctx,
-            SKPaint paintDefault,
-            SKPoint startOffset,
-            IEnumerable<TextLine> lines,
-            SKRect rectDraw,
-            double scale)
-        {
-            if (paintDefault == null)
-                return;
-
-            //apply dynamic properties that were not applied during measure
-            paintDefault.Color = TextColor.ToSKColor();
-            paintDefault.BlendMode = this.FillBlendMode;
-
-            var canvas = ctx.Canvas;
-            SKPaint paintStroke = null;
-
-            if (StrokeColor.Alpha != 0 && StrokeWidth > 0)
-            {
-                PaintStroke.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
-                PaintStroke.TextSize = paintDefault.TextSize * _scaleResampleText;
-                PaintStroke.Color = StrokeColor.ToSKColor();
-                PaintStroke.StrokeWidth = (float)(StrokeWidth * 2 * scale);
-                PaintStroke.IsStroke = true;
-                PaintStroke.IsAntialias = paintDefault.IsAntialias;
-                PaintStroke.Typeface = paintDefault.Typeface;
-
-                paintStroke = PaintStroke;
-            }
-
-            SKPaint paintDropShadow = null;
-
-            if (this.DropShadowColor.Alpha != 0)
-            {
-                PaintShadow.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
-                PaintShadow.TextSize = paintDefault.TextSize * _scaleResampleText;
-                PaintShadow.Color = DropShadowColor.ToSKColor();
-                PaintShadow.StrokeWidth = (float)(this.DropShadowSize * 2 * scale);
-                PaintShadow.IsStroke = true;
-                PaintShadow.IsAntialias = paintDefault.IsAntialias;
-                PaintShadow.Typeface = paintDefault.Typeface;
-
-                paintDropShadow = PaintShadow;
-            }
-
-            if (!GradientByLines)
-            {
-                SetupGradient(paintDefault, FillGradient, rectDraw);
-
-                if (paintStroke != null)
-                {
-                    SetupGradient(paintStroke, StrokeGradient, rectDraw);
-                }
-            }
-
-            if (DebugColor != Colors.Transparent)
-            {
-                PaintDeco.Color = DebugColor.ToSKColor();
-                PaintDeco.Style = SKPaintStyle.StrokeAndFill;
-                PaintDeco.StrokeWidth = 0;
-                canvas.DrawRect(rectDraw, PaintDeco);
-            }
-
-            bool baseLineCalculated = false;
-
-
-
-            var lineNb = 0;
-            var processLines = lines.ToArray();
-
-            foreach (var textSpan in Spans.ToList())
-            {
-                textSpan.Rects.Clear();
-            }
-
-            float baselineY = 0;
-            var moveToBaseline = 0f;
-            var useLineHeight = 0f;
-
-            foreach (var line in processLines)
-            {
-
-                if (!baseLineCalculated)
-                {
-
-                    float PositionBaseline(float calcBaselineY)
-                    {
-                        if (this.VerticalTextAlignment == TextAlignment.End)
-                        {
-                            if (rectDraw.Height > ContentSize.Pixels.Height)
-                            {
-                                calcBaselineY += rectDraw.Height - ContentSize.Pixels.Height;
-                            }
-                        }
-                        else
-                        if (this.VerticalTextAlignment == TextAlignment.Center)
-                        {
-                            calcBaselineY += (rectDraw.Height - ContentSize.Pixels.Height) / 2.0f;
-                        }
-
-                        return calcBaselineY;
-                    }
-
-                    if (!LineHeightUniform)
-                    {
-                        //calc for every line
-                        useLineHeight = line.Height;
-                        moveToBaseline = useLineHeight - FontMetrics.Descent;
-                        if (lineNb == 0)
-                        {
-                            baselineY += PositionBaseline(rectDraw.Top + moveToBaseline);
-                        }
-                        else
-                        {
-
-                            baselineY += PositionBaseline(moveToBaseline) + FontMetrics.Descent;
-                        }
-                    }
-                    else
-                    {
-                        //just once
-                        useLineHeight = MeasuredLineHeight;
-                        moveToBaseline = useLineHeight - FontMetrics.Descent;
-                        baselineY = PositionBaseline(moveToBaseline + rectDraw.Top);
-                        baseLineCalculated = true;
-                    }
-
-                }
-
-                lineNb++;
-
-                #region LAYOUT
-
-                if (line.IsNewParagraph && lineNb > 1)
-                {
-                    baselineY += (float)SpaceBetweenParagraphs;
-                }
-
-                var alignedLineDrawingStartX = rectDraw.Left;
-                if (lineNb == 1)
-                {
-                    alignedLineDrawingStartX += startOffset.X;
-                }
-                var enlargeSpaceCharacter = 0.0f;
-                var fillCharactersOffset = 0.0f;
-                if (this.HorizontalTextAlignment == DrawTextAlignment.Center)
-                {
-                    alignedLineDrawingStartX += (rectDraw.Width - line.Width) / 2.0f;
-                    //System.Diagnostics.Debug.WriteLine($"[LINE D] {line.Width:0.0}");
-                }
-                else
-                if (this.HorizontalTextAlignment == DrawTextAlignment.End)
-                {
-                    alignedLineDrawingStartX += rectDraw.Width - line.Width;
-                }
-                else
-                if ((HorizontalTextAlignment == DrawTextAlignment.FillWords
-                     || HorizontalTextAlignment == DrawTextAlignment.FillCharacters) && !line.IsLastInParagraph
-                    || HorizontalTextAlignment == DrawTextAlignment.FillWordsFull
-                    || HorizontalTextAlignment == DrawTextAlignment.FillCharactersFull)
-                {
-
-                    var emptySpace = rectDraw.Width - line.Width;
-                    if (lineNb == 1)
-                    {
-                        emptySpace = rectDraw.Width - (line.Width + startOffset.X);
-                    }
-                    if (emptySpace > 0)
-                    {
-                        if (HorizontalTextAlignment == DrawTextAlignment.FillWords || HorizontalTextAlignment == DrawTextAlignment.FillWordsFull)
-                        {
-                            var spaces = line.Value.Count(x => x == ' ');
-                            if (spaces > 0)
-                            {
-                                enlargeSpaceCharacter = emptySpace / spaces;
-                            }
-                        }
-                        else
-                        if (HorizontalTextAlignment == DrawTextAlignment.FillCharacters || HorizontalTextAlignment == DrawTextAlignment.FillCharactersFull)
-                        {
-                            fillCharactersOffset = emptySpace / (line.Value.Length - 1);
-                        }
-                    }
-                }
-
-                if (alignedLineDrawingStartX < rectDraw.Left)
-                    alignedLineDrawingStartX = rectDraw.Left;
-
-                line.Bounds = new SKRect(alignedLineDrawingStartX,
-                    baselineY - moveToBaseline,
-                    alignedLineDrawingStartX + line.Width,
-                    baselineY - moveToBaseline + useLineHeight);
-
-                #endregion
-
-                //if (DebugColor != Colors.Transparent)
-                //{
-                //    PaintDeco.Color = DebugColor.ToSKColor();
-                //    PaintDeco.Style = SKPaintStyle.StrokeAndFill;
-                //    PaintDeco.StrokeWidth = 0;
-
-                //    canvas.DrawRect(line.Bounds, PaintDeco);
-                //}
-
-                if (GradientByLines)
-                {
-                    SetupGradient(paintDefault, FillGradient, line.Bounds);
-
-                    if (paintStroke != null)
-                    {
-                        SetupGradient(paintStroke, StrokeGradient, line.Bounds);
-                    }
-                }
-
-
-
-                //DRAW LINE SPANS
-                float offsetX = 0;
-                var spanIndex = 0;
-                foreach (var lineSpan in line.Spans)
-                {
-
-
-                    SKRect rectPrecalculatedSpanBounds = SKRect.Empty;
-
-                    var paint = paintDefault;
-                    if (lineSpan.Span != null)
-                    {
-                        paint = lineSpan.Span.SetupPaint(scale, paintDefault);
-
-                        //first span can initiate painting line background
-                        if (spanIndex == 0)
-                        {
-                            if (lineSpan.Span.ParagraphColor != Colors.Transparent)
-                            {
-                                //todo
-
-
-                                rectPrecalculatedSpanBounds = new SKRect(
-                                    alignedLineDrawingStartX,
-                                    line.Bounds.Top,
-                                    alignedLineDrawingStartX + rectDraw.Width,
-                                    line.Bounds.Bottom + (float)SpaceBetweenParagraphs);
-
-                                PaintDeco.Color = lineSpan.Span.ParagraphColor.ToSKColor();
-                                PaintDeco.Style = SKPaintStyle.StrokeAndFill;
-                                canvas.DrawRect(rectPrecalculatedSpanBounds, PaintDeco);
-                            }
-                        }
-                    }
-
-                    var offsetAdjustmentX = 0.0f;
-
-                    if (lineSpan.Span is IDrawnTextSpan drawn) //MIXED CONTENT SPANS
-                    {
-                        SKRect drawnDestination;
-
-                        var drawnX = (float)Math.Round(alignedLineDrawingStartX + offsetX);
-                        if (drawn.VerticalAlignement == DrawImageAlignment.Center)
-                        {
-                            var drawnY = (float)Math.Round(line.Bounds.Bottom - lineSpan.Size.Height - (line.Bounds.Height - lineSpan.Size.Height) / 2f);
-                            drawnDestination = new SKRect(drawnX, drawnY, drawnX + lineSpan.Size.Width, line.Bounds.Bottom);
-                        }
-                        else
-                        if (drawn.VerticalAlignement == DrawImageAlignment.End)
-                        {
-                            var drawnY = (float)Math.Round(line.Bounds.Bottom - lineSpan.Size.Height);
-                            drawnDestination = new SKRect(drawnX, drawnY, drawnX + lineSpan.Size.Width, line.Bounds.Bottom);
-                        }
-                        else
-                        {
-                            var drawnY = (float)Math.Round(line.Bounds.Top);
-                            drawnDestination = new SKRect(drawnX, drawnY, drawnX + lineSpan.Size.Width, line.Bounds.Bottom);
-                        }
-
-                        drawn.Render(ctx, drawnDestination, (float)scale);
-                    }
-                    else
-                    //draw shaped
-                    if (lineSpan.NeedsShaping) //todo add stroke!
-                    {
-                        DrawShapedText(canvas, lineSpan.Text,
-                            (float)Math.Round(alignedLineDrawingStartX + offsetX),
-                            (float)Math.Round(baselineY),
-                            paint);
-                    }
-                    else
-                    //draw from glyphs
-                    if (lineSpan.Glyphs != null)
-                    {
-                        //must have Glyphs!
-                        var charIndex = 0;
-
-                        float MoveOffsetAdjustmentX(float x, string p)
-                        {
-                            if (enlargeSpaceCharacter > 0 && p == Splitter)
-                            {
-                                x += enlargeSpaceCharacter;
-                            }
-                            else
-                            if (fillCharactersOffset > 0 && charIndex > 0)
-                            {
-                                x += fillCharactersOffset;
-                            }
-                            return x;
-                        }
-
-                        //---
-                        //precalculate rectangle for painting background
-
-                        if (lineSpan.Span != null)
-                        {
-                            if (lineSpan.Span.BackgroundColor != Colors.Transparent)
-                            {
-                                var x = offsetAdjustmentX;
-                                foreach (var glyph in lineSpan.Glyphs)
-                                {
-                                    x = MoveOffsetAdjustmentX(x, glyph.Text);
-                                }
-
-                                rectPrecalculatedSpanBounds = new SKRect(
-                                    alignedLineDrawingStartX + offsetX,
-                                    line.Bounds.Top,
-                                    alignedLineDrawingStartX + offsetX + lineSpan.Size.Width + x,
-                                    line.Bounds.Top + lineSpan.Size.Height);
-
-                                PaintDeco.Color = lineSpan.Span.BackgroundColor.ToSKColor();
-                                PaintDeco.Style = SKPaintStyle.StrokeAndFill;
-                                canvas.DrawRect(rectPrecalculatedSpanBounds, PaintDeco);
-                            }
-
-                        }
-
-                        //---
-
-                        foreach (var glyph in lineSpan.Glyphs)
-                        {
-                            var print = glyph.Text;
-
-                            offsetAdjustmentX = MoveOffsetAdjustmentX(offsetAdjustmentX, print);
-
-                            var posX = alignedLineDrawingStartX + offsetX + lineSpan.Glyphs[charIndex].Position + offsetAdjustmentX;
-
-                            //if (Tag == "Debug")
-                            //{
-                            //    Debug.WriteLine($"Drawing span {lineSpan.Span.Text} with {paint.Typeface.FamilyName} -> {glyph.Text} {glyph.Symbol}");
-                            //}
-
-                            DrawCharacter(canvas, lineNb - 1, charIndex, print, posX,
-                                baselineY, paint, paintStroke, paintDropShadow, line.Bounds, (float)scale);
-
-                            charIndex++;
-                        }
-                    }
-                    else
-                    //fast code without characters positions
-                    {
-                        DrawText(canvas,
-                            alignedLineDrawingStartX + offsetX,
-                            baselineY,
-                            line.Value,
-                            paintDefault,
-                            paintStroke,
-                            paintDropShadow,
-                            (float)scale);
-                    }
-
-                    var lineSpanRect = new SKRect(
-                        alignedLineDrawingStartX + offsetX,
-                        line.Bounds.Top,
-                        alignedLineDrawingStartX + offsetX + lineSpan.Size.Width + offsetAdjustmentX,
-                        line.Bounds.Top + lineSpan.Size.Height);
-
-                    //lineSpan.DrawingRect = lineSpanRect;
-
-                    if (lineSpan.Span != null)
-                    {
-                        lineSpan.Span.Rects.Add(lineSpanRect);
-                        SpanPostDraw(canvas, lineSpan.Span, lineSpanRect, baselineY);
-                    }
-
-                    offsetX += lineSpan.Size.Width + offsetAdjustmentX;
-                    spanIndex++;
-                }
-
-                if (MaxLines > 0 && lineNb == MaxLines)
-                {
-                    break;
-                }
-
-                if (LineHeightUniform)
-                    baselineY += (float)(useLineHeight + GetSpaceBetweenLines(useLineHeight));
-                else
-                    baselineY += (float)GetSpaceBetweenLines(useLineHeight);
-            }
-
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void DrawTextInternal(SKCanvas canvas, string text, float x, float y, SKPaint paint, float scale)
-        {
-            //canvas.DrawText(text, x, y, paint);
-            using var font = paint.ToFont();
-            font.Edging = Super.FontSubPixelRendering ? SKFontEdging.SubpixelAntialias : SKFontEdging.Antialias;
-            font.Subpixel = Super.FontSubPixelRendering;
-
-            //todo instead of setting in skpaint upper
-            //font.Embolden = (this.FontAttributes & FontAttributes.Bold) != 0;
-
-            using (var blob = SKTextBlob.Create(text, font))
-            {
-                if (blob != null)
-                    canvas.DrawText(blob, x, y, paint);
-            }
-
-            //canvas.DrawText(text, (int)Math.Round(x), (int)Math.Round(y), paint);
-        }
-
-        #region custom DrawShapedText
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void DrawShapedText(
             SKCanvas canvas,
@@ -1237,8 +793,8 @@ namespace DrawnUi.Maui.Draw
             if (string.IsNullOrEmpty(text) || paint == null)
                 return;
 
-            using (SKShaper shaper = new SKShaper(paint.Typeface))
-                DrawShapedText(canvas, shaper, text, x, y, paint);
+            SetupShaper(paint.Typeface);
+            DrawShapedText(canvas, Shaper, text, x, y, paint);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1279,602 +835,324 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        #endregion
-
         /// <summary>
-        /// This is called when CharByChar is enabled
-        /// You can override it to apply custom effects to every letter		/// </summary>
-        /// <param name="canvas"></param>
-        /// <param name="lineIndex"></param>
-        /// <param name="letterIndex"></param>
-        /// <param name="text"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="paint"></param>
-        /// <param name="paintStroke"></param>
-        /// <param name="scale"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual void DrawCharacter(SKCanvas canvas,
-            int lineIndex, int letterIndex,
-            string text, float x, float y, SKPaint paint, SKPaint paintStroke, SKPaint paintDropShadow, SKRect destination, float scale)
-        {
-            DrawText(canvas,
-                x, y,
-                text,
-                paint, paintStroke, paintDropShadow, scale);
-        }
-
-        /// <summary>
-        /// todo move this to some font info data block
-        /// otherwise we wont be able to have multiple fonts 
+        /// Overriding this to be able to control either control background is drawn (when background color is set) or gradient can be drawn over text 
         /// </summary>
-        public double SpaceBetweenParagraphs
+        /// <param name="paint"></param>
+        /// <param name="destination"></param>
+        /// <returns></returns>
+        protected override bool SetupBackgroundPaint(SKPaint paint, SKRect destination)
         {
-            get
-            {
-                return LineHeightWithSpacing * ParagraphSpacing;
-            }
-        }
+            if (paint == null)
+                return false;
 
-        public double GetSpaceBetweenLines(float lineHeight)
-        {
-            if (FontMetrics.Leading > 0)
+            var color = this.BackgroundColor;
+            var gradient = FillGradient;
+
+            if (Background != null)
             {
-                return FontMetrics.Leading * LineSpacing;
+                if (Background is SolidColorBrush solid)
+                {
+                    if (solid.Color != null)
+                        color = solid.Color;
+                }
+                else
+                if (Background is GradientBrush gradientBrush)
+                {
+                    gradient = SkiaGradient.FromBrush(gradientBrush);
+                    if (color == null)
+                        color = Colors.Black;
+                }
             }
             else
-            if (LineSpacing != 1)
             {
-                double defaultLeading = lineHeight * 0.1;
-                return defaultLeading * LineSpacing;
-            }
-
-            return 0;
-        }
-
-        public double SpaceBetweenLines
-        {
-            get
-            {
-                return GetSpaceBetweenLines(LineHeightPixels);
-            }
-        }
-
-
-
-        /// <summary>
-        /// todo move this to some font info data block
-        /// otherwise we wont be able to have multiple fonts 
-        /// </summary>
-        public double LineHeightWithSpacing
-        {
-            get
-            {
-                return LineHeightPixels + SpaceBetweenLines;
-            }
-        }
-
-        //public float CalculatedTextHeight(SKPaint paint, float scale)
-        //{
-        //    var textHeight = (float)(textPaint.TextSize * scale);
-        //}
-
-
-        protected string _fontFamily;
-
-        private static IFontRegistrar _registrar;
-        public static IFontRegistrar FontRegistrar
-        {
-            get
-            {
-                if (_registrar == null)
+                if (BackgroundColor != null)
                 {
-
-                    _registrar = Super.Services.GetService<IFontRegistrar>();
-
-                    //_registrar = Super.Services.GetService<IFontManager>();
-
-
+                    color = BackgroundColor;
                 }
-                return _registrar;
-            }
-        }
-
-        const string TypicalFontAssetsPath = "../Fonts/";
-
-        static Stream GetEmbeddedResourceStream(string filename, System.Reflection.Assembly assembly = null)
-        {
-            if (assembly == null)
-            {
-                assembly = Super.App.GetType().Assembly;
             }
 
-            var resourceNames = assembly.GetManifestResourceNames();
-            var searchName = "." + filename;
+            //if (gradient != null && color == null)
+            //{
+            //    color = Colors.Black;
+            //}
 
-            foreach (var name in resourceNames)
-            {
-                if (name.EndsWith(searchName, StringComparison.CurrentCultureIgnoreCase))
-                    return assembly.GetManifestResourceStream(name)!;
-            }
+            if (color == null || color.Alpha <= 0) return false;
 
-            throw new FileNotFoundException($"Resource ending with {filename} not found.");
+            paint.Color = color.ToSKColor();
+            paint.Style = SKPaintStyle.StrokeAndFill;
+            paint.BlendMode = this.FillBlendMode;
+
+            SetupGradient(paint, gradient, destination);
+
+            return true;
         }
 
-        /// <summary>
-        /// A new TypeFace was set
-        /// </summary>
-        protected virtual void OnFontUpdated()
-        {
-            NeedMeasure = true;
-        }
 
-        protected object LockFont = new();
+        #endregion
 
-        protected virtual void UpdateFont()
+        #region MEASURE
+
+        public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
             if (IsDisposed || IsDisposing)
-                return;
+                return ScaledSize.Default;
 
             lock (LockFont)
             {
-                if (_fontFamily != FontFamily
-                    || _fontWeight != FontWeight
-                    || _fontFamily == null
-                    || TypeFace == null)
+                // If measuring in a background context, or control can't draw, or constraints are invalid, return cached
+                if (IsMeasuring || !CanDraw || widthConstraint < 0 || heightConstraint < 0)
                 {
-                    _fontFamily = FontFamily;
-                    _fontWeight = FontWeight;
-
-                    var replaceFont = SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
-
-                    if (replaceFont == null)
-                    {
-                        Super.Log($"Failed to load font {_fontFamily} with weight {_fontWeight}. Using default.");
-                        _replaceFont = SkiaFontManager.DefaultTypeface;
-                    }
-                    else
-                    {
-                        _replaceFont = replaceFont;
-                    }
+                    return MeasuredSize;
                 }
 
-                InvalidateText();
-            }
+                IsMeasuring = true;
 
-        }
-
-
-
-        protected void ReplaceFont()
-        {
-            var newFont = _replaceFont;
-            bool updated = false;
-            if (newFont != null) //new legal font
-            {
-                TypeFace = newFont;
-                updated = true;
-            }
-            if (TypeFace == null) //unacceptable state
-            {
-                TypeFace = SkiaFontManager.DefaultTypeface; ;
-                updated = true;
-            }
-            if (updated) //update
-            {
-                _replaceFont = null;
-                OnFontUpdated();
-            }
-        }
-
-        protected float _fontUnderline;
-
-        public bool IsCut { get; protected set; }
-
-        private DecomposedText _lastDecomposed;
-
-        private TextLine[] SplitLines(string text,
-            SKPaint paint,
-            SKPoint firstLineOffset,
-            float maxWidth,
-            float maxHeight,
-            int maxLines,
-            bool needsShaping,
-            TextSpan span)
-        {
-            if (string.IsNullOrEmpty(text) || paint.Typeface == null)
-            {
-                return null;
-            }
-
-            if (span != null)
-            {
-                needsShaping = span.NeedShape;
-            }
-
-            bool needCalc = true;
-            DecomposedText decomposedText = null;
-            var autosize = this.AutoSize;
-            var autoSizeFontStep = 0.1f;
-
-            if (UsingFontSize > 0 && (AutoSize == AutoSizeType.FitFillHorizontal || AutoSize == AutoSizeType.FitFillVertical))
-            {
-                paint.TextSize = (float)UsingFontSize; //use from last time
-                UpdateFontMetrics(paint);
-            }
-
-            bool calculatingMask = false;
-            var measureText = text;
-
-            if (!string.IsNullOrEmpty(AutoSizeText))
-            {
-                calculatingMask = true;
-                measureText = AutoSizeText;
-            }
-
-            while (needCalc)
-            {
-                decomposedText = DecomposeText(measureText, paint, firstLineOffset, maxWidth, maxHeight, maxLines, needsShaping, span);
-
-                if (autosize != AutoSizeType.None && maxWidth > 0 && maxHeight > 0)
+                try
                 {
-
-                    if ((AutoSize == AutoSizeType.FitHorizontal || AutoSize == AutoSizeType.FitFillHorizontal)
-                        && (decomposedText.CountParagraphs != decomposedText.Lines.Length || decomposedText.WasCut))
+                    var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
+                    if (request.IsSame)
                     {
-                        autosize = AutoSizeType.FitHorizontal;
-                    }
-                    else
-                    if ((AutoSize == AutoSizeType.FitVertical || AutoSize == AutoSizeType.FitFillVertical)
-                        && decomposedText.WasCut)
-                    {
-                        autosize = AutoSizeType.FitVertical;
-                    }
-                    else
-                    if ((AutoSize == AutoSizeType.FillVertical || AutoSize == AutoSizeType.FitFillVertical)
-                        && decomposedText.HasMoreVerticalSpace >= 3)
-                    {
-                        autosize = AutoSizeType.FillVertical;
-                    }
-                    else
-                    if ((AutoSize == AutoSizeType.FillHorizontal || AutoSize == AutoSizeType.FitFillHorizontal)
-                        && decomposedText.HasMoreHorizontalSpace >= 3)
-                    {
-                        autosize = AutoSizeType.FillHorizontal;
-                    }
-                    else
-                    {
-                        autosize = AutoSizeType.None;
+                        return MeasuredSize;
                     }
 
-                    if (autosize == AutoSizeType.FitVertical || autosize == AutoSizeType.FitHorizontal)
+                    ReplaceFont();
+
+                    if (TypeFace == null)
+                        return MeasuredSize; // Unexpected but we handle gracefully
+
+                    SetupDefaultPaint(scale);
+                    var constraints = GetMeasuringConstraints(request);
+
+                    float textWidthPixels = 0f;
+                    float textHeightPixels = 0f;
+
+                    UpdateFontMetrics(PaintDefault);
+
+                    if (Spans.Count == 0)
                     {
-                        if (paint.TextSize == 0)
+                        bool needsShaping = false;
+                        string text = null;
+
+                        if (GliphsInvalidated)
                         {
-                            //wtf just happened
-                            Trace.WriteLine($"[SkiaLabel] Error couldn't fit text '{this.Text}' inside label width {this.Width}");
-                            if (Debugger.IsAttached)
-                                Debugger.Break();
-                            paint.TextSize = 12;
-                            needCalc = false;
+                            Glyphs = GetGlyphs(TextInternal, PaintDefault.Typeface);
                         }
-                        paint.TextSize -= autoSizeFontStep;
-                        UpdateFontMetrics(PaintDefault);
+
+                        if (AutoFont && Glyphs != null && Glyphs.Count > 0)
+                        {
+                            var first = Glyphs[0].Symbol;
+                            var matchedFace = SkiaFontManager.Manager.MatchCharacter(first);
+                            if (matchedFace != null)
+                            {
+                                needsShaping = SkiaLabel.UnicodeNeedsShaping(first);
+                                TypeFace = matchedFace;
+                                PaintDefault.Typeface = matchedFace;
+                            }
+                            text = TextInternal;
+                        }
+                        else if (Glyphs.Count > 0)
+                        {
+                            // Replace unprintable symbols with fallback using StringBuilder to reduce allocations
+                            var sb = new StringBuilder(Glyphs.Count);
+                            for (int i = 0; i < Glyphs.Count; i++)
+                            {
+                                sb.Append(Glyphs[i].IsAvailable ? Glyphs[i].GetGlyphText() : FallbackCharacter.ToString());
+                            }
+                            text = sb.ToString();
+                        }
+                        else
+                        {
+                            text = TextInternal;
+                        }
+
+                        Lines = SplitLines(text,
+                                           PaintDefault,
+                                           SKPoint.Empty,
+                                           (float)constraints.Content.Width,
+                                           (float)constraints.Content.Height,
+                                           MaxLines,
+                                           needsShaping,
+                                           null);
                     }
                     else
-                    if (autosize == AutoSizeType.FillVertical || autosize == AutoSizeType.FillHorizontal)
                     {
-                        paint.TextSize += autoSizeFontStep;
-                        UpdateFontMetrics(PaintDefault);
-                    }
-                }
-                else
-                {
-                    needCalc = false;
-                    if (calculatingMask)
-                    {
-                        calculatingMask = false;
-                        measureText = text;
-                        decomposedText = DecomposeText(measureText, paint, firstLineOffset, maxWidth, maxHeight, maxLines, needsShaping, span);
-                    }
-                }
+                        // Measure multiple spans
+                        var mergedLines = new List<TextLine>();
+                        SKPoint offset = SKPoint.Empty;
+                        TextLine previousSpanLastLine = null;
 
-                decomposedText.AutoSize = autosize;
+                        // Instead of Spans.ToList(), iterate directly:
+                        for (int i = 0; i < Spans.Count; i++)
+                        {
+                            var span = Spans[i];
+                            if (string.IsNullOrEmpty(span.Text))
+                                continue;
 
-                if (_lastDecomposed != null && autosize == AutoSizeType.None) //autosize ended
-                {
-                    if (_lastDecomposed.AutoSize == AutoSizeType.FillHorizontal)
+                            span.DrawingOffset = offset;
+                            var paint = span.SetupPaint(scale, PaintDefault);
+
+                            if (!(span is IDrawnTextSpan))
+                            {
+                                // Only check glyph rendering if not drawn (since drawn might not need shaping)
+                                span.CheckGlyphsCanBeRendered();
+                            }
+
+                            var lines = SplitLines(span.TextFiltered,
+                                                   paint,
+                                                   offset,
+                                                   constraints.Content.Width,
+                                                   constraints.Content.Height,
+                                                   MaxLines,
+                                                   span.NeedShape,
+                                                   span);
+
+                            if (lines != null && lines.Length > 0)
+                            {
+                                // Instead of lines.First()/Last(), access directly:
+                                var firstLine = lines[0];
+                                var lastLine = lines[lines.Length - 1];
+
+                                // merge first one
+                                if (previousSpanLastLine != null && mergedLines.Count > 0)
+                                {
+                                    // Remove last line from merged and merge with firstLine
+                                    var lastIndex = mergedLines.Count - 1;
+                                    if (mergedLines[lastIndex] == previousSpanLastLine)
+                                    {
+                                        mergedLines.RemoveAt(lastIndex);
+                                    }
+                                    MergeSpansForLines(span, firstLine, previousSpanLastLine);
+                                }
+
+                                previousSpanLastLine = lastLine;
+                                offset = new SKPoint(lastLine.Width, 0);
+
+                                // Add all lines from current span
+                                mergedLines.AddRange(lines);
+                            }
+                            else
+                            {
+                                previousSpanLastLine = null;
+                                offset = SKPoint.Empty;
+                            }
+                        }
+
+                        // Last sanity pass if we don't keep spaces on line breaks
+                        if (!KeepSpacesOnLineBreaks && Spans.Count > 0)
+                        {
+                            // Avoid LINQ .Count(), use Count property
+                            int totalLines = mergedLines.Count;
+                            for (int i = 0; i < totalLines - 1; i++) // do not process last line
+                            {
+                                var line = mergedLines[i];
+                                if (line.Value.Length > 0 && line.Value[line.Value.Length - 1] == SpaceChar)
+                                {
+                                    var span = (line.Spans.Count > 0) ? line.Spans[line.Spans.Count - 1] : LineSpan.Default;
+                                    if (span.Text != null)
+                                    {
+                                        // remove last character
+                                        span.Text = span.Text.Substring(0, span.Text.Length - 1);
+                                        line.Value = line.Value.Substring(0, line.Value.Length - 1);
+
+                                        if (span.Glyphs != null && span.Glyphs.Length > 0)
+                                        {
+                                            var newArray = span.Glyphs;
+                                            if (line.Value.Length > 0)
+                                            {
+                                                // kill last glyph
+                                                float removedPos = span.Glyphs[^1].Position;
+                                                line.Width -= (span.Size.Width - removedPos);
+                                                Array.Resize(ref newArray, newArray.Length - 1);
+                                            }
+                                            span.Glyphs = newArray;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Lines = mergedLines.ToArray();
+                    }
+
+                    GliphsInvalidated = false;
+
+                    if (Lines != null && Lines.Length > 0)
                     {
-                        decomposedText = _lastDecomposed;
+                        LinesCount = Lines.Length;
+
+                        // Instead of multiple LINQ calls, do one pass:
+                        int paragraphCount = 0;
+                        float maxLineWidth = 0f;
+                        float maxLineHeight = 0f;
+
+                        for (int i = 0; i < Lines.Length; i++)
+                        {
+                            var line = Lines[i];
+                            if (line.IsNewParagraph)
+                                paragraphCount++;
+
+                            if (line.Width > maxLineWidth)
+                                maxLineWidth = line.Width;
+
+                            if (line.Height > maxLineHeight)
+                                maxLineHeight = line.Height;
+                        }
+
+                        int addParagraphSpacingsCount = paragraphCount - 1;
+                        var addParagraphSpacings = addParagraphSpacingsCount * SpaceBetweenParagraphs;
+
+                        textWidthPixels = maxLineWidth;
+
+                        // Ensure LineHeightPixels is the minimum line height
+                        if (LineHeightUniform)
+                        {
+                            float usedLineHeight = (LineHeightPixels > maxLineHeight) ? LineHeightPixels : maxLineHeight;
+                            MeasuredLineHeight = usedLineHeight;
+                            textHeightPixels = (float)(usedLineHeight * LinesCount
+                                + (LinesCount - 1) * GetSpaceBetweenLines(usedLineHeight) + addParagraphSpacings);
+                        }
+                        else
+                        {
+                            MeasuredLineHeight = LineHeightPixels;
+                            textHeightPixels = 0f;
+                            for (int i = 0; i < LinesCount; i++)
+                            {
+                                var lineHeight = Lines[i].Height;
+                                if (LineHeightPixels > lineHeight)
+                                    lineHeight = LineHeightPixels;
+
+                                textHeightPixels += (float)(lineHeight + addParagraphSpacings);
+                                if (i < LinesCount - 1)
+                                    textHeightPixels += (float)GetSpaceBetweenLines(lineHeight);
+                            }
+                        }
+
+                        ContentSize = ScaledSize.FromPixels(textWidthPixels, textHeightPixels, scale);
                     }
                     else
-                    if (_lastDecomposed.AutoSize == AutoSizeType.FitHorizontal)
                     {
-                        //var stop = _lastDecomposed.Lines;
+                        // No lines
+                        ContentSize = ScaledSize.CreateEmpty(scale);
+                        LinesCount = 0;
                     }
+
+                    return SetMeasuredAdaptToContentSize(constraints, scale);
                 }
-
-                _lastDecomposed = decomposedText;
-            }
-
-            IsCut = decomposedText.WasCut;
-            UsingFontSize = paint.TextSize;
-
-            return decomposedText.Lines;
-        }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public double UsingFontSize { get; set; }
-
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float MeasureTextWidthWithAdvance(SKPaint paint, string text, bool useCache)
-        {
-            var bounds = paint.MeasureText(text);
-
-            return bounds;
-
-            /*
-            ConcurrentDictionary<string, float> typefaceCache = null;
-            var thisFont = new GlyphSizeDefinition
-            {
-                Typeface = paint.Typeface,
-                FontSize = paint.TextSize
-            };
-
-            if (!MeasuredGlyphsWidthWithAdvance.TryGetValue(thisFont, out typefaceCache))
-            {
-                typefaceCache = new();
-                MeasuredGlyphsWidthWithAdvance.TryAdd(thisFont, typefaceCache);
-            }
-
-            float width = 0f;
-            if (!typefaceCache.TryGetValue(text, out width))
-            {
-                width = paint.MeasureText(text);
-            }
-            */
-
-            //if (paint.TextSkewX != 0)
-            //{
-            //    var rect = SKRect.Empty;
-            //    MeasureText(paint, text, ref rect);
-            //    float additionalWidth = Math.Abs(paint.TextSkewX) * rect.Height;
-            //    width += additionalWidth;
-            //}
-
-        }
-
-        //static float GetTextTransformsWidthCorrection(SKPaint paint, string text)
-        //{
-        //    var additionalWidth = 0f;
-        //    if (paint.TextSkewX != 0)
-        //    {
-        //        var lastCharRect = SKRect.Empty;
-        //        MeasureText(paint, text, ref lastCharRect);
-        //        additionalWidth = Math.Abs(paint.TextSkewX) * lastCharRect.Height;
-        //    }
-        //    return additionalWidth;
-        //}
-
-
-
-        //public static float MeasureTextWidthWithAdvanceAndTransforms(SKPaint paint, string text)
-        //{
-        //    float width = paint.MeasureText(text);
-
-        //    if (paint.TextSkewX != 0 && !string.IsNullOrEmpty(text))
-        //    {
-        //        var lastCharRect = SKRect.Empty;
-        //        MeasureText(paint, text.Last().ToString(), ref lastCharRect);
-        //        float additionalWidth = Math.Abs(paint.TextSkewX) * lastCharRect.Height;
-        //        width += additionalWidth;
-        //    }
-
-        //    return width;
-        //}
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float MeasureTextWidth(SKPaint paint, string text)
-        {
-            var rect = SKRect.Empty;
-            MeasureText(paint, text, ref rect);
-            return rect.Width;
-        }
-
-        /// <summary>
-        /// Accounts paint transforms like skew etc
-        /// </summary>
-        /// <param name="paint"></param>
-        /// <param name="text"></param>
-        /// <param name="bounds"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MeasureText(SKPaint paint, string text, ref SKRect bounds)
-        {
-            paint.MeasureText(text, ref bounds);
-
-            if (paint.TextSkewX != 0)
-            {
-                float additionalWidth = Math.Abs(paint.TextSkewX) * paint.TextSize;
-                bounds.Right += additionalWidth; //notice passed by ref struct will be modified
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int LastNonSpaceIndex(string text)
-        {
-            for (int i = text.Length - 1; i >= 0; i--)
-            {
-                if (!char.IsWhiteSpace(text[i]))
+                finally
                 {
-                    return i;
+                    IsMeasuring = false;
+                    NeedMeasure = false;
                 }
             }
-            return -1;
         }
 
-
-        public static List<bool> AreAllGlyphsAvailable(string text, SKTypeface typeface)
+        protected float MeasurePartialTextWidth(SKPaint paint, ReadOnlySpan<char> textSpan,
+            bool needsShaping)
         {
-            var glyphIds = typeface.GetGlyphs(text);
-            var results = new List<bool>(glyphIds.Length); // Use the length of glyphIds instead
-
-            int glyphIndex = 0;
-            for (int i = 0; i < text.Length; i++)
-            {
-                //int codePoint = char.ConvertToUtf32(text, i);
-
-                // Check if it's a high surrogate and increment to skip the low surrogate.
-                if (char.IsHighSurrogate(text[i]))
-                {
-                    i++;
-                }
-
-                bool glyphExists = glyphIds[glyphIndex] != 0;
-                results.Add(glyphExists);
-
-                // Since each code point maps to a single glyph, increment the glyph index separately.
-                glyphIndex++;
-            }
-
-            return results;
-        }
-
-
-        //public static SKSize GetResultSize(SKShaper.Result result)
-        //{
-        //    if (result == null || result.Points.Length == 0)
-        //        throw new ArgumentNullException(nameof(result));
-
-        //    float minX = float.MaxValue;
-        //    float maxX = float.MinValue;
-        //    float minY = float.MaxValue;
-        //    float maxY = float.MinValue;
-
-        //    // Calculate the bounds by considering each glyph's position and advance
-        //    for (var i = 0; i < result.Codepoints.Length; i++)
-        //    {
-        //        var point = result.Points[i];
-
-        //        // Update the minX and minY for the start of the glyph
-        //        minX = Math.Min(minX, point.X);
-        //        minY = Math.Min(minY, point.Y);
-
-        //        // Since this is the positioned glyph, maxX and maxY should consider the glyph width/height which are scaled advances
-        //        maxX = Math.Max(maxX, point.X);
-        //        maxY = Math.Max(maxY, point.Y);
-        //    }
-
-        //    // The width is the difference between the max X and min X values, plus the width of the last glyph
-        //    float width = maxX - minX + result.Width;
-
-        //    // The height is the difference between the max Y and min Y values
-        //    float height = maxY - minY;
-
-        //    return new SKSize(result.Width, height);
-
-
-        //    return new SKSize(width, height);
-        //}
-
-        public static SKSize GetResultSize(SKShaper.Result result)
-        {
-            if (result == null || result.Points.Length == 0)
-                throw new ArgumentNullException(nameof(result));
-
-            float minY = float.MaxValue;
-            float maxY = float.MinValue;
-
-            // Calculate the bounds by considering each glyph's Y position
-            for (var i = 0; i < result.Points.Length; i++)
-            {
-                var point = result.Points[i];
-
-                // Update minY and maxY based on the glyph's position
-                minY = Math.Min(minY, point.Y);
-                maxY = Math.Max(maxY, point.Y);
-            }
-
-            // The height is the difference between the max Y and min Y values
-            float height = maxY - minY;
-
-            // Use the result.Width directly for the width
-            return new SKSize(result.Width, height);
-        }
-
-
-        // 			using var shaper = new SKShaper(paint.GetFont().Typeface);
-        public static SKShaper.Result GetShapedText(SKShaper shaper, string text, float x, float y, SKPaint paint)
-        {
-            if (string.IsNullOrEmpty(text))
-                return null;
-
-            if (shaper == null)
-                throw new ArgumentNullException(nameof(shaper));
-            if (paint == null)
-                throw new ArgumentNullException(nameof(paint));
-
-            var font = paint.ToFont();
-
-            if (font != null && shaper.Typeface != null)
-            {
-                font.Typeface = shaper.Typeface;
-                // shape the text
-                var result = shaper.Shape(text, x, y, paint);
-
-                return result;
-            }
-
-            return null;
-
-
-        }
-
-        public static List<UsedGlyph> GetGlyphs(string text, SKTypeface typeface)
-        {
-
-            if (typeface == null)
-                typeface = SkiaFontManager.DefaultTypeface;
-
-            var glyphIds = typeface.GetGlyphs(text);
-            var results = new List<UsedGlyph>(glyphIds.Length);
-            int glyphIndex = 0;
-
-            if (!string.IsNullOrEmpty(text))
-            {
-                for (int i = 0; i < text.Length; i++)
-                {
-                    int codePoint = char.ConvertToUtf32(text, i);
-
-                    bool isHighSurrogate = char.IsHighSurrogate(text[i]);
-
-                    // Get the text for the glyph, which may be one or two characters long.
-                    string glyphText = text.Substring(i, isHighSurrogate ? 2 : 1);
-
-                    if (isHighSurrogate)
-                    {
-                        i++;
-                    }
-                    var id = glyphIds[glyphIndex];
-
-                    results.Add(new UsedGlyph
-                    {
-                        Id = id,
-                        Text = glyphText,
-                        IsAvailable = id != 0 || IsGlyphAlwaysAvailable(glyphText),
-                        Symbol = codePoint
-                    });
-                    glyphIndex++;
-                }
-
-            }
-
-            return results;
-        }
-
-        public static bool IsGlyphAlwaysAvailable(string glyphText)
-        {
-            return glyphText == "\n";
+            string text = textSpan.ToString();
+            var (w, _) = MeasureLineGlyphs(paint, text, needsShaping);
+            return w;
         }
 
         protected (float Width, LineGlyph[] Glyphs) MeasureLineGlyphs(SKPaint paint, string text, bool needsShaping)
@@ -1884,6 +1162,11 @@ namespace DrawnUi.Maui.Draw
 
             var paintTypeface = paint.Typeface ?? SkiaFontManager.DefaultTypeface;
 
+            if (GlyphMeasurementCache.TryGetValue(paintTypeface, needsShaping, text, out var cachedResult))
+            {
+                return cachedResult;
+            }
+
             var glyphs = GetGlyphs(text, paintTypeface);
 
             var positions = new List<LineGlyph>();
@@ -1892,41 +1175,41 @@ namespace DrawnUi.Maui.Draw
 
             if (needsShaping)
             {
-                var shaper = new SKShaper(paintTypeface);
-                var result = GetShapedText(shaper, text, 0, 0, paint);
+                SetupShaper(paintTypeface);
+                var result = GetShapedText(Shaper, text, 0, 0, paint);
                 if (result == null)
                 {
+                    GlyphMeasurementCache.Add(paintTypeface, needsShaping, text, 0f, null);
                     return (0.0f, null);
                 }
+
                 var measured = GetResultSize(result);
+
+                GlyphMeasurementCache.Add(paintTypeface, needsShaping, text, measured.Width, null);
                 return (measured.Width, null);
             }
 
-            if (_charMonoWidthPixels > 0)
+            if (charMonoWidthPixels > 0)
             {
-                foreach (var glyph in glyphs)
+                foreach (var g in glyphs)
                 {
-                    var print = glyph.Text;
-
-                    var centerOffset = 0.0f;
-
-                    bool mono = glyph.IsNumber();
-
-                    var thisWidth = MeasureTextWidthWithAdvance(paint, print, true);
+                    var print = g.GetGlyphText();
+                    var mono = g.IsNumber();
+                    var thisWidth = MeasureTextWidthWithAdvance(paint, print);
+                    var centerOffset = 0f;
 
                     if (mono)
                     {
-                        //align to center of available space
-                        centerOffset = (_charMonoWidthPixels - thisWidth) / 2.0f;
+                        centerOffset = (charMonoWidthPixels - thisWidth) / 2.0f;
                     }
 
                     var valueOffset = offsetX + centerOffset;
-                    positions.Add(LineGlyph.FromGlyph(glyph, valueOffset, thisWidth));
+                    positions.Add(LineGlyph.FromGlyph(g, valueOffset, thisWidth));
 
                     if (mono)
                     {
-                        offsetX += _charMonoWidthPixels;
-                        value += _charMonoWidthPixels;
+                        offsetX += charMonoWidthPixels;
+                        value += charMonoWidthPixels;
                     }
                     else
                     {
@@ -1935,254 +1218,70 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                //  System.Diagnostics.Debug.WriteLine($"[LINE M] {value:0.0}");
-                return (value, positions.ToArray());
+                var arr = positions.ToArray();
+                GlyphMeasurementCache.Add(paintTypeface, needsShaping, text, value, arr);
+                return (value, arr);
             }
 
+            // Check if we need character spacing or alignment adjustments
+            bool requiresComplexMeasuring =
+                Spans.Count > 0 ||
+                CharacterSpacing != 1f ||
+                HorizontalTextAlignment == DrawTextAlignment.FillWordsFull ||
+                HorizontalTextAlignment == DrawTextAlignment.FillCharactersFull ||
+                HorizontalTextAlignment == DrawTextAlignment.FillWords ||
+                HorizontalTextAlignment == DrawTextAlignment.FillCharacters;
 
-            if (Spans.Count > 0 || CharacterSpacing != 1f
-                || HorizontalTextAlignment == DrawTextAlignment.FillWordsFull
-                || HorizontalTextAlignment == DrawTextAlignment.FillCharactersFull
-                || HorizontalTextAlignment == DrawTextAlignment.FillWords
-                || HorizontalTextAlignment == DrawTextAlignment.FillCharacters)
+            if (requiresComplexMeasuring)
             {
                 var spacingModifier = (int)Math.Round(MeasuredSize.Scale * (CharacterSpacing - 1));
-
                 var pos = 0;
                 var addAtIndex = -1;
+
                 if (paint.TextSkewX != 0)
                 {
                     addAtIndex = LastNonSpaceIndex(text);
                 }
 
-                foreach (var glyph in glyphs)
+                foreach (var g in glyphs)
                 {
-                    var thisWidth = MeasureTextWidthWithAdvance(paint, glyph.Text, true);
+                    var thisWidth = MeasureTextWidthWithAdvance(paint, g.GetGlyphText());
+                    if (pos == addAtIndex)
                     {
-                        if (pos == addAtIndex)
-                        {
-                            var additionalWidth = (int)Math.Round(Math.Abs(paint.TextSkewX) * paint.TextSize / 2f);
-
-                            thisWidth += additionalWidth;
-                        }
+                        var additionalWidth = (int)Math.Round(Math.Abs(paint.TextSkewX) * paint.TextSize / 2f);
+                        thisWidth += additionalWidth;
                     }
 
-                    positions.Add(LineGlyph.FromGlyph(glyph, offsetX, thisWidth));
-
+                    positions.Add(LineGlyph.FromGlyph(g, offsetX, thisWidth));
                     offsetX += thisWidth + spacingModifier;
                     value += thisWidth + spacingModifier;
-
                     pos++;
                 }
 
-                return (value - spacingModifier, positions.ToArray());
+                var finalWidth = value - spacingModifier;
+                var arr2 = positions.ToArray();
+                GlyphMeasurementCache.Add(paintTypeface, needsShaping, text, finalWidth, arr2);
+                return (finalWidth, arr2);
             }
 
-            var simpleValue = MeasureTextWidthWithAdvance(paint, text, false);
-
+            var simpleValue = MeasureTextWidthWithAdvance(paint, text);
             if (paint.TextSkewX != 0)
             {
                 float additionalWidth = Math.Abs(paint.TextSkewX) * paint.TextSize;
                 simpleValue += additionalWidth;
             }
 
+            GlyphMeasurementCache.Add(paintTypeface, needsShaping, text, simpleValue, null);
             return (simpleValue, null);
         }
 
-
-        List<string> SplitLineToWords(string line, char space)
-        {
-            if (line == space.ToString())
-            {
-                return new()
-                {
-                    line
-                };
-            }
-            string GetSpaces(string str, bool leading)
-            {
-                var spaces = leading ? str.TakeWhile(c => c == space).ToArray()
-                    : str.Reverse().TakeWhile(c => c == space).ToArray();
-                return new string(spaces);
-            }
-
-            var leadingSpaces = GetSpaces(line, leading: true);
-            var trailingSpaces = GetSpaces(line, leading: false);
-
-            // Now trim the line and split by space, without removing empty entries
-            var trimmedLine = line.Trim();
-            var words = trimmedLine.Split(new[] { space }, StringSplitOptions.None).Reverse().ToList();
-
-            // words list is inverted!
-            if (leadingSpaces.Length > 0) words.Add(leadingSpaces);
-            if (trailingSpaces.Length > 0) words.Insert(0, trailingSpaces);
-
-            //if (words.Count > 0 && NeedsRTL(words[0]))
-            //{
-            //    words.Reverse();
-            //}
-
-            return words;
-        }
-
-        public static bool UnicodeNeedsShaping(int unicodeCharacter)
-        {
-            if (EmojiData.IsEmoji(unicodeCharacter))
-                return true;
-
-            // Emoji skin tone modifiers (Fitzpatrick scale)
-            if (unicodeCharacter >= 0x1F3FB && unicodeCharacter <= 0x1F3FF) return true;
-
-            // Arabic Unicode range
-            if (unicodeCharacter >= 0x0600 && unicodeCharacter <= 0x06FF) return true;
-
-            // Syriac Unicode range
-            if (unicodeCharacter >= 0x0700 && unicodeCharacter <= 0x074F) return true;
-
-            // Thaana Unicode range
-            if (unicodeCharacter >= 0x0780 && unicodeCharacter <= 0x07BF) return true;
-
-            // Devanagari Unicode range
-            if (unicodeCharacter >= 0x0900 && unicodeCharacter <= 0x097F) return true;
-
-            // Bengali Unicode range
-            if (unicodeCharacter >= 0x0980 && unicodeCharacter <= 0x09FF) return true;
-
-            // Gurmukhi Unicode range
-            if (unicodeCharacter >= 0x0A00 && unicodeCharacter <= 0x0A7F) return true;
-
-            // Gujarati Unicode range
-            if (unicodeCharacter >= 0x0A80 && unicodeCharacter <= 0x0AFF) return true;
-
-            // Oriya Unicode range
-            if (unicodeCharacter >= 0x0B00 && unicodeCharacter <= 0x0B7F) return true;
-
-            // Tamil Unicode range
-            if (unicodeCharacter >= 0x0B80 && unicodeCharacter <= 0x0BFF) return true;
-
-            // Telugu Unicode range
-            if (unicodeCharacter >= 0x0C00 && unicodeCharacter <= 0x0C7F) return true;
-
-            // Kannada Unicode range
-            if (unicodeCharacter >= 0x0C80 && unicodeCharacter <= 0x0CFF) return true;
-
-            // Malayalam Unicode range
-            if (unicodeCharacter >= 0x0D00 && unicodeCharacter <= 0x0D7F) return true;
-
-            // Sinhala Unicode range
-            if (unicodeCharacter >= 0x0D80 && unicodeCharacter <= 0x0DFF) return true;
-
-            // Thai Unicode range
-            if (unicodeCharacter >= 0x0E00 && unicodeCharacter <= 0x0E7F) return true;
-
-            // Lao Unicode range
-            if (unicodeCharacter >= 0x0E80 && unicodeCharacter <= 0x0EFF) return true;
-
-            // Tibetan Unicode range
-            if (unicodeCharacter >= 0x0F00 && unicodeCharacter <= 0x0FFF) return true;
-
-            // Myanmar Unicode range
-            if (unicodeCharacter >= 0x1000 && unicodeCharacter <= 0x109F) return true;
-
-            // Georgian Unicode range
-            if (unicodeCharacter >= 0x10A0 && unicodeCharacter <= 0x10FF) return true;
-
-            // Hangul Jamo (Korean) Unicode range
-            if (unicodeCharacter >= 0x1100 && unicodeCharacter <= 0x11FF) return true;
-
-            // Ethiopic Unicode range
-            if (unicodeCharacter >= 0x1200 && unicodeCharacter <= 0x137F) return true;
-
-            // Khmer Unicode range
-            if (unicodeCharacter >= 0x1780 && unicodeCharacter <= 0x17FF) return true;
-
-            // Mongolian Unicode range
-            if (unicodeCharacter >= 0x1800 && unicodeCharacter <= 0x18AF) return true;
-
-
-            return false;
-        }
-
-        public static bool NeedsRTL(string text)
-        {
-            // Check if the text is null or empty
-            if (string.IsNullOrEmpty(text)) return false;
-
-            // Iterate over each character in the text
-            foreach (char c in text)
-            {
-                int unicodeCharacter = c;
-
-                // Check if the character's script is traditionally RTL
-                // Arabic, Hebrew, Syriac, Thaana, etc.
-                if ((unicodeCharacter >= 0x0600 && unicodeCharacter <= 0x06FF) || // Arabic
-                    (unicodeCharacter >= 0x0590 && unicodeCharacter <= 0x05FF) || // Hebrew
-                    (unicodeCharacter >= 0x0700 && unicodeCharacter <= 0x074F) || // Syriac
-                    (unicodeCharacter >= 0x0780 && unicodeCharacter <= 0x07BF) || // Thaana
-                    (unicodeCharacter >= 0x0800 && unicodeCharacter <= 0x083F))   // Samaritan
-                {
-                    return true;
-                }
-            }
-
-            // If no RTL characters found, return false
-            return false;
-        }
-
-        /// <summary>
-        /// Returns new totalHeight
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="span"></param>
-        /// <param name="totalHeight"></param>
-        /// <param name="heightBlock"></param>
-        /// <param name="isNewParagraph"></param>
-        /// <param name="needsShaping"></param>
-        float AddEmptyLine(List<TextLine> result, TextSpan span,
-            float totalHeight, float heightBlock, bool isNewParagraph, bool needsShaping)
-        {
-            bool assingnIsNewParagraph = isNewParagraph;
-            var widthBlock = 0;
-
-            var chunk = new LineSpan()
-            {
-                NeedsShaping = needsShaping,
-                Glyphs = Array.Empty<LineGlyph>(),
-                Text = "",
-                Span = span,
-                Size = new(widthBlock, heightBlock)
-            };
-
-            var addLine = new TextLine()
-            {
-                Value = "",
-                IsNewParagraph = assingnIsNewParagraph,
-                Width = widthBlock,
-                Spans = new()
-                {
-                    chunk
-                },
-                Height = heightBlock
-            };
-
-            result.Add(addLine);
-
-            if (assingnIsNewParagraph && result.Count > 1)
-            {
-                totalHeight += (float)SpaceBetweenParagraphs;
-            }
-
-            return totalHeight;
-        }
-
-
         protected DecomposedText DecomposeText(string text, SKPaint paint,
-    SKPoint firstLineOffset,
-    float maxWidth,
-    float maxHeight,//-1
-    int maxLines,//-1
-    bool needsShaping,
-    TextSpan span)
+            SKPoint firstLineOffset,
+            float maxWidth,
+            float maxHeight,//-1
+            int maxLines,//-1
+            bool needsShaping,
+            TextSpan span)
         {
 
             var ret = new DecomposedText();
@@ -2577,21 +1676,762 @@ namespace DrawnUi.Maui.Draw
             return ret;
         }
 
-
-        public override void Invalidate()
+        List<string> SplitLineToWords(string line, char space)
         {
-            ResetTextCalculations(); //force recalc
+            if (line == space.ToString())
+            {
+                return new()
+                {
+                    line
+                };
+            }
+            string GetSpaces(string str, bool leading)
+            {
+                var spaces = leading ? str.TakeWhile(c => c == space).ToArray()
+                    : str.Reverse().TakeWhile(c => c == space).ToArray();
+                return new string(spaces);
+            }
 
-            base.Invalidate();
+            var leadingSpaces = GetSpaces(line, leading: true);
+            var trailingSpaces = GetSpaces(line, leading: false);
 
-            Update();
+            // Now trim the line and split by space, without removing empty entries
+            var trimmedLine = line.Trim();
+            var words = trimmedLine.Split(new[] { space }, StringSplitOptions.None).Reverse().ToList();
+
+            // words list is inverted!
+            if (leadingSpaces.Length > 0) words.Add(leadingSpaces);
+            if (trailingSpaces.Length > 0) words.Insert(0, trailingSpaces);
+
+            //if (words.Count > 0 && NeedsRTL(words[0]))
+            //{
+            //    words.Reverse();
+            //}
+
+            return words;
         }
 
-        public override void CalculateMargins()
+        private TextLine[] SplitLines(string text,
+    SKPaint paint,
+    SKPoint firstLineOffset,
+    float maxWidth,
+    float maxHeight,
+    int maxLines,
+    bool needsShaping,
+    TextSpan span)
         {
-            base.CalculateMargins();
+            if (string.IsNullOrEmpty(text) || paint.Typeface == null)
+            {
+                return null;
+            }
 
-            ResetTextCalculations();
+            if (span != null)
+            {
+                needsShaping = span.NeedShape;
+            }
+
+            bool needCalc = true;
+            DecomposedText decomposedText = null;
+            var autosize = this.AutoSize;
+            var autoSizeFontStep = 0.1f;
+
+            if (UsingFontSize > 0 && (AutoSize == AutoSizeType.FitFillHorizontal || AutoSize == AutoSizeType.FitFillVertical))
+            {
+                paint.TextSize = (float)UsingFontSize; //use from last time
+                UpdateFontMetrics(paint);
+            }
+
+            bool calculatingMask = false;
+            var measureText = text;
+
+            if (!string.IsNullOrEmpty(AutoSizeText))
+            {
+                calculatingMask = true;
+                measureText = AutoSizeText;
+            }
+
+            while (needCalc)
+            {
+                decomposedText = DecomposeText(measureText, paint, firstLineOffset, maxWidth, maxHeight, maxLines, needsShaping, span);
+
+                if (autosize != AutoSizeType.None && maxWidth > 0 && maxHeight > 0)
+                {
+
+                    if ((AutoSize == AutoSizeType.FitHorizontal || AutoSize == AutoSizeType.FitFillHorizontal)
+                        && (decomposedText.CountParagraphs != decomposedText.Lines.Length || decomposedText.WasCut))
+                    {
+                        autosize = AutoSizeType.FitHorizontal;
+                    }
+                    else
+                    if ((AutoSize == AutoSizeType.FitVertical || AutoSize == AutoSizeType.FitFillVertical)
+                        && decomposedText.WasCut)
+                    {
+                        autosize = AutoSizeType.FitVertical;
+                    }
+                    else
+                    if ((AutoSize == AutoSizeType.FillVertical || AutoSize == AutoSizeType.FitFillVertical)
+                        && decomposedText.HasMoreVerticalSpace >= 3)
+                    {
+                        autosize = AutoSizeType.FillVertical;
+                    }
+                    else
+                    if ((AutoSize == AutoSizeType.FillHorizontal || AutoSize == AutoSizeType.FitFillHorizontal)
+                        && decomposedText.HasMoreHorizontalSpace >= 3)
+                    {
+                        autosize = AutoSizeType.FillHorizontal;
+                    }
+                    else
+                    {
+                        autosize = AutoSizeType.None;
+                    }
+
+                    if (autosize == AutoSizeType.FitVertical || autosize == AutoSizeType.FitHorizontal)
+                    {
+                        if (paint.TextSize == 0)
+                        {
+                            //wtf just happened
+                            Trace.WriteLine($"[SkiaLabel] Error couldn't fit text '{this.Text}' inside label width {this.Width}");
+                            if (Debugger.IsAttached)
+                                Debugger.Break();
+                            paint.TextSize = 12;
+                            needCalc = false;
+                        }
+                        paint.TextSize -= autoSizeFontStep;
+                        UpdateFontMetrics(PaintDefault);
+                    }
+                    else
+                    if (autosize == AutoSizeType.FillVertical || autosize == AutoSizeType.FillHorizontal)
+                    {
+                        paint.TextSize += autoSizeFontStep;
+                        UpdateFontMetrics(PaintDefault);
+                    }
+                }
+                else
+                {
+                    needCalc = false;
+                    if (calculatingMask)
+                    {
+                        calculatingMask = false;
+                        measureText = text;
+                        decomposedText = DecomposeText(measureText, paint, firstLineOffset, maxWidth, maxHeight, maxLines, needsShaping, span);
+                    }
+                }
+
+                decomposedText.AutoSize = autosize;
+
+                if (_lastDecomposed != null && autosize == AutoSizeType.None) //autosize ended
+                {
+                    if (_lastDecomposed.AutoSize == AutoSizeType.FillHorizontal)
+                    {
+                        decomposedText = _lastDecomposed;
+                    }
+                    else
+                    if (_lastDecomposed.AutoSize == AutoSizeType.FitHorizontal)
+                    {
+                        //var stop = _lastDecomposed.Lines;
+                    }
+                }
+
+                _lastDecomposed = decomposedText;
+            }
+
+            IsCut = decomposedText.WasCut;
+            UsingFontSize = paint.TextSize;
+
+            return decomposedText.Lines;
+        }
+
+
+        public void MergeSpansForLines(
+        TextSpan span,
+        TextLine line,
+        TextLine previousSpanLastLine)
+        //merge first line with last from previous span
+        {
+
+            if (string.IsNullOrEmpty(previousSpanLastLine.Value))
+            {
+                return;
+            }
+
+            var spans = previousSpanLastLine.Spans.ToList();
+            if (!string.IsNullOrEmpty(line.Value))
+            {
+                spans.AddRange(line.Spans);
+                line.Width += previousSpanLastLine.Width;
+            }
+            else
+            {
+                line.Width = previousSpanLastLine.Width;
+            }
+
+            if (previousSpanLastLine.Height > line.Height)
+                line.Height = previousSpanLastLine.Height;
+
+            line.Spans = spans;
+
+            line.Value = previousSpanLastLine.Value + line.Value;
+
+            line.IsNewParagraph = previousSpanLastLine.IsNewParagraph;
+            // var lastSpan = previousSpanLastLine.ApplySpans.LastOrDefault();
+
+            /*
+            if (string.IsNullOrEmpty(line.Value))
+            {
+                line.Value = previousSpanLastLine.Value;
+                line.ApplySpans.AddRange(previousSpanLastLine.ApplySpans);
+                line.Glyphs = previousSpanLastLine.Glyphs;
+                line.Width = previousSpanLastLine.Width;
+            }
+            else
+            {
+                line.Value = previousSpanLastLine.Value + line.Value;
+                line.ApplySpans.AddRange(previousSpanLastLine.ApplySpans);
+                line.ApplySpans.Add(ApplySpan.Create(span,
+                    lastSpan.End + 1,
+                    lastSpan.End + line.Glyphs.Length));
+
+                var characterPositions = new List<LineGlyph>();
+                characterPositions.AddRange(previousSpanLastLine.Glyphs);
+                var startAt = previousSpanLastLine.Width;
+                foreach (var glyph in line.Glyphs)
+                {
+                    characterPositions.Add(LineGlyph.Move(glyph, glyph.Position + startAt));
+                }
+                line.Glyphs = characterPositions.ToArray();
+
+                line.Width += previousSpanLastLine.Width;
+            }
+            */
+        }
+
+        public (int Limit, float Width) CutLineToFit(
+            SKPaint paint,
+            string textIn, float maxWidth)
+        {
+            SKRect bounds = new SKRect();
+            var cycle = "";
+            var limit = 0;
+            float resultWidth = 0;
+
+            var tail = string.Empty;
+            if (LineBreakMode == LineBreakMode.TailTruncation)
+                tail = Trail;
+
+            textIn += tail;
+
+            MeasureText(paint, textIn, ref bounds);
+
+            if (bounds.Width > maxWidth && !string.IsNullOrEmpty(textIn))
+            {
+
+                for (int pos = 0; pos < textIn.Length; pos++)
+                {
+                    cycle = textIn.Left(pos + 1).TrimEnd() + tail;
+                    MeasureText(paint, cycle, ref bounds);
+                    if (bounds.Width > maxWidth)
+                        break;
+                    resultWidth = bounds.Width;
+                    limit = pos + 1;
+                }
+            }
+
+            return (limit, resultWidth);
+        }
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MeasureTextWidthWithAdvance(SKPaint paint, string text)
+        {
+            var bounds = paint.MeasureText(text);
+            return bounds;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MeasureTextWidthWithAdvance(SKPaint paint, ReadOnlySpan<char> textSpan)
+        {
+            var bounds = paint.MeasureText(textSpan);
+            return bounds;
+        }
+
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float MeasureTextWidth(SKPaint paint, string text)
+        {
+            var rect = SKRect.Empty;
+            MeasureText(paint, text, ref rect);
+            return rect.Width;
+        }
+
+        /// <summary>
+        /// Accounts paint transforms like skew etc
+        /// </summary>
+        /// <param name="paint"></param>
+        /// <param name="text"></param>
+        /// <param name="bounds"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void MeasureText(SKPaint paint, string text, ref SKRect bounds)
+        {
+            paint.MeasureText(text, ref bounds);
+
+            if (paint.TextSkewX != 0)
+            {
+                float additionalWidth = Math.Abs(paint.TextSkewX) * paint.TextSize;
+                bounds.Right += additionalWidth; //notice passed by ref struct will be modified
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int LastNonSpaceIndex(string text)
+        {
+            for (int i = text.Length - 1; i >= 0; i--)
+            {
+                if (!char.IsWhiteSpace(text[i]))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+
+        public static List<bool> AreAllGlyphsAvailable(string text, SKTypeface typeface)
+        {
+            var glyphIds = typeface.GetGlyphs(text);
+            var results = new List<bool>(glyphIds.Length); // Use the length of glyphIds instead
+
+            int glyphIndex = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                //int codePoint = char.ConvertToUtf32(text, i);
+
+                // Check if it's a high surrogate and increment to skip the low surrogate.
+                if (char.IsHighSurrogate(text[i]))
+                {
+                    i++;
+                }
+
+                bool glyphExists = glyphIds[glyphIndex] != 0;
+                results.Add(glyphExists);
+
+                // Since each code point maps to a single glyph, increment the glyph index separately.
+                glyphIndex++;
+            }
+
+            return results;
+        }
+
+        public static SKSize GetResultSize(SKShaper.Result result)
+        {
+            if (result == null || result.Points.Length == 0)
+                throw new ArgumentNullException(nameof(result));
+
+            float minY = float.MaxValue;
+            float maxY = float.MinValue;
+
+            for (var i = 0; i < result.Points.Length; i++)
+            {
+                var point = result.Points[i];
+
+                minY = Math.Min(minY, point.Y);
+                maxY = Math.Max(maxY, point.Y);
+            }
+
+            float height = maxY - minY;
+
+            return new SKSize(result.Width, height);
+        }
+
+        public static SKShaper.Result GetShapedText(SKShaper shaper, string text, float x, float y, SKPaint paint)
+        {
+            if (string.IsNullOrEmpty(text))
+                return null;
+
+            if (shaper == null)
+                throw new ArgumentNullException(nameof(shaper));
+            if (paint == null)
+                throw new ArgumentNullException(nameof(paint));
+
+            var font = paint.ToFont();
+
+            if (font != null && shaper.Typeface != null)
+            {
+                font.Typeface = shaper.Typeface;
+                // shape the text
+                var result = shaper.Shape(text, x, y, paint);
+
+                return result;
+            }
+
+            return null;
+
+
+        }
+
+        public static List<UsedGlyph> GetGlyphs(string text, SKTypeface typeface)
+        {
+            if (typeface == null)
+                typeface = SkiaFontManager.DefaultTypeface;
+
+            var glyphIds = typeface.GetGlyphs(text);
+            var results = new List<UsedGlyph>(glyphIds.Length);
+            int glyphIndex = 0;
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                ReadOnlySpan<char> textSpan = text.AsSpan();
+                int i = 0;
+
+                while (i < textSpan.Length)
+                {
+                    // Use DecodeFromUtf16 instead of TryCreate
+                    OperationStatus status = Rune.DecodeFromUtf16(textSpan.Slice(i), out Rune rune, out int charsConsumed);
+
+                    if (status == OperationStatus.Done)
+                    {
+                        int codePoint = rune.Value;
+
+                        var usedGlyph = new UsedGlyph
+                        {
+                            Id = (ushort)(glyphIndex < glyphIds.Length ? glyphIds[glyphIndex] : 0),
+                            Symbol = codePoint,
+                            IsAvailable = (glyphIndex < glyphIds.Length && glyphIds[glyphIndex] != 0) || IsGlyphAlwaysAvailable(rune.ToString()),
+                            StartIndex = i,
+                            Length = charsConsumed,
+                            Source = text // Assign the original text
+                        };
+
+                        results.Add(usedGlyph);
+                        glyphIndex++;
+                        i += charsConsumed;
+                    }
+                    else
+                    {
+                        // Handle invalid rune, possibly replace with fallback
+                        var usedGlyph = new UsedGlyph
+                        {
+                            Id = 0, // Assuming 0 is the fallback glyph ID
+                            Symbol = textSpan[i],
+                            IsAvailable = false,
+                            StartIndex = i,
+                            Length = 1,
+                            Source = text // Assign the original text
+                        };
+                        results.Add(usedGlyph);
+                        glyphIndex++;
+                        i++;
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        public static bool IsGlyphAlwaysAvailable(string glyphText)
+        {
+            return glyphText == "\n";
+        }
+
+        public static bool UnicodeNeedsShaping(int unicodeCharacter)
+        {
+            if (EmojiData.IsEmoji(unicodeCharacter))
+                return true;
+
+            // Emoji skin tone modifiers (Fitzpatrick scale)
+            if (unicodeCharacter >= 0x1F3FB && unicodeCharacter <= 0x1F3FF) return true;
+
+            // Arabic Unicode range
+            if (unicodeCharacter >= 0x0600 && unicodeCharacter <= 0x06FF) return true;
+
+            // Syriac Unicode range
+            if (unicodeCharacter >= 0x0700 && unicodeCharacter <= 0x074F) return true;
+
+            // Thaana Unicode range
+            if (unicodeCharacter >= 0x0780 && unicodeCharacter <= 0x07BF) return true;
+
+            // Devanagari Unicode range
+            if (unicodeCharacter >= 0x0900 && unicodeCharacter <= 0x097F) return true;
+
+            // Bengali Unicode range
+            if (unicodeCharacter >= 0x0980 && unicodeCharacter <= 0x09FF) return true;
+
+            // Gurmukhi Unicode range
+            if (unicodeCharacter >= 0x0A00 && unicodeCharacter <= 0x0A7F) return true;
+
+            // Gujarati Unicode range
+            if (unicodeCharacter >= 0x0A80 && unicodeCharacter <= 0x0AFF) return true;
+
+            // Oriya Unicode range
+            if (unicodeCharacter >= 0x0B00 && unicodeCharacter <= 0x0B7F) return true;
+
+            // Tamil Unicode range
+            if (unicodeCharacter >= 0x0B80 && unicodeCharacter <= 0x0BFF) return true;
+
+            // Telugu Unicode range
+            if (unicodeCharacter >= 0x0C00 && unicodeCharacter <= 0x0C7F) return true;
+
+            // Kannada Unicode range
+            if (unicodeCharacter >= 0x0C80 && unicodeCharacter <= 0x0CFF) return true;
+
+            // Malayalam Unicode range
+            if (unicodeCharacter >= 0x0D00 && unicodeCharacter <= 0x0D7F) return true;
+
+            // Sinhala Unicode range
+            if (unicodeCharacter >= 0x0D80 && unicodeCharacter <= 0x0DFF) return true;
+
+            // Thai Unicode range
+            if (unicodeCharacter >= 0x0E00 && unicodeCharacter <= 0x0E7F) return true;
+
+            // Lao Unicode range
+            if (unicodeCharacter >= 0x0E80 && unicodeCharacter <= 0x0EFF) return true;
+
+            // Tibetan Unicode range
+            if (unicodeCharacter >= 0x0F00 && unicodeCharacter <= 0x0FFF) return true;
+
+            // Myanmar Unicode range
+            if (unicodeCharacter >= 0x1000 && unicodeCharacter <= 0x109F) return true;
+
+            // Georgian Unicode range
+            if (unicodeCharacter >= 0x10A0 && unicodeCharacter <= 0x10FF) return true;
+
+            // Hangul Jamo (Korean) Unicode range
+            if (unicodeCharacter >= 0x1100 && unicodeCharacter <= 0x11FF) return true;
+
+            // Ethiopic Unicode range
+            if (unicodeCharacter >= 0x1200 && unicodeCharacter <= 0x137F) return true;
+
+            // Khmer Unicode range
+            if (unicodeCharacter >= 0x1780 && unicodeCharacter <= 0x17FF) return true;
+
+            // Mongolian Unicode range
+            if (unicodeCharacter >= 0x1800 && unicodeCharacter <= 0x18AF) return true;
+
+
+            return false;
+        }
+
+        public static bool NeedsRTL(string text)
+        {
+            // Check if the text is null or empty
+            if (string.IsNullOrEmpty(text)) return false;
+
+            // Iterate over each character in the text
+            foreach (char c in text)
+            {
+                int unicodeCharacter = c;
+
+                // Check if the character's script is traditionally RTL
+                // Arabic, Hebrew, Syriac, Thaana, etc.
+                if ((unicodeCharacter >= 0x0600 && unicodeCharacter <= 0x06FF) || // Arabic
+                    (unicodeCharacter >= 0x0590 && unicodeCharacter <= 0x05FF) || // Hebrew
+                    (unicodeCharacter >= 0x0700 && unicodeCharacter <= 0x074F) || // Syriac
+                    (unicodeCharacter >= 0x0780 && unicodeCharacter <= 0x07BF) || // Thaana
+                    (unicodeCharacter >= 0x0800 && unicodeCharacter <= 0x083F))   // Samaritan
+                {
+                    return true;
+                }
+            }
+
+            // If no RTL characters found, return false
+            return false;
+        }
+
+        /// <summary>
+        /// Returns new totalHeight
+        /// </summary>
+        /// <param name="result"></param>
+        /// <param name="span"></param>
+        /// <param name="totalHeight"></param>
+        /// <param name="heightBlock"></param>
+        /// <param name="isNewParagraph"></param>
+        /// <param name="needsShaping"></param>
+        float AddEmptyLine(List<TextLine> result, TextSpan span,
+            float totalHeight, float heightBlock, bool isNewParagraph, bool needsShaping)
+        {
+            bool assingnIsNewParagraph = isNewParagraph;
+            var widthBlock = 0;
+
+            var chunk = new LineSpan()
+            {
+                NeedsShaping = needsShaping,
+                Glyphs = Array.Empty<LineGlyph>(),
+                Text = "",
+                Span = span,
+                Size = new(widthBlock, heightBlock)
+            };
+
+            var addLine = new TextLine()
+            {
+                Value = "",
+                IsNewParagraph = assingnIsNewParagraph,
+                Width = widthBlock,
+                Spans = new()
+                {
+                    chunk
+                },
+                Height = heightBlock
+            };
+
+            result.Add(addLine);
+
+            if (assingnIsNewParagraph && result.Count > 1)
+            {
+                totalHeight += (float)SpaceBetweenParagraphs;
+            }
+
+            return totalHeight;
+        }
+
+        /// <summary>
+        /// todo move this to some font info data block
+        /// otherwise we wont be able to have multiple fonts 
+        /// </summary>
+        public double SpaceBetweenParagraphs
+        {
+            get
+            {
+                return LineHeightWithSpacing * ParagraphSpacing;
+            }
+        }
+
+        public double GetSpaceBetweenLines(float lineHeight)
+        {
+            if (FontMetrics.Leading > 0)
+            {
+                return FontMetrics.Leading * LineSpacing;
+            }
+            else
+            if (LineSpacing != 1)
+            {
+                double defaultLeading = lineHeight * 0.1;
+                return defaultLeading * LineSpacing;
+            }
+
+            return 0;
+        }
+
+
+        protected void ResetTextCalculations()
+        {
+            IsCut = false;
+            NeedMeasure = true;
+            _lastDecomposed = null;
+            RenderLimit = -1;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public double SpaceBetweenLines
+        {
+            get
+            {
+                return GetSpaceBetweenLines(LineHeightPixels);
+            }
+        }
+
+        /// <summary>
+        /// todo move this to some font info data block
+        /// otherwise we wont be able to have multiple fonts 
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public double LineHeightWithSpacing
+        {
+            get
+            {
+                return LineHeightPixels + SpaceBetweenLines;
+            }
+        }
+
+        #endregion
+
+        #region FONT
+
+        void UpdateFontMetrics(SKPaint paint)
+        {
+            FontMetrics = paint.FontMetrics;
+            LineHeightPixels = (float)Math.Round(-FontMetrics.Ascent + FontMetrics.Descent);//PaintText.FontSpacing;
+            fontUnderline = FontMetrics.UnderlinePosition.GetValueOrDefault();
+
+            if (!string.IsNullOrEmpty(this.MonoForDigits))
+            {
+                charMonoWidthPixels = MeasureTextWidthWithAdvance(paint, this.MonoForDigits);
+            }
+            else
+            {
+                charMonoWidthPixels = 0;
+            }
+        }
+
+        /// <summary>
+        /// A new TypeFace was set
+        /// </summary>
+        protected virtual void OnFontUpdated()
+        {
+            GliphsInvalidated = true;
+            NeedMeasure = true;
+        }
+
+        protected bool GliphsInvalidated = true;
+
+        protected object LockFont = new();
+        protected string _fontFamily;
+
+        protected virtual void UpdateFont()
+        {
+            if (IsDisposed || IsDisposing)
+                return;
+
+            lock (LockFont)
+            {
+                if (_fontFamily != FontFamily
+                    || _fontWeight != FontWeight
+                    || _fontFamily == null
+                    || TypeFace == null)
+                {
+                    _fontFamily = FontFamily;
+                    _fontWeight = FontWeight;
+
+                    var replaceFont = SkiaFontManager.Instance.GetFont(_fontFamily, _fontWeight);
+
+                    if (replaceFont == null)
+                    {
+                        Super.Log($"Failed to load font {_fontFamily} with weight {_fontWeight}. Using default.");
+                        _replaceFont = SkiaFontManager.DefaultTypeface;
+                    }
+                    else
+                    {
+                        _replaceFont = replaceFont;
+                    }
+                }
+
+                InvalidateText();
+            }
+
+        }
+
+
+        protected void ReplaceFont()
+        {
+            if (_replaceFont == TypeFace)
+                return;
+
+            var newFont = _replaceFont;
+            bool updated = false;
+            if (newFont != null) //new legal font
+            {
+                TypeFace = newFont;
+                updated = true;
+            }
+            if (TypeFace == null) //unacceptable state
+            {
+                TypeFace = SkiaFontManager.DefaultTypeface; ;
+                updated = true;
+            }
+            if (updated) //update
+            {
+                _replaceFont = null;
+                OnFontUpdated();
+            }
         }
 
         protected static void NeedUpdateFont(BindableObject bindable, object oldvalue, object newvalue)
@@ -2606,34 +2446,93 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected override void OnLayoutReady()
-        {
-            base.OnLayoutReady();
 
-            if (AutoSize != AutoSizeType.None)
-                Invalidate();
+        #endregion
+
+        #region ALLOCATIONS
+
+        void CleanAllocations()
+        {
+            PaintDefault?.Dispose();
+            PaintStroke?.Dispose();
+            PaintShadow?.Dispose();
+            PaintDeco?.Dispose();
+            Shaper?.Dispose();
         }
 
-        public override void OnScaleChanged()
+        public SKPaint PaintDefault = new SKPaint
         {
-            UpdateFont();
-        }
+            IsAntialias = true,
+            IsDither = true
+        };
 
-        public override bool CanDraw
+        public SKPaint PaintStroke = new SKPaint
         {
-            get
+            IsAntialias = true,
+            IsDither = true
+        };
+
+        public SKPaint PaintShadow = new SKPaint
+        {
+            IsAntialias = true,
+            IsDither = true
+        };
+
+        public SKPaint PaintDeco = new SKPaint
+        {
+
+        };
+
+        protected void SetupShaper(SKTypeface typeface)
+        {
+            if (Shaper == null || Shaper.Typeface != typeface)
             {
-                if (string.IsNullOrEmpty(Text))
-                {
-                    return DrawWhenEmpty && base.CanDraw;
-                }
-
-                return base.CanDraw;
+                var kill = Shaper;
+                Shaper = new SKShaper(typeface);
+                DisposeObject(kill);
             }
         }
 
+        protected SKShaper Shaper;
 
-        #region PROPERTIES
+        #endregion
+
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public int LinesCount { get; protected set; } = 1;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public TextLine[] Lines { get; protected set; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public float LineHeightPixels { get; protected set; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public List<UsedGlyph> Glyphs { get; protected set; } = new();
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public float MeasuredLineHeight { get; protected set; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public double UsingFontSize { get; set; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool IsCut { get; protected set; }
+
+        protected float charMonoWidthPixels;
+        protected int RenderLimit = -1;
+        protected float fontUnderline;
+
+        private DecomposedText _lastDecomposed;
+        private readonly object _spanLock = new object();
+        private int _fontWeight;
+        private static float _scaleResampleText = 1.0f;
+        private SKTypeface _replaceFont;
+
+        public static string Trail = "..";
+
+
+        #region STATIC BINDABLE PROPERTIES
 
         public static readonly BindableProperty FontAttributesProperty = BindableProperty.Create(nameof(FontAttributes),
         typeof(FontAttributes),
@@ -2922,13 +2821,14 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposed || IsDisposing)
                 return;
 
+            GliphsInvalidated = true;
             SetTextInternal();
-
             InvalidateMeasure();
         }
 
+        private const string Splitter = " ";
 
-        public static string Splitter = " ";
+        const char SpaceChar = ' ';
 
         /// <summary>
         /// Aplies transforms etc
@@ -2948,7 +2848,7 @@ namespace DrawnUi.Maui.Draw
                         break;
 
                     case TextTransform.Titlecase:
-                        TextInternal = Text.ToTitleCase(Splitter, false);
+                        TextInternal = Text.ToTitleCase(SpaceChar.ToString(), false);
                         break;
 
                     case TextTransform.Phrasecase:
@@ -3198,34 +3098,16 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-        #region FAKE BOLD AND ITALIC
-
-        protected virtual void ApplyFontProperties()
-        {
-
-
-        }
-
-        protected virtual void SetItalic(SKPaint paint)
-        {
-            paint.TextSkewX = -0.25f; // Skew factor for faux italic; you can adjust this
-        }
-
-        protected virtual void SetBold(SKPaint paint)
-        {
-            paint.FakeBoldText = false;
-        }
-
-        protected virtual void SetDefault(SKPaint paint)
-        {
-            paint.TextSkewX = 0;
-            paint.FakeBoldText = false;
-        }
-
-
-        #endregion
-
         #region GESTURES
+
+        public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor), typeof(Color),
+            typeof(SkiaLabel),
+            Colors.White);
+        public Color TouchEffectColor
+        {
+            get { return (Color)GetValue(TouchEffectColorProperty); }
+            set { SetValue(TouchEffectColorProperty, value); }
+        }
 
         /// <summary>
         /// Return null if you wish not to consume
@@ -3276,87 +3158,6 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-        public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor), typeof(Color),
-            typeof(SkiaLabel),
-            Colors.White);
-
-        private SKTypeface _replaceFont;
-
-        public Color TouchEffectColor
-        {
-            get { return (Color)GetValue(TouchEffectColorProperty); }
-            set { SetValue(TouchEffectColorProperty, value); }
-        }
-
-        #region CACHE
-
-        public static ConcurrentDictionary<GlyphSizeDefinition, ConcurrentDictionary<string, float>> MeasuredGlyphsWidthWithAdvance { get; } = new();
-
-
-        public struct GlyphSizeDefinition
-        {
-            public SKTypeface Typeface { get; set; }
-            public float FontSize { get; set; }
-
-            public static bool operator ==(GlyphSizeDefinition a, GlyphSizeDefinition b)
-            {
-                return a.FontSize == b.FontSize && a.Typeface == b.Typeface;
-            }
-
-            public static bool operator !=(GlyphSizeDefinition a, GlyphSizeDefinition b)
-            {
-                return a.FontSize != b.FontSize || a.Typeface != b.Typeface;
-            }
-        }
-
-        #endregion
-
-        protected override bool SetupBackgroundPaint(SKPaint paint, SKRect destination)
-        {
-            if (paint == null)
-                return false;
-
-            var color = this.BackgroundColor;
-            var gradient = FillGradient;
-
-            if (Background != null)
-            {
-                if (Background is SolidColorBrush solid)
-                {
-                    if (solid.Color != null)
-                        color = solid.Color;
-                }
-                else
-                if (Background is GradientBrush gradientBrush)
-                {
-                    gradient = SkiaGradient.FromBrush(gradientBrush);
-                    if (color == null)
-                        color = Colors.Black;
-                }
-            }
-            else
-            {
-                if (BackgroundColor != null)
-                {
-                    color = BackgroundColor;
-                }
-            }
-
-            //if (gradient != null && color == null)
-            //{
-            //    color = Colors.Black;
-            //}
-
-            if (color == null || color.Alpha <= 0) return false;
-
-            paint.Color = color.ToSKColor();
-            paint.Style = SKPaintStyle.StrokeAndFill;
-            paint.BlendMode = this.FillBlendMode;
-
-            SetupGradient(paint, gradient, destination);
-
-            return true;
-        }
     }
 
 }

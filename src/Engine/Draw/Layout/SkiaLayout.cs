@@ -390,7 +390,12 @@ namespace DrawnUi.Maui.Draw
         {
             get
             {
-                var output = $"{this.GetType().Name} {Type}, ";
+                var output = $"{this.GetType().Name} {Type} {MeasuredSize.Pixels.Width:0}x{MeasuredSize.Pixels.Height:0}, ";
+
+                if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
+                {
+                    output += $"measured {LastMeasuredIndex + 1}, ";
+                }
 
                 if (IsTemplated || RenderTree == null)
                     return output + ChildrenFactory.GetDebugInfo();
@@ -644,7 +649,8 @@ namespace DrawnUi.Maui.Draw
 
         public override void InvalidateByChild(SkiaControl child)
         {
-            if (!NeedAutoSize && child.NeedAutoSize || !NeedAutoSize && IsTemplated)
+            if (!NeedAutoSize && child.NeedAutoSize
+                || IsTemplated && !NeedAutoSize)
             {
                 UpdateByChild(child);
                 return;
@@ -676,8 +682,8 @@ namespace DrawnUi.Maui.Draw
         public override ScaledSize MeasureAbsolute(SKRect rectForChildrenPixels, float scale)
         {
 
-            var count = ChildrenFactory.GetChildrenCount();
-            if (count > 0)
+            var childrenCount = ChildrenFactory.GetChildrenCount();
+            if (childrenCount > 0)
             {
                 if (!IsTemplated)
                 {
@@ -695,12 +701,12 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                 {
-                    if (this.ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem)
+                    if (this.MeasureItemsStrategy == MeasuringStrategy.MeasureFirst)
                     {
                         standalone = true;
                         var template = ChildrenFactory.GetTemplateInstance();
 
-                        var child = ChildrenFactory.GetChildAt(0, template);
+                        var child = ChildrenFactory.GetChildAt(0, template, 0, true);
 
                         //if (child == null)
                         //{
@@ -726,13 +732,17 @@ namespace DrawnUi.Maui.Draw
                             ChildrenFactory.ReleaseView(template);
                     }
                     else
-                    if (this.ItemSizingStrategy == ItemSizingStrategy.MeasureAllItems
+                    if (this.MeasureItemsStrategy == MeasuringStrategy.MeasureAll
                         || RecyclingTemplate == RecyclingTemplate.Disabled)
                     {
-                        var childrenCount = ChildrenFactory.GetChildrenCount();
+
                         for (int index = 0; index < childrenCount; index++)
                         {
-                            var child = ChildrenFactory.GetChildAt(index, null);
+                            var child = ChildrenFactory.GetChildAt(index, null, 0, true);
+                            if (child == null)
+                            {
+                                break; //unexpected but..
+                            }
 
                             var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
                             if (!measured.IsEmpty)
@@ -799,6 +809,12 @@ namespace DrawnUi.Maui.Draw
 
                                 if (!canMeasureTemplates)
                                     return ScaledSize.CreateEmpty(request.Scale);
+
+                                if (MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
+                                {
+                                    ContentSize = MeasureList(constraints.Content, request.Scale);
+                                    break;
+                                }
                             }
 
                             ContentSize = MeasureStack(constraints.Content, request.Scale);
@@ -829,6 +845,8 @@ namespace DrawnUi.Maui.Draw
                 return SetMeasuredAdaptToContentSize(constraints, request.Scale);
             }
         }
+
+        protected readonly object _lockTemplates = new object();
 
         /// <summary>
         /// If you call this while measurement is in process (IsMeasuring==True) will return last measured value.
@@ -869,14 +887,17 @@ namespace DrawnUi.Maui.Draw
 
                     if (IsTemplated)
                     {
-                        if (ChildrenFactory.TemplatesInvalidated
-                        && !ChildrenFactory.TemplesInvalidating)
+                        lock (_lockTemplates)
                         {
-                            ChildrenFactory.TemplesInvalidating = true;
-                            ApplyNewItemsSource = false;
-                            ChildrenFactory.InitializeTemplates(CreateContentFromTemplate, ItemsSource,
-                                GetTemplatesPoolLimit(),
-                                GetTemplatesPoolPrefill());
+                            if (ChildrenFactory.TemplatesInvalidated
+                                && !ChildrenFactory.TemplesInvalidating)
+                            {
+                                ChildrenFactory.TemplesInvalidating = true;
+                                ApplyNewItemsSource = false;
+                                ChildrenFactory.InitializeTemplates(CreateContentFromTemplate, ItemsSource,
+                                    GetTemplatesPoolLimit(),
+                                    GetTemplatesPoolPrefill());
+                            }
                         }
                     }
                     else
@@ -978,7 +999,14 @@ namespace DrawnUi.Maui.Draw
                 var structure = LatestStackStructure;
                 if (structure != null && structure.GetCount() > 0)
                 {
-                    drawnChildrenCount = DrawStack(structure, ctx, rectForChildren, scale);
+                    if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
+                    {
+                        drawnChildrenCount = DrawList(structure, ctx, rectForChildren, scale);
+                    }
+                    else
+                    {
+                        drawnChildrenCount = DrawStack(structure, ctx, rectForChildren, scale);
+                    }
                 }
             }
             else
@@ -1165,17 +1193,17 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(InitializeTemplatesInBackgroundDelayProperty, value); }
         }
 
-        public static readonly BindableProperty ItemSizingStrategyProperty = BindableProperty.Create(
-            nameof(ItemSizingStrategy),
-            typeof(ItemSizingStrategy),
+        public static readonly BindableProperty MeasureItemsStrategyProperty = BindableProperty.Create(
+            nameof(MeasureItemsStrategy),
+            typeof(MeasuringStrategy),
             typeof(SkiaLayout),
-            ItemSizingStrategy.MeasureFirstItem,
+            MeasuringStrategy.MeasureFirst,
             propertyChanged: NeedUpdateItemsSource);
 
-        public ItemSizingStrategy ItemSizingStrategy
+        public MeasuringStrategy MeasureItemsStrategy
         {
-            get { return (ItemSizingStrategy)GetValue(ItemSizingStrategyProperty); }
-            set { SetValue(ItemSizingStrategyProperty, value); }
+            get { return (MeasuringStrategy)GetValue(MeasureItemsStrategyProperty); }
+            set { SetValue(MeasureItemsStrategyProperty, value); }
         }
 
         public static readonly BindableProperty ItemTemplatePoolSizeProperty = BindableProperty.Create(nameof(ItemTemplatePoolSize),

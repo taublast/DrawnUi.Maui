@@ -395,6 +395,9 @@
     <MauiXaml Update="Views\MainPageXaml2PdfPages.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="WheelPicker\WheelPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
  
