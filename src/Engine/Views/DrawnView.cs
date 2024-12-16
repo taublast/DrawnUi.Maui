@@ -208,6 +208,9 @@ namespace DrawnUi.Maui.Views
 
         public void UpdateRenderingChains(SkiaControl node)
         {
+            if (RenderingTrees.Count == 0)
+                return;
+
             // Check each chain
             foreach (VisualTreeChain chain in RenderingTrees.Values)
             {
@@ -1751,7 +1754,7 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public int DrawingThreads { get; protected set; }
 
-        protected Dictionary<Guid, SkiaControl> DirtyChildrenTracker = new();
+        protected ConcurrentDictionary<Guid, SkiaControl> DirtyChildrenTracker = new();
 
         public void SetChildAsDirty(SkiaControl child)
         {

@@ -848,8 +848,8 @@ namespace DrawnUi.Maui.Draw
                             var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDIstancePanned;
                             var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDIstancePanned;
 
-                            var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.22f;
-                            var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.22f;
+                            var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.8f;
+                            var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.8f;
 
                             _panningLastDelta = new Vector2(interpolatedMoveToX, interpolatedMoveToY);
 

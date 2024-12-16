@@ -1509,7 +1509,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     RenderObject = null;
                 }
-                //DestroyRenderingObject();
+                //DestroyRenderingObject();?
             }
             // need to this to:
             // disable child gesture listeners
@@ -1517,9 +1517,12 @@ namespace DrawnUi.Maui.Draw
             try
             {
                 var pass = IsVisible && newvalue;
-                foreach (var child in Views)
+                if (Views.Count > 0) //todo use childrenfactory for layout?
                 {
-                    child.OnParentVisibilityChanged(pass);
+                    foreach (var child in Views)
+                    {
+                        child.OnParentVisibilityChanged(pass);
+                    }
                 }
 
                 Superview?.UpdateRenderingChains(this);
@@ -4191,7 +4194,7 @@ namespace DrawnUi.Maui.Draw
             }
             else
             {
-                _lastArrangedInside = destination;
+                LastArrangedInside = destination;
             }
 
             return true;
@@ -6471,12 +6474,14 @@ namespace DrawnUi.Maui.Draw
 
 
         public static Random Random = new Random();
+
+        protected SKRect LastArrangedInside;
         protected double _arrangedViewportHeightLimit;
         protected double _arrangedViewportWidthLimit;
         protected float _lastMeasuredForScale;
+
         private bool _isLayoutDirty;
         private Thickness _margins;
-        private SKRect _lastArrangedInside;
         private double _lastArrangedForScale;
         private bool _needUpdateFrontCache;
 

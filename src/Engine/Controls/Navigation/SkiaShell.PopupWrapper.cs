@@ -55,16 +55,16 @@ public partial class SkiaShell
 
         public async Task CloseAsync()
         {
-            if (Content != null && _animated && IsVisibleInViewTree())
+            if (_animated && IsVisibleInViewTree())
             {
                 var cts = new CancellationTokenSource();
-                var timeoutTask = Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
+                var timeoutTask = Task.Delay(TimeSpan.FromMilliseconds(PopupsCancelAnimationsAfterMs), cts.Token);
 
                 try
                 {
                     var animate = Task.WhenAll(
-                        Content.FadeToAsync(0, PopupsAnimationSpeed, null, cts),
-                        Content.ScaleToAsync(0, 0, PopupsAnimationSpeed, null, cts));
+                        FadeToAsync(0, PopupsAnimationSpeed, null, cts),
+                        ScaleToAsync(0, 0, PopupsAnimationSpeed, null, cts));
 
                     var completedTask = await Task.WhenAny(animate, timeoutTask);
                     if (completedTask == timeoutTask)
@@ -108,15 +108,9 @@ public partial class SkiaShell
         {
             base.Draw(context, destination, scale);
 
-            if (_willFreeze && !frozen && LayoutReady)
+            if (_willFreeze && !frozen && LayoutReady && Backdrop != null)
             {
-                var screenshot = Backdrop.GetImage();
-                if (screenshot != null)
-                {
-                    frozen = true;
-                    _shell.FreezeRootLayout(this, screenshot, _animated, _color, (float)SkiaShell.PopupsBackgroundBlur).ConfigureAwait(true);
-                    Backdrop.IsVisible = false;
-                }
+                Backdrop.IsVisible = false;
             }
 
             FinalizeDrawingWithRenderObject(context, scale);

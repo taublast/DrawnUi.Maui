@@ -69,14 +69,16 @@ public partial class SkiaShell
 
                 NavigationStack.Remove(control);
 
+                control?.SetParent(null);
+                Tasks.StartDelayed(TimeSpan.FromMilliseconds(1500), () =>
+                {
+                    control?.DisposeObject();
+                });
+
                 if (_freezeLayout || _shell.FrozenLayers.ContainsKey(control))
                 {
                     await _shell.UnfreezeRootLayout(control, animated);
                 }
-
-                control?.DisposeObject();
-                control?.SetParent(null);
-
             }
             catch (Exception e)
             {

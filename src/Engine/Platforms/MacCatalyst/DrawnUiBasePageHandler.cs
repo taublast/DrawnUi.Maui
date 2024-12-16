@@ -1,5 +1,4 @@
 ﻿using Foundation;
-using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using UIKit;
 using ContentView = Microsoft.Maui.Platform.ContentView;
@@ -13,21 +12,21 @@ public class DrawnUiBasePageHandler : Microsoft.Maui.Handlers.PageHandler
     {
         //return base.CreatePlatformView();;
         if (ViewController == null)
-            ViewController =  new CustomView(VirtualView, MauiContext);
-        
+            ViewController = new CustomView(VirtualView, MauiContext);
+
         if (ViewController is PageViewController pc && pc.CurrentPlatformView is ContentView pv)
             return pv;
 
         if (ViewController.View is ContentView cv)
             return cv;
 
-        throw new InvalidOperationException($"PageViewController.View must be a {nameof(ContentView)}");  
+        throw new InvalidOperationException($"PageViewController.View must be a {nameof(ContentView)}");
     }
 
     public class CustomView : PageViewController
     {
-        public bool TracksKeyboard => DependencyExtensions.StartupSettings != null &&
-                                      DependencyExtensions.StartupSettings.UseDesktopKeyboard;
+        public bool TracksKeyboard => DrawnExtensions.StartupSettings != null &&
+                                      DrawnExtensions.StartupSettings.UseDesktopKeyboard;
 
         public override bool CanBecomeFirstResponder
         {

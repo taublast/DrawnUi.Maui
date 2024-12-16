@@ -8,6 +8,33 @@ namespace DrawnUi.Maui.Draw
 
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
     {
+        public override bool PreArrange(SKRect destination, float widthRequest, float heightRequest, float scale)
+        {
+            if (!CanDraw)
+                return false;
+
+            if (WillInvalidateMeasure)
+            {
+                WillInvalidateMeasure = false;
+                InvalidateMeasureInternal();
+            }
+
+            if (NeedMeasure)
+            {
+                //self measuring
+                var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
+                ArrangedDestination = adjustedDestination;
+                Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
+                ApplyMeasureResult();
+            }
+            else
+            {
+                LastArrangedInside = destination;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// For easier code-behind use
         /// </summary>
