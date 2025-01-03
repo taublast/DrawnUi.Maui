@@ -53,7 +53,7 @@ namespace DrawnUi.Maui.Draw
             if (structure != null)
             {
                 //draw children manually
-                var visibleArea = GetOnScreenVisibleArea((float)this.VirtualisationInflated * scale);
+                var visibleArea = GetOnScreenVisibleArea(destination, (float)(this.VirtualisationInflated * scale));
 
                 //PASS 1 - VISIBILITY
                 //we need this pass before drawing to recycle views that became hidden

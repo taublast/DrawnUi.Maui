@@ -15,5 +15,11 @@ public enum VirtualisationType
     /// <summary>
     /// Only the creation of a cached object is permitted for children not within visible parent bounds
     /// </summary>
-    Smart
+    Smart,
+
+    /// <summary>
+    /// Parent is responsible for providing visible viewport for this control via GetVisibleViewport,
+    /// will not check intersection with this control DrawingRect.
+    /// </summary>
+    Managed
 }

@@ -1,4 +1,5 @@
-﻿
+﻿#define TMP
+
 using System.Collections;
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
@@ -328,18 +329,28 @@ namespace DrawnUi.Maui.Draw
         //private Stopwatch _stopwatchRender = new();
         //List<string> elapsedTimes = new();
 
-        public override ScaledRect GetOnScreenVisibleArea(float inflateByPixels = 0)
+        public override ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0)
         {
-            var onscreen = base.GetOnScreenVisibleArea(inflateByPixels);
+            if (DelegateGetOnScreenVisibleArea != null)
+            {
+                return DelegateGetOnScreenVisibleArea(inflateByPixels);
+            }
 
-            var visible = SKRect.Intersect(onscreen.Pixels, DrawingRect);
+            var onscreen = base.GetOnScreenVisibleArea(pixelsDestination, inflateByPixels);
+
+            if (Virtualisation == VirtualisationType.Managed)
+            {
+                return onscreen;
+            }
+
+            var visible = SKRect.Intersect(onscreen.Pixels, pixelsDestination);//DrawingRect);
 
             return ScaledRect.FromPixels(visible, RenderingScale);
         }
 
         public override void DrawRenderObject(CachedObject cache, SkiaDrawingContext ctx, SKRect destination)
         {
-            var visibleArea = GetOnScreenVisibleArea();
+            var visibleArea = GetOnScreenVisibleArea(destination, 0);
 
             base.DrawRenderObject(cache, ctx, visibleArea.Pixels);
         }
@@ -505,22 +516,12 @@ namespace DrawnUi.Maui.Draw
 
         #region RENDERiNG
 
-
-
-
-        protected ScaledRect _viewport;
-
         public virtual void OnViewportWasChanged(ScaledRect viewport)
         {
-
-            _viewport = viewport;
-
             //RenderingViewport = new(viewport.Pixels);
 
             //cells will get OnScrolled
             ViewportWasChanged = true;
-
-            return;
         }
 
         protected bool ViewportWasChanged { get; set; }
@@ -1312,6 +1313,14 @@ namespace DrawnUi.Maui.Draw
         private static void NeedUpdateItemsSource(BindableObject bindable, object oldvalue, object newvalue)
         {
             var skiaControl = (SkiaLayout)bindable;
+
+            #if TMP
+            if (skiaControl.MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
+            {
+                Super.Log("MeasureVisible is not supported for this property yet, soon.");
+                skiaControl.MeasureItemsStrategy = MeasuringStrategy.MeasureFirst;
+            }
+            #endif
 
             //skiaControl.PostponeInvalidation(nameof(UpdateItemsSource), skiaControl.UpdateItemsSource);
             //skiaControl.Update();

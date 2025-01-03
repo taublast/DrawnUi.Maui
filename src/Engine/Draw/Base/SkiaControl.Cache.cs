@@ -305,10 +305,10 @@ public partial class SkiaControl
                 // Perform the drawing action
                 action(recordingContext);
 
-                surface.Canvas.Flush();
-                //grContext?.Flush();
+                //surface.Canvas.Flush();
 
                 recordingContext.Canvas.Translate(recordArea.Left, recordArea.Top);
+                recordingContext.Canvas.Flush();
 
                 renderObject = new(usingCacheType, surface, recordArea, recordArea)
                 {
@@ -658,7 +658,7 @@ public partial class SkiaControl
     /// <param name="destination"></param>
     /// <param name="scale"></param>
     /// <returns></returns>
-    protected virtual bool DrawUsingRenderObject(SkiaDrawingContext context,
+    public virtual bool DrawUsingRenderObject(SkiaDrawingContext context,
         float widthRequest, float heightRequest,
         SKRect destination,
         float scale)

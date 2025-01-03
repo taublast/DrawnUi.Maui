@@ -353,7 +353,7 @@ public class Canvas : DrawnView, IGestureListener
     {
         base.OnHandlerChanged();
 
-        if (Handler!=null)
+        if (Handler != null)
         {
             OnGesturesAttachChanged();
         }
@@ -363,7 +363,7 @@ public class Canvas : DrawnView, IGestureListener
 
     protected virtual void OnGesturesAttachChanged()
     {
-        if (Handler==null)
+        if (Handler == null)
             return;
 
         if (this.Gestures == GesturesMode.Disabled)
@@ -506,7 +506,7 @@ public class Canvas : DrawnView, IGestureListener
     {
         //Super.Log($"[Touch] Canvas got {args1.Type} {type} => {touchAction}");
 
-#if ANDROID
+#if TODO_ANDROID_SENSITIVE_CASE
         if (touchAction == TouchActionResult.Panning)
         {
             //filter micro-gestures
@@ -544,7 +544,6 @@ public class Canvas : DrawnView, IGestureListener
             _isPanning = false;
         }
 #endif
-
 
         var args = SkiaGesturesParameters.Create(touchAction, args1);
 
@@ -594,6 +593,9 @@ public class Canvas : DrawnView, IGestureListener
                });
 
         Repaint();
+
+
+
     }
 
     #endregion
@@ -780,7 +782,6 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
     {
-
         Context = context;
 
         if (BackgroundColor != null)

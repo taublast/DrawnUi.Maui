@@ -15,10 +15,14 @@ public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
     bool IsVisibleInViewTree();
 
     /// <summary>
-    /// Obtain rectangle visible on the screen to avoid offscreen rendering etc
+    /// For virtualization. For this method to be conditional we introduced the `pixelsDestination`
+    /// parameter so that the Parent could return different visible areas upon context.
+    /// Normally pass your current destination you are drawing into as this parameter. 
     /// </summary>
+    /// <param name="pixelsDestination"></param>
+    /// <param name="inflateByPixels"></param>
     /// <returns></returns>
-    public ScaledRect GetOnScreenVisibleArea(float inflateByPixels = 0);
+    public ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0);
 
     /// <summary>
     /// Invalidates the measured size. May or may not call Update() inside, depends on control

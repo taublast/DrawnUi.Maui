@@ -355,7 +355,8 @@ namespace DrawnUi.Maui.Draw
                 var maybeSecondPass = true;
                 List<SecondPassArrange> listSecondPass = new();
                 bool stopMeasuring = false;
-                ScaledRect visibleArea = _viewport;
+
+                //var visibleArea = GetOnScreenVisibleArea((float)this.VirtualisationInflated * scale);
 
                 //measure
                 //left to right, top to bottom
@@ -497,14 +498,14 @@ namespace DrawnUi.Maui.Draw
 
                             cell.WasMeasured = true;
 
-                            if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
-                            {
-                                if (!visibleArea.Pixels.IntersectsWithInclusive(cell.Destination))
-                                {
-                                    stopMeasuring = true;
-                                    break;
-                                }
-                            }
+                            //if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
+                            //{
+                            //    if (!visibleArea.Pixels.IntersectsWithInclusive(cell.Destination))
+                            //    {
+                            //        stopMeasuring = true;
+                            //        break;
+                            //    }
+                            //}
 
                             if (!useOneTemplate && IsTemplated)
                             {

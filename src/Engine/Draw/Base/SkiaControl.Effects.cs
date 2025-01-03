@@ -58,22 +58,22 @@ namespace DrawnUi.Maui.Draw
 
             switch (e.Action)
             {
-            case NotifyCollectionChangedAction.Add:
-            foreach (SkiaEffect newItem in e.NewItems)
-            {
-                newItem.Attach(this);
-            }
+                case NotifyCollectionChangedAction.Add:
+                    foreach (SkiaEffect newItem in e.NewItems)
+                    {
+                        newItem.Attach(this);
+                    }
 
-            break;
+                    break;
 
-            case NotifyCollectionChangedAction.Reset:
-            case NotifyCollectionChangedAction.Remove:
-            foreach (SkiaEffect oldItem in e.OldItems ?? new SkiaEffect[0])
-            {
-                oldItem.Dettach();
-            }
+                case NotifyCollectionChangedAction.Reset:
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (SkiaEffect oldItem in e.OldItems ?? new SkiaEffect[0])
+                    {
+                        oldItem.Dettach();
+                    }
 
-            break;
+                    break;
             }
 
             OnVisualEffectsChanged();
@@ -99,7 +99,7 @@ namespace DrawnUi.Maui.Draw
         protected List<IRenderEffect> EffectRenderers = new();
         protected IImageEffect EffectImageFilter;
         protected IColorEffect EffectColorFilter;
-        protected IPostRendererEffect EffectPostRenderer;
+        public IPostRendererEffect EffectPostRenderer;
 
         public static readonly BindableProperty VisualEffectsProperty = BindableProperty.Create(
             nameof(VisualEffects),

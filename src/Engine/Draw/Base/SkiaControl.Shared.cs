@@ -2704,46 +2704,46 @@ namespace DrawnUi.Maui.Draw
             {
 
                 case LayoutAlignment.Center when float.IsFinite(availableWidth) && availableWidth > useMaxWidth:
+                {
+                    left += (float)Math.Round(availableWidth / 2.0f - useMaxWidth / 2.0f);
+                    right = left + useMaxWidth;
+
+                    if (left < destination.Left)
                     {
-                        left += (float)Math.Round(availableWidth / 2.0f - useMaxWidth / 2.0f);
+                        left = destination.Left;
                         right = left + useMaxWidth;
-
-                        if (left < destination.Left)
-                        {
-                            left = destination.Left;
-                            right = left + useMaxWidth;
-                        }
-
-                        if (right > destination.Right)
-                        {
-                            right = destination.Right;
-                        }
-
-                        break;
                     }
-                case LayoutAlignment.End when float.IsFinite(destination.Right) && availableWidth > useMaxWidth:
+
+                    if (right > destination.Right)
                     {
                         right = destination.Right;
-                        left = right - useMaxWidth;
-                        if (left < destination.Left)
-                        {
-                            left = destination.Left;
-                        }
-
-                        break;
                     }
+
+                    break;
+                }
+                case LayoutAlignment.End when float.IsFinite(destination.Right) && availableWidth > useMaxWidth:
+                {
+                    right = destination.Right;
+                    left = right - useMaxWidth;
+                    if (left < destination.Left)
+                    {
+                        left = destination.Left;
+                    }
+
+                    break;
+                }
                 case LayoutAlignment.Fill:
                 case LayoutAlignment.Start:
                 default:
+                {
+                    right = left + useMaxWidth;
+                    if (right > destination.Right)
                     {
-                        right = left + useMaxWidth;
-                        if (right > destination.Right)
-                        {
-                            right = destination.Right;
-                        }
-
-                        break;
+                        right = destination.Right;
                     }
+
+                    break;
+                }
             }
 
             // VerticalOptions
@@ -2751,35 +2751,35 @@ namespace DrawnUi.Maui.Draw
             {
 
                 case LayoutAlignment.Center when float.IsFinite(availableHeight) && availableHeight > useMaxHeight:
+                {
+                    top += (float)Math.Round(availableHeight / 2.0f - useMaxHeight / 2.0f);
+                    bottom = top + useMaxHeight;
+
+                    if (top < destination.Top)
                     {
-                        top += (float)Math.Round(availableHeight / 2.0f - useMaxHeight / 2.0f);
+                        top = destination.Top;
                         bottom = top + useMaxHeight;
-
-                        if (top < destination.Top)
-                        {
-                            top = destination.Top;
-                            bottom = top + useMaxHeight;
-                        }
-
-                        else if (bottom > destination.Bottom)
-                        {
-                            bottom = destination.Bottom;
-                            top = bottom - useMaxHeight;
-                        }
-
-                        break;
                     }
-                case LayoutAlignment.End when float.IsFinite(destination.Bottom) && availableHeight > useMaxHeight:
+
+                    else if (bottom > destination.Bottom)
                     {
                         bottom = destination.Bottom;
                         top = bottom - useMaxHeight;
-                        if (top < destination.Top)
-                        {
-                            top = destination.Top;
-                        }
-
-                        break;
                     }
+
+                    break;
+                }
+                case LayoutAlignment.End when float.IsFinite(destination.Bottom) && availableHeight > useMaxHeight:
+                {
+                    bottom = destination.Bottom;
+                    top = bottom - useMaxHeight;
+                    if (top < destination.Top)
+                    {
+                        top = destination.Top;
+                    }
+
+                    break;
+                }
                 case LayoutAlignment.Start:
                 case LayoutAlignment.Fill:
                 default:
@@ -5128,16 +5128,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        /// <summary>
-        /// Rect is real drawing position
-        /// </summary>
-        /// <param name="Control"></param>
-        /// <param name="Rect"></param>
-        /// <param name="Index"></param>
-        public record SkiaControlWithRect(SkiaControl Control,
-            SKRect Rect,
-            SKRect HitRect,
-            int Index);
+
 
         protected long _measuredStamp;
 
@@ -5209,17 +5200,29 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        public Func<float, ScaledRect> DelegateGetOnScreenVisibleArea;
+
+
         /// <summary>
-        /// For virtualization
+        /// For virtualization. For this method to be conditional we introduced the `pixelsDestination`
+        /// parameter so that the Parent could return different visible areas upon context.
+        /// Normally pass your current destination you are drawing into as this parameter. 
         /// </summary>
+        /// <param name="pixelsDestination"></param>
+        /// <param name="inflateByPixels"></param>
         /// <returns></returns>
-        public virtual ScaledRect GetOnScreenVisibleArea(float inflateByPixels = 0)
+        public virtual ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0)
         {
+            if (DelegateGetOnScreenVisibleArea != null)
+            {
+                return DelegateGetOnScreenVisibleArea(inflateByPixels);
+            }
+
             if (this.UsingCacheType != SkiaCacheType.None)
             {
                 //we are going to cache our children so they all must draw
                 //regardless of the fact they might still be offscreen
-                var inflated = DrawingRect;
+                var inflated = pixelsDestination;//DrawingRect;
                 inflated.Inflate(inflateByPixels, inflateByPixels);
 
                 return ScaledRect.FromPixels(inflated, RenderingScale);
@@ -5228,12 +5231,12 @@ namespace DrawnUi.Maui.Draw
             //go up the tree to find the screen area or some parent will override this
             if (Parent != null)
             {
-                return Parent.GetOnScreenVisibleArea(inflateByPixels);
+                return Parent.GetOnScreenVisibleArea(pixelsDestination, inflateByPixels);
             }
 
             if (Superview != null)
             {
-                return Superview.GetOnScreenVisibleArea(inflateByPixels);
+                return Superview.GetOnScreenVisibleArea(pixelsDestination, inflateByPixels);
             }
 
             var inflated2 = Destination;
@@ -5293,11 +5296,19 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+
+        private int _updatedFromThread;
+
         /// <summary>
         /// Main method to invalidate cache and invoke rendering
         /// </summary>
         public virtual void Update()
         {
+            if (NeedUpdate && Thread.CurrentThread.ManagedThreadId == _updatedFromThread)
+                return;
+
+            _updatedFromThread = Thread.CurrentThread.ManagedThreadId;
+
             InvalidateCache();
 
             UpdateInternal();
@@ -6565,6 +6576,19 @@ namespace DrawnUi.Maui.Draw
             if ((float.IsInfinity(a.Width) && float.IsInfinity(b.Width)) || Math.Abs(a.Width - b.Width) <= precision)
             {
                 if ((float.IsInfinity(a.Height) && float.IsInfinity(b.Height)) || Math.Abs(a.Height - b.Height) <= precision)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool CompareVectors(Vector2 a, Vector2 b, float precision)
+        {
+            if ((float.IsInfinity(a.X) && float.IsInfinity(b.X)) || Math.Abs(a.X - b.X) <= precision)
+            {
+                if ((float.IsInfinity(a.Y) && float.IsInfinity(b.Y)) || Math.Abs(a.Y - b.Y) <= precision)
                 {
                     return true;
                 }

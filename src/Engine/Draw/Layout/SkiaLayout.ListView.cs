@@ -17,6 +17,7 @@ public partial class SkiaLayout
     /// <returns></returns>
     public virtual ScaledSize MeasureList(SKRect rectForChildrenPixels, float scale)
     {
+
         if (IsTemplated && ItemsSource.Count > 0)
         {
             int measuredCount = 0;
@@ -42,7 +43,15 @@ public partial class SkiaLayout
             var maybeSecondPass = true;
             List<SecondPassArrange> listSecondPass = new();
             bool stopMeasuring = false;
-            ScaledRect visibleArea = _viewport;
+
+            var visibleArea = base.GetOnScreenVisibleArea(rectForChildrenPixels, (float)this.VirtualisationInflated * scale);
+
+            if (visibleArea.Pixels.Height < 1 || visibleArea.Pixels.Width < 1)
+            {
+                return ScaledSize.CreateEmpty(scale);
+            }
+
+            //ScaledRect visibleArea = _viewport;
 
             var rowsCount = itemsCount;
             var columnsCount = 1;
@@ -310,7 +319,7 @@ public partial class SkiaLayout
         //StackStructure was creating inside Measure.
         //While scrolling templated its not called again (checked).
 
-        List<SkiaControl.SkiaControlWithRect> tree = new();
+        List<SkiaControlWithRect> tree = new();
         bool wasVisible = false;
         var needrebuild = templatesInvalidated;
         int countRendered = 0;
@@ -320,7 +329,7 @@ public partial class SkiaLayout
         if (structure != null)
         {
             //draw children manually
-            var visibleArea = GetOnScreenVisibleArea((float)this.VirtualisationInflated * scale);
+            var visibleArea = GetOnScreenVisibleArea(destination, (float)this.VirtualisationInflated * scale);
 
             var currentIndex = -1;
             foreach (var cell in structure.GetChildrenAsSpans())
@@ -428,7 +437,7 @@ public partial class SkiaLayout
                         }
 
                         //gonna use that for gestures and for item inside viewport detection and for hotreload children tree
-                        tree.Add(new SkiaControl.SkiaControlWithRect(control,
+                        tree.Add(new SkiaControlWithRect(control,
                             destinationRect,
                             control.LastDrawnAt,
                             currentIndex));

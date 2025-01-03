@@ -23,7 +23,7 @@ public partial class SkiaScroll
                 _orderedOffsetY = value;
                 if (!NeedUpdate)
                     Update();
-                OnPropertyChanged();
+                //OnPropertyChanged();
             }
         }
     }
@@ -44,7 +44,7 @@ public partial class SkiaScroll
                 _viewportOffsetX = value;
                 if (!NeedUpdate)
                     Update();
-                OnPropertyChanged();
+                //OnPropertyChanged();
             }
         }
     }
@@ -82,6 +82,17 @@ public partial class SkiaScroll
 
     public LinearDirectionType IsScrollingDirection { get; protected set; }
 
+    protected virtual void CheckAndSetIsStillAnimating()
+    {
+        if (!_animatorFlingY.IsRunning
+            && !_animatorFlingX.IsRunning
+            && !_vectorAnimatorBounceY.IsRunning
+            && !_vectorAnimatorBounceX.IsRunning)
+        {
+            IsAnimating = false;
+        }
+    }
+
     protected virtual void InitializeScroller(float scale)
     {
         if (_vectorAnimatorBounceY == null)
@@ -90,12 +101,16 @@ public partial class SkiaScroll
             {
                 OnStart = () =>
                 {
-
+                    IsAnimating = true;
                 },
                 OnStop = () =>
                 {
                     UpdateLoadingLock(false);
                     IsSnapping = false;
+                    if (_vectorAnimatorBounceY.WasStarted)
+                    {
+                        CheckAndSetIsStillAnimating();
+                    }
                 },
                 OnUpdated = (value) =>
                 {
@@ -107,12 +122,16 @@ public partial class SkiaScroll
             {
                 OnStart = () =>
                 {
-
+                    IsAnimating = true;
                 },
                 OnStop = () =>
                 {
                     UpdateLoadingLock(false);
                     IsSnapping = false;
+                    if (_vectorAnimatorBounceX.WasStarted)
+                    {
+                        CheckAndSetIsStillAnimating();
+                    }
                 },
                 OnUpdated = (value) =>
                 {
@@ -125,12 +144,16 @@ public partial class SkiaScroll
                 OnStart = () =>
                 {
                     //_isSnapping = false;
+                    IsAnimating = true;
                     OnScrollerStarted();
                 },
                 OnStop = () =>
                 {
-                    //_isSnapping = false;
-                    OnScrollerStopped();
+                    if (_animatorFlingX.WasStarted)
+                    {
+                        OnScrollerStopped();
+                        CheckAndSetIsStillAnimating();
+                    }
                 },
                 OnUpdated = (value) =>
                 {
@@ -145,13 +168,17 @@ public partial class SkiaScroll
             {
                 OnStart = () =>
                 {
+                    IsAnimating = true;
                     //_isSnapping = false;
                     OnScrollerStarted();
                 },
                 OnStop = () =>
                 {
-                    //_isSnapping = false;
-                    OnScrollerStopped();
+                    if (_animatorFlingY.WasStarted)
+                    {
+                        OnScrollerStopped();
+                        CheckAndSetIsStillAnimating();
+                    }
                 },
                 OnUpdated = (value) =>
                 {
@@ -164,19 +191,35 @@ public partial class SkiaScroll
 
             _scrollerX = new(this)
             {
+                OnStart = () =>
+                {
+                    IsAnimating = true;
+                },
                 OnStop = () =>
                 {
                     IsSnapping = false;
+                    if (_scrollerX.WasStarted)
+                    {
+                        CheckAndSetIsStillAnimating();
+                    }
                     //SkiaImageLoadingManager.Instance.IsLoadingLocked = false;
                 }
             };
 
             _scrollerY = new(this)
             {
+                OnStart = () =>
+                {
+                    IsAnimating = true;
+                },
                 OnStop = () =>
                 {
                     IsSnapping = false;
-                    //SkiaImageLoadingManager.Instance.IsLoadingLocked = false;
+                    if (_scrollerY.WasStarted)
+                    {
+                        CheckAndSetIsStillAnimating();
+                    }
+
                 }
             };
         }
@@ -869,7 +912,10 @@ public partial class SkiaScroll
         }
     }
 
+    public bool IsAnimating { get; set; }
+    public bool IsBouncing { get; set; }
+
     Vector2 _axis;
     double? _changeSpeed = null;
-    private Vector2 _lastVelocity;
+
 }

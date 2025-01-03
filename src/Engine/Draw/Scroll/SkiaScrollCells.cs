@@ -1,19 +1,13 @@
 ﻿namespace DrawnUi.Maui.Draw
 {
-    public partial class SkiaScrollCells : SkiaScroll
+    public partial class SkiaScroll
     {
         // tuning background cells measurement
         protected virtual int IncrementalMeasureAheadCount { get; set; } = 1;
         protected virtual int IncrementalMeasureBatchSize { get; set; } = 1;
-        protected virtual double MeasurementTriggerDistance { get; set; } = 500.0;
+        protected virtual double MeasurementTriggerDistance { get; set; } = 0;//500.0;
         private bool _incrementalMeasurementInProgress = false;
 
-        // Called periodically when scrolling or when scroll ends
-        public override void OnScrolled()
-        {
-            base.OnScrolled();
-            CheckForIncrementalMeasurementTrigger();
-        }
 
         // Check if we need more items
         protected bool? CheckForIncrementalMeasurementTrigger()

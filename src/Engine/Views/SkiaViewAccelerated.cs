@@ -220,11 +220,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
         FrameTime = Super.GetCurrentTimeNanos();
 
-#if ANDROID
         CalculateFPS(FrameTime);
-#else
-		CalculateFPS(FrameTime, 60);
-#endif
 
         if (OnDraw != null && Super.EnableRendering)
         {

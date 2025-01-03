@@ -41,7 +41,7 @@
                 x:Name="MainScroll"
                 BackgroundColor="Black"
                 Bounces="True"
-                ChangeDIstancePanned="1.75"
+                ChangeDistancePanned="1.75"
                 FrictionScrolled="0.4"
                 HorizontalOptions="Center"
                 Scrolled="OnScrolled"
