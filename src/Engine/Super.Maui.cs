@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 
 namespace DrawnUi.Maui.Draw
 {
@@ -83,10 +84,12 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-
-        public static void Log(string message, [CallerMemberName] string caller = null)
+        public static void Log(string message, LogLevel logLevel = LogLevel.Error, [CallerMemberName] string caller = null)
         {
-            //TODO use ILogger with levels etc
+            if (DrawnExtensions.StartupSettings != null)
+            {
+                DrawnExtensions.StartupSettings.Logger?.Log(logLevel, message);
+            }
 
 #if WINDOWS
         Trace.WriteLine(message);

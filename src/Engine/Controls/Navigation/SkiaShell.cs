@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using AppoMobi.Maui.Navigation;
+using Microsoft.Extensions.Logging;
 
 namespace DrawnUi.Maui.Controls
 {
@@ -150,6 +151,7 @@ namespace DrawnUi.Maui.Controls
         /// </summary>
         public static float PopupsBackgroundBlur = 6;
         public static float PopupsAnimationSpeed = 250;
+        public static int PopupsCancelAnimationsAfterMs = 1500;
 
         public static bool LogEnabled = false;
 
@@ -161,7 +163,7 @@ namespace DrawnUi.Maui.Controls
         {
             Services = Super.Services;
 
-            Popups = new(this, false);
+            Popups = new(this, true);
             Toasts = new(this, false);
 
             //close jeyboard on app startup
@@ -1020,8 +1022,10 @@ namespace DrawnUi.Maui.Controls
                     OnLayersChanged(control);
 
                     control.SetParent(null); //unregister gestures etc
-                    ShellLayout?.DisposeObject(control);
-
+                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(1500), () =>
+                    {
+                        ShellLayout?.DisposeObject(control);
+                    });
                 }
             }
             catch (Exception e)
@@ -1168,12 +1172,12 @@ namespace DrawnUi.Maui.Controls
                         {
                             SetupFrozenLayersVisibility(frozen);
                             if (LogEnabled)
-                                Super.Log("[SHELL] Unfrozen layout");
+                                Super.Log("[SHELL] Unfrozen layout", LogLevel.Information);
                         }
                         else
                         {
                             if (LogEnabled)
-                                Super.Log(($"[SHELL] FrozenLayer not found for {topmost}!"));
+                                Super.Log(($"[SHELL] FrozenLayer not found for {topmost}!"), LogLevel.Information);
                         }
                     }
                 }
@@ -1181,15 +1185,14 @@ namespace DrawnUi.Maui.Controls
                 if (FreezingModals.Count < 1)
                     RootLayout.IsVisible = true;
 
-                if (FrozenLayers.Remove(control, out var screenshot))
+                if (FrozenLayers.Remove(control, out SkiaControl screenshot))
                 {
                     if (screenshot != null)
                     {
                         if (animated && screenshot.IsVisibleInViewTree())
-                            await screenshot.FadeToAsync(0, 250);
+                            await screenshot.FadeToAsync(0, 150);
 
                         RootLayout.RemoveSubView(screenshot);
-
                         RootLayout.DisposeObject(screenshot);
                     }
                 }
@@ -1271,7 +1274,7 @@ namespace DrawnUi.Maui.Controls
                     SetupFrozenLayersVisibility(screenshot);
                     await SetupModalsVisibility(control);
                     if (LogEnabled)
-                        Super.Log("[SHELL] Frozen layout");
+                        Super.Log("[SHELL] Frozen layout", LogLevel.Information);
                 }
 
             }
@@ -1555,7 +1558,7 @@ namespace DrawnUi.Maui.Controls
 
                 if (animated)
                 {
-                    var completedTask = await Task.WhenAny(taskCompletionSource.Task, Task.Delay(TimeSpan.FromSeconds(10)));
+                    var completedTask = await Task.WhenAny(taskCompletionSource.Task, Task.Delay(PopupsCancelAnimationsAfterMs));
 
                     if (completedTask == taskCompletionSource.Task)
                     {
@@ -1668,28 +1671,28 @@ namespace DrawnUi.Maui.Controls
         protected virtual void UnlockNavigation([CallerMemberName] string caller = null)
         {
             if (LogEnabled)
-                Super.Log($"[Shell] Navigation UNlocked by {caller}");
+                Super.Log($"[Shell] Navigation UNlocked by {caller}", LogLevel.Information);
             LockNavigation.Release();
         }
 
         protected virtual async Task AwaitNavigationLock([CallerMemberName] string caller = null)
         {
             if (LogEnabled)
-                Super.Log($"[Shell] Navigation LOCKED by {caller}");
+                Super.Log($"[Shell] Navigation LOCKED by {caller}", LogLevel.Information);
             await LockNavigation.WaitAsync();
         }
 
         protected virtual void UnlockLayers([CallerMemberName] string caller = null)
         {
             if (LogEnabled)
-                Super.Log($"[Shell] Layers UNlocked by {caller}");
+                Super.Log($"[Shell] Layers UNlocked by {caller}", LogLevel.Information);
             LockLayers.Release();
         }
 
         protected virtual async Task AwaitLayersLock([CallerMemberName] string caller = null)
         {
             if (LogEnabled)
-                Super.Log($"[Shell] Layers LOCKED by {caller}");
+                Super.Log($"[Shell] Layers LOCKED by {caller}", LogLevel.Information);
             await LockLayers.WaitAsync();
         }
 

@@ -3,18 +3,18 @@
 public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 {
 
-	public SKSurface CreateStandaloneSurface(int width, int height)
-	{
-		return SKSurface.Create(new SKImageInfo(width, height));
-	}
+    public SKSurface CreateStandaloneSurface(int width, int height)
+    {
+        return SKSurface.Create(new SKImageInfo(width, height));
+    }
 
-	public Func<SKSurface, SKRect, bool> OnDraw { get; set; }
+    public Func<SKSurface, SKRect, bool> OnDraw { get; set; }
 
-	public SkiaViewAccelerated(DrawnView superview)
-	{
-		Superview = superview;
-		EnableTouchEvents = false;
-	}
+    public SkiaViewAccelerated(DrawnView superview)
+    {
+        Superview = superview;
+        EnableTouchEvents = false;
+    }
 
 
 
@@ -48,13 +48,13 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
 #endif
 
-	protected override void OnHandlerChanged()
-	{
-		base.OnHandlerChanged();
+    protected override void OnHandlerChanged()
+    {
+        base.OnHandlerChanged();
 
-		if (Handler == null)
-		{
-			PaintSurface -= OnPaintingSurface;
+        if (Handler == null)
+        {
+            PaintSurface -= OnPaintingSurface;
 
 #if ANDROID
 
@@ -67,12 +67,12 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
 #endif
 
-			Superview?.DisconnectedHandler();
-		}
-		else
-		{
-			PaintSurface -= OnPaintingSurface;
-			PaintSurface += OnPaintingSurface;
+            Superview?.DisconnectedHandler();
+        }
+        else
+        {
+            PaintSurface -= OnPaintingSurface;
+            PaintSurface += OnPaintingSurface;
 
 #if ANDROID
 
@@ -105,134 +105,130 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
 #endif
 
-			Superview?.ConnectedHandler();
-		}
+            Superview?.ConnectedHandler();
+        }
 
-	}
+    }
 
-	public DrawnView Superview { get; protected set; }
-	private SKImage _snapshot;
-	private bool _newFrameReady;
+    public DrawnView Superview { get; protected set; }
+    private SKImage _snapshot;
+    private bool _newFrameReady;
 
-	public void Dispose()
-	{
-		PaintSurface -= OnPaintingSurface;
-		_surface = null;
-		_snapshot?.Dispose();
-		_snapshot = null;
-		Superview = null;
-	}
+    public void Dispose()
+    {
+        PaintSurface -= OnPaintingSurface;
+        _surface = null;
+        _snapshot?.Dispose();
+        _snapshot = null;
+        Superview = null;
+    }
 
-	SKSurface _surface;
-	private DateTime _lastFrame;
-	private double _fps;
-	private double _reportFps;
+    SKSurface _surface;
+    private DateTime _lastFrame;
+    private double _fps;
+    private double _reportFps;
 
-	public SKSurface Surface
-	{
-		get
-		{
-			return _surface;
-		}
-	}
+    public SKSurface Surface
+    {
+        get
+        {
+            return _surface;
+        }
+    }
 
-	public bool IsHardwareAccelerated => true;
+    public bool IsHardwareAccelerated => true;
 
-	public double FPS
-	{
-		get
-		{
-			return _reportFps;
-		}
-	}
+    public double FPS
+    {
+        get
+        {
+            return _reportFps;
+        }
+    }
 
-	public bool IsDrawing
-	{
-		get => _isDrawing;
-		set
-		{
-			if (value == _isDrawing) return;
-			_isDrawing = value;
-			OnPropertyChanged();
-		}
-	}
+    public bool IsDrawing
+    {
+        get => _isDrawing;
+        set
+        {
+            if (value == _isDrawing) return;
+            _isDrawing = value;
+            OnPropertyChanged();
+        }
+    }
 
-	public long FrameTime { get; protected set; }
+    public long FrameTime { get; protected set; }
 
-	public void SignalFrame(long nanoseconds)
-	{
+    public void SignalFrame(long nanoseconds)
+    {
 
-	}
+    }
 
-	public void Update(long nanos)
-	{
-		if (
-			Super.EnableRendering &&
-			this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
-		{
-			_nanos = nanos;
-			IsDrawing = true;
+    public void Update(long nanos)
+    {
+        if (
+            Super.EnableRendering &&
+            this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
+        {
+            _nanos = nanos;
+            IsDrawing = true;
 
-			InvalidateSurface();
-		}
-	}
+            InvalidateSurface();
+        }
+    }
 
-	private double _fpsAverage;
-	private int _fpsCount;
-	private long _lastFrameTimestamp;
-	private long _nanos;
-	private bool _isDrawing;
-
-
-	/// <summary>
-	/// Calculates the frames per second (FPS) and updates the rolling average FPS every 'averageAmount' frames.
-	/// </summary>
-	/// <param name="currentTimestamp">The current timestamp in nanoseconds.</param>
-	/// <param name="averageAmount">The number of frames over which to average the FPS. Default is 10.</param>
-	void CalculateFPS(long currentTimestamp, int averageAmount = 10)
-	{
-		// Convert nanoseconds to seconds for elapsed time calculation.
-		double elapsedSeconds = (currentTimestamp - _lastFrameTimestamp) / 1_000_000_000.0;
-		_lastFrameTimestamp = currentTimestamp;
-
-		double currentFps = 1.0 / elapsedSeconds;
-
-		_fpsAverage = ((_fpsAverage * _fpsCount) + currentFps) / (_fpsCount + 1);
-		_fpsCount++;
-
-		if (_fpsCount >= averageAmount)
-		{
-			_reportFps = _fpsAverage;
-			_fpsCount = 0;
-			_fpsAverage = 0.0;
-		}
-	}
+    private double _fpsAverage;
+    private int _fpsCount;
+    private long _lastFrameTimestamp;
+    private long _nanos;
+    private bool _isDrawing;
 
 
-	/// <summary>
-	/// We are drawing the frame
-	/// </summary>
-	/// <param name="sender"></param>
-	/// <param name="paintArgs"></param>
-	private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
-	{
-		IsDrawing = true;
+    /// <summary>
+    /// Calculates the frames per second (FPS) and updates the rolling average FPS every 'averageAmount' frames.
+    /// </summary>
+    /// <param name="currentTimestamp">The current timestamp in nanoseconds.</param>
+    /// <param name="averageAmount">The number of frames over which to average the FPS. Default is 10.</param>
+    void CalculateFPS(long currentTimestamp, int averageAmount = 10)
+    {
+        // Convert nanoseconds to seconds for elapsed time calculation.
+        double elapsedSeconds = (currentTimestamp - _lastFrameTimestamp) / 1_000_000_000.0;
+        _lastFrameTimestamp = currentTimestamp;
 
-		FrameTime = Super.GetCurrentTimeNanos();
+        double currentFps = 1.0 / elapsedSeconds;
 
-#if ANDROID
+        _fpsAverage = ((_fpsAverage * _fpsCount) + currentFps) / (_fpsCount + 1);
+        _fpsCount++;
+
+        if (_fpsCount >= averageAmount)
+        {
+            _reportFps = _fpsAverage;
+            _fpsCount = 0;
+            _fpsAverage = 0.0;
+        }
+    }
+
+
+    /// <summary>
+    /// We are drawing the frame
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="paintArgs"></param>
+    private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
+    {
+        IsDrawing = true;
+
+        FrameTime = Super.GetCurrentTimeNanos();
+
         CalculateFPS(FrameTime);
-#else
-		CalculateFPS(FrameTime, 60);
-#endif
 
-		if (OnDraw != null && Super.EnableRendering)
-		{
-			var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
-			_surface = paintArgs.Surface;
-			var isDirty = OnDraw.Invoke(paintArgs.Surface, rect);
+        if (OnDraw != null && Super.EnableRendering)
+        {
+            var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
+            _surface = paintArgs.Surface;
+            var isDirty = OnDraw.Invoke(paintArgs.Surface, rect);
 
-#if ANDROID
+#if ANDROID_LEGACY
             if (maybeLowEnd && FPS > 160)
             {
                 maybeLowEnd = false;
@@ -244,12 +240,12 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
                 return;
             }
 #endif
-		}
+        }
 
-		IsDrawing = false;
-	}
+        IsDrawing = false;
+    }
 
-	static bool maybeLowEnd = true;
+    static bool maybeLowEnd = true;
 }
 
 

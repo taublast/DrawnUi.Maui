@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<draw:SkiaLayout
+    x:Class="AppoMobi.Maui.DrawnUi.Demo.Views.Controls.WheelPicker"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    x:Name="Container"
+    BackgroundColor="Gray"
+    HeightRequest="210"
+    HorizontalOptions="Center"
+    WidthRequest="130"
+    ZIndex="10">
+
+    <draw:SkiaControl.FillGradient>
+
+        <draw:SkiaGradient
+            EndXRatio="0"
+            EndYRatio="1"
+            StartXRatio="0"
+            StartYRatio="0"
+            Type="Linear">
+            <draw:SkiaGradient.Colors>
+                <Color>#000000</Color>
+                <Color>#232323</Color>
+                <Color>#000000</Color>
+            </draw:SkiaGradient.Colors>
+        </draw:SkiaGradient>
+
+    </draw:SkiaControl.FillGradient>
+
+    <draw:SkiaScrollLooped
+        x:Name="Scroller"
+        FrictionScrolled="0.5"
+        HorizontalOptions="Fill"
+        Orientation="Vertical"
+        SnapToChildren="Center"
+        Tag="WheelScroll"
+        TrackIndexPosition="Center"
+        VerticalOptions="Fill"
+        ZIndex="1">
+
+        <draw:ScrollPickerWheel
+            x:Name="Wheel"
+            BackgroundColor="Transparent"
+            DistortionAngle="1.0"
+            HorizontalOptions="Fill"
+            Spacing="0"
+            Type="Column"
+            WidthRequest="-1">
+
+            <draw:SkiaLayout.ItemTemplate>
+                <DataTemplate>
+
+                    <draw:ScrollPickerLabelContainer
+                        BackgroundColor="Transparent"
+                        ColorText="White"
+                        ColorTextSelected="Red"
+                        HeightRequest="44"
+                        HorizontalOptions="Fill"
+                        Spacing="0">
+
+                        <!--
+                            TODO recently cannot use  x:DataType="{x:Type x:String}"
+                            with latest Maui.Controls throws Xaml error
+                            need to investigate their change for data type
+                        -->
+
+                        <draw:SkiaLabel
+                            Padding="4"
+                            FontSize="26"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding .}"
+                            TextColor="#ffffff"
+                            VerticalOptions="Center"
+                            VerticalTextAlignment="Center" />
+
+                    </draw:ScrollPickerLabelContainer>
+
+                </DataTemplate>
+
+            </draw:SkiaLayout.ItemTemplate>
+
+        </draw:ScrollPickerWheel>
+
+    </draw:SkiaScrollLooped>
+
+    <draw:SkiaControl
+        BackgroundColor="#44CCCCCC"
+        HeightRequest="0.75"
+        HorizontalOptions="Fill"
+        TranslationY="-22"
+        VerticalOptions="Center" />
+
+    <draw:SkiaControl
+        BackgroundColor="#44CCCCCC"
+        HeightRequest="0.75"
+        HorizontalOptions="Fill"
+        TranslationY="22"
+        VerticalOptions="Center" />
+
+
+</draw:SkiaLayout>

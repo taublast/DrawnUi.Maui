@@ -94,7 +94,15 @@ namespace DrawnUi.Maui.Views
             Update();
         }
 
-        public virtual ScaledRect GetOnScreenVisibleArea(float inflateByPixels = 0)
+        /// <summary>
+        /// For virtualization. For this method to be conditional we introduced the `pixelsDestination`
+        /// parameter so that the Parent could return different visible areas upon context.
+        /// Normally pass your current destination you are drawing into as this parameter. 
+        /// </summary>
+        /// <param name="pixelsDestination"></param>
+        /// <param name="inflateByPixels"></param>
+        /// <returns></returns>
+        public virtual ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0)
         {
             var bounds = new SKRect(0 - inflateByPixels, 0 - inflateByPixels, (int)(Width * RenderingScale + inflateByPixels), (int)(Height * RenderingScale + inflateByPixels));
 
@@ -165,8 +173,8 @@ namespace DrawnUi.Maui.Views
             ExecuteAfterDraw.Enqueue(action);
         }
 
-        public Queue<Action> ExecuteBeforeDraw { get; } = new(256);
-        public Queue<Action> ExecuteAfterDraw { get; } = new(256);
+        public Queue<Action> ExecuteBeforeDraw { get; } = new(1024);
+        public Queue<Action> ExecuteAfterDraw { get; } = new(1024);
 
         protected Action<SKImage> CallbackScreenshot;
 
@@ -208,6 +216,9 @@ namespace DrawnUi.Maui.Views
 
         public void UpdateRenderingChains(SkiaControl node)
         {
+            if (RenderingTrees.Count == 0)
+                return;
+
             // Check each chain
             foreach (VisualTreeChain chain in RenderingTrees.Values)
             {
@@ -287,6 +298,10 @@ namespace DrawnUi.Maui.Views
                 lock (LockAnimatingControls)
                 {
                     animator.IsDeactivated = false;
+                    if (animator.Parent != null && !animator.Parent.IsVisible)
+                    {
+                        animator.IsHiddenInViewTree = true;
+                    }
                     AnimatingControls.TryAdd(animator.Uid, animator);
                 }
             });
@@ -1751,7 +1766,7 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public int DrawingThreads { get; protected set; }
 
-        protected Dictionary<Guid, SkiaControl> DirtyChildrenTracker = new();
+        protected ConcurrentDictionary<Guid, SkiaControl> DirtyChildrenTracker = new();
 
         public void SetChildAsDirty(SkiaControl child)
         {

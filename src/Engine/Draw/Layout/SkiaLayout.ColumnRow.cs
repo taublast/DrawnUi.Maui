@@ -28,13 +28,27 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected ScaledSize MeasureAndArrangeCell(SKRect destination, ControlInStack cell, SkiaControl child, SKRect rectForChildrenPixels, float scale)
+        public LayoutStructure LatestMeasuredStackStructure
+        {
+            get
+            {
+                if (StackStructureMeasured != null)
+                    return StackStructureMeasured;
+
+                return StackStructure;
+            }
+        }
+
+        protected ScaledSize MeasureAndArrangeCell(SKRect destination,
+            ControlInStack cell, SkiaControl child,
+            SKRect rectForChildrenPixels, float scale)
         {
             cell.Area = destination;
 
             var measured = MeasureChild(child, cell.Area.Width, cell.Area.Height, scale);
 
             cell.Measured = measured;
+            cell.WasMeasured = true;
 
             LayoutCell(measured, cell, child, rectForChildrenPixels, scale);
 
@@ -48,6 +62,8 @@ namespace DrawnUi.Maui.Draw
             SKRect rectForChildrenPixels,
             float scale)
         {
+            cell.Layout = rectForChildrenPixels;
+
             if (!measured.IsEmpty)
             {
                 var area = cell.Area;
@@ -111,6 +127,24 @@ namespace DrawnUi.Maui.Draw
                 spacing = (float)Math.Round(Spacing * scale);
             }
             return spacing;
+        }
+
+        protected int GetSizeKey(SKSize size)
+        {
+            int hKey = 0;
+            if (RecyclingTemplate != RecyclingTemplate.Disabled)
+            {
+                if (Type == LayoutType.Column)
+                {
+                    hKey = (int)Math.Round(size.Height);
+                }
+                else
+                if (Type == LayoutType.Row)
+                {
+                    hKey = (int)Math.Round(size.Width);
+                }
+            }
+            return hKey;
         }
 
         /// <summary>
@@ -310,25 +344,31 @@ namespace DrawnUi.Maui.Draw
 
                 var layoutStructure = BuildStackStructure(scale);
 
-                bool standalone = false;
                 bool useOneTemplate = IsTemplated && //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
                                       RecyclingTemplate != RecyclingTemplate.Disabled;
 
                 if (useOneTemplate)
                 {
-                    standalone = true;
                     template = ChildrenFactory.GetTemplateInstance();
-                    template.IsParentIndependent = true;
                 }
 
                 var maybeSecondPass = true;
-
                 List<SecondPassArrange> listSecondPass = new();
+                bool stopMeasuring = false;
+
+                //var visibleArea = GetOnScreenVisibleArea((float)this.VirtualisationInflated * scale);
 
                 //measure
                 //left to right, top to bottom
+                var index = -1;
                 for (var row = 0; row < layoutStructure.MaxRows; row++)
                 {
+                    if (stopMeasuring)
+                    {
+                        break;
+                    }
+
+                    index++;
                     var maxHeight = 0.0f;
                     var maxWidth = 0.0f;
 
@@ -338,10 +378,10 @@ namespace DrawnUi.Maui.Draw
                     if (useOneTemplate)
                     {
                         needMeasureAll = RecyclingTemplate == RecyclingTemplate.Disabled ||
-                                         ItemSizingStrategy == ItemSizingStrategy.MeasureAllItems ||
-                                         (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem
+                                         MeasureItemsStrategy == MeasuringStrategy.MeasureAll ||
+                                         (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst
                                           && columnsCount != Split)
-                                         || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem
+                                         || !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst
                                               && firstCell != null);
                     }
 
@@ -377,7 +417,7 @@ namespace DrawnUi.Maui.Draw
                             SkiaControl child = null;
                             if (IsTemplated)
                             {
-                                child = ChildrenFactory.GetChildAt(cell.ControlIndex, template);
+                                child = ChildrenFactory.GetChildAt(cell.ControlIndex, template, 0, true);
                             }
                             else
                             {
@@ -405,8 +445,8 @@ namespace DrawnUi.Maui.Draw
                             {
                                 bool needMeasure =
                                     needMeasureAll ||
-                                    (ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && columnsCount != Split)
-                                    || !(ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem && firstCell != null);
+                                    (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && columnsCount != Split)
+                                    || !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && firstCell != null);
 
                                 if (needMeasure)
                                 {
@@ -424,6 +464,7 @@ namespace DrawnUi.Maui.Draw
                                     cell.Area = rectFitChild;
                                     cell.Measured = measured.Clone();
                                     cell.Destination = arranged;
+                                    cell.WasMeasured = true;
                                 }
                             }
                             else
@@ -453,6 +494,22 @@ namespace DrawnUi.Maui.Draw
 
                                 //offset -->
                                 rectForChild.Left += (float)(measured.Pixels.Width);
+                            }
+
+                            cell.WasMeasured = true;
+
+                            //if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
+                            //{
+                            //    if (!visibleArea.Pixels.IntersectsWithInclusive(cell.Destination))
+                            //    {
+                            //        stopMeasuring = true;
+                            //        break;
+                            //    }
+                            //}
+
+                            if (!useOneTemplate && IsTemplated)
+                            {
+                                ChildrenFactory.ReleaseView(child);
                             }
 
                         }
@@ -539,10 +596,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (useOneTemplate)
                 {
-                    if (standalone)
-                        ChildrenFactory.ReleaseTemplateInstance(template);
-                    else
-                        ChildrenFactory.ReleaseView(template);
+                    ChildrenFactory.ReleaseTemplateInstance(template);
                 }
 
                 if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
@@ -562,7 +616,6 @@ namespace DrawnUi.Maui.Draw
 
         private LayoutStructure BuildStackStructure(float scale)
         {
-
             //build stack grid
             //fill table
             var column = 0;

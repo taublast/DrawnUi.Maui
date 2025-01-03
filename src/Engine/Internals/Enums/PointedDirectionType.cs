@@ -13,6 +13,8 @@ public enum PointedDirectionType
 
 public enum LinearDirectionType
 {
+    None,
+
     Forward,
 
     Backward,

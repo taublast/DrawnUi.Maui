@@ -1,8 +1,4 @@
-﻿using DrawnUi.Maui;
-using DrawnUi.Maui;
-using SkiaSharp;
-
-namespace DrawnUi.Maui.Demo.Views.Controls;
+﻿namespace DrawnUi.Maui.Demo.Views.Controls;
 
 public class DroppingLetters : SkiaLabel
 {
@@ -41,11 +37,9 @@ public class DroppingLetters : SkiaLabel
             StopAnimators();
         }
     }
-    protected override void DrawCharacter(SKCanvas canvas, int lineIndex, int letterIndex, string text, float x, float y,
-        SKPaint paint,
-        SKPaint paintStroke,
-        SKPaint paintShadow,
-        SKRect destination, float scale)
+
+    protected override void DrawCharacter(SKCanvas canvas, int lineIndex, int letterIndex, ReadOnlySpan<char> characters, float x, float y,
+        SKPaint paint, SKPaint paintStroke, SKPaint paintDropShadow, SKRect destination, float scale)
     {
         // 1 line enabled only!
         if (lineIndex == 0 && _letterOffsetsY != null)
@@ -66,7 +60,7 @@ public class DroppingLetters : SkiaLabel
                     SetupGradient(paintStroke, StrokeGradient, dest);
                 }
 
-                base.DrawCharacter(canvas, lineIndex, letterIndex, text, x, y - offsetY, paint, paintStroke, paintShadow, destination, scale);
+                base.DrawCharacter(canvas, lineIndex, letterIndex, characters, x, y - offsetY, paint, paintStroke, paintDropShadow, destination, scale);
             }
         }
     }

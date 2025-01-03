@@ -4,11 +4,13 @@ public class ContentWithBackdrop : ContentLayout
 {
     public SkiaBackdrop Backdrop { get; protected set; }
 
+    public bool NoBackdrop { get; set; }
+
     protected override void SetContent(SkiaControl view)
     {
         base.SetContent(view);
 
-        if (Backdrop == null)
+        if (Backdrop == null && !NoBackdrop)
         {
             Backdrop = new SkiaBackdrop()
             {
@@ -17,10 +19,10 @@ public class ContentWithBackdrop : ContentLayout
                 VerticalOptions = LayoutOptions.Fill,
                 ZIndex = -1,
             };
-        }
-        if (Views.All(x => x != Backdrop))
-        {
-            AddSubView(Backdrop);
+            if (Views.All(x => x != Backdrop))
+            {
+                AddSubView(Backdrop);
+            }
         }
     }
 

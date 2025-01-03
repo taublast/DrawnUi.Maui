@@ -44,7 +44,56 @@ public static class StaticResourcesExtensions
         }
     }
 
+    public static T FindParent<T>(this Element view) where T : Element
+    {
+        var parent = view.Parent;
+        while (parent != null)
+        {
+            if (parent is T)
+            {
+                return (T)parent;
+            }
+            parent = parent.Parent;
+        }
+        return null;
+    }
 
+    public static T FindParentByType<T>(this SkiaControl view) where T : Element
+    {
+        var parent = view.Parent;
+        var native = view.NativeParent;
+
+        if (native != null)
+        {
+            if (native is T)
+            {
+                return (T)native;
+            }
+            return native.FindParent<T>();
+        }
+
+        while (parent != null)
+        {
+            if (parent is T)
+            {
+                return (T)parent;
+            }
+            if (parent is ISkiaControl drawn)
+            {
+                parent = drawn.Parent;
+            }
+            else
+            if (parent is Element maui)
+            {
+                return maui.FindParent<T>();
+            }
+            else
+            {
+                parent = null;
+            }
+        }
+        return null;
+    }
 
     public static List<VisualElement> GetAllWithMyselfParents(this VisualElement view)
     {

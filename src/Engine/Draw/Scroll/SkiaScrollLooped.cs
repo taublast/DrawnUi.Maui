@@ -14,7 +14,7 @@ public class SkiaScrollLooped : SkiaScroll
 
     public static bool Debug = false;
 
-    public override bool WillClipBounds => true;
+    //public override bool WillClipBounds => true;
 
 
     public override bool ShouldInvalidateByChildren => false;

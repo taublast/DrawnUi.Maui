@@ -18,14 +18,16 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 ## What's New
 
-### Nuget 1.2.9.9
+### Nuget 1.2.9.10
 _for SkiaSharp 2.88.9-preview.2.2_
 
-* ImageDoubleBuffered rendering gets faster
-* TextTransform property for SkiaLabel: Lowercase, Uppercase, Titlecase, Phrasecase
-* SkiaButton TinColor removed, applying Background and BackgroundColor to button frame
-* Nuget iOS 17 compatibility restored
-* Some more fixes
+* Sub-pixel drawing/animations enabled
+* Updating method made faster
+* SkiaScroll panning made smoother
+* Skialabel optimized faster measure/draw
+* Using latest new gesture nuget
+* Android rendering loop synched with choreographer
+* Skiashell critical fixes and other
 * Still using SkiaSharp 2.88.9-preview.2.2 
 until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
 

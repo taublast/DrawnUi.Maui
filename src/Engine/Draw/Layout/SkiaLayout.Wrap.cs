@@ -19,6 +19,20 @@ namespace DrawnUi.Maui.Draw
             return measuredLayout;
         }
 
+        protected override void OnFirstDrawn()
+        {
+            if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureFirst &&
+                RecyclingTemplate != RecyclingTemplate.Disabled)
+            {
+                //avoid lag-spike of first scrolling
+                Task.Run(() =>
+                {
+                    ChildrenFactory.FillPool(ChildrenFactory.PoolSize + 2);
+                }).ConfigureAwait(false);
+            }
+            base.OnFirstDrawn();
+        }
+
         /// <summary>
         /// Renders stack/wrap layout.
         /// Returns number of drawn children.
@@ -39,13 +53,18 @@ namespace DrawnUi.Maui.Draw
             if (structure != null)
             {
                 //draw children manually
-                var visibleArea = GetOnScreenVisibleArea((float)this.VirtualisationInflated * scale);
+                var visibleArea = GetOnScreenVisibleArea(destination, (float)(this.VirtualisationInflated * scale));
 
                 //PASS 1 - VISIBILITY
                 //we need this pass before drawing to recycle views that became hidden
                 var currentIndex = -1;
                 foreach (var cell in structure.GetChildrenAsSpans())
                 {
+                    if (!cell.WasMeasured)
+                    {
+                        continue;
+                    }
+
                     currentIndex++;
 
                     if (cell.Destination == SKRect.Empty || cell.Measured.Pixels.IsEmpty)
@@ -56,8 +75,6 @@ namespace DrawnUi.Maui.Draw
                     {
                         var x = destination.Left + cell.Destination.Left;
                         var y = destination.Top + cell.Destination.Top;
-
-
 
                         cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
 
@@ -100,6 +117,11 @@ namespace DrawnUi.Maui.Draw
 
                 foreach (var cell in CollectionsMarshal.AsSpan(visibleElements))
                 {
+                    if (!cell.WasMeasured)
+                    {
+                        continue;
+                    }
+
                     index++;
 
                     SkiaControl child = null;
@@ -109,46 +131,40 @@ namespace DrawnUi.Maui.Draw
                         {
                             break; //itemssource was changed by other thread
                         }
-                        child = ChildrenFactory.GetChildAt(cell.ControlIndex, null);
+                        child = ChildrenFactory.GetChildAt(cell.ControlIndex, null, GetSizeKey(cell.Measured.Pixels));
+                        if (child == null)
+                        {
+                            return countRendered;
+                        }
                     }
                     else
                     {
                         child = cell.View;
                     }
 
-                    if (child == null) //ChildrenFactory.GetChildAt was unable to return child?..
-                    {
-                        //NeedMeasure = true;
-                        return drawn;
-                    }
-
                     if (child is SkiaControl control && child.IsVisible)
                     {
+                        if (child.NeedMeasure)
+                        {
+                            if (!child.WasMeasured || GetSizeKey(child.MeasuredSize.Pixels) != GetSizeKey(cell.Measured.Pixels))
+                            {
+                                child.Measure((float)cell.Area.Width, (float)cell.Area.Height, scale);
+                            }
+                        }
+
                         SKRect destinationRect;
-                        if (IsTemplated && ItemSizingStrategy == ItemSizingStrategy.MeasureAllItems)
+                        if (IsTemplated && RecyclingTemplate != RecyclingTemplate.Disabled)
                         {
                             //when context changes we need all available space for remeasuring cell
-                            destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Left + cell.Area.Width, cell.Drawn.Top + cell.Area.Bottom);
+                            destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top,
+                                cell.Drawn.Left + cell.Area.Width, cell.Drawn.Top + cell.Area.Bottom);
                         }
                         else
                         {
-                            destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right, cell.Drawn.Bottom);
+                            destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right,
+                                cell.Drawn.Bottom);
                         }
 
-                        //fixes case we changed size of columns/cells and there where already measured..
-                        /*
-                        if (IsTemplated
-                            && (DynamicColumns || ItemSizingStrategy == Microsoft.Maui.Controls.ItemSizingStrategy.MeasureAllItems)
-                            && RecyclingTemplate == RecyclingTemplate.Enabled
-                            && child.RenderedAtDestination != SKRect.Empty
-                            && (destinationRect.Width != child.RenderedAtDestination.Width
-                                || destinationRect.Height != child.RenderedAtDestination.Height))
-                        {
-                            //size is different but template is the same - need to invalidate!
-                            //for example same template rendering on 2 columns in one row and 1 column on the last one
-                            InvalidateChildrenTree(control);
-                        }
-                        */
 
                         if (IsRenderingWithComposition)
                         {

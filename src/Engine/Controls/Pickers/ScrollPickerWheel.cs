@@ -8,6 +8,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
         // visible become hidden at the same time and vice versa
         // se we cant recycle hidden cells at all
         RecyclingTemplate = RecyclingTemplate.Disabled;
+        MeasureItemsStrategy = MeasuringStrategy.MeasureAll;
     }
 
     protected override void OnLayoutChanged()
@@ -92,10 +93,24 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
     protected float mWheelCenterY;
     protected double CurvedVisionAngle = 1.5707963267949; // Pi / 2
 
-    protected override bool DrawChild(SkiaDrawingContext context, SKRect dest, ISkiaControl child, float scale)
+    protected override int GetTemplatesPoolLimit()
     {
-        if (child is SkiaControl control && mHalfWheelHeight > 0)
+        return ItemsSource.Count * 2;
+    }
+
+    protected override bool DrawChild(SkiaDrawingContext context, SKRect destination, ISkiaControl child, float scale)
+    {
+        if (child is SkiaControl control &&
+            child.CanDraw &&
+            mHalfWheelHeight > 0)
         {
+
+            var scroll = (SkiaScroll)Parent;
+
+            var dest = new SKRect(destination.Left, destination.Top,
+                destination.Left + child.MeasuredSize.Pixels.Width,
+                destination.Top + child.MeasuredSize.Pixels.Height);
+
             //child related
             var itemCenterY = dest.MidY;
 
@@ -112,7 +127,6 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
 
             //draw transformed child
 
-            var scroll = (SkiaScroll)Parent;
 
             var centerX = dest.Left + dest.Width * (float)AnchorX;
             var centerY = dest.Top + dest.Height * (float)AnchorY;
@@ -179,7 +193,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
         }
         else
         {
-            return base.DrawChild(context, dest, child, scale);
+            return base.DrawChild(context, destination, child, scale);
         }
 
 

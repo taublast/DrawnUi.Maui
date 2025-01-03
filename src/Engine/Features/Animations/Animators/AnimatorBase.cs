@@ -225,6 +225,8 @@ public class AnimatorBase : ISkiaAnimator
     bool _isRunning;
     private bool _isDeactivated;
 
-
+    /// <summary>
+    /// Main flag to detect if animator stopped after being started (WasStarted) or stop was just called on an already stopped animator. 
+    /// </summary>
     public bool WasStarted { get; protected set; }
 }

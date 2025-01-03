@@ -96,8 +96,12 @@
     <None Remove="Platforms\Windows\Controls\**" />
 	</ItemGroup>
     
+  <!--<ItemGroup>
+      <ProjectReference Include="..\..\..\AppoMobi.Maui.Gestures\src\AppoMobi.Maui.Gestures.csproj" />
+  </ItemGroup>-->
+
   <ItemGroup>
-    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.2.5" />
+    <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.3.1" />
     <!--for parsing markdown text-->
     <PackageReference Include="Markdig" Version="0.34.0" />
     <!--for caching images-->

@@ -607,7 +607,7 @@
   - [AutoScrollingSpeedMs](#P-DrawnUi-Maui-Draw-SkiaScroll-AutoScrollingSpeedMs 'DrawnUi.Maui.Draw.SkiaScroll.AutoScrollingSpeedMs')
   - [Bounces](#P-DrawnUi-Maui-Draw-SkiaScroll-Bounces 'DrawnUi.Maui.Draw.SkiaScroll.Bounces')
   - [CanScrollUsingHeader](#P-DrawnUi-Maui-Draw-SkiaScroll-CanScrollUsingHeader 'DrawnUi.Maui.Draw.SkiaScroll.CanScrollUsingHeader')
-  - [ChangeDIstancePanned](#P-DrawnUi-Maui-Draw-SkiaScroll-ChangeDIstancePanned 'DrawnUi.Maui.Draw.SkiaScroll.ChangeDIstancePanned')
+  - [ChangeDistancePanned](#P-DrawnUi-Maui-Draw-SkiaScroll-ChangeDistancePanned 'DrawnUi.Maui.Draw.SkiaScroll.ChangeDistancePanned')
   - [ChangeVelocityScrolled](#P-DrawnUi-Maui-Draw-SkiaScroll-ChangeVelocityScrolled 'DrawnUi.Maui.Draw.SkiaScroll.ChangeVelocityScrolled')
   - [ContentOffsetBounds](#P-DrawnUi-Maui-Draw-SkiaScroll-ContentOffsetBounds 'DrawnUi.Maui.Draw.SkiaScroll.ContentOffsetBounds')
   - [ContentRectWithOffset](#P-DrawnUi-Maui-Draw-SkiaScroll-ContentRectWithOffset 'DrawnUi.Maui.Draw.SkiaScroll.ContentRectWithOffset')
@@ -7131,8 +7131,8 @@ Should the scroll bounce at edges. Set to false if you want this scroll to let t
 
 If disabled will not scroll using gestures. Scrolling will still be possible by code.
 
-<a name='P-DrawnUi-Maui-Draw-SkiaScroll-ChangeDIstancePanned'></a>
-### ChangeDIstancePanned `property`
+<a name='P-DrawnUi-Maui-Draw-SkiaScroll-ChangeDistancePanned'></a>
+### ChangeDistancePanned `property`
 
 ##### Summary
 

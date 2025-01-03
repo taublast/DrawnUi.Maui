@@ -4,8 +4,7 @@ using SkiaSharp.Views.Maui.Controls;
 namespace Sandbox.Views
 {
 
-
-    public partial class MainGC 
+    public partial class MainGC
     {
 
 

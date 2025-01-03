@@ -35,7 +35,7 @@
 
                     <draw:SkiaLayout
                         HorizontalOptions="Fill"
-                        Spacing="0"
+                        Spacing="1"
                         Tag="ScrollContent"
                         Type="Column"
                         UseCache="ImageComposite">

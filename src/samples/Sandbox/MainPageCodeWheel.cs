@@ -6,7 +6,7 @@ namespace Sandbox
 {
 
 
-    public class MainPageCodeDev : BasePage, IDisposable
+    public class MainPageCodeWheel : BasePage, IDisposable
     {
         Canvas Canvas;
 
@@ -36,7 +36,7 @@ namespace Sandbox
             }
         }
 
-        public MainPageCodeDev()
+        public MainPageCodeWheel()
         {
 #if DEBUG
             HotReloadService.UpdateApplicationEvent += ReloadUI;

@@ -4,6 +4,7 @@ public struct LineSpan
 {
     public LineSpan()
     {
+        Size = SKSize.Empty;
     }
 
     public string Text { get; set; }

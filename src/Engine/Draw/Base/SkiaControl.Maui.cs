@@ -104,7 +104,7 @@ namespace DrawnUi.Maui.Draw
             {
                 OnVisibilityChanged(IsVisible);
 
-                InvalidateMeasure();
+                Repaint();
             }
 
             #endregion

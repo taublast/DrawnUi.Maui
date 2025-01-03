@@ -14,8 +14,6 @@ public interface ISkiaControl : IDrawnBase
     /// </summary>
     bool IsGhost { get; }
 
-
-
     Action<SKPath, SKRect> Clipping { get; }
 
     int ZIndex { get; }

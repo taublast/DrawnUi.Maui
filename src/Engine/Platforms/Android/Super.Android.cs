@@ -54,7 +54,18 @@ public partial class Super
         bool isRendering = false;
         object lockFrane = new();
 
-        /*
+
+
+
+        InitShared();
+
+        //Looper = new(() =>
+        //{
+        //    OnFrame?.Invoke(null, null);
+        //});
+
+        //Looper.StartOnMainThread(120);
+
         Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
         {
             _frameCallback = new FrameCallback((nanos) =>
@@ -98,16 +109,7 @@ public partial class Super
             }
 
         });
-        */
 
-        InitShared();
-
-        Looper = new(() =>
-        {
-            OnFrame?.Invoke(null, null);
-        });
-
-        Looper.StartOnMainThread(120);
     }
 
 

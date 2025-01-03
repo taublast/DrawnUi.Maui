@@ -19,10 +19,6 @@ public class CachedObject : IDisposable
         var offsetCacheX = drawingRect.X - Bounds.Left;
         var offsetCacheY = drawingRect.Y - Bounds.Top;
 
-        //var offsetCacheX = (float)Math.Round(drawingRect.X - Bounds.Left);
-        //var offsetCacheY = (float)Math.Round(drawingRect.Y - Bounds.Top);
-
-
         return new SKPoint(offsetCacheX, offsetCacheY);
     }
 
@@ -35,6 +31,12 @@ public class CachedObject : IDisposable
         return new SKPoint(offsetCacheX, offsetCacheY);
     }
 
+    /// <summary>
+    /// This will draw with destination corrected by offset that it had when was recorded
+    /// </summary>
+    /// <param name="canvas"></param>
+    /// <param name="destination"></param>
+    /// <param name="paint"></param>
     public void Draw(SKCanvas canvas, SKRect destination, SKPaint paint)
     {
         try
@@ -44,8 +46,8 @@ public class CachedObject : IDisposable
                 var moveY = Bounds.Top - RecordingArea.Top;
                 var moveX = Bounds.Left - RecordingArea.Left;
 
-                var x = (float)Math.Round(destination.Left - Bounds.Left + moveX);
-                var y = (float)Math.Round(destination.Top - Bounds.Top + moveY);
+                var x = (float)(destination.Left - Bounds.Left + moveX);
+                var y = (float)(destination.Top - Bounds.Top + moveY);
 
                 canvas.DrawPicture(Picture, x, y, paint);
             }
@@ -55,9 +57,36 @@ public class CachedObject : IDisposable
                 var moveY = Bounds.Top - RecordingArea.Top;
                 var moveX = Bounds.Left - RecordingArea.Left;
 
-                var x = (float)Math.Round(destination.Left + moveX);
-                var y = (float)Math.Round(destination.Top + moveY);
+                var x = (float)(destination.Left + moveX);
+                var y = (float)(destination.Top + moveY);
 
+                canvas.DrawImage(Image, x, y, paint);
+            }
+        }
+        catch (Exception e)
+        {
+            Super.Log(e);
+        }
+    }
+
+    /// <summary>
+    /// Will draw at exact x,y coordinated without any adjustments
+    /// </summary>
+    /// <param name="canvas"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="paint"></param>
+    public void Draw(SKCanvas canvas, float x, float y, SKPaint paint)
+    {
+        try
+        {
+            if (Picture != null)
+            {
+                canvas.DrawPicture(Picture, x, y, paint);
+            }
+            else
+            if (Image != null)
+            {
                 canvas.DrawImage(Image, x, y, paint);
             }
         }
@@ -107,7 +136,10 @@ public class CachedObject : IDisposable
         {
             IsDisposed = true;
 
-            Surface?.Dispose();
+            if (!PreserveSourceFromDispose)
+            {
+                Surface?.Dispose();
+            }
             Surface = null;
             Picture?.Dispose();
             Picture = null;
@@ -120,7 +152,7 @@ public class CachedObject : IDisposable
 
     public string Tag { get; set; }
 
-    public bool NeedDispose { get; set; }
+    public bool PreserveSourceFromDispose { get; set; }
 
     public SKBitmap GetBitmap()
     {
