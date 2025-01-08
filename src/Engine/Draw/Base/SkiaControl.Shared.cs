@@ -1525,6 +1525,11 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
+                if (!WasMeasured)
+                {
+                    InvalidateParent();
+                }
+
                 Superview?.UpdateRenderingChains(this);
             }
             catch (Exception e)
