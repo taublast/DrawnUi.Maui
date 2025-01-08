@@ -1467,9 +1467,16 @@ propertyChanged: NeedChangeColorFIlter);
                 SetAspectScale(LoadedSource.Width, LoadedSource.Height, constraints.Content, this.Aspect, request.Scale);
 
                 if (NeedAutoHeight)
-                    height = SourceImageSize.Pixels.Height * this.AspectScale.Y;
+                {
+                    var newValue = SourceImageSize.Pixels.Height * this.AspectScale.Y;
+                    height = AdaptHeightConstraintToContentRequest(constraints, newValue, VerticalOptions.Expands);
+                }
+
                 if (NeedAutoWidth)
-                    width = SourceImageSize.Pixels.Width * this.AspectScale.X;
+                {
+                    var newValue = SourceImageSize.Pixels.Width * this.AspectScale.X;
+                    width = AdaptWidthConstraintToContentRequest(constraints, newValue, HorizontalOptions.Expands);
+                }
             }
             catch (Exception e)
             {
