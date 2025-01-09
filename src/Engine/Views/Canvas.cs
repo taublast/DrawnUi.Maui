@@ -75,7 +75,7 @@ public class Canvas : DrawnView, IGestureListener
     protected Size AdaptSizeToContentIfNeeded(double widthConstraint, double heightConstraint, bool force = false)
     {
 
-        if (force || _widthConstraint != widthConstraint && _heightConstraint != heightConstraint)
+        if (force || _widthConstraint != widthConstraint || _heightConstraint != heightConstraint)
         {
 
             var measured = Measure((float)widthConstraint, (float)heightConstraint);
@@ -581,16 +581,16 @@ public class Canvas : DrawnView, IGestureListener
 
         //this is intended to not lose gestures when fps drops and avoid crashes in double-buffering
         PostponeExecutionBeforeDraw(() =>
-               {
-                   try
-                   {
-                       ProcessGestures(args);
-                   }
-                   catch (Exception e)
-                   {
-                       Trace.WriteLine(e);
-                   }
-               });
+        {
+            try
+            {
+                ProcessGestures(args);
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e);
+            }
+        });
 
         Repaint();
 
