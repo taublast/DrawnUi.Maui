@@ -120,7 +120,7 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
-        if (_lastMeasureConstraints.Width == widthConstraint && _lastMeasureConstraints.Height == heightConstraint)
+        if (!this.NeedMeasure && _lastMeasureConstraints.Width == widthConstraint && _lastMeasureConstraints.Height == heightConstraint)
         {
             return _lastMeasureResult;
         }
