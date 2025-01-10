@@ -18,19 +18,24 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 ## What's New
 
-### Nuget 1.2.9.10
-_for SkiaSharp 2.88.9-preview.2.2_
+### Nuget 1.3.60.1
+_for SkiaSharp 3.116.1 NET 9_
+* Stable version for SkiaSharp v3, you get hardware acceleration on Windows, new SKSL and much more
+* Compiled for NET 9
+* Fix for items invisible from start coming to visible at runtime sometimes not being measured
+* SkiaImage autosize fix when Margins are not 0
+* Canvas auto-size fix for dynamic content by [Gummimundur](https://github.com/taublast/DrawnUi.Maui/pull/151)
+* Canvas gestures cleanup
 
-* Sub-pixel drawing/animations enabled
-* Updating method made faster
-* SkiaScroll panning made smoother
-* Skialabel optimized faster measure/draw
-* Using latest new gesture nuget
-* Android rendering loop synched with choreographer
-* Skiashell critical fixes and other
+### Nuget 1.2.96.1
+_for SkiaSharp 2.88.9-preview.2.2 NET 8_
+* Fixed for items invisible from start coming to visible at runtime sometimes not being measured.
+* SkiaImage autosize fix when Margins are not 0
+* Canvas auto-size fix for dynamic content by [Gummimundur](https://github.com/taublast/DrawnUi.Maui/pull/151)
+* Canvas gestures cleanup
+* Might be the one of the last nugets for SkiaSharp v2 and NET 8
 * Still using SkiaSharp 2.88.9-preview.2.2 
 until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
-
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 
@@ -123,7 +128,7 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
  ## Development Notes
 
-* To compile the v3 version that supports NEW SHADERS you must set `<UseSkiaSharp3>true</UseSkiaSharp3>` inside `Directory.Build.props` file.
+* To compile the v3 version that supports NEW SHADERS you must set `<UseSkiaSharp3>true</UseSkiaSharp3>` inside `Directory.Build.props` file. The v3 version uses net9. For hardware accelerated views to work with net9 on Windows you have to [enable packaging for your app](https://learn.microsoft.com/en-us/dotnet/maui/windows/setup?view=net-maui-9.0). 
 * All files to be consumed (images etc) must be placed inside the MAUI app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
 * Accessibility support is compatible and is on the roadmap.
 
