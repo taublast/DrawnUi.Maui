@@ -28,7 +28,6 @@
     <Import Condition="'$(UseSkiaSharp3)' != 'true'" Project="..\..\Engine\skia2.props" />
 
     <PropertyGroup>
-    <UseNuget>false</UseNuget>
     <Title>MauiGraphics addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.MauiGraphics</PackageId>
     <Description>SkiaMauiGraphics DrawnUi control for .NET MAUI</Description>
@@ -48,15 +47,11 @@
     <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
   </PropertyGroup>
 
-  <!--for development-->
-  <ItemGroup Condition="'$(UseNuget)' != 'true'">
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
   </ItemGroup>
 
-  <!--production-->
-  <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.96.1" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="8.0.40" />

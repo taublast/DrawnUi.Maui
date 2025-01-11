@@ -29,7 +29,6 @@
 
 
     <PropertyGroup>
-    <UseNuget>false</UseNuget>
     <Title>Game creation addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.Maui.Game</PackageId>
     <Description>Base class for implementing a game with SkiaSharp in .NET MAUI</Description>
@@ -49,14 +48,8 @@
     <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
   </PropertyGroup>
 
-  <!--for development-->
-  <ItemGroup Condition="'$(UseNuget)' != 'true'">
+  <ItemGroup>
     <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
-  </ItemGroup>
-
-  <!--production-->
-  <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.96.1" />
   </ItemGroup>
 
 

@@ -40,7 +40,6 @@
 </ItemGroup>    
 
   <PropertyGroup>
-    <UseNuget>false</UseNuget>
     <Title>MapsUi addon to DrawnUI for .NET MAUI</Title>
     <PackageId>DrawnUi.Maui.MapsUi</PackageId>
     <Description>SkiaMapsUi DrawnUi control for .NET MAUI</Description>
@@ -60,14 +59,9 @@
     <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
   </PropertyGroup>
 
-  <!--for development-->
-  <ItemGroup Condition="'$(UseNuget)' != 'true'">
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\DrawnUi.Maui.csproj" />
   </ItemGroup>
 
-  <!--production-->
-  <ItemGroup Condition="'$(UseNuget)' == 'true'">
-    <PackageReference Include="AppoMobi.Maui.DrawnUi" Version="1.2.96.1" />
-  </ItemGroup>
 
 </Project>

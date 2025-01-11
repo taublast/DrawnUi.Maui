@@ -31,7 +31,7 @@ _for SkiaSharp 3.116.1 NET 9_
 * Fix for animators and invalidation when IsVisible changing at runtime.
 * Fix for SkiaShell animated pages occasional flickering when pushed
 
-### Nuget 1.2.96.1
+### Nuget 1.2.99.1
 _for SkiaSharp 2.88.9-preview.2.2 NET 8_
 * Fixed for items invisible from start coming to visible at runtime sometimes not being measured.
 * SkiaImage autosize fix when Margins are not 0
