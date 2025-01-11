@@ -46,7 +46,7 @@ until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is so
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 
-___Please star ⭐ if you like it!___
+___Please star ⭐ if you like it, helps very much!___
 
 ## Features
 
