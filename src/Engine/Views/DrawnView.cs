@@ -511,12 +511,16 @@ namespace DrawnUi.Maui.Views
                         else
                         {
                             if (!skiaAnimation.IsPaused)
+                            {
                                 skiaAnimation.Pause();
+                                //Debug.WriteLine($"ANIMATORS - PAUSED {key}");
+                            }
                         }
                     }
 
                     foreach (var key in _listRemoveAnimators)
                     {
+                        //Debug.WriteLine($"ANIMATORS - REMOVED {key}");
                         AnimatingControls.Remove(key);
                     }
 
@@ -1420,7 +1424,7 @@ namespace DrawnUi.Maui.Views
 
             IsRendering = false;
 
-            if (UpdateMode == UpdateMode.Constant)
+            if (UpdateMode == UpdateMode.Constant || !CanvasView.HasDrawn)
                 IsDirty = true;
 
             if (IsDirty)
@@ -1958,16 +1962,17 @@ namespace DrawnUi.Maui.Views
                         // ABSOLUTE like inside grid
                         var children = GetOrderedSubviews();
 
+                        var rectForChild = new SKRect(
+                            destination.Left + (float)Math.Round((Padding.Left) * scale),
+                            destination.Top + (float)Math.Round((Padding.Top) * scale),
+                            destination.Right - (float)Math.Round((Padding.Right) * scale),
+                            destination.Bottom - (float)Math.Round((Padding.Bottom) * scale));
+
                         foreach (var child in children)
                         {
                             child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
                             if (child.CanDraw) //still visible
                             {
-                                var rectForChild = new SKRect(
-                                    destination.Left + (float)Math.Round((Padding.Left) * scale),
-                                    destination.Top + (float)Math.Round((Padding.Top) * scale),
-                                    destination.Right - (float)Math.Round((Padding.Right) * scale),
-                                    destination.Bottom - (float)Math.Round((Padding.Bottom) * scale));
                                 if (NeedMeasure)
                                 {
                                     child.NeedMeasure = true;
@@ -2027,7 +2032,7 @@ namespace DrawnUi.Maui.Views
                     }
 
 
-                    if (renderedFrames is >= 3 and < 5 && HardwareAcceleration == HardwareAccelerationMode.Prerender)
+                    if (HardwareAcceleration == HardwareAccelerationMode.Prerender && renderedFrames is >= 3 and < 5)
                     {
                         //looks like we have finally loaded
                         SwapToDelayed();

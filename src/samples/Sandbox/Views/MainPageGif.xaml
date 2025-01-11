@@ -9,6 +9,7 @@
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
+    x:DataType="views:MainPageGif"
     BackgroundColor="Black">
 
     <draw:Canvas
@@ -20,18 +21,15 @@
         Tag="MainPage"
         VerticalOptions="Fill">
 
-        <draw:SkiaLayout
-            HorizontalOptions="Fill"
-            VerticalOptions="Fill">
+        <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
-            <draw:SkiaScroll
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
+            <draw:SkiaScroll HorizontalOptions="Fill" VerticalOptions="Fill">
 
                 <draw:SkiaLayout
                     Padding="20,20,20,20"
                     HorizontalOptions="Fill"
                     Spacing="20"
+                    Tag="VStack"
                     Type="Column"
                     UseCache="None">
 
@@ -45,12 +43,23 @@
                         TextColor="White"
                         UseCache="Operations" />
 
-                    <draw:SkiaMediaImage
+                    <draw:SkiaButton
+                        HeightRequest="38"
                         HorizontalOptions="Center"
+                        Tapped="SkiaButton_OnTapped"
+                        Text="Toggle Visibility"
+                        WidthRequest="200" />
+
+                    <draw:SkiaMediaImage
+                        BackgroundColor="Red"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding Visibility}"
                         Source="Anims/look.webp" />
 
                     <draw:SkiaGif
+                        BackgroundColor="Red"
                         HorizontalOptions="Fill"
+                        IsVisible="{Binding Visibility}"
                         Repeat="-1"
                         Source="Anims/hair.webp" />
 

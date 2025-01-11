@@ -157,6 +157,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
         }
     }
 
+    public bool HasDrawn { get; protected set; }
     public long FrameTime { get; protected set; }
 
     public void SignalFrame(long nanoseconds)
@@ -217,6 +218,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     private void OnPaintingSurface(object sender, SKPaintGLSurfaceEventArgs paintArgs)
     {
         IsDrawing = true;
+        bool maybeDrawn = true;
 
         FrameTime = Super.GetCurrentTimeNanos();
 
@@ -227,6 +229,17 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
             var rect = new SKRect(0, 0, paintArgs.BackendRenderTarget.Width, paintArgs.BackendRenderTarget.Height);
             _surface = paintArgs.Surface;
             var isDirty = OnDraw.Invoke(paintArgs.Surface, rect);
+
+#if WINDOWS
+            //fix handler renderer didn't render first frame at startup for skiasharp v3
+            if (Handler?.PlatformView is SkiaSharp.Views.Windows.SKXamlCanvas canvas)
+            {
+                if (double.IsNaN(canvas.Height) || double.IsNaN(canvas.Width))
+                {
+                    maybeDrawn = false;
+                }
+            }
+#endif
 
 #if ANDROID_LEGACY
             if (maybeLowEnd && FPS > 160)
@@ -242,6 +255,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 #endif
         }
 
+        HasDrawn = maybeDrawn;
         IsDrawing = false;
     }
 

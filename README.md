@@ -18,19 +18,30 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 ## What's New
 
-### Nuget 1.2.9.10
-_for SkiaSharp 2.88.9-preview.2.2_
+New nugets: for NET 9 you need version not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
 
-* Sub-pixel drawing/animations enabled
-* Updating method made faster
-* SkiaScroll panning made smoother
-* Skialabel optimized faster measure/draw
-* Using latest new gesture nuget
-* Android rendering loop synched with choreographer
-* Skiashell critical fixes and other
+### Nuget 1.3.60.1
+_for SkiaSharp 3.116.1 NET 9_
+* Stable version for SkiaSharp v3, you get hardware acceleration on Windows, new SKSL and much more
+* Compiled for NET 9
+* Fix for items invisible from start coming to visible at runtime sometimes not being measured
+* SkiaImage autosize fix when Margins are not 0
+* Canvas auto-size fix for dynamic content by [Gummimundur](https://github.com/taublast/DrawnUi.Maui/pull/151)
+* Canvas gestures cleanup
+* Fix for animators and invalidation when IsVisible changing at runtime.
+* Fix for SkiaShell animated pages occasional flickering when pushed
+
+### Nuget 1.2.99.1
+_for SkiaSharp 2.88.9-preview.2.2 NET 8_
+* Fixed for items invisible from start coming to visible at runtime sometimes not being measured.
+* SkiaImage autosize fix when Margins are not 0
+* Canvas auto-size fix for dynamic content by [Gummimundur](https://github.com/taublast/DrawnUi.Maui/pull/151)
+* Canvas gestures cleanup
+* Fix for animators and invalidation when IsVisible changing at runtime.
+* Fix for SkiaShell animated pages occasional flickering when pushed
+* Might be the one of the last nugets for SkiaSharp v2 and NET 8
 * Still using SkiaSharp 2.88.9-preview.2.2 
 until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
-
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 
@@ -123,13 +134,24 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
  ## Development Notes
 
-* To compile the v3 version that supports NEW SHADERS you must set `<UseSkiaSharp3>true</UseSkiaSharp3>` inside `Directory.Build.props` file.
 * All files to be consumed (images etc) must be placed inside the MAUI app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
+* By default the main branch should be targeting NET 9 and use SkiaSharp v3.
+ * To be able to use hardware accelerated Windows canvas with NET 9 you need to [pack your Windows project as MSIX](https://learn.microsoft.com/en-us/dotnet/maui/windows/setup?view=net-maui-9.0). In visua studio this might create a situation (until it's fixed) when you need to hit Build every time you change your code and only then hit Run, otherwise VS will run the previous package.
+* The `<UseSkiaSharp3>true</UseSkiaSharp3>` inside `Directory.Build.props` file controls where we build for v3 net9 or v2 net8. 
 * Accessibility support is compatible and is on the roadmap.
 
 ## Installation
 
-Install the package __AppoMobi.Maui.DrawnUi__ from NuGet, please install stable versions only, avoid -pre.
+Install the package __AppoMobi.Maui.DrawnUi__ from NuGet, please install stable versions only. For NET 9 you need versions not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
+
+In case of NET 9 you might need at least the following maui versions inside your csproj:
+
+```
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.22" />
+    </ItemGroup>
+```
 
 After that initialize the library inside your MauiProgram.cs file:
 

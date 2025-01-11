@@ -1,8 +1,8 @@
 namespace Sandbox;
 
-public partial class MainPagePdfFixes
+public partial class DevPagePdfFixes
 {
-    public MainPagePdfFixes()
+    public DevPagePdfFixes()
     {
         try
         {

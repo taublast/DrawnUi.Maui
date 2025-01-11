@@ -31,6 +31,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DrawnUi.Maui.MapsUi", "Draw
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.MapsUi", "src\Addons\DrawnUi.Maui.MapsUi\src\DrawnUi.Maui.MapsUi.csproj", "{9DD2A9C8-E84C-4CD7-A9E3-C53F1CD1B56B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedDataEntry", "..\MAUI_CustomEntry\ExtendedDataEntry.csproj", "{85D44C76-789E-419B-8C40-5CF30A9A9215}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{386EDAF8-4CCB-436C-BF31-CC1B2AA81E6E}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +80,10 @@ Global
 		{9DD2A9C8-E84C-4CD7-A9E3-C53F1CD1B56B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DD2A9C8-E84C-4CD7-A9E3-C53F1CD1B56B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DD2A9C8-E84C-4CD7-A9E3-C53F1CD1B56B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85D44C76-789E-419B-8C40-5CF30A9A9215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85D44C76-789E-419B-8C40-5CF30A9A9215}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85D44C76-789E-419B-8C40-5CF30A9A9215}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85D44C76-789E-419B-8C40-5CF30A9A9215}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +102,7 @@ Global
 		{1BECAEC0-5BCC-49FE-AB0B-0677D78C3D0B} = {8ED244C1-6F60-4954-BC7F-98D827EA31CC}
 		{A0568225-C0B6-4BFA-A65D-BB4E53BDCB99} = {5B1CDC4F-5ED6-4662-8EC6-3DE3FF0B05BE}
 		{9DD2A9C8-E84C-4CD7-A9E3-C53F1CD1B56B} = {A0568225-C0B6-4BFA-A65D-BB4E53BDCB99}
+		{85D44C76-789E-419B-8C40-5CF30A9A9215} = {68A72DAA-3C71-4D0E-8B86-9D7C2D853E2A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {329E3D0C-A3F7-4A3E-B61C-6B2D1BD7F708}

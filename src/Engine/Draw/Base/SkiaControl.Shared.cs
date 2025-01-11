@@ -1525,6 +1525,14 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
+                //todo think about switching to visible/hidden/collapsed?
+                if (!WasMeasured || newvalue)
+                {
+                    InvalidateParent();
+                }
+
+                Superview?.SetViewTreeVisibilityByParent(this, newvalue);
+
                 Superview?.UpdateRenderingChains(this);
             }
             catch (Exception e)

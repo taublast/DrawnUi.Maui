@@ -243,6 +243,11 @@ namespace DrawnUi.Maui.Controls
                     var stack = GetNavigationStack(index);
                     stack.Add(new NavigationStackEntry(view, animated, preserve));
 
+                    if (AnimatePages)
+                    {
+                        view.IsVisible = false;
+                    }
+
                     AddSubView(view);
 
                     IsPushing = true; //will be set to false after transition completes

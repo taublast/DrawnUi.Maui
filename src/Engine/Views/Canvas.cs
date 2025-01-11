@@ -14,6 +14,7 @@ namespace DrawnUi.Maui.Views;
 public class Canvas : DrawnView, IGestureListener
 {
 
+    
     public override void SetChildren(IEnumerable<SkiaControl> views)
     {
         //do not use subviews as we are using Content property for this control
@@ -120,6 +121,7 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
+
         if (!this.NeedMeasure && _lastMeasureConstraints.Width == widthConstraint && _lastMeasureConstraints.Height == heightConstraint)
         {
             return _lastMeasureResult;
@@ -353,10 +355,7 @@ public class Canvas : DrawnView, IGestureListener
     {
         base.OnHandlerChanged();
 
-        if (Handler != null)
-        {
-            OnGesturesAttachChanged();
-        }
+        OnGesturesAttachChanged();
     }
 
     #region GESTURES
@@ -364,7 +363,10 @@ public class Canvas : DrawnView, IGestureListener
     protected virtual void OnGesturesAttachChanged()
     {
         if (Handler == null)
+        {
+            TouchEffect.SetForceAttach(this, false);
             return;
+        }
 
         if (this.Gestures == GesturesMode.Disabled)
         {

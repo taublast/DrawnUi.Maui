@@ -1,10 +1,7 @@
 ﻿namespace DrawnUi.Maui.Views;
 
-
-
 public partial class SkiaView : SKCanvasView, ISkiaDrawable
 {
-
 
 
     public bool IsHardwareAccelerated => false;
@@ -113,9 +110,14 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
     public bool IsDrawing { get; protected set; }
 
+    public bool HasDrawn { get; protected set; }
+
+    private bool on;
+
     private void OnPaintingSurface(object sender, SKPaintSurfaceEventArgs paintArgs)
     {
         IsDrawing = true;
+        bool maybeDrawn = true;
 
         FrameTime = Super.GetCurrentTimeNanos();
 
@@ -125,6 +127,25 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         {
             _surface = paintArgs.Surface;
             bool isDirty = OnDraw.Invoke(paintArgs.Surface, new SKRect(0, 0, paintArgs.Info.Width, paintArgs.Info.Height));
+
+
+#if WINDOWS
+            //fix handler renderer didn't render first frame at startup for skiasharp v3
+            if (Handler?.PlatformView is SkiaSharp.Views.Windows.SKXamlCanvas canvas)
+            {
+                if (double.IsNaN(canvas.Height) || double.IsNaN(canvas.Width))
+                {
+                    //maybeDrawn = false;
+                    //if (canvas is Microsoft.UI.Xaml.FrameworkElement element)
+                    //{
+                    //        element.UpdateLayout();
+                    //        element.Measure(new(element.ActualWidth, element.ActualHeight));
+                    //        element.Arrange(new(0, 0, element.ActualWidth, element.ActualHeight));
+                    //}
+                }
+                //Trace.WriteLine($"[!!!] canvas {canvas.Width}");
+            }
+#endif
 
 #if disabledANDROID
             if (maybeLowEnd && FPS > 160)
@@ -141,6 +162,7 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
 
         }
 
+        HasDrawn = maybeDrawn;
         IsDrawing = false;
     }
 

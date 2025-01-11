@@ -13,6 +13,13 @@
     </Style>
 
     <Style
+        ApplyToDerivedTypes="True"
+        TargetType="draw:SkiaButton">
+        <Setter Property="TextColor" Value="Aqua" />
+        <Setter Property="BackgroundColor" Value="Red" />
+    </Style>
+
+    <Style
         x:Key="SkiaLabelDefaultStyle"
         TargetType="draw:SkiaLabel">
         <Setter Property="TextColor" Value="#FFFFFF" />

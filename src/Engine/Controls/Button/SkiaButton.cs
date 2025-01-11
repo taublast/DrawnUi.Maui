@@ -42,12 +42,14 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                 var shape = new SkiaShape
                 {
                     Tag = "BtnShape",
-                    BackgroundColor = Super.ColorAccent,
+                    BackgroundColor = this.InitialBackgroundColor,
+                    Background = this.InitialBackground,
                     CornerRadius = 8,
                     HorizontalOptions = LayoutOptions.Fill,
                     IsClippedToBounds = true,
                     VerticalOptions = LayoutOptions.Fill,
                 };
+
                 shape.SetBinding(SkiaShape.CornerRadiusProperty, new Binding(nameof(CornerRadius), source: this));
                 this.AddSubView(shape);
 
@@ -56,7 +58,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                     UseCache = SkiaCacheType.Operations,
                     Tag = "BtnText",
                     Text = "Test",
-                    TextColor = BlackColor,
+                    TextColor = this.TextColor,
                     HorizontalOptions = LayoutOptions.Center,
                     VerticalOptions = LayoutOptions.Center,
                 });
@@ -125,6 +127,11 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             MainFrame.BackgroundColor = this.BackgroundColor;
             MainFrame.Background = this.Background;
             MainFrame.CornerRadius = this.CornerRadius;
+        }
+        else
+        {
+            InitialBackgroundColor = this.BackgroundColor;
+            InitialBackground = this.Background;
         }
     }
 

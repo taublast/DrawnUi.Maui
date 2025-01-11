@@ -7,6 +7,7 @@ public static partial class InternalExtensions
 
     #region MAUI CONTEXT
 
+ 
     public static IMauiContext? FindMauiContext(this Element element, bool fallbackToAppMauiContext = false)
     {
         if (element is IElement fe && fe.Handler?.MauiContext != null)
