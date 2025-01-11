@@ -18,7 +18,8 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 ## What's New
 
-New nugets: for NET 9 you need version not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
+New nugets: for NET 9 you need version not lower than 1.3.x.  
+For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
 
 ### Nuget 1.3.60.1
 _for SkiaSharp 3.116.1 NET 9_
