@@ -20,5 +20,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(CornerRadiusProperty, value); }
     }
 
+    protected Color InitialBackgroundColor;
+    protected Brush InitialBackground;
 
 }

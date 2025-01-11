@@ -643,10 +643,10 @@ public partial class SkiaControl
     {
         var pixels = ExpandCacheRecordingArea * RenderingScale;
         return new SKRect(
-            (float)Math.Round(drawingRect.Left - pixels),
-            (float)Math.Round(drawingRect.Top - pixels),
-            (float)Math.Round(drawingRect.Right + pixels),
-            (float)Math.Round(drawingRect.Bottom + pixels));
+            (float)(drawingRect.Left - pixels),
+            (float)(drawingRect.Top - pixels),
+            (float)(drawingRect.Right + pixels),
+            (float)(drawingRect.Bottom + pixels));
     }
 
     /// <summary>

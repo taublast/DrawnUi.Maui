@@ -45,6 +45,7 @@ public static class DrawnExtensions
             //handlers.AddHandler(typeof(Window), typeof(CustomizedWindowHandler));
 
 #elif WINDOWS
+            handlers.AddHandler(typeof(SkiaView), typeof(WinCanvasHandler));
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 #endif

@@ -12,6 +12,13 @@ public class SkiaMediaImage : SkiaImage
         GifRenderer?.PlayIfNeeded();
     }
 
+    public override void OnVisibilityChanged(bool newvalue)
+    {
+        base.OnVisibilityChanged(newvalue);
+
+        GifRenderer?.OnVisibilityChanged(newvalue);
+    }
+
     public override void SetImageSource(ImageSource source)
     {
         string uri = null;
@@ -65,6 +72,7 @@ public class SkiaMediaImage : SkiaImage
         }
 
     }
+
     public override void OnDisposing()
     {
         base.OnDisposing();

@@ -1,14 +1,26 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using System.Buffers;
+using DrawnUi.Maui.Draw;
 using Microsoft.Maui.Controls.Compatibility.Platform.UWP;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Handlers;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.Storage.Streams;
 
 namespace DrawnUi.Maui.Draw;
 
 public static class WindowsExtensions
 {
 
-	public static IServiceProvider GetServiceProvider(this IElementHandler handler)
+    //public static IntPtr GetPixels(this WriteableBitmap bitmap) =>
+    //    bitmap.PixelBuffer.GetByteBuffer();
+
+    //public static IntPtr GetByteBuffer(this IBuffer buffer) =>
+    //    (IntPtr)BufferExtensions.GetByteBuffer(buffer);
+
+    public static Microsoft.UI.Xaml.Window GetPlatformWindow(this IMauiContext mauiContext) =>
+        mauiContext.Services.GetRequiredService<Microsoft.UI.Xaml.Window>();
+
+    public static IServiceProvider GetServiceProvider(this IElementHandler handler)
 	{
 		var context = handler.MauiContext ??
 					  throw new InvalidOperationException($"Unable to find the context. The {nameof(ElementHandler.MauiContext)} property should have been set by the host.");

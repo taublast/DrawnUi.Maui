@@ -231,6 +231,12 @@
  
 
  
+      <Compile Update="DevPagePdfFixes.xaml.cs">
+        <DependentUpon>DevPagePdfFixes.xaml</DependentUpon>
+      </Compile>
+ 
+
+ 
       <Compile Update="Resources\Strings\ResStrings.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>

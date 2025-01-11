@@ -8,6 +8,8 @@
             try
             {
                 InitializeComponent();
+
+                BindingContext = this;
             }
             catch (Exception e)
             {
@@ -15,6 +17,29 @@
             }
         }
 
+        private bool _Visibility = true;
+        public bool Visibility
+        {
+            get
+            {
+                return _Visibility;
+            }
+            set
+            {
+                if (_Visibility != value)
+                {
+                    _Visibility = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
+        private void SkiaButton_OnTapped(object sender, SkiaGesturesParameters e)
+        {
+            MainThread.BeginInvokeOnMainThread(() => //for maui bindings..
+            {
+                Visibility = !Visibility;
+            });
+        }
     }
 }
