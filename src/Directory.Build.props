@@ -11,7 +11,7 @@
   <PropertyGroup Condition="'$(UseSkiaSharp3)' == 'true'">
     <DefineConstants>$(DefineConstants);SKIA3</DefineConstants>
     <PackageReleaseNotes>Using SkiaSharp 3-preview. New handlers, SKSL, WinUI hardware acceleration etc..</PackageReleaseNotes>
-    <Version>1.3.60.1</Version>
+    <Version>1.3.61.3-pre</Version>
   </PropertyGroup>
 
 </Project>

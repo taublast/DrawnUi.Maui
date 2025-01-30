@@ -51,6 +51,7 @@ namespace Sandbox
 
             builder.UseDrawnUi(new()
             {
+                MobileIsFullscreen = true,
                 UseDesktopKeyboard = true, //will not work with maui shell on apple!!
                 DesktopWindow = new()
                 {

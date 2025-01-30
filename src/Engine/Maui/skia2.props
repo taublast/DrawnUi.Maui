@@ -1,0 +1,14 @@
+<Project>
+  <!-- Conditional for SkiaSharp 2 -->
+  <ItemGroup>
+      <PackageReference Include="SkiaSharp.Views.Maui.Controls.Compatibility" Version="2.88.9-preview.2.2" />
+      <PackageReference Include="SkiaSharp" Version="2.88.9-preview.2.2" />
+      <PackageReference Include="SkiaSharp.Skottie" Version="2.88.9-preview.2.2" />
+      <PackageReference Include="Svg.Skia" Version="2.0.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.4" />
+      <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.0.7.3-pre" />
+  </ItemGroup>
+  <PropertyGroup>
+      <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+  </PropertyGroup>
+</Project>

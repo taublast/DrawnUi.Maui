@@ -39,7 +39,7 @@ namespace Sandbox
         public MainPageCodeDev()
         {
 #if DEBUG
-            HotReloadService.UpdateApplicationEvent += ReloadUI;
+            Super.HotReload += ReloadUI;
 #endif
             Build();
         }

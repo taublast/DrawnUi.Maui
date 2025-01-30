@@ -20,7 +20,7 @@ namespace Sandbox
             SkiaImageManager.ReuseBitmaps = true;
 
 #if DEBUG
-            HotReloadService.UpdateApplicationEvent += ReloadUI;
+            Super.HotReload += ReloadUI;
 #endif
             Build();
         }

@@ -20,28 +20,16 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 New nugets: for NET 9 you need version not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
 
-### Nuget 1.3.60.1
+### Nuget 1.3.60.5
 _for SkiaSharp 3.116.1 NET 9_
-* Stable version for SkiaSharp v3, you get hardware acceleration on Windows, new SKSL and much more
-* Compiled for NET 9
-* Fix for items invisible from start coming to visible at runtime sometimes not being measured
-* SkiaImage autosize fix when Margins are not 0
-* Canvas auto-size fix for dynamic content by [Gummimundur](https://github.com/taublast/DrawnUi.Maui/pull/151)
-* Canvas gestures cleanup
-* Fix for animators and invalidation when IsVisible changing at runtime.
-* Fix for SkiaShell animated pages occasional flickering when pushed
+* Canvas auto-size optimizations 
+* iOS Metal hardware acceleration improved on simulator and real device.
+* Multi-display fixes for desktop
+* Other fixes and improvements
 
-### Nuget 1.2.99.1
+### Nuget 1.2.99.2
 _for SkiaSharp 2.88.9-preview.2.2 NET 8_
-* Fixed for items invisible from start coming to visible at runtime sometimes not being measured.
-* SkiaImage autosize fix when Margins are not 0
-* Canvas auto-size fix for dynamic content by [Gummimundur](https://github.com/taublast/DrawnUi.Maui/pull/151)
-* Canvas gestures cleanup
-* Fix for animators and invalidation when IsVisible changing at runtime.
-* Fix for SkiaShell animated pages occasional flickering when pushed
-* Might be the one of the last nugets for SkiaSharp v2 and NET 8
-* Still using SkiaSharp 2.88.9-preview.2.2 
-until [scaling issue](https://github.com/taublast/DrawnUi.Maui/issues/130) is solved for Windows 
+* ?
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 

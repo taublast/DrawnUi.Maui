@@ -19,7 +19,7 @@ namespace Sandbox
         public MainPageTestImage()
         {
 #if DEBUG
-            HotReloadService.UpdateApplicationEvent += ReloadUI;
+            Super.HotReload += ReloadUI;
 #endif
             Build();
         }

@@ -17,7 +17,7 @@ namespace Sandbox
         public MainPageCodeForVideo()
         {
 #if DEBUG
-            HotReloadService.UpdateApplicationEvent += ReloadUI;
+            Super.HotReload += ReloadUI;
 #endif
             Build();
         }

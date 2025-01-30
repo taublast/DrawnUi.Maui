@@ -16,7 +16,7 @@ namespace Sandbox
         public MainPageCodeBehindEmpty()
         {
 #if DEBUG
-            HotReloadService.UpdateApplicationEvent += ReloadUI;
+            Super.HotReload += ReloadUI;
 #endif
             Build();
         }

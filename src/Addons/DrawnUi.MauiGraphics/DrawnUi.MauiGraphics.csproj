@@ -24,8 +24,8 @@
     <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
   </PropertyGroup>
 
-    <Import Condition="'$(UseSkiaSharp3)' == 'true'" Project="..\..\Engine\skia3.props" />
-    <Import Condition="'$(UseSkiaSharp3)' != 'true'" Project="..\..\Engine\skia2.props" />
+    <Import Condition="'$(UseSkiaSharp3)' == 'true'" Project="..\..\Engine\Maui\skia3.props" />
+    <Import Condition="'$(UseSkiaSharp3)' != 'true'" Project="..\..\Engine\Maui\skia2.props" />
 
     <PropertyGroup>
     <Title>MauiGraphics addon to DrawnUI for .NET MAUI</Title>
@@ -49,7 +49,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Engine\DrawnUi.Maui.csproj" />
+    <ProjectReference Include="..\..\Engine\Maui\DrawnUi.Maui.csproj" />
   </ItemGroup>
 
 

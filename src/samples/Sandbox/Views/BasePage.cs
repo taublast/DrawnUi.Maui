@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sandbox.Views
+﻿namespace Sandbox.Views
 {
     public class BasePage : DrawnUiBasePage, IDisposable
     {
-        public void Dispose()
+        public virtual void Dispose()
         {
             foreach (var child in InternalChildren)
             {

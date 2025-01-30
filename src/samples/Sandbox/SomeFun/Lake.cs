@@ -3,7 +3,7 @@ using DrawnUi.Maui;
 using DrawnUi.Maui;
 using DrawnUi.Maui;
 using DrawnUi.Maui.Animate.Animators;
-using DrawnUi.Maui.Infrastructure.Extensions;
+using DrawnUi.Maui.Draw;
 using SkiaSharp;
 
 namespace DrawnUi.Maui.Demo.Views.Controls;

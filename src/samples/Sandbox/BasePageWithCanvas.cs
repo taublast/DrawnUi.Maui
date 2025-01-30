@@ -11,8 +11,10 @@ public class BasePageWithCanvas : BasePage, IDisposable
 {
     protected Canvas Canvas;
 
-    public void Dispose()
+    public override void Dispose()
     {
+        base.Dispose();
+
         this.Content = null;
         Canvas?.Dispose();
     }
@@ -37,7 +39,7 @@ public class BasePageWithCanvas : BasePage, IDisposable
     public BasePageWithCanvas()
     {
 #if DEBUG
-        HotReloadService.UpdateApplicationEvent += ReloadUI;
+        Super.HotReload += ReloadUI;
 #endif
 
         Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), () =>
