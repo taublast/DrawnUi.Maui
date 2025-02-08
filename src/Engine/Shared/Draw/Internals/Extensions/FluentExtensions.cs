@@ -8,6 +8,21 @@
             return view;
         }
 
+        public static T WithChildren<T>(this T view, params SkiaControl[] children) where T : SkiaLayout
+        {
+            foreach (SkiaControl child in children)
+            {
+                view.AddSubView(child);
+            }
+            return view;
+        }
+
+        public static T WithContent<T>(this T view, SkiaControl child) where T : ContentLayout
+        {
+            view.Content = child;
+            return view;
+        }
+
         public static T WithParent<T>(this T view, IDrawnBase parent) where T : SkiaControl
         {
             parent.AddSubView(view);
