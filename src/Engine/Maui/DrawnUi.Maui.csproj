@@ -73,7 +73,6 @@
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
     <Compile Remove="Platforms\Windows\ViewChainPanel.Windows.cs" />
     <Compile Remove="Controls\Extensions\**" />
-    <Compile Remove="Features\NewFolder\**" />
     <Compile Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   
@@ -104,7 +103,6 @@
     </None>
     <None Include="Platforms\Windows\ViewChainPanel.Windows.cs" />
     <None Remove="Controls\Extensions\**" />
-    <None Remove="Features\NewFolder\**" />
     <None Remove="Platforms\Windows\Controls\**" />
 	</ItemGroup>
     
@@ -136,19 +134,16 @@
 
   <ItemGroup>
     <EmbeddedResource Remove="Controls\Extensions\**" />
-    <EmbeddedResource Remove="Features\NewFolder\**" />
     <EmbeddedResource Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
     
   <ItemGroup>
     <MauiXaml Remove="Controls\Extensions\**" />
-    <MauiXaml Remove="Features\NewFolder\**" />
     <MauiXaml Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
     
   <ItemGroup>
     <MauiCss Remove="Controls\Extensions\**" />
-    <MauiCss Remove="Features\NewFolder\**" />
     <MauiCss Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   <ItemGroup>
