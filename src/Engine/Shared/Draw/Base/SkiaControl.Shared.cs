@@ -3879,10 +3879,15 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected virtual void OnMeasured()
+        public virtual void SendOnMeasured()
         {
             //Debug.WriteLine($"[MEASURED] {this.GetType().Name} {this.Tag} ");
             Measured?.Invoke(this, MeasuredSize);
+        }
+
+        protected virtual void OnMeasured()
+        {
+            SendOnMeasured();
         }
 
         /// <summary>

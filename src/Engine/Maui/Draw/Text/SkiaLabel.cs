@@ -317,7 +317,7 @@ namespace DrawnUi.Maui.Draw
        SKRect rectDraw,
        double scale)
         {
-            if (paintDefault == null)
+            if (paintDefault == null || paintDefault.Color == null)
                 return;
 
             const char SpaceChar = ' ';

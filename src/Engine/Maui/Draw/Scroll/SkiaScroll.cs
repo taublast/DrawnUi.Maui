@@ -596,7 +596,7 @@ namespace DrawnUi.Maui.Draw
         protected bool ChildWasTapped { get; set; }
 
 
-        protected bool IsContentActive
+        protected virtual bool IsContentActive
         {
             get
             {
@@ -615,11 +615,8 @@ namespace DrawnUi.Maui.Draw
         private bool lockHeader;
 
         public override bool UsesRenderingTree => false;
-
-
-        SpringWithVelocityAnimator _vectorAnimatorBounceX;
-
-        SpringWithVelocityAnimator _vectorAnimatorBounceY;
+        protected SpringWithVelocityAnimator _vectorAnimatorBounceX;
+        protected SpringWithVelocityAnimator _vectorAnimatorBounceY;
 
         /// <summary>
         /// Fling with deceleration
@@ -1031,7 +1028,7 @@ namespace DrawnUi.Maui.Draw
 
         protected SKPoint DetectIndexChildIndexAt;
 
-        void SetDetectIndexChildPoint(RelativePositionType option = RelativePositionType.Start)
+        protected virtual void SetDetectIndexChildPoint(RelativePositionType option = RelativePositionType.Start)
         {
             //todo this will need to change for multiple columns?
 
@@ -1828,17 +1825,13 @@ namespace DrawnUi.Maui.Draw
                 //}
 
                 var constraints = GetMeasuringConstraints(request);
+                var viewport = GetContentAvailableRect(constraints.Content);
+                Viewport = ScaledRect.FromPixels(constraints.Content, request.Scale);
 
                 if (Content != null && Content.IsVisible)
                 {
-                    var viewport = GetContentAvailableRect(constraints.Content);
-
-                    Viewport = ScaledRect.FromPixels(constraints.Content, request.Scale);
-
                     var zoomedScale = (float)(request.Scale * ViewportZoom);
-
                     heightConstraint = viewport.Height;
-
                     var measuredContent = Content.Measure(viewport.Width, heightConstraint, zoomedScale);
 
                     if (ResetScrollPositionOnContentSizeChanged && (ContentSize.Pixels.Height != measuredContent.Pixels.Height || ContentSize.Pixels.Width != measuredContent.Pixels.Width))
@@ -1896,7 +1889,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         /// <param name="destination"></param>
         /// <returns></returns>
-        protected SKRect GetContentAvailableRect(SKRect destination)
+        protected virtual SKRect GetContentAvailableRect(SKRect destination)
         {
             var childRect = new SKRect(destination.Left, destination.Top, destination.Right, destination.Bottom);
 
@@ -1925,9 +1918,12 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// This is where the view port is actually is after being scrolled. We used this value to offset viewport on drawing the last frame
         /// </summary>
-        protected ScaledPoint InternalViewportOffset { get; set; } = ScaledPoint.FromPixels(0, 0, 1);
+        public ScaledPoint InternalViewportOffset { get; protected set; } = ScaledPoint.FromPixels(0, 0, 1);
 
-        protected ScaledRect ContentViewport { get; set; } = new();
+        /// <summary>
+        /// 
+        /// </summary>
+        public ScaledRect ContentViewport { get; protected set; } = new();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void AdjustHeaderParallax()
@@ -1954,21 +1950,21 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-
-
         /// <summary>
-        /// Input offset parameters in PIXELS. We render the scroll Content using pixal snapping but the prepared content will be scrolled (offset) using subpixels for a smooth look.
+        /// Input offset parameters in PIXELS.
+        /// This is called inside Draw, so that we can construct anything according current offset before painting.
+        /// We render the scroll Content using pixal snapping but the prepared content will be scrolled (offset) using subpixels for a smooth look.
         /// Creates a valid ViewportRect inside.
         /// </summary>
-        /// <param name="destination"></param>
-        /// <param name="offsetPtsX"></param>
-        /// <param name="offsetPtsY"></param>
+        /// /// <param name="destination"></param>
+        /// <param name="offsetPixels"></param>
         /// <param name="viewportScale"></param>
         /// <param name="scale"></param>
-        protected virtual void PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale, float scale)
+        /// <returns>Whether we changed viewport and cache changed</returns>
+        protected virtual bool PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale, float scale)
         {
             if (!IsContentActive || Content == null)
-                return;
+                return false;
 
             if (!IsSnapping)
                 Snapped = false;
@@ -2081,9 +2077,7 @@ namespace DrawnUi.Maui.Draw
             //POST EVENTS
 
 
-            Scrolled?.Invoke(this, InternalViewportOffset);
-
-            OnScrolled();
+            SendScrolled();
 
             if (isScroling)
             {
@@ -2093,14 +2087,26 @@ namespace DrawnUi.Maui.Draw
             {
                 if (IsScrolling)
                 {
-                    ScrollingEnded?.Invoke(this, InternalViewportOffset);
-                    OnScrollingEnded();
+                    SendScrollingEnded();
                 }
                 IsScrolling = false;
             }
 
             //Super.Log($"[SCROLL] {InternalViewportOffset.Pixels.Y}");
             //ExecuteDelayedScrollOrders(); //todo move toonscrolled?
+            return true;
+        }
+
+        protected void SendScrolled()
+        {
+            Scrolled?.Invoke(this, InternalViewportOffset);
+            OnScrolled();
+        }
+
+        protected void SendScrollingEnded()
+        {
+            ScrollingEnded?.Invoke(this, InternalViewportOffset);
+            OnScrollingEnded();
         }
 
         private bool _IsScrolling;
@@ -2125,20 +2131,20 @@ namespace DrawnUi.Maui.Draw
 
             if (UsePlanes)
             {
-                if (PlaneA != null && PlaneB != null)
+                if (PlaneCurrent != null && PlaneForward != null)
                 {
                     //return different areas upon destination
-                    if (pixelsDestination.IntersectsWith(PlaneB.Destination))
+                    if (pixelsDestination.IntersectsWith(PlaneForward.Destination))
                     {
                         //return ScaledRect.FromPixels(PlaneA.Destination, RenderingScale);
 
-                        var show = PlaneB.Destination;
+                        var show = PlaneForward.Destination;
                         show.Offset(0, -_planeHeight);
                         return ScaledRect.FromPixels(show, RenderingScale);
                     }
                     else
                     {
-                        return ScaledRect.FromPixels(PlaneA.Destination, RenderingScale);
+                        return ScaledRect.FromPixels(PlaneCurrent.Destination, RenderingScale);
                     }
                 }
             }
@@ -2319,9 +2325,6 @@ namespace DrawnUi.Maui.Draw
             else
             {
                 PaintViews(ctx, destination, ContentRectWithOffset.Pixels, scale, _zoomedScale, arguments);
-
-                //base.Paint(ctx, destination, scale, arguments);
-                //DrawViews(ctx, ContentRectWithOffset.Pixels, _zoomedScale);
             }
         }
 
@@ -2365,16 +2368,16 @@ namespace DrawnUi.Maui.Draw
                     {
                         if (posY < _updatedViewportForPixY)
                         {
-                            IsScrollingDirection = LinearDirectionType.Forward;
+                            ScrollingDirection = LinearDirectionType.Forward;
                         }
                         else
                         if (posY > _updatedViewportForPixY)
                         {
-                            IsScrollingDirection = LinearDirectionType.Backward;
+                            ScrollingDirection = LinearDirectionType.Backward;
                         }
                         else
                         {
-                            IsScrollingDirection = LinearDirectionType.None;
+                            ScrollingDirection = LinearDirectionType.None;
                         }
                     }
                     else
@@ -2382,21 +2385,21 @@ namespace DrawnUi.Maui.Draw
                     {
                         if (posX < _updatedViewportForPixX)
                         {
-                            IsScrollingDirection = LinearDirectionType.Forward;
+                            ScrollingDirection = LinearDirectionType.Forward;
                         }
                         else
                         if (posX > _updatedViewportForPixX)
                         {
-                            IsScrollingDirection = LinearDirectionType.Backward;
+                            ScrollingDirection = LinearDirectionType.Backward;
                         }
                         else
                         {
-                            IsScrollingDirection = LinearDirectionType.None;
+                            ScrollingDirection = LinearDirectionType.None;
                         }
                     }
                     else
                     {
-                        IsScrollingDirection = LinearDirectionType.None;
+                        ScrollingDirection = LinearDirectionType.None;
                     }
 
 
@@ -2404,9 +2407,10 @@ namespace DrawnUi.Maui.Draw
                     _updatedViewportForPixY = posY;
                     _destination = destination;
 
-                    PositionViewport(DrawingRect, new(posX, posY), _zoomedScale, (float)scale);
-
-                    InvalidateCache();
+                    if (PositionViewport(DrawingRect, new(posX, posY), _zoomedScale, (float)scale))
+                    {
+                        InvalidateCache();
+                    }
                 }
 
                 DrawWithClipAndTransforms(ctx, DrawingRect, DrawingRect, true,

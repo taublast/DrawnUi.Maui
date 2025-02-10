@@ -80,7 +80,7 @@ public partial class SkiaScroll
 
     public bool ViewportReady { get; protected set; }
 
-    public LinearDirectionType IsScrollingDirection { get; protected set; }
+    public LinearDirectionType ScrollingDirection { get; protected set; }
 
     protected virtual void CheckAndSetIsStillAnimating()
     {
@@ -306,6 +306,37 @@ public partial class SkiaScroll
             _animatorFlingY.CurrentVelocity));
     }
 
+    protected virtual void BounceIfNeeded(ScrollFlingAnimator animator)
+    {
+        if (animator.SelfFinished)
+        {
+            var remainingVelocity = animator.Parameters.VelocityAt(animator.Speed);
+
+            var velocity = remainingVelocity;
+
+            if (Math.Abs(remainingVelocity) > MaxBounceVelocity)
+            {
+                velocity = Math.Sign(remainingVelocity) * MaxBounceVelocity;
+            }
+
+            var swipeThreshold = ThesholdSwipeOnUp * RenderingScale;
+            if (Math.Abs(velocity) > swipeThreshold)
+            {
+                if (animator == _animatorFlingY)
+                {
+                    BounceY((float)ViewportOffsetY, _axis.Y, velocity);
+                }
+                else
+                if (animator == _animatorFlingX)
+                {
+                    BounceX((float)ViewportOffsetX, _axis.X, velocity);
+                }
+            }
+
+        }
+    }
+
+
     protected virtual void OnScrollerStopped()
     {
         //Super.Log("OnScrollerStopped..");
@@ -321,36 +352,6 @@ public partial class SkiaScroll
             //scroll ended prematurely by our intent because it would end past the bounds
             if (Bounces)
             {
-
-                void BounceIfNeeded(ScrollFlingAnimator animator)
-                {
-                    if (animator.SelfFinished)
-                    {
-                        var remainingVelocity = animator.Parameters.VelocityAt(animator.Speed);
-
-                        var velocity = remainingVelocity;
-
-                        if (Math.Abs(remainingVelocity) > MaxBounceVelocity)
-                        {
-                            velocity = Math.Sign(remainingVelocity) * MaxBounceVelocity;
-                        }
-
-                        var swipeThreshold = ThesholdSwipeOnUp * RenderingScale;
-                        if (Math.Abs(velocity) > swipeThreshold)
-                        {
-                            if (animator == _animatorFlingY)
-                            {
-                                BounceY((float)ViewportOffsetY, _axis.Y, velocity);
-                            }
-                            else
-                            if (animator == _animatorFlingX)
-                            {
-                                BounceX((float)ViewportOffsetX, _axis.X, velocity);
-                            }
-                        }
-
-                    }
-                }
 
                 if (_changeSpeed != null)
                 {
@@ -505,6 +506,11 @@ public partial class SkiaScroll
         return result;
     }
 
+    /// <summary>
+    /// Whether the scrolling offset in inside scrollable bounds or not
+    /// </summary>
+    /// <param name="offset"></param>
+    /// <returns></returns>
     protected virtual bool OffsetOk(Vector2 offset)
     {
         if (offset.Y >= ContentOffsetBounds.Top && offset.Y <= ContentOffsetBounds.Bottom
@@ -530,7 +536,7 @@ public partial class SkiaScroll
     /// <summary>
     /// There are the bounds the scroll offset can go to.. This is NOT the bounds for the whole content.
     /// </summary>
-    public SKRect GetContentOffsetBounds()
+    public virtual SKRect GetContentOffsetBounds()
     {
         ptsContentWidth = ContentSize.Units.Width;
         ptsContentHeight = ContentSize.Units.Height;

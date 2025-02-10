@@ -35,36 +35,14 @@ public partial class Super
         if (Super.NavBarHeight < 0)
             Super.NavBarHeight = 45; //manual
 
-        //var flags = Activity.Window.Attributes.Flags;
+        //var isFullscreen = (int)activity.Window.DecorView.SystemUiVisibility & (int)SystemUiFlags.LayoutStable;
 
-        var isFullscreen = (int)activity.Window.DecorView.SystemUiVisibility & (int)SystemUiFlags.LayoutStable;
-
-        //if (((flags & WindowManagerFlags.TranslucentStatus) == WindowManagerFlags.TranslucentStatus) || isFullscreen>0 || (Activity.Window.StatusBarColor == Android.Graphics.Color.Transparent))
-        if (!(isFullscreen > 0))
-        {
-            Super.StatusBarHeight = GetStatusBarHeight(activity) / Super.Screen.Density;
-        }
-        else
-        {
-            Super.StatusBarHeight = 0;
-        }
-
-        //VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
+        Super.StatusBarHeight = GetStatusBarHeight(activity) / Super.Screen.Density;
 
         bool isRendering = false;
         object lockFrane = new();
 
-
-
-
         InitShared();
-
-        //Looper = new(() =>
-        //{
-        //    OnFrame?.Invoke(null, null);
-        //});
-
-        //Looper.StartOnMainThread(120);
 
         Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
         {

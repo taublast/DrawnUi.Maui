@@ -19,6 +19,5 @@
 
         const string TypicalFontAssetsPath = "../Fonts/";
 
-
     }
 }

@@ -10,9 +10,10 @@ namespace DrawnUi.Maui.Draw;
 /// Control for displaying used Surface as a preview image, for debugging purposes.
 /// Do not use this in prod, this will be invalidated every frame, causing non-stop screen update.
 /// </summary>
-public partial class DebugImage : SkiaControl
+public partial class DebugImage : SkiaShape
 {
     public SkiaImage Display { get; protected set; }
+    public SkiaLabel Caption { get; protected set; }
 
     protected virtual SkiaImage CreatePreview()
     {
@@ -23,6 +24,18 @@ public partial class DebugImage : SkiaControl
             VerticalOptions = LayoutOptions.Fill,
             BackgroundColor = Colors.DarkGrey, 
             Aspect = TransformAspect.AspectFitFill,
+        };
+    }
+
+    protected virtual SkiaLabel CreateLabel()
+    {
+        return new SkiaLabel()
+        {
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.End,
+            BackgroundColor = Colors.Black,
+            Padding = new(4,2),
+            Text = this.Text
         };
     }
 
@@ -39,6 +52,17 @@ public partial class DebugImage : SkiaControl
         set { SetValue(AttachToProperty, value); }
     }
 
+    public static readonly BindableProperty TextProperty = BindableProperty.Create(
+        nameof(Text),
+        typeof(string),
+        typeof(DebugImage),
+        string.Empty);
+
+    public string Text
+    {
+        get { return (string)GetValue(TextProperty); }
+        set { SetValue(TextProperty, value); }
+    }
 
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
@@ -47,9 +71,15 @@ public partial class DebugImage : SkiaControl
 
         if (Display == null)
         {
-            //will serve as preview wrapper
             Display = CreatePreview();
-            Display.SetParent(this);
+            Caption = CreateLabel();
+            var layout = new SkiaLayout()
+                {
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill
+                }
+                .WithChildren(Display, Caption);
+            Content = layout;
         }
 
         return base.Measure(widthConstraint, heightConstraint, scale);
@@ -57,15 +87,18 @@ public partial class DebugImage : SkiaControl
 
     protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
     {
-        base.Paint(ctx, destination, scale, arguments);
-
         if (AttachTo != null)
         {
             var snapshot = AttachTo.Snapshot();
             Display.SetImageInternal(snapshot, true);
         }
 
-        DrawViews(ctx, DrawingRect, scale);
+        if (Text != Caption.Text)
+        {
+            Caption.Text = Text;
+        }
+
+        base.Paint(ctx, destination, scale, arguments);
     }
 
     public override void OnDisposing()
@@ -73,6 +106,8 @@ public partial class DebugImage : SkiaControl
         base.OnDisposing();
 
         AttachTo = null;
+        Display = null;
+        Caption = null;
     }
 }
 
