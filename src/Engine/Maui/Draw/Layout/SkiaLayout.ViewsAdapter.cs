@@ -14,70 +14,78 @@ public class ViewsAdapter : IDisposable
         if (IsDisposed)
             return null;
 
-        if (index >= 0)
+        try
         {
-
-            //lock (lockVisible)
+            if (index >= 0)
             {
-                if (_parent.IsTemplated)
+
+                //lock (lockVisible)
                 {
-
-                    if (template == null && !isMeasuring && _cellsInUseViews.TryGetValue(index, out SkiaControl ready))
+                    if (_parent.IsTemplated)
                     {
 
-                        if (LogEnabled)
+                        if (template == null && !isMeasuring && _cellsInUseViews.TryGetValue(index, out SkiaControl ready))
                         {
-                            Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} returned a ready view {ready.Uid} for index {index} ({ready.ContextIndex})");
+
+                            if (LogEnabled)
+                            {
+                                Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} returned a ready view {ready.Uid} for index {index} ({ready.ContextIndex})");
+                            }
+
+                            if (ready != null && !ready.IsDisposing)
+                            {
+                                AttachView(ready, index);
+                                return ready;
+                            }
+
+                            //lol unexpected happened
+                            _cellsInUseViews.Remove(index);
+                            ReleaseView(ready);
                         }
 
-                        if (ready != null && !ready.IsDisposing)
+                        var view = GetViewAtIndex(index, height, template);
+
+                        if (view == null)
                         {
-                            AttachView(ready, index);
-                            return ready;
+                            return null; //maybe pool is full, anyway unexpected
                         }
 
-                        //lol unexpected happened
-                        _cellsInUseViews.Remove(index);
-                        ReleaseView(ready);
+                        AttachView(view, index);
+
+                        //save visible view for future use only if template is not provided
+                        if (template == null)
+                        {
+                            if (!_cellsInUseViews.Values.Contains(view))
+                            {
+                                _cellsInUseViews.TryAdd(index, view);
+                            }
+
+                            //if (view is ISkiaCell notify) //todo move to draw and couple lofic with cell
+                            //{
+                            //    notify.OnAppearing();
+                            //}
+                        }
+
+                        return view;
                     }
-
-                    var view = GetViewAtIndex(index, height, template);
-
-                    if (view == null)
+                    else
                     {
-                        return null; //maybe pool is full, anyway unexpected
+                        var children = _parent.GetUnorderedSubviews();
+                        if (index < children.Count())
+                            return children.ElementAt(index);
                     }
 
-                    AttachView(view, index);
+                    return null;
 
-                    //save visible view for future use only if template is not provided
-                    if (template == null)
-                    {
-                        if (!_cellsInUseViews.Values.Contains(view))
-                        {
-                            _cellsInUseViews.TryAdd(index, view);
-                        }
-
-                        //if (view is ISkiaCell notify) //todo move to draw and couple lofic with cell
-                        //{
-                        //    notify.OnAppearing();
-                        //}
-                    }
-
-                    return view;
                 }
-                else
-                {
-                    var children = _parent.GetUnorderedSubviews();
-                    if (index < children.Count())
-                        return children.ElementAt(index);
-                }
-
-                return null;
-
             }
+
         }
-        return null;
+        catch (Exception e)
+        {
+            Super.Log(e);
+        }
+      return null;
     }
 
     public SkiaControl GetViewAtIndex(int index, float height = 0, SkiaControl template = null)
