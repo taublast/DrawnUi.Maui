@@ -78,6 +78,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\ISkiaLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\ISkiaSharpView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\IVisibilityAware.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\IWithContent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Models\CachedGradient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Models\CachedShader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Models\CachedShadow.cs" />

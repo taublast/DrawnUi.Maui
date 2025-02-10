@@ -1,7 +1,7 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
 [ContentProperty("Content")]
-public partial class ContentLayout : SkiaLayout, IVisibilityAware, ISkiaGestureListener
+public partial class ContentLayout : SkiaLayout, IVisibilityAware, ISkiaGestureListener, IWithContent
 {
 
     public override void Invalidate()

@@ -490,6 +490,12 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        
+        protected virtual void PaintOnPlane(Plane plane, SKRect destination, float scale, float zoomedScale, object arguments,
+            SkiaDrawingContext recordingContext)
+        {
+            PaintViews(recordingContext, destination, destination, scale, zoomedScale, arguments);
+        }
 
     }
 }

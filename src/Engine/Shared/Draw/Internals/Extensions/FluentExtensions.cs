@@ -2,6 +2,8 @@
 {
     public static class FluentExtensions
     {
+       
+
         public static T With<T>(this T view, Action<T> action) where T : SkiaControl
         {
             action?.Invoke(view);
@@ -17,7 +19,7 @@
             return view;
         }
 
-        public static T WithContent<T>(this T view, SkiaControl child) where T : ContentLayout
+        public static T WithContent<T>(this T view, SkiaControl child) where T : IWithContent
         {
             view.Content = child;
             return view;
