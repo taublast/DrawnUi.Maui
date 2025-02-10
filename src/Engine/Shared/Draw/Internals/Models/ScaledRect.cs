@@ -1,7 +1,13 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
+[DebuggerDisplay("{ToString(),nq}")]
 public struct ScaledRect
 {
+    public override string ToString()
+    {
+        return $"Scale: {Scale}, Pixels: at {Pixels.Left},{Pixels.Top} {Pixels.Width}x{Pixels.Height}, Units: at {Units.Left},{Units.Top} {Units.Width}x{Units.Height}";
+    }
+
     public ScaledRect()
     {
         Scale = 1;
