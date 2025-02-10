@@ -1,10 +1,33 @@
 ﻿
+using Microsoft.Maui.Controls;
+
 namespace DrawnUi.Maui.Draw
 {
+    /// <summary>
+    /// Provides the ability to create/draw views directly while scrolling.
+    /// Content will be generated dynamically, instead of the usual way.
+    /// Override `GetMeasuredView` to provide views upon passed index.
+    /// TODO: for horizonal
+    /// </summary>
     public class VirtualScroll : SkiaScroll
     {
         private float swappedDownAt;
         private float swappedUpAt;
+        protected Dictionary<Plane, List<ViewLayoutInfo>> _planeLayoutData = new();
+
+        /// <summary>
+        /// Holds layout information for a rendered month cell.
+        /// </summary>
+        public struct ViewLayoutInfo
+        {
+            /// <summary>
+            /// Relative month index (0 for current, negative for past, positive for future).
+            /// </summary>
+            public int Index;
+
+ 
+            public SKRect DrawingRect;
+        }
 
         public VirtualScroll()
         {
@@ -48,7 +71,20 @@ namespace DrawnUi.Maui.Draw
 
             base.OnMeasured();
         }
+
+        /// <summary>
+        /// Returns a view for a specific index. Actually used for virtual scroll.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="destination"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
+        protected virtual SkiaLayout GetMeasuredView(int index, SKRect destination, float scale)
+        {
+            //todo
  
+            return null;
+        }
 
         protected override bool PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale, float scale)
         {
@@ -151,6 +187,16 @@ namespace DrawnUi.Maui.Draw
             rectForward.Offset(0, forwardTop - rectForward.Top);
             rectBackward.Offset(0, backwardTop - rectBackward.Top);
 
+            //  if we've moved enough can re-allow a swap
+            if (swappedDownAt != 0 && Math.Abs(currentScroll - swappedDownAt) > _planeHeight / 2f)
+            {
+                swappedDownAt = 0;
+            }
+            if (swappedUpAt != 0 && Math.Abs(currentScroll - swappedUpAt) > _planeHeight / 2f)
+            {
+                swappedUpAt = 0;
+            }
+ 
             // Draw Backward
             if (PlaneBackward.IsReady && ContentViewport.Pixels.IntersectsWithInclusive(rectBackward))
             {
@@ -164,14 +210,14 @@ namespace DrawnUi.Maui.Draw
             PlaneBackward.LastDrawnAt = rectBackward;
 
             // Draw Current
-            if (ContentViewport.Pixels.IntersectsWithInclusive(rectCurrent))
+            if (ContentViewport.Pixels.IntersectsWith(rectCurrent))
             {
                 PlaneCurrent.CachedObject.Draw(context.Canvas, rectCurrent.Left, rectCurrent.Top, null);
             }
             PlaneCurrent.LastDrawnAt = rectCurrent;
 
             // Draw Forward
-            if (PlaneForward.IsReady && ContentViewport.Pixels.IntersectsWithInclusive(rectForward))
+            if (PlaneForward.IsReady && ContentViewport.Pixels.IntersectsWith(rectForward))
             {
                 PlaneForward.CachedObject.Draw(context.Canvas, rectForward.Left, rectForward.Top, null);
             }
@@ -194,6 +240,7 @@ namespace DrawnUi.Maui.Draw
                 // A) Recompute FORWARD plane’s positions, then swap down
                 //    as many times as needed
                 // ------------------------------------------------------
+
                 forwardTop = ContentRectWithOffset.Pixels.Top
                              + InternalViewportOffset.Pixels.Y
                              + PlaneForward.OffsetY;
@@ -203,7 +250,11 @@ namespace DrawnUi.Maui.Draw
 
                 while (rectForward.MidY <= (Viewport.Pixels.Height / 2))
                 {
+                    //if (swappedDownAt != 0)
+                    //    break;
+
                     SwapDown();
+                    swappedDownAt = currentScroll;
                     swappedSomething = true;
 
                     // Recompute forwardTop, rectForward after swapping
@@ -226,9 +277,13 @@ namespace DrawnUi.Maui.Draw
                 rectBackward = PlaneBackward.Source;
                 rectBackward.Offset(0, backwardTop - rectBackward.Top);
 
-                while (rectBackward.MidY >= Viewport.Pixels.Height / 2)//rectBackward.MidY >= _planePrepareThreshold)
+                while (rectBackward.MidY > Viewport.Pixels.Height / 2)//rectBackward.MidY >= _planePrepareThreshold)
                 {
+                    //if (swappedUpAt != 0)
+                    //    break;
+
                     SwapUp();
+                    swappedUpAt = currentScroll;
                     swappedSomething = true;
 
                     // Recompute backwardTop, rectBackward after swapping
@@ -238,6 +293,7 @@ namespace DrawnUi.Maui.Draw
 
                     rectBackward = PlaneBackward.Source;
                     rectBackward.Offset(0, backwardTop - rectBackward.Top);
+                    //break;
                 }
 
                 // If we did no swaps this iteration, no need for more loops
@@ -278,6 +334,7 @@ namespace DrawnUi.Maui.Draw
             PlaneBackward.Invalidate();
         }
 
+
         protected override void PreparePlane(
             SkiaDrawingContext context,
             Plane plane, SKRect destination,
@@ -288,10 +345,11 @@ namespace DrawnUi.Maui.Draw
             plane.Destination = destination;
 
             var recordingContext = context.CreateForRecordingImage(plane.Surface, destination.Size);
-            recordingContext.Canvas.Translate(-destination.Left, -destination.Top);
             recordingContext.Canvas.Clear(plane.BackgroundColor);
 
-            PaintOnPlane(plane, destination, scale, zoomedScale, arguments, recordingContext);
+            var fromZero = destination;
+            fromZero.Offset(-DrawingRect.Left, -DrawingRect.Top);
+            PaintOnPlane(plane, fromZero, scale, zoomedScale, arguments, recordingContext);
 
             recordingContext.Canvas.Flush();
             DisposeObject(plane.CachedObject);
@@ -307,10 +365,216 @@ namespace DrawnUi.Maui.Draw
             plane.IsReady = true;
         }
 
-        protected virtual void PaintOnPlane(Plane plane, SKRect destination, float scale, float zoomedScale, object arguments,
+        Plane? GetNeighborPlaneId(Plane plane, bool isScrollingDown)
+        {
+            Plane? ret = null;
+            if (isScrollingDown)
+            {
+                ret = _planeLayoutData.Keys
+                    .Where(x => x.IsReady && x.OffsetY < plane.OffsetY)
+                    .OrderByDescending(x => x.OffsetY)
+                    .FirstOrDefault();
+            }
+            else
+            {
+                ret = _planeLayoutData.Keys
+                    .Where(x => x.IsReady && x.OffsetY > plane.OffsetY)
+                    .OrderBy(x => x.OffsetY)
+                    .FirstOrDefault();
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="previousPlaneLayout"></param>
+        /// <param name="planeHeight"></param>
+        /// <param name="isScrollingDown"></param>
+        /// <returns></returns>
+        (int startingMonthIndex, float startingOffset) GetNextPlaneStartingLayout(IList<ViewLayoutInfo> previousPlaneLayout, float planeHeight, bool isScrollingDown)
+        {
+            if (previousPlaneLayout == null || previousPlaneLayout.Count == 0)
+            {
+                return (0, 0);
+            }
+
+            if (isScrollingDown)
+            {
+                var lastInfo = previousPlaneLayout.Last();
+                float totalContentHeight = lastInfo.DrawingRect.Top + lastInfo.DrawingRect.Height;
+                float overflow = totalContentHeight - planeHeight;
+                overflow = overflow < 0 ? 0 : overflow;
+                if (overflow > 0)
+                {
+                    return (lastInfo.Index, -lastInfo.DrawingRect.Height + overflow);
+                }
+                int startingMonthIndex = lastInfo.Index + 1;
+                return (startingMonthIndex, overflow);
+            }
+            else
+            {
+                var firstInfo = previousPlaneLayout.First();
+                float underflow = -firstInfo.DrawingRect.Top; 
+                underflow = underflow < 0 ? 0 : underflow;
+                if (underflow > 0)
+                {
+                    return (firstInfo.Index, firstInfo.DrawingRect.Height - underflow);
+                }
+                int startingMonthIndex = firstInfo.Index - 1;
+                return (startingMonthIndex, -underflow);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="globalOffset"></param>
+        /// <param name="top"></param>
+        /// <param name="spacingPixels"></param>
+        /// <param name="destination"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
+        (int, float) ComputeDefaultOffset(
+            float globalOffset,
+            float top,
+            float spacingPixels,
+            SKRect destination,
+            float scale)
+        {
+            var tempDefaultMonthView = GetMeasuredView(0, destination, scale);
+            float defaultCellHeight = tempDefaultMonthView.MeasuredSize.Pixels.Height;
+            float estimatedCellTotalHeight = defaultCellHeight + spacingPixels;
+            int firstMonthIndex = (int)Math.Floor(globalOffset / estimatedCellTotalHeight);
+            float offsetWithinCell = globalOffset - (firstMonthIndex * estimatedCellTotalHeight);
+            float startingOffset = top - offsetWithinCell;
+
+            return (firstMonthIndex, startingOffset);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="plane"></param>
+        /// <param name="destination"></param>
+        /// <param name="scale"></param>
+        /// <param name="zoomedScale"></param>
+        /// <param name="arguments"></param>
+        /// <param name="recordingContext"></param>
+        protected override void PaintOnPlane(
+            Plane plane,
+            SKRect destination,
+            float scale,
+            float zoomedScale,
+            object arguments,
             SkiaDrawingContext recordingContext)
         {
-            PaintViews(recordingContext, destination, destination, scale, zoomedScale, arguments);
+            bool isScrollingDown = (this.ScrollingDirection != LinearDirectionType.Backward);
+
+            float planeTop = destination.Top;
+            float planeHeight = _planeHeight; 
+            float spacingPixels = 0f;          // vertical spacing between months
+
+            float globalOffset = InternalViewportOffset.Pixels.Y;
+
+            int firstMonthIndex;
+            float startingOffset;
+
+            //glue to neighbor
+            var neighbor = GetNeighborPlaneId(plane, isScrollingDown);
+            if (neighbor != null && _planeLayoutData.TryGetValue(neighbor, out var previousLayout)
+                && previousLayout.Count > 0)
+            {
+                (firstMonthIndex, startingOffset)
+                    = GetNextPlaneStartingLayout(previousLayout, planeHeight, isScrollingDown);
+            }
+            else
+            {
+                // no neighbor data
+                (firstMonthIndex, startingOffset)
+                    = ComputeDefaultOffset(globalOffset, planeTop, spacingPixels, destination, scale);
+            }
+
+            // will draw with direction: +1 for down, -1 for up
+            int direction = isScrollingDown ? +1 : -1;
+            float currentPos = isScrollingDown
+                ? (planeTop + startingOffset)
+                : (planeTop + planeHeight + startingOffset);
+
+            int monthIndex = firstMonthIndex;
+            var layoutInfoList = new List<ViewLayoutInfo>();
+
+            while (true)
+            {
+                bool outOfPlane = isScrollingDown
+                    ? (currentPos >= (planeTop + planeHeight))
+                    : (currentPos <= planeTop);
+
+                if (outOfPlane)
+                    break; // we've filled this plane
+
+
+                var monthView = GetMeasuredView(monthIndex, destination, scale);
+                float cellHeight = monthView.MeasuredSize.Pixels.Height;
+
+                // C) Calculate rect
+                SKRect rect;
+                if (isScrollingDown)
+                {
+                    // top->bottom
+                    rect = new SKRect(
+                        destination.Left,
+                        currentPos,
+                        destination.Right,
+                        currentPos + cellHeight
+                    );
+
+                    // Move downward
+                    currentPos += (cellHeight + spacingPixels);
+                }
+                else
+                {
+                    // bottom->top
+                    float cellTop = currentPos - cellHeight;
+                    rect = new SKRect(
+                        destination.Left,
+                        cellTop,
+                        destination.Right,
+                        currentPos
+                    );
+
+                    // Move upward
+                    currentPos -= (cellHeight + spacingPixels);
+                }
+
+                //rect.Offset(DrawingRect.Location);
+
+                monthView.Arrange(rect, monthView.SizeRequest.Width, monthView.SizeRequest.Height, scale);
+                monthView.Render(recordingContext, rect, scale);
+
+                var info = new ViewLayoutInfo
+                {
+                    Index = monthIndex,
+                    DrawingRect = rect,
+                };
+
+                if (isScrollingDown)
+                {
+                    layoutInfoList.Add(info);
+                }
+                else
+                {
+                    layoutInfoList.Insert(0, info); // is drawing bottom->top
+                }
+
+                monthIndex += direction;
+            }
+
+            // 5) Save the layout data for continuity
+            _planeLayoutData[plane] = layoutInfoList;
+
         }
+
+
     }
 }
