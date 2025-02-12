@@ -110,7 +110,7 @@ public class ChainAdjustRGBEffect : BaseChainedEffect
         set => SetValue(BlueProperty, value);
     }
 
-    public override ChainEffectResult Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public override ChainEffectResult Draw(DrawingContext ctx, Action<DrawingContext> drawControl)
     {
         if (NeedApply)
         {
@@ -118,14 +118,14 @@ public class ChainAdjustRGBEffect : BaseChainedEffect
 
             paint.ColorFilter = CreateRGBAdjustmentFilter(Red, Green, Blue);
 
-            ctx.Canvas.SaveLayer(paint);
+            ctx.Context.Canvas.SaveLayer(paint);
 
             drawControl(ctx);
 
             return ChainEffectResult.Create(true);
         }
 
-        return base.Draw(destination, ctx, drawControl);
+        return base.Draw(ctx, drawControl);
     }
 
     private SKColorFilter CreateRGBAdjustmentFilter(float red, float green, float blue)

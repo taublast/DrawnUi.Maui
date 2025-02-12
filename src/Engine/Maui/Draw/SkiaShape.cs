@@ -351,15 +351,6 @@ namespace DrawnUi.Maui.Draw
             base.OnDisposing();
         }
 
-        public override object CreatePaintArguments()
-        {
-            return new ShapePaintArguments()
-            {
-                StrokeAwareSize = MeasuredStrokeAwareSize,
-                StrokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize
-            };
-        }
-
         public override SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
         {
             path ??= new SKPath();
@@ -583,20 +574,31 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected override void PaintWithShadows(SkiaDrawingContext ctx, Action render)
+        protected override void PaintWithShadows(DrawingContext ctx, Action render)
         {
             render(); //we will handle shadows by ourselves
         }
 
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        public override DrawingContext AddPaintArguments(DrawingContext ctx)
         {
+            return ctx.WithArgument(new ("ShapePaintArguments", new ShapePaintArguments()
+            {
+                StrokeAwareSize = MeasuredStrokeAwareSize,
+                StrokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize
+            }));
+        }
 
+        protected override void Paint(DrawingContext ctx)
+        {
+            var scale = ctx.Scale;
             var strokeAwareSize = MeasuredStrokeAwareSize;
             var strokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize;
-            if (arguments is ShapePaintArguments args)
+            ShapePaintArguments? arguments = null;
+            if (ctx.GetArgument("ShapePaintArguments") is ShapePaintArguments defined)
             {
-                strokeAwareSize = args.StrokeAwareSize;
-                strokeAwareChildrenSize = args.StrokeAwareChildrenSize;
+                arguments = defined;
+                strokeAwareSize = defined.StrokeAwareSize;
+                strokeAwareChildrenSize = defined.StrokeAwareChildrenSize;
             }
 
             //base.Paint(ctx, destination, scale, arguments); //for debug
@@ -690,14 +692,14 @@ namespace DrawnUi.Maui.Draw
                             if (DrawRoundedRect == null)
                                 DrawRoundedRect = new();
                             DrawRoundedRect.SetRectRadii(outRect, radii);
-                            ctx.Canvas.DrawRoundRect(DrawRoundedRect, paint);
+                            ctx.Context.Canvas.DrawRoundRect(DrawRoundedRect, paint);
                         }
                         else
-                            ctx.Canvas.DrawRect(outRect, paint);
+                            ctx.Context.Canvas.DrawRect(outRect, paint);
                         break;
 
                     case ShapeType.Circle:
-                        ctx.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, paint);
+                        ctx.Context.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, paint);
                         break;
 
                     case ShapeType.Line:
@@ -712,14 +714,14 @@ namespace DrawnUi.Maui.Draw
                             {
                                 AddStraightPath(DrawPathShape, Points, strokeAwareSize, false);
                             }
-                            ctx.Canvas.DrawPath(DrawPathShape, paint);
+                            ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
                         }
                         break;
 
                     case ShapeType.Ellipse:
                         DrawPathShape.Reset();
                         DrawPathShape.AddOval(outRect);
-                        ctx.Canvas.DrawPath(DrawPathShape, paint);
+                        ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
                         break;
 
                     case ShapeType.Arc:
@@ -728,13 +730,13 @@ namespace DrawnUi.Maui.Draw
                         var startAngle = (float)Value1;
                         var sweepAngle = (float)Value2;
                         DrawPathShape.AddArc(outRect, startAngle, sweepAngle);
-                        ctx.Canvas.DrawPath(DrawPathShape, paint);
+                        ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
                         break;
 
                     case ShapeType.Path:
                         DrawPathShape.Reset();
                         DrawPathShape.AddPath(DrawPathAligned);
-                        ctx.Canvas.DrawPath(DrawPathShape, paint);
+                        ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
 
                         break;
 
@@ -754,7 +756,7 @@ namespace DrawnUi.Maui.Draw
                                 AddStraightPath(path, Points, strokeAwareSize, true);
                             }
 
-                            ctx.Canvas.DrawPath(path, RenderingPaint);
+                            ctx.Context.Canvas.DrawPath(path, RenderingPaint);
                         }
                         break;
                 }
@@ -774,12 +776,12 @@ namespace DrawnUi.Maui.Draw
                         ClipContentPath.Reset();
                         CreateClip(arguments, true, ClipContentPath);
 
-                        var saved = ctx.Canvas.Save();
+                        var saved = ctx.Context.Canvas.Save();
 
-                        ClipSmart(ctx.Canvas, ClipContentPath, SKClipOperation.Difference);
+                        ClipSmart(ctx.Context.Canvas, ClipContentPath, SKClipOperation.Difference);
                         render();
 
-                        ctx.Canvas.RestoreToCount(saved);
+                        ctx.Context.Canvas.RestoreToCount(saved);
                     }
                     else
                     {
@@ -810,7 +812,7 @@ namespace DrawnUi.Maui.Draw
             {
                 if (SetupBackgroundPaint(RenderingPaint, outRect))
                 {
-                    PaintBackground(ctx, outRect, radii, minSize, RenderingPaint);
+                    PaintBackground(ctx.Context, outRect, radii, minSize, RenderingPaint);
                 }
             });
 
@@ -820,15 +822,15 @@ namespace DrawnUi.Maui.Draw
 
             CreateClip(arguments, true, ClipContentPath);
 
-            var saved = ctx.Canvas.Save();
+            var saved = ctx.Context.Canvas.Save();
 
-            ClipSmart(ctx.Canvas, ClipContentPath);
+            ClipSmart(ctx.Context.Canvas, ClipContentPath);
 
             var rectForChildren = ContractPixelsRect(strokeAwareChildrenSize, scale, Padding);
 
-            DrawViews(ctx, rectForChildren, scale);
+            DrawViews(ctx.WithDestination(rectForChildren));
 
-            ctx.Canvas.RestoreToCount(saved);
+            ctx.Context.Canvas.RestoreToCount(saved);
 
             //last pass for stroke over background or children
             if (willStroke)

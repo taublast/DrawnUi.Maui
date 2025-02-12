@@ -29,7 +29,7 @@ public class EdgeGlowAnimator : RenderingAnimator
 
 	public GlowPosition GlowPosition { get; set; }
 
-	protected override bool OnRendering(IDrawnBase control, SkiaDrawingContext context, double scale)
+    protected override bool OnRendering(DrawingContext context, IDrawnBase control)
 	{
 		if (IsRunning)
 		{
@@ -44,7 +44,7 @@ public class EdgeGlowAnimator : RenderingAnimator
 				{
 					float y = GlowPosition == GlowPosition.Top ? 0 : (float)(control.DrawingRect.Height - Height);
 					var rect = new SKRect((float)X, y, (float)(X + Height), (float)(y + Height));
-					context.Canvas.DrawRoundRect(rect, 20, 20, paint);
+					context.Context.Canvas.DrawRoundRect(rect, 20, 20, paint);
 				}
 
 				if (control.ClipEffects)
@@ -53,16 +53,16 @@ public class EdgeGlowAnimator : RenderingAnimator
 					using (SKPath clipInsideParent = new SKPath())
 					{
 						using var clipContent = control.CreateClip(null, true);
-						clipContent.Offset((float)(control.TranslationX * scale), (float)(control.TranslationY * scale));
+						clipContent.Offset((float)(control.TranslationX * context.Scale), (float)(control.TranslationY * context.Scale));
 						clipInsideParent.AddPath(clipContent);
 
-						var count = context.Canvas.Save();
+						var count = context.Context.Canvas.Save();
 
-						control.ClipSmart(context.Canvas, clipInsideParent);
+						control.ClipSmart(context.Context.Canvas, clipInsideParent);
 
 						Draw();
 
-						context.Canvas.RestoreToCount(count);
+						context.Context.Canvas.RestoreToCount(count);
 					}
 				}
 				else

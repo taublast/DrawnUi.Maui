@@ -2,5 +2,5 @@
 
 public interface IPostRendererEffect : ISkiaEffect
 {
-    void Render(SkiaDrawingContext ctx, SKRect destination);
+    void Render(DrawingContext ctx);
 }

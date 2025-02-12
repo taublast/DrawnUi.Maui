@@ -113,7 +113,7 @@ public class ChainDropShadowsEffect : BaseChainedEffect
         }
     }
 
-    public override ChainEffectResult Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public override ChainEffectResult Draw(DrawingContext ctx, Action<DrawingContext> drawControl)
     {
         if (NeedApply)
         {
@@ -135,17 +135,17 @@ public class ChainDropShadowsEffect : BaseChainedEffect
                 (float)shadow.Blur, (float)shadow.Blur,
                 shadow.Color.ToSKColor());
 
-                var saved = ctx.Canvas.SaveLayer(Paint);
+                var saved = ctx.Context.Canvas.SaveLayer(Paint);
 
                 drawControl(ctx);
 
-                ctx.Canvas.RestoreToCount(saved);
+                ctx.Context.Canvas.RestoreToCount(saved);
             }
 
             return ChainEffectResult.Create(false);
         }
 
-        return base.Draw(destination, ctx, drawControl);
+        return base.Draw(ctx, drawControl);
     }
 
     public override bool NeedApply

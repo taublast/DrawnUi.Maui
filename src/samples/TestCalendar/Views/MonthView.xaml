@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:touch="clr-namespace:AppoMobi.Touch"
+             xmlns:xam="clr-namespace:AppoMobi.Xam"
+             xmlns:appoMobi="clr-namespace:AppoMobi"
+             xmlns:views="clr-namespace:TestCalendar.Views"
+             x:DataType="views:BookableShopElement"
+             x:Class="TestCalendar.Views.MonthView">
+    
+    <VerticalStackLayout>
+ 
+        <!--CALENDAR-->
+ 
+
+            <!--MONTH CONTROL-->
+            <StackLayout Spacing="0" 
+                         BackgroundColor="WhiteSmoke">
+
+                <Grid Margin="8,8,8,8" 
+                          BackgroundColor="Gainsboro"
+                          Padding="0" 
+                          ColumnSpacing="0.5"
+                          RowSpacing="0.5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="40"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--PREV MONTH-->
+                    <ContentView
+                          Grid.Column="0">
+                        <touch:GesturesGrid
+                            Tapped="OnTapped_PrevPeriod"
+                            BackgroundColor="WhiteSmoke"
+                            Margin="1.5, 0.5, 0, 1"
+                                       VerticalOptions="FillAndExpand"
+                                       HorizontalOptions="FillAndExpand">
+                            <Label
+                              Margin="0,2.5,0,0"
+                              VerticalOptions="Center"
+                              HorizontalOptions="Center"
+                              FontSize="18"
+                              Rotation="180"
+                              x:Name="cLeftArrow"
+                              Text="➝"
+                              />
+                        </touch:GesturesGrid>
+                    </ContentView>
+
+                    <!--MONTH NAME-->
+                    <ContentView
+                          Grid.Column="1">
+                    <touch:GesturesGrid Margin="0.5, 1, 0, 1"
+                                  BackgroundColor="WhiteSmoke"
+                                  VerticalOptions="FillAndExpand"
+                                  HorizontalOptions="FillAndExpand">
+                            <Label
+                                  Margin="0"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="CenterAndExpand"
+                                  Text="{Binding CurrentMonthDesc}"
+                                  FontSize="15" 
+                                TextColor="DarkGray"/>
+                        </touch:GesturesGrid>
+                    </ContentView>
+
+                    <!--NEXT MONTH-->
+                    <ContentView
+                            Grid.Column="2">
+                    <touch:GesturesGrid
+                                Tapped="OnTapped_NextPeriod"
+                                BackgroundColor="WhiteSmoke"
+                                           Margin="0.5, 1, 1.5, 1"
+                                           VerticalOptions="FillAndExpand"
+                                           HorizontalOptions="FillAndExpand">
+                            <Label
+                                    x:Name="cRightArrow"
+                                    Margin="0,0,0,2.5"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    FontSize="18"
+                                    Text="➝"
+                                />
+                        </touch:GesturesGrid>
+                    </ContentView>
+
+
+
+                </Grid>
+
+
+                <!--DAYS OF WEEK-->
+                <Grid Margin="8,0,8,0"
+                      HeightRequest="-1"
+                            x:Name="cDows"
+                            ColumnDefinitions="*,*,*,*,*,*,*"
+                            ColumnSpacing="0.5"
+                            RowSpacing="0">
+
+                    <ContentView
+                            Grid.Column="0">
+                        <Label
+                                Margin="0"
+                                VerticalOptions="Center"
+                                HorizontalOptions="CenterAndExpand"
+                                x:Name="cDow0"
+                                Text="пн"
+                                FontSize="15"  
+                                TextColor="DarkGray"/>
+                    </ContentView>
+                    
+                    <ContentView
+                              Grid.Column="1">
+                        <Label
+                                  Margin="0"
+                                  x:Name="cDow1"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="CenterAndExpand"
+                                  FontSize="15"  
+                              TextColor="DarkGray"/>
+                    </ContentView>
+                    
+                    <ContentView
+                            Grid.Column="2">
+                        <Label
+                              Margin="0"
+                              VerticalOptions="Center"
+                              HorizontalOptions="CenterAndExpand"
+                              x:Name="cDow2"
+                              TextColor="DarkGray"
+                              FontSize="15"  />
+                    </ContentView>
+                    <ContentView
+                            Grid.Column="3">
+                        <Label
+                              Margin="0"
+                              VerticalOptions="Center"
+                              HorizontalOptions="CenterAndExpand"
+                              x:Name="cDow3"
+                              TextColor="DarkGray"
+                              FontSize="15"  />
+                    </ContentView>
+                    <ContentView
+                            Grid.Column="4">
+                        <Label
+                              Margin="0"
+                              VerticalOptions="Center"
+                              HorizontalOptions="CenterAndExpand"
+                              x:Name="cDow4"
+                              TextColor="DarkGray"
+                              FontSize="15"  />
+                    </ContentView>
+                    <ContentView
+                              Grid.Column="5">
+                        <Label
+                                  Margin="0"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="CenterAndExpand"
+                                  TextColor="DarkGray"
+                                  x:Name="cDow5"
+                                  FontSize="15"  />
+                    </ContentView>
+                    <ContentView
+                              Grid.Column="6">
+                        <Label
+                                  Margin="0"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="CenterAndExpand"
+                                  TextColor="DarkGray"
+                                  x:Name="cDow6"
+                                  FontSize="15"  />
+                    </ContentView>
+
+                </Grid>
+
+            </StackLayout>
+
+        <!--  DAYS  -->
+        <ContentView
+                        Margin="0"
+                        BackgroundColor="WhiteSmoke">
+
+            <ContentView
+                              Margin="8,0,8,8"
+                              BackgroundColor="DarkGray">
+
+
+                <!--<Grid
+                    Margin="1, 1, 0.5, 0.5"
+                    BackgroundColor="WhiteSmoke"
+                    ColumnSpacing="0"
+                    RowSpacing="0"
+                    x:Name="gridDays"
+                    BindableLayout.ItemsSource="{Binding Days}">
+                    <BindableLayout.ItemTemplate>
+                    
+                        <DataTemplate>
+                            <appoMobi:CellDay                                               
+                                ItemTapped="OnClicked_Day"/>
+
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </Grid>-->
+                        <xam:NiftyDataGrid
+                        ItemsSource="{Binding Days}"
+                                  BackgroundColor="WhiteSmoke"
+                                  Columns="7"
+                                  x:Name="gridDays"
+                                  Margin="1, 1, 0.5, 0.5"
+                                  ColumnSpacing="0"
+                                  RowSpacing="0">
+
+                    <xam:NiftyDataGrid.ItemTemplate>
+                        <DataTemplate>
+                            <appoMobi:CellDay                                               
+                                              ItemTapped="OnClicked_Day"/>
+                        </DataTemplate>
+                    </xam:NiftyDataGrid.ItemTemplate>
+
+                </xam:NiftyDataGrid>
+
+            </ContentView>
+
+        </ContentView>
+        
+    </VerticalStackLayout>
+
+</ContentView>

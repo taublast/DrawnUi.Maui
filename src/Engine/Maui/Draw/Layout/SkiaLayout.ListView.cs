@@ -44,7 +44,8 @@ public partial class SkiaLayout
             List<SecondPassArrange> listSecondPass = new();
             bool stopMeasuring = false;
 
-            var visibleArea = base.GetOnScreenVisibleArea(rectForChildrenPixels, (float)this.VirtualisationInflated * scale);
+            var inflate = (float)this.VirtualisationInflated * scale;
+            var visibleArea = base.GetOnScreenVisibleArea(new (null, rectForChildrenPixels,scale), new (inflate,inflate));
 
             if (visibleArea.Pixels.Height < 1 || visibleArea.Pixels.Width < 1)
             {
@@ -310,8 +311,8 @@ public partial class SkiaLayout
     /// <param name="scale"></param>
     /// <returns></returns>
     protected virtual int DrawList(
-        LayoutStructure structure,
-        SkiaDrawingContext context, SKRect destination, float scale)
+        DrawingContext ctx,
+        LayoutStructure structure)
     {
         if (!IsTemplated || IsDisposing)
             return 0;
@@ -329,7 +330,8 @@ public partial class SkiaLayout
         if (structure != null)
         {
             //draw children manually
-            var visibleArea = GetOnScreenVisibleArea(destination, (float)this.VirtualisationInflated * scale);
+            var inflate = (float)this.VirtualisationInflated * ctx.Scale;
+            var visibleArea = GetOnScreenVisibleArea(ctx, new(inflate, inflate));
 
             var currentIndex = -1;
             foreach (var cell in structure.GetChildrenAsSpans())
@@ -349,8 +351,8 @@ public partial class SkiaLayout
                 {
                     //cell.Destination is what was measured, and we got x,y offsets from a parent, like scroll
 
-                    var x = destination.Left + cell.Destination.Left;
-                    var y = destination.Top + cell.Destination.Top;
+                    var x = ctx.Destination.Left + cell.Destination.Left;
+                    var y = ctx.Destination.Top + cell.Destination.Top;
 
                     cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
 
@@ -397,7 +399,7 @@ public partial class SkiaLayout
                         {
                             if (!child.WasMeasured || GetSizeKey(child.MeasuredSize.Pixels) != GetSizeKey(cell.Measured.Pixels))
                             {
-                                child.Measure((float)cell.Area.Width, (float)cell.Area.Height, scale);
+                                child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
                             }
                         }
 
@@ -419,20 +421,19 @@ public partial class SkiaLayout
                         {
                             if (DirtyChildrenInternal.Contains(child))
                             {
-                                DrawChild(context, destinationRect, child, scale);
+                                DrawChild(ctx.WithDestination(destinationRect), child);
                                 countRendered++;
                             }
                             else
                             {
                                 //skip drawing but need arrange :(
                                 //todo set virtual offset between drawnrect and the new
-                                child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height,
-                                    scale);
+                                child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height, ctx.Scale);
                             }
                         }
                         else
                         {
-                            DrawChild(context, destinationRect, child, scale);
+                            DrawChild(ctx.WithDestination(destinationRect), child);
                             countRendered++;
                         }
 

@@ -319,10 +319,7 @@ public class SkiaScrollLooped : SkiaScroll
     }
 
     //Using this to draw a second fake copy of content to loop the cycle
-    protected override void OnDrawn(SkiaDrawingContext context,
-        SKRect destination,
-        float zoomedScale,
-        double scale = 1)
+    protected override void OnDrawn(DrawingContext context)
     {
         bool debug = false;
 
@@ -330,7 +327,7 @@ public class SkiaScrollLooped : SkiaScroll
         {
             if (Orientation == ScrollOrientation.Vertical)
             {
-                var hiddenContentHeightPixels = Content.MeasuredSize.Pixels.Height - destination.Height;
+                var hiddenContentHeightPixels = Content.MeasuredSize.Pixels.Height - context.Destination.Height;
                 if (hiddenContentHeightPixels < 0)
                     hiddenContentHeightPixels = 0;
 
@@ -349,14 +346,13 @@ public class SkiaScrollLooped : SkiaScroll
                         offsetY = Content.MeasuredSize.Pixels.Height + pixelsContentOffsetY;
                     }
 
-                    var childRect = destination.Clone();
+                    var childRect = context.Destination;
                     childRect.Offset(0, offsetY);
 
                     if (pixelsContentOffsetY > 0)
                         childRect.Bottom += hiddenContentHeightPixels;
 
-                    DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true,
-                        true, (ctx) =>
+                    DrawWithClipAndTransforms(context, DrawingRect, true, true, (ctx) =>
                         {
                             if (Debug)
                             {
@@ -364,15 +360,15 @@ public class SkiaScrollLooped : SkiaScroll
                                 {
                                     ColorFilter = SkiaImageEffects.Tint(Colors.Red, SKBlendMode.SrcIn)
                                 };
-                                var count = context.Canvas.SaveLayer(paint);
+                                var count = ctx.Context.Canvas.SaveLayer(paint);
 
-                                DrawViews(context, childRect, zoomedScale, debug);
+                                DrawViews(ctx.WithDestination(childRect));
 
-                                context.Canvas.RestoreToCount(count);
+                                context.Context.Canvas.RestoreToCount(count);
                             }
                             else
                             {
-                                DrawViews(context, childRect, zoomedScale, debug);
+                                DrawViews(ctx.WithDestination(childRect));
                             }
                         });
                 }
@@ -380,7 +376,7 @@ public class SkiaScrollLooped : SkiaScroll
             else
             if (Orientation == ScrollOrientation.Horizontal)
             {
-                var hiddenContentWidthPixels = Content.MeasuredSize.Pixels.Width - destination.Width;
+                var hiddenContentWidthPixels = Content.MeasuredSize.Pixels.Width - context.Destination.Width;
                 if (hiddenContentWidthPixels < 0)
                     hiddenContentWidthPixels = 0;
 
@@ -399,26 +395,20 @@ public class SkiaScrollLooped : SkiaScroll
                         offsetX = Content.MeasuredSize.Pixels.Width + pixelsContentOffsetX;
                     }
 
-                    var childRect = destination.Clone();
+                    var childRect = context.Destination;
                     childRect.Offset(offsetX, 0);
 
-                    DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true,
-                        true, (ctx) =>
-                        {
-                            DrawViews(context, childRect, zoomedScale, debug);
-                        });
+                    DrawWithClipAndTransforms(context, DrawingRect, true, true, (ctx) =>
+                    {
+                        DrawViews(ctx.WithDestination(childRect));
+                    });
 
                 }
             }
         }
 
-        //ScrollOrientation.Both unsupported
-
-        base.OnDrawn(context, destination, zoomedScale, scale);
+        base.OnDrawn(context);
     }
-
-
-
 
     public override Vector2 ClampOffset(float x, float y, bool strict = false)
     {

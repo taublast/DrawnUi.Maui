@@ -43,11 +43,7 @@
         /// </summary>
         public SKPaint PaintWithOpacity { get; protected set; }
 
-        public virtual RenderObject CreateRenderObject(
-            RenderDrawingContext ctx,
-            SKRect
-            destination,
-            float scale)
+        public virtual RenderObject CreateRenderObject(DrawingContext ctx)
         {
             var ret = new RenderObject()
             {
@@ -62,8 +58,7 @@
             if (Element.UsingCacheType != SkiaCacheType.None)
             {
                 Element.DrawUsingRenderObject(ctx,
-                    Element.SizeRequest.Width, Element.SizeRequest.Height,
-                    destination, scale);
+                    Element.SizeRequest.Width, Element.SizeRequest.Height);
 
                 ret.Cache = Element.RenderObject;
             }
@@ -71,27 +66,25 @@
             return ret;
         }
 
+        /*
         public virtual bool UseRenderingObject(
-            RenderObject renderMe,
-            RenderDrawingContext ctx,
-            SKRect destination,
-            float scale)
+            DrawingContext ctx,
+            RenderObject renderMe)
         {
             if (renderMe.Cache != null)
             {
                 if (renderMe.DelegateDrawCache != null)
                 {
-                    renderMe.DelegateDrawCache(renderMe.Cache, ctx, destination);
+                    renderMe.DelegateDrawCache(ctx, renderMe.Cache);
                 }
                 else
                 {
-                    DrawWithClipAndTransforms(renderMe, ctx, destination, destination, true, true,
-                        (ctx) =>
+                    DrawWithClipAndTransforms(ctx, renderMe, ctx.Destination, true, true, (ctx) =>
                     {
 
                         if (renderMe.EffectPostRenderer != null)
                         {
-                            renderMe.EffectPostRenderer.Render(ctx, destination);
+                            renderMe.EffectPostRenderer.Render(ctx);
                         }
                         else
                         {
@@ -100,7 +93,7 @@
                             ctx.PaintWithOpacity.IsDither = renderMe.IsDistorted;
                             ctx.PaintWithOpacity.FilterQuality = SKFilterQuality.Medium;
 
-                            renderMe.Cache.Draw(ctx.Canvas, destination, ctx.PaintWithOpacity);
+                            renderMe.Cache.Draw(ctx.Canvas, ctx.Destination, ctx.PaintWithOpacity);
                         }
                     });
                 }
@@ -109,22 +102,18 @@
         }
 
         public void DrawWithClipAndTransforms(
+            DrawingContext ctx,
             RenderObject renderMe,
-            RenderDrawingContext ctx,
-            SKRect destination,
             SKRect transformsArea,
             bool useOpacity,
             bool useClipping,
-            Action<RenderDrawingContext> draw)
+            Action<DrawingContext> draw)
         {
-
-
-
 
 
         }
 
-
+        */
     }
 
     public class RenderTreeRenderer
@@ -145,10 +134,7 @@
 
     }
 
-    public class RenderDrawingContext : SkiaDrawingContext
-    {
-        public SKPaint PaintWithOpacity { get; protected set; }
-    }
+
 
     public class RenderObject
     {
@@ -165,21 +151,14 @@
         public bool WillClipBounds { get; set; }
         public IPostRendererEffect EffectPostRenderer { get; set; }
 
-        public Action<CachedObject, SkiaDrawingContext, SKRect> DelegateDrawCache { get; set; }
+        public Action<DrawingContext, CachedObject> DelegateDrawCache { get; set; }
 
-
-
-        public virtual void DrawRenderObject(CachedObject cache,
-            SkiaDrawingContext ctx,
-            SKRect destination)
+        public virtual void DrawRenderObject(
+            DrawingContext ctx,
+            CachedObject cache)
         {
 
         }
-
-
-
-
-
 
     }
 

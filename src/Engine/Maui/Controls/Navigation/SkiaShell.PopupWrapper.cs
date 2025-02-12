@@ -104,16 +104,16 @@ public partial class SkiaShell
         private readonly Color _color;
         private readonly bool _willFreeze;
 
-        protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+        protected override void Draw(DrawingContext context)
         {
-            base.Draw(context, destination, scale);
+            base.Draw(context);
 
             if (_willFreeze && !frozen && LayoutReady && Backdrop != null)
             {
                 Backdrop.IsVisible = false;
             }
 
-            FinalizeDrawingWithRenderObject(context, scale);
+            FinalizeDrawingWithRenderObject(context);
         }
 
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)

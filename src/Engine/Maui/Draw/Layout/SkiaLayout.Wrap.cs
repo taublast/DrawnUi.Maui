@@ -37,9 +37,7 @@ namespace DrawnUi.Maui.Draw
         /// Renders stack/wrap layout.
         /// Returns number of drawn children.
         /// </summary>
-        protected virtual int DrawStack(
-            LayoutStructure structure,
-            SkiaDrawingContext context, SKRect destination, float scale)
+        protected virtual int DrawStack(DrawingContext ctx, LayoutStructure structure)
         {
             var drawn = 0;
             //StackStructure was creating inside Measure.
@@ -52,8 +50,15 @@ namespace DrawnUi.Maui.Draw
 
             if (structure != null)
             {
+
+                if (Tag == "Recycled")
+                {
+                    var stop = 1;
+                }
+
                 //draw children manually
-                var visibleArea = GetOnScreenVisibleArea(destination, (float)(this.VirtualisationInflated * scale));
+                var inflate = (float)(this.VirtualisationInflated * ctx.Scale);
+                var visibleArea = GetOnScreenVisibleArea(ctx, new (inflate, inflate));
 
                 //PASS 1 - VISIBILITY
                 //we need this pass before drawing to recycle views that became hidden
@@ -73,8 +78,8 @@ namespace DrawnUi.Maui.Draw
                     }
                     else
                     {
-                        var x = destination.Left + cell.Destination.Left;
-                        var y = destination.Top + cell.Destination.Top;
+                        var x = ctx.Destination.Left + cell.Destination.Left;
+                        var y = ctx.Destination.Top + cell.Destination.Top;
 
                         cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
 
@@ -106,6 +111,11 @@ namespace DrawnUi.Maui.Draw
                         visibleElements.Add(cell);
                     }
                 }
+
+                if (Tag == "Recycled")
+                {
+                    Debug.WriteLine($"Cells at {visibleArea}, visible: {visibleElements.Count}");
+                };
 
                 //PASS 2 DRAW VISIBLE
                 //using precalculated rects
@@ -148,7 +158,7 @@ namespace DrawnUi.Maui.Draw
                         {
                             if (!child.WasMeasured || GetSizeKey(child.MeasuredSize.Pixels) != GetSizeKey(cell.Measured.Pixels))
                             {
-                                child.Measure((float)cell.Area.Width, (float)cell.Area.Height, scale);
+                                child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
                             }
                         }
 
@@ -165,24 +175,23 @@ namespace DrawnUi.Maui.Draw
                                 cell.Drawn.Bottom);
                         }
 
-
                         if (IsRenderingWithComposition)
                         {
                             if (DirtyChildrenInternal.Contains(child))
                             {
-                                DrawChild(context, destinationRect, child, scale);
+                                DrawChild(ctx.WithDestination(destinationRect), child);
                                 countRendered++;
                             }
                             else
                             {
                                 //skip drawing but need arrange :(
                                 //todo set virtual offset between drawnrect and the new
-                                child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height, scale);
+                                child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height, ctx.Scale);
                             }
                         }
                         else
                         {
-                            DrawChild(context, destinationRect, child, scale);
+                            DrawChild(ctx.WithDestination(destinationRect), child);
                             countRendered++;
                         }
 

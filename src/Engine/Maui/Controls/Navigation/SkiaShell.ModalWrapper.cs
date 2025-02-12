@@ -102,15 +102,15 @@ public partial class SkiaShell
             }
         }
 
-        protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
+        protected override int DrawViews(DrawingContext context)
         {
-            if (context.Superview == null || destination.Width <= 0 || destination.Height <= 0)
+            if (context.Context.Superview == null || context.Destination.Width <= 0 || context.Destination.Height <= 0)
             {
                 return 0;
             }
 
             var drawViews = GetOrderedSubviews();
-            return RenderViewsList(drawViews, context, destination, scale);
+            return RenderViewsList(context, drawViews);
         }
 
         public virtual void SetupAppearingAnimation(SkiaControl content)
@@ -153,9 +153,9 @@ public partial class SkiaShell
 
         public bool IsFrozen { get; set; }
 
-        protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+        protected override void Draw(DrawingContext context)
         {
-            base.Draw(context, destination, scale);
+            base.Draw(context);
 
             if (_willFreeze && !frozen && LayoutReady)
             {

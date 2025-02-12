@@ -31,7 +31,8 @@ public class ShimmerAnimator : RenderingAnimator
 
     protected SKPaint Paint;
 
-    protected override bool OnRendering(IDrawnBase control, SkiaDrawingContext context, double scale)
+
+    protected override bool OnRendering(DrawingContext context, IDrawnBase control)
     {
         if (IsRunning)
         {
@@ -59,7 +60,7 @@ public class ShimmerAnimator : RenderingAnimator
             var shimmerStartX = (float)(rect.Left - shimmerWidth + (diagonalLength + shimmerWidth) * mValue);
             var shimmerEndX = shimmerStartX + (float)(shimmerWidth);
 
-            var canvas = context.Canvas;
+            var canvas = context.Context.Canvas;
 
             DrawWithClipping(context, control, selfDrawingLocation, () =>
             {

@@ -8,22 +8,22 @@ namespace DrawnUi.MauiGraphics;
 public class SkiaMauiGraphics : ContentLayout
 {
 
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
-        base.Paint(ctx, destination, scale, arguments);
+        base.Paint(ctx);
 
         if (Drawable != null)
         {
-            Canvas.Canvas = ctx.Canvas;
+            Canvas.Canvas = ctx.Context.Canvas;
 
-            var viewport = new RectF(0, 0, destination.Width, destination.Height);
+            var viewport = new RectF(0, 0, ctx.Destination.Width, ctx.Destination.Height);
 
-            ctx.Canvas.Save();
-            ctx.Canvas.Translate(destination.Left, destination.Top);
+            ctx.Context.Canvas.Save();
+            ctx.Context.Canvas.Translate(ctx.Destination.Left, ctx.Destination.Top);
 
             Drawable.Draw(Canvas, viewport);
 
-            ctx.Canvas.Restore();
+            ctx.Context.Canvas.Restore();
         }
     }
 

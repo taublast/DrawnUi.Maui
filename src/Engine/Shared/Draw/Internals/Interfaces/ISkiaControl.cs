@@ -24,7 +24,7 @@ public interface ISkiaControl : IDrawnBase
 
     void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale);
 
-    void Render(SkiaDrawingContext context, SKRect destination, float scale);
+    void Render(DrawingContext context);
 
     SKRect RenderedAtDestination { get; set; }
 

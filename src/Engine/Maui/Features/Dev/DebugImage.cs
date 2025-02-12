@@ -42,13 +42,13 @@ public partial class DebugImage : SkiaShape
 
     public static readonly BindableProperty AttachToProperty = BindableProperty.Create(
         nameof(AttachTo),
-        typeof(SKSurface),
+        typeof(CachedObject),
         typeof(DebugImage),
         null);
 
-    public SKSurface AttachTo
+    public CachedObject AttachTo
     {
-        get { return (SKSurface)GetValue(AttachToProperty); }
+        get { return (CachedObject)GetValue(AttachToProperty); }
         set { SetValue(AttachToProperty, value); }
     }
 
@@ -85,12 +85,14 @@ public partial class DebugImage : SkiaShape
         return base.Measure(widthConstraint, heightConstraint, scale);
     }
 
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    private Guid _lastFrame;
+
+    protected override void Paint(DrawingContext ctx)
     {
-        if (AttachTo != null)
+        if (AttachTo != null && AttachTo.Id != _lastFrame && AttachTo.Image!=null)
         {
-            var snapshot = AttachTo.Snapshot();
-            Display.SetImageInternal(snapshot, true);
+            _lastFrame = AttachTo.Id;
+            Display.SetImageInternal(AttachTo.Image, true);
         }
 
         if (Text != Caption.Text)
@@ -98,7 +100,7 @@ public partial class DebugImage : SkiaShape
             Caption.Text = Text;
         }
 
-        base.Paint(ctx, destination, scale, arguments);
+        base.Paint(ctx);
     }
 
     public override void OnDisposing()

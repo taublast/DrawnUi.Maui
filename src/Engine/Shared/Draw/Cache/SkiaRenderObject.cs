@@ -111,9 +111,9 @@ public class CachedObject : IDisposable
         Bounds = bounds;
         RecordingArea = recordingArea;
         Image = surface.Snapshot();
-
-
     }
+
+    public Guid Id = Guid.CreateVersion7();
 
     /// <summary>
     /// An existing surface was reused for creating this object

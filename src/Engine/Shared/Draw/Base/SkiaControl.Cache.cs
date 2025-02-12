@@ -207,11 +207,10 @@ public partial class SkiaControl
     }
 
     protected virtual CachedObject CreateRenderingObject(
-    SkiaDrawingContext context,
-    SKRect drawingArea,
+        DrawingContext context,
     SKRect recordingArea,
     CachedObject reuseSurfaceFrom,
-    Action<SkiaDrawingContext> action)
+    Action<DrawingContext> action)
     {
         if (recordingArea.Height == 0 || recordingArea.Width == 0 || IsDisposed || IsDisposing)
         {
@@ -241,7 +240,7 @@ public partial class SkiaControl
                 var width = (int)recordArea.Width;
                 var height = (int)recordArea.Height;
 
-                bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, recordingArea, context) || usingCacheType == SkiaCacheType.GPU; //never reuse GPU surfaces
+                bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, recordingArea, context.Context) || usingCacheType == SkiaCacheType.GPU; //never reuse GPU surfaces
 
                 SKSurface surface = null;
 
@@ -265,7 +264,7 @@ public partial class SkiaControl
 
                     if (usingCacheType == SkiaCacheType.GPU)
                     {
-                        if (context.Superview != null && context.Superview?.CanvasView is SkiaViewAccelerated accelerated
+                        if (context.Context.Superview != null && context.Context.Superview?.CanvasView is SkiaViewAccelerated accelerated
                             && accelerated.GRContext != null)
                         {
                             grContext = accelerated.GRContext;
@@ -295,23 +294,23 @@ public partial class SkiaControl
 
                 var recordingContext = context.CreateForRecordingImage(surface, recordArea.Size);
 
-                recordingContext.IsRecycled = !needCreateSurface;
+                recordingContext.Context.IsRecycled = !needCreateSurface;
 
                 // Translate the canvas to start drawing at (0,0)
 
-                recordingContext.Canvas.Translate(-recordArea.Left, -recordArea.Top);
+                recordingContext.Context.Canvas.Translate(-recordArea.Left, -recordArea.Top);
 
                 // Perform the drawing action
                 action(recordingContext);
 
                 //surface.Canvas.Flush();
 
-                recordingContext.Canvas.Translate(recordArea.Left, recordArea.Top);
-                recordingContext.Canvas.Flush();
+                recordingContext.Context.Canvas.Translate(recordArea.Left, recordArea.Top);
+                recordingContext.Context.Canvas.Flush();
 
                 renderObject = new(usingCacheType, surface, recordArea, recordArea)
                 {
-                    SurfaceIsRecycled = recordingContext.IsRecycled
+                    SurfaceIsRecycled = recordingContext.Context.IsRecycled
                 };
             }
             else
@@ -326,7 +325,7 @@ public partial class SkiaControl
                     action(recordingContext);
 
                     var skPicture = recorder.EndRecording();
-                    renderObject = new(UsingCacheType, skPicture, drawingArea, cacheRecordingArea);
+                    renderObject = new(UsingCacheType, skPicture, context.Destination, cacheRecordingArea);
                 }
             }
 
@@ -340,20 +339,19 @@ public partial class SkiaControl
         return renderObject;
     }
 
-    public Action<CachedObject, SkiaDrawingContext, SKRect> DelegateDrawCache { get; set; }
+    public Action<DrawingContext, CachedObject> DelegateDrawCache { get; set; }
 
     protected virtual void DrawRenderObjectInternal(
-        CachedObject cache,
-        SkiaDrawingContext ctx,
-        SKRect destination)
+        DrawingContext ctx,
+        CachedObject cache)
     {
         if (DelegateDrawCache != null)
         {
-            DelegateDrawCache(cache, ctx, destination);
+            DelegateDrawCache(ctx, cache);
         }
         else
         {
-            DrawRenderObject(cache, ctx, destination);
+            DrawRenderObject(ctx, cache);
         }
     }
 
@@ -380,7 +378,7 @@ public partial class SkiaControl
     }
 
 
-    protected virtual bool UseRenderingObject(SkiaDrawingContext context, SKRect drawingArea, SKRect recordArea, float scale)
+    protected virtual bool UseRenderingObject(DrawingContext context, SKRect recordArea)
     {
 
         //lock (LockDraw)
@@ -402,7 +400,7 @@ public partial class SkiaControl
 
             if (cache != null)
             {
-                if (!UsesCacheDoubleBuffering && !CheckCachedObjectValid(cache, recordArea, context))
+                if (!UsesCacheDoubleBuffering && !CheckCachedObjectValid(cache, recordArea, context.Context))
                 {
                     return false;
                 }
@@ -410,7 +408,7 @@ public partial class SkiaControl
                 //draw existing front cache
                 lock (LockDraw)
                 {
-                    DrawRenderObjectInternal(cache, context, drawingArea);
+                    DrawRenderObjectInternal( context, cache);
                     Monitor.PulseAll(LockDraw);
                 }
 
@@ -424,21 +422,21 @@ public partial class SkiaControl
                 {
                     if (cache == null && cacheOffscreen != null)
                     {
-                        DrawRenderObjectInternal(cacheOffscreen, context, drawingArea);
+                        DrawRenderObjectInternal(context, cacheOffscreen);
                     }
                     Monitor.PulseAll(LockDraw);
                 }
 
                 NeedUpdateFrontCache = false;
 
-                var args = CreatePaintArguments();
+                var clone = AddPaintArguments(context);
                 PushToOffscreenRendering(() =>
                 {
                     //will be executed on background thread in parallel
                     var oldObject = RenderObjectPreparing;
-                    RenderObjectPreparing = CreateRenderingObject(context, drawingArea, recordArea, oldObject, (ctx) =>
+                    RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, (ctx) =>
                     {
-                        PaintWithEffects(ctx, drawingArea, scale, args);
+                        PaintWithEffects(ctx);
                     });
                     RenderObject = RenderObjectPreparing;
                     _renderObjectPreparing = null;
@@ -654,12 +652,10 @@ public partial class SkiaControl
     /// <param name="destination"></param>
     /// <param name="scale"></param>
     /// <returns></returns>
-    public virtual bool DrawUsingRenderObject(SkiaDrawingContext context,
-        float widthRequest, float heightRequest,
-        SKRect destination,
-        float scale)
+    public virtual bool DrawUsingRenderObject(DrawingContext context,
+        float widthRequest, float heightRequest)
     {
-        Arrange(destination, widthRequest, heightRequest, scale);
+        Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
 
         bool willDraw = !CheckIsGhost();
         if (willDraw)
@@ -671,24 +667,24 @@ public partial class SkiaControl
                 if (UsingCacheType == SkiaCacheType.OperationsFull)
                 {
                     //recordArea = destination;
-                    recordArea = context.Canvas.LocalClipBounds;
+                    recordArea = context.Context.Canvas.LocalClipBounds;
                 }
 
                 //paint from cache
-                if (!UseRenderingObject(context, drawingArea, recordArea, scale))
+                var clone = AddPaintArguments(context).WithDestination(drawingArea);
+                if (!UseRenderingObject(clone, recordArea))
                 {
                     //record to cache and paint 
                     if (UsesCacheDoubleBuffering)
                     {
-                        var args = CreatePaintArguments();
+                        //use cloned struct in another thread 
                         PushToOffscreenRendering(() =>
                         {
                             //will be executed on background thread in parallel
                             var oldObject = RenderObjectPreparing;
-
-                            RenderObjectPreparing = CreateRenderingObject(context, drawingArea, recordArea, oldObject, (ctx) =>
+                            RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, (ctx) =>
                             {
-                                PaintWithEffects(ctx, drawingArea, scale, args);
+                                PaintWithEffects(ctx);
                             });
                             RenderObject = RenderObjectPreparing;
                             _renderObjectPreparing = null;
@@ -700,28 +696,29 @@ public partial class SkiaControl
                         });
                     }
                     else
-                        CreateRenderingObjectAndPaint(context, drawingArea, recordArea, (ctx) =>
+                        CreateRenderingObjectAndPaint(clone, recordArea, (ctx) =>
                         {
-                            PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
+                            PaintWithEffects(ctx.WithDestination(DrawingRect));
                         });
                 }
             }
             else
             {
-                DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true, true, (ctx) =>
+                var destination = context.Destination;
+                var clone = AddPaintArguments(context).WithDestination(DrawingRect);
+                DrawWithClipAndTransforms(clone, DrawingRect, true, true, (ctx) =>
                 {
-                    PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
+                    PaintWithEffects(ctx);
 
                     if (EffectPostRenderer != null)
                     {
-                        EffectPostRenderer.Render(ctx, destination);
+                        EffectPostRenderer.Render(ctx.WithDestination(destination));
                     }
-
                 });
             }
         }
 
-        FinalizeDrawingWithRenderObject(context, scale); //NeedUpdate will go false
+        FinalizeDrawingWithRenderObject(context); //NeedUpdate will go false
 
         return willDraw;
     }
@@ -734,10 +731,9 @@ public partial class SkiaControl
     /// <param name="recordArea"></param>
     /// <param name="action"></param>
     protected void CreateRenderingObjectAndPaint(
-        SkiaDrawingContext context,
-        SKRect drawingArea,
+        DrawingContext context,
         SKRect recordingArea,
-        Action<SkiaDrawingContext> action)
+        Action<DrawingContext> action)
     {
 
         if (recordingArea.Width <= 0 || recordingArea.Height <= 0 || float.IsInfinity(recordingArea.Height) || float.IsInfinity(recordingArea.Width) || IsDisposed || IsDisposing)
@@ -767,7 +763,7 @@ public partial class SkiaControl
             oldObject = RenderObjectPrevious;
         }
 
-        var created = CreateRenderingObject(context, drawingArea, recordingArea, oldObject, action);
+        var created = CreateRenderingObject(context, recordingArea, oldObject, action);
 
         if (created == null)
         {
@@ -792,7 +788,7 @@ public partial class SkiaControl
 
         if (RenderObject != null)
         {
-            DrawRenderObjectInternal(RenderObject, context, RenderObject.RecordingArea);
+            DrawRenderObjectInternal(context.WithDestination(RenderObject.RecordingArea), RenderObject);
         }
         else
         {

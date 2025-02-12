@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Specialized;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace DrawnUi.Maui.Draw
@@ -326,33 +327,31 @@ namespace DrawnUi.Maui.Draw
 
         protected List<int> LineBreaks = new List<int>();
 
-        //private Stopwatch _stopwatchRender = new();
-        //List<string> elapsedTimes = new();
 
-        public override ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0)
+        public override ScaledRect GetOnScreenVisibleArea(DrawingContext context, Vector2 inflateByPixels = default)
         {
             if (DelegateGetOnScreenVisibleArea != null)
             {
                 return DelegateGetOnScreenVisibleArea(inflateByPixels);
             }
 
-            var onscreen = base.GetOnScreenVisibleArea(pixelsDestination, inflateByPixels);
+            var onscreen = base.GetOnScreenVisibleArea(context, inflateByPixels);
 
             if (Virtualisation == VirtualisationType.Managed)
             {
                 return onscreen;
             }
 
-            var visible = SKRect.Intersect(onscreen.Pixels, pixelsDestination);//DrawingRect);
+            var visible = SKRect.Intersect(onscreen.Pixels, context.Destination);
 
             return ScaledRect.FromPixels(visible, RenderingScale);
         }
 
-        public override void DrawRenderObject(CachedObject cache, SkiaDrawingContext ctx, SKRect destination)
+        public override void DrawRenderObject(DrawingContext context, CachedObject cache)
         {
-            var visibleArea = GetOnScreenVisibleArea(destination, 0);
+            var visibleArea = GetOnScreenVisibleArea(context);
 
-            base.DrawRenderObject(cache, ctx, visibleArea.Pixels);
+            base.DrawRenderObject(context.WithDestination(visibleArea.Pixels), cache);
         }
 
         protected SkiaControl _emptyView;
@@ -526,9 +525,7 @@ namespace DrawnUi.Maui.Draw
 
         protected bool ViewportWasChanged { get; set; }
 
-        protected virtual bool DrawChild(
-            SkiaDrawingContext context,
-            SKRect dest, ISkiaControl child, float scale)
+        protected virtual bool DrawChild(DrawingContext ctx, ISkiaControl child)
         {
             child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
 
@@ -555,7 +552,7 @@ namespace DrawnUi.Maui.Draw
 
             }
 
-            child.Render(context, dest, scale);
+            child.Render(ctx);
 
             return true;
         }
@@ -975,14 +972,14 @@ namespace DrawnUi.Maui.Draw
             base.ApplyMeasureResult();
         }
 
-        protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+        protected override void Draw(DrawingContext context)
         {
             if (IsDisposed || IsDisposing)
                 return;
 
             ApplyMeasureResult();
 
-            base.Draw(context, destination, scale);
+            base.Draw(context);
 
             ViewportWasChanged = false;
         }
@@ -990,35 +987,35 @@ namespace DrawnUi.Maui.Draw
         bool _trackWasDrawn;
 
 
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected override void Paint(DrawingContext ctx)
         {
-            if (destination.Width == 0 || destination.Height == 0)
+            if (ctx.Destination.Width == 0 || ctx.Destination.Height == 0)
                 return;
 
             if (Type == LayoutType.Grid || IsStack)
             {
-                SetupRenderingWithComposition(ctx, destination);
+                SetupRenderingWithComposition(ctx);
             }
             else
             {
                 DirtyChildrenTracker.Clear();
             }
 
-            base.Paint(ctx, destination, scale, arguments);
+            base.Paint(ctx);
 
-            var rectForChildren = ContractPixelsRect(destination, scale, Padding);
+            var rectForChildren = ContractPixelsRect(ctx.Destination, ctx.Scale, Padding);
 
             var drawnChildrenCount = 0;
 
             //placeholder for empty
             if (_emptyView != null && _emptyView.IsVisible)
             {
-                drawnChildrenCount = DrawViews(ctx, rectForChildren, scale);
+                drawnChildrenCount = DrawViews(ctx.WithDestination(rectForChildren));
             }
             else
             if (Type == LayoutType.Grid) //todo add optimization for OptimizeRenderingViewport
             {
-                drawnChildrenCount = DrawChildrenGrid(ctx, rectForChildren, scale);
+                drawnChildrenCount = DrawChildrenGrid(ctx.WithDestination(rectForChildren));
             }
             else
             //stacklayout
@@ -1029,18 +1026,18 @@ namespace DrawnUi.Maui.Draw
                 {
                     if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
                     {
-                        drawnChildrenCount = DrawList(structure, ctx, rectForChildren, scale);
+                        drawnChildrenCount = DrawList(ctx.WithDestination(rectForChildren), structure);
                     }
                     else
                     {
-                        drawnChildrenCount = DrawStack(structure, ctx, rectForChildren, scale);
+                        drawnChildrenCount = DrawStack(ctx.WithDestination(rectForChildren), structure);
                     }
                 }
             }
             else
             //absolute layout
             {
-                drawnChildrenCount = DrawViews(ctx, rectForChildren, scale);
+                drawnChildrenCount = DrawViews(ctx.WithDestination(rectForChildren));
             }
 
             ApplyIsEmpty(drawnChildrenCount == 0);
@@ -1077,7 +1074,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="destination"></param>
-        void SetupRenderingWithComposition(SkiaDrawingContext ctx, SKRect destination)
+        void SetupRenderingWithComposition(DrawingContext ctx)
         {
             if (UsingCacheType == SkiaCacheType.ImageComposite)
             {
@@ -1086,7 +1083,7 @@ namespace DrawnUi.Maui.Draw
 
                 var previousCache = RenderObjectPrevious;
 
-                if (previousCache != null && ctx.IsRecycled) //not the first draw
+                if (previousCache != null && ctx.Context.IsRecycled) //not the first draw
                 {
                     IsRenderingWithComposition = true;
 
@@ -1144,7 +1141,7 @@ namespace DrawnUi.Maui.Draw
 
 
 
-        protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
+        protected override int DrawViews(DrawingContext context)
         {
             var drawn = 0;
 
@@ -1153,23 +1150,23 @@ namespace DrawnUi.Maui.Draw
                 if (ChildrenFactory.TemplatesAvailable)
                 {
                     using var children = ChildrenFactory.GetViewsIterator();
-                    drawn = RenderViewsList(children, context, destination, scale, debug);
+                    drawn = RenderViewsList(context, children);
                 }
                 if (drawn == 0 && _emptyView != null && _emptyView.IsVisible)
                 {
                     var drawViews = new List<SkiaControl> { _emptyView };
-                    RenderViewsList(drawViews, context, destination, scale);
+                    RenderViewsList(context, drawViews);
                     return 0;
                 }
             }
             else
             {
-                drawn = base.DrawViews(context, destination, scale, debug);
+                drawn = base.DrawViews(context);
 
                 if (drawn == 0 && _emptyView != null && _emptyView.IsVisible)
                 {
                     var drawViews = new List<SkiaControl> { _emptyView };
-                    RenderViewsList(drawViews, context, destination, scale);
+                    RenderViewsList(context, drawViews);
                     return 0;
                 }
             }

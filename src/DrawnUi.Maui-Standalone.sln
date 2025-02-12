@@ -1,0 +1,69 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui", "Engine\Maui\DrawnUi.Maui.csproj", "{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{68A72DAA-3C71-4D0E-8B86-9D7C2D853E2A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8ED244C1-6F60-4954-BC7F-98D827EA31CC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SomeBenchmarks", "test\SomeBenchmarks\SomeBenchmarks.csproj", "{441DFECC-C694-4B72-BA21-CE40E810A575}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "test\UnitTests\UnitTests.csproj", "{1BECAEC0-5BCC-49FE-AB0B-0677D78C3D0B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{386EDAF8-4CCB-436C-BF31-CC1B2AA81E6E}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine", "Engine", "{0BD07AED-AF7D-4F6D-918F-A5830CB81A06}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DrawnUi.Shared", "Engine\Shared\DrawnUi.Shared.shproj", "{83974207-9636-48DD-BDB3-98EDECBB1107}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCalendar", "..\..\..\TestCalendar\TestCalendar.csproj", "{779CAA5D-9AED-B5D2-99DE-3884AE4650D6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{441DFECC-C694-4B72-BA21-CE40E810A575}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{441DFECC-C694-4B72-BA21-CE40E810A575}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{441DFECC-C694-4B72-BA21-CE40E810A575}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{441DFECC-C694-4B72-BA21-CE40E810A575}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BECAEC0-5BCC-49FE-AB0B-0677D78C3D0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BECAEC0-5BCC-49FE-AB0B-0677D78C3D0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BECAEC0-5BCC-49FE-AB0B-0677D78C3D0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BECAEC0-5BCC-49FE-AB0B-0677D78C3D0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{779CAA5D-9AED-B5D2-99DE-3884AE4650D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{779CAA5D-9AED-B5D2-99DE-3884AE4650D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{779CAA5D-9AED-B5D2-99DE-3884AE4650D6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{779CAA5D-9AED-B5D2-99DE-3884AE4650D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{779CAA5D-9AED-B5D2-99DE-3884AE4650D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{779CAA5D-9AED-B5D2-99DE-3884AE4650D6}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC} = {0BD07AED-AF7D-4F6D-918F-A5830CB81A06}
+		{441DFECC-C694-4B72-BA21-CE40E810A575} = {8ED244C1-6F60-4954-BC7F-98D827EA31CC}
+		{1BECAEC0-5BCC-49FE-AB0B-0677D78C3D0B} = {8ED244C1-6F60-4954-BC7F-98D827EA31CC}
+		{83974207-9636-48DD-BDB3-98EDECBB1107} = {0BD07AED-AF7D-4F6D-918F-A5830CB81A06}
+		{779CAA5D-9AED-B5D2-99DE-3884AE4650D6} = {68A72DAA-3C71-4D0E-8B86-9D7C2D853E2A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {329E3D0C-A3F7-4A3E-B61C-6B2D1BD7F708}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Engine\Shared\Shared.projitems*{83974207-9636-48dd-bdb3-98edecbb1107}*SharedItemsImports = 13
+		Engine\Shared\Shared.projitems*{dbaa2877-4197-44ce-9a0b-9548c1c2c4dc}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

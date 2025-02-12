@@ -408,10 +408,10 @@
             }
         }
 
-        public override void Render(SkiaDrawingContext context, SKRect destination, float scale)
+        public override void Render(DrawingContext context)
         {
-            Superview = context.Superview;
-            _destination = destination;
+            Superview = context.Context.Superview;
+            _destination = context.Destination;
 
             if (Content != null)
             {
@@ -433,20 +433,19 @@
                     SubscribeToRenderingChain(true);
             }
 
-            base.Render(context, destination, scale);
+            base.Render(context);
         }
 
 #if ANDROID || WINDOWS
-
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected override void Paint(DrawingContext ctx)
         {
-            base.Paint(ctx, destination, scale, arguments); //paint background color
+            base.Paint(ctx);
 
             if (ShowSnapshot && CachedBitmap != null)
             {
                 //Debug.WriteLine($"Drawing snapshot at {destination}");
                 //todo apply transforms
-                DrawSnapshot(ctx.Canvas, destination);
+                DrawSnapshot(ctx.Context.Canvas, ctx.Destination);
             }
         }
 

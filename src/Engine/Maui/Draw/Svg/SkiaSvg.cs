@@ -1081,12 +1081,12 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected override void Paint(DrawingContext ctx)
         {
-            base.Paint(ctx, destination, scale, arguments); //paint background color
+            base.Paint(ctx); //paint background color
 
-            var area = ContractPixelsRect(destination, scale, Padding);
+            var scale = ctx.Scale;
+            var area = ContractPixelsRect(ctx.Destination, ctx.Scale, Padding);
 
             if (Svg != null)// !string.IsNullOrEmpty(LoadedString))
             {
@@ -1108,14 +1108,14 @@ namespace DrawnUi.Maui.Draw
                     AddShadow(RenderingPaint, scale);
                     RenderingPaint.ColorFilter = SKColorFilter.CreateBlendMode(TintColor.ToSKColor(), SKBlendMode.SrcIn);
 
-                    ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
+                    ctx.Context.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
                 }
                 else
                 if (UseGradient) //todo use standart gradient property instead
                 {
                     RenderingPaint.ColorFilter = null; //todo dispose
 
-                    ctx.Canvas.DrawPicture(Svg.Picture, ref matrix);
+                    ctx.Context.Canvas.DrawPicture(Svg.Picture, ref matrix);
 
                     //will draw gradient rectangle above
 
@@ -1133,7 +1133,7 @@ namespace DrawnUi.Maui.Draw
                         SKShaderTileMode.Clamp);
 
                     RenderingPaint.BlendMode = GradientBlendMode;
-                    ctx.Canvas.DrawRect(Destination, RenderingPaint);
+                    ctx.Context.Canvas.DrawRect(Destination, RenderingPaint);
                 }
                 else
                 {
@@ -1153,18 +1153,18 @@ namespace DrawnUi.Maui.Draw
                             Clipping.Invoke(clipPath, Destination);
                         }
 
-                        var saved = ctx.Canvas.Save();
-                        ClipSmart(ctx.Canvas, clipPath);
+                        var saved = ctx.Context.Canvas.Save();
+                        ClipSmart(ctx.Context.Canvas, clipPath);
 
-                        ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
+                        ctx.Context.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
 
-                        ctx.Canvas.RestoreToCount(saved);
+                        ctx.Context.Canvas.RestoreToCount(saved);
 
                         clipPath.Dispose();
                     }
                     else
                     {
-                        ctx.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
+                        ctx.Context.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
                     }
                 }
             }

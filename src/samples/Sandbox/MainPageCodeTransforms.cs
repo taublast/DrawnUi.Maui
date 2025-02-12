@@ -5,12 +5,11 @@ namespace Sandbox
 {
     public class TestCanvas : Canvas
     {
-        protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+        protected override void Draw(DrawingContext context)
         {
-            base.Draw(context, destination, scale);
+            base.Draw(context);
 
-
-            SKCanvas canvas = context.Canvas;
+            SKCanvas canvas = context.Context.Canvas;
 
             canvas.Clear(SKColors.Maroon);
 

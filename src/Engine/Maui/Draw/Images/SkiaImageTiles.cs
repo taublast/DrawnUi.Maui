@@ -211,9 +211,7 @@ public class SkiaImageTiles : SkiaImage
         NeedRecalculate = true;
     }
 
-    protected override void DrawSource(SkiaDrawingContext ctx, LoadedImageSource source, SKRect dest,
-        float scale,
-        TransformAspect stretch,
+    protected override void DrawSource(DrawingContext ctx, LoadedImageSource source, TransformAspect stretch,
         DrawImageAlignment horizontal = DrawImageAlignment.Center, DrawImageAlignment vertical = DrawImageAlignment.Center,
         SKPaint paint = null)
     {
@@ -225,7 +223,10 @@ public class SkiaImageTiles : SkiaImage
 
         try
         {
-            //existing code
+            var dest = ctx.Destination;
+            var scale = ctx.Scale;
+
+            //existing base code
             if (AspectScale == SKPoint.Empty)
             {
                 throw new ApplicationException("AspectScale is not set");
@@ -271,7 +272,7 @@ public class SkiaImageTiles : SkiaImage
                         left + TileWidthPixels,
                         top + TileHeightPixels);
 
-                    Tile.Render(ctx, tileDest, scale);
+                    Tile.Render(ctx.WithDestination(tileDest));
                 }
             }
 

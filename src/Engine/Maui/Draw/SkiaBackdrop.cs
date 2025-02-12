@@ -142,12 +142,15 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
         }
     }
 
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
         if (IsDisposed || IsDisposing)
         {
             return;
         }
+
+        var destination = ctx.Destination;
+        var scale = ctx.Scale;
 
         if (NeedInvalidateImageFilter)
         {
@@ -165,9 +168,9 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
 
         if (destination.Width > 0 && destination.Height > 0)
         {
-            DrawViews(ctx, destination, scale);
+            DrawViews(ctx);
 
-            PaintTintBackground(ctx.Canvas, destination);
+            PaintTintBackground(ctx.Context.Canvas, destination);
 
             BuildPaint();
 
@@ -189,7 +192,7 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
                         var offsetY = CacheSource.DrawingRect.Top - this.DrawingRect.Top;
                         destination.Offset(offsetX, offsetY);
 
-                        cache.Draw(ctx.Surface.Canvas, destination, ImagePaint);
+                        cache.Draw(ctx.Context.Surface.Canvas, destination, ImagePaint);
                     }
                 }
                 else
@@ -198,22 +201,22 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
                     SKImage snapshot;
                     if (UseContext)
                     {
-                        ctx.Canvas.Flush();
-                        snapshot = ctx.Surface.Snapshot(new((int)destination.Left, (int)destination.Top,
+                        ctx.Context.Canvas.Flush();
+                        snapshot = ctx.Context.Surface.Snapshot(new((int)destination.Left, (int)destination.Top,
                             (int)destination.Right, (int)destination.Bottom));
                     }
                     else
                     {
                         //notice we read from the real canvas and we write to ctx.Canvas which can be cache
-                        ctx.Superview.CanvasView.Surface.Canvas.Flush();
-                        snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left,
+                        ctx.Context.Superview.CanvasView.Surface.Canvas.Flush();
+                        snapshot = ctx.Context.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left,
                             (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
                     }
 
                     if (snapshot != null && Snapshot != snapshot)
                     {
                         var kill = Snapshot;
-                        ctx.Canvas.DrawImage(snapshot, destination, ImagePaint);
+                        ctx.Context.Canvas.DrawImage(snapshot, destination, ImagePaint);
                         Snapshot = snapshot;
                         kill?.Dispose();
                     }

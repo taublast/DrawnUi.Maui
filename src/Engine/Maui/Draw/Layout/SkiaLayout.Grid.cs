@@ -55,12 +55,13 @@ public partial class SkiaLayout
     /// <param name="destination"></param>
     /// <param name="scale"></param>
     /// <returns></returns>
-    protected virtual int DrawChildrenGrid(SkiaDrawingContext context, SKRect destination, float scale)
+    protected virtual int DrawChildrenGrid(DrawingContext context)
     {
         var drawn = 0;
         if (GridStructure != null)
         {
-            //var visibleArea = RenderingViewport;
+            var destination = context.Destination;
+            var scale = context.Scale;
 
             using var cells = ChildrenFactory.GetViewsIterator();
 
@@ -89,7 +90,7 @@ public partial class SkiaLayout
                 {
                     if (DirtyChildrenInternal.Contains(child))
                     {
-                        DrawChild(context, cellRect, child, scale);
+                        DrawChild(context.WithDestination(cellRect), child);
                     }
                     else
                     {
@@ -98,7 +99,7 @@ public partial class SkiaLayout
                 }
                 else
                 {
-                    DrawChild(context, cellRect, child, scale);
+                    DrawChild(context.WithDestination(cellRect), child);
                 }
 
                 tree.Add(new SkiaControlWithRect(child, cellRect, child.LastDrawnAt, drawn));

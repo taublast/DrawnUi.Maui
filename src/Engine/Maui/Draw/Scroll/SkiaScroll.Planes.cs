@@ -1,102 +1,91 @@
 ﻿#define TMP
 
+using System.Collections.Immutable;
+using System.Numerics;
+
 namespace DrawnUi.Maui.Draw
 {
-
-    public class Plane
-    {
-        public float OffsetY;
-        public float OffsetX;
-
-        public SKColor BackgroundColor { get; set; } = SKColors.Transparent;
-        public RenderObject RenderObject { get; set; }
-        public SKRect Source { get; set; }
-        public SKRect Destination { get; set; }
-        public SKRect LastDrawnAt { get; set; }
-        public CachedObject CachedObject { get; set; }
-        public SKSurface Surface { get; set; }
-        public bool IsReady { get; set; } = false;
-        public string Id { get; set; }
-
-        public void Reset(SKSurface surface, SKRect source)
-        {
-            OffsetX = 0;
-            OffsetY = 0;
-            Surface = surface;
-            Source = source;
-            Invalidate();
-        }
-
-        public void Invalidate()
-        {
-            IsReady = false;
-            LastDrawnAt = SKRect.Empty;
-        }
-    }
-
     public partial class SkiaScroll
     {
+        //todo complete and move
+
+        public override void UpdateByChild(SkiaControl control)
+        {
+            if (UsePlanes)
+            {
+                //todo somehow detect which plane is invalidated upon child on it
+                return;
+
+                PlaneCurrent?.Invalidate();
+                PlaneForward?.Invalidate();
+            }
+
+            base.UpdateByChild(control);
+        }
+
+        //todo use when context size is bigger than 2 viewports?
+        public virtual bool UsePlanes
+        {
+            get
+            {
+                return false;
+
+                return Content != null && Orientation != ScrollOrientation.Both;
+            }
+        }
+
+
         protected Plane PlaneCurrent { get; set; }
         protected Plane PlaneForward { get; set; }
         protected Plane PlaneBackward { get; set; }
         protected int _planeWidth;
         protected int _planeHeight;
         protected int _planePrepareThreshold;
+        private float swappedDownAt;
+        private float swappedUpAt;
 
-        // create 2 planes for rendering inside scroll. one plane is around 2 sizes of viewport.
-        // when scrolling we will draw 2 objects with scroll offset max:plane A and plane B.
-        // at start we draw children on plane A then we prepare plane B in background.
-        // when scrolling we drawn the visible part of plane A nd maybe the plane B if itis around to appear.
-        // when plane A is out of view we move it to the end of plane B and prepare it for next drawing.
-
-        /// <summary>
-        /// Prepare the plane for virtual scroll
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="plane"></param>
-        /// <param name="destination"></param>
-        /// <param name="scale"></param>
-        /// <param name="zoomedScale"></param>
-        /// <param name="arguments"></param>
-        protected virtual void PreparePlane(
-            SkiaDrawingContext context,
-            Plane plane, SKRect destination,
-            float scale, float zoomedScale,
-            object arguments)
+        public override ScaledRect GetOnScreenVisibleArea(DrawingContext context, Vector2 inflateByPixels = default)
         {
-            plane.Source = destination;
-            plane.Destination = destination;
 
-            var recordingContext = context.CreateForRecordingImage(plane.Surface, destination.Size);
-            recordingContext.Canvas.Translate(-destination.Left, -destination.Top);
-
-            recordingContext.Canvas.Clear(plane.BackgroundColor);
-
-            PaintViews(recordingContext, destination, destination, scale, zoomedScale, arguments);
-
-            recordingContext.Canvas.Flush();
-
-            DisposeObject(plane.CachedObject);
-
-            plane.CachedObject = new CachedObject(
-                SkiaCacheType.Image,
-                plane.Surface,
-                new SKRect(0, 0, _planeWidth, _planeHeight),
-                destination)
+            if (UsePlanes)
             {
-                PreserveSourceFromDispose = true
-            };
+                //todo
+                if (context.GetArgument(ContextArguments.Viewport.ToString()) is SKRect insideViewport)
+                {
+                    //yay!!!!!
+                    //we can return the plane rect!!!!
+                    Debug.WriteLine($"UsePlanes area: {insideViewport}");
 
-            plane.IsReady = true;
+                    return ScaledRect.FromPixels(insideViewport, _zoomedScale);
+                }
+
+                return ScaledRect.FromPixels(context.Destination, _zoomedScale);
+            }
+
+            if (Virtualisation != VirtualisationType.Disabled) //true by default
+            {
+                //passing visible area to be rendered
+                //when scrolling we will pass changed area to be rendered
+                //most suitable for large content
+                var inflated = ContentViewport.Pixels;
+                inflated.Inflate(inflateByPixels.X, inflateByPixels.Y);
+                return ScaledRect.FromPixels(inflated, RenderingScale);
+            }
+            else
+            {
+                //passing the whole area to be rendered.
+                //when scrolling we will just translate it
+                //most suitable for small content
+                return ContentRectWithOffset;
+
+                //absoluteViewPort = new SKRect(Viewport.Pixels.Left, Viewport.Pixels.Top,
+                //    Viewport.Pixels.Left + ContentSize.Pixels.Width, Viewport.Pixels.Top + ContentSize.Pixels.Height);
+            }
         }
 
 
-        protected float PlanesPreviousScrollOffset;
-
         public virtual void InitializePlanes()
         {
-            PlanesPreviousScrollOffset = 0;
-
             var viewportWidth = Viewport.Pixels.Width;
             var viewportHeight = Viewport.Pixels.Height;
 
@@ -105,26 +94,42 @@ namespace DrawnUi.Maui.Draw
             _planeHeight = (int)(viewportHeight * 2);
             _planePrepareThreshold = (int)(_planeHeight / 2);
 
+            float offsetX = 0, offsetY = 0;
+
+            if (Orientation == ScrollOrientation.Vertical)
+            {
+                offsetY = _planeHeight;
+            }
+            else if (Orientation == ScrollOrientation.Horizontal)
+            {
+                offsetX = _planeWidth;
+            }
+
             PlaneCurrent = new Plane
             {
                 Id="Current",
                 Surface = SKSurface.Create(new SKImageInfo(_planeWidth, _planeHeight)),
                 BackgroundColor = SKColors.Coral,
+                Destination = new (0,0,_planeWidth, _planeHeight)
             };
 
             PlaneForward = new Plane
             {
                 Id = "Forward",
-                OffsetY = _planeHeight,
+                OffsetX = offsetX,
+                OffsetY = offsetY,
                 Surface = SKSurface.Create(new SKImageInfo(_planeWidth, _planeHeight)),
+                Destination = new(0, 0, _planeWidth, _planeHeight),
                 BackgroundColor = SKColors.DarkKhaki,
             };
 
             PlaneBackward = new Plane
             {
                 Id = "Backward",
-                OffsetY = -_planeHeight,
+                OffsetX = -offsetX,
+                OffsetY = -offsetY,
                 Surface = SKSurface.Create(new SKImageInfo(_planeWidth, _planeHeight)),
+                Destination = new(0, 0, _planeWidth, _planeHeight),
                 BackgroundColor = SKColors.DarkCyan,
             };
 
@@ -156,20 +161,11 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        private ScaledRect ReportVisibleAreToContent(float arg)
+        private ScaledRect ReportVisibleAreToContent(Vector2 arg)
         {
             return ScaledRect.FromPixels(PlaneCurrent.Destination, RenderingScale);
         }
 
-        public override void UpdateByChild(SkiaControl control)
-        {
-            base.UpdateByChild(control);
-
-            //todo somehow detect which plane is invalidated upon child on it
-
-            PlaneCurrent?.Invalidate();
-            PlaneForward?.Invalidate();
-        }
 
         private int visibleAreaCaller = 0;
         protected bool _buildingPlaneB;
@@ -192,13 +188,7 @@ namespace DrawnUi.Maui.Draw
             public CancellationTokenSource Cts;    
         }
 
-        protected void TriggerPreparePlane(
-            string planeId,
-            SkiaDrawingContext context,
-            SKRect destination,
-            float scale,
-            float zoomedScale,
-            object arguments)
+        protected void TriggerPreparePlane(DrawingContext context, string planeId)
         {
             if (!_planeBuildStates.TryGetValue(planeId, out var state))
             {
@@ -217,6 +207,7 @@ namespace DrawnUi.Maui.Draw
             state.IsBuilding = true;
             var token = state.Cts.Token;
 
+            var clone = context; //always clone struct from arguments for another thread!
             Task.Run(async () =>
             {
                 try
@@ -230,7 +221,7 @@ namespace DrawnUi.Maui.Draw
                     var plane = GetPlaneById(planeId);
                     Debug.WriteLine($"Run prepare plane {plane?.Id}");
 
-                    PreparePlane(context, plane, destination, scale, zoomedScale, arguments);
+                    PreparePlane(clone.WithArgument(new("BThread", true)), plane);
                 }
                 catch (OperationCanceledException)
                 {
@@ -272,33 +263,6 @@ namespace DrawnUi.Maui.Draw
             };
 
 
-        protected void TriggerPreparePlaneC(
-            SkiaDrawingContext context,
-            SKRect destination,
-            float scale, float zoomedScale,
-            object arguments)
-        {
-            if (_buildingPlaneC)
-                return;
-
-            _buildingPlaneC = true;
-
-            async Task DoMeasure()
-            {
-                await _lockPlanesWorker.WaitAsync();
-
-                Debug.WriteLine($"Run repare {PlaneForward.Id}");
-                PreparePlane(context, PlaneBackward, destination, scale, zoomedScale, arguments);
-
-                _lockPlanesWorker.Release();
-
-                _buildingPlaneC = false;
-            }
-
-            Task.Run(DoMeasure).ConfigureAwait(false);
-        }
-
-
         /// <summary>
         /// Viewport scrolled
         /// </summary>
@@ -324,8 +288,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected void OrderToPreparePlaneForwardInBackground(
-            SkiaDrawingContext context, SKRect destination, float scale, float zoomedScale, object arguments)
+        protected void OrderToPreparePlaneForwardInBackground(DrawingContext context)
         {
             if (_planeBuildStates["Forward"].IsBuilding
                 //|| !_availablePlaneB
@@ -337,24 +300,12 @@ namespace DrawnUi.Maui.Draw
             }
 
             Debug.WriteLine("Preparing PLANE B..");
-
-            var source = PlaneCurrent.Source;
-            if (Orientation == ScrollOrientation.Vertical)
-            {
-                source.Offset(0, -_planeHeight);
-            }
-            else if (Orientation == ScrollOrientation.Horizontal)
-            {
-                source.Offset(-_planeWidth, 0);
-            }
-
-            TriggerPreparePlane("Forward", context, destination, scale, zoomedScale, arguments);
+            TriggerPreparePlane(context, "Forward");
 
             //_availablePlaneB = false;
         }
 
-        protected void OrderToPreparePlaneBackwardInBackground(
-            SkiaDrawingContext context, SKRect destination, float scale, float zoomedScale, object arguments)
+        protected void OrderToPreparePlaneBackwardInBackground(DrawingContext context)
         {
             if (_planeBuildStates["Backward"].IsBuilding        
                 //|| !_availablePlaneB                          
@@ -366,75 +317,23 @@ namespace DrawnUi.Maui.Draw
             }
  
             Debug.WriteLine("Preparing PLANE C..");
-
-            var source = PlaneCurrent.Source;
-            if (Orientation == ScrollOrientation.Vertical)
-            {
-                source.Offset(0, -_planeHeight);
-            }
-            else if (Orientation == ScrollOrientation.Horizontal)
-            {
-                source.Offset(-_planeWidth, 0);
-            }
-
-            TriggerPreparePlane("Backward", context, destination, scale, zoomedScale, arguments);
-
-            //_availablePlaneC = false;
+            TriggerPreparePlane(context,"Backward");
         }
 
 
 
-#if !TMP
 
-        public virtual bool UsePlanes
+        public virtual void DrawPlanes(DrawingContext context)
         {
-            get
+            if (PlaneCurrent == null)
             {
-                return Content != null && Content.IsTemplated && Orientation != ScrollOrientation.Both;
-            }
-        }
-
-#else
-
-        public virtual bool UsePlanes
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-#endif
-
-
-        public virtual void DrawPlanes(
-            SkiaDrawingContext context,
-            SKRect destination, float scale, float zoomedScale,
-            object arguments)
-        {
-            if (Content == null)
-            {
-                return;
-            }
-
-            if (PlaneCurrent == null || PlaneForward == null)
-            {
-                if (Content is SkiaLayout layout)
-                {
-                    layout.Virtualisation = VirtualisationType.Managed;
-                }
-                else
-                {
-                    return;
-                }
                 InitializePlanes();
-                if (PlaneCurrent == null || PlaneForward == null)
+                if (PlaneCurrent == null || PlaneForward == null || PlaneBackward == null)
                 {
                     Super.Log("Failed to create planes");
                     return;
                 }
             }
-
             var displayRectA = new SKRect(
                 ContentRectWithOffset.Pixels.Left,
                 ContentRectWithOffset.Pixels.Top,
@@ -442,59 +341,192 @@ namespace DrawnUi.Maui.Draw
                 ContentRectWithOffset.Pixels.Top + _planeHeight
             );
 
-            if (ScrollingDirection == LinearDirectionType.Forward && PlaneCurrent.Destination.Bottom + InternalViewportOffset.Pixels.Y <= ContentViewport.Pixels.Top)
-            {
-                SwapPlanes();
-            }
-            // Similarly for scrolling up:
-            else
-            if (ScrollingDirection == LinearDirectionType.Backward && PlaneCurrent.Destination.Top + InternalViewportOffset.Pixels.Y >= ContentViewport.Pixels.Bottom)
-            {
-                SwapPlanes();
-            }
-
-
             if (!PlaneCurrent.IsReady)
             {
                 Debug.WriteLine("Preparing PLANE A..");
-                PreparePlane(context, PlaneCurrent, displayRectA, scale, zoomedScale, arguments);
+                PreparePlane(context.WithDestination(displayRectA), PlaneCurrent);
             }
 
             // Draw the planes
+            var currentScroll = InternalViewportOffset.Pixels.Y;
 
-            // A
+            var rectBase = new SKRect(0, 0, _planeWidth, _planeHeight);
+            rectBase.Offset(DrawingRect.Left, DrawingRect.Top);
 
-            var showA = PlaneCurrent.Source;
-            showA.Offset(0, InternalViewportOffset.Pixels.Y);
+            var rectCurrent = rectBase;
+            var rectForward = rectBase;
+            var rectBackward = rectBase;
 
-            if (ContentViewport.Pixels.IntersectsWithInclusive(showA))
+            // Apply vertical offsets
+            rectCurrent.Offset(0, currentScroll + PlaneCurrent.OffsetY);
+            rectForward.Offset(0, currentScroll + PlaneForward.OffsetY);
+            rectBackward.Offset(0, currentScroll + PlaneBackward.OffsetY);
+
+            //  if we've moved enough can re-allow a swap
+            if (swappedDownAt != 0 && Math.Abs(currentScroll - swappedDownAt) > _planeHeight / 2f)
             {
-                PlaneCurrent.CachedObject.Draw(context.Canvas, showA.Left, showA.Top, null);
+                swappedDownAt = 0;
+            }
+            if (swappedUpAt != 0 && Math.Abs(currentScroll - swappedUpAt) > _planeHeight / 2f)
+            {
+                swappedUpAt = 0;
             }
 
-            // B
-
-            if (PlaneForward.IsReady)
+            // Draw Backward
+            if (PlaneBackward.IsReady)
             {
-                var showB = showA;
-                showB.Offset(0, _planeHeight);
-
-                if (ContentViewport.Pixels.IntersectsWithInclusive(showB))
+                if (ContentViewport.Pixels.IntersectsWithInclusive(rectBackward))
                 {
-                    PlaneForward.CachedObject.Draw(context.Canvas, showB.Left, showB.Top, null);
+                    PlaneBackward.CachedObject.Draw(context.Context.Canvas, rectBackward.Left, rectBackward.Top, null);
+                    PlaneBackward.LastDrawnAt = rectBackward;
                 }
             }
             else
             {
-                OrderToPreparePlaneForwardInBackground(context, destination, scale, zoomedScale, arguments);
+                OrderToPreparePlaneBackwardInBackground(context);
+                PlaneBackward.CachedObject?.Draw(context.Context.Canvas, rectBackward.Left, rectBackward.Top, null);
             }
+
+            // Draw Current
+            if (ContentViewport.Pixels.IntersectsWith(rectCurrent))
+            {
+                PlaneCurrent.CachedObject.Draw(context.Context.Canvas, rectCurrent.Left, rectCurrent.Top, null);
+                PlaneCurrent.LastDrawnAt = rectCurrent;
+            }
+
+            // Draw Forward
+            if (PlaneForward.IsReady)
+            {
+                if (ContentViewport.Pixels.IntersectsWith(rectForward))
+                {
+                    PlaneForward.CachedObject.Draw(context.Context.Canvas, rectForward.Left, rectForward.Top, null);
+                    PlaneForward.LastDrawnAt = rectForward;
+                }
+            }
+            else
+            {
+                OrderToPreparePlaneForwardInBackground(context);
+                PlaneForward.CachedObject?.Draw(context.Context.Canvas, rectForward.Left, rectForward.Top, null); //repeat last image for fast scrolling
+            }
+
+            // --------------------------------------------------------------------
+            // Multiple-swap logic to handle fast scrolling
+            // --------------------------------------------------------------------
+            while (true)
+            {
+                bool swappedSomething = false;
+
+                // ------------------------------------------------------
+                // then swap down as many times as needed
+                // ------------------------------------------------------
+                while (rectForward.MidY <= (Viewport.Pixels.Height / 2))
+                {
+                    //if (swappedDownAt != 0)
+                    //    break;
+
+                    SwapDown();
+                    swappedDownAt = currentScroll;
+                    swappedSomething = true;
+
+                    rectForward = rectBase;
+                    rectForward.Offset(0, currentScroll + PlaneForward.OffsetY);
+                }
+
+                // ------------------------------------------------------
+                // swap up as many times as needed
+                // ------------------------------------------------------
+                while (rectBackward.MidY > Viewport.Pixels.Height / 2)
+                {
+                    //if (swappedUpAt != 0)
+                    //    break;
+
+                    SwapUp();
+                    swappedUpAt = currentScroll;
+                    swappedSomething = true;
+
+                    rectBackward = rectBase;
+                    rectBackward.Offset(0, currentScroll - rectBackward.Top);
+                }
+
+                if (!swappedSomething)
+                    break;
+            }
+
+
         }
 
-        
-        protected virtual void PaintOnPlane(Plane plane, SKRect destination, float scale, float zoomedScale, object arguments,
-            SkiaDrawingContext recordingContext)
+
+
+        // -----------------------------------------------------------
+        // SWAP LOGIC
+        // -----------------------------------------------------------
+        private void SwapDown()
         {
-            PaintViews(recordingContext, destination, destination, scale, zoomedScale, arguments);
+            // forward ↑ current
+            // current ↑ backward
+            // backward ↓ forward + invalidate
+            var temp = PlaneBackward;
+            PlaneBackward = PlaneCurrent;
+            PlaneCurrent = PlaneForward;
+            PlaneForward = temp;
+            PlaneForward.OffsetY = PlaneCurrent.OffsetY + _planeHeight;
+            PlaneBackward.OffsetY = PlaneCurrent.OffsetY - _planeHeight;
+            PlaneForward.Invalidate();
+        }
+
+        private void SwapUp()
+        {
+            var temp = PlaneForward;
+            PlaneForward = PlaneCurrent;
+            PlaneCurrent = PlaneBackward;
+            PlaneBackward = temp;
+            PlaneBackward.OffsetY = PlaneCurrent.OffsetY - _planeHeight;
+            PlaneForward.OffsetY = PlaneCurrent.OffsetY + _planeHeight;
+            PlaneBackward.Invalidate();
+        }
+
+        protected virtual void PreparePlane(DrawingContext context, Plane plane)
+        {
+            var destination = plane.Destination;
+           
+            var recordingContext = context.CreateForRecordingImage(plane.Surface, destination.Size);
+
+            var viewport = plane.Destination;
+            viewport.Offset(InternalViewportOffset.Pixels.X, InternalViewportOffset.Pixels.Y);
+            viewport.Offset(DrawingRect.Left, DrawingRect.Top);
+            viewport.Offset(plane.OffsetX, plane.OffsetY);
+
+            var c = recordingContext.Context.Canvas.Save();
+            recordingContext.Context.Canvas.Translate(-viewport.Left, -viewport.Top);
+            recordingContext.Context.Canvas.Clear(plane.BackgroundColor);
+
+            PaintOnPlane(recordingContext
+                .WithDestination(viewport)
+                .WithArguments(
+                    new(ContextArguments.Plane.ToString(), plane.Id),
+                    new(ContextArguments.Viewport.ToString(), viewport)), plane);
+
+            recordingContext.Context.Canvas.RestoreToCount(c);
+
+            recordingContext.Context.Canvas.Flush();
+            DisposeObject(plane.CachedObject);
+            plane.CachedObject = new CachedObject(
+                SkiaCacheType.Image,
+                plane.Surface,
+                new SKRect(0, 0, _planeWidth, _planeHeight),
+                destination)
+            {
+                PreserveSourceFromDispose = true
+            };
+
+            plane.IsReady = true;
+        }
+        
+
+
+        protected virtual void PaintOnPlane(DrawingContext context, Plane plane)
+        {
+            PaintViews(context);
         }
 
     }

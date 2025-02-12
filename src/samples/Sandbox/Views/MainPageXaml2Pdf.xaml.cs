@@ -115,9 +115,10 @@ namespace Sandbox.Views
                                      Width = reportSize.Width,
                                      Height = reportSize.Height
                                  };
-
+                                 var c1 = new DrawingContext(ctx, new SKRect(0, 0, reportSize.Width, reportSize.Height),
+                                     scale);
                                  //with no async stuff this is enough for most cases
-                                 layout.Render(ctx, new SKRect(0, 0, reportSize.Width, reportSize.Height), scale);
+                                 layout.Render(c1);
 
                                  //in our specific case we have images inside that load async,
                                  //so wait for them and render final result
@@ -128,7 +129,9 @@ namespace Sandbox.Views
 
                                  //second rendering required to reflect layout changes
                                  canvas.Clear(SKColor.Empty);
-                                 layout.Render(ctx, new SKRect(0, 0, reportSize.Width, reportSize.Height), scale);
+                                 var c = new DrawingContext(ctx, new SKRect(0, 0, reportSize.Width, reportSize.Height),
+                                     scale, null);
+                                 layout.Render(c);
                              }
                              document.EndPage();
                              document.Close();

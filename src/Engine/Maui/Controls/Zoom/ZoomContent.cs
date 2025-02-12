@@ -183,21 +183,20 @@ public class ZoomContent : ContentLayout, ISkiaGestureListener
         return (scaledDestination, useScale);
     }
 
-
-    protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
+    protected override int DrawViews(DrawingContext context)
     {
         var offset = OffsetImage;
-        if (scale == 1)
+        if (context.Scale == 1)
         {
             offset = SKPoint.Empty;
         }
 
-        var use = ComputeContentScale(destination, scale, offset);
+        var use = ComputeContentScale(context.Destination, context.Scale, offset);
 
         var useScale = use.Scale;
         if (use.Scale < 1)
         {
-            Content.Scale = 1 + ViewportZoom - scale;
+            Content.Scale = 1 + ViewportZoom - context.Scale;
             useScale = 1;
         }
         else
@@ -205,7 +204,7 @@ public class ZoomContent : ContentLayout, ISkiaGestureListener
             Content.Scale = 1;
         }
 
-        return base.DrawViews(context, use.ScaledDestination, useScale, debug);
+        return base.DrawViews(context.WithDestination(use.ScaledDestination).WithScale(useScale));
     }
 
     protected override ScaledSize MeasureContent(IEnumerable<SkiaControl> children, SKRect destination, float scale)

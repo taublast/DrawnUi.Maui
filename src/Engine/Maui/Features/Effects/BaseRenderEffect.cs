@@ -4,7 +4,7 @@ public class BaseChainedEffect : SkiaEffect, IRenderEffect
 {
     public SKPaint Paint { get; set; }
 
-    public virtual ChainEffectResult Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public virtual ChainEffectResult Draw(DrawingContext ctx, Action<DrawingContext> drawControl)
     {
         return ChainEffectResult.Default;
     }

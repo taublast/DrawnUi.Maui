@@ -95,9 +95,9 @@ public class SvgSpan : TextSpan, IDrawnTextSpan
 
     protected SkiaSvg Control = new();
 
-    void IDrawnTextSpan.Render(SkiaDrawingContext ctx, SKRect destination, float scale)
+    void IDrawnTextSpan.Render(DrawingContext ctx)
     {
-        Control.Render(ctx, destination, scale);
+        Control.Render(ctx);
     }
 
     public override void Dispose()

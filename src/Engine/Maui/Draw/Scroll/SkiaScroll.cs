@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections.Immutable;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DrawnUi.Maui.Infrastructure.Helpers;
@@ -2126,49 +2127,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public override ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0)
-        {
-
-            if (UsePlanes)
-            {
-                if (PlaneCurrent != null && PlaneForward != null)
-                {
-                    //return different areas upon destination
-                    if (pixelsDestination.IntersectsWith(PlaneForward.Destination))
-                    {
-                        //return ScaledRect.FromPixels(PlaneA.Destination, RenderingScale);
-
-                        var show = PlaneForward.Destination;
-                        show.Offset(0, -_planeHeight);
-                        return ScaledRect.FromPixels(show, RenderingScale);
-                    }
-                    else
-                    {
-                        return ScaledRect.FromPixels(PlaneCurrent.Destination, RenderingScale);
-                    }
-                }
-            }
-
-            if (Virtualisation != VirtualisationType.Disabled) //true by default
-            {
-                //passing visible area to be rendered
-                //when scrolling we will pass changed area to be rendered
-                //most suitable for large content
-                var inflated = ContentViewport.Pixels;
-                inflated.Inflate(inflateByPixels, inflateByPixels);
-                return ScaledRect.FromPixels(inflated, RenderingScale);
-            }
-            else
-            {
-                //passing the whole area to be rendered.
-                //when scrolling we will just translate it
-                //most suitable for small content
-                return ContentRectWithOffset;
-
-                //absoluteViewPort = new SKRect(Viewport.Pixels.Left, Viewport.Pixels.Top,
-                //    Viewport.Pixels.Left + ContentSize.Pixels.Width, Viewport.Pixels.Top + ContentSize.Pixels.Height);
-            }
-        }
+     
 
         float _loadMoreTriggeredAt;
 
@@ -2293,43 +2252,48 @@ namespace DrawnUi.Maui.Draw
 
         }
 
-        //public void CheckSnap(bool force = false)
-        //{
-        //	if (this.SnapToChildren != SnapToChildrenType.Disabled && !_isSnapping)
-        //		Task.Run(() =>
-        //		{
-        //			if (!_isSnapping)
-        //				SnapIfNeeded(force);
-        //		}).ConfigureAwait(false);
-        //}
+ 
 
-        protected virtual void PaintViews(SkiaDrawingContext recordingContext,
-            SKRect destination, SKRect childRectWithOffset,
-            float scale, float zoomedScale,
-            object arguments)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ctx"></param>
+        protected virtual void PaintViews(DrawingContext ctx)
         {
-            base.Paint(recordingContext, destination, scale, arguments);
-            DrawViews(recordingContext, childRectWithOffset, zoomedScale);
+            base.Paint(ctx);
+
+            if (ctx.GetArgument(ContextArguments.Scale.ToString()) is float zoomedScale)
+            {
+                ctx = ctx.WithScale(zoomedScale);
+            }
+            if (ctx.GetArgument(ContextArguments.Rect.ToString()) is SKRect childRectWithOffset)
+            {
+                ctx = ctx.WithDestination(childRectWithOffset);
+            }
+
+            DrawViews(ctx);
         }
 
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected override void Paint(DrawingContext ctx)
         {
-
-            if (destination.Width == 0 || destination.Height == 0)
+            if (ctx.Destination.Width == 0 || ctx.Destination.Height == 0)
                 return;
+
+            var c = ctx.WithArguments(
+                new(ContextArguments.Scale.ToString(), _zoomedScale),
+                new(ContextArguments.Rect.ToString(), ContentRectWithOffset.Pixels));
 
             if (UsePlanes)
             {
-                DrawPlanes(ctx, destination, scale, _zoomedScale, arguments);
+                DrawPlanes(c);
             }
             else
             {
-                PaintViews(ctx, destination, ContentRectWithOffset.Pixels, scale, _zoomedScale, arguments);
+                PaintViews(c);
             }
         }
 
-        protected override void Draw(SkiaDrawingContext ctx, SKRect destination,
-            float scale)
+        protected override void Draw(DrawingContext context)
         {
             isDrawing = true;
 
@@ -2343,14 +2307,13 @@ namespace DrawnUi.Maui.Draw
                 }
             }
 
-            Arrange(destination, SizeRequest.Width, SizeRequest.Height, scale);
+            Arrange(context.Destination, SizeRequest.Width, SizeRequest.Height, context.Scale);
 
-            _zoomedScale = (float)(scale * ViewportZoom);
+            _zoomedScale = (float)(context.Scale * ViewportZoom);
 
             if (!CheckIsGhost())
             {
-
-                ApplyPannedOffsetWithVelocity(ctx);
+                ApplyPannedOffsetWithVelocity(context.Context);
 
                 var posX = (float)(ViewportOffsetX * _zoomedScale);
                 var posY = (float)(ViewportOffsetY * _zoomedScale);
@@ -2358,7 +2321,7 @@ namespace DrawnUi.Maui.Draw
                 var needReposition =
                                      _updatedViewportForPixY != posY
                                  || _updatedViewportForPixX != posX
-                                 || _destination != destination;
+                                 || _destination != context.Destination;
 
                 //reposition viewport (scroll)
                 if (needReposition)
@@ -2405,26 +2368,25 @@ namespace DrawnUi.Maui.Draw
 
                     _updatedViewportForPixX = posX;
                     _updatedViewportForPixY = posY;
-                    _destination = destination;
+                    _destination = context.Destination;
 
-                    if (PositionViewport(DrawingRect, new(posX, posY), _zoomedScale, (float)scale))
+                    if (PositionViewport(DrawingRect, new(posX, posY), _zoomedScale, context.Scale))
                     {
                         InvalidateCache();
                     }
                 }
 
-                DrawWithClipAndTransforms(ctx, DrawingRect, DrawingRect, true,
-                    true, (ctx) =>
-                    {
-                        PaintWithEffects(ctx, DrawingRect, scale, CreatePaintArguments());
-                    });
+                var clone = AddPaintArguments(context).WithDestination(DrawingRect);
+                DrawWithClipAndTransforms(clone, DrawingRect, true, true, (ctx) =>
+                {
+                    PaintWithEffects(ctx);
+                });
 
-                //Paint(context, DrawingRect, scale, CreatePaintArguments());
             }
 
-            FinalizeDrawingWithRenderObject(ctx, scale);
+            FinalizeDrawingWithRenderObject(context);
 
-            OnDrawn(ctx, DrawingRect, _zoomedScale, scale);
+            OnDrawn(context.WithScale(_zoomedScale));
 
             isDrawing = false;
         }
@@ -2440,15 +2402,14 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected override int DrawViews(SkiaDrawingContext context, SKRect destination, float scale,
-            bool debug = false)
+        protected override int DrawViews(DrawingContext context)
         {
-            if (destination.Width <= 0 || destination.Height <= 0)
+            if (context.Destination.Width <= 0 || context.Destination.Height <= 0)
             {
                 return 0;
             }
 
-            int Render(SkiaDrawingContext ctx)
+            int Render(DrawingContext ctx)
             {
                 var drawViews = new List<SkiaControl>(5) { Content };
                 var offsetFooter = 0f;
@@ -2479,9 +2440,14 @@ namespace DrawnUi.Maui.Draw
                         }
 
                         // Adjust the header hitbox for parallax
-                        var headerTop = destination.Top - Header.UseTranslationY;
+                        var headerTop = context.Destination.Top - Header.UseTranslationY;
                         var headerBottom = headerTop + Header.MeasuredSize.Pixels.Height;
-                        var hitboxHeader = new SKRect(destination.Left, (float)headerTop, destination.Right, (float)headerBottom);
+
+                        var hitboxHeader = new SKRect(
+                            context.Destination.Left,
+                            (float)headerTop,
+                            context.Destination.Right,
+                            (float)headerBottom);
 
                         if (!HeaderBehind && !HeaderSticky)
                         {
@@ -2508,7 +2474,7 @@ namespace DrawnUi.Maui.Draw
                         if (HeaderBehind)
                         {
                             if (hitboxHeader.IntersectsWith(this.Viewport.Pixels))
-                                Header.Render(context, DrawingRect, scale);
+                                Header.Render(context);
                         }
 
                     }
@@ -2534,9 +2500,9 @@ namespace DrawnUi.Maui.Draw
                         }
 
                         // Adjust the header hitbox for parallax in horizontal orientation
-                        var headerLeft = destination.Left + Header.UseTranslationX;
+                        var headerLeft = ctx.Destination.Left + Header.UseTranslationX;
                         var headerRight = headerLeft + Header.MeasuredSize.Pixels.Width;
-                        var hitboxHeader = new SKRect((float)headerLeft, destination.Top, (float)headerRight, destination.Bottom);
+                        var hitboxHeader = new SKRect((float)headerLeft, ctx.Destination.Top, (float)headerRight, ctx.Destination.Bottom);
 
                         if (!HeaderBehind && !HeaderSticky)
                         {
@@ -2564,7 +2530,7 @@ namespace DrawnUi.Maui.Draw
                         if (HeaderBehind)
                         {
                             if (hitboxHeader.IntersectsWith(this.Viewport.Pixels))
-                                Header.Render(context, DrawingRect, scale);
+                                Header.Render(ctx);
                         }
 
                     }
@@ -2579,10 +2545,11 @@ namespace DrawnUi.Maui.Draw
                         {
                             offsetFooter += Content.DrawingRect.Height;
                         }
-                        Footer.AddTranslationY = offsetFooter / scale;
+                        Footer.AddTranslationY = offsetFooter / ctx.Scale;
 
                         //draw only if onscreen
-                        var hitbox = new SKRect(destination.Left, destination.Top + offsetFooter, destination.Right, destination.Top + offsetFooter + Footer.MeasuredSize.Pixels.Height);
+                        var hitbox = new SKRect(ctx.Destination.Left, ctx.Destination.Top + offsetFooter,
+                            ctx.Destination.Right, ctx.Destination.Top + offsetFooter + Footer.MeasuredSize.Pixels.Height);
                         if (hitbox.IntersectsWith(this.Viewport.Pixels))
                             drawViews.Add(Footer);
                     }
@@ -2593,25 +2560,27 @@ namespace DrawnUi.Maui.Draw
                         {
                             offsetFooter += Content.DrawingRect.Width;
                         }
-                        Footer.AddTranslationX = offsetFooter / scale;
+                        Footer.AddTranslationX = offsetFooter / ctx.Scale;
 
                         //draw only if onscreen
-                        var hitbox = new SKRect(destination.Left + offsetFooter, destination.Top, destination.Left + offsetFooter + Footer.MeasuredSize.Pixels.Width, destination.Bottom);
+                        var hitbox = new SKRect(
+                            ctx.Destination.Left + offsetFooter,
+                            ctx.Destination.Top,
+                            ctx.Destination.Left + offsetFooter + Footer.MeasuredSize.Pixels.Width,
+                            ctx.Destination.Bottom);
                         if (hitbox.IntersectsWith(this.Viewport.Pixels))
                             drawViews.Add(Footer);
                     }
-
-
                 }
 
-                return RenderViewsList(drawViews, ctx, destination, scale);
+                return RenderViewsList(ctx, drawViews);
             }
 
             var drawn = Render(context);
 
             if (Header != null && HeaderSticky && !HeaderBehind)
             {
-                Header.Render(context, DrawingRect, scale);
+                Header.Render(context);
                 drawn++;
             }
 
@@ -2621,7 +2590,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     if (refreshIndicator.CanDraw)
                     {
-                        refreshIndicator.Render(context, DrawingRect, scale);
+                        refreshIndicator.Render(context);
                         drawn++;
                     }
                 }
@@ -2996,7 +2965,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         public override void InvalidateViewport()
         {
             //owns viewport
@@ -3025,9 +2993,7 @@ namespace DrawnUi.Maui.Draw
         private long _offsetMovedTime;
 
 
-        protected virtual void OnDrawn(SkiaDrawingContext context, SKRect destination,
-            float zoomedScale,
-            double scale = 1.0)
+        protected virtual void OnDrawn(DrawingContext context)
         {
 
         }

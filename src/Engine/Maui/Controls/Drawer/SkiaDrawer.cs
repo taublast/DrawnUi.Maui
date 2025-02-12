@@ -447,15 +447,12 @@ namespace DrawnUi.Maui.Controls
             ScrollToOffset(snap, Vector2.Zero, Animated && WasDrawn);
         }
 
-
-
-
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected override void Paint(DrawingContext ctx)
         {
             if (IsOpen && !LayoutReady)
                 return;
 
-            base.Paint(ctx, destination, scale, arguments);
+            base.Paint(ctx);
         }
 
 

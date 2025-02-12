@@ -75,7 +75,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     /// </summary>
     /// <param name="ctx"></param>
     /// <param name="destination"></param>
-    public virtual void Render(SkiaDrawingContext ctx, SKRect destination)
+    public virtual void Render(DrawingContext ctx)
     {
         if (PaintWithShader == null)
         {
@@ -87,11 +87,11 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
             };
         }
 
-        SKImage source = GetPrimaryTextureImage(ctx, destination);
+        SKImage source = GetPrimaryTextureImage(ctx.Context, ctx.Destination);
 
-        PaintWithShader.Shader = CreateShader(ctx, destination, source);
+        PaintWithShader.Shader = CreateShader(ctx, source);
 
-        ctx.Canvas.DrawRect(destination, PaintWithShader);
+        ctx.Context.Canvas.DrawRect(ctx.Destination, PaintWithShader);
     }
 
     protected SKShader PrimaryTexture;
@@ -111,8 +111,10 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         return PrimaryTexture;
     }
 
-    public virtual SKShader CreateShader(SkiaDrawingContext ctx, SKRect destination, SKImage source)
+    public virtual SKShader CreateShader(DrawingContext ctx, SKImage source)
     {
+        SKRect destination = ctx.Destination;
+
         //we need to
         //step 1: compile shader
         //step 2: prepare textures to pass
@@ -129,11 +131,11 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         {
             if (source == null && AutoCreateInputTexture)
             {
-                source = CreateSnapshot(ctx, destination);
+                source = CreateSnapshot(ctx.Context, destination);
             }
 
             var killTextures = TexturesUniforms;
-            TexturesUniforms = CreateTexturesUniforms(ctx, destination, CompilePrimaryTexture(source));
+            TexturesUniforms = CreateTexturesUniforms(ctx.Context, destination, CompilePrimaryTexture(source));
 
 #if SKIA3
             if (Parent != null && killTextures != null)

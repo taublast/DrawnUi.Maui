@@ -98,7 +98,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
         return ItemsSource.Count * 2;
     }
 
-    protected override bool DrawChild(SkiaDrawingContext context, SKRect destination, ISkiaControl child, float scale)
+    protected override bool DrawChild(DrawingContext ctx, ISkiaControl child)
     {
         if (child is SkiaControl control &&
             child.CanDraw &&
@@ -106,6 +106,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
         {
 
             var scroll = (SkiaScroll)Parent;
+            var destination = ctx.Destination;
 
             var dest = new SKRect(destination.Left, destination.Top,
                 destination.Left + child.MeasuredSize.Pixels.Width,
@@ -151,7 +152,7 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
             var applyMatrix = control.Helper3d.Matrix;
             control.Helper3d.Restore();
 #endif
-            var saved = context.Canvas.Save();
+            var saved = ctx.Context.Canvas.Save();
 
             //set pivot point
             var DrawingMatrix = SKMatrix.CreateTranslation(-centerX, -centerY);
@@ -163,9 +164,9 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
             DrawingMatrix = DrawingMatrix.PostConcat(SKMatrix.CreateTranslation(centerX, centerY));
 
             //apply parent's transforms
-            DrawingMatrix = DrawingMatrix.PostConcat(context.Canvas.TotalMatrix);
+            DrawingMatrix = DrawingMatrix.PostConcat(ctx.Context.Canvas.TotalMatrix);
 
-            context.Canvas.SetMatrix(DrawingMatrix);
+            ctx.Context.Canvas.SetMatrix(DrawingMatrix);
 
             if (child is IInsideWheelStack cell)
             {
@@ -186,15 +187,15 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
                 cell.OnPositionChanged(offsetRatio, isSelected);
             }
 
-            var ret = base.DrawChild(context, dest, child, scale);
+            var ret = base.DrawChild(ctx.WithDestination(dest), child);
 
-            context.Canvas.RestoreToCount(saved);
+            ctx.Context.Canvas.RestoreToCount(saved);
 
             return true;
         }
         else
         {
-            return base.DrawChild(context, destination, child, scale);
+            return base.DrawChild(ctx, child);
         }
 
 

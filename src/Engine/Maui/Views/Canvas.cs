@@ -429,11 +429,11 @@ public class Canvas : DrawnView, IGestureListener
     {
         base.OnDisposing();
 
-        Context = null;
+        DebugPointer?.Dispose();
+        DebugPointer = null;
     }
 
-    protected SkiaDrawingContext Context;
-
+    protected DrawingContext Context;
 
     private bool _debugIsPressed;
     private bool _debugIsDown;
@@ -797,27 +797,27 @@ public class Canvas : DrawnView, IGestureListener
 
 
 
-    protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+    protected override void Draw(DrawingContext context)
     {
         Context = context;
 
         if (BackgroundColor != null)
         {
-            context.Canvas.Clear(BackgroundColor.ToSKColor());
+            context.Context.Canvas.Clear(BackgroundColor.ToSKColor());
         }
         else
-            context.Canvas.Clear();
+            context.Context.Canvas.Clear();
 
         double widthRequest = WidthRequest;
         double heightRequest = HeightRequest;
 
-        Arrange(destination, widthRequest, heightRequest, scale);
+        Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
 
         if (!IsGhost)
         {
-            PaintTintBackground(context.Canvas);
+            PaintTintBackground(context.Context.Canvas);
 
-            base.Draw(context, Destination, scale);
+            base.Draw(context.WithDestination(Destination));
 
             if (GesturesDebugColor.Alpha > 0 && _PressedPosition != SKPoint.Empty)
             {
@@ -838,7 +838,8 @@ public class Canvas : DrawnView, IGestureListener
                 var offsetHandX = (float)(-13) * RenderingScale;
                 var offsetHandY = (float)(-6) * RenderingScale;
                 DebugPointer.Parent = this;
-                DebugPointer.Render(Context, new SKRect(_PressedPosition.X + offsetHandX, _PressedPosition.Y + offsetHandY, Context.Width, Context.Height), RenderingScale);
+
+                DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX, _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
             }
         }
 

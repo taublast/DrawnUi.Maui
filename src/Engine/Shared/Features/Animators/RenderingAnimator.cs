@@ -6,9 +6,9 @@
 public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 {
 
-	public bool Render(IDrawnBase control, SkiaDrawingContext context, double scale)
+	public bool Render(DrawingContext context, IDrawnBase control)
 	{
-		return OnRendering(control, context, scale);
+		return OnRendering(context, control);
 	}
 
 	/// <summary>
@@ -18,7 +18,7 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 	/// <param name="context"></param>
 	/// <param name="scale"></param>
 	/// <returns></returns>
-	protected virtual bool OnRendering(IDrawnBase control, SkiaDrawingContext context, double scale)
+	protected virtual bool OnRendering(DrawingContext context, IDrawnBase control)
 	{
 		return false;
 	}
@@ -47,7 +47,7 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 		return position;
 	}
 
-	protected static void DrawWithClipping(SkiaDrawingContext context, IDrawnBase control, SKPoint selfDrawingLocation, Action draw)
+	protected static void DrawWithClipping(DrawingContext context, IDrawnBase control, SKPoint selfDrawingLocation, Action draw)
 	{
 
 		void Render()
@@ -58,12 +58,12 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 				{
 					ApplyControlClipping(control, clipInsideParent, selfDrawingLocation);
 
-					var count = context.Canvas.Save();
+					var count = context.Context.Canvas.Save();
 
-					control.ClipSmart(context.Canvas, clipInsideParent);
+					control.ClipSmart(context.Context.Canvas, clipInsideParent);
 					draw();
 
-					context.Canvas.RestoreToCount(count);
+					context.Context.Canvas.RestoreToCount(count);
 				}
 			}
 			else
@@ -74,7 +74,7 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 
 		if (control is SkiaControl skiaControl)
 		{
-			skiaControl.DrawWithClipAndTransforms(context, context.Canvas.LocalClipBounds, control.DrawingRect, false,
+			skiaControl.DrawWithClipAndTransforms(context.WithDestination( context.Context.Canvas.LocalClipBounds), control.DrawingRect, false,
 				true, (ctx) =>
 				{
 					Render();

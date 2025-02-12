@@ -59,9 +59,9 @@ public class SkiaGif : AnimatedFramesRenderer
         return base.GetAnimatorParent();
     }
 
-    protected override void RenderFrame(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void RenderFrame(DrawingContext ctx)
     {
-        DrawViews(ctx, destination, scale); //just draw our Display
+        DrawViews(ctx); //just draw our Display
     }
 
     /// <summary>

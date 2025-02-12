@@ -217,13 +217,14 @@ namespace DrawnUi.Maui.Draw
 
         #region PAINT
 
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected override void Paint(DrawingContext ctx)
         {
             lock (LockFont)
             {
-                base.Paint(ctx, destination, scale, arguments);
+                base.Paint(ctx);
 
-                var rectForChildren = ContractPixelsRect(destination, scale, Padding);
+                var scale = ctx.Scale;
+                var rectForChildren = ContractPixelsRect(ctx.Destination, scale, Padding);
 
                 if (GliphsInvalidated)
                 {
@@ -233,7 +234,7 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 if (Lines != null)
-                    DrawLines(ctx, PaintDefault, SKPoint.Empty, Lines, rectForChildren, scale);
+                    DrawLines(ctx.WithDestination(rectForChildren), PaintDefault, SKPoint.Empty, Lines);
             }
         }
 
@@ -310,22 +311,23 @@ namespace DrawnUi.Maui.Draw
         }
 
         public void DrawLines(
-       SkiaDrawingContext ctx,
+       DrawingContext ctx,
        SKPaint paintDefault,
        SKPoint startOffset,
-       IEnumerable<TextLine> lines,
-       SKRect rectDraw,
-       double scale)
+       IEnumerable<TextLine> lines)
         {
             if (paintDefault == null || paintDefault.Color == null)
                 return;
+
+            SKRect rectDraw = ctx.Destination;
+            double scale = ctx.Scale;
 
             const char SpaceChar = ' ';
 
             paintDefault.Color = TextColor.ToSKColor();
             paintDefault.BlendMode = this.FillBlendMode;
 
-            var canvas = ctx.Canvas;
+            var canvas = ctx.Context.Canvas;
             SKPaint paintStroke = null;
 
             if (StrokeColor.Alpha != 0 && StrokeWidth > 0)
@@ -562,7 +564,7 @@ namespace DrawnUi.Maui.Draw
                         }
 
                         SKRect drawnDestination = new SKRect(drawnX, drawnY, drawnX + lineSpan.Size.Width, line.Bounds.Bottom);
-                        drawn.Render(ctx, drawnDestination, (float)scale);
+                        drawn.Render(ctx.WithDestination(drawnDestination));
                     }
                     else if (lineSpan.NeedsShaping)
                     {

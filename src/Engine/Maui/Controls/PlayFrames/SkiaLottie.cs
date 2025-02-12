@@ -259,9 +259,7 @@ public class SkiaLottie : AnimatedFramesRenderer
         set => SetValue(SourceProperty, value);
     }
 
-
-    protected override void RenderFrame(SkiaDrawingContext ctx, SKRect destination, float scale,
-        object arguments)
+    protected override void RenderFrame(DrawingContext ctx)
     {
         if (IsDisposing || IsDisposed)
             return;
@@ -269,7 +267,7 @@ public class SkiaLottie : AnimatedFramesRenderer
         if (Animation is Animation lottie)
             lock (_lockSource)
             {
-                lottie.Render(ctx.Canvas, DrawingRect);
+                lottie.Render(ctx.Context.Canvas, DrawingRect);
                 Monitor.PulseAll(_lockSource);
             }
     }

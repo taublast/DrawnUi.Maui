@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppoMobi.Maui.Navigation", 
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DrawnUi.Shared", "..\Engine\Shared\DrawnUi.Shared.shproj", "{83974207-9636-48DD-BDB3-98EDECBB1107}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCalendar", "..\samples\TestCalendar\TestCalendar.csproj", "{E6145141-2527-33AF-166F-13ACF1FA3665}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -132,6 +134,12 @@ Global
 		{3C522D1A-08B4-4C19-BD62-9B76EA48954D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C522D1A-08B4-4C19-BD62-9B76EA48954D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C522D1A-08B4-4C19-BD62-9B76EA48954D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6145141-2527-33AF-166F-13ACF1FA3665}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6145141-2527-33AF-166F-13ACF1FA3665}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6145141-2527-33AF-166F-13ACF1FA3665}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E6145141-2527-33AF-166F-13ACF1FA3665}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6145141-2527-33AF-166F-13ACF1FA3665}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6145141-2527-33AF-166F-13ACF1FA3665}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,6 +160,7 @@ Global
 		{2E88BBBF-6532-4B03-B6D5-447A91C89DF8} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
 		{957EBC7B-E4CF-4FC0-B50A-F633BC897D22} = {AD293048-146D-4854-8F0C-5C42C5BFE0F5}
 		{83974207-9636-48DD-BDB3-98EDECBB1107} = {22EE9E7A-55C6-4F9F-9878-9376F7BC1DCC}
+		{E6145141-2527-33AF-166F-13ACF1FA3665} = {0DDE4AC1-3D8B-42C8-88F2-6F45B89F72F2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08E673B7-06BF-468C-8D6C-2D1AA8E4A8CA}

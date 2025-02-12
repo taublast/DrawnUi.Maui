@@ -4214,20 +4214,18 @@ namespace DrawnUi.Maui.Draw
 
         protected bool IsRendering { get; set; }
 
-        public virtual void Render(SkiaDrawingContext context,
-            SKRect destination,
-            float scale)
+        public virtual void Render(DrawingContext context)
         {
             if (IsDisposing || IsDisposed)
                 return;
 
             IsRendering = true;
 
-            Superview = context.Superview;
-            RenderingScale = scale;
+            Superview = context.Context.Superview;
+            RenderingScale = context.Scale;
             NeedUpdate = false;
 
-            OnBeforeDrawing(context, destination, scale);
+            OnBeforeDrawing(context);
 
             if (WillInvalidateMeasure)
             {
@@ -4235,35 +4233,30 @@ namespace DrawnUi.Maui.Draw
                 InvalidateMeasureInternal();
             }
 
-            if (RenderObjectNeedsUpdate && !UsesCacheDoubleBuffering)
+            if (Tag == "Slider")
             {
-                //disposal etc inside setter
-                RenderObject = null;
+                var top = 1;
             }
 
-            if (
-                //RenderedAtDestination.Width != destination.Width ||
-                //RenderedAtDestination.Height != destination.Height ||
-                !CompareRectsSize(RenderedAtDestination, destination, 0.5f) ||
-                RenderingScale != scale)
+            if (RenderObjectNeedsUpdate && !UsesCacheDoubleBuffering)
             {
-                //NeedMeasure = true;
-                RenderedAtDestination = destination;
+                RenderObject = null; //disposal inside setter
+            }
+
+            if (!CompareRectsSize(RenderedAtDestination, context.Destination, 0.5f)
+                || RenderingScale != context.Scale)
+            {
+                RenderedAtDestination = context.Destination;
             }
 
             if (RenderedAtDestination != SKRect.Empty)
             {
-                //moved to superview
-                //ExecuteAnimators(context.FrameTimeNanos);// Super.GetNanoseconds()
-
-                Draw(context, destination, scale);
+                Draw(context);
             }
 
-            //UpdateLocked = false;
+            OnAfterDrawing(context);
 
-            OnAfterDrawing(context, destination, scale);
-
-            Rendered?.Invoke(this, null);
+            Rendered?.Invoke(this, EventArgs.Empty);
 
             IsRendering = false;
         }
@@ -4280,14 +4273,12 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected object LockRenderObject = new();
 
-        public virtual object CreatePaintArguments()
+        public virtual DrawingContext AddPaintArguments(DrawingContext ctx)
         {
-            return null;
+            return ctx;
         }
 
-        protected virtual void OnBeforeDrawing(SkiaDrawingContext context,
-            SKRect destination,
-            float scale)
+        protected virtual void OnBeforeDrawing(DrawingContext context)
         {
             InvalidatedParent = false;
             _invalidatedParentPostponed = false;
@@ -4301,9 +4292,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        protected virtual void OnAfterDrawing(SkiaDrawingContext context,
-            SKRect destination,
-            float scale)
+        protected virtual void OnAfterDrawing(DrawingContext context)
         {
             if (_invalidatedParentPostponed)
             {
@@ -4318,10 +4307,10 @@ namespace DrawnUi.Maui.Draw
 
             LastDrawnAt = DrawingRect;
 
-            X = LastDrawnAt.Location.X / scale;
-            Y = LastDrawnAt.Location.Y / scale;
+            X = LastDrawnAt.Location.X / context.Scale;
+            Y = LastDrawnAt.Location.Y / context.Scale;
 
-            ExecutePostAnimators(context, scale);
+            ExecutePostAnimators(context);
 
             if (NeedRemeasuring || NeedMeasure)
             {
@@ -4350,14 +4339,13 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+        protected virtual void Draw(DrawingContext context)
         {
             if (IsDisposing || IsDisposed)
                 return;
 
             DrawUsingRenderObject(context,
-                SizeRequest.Width, SizeRequest.Height,
-                destination, scale);
+                SizeRequest.Width, SizeRequest.Height);
         }
 
         //public new static readonly BindableProperty XProperty
@@ -4412,7 +4400,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         /// <param name="context"></param>
         /// <param name="scale"></param>
-        protected void FinalizeDrawingWithRenderObject(SkiaDrawingContext context, double scale)
+        protected void FinalizeDrawingWithRenderObject(DrawingContext context)
         {
 
 
@@ -4467,7 +4455,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public SKRect LastDrawnAt { get; protected set; }
 
-        public void ExecutePostAnimators(SkiaDrawingContext context, double scale)
+        public void ExecutePostAnimators(DrawingContext context)
         {
             try
             {
@@ -4482,7 +4470,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     //if (effect.IsRunning)
                     {
-                        if (effect.Render(this, context, scale))
+                        if (effect.Render(context, this))
                         {
                             Repaint();
                         }
@@ -4507,11 +4495,11 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         /// <param name="debug"></param>
         /// <returns></returns>
-        protected virtual int DrawViews(SkiaDrawingContext context, SKRect destination, float scale, bool debug = false)
+        protected virtual int DrawViews(DrawingContext context)
         {
             var children = GetOrderedSubviews();
 
-            return RenderViewsList((IList<SkiaControl>)children, context, destination, scale, debug);
+            return RenderViewsList(context, (IList<SkiaControl>)children);
         }
 
 
@@ -4555,12 +4543,11 @@ namespace DrawnUi.Maui.Draw
 #endif
 
         public void DrawWithClipAndTransforms(
-         SkiaDrawingContext ctx,
-         SKRect destination,
+        DrawingContext ctx,
          SKRect transformsArea,
          bool useOpacity,
          bool useClipping,
-         Action<SkiaDrawingContext> draw)
+         Action<DrawingContext> draw)
         {
             bool isClipping = (WillClipBounds || Clipping != null
                                               || ClippedBy != null || HasPlatformClip()) && useClipping;
@@ -4573,7 +4560,7 @@ namespace DrawnUi.Maui.Draw
 
                 if (HasPlatformClip())
                 {
-                    GetPlatformClip(_preparedClipBounds, destination, RenderingScale);
+                    GetPlatformClip(_preparedClipBounds, ctx.Destination, RenderingScale);
                 }
                 else
                 if (ClippedBy != null)
@@ -4582,8 +4569,8 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                 {
-                    _preparedClipBounds.AddRect(destination);
-                    Clipping?.Invoke(_preparedClipBounds, destination);
+                    _preparedClipBounds.AddRect(ctx.Destination);
+                    Clipping?.Invoke(_preparedClipBounds, ctx.Destination);
                 }
             }
 
@@ -4605,29 +4592,29 @@ namespace DrawnUi.Maui.Draw
 
                 if (applyOpacity || CustomizeLayerPaint != null)
                 {
-                    CustomizeLayerPaint?.Invoke(_paintWithOpacity, destination);
-                    restore = ctx.Canvas.SaveLayer(_paintWithOpacity);
+                    CustomizeLayerPaint?.Invoke(_paintWithOpacity, ctx.Destination);
+                    restore = ctx.Context.Canvas.SaveLayer(_paintWithOpacity);
                 }
                 else
                 {
-                    restore = ctx.Canvas.Save();
+                    restore = ctx.Context.Canvas.Save();
                 }
 
                 if (needTransform)
                 {
-                    ApplyTransforms(ctx, transformsArea);
+                    ApplyTransforms(ctx.Context, transformsArea);
                 }
 
                 if (isClipping)
                 {
 
                     //ctx.Canvas.ClipPath(_preparedClipBounds, SKClipOperation.Intersect, false);
-                    ClipSmart(ctx.Canvas, _preparedClipBounds);
+                    ClipSmart(ctx.Context.Canvas, _preparedClipBounds);
                 }
 
                 draw(ctx);
 
-                ctx.Canvas.RestoreToCount(restore);
+                ctx.Context.Canvas.RestoreToCount(restore);
             }
             else
             {
@@ -4839,15 +4826,15 @@ namespace DrawnUi.Maui.Draw
         protected bool NeedRemeasuring;
 
 
-        protected virtual void PaintWithShadows(SkiaDrawingContext ctx, Action render)
+        protected virtual void PaintWithShadows(DrawingContext ctx, Action render)
         {
             if (PlatformShadow != null)
             {
                 using var paint = new SKPaint() { IsAntialias = true, FilterQuality = SKFilterQuality.Medium };
                 SetupShadow(paint, PlatformShadow, RenderingScale);
-                var saved = ctx.Canvas.SaveLayer(paint);
+                var saved = ctx.Context.Canvas.SaveLayer(paint);
                 render();
-                ctx.Canvas.RestoreToCount(saved);
+                ctx.Context.Canvas.RestoreToCount(saved);
             }
             else
             {
@@ -4856,17 +4843,16 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        protected virtual void PaintWithEffects(
-            SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected virtual void PaintWithEffects(DrawingContext ctx)
         {
             if (IsDisposed || IsDisposing)
                 return;
 
-            void PaintWithEffectsInternal(SkiaDrawingContext context)
+            void PaintWithEffectsInternal(DrawingContext context)
             {
                 PaintWithShadows(context, () =>
                 {
-                    Paint(context, destination, scale, arguments);
+                    Paint(ctx);
                 });
             }
 
@@ -4886,16 +4872,16 @@ namespace DrawnUi.Maui.Draw
                 var effectImage = EffectImageFilter;
 
                 if (effectImage != null)
-                    _paintWithEffects.ImageFilter = effectImage.CreateFilter(destination);
+                    _paintWithEffects.ImageFilter = effectImage.CreateFilter(ctx.Destination);
                 else
                     _paintWithEffects.ImageFilter = null;//will be disposed internally by effect
 
                 if (effectColor != null)
-                    _paintWithEffects.ColorFilter = effectColor.CreateFilter(destination);
+                    _paintWithEffects.ColorFilter = effectColor.CreateFilter(ctx.Destination);
                 else
                     _paintWithEffects.ColorFilter = null;
 
-                var restore = ctx.Canvas.SaveLayer(_paintWithEffects);
+                var restore = ctx.Context.Canvas.SaveLayer(_paintWithEffects);
 
                 bool hasDrawnControl = false;
 
@@ -4905,7 +4891,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     foreach (var effect in renderers)
                     {
-                        var chainedEffectResult = effect.Draw(destination, ctx, PaintWithEffectsInternal);
+                        var chainedEffectResult = effect.Draw(ctx, PaintWithEffectsInternal);
                         if (chainedEffectResult.DrawnControl)
                             hasDrawnControl = true;
                     }
@@ -4916,7 +4902,7 @@ namespace DrawnUi.Maui.Draw
                     PaintWithEffectsInternal(ctx);
                 }
 
-                ctx.Canvas.RestoreToCount(restore);
+                ctx.Context.Canvas.RestoreToCount(restore);
             }
             else
             {
@@ -4933,12 +4919,12 @@ namespace DrawnUi.Maui.Draw
         /// <param name="ctx"></param>
         /// <param name="destination"></param>
         /// <param name="scale"></param>
-        protected virtual void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected virtual void Paint(DrawingContext ctx)
         {
-            if (destination.Width == 0 || destination.Height == 0 || IsDisposing || IsDisposed)
+            if (ctx.Destination.Width == 0 || ctx.Destination.Height == 0 || IsDisposing || IsDisposed)
                 return;
 
-            PaintTintBackground(ctx.Canvas, destination);
+            PaintTintBackground(ctx.Context.Canvas, ctx.Destination);
 
             WasDrawn = true;
         }
@@ -5048,21 +5034,17 @@ namespace DrawnUi.Maui.Draw
         /// Drawing cache, applying clip and transforms as well
         /// </summary>
         /// <param name="cache"></param>
-        /// <param name="ctx"></param>
+        /// <param name="context"></param>
         /// <param name="destination"></param>
-        public virtual void DrawRenderObject(CachedObject cache,
-            SkiaDrawingContext ctx,
-            SKRect destination)
+        public virtual void DrawRenderObject(DrawingContext context, CachedObject cache)
         {
 
-            //lock (LockDraw)
-            {
-                DrawWithClipAndTransforms(ctx, destination, destination, true, true, (ctx) =>
+            DrawWithClipAndTransforms(context, context.Destination, true, true, (ctx) =>
                 {
 
                     if (EffectPostRenderer != null)
                     {
-                        EffectPostRenderer.Render(ctx, destination);
+                        EffectPostRenderer.Render(context);
                     }
                     else
                     {
@@ -5076,12 +5058,9 @@ namespace DrawnUi.Maui.Draw
                         _paintWithOpacity.IsDither = IsDistorted;
                         _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
 
-                        cache.Draw(ctx.Canvas, destination, _paintWithOpacity);
+                        cache.Draw(ctx.Context.Canvas, context.Destination, _paintWithOpacity);
                     }
                 });
-
-            }
-
         }
 
         /// <summary>
@@ -5093,10 +5072,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="destination"></param>
         /// <param name="scale"></param>
         /// <param name="debug"></param>
-        protected virtual int RenderViewsList(IEnumerable<SkiaControl> skiaControls,
-            SkiaDrawingContext context,
-            SKRect destination, float scale,
-            bool debug = false)
+        protected virtual int RenderViewsList(DrawingContext context, IEnumerable<SkiaControl> skiaControls)
         {
             if (skiaControls == null)
                 return 0;
@@ -5114,10 +5090,10 @@ namespace DrawnUi.Maui.Draw
                     child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
                     if (child.CanDraw) //still visible 
                     {
-                        child.Render(context, destination, scale);
+                        child.Render(context);
 
                         tree.Add(new SkiaControlWithRect(child,
-                            destination,//child.LastDrawnAt,
+                            context.Destination,//child.LastDrawnAt,
                             child.LastDrawnAt, count));
 
                         count++;
@@ -5212,9 +5188,8 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public Func<float, ScaledRect> DelegateGetOnScreenVisibleArea;
-
-
+        public Func<Vector2, ScaledRect> DelegateGetOnScreenVisibleArea;
+        
         /// <summary>
         /// For virtualization. For this method to be conditional we introduced the `pixelsDestination`
         /// parameter so that the Parent could return different visible areas upon context.
@@ -5223,8 +5198,11 @@ namespace DrawnUi.Maui.Draw
         /// <param name="pixelsDestination"></param>
         /// <param name="inflateByPixels"></param>
         /// <returns></returns>
-        public virtual ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0)
+        public virtual ScaledRect GetOnScreenVisibleArea(DrawingContext context, Vector2 inflateByPixels = default)
         {
+
+            var pixelsDestination = context.Destination;
+
             if (DelegateGetOnScreenVisibleArea != null)
             {
                 return DelegateGetOnScreenVisibleArea(inflateByPixels);
@@ -5235,7 +5213,7 @@ namespace DrawnUi.Maui.Draw
                 //we are going to cache our children so they all must draw
                 //regardless of the fact they might still be offscreen
                 var inflated = pixelsDestination;//DrawingRect;
-                inflated.Inflate(inflateByPixels, inflateByPixels);
+                inflated.Inflate(inflateByPixels.X, inflateByPixels.Y);
 
                 return ScaledRect.FromPixels(inflated, RenderingScale);
             }
@@ -5243,16 +5221,16 @@ namespace DrawnUi.Maui.Draw
             //go up the tree to find the screen area or some parent will override this
             if (Parent != null)
             {
-                return Parent.GetOnScreenVisibleArea(pixelsDestination, inflateByPixels);
+                return Parent.GetOnScreenVisibleArea(context, inflateByPixels);
             }
 
             if (Superview != null)
             {
-                return Superview.GetOnScreenVisibleArea(pixelsDestination, inflateByPixels);
+                return Superview.GetOnScreenVisibleArea(context, inflateByPixels);
             }
 
             var inflated2 = Destination;
-            inflated2.Inflate(inflateByPixels, inflateByPixels);
+            inflated2.Inflate(inflateByPixels.X, inflateByPixels.Y);
             return ScaledRect.FromPixels(inflated2, RenderingScale);
         }
 

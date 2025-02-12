@@ -6,13 +6,13 @@ namespace DrawnUi.Maui.Draw
     /// <summary>
     /// Provides the ability to create/draw views directly while scrolling.
     /// Content will be generated dynamically, instead of the usual way.
-    /// Override `GetMeasuredView` to provide views upon passed index.
+    /// This control main logic is inside PaintOnPlane override, also it hacks content to work without a real Content.
+    /// You have to override `GetMeasuredView` to provide your views to be drawn upon passed index.
     /// TODO: for horizonal
     /// </summary>
     public class VirtualScroll : SkiaScroll
     {
-        private float swappedDownAt;
-        private float swappedUpAt;
+
         protected Dictionary<Plane, List<ViewLayoutInfo>> _planeLayoutData = new();
 
         /// <summary>
@@ -134,236 +134,8 @@ namespace DrawnUi.Maui.Draw
             return true;
         }
 
-        public override void DrawPlanes(
-        SkiaDrawingContext context,
-        SKRect destination,
-        float scale,
-        float zoomedScale,
-        object arguments)
-        {
-            if (PlaneCurrent == null)
-            {
-                InitializePlanes();
-                if (PlaneCurrent == null || PlaneForward == null || PlaneBackward == null)
-                {
-                    Super.Log("Failed to create planes");
-                    return;
-                }
-            }
-            var displayRectA = new SKRect(
-                ContentRectWithOffset.Pixels.Left,
-                ContentRectWithOffset.Pixels.Top,
-                ContentRectWithOffset.Pixels.Left + _planeWidth,
-                ContentRectWithOffset.Pixels.Top + _planeHeight
-            );
-
-            if (!PlaneCurrent.IsReady)
-            {
-                Debug.WriteLine("Preparing PLANE A..");
-                PreparePlane(context, PlaneCurrent, displayRectA, scale, zoomedScale, arguments);
-            }
-
-            // Draw the planes
-            var currentScroll = InternalViewportOffset.Pixels.Y;
-            var offsetChanged = currentScroll - PlanesPreviousScrollOffset;
-            PlanesPreviousScrollOffset = currentScroll;
-
-            var baseTop = ContentRectWithOffset.Pixels.Top;
-            var currentTop = baseTop + currentScroll + PlaneCurrent.OffsetY;
-            var forwardTop = baseTop + currentScroll + PlaneForward.OffsetY;
-            var backwardTop = baseTop + currentScroll + PlaneBackward.OffsetY;
-
-            var rectCurrent = new SKRect(PlaneCurrent.Source.Left, PlaneCurrent.Source.Top,
-                PlaneCurrent.Source.Left+ _planeWidth, PlaneCurrent.Source.Top + _planeHeight);
-
-            var rectForward = new SKRect(PlaneForward.Source.Left, PlaneForward.Source.Top,
-                PlaneForward.Source.Left + _planeWidth, PlaneForward.Source.Top + _planeHeight);
-
-            var rectBackward = new SKRect(PlaneBackward.Source.Left, PlaneBackward.Source.Top,
-                PlaneBackward.Source.Left + _planeWidth, PlaneBackward.Source.Top + _planeHeight);
-
-            // Apply vertical offsets
-            rectCurrent.Offset(0, currentTop - rectCurrent.Top);
-            rectForward.Offset(0, forwardTop - rectForward.Top);
-            rectBackward.Offset(0, backwardTop - rectBackward.Top);
-
-            //  if we've moved enough can re-allow a swap
-            if (swappedDownAt != 0 && Math.Abs(currentScroll - swappedDownAt) > _planeHeight / 2f)
-            {
-                swappedDownAt = 0;
-            }
-            if (swappedUpAt != 0 && Math.Abs(currentScroll - swappedUpAt) > _planeHeight / 2f)
-            {
-                swappedUpAt = 0;
-            }
- 
-            // Draw Backward
-            if (PlaneBackward.IsReady && ContentViewport.Pixels.IntersectsWithInclusive(rectBackward))
-            {
-                PlaneBackward.CachedObject.Draw(context.Canvas, rectBackward.Left, rectBackward.Top, null);
-            }
-            else
-            {
-                OrderToPreparePlaneBackwardInBackground(context, destination, scale, zoomedScale, arguments);
-                PlaneBackward.CachedObject?.Draw(context.Canvas, rectBackward.Left, rectBackward.Top, null);
-            }
-            PlaneBackward.LastDrawnAt = rectBackward;
-
-            // Draw Current
-            if (ContentViewport.Pixels.IntersectsWith(rectCurrent))
-            {
-                PlaneCurrent.CachedObject.Draw(context.Canvas, rectCurrent.Left, rectCurrent.Top, null);
-            }
-            PlaneCurrent.LastDrawnAt = rectCurrent;
-
-            // Draw Forward
-            if (PlaneForward.IsReady && ContentViewport.Pixels.IntersectsWith(rectForward))
-            {
-                PlaneForward.CachedObject.Draw(context.Canvas, rectForward.Left, rectForward.Top, null);
-            }
-            else
-            {
-                OrderToPreparePlaneForwardInBackground(context, destination, scale, zoomedScale, arguments);
-                PlaneForward.CachedObject?.Draw(context.Canvas, rectForward.Left, rectForward.Top, null); //repeat last image for fast scrolling
-            }
-            PlaneForward.LastDrawnAt = rectForward;
-
-            // --------------------------------------------------------------------
-            // Multiple-swap logic to handle fast scrolling
-            // --------------------------------------------------------------------
-
-            while (true)
-            {
-                bool swappedSomething = false;
-
-                // ------------------------------------------------------
-                // A) Recompute FORWARD plane’s positions, then swap down
-                //    as many times as needed
-                // ------------------------------------------------------
-
-                forwardTop = ContentRectWithOffset.Pixels.Top
-                             + InternalViewportOffset.Pixels.Y
-                             + PlaneForward.OffsetY;
-
-                rectForward = PlaneForward.Source;
-                rectForward.Offset(0, forwardTop - rectForward.Top);
-
-                while (rectForward.MidY <= (Viewport.Pixels.Height / 2))
-                {
-                    //if (swappedDownAt != 0)
-                    //    break;
-
-                    SwapDown();
-                    swappedDownAt = currentScroll;
-                    swappedSomething = true;
-
-                    // Recompute forwardTop, rectForward after swapping
-                    forwardTop = ContentRectWithOffset.Pixels.Top
-                                 + InternalViewportOffset.Pixels.Y
-                                 + PlaneForward.OffsetY;
-
-                    rectForward = PlaneForward.Source;
-                    rectForward.Offset(0, forwardTop - rectForward.Top);
-                }
-
-                // ------------------------------------------------------
-                // B) Recompute BACKWARD plane’s positions, then swap up
-                //    as many times as needed
-                // ------------------------------------------------------
-                backwardTop = ContentRectWithOffset.Pixels.Top
-                              + InternalViewportOffset.Pixels.Y
-                              + PlaneBackward.OffsetY;
-
-                rectBackward = PlaneBackward.Source;
-                rectBackward.Offset(0, backwardTop - rectBackward.Top);
-
-                while (rectBackward.MidY > Viewport.Pixels.Height / 2)//rectBackward.MidY >= _planePrepareThreshold)
-                {
-                    //if (swappedUpAt != 0)
-                    //    break;
-
-                    SwapUp();
-                    swappedUpAt = currentScroll;
-                    swappedSomething = true;
-
-                    // Recompute backwardTop, rectBackward after swapping
-                    backwardTop = ContentRectWithOffset.Pixels.Top
-                                  + InternalViewportOffset.Pixels.Y
-                                  + PlaneBackward.OffsetY;
-
-                    rectBackward = PlaneBackward.Source;
-                    rectBackward.Offset(0, backwardTop - rectBackward.Top);
-                    //break;
-                }
-
-                // If we did no swaps this iteration, no need for more loops
-                if (!swappedSomething)
-                    break;
-            }
 
 
-        }
-
-
-
-        // -----------------------------------------------------------
-        // SWAP LOGIC
-        // -----------------------------------------------------------
-        private void SwapDown()
-        {
-            // forward ↑ current
-            // current ↑ backward
-            // backward ↓ forward + invalidate
-            var temp = PlaneBackward;
-            PlaneBackward = PlaneCurrent;
-            PlaneCurrent = PlaneForward;
-            PlaneForward = temp;
-            PlaneForward.OffsetY = PlaneCurrent.OffsetY + _planeHeight;
-            PlaneBackward.OffsetY = PlaneCurrent.OffsetY - _planeHeight;
-            PlaneForward.Invalidate();
-        }
-
-        private void SwapUp()
-        {
-            var temp = PlaneForward;
-            PlaneForward = PlaneCurrent;
-            PlaneCurrent = PlaneBackward;
-            PlaneBackward = temp;
-            PlaneBackward.OffsetY = PlaneCurrent.OffsetY - _planeHeight;
-            PlaneForward.OffsetY = PlaneCurrent.OffsetY + _planeHeight;
-            PlaneBackward.Invalidate();
-        }
-
-
-        protected override void PreparePlane(
-            SkiaDrawingContext context,
-            Plane plane, SKRect destination,
-            float scale, float zoomedScale,
-            object arguments)
-        {
-            plane.Source = destination;
-            plane.Destination = destination;
-
-            var recordingContext = context.CreateForRecordingImage(plane.Surface, destination.Size);
-            recordingContext.Canvas.Clear(plane.BackgroundColor);
-
-            var fromZero = destination;
-            fromZero.Offset(-DrawingRect.Left, -DrawingRect.Top);
-            PaintOnPlane(plane, fromZero, scale, zoomedScale, arguments, recordingContext);
-
-            recordingContext.Canvas.Flush();
-            DisposeObject(plane.CachedObject);
-            plane.CachedObject = new CachedObject(
-                SkiaCacheType.Image,
-                plane.Surface,
-                new SKRect(0, 0, _planeWidth, _planeHeight),
-                destination)
-            {
-                PreserveSourceFromDispose = true
-            };
-
-            plane.IsReady = true;
-        }
 
         Plane? GetNeighborPlaneId(Plane plane, bool isScrollingDown)
         {
@@ -452,23 +224,11 @@ namespace DrawnUi.Maui.Draw
             return (firstMonthIndex, startingOffset);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="plane"></param>
-        /// <param name="destination"></param>
-        /// <param name="scale"></param>
-        /// <param name="zoomedScale"></param>
-        /// <param name="arguments"></param>
-        /// <param name="recordingContext"></param>
-        protected override void PaintOnPlane(
-            Plane plane,
-            SKRect destination,
-            float scale,
-            float zoomedScale,
-            object arguments,
-            SkiaDrawingContext recordingContext)
+        protected override void PaintOnPlane(DrawingContext context, Plane plane)
         {
+            var destination = context.Destination;
+            var scale = context.Scale;
+
             bool isScrollingDown = (this.ScrollingDirection != LinearDirectionType.Backward);
 
             float planeTop = destination.Top;
@@ -550,7 +310,7 @@ namespace DrawnUi.Maui.Draw
                 //rect.Offset(DrawingRect.Location);
 
                 monthView.Arrange(rect, monthView.SizeRequest.Width, monthView.SizeRequest.Height, scale);
-                monthView.Render(recordingContext, rect, scale);
+                monthView.Render(context.WithDestination(rect));
 
                 var info = new ViewLayoutInfo
                 {
@@ -575,6 +335,40 @@ namespace DrawnUi.Maui.Draw
 
         }
 
+
+        protected override void PreparePlane(DrawingContext context, Plane plane)
+        {
+            var destination = context.Destination;
+            plane.Destination = destination;
+
+            var recordingContext = context.CreateForRecordingImage(plane.Surface, destination.Size);
+            recordingContext.Context.Canvas.Clear(plane.BackgroundColor);
+
+            var fromZero = destination;
+            fromZero.Offset(-DrawingRect.Left, -DrawingRect.Top);
+
+            var viewport = plane.Destination;
+            viewport.Offset(-InternalViewportOffset.Pixels.X, -InternalViewportOffset.Pixels.Y);
+            viewport.Offset(plane.OffsetX, plane.OffsetY);
+
+            PaintOnPlane(recordingContext.WithDestination(fromZero)
+                .WithArguments(
+                new(ContextArguments.Plane.ToString(), plane.Id),
+                new(ContextArguments.Viewport.ToString(), viewport)), plane);;
+
+            recordingContext.Context.Canvas.Flush();
+            DisposeObject(plane.CachedObject);
+            plane.CachedObject = new CachedObject(
+                SkiaCacheType.Image,
+                plane.Surface,
+                new SKRect(0, 0, _planeWidth, _planeHeight),
+                destination)
+            {
+                PreserveSourceFromDispose = true
+            };
+
+            plane.IsReady = true;
+        }
 
     }
 }

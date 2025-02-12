@@ -9,5 +9,5 @@ public interface IRenderEffect : ISkiaEffect
     /// <param name="ctx"></param>
     /// <param name="drawControl"></param>
     /// <returns></returns>
-    ChainEffectResult Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl);
+    ChainEffectResult Draw(DrawingContext ctx, Action<DrawingContext> drawControl);
 }

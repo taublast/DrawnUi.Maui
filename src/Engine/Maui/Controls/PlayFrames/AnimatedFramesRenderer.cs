@@ -57,11 +57,11 @@
 
         }
 
-        protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected override void Paint(DrawingContext ctx)
         {
-            base.Paint(ctx, destination, scale, arguments);
+            base.Paint(ctx);
 
-            RenderFrame(ctx, destination, scale, arguments);
+            RenderFrame(ctx);
 
             if (IsPlaying)
             {
@@ -69,7 +69,7 @@
             }
         }
 
-        protected virtual void RenderFrame(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+        protected virtual void RenderFrame(DrawingContext ctx)
         {
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using DrawnUi.Maui.Infrastructure.Enums;
@@ -100,9 +101,9 @@ namespace DrawnUi.Maui.Views
         /// <param name="pixelsDestination"></param>
         /// <param name="inflateByPixels"></param>
         /// <returns></returns>
-        public virtual ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0)
+        public virtual ScaledRect GetOnScreenVisibleArea(DrawingContext context, Vector2 inflateByPixels = default)
         {
-            var bounds = new SKRect(0 - inflateByPixels, 0 - inflateByPixels, (int)(Width * RenderingScale + inflateByPixels), (int)(Height * RenderingScale + inflateByPixels));
+            var bounds = new SKRect(0 - inflateByPixels.X, 0 - inflateByPixels.Y, (int)(Width * RenderingScale + inflateByPixels.X), (int)(Height * RenderingScale + inflateByPixels.Y));
 
             return ScaledRect.FromPixels(bounds, (float)RenderingScale);
         }
@@ -420,7 +421,7 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-        public int ExecutePostAnimators(SkiaDrawingContext context, double scale)
+        public int ExecutePostAnimators(DrawingContext context)
         {
             var executed = 0;
 
@@ -434,10 +435,10 @@ namespace DrawnUi.Maui.Views
                     if (skiaAnimation.IsRunning && !skiaAnimation.IsPaused)
                     {
                         executed++;
-                        var finished = skiaAnimation.TickFrame(context.FrameTimeNanos);
+                        var finished = skiaAnimation.TickFrame(context.Context.FrameTimeNanos);
                         if (skiaAnimation is ICanRenderOnCanvas renderer)
                         {
-                            var renderedrawn = renderer.Render(this, context, scale);
+                            var renderedrawn = renderer.Render(context, this);
                         }
 
                         if (finished)
@@ -1396,7 +1397,8 @@ namespace DrawnUi.Maui.Views
 
                     WillDraw?.Invoke(this, null);
 
-                    Draw(args, rect, (float)RenderingScale);
+                    var ctx = new DrawingContext(args, rect, RenderingScale, null);
+                    Draw(ctx);
                 }
                 finally
                 {
@@ -1925,7 +1927,7 @@ namespace DrawnUi.Maui.Views
         #endregion
 
 
-        protected virtual void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+        protected virtual void Draw(DrawingContext context)
         {
             ++renderedFrames;
 
@@ -1938,138 +1940,139 @@ namespace DrawnUi.Maui.Views
             }
 
 
+            var destination = context.Destination;
+            var scale = context.Scale;
+
+            if (NeedGlobalRefreshCount != _globalRefresh)
             {
-
-
-                if (NeedGlobalRefreshCount != _globalRefresh)
+                _globalRefresh = NeedGlobalRefreshCount;
+                foreach (var item in Children)
                 {
-                    _globalRefresh = NeedGlobalRefreshCount;
-                    foreach (var item in Children)
-                    {
-                        item.InvalidateMeasureInternal();
-                    }
-                }
-
-                try
-                {
-                    DrawingThreads++;
-
-                    FrameTime = CanvasView.FrameTime;
-
-                    FPS = CanvasFps;
-
-                    CommitInvalidations();
-
-                    while (ExecuteBeforeDraw.TryDequeue(out Action action))
-                    {
-                        try
-                        {
-                            action?.Invoke();
-                        }
-                        catch (Exception e)
-                        {
-                            Super.Log(e);
-                        }
-                    }
-
-                    var executed = ExecuteAnimators(context.FrameTimeNanos);
-
-                    if (this.Width > 0 && this.Height > 0)
-                    {
-                        // ABSOLUTE like inside grid
-                        var children = GetOrderedSubviews();
-
-                        var rectForChild = new SKRect(
-                            destination.Left + (float)Math.Round((Padding.Left) * scale),
-                            destination.Top + (float)Math.Round((Padding.Top) * scale),
-                            destination.Right - (float)Math.Round((Padding.Right) * scale),
-                            destination.Bottom - (float)Math.Round((Padding.Bottom) * scale));
-
-                        foreach (var child in children)
-                        {
-                            child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
-                            if (child.CanDraw) //still visible
-                            {
-                                if (NeedMeasureDrawn)
-                                {
-                                    child.NeedMeasure = true;
-                                }
-                                child.Render(context, rectForChild, (float)scale);
-                            }
-                        }
-
-                        dirtyChilrenProcessing = true;
-                        foreach (var child in DirtyChildrenTracker.Values)
-                        {
-                            if (child != null && !child.IsDisposing)
-                            {
-                                child.InvalidatedParent = false;
-                                child?.InvalidateParent();
-                            }
-                        }
-                        DirtyChildrenTracker.Clear();
-                        dirtyChilrenProcessing = false;
-
-                        //notify registered tree final nodes of rendering tree state
-                        foreach (var tree in RenderingTrees)
-                        {
-                            //DebugV(tree.Value.Transform.IsVisible);
-                            //todo what was this case? disabled as bugging
-                            //if (tree.Value.Nodes.Count != tree.Value.Transform.RenderedNodes)
-                            //{
-                            //tree.Value.Transform.IsVisible = false;
-                            //}
-                            tree.Key.SetVisualTransform(tree.Value.Transform);
-                        }
-
-                        var postExecuted = ExecutePostAnimators(context, scale);
-
-                        //Kick to redraw if need animate
-                        if (executed + postExecuted > 0)
-                        {
-                            IsDirty = true;
-                        }
-
-                        if (CallbackScreenshot != null)
-                        {
-                            TakeScreenShotInternal(context.Superview.CanvasView.Surface);
-                        }
-                    }
-
-                    while (ExecuteAfterDraw.TryDequeue(out Action action))
-                    {
-                        try
-                        {
-                            action?.Invoke();
-                        }
-                        catch (Exception e)
-                        {
-                            Super.Log($"[DrawnView] Handled ExecuteAfterDraw: {e}");
-                        }
-                    }
-
-                    if (HardwareAcceleration == HardwareAccelerationMode.Prerender && renderedFrames is >= 3 and < 5)
-                    {
-                        //looks like we have finally loaded
-                        SwapToDelayed();
-                    }
-
-                    NeedMeasureDrawn = false;
-                }
-                catch (Exception e)
-                {
-                    Super.Log(e); //most probably data was modified while drawing
-
-                    NeedMeasure = true;
-                    NeedMeasureDrawn = true;
-                    IsDirty = true;
-                }
-                finally
-                {
-                    NeedMeasureDrawn = false;
-                    DrawingThreads--;
+                    item.InvalidateMeasureInternal();
                 }
             }
+
+            try
+            {
+                DrawingThreads++;
+
+                FrameTime = CanvasView.FrameTime;
+
+                FPS = CanvasFps;
+
+                CommitInvalidations();
+
+                while (ExecuteBeforeDraw.TryDequeue(out Action action))
+                {
+                    try
+                    {
+                        action?.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
+                }
+
+                var executed = ExecuteAnimators(context.Context.FrameTimeNanos);
+
+                if (this.Width > 0 && this.Height > 0)
+                {
+                    // ABSOLUTE like inside grid
+                    var children = GetOrderedSubviews();
+
+                    var rectForChild = new SKRect(
+                        destination.Left + (float)Math.Round((Padding.Left) * scale),
+                        destination.Top + (float)Math.Round((Padding.Top) * scale),
+                        destination.Right - (float)Math.Round((Padding.Right) * scale),
+                        destination.Bottom - (float)Math.Round((Padding.Bottom) * scale));
+
+                    foreach (var child in children)
+                    {
+                        child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
+                        if (child.CanDraw) //still visible
+                        {
+                            if (NeedMeasureDrawn)
+                            {
+                                child.NeedMeasure = true;
+                            }
+
+                            child.Render(context.WithDestination(rectForChild));
+                        }
+                    }
+
+                    dirtyChilrenProcessing = true;
+                    foreach (var child in DirtyChildrenTracker.Values)
+                    {
+                        if (child != null && !child.IsDisposing)
+                        {
+                            child.InvalidatedParent = false;
+                            child?.InvalidateParent();
+                        }
+                    }
+                    DirtyChildrenTracker.Clear();
+                    dirtyChilrenProcessing = false;
+
+                    //notify registered tree final nodes of rendering tree state
+                    foreach (var tree in RenderingTrees)
+                    {
+                        //DebugV(tree.Value.Transform.IsVisible);
+                        //todo what was this case? disabled as bugging
+                        //if (tree.Value.Nodes.Count != tree.Value.Transform.RenderedNodes)
+                        //{
+                        //tree.Value.Transform.IsVisible = false;
+                        //}
+                        tree.Key.SetVisualTransform(tree.Value.Transform);
+                    }
+
+                    var postExecuted = ExecutePostAnimators(context);
+
+                    //Kick to redraw if need animate
+                    if (executed + postExecuted > 0)
+                    {
+                        IsDirty = true;
+                    }
+
+                    if (CallbackScreenshot != null)
+                    {
+                        TakeScreenShotInternal(context.Context.Superview.CanvasView.Surface);
+                    }
+                }
+
+                while (ExecuteAfterDraw.TryDequeue(out Action action))
+                {
+                    try
+                    {
+                        action?.Invoke();
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log($"[DrawnView] Handled ExecuteAfterDraw: {e}");
+                    }
+                }
+
+                if (HardwareAcceleration == HardwareAccelerationMode.Prerender && renderedFrames is >= 3 and < 5)
+                {
+                    //looks like we have finally loaded
+                    SwapToDelayed();
+                }
+
+                NeedMeasureDrawn = false;
+            }
+            catch (Exception e)
+            {
+                Super.Log(e); //most probably data was modified while drawing
+
+                NeedMeasure = true;
+                NeedMeasureDrawn = true;
+                IsDirty = true;
+            }
+            finally
+            {
+                NeedMeasureDrawn = false;
+                DrawingThreads--;
+            }
+ 
 
 
         }

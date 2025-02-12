@@ -46,11 +46,11 @@ public class RippleAnimator : RenderingAnimator
 
     protected SKPaint Paint;
 
-    protected override bool OnRendering(IDrawnBase control, SkiaDrawingContext context, double scale)
+    protected override bool OnRendering(DrawingContext context, IDrawnBase control)
     {
         if (IsRunning && control != null && !control.IsDisposed && !control.IsDisposing)
         {
-            var touchOffset = new SKPoint((float)(X * scale), (float)(Y * scale));
+            var touchOffset = new SKPoint((float)(X * context.Scale), (float)(Y * context.Scale));
             var selfDrawingLocation = GetSelfDrawingLocation(control);
 
             DrawWithClipping(context, control, selfDrawingLocation, () =>
@@ -60,7 +60,7 @@ public class RippleAnimator : RenderingAnimator
                 Paint.Color = Color.WithAlpha((byte)(Opacity * 255));
 
                 touchOffset.Offset(selfDrawingLocation);
-                context.Canvas.DrawCircle(touchOffset.X, touchOffset.Y, (float)(Diameter * scale), Paint);
+                context.Context.Canvas.DrawCircle(touchOffset.X, touchOffset.Y, (float)(Diameter * context.Scale), Paint);
             });
 
             return true;

@@ -16,11 +16,11 @@ namespace DrawnUi.Maui.Draw
         }
 
 
-        protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+        protected override void Draw(DrawingContext context)
         {
-
-
-            var canvas = context.Canvas;
+            var scale = context.Scale;
+            var destination = context.Destination;
+            var canvas = context.Context.Canvas;
 
             if (IsRootView() && !IsOverlay)
                 canvas.Clear(ClearColor.ToSKColor());
@@ -29,13 +29,13 @@ namespace DrawnUi.Maui.Draw
 
             if (!CheckIsGhost())
             {
-                DrawWithClipAndTransforms(context, DrawingRect, DrawingRect, true, true, (ctx) =>
+                DrawWithClipAndTransforms(context.WithDestination(DrawingRect), DrawingRect, true, true, (ctx) =>
                 {
                     PaintTintBackground(canvas, DrawingRect);
                     //Paint(ctx, DrawingRect, scale, CreatePaintArguments());
                 });
 
-                FinalizeDrawingWithRenderObject(context, scale);
+                FinalizeDrawingWithRenderObject(context);
             }
         }
 

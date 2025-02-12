@@ -18,55 +18,58 @@ public class ViewsAdapter : IDisposable
         {
             if (index >= 0)
             {
-
                 //lock (lockVisible)
                 {
                     if (_parent.IsTemplated)
                     {
 
-                        if (template == null && !isMeasuring && _cellsInUseViews.TryGetValue(index, out SkiaControl ready))
+                        lock (lockVisible)
                         {
-
-                            if (LogEnabled)
+                            if (template == null && !isMeasuring && _cellsInUseViews.TryGetValue(index, out SkiaControl ready))
                             {
-                                Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} returned a ready view {ready.Uid} for index {index} ({ready.ContextIndex})");
+
+                                if (LogEnabled)
+                                {
+                                    Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} returned a ready view {ready.Uid} for index {index} ({ready.ContextIndex})");
+                                }
+
+                                if (ready != null && !ready.IsDisposing)
+                                {
+                                    AttachView(ready, index);
+                                    return ready;
+                                }
+
+                                //lol unexpected happened
+                                _cellsInUseViews.Remove(index);
+                                ReleaseView(ready);
                             }
 
-                            if (ready != null && !ready.IsDisposing)
+                            var view = GetViewAtIndex(index, height, template);
+
+                            if (view == null)
                             {
-                                AttachView(ready, index);
-                                return ready;
+                                return null; //maybe pool is full, anyway unexpected
                             }
 
-                            //lol unexpected happened
-                            _cellsInUseViews.Remove(index);
-                            ReleaseView(ready);
-                        }
+                            AttachView(view, index);
 
-                        var view = GetViewAtIndex(index, height, template);
-
-                        if (view == null)
-                        {
-                            return null; //maybe pool is full, anyway unexpected
-                        }
-
-                        AttachView(view, index);
-
-                        //save visible view for future use only if template is not provided
-                        if (template == null)
-                        {
-                            if (!_cellsInUseViews.Values.Contains(view))
+                            //save visible view for future use only if template is not provided
+                            if (template == null)
                             {
-                                _cellsInUseViews.TryAdd(index, view);
+                                if (!_cellsInUseViews.Values.Contains(view))
+                                {
+                                    _cellsInUseViews.TryAdd(index, view);
+                                }
+
+                                //if (view is ISkiaCell notify) //todo move to draw and couple lofic with cell
+                                //{
+                                //    notify.OnAppearing();
+                                //}
                             }
 
-                            //if (view is ISkiaCell notify) //todo move to draw and couple lofic with cell
-                            //{
-                            //    notify.OnAppearing();
-                            //}
-                        }
+                            return view;
 
-                        return view;
+                        }
                     }
                     else
                     {
@@ -163,7 +166,11 @@ public class ViewsAdapter : IDisposable
                 {
                     var kill = _templatedViewsPool;
 
-                    _cellsInUseViews.Clear();
+                    lock (lockVisible)
+                    {
+                        _cellsInUseViews.Clear();
+                    }
+
                     _templatedViewsPool = new TemplatedViewsPool(template, poolSize, (k) =>
                     {
                         _parent?.DisposeObject(k);

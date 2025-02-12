@@ -81,10 +81,9 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
         set { SetValue(ForceRefreshProperty, value); }
     }
 
-
-    protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+    protected override void Draw(DrawingContext context)
     {
-        base.Draw(context, destination, scale);
+        base.Draw(context);
 
         if (Superview == null)
             return;
@@ -92,19 +91,8 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
         Text = $"FPS: {Superview.FPS:00.0}";
 
         UpdateForceRefresh();
-        //if we had zero updates after 2secs just display a zero
-        //if (_topParent.FPS > 1.0)
-        //{
-        //	_restartingTimer ??= new RestartingTimer<object>(
-        //		2000,
-        //		(context) =>
-        //		{
-        //			Task.Run(Update).ConfigureAwait(false);
-        //		});
-        //	_restartingTimer.Kick(null);
-        //}
-        FinalizeDrawingWithRenderObject(context, scale);
-
+ 
+        FinalizeDrawingWithRenderObject(context);
     }
 
 

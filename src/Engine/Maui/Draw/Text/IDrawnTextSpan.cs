@@ -2,7 +2,7 @@
 
 public interface IDrawnTextSpan
 {
-    public void Render(SkiaDrawingContext ctx, SKRect destination, float scale);
+    public void Render(DrawingContext ctx);
 
     public ScaledSize Measure(float maxWidth, float maxHeight, float scale);
 

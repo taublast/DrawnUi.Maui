@@ -1,4 +1,6 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿using System.Numerics;
+
+namespace DrawnUi.Maui.Draw;
 
 public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
 {
@@ -22,7 +24,7 @@ public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
     /// <param name="pixelsDestination"></param>
     /// <param name="inflateByPixels"></param>
     /// <returns></returns>
-    public ScaledRect GetOnScreenVisibleArea(SKRect pixelsDestination, float inflateByPixels = 0);
+    public ScaledRect GetOnScreenVisibleArea(DrawingContext context, Vector2 inflateByPixels = default);
 
     /// <summary>
     /// Invalidates the measured size. May or may not call Update() inside, depends on control

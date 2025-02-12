@@ -9,7 +9,7 @@ public interface ICanRenderOnCanvas
     /// <param name="context"></param>
     /// <param name="scale"></param>
     /// <returns></returns>
-    bool Render(IDrawnBase control, SkiaDrawingContext context, double scale);
+    bool Render(DrawingContext context, IDrawnBase control);
 }
 
 public interface IOverlayEffect : ICanRenderOnCanvas, ISkiaAnimator

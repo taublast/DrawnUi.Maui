@@ -163,8 +163,9 @@ namespace Sandbox.Views
                                          Height = paper.Height
                                      };
 
+                                     var drawingContext = new DrawingContext(ctx, new SKRect(0, 0, paper.Width, paper.Height), scale);
                                      //first rendering to launch loading images and first layout
-                                     wrapper.Render(ctx, new SKRect(0, 0, paper.Width, paper.Height), scale);
+                                     wrapper.Render(drawingContext);
 
                                      //in our specific case we have images inside that load async,
                                      //so wait for them and render final result
@@ -175,7 +176,7 @@ namespace Sandbox.Views
 
                                      //second rendering required to reflect layout changes and async images are loaded
                                      canvas.Clear(SKColors.White); //non-transparent reserves space inside pdf
-                                     wrapper.Render(ctx, new SKRect(0, 0, paper.Width, paper.Height), scale);
+                                     wrapper.Render(drawingContext);
 
                                  }
                                  document.EndPage();

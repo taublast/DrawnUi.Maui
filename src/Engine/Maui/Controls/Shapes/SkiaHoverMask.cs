@@ -5,7 +5,7 @@
 /// </summary>
 public class SkiaHoverMask : SkiaShape
 {
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
 
         //paint clipped background
@@ -17,25 +17,31 @@ public class SkiaHoverMask : SkiaShape
                 Style = SKPaintStyle.StrokeAndFill,
             })
             {
-                SetupGradient(paint, FillGradient, destination);
+                SetupGradient(paint, FillGradient, ctx.Destination);
 
                 using (SKPath clipInsideParent = new SKPath())
                 {
-                    var saved = ctx.Canvas.Save();
+                    var saved = ctx.Context.Canvas.Save();
+
+                    ShapePaintArguments? arguments = null;
+                    if (ctx.GetArgument("ShapePaintArguments") is ShapePaintArguments defined)
+                    {
+                        arguments = defined;
+                    }
 
                     using var clipContent = CreateClip(arguments, true);
                     clipInsideParent.AddPath(clipContent);
 
-                    ClipSmart(ctx.Canvas, clipInsideParent, SKClipOperation.Difference);
+                    ClipSmart(ctx.Context.Canvas, clipInsideParent, SKClipOperation.Difference);
 
                     //paint this taking viewport dimensions
-                    ctx.Canvas.DrawRect(Parent.DrawingRect, paint);
+                    ctx.Context.Canvas.DrawRect(Parent.DrawingRect, paint);
 
-                    DrawViews(ctx, destination, scale);
+                    DrawViews(ctx);
 
-                    //todo add stroke property?
+                    //todo should maybe add stroke property?
 
-                    ctx.Canvas.RestoreToCount(saved);
+                    ctx.Context.Canvas.RestoreToCount(saved);
                 }
             }
 

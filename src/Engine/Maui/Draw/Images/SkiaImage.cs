@@ -61,7 +61,8 @@ public class SkiaImage : SkiaControl
                     Height = info.Height
                 };
                 var destination = new SKRect(0, 0, info.Width, info.Height);
-                Render(context, destination, 1);
+                var ctx = new DrawingContext(context, destination, 1, null);
+                Render(ctx);
                 surface.Canvas.Flush();
                 return surface.Snapshot();
             }
@@ -1017,9 +1018,9 @@ propertyChanged: NeedChangeColorFIlter);
         NeedInvalidateColorFilter = true;
     }
 
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
-        base.Paint(ctx, destination, scale, arguments);
+        base.Paint(ctx);
 
         var source = LoadedSource;
 
@@ -1118,8 +1119,7 @@ propertyChanged: NeedChangeColorFIlter);
             DrawImageAlignment horizontal = HorizontalAlignment;
             DrawImageAlignment vertical = VerticalAlignment;
 
-            DrawSource(ctx, source, destination, scale, stretch,
-                horizontal, vertical, ImagePaint);
+            DrawSource(ctx, source, stretch, horizontal, vertical, ImagePaint);
         }
     }
 
@@ -1152,8 +1152,7 @@ propertyChanged: NeedChangeColorFIlter);
         Update();
     }
 
-    protected override void Draw(SkiaDrawingContext context,
-        SKRect destination, float scale)
+    protected override void Draw(DrawingContext context)
     {
         //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
         if (IsDisposing || IsDisposed)
@@ -1195,7 +1194,7 @@ propertyChanged: NeedChangeColorFIlter);
                     else
                     {
                         //fast insert new image into presized rect
-                        SetAspectScale(source.Width, source.Height, DrawingRect, this.Aspect, scale);
+                        SetAspectScale(source.Width, source.Height, DrawingRect, this.Aspect, context.Scale);
                     }
                 }
             }
@@ -1203,9 +1202,7 @@ propertyChanged: NeedChangeColorFIlter);
             Update(); //gamechanger for doublebuffering and other complicated cases
         }
 
-        DrawUsingRenderObject(context,
-            SizeRequest.Width, SizeRequest.Height,
-            destination, scale);
+        DrawUsingRenderObject(context, SizeRequest.Width, SizeRequest.Height);
     }
 
     protected override void OnLayoutChanged()
@@ -1216,7 +1213,6 @@ propertyChanged: NeedChangeColorFIlter);
         {
             SetAspectScale(LoadedSource.Width, LoadedSource.Height, DrawingRect, this.Aspect, RenderingScale);
         }
-
     }
 
     public override void OnDisposing()
@@ -1262,10 +1258,8 @@ propertyChanged: NeedChangeColorFIlter);
     }
 
     protected virtual void DrawSource(
-        SkiaDrawingContext ctx,
+        DrawingContext ctx,
         LoadedImageSource source,
-        SKRect dest,
-        float scale,
         TransformAspect stretch,
         DrawImageAlignment horizontal = DrawImageAlignment.Center,
         DrawImageAlignment vertical = DrawImageAlignment.Center,
@@ -1278,6 +1272,9 @@ propertyChanged: NeedChangeColorFIlter);
             {
                 throw new ApplicationException("AspectScale is not set");
             }
+
+            var dest = ctx.Destination;
+            var scale = ctx.Scale;
 
             var aspectScaleX = AspectScale.X * (float)(ZoomX);
             var aspectScaleY = AspectScale.Y * (float)(ZoomY);
@@ -1316,17 +1313,17 @@ propertyChanged: NeedChangeColorFIlter);
 
                     if (ScaledSource != null)
                     {
-                        ctx.Canvas.DrawBitmap(ScaledSource.Bitmap, display, paint);
+                        ctx.Context.Canvas.DrawBitmap(ScaledSource.Bitmap, display, paint);
                     }
                 }
                 else
                 {
-                    ctx.Canvas.DrawBitmap(source.Bitmap, display, paint);
+                    ctx.Context.Canvas.DrawBitmap(source.Bitmap, display, paint);
                 }
             }
             else
             if (source.Image != null)
-                ctx.Canvas.DrawImage(source.Image, display, paint);
+                ctx.Context.Canvas.DrawImage(source.Image, display, paint);
         }
         catch (Exception e)
         {

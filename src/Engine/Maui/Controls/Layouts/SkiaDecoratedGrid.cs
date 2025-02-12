@@ -193,15 +193,15 @@ public partial class SkiaDecoratedGrid : SkiaLayout
         }
     }
 
-    protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+    protected override void Draw(DrawingContext context)
     {
-        base.Draw(context, destination, scale);
+        base.Draw(context);
 
         if (ContainerLines != null)
         {
-            ContainerLines.Render(context, GetDrawingRectForChildren(Destination, scale), scale);
+            ContainerLines.Render(context.WithDestination(GetDrawingRectForChildren(Destination, context.Scale)));
         }
 
-        FinalizeDrawingWithRenderObject(context, scale);
+        FinalizeDrawingWithRenderObject(context);
     }
 }

@@ -19,8 +19,8 @@ public class SkiaCarousel : SnappingLayout
     public override bool WillClipBounds => true;
 
     protected virtual void RenderVisibleChild(
-        SkiaControl view, Vector2 position,
-        SkiaDrawingContext context, SKRect destination, float scale)
+        DrawingContext context,
+        SkiaControl view, Vector2 position)
     {
         view.OptionalOnBeforeDrawing(); //draw even hidden neighboors to be able to preload stuff
         if (view.CanDraw)
@@ -28,7 +28,7 @@ public class SkiaCarousel : SnappingLayout
             view.LockUpdate(true);
             AnimateVisibleChild(view, position);
             view.LockUpdate(false);
-            view.Render(context, destination, scale);
+            view.Render(context);
         }
     }
 
@@ -190,8 +190,7 @@ public class SkiaCarousel : SnappingLayout
 
     }
 
-    protected override int RenderViewsList(IEnumerable<SkiaControl> skiaControls, SkiaDrawingContext context, SKRect destination, float scale,
-        bool debug = false)
+    protected override int RenderViewsList(DrawingContext context, IEnumerable<SkiaControl> skiaControls)
     {
         var drawn = 0;
 
@@ -272,7 +271,7 @@ public class SkiaCarousel : SnappingLayout
 
                 if (cell.IsVisible || this.PreloadNeighboors)
                 {
-                    RenderVisibleChild(view, cell.Offset, context, destination, scale);
+                    RenderVisibleChild(context, view, cell.Offset);
                 }
 
                 if (cell.IsVisible) //but handle gestures only for visible views

@@ -99,11 +99,10 @@ namespace DrawnUi.Maui.Controls
             }
         }
 
-        protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+        protected override void Draw(DrawingContext context)
         {
             IsRendered = true;
-
-            base.Draw(context, destination, scale);
+            base.Draw(context);
         }
 
         public bool IsRendered;

@@ -158,9 +158,9 @@ public partial class SpaceShooter : MauiGame
         PresentGame();
     }
 
-    protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+    protected override void Draw(DrawingContext context)
     {
-        base.Draw(context, destination, scale);
+        base.Draw(context);
 
         if (_needPrerender)
         {

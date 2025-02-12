@@ -15,7 +15,7 @@ public class ChainSaturationEffect : BaseChainedEffect
         set => SetValue(ValueProperty, value);
     }
 
-    public override ChainEffectResult Draw(SKRect destination, SkiaDrawingContext ctx, Action<SkiaDrawingContext> drawControl)
+    public override ChainEffectResult Draw(DrawingContext ctx, Action<DrawingContext> drawControl)
     {
         if (NeedApply)
         {
@@ -27,14 +27,14 @@ public class ChainSaturationEffect : BaseChainedEffect
                 };
             }
 
-            ctx.Canvas.SaveLayer(Paint);
+            ctx.Context.Canvas.SaveLayer(Paint);
 
             drawControl(ctx);
 
             return ChainEffectResult.Create(true);
         }
 
-        return base.Draw(destination, ctx, drawControl);
+        return base.Draw(ctx, drawControl);
     }
 
 
