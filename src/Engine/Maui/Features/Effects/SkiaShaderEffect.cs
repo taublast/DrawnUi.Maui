@@ -11,7 +11,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         propertyChanged: NeedUpdate);
 
     /// <summary>
-    /// Use either context of global Superview background, default is True. 
+    /// Use either context of global Superview background, default is True.
     /// </summary>
     public bool UseContext
     {
@@ -145,7 +145,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
             var kill = Shader;
 
             var uniforms = CreateUniforms(destination);
-#if SKIA3 
+#if SKIA3
             Shader = CompiledShader.ToShader(uniforms, TexturesUniforms);
 #else
             Shader = CompiledShader.ToShader(false, uniforms, TexturesUniforms);
@@ -221,7 +221,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
 
         NeedDisposeShader = string.IsNullOrEmpty(ShaderSource);
 
-        CompiledShader = SkSl.Compile(shaderCode, ShaderSource);
+        CompiledShader = SkSl.Compile(shaderCode, ShaderSource, true);
     }
 
     public bool NeedDisposeShader { get; set; }

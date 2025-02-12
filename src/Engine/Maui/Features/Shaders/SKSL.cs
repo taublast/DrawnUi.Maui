@@ -25,12 +25,22 @@ public static class SkSl
 
     /// <summary>
     /// Will compile your SKSL shader code into SKRuntimeEffect.
+    /// </summary>
+    /// <param name="shaderCode"></param>
+    /// <returns></returns>
+    public static SKRuntimeEffect Compile(string shaderCode)
+    {
+        return Compile(shaderCode, null, false);
+    }
+
+    /// <summary>
+    /// Will compile your SKSL shader code into SKRuntimeEffect.
     /// The filename parameter is used for debugging and caching. Do not forget to disable caching if you edit/change shader code at runtime.
     /// </summary>
     /// <param name="shaderCode"></param>
     /// <param name="filename"></param>
     /// <returns></returns>
-    public static SKRuntimeEffect Compile(string shaderCode, string filename = null, bool useCache = true)
+    public static SKRuntimeEffect Compile(string shaderCode, string filename, bool useCache = true)
     {
         SKRuntimeEffect compiled = null;
 
