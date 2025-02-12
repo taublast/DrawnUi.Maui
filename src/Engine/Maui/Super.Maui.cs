@@ -36,7 +36,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public static event Action<Type[]?>? HotReload;
 
-        
+
         private static void OnHotReload(Type[] obj)
         {
             HotReload?.Invoke(obj);
@@ -197,43 +197,16 @@ namespace DrawnUi.Maui.Draw
         /// <param name="isFixed"></param>
         public static void ResizeWindow(Window window, int width, int height, bool isFixed)
         {
-
-
             var disp = DeviceDisplay.Current.MainDisplayInfo;
-            // move to screen center
-            var x = (disp.Width / disp.Density - window.Width) / 2;
-            var y = (disp.Height / disp.Density - window.Height) / 2;
 
-            //this crashes in NET8 for CATALYST so..
-#if !MACCATALYST
+            // move to screen center
+            var x = (disp.Width / disp.Density- window.Width) / 2.0;
+            var y = (disp.Height / disp.Density - window.Height) / 2.0;
 
             window.Width = width;
             window.Height = height;
             window.X = x;
             window.Y = y;
-
-#else
-
-        var platformWindow = window.Handler?.PlatformView as UIKit.UIWindow;
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            var frame = new CoreGraphics.CGRect(x, y, platformWindow.Frame.Width, platformWindow.Frame.Height);
-
-            platformWindow.Frame = frame;
-
-            var windowScene = UIKit.UIApplication.SharedApplication.ConnectedScenes.ToArray().First() as UIKit.UIWindowScene;
-
-            platformWindow.WindowScene.KeyWindow.Frame = frame;
-
-            windowScene.RequestGeometryUpdate(
-                new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
-                error =>
-                {
-                    var stopp = 1;
-                });
-        });
-
-#endif
 
 #if WINDOWS
 
@@ -242,41 +215,6 @@ namespace DrawnUi.Maui.Draw
             var platformWindow = window.Handler?.PlatformView as Microsoft.Maui.MauiWinUIWindow;
             var hWnd = platformWindow.WindowHandle;
             MakeWindowNonResizable(hWnd);
-        }
-
-#elif MACCATALYST
-
-        foreach (var scene in UIKit.UIApplication.SharedApplication.ConnectedScenes)
-        {
-            if (scene is UIKit.UIWindowScene windowScene)
-            {
-                if (isFixed)
-                {
-                    //windowScene.SizeRestrictions.AllowsFullScreen = false;
-                    //windowScene.SizeRestrictions.MinimumSize = new(width, height);
-                    //windowScene.SizeRestrictions.MaximumSize = new(width, height);
-
-                    var scale = windowScene.Screen.Scale;
-
-                    // Tasks.StartDelayed(TimeSpan.FromSeconds(3),()=>
-                    // {
-                    //todo move to view appeared etc
-                    // MainThread.BeginInvokeOnMainThread(()=>
-                    // {
-                    //     windowScene.RequestGeometryUpdate(
-                    //         new UIKit.UIWindowSceneGeometryPreferencesMac(frame),
-                    //         error =>
-                    //         {
-                    //             var stopp=1;
-                    //         });
-                    //     
-                    //});
-
-                    // });
-
-                }
-
-            }
         }
 
 #endif

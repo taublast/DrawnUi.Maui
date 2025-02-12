@@ -13,6 +13,8 @@ public static partial class DrawnExtensions
 
     #region STARTUP
 
+    static bool windowAdapted = false;
+
     public static DrawnUiStartupSettings StartupSettings { get; set; }
 
     public static MauiAppBuilder UseDrawnUi(this MauiAppBuilder builder, DrawnUiStartupSettings settings = null)
@@ -300,6 +302,15 @@ public static partial class DrawnExtensions
                     Foundation.NSNotificationCenter.DefaultCenter.AddObserver("NSWindowDidBecomeMainNotification", null, null,
                               (h) =>
                               {
+                                  if (!windowAdapted && StartupSettings.DesktopWindow != null)
+                                  {
+                                      Super.ResizeWindow(appWindow,
+                                          StartupSettings.DesktopWindow.Value.Width,
+                                          StartupSettings.DesktopWindow.Value.Height,
+                                          StartupSettings.DesktopWindow.Value.IsFixedSize);
+                                      windowAdapted=true;
+                                  }
+
                                   if (UIKit.UIApplication.SharedApplication.KeyWindow.RootViewController is Microsoft.Maui.Platform.ContainerViewController container)
                                   {
                                       if (container.CurrentView is DrawnUiBasePage page)
@@ -328,11 +339,10 @@ public static partial class DrawnExtensions
                             {
                                 if (scene is UIKit.UIWindowScene windowScene)
                                 {
-
                                     if (Super.Screen.Density != windowScene.Screen.Scale)
                                     {
                                         //not working with several displays never ever
-                                        //var test = DeviceDisplay.Current.MainDisplayInfo.Density;                                      
+                                        //var test = DeviceDisplay.Current.MainDisplayInfo.Density;
                                         Super.Screen.Density = windowScene.Screen.Scale;
                                         Super.NeedGlobalUpdate();
                                     }
@@ -373,12 +383,13 @@ public static partial class DrawnExtensions
                                 });
                         }
 
+
                         if (StartupSettings.DesktopWindow != null)
                         {
-                            Super.ResizeWindow(appWindow,
-                                StartupSettings.DesktopWindow.Value.Width,
-                                StartupSettings.DesktopWindow.Value.Height,
-                                StartupSettings.DesktopWindow.Value.IsFixedSize);
+                            // Super.ResizeWindow(appWindow,
+                            //     StartupSettings.DesktopWindow.Value.Width,
+                            //     StartupSettings.DesktopWindow.Value.Height,
+                            //     StartupSettings.DesktopWindow.Value.IsFixedSize);
                         }
 #elif IOS
                         //see ConfigureHandlers for StartupSettings.MobileIsFullscreen implementation
