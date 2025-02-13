@@ -1,11 +1,46 @@
 ﻿
 using System.ComponentModel;
 using System.Globalization;
+using AppoMobi.Specials;
 using DrawnUi.Maui.Draw;
 
 namespace AppoMobi.Models
 {
-    public class AppoDay : ISelectableOption, INotifyPropertyChanged
+
+	public class AppoMonth : BindableObject
+	{
+		public AppoMonth()
+		{
+			Month = DateTime.Now.Month;
+			Year = DateTime.Now.Year;
+		}
+
+		public AppoMonth(int year, int month)
+		{
+			Month = month;
+			Year = year;
+		}
+
+		public int Month { get; set; }
+
+		public int Year { get; set; }
+
+		ObservableRangeCollection<AppoDay> _Days = new ();
+		public ObservableRangeCollection<AppoDay> Days
+		{
+			get { return _Days; }
+			set
+			{
+				if (_Days != value)
+				{
+					_Days = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+	}
+
+	public class AppoDay : ISelectableRangeOption, INotifyPropertyChanged
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
@@ -76,12 +111,47 @@ namespace AppoMobi.Models
                 if (_Selected != value)
                 {
                     _Selected = value;
-                    NotifyPropertyChanged("Selected");
-                }
+                    NotifyPropertyChanged(nameof(Selected));
+				}
             }
         }
 
-        bool _Disabled;
+        bool _isSelectionStart;
+        public bool SelectionStart
+        {
+	        get
+	        {
+		        return _isSelectionStart;
+	        }
+	        set
+	        {
+		        if (_isSelectionStart != value)
+		        {
+			        _isSelectionStart = value;
+			        NotifyPropertyChanged(nameof(SelectionStart));
+		        }
+	        }
+        }
+
+        bool _isSelectionEnd;
+        public bool SelectionEnd
+        {
+	        get
+	        {
+		        return _isSelectionEnd;
+	        }
+	        set
+	        {
+		        if (_isSelectionEnd != value)
+		        {
+			        _isSelectionEnd = value;
+			        NotifyPropertyChanged(nameof(SelectionEnd));
+		        }
+	        }
+        }
+
+
+		bool _Disabled;
         public bool Disabled
         {
             get { return _Disabled; }

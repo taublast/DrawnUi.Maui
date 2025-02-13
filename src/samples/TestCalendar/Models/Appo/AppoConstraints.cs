@@ -148,9 +148,15 @@ public class AppoHelper
 	public static IEnumerable<AppoTimeInterval> GetAvailable(DateTime? start, DateTime? end, AppoConstraints constraints,
    TimeSpan minInterval)
 	{
-		if (start == null || end == null) return null;
+		if (start == null || end == null) 
+			return null;
 
 		var periods = new List<AppoTimeInterval>();
+
+		if (start > end)
+		{
+			(start, end) = (end, start);
+		}
 		var totalDays = (end.Value - start.Value).TotalDays;
 		var _start = start.Value;
 		var _end = end.Value;

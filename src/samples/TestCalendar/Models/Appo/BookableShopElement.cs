@@ -8,18 +8,34 @@ using Newtonsoft.Json;
 
 namespace TestCalendar.Views;
 
-public class BookableShopElement : INotifyPropertyChanged
-//*************************************************************
+public class MonthInsideDaysIndex
 {
-    
-  
-    public BookableShopElement(ShopElement element, string defaultInterval)
-        
-    {
+	public int Year { get; set; }
+	public int Month { get; set; }
+	public int DayIndexStart { get; set; }
+	public int DayIndexEnd { get; set; }
+}
+
+public class BookableShopElement : INotifyPropertyChanged
+{
+
+	//todo: optimize culture related dynamic getters
+
+	public static string Lang { get; set; } = "en";
+	
+	public static string PricesMask { get; set; } = "${0}";
+
+	public BookableShopElement(ShopElement element, string defaultInterval, bool autoSelect)
+	{
+		_autoSelect = autoSelect;
+
         NeedSeats = 1;
-        Element = element;
-        _defaultInterval = defaultInterval;
-        InitIntervals(_defaultInterval);
+        
+        Element = element; //calls InitIntervals inside if has schedules
+
+		_defaultInterval = defaultInterval;
+        if (!string.IsNullOrEmpty(defaultInterval) || Element.Schedules.Count==0)
+			InitIntervals(_defaultInterval);
     }
 
     protected string _defaultInterval;
@@ -50,7 +66,6 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string CustomerInfo
         
     {
@@ -61,14 +76,12 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string Conditions
         
     {
         get { return Element.Conditions; }
     }
 
-    
     public string TotalPriceDesc
         
     {
@@ -77,17 +90,19 @@ public class BookableShopElement : INotifyPropertyChanged
             var price = "";
             try
             {
-                price = TotalPrice.ToString(MonthView.PricesMask);
+                price = TotalPrice.ToString(PricesMask);
             }
             catch (Exception e)
             {
-                price = 0.ToString(MonthView.PricesMask);
+                price = 0.ToString(PricesMask);
             }
             return $"Total:  " + price;//$"{ResStrings.Total}:  " + price;
         }
     }
 
-    ObservableRangeCollection<AppoDay> _Days = new ObservableRangeCollection<AppoDay>();
+    public List<MonthInsideDaysIndex> MonthIndexes;
+
+ObservableRangeCollection<AppoDay> _Days = new ();
     public ObservableRangeCollection<AppoDay> Days
     {
         get { return _Days; }
@@ -96,12 +111,12 @@ public class BookableShopElement : INotifyPropertyChanged
             if (_Days != value)
             {
                 _Days = value;
-                OnPropertyChanged("Days");
+                OnPropertyChanged();
             }
         }
     }
 
-    ObservableRangeCollection<FullBookableInterval> _DaylyIntervals = new ObservableRangeCollection<FullBookableInterval>();
+    ObservableRangeCollection<FullBookableInterval> _DaylyIntervals = new ();
     public ObservableRangeCollection<FullBookableInterval> DaylyIntervals
     {
         get { return _DaylyIntervals; }
@@ -145,9 +160,7 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string Id
-        
     {
         get
         {
@@ -156,9 +169,7 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public int CurrentIntervalSeats
-        
     {
         get
         {
@@ -177,7 +188,6 @@ public class BookableShopElement : INotifyPropertyChanged
             return -1;
         }
     }
-
 
     public void Patch(ShopElement source)
     {
@@ -223,9 +233,7 @@ public class BookableShopElement : INotifyPropertyChanged
         IntervalsReady = true;
     }
 
-    
     public bool SelectMonth(int year, int month, BookableInterval interval = null)
-        
     {
         SelectedMonth = month;
         SelectedYear = year;
@@ -234,7 +242,6 @@ public class BookableShopElement : INotifyPropertyChanged
             .ToList();
 
         // if (!InThisMonth.Any()) return false;
-
 
         //build intervals
         var days = new List<AppoDay>();
@@ -268,9 +275,8 @@ public class BookableShopElement : INotifyPropertyChanged
 
         Days.ReplaceRange(days);
 
-
         //select
-        if (Days.Count > 0)
+        if (_autoSelect && Days.Count > 0)
         {
             bool standart = true;
             if (interval != null)
@@ -317,7 +323,6 @@ public class BookableShopElement : INotifyPropertyChanged
     /// <param name="hour"></param>
     
     public void LoadFullDaylyIntervals(int hour = -1, int minute = -1)
-        
     {
         //todo YEAR
         IEnumerable<BookableIntervalDto> tmp = null;
@@ -390,9 +395,7 @@ public class BookableShopElement : INotifyPropertyChanged
 
     }
 
-    
     public void SelectDay(AppoDay day, int hour, int minute)
-        
     {
         if (day == null)
         {
@@ -413,6 +416,11 @@ public class BookableShopElement : INotifyPropertyChanged
         OnPropertyChanged("FullTitle");
     }
 
+	/// <summary>
+	/// Call this on UI-thread.
+	/// Sets day as selected, in case of ranged mode this sets it as selection start only
+	/// </summary>
+	/// <param name="day"></param>
     public void SelectDay(AppoDay day)
     {
         if (day == null)
@@ -420,21 +428,56 @@ public class BookableShopElement : INotifyPropertyChanged
             SetSelection(Days, null);
             return;
         }
-        foreach (var member in Days)
-        {
-            member.Selected = false;
-        }
+
+        //in case this day reference is  not inside Days
         day.Selected = true;
-        SetSelection(Days, day);
+        day.SelectionStart = true;
+        day.SelectionEnd = false;
 
-        LoadFullDaylyIntervals();
-
+        //affects UI
+		SetSelection(Days, day);
+		
+		LoadFullDaylyIntervals();
         OnPropertyChanged("SelectedDateTypeDesc");
         OnPropertyChanged("SelectedDateDesc");
         OnPropertyChanged("FullTitle");
     }
 
-    public void SelectInterval(FullBookableInterval time)
+	/// <summary>
+	/// Call this on UI-thread.
+	/// Select a ranged days interval, stat and end can fall in different months. If just one of parameters is null the whole existing range will become unselected and then if start is not null then SelectDay(start) will be invoked internally.
+	/// </summary>
+	/// <param name="start"></param>
+	/// <param name="end"></param>
+	public (int Start, int End) SelectDays(AppoDay start, AppoDay end)
+	{
+
+		//in case this day reference is  not inside Days
+		if (start != null)
+		{
+			start.Selected = true;
+			start.SelectionStart = true;
+			start.SelectionEnd = false;
+		}
+		if (end != null)
+		{
+			end.Selected = true;
+			end.SelectionStart = false;
+			end.SelectionEnd = true;
+		}
+
+		//affects UI
+		var indexes = SetSelection(Days, start, end);
+
+		LoadFullDaylyIntervals();
+		OnPropertyChanged("SelectedDateTypeDesc");
+		OnPropertyChanged("SelectedDateDesc");
+		OnPropertyChanged("FullTitle");
+
+		return indexes;
+	}
+
+	public void SelectInterval(FullBookableInterval time)
     {
         if (time == null) return;
         foreach (var member in DaylyIntervals)
@@ -448,14 +491,17 @@ public class BookableShopElement : INotifyPropertyChanged
         OnPropertyChanged("HasImportantNotes");
     }
 
-    static void SetSelection(IEnumerable<ISelectableOption> list, ISelectableOption selected)
+    static void SetSelection(IEnumerable<ISelectableRangeOption> list, ISelectableRangeOption? selected)
     {
         foreach (var canBeSelected in list)
         {
-            if (selected != null && selected.Id == canBeSelected.Id)
+	        canBeSelected.SelectionStart = false;
+	        canBeSelected.SelectionEnd = false;
+            
+	        if (selected != null && selected.Id == canBeSelected.Id)
             {
                 canBeSelected.Selected = true;
-            }
+			}
             else
             {
                 canBeSelected.Selected = false;
@@ -463,9 +509,90 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
-    public bool HasImportantNotes
-        
+	/// <summary>
+	/// Set range selection. As the selection could be inverted that returns the adjusted start and end IDs.
+	/// </summary>
+	/// <param name="list"></param>
+	/// <param name="start"></param>
+	/// <param name="end"></param>
+	/// <returns></returns>
+    static (int Start, int End) SetSelection(IEnumerable<ISelectableRangeOption> list, ISelectableRangeOption? start, ISelectableRangeOption? end)
+    {
+	    var startIndex = -1;
+	    var endIndex = -1;
+	    var iteration = -1;
+	    var direction = -1;
+	    foreach (var canBeSelected in list)
+	    {
+		    iteration++;
+			if (end != null && canBeSelected.Id == end.Id)
+			{
+				endIndex = iteration;
+			}
+		    if (start != null && start.Id == canBeSelected.Id)
+		    {
+			    canBeSelected.Selected = true;
+			    canBeSelected.SelectionStart = true;
+			    canBeSelected.SelectionEnd = false;
+			    startIndex = iteration;
+				if (endIndex < 0)
+			    {
+				    direction = 1;
+			    }
+		    }
+		    else
+		    {
+			    canBeSelected.Selected = false;
+			    canBeSelected.SelectionEnd = false;
+			    canBeSelected.SelectionStart = false;
+		    }
+	    }
+
+	    if (endIndex>=0)
+	    {
+		    iteration = -1;
+		    bool insideRange = false;
+		    if (direction < 0)
+		    {
+			    (endIndex, startIndex) = (startIndex, endIndex);
+		    }
+			foreach (var canBeSelected in list)
+			{
+				iteration++;
+				if (iteration > endIndex)
+				{
+					insideRange = false;
+				}
+			    if (iteration == startIndex)
+			    {
+				    canBeSelected.Selected = true;
+				    canBeSelected.SelectionStart = true;
+				    canBeSelected.SelectionEnd = false;
+				    insideRange = true;
+			    }
+			    else
+			    if (iteration == endIndex)
+			    {
+				    canBeSelected.Selected = true;
+				    canBeSelected.SelectionStart = false;
+				    canBeSelected.SelectionEnd = true;
+			    }
+			    else
+			    if (insideRange)
+			    {
+					canBeSelected.Selected = true;
+				    canBeSelected.SelectionEnd = false;
+				    canBeSelected.SelectionStart = false;
+			    }
+		    }
+
+
+	    }
+
+	    return (startIndex, endIndex);
+    }
+
+	public bool HasImportantNotes
     {
         get
         {
@@ -473,16 +600,13 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public DateTime GetPrevMonth()
-        
     {
         var dt = new DateTime(SelectedYear, SelectedMonth, 1);
         return new DateTime(dt.AddMonths(-1).Year, dt.AddMonths(-1).Month, 1);
     }
     
     public DateTime GetNextMonth()
-        
     {
         var dt = new DateTime(SelectedYear, SelectedMonth, 1);
         return new DateTime(dt.AddMonths(1).Year, dt.AddMonths(1).Month, 1);
@@ -521,7 +645,6 @@ public class BookableShopElement : INotifyPropertyChanged
     }
     
     public bool CanSelectNextMonth
-        
     {
         get
         {
@@ -536,11 +659,7 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-
-
-    
     public bool HasDailyIntervals
-        
     {
         get
         {
@@ -549,7 +668,6 @@ public class BookableShopElement : INotifyPropertyChanged
     }
     
     public bool CanMakeOrder
-        
     {
         get
         {
@@ -557,9 +675,7 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string CurrentIntervalSeatsDesc
-        
     {
         get
         {
@@ -593,9 +709,7 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string SelectedTimeDesc
-        
     {
         get
         {
@@ -617,7 +731,6 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string FullTitle
     {
         get
@@ -636,9 +749,7 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string SelectedDowDesc
-        
     {
         get
         {
@@ -665,16 +776,14 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string SelectedDateDesc
-        
     {
         get
         {
             var selected = Days.FirstOrDefault(x => x.Selected);
             if (selected != null)
             {
-                CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(MonthView.Lang);
+                CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(Lang);
                 var date = selected.Date.ToString("d MMMM");
                 return $"{date}";
             }
@@ -682,15 +791,13 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-    
     public string CurrentMonthDesc
-        
     {
         get
         {
             try
             {
-                CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(MonthView.Lang);
+                CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(Lang);
                 var time = new DateTime(SelectedYear, SelectedMonth, 1);
                 var desc = time.ToString("MMMM yyyy").ToTitleCase();
                 return desc;
@@ -702,10 +809,7 @@ public class BookableShopElement : INotifyPropertyChanged
         }
     }
 
-
-    
     public void RaiseManualProperties()
-        
     {
         RaiseProperties(
             "SelectedDateDesc",
@@ -747,6 +851,8 @@ public class BookableShopElement : INotifyPropertyChanged
     }
 
     bool _IntervalsReady;
+    readonly bool _autoSelect;
+
     public bool IntervalsReady
     {
         get { return _IntervalsReady; }

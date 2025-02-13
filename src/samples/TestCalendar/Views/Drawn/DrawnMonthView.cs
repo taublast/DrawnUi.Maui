@@ -17,23 +17,110 @@ using TestCalendar.Views;
 namespace TestCalendar.Drawn
 {
 
-	public enum PresentationType
+	/// <summary>
+	/// Presents a single switchable month
+	/// </summary>
+	public partial class DrawnMonthView : SkiaLayout
 	{
-		SingleDate,
-		DatesRange
-	}
 
-	public partial class DrawnMonth : SkiaLayout
-	{
+		public IDrawnDaysController Context
+		{
+			get
+			{
+				return BindingContext as IDrawnDaysController;
+			}
+		}
+
+		protected void SetupCulture(string lang)
+		{
+			Culture = CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(lang);
+		}
+
+		#region PROPERTIES
+
+		public static readonly BindableProperty LangProperty = BindableProperty.Create(
+			nameof(Lang),
+			typeof(string),
+			typeof(DrawnMonthView),
+			"en", propertyChanged: (b, o, n) =>
+			{
+				if (b is DrawnMonthView control)
+				{
+					control.SetupCulture(control.Lang);
+				}
+			});
+
+		/// <summary>
+		/// Can localize
+		/// </summary>
+		public string Lang
+		{
+			get { return (string)GetValue(LangProperty); }
+			set { SetValue(LangProperty, value); }
+		}
+
+		public static readonly BindableProperty RangeEnabledProperty = BindableProperty.Create(
+			nameof(RangeEnabled),
+			typeof(bool),
+			typeof(DrawnMonthView),
+			false);
+
+		/// <summary>
+		/// Whether can allow to select days range instead of single day
+		/// </summary>
+		public bool RangeEnabled
+		{
+			get { return (bool)GetValue(RangeEnabledProperty); }
+			set { SetValue(RangeEnabledProperty, value); }
+		}
+
+
+		#endregion
+
+		protected override void OnBindingContextChanged()
+		{
+			base.OnBindingContextChanged();
+
+			Build();
+		}
+
+		static void NeedRebuild(BindableObject bindable, object oldvalue, object newvalue)
+		{
+			if (bindable is DrawnMonthView control)
+			{
+				control.Build();
+			}
+		}
+
+		public static readonly BindableProperty ColorAccentProperty = BindableProperty.Create(
+			nameof(ColorAccent),
+			typeof(Color),
+			typeof(DrawnMonthView),
+			Colors.Red, propertyChanged: NeedRebuild);
+
+		public Color ColorAccent
+		{
+			get { return (Color)GetValue(ColorAccentProperty); }
+			set { SetValue(ColorAccentProperty, value); }
+		}
+
+		public static readonly BindableProperty DayCornerRadiusProperty = BindableProperty.Create(
+			nameof(DayCornerRadius),
+			typeof(CornerRadius),
+			typeof(DrawnMonthView),
+			default(CornerRadius), propertyChanged: NeedRebuild);
+
+		public CornerRadius DayCornerRadius
+		{
+			get { return (CornerRadius)GetValue(DayCornerRadiusProperty); }
+			set { SetValue(DayCornerRadiusProperty, value); }
+		}
 
 		public static bool UseTimeIntervals = true;
 		public static PresentationType PresentationType = PresentationType.SingleDate;
-
-		int _SelectedYear;
-		int _SelectedMonth;
-		readonly SkiaLayout _layoutHeader;
-		readonly SkiaLayout _layoutDaysOfWeek;
-		readonly SkiaLayout _layoutDays;
+		SkiaLayout _layoutHeader;
+		SkiaLayout _layoutDaysOfWeek;
+		SkiaLayout _layoutDays;
 		SkiaMarkdownLabel _labelMonth;
 		DrawnDataGrid _gridDays;
 		SkiaMarkdownLabel cDow0;
@@ -46,8 +133,6 @@ namespace TestCalendar.Drawn
 		SkiaMarkdownLabel _cLeftArrow;
 		SkiaMarkdownLabel _cRightArrow;
 
-		
-		public static Color ColorAccent = Colors.Goldenrod;
 		public static Color ColorTextActive = Colors.White;
 		public static Color ColorText = Colors.DimGrey;
 		public static Color ColorGrid = Colors.Gainsboro;
@@ -55,30 +140,28 @@ namespace TestCalendar.Drawn
 		public static Color ColorLines = Colors.DarkGrey;
 		public static Color ColorCellBackground = Colors.White;
 
-		public static float DayCornerRadius = 14;
 		public double DayHeight = 44;
 
+		bool _wasBuilt;
+		protected CultureInfo Culture;
 
-		public DrawnMonth()
+		public void Build()
 		{
-
-			Type = LayoutType.Column;
-			Spacing = 0;
-			BackgroundColor = Colors.WhiteSmoke;
-
-			//We have 2 main parts, a header and days.
-
-			// MONTH CONTROL
-			_layoutHeader = new SkiaLayout()
+			if (!_wasBuilt)
 			{
-				Type = LayoutType.Grid,
-				HeightRequest = 44,
-				ColumnSpacing = 0.5,
-				RowSpacing = 0.5,
-				Margin = new Thickness(8),
-				BackgroundColor = ColorLines,
-				HorizontalOptions = LayoutOptions.Fill,
-				Children = new List<SkiaControl>()
+				_wasBuilt = true;
+
+				// MONTH CONTROL
+				_layoutHeader = new SkiaLayout()
+				{
+					Type = LayoutType.Grid,
+					HeightRequest = 44,
+					ColumnSpacing = 0.5,
+					RowSpacing = 0.5,
+					Margin = new Thickness(8),
+					BackgroundColor = ColorLines,
+					HorizontalOptions = LayoutOptions.Fill,
+					Children = new List<SkiaControl>()
 				{
 	                // PREV MONTH
 	                new ContentLayout()
@@ -123,9 +206,9 @@ namespace TestCalendar.Drawn
 						VerticalOptions = LayoutOptions.Fill,
 						Content = new SkiaMarkdownLabel()
 						{
-	                        Text = string.Empty,
+							Text = string.Empty,
 							VerticalOptions = LayoutOptions.Center,
-							HorizontalOptions = LayoutOptions.CenterAndExpand,
+							HorizontalOptions = LayoutOptions.Center,
 							FontSize = 15,
 							TextColor = ColorText
 						}.With((c)=>
@@ -167,17 +250,17 @@ namespace TestCalendar.Drawn
 						};
 					})
 				}
-			}
-			.WithColumnDefinitions("40,*,40");
+				}
+				.WithColumnDefinitions("40,*,40");
 
-			// DAYS OF WEEK 
-			_layoutDaysOfWeek = new SkiaLayout()
-			{
-				Type = LayoutType.Grid,
-				ColumnSpacing = 0.5,
-				RowSpacing = 0,
-				Margin = new Thickness(8, 0, 8, 0),
-				Children = new List<SkiaControl>()
+				// DAYS OF WEEK 
+				_layoutDaysOfWeek = new SkiaLayout()
+				{
+					Type = LayoutType.Grid,
+					ColumnSpacing = 0.5,
+					RowSpacing = 0,
+					Margin = new Thickness(8, 0, 8, 0),
+					Children = new List<SkiaControl>()
 				{
 					new ContentLayout()
 					{
@@ -293,17 +376,17 @@ namespace TestCalendar.Drawn
 					}.WithColumn(6),
 
 				}
-			}
-			.WithColumnDefinitions("*,*,*,*,*,*,*");
+				}
+				.WithColumnDefinitions("*,*,*,*,*,*,*");
 
-			// CONTENT:
+				// CONTENT:
 
-			// DAYS GRID
-			_layoutDays = new SkiaLayout()
-			{
-				BackgroundColor = ColorGrid,
-				Margin = new Thickness(8, 0, 8, 8),
-				Children = new List<SkiaControl>()
+				// DAYS GRID
+				_layoutDays = new SkiaLayout()
+				{
+					BackgroundColor = ColorGrid,
+					Margin = new Thickness(8, 0, 8, 8),
+					Children = new List<SkiaControl>()
 				{
 					new DrawnDataGrid()
 					{
@@ -316,9 +399,10 @@ namespace TestCalendar.Drawn
 						{
 							var cell = new DrawnDay()
 							{
-								HeightRequest = DayHeight,
-								CornerRadius = DayCornerRadius
-							}           
+								//HeightRequest = DayHeight,
+								//HorizontalOptions = LayoutOptions.Center,
+								//CornerRadius = DayCornerRadius
+							}
 							.With((c) =>
 							{
 								c.OnGestures = (args, info) =>
@@ -331,6 +415,9 @@ namespace TestCalendar.Drawn
 									return null;
 								};
 							});
+
+							cell.SetBinding(DrawnDay.InsideRangeProperty, new Binding(nameof(Context.RangeSelected), source: Context));
+
 							return cell;
 						})
 					}.With((c) =>
@@ -338,110 +425,27 @@ namespace TestCalendar.Drawn
 						_gridDays = c;
 					})
 				}
-			};
-
-			Children.Add(_layoutHeader);
-			Children.Add(_layoutDaysOfWeek);
-			Children.Add(_layoutDays);
-
-
-
-			var context = new BookableShopElement(new ShopElement(), null);
-
-			var testData = AppoHelper.GetDefaultConstraints();
-
-			var intervals =
-				AppoHelper.GetAvailable(DateTime.Now.AddDays(-90), DateTime.Now, testData, TimeSpan.FromHours(2));
-
-			var booked = new List<BookableInterval>();
-			foreach (var interval in intervals)
-			{
-				var add = new BookableInterval()
-				{
-					Id = Guid.NewGuid().ToString("N")
 				};
-				Reflection.MapProperties(interval, add);
-				booked.Add(add);
+
+				Children.Add(_layoutHeader);
+				Children.Add(_layoutDaysOfWeek);
+				Children.Add(_layoutDays);
 			}
 
-			context.Element.Schedules = new OptionsList<BookableInterval>(booked);
-			context.InitIntervals();
-
-			Context = context; //new BookableShopElement(new ShopElement(), null);
-
-			BindingContext = Context;
-
-			SetupTime();
-		}
-
-		public static string Lang = "ru";
-		public static string PricesMask = "{0} руб.";
-
-
-		#region CONTEXT
-
-		public BookableShopElement Context { get; set; }
-
-		ObservableRangeCollection<AppoDay> _Days = new();
-		public ObservableRangeCollection<AppoDay> Days
-		{
-			get { return _Days; }
-			set
+			if (BindingContext != null)
 			{
-				if (_Days != value)
-				{
-					_Days = value;
-					OnPropertyChanged("Days");
-				}
+				SetupTime();
 			}
 		}
 
-		ObservableRangeCollection<FullBookableInterval> _DaylyIntervals = new();
-
-		public ObservableRangeCollection<FullBookableInterval> DaylyIntervals
+		public DrawnMonthView()
 		{
-			get { return _DaylyIntervals; }
-			set
-			{
-				if (_DaylyIntervals != value)
-				{
-					_DaylyIntervals = value;
-					OnPropertyChanged();
-				}
-			}
+			Type = LayoutType.Column;
+			Spacing = 0;
+			BackgroundColor = Colors.WhiteSmoke;
+			
+			Build();
 		}
-
-
-
-		public int SelectedMonth
-		{
-			get { return _SelectedMonth; }
-			set
-			{
-				if (_SelectedMonth != value)
-				{
-					_SelectedMonth = value;
-					OnPropertyChanged();
-					OnPropertyChanged("SelectedMonthDesc");
-				}
-			}
-		}
-
-		public int SelectedYear
-		{
-			get { return _SelectedYear; }
-			set
-			{
-				if (_SelectedYear != value)
-				{
-					_SelectedYear = value;
-					OnPropertyChanged();
-					OnPropertyChanged("SelectedMonthDesc");
-				}
-			}
-		}
-
-		#endregion
 
 		void OnTappedDay(AppoDay day)
 		{
@@ -450,47 +454,17 @@ namespace TestCalendar.Drawn
 				return;
 			}
 
-			Context.SelectDay(day);
-			
-			InitSeatsPicker();
-		}
-
-		void InitSeatsPicker()
-		{
-			//todo
-
-			/*
-			PickerSeats.Items.Clear();
-
-			var b = 13;
-			if (Context.CurrentIntervalSeats > 0)
+			if (Context.IsSelecting)
 			{
-				if (b > Context.CurrentIntervalSeats + 1)
-					b = Context.CurrentIntervalSeats + 1;
-
-				for (int a = 1; a < b; a++)
-				{
-					PickerSeats.Items.Add(a.ToString());
-				}
+				Context.SelectEnd(day);
 			}
 			else
-			if (Context.CurrentIntervalSeats == -1) //Many
 			{
-				for (int a = 1; a < b; a++)
-				{
-					PickerSeats.Items.Add(a.ToString());
-				}
+				Context.SelectStart(day);
 			}
-
-			// -2 or 0 = not available
-
-			if (!PickerSeats.Items.Any())
-			{
-				PickerSeats.Items.Add(ResStrings.Unavalable);
-			}
-			*/
-
 		}
+
+		#region SINGLE MONTH WRAPPER
 
 		void OnClicked_Interval(object sender, TapEventArgs e)
 		{
@@ -544,12 +518,14 @@ namespace TestCalendar.Drawn
 			}
 		}
 
+		#endregion
+
 		void SetupTime()
 		{
 
 			//Context.InitIntervals();
 
-			var ci = CultureInfo.CreateSpecificCulture(Lang);
+			var ci = CultureInfo.CreateSpecificCulture(Context.Lang);
 			Thread.CurrentThread.CurrentCulture = ci;
 			//DependencyService.Get<ILocalize>().SetLocale(Lang); 
 			string[] names = ci.DateTimeFormat.AbbreviatedDayNames;
@@ -569,40 +545,47 @@ namespace TestCalendar.Drawn
 			//gridIntervals.BindingContext = Context;
 		}
 
+		/// <summary>
+		/// Days itemssource is set here.
+		/// </summary>
 		protected void SetupCalendarArrows()
 		{
-			if (Context.Days.Any())
+			if (Context.CurrentMonth != null)
 			{
-				var startingdow = (int)Context.Days.First().Date.DayOfWeek;
-				//if (startingdow == 0)
-				//    gridDays.StartColumn = 6;
-				//else
-				//if (startingdow > 1)
-				//    gridDays.StartColumn = startingdow - 1;
+				if (Context.CurrentMonth.Days.Any())
+				{
+					var startingdow = (int)Context.CurrentMonth.Days.First().Date.DayOfWeek;
+					if (startingdow == 0)
+						_gridDays.StartColumn = 6;
+					else
+					if (startingdow > 1)
+						_gridDays.StartColumn = startingdow - 1;
+				}
+
+				//left arrow
+				if (Context.CanSelectPrevMonth)
+				{
+					_cLeftArrow.TextColor = _cLeftArrowColor;
+				}
+				else
+				{
+					_cLeftArrow.TextColor = ColorLines;
+				}
+				//right arrow
+				if (Context.CanSelectNextMonth)
+				{
+					_cRightArrow.TextColor = _cRightArrowColor;
+				}
+				else
+				{
+					_cRightArrow.TextColor = ColorLines;
+				}
+
+				_labelMonth.Text = Context.CurrentMonthDesc;
+
+				_gridDays.ItemsSource = Context.CurrentMonth.Days;
 			}
 
-			//left arrow
-			if (Context.CanSelectPrevMonth)
-			{
-				_cLeftArrow.TextColor = _cLeftArrowColor;
-			}
-			else
-			{
-				_cLeftArrow.TextColor = ColorLines;
-			}
-			//right arrow
-			if (Context.CanSelectNextMonth)
-			{
-				_cRightArrow.TextColor = _cRightArrowColor;
-			}
-			else
-			{
-				_cRightArrow.TextColor = ColorLines;
-			}
-
-			_labelMonth.Text = Context.CurrentMonthDesc;
-
-			_gridDays.ItemsSource = Context.Days;
 			//	
 		}
 

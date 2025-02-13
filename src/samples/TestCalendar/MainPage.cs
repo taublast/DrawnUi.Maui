@@ -62,14 +62,17 @@ namespace Sandbox
 								HeightRequest = 32,
 								TextColor = Colors.Yellow,
 								HorizontalOptions = LayoutOptions.Center,
+								VerticalTextAlignment = TextAlignment.Center,
 								Text = $"Drawn Month Control",
 							}.With((c) =>
 							{
 								DebugLabel = c;
 							}),
-							new DrawnMonth()
+							new DrawnMonthView()
 							{
+								BindingContext = new CalendarController(),
 								HorizontalOptions = LayoutOptions.Fill,
+								RangeEnabled = true
 							}
 						}
 					},

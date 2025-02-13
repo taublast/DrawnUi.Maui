@@ -9,8 +9,8 @@ namespace AppoMobi.Models
    
  
     public class FullBookableInterval : BookableIntervalDto, 
-        INotifyPropertyChanged, ISelectableOption
-    {
+        INotifyPropertyChanged, ISelectableRangeOption
+	{
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -39,7 +39,41 @@ namespace AppoMobi.Models
             }
         }
 
-        public string Id { get; set; }
+		bool _isSelectionStart;
+		public bool SelectionStart
+		{
+			get
+			{
+				return _isSelectionStart;
+			}
+			set
+			{
+				if (_isSelectionStart != value)
+				{
+					_isSelectionStart = value;
+					NotifyPropertyChanged(nameof(SelectionStart));
+				}
+			}
+		}
+
+		bool _isSelectionEnd;
+		public bool SelectionEnd
+		{
+			get
+			{
+				return _isSelectionEnd;
+			}
+			set
+			{
+				if (_isSelectionEnd != value)
+				{
+					_isSelectionEnd = value;
+					NotifyPropertyChanged(nameof(SelectionEnd));
+				}
+			}
+		}
+
+		public string Id { get; set; }
 
         public string ParentId { get; set; }
 
@@ -47,7 +81,7 @@ namespace AppoMobi.Models
         {
             get
             {
-                CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(MonthView.Lang);
+                CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(BookableShopElement.Lang);
                 return TimeStart.Value.ToShortTimeString();
             }
         }
