@@ -47,7 +47,7 @@ namespace Sandbox
 					new SkiaLayout()
 					{
 						Type = LayoutType.Column,
-						Spacing = 8,
+						Spacing = 9,
 						BackgroundColor = Colors.HotPink,
 						HorizontalOptions = LayoutOptions.Fill,
 						
@@ -67,52 +67,10 @@ namespace Sandbox
 							{
 								DebugLabel = c;
 							}),
-							new MonthsScroll()
+							new DrawnMonth()
 							{
-								IsVisible = false,
-								BackgroundColor = Colors.DarkSlateGray,
 								HorizontalOptions = LayoutOptions.Fill,
-								HeightRequest = 260,
-							}.With((c) =>
-							{
-								c.Scrolled += (sender, point) =>
-								{
-									DebugLabel.Text = $"Scroll Y-offset: {c.InternalViewportOffset.Pixels.Y:0}";
-								};
-							}),
-						 
-							new SmartScroll()
-							{       
-								IsVisible = true,
-								HorizontalOptions = LayoutOptions.Fill,
-								VerticalOptions = LayoutOptions.Fill,
-							}.WithContent(new SkiaLayout()
-							{
-								Tag="Recycled",
-								Virtualisation = VirtualisationType.Managed,
-								HorizontalOptions = LayoutOptions.Fill,
-			 
-								Type = LayoutType.Column,
-								Spacing=4,
-								ItemsSource = Enumerable.Range(1, 2000).ToList(),
-								MeasureItemsStrategy = MeasuringStrategy.MeasureFirst,
-								ItemTemplate = new DataTemplate(() =>
-								{
-									var label = new SkiaLabel()
-									{
-										Tag="CellLabel",
-										Padding = new(8,4),
-										HorizontalOptions = LayoutOptions.Fill,
-										HorizontalTextAlignment = DrawTextAlignment.Center,
-										BackgroundColor = Colors.DarkBlue,
-										TextColor = Colors.White,
-										FontSize = 32
-									};
-									label.SetBinding(SkiaLabel.TextProperty, new Binding("."));
-									return label;
-								})
-							})
-						 
+							}
 						}
 					},
 					new SkiaLabel()
@@ -126,53 +84,8 @@ namespace Sandbox
 						HorizontalOptions = LayoutOptions.Start,
 						VerticalOptions = LayoutOptions.End,
 						Text = $"Reloads: {this.CountReloads}",
-					},
-					new SkiaLayout()
-					{
-						Type = LayoutType.Column
-					}.WithChildren(new DebugImage()
-						{
-							Text = "A",
-							StrokeWidth = 1,
-							StrokeColor = Colors.DimGray,
-							ZIndex = 100,
-							WidthRequest = 90,
-							HeightRequest = 90,
-							VerticalOptions = LayoutOptions.Start,
-							HorizontalOptions = LayoutOptions.Start
-						}.With((c) =>
-						{
-							MainPage.DebugLayerA = c;
-						}),
-						new DebugImage()
-						{
-							Text = "B",
-							ZIndex = 100,
-							StrokeWidth = 1,
-							StrokeColor = Colors.DimGray,
-							WidthRequest = 90,
-							HeightRequest = 90,
-							VerticalOptions = LayoutOptions.Start,
-							HorizontalOptions = LayoutOptions.End
-						}.With((c) =>
-						{
-							MainPage.DebugLayerB = c;
-						}),
-						new DebugImage()
-						{
-							Text = "C",
-							ZIndex = 100,
-							StrokeWidth = 1,
-							StrokeColor = Colors.DimGray,
-							WidthRequest = 90,
-							HeightRequest = 90,
-							VerticalOptions = LayoutOptions.Start,
-							HorizontalOptions = LayoutOptions.End
-						}.With((c) =>
-						{
-							MainPage.DebugLayerC = c;
-						})
-					)
+					}
+					
 				)
 			};
 
