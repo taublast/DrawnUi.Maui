@@ -1,10 +1,14 @@
 ﻿using AppoMobi.Models;
 using AppoMobi.Specials;
 using AppoMobi.Xam;
+using DrawnUi.Maui.Draw;
 using TestCalendar.Views;
 
 namespace TestCalendar.Drawn;
 
+/// <summary>
+/// Calendar control ViewModel
+/// </summary>
 public class CalendarController : BindableObject, IDrawnDaysController
 {
 
@@ -49,13 +53,15 @@ public class CalendarController : BindableObject, IDrawnDaysController
 			var days = Context.DaysContainer.GetDaysForMonth(monthInfo.Id);
 			month.Days = days;
 
+			Months.Add(month); 
+			
 			if (current == null)
 			{
 				current = month;
 			}
 		}
 		CurrentMonth = current;
-
+		
 	}
 
 	bool RangeEnabled => true;
@@ -175,18 +181,19 @@ public class CalendarController : BindableObject, IDrawnDaysController
 	public (int Start, int End) SelectDays(AppoDay start, AppoDay end)
 	{
 		//in case this day reference is  not inside Days
-		if (start != null)
-		{
-			start.Selected = true;
-			start.SelectionStart = true;
-			start.SelectionEnd = false;
-		}
-		if (end != null)
-		{
-			end.Selected = true;
-			end.SelectionStart = false;
-			end.SelectionEnd = true;
-		}
+		//todo re-enable
+		//if (start != null)
+		//{
+		//	start.Selected = true;
+		//	start.SelectionStart = true;
+		//	start.SelectionEnd = false;
+		//}
+		//if (end != null)
+		//{
+		//	end.Selected = true;
+		//	end.SelectionStart = false;
+		//	end.SelectionEnd = true;
+		//}
 
 		//affects UI
 		var indexes = Context.DaysContainer.SelectDays(start, end);
@@ -197,9 +204,29 @@ public class CalendarController : BindableObject, IDrawnDaysController
 		//OnPropertyChanged("SelectedDateDesc");
 		//OnPropertyChanged("FullTitle");
 
+		SendSelectionChanged();
+
 		return indexes;
 	}
 
+	public event EventHandler<IEnumerable<AppoDay>>? SelectionChanged;
+
+	public IEnumerable<AppoDay> GetSelection()
+	{
+		if (Context == null || Context.DaysContainer == null)
+		{
+			return new List<AppoDay>().AsReadOnly();
+		}
+		return Context.DaysContainer.Days.Where(x => x.Selected).ToList().AsReadOnly();
+	}
+
+	public void SendSelectionChanged()
+	{
+		if (SelectionChanged != null)
+		{
+			SelectionChanged.Invoke(this, GetSelection());
+		}
+	}
 
 	/// <summary>
 	/// Is in range mode and have first date already selected, waiting to select ending date

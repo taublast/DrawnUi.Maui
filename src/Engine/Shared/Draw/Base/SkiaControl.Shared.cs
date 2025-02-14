@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Input;
-using DrawnUi.Maui.Draw;
 using SKBlendMode = SkiaSharp.SKBlendMode;
 using SKCanvas = SkiaSharp.SKCanvas;
 using SKClipOperation = SkiaSharp.SKClipOperation;
@@ -1640,13 +1639,15 @@ namespace DrawnUi.Maui.Draw
             if (LockRatio > 0)
             {
                 var lockValue = (float)SmartMax(widthConstraint, heightConstraint);
-                return new SKSize(lockValue, lockValue);
+                if (lockValue > 0) //otherwise would need to use this while layouting
+                    return new SKSize(lockValue, lockValue);
             }
 
             if (LockRatio < 0)
             {
                 var lockValue = (float)SmartMin(widthConstraint, heightConstraint);
-                return new SKSize(lockValue, lockValue);
+                if (lockValue > 0)
+                    return new SKSize(lockValue, lockValue);
             }
 
             return new SKSize(widthConstraint, heightConstraint);
@@ -6175,6 +6176,9 @@ namespace DrawnUi.Maui.Draw
             validateValue: (bo, v) => v is IList<SkiaControl>,
             propertyChanged: ChildrenPropertyChanged);
 
+        /// <summary>
+        /// This is used by MAUI to set content from XAML. 
+        /// </summary>
         public IList<SkiaControl> Children
         {
             get => (IList<SkiaControl>)GetValue(ChildrenProperty);

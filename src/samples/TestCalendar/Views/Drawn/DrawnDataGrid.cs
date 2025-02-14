@@ -10,6 +10,20 @@ namespace AppoMobi.Xam
     {
         int SelectedRow = -1;
 
+		/// <summary>
+		/// Overrided to avoid applying to Views
+		/// </summary>
+		public override void ApplyBindingContext()
+        {
+	        if (IsDisposing)
+		        return;
+
+	        AttachEffects();
+
+	        if (FillGradient != null)
+		        FillGradient.BindingContext = BindingContext;
+		}
+
         //private AppoMobi.Touch.LegacyGesturesBoxView SelectionBox = null;
 
         public bool IsPressed { get; set; } = false;
@@ -43,13 +57,9 @@ namespace AppoMobi.Xam
 			// Update the UI
 			switch (propertyName)
 			{
-				case nameItemsSource:
-					ItemsSourceChanged();
-					break;
-
 				//property changed
 				case nameStartColumn:
-					ItemsSourceChanged();
+					OnItemSourceChanged();;
 					break;
 
 				//property changed
@@ -336,23 +346,32 @@ namespace AppoMobi.Xam
         public IList<IView> Views { get; private set; } = null;
         INotifyCollectionChanged oldSource { get; set; }
 
-        void ItemsSourceChanged()
+        public override void OnItemSourceChanged()
         {
-            ItemsLoaded = false;
+			//base.OnItemSourceChanged();
 
-            BuildGrid();
+			ItemsLoaded = false;
 
-            //new fix
-            if (oldSource != null)
-                oldSource.CollectionChanged -= OnCollectionChanged;
-            oldSource = ItemsSource as INotifyCollectionChanged;
+			BuildGrid();
+		}
 
-            var notifyCollection = ItemsSource as INotifyCollectionChanged;
-            if (notifyCollection != null)
-            {
-                notifyCollection.CollectionChanged += OnCollectionChanged;
-            }
-        }
+        //void ItemsSourceChanged()
+        //{
+        //    ItemsLoaded = false;
+
+        //    BuildGrid();
+
+        //    //new fix
+        //    if (oldSource != null)
+        //        oldSource.CollectionChanged -= OnCollectionChanged;
+        //    oldSource = ItemsSource as INotifyCollectionChanged;
+
+        //    var notifyCollection = ItemsSource as INotifyCollectionChanged;
+        //    if (notifyCollection != null)
+        //    {
+        //        notifyCollection.CollectionChanged += OnCollectionChanged;
+        //    }
+        //}
 
 
 
@@ -387,28 +406,6 @@ namespace AppoMobi.Xam
             get { return (int)GetValue(RowsProperty); }
             private set { SetValue(RowsProperty, value); }
         }
-
-
-
-
-        public DataTemplate ItemTemplate
-
-        {
-            get;
-            set;
-        }
-
-
-
-        // ItemsSource
-        const string nameItemsSource = "ItemsSource";
-        public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameItemsSource, typeof(IList), typeof(DrawnDataGrid), null, BindingMode.TwoWay);
-        public IList ItemsSource
-        {
-            get { return (IList)GetValue(ItemsSourceProperty); }
-            set { SetValue(ItemsSourceProperty, value); }
-        }
-
 
 
         /// <summary>

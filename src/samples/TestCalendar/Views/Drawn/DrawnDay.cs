@@ -35,13 +35,15 @@ namespace TestCalendar.Drawn
 				UseCache = SkiaCacheType.Operations,
 				VerticalOptions = LayoutOptions.Center,
 				HorizontalOptions = LayoutOptions.Center,
-				Padding = new(10, 6),
-				CornerRadius = 12,
+				LockRatio = 0,
+				MinimumWidthRequest = 40,
+				Padding = new(12, 6),
+				CornerRadius = 16,
 				StrokeWidth = 1.0,
 				BackgroundColor = TransparentColor,
 				Content = new SkiaLabel()
 				{
-				VerticalOptions = LayoutOptions.Center,
+				VerticalOptions = LayoutOptions.Fill,
 				HorizontalOptions = LayoutOptions.Center,
 				HorizontalTextAlignment = DrawTextAlignment.Center,
 				VerticalTextAlignment = TextAlignment.Center,
@@ -138,16 +140,25 @@ namespace TestCalendar.Drawn
 
 		void OnItemPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName.IsEither("Selected"))
+			if (BindingContext is AppoDay day)
 			{
-				StyleCell(BindingContext as AppoDay);
+				if (e.PropertyName.IsEither("Selected", "SelectionStart", "SelectionEnd"))
+				{
+					StyleCell(day);
+				}
 			}
 		}
 
 		public void SetupCell()
 		{
 			if (BindingContext is not AppoDay item)
+			{
+				if (BindingContext != null)
+				{
+					Super.Log("DrawnDay BindingContext is NOT AppoDay");
+				}
 				return;
+			}
 
 			try { item.PropertyChanged -= OnItemPropertyChanged; }
 			catch (Exception e) { }

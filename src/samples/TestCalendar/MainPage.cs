@@ -48,7 +48,7 @@ namespace Sandbox
 					{
 						Type = LayoutType.Column,
 						Spacing = 9,
-						BackgroundColor = Colors.HotPink,
+						BackgroundColor = Colors.DarkGrey,
 						HorizontalOptions = LayoutOptions.Fill,
 						
 						//VSTACK CONTENT
@@ -68,10 +68,12 @@ namespace Sandbox
 							{
 								DebugLabel = c;
 							}),
-							new DrawnMonthView()
+							new DrawnMultimonthsView()
 							{
+								BackgroundColor = Colors.White,
 								BindingContext = new CalendarController(),
 								HorizontalOptions = LayoutOptions.Fill,
+								VerticalOptions = LayoutOptions.Fill,
 								RangeEnabled = true
 							}
 						}
@@ -79,7 +81,7 @@ namespace Sandbox
 					new SkiaLabel()
 					{
 						UseCache = SkiaCacheType.Operations,
-						ZIndex = 100,
+						ZIndex = 991,
 						Tag = "Reloads",
 						TextColor = Colors.White,
 						BackgroundColor = Colors.Black,

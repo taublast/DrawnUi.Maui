@@ -158,8 +158,6 @@ public class DaysContainer
 
 		}
 
-		System.Diagnostics.Debug.WriteLine($"Selected: {list.Where(x=>x.Selected).Select(x=>$"{x.Id:0.00}").ToList().ToTags()}");
-
 		return (startIndex, endIndex);
 	}
 
