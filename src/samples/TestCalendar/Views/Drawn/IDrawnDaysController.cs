@@ -28,4 +28,8 @@ public interface IDrawnDaysController
 	void SelectPrevMonth();
 
 	string Lang { get; }
+
+	void SetupCulture(string lang);
+
+	List<string> GetWeekDaysShortNames();
 }

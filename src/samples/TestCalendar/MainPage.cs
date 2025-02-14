@@ -70,6 +70,7 @@ namespace Sandbox
 							}),
 							new DrawnMultimonthsView()
 							{
+								Lang = "ru",
 								BackgroundColor = Colors.White,
 								BindingContext = new CalendarController(),
 								HorizontalOptions = LayoutOptions.Fill,

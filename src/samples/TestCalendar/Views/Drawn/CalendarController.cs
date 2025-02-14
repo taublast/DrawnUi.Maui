@@ -1,4 +1,5 @@
-﻿using AppoMobi.Models;
+﻿using System.Globalization;
+using AppoMobi.Models;
 using AppoMobi.Specials;
 using AppoMobi.Xam;
 using DrawnUi.Maui.Draw;
@@ -62,6 +63,38 @@ public class CalendarController : BindableObject, IDrawnDaysController
 		}
 		CurrentMonth = current;
 		
+	}
+
+	protected CultureInfo Culture;
+
+	public void SetupCulture(string lang)
+	{
+		Culture = CultureInfo.CreateSpecificCulture(lang);
+		CultureInfo.CurrentCulture = Culture;
+		Thread.CurrentThread.CurrentCulture = Culture;
+		Thread.CurrentThread.CurrentUICulture = Culture;
+	}
+
+	public List<string> WeekDaysNames { get; set; } = new();
+
+	public List<string> GetWeekDaysShortNames()
+	{
+		var names = Culture.DateTimeFormat.AbbreviatedDayNames;
+		bool startsOnSunday = Culture.DateTimeFormat.FirstDayOfWeek == DayOfWeek.Sunday;
+
+		if (!startsOnSunday)
+		{
+			string sunday = names[0];
+			for (int i = 0; i < names.Length - 1; i++)
+			{
+				names[i] = names[i + 1];
+			}
+			names[names.Length - 1] = sunday;
+		}
+
+		WeekDaysNames = names.ToList();
+
+		return WeekDaysNames;
 	}
 
 	bool RangeEnabled => true;

@@ -33,7 +33,10 @@ namespace TestCalendar.Drawn
 
 		protected void SetupCulture(string lang)
 		{
-			Culture = CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(lang);
+			if (Context != null)
+			{
+				Context.SetupCulture(lang);
+			}
 		}
 
 		#region PROPERTIES
@@ -143,13 +146,15 @@ namespace TestCalendar.Drawn
 		public double DayHeight = 44;
 
 		bool _wasBuilt;
-		protected CultureInfo Culture;
+
 
 		public void Build()
 		{
 			if (!_wasBuilt)
 			{
 				_wasBuilt = true;
+
+				SetupCulture(Lang);
 
 				// MONTH CONTROL
 				_layoutHeader = new SkiaLayout()
@@ -256,129 +261,36 @@ namespace TestCalendar.Drawn
 				// DAYS OF WEEK 
 				_layoutDaysOfWeek = new SkiaLayout()
 				{
-					Type = LayoutType.Grid,
-					ColumnSpacing = 0.5,
-					RowSpacing = 0,
+					Type = LayoutType.Row,
+					Spacing = 0,
+					HorizontalOptions = LayoutOptions.Fill,
 					Margin = new Thickness(8, 0, 8, 0),
-					Children = new List<SkiaControl>()
-				{
-					new ContentLayout()
+					ItemTemplate = new DataTemplate(() =>
 					{
-						HorizontalOptions = LayoutOptions.Fill,
-						Content = new SkiaMarkdownLabel()
+						var cell = new ContentLayout()
 						{
-							Text = "пн",
-							Margin = new Thickness(0),
-							VerticalOptions = LayoutOptions.Center,
-							HorizontalOptions = LayoutOptions.Center,
-							FontSize = 15,
-							TextColor = ColorText
-						}.With((c) =>
-						{
-							cDow0 = c;
-						})
-					}.WithColumn(0),
-					new ContentLayout()
-					{
-						HorizontalOptions = LayoutOptions.Fill,
-						Content = new SkiaMarkdownLabel()
-						{
-							Text = "вт",
-							Margin = new Thickness(0),
-							VerticalOptions = LayoutOptions.Center,
-							HorizontalOptions = LayoutOptions.Center,
-							FontSize = 15,
-							TextColor = ColorText
-						}.With((c) =>
-						{
-							cDow1 = c;
-						})
-					}.WithColumn(1),
-					new ContentLayout()
-					{
-						HorizontalOptions = LayoutOptions.Fill,
-						Content = new SkiaMarkdownLabel()
-						{
-							Text = "ср",
-							Margin = new Thickness(0),
-							VerticalOptions = LayoutOptions.Center,
-							HorizontalOptions = LayoutOptions.Center,
-							FontSize = 15,
-							TextColor = ColorText
-						}.With((c) =>
-						{
-							cDow2 = c;
-						})
-					}.WithColumn(2),
-					new ContentLayout()
-					{
-						HorizontalOptions = LayoutOptions.Fill,
-						Content = new SkiaMarkdownLabel()
-						{
-							Text = "чт",
-							Margin = new Thickness(0),
-							VerticalOptions = LayoutOptions.Center,
-							HorizontalOptions = LayoutOptions.Center,
-							FontSize = 15,
-							TextColor = ColorText
-						}.With((c) =>
-						{
-							cDow3 = c;
-						})
-					}.WithColumn(3),
-					new ContentLayout()
-					{
-						HorizontalOptions = LayoutOptions.Fill,
-						Content = new SkiaMarkdownLabel()
-						{
-							Text = "пт",
-							Margin = new Thickness(0),
-							VerticalOptions = LayoutOptions.Center,
-							HorizontalOptions = LayoutOptions.Center,
-							FontSize = 15,
-							TextColor = ColorText
-						}.With((c) =>
-						{
-							cDow4 = c;
-						})
-					}.WithColumn(4),
-					new ContentLayout()
-					{
-						HorizontalOptions = LayoutOptions.Fill,
-						Content = new SkiaMarkdownLabel()
-						{
-							Text = "сб",
-							Margin = new Thickness(0),
-							VerticalOptions = LayoutOptions.Center,
-							HorizontalOptions = LayoutOptions.Center,
-							FontSize = 15,
-							TextColor = ColorText
-						}.With((c) =>
-						{
-							cDow5 = c;
-						})
-					}.WithColumn(5),
-					new ContentLayout()
-					{
-						HorizontalOptions = LayoutOptions.Fill,
-						Content = new SkiaMarkdownLabel()
-						{
-							Text = "вс",
-							Margin = new Thickness(0),
-							VerticalOptions = LayoutOptions.Center,
-							HorizontalOptions = LayoutOptions.Center,
-							FontSize = 15,
-							TextColor = ColorText
-						}.With((c) =>
-						{
-							cDow6 = c;
-						})
-					}.WithColumn(6),
-
-				}
-				}
-				.WithColumnDefinitions("*,*,*,*,*,*,*");
-
+							HorizontalOptions = LayoutOptions.Fill,
+							HorizontalFillRatio = 0.142857, // 1/7
+							Content = new SkiaMarkdownLabel()
+							{
+								Margin = new Thickness(0),
+								VerticalOptions = LayoutOptions.Center,
+								HorizontalOptions = LayoutOptions.Fill,
+								HorizontalTextAlignment = DrawTextAlignment.Center,
+								FontSize = 13,
+								MaxLines = 1,
+								FontAttributes = FontAttributes.Bold,
+								LineBreakMode = LineBreakMode.NoWrap,
+								TextColor = CalendarViewSettings.DayText
+							}.With((label) =>
+							{
+								label.SetBinding(SkiaLabel.TextProperty, new Binding("."));
+							})
+						};
+						return cell;
+					})
+				};
+				
 				// CONTENT:
 
 				// DAYS GRID
@@ -387,44 +299,44 @@ namespace TestCalendar.Drawn
 					BackgroundColor = ColorGrid,
 					Margin = new Thickness(8, 0, 8, 8),
 					Children = new List<SkiaControl>()
-				{
-					new DrawnDataGrid()
 					{
-						BackgroundColor = ColorBackground,
-						Columns = 7,
-						Margin = new Thickness(1, 1, 0.5, 0.5),
-						ColumnSpacing = 0,
-						RowSpacing = 0,
-						ItemTemplate = new DataTemplate(() =>
+						new DrawnDataGrid()
 						{
-							var cell = new DrawnDay()
+							BackgroundColor = ColorBackground,
+							Columns = 7,
+							Margin = new Thickness(1, 1, 0.5, 0.5),
+							ColumnSpacing = 0,
+							RowSpacing = 0,
+							ItemTemplate = new DataTemplate(() =>
 							{
-								//HeightRequest = DayHeight,
-								//HorizontalOptions = LayoutOptions.Center,
-								//CornerRadius = DayCornerRadius
-							}
-							.With((c) =>
-							{
-								c.OnGestures = (args, info) =>
+								var cell = new DrawnDay()
 								{
-									if (args.Type == TouchActionResult.Tapped)
+									//HeightRequest = DayHeight,
+									//HorizontalOptions = LayoutOptions.Center,
+									//CornerRadius = DayCornerRadius
+								}
+								.With((c) =>
+								{
+									c.OnGestures = (args, info) =>
 									{
-										OnTappedDay(c.BindingContext as AppoDay);
-										return c;
-									}
-									return null;
-								};
-							});
+										if (args.Type == TouchActionResult.Tapped)
+										{
+											OnTappedDay(c.BindingContext as AppoDay);
+											return c;
+										}
+										return null;
+									};
+								});
 
-							cell.SetBinding(DrawnDay.InsideRangeProperty, new Binding(nameof(Context.RangeSelected), source: Context));
+								cell.SetBinding(DrawnDay.InsideRangeProperty, new Binding(nameof(Context.RangeSelected), source: Context));
 
-							return cell;
+								return cell;
+							})
+						}.With((c) =>
+						{
+							_gridDays = c;
 						})
-					}.With((c) =>
-					{
-						_gridDays = c;
-					})
-				}
+					}
 				};
 
 				Children.Add(_layoutHeader);
@@ -523,21 +435,11 @@ namespace TestCalendar.Drawn
 		void SetupTime()
 		{
 
+			_layoutDaysOfWeek.ItemsSource = Context.GetWeekDaysShortNames();
+		
 			//Context.InitIntervals();
 
-			var ci = CultureInfo.CreateSpecificCulture(Context.Lang);
-			Thread.CurrentThread.CurrentCulture = ci;
-			//DependencyService.Get<ILocalize>().SetLocale(Lang); 
-			string[] names = ci.DateTimeFormat.AbbreviatedDayNames;
-			cDow0.Text = names[1];
-			cDow1.Text = names[2];
-			cDow2.Text = names[3];
-			cDow3.Text = names[4];
-			cDow4.Text = names[5];
-			cDow5.Text = names[6];
-			cDow6.Text = names[0];
-
-			_gridDays.BindingContext = Context;
+			//_gridDays.BindingContext = Context;
 			
 			_labelMonth.Text = Context.CurrentMonthDesc;
 

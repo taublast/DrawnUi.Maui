@@ -11,7 +11,7 @@
 
     <ShellContent
         Title="Drawn UI"
-        ContentTemplate="{DataTemplate mauiNet8:MainPage}"
+        ContentTemplate="{DataTemplate views:MainPageGame}"
         Route="MainPage" />
 
 </Shell>
