@@ -1,7 +1,6 @@
 ﻿using AppoMobi.Models;
 using AppoMobi.Specials;
 using AppoMobi.Xam;
-using Polly;
 using TestCalendar.Views;
 
 namespace TestCalendar.Drawn;
@@ -17,7 +16,7 @@ public class CalendarController : BindableObject, IDrawnDaysController
 		var testData = AppoHelper.GetDefaultConstraints();
 		
 		var intervals =
-			AppoHelper.GetAvailable(DateTime.Now.AddDays(90), DateTime.Now, testData, TimeSpan.FromHours(2));
+			AppoHelper.GetAvailable(DateTime.Now.AddDays(90), DateTime.Now, testData, TimeSpan.FromHours(6));
 
 		var booked = new List<BookableInterval>();
 		foreach (var interval in intervals)
@@ -38,10 +37,25 @@ public class CalendarController : BindableObject, IDrawnDaysController
 
 		Context = context;      
 		
-		var month = new AppoMonth(SelectedYear, SelectedMonth);
-		month.Days.ReplaceRange(context.Days);
-		Months.Add(month);
-		CurrentMonth = month;
+		//add 1 year
+		var startMonth = DateTime.Now.Month;
+		var startYear = DateTime.Now.Year;
+		Context.SetupDays(startYear, startMonth, startYear+1, startMonth);
+
+		AppoMonth? current = null;
+		foreach (var monthInfo in Context.DaysContainer.Indexes)
+		{
+			var month = new AppoMonth(monthInfo.Year, monthInfo.Month);
+			var days = Context.DaysContainer.GetDaysForMonth(monthInfo.Id);
+			month.Days = days;
+
+			if (current == null)
+			{
+				current = month;
+			}
+		}
+		CurrentMonth = current;
+
 	}
 
 	bool RangeEnabled => true;
@@ -52,6 +66,30 @@ public class CalendarController : BindableObject, IDrawnDaysController
 
 
 	#region Selection
+
+	public void SelectDay(AppoDay day)
+	{
+		if (day == null)
+		{
+			Context.DaysContainer.SelectDay(null);
+			return;
+		}
+
+		//in case this day reference is  not inside Days
+		day.Selected = true;
+		day.SelectionStart = true;
+		day.SelectionEnd = false;
+
+		//affects UI
+		Context.DaysContainer.SelectDay(day);
+
+		//todo!!!
+		//LoadFullDaylyIntervals();
+		
+		//OnPropertyChanged("SelectedDateTypeDesc");
+		//OnPropertyChanged("SelectedDateDesc");
+		//OnPropertyChanged("FullTitle");
+	}
 
 	AppoDay? _dayStart;
 	AppoDay? DayStart
@@ -112,7 +150,7 @@ public class CalendarController : BindableObject, IDrawnDaysController
 
 	void InitDaySelection(AppoDay value)
 	{
-		Context.SelectDay(value);
+		SelectDay(value);
 		InitSeatsPicker();
 	}
 
@@ -126,7 +164,7 @@ public class CalendarController : BindableObject, IDrawnDaysController
 
 		if (start != null)
 		{
-			var selected = Context.SelectDays(start, end);
+			var selected = SelectDays(start, end);
 			if (selected.Start > 0)
 			{
 				DayEnd = end;
@@ -134,47 +172,119 @@ public class CalendarController : BindableObject, IDrawnDaysController
 		}
 	}
 
+	public (int Start, int End) SelectDays(AppoDay start, AppoDay end)
+	{
+		//in case this day reference is  not inside Days
+		if (start != null)
+		{
+			start.Selected = true;
+			start.SelectionStart = true;
+			start.SelectionEnd = false;
+		}
+		if (end != null)
+		{
+			end.Selected = true;
+			end.SelectionStart = false;
+			end.SelectionEnd = true;
+		}
+
+		//affects UI
+		var indexes = Context.DaysContainer.SelectDays(start, end);
+
+		//todo
+		//LoadFullDaylyIntervals();
+		//OnPropertyChanged("SelectedDateTypeDesc");
+		//OnPropertyChanged("SelectedDateDesc");
+		//OnPropertyChanged("FullTitle");
+
+		return indexes;
+	}
+
+
 	/// <summary>
 	/// Is in range mode and have first date already selected, waiting to select ending date
 	/// </summary>
 	public bool IsSelecting => RangeEnabled && DayStart != null && DayEnd == null;
 
-	public bool CanSelectNextMonth => Context.CanSelectNextMonth;
-	public bool CanSelectPrevMonth => Context.CanSelectPrevMonth;
-	public string CurrentMonthDesc => Context.CurrentMonthDesc;
+	public bool CanSelectNextMonth
+	{
+		get
+		{
+			if (CurrentMonth == null)
+				return false;
+
+			var next = CurrentMonth.GetNextMonthId();
+			return Context.DaysContainer.ContainsMonth(next);
+		}
+	}
+
+	public bool CanSelectPrevMonth
+	{
+		get
+		{
+			if (CurrentMonth == null)
+				return false;
+
+			var next = CurrentMonth.GetPreviousMonthId();
+			return Context.DaysContainer.ContainsMonth(next);
+		}
+	}
+
+	public string CurrentMonthDesc
+	{
+		get
+		{
+			if (CurrentMonth == null)
+				return string.Empty;
+
+			var time = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+			var desc = time.ToString("MMMM yyyy").ToTitleCase();
+			return desc;
+		}
+	} 
 
 	public void SelectNextMonth()
 	{
-		if (CanSelectNextMonth)
-		{
-			Context.SelectNextMonth();
+		if (CurrentMonth == null)
+			return;
 
+		var monthInfo = CurrentMonth.GetNextMonthInfo();
+		if (Context.DaysContainer.ContainsMonth(monthInfo.Id))
+		{
 			var month = Months
-				.FirstOrDefault(x => x.Year == Context.SelectedYear && x.Month == Context.SelectedMonth);
-			if (month==null)
+				.FirstOrDefault(x => x.Year == monthInfo.Year && x.Month == monthInfo.Month);
+
+			if (month == null)
 			{
-				month = new AppoMonth(SelectedYear, SelectedMonth);
-				month.Days.ReplaceRange(Context.Days);
+				month = new AppoMonth(monthInfo.Year, monthInfo.Month);
+				var days = Context.DaysContainer.GetDaysForMonth(monthInfo.Id);
+				month.Days = days;
 				Months.Add(month);
 			}
+
 			CurrentMonth = month;
 		}
 	}
 
 	public void SelectPrevMonth()
 	{
-		if (CanSelectPrevMonth)
-		{
-			Context.SelectPrevMonth();
+		if (CurrentMonth == null)
+			return;
 
+		var monthInfo = CurrentMonth.GetPreviousMonthInfo();
+		if (Context.DaysContainer.ContainsMonth(monthInfo.Id))
+		{
 			var month = Months
-				.FirstOrDefault(x => x.Year == Context.SelectedYear && x.Month == Context.SelectedMonth);
+				.FirstOrDefault(x => x.Year == monthInfo.Year && x.Month == monthInfo.Month);
+
 			if (month == null)
 			{
-				month = new AppoMonth(SelectedYear, SelectedMonth);
-				month.Days.ReplaceRange(Context.Days);
+				month = new AppoMonth(monthInfo.Year, monthInfo.Month);
+				var days = Context.DaysContainer.GetDaysForMonth(monthInfo.Id);
+				month.Days = days;
 				Months.Insert(0, month);
 			}
+
 			CurrentMonth = month;
 		}
 	}
@@ -229,7 +339,46 @@ public class CalendarController : BindableObject, IDrawnDaysController
 
 	public BookableShopElement Context { get; set; }
 
-	public AppoMonth? CurrentMonth { get; protected set; }
+	AppoMonth? _month;
+	public AppoMonth? CurrentMonth 
+	{
+		get
+		{
+			return _month;
+		}
+		protected set
+		{
+			if (_month != value)
+			{
+				_month = value;
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(SelectedYear));
+				OnPropertyChanged(nameof(SelectedMonth));
+			}
+		}
+	}
+
+	public int SelectedMonth
+	{
+		get
+		{
+			if (CurrentMonth == null)
+				return 1;
+
+			return CurrentMonth.Month;
+		}
+	}
+
+	public int SelectedYear
+	{
+		get
+		{
+			if (CurrentMonth == null)
+				return DateTime.Now.Year;
+
+			return CurrentMonth.Year;
+		}
+	}
 
 	ObservableRangeCollection<AppoMonth> _months = new();
 	public ObservableRangeCollection<AppoMonth> Months
@@ -244,10 +393,6 @@ public class CalendarController : BindableObject, IDrawnDaysController
 			}
 		}
 	}
-
-	public int SelectedMonth => Context.SelectedMonth;
-
-	public int SelectedYear => Context.SelectedYear;
 
 	#endregion
 

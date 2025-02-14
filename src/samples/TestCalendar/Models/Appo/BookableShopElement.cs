@@ -10,6 +10,7 @@ namespace TestCalendar.Views;
 
 public class MonthInsideDaysIndex
 {
+	public float Id { get; set; }
 	public int Year { get; set; }
 	public int Month { get; set; }
 	public int DayIndexStart { get; set; }
@@ -18,6 +19,64 @@ public class MonthInsideDaysIndex
 
 public class BookableShopElement : INotifyPropertyChanged
 {
+
+	#region DAYS CONTAINER
+
+	(List<AppoDay> Days, List<MonthInsideDaysIndex> Indexes) CreateDays(int yearStart, int monthStart, int yearEnd, int monthEnd)
+	{
+		var year = yearStart;
+		var month = monthStart;
+
+		List<AppoDay> ret = new();
+		List<MonthInsideDaysIndex> indexes = new();
+
+		while (year <= yearEnd || month <= monthEnd)
+		{
+			SelectMonth(year, month, null);
+			indexes.Add(new()
+			{
+				Id = AppoMonth.EncodeMonth(year, month),
+				Month = month,
+				Year = year,
+				DayIndexStart = ret.Count,
+				DayIndexEnd = ret.Count + Days.Count - 1
+			});
+			ret.AddRange(Days);
+
+			month++;
+			if (month > 12)
+			{
+				month = 1;
+				year++;
+			}
+		}
+
+		return (ret, indexes);
+	}
+
+	public DaysContainer DaysContainer { get; protected set; }
+
+	public void SetupDays(int yearStart, int monthStart, int yearEnd, int monthEnd)
+	{
+		var data = CreateDays(yearStart, monthStart, yearEnd, monthEnd);
+		DaysContainer = new DaysContainer(data.Days, data.Indexes);
+	}
+
+	#endregion
+
+	ObservableRangeCollection<AppoDay> _Days = new();
+	public ObservableRangeCollection<AppoDay> Days
+	{
+		get { return _Days; }
+		set
+		{
+			if (_Days != value)
+			{
+				_Days = value;
+				OnPropertyChanged();
+			}
+		}
+	}
 
 	//todo: optimize culture related dynamic getters
 
@@ -97,22 +156,6 @@ public class BookableShopElement : INotifyPropertyChanged
                 price = 0.ToString(PricesMask);
             }
             return $"Total:  " + price;//$"{ResStrings.Total}:  " + price;
-        }
-    }
-
-    public List<MonthInsideDaysIndex> MonthIndexes;
-
-ObservableRangeCollection<AppoDay> _Days = new ();
-    public ObservableRangeCollection<AppoDay> Days
-    {
-        get { return _Days; }
-        set
-        {
-            if (_Days != value)
-            {
-                _Days = value;
-                OnPropertyChanged();
-            }
         }
     }
 
@@ -250,9 +293,11 @@ ObservableRangeCollection<AppoDay> _Days = new ();
         {
             var day = new AppoDay();
             day.Date = new DateTime(year, month, a);
-            day.Id = $"{day.Month}-{day.Day}";
+			
+            //day.Id = $"{day.Month}-{day.Day}"; legacy appo, will not work with multi-months engine
+			day.Id = $"{a:00}.{month:00}.{year}";
 
-            IEnumerable<BookableIntervalDto> intervals = null;
+			IEnumerable<BookableIntervalDto> intervals = null;
             try
             {
                 intervals = InThisMonth.Where(x => x.TimeStart.Value.Day == day.Day && x.TimeStart.Value.Month == day.Month);

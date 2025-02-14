@@ -57,6 +57,7 @@ namespace TestCalendar.Drawn
 
 			_selectionBackground = new SkiaShape()
 			{
+				Tag="Sel",
 				UseCache = SkiaCacheType.Operations,
 				HorizontalOptions = LayoutOptions.Fill,
 				VerticalOptions = LayoutOptions.Fill,
@@ -198,23 +199,24 @@ namespace TestCalendar.Drawn
 			bool selectShape = false;
 			if (item.SelectionStart)
 			{
-				_selectionBackground.AddMarginRight = 0;
-				_selectionBackground.AddMarginLeft = Width/2.0;
+				_selectionBackground.HorizontalPositionOffsetRatio = 1.0;
+				_selectionBackground.HorizontalFillRatio = 0.5;
 				_selectionBackground.IsVisible = InsideRange;
 				selectShape = true; 
 			}
 			else
 			if (item.SelectionEnd)
 			{
-				_selectionBackground.AddMarginRight = Width / 2.0;
-				_selectionBackground.AddMarginLeft = 0;
+				_selectionBackground.HorizontalPositionOffsetRatio = 0.0;
+				_selectionBackground.HorizontalFillRatio = 0.5;
 				_selectionBackground.IsVisible = InsideRange;
 				selectShape = true;
 			}
 			else
 			{
-				_selectionBackground.AddMarginLeft = 0;
-				_selectionBackground.AddMarginRight = 0;
+				_selectionBackground.HorizontalPositionOffsetRatio = 0;
+				_selectionBackground.HorizontalFillRatio = 1.0;
+
 				_selectionBackground.IsVisible = item.Selected && InsideRange;
 				selectShape = item.Selected && !InsideRange;
 			}
