@@ -3541,6 +3541,21 @@ namespace DrawnUi.Maui.Draw
         {
             RenderingScale = scale;
 
+            if (float.IsFinite(widthConstraint) && widthConstraint > 0)
+            {
+                if (HorizontalFillRatio != 1)
+                {
+                    widthConstraint *= (float)HorizontalFillRatio;
+                }
+            }
+            if (float.IsFinite(heightConstraint) && heightConstraint > 0)
+            {
+                if (VerticalFillRatio != 1)
+                {
+                    heightConstraint *= (float)VerticalFillRatio;
+                }
+            }
+
             if (LockRatio < 0)
             {
                 var size = Math.Min(heightConstraint, widthConstraint);
