@@ -210,6 +210,11 @@ public static partial class DrawnExtensions
                             if (StartupSettings.MobileIsFullscreen)
                             {
                                 Super.SetFullScreen(activity);
+
+                                if (StartupSettings.UseDesktopKeyboard)
+                                {
+                                    KeyboardManager.AttachToKeyboard(activity);
+                                }
                             }
                         }
                         Super.OnMauiAppCreated?.Invoke();
