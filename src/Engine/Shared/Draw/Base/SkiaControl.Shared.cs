@@ -1814,6 +1814,9 @@ namespace DrawnUi.Maui.Draw
             1.0,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// This would be applied to the reported available dimension for the control to fill. The parent layout is responsible for aliignement.
+        /// </summary>
         public double HorizontalFillRatio
         {
             get { return (double)GetValue(HorizontalFillRatioProperty); }
@@ -1827,6 +1830,9 @@ namespace DrawnUi.Maui.Draw
             1.0,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// This would be applied to the reported available dimension for the control to fill. The parent layout is responsible for aliignement.
+        /// </summary>
         public double VerticalFillRatio
         {
             get { return (double)GetValue(VerticalFillRatioProperty); }
@@ -2637,7 +2643,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        ///  destination in PIXELS, requests in UNITS
+        ///  Destination in PIXELS, requests in UNITS. This is affected by HorizontalFillRatio and VerticalFillRatio.
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="widthRequest"></param>
@@ -2656,6 +2662,15 @@ namespace DrawnUi.Maui.Draw
             wants = heightRequest * scale;
             if (wants >= 0 && wants < rectHeight)
                 rectHeight = (int)wants;
+
+            if (HorizontalFillRatio != 1)
+            {
+                rectWidth *= (float)HorizontalFillRatio;
+            }
+            if (VerticalFillRatio != 1)
+            {
+                rectHeight *= (float)VerticalFillRatio;
+            }
 
             return ScaledSize.FromPixels(rectWidth, rectHeight, scale);
         }
@@ -2685,10 +2700,6 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         public SKRect CalculateLayout(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
-            //if (widthRequest == 0 || heightRequest == 0)
-            //{
-            //    return new SKRect(0, 0, 0, 0);
-            //}
 
             var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale);
 
@@ -2817,121 +2828,6 @@ namespace DrawnUi.Maui.Draw
 
             return layout;
         }
-
-        /*
-        public SKRect CalculateLayout(SKRect destination, float widthRequest, float heightRequest, float scale)
-        {
-            if (widthRequest == 0 || heightRequest == 0)
-            {
-                return new SKRect(0, 0, 0, 0);
-            }
-
-            var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale);
-
-            var availableWidth = destination.Width;
-            var availableHeight = destination.Height;
-
-            var layoutHorizontal = new LayoutOptions(HorizontalOptions.Alignment, HorizontalOptions.Expands);
-            var layoutVertical = new LayoutOptions(VerticalOptions.Alignment, HorizontalOptions.Expands);
-
-
-            //initial fill
-            var left = destination.Left;
-            var top = destination.Top;
-            var right = left + rectAvailable.Pixels.Width;
-            var bottom = top + rectAvailable.Pixels.Height;
-
-            //layoutHorizontal
-            if (layoutHorizontal.Alignment == LayoutAlignment.Center && float.IsFinite(availableWidth))
-            {
-                //center
-                left += (availableWidth - rectAvailable.Pixels.Width) / 2.0f;
-                right = left + rectAvailable.Pixels.Width;
-
-                if (left < destination.Left)
-                {
-                    left = (float)(destination.Left);
-                    right = left + rectAvailable.Pixels.Width;
-                }
-
-                if (right > destination.Right)
-                {
-                    right = (float)(destination.Right);
-                }
-
-            }
-            else
-            if (layoutHorizontal.Alignment == LayoutAlignment.End)
-            {
-                //end
-                right = destination.Right;
-                left = right - rectAvailable.Pixels.Width;
-                if (left < destination.Left)
-                {
-                    left = (float)(destination.Left);
-                }
-            }
-            else
-            {
-                //start or fill
-                right = left + rectAvailable.Pixels.Width;
-                if (right > destination.Right)
-                {
-                    right = (float)(destination.Right);
-                }
-
-
-            }
-
-            //VerticalOptions
-            if (layoutVertical.Alignment == LayoutAlignment.Center)
-            {
-                //center
-                top += availableHeight / 2.0f - rectAvailable.Pixels.Height / 2.0f;
-                bottom = top + rectAvailable.Pixels.Height;
-                if (top < destination.Top)
-                {
-                    top = (float)(destination.Top);
-                    bottom = top + rectAvailable.Pixels.Height;
-                }
-                else
-                if (bottom > destination.Bottom)
-                {
-                    bottom = (float)(destination.Bottom);
-                    top = bottom - rectAvailable.Pixels.Height;
-                }
-            }
-            else
-            if (layoutVertical.Alignment == LayoutAlignment.End && double.IsFinite(destination.Bottom))
-            {
-                //end
-                bottom = destination.Bottom;
-                top = bottom - rectAvailable.Pixels.Height;
-                if (top < destination.Top)
-                {
-                    top = (float)(destination.Top);
-                }
-
-            }
-            else
-            {
-                //start or fill
-                bottom = top + rectAvailable.Pixels.Height;
-                if (bottom > destination.Bottom)
-                {
-                    bottom = (float)(destination.Bottom);
-                }
-
-            }
-
-            var ret = new SKRect((float)left, (float)top, (float)right, (float)bottom);
-
-            //Debug.WriteLine($"[Layout] '{Tag}' {ret.Left - destination.Left:0.0}-{destination.Right - ret.Right:0.0} ");
-
-            return ret;
-        }
-        */
-
 
         private ScaledSize _contentSize = new();
         public ScaledSize ContentSize
@@ -3632,26 +3528,17 @@ namespace DrawnUi.Maui.Draw
             return new SKSize(width, height);
         }
 
+        /// <summary>
+        /// todo use this for layout, actually this is used for measurement only .
+        /// RenderingScale is set insde.
+        /// </summary>
+        /// <param name="widthConstraint"></param>
+        /// <param name="heightConstraint"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
         protected virtual MeasureRequest CreateMeasureRequest(float widthConstraint, float heightConstraint, float scale)
         {
-
             RenderingScale = scale;
-
-            //LastMeasureRequest = new()
-            //{
-            //    Parent = this.Parent,
-            //    WidthRequest = widthConstraint,
-            //    HeightRequest = heightConstraint,
-            //};
-
-            if (HorizontalFillRatio != 1 && double.IsFinite(widthConstraint) && widthConstraint > 0)
-            {
-                widthConstraint *= (float)HorizontalFillRatio;
-            }
-            if (VerticalFillRatio != 1 && double.IsFinite(heightConstraint) && heightConstraint > 0)
-            {
-                heightConstraint *= (float)VerticalFillRatio;
-            }
 
             if (LockRatio < 0)
             {
