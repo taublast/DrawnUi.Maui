@@ -22,8 +22,13 @@ namespace TestCalendar.Drawn
 		readonly SkiaShape _shape;
 		readonly SkiaShape _selectionBackground;
 
-		public DrawnDay()
+		DynamicOptions _settings;
+
+		public DrawnDay(DynamicOptions settings)
 		{
+			_settings = settings;
+
+			_back = _settings.DaySelectionText;
 
 			HorizontalOptions = LayoutOptions.Fill;
 
@@ -35,7 +40,7 @@ namespace TestCalendar.Drawn
 				LockRatio = 0,
 				MinimumWidthRequest = 40,
 				Padding = new(12, 6),
-				CornerRadius = CalendarViewSettings.SelectionRadius,
+				CornerRadius = _settings.SelectionRadius,
 				StrokeWidth = 1.0,
 				BackgroundColor = TransparentColor,
 				Content = new SkiaLabel()
@@ -44,8 +49,8 @@ namespace TestCalendar.Drawn
 					HorizontalOptions = LayoutOptions.Center,
 					HorizontalTextAlignment = DrawTextAlignment.Center,
 					VerticalTextAlignment = TextAlignment.Center,
-					TextColor = CalendarViewSettings.DayText,
-					FontSize = CalendarViewSettings.DayTextSize
+					TextColor = _settings.DayText,
+					FontSize = _settings.DayTextSize
 				}.With((c) =>
 				{
 					_labelText = c;
@@ -57,7 +62,7 @@ namespace TestCalendar.Drawn
 				UseCache = SkiaCacheType.Operations,
 				HorizontalOptions = LayoutOptions.Fill,
 				VerticalOptions = LayoutOptions.Fill,
-				BackgroundColor = CalendarViewSettings.DayRangeSelectionBackground
+				BackgroundColor = _settings.DayRangeSelectionBackground
 			};
 
 			Children = new List<SkiaControl>()
@@ -102,7 +107,7 @@ namespace TestCalendar.Drawn
 			base.OnBindingContextChanged();
 		}
 
-		Color _back { get; set; } = CalendarViewSettings.DaySelectionText;
+		Color _back { get; set; }  
 		Color _front { get; set; }= Colors.Transparent;
 		
 		public override void OnDisposing()
@@ -176,14 +181,14 @@ namespace TestCalendar.Drawn
 			{
 				_back = Colors.Transparent;
 				_shape.BackgroundColor = _back;
-				_front = CalendarViewSettings.DayDisabledText;
-				_labelText.FontAttributes = CalendarViewSettings.DayDisabledTextAttributes;
+				_front = _settings.DayDisabledText;
+				_labelText.FontAttributes = _settings.DayDisabledTextAttributes;
 				_selectionBackground.IsVisible = false;
 			}
 			else
 			{
-				_front = CalendarViewSettings.DayText;
-				_labelText.FontAttributes = CalendarViewSettings.DayTextAttributes;
+				_front = _settings.DayText;
+				_labelText.FontAttributes = _settings.DayTextAttributes;
 			}
 
 			_labelText.TextColor = _front;
@@ -220,16 +225,16 @@ namespace TestCalendar.Drawn
 			//selected shape
 			if (selectShape)
 			{
-				_shape.BackgroundColor = CalendarViewSettings.DaySelectionBackground;
-				_shape.StrokeColor = CalendarViewSettings.DaySelectionStroke;
-				_labelText.TextColor = CalendarViewSettings.DaySelectionText;
+				_shape.BackgroundColor = _settings.DaySelectionBackground;
+				_shape.StrokeColor = _settings.DaySelectionStroke;
+				_labelText.TextColor = _settings.DaySelectionText;
 			}
 			else
 			{
 				if (item.Date == today)
 				{
-					_shape.StrokeColor = CalendarViewSettings.DayTodayStroke;
-					_shape.BackgroundColor = CalendarViewSettings.DayTodayBackground;
+					_shape.StrokeColor = _settings.DayTodayStroke;
+					_shape.BackgroundColor = _settings.DayTodayBackground;
 				}
 				else
 				{

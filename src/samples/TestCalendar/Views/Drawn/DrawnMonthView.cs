@@ -23,6 +23,8 @@ namespace TestCalendar.Drawn
 	public partial class DrawnMonthView : SkiaLayout
 	{
 
+		public DynamicOptions Settings { get; set; } = new();
+
 		public IDrawnDaysController Context
 		{
 			get
@@ -281,7 +283,7 @@ namespace TestCalendar.Drawn
 								MaxLines = 1,
 								FontAttributes = FontAttributes.Bold,
 								LineBreakMode = LineBreakMode.NoWrap,
-								TextColor = CalendarViewSettings.DayText
+								TextColor = Settings.DayText
 							}.With((label) =>
 							{
 								label.SetBinding(SkiaLabel.TextProperty, new Binding("."));
@@ -309,7 +311,7 @@ namespace TestCalendar.Drawn
 							RowSpacing = 0,
 							ItemTemplate = new DataTemplate(() =>
 							{
-								var cell = new DrawnDay()
+								var cell = new DrawnDay(Settings)
 								{
 									//HeightRequest = DayHeight,
 									//HorizontalOptions = LayoutOptions.Center,

@@ -1,15 +1,33 @@
-﻿using AppoMobi.Specials;
+﻿using System.Globalization;
+using AppoMobi.Specials;
+using TestCalendar.Drawn;
 
 namespace AppoMobi.Models;
 
 public class AppoMonth : BindableObject
 {
+	public float Id { get; set; }
+	public int Month { get; set; }
+	public int Year { get; set; }
+	public DynamicOptions Settings { get; set; } = new();
+
+
 	public AppoMonth()
 	{
 		Month = DateTime.Now.Month;
 		Year = DateTime.Now.Year;
 		Id = EncodeMonth(Year, Month);
 	}
+
+
+	public AppoMonth(int year, int month, DynamicOptions settings)
+	{
+		Month = month;
+		Year = year;
+		Id = EncodeMonth(Year, Month);
+		Settings = settings;
+	}
+
 
 	public (int Year, int Month, float Id) GetNextMonthInfo()
 	{
@@ -83,29 +101,25 @@ public class AppoMonth : BindableObject
 		return (year, month);
 	}
 
-	public AppoMonth(int year, int month)
-	{
-		Month = month;
-		Year = year;
-		Id = EncodeMonth(Year, Month);
-	}
 
-	public float Id { get; set; }
-	public int Month { get; set; }
-	public int Year { get; set; }
 
 	public string Name
 	{
 		get
 		{
-			var time = new DateTime(Year, Month, 1);
-			var desc = time.ToString("MMMM yyyy").ToTitleCase();
-			return desc;
+			try
+			{
+				var time = new DateTime(Year, Month, 1);
+				var desc = time.ToString(Settings.MonthFormat, Settings.Culture).ToTitleCase();
+				return desc;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				return string.Empty;
+			}
 		}
-		set
-		{
-
-		}
+		set {}
 	}
 
 	List<AppoDay> _Days = new ();

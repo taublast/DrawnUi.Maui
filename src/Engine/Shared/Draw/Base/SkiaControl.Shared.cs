@@ -4121,10 +4121,16 @@ namespace DrawnUi.Maui.Draw
             if (NeedMeasure)
             {
                 //self measuring
-                var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
-                ArrangedDestination = adjustedDestination;
-                Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
+                //var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
+                //ArrangedDestination = adjustedDestination;
+                //Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
+                //ApplyMeasureResult();
+
+                //self measuring, for top controls and those invalidated-redrawn when parents didn't re-measure them
+                var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale, false);
+                Measure(rectAvailable.Pixels.Width, rectAvailable.Pixels.Height, scale);
                 ApplyMeasureResult();
+
             }
             else
             {

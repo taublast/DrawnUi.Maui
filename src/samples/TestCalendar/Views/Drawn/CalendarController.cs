@@ -7,6 +7,35 @@ using TestCalendar.Views;
 
 namespace TestCalendar.Drawn;
 
+public class DynamicOptions
+{
+	public CultureInfo? Culture = null;
+	public string MonthFormat = "MMMM yyyy";
+
+	public  Color ColorTextActive = Colors.White;
+	public  Color ColorText = Colors.DimGrey;
+	public  Color ColorGrid = Colors.Gainsboro;
+	public  Color ColorBackground = Colors.White;
+	//public  Color ColorLines = Colors.DarkGrey;
+	public  Color ColorCellBackground = Colors.White;
+
+	// DAYS
+	public  float DayHeight = 44f;
+	public  float DayTextSize = 15f;
+	public  Color DayText = Color.Parse("#555555");
+	public  FontAttributes DayTextAttributes = FontAttributes.Bold;
+	public  Color DayDisabledText = Color.Parse("#999999");
+	public  FontAttributes DayDisabledTextAttributes = FontAttributes.None;
+	public  Color DayTodayStroke = Colors.LightGray;
+	public  Color DayTodayBackground = Colors.LightGray;
+	public  Color DaySelectionBackground = Colors.Red;
+	public  Color DaySelectionStroke = Colors.Crimson;
+	public  Color DayRangeSelectionBackground = Color.Parse("#22FF0000");
+	public  Color DaySelectionText = Colors.White;
+	public  float SelectionRadius = 16f;
+
+}
+
 /// <summary>
 /// Calendar control ViewModel
 /// </summary>
@@ -50,7 +79,7 @@ public class CalendarController : BindableObject, IDrawnDaysController
 		AppoMonth? current = null;
 		foreach (var monthInfo in Context.DaysContainer.Indexes)
 		{
-			var month = new AppoMonth(monthInfo.Year, monthInfo.Month);
+			var month = new AppoMonth(monthInfo.Year, monthInfo.Month, this.CultureReference);
 			var days = Context.DaysContainer.GetDaysForMonth(monthInfo.Id);
 			month.Days = days;
 
@@ -65,22 +94,19 @@ public class CalendarController : BindableObject, IDrawnDaysController
 		
 	}
 
-	protected CultureInfo Culture;
+	protected DynamicOptions CultureReference { get; } = new();
 
 	public void SetupCulture(string lang)
 	{
-		Culture = CultureInfo.CreateSpecificCulture(lang);
-		CultureInfo.CurrentCulture = Culture;
-		Thread.CurrentThread.CurrentCulture = Culture;
-		Thread.CurrentThread.CurrentUICulture = Culture;
+		CultureReference.Culture = CultureInfo.CreateSpecificCulture(lang);
 	}
 
 	public List<string> WeekDaysNames { get; set; } = new();
 
 	public List<string> GetWeekDaysShortNames()
 	{
-		var names = Culture.DateTimeFormat.AbbreviatedDayNames;
-		bool startsOnSunday = Culture.DateTimeFormat.FirstDayOfWeek == DayOfWeek.Sunday;
+		var names = CultureReference.Culture.DateTimeFormat.AbbreviatedDayNames;
+		bool startsOnSunday = CultureReference.Culture.DateTimeFormat.FirstDayOfWeek == DayOfWeek.Sunday;
 
 		if (!startsOnSunday)
 		{
@@ -92,10 +118,13 @@ public class CalendarController : BindableObject, IDrawnDaysController
 			names[names.Length - 1] = sunday;
 		}
 
-		WeekDaysNames = names.ToList();
+		WeekDaysNames = names
+			.Select(name => name.Replace(".", ""))
+			.ToList();
 
 		return WeekDaysNames;
 	}
+
 
 	bool RangeEnabled => true;
 
@@ -144,6 +173,7 @@ public class CalendarController : BindableObject, IDrawnDaysController
 				_dayStart = value;
 				OnPropertyChanged();
 				RaiseRangeProperties();
+				SendSelectionChanged();
 			}
 		}
 	}
@@ -162,6 +192,7 @@ public class CalendarController : BindableObject, IDrawnDaysController
 				_dayEnd = value;
 				OnPropertyChanged();
 				RaiseRangeProperties();
+				SendSelectionChanged();
 			}
 		}
 	}
@@ -237,12 +268,35 @@ public class CalendarController : BindableObject, IDrawnDaysController
 		//OnPropertyChanged("SelectedDateDesc");
 		//OnPropertyChanged("FullTitle");
 
-		SendSelectionChanged();
-
 		return indexes;
 	}
 
+
+
+	public event EventHandler<(DateTime? Start, DateTime? End)>? SelectionDatesChanged;
+
 	public event EventHandler<IEnumerable<AppoDay>>? SelectionChanged;
+
+	public (DateTime? Start, DateTime? End) GetSelectionDates()
+	{
+		if (Context == null || Context.DaysContainer == null)
+		{
+			return new(null, null);
+		}
+
+		DateTime? start = null, end = null;
+
+		if (DayStart != null)
+		{
+			start = DayStart.Date;
+		}
+		if (DayEnd != null)
+		{
+			end = DayEnd.Date;
+		}
+
+		return new (start, end);
+	}
 
 	public IEnumerable<AppoDay> GetSelection()
 	{
@@ -258,6 +312,10 @@ public class CalendarController : BindableObject, IDrawnDaysController
 		if (SelectionChanged != null)
 		{
 			SelectionChanged.Invoke(this, GetSelection());
+		}
+		if (SelectionDatesChanged != null)
+		{
+			SelectionDatesChanged.Invoke(this, GetSelectionDates());
 		}
 	}
 
@@ -316,7 +374,7 @@ public class CalendarController : BindableObject, IDrawnDaysController
 
 			if (month == null)
 			{
-				month = new AppoMonth(monthInfo.Year, monthInfo.Month);
+				month = new AppoMonth(monthInfo.Year, monthInfo.Month, this.CultureReference);
 				var days = Context.DaysContainer.GetDaysForMonth(monthInfo.Id);
 				month.Days = days;
 				Months.Add(month);
@@ -339,7 +397,7 @@ public class CalendarController : BindableObject, IDrawnDaysController
 
 			if (month == null)
 			{
-				month = new AppoMonth(monthInfo.Year, monthInfo.Month);
+				month = new AppoMonth(monthInfo.Year, monthInfo.Month, this.CultureReference);
 				var days = Context.DaysContainer.GetDaysForMonth(monthInfo.Id);
 				month.Days = days;
 				Months.Insert(0, month);

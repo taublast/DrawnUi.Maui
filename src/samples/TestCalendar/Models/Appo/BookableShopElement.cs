@@ -305,11 +305,6 @@ public class BookableShopElement : INotifyPropertyChanged
                 {
                     day.Disabled = true;
                 }
-                else
-                {
-					//yay
-					var stop = 4;
-                }
             }
             catch (Exception e)
             {
@@ -655,22 +650,6 @@ public class BookableShopElement : INotifyPropertyChanged
     {
         var dt = new DateTime(SelectedYear, SelectedMonth, 1);
         return new DateTime(dt.AddMonths(1).Year, dt.AddMonths(1).Month, 1);
-    }
-    
-    public bool SelectNextMonth()
-    {
-        var dayone = GetNextMonth();
-        var year = dayone.Year;
-        var month = dayone.Month;
-        return SelectMonth(year, month);
-    }
-    
-    public bool SelectPrevMonth()
-    {
-        var dayone = GetPrevMonth();
-        var year = dayone.Year;
-        var month = dayone.Month;
-        return SelectMonth(year, month);
     }
     
     public bool CanSelectPrevMonth

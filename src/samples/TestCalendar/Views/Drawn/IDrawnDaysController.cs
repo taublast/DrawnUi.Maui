@@ -32,4 +32,9 @@ public interface IDrawnDaysController
 	void SetupCulture(string lang);
 
 	List<string> GetWeekDaysShortNames();
+
+	event EventHandler<(DateTime? Start, DateTime? End)>? SelectionDatesChanged;
+
+	event EventHandler<IEnumerable<AppoDay>>? SelectionChanged;
+
 }

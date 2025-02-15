@@ -1,5 +1,4 @@
-﻿using AppoMobi.Xam;
-using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Maui.Draw;
 using TestCalendar.Drawn;
 using Canvas = DrawnUi.Maui.Views.Canvas;
 
@@ -70,13 +69,20 @@ namespace Sandbox
 							}),
 							new DrawnMultimonthsView()
 							{
-								Lang = "ru",
+								Lang = "fr",
+								MaximumWidthRequest = 300,
 								BackgroundColor = Colors.White,
 								BindingContext = new CalendarController(),
-								HorizontalOptions = LayoutOptions.Fill,
+								HorizontalOptions = LayoutOptions.Center,
 								VerticalOptions = LayoutOptions.Fill,
 								RangeEnabled = true
-							}
+							}.With((c) =>
+							{
+								c.SelectionDatesChanged += (s, e) =>
+								{
+									System.Diagnostics.Debug.WriteLine($"Sel: {e}");
+								};
+							})
 						}
 					},
 					new SkiaLabel()
