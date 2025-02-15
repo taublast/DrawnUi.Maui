@@ -2652,7 +2652,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         /// <returns></returns>
         public ScaledSize DefineAvailableSize(SKRect destination,
-            float widthRequest, float heightRequest, float scale)
+            float widthRequest, float heightRequest, float scale, bool useModifiers=true)
         {
             var rectWidth = destination.Width;
             var wants = widthRequest * scale;
@@ -2664,13 +2664,16 @@ namespace DrawnUi.Maui.Draw
             if (wants >= 0 && wants < rectHeight)
                 rectHeight = (int)wants;
 
-            if (HorizontalFillRatio != 1)
+            if (useModifiers)
             {
-                rectWidth *= (float)HorizontalFillRatio;
-            }
-            if (VerticalFillRatio != 1)
-            {
-                rectHeight *= (float)VerticalFillRatio;
+                if (HorizontalFillRatio != 1)
+                {
+                    rectWidth *= (float)HorizontalFillRatio;
+                }
+                if (VerticalFillRatio != 1)
+                {
+                    rectHeight *= (float)VerticalFillRatio;
+                }
             }
 
             return ScaledSize.FromPixels(rectWidth, rectHeight, scale);
@@ -2701,7 +2704,6 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         public SKRect CalculateLayout(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
-
             var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale);
 
             var useMaxWidth = rectAvailable.Pixels.Width;
@@ -3547,12 +3549,29 @@ namespace DrawnUi.Maui.Draw
                 {
                     widthConstraint *= (float)HorizontalFillRatio;
                 }
+
+                if (MaximumWidthRequest >= 0)
+                {
+                    var maxWidth = (float)(MaximumWidthRequest * scale);
+                    if (widthConstraint > maxWidth)
+                    {
+                        widthConstraint = maxWidth;
+                    }
+                }
             }
             if (float.IsFinite(heightConstraint) && heightConstraint > 0)
             {
                 if (VerticalFillRatio != 1)
                 {
                     heightConstraint *= (float)VerticalFillRatio;
+                }
+                if (MaximumHeightRequest >= 0)
+                {
+                    var maxHeight = (float)(MaximumHeightRequest * scale);
+                    if (widthConstraint > maxHeight)
+                    {
+                        widthConstraint = maxHeight;
+                    }
                 }
             }
 
