@@ -19,9 +19,32 @@ namespace TestCalendar.Drawn
 		{
 			Type = LayoutType.Column;
 			Spacing = 0;
-			BackgroundColor = Colors.WhiteSmoke;
+		}
 
+		protected virtual DynamicOptions CreateSettings()
+		{
+			return new DynamicOptions();
+		}
+
+
+		protected virtual IDrawnDaysController CreateController()
+		{
+			return new CalendarController(Settings);
+		}
+
+		protected override void CreateDefaultContent()
+		{
+			base.CreateDefaultContent();
+
+			Settings = CreateSettings();
+			_controller = CreateController();
+			SetBindingContext();
 			Build();
+		}
+
+		public void SetBindingContext()
+		{
+			BindingContext = _controller;
 		}
 
 		public IDrawnDaysController Context
@@ -34,32 +57,32 @@ namespace TestCalendar.Drawn
 
 		#region PROPERTIES
 
-		public static readonly BindableProperty LangProperty = BindableProperty.Create(
-			nameof(Lang),
-			typeof(string),
-			typeof(DrawnMultimonthsView),
-			"en", propertyChanged: (b, o, n) =>
-			{
-				if (b is DrawnMultimonthsView control)
-				{
-					control.SetupCulture(control.Lang);
-				}
-			});
+		//public static readonly BindableProperty LangProperty = BindableProperty.Create(
+		//	nameof(Lang),
+		//	typeof(string),
+		//	typeof(DrawnMultimonthsView),
+		//	"en", propertyChanged: (b, o, n) =>
+		//	{
+		//		if (b is DrawnMultimonthsView control)
+		//		{
+		//			control.SetupCulture(control.Lang);
+		//		}
+		//	});
 
-		/// <summary>
-		/// Can localize
-		/// </summary>
-		public string Lang
-		{
-			get { return (string)GetValue(LangProperty); }
-			set { SetValue(LangProperty, value); }
-		}
+		///// <summary>
+		///// Can localize
+		///// </summary>
+		//public string Lang
+		//{
+		//	get { return (string)GetValue(LangProperty); }
+		//	set { SetValue(LangProperty, value); }
+		//}
 
 		public static readonly BindableProperty RangeEnabledProperty = BindableProperty.Create(
 			nameof(RangeEnabled),
 			typeof(bool),
 			typeof(DrawnMultimonthsView),
-			false);
+			true);
 
 		/// <summary>
 		/// Whether can allow to select days range instead of single day
@@ -125,27 +148,18 @@ namespace TestCalendar.Drawn
 		}
 
 		public static bool UseTimeIntervals = true;
-		public static PresentationType PresentationType = PresentationType.SingleDate;
+ 
 		SkiaLayout _layoutHeader;
 		SkiaLayout _layoutDaysOfWeek;
 		SkiaLayout _layoutDays;
 		SkiaMarkdownLabel _labelMonth;
-		//DrawnDataGrid _gridDays;
-		SkiaMarkdownLabel cDow0;
-		SkiaMarkdownLabel cDow1;
-		SkiaMarkdownLabel cDow2;
-		SkiaMarkdownLabel cDow3;
-		SkiaMarkdownLabel cDow4;
-		SkiaMarkdownLabel cDow5;
-		SkiaMarkdownLabel cDow6;
-		SkiaMarkdownLabel _cLeftArrow;
-		SkiaMarkdownLabel _cRightArrow;
 		SkiaScroll _layoutScroll;
 		SkiaLayout _stackMonths;
 
 		bool _wasBuilt;
 		protected CultureInfo Culture;
 		IDrawnDaysController _context;
+		IDrawnDaysController _controller;
 
 		public void Build()
 		{
@@ -153,112 +167,13 @@ namespace TestCalendar.Drawn
 			{
 				_wasBuilt = true;
 
-				SetupCulture(Lang);
+				//SetupCulture(Lang);
 
 				_context = Context;
 
 				_context.SelectionDatesChanged += OnDatesChanged;
 
-				// MONTH CONTROL
-				//_layoutHeader = new SkiaLayout()
-				//{
-				//	Type = LayoutType.Grid,
-				//	HeightRequest = 44,
-				//	ColumnSpacing = 0.5,
-				//	RowSpacing = 0.5,
-				//	Margin = new Thickness(8),
-				//	BackgroundColor = CalendarViewSettings.ColorBackground,
-				//	HorizontalOptions = LayoutOptions.Fill,
-				//	Children = new List<SkiaControl>()
-				//{
-				//             // PREV MONTH
-				//             new ContentLayout()
-				//	{
-				//		UseCache = SkiaCacheType.Operations,
-				//		Margin = new Thickness(1.5, 0.5, 0, 1),
-				//		HorizontalOptions = LayoutOptions.Fill,
-				//		VerticalOptions = LayoutOptions.Fill,
-				//		Content = new SkiaMarkdownLabel()
-				//		{
-				//			Text = "➝",
-				//			Margin = new Thickness(0, 2.5, 0, 0),
-				//			VerticalOptions = LayoutOptions.Center,
-				//			HorizontalOptions = LayoutOptions.Center,
-				//			FontSize = 18,
-				//			Rotation = 180
-				//		}.With((c) =>
-				//		{
-				//			_cLeftArrow = c;
-				//		})
-				//	}.With((c) =>
-				//	{
-				//		c.OnGestures = (args, info) =>
-				//		{
-				//			if (args.Type == TouchActionResult.Tapped)
-				//			{
-				//				OnTappedPrevPeriod();
-				//				return c;
-				//			}
-				//			return null;
-				//		};
-				//	}),
-
-				//             // MONTH NAME
-				//             new ContentLayout()
-				//	{
-				//		UseCache = SkiaCacheType.Operations,
-				//		BackgroundColor = CalendarViewSettings.ColorBackground,
-				//		Margin = new Thickness(0.5, 1, 0, 1),
-				//		HorizontalOptions = LayoutOptions.Fill,
-				//		VerticalOptions = LayoutOptions.Fill,
-				//		Content = new SkiaMarkdownLabel()
-				//		{
-				//			Text = string.Empty,
-				//			VerticalOptions = LayoutOptions.Center,
-				//			HorizontalOptions = LayoutOptions.Center,
-				//			FontSize = 15,
-				//			TextColor = CalendarViewSettings.ColorText
-				//		}.With((c)=>
-				//		{
-				//			_labelMonth = c;
-				//		})
-				//	}.WithColumn(1),
-
-				//             // NEXT MONTH
-				//             new ContentLayout()
-				//	{
-				//		UseCache = SkiaCacheType.Operations,
-				//		BackgroundColor = CalendarViewSettings.ColorBackground,
-				//		Margin = new Thickness(0.5, 1, 1.5, 1),
-				//		HorizontalOptions = LayoutOptions.Fill,
-				//		VerticalOptions = LayoutOptions.Fill,
-				//		Content = new SkiaMarkdownLabel()
-				//		{
-				//			Text = "➝",
-				//			Margin = new Thickness(0, 0, 0, 2.5),
-				//			VerticalOptions = LayoutOptions.Center,
-				//			HorizontalOptions = LayoutOptions.Center,
-				//			FontSize = 18
-				//		}.With((c) =>
-				//		{
-				//			_cRightArrow = c;
-				//		})
-				//	}.WithColumn(2)
-				//	.With((c) =>
-				//	{
-				//		c.OnGestures = (args, info) =>
-				//		{
-				//			if (args.Type == TouchActionResult.Tapped)
-				//			{
-				//				OnTappedNextPeriod();
-				//				return c;
-				//			}
-				//			return null;
-				//		};
-				//	})
-				//}
-				//}
-				//.WithColumnDefinitions("40,*,40");
+				BackgroundColor = Settings.ColorBackground;
 
 				// DAYS OF WEEK 
 				_layoutDaysOfWeek = new SkiaLayout()
@@ -276,16 +191,17 @@ namespace TestCalendar.Drawn
 							HorizontalFillRatio = 0.142857, // 1/7
 							Children = new List<SkiaControl>()
 							{
-								new SkiaLabel()
+								new SkiaMarkdownLabel()
 								{
 									Margin = new Thickness(0),
 									VerticalOptions = LayoutOptions.Center,
 									HorizontalOptions = LayoutOptions.Fill,
 									HorizontalTextAlignment = DrawTextAlignment.Center,
-									FontSize = 13,
+									FontSize = Settings.WeekDayTextSize,
+									FontFamily = Settings.WeekDayFont,
 									FontAttributes = FontAttributes.Bold,
-									TextColor = Settings.DayText
-								}.With((label) =>
+									TextColor = Settings.ColorWeekDay
+								}.Adjust((label) =>
 								{
 									label.SetBinding(SkiaLabel.TextProperty, new Binding("."));
 								})
@@ -310,8 +226,6 @@ namespace TestCalendar.Drawn
 						Spacing = 4,
 						ItemTemplate = new DataTemplate(() =>
 						{
-
-							// MONTH TEMPLATE for AppoMonth
 							var tpl = new SkiaLayout()
 							{
 								UseCache = SkiaCacheType.ImageDoubleBuffered,
@@ -324,18 +238,19 @@ namespace TestCalendar.Drawn
 									new SkiaLabel()
 									{
 										Margin = new Thickness(8, 0, 8, 8),
-										//FontFamily = "FontText",
-										TextColor =Settings.DayText,
-										FontSize = 15,
+										FontFamily = Settings.MonthNameFont,
+										TextColor =Settings.ColorMonthName,
+										FontSize = Settings.MonthTextSize,
 										FontAttributes = FontAttributes.Bold,
 										UseCache = SkiaCacheType.Operations,
-									}.With((c) =>
+									}.Adjust((c) =>
 									{
+										// type is AppoMonth
 										c.SetBinding(SkiaLabel.TextProperty, new Binding("Name"));
 									}),
 									new DaysGrid()
 									{
-										BackgroundColor = Settings.ColorBackground,
+										BackgroundColor = Settings.ColorDaysBackground,
 										Columns = 7,
 										Margin = new Thickness(1, 1, 0.5, 0.5),
 										ColumnSpacing = 0,
@@ -350,7 +265,7 @@ namespace TestCalendar.Drawn
 													//HorizontalOptions = LayoutOptions.Center,
 													//CornerRadius = DayCornerRadius
 												}
-												.With((c) =>
+												.Adjust((c) =>
 												{
 													c.OnGestures = (args, info) =>
 													{
@@ -367,7 +282,7 @@ namespace TestCalendar.Drawn
 
 											return cell;
 										})
-									}.With((c) =>
+									}.Adjust((c) =>
 									{
 										c.SetBinding(SkiaLayout.ItemsSourceProperty, new Binding("Days"));
 									})
@@ -377,7 +292,7 @@ namespace TestCalendar.Drawn
 							//label.SetBinding(SkiaLabel.TextProperty, new Binding("."));
 							return tpl;
 						})
-					}.With((c) =>
+					}.Adjust((c) =>
 					{
 						_stackMonths = c;
 						if (c.BindingContext is IDrawnDaysController controller)
@@ -473,11 +388,6 @@ namespace TestCalendar.Drawn
 			_layoutDaysOfWeek.ItemsSource = Context.GetWeekDaysShortNames();
 
 			SetupCalendarArrows();
-		}
-
-		protected void SetupCulture(string lang) //tod CultureSettings
-		{
-			Context?.SetupCulture(lang);
 		}
 
 		/// <summary>

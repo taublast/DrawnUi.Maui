@@ -5,6 +5,7 @@ namespace TestCalendar.Drawn;
 
 public interface IDrawnDaysController
 {
+
 	ObservableRangeCollection<AppoMonth> Months { get; }
 
 	AppoMonth? CurrentMonth { get; }
@@ -26,10 +27,6 @@ public interface IDrawnDaysController
 	void SelectNextMonth();
 	
 	void SelectPrevMonth();
-
-	string Lang { get; }
-
-	void SetupCulture(string lang);
 
 	List<string> GetWeekDaysShortNames();
 

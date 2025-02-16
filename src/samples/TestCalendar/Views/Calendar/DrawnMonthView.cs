@@ -37,7 +37,7 @@ namespace TestCalendar.Drawn
 		{
 			if (Context != null)
 			{
-				Context.SetupCulture(lang);
+				//Context.SetupCulture(lang);
 			}
 		}
 
@@ -122,7 +122,7 @@ namespace TestCalendar.Drawn
 		}
 
 		public static bool UseTimeIntervals = true;
-		public static PresentationType PresentationType = PresentationType.SingleDate;
+
 		SkiaLayout _layoutHeader;
 		SkiaLayout _layoutDaysOfWeek;
 		SkiaLayout _layoutDays;
@@ -186,11 +186,11 @@ namespace TestCalendar.Drawn
 							HorizontalOptions = LayoutOptions.Center,
 							FontSize = 18,
 							Rotation = 180
-						}.With((c) =>
+						}.Adjust((c) =>
 						{
 							_cLeftArrow = c;
 						})
-					}.With((c) =>
+					}.Adjust((c) =>
 					{
 						c.OnGestures = (args, info) =>
 						{
@@ -218,7 +218,7 @@ namespace TestCalendar.Drawn
 							HorizontalOptions = LayoutOptions.Center,
 							FontSize = 15,
 							TextColor = ColorText
-						}.With((c)=>
+						}.Adjust((c)=>
 						{
 							_labelMonth = c;
 						})
@@ -239,12 +239,12 @@ namespace TestCalendar.Drawn
 							VerticalOptions = LayoutOptions.Center,
 							HorizontalOptions = LayoutOptions.Center,
 							FontSize = 18
-						}.With((c) =>
+						}.Adjust((c) =>
 						{
 							_cRightArrow = c;
 						})
 					}.WithColumn(2)
-					.With((c) =>
+					.Adjust((c) =>
 					{
 						c.OnGestures = (args, info) =>
 						{
@@ -284,7 +284,7 @@ namespace TestCalendar.Drawn
 								FontAttributes = FontAttributes.Bold,
 								LineBreakMode = LineBreakMode.NoWrap,
 								TextColor = Settings.DayText
-							}.With((label) =>
+							}.Adjust((label) =>
 							{
 								label.SetBinding(SkiaLabel.TextProperty, new Binding("."));
 							})
@@ -317,7 +317,7 @@ namespace TestCalendar.Drawn
 									//HorizontalOptions = LayoutOptions.Center,
 									//CornerRadius = DayCornerRadius
 								}
-								.With((c) =>
+								.Adjust((c) =>
 								{
 									c.OnGestures = (args, info) =>
 									{
@@ -334,7 +334,7 @@ namespace TestCalendar.Drawn
 
 								return cell;
 							})
-						}.With((c) =>
+						}.Adjust((c) =>
 						{
 							_gridDays = c;
 						})
