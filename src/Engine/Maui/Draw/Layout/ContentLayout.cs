@@ -183,26 +183,6 @@ protected virtual void SetContent(SkiaControl view)
     }
 
 
-    protected override void CreateChildrenFromCode()
-    {
-        if (Content == null && !DefaultChildrenCreated)
-        {
-            DefaultChildrenCreated = true;
-            if (CreateChildren != null)
-            {
-                try
-                {
-                    var children = CreateChildren();
-                    Content = children.FirstOrDefault();
-                }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e);
-                }
-            }
-        }
-    }
-
     #region PROPERTIES
 
 

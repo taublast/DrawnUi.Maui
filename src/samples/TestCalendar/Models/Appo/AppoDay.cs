@@ -23,7 +23,6 @@ namespace AppoMobi.Models
 
         public string ParentId { get; set; }
 
-
         //todo add propertychanged calls
         public DateTime Date { get; set; }
 

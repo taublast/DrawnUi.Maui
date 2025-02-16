@@ -895,7 +895,11 @@ namespace DrawnUi.Maui.Draw
                 {
                     IsMeasuring = true;
 
-                    CreateDefaultContent();
+                    if (!DefaultChildrenCreated)
+                    {
+                        DefaultChildrenCreated = true;
+                        CreateDefaultContent();
+                    }
 
                     var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
                     if (request.IsSame)

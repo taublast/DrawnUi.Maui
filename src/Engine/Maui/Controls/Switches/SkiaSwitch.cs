@@ -11,11 +11,10 @@ public class SkiaSwitch : SkiaToggle
     protected override void CreateDefaultContent()
     {
         //todo can make different upon platform!
-        if (!DefaultChildrenCreated && this.Views.Count == 0)
+        if (this.Views.Count == 0)
         {
-            if (CreateChildren == null)
+
             {
-                DefaultChildrenCreated = true;
 
                 if (this.WidthRequest < 0)
                     this.WidthRequest = 50;

@@ -27,12 +27,10 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     protected override void CreateDefaultContent()
     {
-        if (!DefaultChildrenCreated && this.Views.Count == 0)
+        if (this.Views.Count == 0)
         {
-            if (CreateChildren == null)
-            {
-                DefaultChildrenCreated = true;
 
+            {
                 if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill)
                     this.WidthRequest = 100;
 

@@ -63,20 +63,16 @@ namespace Sandbox
 								HorizontalOptions = LayoutOptions.Center,
 								VerticalTextAlignment = TextAlignment.Center,
 								Text = $"Drawn Month Control",
-							}.With((c) =>
+							}.Adjust((c) =>
 							{
 								DebugLabel = c;
 							}),
-							new DrawnMultimonthsView()
+							new BlueCalendar()
 							{
-								Lang = "fr",
 								MaximumWidthRequest = 300,
-								BackgroundColor = Colors.White,
-								BindingContext = new CalendarController(),
 								HorizontalOptions = LayoutOptions.Center,
-								VerticalOptions = LayoutOptions.Fill,
-								RangeEnabled = true
-							}.With((c) =>
+								VerticalOptions = LayoutOptions.Fill
+							}.Adjust((c) =>
 							{
 								c.SelectionDatesChanged += (s, e) =>
 								{

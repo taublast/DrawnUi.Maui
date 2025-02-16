@@ -1626,19 +1626,12 @@ namespace DrawnUi.Maui.Controls
                         Opacity = 0,
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.End,
-                        BackgroundColor = ToastBackgroundColor,
-                        CreateChildren = () => new()
+                        BackgroundColor = ToastBackgroundColor
+                    }.WithChildren(
+                        new SkiaLayout()
                         {
-                            new SkiaLayout()
-                            {
-                                HorizontalOptions = LayoutOptions.Fill,
-                                CreateChildren = () => new()
-                                {
-                                    content
-                                }
-                            }
-                        }
-                    };
+                            HorizontalOptions = LayoutOptions.Fill
+                        }.WithChildren(content));
 
                     control.LayoutIsReady += (s, o) =>
                     {

@@ -216,50 +216,8 @@ namespace DrawnUi.Maui.Draw
         {
 
         }
-        /// <summary>
-        /// To create custom content in code-behind. Will be called from OnLayoutChanged if Views.Count == 0.
-        /// </summary>
-        public Func<List<SkiaControl>> CreateChildren
-        {
-            get => _createChildren;
-            set
-            {
-                _createChildren = value;
-                if (value != null)
-                {
-                    DefaultChildrenCreated = false;
-                    CreateChildrenFromCode();
-                }
-            }
-        }
 
-        /// <summary>
-        /// Executed when CreateChildren is set
-        /// </summary>
-        /// <returns></returns>
-        protected virtual void CreateChildrenFromCode()
-        {
-            if (this.Views.Count == 0 && !DefaultChildrenCreated)
-            {
-                DefaultChildrenCreated = true;
-                if (CreateChildren != null)
-                {
-                    try
-                    {
-                        var children = CreateChildren();
-                        foreach (var skiaControl in children)
-                        {
-                            AddSubView(skiaControl);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Super.Log(e);
-                    }
-                }
 
-            }
-        }
 
 
 
@@ -5896,6 +5854,9 @@ namespace DrawnUi.Maui.Draw
             return Views;
         }
 
+        /// <summary>
+        /// For internal use
+        /// </summary>
         public List<SkiaControl> Views { get; } = new();
 
         public virtual void DisposeChildren()
@@ -5947,19 +5908,28 @@ namespace DrawnUi.Maui.Draw
             //NeedMeasure = true;
         }
 
-        protected virtual void OnChildAdded(SkiaControl child)
-        {
-            Invalidate();
-        }
-
+        /// <summary>
+        /// Avoid slowing us down with MAUI internals
+        /// </summary>
+        /// <param name="child"></param>
+        /// <param name="oldLogicalIndex"></param>
         protected override void OnChildRemoved(Element child, int oldLogicalIndex)
         {
             //base.OnChildRemoved(child, oldLogicalIndex);
         }
 
+        /// <summary>
+        /// Avoid slowing us down with MAUI internals
+        /// </summary>
+        /// <param name="child"></param>
         protected override void OnChildAdded(Element child)
         {
             //base.OnChildAdded(child);
+        }
+
+        protected virtual void OnChildAdded(SkiaControl child)
+        {
+            Invalidate();
         }
 
         protected virtual void OnChildRemoved(SkiaControl child)

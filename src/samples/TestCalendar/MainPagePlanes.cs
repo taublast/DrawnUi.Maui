@@ -63,7 +63,7 @@ namespace Sandbox
 								TextColor = Colors.Yellow,
 								HorizontalOptions = LayoutOptions.Center,
 								Text = $"Drawn Month Control",
-							}.With((c) =>
+							}.Adjust((c) =>
 							{
 								DebugLabel = c;
 							}),
@@ -73,7 +73,7 @@ namespace Sandbox
 								BackgroundColor = Colors.DarkSlateGray,
 								HorizontalOptions = LayoutOptions.Fill,
 								HeightRequest = 260,
-							}.With((c) =>
+							}.Adjust((c) =>
 							{
 								c.Scrolled += (sender, point) =>
 								{
@@ -140,7 +140,7 @@ namespace Sandbox
 							HeightRequest = 90,
 							VerticalOptions = LayoutOptions.Start,
 							HorizontalOptions = LayoutOptions.Start
-						}.With((c) =>
+						}.Adjust((c) =>
 						{
 							MainPage.DebugLayerA = c;
 						}),
@@ -154,7 +154,7 @@ namespace Sandbox
 							HeightRequest = 90,
 							VerticalOptions = LayoutOptions.Start,
 							HorizontalOptions = LayoutOptions.End
-						}.With((c) =>
+						}.Adjust((c) =>
 						{
 							MainPage.DebugLayerB = c;
 						}),
@@ -168,7 +168,7 @@ namespace Sandbox
 							HeightRequest = 90,
 							VerticalOptions = LayoutOptions.Start,
 							HorizontalOptions = LayoutOptions.End
-						}.With((c) =>
+						}.Adjust((c) =>
 						{
 							MainPage.DebugLayerC = c;
 						})

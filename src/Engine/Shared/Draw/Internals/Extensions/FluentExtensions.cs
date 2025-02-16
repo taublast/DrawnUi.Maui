@@ -4,7 +4,7 @@
     {
        
 
-        public static T With<T>(this T view, Action<T> action) where T : SkiaControl
+        public static T Adjust<T>(this T view, Action<T> action) where T : SkiaControl
         {
             action?.Invoke(view);
             return view;

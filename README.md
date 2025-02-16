@@ -391,8 +391,10 @@ You can position your children using familiar properties like
 and additional `MaximumWidthRequest`,  `MaximumHeightRequest`, `HorizontalFillRatio`, `VerticalFillRatio` and `LockRatio` properties.
 
 * `LockRatio` will be used to calculate the width when the height is set or vice versa. If it's above 0 the max value will be applied, if it's below 0 the min value will be applied. If it's 0 then the ratio will be ignored.
-* `HorizontalFillRatio`, `VerticalFillRatio` will let you take a percent and the available size if you don't set a numeric request. For example if `HorizontalFillRatio` is set to 0.5 you will take 50% of the available width, at the same time being able to align the control at start, center or at the and in a usual way.
-* `HorizontalPositionOffsetRatio` and `VerticalPositionOffsetRatio` let you offset the item after it was aligned by applying a ratio to its computed size. Defaults are 0.0. For example, HorizontalPositionOffsetRatio of -0.5 will offset the item by -Width/2, practically centering it horizontally along the current x-position. Works almost like translation but relatively to the current size.
+* `HorizontalFillRatio`, `VerticalFillRatio` will let you take a percent and the available size if you don't set a numeric request.  
+    For example if `HorizontalFillRatio` is set to 0.5 you will take 50% of the available width, at the same time being able to align the control at start, center or at the and in a usual way.
+* `HorizontalPositionOffsetRatio` and `VerticalPositionOffsetRatio` let you offset the item after it was aligned by applying a ratio to its computed size. Defaults are 0.0.  
+    For example, HorizontalPositionOffsetRatio of -0.5 will offset the item by -Width/2, practically centering it horizontally along the current x-position. Works almost like translation but relatively to the current size.
 
 For dynamic positioning or other precise cases use `TranslationX` and `TranslationY`.
 
@@ -467,31 +469,44 @@ The example below will load animation from `Resources\Raw\Lottie\Loader.json`.
                 WidthRequest="56" />
 ```
 
+#### Control Children
 
-#### Enhanced usage
+You have a main property `Children` as a main interface to set your subviews at initialization. 
+There are some layout controls that use `Content` property instead of `Children` as they accept only one child. 
+MAUI XAML engine will place controls inside those properties too.  
+When initializing control from XAML, what you place inside your layout control will land inside `Children`.  
+When initializing from code-behind you can set `Children` directly:
 
-When dealing with subviews in code behind you could typically use two ways. 
+```csharp
+	new SkiaLayout()
+	{
+		Type = LayoutType.Column,
+		HorizontalOptions = LayoutOptions.Fill,
+		Children = new List<SkiaControl>()
+		{
+			new SkiaLabel()
+			{
+				TextColor = Colors.Yellow,
+				Text = "Hello",
+			},
+			new SkiaLabel()
+			{
+				TextColor = Colors.Red,
+				Text = "Word",
+			}
+		}
+	},
+```
 
-Example for adding a subview:
- 
-* Use method `SetParent` passing new parent. In this case parent layout will not be invalidated, use this for optimized logic when you know what you are doing. You can mainly use this way when just constructing parent, knowing it will be measured at start anyway.
-* Call parent's method `AddSubView` passing subview Parent's layout will be invalidated, and OnChildAdded will be called on parent.
-* When working with `Children` property use `Add` method, it will set `Views` to a new instance of appropriate collection, and call `AddSubView` for each item.
+If you wish to create controls or customize them, let's take an example of how `SkiaLayout` works.  
+The `Children` property is set at startup. A this is a thread-unsafe property (the upper framework might changing on UI-thread) we insert sub-controls into the `Views` internal property.  
+As `SkiaLayout` can be templated it uses a views adapter. This one iterates either `Views`, either virtual views created from the provided template.  
+As You can see `Children` is used mainly for initialization only and a control might have it's own subviews processing logic. It may choose to use or completely ignore what is placed inside `Children`.  
 
-For removing a subview the usual options would be:
+If we talk about a non-templated layout at runtime we can manage subviews with: `AddSubView`, `RemoveSubView` and `ClearChildren` methods.  
+Those will correctly apply all the needed logic regarding, BindingContext, HotReload, disposal of subviews etc. 
+Expect virtuals `OnChildAdded(SkiaControl child)` and `OnChildRemoved(SkiaControl child)` to be invoked.
 
-* Call `SetParent` passing null, for soft removal.
-* Call parent's method `RemoveSubView` passing subview`.Parent`'s layout will be invalidated, and OnChildRemoved will be called on parent.	
-* When working with `Children` property use `Remove` method, it will set `Views` to a new instance of appropriate collection, and call `RemoveSubView` for each item.
- 
-#### In Deep
-
-When XAML would be constructed it would fill `Children` property with views, this property is for high-level access. `Views` 
-
-Will be then filled internally. When you add or remove items in `Children` methods `AddSubView` and `RemoveSubView` will be called for managing `Views`.
-
-
- 
 
 ## Maui Views
 
