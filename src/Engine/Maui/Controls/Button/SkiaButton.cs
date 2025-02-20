@@ -48,7 +48,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                     VerticalOptions = LayoutOptions.Fill,
                 };
 
-                shape.SetBinding(SkiaShape.CornerRadiusProperty, new Binding(nameof(CornerRadius), source: this));
                 this.AddSubView(shape);
 
                 this.AddSubView(new SkiaLabel()
@@ -572,7 +571,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
         base.OnPropertyChanged(propertyName);
 
-        if (propertyName.IsEither(nameof(Background), nameof(BackgroundColor)))
+        if (propertyName.IsEither(nameof(Background), nameof(BackgroundColor), nameof(CornerRadius)))
         {
             ApplyProperties();
         }
@@ -580,15 +579,15 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     #endregion
 
+    /// <summary>
+    /// Will never paint background, it's up to the button shape to do it.
+    /// </summary>
+    /// <param name="paint"></param>
+    /// <param name="destination"></param>
+    /// <returns></returns>
     protected override bool SetupBackgroundPaint(SKPaint paint, SKRect destination)
     {
-        if (MainFrame != null)
-        {
-            //will paint its background instead
-            return false;
-        }
-
-        return base.SetupBackgroundPaint(paint, destination);
+        return false;
     }
 
 }
