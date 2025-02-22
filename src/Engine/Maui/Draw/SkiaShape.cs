@@ -286,15 +286,17 @@ namespace DrawnUi.Maui.Draw
 
                 float scaleX = strokeAwareSize.Width / (bounds.Width + halfStroke);
                 float scaleY = strokeAwareSize.Height / (bounds.Height + halfStroke);
+
                 float translateX = (strokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 -
                                    bounds.Left * scaleX;
                 float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 -
                                    bounds.Top * scaleY;
-                SKMatrix matrix = SKMatrix.CreateIdentity();
+
 #if SKIA3
-                matrix.PreConcat(SKMatrix.CreateScale(scaleX, scaleY));
-                matrix.PreConcat(SKMatrix.CreateTranslation(translateX, translateY));
+                SKMatrix matrix = SKMatrix.CreateScale(scaleX, scaleY);
+                matrix = SKMatrix.Concat(matrix, SKMatrix.CreateTranslation(translateX/2, translateY/2));
 #else
+                SKMatrix matrix = SKMatrix.CreateIdentity();
                 SKMatrix.PreConcat(ref matrix, SKMatrix.CreateScale(scaleX, scaleY));
                 SKMatrix.PreConcat(ref matrix, SKMatrix.CreateTranslation(translateX, translateY));
 #endif
