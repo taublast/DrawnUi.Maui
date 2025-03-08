@@ -109,7 +109,7 @@ public partial class SkiaLayout
                             ControlIndex = index
                         };
 
-                        SkiaControl child = ChildrenFactory.GetChildAt(cell.ControlIndex, template, 0, true);
+                        SkiaControl child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, template, 0, true);
 
                         if (child == null)
                         {
@@ -387,7 +387,7 @@ public partial class SkiaLayout
                         visibleIndex = currentIndex;
                     }
 
-                    var child = ChildrenFactory.GetChildAt(cell.ControlIndex, null, GetSizeKey(cell.Measured.Pixels));
+                    var child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, null, GetSizeKey(cell.Measured.Pixels));
                     if (child == null) //ChildrenFactory.GetChildAt was unable to return child?..
                     {
                         return countRendered;
@@ -665,7 +665,7 @@ public partial class SkiaLayout
             {
                 stackHeight += GetSpacingForIndex(row, scale);
 
-                var child = ChildrenFactory.GetChildAt(currentIndex, template, 0, true);
+                var child = ChildrenFactory.GetViewForIndex(currentIndex, template, 0, true);
                 if (child == null)
                 {
                     return 0;

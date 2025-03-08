@@ -68,7 +68,7 @@ public partial class SkiaLayout
             List<SkiaControlWithRect> tree = new();
 
             var cellIndex = 0;
-            foreach (var child in cells)
+            foreach (var child in cells.ToList())
             {
                 child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
 

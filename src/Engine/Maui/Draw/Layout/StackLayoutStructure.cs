@@ -40,7 +40,7 @@ public abstract class StackLayoutStructure
             SkiaControl child = null;
             if (_layout.IsTemplated)
             {
-                child = _layout.ChildrenFactory.GetChildAt(index, template, 0, true);
+                child = _layout.ChildrenFactory.GetViewForIndex(index, template, 0, true);
             }
             else
             {

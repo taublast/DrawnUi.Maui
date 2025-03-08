@@ -129,10 +129,10 @@ namespace DrawnUi.Maui.Draw
             return spacing;
         }
 
-        protected int GetSizeKey(SKSize size)
+        public int GetSizeKey(SKSize size)
         {
             int hKey = 0;
-            if (RecyclingTemplate != RecyclingTemplate.Disabled)
+            //if (RecyclingTemplate != RecyclingTemplate.Disabled)
             {
                 if (Type == LayoutType.Column)
                 {
@@ -167,11 +167,6 @@ namespace DrawnUi.Maui.Draw
                 {
                     //preload with condition..
                     nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
-                }
-                else
-                {
-                    //List<SkiaControl> dirtyChildren = DirtyChildrenTracker.GetList();
-                    //Debug.WriteLine($"Dirty: {dirtyChildren.Count}");
                 }
 
                 bool smartMeasuring = false;
@@ -417,7 +412,7 @@ namespace DrawnUi.Maui.Draw
                             SkiaControl child = null;
                             if (IsTemplated)
                             {
-                                child = ChildrenFactory.GetChildAt(cell.ControlIndex, template, 0, true);
+                                child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, template, 0, true);
                             }
                             else
                             {

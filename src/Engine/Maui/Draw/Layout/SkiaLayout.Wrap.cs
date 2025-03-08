@@ -50,12 +50,6 @@ namespace DrawnUi.Maui.Draw
 
             if (structure != null)
             {
-
-                if (Tag == "Recycled")
-                {
-                    var stop = 1;
-                }
-
                 //draw children manually
                 var inflate = (float)(this.VirtualisationInflated * ctx.Scale);
                 var visibleArea = GetOnScreenVisibleArea(ctx, new (inflate, inflate));
@@ -112,9 +106,9 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
 
-                if (Tag == "Recycled")
+                if (OutputDebug)
                 {
-                    Debug.WriteLine($"Cells at {visibleArea}, visible: {visibleElements.Count}");
+                    Super.Log($"[SkiaLayout] visible area {visibleArea}, visible items: {visibleElements.Count}");
                 };
 
                 //PASS 2 DRAW VISIBLE
@@ -141,7 +135,7 @@ namespace DrawnUi.Maui.Draw
                         {
                             break; //itemssource was changed by other thread
                         }
-                        child = ChildrenFactory.GetChildAt(cell.ControlIndex, null, GetSizeKey(cell.Measured.Pixels));
+                        child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, null, GetSizeKey(cell.Measured.Pixels));
                         if (child == null)
                         {
                             return countRendered;

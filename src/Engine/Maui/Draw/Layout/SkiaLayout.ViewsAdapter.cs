@@ -9,7 +9,7 @@ public record CellWIthHeight(float Height, SkiaControl view);
 /// </summary>
 public class ViewsAdapter : IDisposable
 {
-    public SkiaControl GetChildAt(int index, SkiaControl template = null, float height = 0, bool isMeasuring = false)
+    public SkiaControl GetViewForIndex(int index, SkiaControl template = null, float height = 0, bool isMeasuring = false)
     {
         if (IsDisposed)
             return null;
@@ -670,7 +670,7 @@ public class ViewsAdapter : IDisposable
 
     public ViewsIterator GetViewsIterator()
     {
-        //lock (_lockTemplates)
+        lock (_lockTemplates)
         {
             if (_parent.IsTemplated)
             {

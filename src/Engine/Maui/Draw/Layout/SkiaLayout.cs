@@ -36,23 +36,14 @@ namespace DrawnUi.Maui.Draw
             return true;
         }
 
-        /// <summary>
-        /// For easier code-behind use
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="apply"></param>
-        /// <returns></returns>
-        public override ISkiaGestureListener OnSkiaGestureEvent(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
-            if (!CanDraw)
-                return null;
-
             if (OnGestures != null)
             {
                 return OnGestures(args, apply);
             }
 
-            return base.OnSkiaGestureEvent(args, apply);
+            return base.ProcessGestures(args, apply);
         }
 
         /// <summary>
@@ -71,7 +62,6 @@ namespace DrawnUi.Maui.Draw
                     var transformed = child.Control.ApplyTransforms(child.Rect); //instead of HitRect
                     inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
                 }
-
                 return inside;
             }
 
@@ -233,6 +223,33 @@ namespace DrawnUi.Maui.Draw
                     return child.Destination;
             }
             return SKRect.Empty;
+        }
+
+        /// <summary>
+        /// TODO for templated stacks this is not optimized to handle cell size
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public SkiaControl GetChildAt(int index)
+        {
+            if (IsTemplated)
+            {
+                //todo 
+                bool useOneTemplate = IsTemplated && //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
+                                      RecyclingTemplate != RecyclingTemplate.Disabled;
+
+                SkiaControl template = null;
+                if (useOneTemplate)
+                {
+                    template = ChildrenFactory.GetTemplateInstance();
+                }
+
+                var child = ChildrenFactory.GetViewForIndex(index, template, 0, true);
+
+                return child;
+            }
+
+            return GetOrderedSubviews()[index];
         }
 
         public SkiaControl GetChildAt(float x, float y)
@@ -589,7 +606,7 @@ namespace DrawnUi.Maui.Draw
             base.InvalidateInternal();
         }
 
-        bool templatesInvalidated;
+        protected bool templatesInvalidated;
 
         public override void InvalidateWithChildren()
         {
@@ -730,7 +747,7 @@ namespace DrawnUi.Maui.Draw
                         standalone = true;
                         var template = ChildrenFactory.GetTemplateInstance();
 
-                        var child = ChildrenFactory.GetChildAt(0, template, 0, true);
+                        var child = ChildrenFactory.GetViewForIndex(0, template, 0, true);
 
                         //if (child == null)
                         //{
@@ -762,7 +779,7 @@ namespace DrawnUi.Maui.Draw
 
                         for (int index = 0; index < childrenCount; index++)
                         {
-                            var child = ChildrenFactory.GetChildAt(index, null, 0, true);
+                            var child = ChildrenFactory.GetViewForIndex(index, null, 0, true);
                             if (child == null)
                             {
                                 break; //unexpected but..
@@ -895,6 +912,8 @@ namespace DrawnUi.Maui.Draw
                 {
                     IsMeasuring = true;
 
+                    //LockUpdate(true);  never enable this here, breaks stuff
+
                     if (!DefaultChildrenCreated)
                     {
                         DefaultChildrenCreated = true;
@@ -949,6 +968,8 @@ namespace DrawnUi.Maui.Draw
             finally
             {
                 IsMeasuring = false;
+
+                //LockUpdate(false); never enable this here, breaks stuff
             }
 
         }
@@ -994,6 +1015,8 @@ namespace DrawnUi.Maui.Draw
         {
             if (ctx.Destination.Width == 0 || ctx.Destination.Height == 0)
                 return;
+
+            LockUpdate(true);
 
             if (Type == LayoutType.Grid || IsStack)
             {
@@ -1050,6 +1073,8 @@ namespace DrawnUi.Maui.Draw
                 _trackWasDrawn = true;
                 OnAppeared();
             }
+
+            LockUpdate(false);
         }
 
         public override void OnDisposing()

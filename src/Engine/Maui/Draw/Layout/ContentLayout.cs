@@ -165,21 +165,23 @@ protected virtual void SetContent(SkiaControl view)
 
     public SKRect ContentAvailableSpace { get; protected set; }
 
+    private SkiaControl _oldContent;
 
     protected virtual void SetContent(SkiaControl view)
     {
-        var oldContent = Views.FirstOrDefault(x => x == Content);
-        if (view != oldContent)
+        if (_oldContent == view)
         {
-            if (oldContent != null)
-            {
-                RemoveSubView(oldContent);
-            }
-            if (view != null)
-            {
-                AddSubView(view);
-            }
+            return;
         }
+        if (_oldContent != null)
+        {
+            RemoveSubView(_oldContent);
+        }
+        if (view != null)
+        {
+            AddSubView(view);
+        }
+        _oldContent = view;
     }
 
 
