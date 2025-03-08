@@ -6,7 +6,14 @@
 
         public static T Adjust<T>(this T view, Action<T> action) where T : SkiaControl
         {
-            action?.Invoke(view);
+            try
+            {
+                action?.Invoke(view);
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
             return view;
         }
 

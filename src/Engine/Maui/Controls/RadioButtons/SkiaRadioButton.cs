@@ -99,7 +99,6 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
     public SkiaControl ViewOn;
     public SkiaLabel ViewText;
 
-
     protected virtual void FindViews()
     {
         ViewOn = FindView<SkiaControl>("On");

@@ -106,7 +106,7 @@ public partial class DrawnView
             IsDirty &&
             CanvasView != null && this.Handler != null && this.Handler.PlatformView != null
                 && !CanvasView.IsDrawing
-               && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
+               && !(UpdateLocks>0 && StopDrawingWhenUpdateIsLocked)
                && IsVisible && Super.EnableRendering;
     }
 

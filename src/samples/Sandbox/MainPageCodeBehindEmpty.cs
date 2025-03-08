@@ -3,27 +3,24 @@ using Canvas = DrawnUi.Maui.Views.Canvas;
 
 namespace Sandbox
 {
-    public class MainPageCodeBehindEmpty : BasePage, IDisposable
+    public class MainPageCodeBehindEmpty : BasePageCodeBehind, IDisposable
     {
         Canvas Canvas;
 
-        public void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
-            this.Content = null;
-            Canvas?.Dispose();
+            if (isDisposing)
+            {
+                this.Content = null;
+                Canvas?.Dispose();
+            }
+
+            base.Dispose(isDisposing);
         }
 
-        public MainPageCodeBehindEmpty()
-        {
-#if DEBUG
-            Super.HotReload += ReloadUI;
-#endif
-            Build();
-        }
 
-        private int _reloads;
 
-        void Build()
+        public override void Build()
         {
             Canvas?.Dispose();
 
@@ -34,18 +31,11 @@ namespace Sandbox
                 BackgroundColor = Colors.LightGray
             };
 
-            _reloads++;
+ 
 
             this.Content = Canvas;
         }
 
-        private void ReloadUI(Type[] obj)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Build();
-            });
-        }
-
+ 
     }
 }

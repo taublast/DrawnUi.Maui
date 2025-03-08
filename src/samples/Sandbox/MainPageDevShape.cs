@@ -5,28 +5,22 @@ namespace Sandbox
 {
 
 
-    public class MainPageDevShape : BasePage, IDisposable
+    public class MainPageDevShape : BasePageCodeBehind, IDisposable
     {
         Canvas Canvas;
 
-        public void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
-            this.Content = null;
-            Canvas?.Dispose();
+            if (isDisposing)
+            {
+                this.Content = null;
+                Canvas?.Dispose();
+            }
+
+            base.Dispose(isDisposing);
         }
 
-        public MainPageDevShape()
-        {
-#if DEBUG
-            Super.HotReload += ReloadUI;
-#endif
-            Build();
-        }
-
-        private int _reloads;
-
-
-        void Build()
+        public override void Build()
         {
             Canvas?.Dispose();
 
@@ -66,18 +60,12 @@ namespace Sandbox
                 }
             };
 
-            _reloads++;
+ 
 
             this.Content = Canvas;
         }
 
-        private void ReloadUI(Type[] obj)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Build();
-            });
-        }
+ 
 
     }
 }

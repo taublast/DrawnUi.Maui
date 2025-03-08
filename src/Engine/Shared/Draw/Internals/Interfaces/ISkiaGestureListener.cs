@@ -23,7 +23,7 @@ public interface ISkiaGestureListener
 
     int ZIndex { get; }
 
-    DateTime GestureListenerRegistrationTime { get; set; }
+    DateTime? GestureListenerRegistrationTime { get; set; }
 
 
     /// <summary>

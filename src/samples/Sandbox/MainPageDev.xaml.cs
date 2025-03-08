@@ -10,7 +10,7 @@ using Sandbox.Views;
 namespace MauiNet8;
 
 
-public partial class MainPageDev : BasePage
+public partial class MainPageDev : BasePageCodeBehind
 {
     private readonly List<string> _shaders;
 

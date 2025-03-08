@@ -5,7 +5,13 @@ namespace DrawnUi.Maui.Controls;
 public class SkiaTabsSelector : SkiaLayout
 {
     /// <summary>
-    /// This is called when processing stack of index changes. For example you might have index chnaged 5 times during the time you were executing ApplySelectedIndex (playing the animations etc), so then you just need the lastest index to be applied. At the same time ApplySelectedIndex will not be called again while its already running, this way you would viually apply only the lastest more actual value instead of maybe freezing ui for too many heavy to render changes.
+    /// This is called when processing stack of index changes.
+    /// For example, you might have index changed 5 times
+    /// during the time you were executing ApplySelectedIndex (playing the animations etc),
+    /// so then you just need the latest index to be applied.
+    /// At the same time ApplySelectedIndex will not be called again while its already running,
+    /// this way you would visually apply only the latest most actual value instead of
+    /// maybe freezing the UI for too many heavy to be rendered changes.
     /// </summary>
     public virtual async Task ApplySelectedIndex(int index)
     {

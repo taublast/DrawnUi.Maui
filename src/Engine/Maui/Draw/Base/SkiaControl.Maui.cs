@@ -136,9 +136,7 @@ namespace DrawnUi.Maui.Draw
 
         public virtual IReadOnlyList<IVisualTreeElement> GetVisualChildren() //working fine
         {
-            return Views.Cast<IVisualTreeElement>().ToList().AsReadOnly();
-
-            //return Views.Select(x => x as IVisualTreeElement).ToList().AsReadOnly();;
+            return Views.ToList().Cast<IVisualTreeElement>().ToList();
         }
 
         public virtual IVisualTreeElement GetVisualParent()  //working fine
@@ -236,7 +234,9 @@ namespace DrawnUi.Maui.Draw
                 if (!CompareSize(DrawingRect.Size, _lastSize, 1))
                 {
                     _lastSize = DrawingRect.Size;
-                    Frame = new Rect(DrawingRect.Left, DrawingRect.Top, DrawingRect.Width, DrawingRect.Height);
+
+                    //todo /do we need this here? just for MAUI and this must use main thread and slow everything down.
+                    //Frame = new Rect(DrawingRect.Left, DrawingRect.Top, DrawingRect.Width, DrawingRect.Height);
                 }
             }
             LayoutReady = ready;

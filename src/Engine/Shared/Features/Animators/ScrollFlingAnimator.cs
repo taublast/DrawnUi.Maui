@@ -10,12 +10,18 @@ public class ScrollFlingAnimator : SkiaValueAnimator
 
     public Task RunAsync(float position, float velocity, float deceleration = 0.998f, float threshold = 0.5f, CancellationToken cancellationToken = default)
     {
-        return RunAsync(() => Initialize(position, velocity, deceleration, threshold), cancellationToken);
+        return RunAsync(() => InitializeWithVelocity(position, velocity, deceleration, threshold), cancellationToken);
     }
 
-    public void Initialize(float position, float velocity, float deceleration = 0.998f, float threshold = 0.5f)
+    public void InitializeWithVelocity(float position, float velocity, float deceleration = 0.998f, float threshold = 0.5f)
     {
         Parameters = new(position, velocity, deceleration, threshold);
+        Speed = Parameters.DurationSecs;
+    }
+
+    public void InitializeWithDestination(float position, float target, float timeSecs, float deceleration = 0.998f, float threshold = 0.5f)
+    {
+        Parameters = new(position, target, timeSecs, deceleration, threshold);
         Speed = Parameters.DurationSecs;
     }
 
@@ -42,13 +48,12 @@ public class ScrollFlingAnimator : SkiaValueAnimator
 
         mValue = Parameters.ValueAt(secs);
         CurrentVelocity = Parameters.VelocityAt(secs);
-
         return SelfFinished;
     }
 
     public ScrollFlingAnimator(IDrawnBase parent) : base(parent)
     {
-        Initialize(0, 0);
+        InitializeWithVelocity(0, 0);
     }
 
 }

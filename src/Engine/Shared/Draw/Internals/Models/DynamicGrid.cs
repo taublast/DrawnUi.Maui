@@ -82,6 +82,11 @@ public class DynamicGrid<T>
         return grid.Values;
     }
 
+    public T FindChildAtIndex(int index)
+    {
+        return grid.Values.ToArray()[index];
+    }
+
     public Span<T> GetChildrenAsSpans()
     {
         return CollectionsMarshal.AsSpan(grid.Values.ToList());

@@ -312,6 +312,7 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(SvgDataProperty, value); }
         }
         */
+
         public static readonly BindableProperty ZoomXProperty = BindableProperty.Create(
             nameof(ZoomX),
             typeof(double),
@@ -1085,11 +1086,11 @@ namespace DrawnUi.Maui.Draw
         {
             base.Paint(ctx); //paint background color
 
-            var scale = ctx.Scale;
-            var area = ContractPixelsRect(ctx.Destination, ctx.Scale, Padding);
-
             if (Svg != null)// !string.IsNullOrEmpty(LoadedString))
             {
+                var scale = ctx.Scale;
+                var area = ContractPixelsRect(ctx.Destination, ctx.Scale, Padding);
+
                 RenderingPaint ??= new SKPaint()
                 {
                     IsAntialias = true

@@ -14,8 +14,6 @@ public class CachedObject : IDisposable
 
     public SKPoint CalculatePositionOffset(SKPoint drawingRect)
     {
-        //return new(0, 0);
-
         var offsetCacheX = drawingRect.X - Bounds.Left;
         var offsetCacheY = drawingRect.Y - Bounds.Top;
 

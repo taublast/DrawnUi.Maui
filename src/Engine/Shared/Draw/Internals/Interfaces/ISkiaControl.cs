@@ -5,6 +5,7 @@ public interface ISkiaControl : IDrawnBase
     IDrawnBase Parent { get; set; }
 
     Thickness Margin { get; }
+
     Thickness Padding { get; }
 
     void SetParent(IDrawnBase parent);
@@ -29,8 +30,6 @@ public interface ISkiaControl : IDrawnBase
     SKRect RenderedAtDestination { get; set; }
 
     void SetChildren(IEnumerable<SkiaControl> views);
-
-
 
     /// <summary>
     /// Expecting PIXELS as input

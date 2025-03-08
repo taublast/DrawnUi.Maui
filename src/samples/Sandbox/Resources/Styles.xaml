@@ -5,23 +5,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw">
 
-    <Style
-        ApplyToDerivedTypes="True"
-        TargetType="draw:SkiaLabel">
+    <Style ApplyToDerivedTypes="True" TargetType="draw:SkiaLabel">
         <Setter Property="TextColor" Value="Black" />
         <Setter Property="FontSize" Value="14" />
     </Style>
 
-    <Style
-        ApplyToDerivedTypes="True"
-        TargetType="draw:SkiaButton">
+    <Style ApplyToDerivedTypes="True" TargetType="draw:SkiaButton">
         <Setter Property="TextColor" Value="Aqua" />
         <Setter Property="BackgroundColor" Value="Red" />
     </Style>
 
-    <Style
-        x:Key="SkiaLabelDefaultStyle"
-        TargetType="draw:SkiaLabel">
+    <Style x:Key="SkiaLabelDefaultStyle" TargetType="draw:SkiaLabel">
         <Setter Property="TextColor" Value="#FFFFFF" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="FontText" />
@@ -394,16 +388,12 @@
         </Setter>
     </Style>
 
-    <Style
-        ApplyToDerivedTypes="True"
-        TargetType="Page">
+    <Style ApplyToDerivedTypes="True" TargetType="Page">
         <Setter Property="Padding" Value="0" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}" />
     </Style>
 
-    <Style
-        ApplyToDerivedTypes="True"
-        TargetType="Shell">
+    <Style ApplyToDerivedTypes="True" TargetType="Shell">
         <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray950}}" />
         <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource Primary}, Default={StaticResource White}}" />
         <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />

@@ -73,6 +73,7 @@
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
     <Compile Remove="Platforms\Windows\ViewChainPanel.Windows.cs" />
     <Compile Remove="Controls\Extensions\**" />
+    <Compile Remove="Platforms\Android\NewFolder\**" />
     <Compile Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   
@@ -103,12 +104,9 @@
     </None>
     <None Include="Platforms\Windows\ViewChainPanel.Windows.cs" />
     <None Remove="Controls\Extensions\**" />
+    <None Remove="Platforms\Android\NewFolder\**" />
     <None Remove="Platforms\Windows\Controls\**" />
 	</ItemGroup>
-    
-  <!--<ItemGroup>
-      <ProjectReference Include="..\..\..\..\AppoMobi.Maui.Gestures\src\AppoMobi.Maui.Gestures.csproj" />
-  </ItemGroup>-->
 
   <ItemGroup>
 
@@ -134,16 +132,19 @@
 
   <ItemGroup>
     <EmbeddedResource Remove="Controls\Extensions\**" />
+    <EmbeddedResource Remove="Platforms\Android\NewFolder\**" />
     <EmbeddedResource Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
     
   <ItemGroup>
     <MauiXaml Remove="Controls\Extensions\**" />
+    <MauiXaml Remove="Platforms\Android\NewFolder\**" />
     <MauiXaml Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
     
   <ItemGroup>
     <MauiCss Remove="Controls\Extensions\**" />
+    <MauiCss Remove="Platforms\Android\NewFolder\**" />
     <MauiCss Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   <ItemGroup>
@@ -152,7 +153,6 @@
     
   <ItemGroup>
     <Folder Include="Internals\Handlers\" />
-    <Folder Include="Platforms\Android\NewFolder\" />
     <Folder Include="Shared\Handlers\" />
     <Folder Include="Views\Compat\" />
   </ItemGroup>

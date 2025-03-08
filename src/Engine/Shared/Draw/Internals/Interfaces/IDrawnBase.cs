@@ -110,7 +110,7 @@ public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
 
     bool ClipEffects { get; set; }
 
-    bool UpdateLocked { get; }
+    int UpdateLocks { get; }
 
     /// <summary>
     /// This is needed by layout to track which child changed to sometimes avoid recalculating other children

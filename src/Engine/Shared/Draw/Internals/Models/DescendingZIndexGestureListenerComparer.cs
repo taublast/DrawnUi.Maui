@@ -11,8 +11,8 @@ public class DescendingZIndexGestureListenerComparer : IComparer<ISkiaGestureLis
 
 		// If ZIndex are equal, compare RegistrationTime in descending order
 		if (result == 0)
-		{
-			result = x.GestureListenerRegistrationTime.CompareTo(y.GestureListenerRegistrationTime);
+        {
+            result = x.GestureListenerRegistrationTime.GetValueOrDefault().CompareTo(y.GestureListenerRegistrationTime.GetValueOrDefault());
 		}
 
 		// If RegistrationTime is equal, compare Uid to ensure uniqueness

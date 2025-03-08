@@ -4,29 +4,22 @@ using Canvas = DrawnUi.Maui.Views.Canvas;
 namespace Sandbox
 {
 
-    public class MainPageCode : BasePage, IDisposable
+    public class MainPageCode : BasePageCodeBehind, IDisposable
     {
         Canvas Canvas;
 
-        public override void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
-            base.Dispose();
+            if (isDisposing)
+            {
+                this.Content = null;
+                Canvas?.Dispose();
+            }
 
-            this.Content = null;
-            Canvas?.Dispose();
+            base.Dispose(isDisposing);
         }
 
-        public MainPageCode()
-        {
-#if DEBUG
-            Super.HotReload += ReloadUI;
-#endif
-            Build();
-        }
-
-        private int _reloads;
-
-        void Build()
+        public override void Build()
         {
             Canvas?.Dispose();
 
@@ -46,18 +39,12 @@ namespace Sandbox
                 }
             };
 
-            _reloads++;
+ 
 
             this.Content = Canvas;
         }
 
-        private void ReloadUI(Type[] obj)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Build();
-            });
-        }
+ 
 
     }
 }

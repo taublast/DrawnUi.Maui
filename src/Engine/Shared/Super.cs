@@ -207,7 +207,7 @@ public partial class Super
     public static void OnWentForeground()
     {
         InBackground = false;
-        NeedGlobalUpdate();
+        //NeedGlobalUpdate();
         OnNativeAppResumed?.Invoke(null, EventArgs.Empty);
     }
 

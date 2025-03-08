@@ -441,7 +441,7 @@ public partial class SkiaControl
                     RenderObject = RenderObjectPreparing;
                     _renderObjectPreparing = null;
 
-                    if (Parent != null && !Parent.UpdateLocked)
+                    if (Parent != null && Parent.UpdateLocks < 1)
                     {
                         Parent?.UpdateByChild(this); //repaint us
                     }
@@ -461,12 +461,12 @@ public partial class SkiaControl
         return action;
     }
 
-    public void PushToOffscreenRendering(Action action)
+    public void PushToOffscreenRendering(Action action, CancellationToken cancel = default)
     {
         if (Super.OffscreenRenderingAtCanvasLevel)
         {
             _offscreenCacheRenderingQueue.Push(action);
-            Superview?.PushToOffscreenRendering(this);
+            Superview?.PushToOffscreenRendering(this, cancel);
         }
         else
         {
@@ -477,7 +477,7 @@ public partial class SkiaControl
                 Task.Run(async () =>
                 {
                     await ProcessOffscreenCacheRenderingAsync();
-                }).ConfigureAwait(false);
+                }, cancel).ConfigureAwait(false);
             }
         }
     }
@@ -689,7 +689,7 @@ public partial class SkiaControl
                             RenderObject = RenderObjectPreparing;
                             _renderObjectPreparing = null;
 
-                            if (Parent != null && !Parent.UpdateLocked)
+                            if (Parent != null && Parent.UpdateLocks < 1)
                             {
                                 Parent?.UpdateByChild(this); //repaint us
                             }

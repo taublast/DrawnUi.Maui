@@ -2,9 +2,8 @@
 
 namespace Sandbox;
 
-public class MainPageBugCode : BasePageWithCanvas
+public class MainPageBugCode : BasePageReloadable
 {
-
     /*
 
 
@@ -27,14 +26,24 @@ public class MainPageBugCode : BasePageWithCanvas
         
      */
 
+    Canvas Canvas;
 
-    private int _reloads;
-
-    public override Canvas CreateCanvas()
+    protected override void Dispose(bool isDisposing)
     {
-        _reloads++;
+        if (isDisposing)
+        {
+            this.Content = null;
+            Canvas?.Dispose();
+        }
 
-        return new Canvas()
+        base.Dispose(isDisposing);
+    }
+
+    public override void Build()
+    {
+        Canvas?.Dispose();
+
+        Canvas = new Canvas()
         {
             Gestures = GesturesMode.Enabled,
             HardwareAcceleration = HardwareAccelerationMode.Enabled,
@@ -97,7 +106,7 @@ public class MainPageBugCode : BasePageWithCanvas
 
 
                         }
-                    }
+                    },
 
                 }
             }
@@ -142,6 +151,8 @@ public class MainPageBugCode : BasePageWithCanvas
             }
             */
         };
+
+        this.Content = Canvas;
     }
 
 

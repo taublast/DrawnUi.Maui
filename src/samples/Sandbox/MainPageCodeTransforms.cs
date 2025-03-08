@@ -92,29 +92,24 @@ namespace Sandbox
         }
     }
 
-    public class MainPageCodeTransforms : BasePage, IDisposable
+    public class MainPageCodeTransforms : BasePageCodeBehind, IDisposable
     {
         Canvas Canvas;
 
-        public override void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
-            base.Dispose();
+            if (isDisposing)
+            {
+                this.Content = null;
+                Canvas?.Dispose();
+            }
 
-            this.Content = null;
-            Canvas?.Dispose();
+            base.Dispose(isDisposing);
         }
 
-        public MainPageCodeTransforms()
-        {
-#if DEBUG
-            Super.HotReload += ReloadUI;
-#endif
-            Build();
-        }
 
-        private int _reloads;
 
-        void Build()
+        public override void Build()
         {
             Canvas?.Dispose();
 
@@ -152,25 +147,18 @@ namespace Sandbox
                                     TextColor = Colors.White,
                                     HorizontalOptions = LayoutOptions.Center,
                                     VerticalOptions = LayoutOptions.Center,
-                                    Text=$"Overlay {_reloads}"
+                                    Text=$"Overlay {CountReloads}"
                                 }
                             }
                     }
                 }
             };
-
-            _reloads++;
+ 
 
             this.Content = Canvas;
         }
 
-        private void ReloadUI(Type[] obj)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Build();
-            });
-        }
+ 
 
     }
 }

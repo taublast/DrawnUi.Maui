@@ -3,7 +3,7 @@ using Sandbox.Views.Xaml2Pdf;
 
 namespace Sandbox.Views
 {
-    public partial class MainPageXaml2Pdf : BasePage
+    public partial class MainPageXaml2Pdf : BasePageCodeBehind
     {
 
         public MainPageXaml2Pdf()

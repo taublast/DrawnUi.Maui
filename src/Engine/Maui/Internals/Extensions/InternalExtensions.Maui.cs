@@ -38,6 +38,16 @@ public static partial class InternalExtensions
 
     #endregion
 
+    /// <summary>
+    /// Radians to degrees
+    /// </summary>
+    /// <param name="radians"></param>
+    /// <returns></returns>
+    public static float ToDegrees(this float radians)
+    {
+        return radians * 180f / (float)Math.PI;
+    }
+
     public static SkiaShadow FromPlatform(this object platform)
     {
         if (platform is Shadow shadow)

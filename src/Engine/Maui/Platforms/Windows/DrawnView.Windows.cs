@@ -95,7 +95,7 @@ namespace DrawnUi.Maui.Views
                && !OrderedDraw
                && !CanvasView.IsDrawing
                && IsDirty
-               && !(UpdateLocked && StopDrawingWhenUpdateIsLocked)
+               && !(UpdateLocks > 0 && StopDrawingWhenUpdateIsLocked)
                && IsVisible && Super.EnableRendering;
         }
 

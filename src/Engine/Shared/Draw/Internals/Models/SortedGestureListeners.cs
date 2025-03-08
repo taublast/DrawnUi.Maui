@@ -14,7 +14,7 @@ public class SortedGestureListeners
             {
                 Sorted = _dic.Values
                     .OrderByDescending(listener => listener.ZIndex)
-                    .ThenByDescending(listener => listener.GestureListenerRegistrationTime)
+                    .ThenByDescending(listener => listener.GestureListenerRegistrationTime.GetValueOrDefault())
                     .ToList();
                 _isDirty = false;
             }

@@ -20,44 +20,6 @@ public struct RangeF
 
 public class ScaledSize
 {
-
-    /*
-     
-     
-    #region COMPARE
-
-    public static bool operator ==(ScaledSize left, ScaledSize right)
-    {
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(ScaledSize left, ScaledSize right)
-    {
-        return !left.Equals(right);
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (obj is ScaledSize other)
-        {
-            return Scale == other.Scale && Pixels == other.Pixels;
-            // Units == other.Units &&
-            //Pixels == other.Pixels &&
-            //WidthCut == other.WidthCut &&
-            //HeightCut == other.HeightCut;
-        }
-        return false;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Scale, Units, Pixels, WidthCut, HeightCut);
-    }
-
-    #endregion
-
-    */
-
     public ScaledSize()
     {
         Units = default;

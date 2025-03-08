@@ -24,6 +24,62 @@ namespace DrawnUi.Maui.Draw
             DecelerationK = 1000 * (float)Math.Log(DecelerationRate);
         }
 
+        /// <summary>
+/// Creates timing parameters specifically for scrolling to a target position in a specified time
+/// </summary>
+/// <param name="currentValue">The current position/value</param>
+/// <param name="targetValue">The target position/value to scroll to</param>
+/// <param name="durationSecs">The desired duration in seconds</param>
+/// <param name="decelerationRate">The deceleration rate (between 0 and 1)</param>
+/// <param name="threshold">The threshold for considering motion stopped</param>
+public DecelerationTimingParameters(float currentValue, float targetValue, float durationSecs, float decelerationRate, float threshold = 0.1f)
+{
+    if (decelerationRate <= 0 || decelerationRate >= 1)
+    {
+        throw new ArgumentOutOfRangeException(nameof(decelerationRate), "Deceleration rate must be greater than 0 and less than 1.");
+    }
+    
+    if (durationSecs <= 0)
+    {
+        throw new ArgumentOutOfRangeException(nameof(durationSecs), "Duration must be greater than 0.");
+    }
+    
+    // Store basic parameters
+    InitialValue = currentValue;
+    Threshold = threshold;
+    DecelerationRate = decelerationRate;
+    DecelerationK = 1000 * (float)Math.Log(DecelerationRate);
+    
+    // Calculate the distance to travel
+    float distance = targetValue - currentValue;
+    
+    // If we're already at the target, no velocity needed
+    if (Math.Abs(distance) < 1e-5f)
+    {
+        InitialVelocity = 0;
+        return;
+    }
+    
+    // Calculate the required initial velocity to reach the target in the specified time
+    // This is derived from inverting the position formula:
+    // x(t) = x0 + v0 * (e^(k*t) - 1) / k
+    // Solving for v0 gives:
+    // v0 = (x - x0) * k / (e^(k*t) - 1)
+    float numerator = distance * DecelerationK;
+    float denominator = (float)(Math.Pow(DecelerationRate, 1000 * durationSecs) - 1);
+    
+    // Handle extreme cases for numerical stability
+    if (Math.Abs(denominator) < 1e-5f)
+    {
+        // If denominator is too small, use a simplified calculation
+        InitialVelocity = distance / durationSecs;
+    }
+    else
+    {
+        InitialVelocity = numerator / denominator;
+    }
+}
+
         public float Destination
         {
             get

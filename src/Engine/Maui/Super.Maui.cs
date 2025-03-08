@@ -220,5 +220,14 @@ namespace DrawnUi.Maui.Draw
 #endif
 
         }
+
+
+        #region SCREENSHOT
+
+
+
+
+        #endregion
+
     }
 }

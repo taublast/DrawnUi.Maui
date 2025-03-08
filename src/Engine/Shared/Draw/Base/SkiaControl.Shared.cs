@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Input;
+using SkiaSharp;
 using SKBlendMode = SkiaSharp.SKBlendMode;
 using SKCanvas = SkiaSharp.SKCanvas;
 using SKClipOperation = SkiaSharp.SKClipOperation;
@@ -367,7 +368,7 @@ namespace DrawnUi.Maui.Draw
                 }
                 else
                 {
-                    callback?.Invoke(value);
+                    callbaclOnCancel?.Invoke();
                     animator.Stop();
                     DisposeObject(animator);
                 }
@@ -961,29 +962,30 @@ namespace DrawnUi.Maui.Draw
             return false;
         }
 
-        public Dictionary<Guid, ISkiaGestureListener> HadInput { get; } = new(128);
-
-        protected TouchActionResult _lastIncomingTouchAction;
-
-        public virtual ISkiaGestureListener OnSkiaGestureEvent(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
+        /// <summary>
+        /// Will be called by Canvas. Please override ProcessGestures for handling gestures, this method is for internal use.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="apply"></param>
+        /// <returns></returns>
+        public ISkiaGestureListener OnSkiaGestureEvent(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
-            if (!CanDraw)
-                return null;
-
-            if (args.Type == _lastIncomingTouchAction && args.Type == TouchActionResult.Up)
+            if (CanDraw && this is ISkiaGestureListener listener)
             {
-                //a case when we were called for same event by parent and by some top level
-                //because we previously has input and we got into HadInput to be notified of releases
-                //so we have set up a filter here
-                return null;
+                var canvas = _superview as Canvas;
+                if (canvas != null)
+                {
+                    if (!canvas.SignalInput(listener, args.Type))
+                    {
+                        return null; //avoid being called twice for same gesture
+                    }
+                }
+
+                var result = ProcessGestures(args, apply);
+
+                return result;
             }
-
-            //todo check latest behaviour!
-            _lastIncomingTouchAction = args.Type;
-
-            var result = ProcessGestures(args, apply);
-
-            return result;
+            return null;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1043,50 +1045,13 @@ namespace DrawnUi.Maui.Draw
             }
 
             ISkiaGestureListener consumed = null;
-            ISkiaGestureListener tmpConsumed = apply.alreadyConsumed;
+            ISkiaGestureListener wasConsumed = apply.alreadyConsumed;
             bool manageChildFocus = false;
 
             if (UsesRenderingTree && RenderTree != null)
             {
                 var thisOffset = TranslateInputCoords(apply.childOffset);
                 var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X, args.Event.Location.Y + thisOffset.Y);
-
-                //first process those who already had input
-                if (HadInput.Count > 0)
-                {
-                    if (
-                            args.Type == TouchActionResult.Panning ||
-                            args.Type == TouchActionResult.Wheel ||
-                            args.Type == TouchActionResult.Up
-                        )
-                    {
-                        foreach (var hadInput in HadInput.Values)
-                        {
-                            if (!hadInput.CanDraw || hadInput.InputTransparent)
-                            {
-                                continue;
-                            }
-                            consumed = hadInput.OnSkiaGestureEvent(args,
-                                new GestureEventProcessingInfo(
-                                thisOffset,
-                                TranslateInputCoords(apply.childOffsetDirect, false), tmpConsumed));
-
-                            if (consumed != null)
-                            {
-                                if (tmpConsumed == null)
-                                    tmpConsumed = consumed;
-
-                                if (args.Type != TouchActionResult.Up)
-                                    break;
-                            }
-                        }
-                    }
-                    //else
-                    if (HadInput.Count > 0 && args.Type == TouchActionResult.Up)
-                    {
-                        HadInput.Clear();
-                    }
-                }
 
                 var hadInputConsumed = consumed;
 
@@ -1106,15 +1071,6 @@ namespace DrawnUi.Maui.Draw
                         if (listener == null && child.Control is ISkiaGestureListener listen)
                         {
                             listener = listen;
-                        }
-
-                        if (HadInput.Values.Contains(listener) &&
-                            (
-                                args.Type == TouchActionResult.Panning ||
-                                args.Type == TouchActionResult.Wheel ||
-                                args.Type == TouchActionResult.Up))
-                        {
-                            continue;
                         }
 
                         if (listener != null)
@@ -1161,10 +1117,6 @@ namespace DrawnUi.Maui.Draw
 
                                 if (consumed != null)
                                 {
-                                    if (args.Type != TouchActionResult.Up)
-                                    {
-                                        HadInput.TryAdd(listener.Uid, consumed);
-                                    }
                                     break;
                                 }
                             }
@@ -1173,10 +1125,6 @@ namespace DrawnUi.Maui.Draw
                     }
                 }  //end
 
-                if (HadInput.Count > 0 && args.Type == TouchActionResult.Up)
-                {
-                    HadInput.Clear();
-                }
 
                 if (manageChildFocus)
                 {
@@ -1198,60 +1146,11 @@ namespace DrawnUi.Maui.Draw
 
                         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
-                        if (HadInput.Count > 0)
-                        {
-                            if (
-                                (
-                                 args.Type == TouchActionResult.Panning ||
-                                 args.Type == TouchActionResult.Wheel ||
-                                 args.Type == TouchActionResult.Up))
-                            {
-                                foreach (var hadInput in HadInput.Values)
-                                {
-                                    if (!hadInput.CanDraw || hadInput.InputTransparent)
-                                    {
-                                        continue;
-                                    }
-                                    consumed = hadInput.OnSkiaGestureEvent(args,
-                                        new GestureEventProcessingInfo(
-                                        TranslateInputCoords(apply.childOffset, true),
-                                        TranslateInputCoords(apply.childOffsetDirect, false), tmpConsumed));
-
-                                    if (consumed != null)
-                                    {
-                                        if (tmpConsumed == null)
-                                            tmpConsumed = consumed;
-
-                                        if (args.Type != TouchActionResult.Up)
-                                            break;
-                                    }
-                                }
-                            }
-                            //else
-                            if (HadInput.Count > 0 && args.Type == TouchActionResult.Up)
-                            {
-                                HadInput.Clear();
-                            }
-                        }
-
-                        var hadInputConsumed = consumed;
-
                         if (consumed == null || args.Type == TouchActionResult.Up)// !GestureListeners.Contains(consumed))
                             foreach (var listener in GestureListeners.GetListeners())
                             {
-                                if (!listener.CanDraw || listener.InputTransparent)
+                                if (listener==null || !listener.CanDraw || listener.InputTransparent || listener.GestureListenerRegistrationTime == null)
                                     continue;
-
-                                if (HadInput.Values.Contains(listener) &&
-                                    (
-                                    args.Type == TouchActionResult.Panning ||
-                                    args.Type == TouchActionResult.Wheel ||
-                                    args.Type == TouchActionResult.Up))
-                                {
-                                    continue;
-                                }
-
-                                //Debug.WriteLine($"Checking {listener} gestures in {this.Tag} {this}");
 
                                 if (listener == Superview.FocusedChild)
                                     manageChildFocus = true;
@@ -1281,34 +1180,25 @@ namespace DrawnUi.Maui.Draw
                                         new GestureEventProcessingInfo(
                                         TranslateInputCoords(apply.childOffset, true),
                                         TranslateInputCoords(apply.childOffsetDirect, false),
-                                        tmpConsumed));
+                                        wasConsumed));
 
                                     if (consumed != null)
                                     {
-                                        if (tmpConsumed == null)
-                                            tmpConsumed = consumed;
+                                        if (wasConsumed == null)
+                                            wasConsumed = consumed;
 
-                                        if (args.Type != TouchActionResult.Up)
-                                        {
-                                            HadInput.TryAdd(listener.Uid, consumed);
-                                        }
                                         break;
                                     }
                                 }
                             }
-
-                        if (HadInput.Count > 0 && args.Type == TouchActionResult.Up)
-                        {
-                            HadInput.Clear();
-                        }
 
                         if (manageChildFocus)
                         {
                             Superview.FocusedChild = null;
                         }
 
-                        if (hadInputConsumed != null)
-                            consumed = hadInputConsumed;
+                        if (wasConsumed != null)
+                            consumed = wasConsumed;
 
                     }
                     catch (Exception e)
@@ -1323,12 +1213,31 @@ namespace DrawnUi.Maui.Draw
             return consumed;
         }
 
+        public int UpdateLocks { get; private set; }
 
-        public bool UpdateLocked { get; set; }
+        public void UnlockUpdate()
+        {
+            LockUpdate(false);
+        }
 
         public void LockUpdate(bool value)
         {
-            UpdateLocked = value;
+            bool fire = UpdateLocks>0 && !value;
+            if (value)
+            {
+                UpdateLocks++;
+            }
+            else
+            {
+                if (UpdateLocks > 0)
+                {
+                    UpdateLocks--;
+                }
+            }
+            if (fire && _neededUpdate)
+            {
+                UpdateInternal();
+            }
         }
 
         private void Init()
@@ -3084,6 +2993,42 @@ namespace DrawnUi.Maui.Draw
             return IsGhost || Destination == SKRect.Empty;
         }
 
+
+        /// <summary>
+        /// Helper on top of `Measure` +`Arrange` for an easy-use
+        /// Input in PIXELS.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="destinationPixels"></param>
+        public void Layout(DrawingContext context, SKRect destinationPixels)
+        {
+            Measure(SizeRequest.Width, SizeRequest.Height, context.Scale);
+            Arrange(context.Destination, SizeRequest.Width, SizeRequest.Height, context.Scale);
+        }
+
+        /// <summary>
+        /// Helper on top of `Measure` +`Arrange` for an easy-use
+        /// Input in PIXELS.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="destinationPixels"></param>
+        public void Layout(DrawingContext context, float left, float top, float right, float bottom)
+        {
+            Layout(context, new (left, top, right, bottom));
+        }
+
+        /// <summary>
+        /// Helper on top of `Measure` +`Arrange` for an easy-use
+        /// Input in PIXELS.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="destinationPixels"></param>
+        public void Layout(DrawingContext context, int left, int top, int right, int bottom)
+        {
+            Layout(context, new(left, top, right, bottom));
+        }
+
+
         /// <summary>
         ///  destination in PIXELS, requests in UNITS. resulting Destination prop will be filed in PIXELS.
         /// DrawUsingRenderObject wil call this among others..
@@ -3393,8 +3338,24 @@ namespace DrawnUi.Maui.Draw
             public float HeightRequest { get; set; }
         }
 
+        protected virtual ScaledSize MeasureInternal(MeasureRequest request)
+        {
+            if (!this.CanDraw || request.WidthRequest == 0 || request.HeightRequest == 0)
+            {
+                InvalidateCacheWithPrevious();
+
+                return SetMeasuredAsEmpty(request.Scale);
+            }
+
+            var constraints = GetMeasuringConstraints(request);
+
+            ContentSize = MeasureAbsolute(constraints.Content, request.Scale);
+
+            return SetMeasuredAdaptToContentSize(constraints, request.Scale);
+        }
+
         /// <summary>
-        /// 
+        /// Input in POINTS
         /// </summary>
         /// <param name="widthConstraint"></param>
         /// <param name="heightConstraint"></param>
@@ -3418,23 +3379,18 @@ namespace DrawnUi.Maui.Draw
                 RenderingScale = scale;
 
                 var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-                //if (request.IsSame)
-                //{
-                //    return MeasuredSize;
-                //}
-
-                if (!this.CanDraw || request.WidthRequest == 0 || request.HeightRequest == 0)
+                if (!NeedMeasure && request.IsSame)
                 {
-                    InvalidateCacheWithPrevious();
-
-                    return SetMeasuredAsEmpty(request.Scale);
+                    return MeasuredSize;
                 }
 
-                var constraints = GetMeasuringConstraints(request);
+                if (!DefaultChildrenCreated)
+                {
+                    DefaultChildrenCreated = true;
+                    CreateDefaultContent();
+                }
 
-                ContentSize = MeasureAbsolute(constraints.Content, scale);
-
-                return SetMeasuredAdaptToContentSize(constraints, scale);
+                return MeasureInternal(request);
             }
             finally
             {
@@ -3973,6 +3929,8 @@ namespace DrawnUi.Maui.Draw
                 EffectsGestureProcessors = null;
                 EffectPostRenderer = null;
             });
+
+            GC.SuppressFinalize(this);
         }
 
         protected SKPaint PaintErase = new()
@@ -4402,10 +4360,7 @@ namespace DrawnUi.Maui.Draw
                 || IsDisposed || Parent == null)
                 return;
 
-            if (!Parent.UpdateLocked)
-            {
-                Parent?.UpdateByChild(this);
-            }
+            Parent?.UpdateByChild(this);
         }
 
         protected SKPaint _paintWithEffects = null;
@@ -5160,11 +5115,16 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposing || IsDisposed)
                 return;
 
+            if (UpdateLocks>0)
+            {
+                _neededUpdate = true;
+                return;
+            }
+
+            _neededUpdate = false;
+
             NeedUpdateFrontCache = true;
             NeedUpdate = true;
-
-            if (UpdateLocked)
-                return;
 
             if (!WillNotUpdateParent)
             {
@@ -5175,6 +5135,8 @@ namespace DrawnUi.Maui.Draw
 
         private int _updatedFromThread;
 
+        private volatile bool _neededUpdate;
+
         /// <summary>
         /// Main method to invalidate cache and invoke rendering
         /// </summary>
@@ -5183,6 +5145,11 @@ namespace DrawnUi.Maui.Draw
             if (NeedUpdate && Thread.CurrentThread.ManagedThreadId == _updatedFromThread)
                 return;
 
+            if (OutputDebug)
+            {
+                Super.Log($"[SkiaControl] will Update {this}");
+            }
+            
             _updatedFromThread = Thread.CurrentThread.ManagedThreadId;
 
             InvalidateCache();
@@ -5463,16 +5430,26 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        /// <summary>
+        /// Internal use folks, enable this to get console logs specifically from this instance
+        /// </summary>
+        public bool OutputDebug { get; set; }
+
         public virtual void InvalidateWithChildren()
         {
-            UpdateLocked = true;
+            if (OutputDebug)
+            {
+                Super.Log($"[SkiaControl] InvalidateWithChildren");
+            };
 
-            foreach (var view in Views) //will crash? why adapter nor used??
+            LockUpdate(true);
+
+            foreach (var view in Views.ToList()) //todo why on earth adapter is not used??
             {
                 InvalidateChildren(view as SkiaControl);
             }
 
-            UpdateLocked = false;
+            LockUpdate(false);
 
             InvalidateInternal();
         }
@@ -5937,7 +5914,7 @@ namespace DrawnUi.Maui.Draw
             Invalidate();
         }
 
-        public DateTime GestureListenerRegistrationTime { get; set; }
+        public DateTime? GestureListenerRegistrationTime { get; set; }
 
         public void RegisterGestureListener(ISkiaGestureListener gestureListener)
         {
@@ -5953,7 +5930,7 @@ namespace DrawnUi.Maui.Draw
         {
             lock (LockIterateListeners)
             {
-                HadInput.Remove(gestureListener.Uid);
+                gestureListener.GestureListenerRegistrationTime = null;
                 GestureListeners.Remove(gestureListener);
                 //Debug.WriteLine($"Removed {gestureListener} from gestures of {this.Tag} {this}");
             }
@@ -6427,15 +6404,15 @@ namespace DrawnUi.Maui.Draw
         //}
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool CompareFloats(float a, float b, float precision)
+        public static bool CompareFloats(float a, float b, float precision = float.Epsilon)
         {
-            return Math.Abs(a - b) <= precision;
+            return Math.Abs(a - b) < precision;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool CompareDoubles(double a, double b, double precision)
+        public static bool CompareDoubles(double a, double b, double precision = double.Epsilon)
         {
-            return Math.Abs(a - b) <= precision;
+            return Math.Abs(a - b) < precision;
         }
 
 

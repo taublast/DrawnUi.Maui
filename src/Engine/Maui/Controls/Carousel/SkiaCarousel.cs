@@ -253,7 +253,7 @@ public class SkiaCarousel : SnappingLayout
             var track = DrawingRect.Width - SidesOffset;
             foreach (var cell in visibleElements)
             {
-                var view = ChildrenFactory.GetChildAt(cell.ControlIndex);
+                var view = ChildrenFactory.GetViewForIndex(cell.ControlIndex);
 
                 //Debug.Write($"[Carousel] {Tag} obtained cell for index {cell.ControlIndex}, visible {cell.IsVisible}");
 
@@ -861,7 +861,7 @@ public class SkiaCarousel : SnappingLayout
         {
             if (!IsTemplated || RecyclingTemplate == RecyclingTemplate.Disabled)
             {
-                var view = ChildrenFactory.GetChildAt(index);
+                var view = ChildrenFactory.GetViewForIndex(index);
                 view.InvalidateWithChildren();
             }
 
@@ -1079,7 +1079,7 @@ public class SkiaCarousel : SnappingLayout
     {
         if (ChildrenFactory.TemplatesAvailable)
         {
-            var child = ChildrenFactory.GetChildAt(index);
+            var child = ChildrenFactory.GetViewForIndex(index);
             if (child != null && !child.NeedMeasure)
             {
                 if (this.NeedAutoHeight)

@@ -1,4 +1,4 @@
-﻿using AppoMobi.Maui.DrawnUi.Demo.Views.Controls;
+﻿using System.Diagnostics;
 using Sandbox.Views;
 using Canvas = DrawnUi.Maui.Views.Canvas;
 
@@ -6,16 +6,20 @@ namespace Sandbox
 {
 
 
-    public class MainPageCodeDev : BasePage, IDisposable
+    public class MainPageCodeDev : BasePageCodeBehind, IDisposable
     {
         Canvas Canvas;
 
-        public void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
-            this.Content = null;
-            Canvas?.Dispose();
-        }
+            if (isDisposing)
+            {
+                this.Content = null;
+                Canvas?.Dispose();
+            }
 
+            base.Dispose(isDisposing);
+        }
 
 
         public class MyDataTemplateSelector : DataTemplateSelector
@@ -36,30 +40,18 @@ namespace Sandbox
             }
         }
 
-        public MainPageCodeDev()
+        public override void Build()
         {
-#if DEBUG
-            Super.HotReload += ReloadUI;
-#endif
-            Build();
-        }
-
-        private int _reloads;
-
-        void Build()
-        {
-            var itemsSource = Enumerable.Range(1, 12).Select(x => $"{x * 10} m").ToList();
-
-            var selector = new MyDataTemplateSelector();
-
             Canvas?.Dispose();
 
             Canvas = new Canvas()
             {
+                WidthRequest = 210,
+                HorizontalOptions = LayoutOptions.Center,
                 Gestures = GesturesMode.Lock,
                 HardwareAcceleration = HardwareAccelerationMode.Enabled,
                 VerticalOptions = LayoutOptions.Fill,
-                HorizontalOptions = LayoutOptions.Fill,
+                HeightRequest = 250,
                 BackgroundColor = Colors.Gray,
 
                 //Content = new SkiaLayout()
@@ -74,55 +66,65 @@ namespace Sandbox
 
                 Content =
 
-
-                    new SkiaLayout()
+                    new SkiaLayout() //wrapper
                     {
-                        Tag = "1",
-                        Type = LayoutType.Column,
-                        BackgroundColor = Colors.Blue,
+                        VerticalOptions = LayoutOptions.Fill,
                         HorizontalOptions = LayoutOptions.Fill,
-                        Children = new List<SkiaControl>()
-                        {
-                            new SkiaMarkdownLabel()
-                            {
-                                Margin=16,
-                                FontFamily="OpenSansRegular",
-                                FontSize=15,
-                                Text="`CODE` xx",
-                                TextColor=Colors.White,
-                            }.CenterX(),
-                            new WheelPicker()
-                            {
-                                Margin = 100,
-                                Tag = "Picker",
-                                DataSource = itemsSource,
-                                //ItemTemplate = new DataTemplate(() =>
-                                //{
-                                //    return new SkiaLabel()
-                                //    {
-                                //        Text = "???",
-                                //        BackgroundColor = Colors.Yellow
-                                //    };
+                    }.WithChildren(
 
-                                //})
-                            }
-                        }
+                           new SkiaLayout()
+                           {
+                               Tag = "1",
+                               Type = LayoutType.Column,
+                               BackgroundColor = Colors.Gray,
+                               VerticalOptions = LayoutOptions.Fill,
+                               HorizontalOptions = LayoutOptions.Fill,
+                               Children = new List<SkiaControl>()
+                    {
+                        //new SkiaMarkdownLabel()
+                        //{
+                        //    Margin=16,
+                        //    FontFamily="OpenSansRegular",
+                        //    FontSize=15,
+                        //    Text="`CODE` xx",
+                        //    TextColor=Colors.White,
+                        //}.CenterX(),
+
+                 
                     }
+                           },
+                           //new SkiaLabel()
+                           //{
+                           //    Margin = new(8),
+                           //    VerticalOptions = LayoutOptions.Center,
+                           //    ZIndex = 100,
+                           //    FontSize = 8,
+                           //    TextColor = Colors.White,
+                           //    BackgroundColor = Colors.Black,
+                           //}.Adjust((c) =>
+                           //{
+                           //    c.SetBinding(SkiaLabel.TextProperty, static (WheelScroll x) => x.DebugWheel, source: wheel);
+                           //}),
+                           new SkiaLabelFps()
+                           {
+                               Margin = new(0,0,4,24),
+                               VerticalOptions = LayoutOptions.End,
+                               HorizontalOptions = LayoutOptions.End,
+                               Rotation = -45,
+                                BackgroundColor = Colors.DarkRed,
+                               TextColor = Colors.White,
+                               ZIndex = 110,
+                           }
+
+                    )
+
+         
 
             };
-
-            _reloads++;
 
             this.Content = Canvas;
         }
 
-        private void ReloadUI(Type[] obj)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Build();
-            });
-        }
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageMarkdown : BasePage
+    public partial class MainPageMarkdown : BasePageCodeBehind
     {
 
         public MainPageMarkdown()
