@@ -280,31 +280,34 @@ namespace DrawnUi.Maui.Draw
             //rescale the path to match container
             if (Type == ShapeType.Path)
             {
-                DrawPath.GetTightBounds(out var bounds);
-                using SKPath stretched = new();
-                stretched.AddPath(DrawPath);
+                if (DrawPath != null)
+                {
+                    DrawPath.GetTightBounds(out var bounds);
+                    using SKPath stretched = new();
+                    stretched.AddPath(DrawPath);
 
-                float scaleX = strokeAwareSize.Width / (bounds.Width + halfStroke);
-                float scaleY = strokeAwareSize.Height / (bounds.Height + halfStroke);
+                    float scaleX = strokeAwareSize.Width / (bounds.Width + halfStroke);
+                    float scaleY = strokeAwareSize.Height / (bounds.Height + halfStroke);
 
-                float translateX = (strokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 -
-                                   bounds.Left * scaleX;
-                float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 -
-                                   bounds.Top * scaleY;
+                    float translateX = (strokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 -
+                                       bounds.Left * scaleX;
+                    float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 -
+                                       bounds.Top * scaleY;
 
 #if SKIA3
-                SKMatrix matrix = SKMatrix.CreateScale(scaleX, scaleY);
-                matrix = SKMatrix.Concat(matrix, SKMatrix.CreateTranslation(translateX/2, translateY/2));
+                    SKMatrix matrix = SKMatrix.CreateScale(scaleX, scaleY);
+                    matrix = SKMatrix.Concat(matrix, SKMatrix.CreateTranslation(translateX / 2, translateY / 2));
 #else
-                SKMatrix matrix = SKMatrix.CreateIdentity();
-                SKMatrix.PreConcat(ref matrix, SKMatrix.CreateScale(scaleX, scaleY));
-                SKMatrix.PreConcat(ref matrix, SKMatrix.CreateTranslation(translateX, translateY));
+                    SKMatrix matrix = SKMatrix.CreateIdentity();
+                    SKMatrix.PreConcat(ref matrix, SKMatrix.CreateScale(scaleX, scaleY));
+                    SKMatrix.PreConcat(ref matrix, SKMatrix.CreateTranslation(translateX, translateY));
 #endif
-                stretched.Transform(matrix);
-                stretched.Offset(halfStroke, halfStroke);
+                    stretched.Transform(matrix);
+                    stretched.Offset(halfStroke, halfStroke);
 
-                DrawPathResized.Reset();
-                DrawPathResized.AddPath(stretched);
+                    DrawPathResized.Reset();
+                    DrawPathResized.AddPath(stretched);
+                }
             }
         }
 
