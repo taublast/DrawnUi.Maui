@@ -20,16 +20,15 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 New nugets: for NET 9 you need version not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
 
-### Nuget 1.3.60.5
+### Nuget 1.4.0.1
 _for SkiaSharp 3.116.1 NET 9_
-* Canvas auto-size optimizations 
-* iOS Metal hardware acceleration improved on simulator and real device.
-* Multi-display fixes for desktop
+* More fluent extensions and added base page for C# HotReload to build UI from code, many examples inside Sandbox project.
+* Canvas gestures performance/fixes
+* SkiaLayout performance/fixes (inc. VerticalFillRatio HorizontalFillRatio)
+* Fixes for SkiaButton, SkiaShape, SkiaScroll, SkiaGradient and more
+* SkiaMarkdownLabel will force bold/italic for spans if set globally
+* Sk3dView Save-Restore implemented
 * Other fixes and improvements
-
-### Nuget 1.2.99.2
-_for SkiaSharp 2.88.9-preview.2.2 NET 8_
-* ?
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 
