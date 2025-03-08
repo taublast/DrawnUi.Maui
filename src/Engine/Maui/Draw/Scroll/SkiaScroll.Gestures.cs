@@ -159,7 +159,6 @@ public partial class SkiaScroll
                 var zoomed = SetZoom(scale);
             }
 
-
             if (IgnoreWrongDirection)
             {
                 var panDirection = DirectionType.Vertical;
@@ -177,7 +176,6 @@ public partial class SkiaScroll
                 }
             }
         }
-
 
         if (!IsUserPanning || wrongDirection || args.Type == TouchActionResult.Up || args.Type == TouchActionResult.Tapped || !RespondsToGestures)
         {
@@ -221,7 +219,8 @@ public partial class SkiaScroll
             var zoomed = SetZoom(args.Event.Wheel.Scale);
             consumed = this;
         }
-        else if (args.Event.NumberOfTouches < 2 && hadNumberOfTouches < 2)
+        else
+        if (args.Event.NumberOfTouches < 2 && hadNumberOfTouches < 2)
         {
             switch (args.Type)
             {
@@ -303,15 +302,13 @@ public partial class SkiaScroll
                         }
 
                         //accumulate velocity for different gestures before drawing
-                        _pannedVelocity = new(
-                            _pannedVelocity.X + VelocityX,
-                            _pannedVelocity.Y + VelocityY);
+                        _pannedVelocity = _pannedVelocity + new Vector2(VelocityX, VelocityY);
 
                         _pannedOffset = clamped; //will be applied once when drawing by ApplyPannedOffsetWithVelocity
 
                         consumed = this;
 
-                        Update();
+                        Repaint();
                     }
                     break;
 
@@ -323,8 +320,8 @@ public partial class SkiaScroll
 
                         if (apply.alreadyConsumed != null)
                         {
-                            if (CheckNeedToSnap())
-                                Snap(SystemAnimationTimeSecs);
+                            //if (CheckNeedToSnap())
+                            //    Snap(SystemAnimationTimeSecs);
                             return null;
                         }
 
@@ -461,12 +458,12 @@ public partial class SkiaScroll
 
                             if (!fling)
                             {
-                                if (CheckNeedToSnap())
-                                    Snap(SystemAnimationTimeSecs);
-                                else
-                                {
-                                    _destination = SKRect.Empty;
-                                }
+                                //if (CheckNeedToSnap())
+                                //    Snap(SystemAnimationTimeSecs);
+                                //else
+                                //{
+                                //    _destination = SKRect.Empty;
+                                //}
                             }
                         }
                         break;

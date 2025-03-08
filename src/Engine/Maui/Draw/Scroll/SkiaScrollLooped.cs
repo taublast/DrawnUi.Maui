@@ -323,7 +323,7 @@ public class SkiaScrollLooped : SkiaScroll
     {
         bool debug = false;
 
-        if (!IsBanner)
+        if (!IsBanner) // seamlessly gluing START to END
         {
             if (Orientation == ScrollOrientation.Vertical)
             {
@@ -333,7 +333,6 @@ public class SkiaScrollLooped : SkiaScroll
 
                 if (hiddenContentHeightPixels > 0)
                 {
-
                     var pixelsContentOffsetY = (float)(InternalViewportOffset.Pixels.Y);
                     float offsetY = 0;
                     if (pixelsContentOffsetY > 0)
@@ -346,7 +345,13 @@ public class SkiaScrollLooped : SkiaScroll
                         offsetY = Content.MeasuredSize.Pixels.Height + pixelsContentOffsetY;
                     }
 
-                    var childRect = context.Destination;
+                    var margins = GetAllMarginsInPixels(context.Scale);
+                    var childRect = new SKRect(
+                        context.Destination.Left + (float)margins.Left,
+                        context.Destination.Top + (float)margins.Top,
+                        context.Destination.Right - (float)margins.Right,
+                        context.Destination.Bottom - (float)margins.Bottom);
+
                     childRect.Offset(0, offsetY);
 
                     if (pixelsContentOffsetY > 0)
@@ -514,8 +519,10 @@ public class SkiaScrollLooped : SkiaScroll
     = BindableProperty.Create(nameof(IsBanner),
     typeof(bool), typeof(SkiaScrollLooped),
     false, propertyChanged: NeedDraw);
+
     /// <summary>
-    /// Whether this should look like an infinite scrolling text banner
+    /// Whether this should look like an infinite scrolling text banner.
+    /// So then the END doesn't glue with START directly, new START appears only when when previous END gows out of the screen.
     /// </summary>
     public bool IsBanner
     {

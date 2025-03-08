@@ -339,15 +339,13 @@ public partial class SkiaScroll
 
     protected virtual void OnScrollerStopped()
     {
-        //Super.Log("OnScrollerStopped..");
-
         UpdateLoadingLock(false);
 
-        if (CheckNeedToSnap())
-        {
-            Snap(SystemAnimationTimeSecs);
-        }
-        else
+        //if (CheckNeedToSnap())
+        //{
+        //    Snap(SystemAnimationTimeSecs);
+        //}
+        //else
         {
             //scroll ended prematurely by our intent because it would end past the bounds
             if (Bounces)
@@ -628,7 +626,7 @@ public partial class SkiaScroll
     {
         var contentOffset = from;
 
-        animator.Initialize(contentOffset, velocity, 1f - DecelerationRatio);
+        animator.InitializeWithVelocity(contentOffset, velocity, 1f - DecelerationRatio);
 
         if (PrepareToFlingAfterInitialized(animator))
         {
@@ -647,7 +645,7 @@ public partial class SkiaScroll
 
         var contentOffset = from;// new float((float)ViewportOffsetX, (float)ViewportOffsetY);
 
-        animator.Initialize(contentOffset, velocity, 1f - DecelerationRatio);
+        animator.InitializeWithVelocity(contentOffset, velocity, 1f - DecelerationRatio);
 
         return await FlingAfterInitialized(animator);
     }
@@ -656,7 +654,7 @@ public partial class SkiaScroll
     {
         var velocity = animator.Parameters.VelocityToZero(from, to, changeSpeedSecs);
 
-        animator.Initialize(from, velocity, 1f - DecelerationRatio);
+        animator.InitializeWithVelocity(from, velocity, 1f - DecelerationRatio);
 
         if (changeSpeedSecs > 0)
             animator.Speed = changeSpeedSecs;
@@ -668,7 +666,7 @@ public partial class SkiaScroll
     {
         var velocity = animator.Parameters.VelocityTo(from, to, timeSeconds);
 
-        animator.Initialize(from, velocity, 1f - DecelerationRatio);
+        animator.InitializeWithVelocity(from, velocity, 1f - DecelerationRatio);
 
         animator.Speed = timeSeconds;
 
@@ -836,6 +834,18 @@ public partial class SkiaScroll
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// Easy-to-use helper around using a lower level ScrollTo function
+    /// </summary>
+    /// <param name="offset"></param>
+    /// <param name="animated"></param>
+    public void SetContentOffset(Vector2 offset, bool animated)
+    {
+        var speed = animated ? AutoScrollingSpeedMs : 0;
+
+        ScrollTo(offset.X, offset.Y, speed);
     }
 
     public void ScrollTo(float x, float y, float maxSpeedSecs)

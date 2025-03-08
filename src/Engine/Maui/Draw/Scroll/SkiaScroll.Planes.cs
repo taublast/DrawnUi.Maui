@@ -11,7 +11,7 @@ namespace DrawnUi.Maui.Draw
 
         public override void UpdateByChild(SkiaControl control)
         {
-            if (UsePlanes)
+            if (UseVirtual)
             {
                 //todo somehow detect which plane is invalidated upon child on it
                 return;
@@ -24,13 +24,12 @@ namespace DrawnUi.Maui.Draw
         }
 
         //todo use when context size is bigger than 2 viewports?
-        public virtual bool UsePlanes
+        public virtual bool UseVirtual
         {
             get
             {
-                return false;
-
-                return Content != null && Orientation != ScrollOrientation.Both;
+                return Content != null
+                       && Orientation != ScrollOrientation.Both && Content is SkiaLayout layout && layout.Virtualisation == VirtualisationType.Managed;
             }
         }
 
@@ -47,7 +46,7 @@ namespace DrawnUi.Maui.Draw
         public override ScaledRect GetOnScreenVisibleArea(DrawingContext context, Vector2 inflateByPixels = default)
         {
 
-            if (UsePlanes)
+            if (UseVirtual)
             {
                 //todo
                 if (context.GetArgument(ContextArguments.Viewport.ToString()) is SKRect insideViewport)
@@ -320,10 +319,11 @@ namespace DrawnUi.Maui.Draw
             TriggerPreparePlane(context,"Backward");
         }
 
-
-
-
-        public virtual void DrawPlanes(DrawingContext context)
+        /// <summary>
+        /// This is called when scrolling changes when in UseVirtual mode, override this to draw custom content
+        /// </summary>
+        /// <param name="context"></param>
+        public virtual void DrawVirtual(DrawingContext context)
         {
             if (PlaneCurrent == null)
             {
@@ -412,19 +412,23 @@ namespace DrawnUi.Maui.Draw
             // --------------------------------------------------------------------
             // Multiple-swap logic to handle fast scrolling
             // --------------------------------------------------------------------
-            while (true)
-            {
-                bool swappedSomething = false;
 
+            int swaps = 0;
+            bool swappedSomething = false;
+            while (!swappedSomething)
+            {
                 // ------------------------------------------------------
                 // then swap down as many times as needed
                 // ------------------------------------------------------
-                while (rectForward.MidY <= (Viewport.Pixels.Height / 2))
+                var topDown = -1f; // break when same 
+                while (topDown != rectForward.Top && rectForward.MidY <= (Viewport.Pixels.Height / 2))
                 {
+                    topDown = rectForward.Top;
                     //if (swappedDownAt != 0)
                     //    break;
 
                     SwapDown();
+                    swaps++;
                     swappedDownAt = currentScroll;
                     swappedSomething = true;
 
@@ -435,12 +439,15 @@ namespace DrawnUi.Maui.Draw
                 // ------------------------------------------------------
                 // swap up as many times as needed
                 // ------------------------------------------------------
-                while (rectBackward.MidY > Viewport.Pixels.Height / 2)
+                var topUp = -1f;
+                while (topUp != rectBackward.Top && rectBackward.MidY > Viewport.Pixels.Height / 2)
                 {
+                    topUp = rectBackward.Top;
                     //if (swappedUpAt != 0)
                     //    break;
 
                     SwapUp();
+                    swaps++;
                     swappedUpAt = currentScroll;
                     swappedSomething = true;
 
