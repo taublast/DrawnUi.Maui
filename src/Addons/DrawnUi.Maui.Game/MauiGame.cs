@@ -7,10 +7,21 @@ using System.Threading.Tasks;
 
 namespace DrawnUi.Maui.Game
 {
+    public interface IMauiGame
+    {
+        void OnKeyDown(MauiKey key);
+        void OnKeyUp(MauiKey key);
+
+        void Pause();
+        void Resume();
+        void StopLoop();
+        void StartLoop(int delayMs = 0);
+    }
+
     /// <summary>
     /// Base class for implementing a game. StartLoop, StopLoop, override GameLoop(..) etc.
     /// </summary>
-    public class MauiGame : SkiaLayout
+    public class MauiGame : SkiaLayout, IMauiGame
     {
 
         private ActionOnTickAnimator _appLoop;
@@ -22,11 +33,14 @@ namespace DrawnUi.Maui.Game
             KeyboardManager.KeyUp += OnKeyboardUpEvent;
         }
 
-        ~MauiGame()
+        public override void OnDisposing()
         {
             KeyboardManager.KeyUp -= OnKeyboardUpEvent;
             KeyboardManager.KeyDown -= OnKeyboardDownEvent;
+
+            base.OnDisposing();
         }
+
 
         protected virtual void OnResumed()
         {
