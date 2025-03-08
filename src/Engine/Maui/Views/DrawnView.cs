@@ -268,6 +268,7 @@ namespace DrawnUi.Maui.Views
             if (gestureListener == null)
                 return;
 
+            gestureListener.GestureListenerRegistrationTime = null;
             GestureListeners.Remove(gestureListener);
         }
 
@@ -687,7 +688,7 @@ namespace DrawnUi.Maui.Views
         }
 
         /// <summary>
-        /// Set this to true if you do not want the canvas to be redrawn as transparent and showing content below the canvas (splash?..) when UpdateLocked is True
+        /// Set this to true if you do not want the canvas to be redrawn as transparent and showing content below the canvas (splash?..) when UpdateLocks is True
         /// </summary>
         public bool StopDrawingWhenUpdateIsLocked { get; set; }
 
@@ -944,16 +945,16 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-        public static readonly BindableProperty UpdateLockedProperty = BindableProperty.Create(
-            nameof(UpdateLocked),
-            typeof(bool),
+        public static readonly BindableProperty UpdateLocksProperty = BindableProperty.Create(
+            nameof(UpdateLocks),
+            typeof(int),
             typeof(DrawnView),
-            false);
+            0);
 
-        public bool UpdateLocked
+        public int UpdateLocks
         {
-            get { return (bool)GetValue(UpdateLockedProperty); }
-            set { SetValue(UpdateLockedProperty, value); }
+            get { return (int)GetValue(UpdateLocksProperty); }
+            set { SetValue(UpdateLocksProperty, value); }
         }
 
 
@@ -1830,7 +1831,7 @@ namespace DrawnUi.Maui.Views
 
         protected SemaphoreSlim semaphoreOffscreenProcess = new(1);
 
-        public record OffscreenCommand(SkiaControl Control);
+        public record OffscreenCommand(SkiaControl Control, CancellationToken Cancel);
 
         /// <summary>
         /// Ensures offscreen rendering queue is running
@@ -1853,9 +1854,9 @@ namespace DrawnUi.Maui.Views
         /// <summary>
         /// Push an offscreen rendering command without blocking the UI thread.
         /// </summary>
-        public void PushToOffscreenRendering(SkiaControl control)
+        public void PushToOffscreenRendering(SkiaControl control, CancellationToken cancel = default)
         {
-            _incomingCommands.Enqueue(new OffscreenCommand(control));
+            _incomingCommands.Enqueue(new OffscreenCommand(control, cancel));
             KickOffscreenCacheRendering();
         }
 
@@ -1884,7 +1885,8 @@ namespace DrawnUi.Maui.Views
                 }
 
                 // Process the latest commands now
-                // Reading dictionary under lock might not be strictly necessary if we trust only this background thread modifies it
+                // Reading dictionary under lock might not be strictly necessary
+                // if we trust only this background thread modifies it
                 // but we can snapshot under lock for safety.
                 OffscreenCommand[] toProcess;
                 lock (_offscreenCommands)
@@ -1899,9 +1901,8 @@ namespace DrawnUi.Maui.Views
                 {
                     try
                     {
-                        if (command.Control.IsDisposed || command.Control.IsDisposing)
+                        if (command.Control.IsDisposed || command.Control.IsDisposing || command.Cancel.IsCancellationRequested)
                         {
-                            // If control is no longer valid, skip it.
                             continue;
                         }
 
@@ -1934,7 +1935,7 @@ namespace DrawnUi.Maui.Views
             //Debug.WriteLine($"[DRAW] {Tag}");
 
 
-            if (IsDisposed || UpdateLocked)
+            if (IsDisposed || UpdateLocks>0)
             {
                 return;
             }

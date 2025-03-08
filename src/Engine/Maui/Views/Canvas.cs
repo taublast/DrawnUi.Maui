@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using Microsoft.Maui.Controls.Internals;
 using Size = Microsoft.Maui.Graphics.Size;
 
@@ -402,13 +403,6 @@ public class Canvas : DrawnView, IGestureListener
         }
     }
 
-    /// <summary>
-    /// To filter micro-gestures on super sensitive screens, start passing panning only when threshold is once overpassed
-    /// </summary>
-    public static float FirstPanThreshold = 5;
-
-    bool _isPanning;
-
 
     protected virtual SkiaSvg CreateDebugPointer()
     {
@@ -435,6 +429,35 @@ public class Canvas : DrawnView, IGestureListener
 
     protected DrawingContext Context;
 
+
+    /// <summary>
+    /// Fixing error in gestures nuget TODO fix there
+    /// </summary>
+    private PointF _panningStartedAt;
+
+    /// <summary>
+    /// Got input during current pass
+    /// </summary>
+    public ConcurrentBag<ISkiaGestureListener> ReceivedInput { get; } = new();
+
+    /// <summary>
+    /// Have consumed input in previous or current pass. To notify them about UP (release) even if they don't get it via touch.
+    /// </summary>
+    public Dictionary<Guid, ISkiaGestureListener> HadInput { get; } = new();
+
+    /// <summary>
+    /// Define if consuming this gesture will register child inside `HadInput`
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    protected bool IsSavedGesture(TouchActionResult type)
+    {
+        return type == TouchActionResult.Panning ||
+               type == TouchActionResult.Wheel ||
+               type == TouchActionResult.Up;
+    }
+
+
     private bool _debugIsPressed;
     private bool _debugIsDown;
 
@@ -449,10 +472,51 @@ public class Canvas : DrawnView, IGestureListener
             IsHiddenInViewTree = false; //if we get a gesture, we are visible by design
             bool manageChildFocus = false;
 
+
+            //first process those who already had input
+            if (HadInput.Count > 0)
+            {
+                if (IsSavedGesture(args.Type))
+                {
+                    foreach (var hadInput in HadInput.Values)
+                    {
+                        if (!hadInput.CanDraw || hadInput.InputTransparent || hadInput.GestureListenerRegistrationTime == null)
+                        {
+                            continue;
+                        }
+
+                        var adjust = new GestureEventProcessingInfo()
+                        {
+                            alreadyConsumed = wasConsumed
+                        };
+
+                        consumed = hadInput.OnSkiaGestureEvent(args, adjust);
+
+                        if (consumed != null)
+                        {
+                            if (wasConsumed == null)
+                                wasConsumed = consumed;
+
+                            if (args.Type != TouchActionResult.Up)
+                                break;
+                        }
+                        
+                    }
+                }
+                
+            }
+
+
+            //USUAL PROCESSING
             //var listeners = CollectionsMarshal.AsSpan(GestureListeners.GetListeners());
             foreach (var listener in GestureListeners.GetListeners())
             {
-                if (!listener.CanDraw || listener.InputTransparent)
+                if (listener==null || !listener.CanDraw || listener.InputTransparent)
+                {
+                    continue;
+                }
+
+                if (HadInput.Values.Contains(listener) && IsSavedGesture(args.Type))
                 {
                     continue;
                 }
@@ -481,7 +545,10 @@ public class Canvas : DrawnView, IGestureListener
 
                     if (consumed != null)
                     {
-                        // TODO implement same code as skiacontrol?
+                        if (args.Type != TouchActionResult.Up)
+                        {
+                            HadInput.TryAdd(listener.Uid, consumed);
+                        }
                         break;
                     }
                 }
@@ -500,12 +567,41 @@ public class Canvas : DrawnView, IGestureListener
             }
 
             if (args.Type == TouchActionResult.Up)
+            {
+                if (HadInput.Count > 0)
+                {
+                    HadInput.Clear();
+                }
+
                 if (manageChildFocus || FocusedChild != null && consumed != FocusedChild)
                 {
                     FocusedChild = consumed;
                 }
+            }
+
+            if (ReceivedInput.Count > 0)
+            {
+                ReceivedInput.Clear();
+            }
+
         }
 
+    }
+
+    /// <summary>
+    /// Gets signal from a listener that in has processed gestures. Return false if should not rpocess gestures.
+    /// </summary>
+    public bool SignalInput(ISkiaGestureListener listener, TouchActionResult gestureType)
+    {
+        if (ReceivedInput.Contains(listener))
+            return false;
+
+        if (IsSavedGesture(gestureType)) //we avoid notifying them for being inside HadInput
+        {
+            ReceivedInput.Add(listener);
+        }
+
+        return true;
     }
 
     private SKPoint _panningOffset;
@@ -522,45 +618,6 @@ public class Canvas : DrawnView, IGestureListener
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
         //Super.Log($"[Touch] Canvas got {args1.Type} {type} => {touchAction}");
-
-#if TODO_ANDROID_SENSITIVE_CASE
-        if (touchAction == TouchActionResult.Panning)
-        {
-            //filter micro-gestures
-            if ((Math.Abs(args1.Distance.Delta.X) < 1 && Math.Abs(args1.Distance.Delta.Y) < 1)
-                || (Math.Abs(args1.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args1.Distance.Velocity.Y / RenderingScale) < 1))
-            {
-                //Super.Log($"[Touch] IGNORED");
-                return;
-            }
-
-            var threshold = FirstPanThreshold * RenderingScale;
-
-            if (!_isPanning)
-            {
-                //filter first panning movement on super sensitive screens
-                if (Math.Abs(args1.Distance.Total.X) < threshold && Math.Abs(args1.Distance.Total.Y) < threshold)
-                {
-                    _panningOffset = SKPoint.Empty;
-                    return;
-                }
-
-                if (_panningOffset == SKPoint.Empty)
-                {
-                    _panningOffset = args1.Distance.Total.ToSKPoint();
-                }
-
-                //args.PanningOffset = _panningOffset;
-
-                _isPanning = true;
-            }
-        }
-
-        if (touchAction == TouchActionResult.Down)
-        {
-            _isPanning = false;
-        }
-#endif
 
         var args = SkiaGesturesParameters.Create(touchAction, args1);
 
@@ -610,8 +667,6 @@ public class Canvas : DrawnView, IGestureListener
         });
 
         Repaint();
-
-
 
     }
 
@@ -782,7 +837,7 @@ public class Canvas : DrawnView, IGestureListener
     /// </summary>
     public virtual void EnableUpdates()
     {
-        UpdateLocked = false;
+        UpdateLocks = 0;
         NeedCheckParentVisibility = true;
         Update();
     }
@@ -792,7 +847,7 @@ public class Canvas : DrawnView, IGestureListener
     /// </summary>
     public virtual void DisableUpdates()
     {
-        UpdateLocked = true;
+        UpdateLocks = 1;
     }
 
 
