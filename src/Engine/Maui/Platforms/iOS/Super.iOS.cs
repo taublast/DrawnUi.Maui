@@ -1,8 +1,9 @@
-﻿using CoreAnimation;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using CoreAnimation;
 using Foundation;
 using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
 using SkiaSharp.Views.iOS;
-using System.Diagnostics;
 using UIKit;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
@@ -219,5 +220,39 @@ namespace DrawnUi.Maui.Draw
                 return new List<string>();
             }
         }
+
+        public static async Task<byte[]> CaptureScreenshotAsync()
+        {
+            UIWindow window;
+            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0))
+            {
+                window = UIApplication.SharedApplication.Windows.First();
+                if (window.GetType().Name.Contains("Popup"))
+                {
+                    var maybe = UIApplication.SharedApplication.Windows.FirstOrDefault(x => x != window);
+                    if (maybe != null)
+                    {
+                        window = maybe;
+                    }
+                }
+            }
+            else
+            {
+                window = UIApplication.SharedApplication.KeyWindow;
+            }
+
+            UIGraphics.BeginImageContextWithOptions(window.Bounds.Size, false, UIScreen.MainScreen.Scale);
+            window.Layer.RenderInContext(UIGraphics.GetCurrentContext());
+            UIImage image = UIGraphics.GetImageFromCurrentImageContext();
+            UIGraphics.EndImageContext();
+            using (NSData data = image.AsPNG())
+            {
+                var bytes = new byte[data.Length];
+                Marshal.Copy(data.Bytes, bytes, 0, Convert.ToInt32(data.Length));
+                return bytes;
+            }
+
+        }
+
     }
 }

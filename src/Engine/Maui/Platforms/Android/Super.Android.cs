@@ -1,8 +1,10 @@
 ﻿using Android.Content;
 using Android.Content.Res;
+using Android.Graphics;
 using Android.OS;
 using Android.Views;
 using Microsoft.Maui.Controls.Compatibility.Platform.Android;
+using Canvas = Android.Graphics.Canvas;
 using Context = Android.Content.Context;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
@@ -334,4 +336,188 @@ public partial class Super
         string[] files = assets.List(subfolder);
         return files;
     }
+
+    #region modern screenshot
+
+    public static Task<byte[]> CaptureScreenshotAsync()
+    {
+        var rootView = Platform.CurrentActivity.Window.DecorView.RootView;
+        return CaptureScreenshotAsync(rootView, Platform.CurrentActivity);
+    }
+
+    public static async Task<byte[]> CaptureScreenshotAsync(Android.Views.View view, Android.App.Activity activity)
+    {
+        if (view.Height < 1 || view.Width < 1)
+            return null;
+
+        byte[] buffer = null;
+
+        if ((int)Build.VERSION.SdkInt < 24)
+        {
+            view.DrawingCacheEnabled = true;
+
+            view.BuildDrawingCache(true);
+
+            using (var screenshot = Bitmap.CreateBitmap(
+                view.Width,
+                view.Height,
+                Bitmap.Config.Argb8888))
+            {
+                var canvas = new Canvas(screenshot);
+
+                view.Draw(canvas);
+
+                using (var stream = new MemoryStream())
+                {
+                    screenshot.Compress(Bitmap.CompressFormat.Png, 100, stream);
+                    buffer = stream.ToArray();
+                }
+            }
+
+            view.DrawingCacheEnabled = false;
+
+            return buffer;
+        }
+
+        bool wait = true;
+
+        using var helper = new ScreenshotHelper(view, activity);
+
+        helper.Capture((Bitmap bitmap) =>
+        {
+            try
+            {
+
+                if (!helper.Error)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        bitmap.Compress(Bitmap.CompressFormat.Png, 100, stream);
+                        buffer = stream.ToArray();
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                wait = false;
+            }
+        });
+
+
+        while (wait)
+        {
+            await Task.Delay(1);
+        }
+
+        return buffer;
+    }
+
+    public class ScreenshotHelper : Java.Lang.Object, PixelCopy.IOnPixelCopyFinishedListener
+    {
+
+
+        public void OnPixelCopyFinished(int copyResult)
+        {
+            var stop = true;
+            if (copyResult == (int)PixelCopyResult.Success)
+            {
+                Error = false;
+            }
+            else
+            {
+                Error = true;
+            }
+
+            _callback(_bitmap);
+            Task.Run(StopBackgroundThread);
+        }
+
+        public bool Error { get; protected set; }
+
+        public ScreenshotHelper(Android.Views.View view, Android.App.Activity activity)
+        {
+            _view = view;
+            _activity = activity;
+
+            _bitmap = Bitmap.CreateBitmap(
+                _view.Width,
+                _view.Height,
+                Bitmap.Config.Argb8888);
+        }
+
+        // Starts a background thread and its {@link Handler}.
+        private void StartBackgroundThread()
+        {
+            _BackgroundThread = new HandlerThread("ScreeshotMakerBackground");
+            _BackgroundThread.Start();
+            _BackgroundHandler = new Handler(_BackgroundThread.Looper);
+        }
+
+        // Stops the background thread and its {@link Handler}.
+        private void StopBackgroundThread()
+        {
+            try
+            {
+                _BackgroundThread.QuitSafely();
+                _BackgroundThread.Join();
+                _BackgroundThread = null;
+                _BackgroundHandler = null;
+            }
+            catch (Exception)
+            {
+                //e.PrintStackTrace();
+            }
+        }
+
+        public void Capture(Action<Bitmap> callback)
+        {
+            //var locationOfViewInWindow = new int[2];
+            //_view.GetLocationInWindow(locationOfViewInWindow);
+            _callback = callback;
+
+            try
+            {
+                StartBackgroundThread();
+                //todo could create-use background handler
+                PixelCopy.Request(_activity.Window, _bitmap, this,
+                    _BackgroundHandler);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Task.Run(StopBackgroundThread);
+            }
+
+        }
+
+        private Android.Views.View _view;
+        private Android.App.Activity _activity;
+        private Bitmap _bitmap;
+        private HandlerThread _BackgroundThread;
+        private Handler _BackgroundHandler;
+        private Action<Bitmap> _callback;
+
+
+        public new void Dispose()
+        {
+            _bitmap?.Dispose();
+            _bitmap = null;
+            _activity = null;
+            _view = null;
+            _callback = null;
+
+            base.Dispose();
+        }
+
+    }
+
+
+
+    #endregion
+
 }

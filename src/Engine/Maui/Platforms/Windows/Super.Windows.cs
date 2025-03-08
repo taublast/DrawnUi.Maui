@@ -68,6 +68,22 @@ namespace DrawnUi.Maui.Draw
 
             return files.Select(f => f.Name).ToList();
         }
+
+        public static async Task<byte[]> CaptureScreenshotAsync()
+        {
+            var screen = await Screenshot.CaptureAsync();
+            using var input = await screen.OpenReadAsync();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                input.CopyTo(ms);
+                {
+                    var data = ms.ToArray();
+                    return data;
+                }
+            }
+        }
+
     }
 
 
