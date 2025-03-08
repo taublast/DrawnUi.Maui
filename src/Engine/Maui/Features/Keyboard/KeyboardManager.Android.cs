@@ -12,6 +12,35 @@ public partial class KeyboardManager
 {
     private static KeysListener _listener;
 
+    public static Task GetControllers()
+    {
+        var deviceIds = InputDevice.GetDeviceIds();
+
+        if (deviceIds is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        foreach (var deviceId in deviceIds)
+        {
+            var device = InputDevice.GetDevice(deviceId);
+
+            if (device is null)
+            {
+                continue;
+            }
+
+            var sources = device.Sources;
+
+            if (sources.HasFlag(InputSourceType.Gamepad) || sources.HasFlag(InputSourceType.Joystick))
+            {
+                //todo something with 
+                var controller = deviceId;
+            }
+        }
+
+        return Task.CompletedTask;
+    }
 
     public static void AttachToKeyboard(Activity activity) 
     {
@@ -31,6 +60,11 @@ public partial class KeyboardManager
 
         });
 
+        //was testing
+        //Tasks.StartDelayed(TimeSpan.FromSeconds(1), () =>
+        //{
+        //    _ = GetControllers();
+        //});
     }
 
     public static MauiKey MapToMaui(Keycode keycode)
@@ -151,6 +185,12 @@ public partial class KeyboardManager
             _callback = callback;
             _activity = activity;
             _activity.Window.DecorView.ViewTreeObserver.AddOnGlobalFocusChangeListener(this);
+
+            var currentFocus = _activity.CurrentFocus;
+            if (currentFocus != null)
+            {
+                currentFocus.SetOnKeyListener(this);
+            }
         }
 
         public void OnGlobalFocusChanged(View oldFocus, View newFocus)

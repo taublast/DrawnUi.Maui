@@ -21,6 +21,8 @@ public static partial class DrawnExtensions
     {
         StartupSettings = settings;
 
+        TouchEffect.TappedWhenMovedThresholdPoints = 55;
+
         builder.ConfigureMauiHandlers(handlers =>
         {
 #if ANDROID
@@ -210,11 +212,10 @@ public static partial class DrawnExtensions
                             if (StartupSettings.MobileIsFullscreen)
                             {
                                 Super.SetFullScreen(activity);
-
-                                if (StartupSettings.UseDesktopKeyboard)
-                                {
-                                    KeyboardManager.AttachToKeyboard(activity);
-                                }
+                            }
+                            if (StartupSettings.UseDesktopKeyboard)
+                            {
+                                KeyboardManager.AttachToKeyboard(activity);
                             }
                         }
                         Super.OnMauiAppCreated?.Invoke();
