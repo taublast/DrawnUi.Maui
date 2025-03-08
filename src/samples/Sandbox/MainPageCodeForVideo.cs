@@ -4,30 +4,27 @@ using Canvas = DrawnUi.Maui.Views.Canvas;
 
 namespace Sandbox
 {
-    public class MainPageCodeForVideo : BasePage, IDisposable
+    public class MainPageCodeForVideo : BasePageCodeBehind, IDisposable
     {
         Canvas Canvas;
 
-        public void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
-            this.Content = null;
-            Canvas?.Dispose();
+            if (isDisposing)
+            {
+                this.Content = null;
+                Canvas?.Dispose();
+            }
+
+            base.Dispose(isDisposing);
         }
 
-        public MainPageCodeForVideo()
-        {
-#if DEBUG
-            HotReloadService.UpdateApplicationEvent += ReloadUI;
-#endif
-            Build();
-        }
-
-        private int _reloads;
+ 
 
         private int _counter;
         private SkiaLabel _label;
 
-        void Build()
+        public override void Build()
         {
             Canvas?.Dispose();
 
@@ -69,13 +66,13 @@ namespace Sandbox
                                         TextColor = Colors.White,
                                         VerticalOptions = LayoutOptions.Center,
                                         Text="Placeholder"
-                                    }.With((c) =>
+                                    }.Adjust((c) =>
                                     {
                                         _label = c;
                                     })
                                 }
                             }
-                        }.With((c) =>
+                        }.Adjust((c) =>
                         {
                             c.Shadows.Add(new ()
                             {
@@ -126,18 +123,12 @@ namespace Sandbox
                 }
             };
 
-            _reloads++;
+ 
 
             this.Content = Canvas;
         }
 
-        private void ReloadUI(Type[] obj)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Build();
-            });
-        }
+ 
 
     }
 }

@@ -105,8 +105,7 @@ public partial class SkiaColorPicker : SkiaLayout
 
 
 
-    protected override int RenderViewsList(IEnumerable<SkiaControl> skiaControls, SkiaDrawingContext context, SKRect destination, float scale,
-        bool debug = false)
+    protected override int RenderViewsList(DrawingContext context, IEnumerable<SkiaControl> skiaControls)
     {
         var count = 0;
         foreach (var child in skiaControls)
@@ -120,8 +119,8 @@ public partial class SkiaColorPicker : SkiaLayout
 
                     using (var bitmap = SKBitmap.FromImage(Panel.RenderObject.Image))
                     {
-                        var x = (int)Math.Round((child.TranslationX + child.Width / 2) * scale);
-                        var y = (int)Math.Round((child.TranslationY + child.Height / 2) * scale);
+                        var x = (int)Math.Round((child.TranslationX + child.Width / 2) * context.Scale);
+                        var y = (int)Math.Round((child.TranslationY + child.Height / 2) * context.Scale);
 
                         x = Math.Clamp(x, 0, bitmap.Width - 1);
                         y = Math.Clamp(y, 0, bitmap.Height - 1);
@@ -135,7 +134,7 @@ public partial class SkiaColorPicker : SkiaLayout
                 if (child.CanDraw) //still visible 
                 {
                     count++;
-                    child.Render(context, destination, scale);
+                    child.Render(context);
                 }
             }
         }

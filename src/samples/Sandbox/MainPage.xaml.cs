@@ -3,7 +3,7 @@ using Sandbox.Views;
 
 namespace MauiNet8;
 
-public partial class MainPage : BasePage
+public partial class MainPage : BasePageCodeBehind
 {
     int count = 0;
 

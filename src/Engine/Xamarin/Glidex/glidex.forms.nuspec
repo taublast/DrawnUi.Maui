@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+        <id>glidex.forms</id>
+        <version>$version$</version>
+        <authors>Jonathan Peppers</authors>
+        <owners>Jonathan Peppers</owners>
+        <title>glidex.forms</title>
+        <description>A library containing a Xamarin.Forms IImageViewHandler to speed up images on Android. Based on Glide. Just add Android.Glide.Forms.Init(this); after Xamarin.Forms.Forms.Init();</description>
+        <summary>A library containing a Xamarin.Forms IImageViewHandler to speed up images on Android. Based on Glide. Just add Android.Glide.Forms.Init(this); after Xamarin.Forms.Forms.Init();</summary>
+        <licenseUrl>https://raw.githubusercontent.com/jonathanpeppers/glidex/master/LICENSE</licenseUrl>
+        <iconUrl>https://raw.githubusercontent.com/jonathanpeppers/glidex/master/icon.png</iconUrl>
+        <projectUrl>https://github.com/jonathanpeppers/glidex/</projectUrl>
+        <repository type="git" url="https://github.com/jonathanpeppers/glidex"/>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>Jonathan Peppers 2020</copyright>
+        <releaseNotes></releaseNotes>
+        <tags>Xamarin, Xamarin.Forms, Android, Glide, Bitmap, Images</tags>
+        <dependencies>
+            <group targetFramework="MonoAndroid12.0">
+                <dependency id="Xamarin.Android.Glide" version="4.12.0.8" />
+                <dependency id="Xamarin.Forms" version="5.0.0.2291" />
+            </group>
+        </dependencies>
+    </metadata>
+</package>

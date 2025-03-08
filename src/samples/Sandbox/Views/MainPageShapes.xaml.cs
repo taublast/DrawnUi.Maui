@@ -3,7 +3,7 @@ using Sandbox.Views;
 
 namespace MauiNet8;
 
-public partial class MainPageShapes : BasePage
+public partial class MainPageShapes : BasePageCodeBehind
 {
     int count = 0;
 
@@ -30,9 +30,9 @@ public class DebugCanvas : Canvas
 
     }
 
-    protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+    protected override void Draw(DrawingContext context)
     {
-        base.Draw(context, destination, scale);
+        base.Draw(context);
 
         /*
         if (Height > 0 && Width > 0)

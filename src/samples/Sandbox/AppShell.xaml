@@ -10,7 +10,7 @@
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
-        Title="Drawn UI"
+        Title="Drawn UI for .NET MAUI"
         ContentTemplate="{DataTemplate mauiNet8:MainPage}"
         Route="MainPage" />
 

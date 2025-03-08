@@ -70,9 +70,9 @@ public partial class SkiaRive : SkiaControl
         return needUpdate;
     }
 
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
-        base.Paint(ctx, destination, scale, arguments);
+        base.Paint(ctx);
 
         if (_scene != null && _scene.IsLoaded)
         {
@@ -81,7 +81,7 @@ public partial class SkiaRive : SkiaControl
                 Advance();
             }
 
-            var renderer = new Renderer(ctx.Canvas);
+            var renderer = new Renderer(ctx.Context.Canvas);
             renderer.Save();
             renderer.Translate(DrawingRect.Left, DrawingRect.Top);
             renderer.Transform(ComputeAlignment(DrawingRect.Width, DrawingRect.Height));

@@ -245,7 +245,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
         }
     }
 
-    private void DrawContentImage(CachedObject cache, SkiaDrawingContext ctx, SKRect destination)
+    private void DrawContentImage(DrawingContext ctx, CachedObject cache)
     {
         if (Content != null && _compiledShader != null && _passTextures != null)
         {
@@ -274,8 +274,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
             paintWithShader.Shader = _compiledShader.ToShader(false, uniforms, _passTextures);
 #endif
 
-            ctx.Canvas.DrawRect(destination, paintWithShader);
-
+            ctx.Context.Canvas.DrawRect(ctx.Destination, paintWithShader);
         }
     }
 

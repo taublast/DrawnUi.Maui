@@ -180,7 +180,7 @@ namespace AppoMobi.Forms.Controls
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 TextColor = App.Current.Resources.Get<Color>("ColorPrimary")
-            }.With((c) =>
+            }.Adjust((c) =>
             {
                 c.Measured += OnFirstTimeMeasured;
             }).WithParent(FrameNewDate);
@@ -231,7 +231,7 @@ namespace AppoMobi.Forms.Controls
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Start,
                 HeightRequest = 200,
-            }.WithParent(MessageStack).With((c) =>
+            }.WithParent(MessageStack).Adjust((c) =>
             {
                 c.OnError += OnImageError;
             });
@@ -262,7 +262,7 @@ namespace AppoMobi.Forms.Controls
                 Margin = new Thickness(8, 8, 8, 8),
                 VerticalOptions = LayoutOptions.Center,
                 TextColor = App.Current.Resources.Get<Color>("ColorText"),
-            }.WithParent(MessageStack).With((c) =>
+            }.WithParent(MessageStack).Adjust((c) =>
             {
                 c.Measured += OnTextSizeChanged;
             });

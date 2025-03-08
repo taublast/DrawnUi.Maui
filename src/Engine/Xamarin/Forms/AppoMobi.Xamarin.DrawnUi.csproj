@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <ProduceReferenceAssemblyInOutDir>true</ProduceReferenceAssemblyInOutDir>
+    <LangVersion>latest</LangVersion>
+    <BuildWithMSBuildOnMono>true</BuildWithMSBuildOnMono>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DrawnUi\Draw\Base\SkiaControl.Shared.cs" />
+    <Compile Remove="DrawnUi\Draw\SkiaControl.Cache.cs" />
+    <Compile Remove="DrawnUi\Draw\SkiaControl.cs" />
+    <Compile Remove="DrawnUi\Draw\SkiaControl.Effects.cs" />
+    <Compile Remove="DrawnUi\Draw\SkiaControl.Invalidation.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AppoMobi.Specials" Version="8.0.3" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.9-preview.2.2" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.88.9-preview.2.2" />
+    <PackageReference Include="Svg.Skia" Version="2.0.0.2" /> 
+    <PackageReference Include="Markdig" Version="0.37.0" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2612" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="DrawnUi\Draw\SkiaControl.Cache.cs" />
+    <None Include="DrawnUi\Draw\SkiaControl.cs" />
+    <None Include="DrawnUi\Draw\SkiaControl.Effects.cs" />
+    <None Include="DrawnUi\Draw\SkiaControl.Invalidation.cs" />
+  </ItemGroup>
+</Project>

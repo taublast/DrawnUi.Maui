@@ -166,11 +166,8 @@ public class DrawnTabsHeader : SkiaLayout
 
         Update();
     }
-
-    protected override int RenderViewsList(IEnumerable<SkiaControl> skiaControls,
-        SkiaDrawingContext context,
-        SKRect destination, float scale,
-        bool debug = false)
+    
+    protected override int RenderViewsList(DrawingContext context, IEnumerable<SkiaControl> skiaControls)
     {
         var drawn = 0;
         foreach (var child in skiaControls)
@@ -186,14 +183,14 @@ public class DrawnTabsHeader : SkiaLayout
                         child.Clipping = (path, dest) =>
                         {
                             path.Reset();
-                            clip.Offset((float)(OffsetClip * scale), 0);
+                            clip.Offset((float)(OffsetClip * context.Scale), 0);
 
                             //Trace.WriteLine($"[C] offset {OffsetClip:0.0} tab {_ptsTabWidth} max {Width}");
 
                             path.AddPath(clip);
                         };
                     }
-                    child.Render(context, destination, scale);
+                    child.Render(context);
                     drawn++;
                 }
             }

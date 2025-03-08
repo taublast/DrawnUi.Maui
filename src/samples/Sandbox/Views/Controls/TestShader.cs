@@ -63,7 +63,7 @@ public class TestShader : ContentLayout
         _compiledShader = null;
     }
 
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
         if (IsDisposed)
         {
@@ -89,16 +89,15 @@ public class TestShader : ContentLayout
             PaintShader = null;
         }
 
-
+        var destination = ctx.Destination;
 
         if (destination.Width > 0 && destination.Height > 0 && _compiledShader != null)
         {
-
-            DrawViews(ctx, destination, scale);
+            DrawViews(ctx);
 
             //notice we read from the real canvas and we write to ctx.Canvas which can be cache
-            ctx.Superview.CanvasView.Surface.Canvas.Flush();
-            var snapshot = ctx.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
+            ctx.Context.Superview.CanvasView.Surface.Canvas.Flush();
+            var snapshot = ctx.Context.Superview.CanvasView.Surface.Snapshot(new((int)destination.Left, (int)destination.Top, (int)destination.Right, (int)destination.Bottom));
 
             BuildTextures(snapshot);
 
@@ -123,10 +122,10 @@ public class TestShader : ContentLayout
             {
                 if (snapshot != null)
                 {
-                    PaintTintBackground(ctx.Canvas, destination);
+                    PaintTintBackground(ctx.Context.Canvas, ctx.Destination);
 
 #if !WINDOWS && !MACCATALYST
-                    ctx.Canvas.DrawRect(destination, ImagePaint);
+                    ctx.Context.Canvas.DrawRect(ctx.Destination, ImagePaint);
 #endif
                 }
 

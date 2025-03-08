@@ -5,31 +5,32 @@ namespace Sandbox
 {
 
 
-    public class MainPageAnomalyNodes : BasePage, IDisposable
+    public class MainPageAnomalyNodes : BasePageCodeBehind, IDisposable
     {
         Canvas Canvas;
 
-        public void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
-            this.Content = null;
-            Canvas?.Dispose();
+            if (isDisposing)
+            {
+                this.Content = null;
+                Canvas?.Dispose();
+            }
+
+            base.Dispose(isDisposing);
         }
 
         public MainPageAnomalyNodes()
         {
             SkiaImageManager.ReuseBitmaps = true;
-
-#if DEBUG
-            HotReloadService.UpdateApplicationEvent += ReloadUI;
-#endif
-            Build();
+ 
         }
 
-        private int _reloads;
+ 
 
         private SkiaLayout TreeLayout;
 
-        void Build()
+        public override void Build()
         {
             Canvas?.Dispose();
 
@@ -45,13 +46,12 @@ namespace Sandbox
                     BackgroundColor = Colors.LightGray,
                 }
             };
-
-            _reloads++;
+ 
 
             TreeLayout.Children.Add(new SkiaLabel()
             {
                 BackgroundColor = Colors.Black,
-                Text = $"Reloaded {_reloads}",
+                Text = $"Reloaded {CountReloads}",
                 TextColor = Colors.Red
             });
 
@@ -66,14 +66,7 @@ namespace Sandbox
             this.Content = Canvas;
         }
 
-        private void ReloadUI(Type[] obj)
-        {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Build();
-            });
-        }
-
+ 
 
         public int GlobalOffset = 75;
         public const int NodeWidth = 40;

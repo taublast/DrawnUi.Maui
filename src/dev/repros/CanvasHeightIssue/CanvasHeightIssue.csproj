@@ -71,10 +71,9 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Engine\DrawnUi.Maui.csproj" />
-	</ItemGroup>
 
+	  <ProjectReference Include="..\..\..\Engine\Maui\DrawnUi.Maui.csproj" />
+    
 
 
 

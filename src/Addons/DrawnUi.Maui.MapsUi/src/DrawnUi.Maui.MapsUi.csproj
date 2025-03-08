@@ -28,8 +28,8 @@
     <DefineConstants>$(DefineConstants);ONPLATFORM</DefineConstants>
   </PropertyGroup>
 
-    <Import Condition="'$(UseSkiaSharp3)' == 'true'" Project="..\..\..\Engine\skia3.props" />
-    <Import Condition="'$(UseSkiaSharp3)' != 'true'" Project="..\..\..\Engine\skia2.props" />
+    <Import Condition="'$(UseSkiaSharp3)' == 'true'" Project="..\..\..\Engine\Maui\skia3.props" />
+    <Import Condition="'$(UseSkiaSharp3)' != 'true'" Project="..\..\..\Engine\Maui\skia2.props" />
 
     <ItemGroup>
     <!--<PackageReference Include="BruTile" Version="5.0.6" />-->
@@ -60,7 +60,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Engine\DrawnUi.Maui.csproj" />
+    <ProjectReference Include="..\..\..\Engine\Maui\DrawnUi.Maui.csproj" />
   </ItemGroup>
 
 

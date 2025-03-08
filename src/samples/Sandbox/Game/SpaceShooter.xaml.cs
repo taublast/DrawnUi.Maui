@@ -158,9 +158,9 @@ public partial class SpaceShooter : MauiGame
         PresentGame();
     }
 
-    protected override void Draw(SkiaDrawingContext context, SKRect destination, float scale)
+    protected override void Draw(DrawingContext context)
     {
-        base.Draw(context, destination, scale);
+        base.Draw(context);
 
         if (_needPrerender)
         {
@@ -698,13 +698,13 @@ public partial class SpaceShooter : MauiGame
 
     public override void OnKeyUp(MauiKey mauiKey)
     {
-        if (mauiKey == MauiKey.Enter && (State == GameState.Ready || State == GameState.Ended))
+        var key = MapToGame(mauiKey);
+
+        if (key == GameKey.Fire && (State == GameState.Ready || State == GameState.Ended))
         {
             StartNewGame();
             return;
         }
-
-        var key = MapToGame(mauiKey);
 
         if (State != GameState.Playing)
             return;

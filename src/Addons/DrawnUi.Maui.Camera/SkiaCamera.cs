@@ -96,8 +96,9 @@ public partial class SkiaCamera : SkiaControl
                 image.Rotation = transfromRotation;
             }
 
-            image.Render(context, destination, 1);
-            overlay.Render(context, destination, scaleOverlay);
+            var ctx = new DrawingContext(context, destination, 1, null);
+            image.Render(ctx);
+            overlay.Render(ctx.WithScale(scaleOverlay));
 
             surface.Canvas.Flush();
             return surface.Snapshot();
@@ -548,9 +549,9 @@ public partial class SkiaCamera : SkiaControl
         NewPreviewSet?.Invoke(this, source);
     }
 
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
-        base.Paint(ctx, destination, scale, arguments);
+        base.Paint(ctx);
 
         if (NativeControl != null)
         {
@@ -569,7 +570,7 @@ public partial class SkiaCamera : SkiaControl
             }
 
             //draw DisplayImage
-            DrawViews(ctx, DrawingRect, scale);
+            DrawViews(ctx);
         }
 
 

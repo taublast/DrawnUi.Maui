@@ -47,8 +47,6 @@ namespace Sandbox
                     fonts.AddFont("Orbitron-ExtraBold.ttf", "FontGameExtraBold"); //800
                 });
 
-
-
             builder.UseDrawnUi(new()
             {
                 UseDesktopKeyboard = true, //will not work with maui shell on apple!!
@@ -64,6 +62,10 @@ namespace Sandbox
             {
                 ShadersFolder = "Shaders2";
             }
+
+#if ANDROID
+            var t = 1;
+#endif
 
 #if DEBUG
             builder.Logging.AddDebug();

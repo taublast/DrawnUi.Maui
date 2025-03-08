@@ -49,19 +49,19 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 
     public List<SkiaMapLayer> Layers;
 
-    protected override void Paint(SkiaDrawingContext ctx, SKRect destination, float scale, object arguments)
+    protected override void Paint(DrawingContext ctx)
     {
-        base.Paint(ctx, destination, scale, arguments); //paint background
+        base.Paint(ctx); //paint background
 
-        ctx.Canvas.Save();
-        ctx.Canvas.ClipRect(destination);
-        ctx.Canvas.Translate(destination.Left, destination.Top);
-        ctx.Canvas.Scale(PixelDensity, PixelDensity);
+        ctx.Context.Canvas.Save();
+        ctx.Context.Canvas.ClipRect(ctx.Destination);
+        ctx.Context.Canvas.Translate(ctx.Destination.Left, ctx.Destination.Top);
+        ctx.Context.Canvas.Scale(PixelDensity, PixelDensity);
 
         //paint map into the layout area
-        CommonDrawControl(ctx.Canvas);
+        CommonDrawControl(ctx.Context.Canvas);
 
-        ctx.Canvas.Restore();
+        ctx.Context.Canvas.Restore();
     }
 
     protected override void OnLayoutChanged()

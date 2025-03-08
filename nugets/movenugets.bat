@@ -11,7 +11,7 @@ REM Debugging: Print the batch directory
 echo Batch directory: %batch_dir%
 
 REM Define source directories relative to the batch file location
-set "source_dir1=%batch_dir%\..\src\Engine\bin\Release"
+set "source_dir1=%batch_dir%\..\src\Engine\Maui\bin\Release"
 set "source_dir2=%batch_dir%\..\src\Addons\DrawnUi.Maui.Camera\bin\Release"
 set "source_dir3=%batch_dir%\..\src\Addons\DrawnUi.Maui.Game\bin\Release"
 set "source_dir4=%batch_dir%\..\src\Addons\DrawnUi.Maui.MapsUi\src\bin\Release"
