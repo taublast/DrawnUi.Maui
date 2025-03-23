@@ -608,6 +608,8 @@ public class Canvas : DrawnView, IGestureListener
 
     private SKPoint _PressedPosition;
 
+    public event EventHandler Tapped;
+
     /// <summary>
     /// IGestureListener implementation
     /// </summary>
@@ -618,6 +620,12 @@ public class Canvas : DrawnView, IGestureListener
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
         //Super.Log($"[Touch] Canvas got {args1.Type} {type} => {touchAction}");
+
+        if (touchAction == TouchActionResult.Tapped && Tapped != null)
+        {
+            Tapped.Invoke(this, EventArgs.Empty);
+            return;
+        }
 
         var args = SkiaGesturesParameters.Create(touchAction, args1);
 

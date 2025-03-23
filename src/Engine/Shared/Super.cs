@@ -14,6 +14,8 @@ public partial class Super
     /// </summary>
     public static bool Multithreaded = false;
 
+    public static bool PreloadRegisteredFonts = false;
+
     /// <summary>
     /// If set to True will process all ofscreen rendering in one background thread at canvas level, otherwise every control will launch its own background processing thread.
     /// Default is False
@@ -137,7 +139,7 @@ public partial class Super
     }
 
     /// <summary>
-    /// Capping FPS, (1 / FPS * 1000_000) 
+    /// Capping FPS,at 120
     /// </summary>
     public static float CapMicroSecs = 8333.333333f;
 

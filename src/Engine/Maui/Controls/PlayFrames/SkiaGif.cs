@@ -205,7 +205,7 @@ public class SkiaGif : AnimatedFramesRenderer
             {
                 if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri) && uri.Scheme != "file")
                 {
-                    var client = Super.Services.CreateLoadImagesHttpClient();
+                    using HttpClient client = Super.Services.CreateLoadImagesHttpClient();
                     using var dataStream = await client.GetStreamAsync(uri);
                     animation.LoadFromStream(dataStream);
                 }

@@ -137,6 +137,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\Parameters\SpringTimingVectorParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\Parameters\TimingParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\Parameters\UnderdampedSpringTimingVectorParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\FrameTimeInterpolator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\ToDo\IInterpolator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\ToDo\ViscousFluidInterpolator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\AnimatorBase.cs" />

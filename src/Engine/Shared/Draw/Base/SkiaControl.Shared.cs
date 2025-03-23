@@ -1816,7 +1816,6 @@ namespace DrawnUi.Maui.Draw
         }
         */
 
-
         public static readonly BindableProperty SkewXProperty
         = BindableProperty.Create(nameof(SkewX),
         typeof(float), typeof(SkiaControl),
@@ -4470,10 +4469,15 @@ namespace DrawnUi.Maui.Draw
             var moveX = UseTranslationX * RenderingScale;
             var moveY = UseTranslationY * RenderingScale;
 
-            if (usePixelSnapping)
+            if (Rotation == 0 &&
+                ScaleX == 1 && ScaleY == 1 &&
+                SkewX == 0 && SkewY == 0 &&
+                Perspective1 == 0 && Perspective2 == 0 &&
+                RotationX == 0 && RotationY == 0 && RotationZ == 0 && TranslationZ == 0)
             {
-                moveX = Math.Round(moveX);
-                moveY = Math.Round(moveY);
+                // fast translation
+                ctx.Canvas.Translate((float)moveX, (float)moveY);
+                return;
             }
 
             float pivotX = (float)(destination.Left + destination.Width * AnchorX);

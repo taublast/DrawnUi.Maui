@@ -48,7 +48,7 @@ public static partial class DrawnExtensions
 
         builder.UseGestures();
 
-        builder.Services.AddUriImageSourceHttpClient();
+        //builder.Services.AddUriImageSourceHttpClient(); //removed for faster startup without ihttpclientfactory
 
         //In-Memory Caching of bitmaps
         builder.Services  //Important step for In-Memory Caching

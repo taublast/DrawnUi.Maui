@@ -469,7 +469,7 @@ namespace DrawnUi.Maui.Draw
 
         //    return clampedElastic;
         //}
-        protected virtual Vector2 ClampOffsetWithRubberBand(float x, float y)
+        protected virtual Vector2 ClampOffsetWithRubberBand(float x, float y, SKRect contentOffsetBounds)
         {
             Vector2 clampedElastic = Vector2.Zero;
             var add = Elastic * RenderingScale;
@@ -483,10 +483,10 @@ namespace DrawnUi.Maui.Draw
                 {
                     clamped = true;
                     float adjusted = (float)(RefreshIndicator.Height * RenderingScale + add);
-                    var customDims = new Vector2(ContentOffsetBounds.Width, adjusted);
+                    var customDims = new Vector2(contentOffsetBounds.Width, adjusted);
                     clampedElastic = RubberBandUtils.ClampOnTrack(
                         new Vector2(x, y),
-                        ContentOffsetBounds,
+                        contentOffsetBounds,
                         (float)RubberEffect,
                         customDims
                     );
@@ -496,11 +496,11 @@ namespace DrawnUi.Maui.Draw
                 {
                     clamped = true;
                     float adjusted = (float)(RefreshIndicator.Width * RenderingScale + add);
-                    var customDims = new Vector2(adjusted, ContentOffsetBounds.Height);
+                    var customDims = new Vector2(adjusted, contentOffsetBounds.Height);
 
                     clampedElastic = RubberBandUtils.ClampOnTrack(
                         new Vector2(x, y),
-                        ContentOffsetBounds,
+                        contentOffsetBounds,
                         (float)RubberEffect,
                         customDims
                     );
@@ -512,7 +512,7 @@ namespace DrawnUi.Maui.Draw
             {
                 clampedElastic = RubberBandUtils.ClampOnTrack(
                     new Vector2(x, y),
-                    ContentOffsetBounds,
+                    contentOffsetBounds,
                     (float)RubberEffect,
                     new Vector2(add, add)
                 );
@@ -521,12 +521,12 @@ namespace DrawnUi.Maui.Draw
             // Preserve the clamping in the non-scrolling direction
             if (Orientation == ScrollOrientation.Vertical)
             {
-                var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
+                var clampedX = Math.Max(contentOffsetBounds.Left, Math.Min(contentOffsetBounds.Right, x));
                 return clampedElastic with { X = clampedX };
             }
             if (Orientation == ScrollOrientation.Horizontal)
             {
-                var clampedY = Math.Max(ContentOffsetBounds.Top, Math.Min(ContentOffsetBounds.Bottom, y));
+                var clampedY = Math.Max(contentOffsetBounds.Top, Math.Min(contentOffsetBounds.Bottom, y));
                 return clampedElastic with { Y = clampedY };
             }
 
@@ -535,17 +535,19 @@ namespace DrawnUi.Maui.Draw
 
         public static int Elastic = 100;
 
-        public virtual Vector2 ClampOffset(float x, float y, bool strict = false)
+        public virtual Vector2 ClampOffset(float x, float y, SKRect contentOffsetBounds, bool strict = false)
         {
             if (!Bounces || strict)
             {
-                var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
-                var clampedY = Math.Max(ContentOffsetBounds.Top, Math.Min(ContentOffsetBounds.Bottom, y));
+                var clampedX = Math.Max(contentOffsetBounds.Left, Math.Min(contentOffsetBounds.Right, x));
+                var clampedY = Math.Max(contentOffsetBounds.Top, Math.Min(contentOffsetBounds.Bottom, y));
+
+                Debug.WriteLine($"Clamped {y} => {clampedY}");
 
                 return new Vector2(clampedX, clampedY);
             }
 
-            return ClampOffsetWithRubberBand(x, y);
+            return ClampOffsetWithRubberBand(x, y, contentOffsetBounds);
         }
 
         public static readonly BindableProperty RespondsToGesturesProperty = BindableProperty.Create(
@@ -2003,12 +2005,12 @@ namespace DrawnUi.Maui.Draw
             ContentAvailableSpace = GetContentAvailableRect(destination);
 
             //we scroll at subpixels but stop only at pixel-snapped
-            //if (IsScrolling && !isScroling && !IsUserPanning || onceAfterInitializeViewport)
-            //{
-            //    var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
-            //    var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
-            //    offsetPixels.Offset(roundX, roundY);
-            //}
+            if (IsScrolling && !IsUserPanning || onceAfterInitializeViewport)
+            {
+                var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
+                var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
+                offsetPixels.Offset(roundX, roundY);
+            }
 
             InternalViewportOffset = ScaledPoint.FromPixels(offsetPixels.X, offsetPixels.Y, scale); //removed pixel rounding
 
@@ -2019,13 +2021,14 @@ namespace DrawnUi.Maui.Draw
 
             ContentRectWithOffset = ScaledRect.FromPixels(childRect, scale);
 
-            AdjustHeaderParallax();
+            if (Header != null)
+                AdjustHeaderParallax();
 
             //content size changed?.. maybe need to set offsets to a valid position then
             if (onceAfterInitializeViewport)
             {
                 onceAfterInitializeViewport = false;
-                var clamped = ClampOffset(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y, true);
+                var clamped = ClampOffset(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y, ContentOffsetBounds, true);
                 //AdjustHeaderParallax(ScaledPoint.FromUnits(clamped.X, clamped.Y, scale));
 
                 ViewportOffsetX = clamped.X;

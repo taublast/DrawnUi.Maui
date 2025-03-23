@@ -622,7 +622,7 @@ namespace DrawnUi.Maui.Draw
                 string json;
                 if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri))
                 {
-                    var client = Super.Services.CreateLoadImagesHttpClient();
+                    using HttpClient client = Super.Services.CreateLoadImagesHttpClient();
                     using var stream = await client.GetStreamAsync(uri);
                     using var reader = new StreamReader(stream);
                     json = await reader.ReadToEndAsync();

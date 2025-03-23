@@ -10,9 +10,7 @@ public partial class SkiaFontManager
     }
 
     public bool Initialized { get; set; }
-
     public static SKTypeface DefaultTypeface { get; }
-
     private object _lockInitialization = new();
 
     private void ThrowIfFontNotFound(string filename)
@@ -27,7 +25,7 @@ public partial class SkiaFontManager
     {
         if (!Initialized)
         {
-            lock (_lockInitialization)
+            if (Super.PreloadRegisteredFonts)
             {
                 var instance = FontRegistrar as FontRegistrar;
                 var type = instance.GetType();
@@ -40,13 +38,15 @@ public partial class SkiaFontManager
                     var file = data.Value.Filename;
                     try
                     {
-                        using (Stream fileStream = FileSystem.Current.OpenAppPackageFileAsync(file).GetAwaiter().GetResult())
+                        using (Stream fileStream =
+                               FileSystem.Current.OpenAppPackageFileAsync(file).GetAwaiter().GetResult())
                         {
                             var font = SKTypeface.FromStream(fileStream);
                             if (font == null)
                             {
                                 ThrowIfFontNotFound(file);
                             }
+
                             Fonts[data.Value.Alias] = font;
                         }
                     }
@@ -56,14 +56,16 @@ public partial class SkiaFontManager
                         ThrowIfFontNotFound(file);
                     }
                 }
-                Initialized = true;
             }
+
+
+            Initialized = true;
         }
     }
 
     public static bool ThrowIfFailedToCreateFont = true;
-
     static SKFontManager _SKFontManager;
+
     public static SKFontManager Manager
     {
         get
@@ -72,6 +74,7 @@ public partial class SkiaFontManager
             {
                 _SKFontManager = SKFontManager.CreateDefault();
             }
+
             return _SKFontManager;
         }
     }
@@ -95,6 +98,7 @@ public partial class SkiaFontManager
                 i++;
             }
         }
+
         return codePoints;
     }
 
@@ -119,6 +123,7 @@ public partial class SkiaFontManager
             list = new();
             RegisteredWeights[alias] = list;
         }
+
         list.Add((int)weight);
     }
 
@@ -146,6 +151,7 @@ public partial class SkiaFontManager
         {
             return SkiaFontManager.DefaultTypeface;
         }
+
         var alias = GetRegisteredAlias(fontFamily, fontWeight);
         var font = GetFont(alias);
 
@@ -154,6 +160,7 @@ public partial class SkiaFontManager
         {
             return SkiaFontManager.DefaultTypeface;
         }
+
         return font;
     }
 
@@ -172,7 +179,6 @@ public partial class SkiaFontManager
         return closest;
     }
 
-
     public static string GetAlias(string alias, FontWeight weight)
     {
         if (!string.IsNullOrEmpty(alias))
@@ -186,7 +192,6 @@ public partial class SkiaFontManager
         var e = GetWeightEnum(weight);
         return GetAlias(alias, e);
     }
-
 
     /// <summary>
     /// Takes the full name of a resource and loads it in to a stream.
@@ -214,6 +219,7 @@ public partial class SkiaFontManager
         {
             throw new Exception(string.Format("Resource ending with {0} not found.", resourceFileName));
         }
+
         if (resourcePaths.Length > 1)
         {
             resourcePaths = resourcePaths.Where(x => IsFile(x, resourceFileName)).ToArray();
@@ -239,23 +245,23 @@ public partial class SkiaFontManager
     }
 
     private static SkiaFontManager _instance;
+
     public static SkiaFontManager Instance
     {
         get
         {
-
             if (_instance == null)
             {
                 _instance = new SkiaFontManager();
             }
+
             return _instance;
         }
     }
 
-
     public Dictionary<string, SKTypeface> Fonts { get; set; } = new(128);
-
     private static IFontRegistrar _registrar;
+
     public static IFontRegistrar FontRegistrar
     {
         get
@@ -264,10 +270,10 @@ public partial class SkiaFontManager
             {
                 _registrar = Super.Services.GetService<IFontRegistrar>();
             }
+
             return _registrar;
         }
     }
-
 
     public SKTypeface GetEmbeededFont(string filename, Assembly assembly, string alias = null)
     {
@@ -303,9 +309,5 @@ public partial class SkiaFontManager
             font = SkiaFontManager.DefaultTypeface;
 
         return font;
-
     }
-
-
-
 }

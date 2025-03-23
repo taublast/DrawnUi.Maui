@@ -472,10 +472,14 @@ namespace DrawnUi.Maui.Views
         /// </summary>
         public Dictionary<Guid, ISkiaAnimator> AnimatingControls { get; } = new(512);
 
-        protected int ExecuteAnimators(long nanos)
+        protected FrameTimeInterpolator FrameTimeInterpolator = new();
+        public long mLastFrameTime { get; set; }
+
+        protected int ExecuteAnimators(long frameTime)
         {
 
             var executed = 0;
+
 
             //lock (LockAnimatingControls)
             {
@@ -484,6 +488,20 @@ namespace DrawnUi.Maui.Views
 
                     if (AnimatingControls.Count == 0)
                         return executed;
+
+                    var nanos = frameTime;
+                    //if (mLastFrameTime == 0)
+                    //{
+                    //    mLastFrameTime = frameTime;
+                    //}
+                    //else
+                    //{
+                    //    float deltaSeconds = (frameTime - mLastFrameTime) / 1_000_000_000.0f;
+                    //    deltaSeconds = FrameTimeInterpolator.GetDeltaTime(deltaSeconds);
+                    //    var deltaNanos = (long)(deltaSeconds * 1_000_000_000.0f);
+                    //    nanos = mLastFrameTime + deltaNanos;
+                    //    mLastFrameTime = frameTime;
+                    //}
 
                     _listRemoveAnimators.Clear();
 
@@ -2757,28 +2775,8 @@ namespace DrawnUi.Maui.Views
                             {
                                 try
                                 {
-#if !WINDOWS
-                                    //cap fps around 120fps
-                                    var nowNanos = Super.GetCurrentTimeNanos();
-                                    var elapsedMicros = (nowNanos - _lastUpdateTimeNanos) / 1_000.0;
-                                    _lastUpdateTimeNanos = nowNanos;
-
-                                    var needWait =
-                                        Super.CapMicroSecs
-#if IOS || MACCATALYST
-                                * 2 // apple is double buffered                             
-#endif
-                                        - elapsedMicros;
-                                    if (needWait < 1)
-                                        needWait = 1;
-
-                                    var ms = (int)(needWait / 1000);
-                                    if (ms < 1)
-                                        ms = 1;
-                                    await Task.Delay(ms);
-#else
-                                    await Task.Delay(1);
-#endif
+                                    //avoid blocking ui thread
+                                    //await Task.Delay(1);
 
                                     CanvasView?.Update(); //very rarely could throw on windows here if maui destroys view when navigating, so we secured with try-catch
                                 }

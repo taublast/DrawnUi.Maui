@@ -157,7 +157,7 @@ public partial class SkiaScroll
                 },
                 OnUpdated = (value) =>
                 {
-                    var clamped = ClampOffset((float)value, 0);
+                    var clamped = ClampOffset((float)value, 0, ContentOffsetBounds);
                     ViewportOffsetX = clamped.X;
 
                     OnScrollerUpdated();
@@ -182,7 +182,7 @@ public partial class SkiaScroll
                 },
                 OnUpdated = (value) =>
                 {
-                    var clamped = ClampOffset(0, (float)value);
+                    var clamped = ClampOffset(0, (float)value, ContentOffsetBounds);
                     ViewportOffsetY = clamped.Y;
 
                     OnScrollerUpdated();

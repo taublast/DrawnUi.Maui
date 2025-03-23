@@ -818,7 +818,7 @@ public partial class SkiaImageManager : IDisposable
 
     public static async Task<SKBitmap> LoadImageFromInternetAsync(UriImageSource uriSource, CancellationToken cancel)
     {
-        var client = Super.Services.CreateLoadImagesHttpClient();
+        using HttpClient client = Super.Services.CreateLoadImagesHttpClient();
         var response = await client.GetAsync(uriSource.Uri, cancel);
         if (response.IsSuccessStatusCode)
         {

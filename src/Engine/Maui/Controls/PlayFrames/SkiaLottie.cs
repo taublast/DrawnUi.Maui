@@ -295,7 +295,7 @@ public class SkiaLottie : AnimatedFramesRenderer
             {
                 if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri) && uri.Scheme != "file")
                 {
-                    var client = Super.Services.CreateLoadImagesHttpClient();
+                    using HttpClient client = Super.Services.CreateLoadImagesHttpClient();
                     var data = await client.GetByteArrayAsync(uri);
                     //var client = new WebClient();
                     //var data = await client.DownloadDataTaskAsync(uri);

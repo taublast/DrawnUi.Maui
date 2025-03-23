@@ -291,7 +291,7 @@ public partial class SkiaScroll
 
                         _panningCurrentOffsetPts = moveTo;
 
-                        var clamped = ClampOffset(moveTo.X, moveTo.Y);
+                        var clamped = ClampOffset(moveTo.X, moveTo.Y, ContentOffsetBounds);
 
                         if (!Bounces && checkOverscroll)
                         {
@@ -528,7 +528,7 @@ public partial class SkiaScroll
                         _panningCurrentOffsetPts.X + movedPtsX,
                         _panningCurrentOffsetPts.Y + movedPtsY);
 
-                    var clamped = ClampOffset(_panningCurrentOffsetPts.X, _panningCurrentOffsetPts.Y);
+                    var clamped = ClampOffset(_panningCurrentOffsetPts.X, _panningCurrentOffsetPts.Y, ContentOffsetBounds);
                     ViewportOffsetX = clamped.X;
                     ViewportOffsetY = clamped.Y;
                 }

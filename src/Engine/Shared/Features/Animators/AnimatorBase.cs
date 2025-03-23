@@ -131,6 +131,11 @@ public class AnimatorBase : ISkiaAnimator
         isStarting = false;
     }
 
+    /// <summary>
+    /// Time in NANOS
+    /// </summary>
+    /// <param name="frameTime"></param>
+    /// <returns></returns>
     public virtual bool TickFrame(long frameTime)
     {
         if (!IsRunning)

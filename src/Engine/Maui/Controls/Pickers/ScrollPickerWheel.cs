@@ -11,6 +11,18 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
         MeasureItemsStrategy = MeasuringStrategy.MeasureFirst;
     }
 
+    public static readonly BindableProperty DistortionAngleProperty = BindableProperty.Create(nameof(DistortionAngle),
+        typeof(double),
+        typeof(ScrollPickerWheel),
+        2.8, propertyChanged: NeedDraw);
+
+
+    public double DistortionAngle
+    {
+        get { return (double)GetValue(DistortionAngleProperty); }
+        set { SetValue(DistortionAngleProperty, value); }
+    }
+
     protected override void OnLayoutChanged()
     {
         //this one constantly changes size, we avoid invoking onsizechanged on every frame..
@@ -66,11 +78,12 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
             relativePosition = (float)Math.Min(Math.Max((double)relativePosition, -1), 1);
             relativePosition = (float)Math.Max((double)relativePosition, -1);
 
-            var childViewAngle = (float)RadiansToDegrees(relativePosition);
-            var zDepth = (float)(HalfWheelHeight * (1 - Math.Cos(relativePosition)));
+            var childViewAngle = (float)RadiansToDegrees(relativePosition) * (float)DistortionAngle;
+            var distortionZ = 1.0f - (float)DistortionAngle / 10.0f;
+            var zDepth = (float)(HalfWheelHeight * (1 - Math.Cos(relativePosition)))* distortionZ;
 
             var centerX = dest.Left + dest.Width * (float)AnchorX;
-            var centerY = itemCenterY;//dest.Top + dest.Height * (float)AnchorY;
+            var centerY = dest.Top + dest.Height * (float)AnchorY;
 
             var centerViewportY = scroll.Destination.Top + scroll.Viewport.Pixels.MidY;
 
