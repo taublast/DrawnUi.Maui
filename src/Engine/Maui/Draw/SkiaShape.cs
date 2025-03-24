@@ -920,11 +920,11 @@ namespace DrawnUi.Maui.Draw
             defaultValueCreator: (instance) =>
             {
                 var created = new SkiaShadowsCollection();
-                ShadowsPropertyChanged(instance, null, created);
+                created.CollectionChanged += ((SkiaShape)instance).OnShadowCollectionChanged;
                 return created;
             },
             validateValue: (bo, v) => v is IList<SkiaShadow>,
-            propertyChanged: NeedDraw,
+            propertyChanged: ShadowsPropertyChanged,
             coerceValue: CoerceShadows);
 
         private static int instanceCount = 0;
@@ -969,7 +969,7 @@ namespace DrawnUi.Maui.Draw
             defaultValueCreator: (instance) =>
             {
                 var created = new ObservableCollection<SkiaPoint>();
-                PointsPropertyChanged(instance, null, created);
+                created.CollectionChanged += ((SkiaShape)instance).OnPointsCollectionChanged;
                 return created;
             },
             validateValue: (bo, v) => v is IList<SkiaPoint>,

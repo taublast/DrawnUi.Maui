@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <UseNet9>true</UseNet9>
-        <UseNuget>false</UseNuget>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(UseNet9)' == 'true'">

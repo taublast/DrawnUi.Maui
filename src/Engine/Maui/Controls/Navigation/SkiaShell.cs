@@ -1852,8 +1852,6 @@ namespace DrawnUi.Maui.Controls
 
                 //we support  a route with subroutes for startup ex: "//main/chats?id-123"
                 GoToAsync(route, false);
-
-
             }
 
             OnStarted();

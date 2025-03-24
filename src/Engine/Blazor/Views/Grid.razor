@@ -1,0 +1,155 @@
+﻿@using AppoMobi.Specials.Extensions
+@inherits VisualElement
+
+@if (IsVisible)
+{
+    <style>
+            @ClassUidStyle {
+                display: grid;
+                @CssColumns
+                @CssRows
+                @CssPadding
+            }
+
+            @ClassUidStyle > div {
+                box-sizing: border-box;
+                grid-column-start: 1;
+                grid-row-start: 1;
+
+            }
+
+            @*@ClassUidStyle > div:first-child {
+                margin-top: 0;
+            }
+
+            @ClassUidStyle > div:last-child {
+                margin-bottom: 0;
+            }*@
+
+    </style>
+
+ 
+        <div class="xaml-element xaml-grid @ClassUid @Class" style="@CssMargins @CssPadding @CssGridPosition @CssStyle @Style">
+
+            @ChildContent
+
+        </div>
+ 
+
+        }
+
+
+
+        @code {
+
+            string DefinitionsToString(string definitions)
+            {
+                if (string.IsNullOrEmpty(definitions))
+                    return string.Empty;
+
+                var cols = definitions.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var stringCols = "";
+                var nbCol = -1;
+                foreach (var col in cols)
+                {
+                    var value = col.Trim().ToLower();
+                    nbCol++;
+                    if (value == "auto")
+                    {
+                        //todo
+                        stringCols += $" auto";
+                    }
+                    else
+                    if (value == "*")
+                    {
+                        stringCols += $" 1fr"; //todo
+                    }
+                    else
+                    if (value.Contains("*"))
+                    {
+                        stringCols += $" {col.Replace("*", "")}fr";
+                    }
+                    else
+                    {
+                        var vCol = value.ToDouble();
+                        stringCols += $" {vCol}{Units}";
+                    }
+                }
+                return stringCols;
+            }
+
+    protected override void OnParametersSet()
+        {
+            if (!string.IsNullOrEmpty(ColumnDefinitions))
+            {
+                CssColumns = $"grid-template-columns: {DefinitionsToString(ColumnDefinitions)}; grid-column-gap: {ColumnSpacing}{Units};";
+            }
+            if (!string.IsNullOrEmpty(RowDefinitions))
+            {
+                CssRows = $"grid-template-rows: {DefinitionsToString(RowDefinitions)}; grid-row-gap: {RowSpacing}{Units};";
+            }
+
+            base.OnParametersSet();
+        }
+
+        string CssColumns { get; set; }
+
+        string CssRows { get; set; }
+
+        [Parameter]
+        public string ColumnDefinitions { get; set; }
+
+        [Parameter]
+        public string RowDefinitions { get; set; }
+
+
+        MarkupString StyleMargin
+        {
+            get
+            {
+                /* top | right | bottom | left */
+                //            return new MarkupString($"margin: {SpacingUnits} auto {SpacingUnits} auto;");
+                return new MarkupString($"margin: 0 0 {SpacingRowsUnits} 0;");
+            }
+        }
+
+        public MarkupString CssStyle
+        {
+            get
+            {
+                var ret = $"{CssLayoutAlignment}";
+
+                return new MarkupString(ret);
+            }
+        }
+
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
+
+        [Parameter]
+        public double ColumnSpacing { get; set; } = 8.0;
+
+        [Parameter]
+        public double RowSpacing { get; set; } = 8.0;
+
+
+        public MarkupString SpacingRowsUnits
+        {
+            get
+            {
+                return new MarkupString($"{RowSpacing}{Units}");
+            }
+        }
+
+        public MarkupString SpacingColsUnits
+        {
+            get
+            {
+                return new MarkupString($"{ColumnSpacing}{Units}");
+            }
+        }
+
+
+        }
+
+

@@ -23,5 +23,11 @@ public class DrawnUiStartupSettings
     /// Listen to desktop keyboard keys with KeyboardManager. Windows and Catalyst available.
     /// </summary>
     public bool UseDesktopKeyboard { get; set; }
+
+    /// <summary>
+    /// Will be executed after DrawnUI is initialized and MAUI App is created. 
+    /// </summary>
+    public Action<IServiceProvider> Startup { get; set; }
+
 }
 

@@ -69,6 +69,11 @@ public partial class Super
     protected static void InitShared()
     {
         SkiaFontManager.Instance.Initialize();
+
+        if (DrawnExtensions.StartupSettings != null && DrawnExtensions.StartupSettings.Startup !=null)
+        {
+            DrawnExtensions.StartupSettings.Startup?.Invoke(Services);
+        }
     }
 
     public static bool EnableRendering

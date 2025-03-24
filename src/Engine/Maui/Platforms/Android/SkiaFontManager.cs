@@ -16,7 +16,6 @@
             {
                 try
                 {
-
                     var registrar = FontRegistrar;
                     var realName = registrar.GetFont(alias);
                     if (!string.IsNullOrEmpty(realName))
@@ -26,7 +25,6 @@
                             font = SKTypeface.FromStream(fileStream);
                         }
                     }
-
                 }
                 catch (Exception e)
                 {

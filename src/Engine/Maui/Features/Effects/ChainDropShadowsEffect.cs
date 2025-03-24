@@ -16,7 +16,7 @@ public class ChainDropShadowsEffect : BaseChainedEffect
         defaultValueCreator: (instance) =>
         {
             var created = new SkiaShadowsCollection();
-            ShadowsPropertyChanged(instance, null, created);
+            created.CollectionChanged += ((ChainDropShadowsEffect)instance).OnShadowCollectionChanged;
             return created;
         },
         validateValue: (bo, v) => v is IList<SkiaShadow>,

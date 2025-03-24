@@ -1,0 +1,101 @@
+﻿@inherits VisualElement
+
+@if (IsVisible)
+{
+    <style>
+            @ClassUidStyle
+            {
+                @OrientationStyle
+                display: flex;
+                overflow: visible;
+                @CssPadding
+            }
+
+            @ClassUidStyle > div:not(:last-child) {
+            box-sizing: border-box;
+            @StyleMargin
+            }
+
+            @ClassUidStyle > div:last-child {
+                margin: 0 0 0 0;
+            }
+
+    </style>
+
+
+
+        <div class="xaml-element xaml-stacklayout @ClassUid @Class" style="@CssMargins @CssPadding @CssGridPosition @CssStyle @Style">
+
+
+            @ChildContent
+
+
+        </div>
+
+
+
+
+}
+
+
+
+@code {
+
+    MarkupString StyleMargin
+    {
+        get
+        {
+            /* top | right | bottom | left */
+            //            return new MarkupString($"margin: {SpacingUnits} auto {SpacingUnits} auto;");
+            if (Orientation == StackOrientation.Vertical)
+                return new MarkupString($"margin: 0 0 {SpacingUnits} 0;");
+            else
+                return new MarkupString($"margin: 0 {SpacingUnits} 0 0;");
+        }
+    }
+
+    public MarkupString CssStyle
+    {
+        get
+        {
+            var ret = $"{CssLayoutAlignment}";
+
+            return new MarkupString(ret);
+        }
+    }
+
+
+    [Parameter]
+    public StackOrientation Orientation { get; set; } = StackOrientation.Vertical;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public double Spacing { get; set; } = 16.0;
+
+    public MarkupString OrientationStyle
+    {
+        get
+        {
+            if (Orientation == StackOrientation.Horizontal)
+                return new MarkupString("flex-direction: row;");
+            return new MarkupString("flex-direction: column;");
+        }
+    }
+
+
+
+    public MarkupString SpacingUnits
+    {
+        get
+        {
+            return new MarkupString($"{Spacing}{Units}");
+        }
+    }
+
+
+
+}
+
+

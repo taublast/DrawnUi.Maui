@@ -80,6 +80,8 @@ namespace DrawnUi.Maui.Game
             _appLoop.Start(delayMs);
         }
 
+        protected FrameTimeInterpolator FrameTimeInterpolator = new();
+
         /// <summary>
         /// Internal, use override GameLoop for your game.
         /// </summary>
@@ -88,10 +90,14 @@ namespace DrawnUi.Maui.Game
         {
             // Incoming frameTime is in nanoseconds
             // Calculate delta time in seconds for later use
-            float deltaTime = (frameTime - LastFrameTimeNanos) / 1_000_000_000.0f;
+            float deltaSeconds = (frameTime - LastFrameTimeNanos) / 1_000_000_000.0f;
+
+            // Use stable time
+            deltaSeconds = FrameTimeInterpolator.GetDeltaTime(deltaSeconds);
+
             LastFrameTimeNanos = frameTime;
 
-            GameLoop(deltaTime);
+            GameLoop(deltaSeconds);
         }
 
         private bool _IsPaused;

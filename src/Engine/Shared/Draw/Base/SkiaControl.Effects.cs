@@ -108,11 +108,7 @@ namespace DrawnUi.Maui.Draw
             defaultValueCreator: (instance) =>
             {
                 var created = new ObservableCollection<SkiaEffect>();
-                //EffectsPropertyChanged(instance, null, created);
-                if (instance is SkiaControl control)
-                {
-                    created.CollectionChanged += control.EffectsCollectionChanged;
-                }
+                created.CollectionChanged += ((SkiaControl)instance).EffectsCollectionChanged;
                 return created;
             },
             validateValue: (bo, v) => v is IList<SkiaEffect>,

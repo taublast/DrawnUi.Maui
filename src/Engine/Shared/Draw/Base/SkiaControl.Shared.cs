@@ -4076,11 +4076,6 @@ namespace DrawnUi.Maui.Draw
                 InvalidateMeasureInternal();
             }
 
-            if (Tag == "Slider")
-            {
-                var top = 1;
-            }
-
             if (RenderObjectNeedsUpdate && !UsesCacheDoubleBuffering)
             {
                 RenderObject = null; //disposal inside setter
@@ -6096,64 +6091,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(ItemTemplateTypeProperty, value); }
         }
 
-
-        #region SELECTABLE TEMPLATES
-
-
-        public static readonly BindableProperty TemplatesProperty = BindableProperty.Create(
-            nameof(Templates),
-            typeof(IList<SkiaControl>),
-            typeof(SkiaControl),
-            defaultValueCreator: (instance) =>
-            {
-                var created = new ObservableCollection<SkiaControl>();
-                ItemTemplateChanged(instance, null, created);
-                return created;
-            },
-            validateValue: (bo, v) => v is IList<SkiaControl>,
-            propertyChanged: ItemTemplateChanged,
-            coerceValue: CoerceTemplates);
-
-        public IList<SkiaControl> Templates
-        {
-            get => (IList<SkiaControl>)GetValue(TemplatesProperty);
-            set => SetValue(TemplatesProperty, value);
-        }
-
-        private static object CoerceTemplates(BindableObject bindable, object value)
-        {
-            if (!(value is ReadOnlyCollection<SkiaControl> readonlyCollection))
-            {
-                return value;
-            }
-
-            return new ReadOnlyCollection<SkiaControl>(
-                readonlyCollection.ToList());
-        }
-
-        private void OnSkiaPropertyTemplateCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (sender is SkiaControl control)
-            {
-                switch (e.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        control.OnItemTemplateChanged();
-                        break;
-
-                    case NotifyCollectionChangedAction.Reset:
-                    case NotifyCollectionChangedAction.Remove:
-                        control.OnItemTemplateChanged();
-                        break;
-                }
-            }
-        }
-
-
-
-
-        #endregion
-
         public static readonly BindableProperty ChildrenProperty = BindableProperty.Create(
             nameof(Children),
             typeof(IList<SkiaControl>),
@@ -6161,7 +6098,7 @@ namespace DrawnUi.Maui.Draw
             defaultValueCreator: (instance) =>
             {
                 var created = new ObservableCollection<SkiaControl>();
-                ChildrenPropertyChanged(instance, null, created);
+                created.CollectionChanged += ((SkiaControl)instance).OnChildrenCollectionChanged;
                 return created;
             },
             validateValue: (bo, v) => v is IList<SkiaControl>,

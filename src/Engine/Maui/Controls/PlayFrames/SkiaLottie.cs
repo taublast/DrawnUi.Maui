@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using DrawnUi.Maui.Features.Images;
+using Microsoft.Maui.Storage;
 using Newtonsoft.Json.Linq;
 using Animation = SkiaSharp.Skottie.Animation;
 
@@ -191,11 +192,11 @@ public class SkiaLottie : AnimatedFramesRenderer
         nameof(Colors),
         typeof(IList<Color>),
         typeof(SkiaLottie),
-        defaultValueCreator: (instance) =>
+        defaultValueCreator: (bindable) =>
         {
-            var created = new ObservableCollection<Color>();
-            ColorsPropertyChanged(instance, null, created);
-            return created;
+            var newCollection = new ObservableCollection<Color>();
+            newCollection.CollectionChanged +=((SkiaLottie)bindable).OnSkiaPropertyColorCollectionChanged;
+            return newCollection;
         },
         validateValue: (bo, v) => v is IList<Color>,
         propertyChanged: ColorsPropertyChanged,
@@ -219,6 +220,8 @@ public class SkiaLottie : AnimatedFramesRenderer
             readonlyCollection.Select(s => s)
                 .ToList());
     }
+
+
 
     private static void ColorsPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
     {
@@ -270,6 +273,36 @@ public class SkiaLottie : AnimatedFramesRenderer
                 lottie.Render(ctx.Context.Canvas, DrawingRect);
                 Monitor.PulseAll(_lockSource);
             }
+    }
+
+    public string LoadLocalJson(string fileName)
+    {
+        string json = null;
+        try
+        {
+            if (fileName.SafeContainsInLower(SkiaImageManager.NativeFilePrefix))
+            {
+                var fullFilename = fileName.Replace(SkiaImageManager.NativeFilePrefix, "");
+                using var stream = new FileStream(fullFilename, FileMode.Open);
+                using var reader = new StreamReader(stream);
+                json = reader.ReadToEnd();
+            }
+            else
+            {
+                using var stream = FileSystem.OpenAppPackageFileAsync(fileName).GetAwaiter().GetResult();
+                using var reader = new StreamReader(stream);
+                json = reader.ReadToEnd();
+            }
+
+            CachedAnimations.TryAdd(fileName, json);
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        return json;
     }
 
     /// <summary>
@@ -336,7 +369,7 @@ public class SkiaLottie : AnimatedFramesRenderer
 
             if (ProcessJson != null) json = ProcessJson(json);
 
-            return await LoadAnimationFromJson(OnJsonLoaded(json));
+            return LoadAnimationFromJson(OnJsonLoaded(json));
         }
         catch (Exception e)
         {
@@ -347,6 +380,38 @@ public class SkiaLottie : AnimatedFramesRenderer
         {
             _semaphoreLoadFile.Release();
         }
+    }
+
+    public Animation CreateAnimation(string json)
+    {
+        if (string.IsNullOrEmpty(json))
+            return null;
+
+        try
+        {
+            if (Colors.Count>0)
+            {
+                json = ApplyTint(json, Colors);
+            }
+            else
+            if (ColorTint.Alpha > 0)
+            {
+                json = ApplyTint(json, new List<Color>()
+                {
+                    ColorTint
+                });
+            }
+
+            if (ProcessJson != null) json = ProcessJson(json);
+
+            return LoadAnimationFromJson(OnJsonLoaded(json));
+        }
+        catch (Exception e)
+        {
+            Super.Log($"[SkiaLottie] LoadSource failed to create animation");
+            return null;
+        }
+ 
     }
 
     public static Stream StreamFromResourceUrl(string url, Assembly assembly = null)
@@ -390,7 +455,7 @@ public class SkiaLottie : AnimatedFramesRenderer
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>
-    public async Task<Animation> LoadAnimationFromJson(string json)
+    public Animation LoadAnimationFromJson(string json)
     {
         try
         {
@@ -537,14 +602,61 @@ public class SkiaLottie : AnimatedFramesRenderer
         }
     }
 
+    private object lockSource = new();
+
     public virtual void ReloadSource()
     {
-        Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(1), async () =>
+        if (string.IsNullOrEmpty(Source))
         {
-            var animation = await LoadSource(Source);
-            if (animation != null) SetAnimation(animation, true);
-        });
+            return;
+        }
+
+        lock (lockSource)
+        {
+            string json = null;
+            Animation animation = null;
+
+            if (CachedAnimations.TryGetValue(Source, out json))
+            {
+                animation = CreateAnimation(json);
+            }
+
+            if (animation != null)
+            {
+                SetAnimation(animation, true);
+                return;
+            }
+
+            var type = GetSourceType(Source);
+
+            switch (type)
+            {
+                case SourceType.Url:
+                    Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(1), async () =>
+                    {
+                        var a = await LoadSource(Source);
+                        if (a != null)
+                        {
+                            SetAnimation(a, true);
+                        }
+                    });
+                    break;
+                default:
+
+                    json = LoadLocalJson(Source);
+                    animation = CreateAnimation(json);
+                    if (animation != null)
+                    {
+                        SetAnimation(animation, true);
+                        return;
+                    }
+                    break;
+            }
+        }
+   
+ 
     }
+
 
     private static void ApplySourceProperty(BindableObject bindable, object oldvalue, object newvalue)
     {

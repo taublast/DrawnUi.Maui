@@ -35,12 +35,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RecycleTemplateType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RecyclingTemplate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RelativePositionType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\ScrollInteractionState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\ShapeType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SkiaAnchorBak.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SkiaImageEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SkiaImageEffects.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SkiaTouchAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SnapToChildrenType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SourceType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SpaceDistribution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\TextTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\TransformAspect.cs" />

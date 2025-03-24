@@ -2375,7 +2375,8 @@ namespace DrawnUi.Maui.Draw
 
         protected bool GliphsInvalidated = true;
 
-        protected object LockFont = new();
+        protected static object LockFont = new();
+
         protected string _fontFamily;
 
         protected virtual void UpdateFont()

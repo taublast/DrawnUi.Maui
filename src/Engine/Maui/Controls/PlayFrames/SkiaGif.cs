@@ -1,4 +1,5 @@
 ﻿using DrawnUi.Maui.Features.Images;
+using Microsoft.Maui.Storage;
 
 namespace DrawnUi.Maui.Controls;
 
@@ -180,12 +181,71 @@ public class SkiaGif : AnimatedFramesRenderer
     private static void ApplySourceProperty(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is SkiaGif control)
-            Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(1), async () =>
-            {
-                var animation = await control.LoadSource(control.Source);
-                if (animation != null) control.SetAnimation(animation, true);
-            });
+            control.ReloadSource();
     }
+
+    private object lockSource = new();
+
+    public virtual void ReloadSource()
+    {
+        if (string.IsNullOrEmpty(Source))
+        {
+            return;
+        }
+
+        lock (lockSource)
+        {
+            var type = GetSourceType(Source);
+
+            switch (type)
+            {
+                case SourceType.Url:
+                    Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(1), async () =>
+                    {
+                        var a = await LoadSource(Source);
+                        if (a != null)
+                        {
+                            SetAnimation(a, true);
+                        }
+                    });
+                    break;
+                default:
+                    GifAnimation animation = new();
+                    try
+                    {
+                        if (Source.SafeContainsInLower(SkiaImageManager.NativeFilePrefix))
+                        {
+                            var fullFilename = Source.Replace(SkiaImageManager.NativeFilePrefix, "");
+                            using var stream = new FileStream(fullFilename, FileMode.Open);
+                            animation.LoadFromStream(stream);
+                        }
+                        else
+                        {
+                            using var stream = FileSystem.OpenAppPackageFileAsync(Source).GetAwaiter().GetResult();
+                            using var reader = new StreamReader(stream);
+                            animation.LoadFromStream(stream);
+                        }
+                        if (animation.TotalFrames <1)
+                        {
+                            animation = null;
+                        }
+                        if (animation != null)
+                        {
+                            SetAnimation(animation, true);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                    break;
+            }
+        }
+
+
+    }
+
+
 
     /// <summary>
     /// This is not replacing current animation, only pre-loading! Use SetAnimation after that if needed.

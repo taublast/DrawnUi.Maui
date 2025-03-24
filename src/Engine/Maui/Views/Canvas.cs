@@ -629,6 +629,20 @@ public class Canvas : DrawnView, IGestureListener
 
         var args = SkiaGesturesParameters.Create(touchAction, args1);
 
+        //anti lag-spike false tap
+        if (args != null)
+        {
+            if (args.Type == TouchActionResult.Tapped)
+            {
+                var threshold = TouchEffect.TappedWhenMovedThresholdPoints * RenderingScale;
+                if (Math.Abs(args.Event.Distance.Total.X) > threshold ||
+                    Math.Abs(args.Event.Distance.Total.Y) > threshold)
+                {
+                    return;
+                }
+            }
+        }
+
         if (GesturesDebugColor.Alpha > 0)
         {
 

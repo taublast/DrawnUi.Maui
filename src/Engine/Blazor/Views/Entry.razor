@@ -1,0 +1,106 @@
+﻿@inherits VisualElement
+
+@if (IsVisible)
+{
+        <div class="xaml-element xaml-entry @Class" style="@CssMargins @CssPadding @CssStyle">
+            <div class="xaml-entry-input-container">
+                <input type="text"
+                       class="xaml-entry-input"
+                       placeholder="@Placeholder"
+                       @ref="InputField"
+                       @onblur="() => { OnUnFocused?.Invoke(InputField, null); }"
+                       @onfocus="() => { OnFocused?.Invoke(InputField, null); }"
+                       @onkeypress="OnKeyPressed"
+                       @bind="Text"
+                       @bind:event="oninput">
+            </div>
+        </div>
+}
+
+@code {
+
+    [Parameter]
+    public EventHandler OnFocused { get; set; }
+
+    [Parameter]
+    public EventHandler OnUnFocused { get; set; }
+
+    [Parameter]
+    public EventHandler OnTyping { get; set; }
+
+    [Parameter]
+    public EventHandler OnEnter { get; set; }
+
+    ElementReference InputField;
+
+    protected async Task OnKeyPressed(KeyboardEventArgs eventArgs)
+    {
+
+        if (eventArgs.Key == "Enter")
+        {
+            await App.Current.CallJSAsync("SetFocus", InputField, false);
+            OnEnter?.Invoke(InputField, null);
+        }
+        else
+        {
+            OnTyping?.Invoke(InputField, null);
+        }
+    }
+
+    public MarkupString CssStyle
+    {
+        get
+        {
+            var ret = $"font-size: {fontSize}; color: {TextColor}; {CssLayoutAlignment}";
+
+            return new MarkupString(ret);
+        }
+    }
+
+    [Parameter]
+    public string Text
+    {
+        get
+        {
+            return _value;
+        }
+        set
+        {
+            if (value != _value)
+            {
+                _value = value;
+                TextChanged.InvokeAsync(value);
+            }
+        }
+
+    }
+
+    string _value;
+
+    [Parameter]
+    public EventCallback<string> TextChanged { get; set; }
+
+    [Parameter]
+    public string Placeholder { get; set; } = "...";
+
+    [Parameter]
+    public double FontSize { get; set; } = 12.0;
+
+
+    /// <summary>
+    /// Hex string
+    /// </summary>
+    [Parameter]
+    public string TextColor { get; set; } = "#000000";
+
+    string fontSize
+    {
+        get
+        {
+            return $"{FontSize}{Units}";
+        }
+    }
+
+}
+
+

@@ -139,16 +139,24 @@ public static partial class DrawnExtensions
 
 #if WINDOWS
 
+            AppLifecycle.AddEvent<WindowsLifecycle.OnLaunched>("OnLaunching", (application, args) =>  
+                {
+                    Super.Init();
+                });
+
             AppLifecycle.AddEvent<WindowsLifecycle.OnWindowCreated>("OnWindowCreated",
                 (window) =>
                 {
-                    Super.Init();
                     Super.OnMauiAppCreated?.Invoke();
                 });
 
             AppLifecycle.AddEvent<WindowsLifecycle.OnLaunched>("OnLaunched",
                 (Microsoft.UI.Xaml.Application application, Microsoft.UI.Xaml.LaunchActivatedEventArgs args) =>
                 {
+                    Super.Init();
+
+                    Super.OnMauiAppCreated?.Invoke();
+
                     Super.App = Super.Services.GetRequiredService<IApplication>();
 
                     var appWindow = Super.App.Windows.First() as Microsoft.Maui.Controls.Window;

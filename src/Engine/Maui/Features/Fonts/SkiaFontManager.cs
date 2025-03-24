@@ -6,12 +6,27 @@ public partial class SkiaFontManager
 {
     static SkiaFontManager()
     {
-        DefaultTypeface = SKTypeface.CreateDefault();
     }
 
     public bool Initialized { get; set; }
-    public static SKTypeface DefaultTypeface { get; }
-    private object _lockInitialization = new();
+
+    static SKTypeface? defaultTypeface = null;
+
+    public static SKTypeface? DefaultTypeface
+    {
+        get
+        {
+            if (defaultTypeface == null)
+            {
+                defaultTypeface = SKTypeface.CreateDefault();
+            }
+            return defaultTypeface;
+        }
+        set
+        {
+            defaultTypeface = value;
+        }
+    }
 
     private void ThrowIfFontNotFound(string filename)
     {
