@@ -68,20 +68,20 @@ public class PendulumAnimator : SkiaValueAnimator
 
     private static long instances;
 
-    public override bool TickFrame(long frameTime)
+    public override bool TickFrame(long frameTimeNanos)
     {
         if (!IsRunning)
             return false; //sanity check
 
-        if (mLastFrameTime == 0)
+        if (LastFrameTimeNanos == 0)
         {
             //  First frame.
-            mLastFrameTime = frameTime;
-            mStartFrameTime = frameTime;
+            LastFrameTimeNanos = frameTimeNanos;
+            StartFrameTimeNanos = frameTimeNanos;
         }
 
         //ms
-        var ms = (frameTime - mLastFrameTime) / 1000000.0f;
+        var ms = (frameTimeNanos - LastFrameTimeNanos) / 1000000.0f;
 
         if (Speed == 0)
             Speed = 1;
@@ -105,7 +105,7 @@ public class PendulumAnimator : SkiaValueAnimator
             x = mMaxValue;
         _action?.Invoke(x);
 
-        mLastFrameTime = frameTime;
+        LastFrameTimeNanos = frameTimeNanos;
 
         var finished = Math.Abs(pendulum.AngularVelocity) < 0.01 && x < 0.01;
 

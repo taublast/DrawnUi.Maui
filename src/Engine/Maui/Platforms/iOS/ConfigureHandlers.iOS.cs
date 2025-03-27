@@ -30,10 +30,15 @@ namespace DrawnUi.Maui.Draw
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 
 #if SKIA3
-            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerFixed));
+            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerRetained));
 #else
             handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
 #endif
         }
     }
+
+    namespace DrawnUi.Maui.Views
+    {
+    }
+
 }

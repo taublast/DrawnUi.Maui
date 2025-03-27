@@ -7,10 +7,10 @@ public class ActionOnTickAnimator : AnimatorBase
 {
     private readonly Action<long> _action;
 
-    public override bool TickFrame(long frameTime)
+    public override bool TickFrame(long frameTimeNanos)
     {
-        _action?.Invoke(frameTime);
-        return base.TickFrame(frameTime);
+        _action?.Invoke(frameTimeNanos);
+        return base.TickFrame(frameTimeNanos);
     }
 
     public ActionOnTickAnimator(SkiaControl parent, Action<long> action) : base(parent)

@@ -1,0 +1,88 @@
+﻿@inherits VisualElement
+
+@if (IsVisible)
+{
+    <style>
+        @ClassUidStyle
+        > svg {
+            height: 100%;
+            width: 100%;
+            vertical-align: baseline;
+        }
+    </style>
+
+    <div class="xaml-element xaml-svgicon @ClassUid @Class" style="@CssMargins @CssPadding @CssGridPosition @CssStyle @Style">
+
+        @* WARNING: SVG must have viewBox=... inside for the auto-resizing to work ! *@
+        
+        @ChildContent
+
+    </div>
+ 
+}
+
+@code {
+
+
+    protected override void OnParametersSet()
+    {
+        var ratio = 1.0;
+        if (SizeMax >= 0)
+        {
+            if (InitialHeight!=0)
+            {
+                var max = Math.Max(InitialWidth, InitialHeight);
+                //var min = Math.Max(InitialWidth, InitialHeight);
+                var aspect = InitialWidth / InitialHeight;
+
+                if (InitialWidth == max)
+                {
+                    WidthRequest = SizeMax;
+                    HeightRequest = SizeMax / aspect;
+                }
+                else
+                {
+                    HeightRequest = SizeMax;
+                    WidthRequest = SizeMax * aspect;
+                }
+            }
+
+
+        }
+
+        base.OnParametersSet();
+    }
+
+    /// <summary>
+    /// WARNING: SVG must have viewBox=... inside for the auto-resizing to work !
+    /// </summary>
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public MarkupString CssStyle
+    {
+        get
+        {
+            var ret = $"background: {BackgroundColor}; {CssLayoutAlignment} {Style}";
+
+            return new MarkupString(ret);
+        }
+    }
+
+
+    [Parameter]
+    public string BackgroundColor { get; set; } = "#00000000";
+
+    [Parameter]
+    public double InitialWidth { get; set; } = -1.0;
+
+    [Parameter]
+    public double InitialHeight { get; set; } = -1.0;
+
+    [Parameter]
+    public double SizeMax { get; set; } = -1.0;
+
+
+}
+
+

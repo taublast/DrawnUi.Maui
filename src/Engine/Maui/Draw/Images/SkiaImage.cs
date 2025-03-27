@@ -1,4 +1,5 @@
-﻿using DrawnUi.Maui.Infrastructure.Xaml;
+﻿using System;
+using DrawnUi.Maui.Infrastructure.Xaml;
 
 namespace DrawnUi.Maui.Draw;
 
@@ -8,6 +9,28 @@ public class SkiaImage : SkiaControl
     public SkiaImage()
     {
 
+    }
+
+    void CancelNextSource()
+    {
+        CancelLoading?.Cancel();
+        LoadSource = null;
+        var kill = ApplyNewSource;
+        ApplyNewSource = null;
+        if (kill != null)
+        {
+            if (SkiaImageManager.ReuseBitmaps)
+                kill.ProtectBitmapFromDispose = true; //do not dispose shared cached image
+            DisposeObject(kill);
+        }
+    }
+
+    public override void OnScaleChanged()
+    {
+        InvalidateImageFilter();
+        InvalidateColorFilter();
+
+        base.OnScaleChanged();
     }
 
     /// <summary>
@@ -432,7 +455,7 @@ public class SkiaImage : SkiaControl
         {
             TraceLog($"[SkiaImage] source is null");
             ClearBitmap();
-            OnSuccess?.Invoke(this, new ContentLoadedEventArgs(null));
+            OnSourceSuccess(null);
         }
         else
         {
@@ -440,6 +463,8 @@ public class SkiaImage : SkiaControl
             {
                 ClearBitmap(); //erase old image..
             }
+
+            CancelNextSource();
 
             if (!string.IsNullOrEmpty(PreviewBase64))
             {
@@ -456,23 +481,46 @@ public class SkiaImage : SkiaControl
                     var cachedBitmap = SkiaImageManager.Instance.GetFromCache(uri);
                     if (cachedBitmap != null)
                     {
-                        ImageBitmap = new LoadedImageSource(cachedBitmap)
-                        {
-                            ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
-                        };
-                        OnSuccess?.Invoke(this, new ContentLoadedEventArgs(uri));
+                        SetImageInternal(SKImage.FromBitmap(cachedBitmap), SkiaImageManager.ReuseBitmaps);
+                        //ImageBitmap = new LoadedImageSource(cachedBitmap)
+                        //{
+                        //    ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
+                        //};
+                        OnSourceSuccess(uri);
                         return;
                     }
                 }
 
-                //okay will load async then
-                CancelLoading?.Cancel();
-                LastSource = source;
                 string url = FrameworkImageSourceConverter.ConvertToString(source);
                 var cancel = new CancellationTokenSource();
                 CancelLoading = cancel;
                 IsLoading = true;
 
+                //maybe its local image?
+                if (source is StreamImageSource || source is FileImageSource)
+                {
+                    //load in sync mode
+                    var bitmap = SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel).GetAwaiter().GetResult();
+                    if (bitmap != null)
+                    {
+                        //ImageBitmap = new LoadedImageSource(bitmap)
+                        //{
+                        //    ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
+                        //};
+                        SetImageInternal(SKImage.FromBitmap(bitmap), SkiaImageManager.ReuseBitmaps);
+                        OnSourceSuccess(uri);
+                    }
+                    else
+                    {
+                        OnSourceError(url);
+                    }
+                    return;
+                }
+
+                //okay will load async then
+                LastSource = source;
+
+                //async loadinc
                 LoadSource = async () =>
                 {
 
@@ -492,7 +540,6 @@ public class SkiaImage : SkiaControl
                                     TraceLog($"[SkiaImage] Canceled loading {source}");
                                 return;
                             }
-
 
                             async Task LoadAction()
                             {
@@ -530,9 +577,9 @@ public class SkiaImage : SkiaControl
                                         {
                                             ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
                                         }; //at the end will use SetImage(new InstancedBitmap(bitmap));
-                                        TraceLog($"[SkiaImage] Loaded {source}");
-                                        OnSuccess?.Invoke(this, new ContentLoadedEventArgs(url));
-                                        OnSourceSuccess();
+
+                                        //TraceLog($"[SkiaImage] Loaded {source}");
+                                        OnSourceSuccess(uri);
                                         return;
                                     }
 
@@ -560,16 +607,13 @@ public class SkiaImage : SkiaControl
 
                         }
 
-                        OnError?.Invoke(this, new ContentLoadedEventArgs(url));
-                        OnSourceError();
+                        OnSourceError(url);
 
                     }
                     catch (Exception e)
                     {
                         TraceLog(e.Message);
-
-                        OnError?.Invoke(this, new ContentLoadedEventArgs(url));
-                        OnSourceError();
+                        OnSourceError(url);
                     }
 
                 };
@@ -599,7 +643,7 @@ public class SkiaImage : SkiaControl
             {
                 TraceLog($"[SkiaImage] Source already loaded {source}");
 
-                OnSuccess?.Invoke(this, new ContentLoadedEventArgs(null));
+                OnSourceSuccess(null);
             }
         }
 
@@ -945,20 +989,22 @@ propertyChanged: NeedChangeColorFIlter);
     }
 
     bool _needClearBitmap;
-    public void ClearBitmap()
+    public virtual void ClearBitmap()
     {
         ImageBitmap = null;
         _needClearBitmap = true;
     }
 
-    public virtual void OnSourceError()
+    public virtual void OnSourceError(string source)
     {
         HasError = true;
+        OnError?.Invoke(this, new ContentLoadedEventArgs(source));
     }
 
-    public virtual void OnSourceSuccess()
+    public virtual void OnSourceSuccess(string source)
     {
         HasError = false;
+        OnSuccess?.Invoke(this, new ContentLoadedEventArgs(source));
     }
 
     protected virtual void SubscribeToCanReload()

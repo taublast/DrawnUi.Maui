@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using DrawnUi.Maui.Infrastructure.Helpers;
 
-
 namespace DrawnUi.Maui.Draw
 {
     [ContentProperty("Content")]
@@ -25,17 +24,6 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public static float SystemAnimationTimeSecs = 0.2f;
 
-        /// <summary>
-        /// TODO implement this
-        /// </summary>
-        public enum ScrollingInteractionState
-        {
-            None,
-            Dragging,
-            Scrolling,
-            Zooming
-        }
-
         public override void OnWillDisposeWithChildren()
         {
             base.OnWillDisposeWithChildren();
@@ -45,13 +33,10 @@ namespace DrawnUi.Maui.Draw
             Footer?.Dispose();
         }
 
-        private ScrollingInteractionState _intercationState;
-        public ScrollingInteractionState InteractionState
+        private ScrollInteractionState _intercationState;
+        public ScrollInteractionState InteractionState
         {
-            get
-            {
-                return _intercationState;
-            }
+            get { return _intercationState; }
             set
             {
                 if (_intercationState != value)
@@ -61,7 +46,6 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
-
 
         public virtual void UpdateVisibleIndex()
         {
@@ -74,14 +58,9 @@ namespace DrawnUi.Maui.Draw
 
         #region Scrollers
 
-
         public bool HasContentToScroll
         {
-            get
-            {
-                return _hasContentToScroll;
-            }
-
+            get { return _hasContentToScroll; }
             set
             {
                 if (_hasContentToScroll != value)
@@ -91,14 +70,14 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         bool _hasContentToScroll;
 
-
         public static readonly BindableProperty HeaderStickyProperty = BindableProperty.Create(
-         nameof(HeaderSticky),
-         typeof(bool),
-         typeof(SkiaScroll),
-         false, propertyChanged: NeedInvalidateMeasure);
+            nameof(HeaderSticky),
+            typeof(bool),
+            typeof(SkiaScroll),
+            false, propertyChanged: NeedInvalidateMeasure);
 
         /// <summary>
         /// Should the header stay in place when content is scrolling
@@ -108,7 +87,6 @@ namespace DrawnUi.Maui.Draw
             get { return (bool)GetValue(HeaderStickyProperty); }
             set { SetValue(HeaderStickyProperty, value); }
         }
-
 
         public static readonly BindableProperty ParallaxOverscrollEnabledProperty = BindableProperty.Create(
             nameof(ParallaxOverscrollEnabled),
@@ -147,16 +125,16 @@ namespace DrawnUi.Maui.Draw
         }
 
         public static readonly BindableProperty HeaderProperty = BindableProperty.Create(
-        nameof(Header),
-        typeof(SkiaControl),
-        typeof(SkiaScroll),
-       null, propertyChanged: (b, o, n) =>
-       {
-           if (b is SkiaScroll control)
-           {
-               control.SetHeader((SkiaControl)n);
-           }
-       });
+            nameof(Header),
+            typeof(SkiaControl),
+            typeof(SkiaScroll),
+            null, propertyChanged: (b, o, n) =>
+            {
+                if (b is SkiaScroll control)
+                {
+                    control.SetHeader((SkiaControl)n);
+                }
+            });
 
         public SkiaControl Header
         {
@@ -176,18 +154,17 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(HeaderParallaxRatioProperty, value); }
         }
 
-
         public static readonly BindableProperty FooterProperty = BindableProperty.Create(
-        nameof(Footer),
-        typeof(SkiaControl),
-        typeof(SkiaScroll),
-        null, propertyChanged: (b, o, n) =>
-        {
-            if (b is SkiaScroll control)
+            nameof(Footer),
+            typeof(SkiaControl),
+            typeof(SkiaScroll),
+            null, propertyChanged: (b, o, n) =>
             {
-                control.SetFooter((SkiaControl)n);
-            }
-        });
+                if (b is SkiaScroll control)
+                {
+                    control.SetFooter((SkiaControl)n);
+                }
+            });
 
         public SkiaControl Footer
         {
@@ -195,8 +172,8 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(FooterProperty, value); }
         }
 
-
-        public static readonly BindableProperty RefreshIndicatorProperty = BindableProperty.Create(nameof(RefreshIndicator),
+        public static readonly BindableProperty RefreshIndicatorProperty = BindableProperty.Create(
+            nameof(RefreshIndicator),
             typeof(IRefreshIndicator),
             typeof(SkiaScroll),
             null,
@@ -237,11 +214,11 @@ namespace DrawnUi.Maui.Draw
                 {
                     newControl.HeightRequest = RefreshDistanceLimit;
                 }
-                else
-                if (Orientation == ScrollOrientation.Horizontal)
+                else if (Orientation == ScrollOrientation.Horizontal)
                 {
                     newControl.WidthRequest = RefreshDistanceLimit;
                 }
+
                 newControl.ZIndex = 1000;
                 AddSubView(newControl);
             }
@@ -268,7 +245,8 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(OrderedScrollProperty, value); }
         }
 
-        public static readonly BindableProperty OrderedScrollIsAnimatedProperty = BindableProperty.Create(nameof(OrderedScrollIsAnimated),
+        public static readonly BindableProperty OrderedScrollIsAnimatedProperty = BindableProperty.Create(
+            nameof(OrderedScrollIsAnimated),
             typeof(bool),
             typeof(SkiaScroll), false);
 
@@ -282,6 +260,7 @@ namespace DrawnUi.Maui.Draw
             typeof(bool),
             typeof(SkiaScroll),
             false);
+
         public bool RefreshEnabled
         {
             get { return (bool)GetValue(RefreshEnabledProperty); }
@@ -289,45 +268,47 @@ namespace DrawnUi.Maui.Draw
         }
 
         public static readonly BindableProperty IsRefreshingProperty = BindableProperty.Create(nameof(IsRefreshing),
-        typeof(bool),
-        typeof(SkiaScroll),
-        false,
-        propertyChanged: (bindable, old, changed) =>
-        {
-            if (bindable is SkiaScroll scroll)
+            typeof(bool),
+            typeof(SkiaScroll),
+            false,
+            propertyChanged: (bindable, old, changed) =>
             {
-                try
+                if (bindable is SkiaScroll scroll)
                 {
-                    scroll.SetIsRefreshing((bool)changed);
+                    try
+                    {
+                        scroll.SetIsRefreshing((bool)changed);
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                    }
                 }
-                catch (Exception e)
-                {
-                    Super.Log(e);
-                }
-            }
-        });
+            });
+
         public bool IsRefreshing
         {
             get { return (bool)GetValue(IsRefreshingProperty); }
             set { SetValue(IsRefreshingProperty, value); }
         }
 
-
         public static readonly BindableProperty RefreshCommandProperty = BindableProperty.Create(nameof(RefreshCommand),
-        typeof(ICommand),
-        typeof(SkiaScroll),
-        null);
+            typeof(ICommand),
+            typeof(SkiaScroll),
+            null);
+
         public ICommand RefreshCommand
         {
             get { return (ICommand)GetValue(RefreshCommandProperty); }
             set { SetValue(RefreshCommandProperty, value); }
         }
 
+        public static readonly BindableProperty RefreshDistanceLimitProperty = BindableProperty.Create(
+            nameof(RefreshDistanceLimit),
+            typeof(float),
+            typeof(SkiaScroll),
+            150f);
 
-        public static readonly BindableProperty RefreshDistanceLimitProperty = BindableProperty.Create(nameof(RefreshDistanceLimit),
-        typeof(float),
-        typeof(SkiaScroll),
-        150f);
         /// <summary>
         /// Applyed to RefreshView
         /// </summary>
@@ -352,15 +333,11 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(RefreshShowDistanceProperty, value); }
         }
 
-
         public Easing ScrollingEasing = Easing.SpringOut;
-
         private readonly TimeSpan debounceTime = TimeSpan.FromMilliseconds(10);
         private float filterFactor = 0.99f; //   (0 to 1)
-
         protected float _velocitySwipe = 200; //pts
         protected float _velocitySwipeRatio = 1.0f;
-
         protected Vector2 _panningLastDelta;
         protected Vector2 _panningCurrentOffsetPts;
         private Vector2 _panningStartOffsetPts;
@@ -371,12 +348,10 @@ namespace DrawnUi.Maui.Draw
             {
                 UnregisterAllAnimatorsByType(typeof(EdgeGlowAnimator));
             }
+
             var animation = new EdgeGlowAnimator(this)
             {
-                GlowPosition = GlowPosition.Top,
-                Color = color.ToSKColor(),
-                X = x,
-                Y = y,
+                GlowPosition = GlowPosition.Top, Color = color.ToSKColor(), X = x, Y = y,
             };
             animation.Start();
         }
@@ -386,11 +361,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public Vector2 OverscrollDistance
         {
-            get
-            {
-                return _overscrollDistance;
-            }
-
+            get { return _overscrollDistance; }
             set
             {
                 if (_overscrollDistance != value)
@@ -405,17 +376,12 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         Vector2 _overscrollDistance;
-
-
 
         public bool ScrollLocked
         {
-            get
-            {
-                return _scrollLocked;
-            }
-
+            get { return _scrollLocked; }
             set
             {
                 if (_scrollLocked != value)
@@ -426,23 +392,19 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         bool _scrollLocked;
 
         //private const float PanTimeThreshold = 10;
         //private DateTimeOffset lastPanTime = DateTimeOffset.Now;
-
         protected VelocityTracker VelocityTrackerPan = new();
-
         protected VelocityTracker VelocityTrackerScale = new();
-
         DateTime lastPanTime;
-
 
         /// <summary>
         /// There are the bounds the scroll offset can go to.. This is NOT the bounds for the whole content.
         /// </summary>
         protected SKRect ContentOffsetBounds { get; set; }
-
 
         /// <summary>
         /// Used to clamp while panning while finger is down
@@ -466,10 +428,9 @@ namespace DrawnUi.Maui.Draw
         //        return clampedElastic with { Y = clampedY };
         //    }
 
-
         //    return clampedElastic;
         //}
-        protected virtual Vector2 ClampOffsetWithRubberBand(float x, float y)
+        protected virtual Vector2 ClampOffsetWithRubberBand(float x, float y, SKRect contentOffsetBounds)
         {
             Vector2 clampedElastic = Vector2.Zero;
             var add = Elastic * RenderingScale;
@@ -483,36 +444,34 @@ namespace DrawnUi.Maui.Draw
                 {
                     clamped = true;
                     float adjusted = (float)(RefreshIndicator.Height * RenderingScale + add);
-                    var customDims = new Vector2(ContentOffsetBounds.Width, adjusted);
+                    var customDims = new Vector2(contentOffsetBounds.Width, adjusted);
                     clampedElastic = RubberBandUtils.ClampOnTrack(
                         new Vector2(x, y),
-                        ContentOffsetBounds,
+                        contentOffsetBounds,
                         (float)RubberEffect,
                         customDims
                     );
                 }
-                else
-                if (Orientation == ScrollOrientation.Horizontal && x > 0)//pulling right
+                else if (Orientation == ScrollOrientation.Horizontal && x > 0) //pulling right
                 {
                     clamped = true;
                     float adjusted = (float)(RefreshIndicator.Width * RenderingScale + add);
-                    var customDims = new Vector2(adjusted, ContentOffsetBounds.Height);
+                    var customDims = new Vector2(adjusted, contentOffsetBounds.Height);
 
                     clampedElastic = RubberBandUtils.ClampOnTrack(
                         new Vector2(x, y),
-                        ContentOffsetBounds,
+                        contentOffsetBounds,
                         (float)RubberEffect,
                         customDims
                     );
                 }
-
             }
 
             if (!clamped)
             {
                 clampedElastic = RubberBandUtils.ClampOnTrack(
                     new Vector2(x, y),
-                    ContentOffsetBounds,
+                    contentOffsetBounds,
                     (float)RubberEffect,
                     new Vector2(add, add)
                 );
@@ -521,12 +480,13 @@ namespace DrawnUi.Maui.Draw
             // Preserve the clamping in the non-scrolling direction
             if (Orientation == ScrollOrientation.Vertical)
             {
-                var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
+                var clampedX = Math.Max(contentOffsetBounds.Left, Math.Min(contentOffsetBounds.Right, x));
                 return clampedElastic with { X = clampedX };
             }
+
             if (Orientation == ScrollOrientation.Horizontal)
             {
-                var clampedY = Math.Max(ContentOffsetBounds.Top, Math.Min(ContentOffsetBounds.Bottom, y));
+                var clampedY = Math.Max(contentOffsetBounds.Top, Math.Min(contentOffsetBounds.Bottom, y));
                 return clampedElastic with { Y = clampedY };
             }
 
@@ -535,17 +495,19 @@ namespace DrawnUi.Maui.Draw
 
         public static int Elastic = 100;
 
-        public virtual Vector2 ClampOffset(float x, float y, bool strict = false)
+        public virtual Vector2 ClampOffset(float x, float y, SKRect contentOffsetBounds, bool strict = false)
         {
             if (!Bounces || strict)
             {
-                var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
-                var clampedY = Math.Max(ContentOffsetBounds.Top, Math.Min(ContentOffsetBounds.Bottom, y));
+                var clampedX = Math.Max(contentOffsetBounds.Left, Math.Min(contentOffsetBounds.Right, x));
+                var clampedY = Math.Max(contentOffsetBounds.Top, Math.Min(contentOffsetBounds.Bottom, y));
+
+                Debug.WriteLine($"Clamped {y} => {clampedY}");
 
                 return new Vector2(clampedX, clampedY);
             }
 
-            return ClampOffsetWithRubberBand(x, y);
+            return ClampOffsetWithRubberBand(x, y, contentOffsetBounds);
         }
 
         public static readonly BindableProperty RespondsToGesturesProperty = BindableProperty.Create(
@@ -562,7 +524,6 @@ namespace DrawnUi.Maui.Draw
             get { return (bool)GetValue(RespondsToGesturesProperty); }
             set { SetValue(RespondsToGesturesProperty, value); }
         }
-
 
         public static readonly BindableProperty CanScrollUsingHeaderProperty = BindableProperty.Create(
             nameof(CanScrollUsingHeader),
@@ -593,28 +554,16 @@ namespace DrawnUi.Maui.Draw
         }
 
         protected bool ChildWasPanning { get; set; }
-
         protected bool ChildWasTapped { get; set; }
-
 
         protected virtual bool IsContentActive
         {
-            get
-            {
-                return Content != null && Content.IsVisible;
-            }
+            get { return Content != null && Content.IsVisible; }
         }
 
-
         protected VelocityAccumulator SwipeVelocityAccumulator { get; } = new();
-
         int lastNumberOfTouches;
-
-
-
-
         private bool lockHeader;
-
         public override bool UsesRenderingTree => false;
         protected SpringWithVelocityAnimator _vectorAnimatorBounceX;
         protected SpringWithVelocityAnimator _vectorAnimatorBounceY;
@@ -648,7 +597,6 @@ namespace DrawnUi.Maui.Draw
         /// Units
         /// </summary>
         protected float _scrollMinY;
-
 
         protected float _scrollMaxX;
         protected float _scrollMaxY;
@@ -689,7 +637,8 @@ namespace DrawnUi.Maui.Draw
                     shouldLock = Math.Abs(velocity.X) >= VelocityImageLoaderLock;
                     break;
                 default:
-                    shouldLock = Math.Abs(velocity.Y) >= VelocityImageLoaderLock || Math.Abs(velocity.X) >= VelocityImageLoaderLock;
+                    shouldLock = Math.Abs(velocity.Y) >= VelocityImageLoaderLock ||
+                                 Math.Abs(velocity.X) >= VelocityImageLoaderLock;
                     break;
             }
 
@@ -698,12 +647,10 @@ namespace DrawnUi.Maui.Draw
 
         float _minVelocitySnap = 15f;
 
-
         /// <summary>
         /// POINTS per sec
         /// </summary>
         private float snapMinimumVelocity = 3f;
-
 
         //public virtual bool ScrollStoppedForSnap()
         //{
@@ -727,8 +674,6 @@ namespace DrawnUi.Maui.Draw
         //		&& Content is SkiaLayout layout
         //		&& ScrollStoppedForSnap());
         //}
-
-
 
         /// <summary>
         /// ToDo adapt this to same logic as ScrollLooped has !
@@ -778,17 +723,15 @@ namespace DrawnUi.Maui.Draw
         //					}
         //				}
 
-
         //			}
         //		}
         //	}
         //}
-
-
         public static readonly BindableProperty BouncesProperty = BindableProperty.Create(nameof(Bounces),
-        typeof(bool),
-        typeof(SkiaScroll),
-        true);
+            typeof(bool),
+            typeof(SkiaScroll),
+            true);
+
         /// <summary>
         /// Should the scroll bounce at edges. Set to false if you want this scroll to let the parent SkiaDrawer respond to scroll when the child scroll reached bounds.
         /// </summary>
@@ -813,7 +756,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(RubberDampingProperty, value); }
         }
 
-
         public static readonly BindableProperty RubberEffectProperty = BindableProperty.Create(
             nameof(RubberEffect),
             typeof(double),
@@ -834,13 +776,15 @@ namespace DrawnUi.Maui.Draw
             get { return (float)GetValue(SnapBouncingIfVelocityLessThanProperty); }
             set { SetValue(SnapBouncingIfVelocityLessThanProperty, value); }
         }
-        public static readonly BindableProperty SnapBouncingIfVelocityLessThanProperty = BindableProperty.Create(nameof(SnapBouncingIfVelocityLessThan),
+
+        public static readonly BindableProperty SnapBouncingIfVelocityLessThanProperty = BindableProperty.Create(
+            nameof(SnapBouncingIfVelocityLessThan),
             typeof(float),
             typeof(SkiaScroll),
             750.0f);
 
-
-        public static readonly BindableProperty AutoScrollingSpeedMsProperty = BindableProperty.Create(nameof(AutoScrollingSpeedMs),
+        public static readonly BindableProperty AutoScrollingSpeedMsProperty = BindableProperty.Create(
+            nameof(AutoScrollingSpeedMs),
             typeof(int),
             typeof(SkiaScroll),
             600);
@@ -854,7 +798,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(AutoScrollingSpeedMsProperty, value); }
         }
 
-
         /// <summary>
         /// Use this to control how fast the scroll will decelerate. Values 0.1 - 0.9 are the best, default is 0.3. Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
         /// </summary>
@@ -864,12 +807,12 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(FrictionScrolledProperty, value); }
         }
 
-        public static readonly BindableProperty FrictionScrolledProperty = BindableProperty.Create(nameof(FrictionScrolled),
-        typeof(float),
-        typeof(SkiaScroll),
-        .3f,
-        propertyChanged: FrictionValueChanged);
-
+        public static readonly BindableProperty FrictionScrolledProperty = BindableProperty.Create(
+            nameof(FrictionScrolled),
+            typeof(float),
+            typeof(SkiaScroll),
+            .3f,
+            propertyChanged: FrictionValueChanged);
 
         public static readonly BindableProperty IgnoreWrongDirectionProperty = BindableProperty.Create(
             nameof(IgnoreWrongDirection),
@@ -903,18 +846,18 @@ namespace DrawnUi.Maui.Draw
         }
         */
 
-        public static readonly BindableProperty ResetScrollPositionOnContentSizeChangedProperty = BindableProperty.Create(
-            nameof(ResetScrollPositionOnContentSizeChanged),
-            typeof(bool),
-            typeof(SkiaScroll),
-            false);
+        public static readonly BindableProperty ResetScrollPositionOnContentSizeChangedProperty =
+            BindableProperty.Create(
+                nameof(ResetScrollPositionOnContentSizeChanged),
+                typeof(bool),
+                typeof(SkiaScroll),
+                false);
 
         public bool ResetScrollPositionOnContentSizeChanged
         {
             get { return (bool)GetValue(ResetScrollPositionOnContentSizeChangedProperty); }
             set { SetValue(ResetScrollPositionOnContentSizeChangedProperty, value); }
         }
-
 
         /// <summary>
         /// For when the finger is up and swipe is detected
@@ -924,7 +867,9 @@ namespace DrawnUi.Maui.Draw
             get { return (float)GetValue(ChangeVelocityScrolledProperty); }
             set { SetValue(ChangeVelocityScrolledProperty, value); }
         }
-        public static readonly BindableProperty ChangeVelocityScrolledProperty = BindableProperty.Create(nameof(ChangeVelocityScrolled),
+
+        public static readonly BindableProperty ChangeVelocityScrolledProperty = BindableProperty.Create(
+            nameof(ChangeVelocityScrolled),
             typeof(float),
             typeof(SkiaScroll),
             1.33f);
@@ -968,13 +913,11 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(ChangeDistancePannedProperty, value); }
         }
 
-
-        public static readonly BindableProperty ChangeDistancePannedProperty = BindableProperty.Create(nameof(ChangeDistancePanned),
+        public static readonly BindableProperty ChangeDistancePannedProperty = BindableProperty.Create(
+            nameof(ChangeDistancePanned),
             typeof(float),
             typeof(SkiaScroll),
             1.0f);
-
-
 
         private static void FrictionValueChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
@@ -985,12 +928,10 @@ namespace DrawnUi.Maui.Draw
         }
 
         int _currentIndex = -1;
+
         public int CurrentIndex
         {
-            get
-            {
-                return _currentIndex;
-            }
+            get { return _currentIndex; }
             protected set
             {
                 if (_currentIndex != value)
@@ -1007,10 +948,7 @@ namespace DrawnUi.Maui.Draw
 
         public ContainsPointResult CurrentIndexHit
         {
-            get
-            {
-                return _CurrentIndexHit;
-            }
+            get { return _CurrentIndexHit; }
             set
             {
                 if (value != _CurrentIndexHit)
@@ -1020,11 +958,11 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         private ContainsPointResult _CurrentIndexHit;
 
         void WatchState()
         {
-
         }
 
         protected SKPoint DetectIndexChildIndexAt;
@@ -1049,16 +987,14 @@ namespace DrawnUi.Maui.Draw
                 {
                     point.Y += (endY - TrackIndexPositionOffset);
                 }
-                else
-                if (option == RelativePositionType.Center)
+                else if (option == RelativePositionType.Center)
                 {
                     point.Y += endY / 2f;
                 }
 
                 point.X = this.Viewport.Pixels.MidX;
             }
-            else
-            if (this.Orientation == ScrollOrientation.Horizontal)
+            else if (this.Orientation == ScrollOrientation.Horizontal)
             {
                 var endX = this.Viewport.Pixels.Width;
                 if (this.Content.MeasuredSize.Pixels.Width < endX)
@@ -1068,8 +1004,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     point.X += endX - TrackIndexPositionOffset;
                 }
-                else
-                if (option == RelativePositionType.Center)
+                else if (option == RelativePositionType.Center)
                 {
                     point.X += endX / 2f;
                 }
@@ -1089,16 +1024,15 @@ namespace DrawnUi.Maui.Draw
         {
             if (Content is SkiaLayout layout)
             {
-
-                var pixelsOffsetX = InternalViewportOffset.Pixels.X;// (float)(ViewportOffsetX * layout.RenderingScale);
-                var pixelsOffsetY = InternalViewportOffset.Pixels.Y;// (float)(ViewportOffsetY * layout.RenderingScale);
+                var pixelsOffsetX =
+                    InternalViewportOffset.Pixels.X; // (float)(ViewportOffsetX * layout.RenderingScale);
+                var pixelsOffsetY =
+                    InternalViewportOffset.Pixels.Y; // (float)(ViewportOffsetY * layout.RenderingScale);
 
                 return GetItemIndex(layout, pixelsOffsetX, pixelsOffsetY, option);
             }
-            else
-            if (Content is ILayoutInsideViewport inside)
+            else if (Content is ILayoutInsideViewport inside)
             {
-
                 var point = new SKPoint(
                     DetectIndexChildIndexAt.X + InternalViewportOffset.Pixels.X + DrawingRect.Left,
                     DetectIndexChildIndexAt.Y + InternalViewportOffset.Pixels.Y + DrawingRect.Top);
@@ -1107,9 +1041,6 @@ namespace DrawnUi.Maui.Draw
 
                 if (found.Index != -1)
                 {
-
-
-
                     //todo translate found
                     var area = found.Area;
                     area.Offset(-DrawingRect.Left, -DrawingRect.Top);
@@ -1129,7 +1060,8 @@ namespace DrawnUi.Maui.Draw
             return ContainsPointResult.NotFound();
         }
 
-        public virtual ContainsPointResult GetItemIndex(SkiaLayout layout, float pixelsOffsetX, float pixelsOffsetY, RelativePositionType option)
+        public virtual ContainsPointResult GetItemIndex(SkiaLayout layout, float pixelsOffsetX, float pixelsOffsetY,
+            RelativePositionType option)
         {
             if (layout.LatestStackStructure == null)
                 return ContainsPointResult.NotFound();
@@ -1146,8 +1078,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     pixelsOffsetY -= Viewport.Pixels.Height / 2f;
                 }
-                else
-                if (option == RelativePositionType.End)
+                else if (option == RelativePositionType.End)
                 {
                     pixelsOffsetY -= Viewport.Pixels.Height;
                 }
@@ -1156,7 +1087,6 @@ namespace DrawnUi.Maui.Draw
                 {
                     //inverted scroll
                     pixelsOffsetY -= Content.MeasuredSize.Pixels.Height;
-
                 }
                 else
                 {
@@ -1170,8 +1100,8 @@ namespace DrawnUi.Maui.Draw
                 // ----------- proper to infinite end
 
                 var point = new SKPoint(
-                (float)Math.Abs(pixelsOffsetX),
-                (float)Math.Abs(pixelsOffsetY)
+                    (float)Math.Abs(pixelsOffsetX),
+                    (float)Math.Abs(pixelsOffsetY)
                 );
 
                 if (layout.Type == LayoutType.Column || layout.Type == LayoutType.Wrap && layout.Split > 0) //todo grid
@@ -1198,11 +1128,9 @@ namespace DrawnUi.Maui.Draw
                             };
                         }
                     }
-
                 }
             }
-            else
-            if (this.Orientation == ScrollOrientation.Horizontal)
+            else if (this.Orientation == ScrollOrientation.Horizontal)
             {
                 var initialValue = pixelsOffsetX;
 
@@ -1212,8 +1140,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     pixelsOffsetX -= Viewport.Pixels.Width / 2f;
                 }
-                else
-                if (option == RelativePositionType.End)
+                else if (option == RelativePositionType.End)
                 {
                     pixelsOffsetX -= Viewport.Pixels.Width;
                 }
@@ -1239,8 +1166,8 @@ namespace DrawnUi.Maui.Draw
 
 
                 var point = new SKPoint(
-                (float)Math.Abs(pixelsOffsetX),
-                (float)Math.Abs(pixelsOffsetY)
+                    (float)Math.Abs(pixelsOffsetX),
+                    (float)Math.Abs(pixelsOffsetY)
                 );
 
 
@@ -1268,13 +1195,11 @@ namespace DrawnUi.Maui.Draw
                             };
                         }
                     }
-
                 }
             }
 
             return ContainsPointResult.NotFound();
         }
-
 
         protected virtual SKPoint ClampedOrderedScrollOffset(SKPoint scrollTo)
         {
@@ -1311,7 +1236,7 @@ namespace DrawnUi.Maui.Draw
                 }
 
                 var structure = layout.LatestStackStructure;
-                if (structure != null && structure.GetCount() > 0)// && layout.StackStructure.Count == childrenCount)
+                if (structure != null && structure.GetCount() > 0) // && layout.StackStructure.Count == childrenCount)
                 {
                     float offset = 0;
 
@@ -1340,7 +1265,6 @@ namespace DrawnUi.Maui.Draw
 
                         if (isValid && childInfo.Measured != null)
                         {
-
                             if (Orientation == ScrollOrientation.Horizontal)
                             {
                                 //todo rework
@@ -1361,12 +1285,8 @@ namespace DrawnUi.Maui.Draw
                                 }
 
                                 return ClampedOrderedScrollOffset(new SKPoint(-offset, 0));
-
-
-
                             }
-                            else
-                            if (Orientation == ScrollOrientation.Vertical)
+                            else if (Orientation == ScrollOrientation.Vertical)
                             {
                                 var scrollSpaceY = ptsContentHeight - Viewport.Units.Height;
 
@@ -1377,11 +1297,11 @@ namespace DrawnUi.Maui.Draw
 
                                     if (option == RelativePositionType.End)
                                     {
-                                        offset = childOffset - (this.Viewport.Units.Height - childInfo.Measured.Units.Height);
+                                        offset = childOffset -
+                                                 (this.Viewport.Units.Height - childInfo.Measured.Units.Height);
                                     }
                                     else if (option == RelativePositionType.Center)
                                     {
-
                                         offset = childOffset -
                                                  (this.Viewport.Units.Height - childInfo.Measured.Units.Height) / 2f;
                                     }
@@ -1396,14 +1316,8 @@ namespace DrawnUi.Maui.Draw
                                 }
 
                                 //return ClampedOrderedScrollOffset(new SKPoint(0, -offset));
-
-
-
-
                             }
-
                         }
-
                     }
                     catch (Exception e)
                     {
@@ -1415,21 +1329,20 @@ namespace DrawnUi.Maui.Draw
             return NotValidPoint();
         }
 
-
-
-
         protected virtual bool CheckNeedToSnap()
         {
             bool ret = !(IsSnapping || Snapped
-                         || IsUserFocused
-                         || OrderedScrollTo.IsValid //already scrolling somewhere
-                         || this.SnapToChildren == SnapToChildrenType.Disabled
-                         || _vectorAnimatorBounceY.IsRunning || _vectorAnimatorBounceX.IsRunning
-                         || _animatorFlingX.IsRunning && (Math.Abs(_animatorFlingX.CurrentVelocity) > _minVelocitySnap
-                        || _animatorFlingY.IsRunning && (Math.Abs(_animatorFlingY.CurrentVelocity) > _minVelocitySnap
-                        || Math.Abs(_animatorFlingY.CurrentVelocity) > _minVelocitySnap)
-                        || Math.Abs(_animatorFlingX.CurrentVelocity) > _minVelocitySnap)
-                        );
+                                    || IsUserFocused
+                                    || OrderedScrollTo.IsValid //already scrolling somewhere
+                                    || this.SnapToChildren == SnapToChildrenType.Disabled
+                                    || _vectorAnimatorBounceY.IsRunning || _vectorAnimatorBounceX.IsRunning
+                                    || _animatorFlingX.IsRunning &&
+                                    (Math.Abs(_animatorFlingX.CurrentVelocity) > _minVelocitySnap
+                                     || _animatorFlingY.IsRunning &&
+                                     (Math.Abs(_animatorFlingY.CurrentVelocity) > _minVelocitySnap
+                                      || Math.Abs(_animatorFlingY.CurrentVelocity) > _minVelocitySnap)
+                                     || Math.Abs(_animatorFlingX.CurrentVelocity) > _minVelocitySnap)
+                );
 
             //Trace.WriteLine($"CheckNeedToSnap {ret}");
 
@@ -1470,7 +1383,6 @@ namespace DrawnUi.Maui.Draw
                         }
                         else if (SnapToChildren == SnapToChildrenType.Side)
                         {
-
                             if (TrackIndexPosition == RelativePositionType.Start)
                             {
                                 needMove = hit.Point.Y - hit.Area.Bottom;
@@ -1513,7 +1425,6 @@ namespace DrawnUi.Maui.Draw
                         }
                         else if (SnapToChildren == SnapToChildrenType.Side)
                         {
-
                             if (TrackIndexPosition == RelativePositionType.Start)
                             {
                                 needMove = hit.Area.Width - (hit.Area.Right - hit.Point.X);
@@ -1538,41 +1449,31 @@ namespace DrawnUi.Maui.Draw
 
                             return;
                         }
-
                     }
                 }
-
             }
 
             IsSnapping = false;
         }
 
-
-
         public static readonly BindableProperty SnapToChildrenProperty
-        = BindableProperty.Create(nameof(SnapToChildren),
-        typeof(SnapToChildrenType), typeof(SkiaScroll),
-        SnapToChildrenType.Disabled, propertyChanged: NeedDraw);
+            = BindableProperty.Create(nameof(SnapToChildren),
+                typeof(SnapToChildrenType), typeof(SkiaScroll),
+                SnapToChildrenType.Disabled, propertyChanged: NeedDraw);
+
         /// <summary>
         /// Whether should snap to children after scrolling stopped
         /// </summary>
         public SnapToChildrenType SnapToChildren
         {
-            get
-            {
-                return (SnapToChildrenType)GetValue(SnapToChildrenProperty);
-            }
-            set
-            {
-                SetValue(SnapToChildrenProperty, value);
-            }
+            get { return (SnapToChildrenType)GetValue(SnapToChildrenProperty); }
+            set { SetValue(SnapToChildrenProperty, value); }
         }
 
-
         public static readonly BindableProperty TrackIndexPositionProperty
-        = BindableProperty.Create(nameof(TrackIndexPosition),
-        typeof(RelativePositionType), typeof(SkiaScroll),
-        RelativePositionType.None, propertyChanged: OnTrackingChanged);
+            = BindableProperty.Create(nameof(TrackIndexPosition),
+                typeof(RelativePositionType), typeof(SkiaScroll),
+                RelativePositionType.None, propertyChanged: OnTrackingChanged);
 
         private static void OnTrackingChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
@@ -1588,31 +1489,28 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public RelativePositionType TrackIndexPosition
         {
-            get
-            {
-                return (RelativePositionType)GetValue(TrackIndexPositionProperty);
-            }
-            set
-            {
-                SetValue(TrackIndexPositionProperty, value);
-            }
+            get { return (RelativePositionType)GetValue(TrackIndexPositionProperty); }
+            set { SetValue(TrackIndexPositionProperty, value); }
         }
 
+        public static readonly BindableProperty TrackIndexPositionOffsetProperty = BindableProperty.Create(
+            nameof(TrackIndexPositionOffset),
+            typeof(float),
+            typeof(SkiaScroll),
+            8.0f, propertyChanged: OnTrackingChanged);
 
-        public static readonly BindableProperty TrackIndexPositionOffsetProperty = BindableProperty.Create(nameof(TrackIndexPositionOffset),
-        typeof(float),
-        typeof(SkiaScroll),
-        8.0f, propertyChanged: OnTrackingChanged);
         public float TrackIndexPositionOffset
         {
             get { return (float)GetValue(TrackIndexPositionOffsetProperty); }
             set { SetValue(TrackIndexPositionOffsetProperty, value); }
         }
 
-        public static readonly BindableProperty LoadMoreCommandProperty = BindableProperty.Create(nameof(LoadMoreCommand),
+        public static readonly BindableProperty LoadMoreCommandProperty = BindableProperty.Create(
+            nameof(LoadMoreCommand),
             typeof(ICommand),
             typeof(SkiaScroll),
             null);
+
         public ICommand LoadMoreCommand
         {
             get { return (ICommand)GetValue(LoadMoreCommandProperty); }
@@ -1623,20 +1521,17 @@ namespace DrawnUi.Maui.Draw
             typeof(float),
             typeof(SkiaScroll),
             0.0f, propertyChanged: OnTrackingChanged);
+
         public float LoadMoreOffset
         {
             get { return (float)GetValue(LoadMoreOffsetProperty); }
             set { SetValue(LoadMoreOffsetProperty, value); }
         }
 
-
-
         #endregion
-
 
         protected SKSize LastContentSizePixels = new SKSize(-1, -1);
         protected SKSize LastMeasuredSizePixels = new SKSize(-1, -1);
-
 
         protected virtual void ApplyContentSize()
         {
@@ -1662,7 +1557,8 @@ namespace DrawnUi.Maui.Draw
         private double prevV;
         private long c1;
 
-        protected virtual ISkiaGestureListener PassGestureToChildren(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
+        protected virtual ISkiaGestureListener PassGestureToChildren(SkiaGesturesParameters args,
+            GestureEventProcessingInfo apply)
         {
             if (IsContentActive)
             {
@@ -1672,21 +1568,16 @@ namespace DrawnUi.Maui.Draw
             return null;
         }
 
-
-
         public float VelocityY
         {
-            get
-            {
-                return _velocityY;
-            }
-
+            get { return _velocityY; }
             set
             {
                 if (Math.Abs(value) > MaxVelocity)
                 {
                     value = MaxVelocity * Math.Sign(value);
                 }
+
                 if (_velocityY != value)
                 {
                     _velocityY = value;
@@ -1694,21 +1585,19 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         float _velocityY;
 
         public float VelocityX
         {
-            get
-            {
-                return _velocityX;
-            }
-
+            get { return _velocityX; }
             set
             {
                 if (Math.Abs(value) > MaxVelocity)
                 {
                     value = MaxVelocity * Math.Sign(value);
                 }
+
                 if (_velocityX != value)
                 {
                     _velocityX = value;
@@ -1716,17 +1605,14 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         float _velocityX;
-
-
         private DateTime lastInputTime;
 
         bool SameSign(double a, double b)
         {
             return Math.Sign(a) == Math.Sign(b);
         }
-
-
 
         public bool SetZoom(double zoom)
         {
@@ -1737,8 +1623,7 @@ namespace DrawnUi.Maui.Draw
 
             if (zoom < ZoomMin)
                 zoom = ZoomMin;
-            else
-            if (zoom > ZoomMax)
+            else if (zoom > ZoomMax)
                 zoom = ZoomMax;
 
             ZoomScaleInternal = zoom;
@@ -1797,7 +1682,6 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         protected double ZoomScaleInternal { get; set; }
 
-
         protected ScaledSize HeaderSize;
         protected ScaledSize FooterSize;
 
@@ -1831,13 +1715,16 @@ namespace DrawnUi.Maui.Draw
 
                 var measuredContent = MeasureContent(viewport.Width, viewport.Height, zoomedScale);
 
-                if (ResetScrollPositionOnContentSizeChanged && (ContentSize.Pixels.Height != measuredContent.Pixels.Height || ContentSize.Pixels.Width != measuredContent.Pixels.Width))
+                if (ResetScrollPositionOnContentSizeChanged &&
+                    (ContentSize.Pixels.Height != measuredContent.Pixels.Height ||
+                     ContentSize.Pixels.Width != measuredContent.Pixels.Width))
                 {
                     if (ViewportOffsetX != 0 || ViewportOffsetY != 0)
                         ScrollTo(0, 0, 0);
                 }
 
-                ContentSize = ScaledSize.FromPixels(measuredContent.Pixels.Width, measuredContent.Pixels.Height, request.Scale);
+                ContentSize = ScaledSize.FromPixels(measuredContent.Pixels.Width, measuredContent.Pixels.Height,
+                    request.Scale);
             }
             else
             {
@@ -1887,7 +1774,7 @@ namespace DrawnUi.Maui.Draw
 
                 return MeasureInternal(request);
 
-            
+
             }
             finally
             {
@@ -1899,7 +1786,6 @@ namespace DrawnUi.Maui.Draw
         }
 
         */
-
         public ScaledRect Viewport { get; protected set; } = new();
 
         protected override ScaledSize SetMeasured(float width, float height, bool widthCut, bool heightCut, float scale)
@@ -1913,7 +1799,6 @@ namespace DrawnUi.Maui.Draw
 
             return base.SetMeasured(width, height, widthCut, heightCut, scale);
         }
-
 
         /// <summary>
         /// In PIXELS
@@ -1929,12 +1814,12 @@ namespace DrawnUi.Maui.Draw
                 childRect.Right = float.PositiveInfinity;
                 childRect.Bottom = float.PositiveInfinity;
             }
-            else
-            if (Orientation == ScrollOrientation.Vertical)
+            else if (Orientation == ScrollOrientation.Vertical)
             {
                 childRect.Right = destination.Right;
                 childRect.Bottom = float.PositiveInfinity;
             }
+
             if (Orientation == ScrollOrientation.Horizontal)
             {
                 childRect.Right = float.PositiveInfinity;
@@ -1943,8 +1828,6 @@ namespace DrawnUi.Maui.Draw
 
             return childRect;
         }
-
-
 
         /// <summary>
         /// This is where the view port is actually is after being scrolled. We used this value to offset viewport on drawing the last frame
@@ -1967,19 +1850,16 @@ namespace DrawnUi.Maui.Draw
             {
                 if (this.Orientation == ScrollOrientation.Vertical)
                 {
-                    var m = InternalViewportOffset.Units.Y * this.HeaderParallaxRatio;
-                    ParallaxComputedValue = m;
+                    var m = InternalViewportOffset.Units.Y * (1 - this.HeaderParallaxRatio);
+                    ParallaxComputedValue = - m;
                 }
-                else
-                if (this.Orientation == ScrollOrientation.Horizontal)
+                else if (this.Orientation == ScrollOrientation.Horizontal)
                 {
-                    var m = InternalViewportOffset.Units.X * this.HeaderParallaxRatio;
-                    ParallaxComputedValue = m;
+                    var m = InternalViewportOffset.Units.X * (1 - this.HeaderParallaxRatio);
+                    ParallaxComputedValue = - m;
                 }
             }
-
         }
-
 
         /// <summary>
         /// Input offset parameters in PIXELS.
@@ -1992,25 +1872,27 @@ namespace DrawnUi.Maui.Draw
         /// <param name="viewportScale"></param>
         /// <param name="scale"></param>
         /// <returns>Whether we changed viewport and cache changed</returns>
-        protected virtual bool PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale, float scale)
+        protected virtual bool PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale,
+            float scale)
         {
             if (!IsContentActive || Content == null)
                 return false;
 
             if (!IsSnapping)
                 Snapped = false;
- 
+
             ContentAvailableSpace = GetContentAvailableRect(destination);
 
             //we scroll at subpixels but stop only at pixel-snapped
-            //if (IsScrolling && !isScroling && !IsUserPanning || onceAfterInitializeViewport)
-            //{
-            //    var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
-            //    var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
-            //    offsetPixels.Offset(roundX, roundY);
-            //}
+            if (IsScrolling && !IsUserPanning || onceAfterInitializeViewport)
+            {
+                var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
+                var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
+                offsetPixels.Offset(roundX, roundY);
+            }
 
-            InternalViewportOffset = ScaledPoint.FromPixels(offsetPixels.X, offsetPixels.Y, scale); //removed pixel rounding
+            InternalViewportOffset =
+                ScaledPoint.FromPixels(offsetPixels.X, offsetPixels.Y, scale); //removed pixel rounding
 
             //Debug.WriteLine($"scroll set to {InternalViewportOffset.Units.Y}");
 
@@ -2025,7 +1907,8 @@ namespace DrawnUi.Maui.Draw
             if (onceAfterInitializeViewport)
             {
                 onceAfterInitializeViewport = false;
-                var clamped = ClampOffset(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y, true);
+                var clamped = ClampOffset(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y,
+                    ContentOffsetBounds, true);
                 //AdjustHeaderParallax(ScaledPoint.FromUnits(clamped.X, clamped.Y, scale));
 
                 ViewportOffsetX = clamped.X;
@@ -2036,10 +1919,10 @@ namespace DrawnUi.Maui.Draw
                     HideRefreshIndicator();
                     ScrollTo(0, 0, 0);
                 }
-
             }
 
-            OverscrollDistance = CalculateOverscrollDistance(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
+            OverscrollDistance =
+                CalculateOverscrollDistance(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
 
             if (Content is IInsideViewport viewport)
             {
@@ -2056,13 +1939,14 @@ namespace DrawnUi.Maui.Draw
                             absoluteViewPort.Top - Header.MeasuredSize.Pixels.Height,
                             absoluteViewPort.Right,
                             absoluteViewPort.Bottom - Header.MeasuredSize.Pixels.Height
-                            );
+                        );
                         absoluteViewPort.Offset(0, (float)Math.Round(-ContentOffset * scale));
                     }
-                    else
-                    if (this.Orientation == ScrollOrientation.Horizontal)
+                    else if (this.Orientation == ScrollOrientation.Horizontal)
                     {
-                        absoluteViewPort = new SKRect(absoluteViewPort.Left - Header.MeasuredSize.Pixels.Width, absoluteViewPort.Top, absoluteViewPort.Right - Header.MeasuredSize.Pixels.Width, absoluteViewPort.Bottom);
+                        absoluteViewPort = new SKRect(absoluteViewPort.Left - Header.MeasuredSize.Pixels.Width,
+                            absoluteViewPort.Top, absoluteViewPort.Right - Header.MeasuredSize.Pixels.Width,
+                            absoluteViewPort.Bottom);
                         absoluteViewPort.Offset((float)Math.Round(-ContentOffset * scale), 0);
                     }
                 }
@@ -2076,11 +1960,10 @@ namespace DrawnUi.Maui.Draw
 
             if (LoadMoreCommand != null)
             {
-
                 if (_loadMoreTriggeredAt != 0
                     && Math.Abs(InternalViewportOffset.Units.Y - _loadMoreTriggeredAt) > (LoadMoreOffset + 100) * scale
                     && (DateTime.Now - _loadMoreTriggeredTime).TotalSeconds > 3)
-                //we have scrolled out of the triggered loadMore by 100pts
+                    //we have scrolled out of the triggered loadMore by 100pts
                 {
                     _loadMoreTriggeredAt = 0; //so can track loadMore again
                 }
@@ -2089,8 +1972,10 @@ namespace DrawnUi.Maui.Draw
                 {
                     var threshold = LoadMoreOffset * scale;
 
-                    if ((Orientation == ScrollOrientation.Vertical && InternalViewportOffset.Units.Y <= _scrollMinY + threshold)
-                        || (Orientation == ScrollOrientation.Horizontal && InternalViewportOffset.Units.X <= _scrollMinX + threshold))
+                    if ((Orientation == ScrollOrientation.Vertical &&
+                         InternalViewportOffset.Units.Y <= _scrollMinY + threshold)
+                        || (Orientation == ScrollOrientation.Horizontal &&
+                            InternalViewportOffset.Units.X <= _scrollMinX + threshold))
                     {
                         _loadMoreTriggeredTime = DateTime.Now;
                         _loadMoreTriggeredAt = InternalViewportOffset.Units.Y;
@@ -2098,7 +1983,6 @@ namespace DrawnUi.Maui.Draw
                         LoadMoreCommand?.Execute(this);
                     }
                 }
-
             }
 
             return true;
@@ -2130,6 +2014,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         private bool _IsScrolling;
+
         public bool IsScrolling
         {
             get
@@ -2140,21 +2025,23 @@ namespace DrawnUi.Maui.Draw
             {
                 if (_IsScrolling != value)
                 {
+                    if (value)
+                    {
+                        InteractionState = ScrollInteractionState.Scrolling;
+                    }
                     bool fireStop = _IsScrolling && !value;
                     _IsScrolling = value;
                     OnPropertyChanged();
                     if (fireStop)
                     {
+                        InteractionState = ScrollInteractionState.None;
                         SendScrollingEnded();
                     }
                 }
             }
         }
 
-     
-
         float _loadMoreTriggeredAt;
-
 
         protected virtual void HideRefreshIndicator()
         {
@@ -2182,9 +2069,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         public event EventHandler<ScaledPoint> ScrollingEnded;
-
         public event EventHandler<ScaledPoint> Scrolled;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -2197,8 +2082,7 @@ namespace DrawnUi.Maui.Draw
                 if (ratio >= 0)
                     RefreshIndicator.SetDragRatio(ratio);
             }
-            else
-            if (Orientation == ScrollOrientation.Horizontal)
+            else if (Orientation == ScrollOrientation.Horizontal)
             {
                 ratio = (OverscrollDistance.X - RefreshShowDistance) / (RefreshDistanceLimit - RefreshShowDistance);
                 if (ratio >= 0)
@@ -2235,8 +2119,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     ApplyScrollPositionToRefreshViewUnsafe();
                 }
-                else
-                if (RefreshIndicator.IsVisible)
+                else if (RefreshIndicator.IsVisible)
                 {
                     StopVelocityPanning();
                     HideRefreshIndicator();
@@ -2267,12 +2150,10 @@ namespace DrawnUi.Maui.Draw
                 {
                     ScrollToTop(SystemAnimationTimeSecs);
                 }
+
                 ScrollLocked = false;
             }
-
         }
-
- 
 
         /// <summary>
         /// 
@@ -2284,6 +2165,7 @@ namespace DrawnUi.Maui.Draw
             {
                 ctx = ctx.WithScale(zoomedScale);
             }
+
             if (ctx.GetArgument(ContextArguments.Rect.ToString()) is SKRect childRectWithOffset)
             {
                 ctx = ctx.WithDestination(childRectWithOffset);
@@ -2335,8 +2217,11 @@ namespace DrawnUi.Maui.Draw
                 ApplyPannedOffsetWithVelocity(context.Context);
 
                 //rounding work smoothly with subpixels
-                var posX = (float)Math.Round(ViewportOffsetX * _zoomedScale);
-                var posY = (float)Math.Round(ViewportOffsetY * _zoomedScale);
+                //var posX = (float)Math.Round(ViewportOffsetX * _zoomedScale);
+                //var posY = (float)Math.Round(ViewportOffsetY * _zoomedScale);
+
+                var posX = (float)(ViewportOffsetX * _zoomedScale);
+                var posY = (float)(ViewportOffsetY * _zoomedScale);
 
 
                 IsScrolling = _animatorFlingY.IsRunning || _animatorFlingX.IsRunning ||
@@ -2344,22 +2229,20 @@ namespace DrawnUi.Maui.Draw
                               || _scrollerX.IsRunning || _scrollerY.IsRunning || IsUserPanning;
 
                 var needReposition =
-                                     _updatedViewportForPixY != posY
-                                 || _updatedViewportForPixX != posX
-                                 || _destination != context.Destination;
+                    _updatedViewportForPixY != posY
+                    || _updatedViewportForPixX != posX
+                    || _destination != context.Destination;
 
                 //reposition viewport (scroll)
                 if (needReposition)
                 {
-
                     if (Orientation == ScrollOrientation.Vertical)
                     {
                         if (posY < _updatedViewportForPixY)
                         {
                             ScrollingDirection = LinearDirectionType.Forward;
                         }
-                        else
-                        if (posY > _updatedViewportForPixY)
+                        else if (posY > _updatedViewportForPixY)
                         {
                             ScrollingDirection = LinearDirectionType.Backward;
                         }
@@ -2368,15 +2251,13 @@ namespace DrawnUi.Maui.Draw
                             ScrollingDirection = LinearDirectionType.None;
                         }
                     }
-                    else
-                    if (Orientation == ScrollOrientation.Horizontal)
+                    else if (Orientation == ScrollOrientation.Horizontal)
                     {
                         if (posX < _updatedViewportForPixX)
                         {
                             ScrollingDirection = LinearDirectionType.Forward;
                         }
-                        else
-                        if (posX > _updatedViewportForPixX)
+                        else if (posX > _updatedViewportForPixX)
                         {
                             ScrollingDirection = LinearDirectionType.Backward;
                         }
@@ -2402,16 +2283,11 @@ namespace DrawnUi.Maui.Draw
                         //POST EVENTS
                         if (IsScrolling)
                             SendScrolled();
-
                     }
                 }
 
                 var clone = AddPaintArguments(context).WithDestination(DrawingRect);
-                DrawWithClipAndTransforms(clone, DrawingRect, true, true, (ctx) =>
-                {
-                    PaintWithEffects(ctx);
-                });
-
+                DrawWithClipAndTransforms(clone, DrawingRect, true, true, (ctx) => { PaintWithEffects(ctx); });
             }
 
             FinalizeDrawingWithRenderObject(context);
@@ -2500,16 +2376,13 @@ namespace DrawnUi.Maui.Draw
                         {
                             drawViews.Add(Header);
                         }
-                        else
-                        if (HeaderBehind)
+                        else if (HeaderBehind)
                         {
                             if (hitboxHeader.IntersectsWith(this.Viewport.Pixels))
                                 Header.Render(context);
                         }
-
                     }
-                    else
-                    if (this.Orientation == ScrollOrientation.Horizontal)
+                    else if (this.Orientation == ScrollOrientation.Horizontal)
                     {
                         translateContent = Header.MeasuredSize.Units.Width;
 
@@ -2532,7 +2405,8 @@ namespace DrawnUi.Maui.Draw
                         // Adjust the header hitbox for parallax in horizontal orientation
                         var headerLeft = ctx.Destination.Left + Header.UseTranslationX;
                         var headerRight = headerLeft + Header.MeasuredSize.Pixels.Width;
-                        var hitboxHeader = new SKRect((float)headerLeft, ctx.Destination.Top, (float)headerRight, ctx.Destination.Bottom);
+                        var hitboxHeader = new SKRect((float)headerLeft, ctx.Destination.Top, (float)headerRight,
+                            ctx.Destination.Bottom);
 
                         if (!HeaderBehind && !HeaderSticky)
                         {
@@ -2550,21 +2424,19 @@ namespace DrawnUi.Maui.Draw
                         if (Content != null)
                             Content.AddTranslationY = translateContent;
 
-                        offsetFooter += Header.MeasuredSize.Units.Width + (float)ContentOffset; ;
+                        offsetFooter += Header.MeasuredSize.Units.Width + (float)ContentOffset;
+                        ;
 
                         if (drawHeaderBefore)
                         {
                             drawViews.Add(Header);
                         }
-                        else
-                        if (HeaderBehind)
+                        else if (HeaderBehind)
                         {
                             if (hitboxHeader.IntersectsWith(this.Viewport.Pixels))
                                 Header.Render(ctx);
                         }
-
                     }
-
                 }
 
                 if (Footer != null)
@@ -2575,21 +2447,23 @@ namespace DrawnUi.Maui.Draw
                         {
                             offsetFooter += Content.DrawingRect.Height;
                         }
+
                         Footer.AddTranslationY = offsetFooter / ctx.Scale;
 
                         //draw only if onscreen
                         var hitbox = new SKRect(ctx.Destination.Left, ctx.Destination.Top + offsetFooter,
-                            ctx.Destination.Right, ctx.Destination.Top + offsetFooter + Footer.MeasuredSize.Pixels.Height);
+                            ctx.Destination.Right,
+                            ctx.Destination.Top + offsetFooter + Footer.MeasuredSize.Pixels.Height);
                         if (hitbox.IntersectsWith(this.Viewport.Pixels))
                             drawViews.Add(Footer);
                     }
-                    else
-                    if (this.Orientation == ScrollOrientation.Horizontal)
+                    else if (this.Orientation == ScrollOrientation.Horizontal)
                     {
                         if (IsContentActive)
                         {
                             offsetFooter += Content.DrawingRect.Width;
                         }
+
                         Footer.AddTranslationX = offsetFooter / ctx.Scale;
 
                         //draw only if onscreen
@@ -2628,7 +2502,6 @@ namespace DrawnUi.Maui.Draw
 
             return drawn;
         }
-
 
         float _updatedViewportForPixX;
         float _updatedViewportForPixY;
@@ -2680,6 +2553,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     RemoveSubView(oldContent);
                 }
+
                 if (view != null)
                 {
                     AddSubView(view);
@@ -2696,6 +2570,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     RemoveSubView(oldContent);
                 }
+
                 if (view != null)
                 {
                     view.ZIndex = 1;
@@ -2713,6 +2588,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     RemoveSubView(oldContent);
                 }
+
                 if (view != null)
                 {
                     AddSubView(view);
@@ -2722,7 +2598,8 @@ namespace DrawnUi.Maui.Draw
 
         #region PROPERTIES
 
-        public static readonly BindableProperty ScrollingSpeedMsProperty = BindableProperty.Create(nameof(ScrollingSpeedMs),
+        public static readonly BindableProperty ScrollingSpeedMsProperty = BindableProperty.Create(
+            nameof(ScrollingSpeedMs),
             typeof(int),
             typeof(SkiaScroll),
             400);
@@ -2737,20 +2614,21 @@ namespace DrawnUi.Maui.Draw
         }
 
         public static readonly BindableProperty ZoomLockedProperty = BindableProperty.Create(nameof(ZoomLocked),
-        typeof(bool),
-        typeof(SkiaScroll),
-        true);
+            typeof(bool),
+            typeof(SkiaScroll),
+            true);
+
         public bool ZoomLocked
         {
             get { return (bool)GetValue(ZoomLockedProperty); }
             set { SetValue(ZoomLockedProperty, value); }
         }
 
-
         public static readonly BindableProperty ZoomMinProperty = BindableProperty.Create(nameof(ZoomMin),
-        typeof(double),
-        typeof(SkiaScroll),
-        0.1);
+            typeof(double),
+            typeof(SkiaScroll),
+            0.1);
+
         public double ZoomMin
         {
             get { return (double)GetValue(ZoomMinProperty); }
@@ -2761,6 +2639,7 @@ namespace DrawnUi.Maui.Draw
             typeof(double),
             typeof(SkiaScroll),
             10.0);
+
         public double ZoomMax
         {
             get { return (double)GetValue(ZoomMaxProperty); }
@@ -2771,6 +2650,7 @@ namespace DrawnUi.Maui.Draw
             typeof(double), typeof(SkiaScroll),
             1.0,
             propertyChanged: NeedDraw);
+
         public double ViewportZoom
         {
             get { return (double)GetValue(ViewportZoomProperty); }
@@ -2791,7 +2671,6 @@ namespace DrawnUi.Maui.Draw
             get { return (double)GetValue(VelocityImageLoaderLockProperty); }
             set { SetValue(VelocityImageLoaderLockProperty, value); }
         }
-
 
         /*
         public static readonly BindableProperty ViewportOffsetYProperty = BindableProperty.Create(nameof(ViewportOffsetY),
@@ -2844,15 +2723,18 @@ namespace DrawnUi.Maui.Draw
                 control.SetContent(newvalue as SkiaControl);
             }
         }
+
         public SkiaControl Content
         {
             get { return (SkiaControl)GetValue(ContentProperty); }
             set { SetValue(ContentProperty, value); }
         }
 
-        public static readonly BindableProperty OrientationProperty = BindableProperty.Create(nameof(Orientation), typeof(ScrollOrientation), typeof(SkiaScroll),
+        public static readonly BindableProperty OrientationProperty = BindableProperty.Create(nameof(Orientation),
+            typeof(ScrollOrientation), typeof(SkiaScroll),
             ScrollOrientation.Vertical,
             propertyChanged: NeedDraw);
+
         /// <summary>
         /// <summary>Gets or sets the scrolling direction of the ScrollView. This is a bindable property.</summary>
         /// </summary>
@@ -2862,10 +2744,11 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(OrientationProperty, value); }
         }
 
-
-        public static readonly BindableProperty ScrollTypeProperty = BindableProperty.Create(nameof(ViewportScrollType), typeof(ViewportScrollType), typeof(SkiaScroll),
+        public static readonly BindableProperty ScrollTypeProperty = BindableProperty.Create(nameof(ViewportScrollType),
+            typeof(ViewportScrollType), typeof(SkiaScroll),
             ViewportScrollType.Scrollable,
             propertyChanged: NeedDraw);
+
         /// <summary>
         /// <summary>Gets or sets the scrolling direction of the ScrollView. This is a bindable property.</summary>
         /// </summary>
@@ -2876,11 +2759,11 @@ namespace DrawnUi.Maui.Draw
         }
 
         public static readonly BindableProperty VirtualisationProperty = BindableProperty.Create(
-        nameof(Virtualisation),
-        typeof(VirtualisationType),
-        typeof(SkiaScroll),
-        VirtualisationType.Enabled,
-        propertyChanged: NeedInvalidateMeasure);
+            nameof(Virtualisation),
+            typeof(VirtualisationType),
+            typeof(SkiaScroll),
+            VirtualisationType.Enabled,
+            propertyChanged: NeedInvalidateMeasure);
 
         /// <summary>
         /// Default is true, children get the visible viewport area for rendering and can virtualize.
@@ -2892,9 +2775,7 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(VirtualisationProperty, value); }
         }
 
-
         //todo ZOOM
-
 
         #endregion
 
@@ -2957,13 +2838,11 @@ namespace DrawnUi.Maui.Draw
 
                 if (needScrollMore > 0)
                     _scrollTo = this.ViewportOffsetY - needScrollMore;
-
             }
             catch (Exception e)
             {
                 Trace.WriteLine(e);
             }
-
         }
 
         public virtual void AdaptToKeyboard()
@@ -2983,7 +2862,6 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-
         protected override void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             base.OnPropertyChanged(propertyName);
@@ -3001,14 +2879,9 @@ namespace DrawnUi.Maui.Draw
             Repaint();
         }
 
-
         #region RENDERiNG
 
-
         public override bool WillClipBounds => true;
-
-
-
         bool isDrawing;
         private SKRect _destination;
         private ScaledSize _lastContentSize;
@@ -3022,17 +2895,12 @@ namespace DrawnUi.Maui.Draw
         private float _offsetMoved;
         private long _offsetMovedTime;
 
-
         protected virtual void OnDrawn(DrawingContext context)
         {
-
         }
-
 
         //public Action<ISkiaControl> Measured { get; set; }
 
         #endregion
-
-
     }
 }

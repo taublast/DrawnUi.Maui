@@ -154,7 +154,7 @@ public partial class SkiaGradient : BindableObject, ICloneable
         defaultValueCreator: (instance) =>
         {
             var created = new ObservableCollection<Color>();
-            ColorsPropertyChanged(instance, null, created);
+            created.CollectionChanged += ((SkiaGradient)instance).OnSkiaPropertyColorCollectionChanged;
             return created;
         },
         validateValue: (bo, v) => v is IList<Color>,
@@ -216,7 +216,7 @@ public partial class SkiaGradient : BindableObject, ICloneable
         defaultValueCreator: (instance) =>
         {
             var created = new ObservableCollection<double>();
-            ColorPositionsPropertyChanged(instance, null, created);
+            created.CollectionChanged += ((SkiaGradient)instance).OnColorPositionsCollectionChanged;
             return created;
         },
         validateValue: (bo, v) => v is IList<double>,

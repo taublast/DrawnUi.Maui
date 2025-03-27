@@ -229,7 +229,8 @@ public partial class SkiaLayout
         typeof(ColumnDefinitionCollection), typeof(SkiaLayout),
         null,
         validateValue: (bindable, value) => value != null,
-        propertyChanged: UpdateSizeChangedHandlers, defaultValueCreator: bindable =>
+        propertyChanged: UpdateSizeChangedHandlers,
+        defaultValueCreator: bindable =>
         {
             var colDef = new ColumnDefinitionCollection()
             {

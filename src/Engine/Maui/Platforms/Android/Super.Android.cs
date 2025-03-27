@@ -90,10 +90,12 @@ public partial class Super
 
         });
 
+        ExecAfterInit?.Invoke(null, EventArgs.Empty);
+
+        ExecAfterInit = null;
     }
 
-
-
+    private static EventHandler ExecAfterInit;
 
     /// <summary>
     /// ToDo resolve obsolete for android api 30 and later
@@ -199,6 +201,16 @@ public partial class Super
             return;
 
         var activity = Platform.CurrentActivity;
+
+        if (activity == null)
+        {
+            ExecAfterInit += (s, a) =>
+            {
+                SetNavigationBarColor(colorBar, colorSeparator, darkStatusBarTint);
+            };
+            return;
+        }
+
         var window = activity.Window;
 
         window.ClearFlags(WindowManagerFlags.TranslucentNavigation);
@@ -264,6 +276,16 @@ public partial class Super
         {
 
             var activity = Platform.CurrentActivity;
+
+            if (activity == null)
+            {
+                ExecAfterInit += (s, a) =>
+                {
+                    SetWhiteTextStatusBar();
+                };
+                return;
+            }
+
             var window = activity.Window;
 
             // Fetch the current flags.
@@ -280,6 +302,16 @@ public partial class Super
         if (Build.VERSION.SdkInt > Android.OS.BuildVersionCodes.M)
         {
             var activity = Platform.CurrentActivity;
+
+            if (activity == null)
+            {
+                ExecAfterInit += (s, a) =>
+                {
+                    SetBlackTextStatusBar();
+                };
+                return;
+            }
+
             var window = activity.Window;
 
             // Fetch the current flags.

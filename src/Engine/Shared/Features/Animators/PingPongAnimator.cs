@@ -19,8 +19,8 @@ public class PingPongAnimator : RangeAnimator
             Distance = mMaxValue - mMinValue;
 
             mValue = mMinValue;
-            mLastFrameTime = 0;
-            mStartFrameTime = 0;
+            LastFrameTimeNanos = 0;
+            StartFrameTimeNanos = 0;
             return false;
         }
         else if (Repeat > 0)
@@ -33,8 +33,8 @@ public class PingPongAnimator : RangeAnimator
             Distance = mMaxValue - mMinValue;
 
             mValue = mMinValue;
-            mLastFrameTime = 0;
-            mStartFrameTime = 0;
+            LastFrameTimeNanos = 0;
+            StartFrameTimeNanos = 0;
             return false;
         }
 

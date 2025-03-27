@@ -293,6 +293,14 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
         return null;
     }
 
+    public override void OnScaleChanged()
+    {
+        InvalidateImageFilter();
+        InvalidateColorFilter();
+
+        base.OnScaleChanged();
+    }
+
     protected virtual void BuildPaint()
     {
         if (PaintColorFilter == null)
@@ -302,7 +310,7 @@ public class SkiaBackdrop : ContentLayout, ISkiaGestureListener
 
         if (PaintImageFilter == null)
         {
-            PaintImageFilter = SKImageFilter.CreateBlur((float)Blur, (float)Blur, SKShaderTileMode.Mirror);
+            PaintImageFilter = SKImageFilter.CreateBlur((float)Blur * RenderingScale, (float)Blur * RenderingScale, SKShaderTileMode.Mirror);
         }
 
         if (ImagePaint == null)

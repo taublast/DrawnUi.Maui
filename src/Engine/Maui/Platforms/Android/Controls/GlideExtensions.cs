@@ -54,6 +54,7 @@ public static class GlideExtensions
 
             case UriImageSource uriSource:
             builder = HandleUriImageSource(request, uriSource);
+            //Debug.WriteLine($"[IMAGE] load url {uriSource.Uri}");
             break;
 
             case StreamImageSource streamSource:

@@ -1,0 +1,63 @@
+﻿@inherits DrawnUi.Views.VisualElement
+
+@if (IsVisible)
+{
+ 
+        <div class="xaml-element xaml-label @Class" style="@CssMargins @CssPadding @CssGridPosition @CssStyle @Style">@FormattedText</div>
+ 
+        }
+
+        @code {
+
+            string FormattedText
+    {
+                get
+        {
+                    if (!string.IsNullOrEmpty(StringFormat))
+                    {
+                        return string.Format(StringFormat, Text);
+                    }
+                    return Text;
+                }
+            }
+
+    public MarkupString CssStyle
+        {
+            get
+            {
+                var ret = $"{CssLayoutAlignment} font-size: {fontSize}; color: {TextColor}; {Style}";
+
+                return new MarkupString(ret);
+            }
+        }
+
+
+        [Parameter]
+        public string Text { get; set; }
+
+        [Parameter]
+        public string StringFormat { get; set; }
+
+
+
+        [Parameter]
+        public double FontSize { get; set; } = 12.0;
+
+
+        /// <summary>
+        /// Hex string
+        /// </summary>
+        [Parameter]
+        public string TextColor { get; set; } = "#000000";
+
+        string fontSize
+        {
+            get
+            {
+                return $"{FontSize}{Units}";
+            }
+        }
+
+        }
+
+

@@ -98,7 +98,6 @@ namespace DrawnUi.Maui.Draw
             return new(position.X, position.Y);
         }
 
-
         /// <summary>
         /// Find drawing position for control accounting for all caches up the rendering tree.
         /// </summary>
@@ -109,10 +108,6 @@ namespace DrawnUi.Maui.Draw
 
             return new(position.X, position.Y);
         }
-
-
-
-
 
         public SKPoint BuildSelfDrawingPosition(SKPoint offset, SkiaControl control, bool isChild)
         {
@@ -141,8 +136,8 @@ namespace DrawnUi.Maui.Draw
             return BuildSelfDrawingPosition(drawingOffset, parent, false);
         }
 
-
-        public SKPoint BuildDrawingOffsetRecursive(SKPoint offset, SkiaControl control, bool ignoreCache, bool useTranslation = true)
+        public SKPoint BuildDrawingOffsetRecursive(SKPoint offset, SkiaControl control, bool ignoreCache,
+            bool useTranslation = true)
         {
             if (control == null)
             {
@@ -157,10 +152,12 @@ namespace DrawnUi.Maui.Draw
                 drawingOffset.Offset(control.DrawingRect.Location);
                 return drawingOffset;
             }
+
             return BuildDrawingOffsetRecursive(drawingOffset, parent, false, useTranslation);
         }
 
-        public SKPoint BuildDrawnOffsetRecursive(SKPoint offset, SkiaControl control, bool ignoreCache, bool useTranslation = true)
+        public SKPoint BuildDrawnOffsetRecursive(SKPoint offset, SkiaControl control, bool ignoreCache,
+            bool useTranslation = true)
         {
             if (control == null)
             {
@@ -175,19 +172,18 @@ namespace DrawnUi.Maui.Draw
                 drawingOffset.Offset(control.LastDrawnAt.Location);
                 return drawingOffset;
             }
+
             return BuildDrawnOffsetRecursive(drawingOffset, parent, false, useTranslation);
         }
-
 
         public virtual string DebugString
         {
             get
             {
-                return $"{GetType().Name} Tag {Tag}, IsVisible {IsVisible}, Children {Views.Count}, {Width:0.0}x{Height:0.0}dp, DrawingRect: {DrawingRect}";
+                return
+                    $"{GetType().Name} Tag {Tag}, IsVisible {IsVisible}, Children {Views.Count}, {Width:0.0}x{Height:0.0}dp, DrawingRect: {DrawingRect}";
             }
         }
-
-
 
         public virtual bool CanDraw
         {
@@ -205,7 +201,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         /// <summary>
         /// Can be set but custom controls while optimizing rendering etc. Will affect CanDraw.
         /// </summary>
@@ -215,12 +210,7 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void CreateDefaultContent()
         {
-
         }
-
-
-
-
 
         /// <summary>
         /// This actually used by SkiaMauiElement but could be used by other controls. Also might be useful for debugging purposes.
@@ -259,7 +249,6 @@ namespace DrawnUi.Maui.Draw
         /// <param name="transform"></param>
         public virtual void SetVisualTransform(VisualTransform transform)
         {
-
         }
 
         /// <summary>
@@ -271,6 +260,7 @@ namespace DrawnUi.Maui.Draw
             {
                 invalidation.Value.Invoke();
             }
+
             PostponedInvalidations.Clear();
         }
 
@@ -379,8 +369,8 @@ namespace DrawnUi.Maui.Draw
             return tcs.Task;
         }
 
-
         CancellationTokenSource _fadeCancelTokenSource;
+
         /// <summary>
         /// Fades the drawn view from the current Opacity to end, animator is reused if already running
         /// </summary>
@@ -389,7 +379,8 @@ namespace DrawnUi.Maui.Draw
         /// <param name="easing"></param>
         /// <param name="cancel"></param>
         /// <returns></returns>
-        public Task FadeToAsync(double end, float ms = 250, Easing easing = null, CancellationTokenSource cancel = default)
+        public Task FadeToAsync(double end, float ms = 250, Easing easing = null,
+            CancellationTokenSource cancel = default)
         {
             // Cancel previous animation if it exists and is still running.
             _fadeCancelTokenSource?.Cancel();
@@ -402,16 +393,14 @@ namespace DrawnUi.Maui.Draw
                     this.Opacity = startOpacity + (end - startOpacity) * value;
                     //Debug.WriteLine($"[ANIM] Opacity: {this.Opacity}");
                 },
-                () =>
-                {
-                    this.Opacity = end;
-                },
+                () => { this.Opacity = end; },
                 ms,
                 easing,
                 _fadeCancelTokenSource);
         }
 
         CancellationTokenSource _scaleCancelTokenSource;
+
         /// <summary>
         /// Scales the drawn view from the current Scale to x,y, animator is reused if already running
         /// </summary>
@@ -421,7 +410,8 @@ namespace DrawnUi.Maui.Draw
         /// <param name="easing"></param>
         /// <param name="cancel"></param>
         /// <returns></returns>
-        public Task ScaleToAsync(double x, double y, float length = 250, Easing easing = null, CancellationTokenSource cancel = default)
+        public Task ScaleToAsync(double x, double y, float length = 250, Easing easing = null,
+            CancellationTokenSource cancel = default)
         {
             // Cancel previous animation if it exists and is still running.
             _scaleCancelTokenSource?.Cancel();
@@ -431,19 +421,19 @@ namespace DrawnUi.Maui.Draw
             var startScaleY = this.ScaleY;
 
             return AnimateAsync(value =>
-            {
-                this.ScaleX = startScaleX + (x - startScaleX) * value;
-                this.ScaleY = startScaleY + (y - startScaleY) * value;
-            },
-            () =>
-            {
-                this.ScaleX = x;
-                this.ScaleY = y;
-            }, length, easing, _scaleCancelTokenSource);
+                {
+                    this.ScaleX = startScaleX + (x - startScaleX) * value;
+                    this.ScaleY = startScaleY + (y - startScaleY) * value;
+                },
+                () =>
+                {
+                    this.ScaleX = x;
+                    this.ScaleY = y;
+                }, length, easing, _scaleCancelTokenSource);
         }
 
-
         CancellationTokenSource _translateCancelTokenSource;
+
         /// <summary>
         /// Translates the drawn view from the current position to x,y, animator is reused if already running
         /// </summary>
@@ -453,7 +443,8 @@ namespace DrawnUi.Maui.Draw
         /// <param name="easing"></param>
         /// <param name="cancel"></param>
         /// <returns></returns>
-        public Task TranslateToAsync(double x, double y, float length = 250, Easing easing = null, CancellationTokenSource cancel = default)
+        public Task TranslateToAsync(double x, double y, float length = 250, Easing easing = null,
+            CancellationTokenSource cancel = default)
         {
             // Cancel previous animation if it exists and is still running.
             _translateCancelTokenSource?.Cancel();
@@ -463,19 +454,20 @@ namespace DrawnUi.Maui.Draw
             var startTranslationY = this.TranslationY;
 
             return AnimateAsync(value =>
-            {
-                this.TranslationX = (float)(startTranslationX + (x - startTranslationX) * value);
-                this.TranslationY = (float)(startTranslationY + (y - startTranslationY) * value);
-            },
-            () =>
-            {
-                this.TranslationX = x;
-                this.TranslationY = y;
-            },
-            length, easing, _translateCancelTokenSource);
+                {
+                    this.TranslationX = (float)(startTranslationX + (x - startTranslationX) * value);
+                    this.TranslationY = (float)(startTranslationY + (y - startTranslationY) * value);
+                },
+                () =>
+                {
+                    this.TranslationX = x;
+                    this.TranslationY = y;
+                },
+                length, easing, _translateCancelTokenSource);
         }
 
         CancellationTokenSource _rotateCancelTokenSource;
+
         /// <summary>
         /// Rotates the drawn view from the current rotation to end, animator is reused if already running
         /// </summary>
@@ -484,7 +476,8 @@ namespace DrawnUi.Maui.Draw
         /// <param name="easing"></param>
         /// <param name="cancel"></param>
         /// <returns></returns>
-        public Task RotateToAsync(double end, uint length = 250, Easing easing = null, CancellationTokenSource cancel = default)
+        public Task RotateToAsync(double end, uint length = 250, Easing easing = null,
+            CancellationTokenSource cancel = default)
         {
             // Cancel previous animation if it exists and is still running.
             _rotateCancelTokenSource?.Cancel();
@@ -492,26 +485,19 @@ namespace DrawnUi.Maui.Draw
 
             var startRotation = this.Rotation;
 
-            return AnimateAsync(value =>
-            {
-                this.Rotation = (float)(startRotation + (end - startRotation) * value);
-            },
-            () =>
-            {
-                this.Rotation = end;
-            },
-            length, easing, _rotateCancelTokenSource);
+            return AnimateAsync(value => { this.Rotation = (float)(startRotation + (end - startRotation) * value); },
+                () => { this.Rotation = end; },
+                length, easing, _rotateCancelTokenSource);
         }
-
 
         public virtual void OnPrintDebug()
         {
-
         }
 
         public void PrintDebug(string indent = "     ")
         {
-            Super.Log($"{indent}└─ {GetType().Name} {Width:0.0}x{Height:0.0} pts ({MeasuredSize.Pixels.Width:0.0}x{MeasuredSize.Pixels.Height:0.0} px)");
+            Super.Log(
+                $"{indent}└─ {GetType().Name} {Width:0.0}x{Height:0.0} pts ({MeasuredSize.Pixels.Width:0.0}x{MeasuredSize.Pixels.Height:0.0} px)");
             OnPrintDebug();
             foreach (var view in Views)
             {
@@ -521,9 +507,10 @@ namespace DrawnUi.Maui.Draw
         }
 
         public static readonly BindableProperty DebugRenderingProperty = BindableProperty.Create(nameof(DebugRendering),
-        typeof(bool),
-        typeof(SkiaControl),
-        false, propertyChanged: NeedDraw);
+            typeof(bool),
+            typeof(SkiaControl),
+            false, propertyChanged: NeedDraw);
+
         public bool DebugRendering
         {
             get { return (bool)GetValue(DebugRenderingProperty); }
@@ -542,7 +529,8 @@ namespace DrawnUi.Maui.Draw
         /// <param name="cancel"></param>
         /// <param name="onStopped"></param>
         /// <returns></returns>
-        public Task AnimateRangeAsync(Action<double> callback, double start, double end, double length = 250, Easing easing = null,
+        public Task AnimateRangeAsync(Action<double> callback, double start, double end, double length = 250,
+            Easing easing = null,
             CancellationToken cancel = default,
             bool applyEndValueOnStop = false)
         {
@@ -550,10 +538,7 @@ namespace DrawnUi.Maui.Draw
 
             var tcs = new TaskCompletionSource<bool>(cancel);
 
-            tcs.Task.ContinueWith(task =>
-            {
-                DisposeObject(animator);
-            });
+            tcs.Task.ContinueWith(task => { DisposeObject(animator); });
 
             animator = new RangeAnimator(this)
             {
@@ -583,8 +568,6 @@ namespace DrawnUi.Maui.Draw
 
             return tcs.Task;
         }
-
-
 
         public SKPoint NotValidPoint()
         {
@@ -643,7 +626,8 @@ namespace DrawnUi.Maui.Draw
             var adaptedWidthConstraint = AdaptWidthConstraintToRequest(withLock.Width, margins, request.Scale);
             var adaptedHeightConstraint = AdaptHeightContraintToRequest(withLock.Height, margins, request.Scale);
 
-            var rectForChildrenPixels = GetMeasuringRectForChildren(adaptedWidthConstraint, adaptedHeightConstraint, request.Scale);
+            var rectForChildrenPixels =
+                GetMeasuringRectForChildren(adaptedWidthConstraint, adaptedHeightConstraint, request.Scale);
 
             return new MeasuringConstraints
             {
@@ -662,7 +646,6 @@ namespace DrawnUi.Maui.Draw
             bool autoSize,
             double minRequest, double maxRequest, float scale, bool canExpand)
         {
-
             var contentDimension = sideConstraintsPixels + measuredDimension;
 
             if (autoSize && measuredDimension >= 0 && (canExpand || measuredDimension < constraintPixels)
@@ -678,6 +661,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     min = Math.Round(minRequest * scale);
                 }
+
                 constraintPixels = (float)Math.Max(constraintPixels, min);
             }
 
@@ -688,6 +672,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     max = Math.Round(maxRequest * scale);
                 }
+
                 constraintPixels = (float)Math.Min(constraintPixels, max);
             }
 
@@ -695,7 +680,8 @@ namespace DrawnUi.Maui.Draw
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public float AdaptWidthConstraintToContentRequest(MeasuringConstraints constraints, float contentWidthPixels, bool canExpand)
+        public float AdaptWidthConstraintToContentRequest(MeasuringConstraints constraints, float contentWidthPixels,
+            bool canExpand)
         {
             var sideConstraintsPixels = NeedAutoWidth
                 ? constraints.TotalMargins.HorizontalThickness
@@ -729,7 +715,6 @@ namespace DrawnUi.Maui.Draw
                 RenderingScale, canExpand);
         }
 
-
         public float AdaptWidthConstraintToContentRequest(float widthConstraintPixels,
             ScaledSize measuredContent, double sideConstraintsPixels)
         {
@@ -742,7 +727,6 @@ namespace DrawnUi.Maui.Draw
                 MaximumWidthRequest,
                 RenderingScale, this.HorizontalOptions.Expands);
         }
-
 
         public float AdaptHeightConstraintToContentRequest(float heightConstraintPixels,
             ScaledSize measuredContent,
@@ -757,7 +741,6 @@ namespace DrawnUi.Maui.Draw
                 MaximumHeightRequest,
                 RenderingScale, this.VerticalOptions.Expands);
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public SKRect AdaptToContraints(SKRect measuredPixels,
@@ -793,8 +776,6 @@ namespace DrawnUi.Maui.Draw
             return outPixels;
         }
 
-
-
         /// <summary>
         /// In UNITS
         /// </summary>
@@ -807,15 +788,15 @@ namespace DrawnUi.Maui.Draw
             {
                 widthRequestPts = ContentSize.Units.Width + Padding.Left + Padding.Right;
             }
+
             if (NeedAutoHeight && ContentSize.Units.Height > 0)
             {
                 heightRequestPts = ContentSize.Units.Height + Padding.Top + Padding.Bottom;
             }
 
-            return new Size(widthRequestPts, heightRequestPts); ;
+            return new Size(widthRequestPts, heightRequestPts);
+            ;
         }
-
-
 
         /// <summary>
         /// Use Superview from public area
@@ -851,12 +832,10 @@ namespace DrawnUi.Maui.Draw
         /// <returns></returns>
         public bool GestureIsInside(TouchActionEventArgs args, float offsetX = 0, float offsetY = 0)
         {
-
             return IsPixelInside((float)args.Location.X + offsetX, (float)args.Location.Y + offsetY);
 
             //            return IsPointInside((float)args.Event.Location.X + offsetX, (float)args.Event.Location.Y + offsetY, (float)RenderingScale);
         }
-
 
         /// <summary>
         /// To detect if a gesture Start point was inside Destination
@@ -897,8 +876,6 @@ namespace DrawnUi.Maui.Draw
             return isInside;
         }
 
-
-
         /// <summary>
         /// Whether the pixel is inside Destination
         /// </summary>
@@ -911,19 +888,22 @@ namespace DrawnUi.Maui.Draw
             return isInside;
         }
 
-        protected virtual bool CheckGestureIsInsideChild(SkiaControl child, TouchActionEventArgs args, float offsetX = 0, float offsetY = 0)
+        protected virtual bool CheckGestureIsInsideChild(SkiaControl child, TouchActionEventArgs args,
+            float offsetX = 0, float offsetY = 0)
         {
             return child.CanDraw && child.GestureIsInside(args, offsetX, offsetY);
         }
 
-        protected virtual bool CheckGestureIsForChild(SkiaControl child, TouchActionEventArgs args, float offsetX = 0, float offsetY = 0)
+        protected virtual bool CheckGestureIsForChild(SkiaControl child, TouchActionEventArgs args, float offsetX = 0,
+            float offsetY = 0)
         {
             return child.CanDraw && child.GestureStartedInside(args, offsetX, offsetY);
         }
 
         protected object LockIterateListeners = new();
 
-        public static readonly BindableProperty LockChildrenGesturesProperty = BindableProperty.Create(nameof(LockChildrenGestures),
+        public static readonly BindableProperty LockChildrenGesturesProperty = BindableProperty.Create(
+            nameof(LockChildrenGestures),
             typeof(LockTouch),
             typeof(SkiaControl),
             LockTouch.Disabled);
@@ -985,6 +965,7 @@ namespace DrawnUi.Maui.Draw
 
                 return result;
             }
+
             return null;
         }
 
@@ -993,7 +974,7 @@ namespace DrawnUi.Maui.Draw
         {
             bool inside = false;
             if (child.Control != null && !child.Control.IsDisposing && !child.Control.IsDisposed &&
-            !child.Control.InputTransparent && child.Control.CanDraw)
+                !child.Control.InputTransparent && child.Control.CanDraw)
             {
                 var transformed = child.Control.ApplyTransforms(child.HitRect);
                 inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
@@ -1004,7 +985,8 @@ namespace DrawnUi.Maui.Draw
 
         //          
         // SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed
-        public static readonly BindableProperty CommandChildTappedProperty = BindableProperty.Create(nameof(CommandChildTapped), typeof(ICommand),
+        public static readonly BindableProperty CommandChildTappedProperty = BindableProperty.Create(
+            nameof(CommandChildTapped), typeof(ICommand),
             typeof(SkiaControl),
             null);
 
@@ -1018,8 +1000,8 @@ namespace DrawnUi.Maui.Draw
         }
 
         public virtual ISkiaGestureListener ProcessGestures(
-                  SkiaGesturesParameters args,
-                  GestureEventProcessingInfo apply)
+            SkiaGesturesParameters args,
+            GestureEventProcessingInfo apply)
         {
             if (IsDisposed || IsDisposing)
                 return null;
@@ -1051,7 +1033,8 @@ namespace DrawnUi.Maui.Draw
             if (UsesRenderingTree && RenderTree != null)
             {
                 var thisOffset = TranslateInputCoords(apply.childOffset);
-                var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X, args.Event.Location.Y + thisOffset.Y);
+                var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X,
+                    args.Event.Location.Y + thisOffset.Y);
 
                 var hadInputConsumed = consumed;
 
@@ -1060,7 +1043,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     var asSpan = CollectionsMarshal.AsSpan(RenderTree);
                     for (int i = asSpan.Length - 1; i >= 0; i--)
-                    //for (int i = 0; i < RenderTree.Length; i++)
+                        //for (int i = 0; i < RenderTree.Length; i++)
                     {
                         var child = asSpan[i];
 
@@ -1082,6 +1065,7 @@ namespace DrawnUi.Maui.Draw
                                 {
                                     CommandChildTapped.Execute(child);
                                 }
+
                                 //Trace.WriteLine($"[HIT] for cell {i} at Y {y:0.0}");
                                 if (manageChildFocus && listener == Superview.FocusedChild)
                                 {
@@ -1094,9 +1078,9 @@ namespace DrawnUi.Maui.Draw
                                 {
                                     var c = effect.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
-                                        thisOffset,
-                                        childOffset,
-                                        apply.alreadyConsumed));
+                                            thisOffset,
+                                            childOffset,
+                                            apply.alreadyConsumed));
                                     if (c != null)
                                     {
                                         consumed = effect;
@@ -1106,9 +1090,9 @@ namespace DrawnUi.Maui.Draw
                                 {
                                     var c = listener.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
-                                        thisOffset,
-                                        childOffset,
-                                        apply.alreadyConsumed));
+                                            thisOffset,
+                                            childOffset,
+                                            apply.alreadyConsumed));
                                     if (c != null)
                                     {
                                         consumed = c;
@@ -1121,9 +1105,8 @@ namespace DrawnUi.Maui.Draw
                                 }
                             }
                         }
-
                     }
-                }  //end
+                } //end
 
 
                 if (manageChildFocus)
@@ -1138,7 +1121,6 @@ namespace DrawnUi.Maui.Draw
             {
                 //lock (LockIterateListeners)
                 {
-
                     try
                     {
                         if (CheckChildrenGesturesLocked(args.Type))
@@ -1146,10 +1128,12 @@ namespace DrawnUi.Maui.Draw
 
                         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
-                        if (consumed == null || args.Type == TouchActionResult.Up)// !GestureListeners.Contains(consumed))
+                        if (consumed == null ||
+                            args.Type == TouchActionResult.Up) // !GestureListeners.Contains(consumed))
                             foreach (var listener in GestureListeners.GetListeners())
                             {
-                                if (listener==null || !listener.CanDraw || listener.InputTransparent || listener.GestureListenerRegistrationTime == null)
+                                if (listener == null || !listener.CanDraw || listener.InputTransparent ||
+                                    listener.GestureListenerRegistrationTime == null)
                                     continue;
 
                                 if (listener == Superview.FocusedChild)
@@ -1161,7 +1145,8 @@ namespace DrawnUi.Maui.Draw
                                 {
                                     if (listener is SkiaControl c)
                                     {
-                                        Debug.WriteLine($"[BASE] for child {forChild} {c.Tag} at {point.X:0},{point.Y:0} -> {c.HitBoxAuto} ");
+                                        Debug.WriteLine(
+                                            $"[BASE] for child {forChild} {c.Tag} at {point.X:0},{point.Y:0} -> {c.HitBoxAuto} ");
                                     }
                                 }
 
@@ -1171,16 +1156,18 @@ namespace DrawnUi.Maui.Draw
                                     {
                                         CommandChildTapped.Execute(listener);
                                     }
+
                                     if (manageChildFocus && listener == Superview.FocusedChild)
                                     {
                                         manageChildFocus = false;
                                     }
+
                                     //Log($"[OnGestureEvent] sent {args.Action} to {listener.Tag}");
                                     consumed = listener.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
-                                        TranslateInputCoords(apply.childOffset, true),
-                                        TranslateInputCoords(apply.childOffsetDirect, false),
-                                        wasConsumed));
+                                            TranslateInputCoords(apply.childOffset, true),
+                                            TranslateInputCoords(apply.childOffsetDirect, false),
+                                            wasConsumed));
 
                                     if (consumed != null)
                                     {
@@ -1199,14 +1186,11 @@ namespace DrawnUi.Maui.Draw
 
                         if (wasConsumed != null)
                             consumed = wasConsumed;
-
                     }
                     catch (Exception e)
                     {
                         Super.Log(e);
                     }
-
-
                 }
             }
 
@@ -1222,7 +1206,7 @@ namespace DrawnUi.Maui.Draw
 
         public void LockUpdate(bool value)
         {
-            bool fire = UpdateLocks>0 && !value;
+            bool fire = UpdateLocks > 0 && !value;
             if (value)
             {
                 UpdateLocks++;
@@ -1234,6 +1218,7 @@ namespace DrawnUi.Maui.Draw
                     UpdateLocks--;
                 }
             }
+
             if (fire && _neededUpdate)
             {
                 UpdateInternal();
@@ -1271,12 +1256,8 @@ namespace DrawnUi.Maui.Draw
 
         public Element NativeParent
         {
-            get
-            {
-                return base.Parent;
-            }
+            get { return base.Parent; }
         }
-
 
         public static readonly BindableProperty ParentProperty = BindableProperty.Create(
             nameof(Parent),
@@ -1294,15 +1275,14 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(ParentProperty, value); }
         }
 
-
         #region View
 
-
-        public static readonly BindableProperty VerticalOptionsProperty = BindableProperty.Create(nameof(VerticalOptions),
-        typeof(LayoutOptions),
-        typeof(SkiaControl),
-        LayoutOptions.Start,
-        propertyChanged: NeedInvalidateMeasure);
+        public static readonly BindableProperty VerticalOptionsProperty = BindableProperty.Create(
+            nameof(VerticalOptions),
+            typeof(LayoutOptions),
+            typeof(SkiaControl),
+            LayoutOptions.Start,
+            propertyChanged: NeedInvalidateMeasure);
 
         public LayoutOptions VerticalOptions
         {
@@ -1310,7 +1290,8 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(VerticalOptionsProperty, value); }
         }
 
-        public static readonly BindableProperty HorizontalOptionsProperty = BindableProperty.Create(nameof(HorizontalOptions),
+        public static readonly BindableProperty HorizontalOptionsProperty = BindableProperty.Create(
+            nameof(HorizontalOptions),
             typeof(LayoutOptions),
             typeof(SkiaControl),
             LayoutOptions.Start,
@@ -1376,6 +1357,7 @@ namespace DrawnUi.Maui.Draw
                 }
                 //DestroyRenderingObject();?
             }
+
             // need to this to:
             // disable child gesture listeners
             // pause hidden animations
@@ -1434,6 +1416,7 @@ namespace DrawnUi.Maui.Draw
             typeof(SkiaControl),
             false,
             propertyChanged: NeedDraw);
+
         public bool IsGhost
         {
             get { return (bool)GetValue(IsGhostProperty); }
@@ -1441,24 +1424,15 @@ namespace DrawnUi.Maui.Draw
         }
 
         public static readonly BindableProperty IgnoreChildrenInvalidationsProperty
-        = BindableProperty.Create(nameof(IgnoreChildrenInvalidations),
-        typeof(bool), typeof(SkiaControl),
-        false);
+            = BindableProperty.Create(nameof(IgnoreChildrenInvalidations),
+                typeof(bool), typeof(SkiaControl),
+                false);
 
         public bool IgnoreChildrenInvalidations
         {
-            get
-            {
-                return (bool)GetValue(IgnoreChildrenInvalidationsProperty);
-            }
-            set
-            {
-                SetValue(IgnoreChildrenInvalidationsProperty, value);
-            }
+            get { return (bool)GetValue(IgnoreChildrenInvalidationsProperty); }
+            set { SetValue(IgnoreChildrenInvalidationsProperty, value); }
         }
-
-
-
 
         #region FillGradient
 
@@ -1475,6 +1449,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     gradient.BindingContext = control.BindingContext;
                 }
+
                 control.Update();
             }
         }
@@ -1487,16 +1462,10 @@ namespace DrawnUi.Maui.Draw
 
         public bool HasFillGradient
         {
-            get
-            {
-                return this.FillGradient != null && this.FillGradient.Type != GradientType.None;
-            }
+            get { return this.FillGradient != null && this.FillGradient.Type != GradientType.None; }
         }
 
-
         #endregion
-
-
 
         public virtual SKSize GetSizeRequest(float widthConstraint, float heightConstraint, bool insideLayout)
         {
@@ -1566,14 +1535,11 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(ViewportWidthLimitProperty, value); }
         }
 
-
         private double _height = -1;
+
         public new double Height
         {
-            get
-            {
-                return _height;
-            }
+            get { return _height; }
             set
             {
                 if (_height != value)
@@ -1585,12 +1551,10 @@ namespace DrawnUi.Maui.Draw
         }
 
         private double _width = -1;
+
         public new double Width
         {
-            get
-            {
-                return _width;
-            }
+            get { return _width; }
             set
             {
                 if (_width != value)
@@ -1606,10 +1570,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public new double Scale
         {
-            get
-            {
-                return Math.Min(ScaleX, ScaleY);
-            }
+            get { return Math.Min(ScaleX, ScaleY); }
             set
             {
                 ScaleX = value;
@@ -1617,23 +1578,23 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         public static readonly BindableProperty TagProperty = BindableProperty.Create(nameof(Tag),
-        typeof(string),
-        typeof(SkiaControl),
-        string.Empty,
-        propertyChanged: NeedDraw);
+            typeof(string),
+            typeof(SkiaControl),
+            string.Empty,
+            propertyChanged: NeedDraw);
+
         public string Tag
         {
             get { return (string)GetValue(TagProperty); }
             set { SetValue(TagProperty, value); }
         }
 
-
         public static readonly BindableProperty LockRatioProperty = BindableProperty.Create(nameof(LockRatio),
             typeof(double), typeof(SkiaControl),
             0.0,
             propertyChanged: NeedInvalidateMeasure);
+
         /// <summary>
         /// Locks the final size to the min (-1.0 -> 0.0) or max (0.0 -> 1.0) of the provided size.
         /// </summary>
@@ -1737,6 +1698,7 @@ namespace DrawnUi.Maui.Draw
             typeof(SKBlendMode), typeof(SkiaControl),
             SKBlendMode.SrcOver,
             propertyChanged: NeedDraw);
+
         public SKBlendMode FillBlendMode
         {
             get { return (SKBlendMode)GetValue(FillBlendModeProperty); }
@@ -1792,7 +1754,6 @@ namespace DrawnUi.Maui.Draw
         //	set { SetValue(HeightProperty, value); }
         //}
 
-
         //public static readonly BindableProperty WidthProperty = BindableProperty.Create(nameof(Width),
         //	typeof(double), typeof(SkiaControl),
         //	-1.0);
@@ -1801,8 +1762,6 @@ namespace DrawnUi.Maui.Draw
         //	get { return (double)GetValue(WidthProperty); }
         //	set { SetValue(WidthProperty, value); }
         //}
-
-
         /*
 
         public static readonly BindableProperty OpacityProperty = BindableProperty.Create(nameof(Opacity),
@@ -1816,60 +1775,41 @@ namespace DrawnUi.Maui.Draw
         }
         */
 
-
         public static readonly BindableProperty SkewXProperty
-        = BindableProperty.Create(nameof(SkewX),
-        typeof(float), typeof(SkiaControl),
-        0.0f, propertyChanged: NeedRepaint);
+            = BindableProperty.Create(nameof(SkewX),
+                typeof(float), typeof(SkiaControl),
+                0.0f, propertyChanged: NeedRepaint);
 
         public float SkewX
         {
-            get
-            {
-                return (float)GetValue(SkewXProperty);
-            }
-            set
-            {
-                SetValue(SkewXProperty, value);
-            }
+            get { return (float)GetValue(SkewXProperty); }
+            set { SetValue(SkewXProperty, value); }
         }
 
         public static readonly BindableProperty SkewYProperty
-        = BindableProperty.Create(nameof(SkewY),
-        typeof(float), typeof(SkiaControl),
-        0.0f, propertyChanged: NeedRepaint);
+            = BindableProperty.Create(nameof(SkewY),
+                typeof(float), typeof(SkiaControl),
+                0.0f, propertyChanged: NeedRepaint);
 
         public float SkewY
         {
-            get
-            {
-                return (float)GetValue(SkewYProperty);
-            }
-            set
-            {
-                SetValue(SkewYProperty, value);
-            }
+            get { return (float)GetValue(SkewYProperty); }
+            set { SetValue(SkewYProperty, value); }
         }
-
 
         public static readonly BindableProperty TranslationZProperty
             = BindableProperty.Create(nameof(TranslationZ),
                 typeof(double), typeof(SkiaControl),
                 0.0, propertyChanged: NeedRepaint);
+
         /// <summary>
         /// Gets or sets Z-perspective translation. This is a bindable property.
         /// </summary>
         /// <remarks>Rotation is applied relative to <see cref="AnchorX"/> and <see cref="AnchorY" />.</remarks>
         public double TranslationZ
         {
-            get
-            {
-                return (double)GetValue(TranslationZProperty);
-            }
-            set
-            {
-                SetValue(TranslationZProperty, value);
-            }
+            get { return (double)GetValue(TranslationZProperty); }
+            set { SetValue(TranslationZProperty, value); }
         }
 
         public static readonly BindableProperty RotationZProperty
@@ -1883,14 +1823,8 @@ namespace DrawnUi.Maui.Draw
         /// <remarks>Rotation is applied relative to <see cref="AnchorX"/> and <see cref="AnchorY" />.</remarks>
         public double RotationZ
         {
-            get
-            {
-                return (double)GetValue(RotationZProperty);
-            }
-            set
-            {
-                SetValue(RotationZProperty, value);
-            }
+            get { return (double)GetValue(RotationZProperty); }
+            set { SetValue(RotationZProperty, value); }
         }
 
         //public new static readonly BindableProperty VerticalOptionsProperty = BindableProperty.Create(nameof(VerticalOptions),
@@ -1917,41 +1851,26 @@ namespace DrawnUi.Maui.Draw
         //    set { SetValue(HorizontalOptionsProperty, value); }
         //}
 
-
-
-
         public static readonly BindableProperty Perspective1Property
-        = BindableProperty.Create(nameof(Perspective1),
-        typeof(float), typeof(SkiaControl),
-        0.0f, propertyChanged: NeedRepaint);
+            = BindableProperty.Create(nameof(Perspective1),
+                typeof(float), typeof(SkiaControl),
+                0.0f, propertyChanged: NeedRepaint);
 
         public float Perspective1
         {
-            get
-            {
-                return (float)GetValue(Perspective1Property);
-            }
-            set
-            {
-                SetValue(Perspective1Property, value);
-            }
+            get { return (float)GetValue(Perspective1Property); }
+            set { SetValue(Perspective1Property, value); }
         }
 
         public static readonly BindableProperty Perspective2Property
-        = BindableProperty.Create(nameof(Perspective2),
-        typeof(float), typeof(SkiaControl),
-          0.0f, propertyChanged: NeedRepaint);
+            = BindableProperty.Create(nameof(Perspective2),
+                typeof(float), typeof(SkiaControl),
+                0.0f, propertyChanged: NeedRepaint);
 
         public float Perspective2
         {
-            get
-            {
-                return (float)GetValue(Perspective2Property);
-            }
-            set
-            {
-                SetValue(Perspective2Property, value);
-            }
+            get { return (float)GetValue(Perspective2Property); }
+            set { SetValue(Perspective2Property, value); }
         }
 
         //public static readonly BindableProperty TransformPivotPointXProperty
@@ -1987,7 +1906,6 @@ namespace DrawnUi.Maui.Draw
         //    }
         //}
 
-
         private static void OnControlClipFromChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is SkiaControl control)
@@ -2019,19 +1937,22 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(AdjustClippingProperty, value); }
         }
 
-
-        public static readonly BindableProperty PaddingProperty = BindableProperty.Create(nameof(Padding), typeof(Thickness),
+        public static readonly BindableProperty PaddingProperty = BindableProperty.Create(nameof(Padding),
+            typeof(Thickness),
             typeof(SkiaControl), Thickness.Zero,
             propertyChanged: NeedInvalidateMeasure);
+
         public Thickness Padding
         {
             get { return (Thickness)GetValue(PaddingProperty); }
             set { SetValue(PaddingProperty, value); }
         }
 
-        public static readonly BindableProperty MarginProperty = BindableProperty.Create(nameof(Margin), typeof(Thickness),
+        public static readonly BindableProperty MarginProperty = BindableProperty.Create(nameof(Margin),
+            typeof(Thickness),
             typeof(SkiaControl), Thickness.Zero,
             propertyChanged: NeedInvalidateMeasure);
+
         public Thickness Margin
         {
             get { return (Thickness)GetValue(MarginProperty); }
@@ -2100,10 +2021,12 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public static readonly BindableProperty SpacingProperty = BindableProperty.Create(nameof(Spacing), typeof(double),
+        public static readonly BindableProperty SpacingProperty = BindableProperty.Create(nameof(Spacing),
+            typeof(double),
             typeof(SkiaControl),
             8.0,
             propertyChanged: NeedInvalidateMeasure);
+
         public double Spacing
         {
             get { return (double)GetValue(SpacingProperty); }
@@ -2138,6 +2061,7 @@ namespace DrawnUi.Maui.Draw
             = BindableProperty.Create(nameof(ExpandCacheRecordingArea),
                 typeof(double), typeof(SkiaControl),
                 0.0, propertyChanged: NeedDraw);
+
         /// <summary>
         /// Normally cache is recorded inside DrawingRect, but you might want to exapnd this to include shadows around, for example.
         /// Specify number of points by which you want to expand the recording area.
@@ -2146,14 +2070,8 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public double ExpandCacheRecordingArea
         {
-            get
-            {
-                return (double)GetValue(ExpandCacheRecordingAreaProperty);
-            }
-            set
-            {
-                SetValue(ExpandCacheRecordingAreaProperty, value);
-            }
+            get { return (double)GetValue(ExpandCacheRecordingAreaProperty); }
+            set { SetValue(ExpandCacheRecordingAreaProperty, value); }
         }
 
         /*
@@ -2180,9 +2098,11 @@ namespace DrawnUi.Maui.Draw
         }
         */
 
-        public static readonly BindableProperty IsClippedToBoundsProperty = BindableProperty.Create(nameof(IsClippedToBounds),
+        public static readonly BindableProperty IsClippedToBoundsProperty = BindableProperty.Create(
+            nameof(IsClippedToBounds),
             typeof(bool), typeof(SkiaControl), false,
             propertyChanged: NeedInvalidateMeasure);
+
         /// <summary>
         /// This cuts shadows etc. You might want to enable it for some cases as it speeds up the rendering, it is False by default
         /// </summary>
@@ -2195,6 +2115,7 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty ClipEffectsProperty = BindableProperty.Create(nameof(ClipEffects),
             typeof(bool), typeof(SkiaControl), true,
             propertyChanged: NeedInvalidateMeasure);
+
         /// <summary>
         /// This cuts shadows etc
         /// </summary>
@@ -2204,7 +2125,8 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(ClipEffectsProperty, value); }
         }
 
-        public static readonly BindableProperty BindableTriggerProperty = BindableProperty.Create(nameof(BindableTrigger),
+        public static readonly BindableProperty BindableTriggerProperty = BindableProperty.Create(
+            nameof(BindableTrigger),
             typeof(object), typeof(SkiaControl),
             null,
             propertyChanged: TriggerPropertyChanged);
@@ -2219,7 +2141,6 @@ namespace DrawnUi.Maui.Draw
 
         public virtual void OnTriggerChanged()
         {
-
         }
 
         public object BindableTrigger
@@ -2232,6 +2153,7 @@ namespace DrawnUi.Maui.Draw
             typeof(double), typeof(SkiaControl),
             0.0,
             propertyChanged: NeedDraw);
+
         public double Value1
         {
             get { return (double)GetValue(Value1Property); }
@@ -2242,6 +2164,7 @@ namespace DrawnUi.Maui.Draw
             typeof(double), typeof(SkiaControl),
             0.0,
             propertyChanged: NeedDraw);
+
         public double Value2
         {
             get { return (double)GetValue(Value2Property); }
@@ -2252,6 +2175,7 @@ namespace DrawnUi.Maui.Draw
             typeof(double), typeof(SkiaControl),
             0.0,
             propertyChanged: NeedDraw);
+
         public double Value3
         {
             get { return (double)GetValue(Value3Property); }
@@ -2265,12 +2189,12 @@ namespace DrawnUi.Maui.Draw
             typeof(double), typeof(SkiaControl),
             0.0,
             propertyChanged: NeedDraw);
+
         public double Value4
         {
             get { return (double)GetValue(Value4Property); }
             set { SetValue(Value4Property, value); }
         }
-
 
         public static readonly BindableProperty RenderingScaleProperty = BindableProperty.Create(nameof(RenderingScale),
             typeof(float), typeof(SkiaControl),
@@ -2297,19 +2221,16 @@ namespace DrawnUi.Maui.Draw
                 {
                     Super.Log(e); //catching Nullable object must have a value, is this because of NET8?
                 }
+
                 if (value <= 0)
                 {
                     return GetDensity();
                 }
+
                 return value;
             }
-            set
-            {
-                SetValue(RenderingScaleProperty, value);
-            }
+            set { SetValue(RenderingScaleProperty, value); }
         }
-
-
 
         //public double RenderingScaleSafe
         //{
@@ -2328,10 +2249,7 @@ namespace DrawnUi.Maui.Draw
         //    }
         //}
 
-
-
         #endregion
-
 
         public SKRect RenderedAtDestination { get; set; }
 
@@ -2340,8 +2258,8 @@ namespace DrawnUi.Maui.Draw
             InvalidateMeasure();
         }
 
-
         private Style _currentStyle;
+
         private void SubscribeToStyleProperties()
         {
             UnsubscribeFromOldStyle();
@@ -2350,7 +2268,6 @@ namespace DrawnUi.Maui.Draw
 
             if (_currentStyle != null)
             {
-
             }
         }
 
@@ -2358,7 +2275,6 @@ namespace DrawnUi.Maui.Draw
         {
             if (_currentStyle != null)
             {
-
             }
         }
 
@@ -2366,7 +2282,6 @@ namespace DrawnUi.Maui.Draw
         {
             this.SetValue(property, value);
         }
-
 
         public Guid Uid { get; set; } = Guid.NewGuid();
 
@@ -2376,6 +2291,7 @@ namespace DrawnUi.Maui.Draw
         {
             return (float)((value * Math.PI) / 180);
         }
+
         public static float RadiansToDegrees(float value)
         {
             return (float)(value * 180 / Math.PI);
@@ -2385,6 +2301,7 @@ namespace DrawnUi.Maui.Draw
         {
             return ((value * Math.PI) / 180);
         }
+
         public static double RadiansToDegrees(double value)
         {
             return value * 180 / Math.PI;
@@ -2405,8 +2322,9 @@ namespace DrawnUi.Maui.Draw
             (double x, double y) PointOfAngle(double a)
             {
                 return (x: Math.Cos(a), y: Math.Sin(a));
-            };
+            }
 
+            ;
 
 
             var eps = Math.Pow(2, -52);
@@ -2430,7 +2348,6 @@ namespace DrawnUi.Maui.Draw
         }
 
         public static TimeSpan DisposalDelay = TimeSpan.FromSeconds(3.5);
-
         public ObjectAliveType IsAlive { get; set; }
 
         public void DisposeObject()
@@ -2490,13 +2407,10 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void OnSizeChanged()
         {
-
         }
 
         public Action<SKPath, SKRect> Clipping { get; set; }
-
         public SkiaControl ClippedBy { get; set; }
-
 
         /// <summary>
         /// Optional scene hero control identifier
@@ -2519,7 +2433,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         /// <returns></returns>
         public ScaledSize DefineAvailableSize(SKRect destination,
-            float widthRequest, float heightRequest, float scale, bool useModifiers=true)
+            float widthRequest, float heightRequest, float scale, bool useModifiers = true)
         {
             var rectWidth = destination.Width;
             var wants = widthRequest * scale;
@@ -2537,6 +2451,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     rectWidth *= (float)HorizontalFillRatio;
                 }
+
                 if (VerticalFillRatio != 1)
                 {
                     rectHeight *= (float)VerticalFillRatio;
@@ -2590,7 +2505,6 @@ namespace DrawnUi.Maui.Draw
             // layoutHorizontal
             switch (layoutHorizontal.Alignment)
             {
-
                 case LayoutAlignment.Center when float.IsFinite(availableWidth) && availableWidth > useMaxWidth:
                 {
                     left += (float)Math.Round(availableWidth / 2.0f - useMaxWidth / 2.0f);
@@ -2637,7 +2551,6 @@ namespace DrawnUi.Maui.Draw
             // VerticalOptions
             switch (layoutVertical.Alignment)
             {
-
                 case LayoutAlignment.Center when float.IsFinite(availableHeight) && availableHeight > useMaxHeight:
                 {
                     top += (float)Math.Round(availableHeight / 2.0f - useMaxHeight / 2.0f);
@@ -2677,8 +2590,8 @@ namespace DrawnUi.Maui.Draw
                     {
                         bottom = destination.Bottom;
                     }
-                    break;
 
+                    break;
             }
 
             var layout = new SKRect(left, top, right, bottom);
@@ -2689,6 +2602,7 @@ namespace DrawnUi.Maui.Draw
             {
                 offsetY = (float)VerticalPositionOffsetRatio * layout.Height;
             }
+
             if (float.IsFinite(availableWidth))
             {
                 offsetX = (float)HorizontalPositionOffsetRatio * layout.Width;
@@ -2700,12 +2614,10 @@ namespace DrawnUi.Maui.Draw
         }
 
         private ScaledSize _contentSize = new();
+
         public ScaledSize ContentSize
         {
-            get
-            {
-                return _contentSize;
-            }
+            get { return _contentSize; }
             protected set
             {
                 if (_contentSize != value)
@@ -2716,12 +2628,10 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         public bool WasMeasured { get; protected set; }
 
         protected virtual void OnDrawingSizeChanged()
         {
-
         }
 
         protected virtual void AdaptCachedLayout(SKRect destination, float scale)
@@ -2740,7 +2650,6 @@ namespace DrawnUi.Maui.Draw
         private SKRect _lastArrangedFor = new();
         private float _lastArrangedWidth;
         private float _lastArrangedHeight;
-
         public float _lastMeasuredForWidth { get; protected set; }
         public float _lastMeasuredForHeight { get; protected set; }
 
@@ -2755,14 +2664,8 @@ namespace DrawnUi.Maui.Draw
         [EditorBrowsable(EditorBrowsableState.Never)]
         public new Rect Bounds
         {
-            get
-            {
-                return DrawingRect.ToMauiRectangle();
-            }
-            private set
-            {
-                throw new NotImplementedException("Use DrawingRect instead.");
-            }
+            get { return DrawingRect.ToMauiRectangle(); }
+            private set { throw new NotImplementedException("Use DrawingRect instead."); }
         }
 
         /// <summary>
@@ -2781,7 +2684,8 @@ namespace DrawnUi.Maui.Draw
             //    hitbox.Offset(offsetCacheX,offsetCacheY);
             //}
 
-            return hitbox.ContainsInclusive(x, y); ;
+            return hitbox.ContainsInclusive(x, y);
+            ;
         }
 
         /// <summary>
@@ -2819,7 +2723,7 @@ namespace DrawnUi.Maui.Draw
 
             return new SKRect(rect.Left + (float)(UseTranslationX * RenderingScale),
                 rect.Top + (float)(UseTranslationY * RenderingScale),
-                    rect.Right + (float)(UseTranslationX * RenderingScale),
+                rect.Right + (float)(UseTranslationX * RenderingScale),
                 rect.Bottom + (float)(UseTranslationY * RenderingScale));
         }
 
@@ -2847,7 +2751,8 @@ namespace DrawnUi.Maui.Draw
         /// <returns></returns>
         public virtual SKPoint TranslateInputCoords(SKPoint childOffset, bool accountForCache = true)
         {
-            var thisOffset = new SKPoint(-(float)(UseTranslationX * RenderingScale), -(float)(UseTranslationY * RenderingScale));
+            var thisOffset = new SKPoint(-(float)(UseTranslationX * RenderingScale),
+                -(float)(UseTranslationY * RenderingScale));
 
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
             //so we must offset the coordinates to match the current drawing rect
@@ -2873,13 +2778,13 @@ namespace DrawnUi.Maui.Draw
                     {
                         thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
                     }
-                    else
-                    if (RenderObjectPrevious != null)
+                    else if (RenderObjectPrevious != null)
                     {
                         thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
                     }
                 }
             }
+
             thisOffset.Offset(childOffset);
 
             //layout is different from real drawing area
@@ -2896,8 +2801,10 @@ namespace DrawnUi.Maui.Draw
             var thisOffset = SKPoint.Empty;
             if (!cacheOnly && useTranlsation)
             {
-                thisOffset = new SKPoint((float)(UseTranslationX * RenderingScale), (float)(UseTranslationY * RenderingScale));
+                thisOffset = new SKPoint((float)(UseTranslationX * RenderingScale),
+                    (float)(UseTranslationY * RenderingScale));
             }
+
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
             //so we must offset the coordinates to match the current drawing rect
             if (!ignoreCache && UsingCacheType != SkiaCacheType.None)
@@ -2906,8 +2813,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     thisOffset.Offset(RenderObject.CalculatePositionOffset(LastDrawnAt.Location));
                 }
-                else
-                if (UsesCacheDoubleBuffering && RenderObjectPrevious != null)
+                else if (UsesCacheDoubleBuffering && RenderObjectPrevious != null)
                 {
                     thisOffset.Offset(RenderObjectPrevious.CalculatePositionOffset(LastDrawnAt.Location));
                 }
@@ -2926,8 +2832,10 @@ namespace DrawnUi.Maui.Draw
             var thisOffset = SKPoint.Empty;
             if (!cacheOnly && useTranlsation)
             {
-                thisOffset = new SKPoint((float)(UseTranslationX * RenderingScale), (float)(UseTranslationY * RenderingScale));
+                thisOffset = new SKPoint((float)(UseTranslationX * RenderingScale),
+                    (float)(UseTranslationY * RenderingScale));
             }
+
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
             //so we must offset the coordinates to match the current drawing rect
             if (!ignoreCache && UsingCacheType != SkiaCacheType.None)
@@ -2936,22 +2844,18 @@ namespace DrawnUi.Maui.Draw
                 {
                     thisOffset.Offset(RenderObject.CalculatePositionOffset(DrawingRect.Location));
                 }
-                else
-                if (UsesCacheDoubleBuffering && RenderObjectPrevious != null)
+                else if (UsesCacheDoubleBuffering && RenderObjectPrevious != null)
                 {
                     thisOffset.Offset(RenderObjectPrevious.CalculatePositionOffset(DrawingRect.Location));
                 }
             }
+
             return thisOffset;
         }
 
         long _layoutChanged = 0;
-
         public SKRect ArrangedDestination { get; protected set; }
-
         private SKSize _lastSize;
-
-
         public event EventHandler LayoutIsReady;
         public event EventHandler Disposing;
 
@@ -2968,11 +2872,7 @@ namespace DrawnUi.Maui.Draw
 
         public bool LayoutReady
         {
-            get
-            {
-                return _layoutReady;
-            }
-
+            get { return _layoutReady; }
             protected set
             {
                 if (_layoutReady != value)
@@ -2986,13 +2886,13 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         bool _layoutReady;
 
         public bool CheckIsGhost()
         {
             return IsGhost || Destination == SKRect.Empty;
         }
-
 
         /// <summary>
         /// Helper on top of `Measure` +`Arrange` for an easy-use
@@ -3014,7 +2914,7 @@ namespace DrawnUi.Maui.Draw
         /// <param name="destinationPixels"></param>
         public void Layout(DrawingContext context, float left, float top, float right, float bottom)
         {
-            Layout(context, new (left, top, right, bottom));
+            Layout(context, new(left, top, right, bottom));
         }
 
         /// <summary>
@@ -3027,7 +2927,6 @@ namespace DrawnUi.Maui.Draw
         {
             Layout(context, new(left, top, right, bottom));
         }
-
 
         /// <summary>
         ///  destination in PIXELS, requests in UNITS. resulting Destination prop will be filed in PIXELS.
@@ -3045,8 +2944,12 @@ namespace DrawnUi.Maui.Draw
                 return;
             }
 
-            var width = (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0) ? -1 : MeasuredSize.Units.Width;
-            var height = (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0) ? -1 : MeasuredSize.Units.Height;
+            var width = (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
+                ? -1
+                : MeasuredSize.Units.Width;
+            var height = (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
+                ? -1
+                : MeasuredSize.Units.Height;
 
             PostArrange(destination, width, height, scale);
         }
@@ -3179,10 +3082,12 @@ namespace DrawnUi.Maui.Draw
 
                     if (ignoreFill)
                     {
-                        if (measuredWidth > maxWidth && (child.HorizontalOptions.Alignment != LayoutAlignment.Fill || child.WidthRequest >= 0))
+                        if (measuredWidth > maxWidth && (child.HorizontalOptions.Alignment != LayoutAlignment.Fill ||
+                                                         child.WidthRequest >= 0))
                             maxWidth = measuredWidth;
 
-                        if (measuredHeight > maxHeight && (child.VerticalOptions.Alignment != LayoutAlignment.Fill || child.HeightRequest >= 0))
+                        if (measuredHeight > maxHeight && (child.VerticalOptions.Alignment != LayoutAlignment.Fill ||
+                                                           child.HeightRequest >= 0))
                             maxHeight = measuredHeight;
                     }
                     else
@@ -3193,7 +3098,6 @@ namespace DrawnUi.Maui.Draw
                         if (measuredHeight > maxHeight)
                             maxHeight = measuredHeight;
                     }
-
                 }
             }
 
@@ -3210,8 +3114,9 @@ namespace DrawnUi.Maui.Draw
                 if (autosize &&
                     (child.HorizontalOptions.Alignment == LayoutAlignment.Fill
                      && child.VerticalOptions.Alignment == LayoutAlignment.Fill)
-                    || (!autosize && (child.HorizontalOptions.Alignment == LayoutAlignment.Fill || child.VerticalOptions.Alignment == LayoutAlignment.Fill))
-                    )
+                    || (!autosize && (child.HorizontalOptions.Alignment == LayoutAlignment.Fill ||
+                                      child.VerticalOptions.Alignment == LayoutAlignment.Fill))
+                   )
                 {
                     fill.Add(child); //todo not very correct for the case just 1 dimension is Fill and other one may by bigger that other children!
                     continue;
@@ -3241,13 +3146,16 @@ namespace DrawnUi.Maui.Draw
                     {
                         provideWidth = maxWidth;
                     }
+
                     var provideHeight = rectForChildrenPixels.Height;
                     if (NeedAutoHeight && maxHeight >= 0)
                     {
                         provideHeight = maxHeight;
                     }
+
                     measured = MeasureChild(child, provideWidth, provideHeight, scale);
-                    if (maxHeight <= 0 || maxWidth <= 0 || float.IsInfinity(provideHeight) || float.IsInfinity(provideWidth))
+                    if (maxHeight <= 0 || maxWidth <= 0 || float.IsInfinity(provideHeight) ||
+                        float.IsInfinity(provideWidth))
                     {
                         PostProcessMeasuredChild(measured, child, false);
                     }
@@ -3257,11 +3165,14 @@ namespace DrawnUi.Maui.Draw
                 heightCut |= measured.HeightCut;
             }
 
-            if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0 && float.IsFinite(rectForChildrenPixels.Width))
+            if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0 &&
+                float.IsFinite(rectForChildrenPixels.Width))
             {
                 maxWidth = rectForChildrenPixels.Width;
             }
-            if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0 && float.IsFinite(rectForChildrenPixels.Height))
+
+            if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0 &&
+                float.IsFinite(rectForChildrenPixels.Height))
             {
                 maxHeight = rectForChildrenPixels.Height;
             }
@@ -3303,6 +3214,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         protected bool BindingContextWasSet { get; set; }
+
         /// <summary>
         /// First Maui will apply bindings to your controls, then it would call OnBindingContextChanged, so beware on not to break bindings.
         /// </summary>
@@ -3323,7 +3235,6 @@ namespace DrawnUi.Maui.Draw
 
                 //will apply to maui prps like styles, triggers etc
                 base.OnBindingContextChanged();
-
             }
             catch (Exception e)
             {
@@ -3396,7 +3307,6 @@ namespace DrawnUi.Maui.Draw
             {
                 IsMeasuring = false;
             }
-
         }
 
         protected virtual ScaledSize SetMeasuredAsEmpty(float scale)
@@ -3407,8 +3317,12 @@ namespace DrawnUi.Maui.Draw
         public virtual ScaledSize SetMeasuredAdaptToContentSize(MeasuringConstraints constraints,
             float scale)
         {
-            var contentWidth = NeedAutoWidth ? ContentSize.Pixels.Width : SmartMax(ContentSize.Pixels.Width, constraints.Request.Width);
-            var contentHeight = NeedAutoHeight ? ContentSize.Pixels.Height : SmartMax(ContentSize.Pixels.Height, constraints.Request.Height);
+            var contentWidth = NeedAutoWidth
+                ? ContentSize.Pixels.Width
+                : SmartMax(ContentSize.Pixels.Width, constraints.Request.Width);
+            var contentHeight = NeedAutoHeight
+                ? ContentSize.Pixels.Height
+                : SmartMax(ContentSize.Pixels.Height, constraints.Request.Height);
 
             var width = AdaptWidthConstraintToContentRequest(constraints, contentWidth, HorizontalOptions.Expands);
             var height = AdaptHeightConstraintToContentRequest(constraints, contentHeight, VerticalOptions.Expands);
@@ -3427,8 +3341,6 @@ namespace DrawnUi.Maui.Draw
             return SetMeasured(size.Width, size.Height, widthCut, heighCut, scale);
         }
 
-
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static SKSize GetSizeInPoints(SKSize size, float scale)
         {
@@ -3438,10 +3350,12 @@ namespace DrawnUi.Maui.Draw
             {
                 width = size.Width / scale;
             }
+
             if (double.IsFinite(size.Height) && size.Height >= 0)
             {
                 height = size.Height / scale;
             }
+
             return new SKSize(width, height);
         }
 
@@ -3453,7 +3367,8 @@ namespace DrawnUi.Maui.Draw
         /// <param name="heightConstraint"></param>
         /// <param name="scale"></param>
         /// <returns></returns>
-        protected virtual MeasureRequest CreateMeasureRequest(float widthConstraint, float heightConstraint, float scale)
+        protected virtual MeasureRequest CreateMeasureRequest(float widthConstraint, float heightConstraint,
+            float scale)
         {
             RenderingScale = scale;
 
@@ -3473,12 +3388,14 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
             }
+
             if (float.IsFinite(heightConstraint) && heightConstraint > 0)
             {
                 if (VerticalFillRatio != 1)
                 {
                     heightConstraint *= (float)VerticalFillRatio;
                 }
+
                 if (MaximumHeightRequest >= 0)
                 {
                     var maxHeight = (float)(MaximumHeightRequest * scale);
@@ -3496,8 +3413,7 @@ namespace DrawnUi.Maui.Draw
                 heightConstraint = size;
                 widthConstraint = size;
             }
-            else
-            if (LockRatio > 0)
+            else if (LockRatio > 0)
             {
                 var size = Math.Max(heightConstraint, widthConstraint);
                 size *= (float)LockRatio;
@@ -3518,10 +3434,7 @@ namespace DrawnUi.Maui.Draw
                 _lastMeasuredForScale = scale;
             }
 
-            return new MeasureRequest(widthConstraint, heightConstraint, scale)
-            {
-                IsSame = isSame
-            };
+            return new MeasureRequest(widthConstraint, heightConstraint, scale) { IsSame = isSame };
         }
 
         public SKRect GetMeasuringRectForChildren(float widthConstraint, float heightConstraint, double scale)
@@ -3562,12 +3475,11 @@ namespace DrawnUi.Maui.Draw
                 var maxHeight = 0.0f;
                 var maxWidth = 0.0f;
 
-                var children = Views;//GetOrderedSubviews();
+                var children = Views; //GetOrderedSubviews();
                 return MeasureContent(children, rectForChildrenPixels, scale);
             }
             //empty container
-            else
-            if (NeedAutoHeight || NeedAutoWidth)
+            else if (NeedAutoHeight || NeedAutoWidth)
             {
                 return ScaledSize.CreateEmpty(scale);
                 //return SetMeasured(0, 0, scale);
@@ -3575,7 +3487,6 @@ namespace DrawnUi.Maui.Draw
 
             return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
         }
-
 
         public static SKRect ContractPixelsRect(SKRect rect, float scale, Thickness amount)
         {
@@ -3586,7 +3497,6 @@ namespace DrawnUi.Maui.Draw
                 rect.Bottom - (float)Math.Round((float)amount.Bottom * scale)
             );
         }
-
 
         public SKRect GetDrawingRectForChildren(SKRect destination, double scale)
         {
@@ -3603,18 +3513,16 @@ namespace DrawnUi.Maui.Draw
 
             SKRect rectForChild = new SKRect(
                 (float)Math.Round(destination.Left + (float)constraintLeft),
-                    (float)Math.Round(destination.Top + (float)constraintTop),
-                        (float)Math.Round(destination.Right - (float)constraintRight),
-                            (float)Math.Round(destination.Bottom - (float)constraintBottom)
-                );
+                (float)Math.Round(destination.Top + (float)constraintTop),
+                (float)Math.Round(destination.Right - (float)constraintRight),
+                (float)Math.Round(destination.Bottom - (float)constraintBottom)
+            );
 
             return rectForChild;
         }
 
         public virtual SKRect GetDrawingRectWithMargins(SKRect destination, double scale)
         {
-
-
             var constraintLeft = (float)Math.Round(Margins.Left * scale);
             var constraintRight = (float)Math.Round(Margins.Right * scale);
             var constraintTop = (float)Math.Round(Margins.Top * scale);
@@ -3654,9 +3562,7 @@ namespace DrawnUi.Maui.Draw
             return rectForChild;
         }
 
-
         protected object lockMeasured = new();
-
         bool debugMe;
 
         /// <summary>
@@ -3731,16 +3637,11 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public event EventHandler<ScaledSize> Measured;
 
-
         public ScaledSize MeasuredSize { get; set; } = new();
-
 
         public virtual bool NeedAutoSize
         {
-            get
-            {
-                return NeedAutoHeight || NeedAutoWidth;
-            }
+            get { return NeedAutoHeight || NeedAutoWidth; }
         }
 
         public bool NeedAutoHeight
@@ -3750,6 +3651,7 @@ namespace DrawnUi.Maui.Draw
                 return LockRatio == 0 && VerticalOptions.Alignment != LayoutAlignment.Fill && SizeRequest.Height < 0;
             }
         }
+
         public bool NeedAutoWidth
         {
             get
@@ -3758,15 +3660,11 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         private bool _isDisposed;
 
         public bool IsDisposed
         {
-            get
-            {
-                return _isDisposed;
-            }
+            get { return _isDisposed; }
             protected set
             {
                 if (value != _isDisposed)
@@ -3781,10 +3679,7 @@ namespace DrawnUi.Maui.Draw
 
         public bool IsDisposing
         {
-            get
-            {
-                return _isDisposing;
-            }
+            get { return _isDisposing; }
             protected set
             {
                 if (value != _isDisposing)
@@ -3794,8 +3689,6 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
-
-
 
         /// <summary>
         /// Developer can use this to mark control as to be disposed by parent custom controls
@@ -3820,12 +3713,12 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
             }
+
             return found;
         }
 
         public TChild FindView<TChild>() where TChild : SkiaControl
         {
-
             var found = Views.FirstOrDefault(x => x is TChild) as TChild;
             if (found == null)
             {
@@ -3839,6 +3732,7 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
             }
+
             return found;
         }
 
@@ -3860,6 +3754,7 @@ namespace DrawnUi.Maui.Draw
                     }
                 }
             }
+
             return found;
         }
 
@@ -3880,7 +3775,6 @@ namespace DrawnUi.Maui.Draw
             //for the double buffering case it's safer to delay
             Tasks.StartDelayed(DisposalDelay, () =>
             {
-
                 RenderObject = null;
 
                 PaintSystem?.Dispose();
@@ -3909,14 +3803,16 @@ namespace DrawnUi.Maui.Draw
 
                 CustomizeLayerPaint = null;
 
-                RenderObjectPreparing?.Dispose();
+                var kill2 = RenderObjectPreparing;
                 RenderObjectPreparing = null;
+                kill2?.Dispose();
 
                 clipPreviousCachePath?.Dispose();
                 PaintErase?.Dispose();
 
-                RenderObjectPrevious?.Dispose();
+                var kill3 = RenderObjectPrevious;
                 RenderObjectPrevious = null;
+                kill3?.Dispose();
 
                 _paintWithOpacity?.Dispose();
                 _paintWithEffects?.Dispose();
@@ -3933,12 +3829,7 @@ namespace DrawnUi.Maui.Draw
             GC.SuppressFinalize(this);
         }
 
-        protected SKPaint PaintErase = new()
-        {
-            Color = SKColors.Transparent,
-            BlendMode = SKBlendMode.Src
-        };
-
+        protected SKPaint PaintErase = new() { Color = SKColors.Transparent, BlendMode = SKBlendMode.Src };
 
         public static long GetNanoseconds()
         {
@@ -3952,10 +3843,8 @@ namespace DrawnUi.Maui.Draw
             //return (long)nano;
         }
 
-
         public virtual void OnBeforeMeasure()
         {
-
         }
 
         public virtual void OptionalOnBeforeDrawing()
@@ -3974,17 +3863,17 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public bool IsOverlay { get; set; }
 
-
         /// <summary>
         /// Executed after the rendering
         /// </summary>
         public List<IOverlayEffect> PostAnimators { get; } = new(); //to be renamed to post-effects
 
+        public static readonly BindableProperty UpdateWhenReturnedFromBackgroundProperty = BindableProperty.Create(
+            nameof(UpdateWhenReturnedFromBackground),
+            typeof(bool),
+            typeof(SkiaControl),
+            false);
 
-        public static readonly BindableProperty UpdateWhenReturnedFromBackgroundProperty = BindableProperty.Create(nameof(UpdateWhenReturnedFromBackground),
-        typeof(bool),
-        typeof(SkiaControl),
-        false);
         public bool UpdateWhenReturnedFromBackground
         {
             get { return (bool)GetValue(UpdateWhenReturnedFromBackgroundProperty); }
@@ -4046,7 +3935,6 @@ namespace DrawnUi.Maui.Draw
                 var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale, false);
                 Measure(rectAvailable.Pixels.Width, rectAvailable.Pixels.Height, scale);
                 ApplyMeasureResult();
-
             }
             else
             {
@@ -4075,11 +3963,6 @@ namespace DrawnUi.Maui.Draw
             {
                 WillInvalidateMeasure = false;
                 InvalidateMeasureInternal();
-            }
-
-            if (Tag == "Slider")
-            {
-                var top = 1;
             }
 
             if (RenderObjectNeedsUpdate && !UsesCacheDoubleBuffering)
@@ -4161,27 +4044,23 @@ namespace DrawnUi.Maui.Draw
                 NeedRemeasuring = false;
                 InvalidateMeasure();
             }
-            else
-            if (UsesCacheDoubleBuffering
-                && RenderObject != null)
+            else if (UsesCacheDoubleBuffering
+                     && RenderObject != null)
             {
                 if (!CompareRectsSize(DrawingRect, RenderObject.Bounds, 0.5f))
                 {
                     InvalidateMeasure();
                 }
             }
-            else
-            if (UsingCacheType == SkiaCacheType.ImageComposite
-                && RenderObjectPrevious != null)
+            else if (UsingCacheType == SkiaCacheType.ImageComposite
+                     && RenderObjectPrevious != null)
             {
                 if (!CompareRectsSize(DrawingRect, RenderObjectPrevious.Bounds, 0.5f))
                 {
                     InvalidateMeasure();
                 }
             }
-
         }
-
 
         protected virtual void Draw(DrawingContext context)
         {
@@ -4196,18 +4075,14 @@ namespace DrawnUi.Maui.Draw
         //    = BindableProperty.Create(nameof(X),
         //        typeof(double), typeof(SkiaControl),
         //        0.0f);
-
-
         private double _X;
+
         /// <summary>
         /// Absolute position obtained after this control was drawn on the Canvas, this is not relative to parent control.
         /// </summary>
         public new double X
         {
-            get
-            {
-                return _X;
-            }
+            get { return _X; }
             protected set
             {
                 if (_X != value)
@@ -4219,15 +4094,13 @@ namespace DrawnUi.Maui.Draw
         }
 
         private double _Y;
+
         /// <summary>
         /// Absolute position obtained after this control was drawn on the Canvas, this is not relative to parent control.
         /// </summary>
         public new double Y
         {
-            get
-            {
-                return _Y;
-            }
+            get { return _Y; }
             protected set
             {
                 if (_Y != value)
@@ -4238,7 +4111,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         /// <summary>
         /// Execute post drawing operations, like post-animators etc
         /// </summary>
@@ -4246,8 +4118,6 @@ namespace DrawnUi.Maui.Draw
         /// <param name="scale"></param>
         protected void FinalizeDrawingWithRenderObject(DrawingContext context)
         {
-
-
         }
 
         public SKPoint GetPositionOffsetInPoints()
@@ -4258,7 +4128,8 @@ namespace DrawnUi.Maui.Draw
             return new((float)x, (float)y);
         }
 
-        public SKPoint GetPositionOffsetInPixels(bool cacheOnly = false, bool ignoreCache = false, bool useTranslation = true)
+        public SKPoint GetPositionOffsetInPixels(bool cacheOnly = false, bool ignoreCache = false,
+            bool useTranslation = true)
         {
             var thisOffset = CalculatePositionOffset(cacheOnly, ignoreCache, useTranslation);
             var x = (thisOffset.X);
@@ -4266,7 +4137,8 @@ namespace DrawnUi.Maui.Draw
             return new((float)x, (float)y);
         }
 
-        public SKPoint GetFuturePositionOffsetInPixels(bool cacheOnly = false, bool ignoreCache = false, bool useTranslation = true)
+        public SKPoint GetFuturePositionOffsetInPixels(bool cacheOnly = false, bool ignoreCache = false,
+            bool useTranslation = true)
         {
             var thisOffset = CalculateFuturePositionOffset(cacheOnly, ignoreCache, useTranslation);
             var x = (thisOffset.X);
@@ -4325,7 +4197,6 @@ namespace DrawnUi.Maui.Draw
             {
                 Super.Log(e);
             }
-
         }
 
         #region CACHE
@@ -4346,9 +4217,6 @@ namespace DrawnUi.Maui.Draw
             return RenderViewsList(context, (IList<SkiaControl>)children);
         }
 
-
-
-
         /// <summary>
         /// Just make us repaint to apply new transforms etc
         /// </summary>
@@ -4365,11 +4233,8 @@ namespace DrawnUi.Maui.Draw
 
         protected SKPaint _paintWithEffects = null;
         protected SKPaint _paintWithOpacity = null;
-
         SKPath _preparedClipBounds = null;
-
         private IAnimatorsManager _lastAnimatorManager;
-
         private Func<List<SkiaControl>> _createChildren;
 
         /// <summary>
@@ -4384,11 +4249,11 @@ namespace DrawnUi.Maui.Draw
 #endif
 
         public void DrawWithClipAndTransforms(
-        DrawingContext ctx,
-         SKRect transformsArea,
-         bool useOpacity,
-         bool useClipping,
-         Action<DrawingContext> draw)
+            DrawingContext ctx,
+            SKRect transformsArea,
+            bool useOpacity,
+            bool useClipping,
+            Action<DrawingContext> draw)
         {
             bool isClipping = (WillClipBounds || Clipping != null
                                               || ClippedBy != null || HasPlatformClip()) && useClipping;
@@ -4403,8 +4268,7 @@ namespace DrawnUi.Maui.Draw
                 {
                     GetPlatformClip(_preparedClipBounds, ctx.Destination, RenderingScale);
                 }
-                else
-                if (ClippedBy != null)
+                else if (ClippedBy != null)
                 {
                     ClippedBy.CreateClip(null, true, _preparedClipBounds);
                 }
@@ -4448,7 +4312,6 @@ namespace DrawnUi.Maui.Draw
 
                 if (isClipping)
                 {
-
                     //ctx.Canvas.ClipPath(_preparedClipBounds, SKClipOperation.Intersect, false);
                     ClipSmart(ctx.Context.Canvas, _preparedClipBounds);
                 }
@@ -4470,10 +4333,15 @@ namespace DrawnUi.Maui.Draw
             var moveX = UseTranslationX * RenderingScale;
             var moveY = UseTranslationY * RenderingScale;
 
-            if (usePixelSnapping)
+            if (Rotation == 0 &&
+                ScaleX == 1 && ScaleY == 1 &&
+                SkewX == 0 && SkewY == 0 &&
+                Perspective1 == 0 && Perspective2 == 0 &&
+                RotationX == 0 && RotationY == 0 && RotationZ == 0 && TranslationZ == 0)
             {
-                moveX = Math.Round(moveX);
-                moveY = Math.Round(moveY);
+                // fast translation
+                ctx.Canvas.Translate((float)moveX, (float)moveY);
+                return;
             }
 
             float pivotX = (float)(destination.Left + destination.Width * AnchorX);
@@ -4535,7 +4403,7 @@ namespace DrawnUi.Maui.Draw
 
 
             drawingMatrix = drawingMatrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY))
-                                          .PostConcat(ctx.Canvas.TotalMatrix);
+                .PostConcat(ctx.Canvas.TotalMatrix);
 
             ctx.Canvas.SetMatrix(drawingMatrix);
         }
@@ -4575,6 +4443,7 @@ namespace DrawnUi.Maui.Draw
                         {
                             return false; // More than 4 LineTo commands
                         }
+
                         break;
 
                     case SKPathVerb.Close:
@@ -4594,9 +4463,9 @@ namespace DrawnUi.Maui.Draw
         /// <param name="canvas"></param>
         /// <param name="path"></param>
         /// <param name="operation"></param>
-        public virtual void ClipSmart(SKCanvas canvas, SKPath path, SKClipOperation operation = SKClipOperation.Intersect)
+        public virtual void ClipSmart(SKCanvas canvas, SKPath path,
+            SKClipOperation operation = SKClipOperation.Intersect)
         {
-
             canvas.ClipPath(path, operation, ShouldClipAntialiased);
         }
 
@@ -4621,9 +4490,8 @@ namespace DrawnUi.Maui.Draw
                 //OnPropertyChanged(); disabled atm
             }
         }
+
         private bool _needMeasure = true;
-
-
 
         /// <summary>
         /// If attached to a SuperView and rendering is in progress will run after it. Run now otherwise.
@@ -4634,10 +4502,7 @@ namespace DrawnUi.Maui.Draw
             var super = this.Superview;
             if (super != null)
             {
-                Superview.PostponeExecutionBeforeDraw(() =>
-                {
-                    action();
-                });
+                Superview.PostponeExecutionBeforeDraw(() => { action(); });
 
                 Repaint();
             }
@@ -4662,10 +4527,7 @@ namespace DrawnUi.Maui.Draw
                 Superview.PostponeExecutionAfterDraw(action);
         }
 
-
-
         protected bool NeedRemeasuring;
-
 
         protected virtual void PaintWithShadows(DrawingContext ctx, Action render)
         {
@@ -4683,7 +4545,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         protected virtual void PaintWithEffects(DrawingContext ctx)
         {
             if (IsDisposed || IsDisposing)
@@ -4691,22 +4552,14 @@ namespace DrawnUi.Maui.Draw
 
             void PaintWithEffectsInternal(DrawingContext context)
             {
-                PaintWithShadows(context, () =>
-                {
-                    Paint(ctx);
-                });
+                PaintWithShadows(context, () => { Paint(ctx); });
             }
 
             if (!DisableEffects && VisualEffects.Count > 0)
             {
                 if (_paintWithEffects == null)
                 {
-                    _paintWithEffects = new()
-                    {
-                        IsAntialias = true,
-                        FilterQuality = SKFilterQuality.Medium
-                    };
-
+                    _paintWithEffects = new() { IsAntialias = true, FilterQuality = SKFilterQuality.Medium };
                 }
 
                 var effectColor = EffectColorFilter;
@@ -4715,7 +4568,7 @@ namespace DrawnUi.Maui.Draw
                 if (effectImage != null)
                     _paintWithEffects.ImageFilter = effectImage.CreateFilter(ctx.Destination);
                 else
-                    _paintWithEffects.ImageFilter = null;//will be disposed internally by effect
+                    _paintWithEffects.ImageFilter = null; //will be disposed internally by effect
 
                 if (effectColor != null)
                     _paintWithEffects.ColorFilter = effectColor.CreateFilter(ctx.Destination);
@@ -4751,7 +4604,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         /// <summary>
         /// This is the main drawing routine you should override to draw something.
         /// Base one paints background color inside DrawingRect that was defined by Arrange inside base.Draw.
@@ -4771,16 +4623,14 @@ namespace DrawnUi.Maui.Draw
         }
 
         private bool _wasDrawn;
+
         /// <summary>
         /// Signals if this control was drawn on canvas one time at least, it will be set by Paint method. 
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public bool WasDrawn
         {
-            get
-            {
-                return _wasDrawn;
-            }
+            get { return _wasDrawn; }
             set
             {
                 if (_wasDrawn != value)
@@ -4820,26 +4670,20 @@ namespace DrawnUi.Maui.Draw
             {
                 path.AddRect(new(0, 0, DrawingRect.Width, DrawingRect.Height));
             }
+
             return path;
         }
-
 
         public static SKColor DebugRenderingColor = SKColor.Parse("#66FFFF00");
 
         public double UseTranslationY
         {
-            get
-            {
-                return TranslationY + AddTranslationY;
-            }
+            get { return TranslationY + AddTranslationY; }
         }
 
         public double UseTranslationX
         {
-            get
-            {
-                return TranslationX + AddTranslationX;
-            }
+            get { return TranslationX + AddTranslationX; }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -4870,7 +4714,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         /// <summary>
         /// Drawing cache, applying clip and transforms as well
         /// </summary>
@@ -4879,29 +4722,27 @@ namespace DrawnUi.Maui.Draw
         /// <param name="destination"></param>
         public virtual void DrawRenderObject(DrawingContext context, CachedObject cache)
         {
-
             DrawWithClipAndTransforms(context, context.Destination, true, true, (ctx) =>
+            {
+                if (EffectPostRenderer != null)
                 {
-
-                    if (EffectPostRenderer != null)
+                    EffectPostRenderer.Render(context);
+                }
+                else
+                {
+                    if (_paintWithOpacity == null)
                     {
-                        EffectPostRenderer.Render(context);
+                        _paintWithOpacity = new SKPaint();
                     }
-                    else
-                    {
-                        if (_paintWithOpacity == null)
-                        {
-                            _paintWithOpacity = new SKPaint();
-                        }
 
-                        _paintWithOpacity.Color = SKColors.White;
-                        _paintWithOpacity.IsAntialias = true;
-                        _paintWithOpacity.IsDither = IsDistorted;
-                        _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
+                    _paintWithOpacity.Color = SKColors.White;
+                    _paintWithOpacity.IsAntialias = true;
+                    _paintWithOpacity.IsDither = IsDistorted;
+                    _paintWithOpacity.FilterQuality = SKFilterQuality.Medium;
 
-                        cache.Draw(ctx.Context.Canvas, context.Destination, _paintWithOpacity);
-                    }
-                });
+                    cache.Draw(ctx.Context.Canvas, context.Destination, _paintWithOpacity);
+                }
+            });
         }
 
         /// <summary>
@@ -4934,7 +4775,7 @@ namespace DrawnUi.Maui.Draw
                         child.Render(context);
 
                         tree.Add(new SkiaControlWithRect(child,
-                            context.Destination,//child.LastDrawnAt,
+                            context.Destination, //child.LastDrawnAt,
                             child.LastDrawnAt, count));
 
                         count++;
@@ -4951,18 +4792,11 @@ namespace DrawnUi.Maui.Draw
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual bool UsesRenderingTree
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
-
-
         protected long _measuredStamp;
-
         protected long _builtRenderTreeStamp;
-
 
         /// <summary>
         /// Last rendered controls tree. Used by gestures etc..
@@ -4970,18 +4804,15 @@ namespace DrawnUi.Maui.Draw
         public List<SkiaControlWithRect> RenderTree { get; protected set; }
 
         #endregion
+
         public bool Invalidated { get; set; } = true;
 
         /// <summary>
         /// For internal use, set by Update method
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool NeedUpdate
         {
-            get
-            {
-                return _needUpdate;
-            }
+            get { return _needUpdate; }
             set
             {
                 if (_needUpdate != value)
@@ -4993,11 +4824,10 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         bool _needUpdate;
-
-
-
         DrawnView _superview;
+
         /// <summary>
         /// Our canvas
         /// </summary>
@@ -5016,6 +4846,7 @@ namespace DrawnUi.Maui.Draw
                         SuperViewChanged();
                     }
                 }
+
                 return _superview;
             }
             set
@@ -5030,7 +4861,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         public Func<Vector2, ScaledRect> DelegateGetOnScreenVisibleArea;
-        
+
         /// <summary>
         /// For virtualization. For this method to be conditional we introduced the `pixelsDestination`
         /// parameter so that the Parent could return different visible areas upon context.
@@ -5041,7 +4872,6 @@ namespace DrawnUi.Maui.Draw
         /// <returns></returns>
         public virtual ScaledRect GetOnScreenVisibleArea(DrawingContext context, Vector2 inflateByPixels = default)
         {
-
             var pixelsDestination = context.Destination;
 
             if (DelegateGetOnScreenVisibleArea != null)
@@ -5053,7 +4883,7 @@ namespace DrawnUi.Maui.Draw
             {
                 //we are going to cache our children so they all must draw
                 //regardless of the fact they might still be offscreen
-                var inflated = pixelsDestination;//DrawingRect;
+                var inflated = pixelsDestination; //DrawingRect;
                 inflated.Inflate(inflateByPixels.X, inflateByPixels.Y);
 
                 return ScaledRect.FromPixels(inflated, RenderingScale);
@@ -5077,27 +4907,19 @@ namespace DrawnUi.Maui.Draw
 
         bool _lastUpdatedVisibility;
 
-
-
         /// <summary>
         /// Used to check whether to apply IsClippedToBounds property
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual bool WillClipBounds
         {
-            get
-            {
-                return IsClippedToBounds || (UsingCacheType != SkiaCacheType.None && !IsCacheOperations);
-            }
+            get { return IsClippedToBounds || (UsingCacheType != SkiaCacheType.None && !IsCacheOperations); }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual bool WillClipEffects
         {
-            get
-            {
-                return ClipEffects;
-            }
+            get { return ClipEffects; }
         }
 
         /// <summary>
@@ -5115,7 +4937,7 @@ namespace DrawnUi.Maui.Draw
             if (IsDisposing || IsDisposed)
                 return;
 
-            if (UpdateLocks>0)
+            if (UpdateLocks > 0)
             {
                 _neededUpdate = true;
                 return;
@@ -5132,9 +4954,7 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         private int _updatedFromThread;
-
         private volatile bool _neededUpdate;
 
         /// <summary>
@@ -5149,7 +4969,7 @@ namespace DrawnUi.Maui.Draw
             {
                 Super.Log($"[SkiaControl] will Update {this}");
             }
-            
+
             _updatedFromThread = Thread.CurrentThread.ManagedThreadId;
 
             InvalidateCache();
@@ -5186,18 +5006,15 @@ namespace DrawnUi.Maui.Draw
         public SKRect Destination { get; protected set; }
 
         protected SKPaint PaintSystem { get; set; }
-
         private bool _IsRenderingWithComposition;
+
         /// <summary>
         /// Internal flag indicating that the current frame will use cache composition, old cache will be reused, only dirty children will be redrawn over it
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public bool IsRenderingWithComposition
         {
-            get
-            {
-                return _IsRenderingWithComposition;
-            }
+            get { return _IsRenderingWithComposition; }
             protected set
             {
                 if (_IsRenderingWithComposition != value)
@@ -5231,8 +5048,7 @@ namespace DrawnUi.Maui.Draw
                     if (solid.Color != null)
                         color = solid.Color;
                 }
-                else
-                if (Background is GradientBrush gradientBrush)
+                else if (Background is GradientBrush gradientBrush)
                 {
                     gradient = SkiaGradient.FromBrush(gradientBrush);
                     if (color == null)
@@ -5263,7 +5079,6 @@ namespace DrawnUi.Maui.Draw
             return true;
         }
 
-
         /// <summary>
         /// destination in pixels, if you see no Scale parameter
         /// </summary>
@@ -5284,7 +5099,8 @@ namespace DrawnUi.Maui.Draw
                 if (IsRenderingWithComposition)
                 {
                     var previousCache = RenderObjectPrevious;
-                    var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
+                    var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left,
+                        DrawingRect.Top - previousCache.Bounds.Top);
                     clipPreviousCachePath.Reset();
 
                     foreach (var dirtyChild in DirtyChildrenInternal)
@@ -5295,7 +5111,8 @@ namespace DrawnUi.Maui.Draw
                     }
 
                     var saved = canvas.Save();
-                    canvas.ClipPath(clipPreviousCachePath, SKClipOperation.Intersect, false); //we have rectangles, no need to antialiase
+                    canvas.ClipPath(clipPreviousCachePath, SKClipOperation.Intersect,
+                        false); //we have rectangles, no need to antialiase
                     canvas.DrawRect(destination, PaintSystem);
                     canvas.RestoreToCount(saved);
                 }
@@ -5335,9 +5152,6 @@ namespace DrawnUi.Maui.Draw
 
             canvas.RestoreToCount(saved);
         }
-
-
-
 
         /// <summary>
         /// Summing up Margins and AddMargin.. properties
@@ -5440,7 +5254,9 @@ namespace DrawnUi.Maui.Draw
             if (OutputDebug)
             {
                 Super.Log($"[SkiaControl] InvalidateWithChildren");
-            };
+            }
+
+            ;
 
             LockUpdate(true);
 
@@ -5482,7 +5298,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-
         protected static void NeedDraw(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is SkiaControl control)
@@ -5513,7 +5328,6 @@ namespace DrawnUi.Maui.Draw
 
         protected static void NeedInvalidateViewport(BindableObject bindable, object oldvalue, object newvalue)
         {
-
             var control = bindable as SkiaControl;
             {
                 if (control != null && !control.IsDisposed)
@@ -5529,15 +5343,11 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual bool IsTemplated
         {
-            get
-            {
-                return (this.ItemTemplate != null || ItemTemplateType != null);
-            }
+            get { return (this.ItemTemplate != null || ItemTemplateType != null); }
         }
 
         public virtual void OnItemTemplateChanged()
         {
-
         }
 
         public virtual object CreateContentFromTemplate()
@@ -5556,6 +5366,7 @@ namespace DrawnUi.Maui.Draw
                     throw new ApplicationException("DrawnUI has limited compatibility wih DataTemplateSelector " +
                                                    "as it is not needed here as you can modify your cell view on the fly, at the same time template selector prohibits enhanced optimizations. Your legacy selector will be called upon first cell creation only with a null context. Kindly consider adapting your code to DrawnUI style.");
                 }
+
                 return tpl.CreateContent();
             }
 
@@ -5564,7 +5375,6 @@ namespace DrawnUi.Maui.Draw
 
         protected static void ItemTemplateChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
-
             var control = bindable as SkiaControl;
             {
                 if (control != null && !control.IsDisposed)
@@ -5573,12 +5383,10 @@ namespace DrawnUi.Maui.Draw
                 }
             }
         }
+
         static object lockViews = new();
 
-
-
-
-        #region Animation 
+        #region Animation
 
         //public async Task PlayRippleAnimationAsync(Color color, double x, double y, bool removePrevious = true)
         //{
@@ -5591,7 +5399,6 @@ namespace DrawnUi.Maui.Draw
 
         //	await PlayAnimation(animation, 350, null, removePrevious);
         //}
-
 
         public IAnimatorsManager GetAnimatorsManager()
         {
@@ -5620,6 +5427,7 @@ namespace DrawnUi.Maui.Draw
                 Repaint();
                 return true;
             }
+
             return false;
         }
 
@@ -5630,6 +5438,7 @@ namespace DrawnUi.Maui.Draw
             {
                 top = _lastAnimatorManager;
             }
+
             top?.RemoveAnimator(uid);
         }
 
@@ -5656,34 +5465,27 @@ namespace DrawnUi.Maui.Draw
             }
 
             //Debug.WriteLine($"[RIPPLE] start play for '{Tag}'");
-            var animation = new RippleAnimator(this)
-            {
-                Color = color.ToSKColor(),
-                X = x,
-                Y = y
-            };
+            var animation = new RippleAnimator(this) { Color = color.ToSKColor(), X = x, Y = y };
             animation.Start();
         }
 
-        public async void PlayShimmerAnimation(Color color, float shimmerWidth = 50, float shimmerAngle = 45, int speedMs = 1000, bool removePrevious = true)
+        public async void PlayShimmerAnimation(Color color, float shimmerWidth = 50, float shimmerAngle = 45,
+            int speedMs = 1000, bool removePrevious = true)
         {
             //Debug.WriteLine($"[SHIMMER] start play for '{Tag}'");
             if (removePrevious)
             {
                 //UnregisterAllAnimatorsByType(typeof(ShimmerAnimator));
             }
+
             var animation = new ShimmerAnimator(this)
             {
-                Color = color.ToSKColor(),
-                ShimmerWidth = shimmerWidth,
-                ShimmerAngle = shimmerAngle,
-                Speed = speedMs
+                Color = color.ToSKColor(), ShimmerWidth = shimmerWidth, ShimmerAngle = shimmerAngle, Speed = speedMs
             };
             animation.Start();
         }
 
         #endregion
-
 
         #region PAINT HELPERS
 
@@ -5722,7 +5524,7 @@ namespace DrawnUi.Maui.Draw
                         //float sweep = (float)Value3;//((float)this.Variable1 % (float)this.Variable2 / 100F) * 360.0F;
 
                         return SKShader.CreateSweepGradient(
-                             new SKPoint(destination.Left + destination.Width / 2.0f,
+                            new SKPoint(destination.Left + destination.Width / 2.0f,
                                 destination.Top + destination.Height / 2.0f),
                             colors.ToArray(),
                             colorPositions,
@@ -5748,9 +5550,14 @@ namespace DrawnUi.Maui.Draw
                             gradient.TileMode
                         );
                         // Create a scaling matrix centered around the gradient's origin point
-                        float scaleX = destination.Width >= destination.Height ? 1f : destination.Width / destination.Height;
-                        float scaleY = destination.Height >= destination.Width ? 1f : destination.Height / destination.Width;
-                        var transform = SKMatrix.CreateScale(scaleX, scaleY, destination.Left + halfX, destination.Top + halfY);
+                        float scaleX = destination.Width >= destination.Height
+                            ? 1f
+                            : destination.Width / destination.Height;
+                        float scaleY = destination.Height >= destination.Width
+                            ? 1f
+                            : destination.Height / destination.Width;
+                        var transform = SKMatrix.CreateScale(scaleX, scaleY, destination.Left + halfX,
+                            destination.Top + halfY);
                         return shader.WithLocalMatrix(transform);
 
                     case GradientType.Linear:
@@ -5765,18 +5572,13 @@ namespace DrawnUi.Maui.Draw
                             gradient.TileMode);
                         break;
                 }
-
             }
 
             return null;
         }
 
         protected CachedGradient LastGradient;
-
         protected CachedShadow LastShadow;
-
-
-
 
         /// <summary>
         /// Creates and sets an ImageFilter for SKPaint
@@ -5788,12 +5590,7 @@ namespace DrawnUi.Maui.Draw
             if (shadow != null && paint != null)
             {
                 var kill = LastShadow;
-                LastShadow = new()
-                {
-                    Filter = CreateShadow(shadow, scale),
-                    Scale = scale,
-                    Shadow = shadow
-                };
+                LastShadow = new() { Filter = CreateShadow(shadow, scale), Scale = scale, Shadow = shadow };
                 DisposeObject(kill);
 
                 var old = paint.ImageFilter;
@@ -5811,7 +5608,6 @@ namespace DrawnUi.Maui.Draw
 
         #endregion
 
-
         #region CHILDREN VIEWS
 
         private List<SkiaControl> _orderedChildren;
@@ -5822,9 +5618,9 @@ namespace DrawnUi.Maui.Draw
             {
                 _orderedChildren = Views.OrderBy(x => x.ZIndex).ToList();
             }
+
             return _orderedChildren;
         }
-
 
         public IReadOnlyList<SkiaControl> GetUnorderedSubviews(bool recalculate = false)
         {
@@ -5843,6 +5639,7 @@ namespace DrawnUi.Maui.Draw
                 RemoveSubView(child);
                 child.Dispose();
             }
+
             Views.Clear();
             Invalidate();
         }
@@ -5940,7 +5737,6 @@ namespace DrawnUi.Maui.Draw
         /// Children we should check for touch hits
         /// </summary>
         //public SortedSet<ISkiaGestureListener> GestureListeners { get; } = new(new DescendingZIndexGestureListenerComparer());
-
         public SortedGestureListeners GestureListeners { get; } = new();
 
         public virtual void OnParentChanged(IDrawnBase newvalue, IDrawnBase oldvalue)
@@ -6024,9 +5820,7 @@ namespace DrawnUi.Maui.Draw
 
                 InvalidateInternal();
             }
-
         }
-
 
         #endregion
 
@@ -6039,6 +5833,7 @@ namespace DrawnUi.Maui.Draw
             {
                 control.Parent.RegisterGestureListener(listener);
             }
+
             foreach (var view in Views)
             {
                 view.RegisterGestureListenersTree(view);
@@ -6054,19 +5849,20 @@ namespace DrawnUi.Maui.Draw
             {
                 control.Parent.UnregisterGestureListener(listener);
             }
+
             foreach (var view in Views)
             {
                 view.UnregisterGestureListenersTree(view);
             }
         }
 
-
         #region Children
 
-
-        public static readonly BindableProperty ItemTemplateProperty = BindableProperty.Create(nameof(ItemTemplate), typeof(DataTemplate),
+        public static readonly BindableProperty ItemTemplateProperty = BindableProperty.Create(nameof(ItemTemplate),
+            typeof(DataTemplate),
             typeof(DataTemplate), null,
             propertyChanged: ItemTemplateChanged);
+
         /// <summary>
         /// Kind of BindableLayout.DrawnTemplate
         /// </summary>
@@ -6092,64 +5888,6 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(ItemTemplateTypeProperty, value); }
         }
 
-
-        #region SELECTABLE TEMPLATES
-
-
-        public static readonly BindableProperty TemplatesProperty = BindableProperty.Create(
-            nameof(Templates),
-            typeof(IList<SkiaControl>),
-            typeof(SkiaControl),
-            defaultValueCreator: (instance) =>
-            {
-                var created = new ObservableCollection<SkiaControl>();
-                ItemTemplateChanged(instance, null, created);
-                return created;
-            },
-            validateValue: (bo, v) => v is IList<SkiaControl>,
-            propertyChanged: ItemTemplateChanged,
-            coerceValue: CoerceTemplates);
-
-        public IList<SkiaControl> Templates
-        {
-            get => (IList<SkiaControl>)GetValue(TemplatesProperty);
-            set => SetValue(TemplatesProperty, value);
-        }
-
-        private static object CoerceTemplates(BindableObject bindable, object value)
-        {
-            if (!(value is ReadOnlyCollection<SkiaControl> readonlyCollection))
-            {
-                return value;
-            }
-
-            return new ReadOnlyCollection<SkiaControl>(
-                readonlyCollection.ToList());
-        }
-
-        private void OnSkiaPropertyTemplateCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (sender is SkiaControl control)
-            {
-                switch (e.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        control.OnItemTemplateChanged();
-                        break;
-
-                    case NotifyCollectionChangedAction.Reset:
-                    case NotifyCollectionChangedAction.Remove:
-                        control.OnItemTemplateChanged();
-                        break;
-                }
-            }
-        }
-
-
-
-
-        #endregion
-
         public static readonly BindableProperty ChildrenProperty = BindableProperty.Create(
             nameof(Children),
             typeof(IList<SkiaControl>),
@@ -6157,7 +5895,7 @@ namespace DrawnUi.Maui.Draw
             defaultValueCreator: (instance) =>
             {
                 var created = new ObservableCollection<SkiaControl>();
-                ChildrenPropertyChanged(instance, null, created);
+                created.CollectionChanged += ((SkiaControl)instance).OnChildrenCollectionChanged;
                 return created;
             },
             validateValue: (bo, v) => v is IList<SkiaControl>,
@@ -6184,7 +5922,6 @@ namespace DrawnUi.Maui.Draw
                 {
                     RemoveSubView(subView);
                 }
-
             }
         }
 
@@ -6205,7 +5942,6 @@ namespace DrawnUi.Maui.Draw
         {
             if (bindable is SkiaControl skiaControl)
             {
-
                 var enumerableChildren = (IEnumerable<SkiaControl>)newvalue;
 
                 if (oldvalue != null)
@@ -6241,15 +5977,11 @@ namespace DrawnUi.Maui.Draw
 
                 skiaControl.Update();
             }
-
         }
 
         public bool HasItemTemplate
         {
-            get
-            {
-                return ItemTemplate != null;
-            }
+            get { return ItemTemplate != null; }
         }
 
         private void OnChildrenCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -6264,6 +5996,7 @@ namespace DrawnUi.Maui.Draw
                     {
                         AddOrRemoveView(newChildren, true);
                     }
+
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
@@ -6280,7 +6013,6 @@ namespace DrawnUi.Maui.Draw
         }
 
         #endregion
-
 
         public AddGestures.GestureListener GesturesEffect { get; set; }
 
@@ -6325,6 +6057,7 @@ namespace DrawnUi.Maui.Draw
                         aspectX = width < dest.Width ? s1 : 1;
                         aspectY = height < dest.Height ? s2 : 1;
                     }
+
                     break;
 
                 case TransformAspect.AspectFill:
@@ -6353,6 +6086,7 @@ namespace DrawnUi.Maui.Draw
                         aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
                         aspectY = aspectX;
                     }
+
                     break;
             }
 
@@ -6361,20 +6095,15 @@ namespace DrawnUi.Maui.Draw
 
         #region HELPERS
 
-
-
         public static Random Random = new Random();
-
         protected SKRect LastArrangedInside;
         protected double _arrangedViewportHeightLimit;
         protected double _arrangedViewportWidthLimit;
         protected float _lastMeasuredForScale;
-
         private bool _isLayoutDirty;
         private Thickness _margins;
         private double _lastArrangedForScale;
         private bool _needUpdateFrontCache;
-
 
         public static Color GetRandomColor()
         {
@@ -6415,7 +6144,6 @@ namespace DrawnUi.Maui.Draw
             return Math.Abs(a - b) < precision;
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool CompareRects(SKRect a, SKRect b, float precision)
         {
@@ -6423,15 +6151,18 @@ namespace DrawnUi.Maui.Draw
             {
                 if ((float.IsInfinity(a.Top) && float.IsInfinity(b.Top)) || Math.Abs(a.Top - b.Top) <= precision)
                 {
-                    if ((float.IsInfinity(a.Right) && float.IsInfinity(b.Right)) || Math.Abs(a.Right - b.Right) <= precision)
+                    if ((float.IsInfinity(a.Right) && float.IsInfinity(b.Right)) ||
+                        Math.Abs(a.Right - b.Right) <= precision)
                     {
-                        if ((float.IsInfinity(a.Bottom) && float.IsInfinity(b.Bottom)) || Math.Abs(a.Bottom - b.Bottom) <= precision)
+                        if ((float.IsInfinity(a.Bottom) && float.IsInfinity(b.Bottom)) ||
+                            Math.Abs(a.Bottom - b.Bottom) <= precision)
                         {
                             return true;
                         }
                     }
                 }
             }
+
             return false;
         }
 
@@ -6440,25 +6171,28 @@ namespace DrawnUi.Maui.Draw
         {
             if ((float.IsInfinity(a.Width) && float.IsInfinity(b.Width)) || (Math.Abs(a.Width - b.Width) <= precision))
             {
-                if ((float.IsInfinity(a.Height) && float.IsInfinity(b.Height)) || (Math.Abs(a.Height - b.Height) <= precision))
+                if ((float.IsInfinity(a.Height) && float.IsInfinity(b.Height)) ||
+                    (Math.Abs(a.Height - b.Height) <= precision))
                 {
                     return true;
                 }
             }
+
             return false;
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool CompareSize(SKSize a, SKSize b, float precision)
         {
             if ((float.IsInfinity(a.Width) && float.IsInfinity(b.Width)) || Math.Abs(a.Width - b.Width) <= precision)
             {
-                if ((float.IsInfinity(a.Height) && float.IsInfinity(b.Height)) || Math.Abs(a.Height - b.Height) <= precision)
+                if ((float.IsInfinity(a.Height) && float.IsInfinity(b.Height)) ||
+                    Math.Abs(a.Height - b.Height) <= precision)
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -6472,9 +6206,9 @@ namespace DrawnUi.Maui.Draw
                     return true;
                 }
             }
+
             return false;
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool AreEqual(double v1, double v2, double precision)
@@ -6483,6 +6217,7 @@ namespace DrawnUi.Maui.Draw
             {
                 return true;
             }
+
             return false;
         }
 
@@ -6493,6 +6228,7 @@ namespace DrawnUi.Maui.Draw
             {
                 return true;
             }
+
             return false;
         }
 
@@ -6506,9 +6242,9 @@ namespace DrawnUi.Maui.Draw
                     return true;
                 }
             }
+
             return false;
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectionType GetDirectionType(Vector2 velocity, DirectionType defaultDirection, float ratio)
@@ -6549,11 +6285,11 @@ namespace DrawnUi.Maui.Draw
             }
             else
             {
-                return DirectionType.None; // The direction is neither horizontal nor vertical (the vectors are equal or diagonally aligned)
+                return
+                    DirectionType
+                        .None; // The direction is neither horizontal nor vertical (the vectors are equal or diagonally aligned)
             }
         }
-
-
 
         /// <summary>
         /// Ported from Avalonia: AreClose - Returns whether or not two floats are "close".  That is, whether or 
@@ -6569,7 +6305,6 @@ namespace DrawnUi.Maui.Draw
             float delta = value1 - value2;
             return (-eps < delta) && (eps > delta);
         }
-
 
         /// <summary>
         /// Ported from Avalonia: AreClose - Returns whether or not two doubles are "close".  That is, whether or 
@@ -6596,9 +6331,6 @@ namespace DrawnUi.Maui.Draw
         {
             return Math.Abs(value - 1.0) < 10.0 * double.Epsilon;
         }
-
-
-
 
         #endregion
     }
@@ -6648,8 +6380,5 @@ namespace DrawnUi.Maui.Draw
 
             return snappedTranslation;
         }
-
-
-
     }
 }

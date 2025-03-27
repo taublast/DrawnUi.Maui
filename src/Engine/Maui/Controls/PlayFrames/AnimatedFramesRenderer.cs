@@ -57,6 +57,37 @@
 
         }
 
+        public SourceType GetSourceType(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return SourceType.Unknown;
+            }
+
+            // Check if it's a URL
+            if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri) && uri.Scheme != "file")
+            {
+                return SourceType.Url;
+            }
+
+            // Check if it's a native stream (based on SkiaImageManager.NativeFilePrefix)
+            if (fileName.SafeContainsInLower(SkiaImageManager.NativeFilePrefix))
+            {
+                return SourceType.NativeStream;
+            }
+
+            // Check if it's a local file (absolute file path)
+            if (Path.IsPathRooted(fileName) || File.Exists(fileName))
+            {
+                return SourceType.LocalFile;
+            }
+
+            // Default to app package file if none of the above match
+            return SourceType.PackageFile;
+        }
+
+
+
         protected override void Paint(DrawingContext ctx)
         {
             base.Paint(ctx);

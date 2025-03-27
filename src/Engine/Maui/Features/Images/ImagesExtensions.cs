@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Http;
-using Polly;
-using Polly.Timeout;
+//using Microsoft.Extensions.Http;
+//using Polly;
+//using Polly.Timeout;
 using System.Net;
 
 namespace DrawnUi.Maui.Features.Images
@@ -9,6 +9,8 @@ namespace DrawnUi.Maui.Features.Images
     public static class ImagesExtensions
     {
         const string HttpClientKey = "drawnui";
+
+        /*
 
         public static IServiceCollection AddUriImageSourceHttpClient(this IServiceCollection services,
             Action<HttpClient>? configureDelegate = null, Func<IHttpClientBuilder, IHttpClientBuilder>? delegateBuilder = null)
@@ -59,11 +61,21 @@ namespace DrawnUi.Maui.Features.Images
             return services;
         }
 
+        */
+
+        /// <summary>
+        /// Do not forget to dispose the client
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public static HttpClient? CreateLoadImagesHttpClient(this IServiceProvider services)
         {
-            return services.GetService<IHttpClientFactory>()?.CreateClient(HttpClientKey);
-        }
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(Super.UserAgent);
 
+            return client;
+            //return services.GetService<IHttpClientFactory>()?.CreateClient(HttpClientKey);
+        }
 
     }
 }

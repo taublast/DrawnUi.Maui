@@ -14,7 +14,7 @@ namespace DrawnUi.Maui.Draw
             //handlers.AddHandler(typeof(Window), typeof(CustomizedWindowHandler));
 
 #if SKIA3
-            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerFixed));
+            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerRetained));
 #else
             handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
 #endif

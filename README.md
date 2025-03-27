@@ -21,15 +21,14 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 New nugets: for NET 9 you need version not lower than 1.3.x.  
 For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
 
-### Nuget 1.4.0.1
+### Nuget 1.4.0.4
 _for SkiaSharp 3.116.1 NET 9_
-* More fluent extensions and added base page for C# HotReload to build UI from code, many examples inside Sandbox project.
-* Canvas gestures performance/fixes
-* SkiaLayout performance/fixes (inc. VerticalFillRatio HorizontalFillRatio)
-* Fixes for SkiaButton, SkiaShape, SkiaScroll, SkiaGradient and more
-* SkiaMarkdownLabel will force bold/italic for spans if set globally
-* Sk3dView Save-Restore implemented
-* Other fixes and improvements
+* Impact on app startup time improved.
+* A rather important fix for `MauiGame` that is ticking superfluid see [SpaceShooter](https://github.com/taublast/Maui.Game.SpaceShooter) and Game section of Sandbox project.
+* Using new gestures nuget with fix for UP being correctly send when finger released outside of canvas.
+* Sandbox on iOS not crashing anymore due to Canvas disposal.
+* A lot of bug fixes and small improvements
+* This is most likely the last nuget having`Maui` in the namespaces, since i use shared code and a Blazor version will come out this year.
 
 https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
 

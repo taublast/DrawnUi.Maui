@@ -1,0 +1,45 @@
+﻿@inherits VisualElement
+
+@if (IsVisible)
+{
+ 
+        <div class="xaml-element xaml-contentview @Class" style="@CssMargins @CssPadding @CssGridPosition @CssStyle"
+             @onclick="() => {  this.Tapped.Invoke(); }">
+            @ChildContent
+        </div>
+ 
+}
+
+@code {
+
+    [Parameter]
+    public Action Tapped { get; set; }
+
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public MarkupString CssStyle
+    {
+        get
+        {
+            var ret = $"background: {BackgroundColor}; {CssLayoutAlignment} {Style}";
+
+            return new MarkupString(ret);
+        }
+    }
+
+
+
+
+
+    /// <summary>
+    /// Hex string
+    /// </summary>
+    [Parameter]
+    public string BackgroundColor { get; set; } = "#00000000";
+
+
+}
+
+

@@ -40,11 +40,12 @@
 
     <!--  STARS PARALLAX  -->
     <draw:SkiaImageTiles
+        Tag="ParallaxLayer"
         x:Name="ParallaxLayer"
         HorizontalOptions="Fill"
         Source="Space/Sprites/stars.png"
         TileAspect="Cover"
-        TileCacheType="GPU"
+        TileCacheType="Image"
         TileHeight="600"
         TileWidth="600"
         VerticalOptions="Fill" />

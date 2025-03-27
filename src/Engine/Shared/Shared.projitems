@@ -35,12 +35,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RecycleTemplateType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RecyclingTemplate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RelativePositionType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\ScrollInteractionState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\ShapeType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SkiaAnchorBak.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SkiaImageEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SkiaImageEffects.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SkiaTouchAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SnapToChildrenType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SourceType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SpaceDistribution.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\TextTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\TransformAspect.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\Parameters\SpringTimingVectorParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\Parameters\TimingParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\Parameters\UnderdampedSpringTimingVectorParameters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\FrameTimeInterpolator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\ToDo\IInterpolator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animations\ToDo\ViscousFluidInterpolator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\AnimatorBase.cs" />
@@ -157,6 +160,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\SpringWithVelocityAnimator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\SpringWithVelocityVectorAnimator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\VelocitySkiaAnimator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\Sk3dView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\SkCamera3D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\SkPatch3D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\TrackedObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Super.cs" />
   </ItemGroup>
 </Project>

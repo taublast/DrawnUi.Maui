@@ -3,26 +3,20 @@
     x:Class="Sandbox.Views.MainPageGame"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:game="clr-namespace:SpaceShooter.Game"
-    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel"
     BackgroundColor="#000000">
 
     <ContentPage.Resources>
-        <ResourceDictionary>
-
-      
-
-        </ResourceDictionary>
+        <ResourceDictionary />
     </ContentPage.Resources>
 
-    <Grid
-        HorizontalOptions="Fill"
-        VerticalOptions="Fill">
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
 
         <draw:Canvas
             Gestures="Enabled"
@@ -30,15 +24,13 @@
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
-     
-            <draw:SkiaLayout
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
- 
+
+            <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
+
                 <game:SpaceShooter />
-                
-                <controls:ButtonToRoot/>
-       
+
+                <controls:ButtonToRoot />
+
                 <draw:SkiaLabelFps
                     Margin="0,0,4,24"
                     BackgroundColor="DarkRed"

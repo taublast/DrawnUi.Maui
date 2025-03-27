@@ -96,7 +96,7 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
     }
 
 
-    public bool TickFrame(long frameTime)
+    public bool TickFrame(long frameTimeNanos)
     {
         return false;
     }

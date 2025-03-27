@@ -155,8 +155,15 @@ namespace DrawnUi.Maui.Draw
                                 child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
                             }
                         }
+                        //else
+                        //{
+                        //    if (!child.NeedUpdate)
+                        //    {
+                        //        continue;
+                        //    }
+                        //}
 
-                        SKRect destinationRect;
+                            SKRect destinationRect;
                         if (IsTemplated && RecyclingTemplate != RecyclingTemplate.Disabled)
                         {
                             //when context changes we need all available space for remeasuring cell

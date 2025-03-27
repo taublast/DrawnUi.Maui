@@ -116,9 +116,9 @@ public class SkiaImageTiles : SkiaImage
     /// <summary>
     /// Source was loaded, we can create tile
     /// </summary>
-    public override void OnSourceSuccess()
+    public override void OnSourceSuccess(string source)
     {
-        base.OnSourceSuccess();
+        base.OnSourceSuccess(source);
 
         SetupTiles();
     }
@@ -146,16 +146,20 @@ public class SkiaImageTiles : SkiaImage
 
     protected virtual void SetupTiles()
     {
-        if (TileWidth > 0 && TileHeight > 0 && ImageBitmap != null)
+        var image = ApplyNewSource;
+        if (image == null)
         {
+            image = ImageBitmap;
+        }
 
-            Tile = CreateTile(TileWidth, TileHeight, ImageBitmap);
-
+        if (TileWidth > 0 && TileHeight > 0 && image != null)
+        {
+            Tile = CreateTile(TileWidth, TileHeight, image);
             DrawTiles = true;
         }
         else
         {
-            DrawTiles = false;
+            DrawTiles = Tile != null;
         }
 
     }

@@ -18,4 +18,6 @@ public interface ISkiaDrawable : ISkiaSharpView, IDisposable
     public bool HasDrawn { get; }
 
     long FrameTime { get; }
+
+    Guid Uid { get; }
 }

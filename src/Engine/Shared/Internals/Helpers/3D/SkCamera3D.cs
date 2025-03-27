@@ -15,7 +15,7 @@ public class SkCamera3D
     public Vector3 fObserver;   // eye position (may not be the same as the origin)
 
     bool fNeedToUpdate;
-    SkiaSharp.SKMatrix fOrientation;
+    SKMatrix fOrientation;
 
     private Matrix4x4 transformationMatrix;
 

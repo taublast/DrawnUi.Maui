@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <UseNet9>true</UseNet9>
-        <UseNuget>false</UseNuget>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(UseNet9)' == 'true'">
@@ -96,6 +95,10 @@
   
   <PropertyGroup Condition="$(TargetFramework.Contains('ios')) == true">
     <ProvisioningType>manual</ProvisioningType>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>  
 
   <ItemGroup>

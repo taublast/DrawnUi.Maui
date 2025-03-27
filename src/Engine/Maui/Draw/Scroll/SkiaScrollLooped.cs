@@ -415,7 +415,7 @@ public class SkiaScrollLooped : SkiaScroll
         base.OnDrawn(context);
     }
 
-    public override Vector2 ClampOffset(float x, float y, bool strict = false)
+    public override Vector2 ClampOffset(float x, float y, SKRect contentOffsetBounds, bool strict = false)
     {
         //to avoid clamping infinity
         if (Orientation == ScrollOrientation.Vertical)
