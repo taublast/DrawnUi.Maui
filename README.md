@@ -21,16 +21,11 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 New nugets: for NET 9 you need version not lower than 1.3.x.  
 For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
 
-### Nuget 1.4.0.4
+### Nuget 1.4.0.5
 _for SkiaSharp 3.116.1 NET 9_
-* Impact on app startup time improved.
-* A rather important fix for `MauiGame` that is ticking superfluid see [SpaceShooter](https://github.com/taublast/Maui.Game.SpaceShooter) and Game section of Sandbox project.
-* Using new gestures nuget with fix for UP being correctly send when finger released outside of canvas.
-* Sandbox on iOS not crashing anymore due to Canvas disposal.
-* A lot of bug fixes and small improvements
-* This is most likely the last nuget having`Maui` in the namespaces, since i use shared code and a Blazor version will come out this year.
-
-https://github.com/taublast/DrawnUi.Maui/assets/25801194/3b360229-ce3b-4d33-a85b-554d1cca8408
+* Improved crash-free hardware-accelerated handler for WIndows.
+* `Backdrop` blur scale fix.
+* Few small fixes and improvements.
 
 ___Please star ⭐ if you like it, helps very much!___
 
