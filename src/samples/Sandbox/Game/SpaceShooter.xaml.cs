@@ -231,14 +231,14 @@ public partial class SpaceShooter : MauiGame
 
     #region GAME LOOP
 
-    public override void GameLoop(float deltaMs)
+    public override void GameLoop(float deltaSeconds)
     {
-        base.GameLoop(deltaMs);
+        base.GameLoop(deltaSeconds);
 
         if (State == GameState.Playing)
         {
             //update stars parallax
-            ParallaxLayer.TileOffsetY -= STARS_SPEED * deltaMs;
+            ParallaxLayer.TileOffsetY -= STARS_SPEED * deltaSeconds;
 
             // get the player hit box
             var playerPosition = Player.GetPositionOnCanvasInPoints();
@@ -290,7 +290,7 @@ public partial class SpaceShooter : MauiGame
                     // if enemy is still alive it can move..
                     if (enemySprite.IsActive)
                     {
-                        enemySprite.UpdatePosition(deltaMs);
+                        enemySprite.UpdatePosition(deltaSeconds);
                     }
 
                 }
@@ -308,14 +308,14 @@ public partial class SpaceShooter : MauiGame
                         // move the bullet rectangle towards top of the screen
                         if (bulletSprite.IsActive)
                         {
-                            bulletSprite.UpdatePosition(deltaMs);
+                            bulletSprite.UpdatePosition(deltaSeconds);
                         }
                     }
                 }
             }
 
             // reduce time we wait between enemy creations
-            _pauseEnemyCreation -= 1 * deltaMs;
+            _pauseEnemyCreation -= 1 * deltaSeconds;
 
             // our logic for calculating time between enemy spans according to difficulty and current score
             if (_pauseEnemyCreation < 0)
@@ -346,12 +346,12 @@ public partial class SpaceShooter : MauiGame
             // player movement
             if (_moveLeft)
             {
-                UpdatePlayerPosition(Player.TranslationX - PLAYER_SPEED * deltaMs);
+                UpdatePlayerPosition(Player.TranslationX - PLAYER_SPEED * deltaSeconds);
             }
 
             if (_moveRight)
             {
-                UpdatePlayerPosition(Player.TranslationX + PLAYER_SPEED * deltaMs);
+                UpdatePlayerPosition(Player.TranslationX + PLAYER_SPEED * deltaSeconds);
             }
 
             if (Health < 1)

@@ -15,7 +15,7 @@ public class FrameTimeInterpolator
     private const float QUALITY_CHANGE_THRESHOLD = 0.75f; // 75% of frames must exceed threshold
 
     // Quality reduction ratio from target FPS
-    private const float QUALITY_REDUCTION_RATIO = 0.5f; // 50% of target FPS
+    private const float QUALITY_REDUCTION_RATIO = 0.75f; 
 
     private float _lastFrameTime;
     private float _currentTimeStep;
@@ -229,4 +229,10 @@ public class FrameTimeInterpolator
         }
     }
 
+    // Singleton pattern
+    private static FrameTimeInterpolator _instance;
+    public static FrameTimeInterpolator Instance =>
+        _instance ??= new FrameTimeInterpolator();
+
+ 
 }

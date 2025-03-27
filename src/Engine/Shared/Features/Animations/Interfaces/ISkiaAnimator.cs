@@ -6,9 +6,9 @@ public interface ISkiaAnimator : IDisposable
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="frameTime"></param>
+    /// <param name="frameTimeNanos"></param>
     /// <returns>Is Finished</returns>
-    bool TickFrame(long frameTime);
+    bool TickFrame(long frameTimeNanos);
 
     bool IsRunning { get; }
 

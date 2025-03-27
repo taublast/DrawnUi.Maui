@@ -38,13 +38,9 @@
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
-            <draw:SkiaLayout
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
+            <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
-                <draw:SkiaScroll
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
+                <draw:SkiaScroll HorizontalOptions="Fill" VerticalOptions="Fill">
 
                     <draw:SkiaLayout
                         Padding="24"

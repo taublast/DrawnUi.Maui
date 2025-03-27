@@ -51,10 +51,10 @@ namespace DrawnUi.Maui.Game
         }
 
         /// <summary>
-        /// Override this for your game. `deltaMs` is time elapsed between the previous frame and this one 
+        /// Override this for your game. `deltaSeconds` is time elapsed between the previous frame and this one 
         /// </summary>
-        /// <param name="deltaMs"></param>
-        public virtual void GameLoop(float deltaMs)
+        /// <param name="deltaSeconds"></param>
+        public virtual void GameLoop(float deltaSeconds)
         {
 
         }
@@ -85,17 +85,17 @@ namespace DrawnUi.Maui.Game
         /// <summary>
         /// Internal, use override GameLoop for your game.
         /// </summary>
-        /// <param name="frameTime"></param>
-        protected virtual void GameTick(long frameTime)
+        /// <param name="frameTimeNanos"></param>
+        protected virtual void GameTick(long frameTimeNanos)
         {
             // Incoming frameTime is in nanoseconds
             // Calculate delta time in seconds for later use
-            float deltaSeconds = (frameTime - LastFrameTimeNanos) / 1_000_000_000.0f;
+            float deltaSeconds = (frameTimeNanos - LastFrameTimeNanos) / 1_000_000_000.0f;
 
             // Use stable time
             deltaSeconds = FrameTimeInterpolator.GetDeltaTime(deltaSeconds);
 
-            LastFrameTimeNanos = frameTime;
+            LastFrameTimeNanos = frameTimeNanos;
 
             GameLoop(deltaSeconds);
         }

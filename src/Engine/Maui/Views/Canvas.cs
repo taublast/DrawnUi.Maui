@@ -13,8 +13,6 @@ namespace DrawnUi.Maui.Views;
 [ContentProperty("Content")]
 public class Canvas : DrawnView, IGestureListener
 {
-
-
     public override void SetChildren(IEnumerable<SkiaControl> views)
     {
         //do not use subviews as we are using Content property for this control
@@ -44,6 +42,7 @@ public class Canvas : DrawnView, IGestureListener
             {
                 RemoveSubView(oldContent);
             }
+
             if (view != null)
             {
                 AddSubView(view);
@@ -75,17 +74,16 @@ public class Canvas : DrawnView, IGestureListener
 
     protected Size AdaptSizeToContentIfNeeded(double widthConstraint, double heightConstraint, bool force = false)
     {
-
         if (force || _widthConstraint != widthConstraint || _heightConstraint != heightConstraint)
         {
-
             var measured = Measure((float)widthConstraint, (float)heightConstraint);
 
             var request = measured.Units;
 
             _widthConstraint = widthConstraint;
             _heightConstraint = heightConstraint;
-            _measuredContent = new Size(request.Width + Margin.Left + Margin.Right, request.Height + Margin.Top + Margin.Bottom);
+            _measuredContent = new Size(request.Width + Margin.Left + Margin.Right,
+                request.Height + Margin.Top + Margin.Bottom);
 
             if (_measuredContent != Size.Zero)
             {
@@ -125,19 +123,22 @@ public class Canvas : DrawnView, IGestureListener
         {
             var stop = heightConstraint;
         }
+
         //we need this for NET 9, where we might have `heightConstraint` Infinity
         //while `HeightRequest` was defined to exact value
         if (!double.IsFinite(heightConstraint) && double.IsFinite(HeightRequest))
         {
             heightConstraint = HeightRequest;
         }
+
         if (!double.IsFinite(widthConstraint) && double.IsFinite(WidthRequest))
         {
             widthConstraint = WidthRequest;
         }
 
 
-        if (!this.NeedMeasure && _lastMeasureConstraints.Width == widthConstraint && _lastMeasureConstraints.Height == heightConstraint)
+        if (!this.NeedMeasure && _lastMeasureConstraints.Width == widthConstraint &&
+            _lastMeasureConstraints.Height == heightConstraint)
         {
             NeedMeasure = false;
             return _lastMeasureResult;
@@ -174,10 +175,8 @@ public class Canvas : DrawnView, IGestureListener
         return ret;
     }
 
-
     public override void Invalidate()
     {
-
         if (NeedAutoSize)
         {
             //will trigger parent calling our MeasureOverride
@@ -186,24 +185,22 @@ public class Canvas : DrawnView, IGestureListener
             {
                 InvalidateMeasureNonVirtual(InvalidationTrigger.HorizontalOptionsChanged);
             });
-
         }
 
         base.Invalidate();
     }
 
-
-
     public float AdaptWidthContraintToRequest(double widthConstraint)
     {
-        if (widthConstraint >= 0)//&& width < widthConstraint)
+        if (widthConstraint >= 0) //&& width < widthConstraint)
             widthConstraint -= Margin.HorizontalThickness;
 
         return (float)widthConstraint;
     }
+
     public float AdaptHeightContraintToRequest(double heightConstraint)
     {
-        if (heightConstraint >= 0)// && widthPixels < heightConstraint)
+        if (heightConstraint >= 0) // && widthPixels < heightConstraint)
             heightConstraint -= Margin.VerticalThickness;
 
         return (float)heightConstraint;
@@ -236,7 +233,8 @@ public class Canvas : DrawnView, IGestureListener
             var children = GetOrderedSubviews();
             if (children.Count > 0)
             {
-                SKRect rectForChild = GetMeasuringRectForChildren(widthConstraintPts, heightConstraintPts, (float)RenderingScale);
+                SKRect rectForChild =
+                    GetMeasuringRectForChildren(widthConstraintPts, heightConstraintPts, (float)RenderingScale);
 
                 var maxHeight = 0.0f;
                 var maxWidth = 0.0f;
@@ -255,8 +253,11 @@ public class Canvas : DrawnView, IGestureListener
 
                 ContentSize = ScaledSize.FromPixels(maxWidth, maxHeight, (float)RenderingScale);
 
-                widthConstraintPts = AdaptWidthContraintToContentRequest(widthConstraintPts, ContentSize, Padding.Left + Padding.Right);
-                heightConstraintPts = AdaptHeightContraintToContentRequest(heightConstraintPts, ContentSize, Padding.Top + Padding.Bottom);
+                widthConstraintPts =
+                    AdaptWidthContraintToContentRequest(widthConstraintPts, ContentSize, Padding.Left + Padding.Right);
+                heightConstraintPts =
+                    AdaptHeightContraintToContentRequest(heightConstraintPts, ContentSize,
+                        Padding.Top + Padding.Bottom);
             }
         }
 
@@ -286,7 +287,8 @@ public class Canvas : DrawnView, IGestureListener
         return rectForChild;
     }
 
-    public float AdaptWidthContraintToContentRequest(float widthConstraintUnits, ScaledSize measuredContent, double sideConstraintsUnits)
+    public float AdaptWidthContraintToContentRequest(float widthConstraintUnits, ScaledSize measuredContent,
+        double sideConstraintsUnits)
     {
         return SkiaControl.AdaptConstraintToContentRequest(
             widthConstraintUnits,
@@ -298,7 +300,8 @@ public class Canvas : DrawnView, IGestureListener
             1, false);
     }
 
-    public float AdaptHeightContraintToContentRequest(float heightConstraintUnits, ScaledSize measuredContent, double sideConstraintsUnits)
+    public float AdaptHeightContraintToContentRequest(float heightConstraintUnits, ScaledSize measuredContent,
+        double sideConstraintsUnits)
     {
         return SkiaControl.AdaptConstraintToContentRequest(
             heightConstraintUnits,
@@ -309,7 +312,6 @@ public class Canvas : DrawnView, IGestureListener
             MaximumHeightRequest,
             1, false);
     }
-
 
     /// <summary>
     /// In UNITS
@@ -323,21 +325,21 @@ public class Canvas : DrawnView, IGestureListener
         {
             widthRequest = ContentSize.Units.Width + Padding.Left + Padding.Right;
         }
+
         if (NeedAutoHeight && ContentSize.Units.Height > 0)
         {
             heightRequest = ContentSize.Units.Height + Padding.Top + Padding.Bottom;
         }
 
-        return new Size(widthRequest, heightRequest); ;
+        return new Size(widthRequest, heightRequest);
+        ;
     }
 
     private ScaledSize _contentSize = new();
+
     public ScaledSize ContentSize
     {
-        get
-        {
-            return _contentSize;
-        }
+        get { return _contentSize; }
         protected set
         {
             if (_contentSize != value)
@@ -394,15 +396,13 @@ public class Canvas : DrawnView, IGestureListener
 
             if (this.Gestures == GesturesMode.Enabled)
                 TouchEffect.SetShareTouch(this, TouchHandlingStyle.Default);
-            else
-            if (this.Gestures == GesturesMode.Lock)
+            else if (this.Gestures == GesturesMode.Lock)
                 TouchEffect.SetShareTouch(this, TouchHandlingStyle.Lock);
             //else
             //if (this.Gestures == GesturesMode.Share)
             //    TouchEffect.SetShareTouch(this, TouchHandlingStyle.Share);
         }
     }
-
 
     protected virtual SkiaSvg CreateDebugPointer()
     {
@@ -428,7 +428,6 @@ public class Canvas : DrawnView, IGestureListener
     }
 
     protected DrawingContext Context;
-
 
     /// <summary>
     /// Fixing error in gestures nuget TODO fix there
@@ -457,13 +456,11 @@ public class Canvas : DrawnView, IGestureListener
                type == TouchActionResult.Up;
     }
 
-
     private bool _debugIsPressed;
     private bool _debugIsDown;
 
     protected virtual void ProcessGestures(SkiaGesturesParameters args)
     {
-
         lock (LockIterateListeners)
         {
             ISkiaGestureListener consumed = null;
@@ -480,15 +477,13 @@ public class Canvas : DrawnView, IGestureListener
                 {
                     foreach (var hadInput in HadInput.Values)
                     {
-                        if (!hadInput.CanDraw || hadInput.InputTransparent || hadInput.GestureListenerRegistrationTime == null)
+                        if (!hadInput.CanDraw || hadInput.InputTransparent ||
+                            hadInput.GestureListenerRegistrationTime == null)
                         {
                             continue;
                         }
 
-                        var adjust = new GestureEventProcessingInfo()
-                        {
-                            alreadyConsumed = wasConsumed
-                        };
+                        var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
 
                         consumed = hadInput.OnSkiaGestureEvent(args, adjust);
 
@@ -500,10 +495,8 @@ public class Canvas : DrawnView, IGestureListener
                             if (args.Type != TouchActionResult.Up)
                                 break;
                         }
-                        
                     }
                 }
-                
             }
 
 
@@ -511,7 +504,7 @@ public class Canvas : DrawnView, IGestureListener
             //var listeners = CollectionsMarshal.AsSpan(GestureListeners.GetListeners());
             foreach (var listener in GestureListeners.GetListeners())
             {
-                if (listener==null || !listener.CanDraw || listener.InputTransparent)
+                if (listener == null || !listener.CanDraw || listener.InputTransparent)
                 {
                     continue;
                 }
@@ -526,7 +519,8 @@ public class Canvas : DrawnView, IGestureListener
 
                 var forChild = true;
                 if (args.Type != TouchActionResult.Up)
-                    forChild = ((SkiaControl)listener).HitIsInside(args.Event.StartingLocation.X, args.Event.StartingLocation.Y) || listener == FocusedChild;
+                    forChild = ((SkiaControl)listener).HitIsInside(args.Event.StartingLocation.X,
+                        args.Event.StartingLocation.Y) || listener == FocusedChild;
 
                 if (forChild)
                 {
@@ -536,10 +530,7 @@ public class Canvas : DrawnView, IGestureListener
                         manageChildFocus = false;
                     }
 
-                    var adjust = new GestureEventProcessingInfo()
-                    {
-                        alreadyConsumed = wasConsumed
-                    };
+                    var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
 
                     consumed = listener.OnSkiaGestureEvent(args, adjust);
 
@@ -549,6 +540,7 @@ public class Canvas : DrawnView, IGestureListener
                         {
                             HadInput.TryAdd(listener.Uid, consumed);
                         }
+
                         break;
                     }
                 }
@@ -562,7 +554,8 @@ public class Canvas : DrawnView, IGestureListener
                 }
                 else
                 {
-                    Super.Log($"[Touch] {args.Type} ({args.Event.NumberOfTouches}) consumed by {consumed} {consumed.Tag}");
+                    Super.Log(
+                        $"[Touch] {args.Type} ({args.Event.NumberOfTouches}) consumed by {consumed} {consumed.Tag}");
                 }
             }
 
@@ -583,9 +576,7 @@ public class Canvas : DrawnView, IGestureListener
             {
                 ReceivedInput.Clear();
             }
-
         }
-
     }
 
     /// <summary>
@@ -605,9 +596,7 @@ public class Canvas : DrawnView, IGestureListener
     }
 
     private SKPoint _panningOffset;
-
     private SKPoint _PressedPosition;
-
     public event EventHandler Tapped;
 
     /// <summary>
@@ -645,7 +634,6 @@ public class Canvas : DrawnView, IGestureListener
 
         if (GesturesDebugColor.Alpha > 0)
         {
-
             if (DebugPointer == null)
             {
                 DebugPointer = CreateDebugPointer();
@@ -663,7 +651,8 @@ public class Canvas : DrawnView, IGestureListener
                 if (args.Type == TouchActionResult.Up)
                 {
                     _debugIsPressed = false;
-                    _PressedPosition = SKPoint.Empty; ;
+                    _PressedPosition = SKPoint.Empty;
+                    ;
                 }
             }
 
@@ -672,7 +661,6 @@ public class Canvas : DrawnView, IGestureListener
                 //pixels already
                 _PressedPosition = new(args.Event.Location.X, args.Event.Location.Y);
             }
-
         }
 
         //this is intended to not lose gestures when fps drops and avoid crashes in double-buffering
@@ -689,14 +677,11 @@ public class Canvas : DrawnView, IGestureListener
         });
 
         Repaint();
-
     }
 
     #endregion
 
     #region HELPER METHODS
-
-
 
     public void BreakLine()
     {
@@ -707,7 +692,6 @@ public class Canvas : DrawnView, IGestureListener
 
     public Canvas() : base()
     {
-
     }
 
     public void Clear()
@@ -717,29 +701,21 @@ public class Canvas : DrawnView, IGestureListener
 
     public void PlayRippleAnimation(Color color, double x, double y, bool removePrevious = true)
     {
-        var animation = new RippleAnimator(this)
-        {
-            X = x,
-            Y = y
-        };
+        var animation = new RippleAnimator(this) { X = x, Y = y };
         animation.Start();
     }
 
-    public void PlayShimmerAnimation(Color color, float shimmerWidth, float shimmerAngle, int speedMs = 1000, bool removePrevious = false)
+    public void PlayShimmerAnimation(Color color, float shimmerWidth, float shimmerAngle, int speedMs = 1000,
+        bool removePrevious = false)
     {
         var animation = new ShimmerAnimator(this)
         {
-            Color = color.ToSKColor(),
-            ShimmerWidth = shimmerWidth,
-            ShimmerAngle = shimmerAngle,
-            Speed = speedMs
+            Color = color.ToSKColor(), ShimmerWidth = shimmerWidth, ShimmerAngle = shimmerAngle, Speed = speedMs
         };
         animation.Start();
     }
 
-
     public static long TimeLastGC { get; set; }
-
     public static long DelayNanosBetweenGC { get; set; } = 160_000_000; //160ms
 
     public static void CollectGarbage(long timeNanos)
@@ -756,7 +732,6 @@ public class Canvas : DrawnView, IGestureListener
             GC.Collect(0);
         }
     }
-
 
     #endregion
 
@@ -797,7 +772,6 @@ public class Canvas : DrawnView, IGestureListener
         set { SetValue(ReserveSpaceAroundProperty, value); }
     }
 
-
     private static void GesturesChanged(BindableObject bindable, object oldvalue, object newvalue)
     {
         if (bindable is Canvas control)
@@ -835,6 +809,7 @@ public class Canvas : DrawnView, IGestureListener
             control.SetContent(newvalue as SkiaControl);
         }
     }
+
     public new ISkiaControl Content
     {
         get { return (ISkiaControl)GetValue(ContentProperty); }
@@ -845,14 +820,12 @@ public class Canvas : DrawnView, IGestureListener
 
     #region RENDERiNG
 
-
     protected override void OnParentChanged()
     {
         base.OnParentChanged();
 
         NeedCheckParentVisibility = true;
     }
-
 
     /// <summary>
     /// Enable canvas rendering itsself
@@ -872,18 +845,11 @@ public class Canvas : DrawnView, IGestureListener
         UpdateLocks = 1;
     }
 
-
+    public bool RetainedMode = false;
 
     protected override void Draw(DrawingContext context)
     {
         Context = context;
-
-        if (BackgroundColor != null)
-        {
-            context.Context.Canvas.Clear(BackgroundColor.ToSKColor());
-        }
-        else
-            context.Context.Canvas.Clear();
 
         double widthRequest = WidthRequest;
         double heightRequest = HeightRequest;
@@ -892,35 +858,76 @@ public class Canvas : DrawnView, IGestureListener
 
         if (!IsGhost)
         {
-            PaintTintBackground(context.Context.Canvas);
-
-            base.Draw(context.WithDestination(Destination));
-
-            if (GesturesDebugColor.Alpha > 0 && _PressedPosition != SKPoint.Empty)
+            if (RetainedMode && Content is SkiaControl skia)
             {
-
-                if (_debugIsDown)
+                //to debug RETAINED MODE
+                if (skia.NeedUpdate)
                 {
-                    using (SKPaint paint = new SKPaint
+                    Debug.WriteLine("PAINT");
+
+                    PaintTintBackground(context.Context.Canvas);
+
+                    base.Draw(context.WithDestination(Destination));
+
+                    if (GesturesDebugColor.Alpha > 0 && _PressedPosition != SKPoint.Empty)
                     {
-                        Style = SKPaintStyle.StrokeAndFill,
-                        Color = GesturesDebugColor.ToSKColor()
-                    })
-                    {
-                        var circleRadius = 10f * RenderingScale; //half size
-                        this.CanvasView.Surface.Canvas.DrawCircle(_PressedPosition.X, _PressedPosition.Y, circleRadius, paint);
+                        if (_debugIsDown)
+                        {
+                            using (SKPaint paint = new SKPaint
+                                   {
+                                       Style = SKPaintStyle.StrokeAndFill, Color = GesturesDebugColor.ToSKColor()
+                                   })
+                            {
+                                var circleRadius = 10f * RenderingScale; //half size
+                                this.CanvasView.Surface.Canvas.DrawCircle(_PressedPosition.X, _PressedPosition.Y,
+                                    circleRadius, paint);
+                            }
+                        }
+
+                        var offsetHandX = (float)(-13) * RenderingScale;
+                        var offsetHandY = (float)(-6) * RenderingScale;
+                        DebugPointer.Parent = this;
+
+                        DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX,
+                            _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
                     }
                 }
+                else
+                {
+                    Debug.WriteLine("RETAINED");
+                }
+            }
+            else
+            {
+                //usual immediate mode
+                PaintTintBackground(context.Context.Canvas);
 
-                var offsetHandX = (float)(-13) * RenderingScale;
-                var offsetHandY = (float)(-6) * RenderingScale;
-                DebugPointer.Parent = this;
+                base.Draw(context.WithDestination(Destination));
 
-                DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX, _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
+                if (GesturesDebugColor.Alpha > 0 && _PressedPosition != SKPoint.Empty)
+                {
+                    if (_debugIsDown)
+                    {
+                        using (SKPaint paint = new SKPaint
+                               {
+                                   Style = SKPaintStyle.StrokeAndFill, Color = GesturesDebugColor.ToSKColor()
+                               })
+                        {
+                            var circleRadius = 10f * RenderingScale; //half size
+                            this.CanvasView.Surface.Canvas.DrawCircle(_PressedPosition.X, _PressedPosition.Y,
+                                circleRadius, paint);
+                        }
+                    }
+
+                    var offsetHandX = (float)(-13) * RenderingScale;
+                    var offsetHandY = (float)(-6) * RenderingScale;
+                    DebugPointer.Parent = this;
+
+                    DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX,
+                        _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
+                }
             }
         }
-
-
     }
 
     #endregion

@@ -72,20 +72,14 @@
     <Compile Remove="Internals\ConditionalStyle.cs" />
     <Compile Remove="Internals\Models\ConditionalStyle.cs" />
     <Compile Remove="Platforms\Windows\ViewChainPanel.Windows.cs" />
+    <Compile Remove="Platforms\Windows\Views\AngleSwapChainPanel.cs" />
     <Compile Remove="Controls\Extensions\**" />
-    <Compile Remove="Platforms\Android\NewFolder\**" />
     <Compile Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
-    <Compile Remove="Views\Compat\SKCanvasViewRendererBase.cs" />
     <Compile Remove="Platforms\Windows\SKCanvasViewRenderer.Windows.cs" />
-    <Compile Remove="Platforms\iOS\SKMetalViewFixed.cs" />
     <Compile Remove="Platforms\iOS\SKMetalViewRenderer.cs" />
-  </ItemGroup>
-
-   <ItemGroup Condition="'$(UseSkiaSharp3)' != 'true'">
-    <Compile Remove="Internals\Helpers\3D\**" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
@@ -103,14 +97,14 @@
       <Pack>True</Pack>
     </None>
     <None Include="Platforms\Windows\ViewChainPanel.Windows.cs" />
+    <None Include="Platforms\Windows\Views\AngleSwapChainPanel.cs" />
     <None Remove="Controls\Extensions\**" />
-    <None Remove="Platforms\Android\NewFolder\**" />
     <None Remove="Platforms\Windows\Controls\**" />
 	</ItemGroup>
 
   <ItemGroup>
 
-      <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.3.1" />
+      <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.4" />
     <!--for parsing markdown text-->
     <PackageReference Include="Markdig" Version="0.34.0" />
     <!--for caching images-->
@@ -132,19 +126,16 @@
 
   <ItemGroup>
     <EmbeddedResource Remove="Controls\Extensions\**" />
-    <EmbeddedResource Remove="Platforms\Android\NewFolder\**" />
     <EmbeddedResource Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
     
   <ItemGroup>
     <MauiXaml Remove="Controls\Extensions\**" />
-    <MauiXaml Remove="Platforms\Android\NewFolder\**" />
     <MauiXaml Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
     
   <ItemGroup>
     <MauiCss Remove="Controls\Extensions\**" />
-    <MauiCss Remove="Platforms\Android\NewFolder\**" />
     <MauiCss Remove="Platforms\Windows\Controls\**" />
   </ItemGroup>
   <ItemGroup>
@@ -154,7 +145,6 @@
   <ItemGroup>
     <Folder Include="Internals\Handlers\" />
     <Folder Include="Shared\Handlers\" />
-    <Folder Include="Views\Compat\" />
   </ItemGroup>
  
     

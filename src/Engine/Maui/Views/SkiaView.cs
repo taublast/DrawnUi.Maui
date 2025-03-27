@@ -2,12 +2,14 @@
 
 public partial class SkiaView : SKCanvasView, ISkiaDrawable
 {
-
+    public Guid Uid { get; } = Guid.NewGuid();
 
     public bool IsHardwareAccelerated => false;
 
     public void SignalFrame(long nanoseconds)
-    { }
+    {
+
+    }
 
     public SKSurface CreateStandaloneSurface(int width, int height)
     {

@@ -28,7 +28,7 @@ public class RangeAnimator : SkiaValueAnimator
 
             _callback = callback;
             mValue = start;
-            mLastFrameTime = 0;
+            LastFrameTimeNanos = 0;
             mMinValue = start;
             mMaxValue = end;
             Speed = ms;

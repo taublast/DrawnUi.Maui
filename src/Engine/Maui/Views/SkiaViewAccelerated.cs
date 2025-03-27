@@ -4,6 +4,7 @@
 
 public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 {
+    public Guid Uid { get; }  = Guid.NewGuid();
 
     public SKSurface CreateStandaloneSurface(int width, int height)
     {
@@ -113,16 +114,15 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     }
 
     public DrawnView Superview { get; protected set; }
-    private SKImage _snapshot;
     private bool _newFrameReady;
 
     public void Dispose()
     {
         PaintSurface -= OnPaintingSurface;
         _surface = null;
-        _snapshot?.Dispose();
-        _snapshot = null;
         Superview = null;
+
+        GC.SuppressFinalize(this);
     }
 
     SKSurface _surface;

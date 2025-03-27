@@ -160,6 +160,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\SpringWithVelocityAnimator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\SpringWithVelocityVectorAnimator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\VelocitySkiaAnimator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\Sk3dView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\SkCamera3D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\SkPatch3D.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\TrackedObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Super.cs" />
   </ItemGroup>
 </Project>

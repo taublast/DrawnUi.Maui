@@ -42,7 +42,7 @@
                 Bounces="True"
                 ChangeDistancePanned="1.2"
                 FrictionScrolled="0.6"
-                HorizontalOptions="Center"
+                HorizontalOptions="Fill"
                 RefreshEnabled="False"
                 Scrolled="OnScrolled"
                 VerticalOptions="Fill"

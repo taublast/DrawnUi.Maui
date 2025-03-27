@@ -43,10 +43,6 @@ public partial class MainPage : BasePageCodeBehind
             var page = App.MainPages.FirstOrDefault(x => x.Name == btn.Text);
             if (page != null)
             {
-                Super.EnableRendering = false; //globally disable the rendering
-                //to avoid crash accessing memory when the old mainpage is destroyed
-                //but double buffered hw-accelerated view might try to render to it
-
                 var instance = (ContentPage)Activator.CreateInstance(page.Type);
 
                 App.Instance.SetMainPage(instance);

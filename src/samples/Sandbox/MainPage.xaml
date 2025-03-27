@@ -12,9 +12,7 @@
     x:DataType="sandbox:MainPageViewModel"
     BackgroundColor="#000000">
 
-    <Grid
-        HorizontalOptions="Fill"
-        VerticalOptions="Fill">
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
 
         <draw:Canvas
             BackgroundColor="DarkSlateBlue"
@@ -29,9 +27,7 @@
                 Tag="Wrapper"
                 VerticalOptions="Fill">
 
-                <draw:SkiaScroll
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
+                <draw:SkiaScroll HorizontalOptions="Fill" VerticalOptions="Fill">
 
                     <draw:SkiaLayout
                         HorizontalOptions="Fill"

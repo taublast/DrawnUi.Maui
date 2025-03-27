@@ -13,22 +13,6 @@ namespace DrawnUi.Maui.Draw
     public partial class Super
     {
 
-        #region Thread
-        static bool PlatformIsMainThread
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        static void PlatformBeginInvokeOnMainThread(Action action, string Identifier = null)
-        {
-
-        }
-
-        #endregion
-
         public static void Init()
         {
             if (Initialized)
@@ -88,7 +72,6 @@ namespace DrawnUi.Maui.Draw
                                     catch (Exception e)
                                     {
                                         Console.WriteLine(e);
-                                        throw;
                                     }
                                 }
                             }

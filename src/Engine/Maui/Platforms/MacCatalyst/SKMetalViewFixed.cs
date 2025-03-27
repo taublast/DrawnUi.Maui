@@ -3,13 +3,15 @@ using CoreGraphics;
 using Foundation;
 using Metal;
 using MetalKit;
+using ObjCRuntime;
 using SkiaSharp.Views.iOS;
 
 namespace DrawnUi.Maui.Views
 {
-    [Register(nameof(SKMetalViewFixed))]
+
+    [Register(nameof(SKMetalViewRetained))]
     [DesignTimeVisible(true)]
-    public class SKMetalViewFixed : MTKView, IMTKViewDelegate, IComponent
+    public class SKMetalViewRetained : MTKView, IMTKViewDelegate, IComponent
     {
         // for IComponent
 #pragma warning disable 67
@@ -36,28 +38,28 @@ namespace DrawnUi.Maui.Views
         }
 
         // created in code
-        public SKMetalViewFixed()
+        public SKMetalViewRetained()
             : this(CGRect.Empty)
         {
             Initialize();
         }
 
         // created in code
-        public SKMetalViewFixed(CGRect frame)
+        public SKMetalViewRetained(CGRect frame)
             : base(frame, null)
         {
             Initialize();
         }
 
         // created in code
-        public SKMetalViewFixed(CGRect frame, IMTLDevice device)
+        public SKMetalViewRetained(CGRect frame, IMTLDevice device)
             : base(frame, device)
         {
             Initialize();
         }
 
         // created via designer
-        public SKMetalViewFixed(IntPtr p)
+        public SKMetalViewRetained(IntPtr p)
             : base(p)
         {
         }
@@ -125,6 +127,17 @@ namespace DrawnUi.Maui.Views
                 SetNeedsDisplay();
         }
 
+        SKSurface _surface;
+        GRBackendRenderTarget _lastTarget;
+        SKSize _lastTargetInfo;
+
+
+        public override void Draw()
+        {
+            base.Draw();
+
+        }
+
         void IMTKViewDelegate.Draw(MTKView view)
         {
             if (designMode)
@@ -144,27 +157,53 @@ namespace DrawnUi.Maui.Views
             const SKColorType colorType = SKColorType.Bgra8888;
             const GRSurfaceOrigin surfaceOrigin = GRSurfaceOrigin.TopLeft;
 
-            // create the render target
-            var metalInfo = new GRMtlTextureInfo(CurrentDrawable.Texture);
-            using var renderTarget = new GRBackendRenderTarget((int)CanvasSize.Width, (int)CanvasSize.Height, (int)SampleCount, metalInfo);
+            bool needsNewSurface = _surface == null ||
+                                   _lastTarget == null ||
+                                   !_lastTarget.IsValid ||
+                                   _lastTargetInfo != CanvasSize;
 
-            // create the surface
-            using var surface = SKSurface.Create(context, renderTarget, surfaceOrigin, colorType);
-            using var canvas = surface.Canvas;
+            if (needsNewSurface)
+            {
+                DisposeTarget();
+
+                _lastTargetInfo = CanvasSize;
+
+                // create the render target
+                var metalInfo = new GRMtlTextureInfo(CurrentDrawable.Texture);
+                _lastTarget = new GRBackendRenderTarget((int)CanvasSize.Width, (int)CanvasSize.Height, (int)SampleCount, metalInfo);
+
+                // create the surface
+                _surface = SKSurface.Create(context, _lastTarget, surfaceOrigin, colorType);
+            }
 
             // start drawing
-            var e = new SkiaSharp.Views.iOS.SKPaintMetalSurfaceEventArgs(surface, renderTarget, surfaceOrigin, colorType);
+            var e = new SkiaSharp.Views.iOS.SKPaintMetalSurfaceEventArgs(_surface, _lastTarget, surfaceOrigin, colorType);
             OnPaintSurface(e);
 
             // flush the SkiaSharp contents
-            canvas.Flush();
-            surface.Flush();
+            _surface.Canvas.Flush();
+            _surface.Flush();
             context.Flush();
 
             // present
             using var commandBuffer = backendContext.Queue.CommandBuffer();
+            commandBuffer.AddCompletedHandler(buffer => {
+
+                // GPU finished rendering
+                // runs on background thread
+
+
+
+
+            });
             commandBuffer.PresentDrawable(CurrentDrawable);
             commandBuffer.Commit();
+        }
+
+        void DisposeTarget()
+        {
+            _lastTarget?.Dispose();
+            _surface?.Dispose();
         }
 
         public event EventHandler<SkiaSharp.Views.iOS.SKPaintMetalSurfaceEventArgs> PaintSurface;
@@ -175,4 +214,3 @@ namespace DrawnUi.Maui.Views
         }
     }
 }
-

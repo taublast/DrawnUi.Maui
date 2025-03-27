@@ -3,13 +3,20 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Microsoft.UI.Xaml.Media;
 
 namespace DrawnUi.Maui.Draw
 {
     public partial class Super
     {
 
+        /// <summary>
+        /// When set to true will run loop uponCompositionTarget.Rendering hits instead of a timer looper that targets 120 fps. Default is false because for Windows double buffering we need twice the standart calls..
+        /// </summary>
+        public static bool UseDisplaySync = false;
 
+        static bool _loopStarting = false;
+        static bool _loopStarted = false;
 
         public static void Init()
         {
@@ -27,12 +34,52 @@ namespace DrawnUi.Maui.Draw
             //VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
             InitShared();
 
-            Looper = new(() =>
+            if (UseDisplaySync)
             {
-                OnFrame?.Invoke(null, null);
-            });
+                Tasks.StartDelayed(TimeSpan.FromMilliseconds(250), async () =>
+                {
+                    while (!_loopStarted)
+                    {
+                        MainThread.BeginInvokeOnMainThread(async () =>
+                        {
+                            if (_loopStarting)
+                                return;
+                            _loopStarting = true;
 
-            Looper.StartOnMainThread(120);
+                            if (MainThread.IsMainThread) //UI thread is available
+                            {
+                                if (!_loopStarted)
+                                {
+                                    _loopStarted = true;
+                                    try
+                                    {
+                                        CompositionTarget.Rendering += (s, a) =>
+                                        {
+                                            OnFrame?.Invoke(null, null);
+                                        };
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine(e);
+                                    }
+                                }
+                            }
+
+                            _loopStarting = false;
+                        });
+                        await Task.Delay(100);
+                    }
+                });
+            }
+            else
+            {
+                Looper = new(() =>
+                {
+                    OnFrame?.Invoke(null, null);
+                });
+
+                Looper.StartOnMainThread(120);
+            }
         }
 
         static Looper Looper { get; set; }

@@ -90,16 +90,16 @@ public class SkiaValueAnimator : AnimatorBase
         if (Repeat < 0) //forever
         {
             mValue = mMinValue;
-            mLastFrameTime = 0;
-            mStartFrameTime = 0;
+            LastFrameTimeNanos = 0;
+            StartFrameTimeNanos = 0;
             finished = false;
         }
         else if (Repeat > 0)
         {
             Repeat--;
             mValue = mMinValue;
-            mLastFrameTime = 0;
-            mStartFrameTime = 0;
+            LastFrameTimeNanos = 0;
+            StartFrameTimeNanos = 0;
             finished = false;
         }
         else
@@ -109,7 +109,10 @@ public class SkiaValueAnimator : AnimatorBase
         }
         return finished;
     }
-    public override bool TickFrame(long frameTime)
+
+    protected FrameTimeInterpolator FrameTimeInterpolator = new();
+
+    public override bool TickFrame(long frameTimeNanos)
     {
         if (lockCheck)
         {
@@ -122,20 +125,24 @@ public class SkiaValueAnimator : AnimatorBase
             if (!IsRunning)
                 return true;
 
-            if (mLastFrameTime == 0)
+            if (LastFrameTimeNanos == 0)
             {
                 //  First frame.
-                mLastFrameTime = frameTime;
-                mStartFrameTime = frameTime;
+                LastFrameTimeNanos = frameTimeNanos;
+                StartFrameTimeNanos = frameTimeNanos;
             }
 
-            long deltaFromStart = (frameTime - mStartFrameTime);
-            long deltaT = (frameTime - mLastFrameTime);
+            long deltaFromStart = (frameTimeNanos - StartFrameTimeNanos);
+            long deltaNanos = (frameTimeNanos - LastFrameTimeNanos);
 
-            mLastFrameTime = frameTime;
-            bool finished = UpdateValue(deltaT, deltaFromStart);
+            //float deltaSeconds = deltaNanos / 1_000_000_000.0f;
+            //deltaSeconds = FrameTimeInterpolator.GetDeltaTime(deltaSeconds);
+            //deltaNanos = (long)(deltaSeconds * 1_000_000_000.0f);
 
-            var currentValue = TransformReportedValue(deltaT);
+            LastFrameTimeNanos = frameTimeNanos;
+            bool finished = UpdateValue(deltaNanos, deltaFromStart);
+
+            var currentValue = TransformReportedValue(deltaNanos);
             OnUpdated?.Invoke(currentValue);
 
             if (finished)

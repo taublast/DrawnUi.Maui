@@ -122,8 +122,8 @@ public class AnimatorBase : ISkiaAnimator
             WasStarted = true;
             if (!IsRunning)
             {
-                mLastFrameTime = 0;
-                mStartFrameTime = 0;
+                LastFrameTimeNanos = 0;
+                StartFrameTimeNanos = 0;
                 IsRunning = true;
             }
         }
@@ -134,14 +134,14 @@ public class AnimatorBase : ISkiaAnimator
     /// <summary>
     /// Time in NANOS
     /// </summary>
-    /// <param name="frameTime"></param>
+    /// <param name="frameTimeNanos"></param>
     /// <returns></returns>
-    public virtual bool TickFrame(long frameTime)
+    public virtual bool TickFrame(long frameTimeNanos)
     {
         if (!IsRunning)
             return true;
 
-        mLastFrameTime = frameTime;
+        LastFrameTimeNanos = frameTimeNanos;
         return false;
     }
 
@@ -152,7 +152,7 @@ public class AnimatorBase : ISkiaAnimator
 
     public virtual void Resume()
     {
-        mLastFrameTime = Super.GetCurrentTimeNanos();
+        LastFrameTimeNanos = Super.GetCurrentTimeNanos();
         IsPaused = false;
     }
 
@@ -162,8 +162,8 @@ public class AnimatorBase : ISkiaAnimator
     {
         Unregister();
 
-        mLastFrameTime = 0;
-        mStartFrameTime = 0;
+        LastFrameTimeNanos = 0;
+        StartFrameTimeNanos = 0;
         IsRunning = false;
 
         WasStarted = false;
@@ -183,9 +183,9 @@ public class AnimatorBase : ISkiaAnimator
         }
     }
 
-    public long mLastFrameTime { get; set; }
+    public long LastFrameTimeNanos { get; set; }
 
-    public long mStartFrameTime
+    public long StartFrameTimeNanos
     {
         get;
         set;
