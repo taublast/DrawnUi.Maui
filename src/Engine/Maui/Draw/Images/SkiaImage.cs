@@ -25,6 +25,14 @@ public class SkiaImage : SkiaControl
         }
     }
 
+    public override void OnScaleChanged()
+    {
+        InvalidateImageFilter();
+        InvalidateColorFilter();
+
+        base.OnScaleChanged();
+    }
+
     /// <summary>
     /// Do not call this directly, use InstancedBitmap prop
     /// </summary>

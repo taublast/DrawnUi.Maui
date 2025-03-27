@@ -14,9 +14,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
 
-            <Style
-                x:Key="TestStyle"
-                TargetType="draw:SkiaLabel">
+            <Style x:Key="TestStyle" TargetType="draw:SkiaLabel">
                 <Setter Property="VerticalOptions" Value="Center" />
             </Style>
 
@@ -32,9 +30,7 @@
         HorizontalOptions="Fill"
         VerticalOptions="Center">
 
-        <draw:SkiaLayout
-            HorizontalOptions="Fill"
-            VerticalOptions="Fill">
+        <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
             <draw:SkiaScroll
                 x:Name="MainScroll"
@@ -69,8 +65,8 @@
                     x:Name="StackCells"
                     BackgroundColor="White"
                     HorizontalOptions="Fill"
-                    MeasureItemsStrategy="MeasureAll"
                     ItemsSource="{Binding Items}"
+                    MeasureItemsStrategy="MeasureAll"
                     RecyclingTemplate="Enabled"
                     Type="Column"
                     VirtualisationInflated="0">
