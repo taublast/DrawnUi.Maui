@@ -216,10 +216,14 @@ public class Canvas : DrawnView, IGestureListener
             return SetMeasured(0, 0, (float)RenderingScale);
         }
 
-        if (widthConstraintPts < 0 || heightConstraintPts < 0)
+        if (widthConstraintPts < 0)
         {
-            //not setting NeedMeasure=false;
-            return ScaledSize.Default;
+            widthConstraintPts = float.PositiveInfinity;
+        }
+
+        if (heightConstraintPts < 0)
+        {
+            heightConstraintPts = float.PositiveInfinity;
         }
 
         widthConstraintPts = AdaptWidthContraintToRequest(widthConstraintPts);
@@ -900,7 +904,14 @@ public class Canvas : DrawnView, IGestureListener
             else
             {
                 //usual immediate mode
-                PaintTintBackground(context.Context.Canvas);
+                if (BackgroundColor != null && BackgroundColor != Colors.Transparent)
+                {
+                    PaintTintBackground(context.Context.Canvas);
+                }
+                else
+                {
+                    context.Context.Canvas.Clear();
+                }
 
                 base.Draw(context.WithDestination(Destination));
 
