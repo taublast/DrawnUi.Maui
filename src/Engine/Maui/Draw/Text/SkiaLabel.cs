@@ -11,6 +11,8 @@ using PropertyChangingEventArgs = Microsoft.Maui.Controls.PropertyChangingEventA
 
 namespace DrawnUi.Maui.Draw
 {
+    //todo add accesibility features
+
     //todo
     //public enum UseRotationDirection
     //{
@@ -19,8 +21,24 @@ namespace DrawnUi.Maui.Draw
     //    UsePath
     //}
 
-    //todo add accesibility features
-
+    /// <summary>
+    /// A high-performance text rendering control that provides advanced text formatting,
+    /// layout, and styling capabilities using SkiaSharp for rendering.
+    /// </summary>
+    /// <remarks>
+    /// SkiaLabel offers rich text formatting with features including:
+    /// - Multi-line text with various alignment options
+    /// - Rich text styling with spans for portions of text
+    /// - Text shadows and gradient effects
+    /// - Font customization including weight, family, and size
+    /// - Emoji rendering support
+    /// - Text transformation and decoration
+    /// - Line height and spacing control
+    /// - Text measurement and truncation
+    /// 
+    /// Performance is optimized through text layout caching, glyph measurement caching,
+    /// and intelligent rendering that only processes visible portions of text.
+    /// </remarks>
     [ContentProperty("Spans")]
     public partial class SkiaLabel : SkiaControl, ISkiaGestureListener, IText
     {
@@ -149,6 +167,36 @@ namespace DrawnUi.Maui.Draw
 
         #region SPANS
 
+        /// <summary>
+        /// Gets the collection of text spans for rich text formatting.
+        /// </summary>
+        /// <remarks>
+        /// Spans allow you to apply different styling to portions of text within the label.
+        /// Each TextSpan can have its own:
+        /// 
+        /// - Text content
+        /// - Font attributes (weight, family, size)
+        /// - Text color
+        /// - Background color
+        /// - Text decorations (underline, strikethrough)
+        /// - Custom styles
+        /// 
+        /// Spans are rendered in the order they appear in the collection.
+        /// 
+        /// Example XAML usage:
+        /// ```xml
+        /// <draw:SkiaLabel>
+        ///     <draw:SkiaLabel.Spans>
+        ///         <draw:TextSpan Text="This is " />
+        ///         <draw:TextSpan Text="bold" FontAttributes="Bold" TextColor="Red" />
+        ///         <draw:TextSpan Text=" text" />
+        ///     </draw:SkiaLabel.Spans>
+        /// </draw:SkiaLabel>
+        /// ```
+        /// 
+        /// When spans are used, the Text property is ignored. To reset to using
+        /// the Text property, clear the Spans collection.
+        /// </remarks>
         public IList<TextSpan> Spans => _spans;
 
         void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -2580,6 +2628,34 @@ namespace DrawnUi.Maui.Draw
             typeof(SkiaLabel),
             0, propertyChanged: NeedUpdateFont);
 
+        /// <summary>
+        /// Gets or sets the weight (thickness) of the font.
+        /// </summary>
+        /// <remarks>
+        /// Font weight is specified as an integer value, typically in the range of 100-900:
+        /// 
+        /// - 100: Thin
+        /// - 200: Extra Light (Ultra Light)
+        /// - 300: Light
+        /// - 400: Normal/Regular (default)
+        /// - 500: Medium
+        /// - 600: Semi Bold (Demi Bold)
+        /// - 700: Bold
+        /// - 800: Extra Bold (Ultra Bold)
+        /// - 900: Black (Heavy)
+        /// 
+        /// This property requires that fonts be properly registered with font weight information.
+        /// Use the following approach in your MauiProgram.cs:
+        /// 
+        /// ```csharp
+        /// fonts.AddFont("Roboto-Light.ttf", "Roboto", FontWeight.Light);
+        /// fonts.AddFont("Roboto-Regular.ttf", "Roboto", FontWeight.Regular);
+        /// fonts.AddFont("Roboto-Medium.ttf", "Roboto", FontWeight.Medium);
+        /// fonts.AddFont("Roboto-Bold.ttf", "Roboto", FontWeight.Bold);
+        /// ```
+        /// 
+        /// A value of 0 means the default weight will be used.
+        /// </remarks>
         public int FontWeight
         {
             get { return (int)GetValue(FontWeightProperty); }
@@ -2621,6 +2697,22 @@ namespace DrawnUi.Maui.Draw
             defaultValue: DrawTextAlignment.Start,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// Gets or sets the horizontal alignment of text within the label.
+        /// </summary>
+        /// <remarks>
+        /// Available alignment options:
+        /// - Start: Aligns text to the left (or right in RTL languages)
+        /// - Center: Centers text horizontally
+        /// - End: Aligns text to the right (or left in RTL languages)
+        /// - FillWords: Stretches text to fill the width by adjusting word spacing
+        /// - FillWordsFull: Similar to FillWords but with more aggressive stretching
+        /// - FillCharacters: Stretches text by adjusting character spacing
+        /// - FillCharactersFull: Similar to FillCharacters but with more aggressive stretching
+        /// 
+        /// The Fill options are useful for justified text alignment, creating evenly
+        /// distributed text that spans the entire width of the label.
+        /// </remarks>
         public DrawTextAlignment HorizontalTextAlignment
         {
             get { return (DrawTextAlignment)GetValue(HorizontalTextAlignmentProperty); }
@@ -2634,6 +2726,19 @@ namespace DrawnUi.Maui.Draw
             defaultValue: TextAlignment.Start,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// Gets or sets the vertical alignment of text within the label.
+        /// </summary>
+        /// <remarks>
+        /// Available alignment options:
+        /// - Start: Aligns text to the top of the label
+        /// - Center: Centers text vertically within the label
+        /// - End: Aligns text to the bottom of the label
+        /// 
+        /// This property is particularly useful when the label height is larger than
+        /// the text content height, allowing control over where the text is positioned
+        /// vertically within the available space.
+        /// </remarks>
         public TextAlignment VerticalTextAlignment
         {
             get { return (TextAlignment)GetValue(VerticalTextAlignmentProperty); }
@@ -2648,6 +2753,21 @@ namespace DrawnUi.Maui.Draw
             1.0,
             propertyChanged: NeedUpdateFont);
 
+        /// <summary>
+        /// Gets or sets the line height as a multiple of the font size.
+        /// </summary>
+        /// <remarks>
+        /// This property controls the spacing between lines of text:
+        /// - 1.0 (default): Normal line height (equivalent to the font's built-in line height)
+        /// - Less than 1.0: Compressed line height, lines are closer together
+        /// - Greater than 1.0: Expanded line height, lines are further apart
+        /// 
+        /// For example, a value of 1.5 will make each line 50% taller than the default,
+        /// creating more space between lines of text.
+        /// 
+        /// This is different from LineSpacing, which adds a fixed amount of space between lines.
+        /// LineHeight scales proportionally with the font size.
+        /// </remarks>
         public double LineHeight
         {
             get { return (double)GetValue(LineHeightProperty); }
@@ -2675,6 +2795,27 @@ namespace DrawnUi.Maui.Draw
             defaultValue: string.Empty,
             propertyChanged: NeedUpdateFont);
 
+        /// <summary>
+        /// Gets or sets the font family name used for rendering the text.
+        /// </summary>
+        /// <remarks>
+        /// Set this property to use a specific font for rendering text. You can use:
+        /// 
+        /// - System fonts: "Arial", "Helvetica", "Times New Roman", etc.
+        /// - Custom fonts that have been registered with the app
+        /// 
+        /// For custom fonts, you need to:
+        /// 1. Add the font file to your project (typically in Resources/Fonts folder)
+        /// 2. Register it in MauiProgram.cs using:
+        ///    ```csharp
+        ///    fonts.AddFont("FontFileName.ttf", "CustomFontName");
+        ///    ```
+        /// 3. Reference it using the "CustomFontName" alias
+        /// 
+        /// When used with FontWeight, you can specify different weights of the same font family.
+        /// 
+        /// If empty (default), a fallback system font will be used.
+        /// </remarks>
         public string FontFamily
         {
             get { return (string)GetValue(FontFamilyProperty); }
@@ -2684,6 +2825,24 @@ namespace DrawnUi.Maui.Draw
         public static readonly BindableProperty MaxLinesProperty = BindableProperty.Create(nameof(MaxLines),
             typeof(int), typeof(SkiaLabel), -1,
             propertyChanged: NeedInvalidateMeasure);
+        /// <summary>
+        /// Gets or sets the maximum number of lines to display.
+        /// </summary>
+        /// <remarks>
+        /// This property limits the number of text lines rendered:
+        /// 
+        /// - -1 (default): No limit, all lines are displayed
+        /// - 0: No lines are displayed (text is hidden)
+        /// - 1: Single line only (similar to a single-line text field)
+        /// - 2+: Specific number of lines maximum
+        /// 
+        /// When text exceeds the maximum number of lines, the overflow behavior is
+        /// determined by the LineBreakMode property. For example, with LineBreakMode.TailTruncation,
+        /// excess text will be replaced with an ellipsis (...).
+        /// 
+        /// This property is useful for creating fixed-height text areas or previews
+        /// where you want to show only a limited number of lines.
+        /// </remarks>
         public int MaxLines
         {
             get { return (int)GetValue(MaxLinesProperty); }
@@ -2707,6 +2866,29 @@ namespace DrawnUi.Maui.Draw
             typeof(AutoSizeType), typeof(SkiaLabel),
             AutoSizeType.None,
             propertyChanged: NeedInvalidateMeasure);
+        /// <summary>
+        /// Gets or sets how the label automatically adjusts font size to fit available space.
+        /// </summary>
+        /// <remarks>
+        /// Available auto-sizing options:
+        /// 
+        /// - None (default): No auto-sizing, text uses the exact FontSize specified
+        /// - TextToWidth: Adjusts font size to fit the width of the label
+        /// - TextToHeight: Adjusts font size to fit the height of the label
+        /// - TextToView: Adjusts font size to fit both width and height of the label
+        /// 
+        /// When auto-sizing is enabled, the label will automatically reduce the font size
+        /// when necessary to make the text fit within the available space. The minimum
+        /// font size is determined by the AutoSizeText property.
+        /// 
+        /// This is useful for:
+        /// - Responsive layouts where available space may vary
+        /// - Dynamic text where length may change at runtime
+        /// - Ensuring text is fully visible within fixed space constraints
+        /// 
+        /// Note that auto-sizing can impact performance, especially with frequently 
+        /// changing text or container sizes.
+        /// </remarks>
         public AutoSizeType AutoSize
         {
             get { return (AutoSizeType)GetValue(AutoSizeProperty); }
@@ -2764,6 +2946,24 @@ namespace DrawnUi.Maui.Draw
             LineBreakMode.TailTruncation,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// Gets or sets how text is handled when it exceeds the available width.
+        /// </summary>
+        /// <remarks>
+        /// Available modes:
+        /// - TailTruncation (default): Truncates at the end with an ellipsis (...)
+        /// - HeadTruncation: Truncates at the beginning with an ellipsis
+        /// - MiddleTruncation: Truncates in the middle with an ellipsis
+        /// - CharacterWrap: Wraps to a new line at any character
+        /// - WordWrap: Wraps to a new line at word boundaries
+        /// - NoWrap: Does not wrap text; long text may be clipped or extend beyond container
+        /// 
+        /// This property only affects how text that doesn't fit in the available space is handled.
+        /// It works in conjunction with MaxLines to control text overflow behavior.
+        /// 
+        /// For single-line text fields, TailTruncation is commonly used.
+        /// For multi-line text, WordWrap is typically preferred.
+        /// </remarks>
         public LineBreakMode LineBreakMode
         {
             get { return (LineBreakMode)GetValue(LineBreakModeProperty); }
@@ -2796,6 +2996,21 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        /// <summary>
+        /// Gets or sets the text content to be displayed by the label.
+        /// </summary>
+        /// <remarks>
+        /// This is the primary property for setting simple text content. For rich text with
+        /// multiple styles, use the Spans collection or FormattedText property instead.
+        /// 
+        /// The text supports:
+        /// - Multiline content (use newline characters)
+        /// - Text transformations via TextTransform property
+        /// - Truncation via LineBreakMode property
+        /// - Auto-sizing via AutoSize property
+        /// 
+        /// When Text is set, any existing FormattedText or Spans will be replaced.
+        /// </remarks>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
@@ -2916,6 +3131,19 @@ namespace DrawnUi.Maui.Draw
             nameof(TextColor), typeof(Color), typeof(SkiaLabel),
             Colors.GreenYellow,
             propertyChanged: NeedDraw);
+        /// <summary>
+        /// Gets or sets the color used to display the text.
+        /// </summary>
+        /// <remarks>
+        /// This property sets the default color for all text within the label.
+        /// Individual spans can override this color for portions of text when using
+        /// the Spans collection or FormattedText.
+        /// 
+        /// The default color is GreenYellow, which is easily visible during development.
+        /// You should explicitly set this to your desired text color.
+        /// 
+        /// For gradient text, use the TextGradient property instead of or in conjunction with this property.
+        /// </remarks>
         public Color TextColor
         {
             get { return (Color)GetValue(TextColorProperty); }
@@ -2929,6 +3157,20 @@ namespace DrawnUi.Maui.Draw
             Colors.Transparent,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// Gets or sets the color of the text outline stroke.
+        /// </summary>
+        /// <remarks>
+        /// When set to a non-transparent color and used with a non-zero StrokeWidth,
+        /// this creates an outline effect around the text. This can be used for:
+        /// 
+        /// - Creating outlined text for better visibility on variable backgrounds
+        /// - Stylistic effects like outlined fonts
+        /// - Creating text that stands out with contrasting outline
+        /// 
+        /// The default is Transparent, which means no outline is drawn.
+        /// For the outline to be visible, both StrokeColor and StrokeWidth must be set.
+        /// </remarks>
         public Color StrokeColor
         {
             get { return (Color)GetValue(StrokeColorProperty); }
@@ -3015,6 +3257,23 @@ namespace DrawnUi.Maui.Draw
             12.0,
             propertyChanged: NeedUpdateFont);
 
+        /// <summary>
+        /// Gets or sets the font size in device-independent units.
+        /// </summary>
+        /// <remarks>
+        /// Font size determines the height of the text in device-independent units:
+        /// 
+        /// - Default is 12.0 units
+        /// - Larger values make text bigger
+        /// - Smaller values make text smaller
+        /// 
+        /// In XAML, you can use named font sizes by setting this property to "Small", "Medium", 
+        /// "Large", etc. The FontSizeConverter will convert these to appropriate numeric values.
+        /// 
+        /// When AutoSize is enabled, this value becomes the minimum or initial font size.
+        /// 
+        /// For best rendering quality, especially with small text, consider using integer values.
+        /// </remarks>
         [System.ComponentModel.TypeConverter(typeof(FontSizeConverter))]
         public double FontSize
         {
