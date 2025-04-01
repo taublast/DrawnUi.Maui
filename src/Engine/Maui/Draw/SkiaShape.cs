@@ -389,8 +389,8 @@ namespace DrawnUi.Maui.Draw
             var y = (int)Math.Round(destination.Top);
 
             var strokeAwareSize = new SKRect(x, y,
-                (float)(x + Math.Round(destination.Width)),
-                (float)(y + Math.Round(destination.Height)));
+                (float)(x + (destination.Width)),
+                (float)(y + (destination.Height)));
 
             var strokeAwareChildrenSize = strokeAwareSize;
             ContractPixelsRect(strokeAwareChildrenSize, scale, Padding);
@@ -413,6 +413,7 @@ namespace DrawnUi.Maui.Draw
                     (float)Math.Round(strokeAwareSize.Right),
                     (float)Math.Round(strokeAwareSize.Bottom)
                 );
+
             }
 
             MeasuredStrokeAwareSize = strokeAwareSize;

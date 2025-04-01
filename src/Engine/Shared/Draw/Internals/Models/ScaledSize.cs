@@ -91,6 +91,12 @@ public class ScaledSize
         }
     }
 
+    public static float SnapToPixel(double point, double scale)
+    {
+        return (float)(Math.Round(point * scale) / scale);
+    }
+
+
     public static ScaledSize FromUnits(float width, float height, float scale)
     {
         if (double.IsNaN(width))
@@ -98,7 +104,7 @@ public class ScaledSize
         if (double.IsNaN(height))
             height = -1;
 
-        var nWidth = (float)Math.Round(width * scale);
+        var nWidth = (float)(width * scale);
         if (nWidth < 0)
             nWidth = -1;
         if (float.IsInfinity(width))
@@ -106,7 +112,7 @@ public class ScaledSize
             nWidth = float.PositiveInfinity;
         }
 
-        var nHeight = (float)Math.Round(height * scale);
+        var nHeight = (float)(height * scale);
         if (nHeight < 0)
             nHeight = -1;
 
@@ -119,13 +125,13 @@ public class ScaledSize
         {
             Scale = scale,
             Units = new SKSize(width, height),
-            Pixels = new SKSize(nWidth, nHeight)
+            Pixels = new SKSize((float)Math.Round(nWidth), (float)Math.Round(nHeight))
         };
     }
 
     public static ScaledSize FromPixels(SKSize size, float scale)
     {
-        return FromPixels((float)Math.Round(size.Width), (float)Math.Round(size.Height), false, false, scale);
+        return FromPixels((float)(size.Width), (float)(size.Height), false, false, scale);
     }
 
     public static ScaledSize FromPixels(float width, float height, float scale)

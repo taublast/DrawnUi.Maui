@@ -3,7 +3,8 @@
 namespace DrawnUi.Maui.Draw;
 
 /// <summary>
-/// Base control for toggling between 2 states
+/// Base control for toggling between 2 states.
+/// It provides no gestures support by itsself.
 /// </summary>
 public class SkiaToggle : SkiaLayout
 {

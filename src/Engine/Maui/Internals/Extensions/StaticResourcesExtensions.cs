@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Extensions;
+﻿namespace DrawnUi.Maui.Draw;
 
 public static class StaticResourcesExtensions
 {

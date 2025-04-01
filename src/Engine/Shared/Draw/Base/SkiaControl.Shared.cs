@@ -2507,6 +2507,49 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
+        public static float SnapToPixel(double point, double scale)
+        {
+            return (float)(Math.Round(point * scale) / scale);
+        }
+
+        public static SKPoint SnapSizeToPixel(SKSize point, double scale)
+        {
+            return new((float)(Math.Round(point.Width * scale) / scale),
+                (float)(Math.Round(point.Height * scale) / scale));
+        }
+
+        public static SKPoint SnapPointToPixel(SKPoint point, double scale)
+        {
+            return new((float)(Math.Round(point.X * scale) / scale),
+                (float)(Math.Round(point.Y * scale) / scale));
+        }
+
+        public static SKPoint SnapRectCenter(SKRect rect, float scale)
+        {
+            var center = new SKPoint(rect.MidX, rect.MidY);
+            var snappedCenter = new SKPoint(
+                (float)Math.Round(center.X * scale) / scale,
+                (float)Math.Round(center.Y * scale) / scale
+            );
+
+            // Offset the rect so that its center becomes the snapped center
+            return new SKPoint(
+                snappedCenter.X - rect.Width / 2,
+                snappedCenter.Y - rect.Height / 2
+            );
+        }
+
+        public static SKRect SnapRectToPixels(SKRect rect, float scale)
+        {
+            var left = Math.Round(rect.Left * scale) / scale;
+            var top = Math.Round(rect.Top * scale) / scale;
+            var right = Math.Round(rect.Right * scale) / scale;
+            var bottom = Math.Round(rect.Bottom * scale) / scale;
+
+            return new SKRect((float)left, (float)top, (float)right, (float)bottom);
+        }
+
+
         /// <summary>
         ///  destination in PIXELS, requests in UNITS. resulting Destination prop will be filed in PIXELS.
         /// Not using Margins nor Padding

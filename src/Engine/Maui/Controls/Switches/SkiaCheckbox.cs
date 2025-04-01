@@ -18,7 +18,7 @@ public class SkiaCheckbox : SkiaToggle
     protected static string SvgWindowsCheck = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M4 11.6L10 17.6L20 7.6\" stroke=\"#000000\" stroke-width=\"2.5\" stroke-linecap=\"square\" stroke-linejoin=\"round\"/>\n</svg>";
     
     // Checkmark path data for use with SkiaShape
-    protected static string CheckmarkPathData = "M4,12 L9,17 L20,7";
+    protected static string CheckmarkPathData = "M6 12 L10 16 L18 8";
 
     protected override void CreateDefaultContent()
     {
@@ -88,7 +88,7 @@ public class SkiaCheckbox : SkiaToggle
             LockRatio = 1,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
-        }.Assign(out ViewCheckOn)));
+        }));
     }
     
     protected virtual void CreateCupertinoStyleContent()
@@ -273,7 +273,14 @@ public class SkiaCheckbox : SkiaToggle
             // Apply appropriate styling based on ViewCheckOn type
             if (ViewCheckOn is SkiaShape shape)
             {
-                shape.BackgroundColor = this.ColorCheckOn;
+                if (shape.Type == ShapeType.Path)
+                {
+                    shape.StrokeColor = this.ColorCheckOn;
+                }
+                else
+                {
+                    shape.BackgroundColor = this.ColorCheckOn;
+                }
             }
             else if (ViewCheckOn is SkiaSvg svg)
             {
@@ -373,4 +380,54 @@ public class SkiaCheckbox : SkiaToggle
         get { return (Color)GetValue(ColorCheckOnProperty); }
         set { SetValue(ColorCheckOnProperty, value); }
     }
+
+    protected virtual bool CanAnimate()
+    {
+        return LayoutReady && IsAnimated && IsVisible; //todo add visibility in view tree
+    }
+
+    public static uint AnimationSpeed = 100;
+
+    CancellationTokenSource cancelAnimation;
+
+    protected override void OnToggledChanged()
+    {
+        cancelAnimation?.Cancel();
+        cancelAnimation = new CancellationTokenSource();
+
+        if (CanAnimate() && ViewCheckOn != null && FrameOff!=null && FrameOn !=null)
+        {
+            var msSpeed = AnimationSpeed;
+            if (!IsToggled)
+            {
+                _ = Task.Run(async () =>
+                {
+                    FrameOff.IsVisible = true;
+                    await ViewCheckOn.ScaleToAsync(0.0, 0.0, msSpeed, Easing.CubicOut, cancelAnimation);
+                    ApplyOff();
+                }, cancelAnimation.Token);
+            }
+            else
+            {
+                _ = Task.Run(async () =>
+                {
+                    ViewCheckOn.Scale = 0;
+                    ViewCheckOn.IsVisible = true;
+                    FrameOn.IsVisible = true;
+                    await ViewCheckOn.ScaleToAsync(1.0, 1.0, msSpeed, Easing.CubicIn, cancelAnimation);
+                    ApplyOn();
+                }, cancelAnimation.Token);
+            }
+        }
+        else
+        {
+            ApplyProperties();
+        }
+    }
+
+
 }
+
+
+
+ 
