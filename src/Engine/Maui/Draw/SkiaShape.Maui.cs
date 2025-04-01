@@ -9,16 +9,7 @@ using Path = Microsoft.Maui.Controls.Shapes.Path;
 
 namespace DrawnUi.Maui.Draw
 {
-	/// <summary>
-	/// A versatile shape control for rendering various geometric shapes with customizable
-	/// appearance including fill, stroke, shadows, and gradient effects.
-	/// The MAUI implementation provides platform-specific properties and behavior.
-	/// </summary>
-	/// <remarks>
-	/// This partial class contains the MAUI-specific implementation of SkiaShape,
-	/// including properties like CornerRadius that integrate with MAUI's type system.
-	/// </remarks>
-	public partial class SkiaShape
+    public partial class SkiaShape
 	{
 		public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(
 			nameof(CornerRadius),
