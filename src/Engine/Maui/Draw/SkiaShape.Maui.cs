@@ -10,8 +10,14 @@ using Path = Microsoft.Maui.Controls.Shapes.Path;
 namespace DrawnUi.Maui.Draw
 {
 	/// <summary>
-	/// Implements ISkiaGestureListener to pass gestures to children
+	/// A versatile shape control for rendering various geometric shapes with customizable
+	/// appearance including fill, stroke, shadows, and gradient effects.
+	/// The MAUI implementation provides platform-specific properties and behavior.
 	/// </summary>
+	/// <remarks>
+	/// This partial class contains the MAUI-specific implementation of SkiaShape,
+	/// including properties like CornerRadius that integrate with MAUI's type system.
+	/// </remarks>
 	public partial class SkiaShape
 	{
 		public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(
@@ -21,6 +27,18 @@ namespace DrawnUi.Maui.Draw
 			default(CornerRadius),
 			propertyChanged: NeedInvalidateMeasure);
 
+		/// <summary>
+		/// Gets or sets the corner radius for the shape when Type is Rectangle.
+		/// </summary>
+		/// <remarks>
+		/// You can specify different corner radii for each corner using the format 
+		/// "topLeft,topRight,bottomLeft,bottomRight". For equal corner radius on all 
+		/// corners, just provide a single value.
+		/// 
+		/// In XAML, this can be set using string values that will be automatically converted:
+		/// - Single value: "10" (all corners have radius 10)
+		/// - Multiple values: "10,20,15,5" (each corner has its own radius)
+		/// </remarks>
 		[System.ComponentModel.TypeConverter(typeof(Microsoft.Maui.Converters.CornerRadiusTypeConverter))]
 		public CornerRadius CornerRadius
 		{
@@ -34,6 +52,20 @@ namespace DrawnUi.Maui.Draw
 			typeof(SkiaShape),
 			null);
 
+		/// <summary>
+		/// Gets or sets the dash pattern for the shape's stroke.
+		/// </summary>
+		/// <remarks>
+		/// Allows for creating dashed or dotted lines by specifying an array of numbers
+		/// that define the pattern of dashes and gaps:
+		/// 
+		/// - A pattern like [3,1] creates dashes of length 3 followed by gaps of length 1
+		/// - [5,2,1,2] creates a dash of 5, gap of 2, dash of 1, gap of 2, then repeats
+		/// - Empty or null array means a solid line with no dashes
+		/// 
+		/// In XAML, this property can be set with a comma-separated list of values:
+		/// StrokePath="3,1" or StrokePath="5,2,1,2"
+		/// </remarks>
 		[TypeConverter(typeof(StringToDoubleArrayTypeConverter))]
 		public double[] StrokePath
 		{
@@ -48,6 +80,18 @@ namespace DrawnUi.Maui.Draw
 			Colors.Transparent,
 			propertyChanged: NeedDraw);
 
+		/// <summary>
+		/// Gets or sets the color of the shape's outline stroke.
+		/// </summary>
+		/// <remarks>
+		/// - Default is Transparent (no visible stroke)
+		/// - Must be used with a non-zero StrokeWidth to make the stroke visible
+		/// - Can use MAUI Color resources and predefined colors
+		/// - Can be combined with StrokeGradient for gradient stroke effects
+		/// - Can be animated for dynamic effects
+		/// 
+		/// The stroke is rendered on top of the fill and any child elements.
+		/// </remarks>
 		public Color StrokeColor
 		{
 			get { return (Color)GetValue(StrokeColorProperty); }

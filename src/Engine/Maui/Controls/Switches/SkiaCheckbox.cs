@@ -1,30 +1,5 @@
 ﻿namespace DrawnUi.Maui.Draw;
 
-public enum PrebuiltControlStyle
-{
-    Unset,
-
-    /// <summary>
-    /// Will select the style upon the current platform
-    /// </summary>
-    Platform,
-
-    /// <summary>
-    /// Apple iOS style
-    /// </summary>
-    Cupertino,
-
-    /// <summary>
-    /// Google Android tyle
-    /// </summary>
-    Material,
-
-    /// <summary>
-    /// Windows style
-    /// </summary>
-    Windows
-}
-
 /// <summary>
 /// Switch-like control, can include any content inside. It's aither you use default content (todo templates?..)
 /// or can include any content inside, and properties will by applied by convention to a SkiaShape with Tag `Frame`, SkiaShape with Tag `Thumb`. At the same time you can override ApplyProperties() and apply them to your content yourself.

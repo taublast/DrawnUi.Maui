@@ -7,8 +7,21 @@ using DrawnUi.Maui.Infrastructure.Xaml;
 namespace DrawnUi.Maui.Draw
 {
     /// <summary>
-    /// Implements ISkiaGestureListener to pass gestures to children
+    /// A versatile visual element that can render various shapes such as rectangles, circles, 
+    /// ellipses, polygons, paths, and lines. Supports customizable fills, strokes, shadows, 
+    /// and gradients. Can also serve as a container for child elements with content clipping.
     /// </summary>
+    /// <remarks>
+    /// SkiaShape can be used to create a wide variety of UI elements such as:
+    /// - Buttons, cards, and panels with custom shapes and effects
+    /// - Visual indicators, gauges, and progress bars
+    /// - Custom decorative elements with shadows and gradients
+    /// - Clipping containers for complex layouts
+    /// - Path-based icons and vector graphics
+    /// 
+    /// Use properties like Type, CornerRadius, StrokeWidth, and BackgroundColor to customize appearance.
+    /// For complex shapes, use PathData or Points properties to define custom geometries.
+    /// </remarks>
     public partial class SkiaShape : ContentLayout
     {
         public override void ApplyBindingContext()
@@ -39,6 +52,25 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// For Type = Path, use the path markup syntax
         /// </summary>
+        /// <summary>
+        /// Gets or sets the SVG path data string used to define a custom path shape.
+        /// </summary>
+        /// <remarks>
+        /// This property is used when Type is set to ShapeType.Path. The string should follow
+        /// standard SVG path syntax, for example:
+        /// "M0,0L15.825011,8.0009766 31.650999,15.997986 15.825011,23.998993 0,32 0,15.997986z"
+        /// 
+        /// Common path commands:
+        /// - M: MoveTo - Starts a new sub-path (x,y)
+        /// - L: LineTo - Draws a line from current position
+        /// - H: Horizontal line - Draws a horizontal line
+        /// - V: Vertical line - Draws a vertical line
+        /// - C: Curve - Cubic Bezier curve
+        /// - Q: Quadratic curve - Quadratic Bezier curve
+        /// - Z: Close path - Closes the current sub-path
+        /// 
+        /// The path will be automatically scaled to fit the control dimensions.
+        /// </remarks>
         public string PathData
         {
             get { return (string)GetValue(PathDataProperty); }
@@ -50,6 +82,22 @@ namespace DrawnUi.Maui.Draw
             ShapeType.Rectangle,
             propertyChanged: NeedSetType);
 
+        /// <summary>
+        /// Gets or sets the type of shape to render.
+        /// </summary>
+        /// <remarks>
+        /// Available shape types:
+        /// - Rectangle: A rectangle with optional corner radius (default)
+        /// - Circle: A perfect circle that fits within the bounds
+        /// - Ellipse: An oval shape that fills the bounds
+        /// - Path: A custom shape defined by the PathData property
+        /// - Polygon: A multi-point shape defined by the Points collection
+        /// - Line: An open path connecting points in the Points collection
+        /// - Arc: A curved segment defined by Value1 (start angle) and Value2 (sweep angle)
+        /// 
+        /// Changing the Type property may require setting additional properties for proper rendering,
+        /// such as PathData for Path type or Points for Polygon/Line types.
+        /// </remarks>
         public new ShapeType Type
         {
             get { return (ShapeType)GetValue(TypeProperty); }
@@ -68,6 +116,25 @@ namespace DrawnUi.Maui.Draw
             null,
             propertyChanged: StrokeGradientPropertyChanged);
 
+        /// <summary>
+        /// Gets or sets the gradient to be applied to the shape's stroke.
+        /// </summary>
+        /// <remarks>
+        /// When set, this gradient will be used for the stroke color instead of the solid 
+        /// StrokeColor. The gradient can be defined with multiple colors, stops, and a gradient 
+        /// direction.
+        /// 
+        /// Example XAML usage:
+        /// <code>
+        /// &lt;draw:SkiaShape&gt;
+        ///   &lt;draw:SkiaShape.StrokeGradient&gt;
+        ///     &lt;draw:SkiaGradient StartColor="Blue" EndColor="Green" Type="Linear" /&gt;
+        ///   &lt;/draw:SkiaShape.StrokeGradient&gt;
+        /// &lt;/draw:SkiaShape&gt;
+        /// </code>
+        /// 
+        /// The StrokeWidth property must be set to a non-zero value for the gradient to be visible.
+        /// </remarks>
         public SkiaGradient StrokeGradient
         {
             get { return (SkiaGradient)GetValue(StrokeGradientProperty); }
@@ -106,8 +173,19 @@ namespace DrawnUi.Maui.Draw
             false, propertyChanged: NeedDraw);
 
         /// <summary>
-        /// This is for the tricky case when you want to drop shadow but keep background transparent to see through, set to True in that case.
+        /// Gets or sets whether the background color is clipped out, allowing transparent areas with shadows.
         /// </summary>
+        /// <remarks>
+        /// When set to true, the shape's background color will be clipped out, creating a "hollow" shape
+        /// that shows content beneath it while still displaying any shadows applied to the shape.
+        /// 
+        /// This is particularly useful for:
+        /// - Creating floating shadows without a visible shape
+        /// - Adding depth effects while preserving transparency
+        /// - Creating cutout effects where only the shape's outline and shadow are visible
+        /// 
+        /// Example use case: A floating card shadow effect where the card itself is transparent.
+        /// </remarks>
         public bool ClipBackgroundColor
         {
             get { return (bool)GetValue(ClipBackgroundColorProperty); }
@@ -124,6 +202,19 @@ namespace DrawnUi.Maui.Draw
             0.0,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// Gets or sets the width of the stroke (outline) in device-independent units.
+        /// </summary>
+        /// <remarks>
+        /// - A value of 0 (default) means no stroke will be drawn
+        /// - The stroke is drawn centered on the shape's path
+        /// - For thin lines (e.g., single-pixel), use values around 1-2
+        /// - For thicker borders, use larger values
+        /// - Must be combined with a non-transparent StrokeColor to be visible
+        /// - Affects the layout calculations to preserve the interior area of the shape
+        /// 
+        /// The stroke is always drawn on top of the shape's fill and any child elements.
+        /// </remarks>
         public double StrokeWidth
         {
             get { return (double)GetValue(StrokeWidthProperty); }
@@ -141,8 +232,21 @@ namespace DrawnUi.Maui.Draw
             propertyChanged: NeedDraw);
 
         /// <summary>
-        /// Affects joint of shapes. Default is KStrokeCap.Round
+        /// Gets or sets the cap style for stroke line ends and the join style for corners.
         /// </summary>
+        /// <remarks>
+        /// Available cap styles:
+        /// - Round (default): Rounds the ends of lines and smooths the corners
+        /// - Butt: Creates flat ends exactly at the end points, without extension
+        /// - Square: Creates flat ends that extend beyond the end points by half the stroke width
+        /// 
+        /// This property affects:
+        /// - How line segments are joined at corners (as a StrokeJoin)
+        /// - How lines end at termination points
+        /// - The appearance of dashed lines when StrokePath is used
+        /// 
+        /// For Line and Path shapes with sharp angles, Round provides the smoothest appearance.
+        /// </remarks>
         public SKStrokeCap StrokeCap
         {
             get { return (SKStrokeCap)GetValue(StrokeCapProperty); }
@@ -157,6 +261,22 @@ namespace DrawnUi.Maui.Draw
             LayoutType.Absolute,
             propertyChanged: NeedDraw);
 
+        /// <summary>
+        /// Gets or sets how child elements are arranged within the shape.
+        /// </summary>
+        /// <remarks>
+        /// Available layout types:
+        /// - Absolute (default): Position children using explicit coordinates and size
+        /// - Column: Stack children vertically from top to bottom
+        /// - Row: Stack children horizontally from left to right
+        /// - Grid: Arrange children in rows and columns
+        /// 
+        /// The SkiaShape can work as a container with specific layout behavior while
+        /// still clipping its content to the shape's boundaries. This allows for creating
+        /// complex UI components with custom shapes and internal layouts.
+        /// 
+        /// Child elements are always clipped to the shape's boundaries regardless of layout type.
+        /// </remarks>
         public LayoutType LayoutChildren
         {
             get { return (LayoutType)GetValue(LayoutChildrenProperty); }
@@ -170,8 +290,24 @@ namespace DrawnUi.Maui.Draw
             propertyChanged: NeedDraw);
 
         /// <summary>
-        /// Default is SKBlendMode.SrcOver
+        /// Gets or sets the blend mode used when rendering the stroke.
         /// </summary>
+        /// <remarks>
+        /// Blend modes control how the stroke color combines with the underlying content:
+        /// 
+        /// - SrcOver (default): Normal alpha blending
+        /// - Multiply: Multiplies colors, resulting in darker colors
+        /// - Screen: Opposite of multiply, resulting in lighter colors
+        /// - Plus: Adds colors together, creating additive blending
+        /// - Difference: Subtracts colors, creating inverted effects
+        /// - Overlay: Combines multiply and screen, enhancing contrast
+        /// - HardLight: Similar to overlay but with stronger effect
+        /// - Darken: Selects the darker of the source and destination colors
+        /// - Lighten: Selects the lighter of the source and destination colors
+        /// - Clear: Makes the destination transparent
+        /// 
+        /// Creative uses include glow effects, neon strokes, or color inversion at edges.
+        /// </remarks>
         public SKBlendMode StrokeBlendMode
         {
             get { return (SKBlendMode)GetValue(StrokeBlendModeProperty); }
@@ -335,12 +471,30 @@ namespace DrawnUi.Maui.Draw
         protected SKPaint RenderingPaint { get; set; }
 
         /// <summary>
-        /// Parsed PathData
+        /// Gets or sets the parsed SKPath object created from the PathData property.
         /// </summary>
+        /// <remarks>
+        /// This field holds the SkiaSharp path object that is created by parsing the
+        /// PathData string. It is automatically created when PathData is set and Type
+        /// is ShapeType.Path. The path is used for both rendering and hit-testing.
+        /// 
+        /// The path is stored in its original form and is scaled/transformed during rendering
+        /// to fit the shape's bounds.
+        /// </remarks>
         protected SKPath DrawPath { get; set; } = new();
 
         protected SKPath DrawPathShape { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets the rounded rectangle used for rendering when Type is Rectangle with CornerRadius.
+        /// </summary>
+        /// <remarks>
+        /// This object is created and reused during rendering to represent a rectangle with
+        /// rounded corners. It is automatically configured with the appropriate dimensions
+        /// and corner radii based on the shape's properties.
+        /// 
+        /// The object is created on demand and may be null until needed for rendering.
+        /// </remarks>
         protected SKRoundRect DrawRoundedRect { get; set; }
 
         SKPath ClipContentPath { get; set; } = new();
@@ -1072,9 +1226,22 @@ namespace DrawnUi.Maui.Draw
         );
 
         /// <summary>
-        /// Controls the automatic smoothness between points of Line and Polygon. Ranges from 0.0 (no smoothing) to 1.0.
-        /// Works for sequential points only.
+        /// Gets or sets the smoothness level for Line and Polygon shapes.
         /// </summary>
+        /// <remarks>
+        /// This property controls how points are connected when drawing Line and Polygon shapes:
+        /// 
+        /// - 0.0 (default): No smoothing, points are connected with straight lines
+        /// - 0.1 to 0.3: Slight smoothing, good for subtle rounding of corners
+        /// - 0.4 to 0.7: Moderate smoothing, creates natural-looking curves
+        /// - 0.8 to 1.0: Maximum smoothing, creates very rounded curves
+        /// 
+        /// When SmoothPoints is greater than 0, quadratic Bezier curves are used to connect
+        /// points instead of straight lines. This results in smoother, more organic shapes.
+        /// 
+        /// The smoothing effect works best with points that form a sequential path and may
+        /// not produce expected results with arbitrary point configurations.
+        /// </remarks>
         public float SmoothPoints
         {
             get => (float)GetValue(SmoothPointsProperty);
