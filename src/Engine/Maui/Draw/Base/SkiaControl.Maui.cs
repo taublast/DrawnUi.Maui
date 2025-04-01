@@ -4,21 +4,189 @@ All the MAUI-related base SkiaControl implementation.
 Normally other partial code definitions should be framework independent.
 */
 
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Microsoft.Maui.HotReload;
 
 namespace DrawnUi.Maui.Draw
 {
-    [ContentProperty("Children")]
+    [ContentProperty(nameof(Children))]
     public partial class SkiaControl : VisualElement,
-        IVisualTreeElement,
-        IReloadHandler,
-        IHotReloadableView
+        IVisualTreeElement, // to support VS HotReload
+        IContainer // to support VS HotReload full page reload mode
     {
+
+        #region IContainer
+
+        public IEnumerator<IView> GetEnumerator()
+        {
+            return Children.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Children.GetEnumerator();
+        }
+
+        public void Add(IView item)
+        {
+            if (item is SkiaControl skia)
+            {
+                Children.Add(skia);
+            }
+        }
+
+        public void Clear()
+        {
+            Children.Clear();
+        }
+
+        public bool Contains(IView item)
+        {
+            return Children.Contains(item);
+        }
+
+        public void CopyTo(IView[] array, int arrayIndex)
+        {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+            if (arrayIndex < 0)
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), "Array index must be non-negative.");
+            if (arrayIndex + Children.Count > array.Length)
+                throw new ArgumentException("The array is too small to accommodate the collection starting at the specified index.", nameof(array));
+
+            for (int i = 0; i < Children.Count; i++)
+            {
+                array[arrayIndex + i] = Children[i];
+            }
+        }
+
+        public bool Remove(IView item)
+        {
+            var found = false;
+            if (item is SkiaControl skia)
+            {
+                found = Children.Contains(skia);
+                if (found)
+                {
+                    Children.Remove(skia);
+                }
+            }
+            return found;
+        }
+
+        public int Count
+        {
+            get => Children.Count();
+        }
+
+        public bool IsReadOnly => false;
+
+        public int IndexOf(IView item)
+        {
+            var found = -1;
+            if (item is SkiaControl skia)
+            {
+                return Children.IndexOf(skia);
+            }
+            return found;
+        }
+
+        public void Insert(int index, IView item)
+        {
+            if (item is SkiaControl skia)
+            {
+                Children.Insert(index, skia);
+            }
+        }
+
+        public void RemoveAt(int index)
+        {
+            Children.RemoveAt(index);
+        }
+
+        public IView this[int index]
+        {
+            get
+            {
+                return Children[index];
+            }
+            set
+            {
+                if (value is SkiaControl skia)  
+                {
+                    Children[index] = skia; 
+                }
+                else
+                {
+                    throw new ArgumentException("Item must be of type SkiaControl", nameof(value));
+                }
+            }
+        }
+
+        #endregion
+
+        #region IVisualTreeElement
+
+        public virtual IReadOnlyList<IVisualTreeElement> GetVisualChildren() //working fine
+        {
+            return Views.ToList().Cast<IVisualTreeElement>().ToList();
+        }
+
+        public virtual IVisualTreeElement GetVisualParent()  //working fine
+        {
+            return Parent as IVisualTreeElement;
+        }
+
+        public virtual void ReportHotreloadChildAdded(SkiaControl child)
+        {
+            if (child == null)
+                return;
+
+            //this.OnChildAdded(child);
+
+            var children = GetVisualChildren();
+            var index = children.FindIndex(child);
+
+            if (index >= 0)
+                VisualDiagnostics.OnChildAdded(this, child, index);
+        }
+
+        public virtual void ReportHotreloadChildRemoved(SkiaControl control)
+        {
+            if (control == null)
+                return;
+
+
+            var children = GetVisualChildren();
+            var index = children.FindIndex(control);
+
+            if (index >= 0)
+                VisualDiagnostics.OnChildRemoved(this, control, index);
+            //            this.OnChildRemoved(control, index);
+        }
+
+        #endregion
+        
+
         public static Color TransparentColor = Colors.Transparent;
         public static Color WhiteColor = Colors.White;
         public static Color BlackColor = Colors.Black;
         public static Color RedColor = Colors.Red;
+
+        public static readonly BindableProperty ControlStyleProperty = BindableProperty.Create(nameof(PrebuiltControlStyle),
+            typeof(PrebuiltControlStyle), typeof(SkiaControl),
+            PrebuiltControlStyle.Unset,
+            propertyChanged: NeedDraw);
+
+        /// <summary>
+        /// Will be used by control CreateDefaultContent to create appropriate look.
+        /// </summary>
+        public PrebuiltControlStyle ControlStyle
+        {
+            get { return (PrebuiltControlStyle)GetValue(ControlStyleProperty); }
+            set { SetValue(ControlStyleProperty, value); }
+        }
 
         public static readonly BindableProperty ClearColorProperty = BindableProperty.Create(nameof(ClearColor), typeof(Color), typeof(SkiaControl),
             Colors.Transparent,
@@ -111,82 +279,6 @@ namespace DrawnUi.Maui.Draw
             #endregion
         }
 
-        #region HotReload
-
-        IView IReplaceableView.ReplacedView =>
-            MauiHotReloadHelper.GetReplacedView(this) ?? this;
-
-        IReloadHandler IHotReloadableView.ReloadHandler { get; set; }
-
-        void IHotReloadableView.TransferState(IView newView)
-        {
-            //reload the the ViewModel
-            if (newView is SkiaControl v)
-                v.BindingContext = BindingContext;
-        }
-
-        void IHotReloadableView.Reload()
-        {
-            InvalidateMeasure();
-        }
-
-        #endregion
-
-        #region IVisualTreeElement
-
-        public virtual IReadOnlyList<IVisualTreeElement> GetVisualChildren() //working fine
-        {
-            return Views.ToList().Cast<IVisualTreeElement>().ToList();
-        }
-
-        public virtual IVisualTreeElement GetVisualParent()  //working fine
-        {
-            return Parent as IVisualTreeElement;
-        }
-
-        #endregion
-
-        #region HOTRELOAD
-
-        /// <summary>
-        /// HOTRELOAD IReloadHandler
-        /// </summary>
-        public virtual void Reload()
-        {
-            InvalidateMeasure();
-        }
-
-        public virtual void ReportHotreloadChildAdded(SkiaControl child)
-        {
-            if (child == null)
-                return;
-
-            //this.OnChildAdded(child);
-
-            var children = GetVisualChildren();
-            var index = children.FindIndex(child);
-
-            if (index >= 0)
-                VisualDiagnostics.OnChildAdded(this, child, index);
-        }
-
-        public virtual void ReportHotreloadChildRemoved(SkiaControl control)
-        {
-            if (control == null)
-                return;
-
-
-            var children = GetVisualChildren();
-            var index = children.FindIndex(control);
-
-            if (index >= 0)
-                VisualDiagnostics.OnChildRemoved(this, control, index);
-            //            this.OnChildRemoved(control, index);
-        }
-
-
-
-        #endregion
 
 
         public virtual void AddSubView(SkiaControl control)
@@ -344,6 +436,7 @@ namespace DrawnUi.Maui.Draw
         {
             return (float)Super.Screen.Density;
         }
+
 
 
     }

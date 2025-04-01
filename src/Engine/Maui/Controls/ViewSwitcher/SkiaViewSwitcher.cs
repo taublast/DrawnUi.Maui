@@ -479,6 +479,13 @@ namespace DrawnUi.Maui.Controls
                 }
 
                 stack.Clear();
+
+                if (SelectedIndex < 0)
+                {
+                    Super.Log("SelectedIndex is -1");
+                    return;
+                }
+
                 NavigationStacks[SelectedIndex] = stack;
             }
             catch (Exception e)

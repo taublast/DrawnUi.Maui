@@ -106,6 +106,9 @@ namespace DrawnUi.Maui.Views
                 lastSize = newSize;
             }
 
+            // clear everything, removing this line make view to act in retained mode
+            OpenGles.Clear(OpenGles.GL_COLOR_BUFFER_BIT | OpenGles.GL_DEPTH_BUFFER_BIT | OpenGles.GL_STENCIL_BUFFER_BIT);
+
             using (new SKAutoCanvasRestore(surface.Canvas, true))
             {
                 // start drawing

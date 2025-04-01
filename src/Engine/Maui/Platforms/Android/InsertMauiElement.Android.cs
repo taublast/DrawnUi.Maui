@@ -3,7 +3,6 @@ using Android.Views;
 using Microsoft.Maui.Platform;
 using View = Android.Views.View;
 
-
 namespace DrawnUi.Maui.Draw;
 
 public partial class SkiaMauiElement
@@ -54,15 +53,14 @@ public partial class SkiaMauiElement
 
     protected virtual void LayoutNativeView(VisualElement element)
     {
-        //lock (locknative)
+        if (element.Handler?.PlatformView is View nativeView)
         {
-            if (element.Handler?.PlatformView is View nativeView)
+            nativeView.Visibility = VisualTransformNative.IsVisible && IsNativeVisible
+                ? ViewStates.Visible
+                : ViewStates.Invisible;
+
+            if (nativeView.Visibility == ViewStates.Visible)
             {
-                nativeView.Visibility = VisualTransformNative.IsVisible && IsNativeVisible ? ViewStates.Visible : ViewStates.Invisible;
-
-                //                Debug.WriteLine($"Visibility {nativeView.Visibility}");
-                //                Debug.WriteLine($"Drawing VIEW at {VisualTransformNative.Rect}");
-
                 nativeView.TranslationX = VisualTransformNative.Translation.X;
                 nativeView.TranslationY = VisualTransformNative.Translation.Y;
                 nativeView.Rotation = VisualTransformNative.Rotation;
@@ -75,18 +73,17 @@ public partial class SkiaMauiElement
                     (int)(VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale),
                     (int)(VisualTransformNative.Rect.Right + this.Padding.Right * RenderingScale),
                     (int)(VisualTransformNative.Rect.Bottom + this.Padding.Bottom * RenderingScale));
-
-                //nativeView.Invalidate();
-
-                //nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
-
-                if (!WasRendered)
-                    WasRendered = nativeView.Width > 0;
-
-                //Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} width {nativeView.Width}");
             }
-        }
 
+            //nativeView.Invalidate();
+
+            //nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
+
+            if (!WasRendered)
+                WasRendered = nativeView.Width > 0;
+
+            //Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} width {nativeView.Width}");
+        }
     }
 
     private object locknative = new();
@@ -146,7 +143,6 @@ public partial class SkiaMauiElement
             });
         }
     }
-
 }
 
 public class MakeInputTransparent : Java.Lang.Object, View.IOnTouchListener

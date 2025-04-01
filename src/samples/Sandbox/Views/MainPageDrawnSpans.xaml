@@ -23,9 +23,7 @@
             Tag="Wrapper"
             VerticalOptions="Fill">
 
-            <draw:SkiaScroll
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
+            <draw:SkiaScroll HorizontalOptions="Fill" VerticalOptions="Fill">
 
                 <draw:SkiaLayout
                     Padding="20,20,20,20"
@@ -147,6 +145,6 @@
         </draw:SkiaLayout>
 
     </draw:Canvas>
- 
+
 
 </views:BasePageCodeBehind>

@@ -10,6 +10,7 @@ namespace DrawnUi.Maui.Draw
 
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
     {
+
         public override bool PreArrange(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
             if (!CanDraw)
@@ -50,6 +51,7 @@ namespace DrawnUi.Maui.Draw
         /// Delegate for use instead of calling base.OnSkiaGestureEvent
         /// </summary>
         public Func<SkiaGesturesParameters, GestureEventProcessingInfo, ISkiaGestureListener> OnGestures;
+
 
         public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
         {
@@ -914,9 +916,9 @@ namespace DrawnUi.Maui.Draw
 
                     //LockUpdate(true);  never enable this here, breaks stuff
 
-                    if (!DefaultChildrenCreated)
+                    if (!DefaultContentCreated)
                     {
-                        DefaultChildrenCreated = true;
+                        DefaultContentCreated = true;
                         CreateDefaultContent();
                     }
 

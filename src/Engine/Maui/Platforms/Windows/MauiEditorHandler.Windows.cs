@@ -19,6 +19,8 @@ public partial class MauiEditorHandlerBack : EditorHandler
 
         _control = platformView;
 
+        platformView.Text = this.VirtualView.Text;
+
         //platformView.EditorAction += OnEditorAction;
         platformView.TextChanged += OnTextChanged;
 

@@ -67,7 +67,7 @@ half4 main(float2 fragCoord)
             // Calculate the delay based on the distance
             float delay = distance / speed;
 
-            // Adjust the time for the delay and clamp to 0
+            // Adapt the time for the delay and clamp to 0
             float time = max(0.0, progress * duration - delay);
 
             // Calculate the ripple amount
@@ -93,14 +93,14 @@ half4 main(float2 fragCoord)
     // Calculate Fresnel effect
     float fresnelEffect = pow(1.0 - dot(normalize(combinedDisplacement), viewingDirection), 3.0);
 
-    // Adjust reflection intensity with Fresnel effect
+    // Adapt reflection intensity with Fresnel effect
     float reflectionFactor = fresnelEffect * clamp(length(combinedDisplacement) / amplitude, 0.0, 1.0);
 
     // Ensure minimum reflection intensity
     reflectionFactor = max(reflectionFactor, minReflectionIntensity);
 
     // Calculate dynamic perturbation factor based on combined displacement
-    float dynamicPerturbationFactor = length(combinedDisplacement) * 10000.0; // Adjust factor based on ripple strength
+    float dynamicPerturbationFactor = length(combinedDisplacement) * 10000.0; // Adapt factor based on ripple strength
 
     // Calculate perturbation
     vec2 perturbation = vec2(sin(finalPosition.x * dynamicPerturbationFactor), cos(finalPosition.y * dynamicPerturbationFactor)) * 0.05;

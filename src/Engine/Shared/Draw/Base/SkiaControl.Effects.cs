@@ -107,7 +107,7 @@ namespace DrawnUi.Maui.Draw
             typeof(SkiaControl),
             defaultValueCreator: (instance) =>
             {
-                var created = new ObservableCollection<SkiaEffect>();
+                var created = new ObservableAttachedItemsCollection<SkiaEffect>();
                 created.CollectionChanged += ((SkiaControl)instance).EffectsCollectionChanged;
                 return created;
             },

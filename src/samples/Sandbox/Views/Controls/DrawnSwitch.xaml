@@ -73,9 +73,5 @@
 
     </draw:SkiaShape>
 
-    <draw:SkiaHotspot
-        Tapped="OnTapped"
-        TransformView="{x:Reference ThumbRef}" />
-
 </draw:SkiaSwitch>
 

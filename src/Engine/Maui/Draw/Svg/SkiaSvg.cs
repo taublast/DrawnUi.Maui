@@ -492,11 +492,13 @@ namespace DrawnUi.Maui.Draw
 
         //protected SKMatrix DrawingMatrix;
 
-        protected void Clear()
+        public new void Clear()
         {
             var svg = Svg;
             Svg = null;
             svg?.Dispose();
+
+            base.Clear();
         }
 
         public void UpdateIcon()

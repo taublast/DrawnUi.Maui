@@ -1,5 +1,29 @@
-﻿
-namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Maui.Draw;
+
+public enum PrebuiltControlStyle
+{
+    Unset,
+
+    /// <summary>
+    /// Will select the style upon the current platform
+    /// </summary>
+    Platform,
+
+    /// <summary>
+    /// Apple iOS style
+    /// </summary>
+    Cupertino,
+
+    /// <summary>
+    /// Google Android tyle
+    /// </summary>
+    Material,
+
+    /// <summary>
+    /// Windows style
+    /// </summary>
+    Windows
+}
 
 /// <summary>
 /// Switch-like control, can include any content inside. It's aither you use default content (todo templates?..)
@@ -9,102 +33,339 @@ public class SkiaCheckbox : SkiaToggle
 {
     #region DEFAULT CONTENT
 
+    /// <summary>
+    /// SVG checkmark paths for different styles
+    /// </summary>
+    protected static string SvgCupertinoCheck = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M4 12.6111L8.92308 17.5L20 6.5\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n</svg>";
+    
+    protected static string SvgMaterialCheck = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M5 13L9 17L19 7\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n</svg>";
+    
+    protected static string SvgWindowsCheck = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M4 11.6L10 17.6L20 7.6\" stroke=\"#000000\" stroke-width=\"2.5\" stroke-linecap=\"square\" stroke-linejoin=\"round\"/>\n</svg>";
+    
+    // Checkmark path data for use with SkiaShape
+    protected static string CheckmarkPathData = "M4,12 L9,17 L20,7";
+
     protected override void CreateDefaultContent()
     {
-        // TODO
-        /*
-        //todo can make different upon platform!
-        if (!DefaultChildrenCreated && this.Views.Count == 0)
+        if (this.Views.Count == 0)
         {
-            if (CreateChildren == null)
+            switch (ControlStyle)
             {
-                DefaultChildrenCreated = true;
-
-                if (this.WidthRequest < 0)
-                    this.WidthRequest = 50;
-                if (this.HeightRequest < 0)
-                    this.HeightRequest = 32;
-
-                var shape = new SkiaShape
-                {
-                    Tag = "Frame",
-                    Type = ShapeType.Rectangle,
-                    CornerRadius = 20,
-                    HorizontalOptions = LayoutOptions.Fill,
-                    VerticalOptions = LayoutOptions.Fill,
-                };
-                this.AddSubView(shape);
-
-                this.AddSubView(new SkiaShape()
-                {
-                    UseCache = SkiaCacheType.Operations,
-                    Type = ShapeType.Circle,
-                    Margin = 2,
-                    LockRatio = -1,
-                    Tag = "Thumb",
-                    HorizontalOptions = LayoutOptions.Start,
-                    VerticalOptions = LayoutOptions.Fill,
-                });
-
-                var hotspot = new SkiaHotspot()
-                {
-                    TransformView = this.Thumb,
-                };
-                hotspot.Tapped += (s, e) =>
-                {
-                    IsToggled = !IsToggled;
-                };
-                this.AddSubView(hotspot);
-
-                ApplyProperties();
+                case PrebuiltControlStyle.Cupertino:
+                    CreateCupertinoStyleContent();
+                    break;
+                case PrebuiltControlStyle.Material:
+                    CreateMaterialStyleContent();
+                    break;
+                case PrebuiltControlStyle.Windows:
+                    CreateWindowsStyleContent();
+                    break;
+                case PrebuiltControlStyle.Platform:
+                    #if IOS || MACCATALYST
+                    CreateCupertinoStyleContent();
+                    #elif ANDROID
+                    CreateMaterialStyleContent();
+                    #elif WINDOWS
+                    CreateWindowsStyleContent();
+                    #else
+                    CreateDefaultStyleContent();
+                    #endif
+                    break;
+                case PrebuiltControlStyle.Unset:
+                default:
+                    CreateDefaultStyleContent();
+                    break;
             }
-
+            
+            ApplyProperties();
         }
-        */
     }
+    
+    protected virtual void CreateDefaultStyleContent()
+    {
+        SetDefaultContentSize(22, 22);
 
+        this.AddSubView(new SkiaShape
+        {
+            Tag = "FrameOff",
+            StrokeWidth = 1,
+            Type = ShapeType.Rectangle,
+            StrokeColor = this.ColorFrameOff,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        });
+
+        this.AddSubView(new SkiaShape
+        {
+            Tag = "FrameOn",
+            Type = ShapeType.Rectangle,
+            StrokeColor = this.ColorFrameOn,
+            StrokeWidth = 1,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        }.WithContent(new SkiaShape()
+        {
+            Tag = "ViewCheckOn",
+            UseCache = SkiaCacheType.Operations,
+            Type = ShapeType.Rectangle,
+            BackgroundColor = this.ColorCheckOn,
+            Margin = 3,
+            LockRatio = 1,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        }.Assign(out ViewCheckOn)));
+    }
+    
+    protected virtual void CreateCupertinoStyleContent()
+    {
+        // iOS style uses rounded rectangle with checkmark
+        SetDefaultContentSize(22, 22);
+        
+        // Frame Off
+        this.AddSubView(new SkiaShape
+        {
+            Tag = "FrameOff",
+            StrokeWidth = 1,
+            Type = ShapeType.Rectangle,
+            CornerRadius = 4, // iOS slightly rounded corners
+            StrokeColor = Color.FromRgba(191, 191, 191, 255), // iOS light gray
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        });
+        
+        // Frame On
+        var frameOn = new SkiaShape
+        {
+            Tag = "FrameOn",
+            Type = ShapeType.Rectangle,
+            CornerRadius = 4, // iOS slightly rounded corners
+            BackgroundColor = Color.FromRgba(0, 122, 255, 255), // iOS blue
+            StrokeWidth = 0,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        };
+        this.AddSubView(frameOn);
+        
+        // Checkmark
+        var checkmark = new SkiaSvg
+        {
+            Tag = "ViewCheckOn",
+            SvgString = SvgCupertinoCheck,
+            TintColor = Colors.White, // White checkmark
+            Margin = new Thickness(2),
+            UseCache = SkiaCacheType.Operations,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        };
+        frameOn.AddSubView(checkmark);
+        ViewCheckOn = checkmark;
+        
+        // Color overrides for iOS style
+        ColorFrameOff = Color.FromRgba(191, 191, 191, 255);
+        ColorFrameOn = Color.FromRgba(0, 122, 255, 255);
+        ColorCheckOn = Colors.White;
+    }
+    
+    protected virtual void CreateMaterialStyleContent()
+    {
+        // Material style tends to use a container with a checkmark
+        SetDefaultContentSize(24, 24);
+        
+        // Frame Off (outlined box)
+        this.AddSubView(new SkiaShape
+        {
+            Tag = "FrameOff",
+            StrokeWidth = 2,
+            Type = ShapeType.Rectangle,
+            CornerRadius = 2, // Material slight corner
+            StrokeColor = Color.FromRgba(117, 117, 117, 255), // Material mid-gray
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        });
+        
+        // Frame On (filled box)
+        var frameOn = new SkiaShape
+        {
+            Tag = "FrameOn",
+            Type = ShapeType.Rectangle,
+            CornerRadius = 2,
+            BackgroundColor = Color.FromRgba(33, 150, 243, 255), // Material blue
+            StrokeWidth = 0,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        };
+        this.AddSubView(frameOn);
+        
+        // Material style checkmark
+        var checkmark = new SkiaSvg
+        {
+            Tag = "ViewCheckOn",
+            SvgString = SvgMaterialCheck,
+            TintColor = Colors.White,
+            Margin = new Thickness(2),
+            UseCache = SkiaCacheType.Operations,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        };
+        frameOn.AddSubView(checkmark);
+        ViewCheckOn = checkmark;
+        
+        // Color overrides for Material style
+        ColorFrameOff = Color.FromRgba(117, 117, 117, 255);
+        ColorFrameOn = Color.FromRgba(33, 150, 243, 255);
+        ColorCheckOn = Colors.White;
+    }
+    
+    protected virtual void CreateWindowsStyleContent()
+    {
+        // Windows style with squared corners
+        SetDefaultContentSize(20, 20);
+        
+        // Frame Off
+        this.AddSubView(new SkiaShape
+        {
+            Tag = "FrameOff",
+            StrokeWidth = 1,
+            Type = ShapeType.Rectangle,
+            CornerRadius = 0, // Square corners for Windows
+            StrokeColor = Color.FromRgba(153, 153, 153, 255), // Windows gray
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        });
+        
+        // Frame On
+        var frameOn = new SkiaShape
+        {
+            Tag = "FrameOn",
+            Type = ShapeType.Rectangle,
+            CornerRadius = 0,
+            BackgroundColor = Color.FromRgba(0, 120, 215, 255), // Windows blue
+            StrokeWidth = 0,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        };
+        this.AddSubView(frameOn);
+        
+        // Windows style checkmark is more bold
+        var checkmark = new SkiaSvg
+        {
+            Tag = "ViewCheckOn",
+            SvgString = SvgWindowsCheck,
+            TintColor = Colors.White,
+            Margin = new Thickness(1),
+            UseCache = SkiaCacheType.Operations,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+        };
+        frameOn.AddSubView(checkmark);
+        ViewCheckOn = checkmark;
+        
+        // Color overrides for Windows style
+        ColorFrameOff = Color.FromRgba(153, 153, 153, 255);
+        ColorFrameOn = Color.FromRgba(0, 120, 215, 255);
+        ColorCheckOn = Colors.White;
+    }
+    
     #endregion
 
-    protected override void OnLayoutChanged()
+    public virtual void ApplyOn()
     {
-        base.OnLayoutChanged();
+        if (FrameOn != null)
+        {
+            FrameOn.IsVisible = true;
+            
+            if (FrameOn is SkiaShape shape)
+            {
+                // Update the color based on control style
+                switch (ControlStyle)
+                {
+                    case PrebuiltControlStyle.Cupertino:
+                    case PrebuiltControlStyle.Material:
+                    case PrebuiltControlStyle.Windows:
+                        shape.BackgroundColor = ColorFrameOn;
+                        break;
+                    default:
+                        shape.StrokeColor = ColorFrameOn;
+                        break;
+                }
+            }
+        }
 
-        ApplyProperties();
+        if (ViewCheckOn != null)
+        {
+            ViewCheckOn.IsVisible = true;
+            
+            // Apply appropriate styling based on ViewCheckOn type
+            if (ViewCheckOn is SkiaShape shape)
+            {
+                shape.BackgroundColor = this.ColorCheckOn;
+            }
+            else if (ViewCheckOn is SkiaSvg svg)
+            {
+                svg.TintColor = this.ColorCheckOn;
+            }
+        }
+
+        if (FrameOff != null)
+        {
+            FrameOff.IsVisible = false;
+        }
     }
 
     public virtual void ApplyOff()
     {
-        if (ViewOn != null)
+        if (FrameOff != null)
         {
-            ViewOn.IsVisible = false;
+            FrameOff.IsVisible = true;
+            
+            if (FrameOff is SkiaShape shape)
+            {
+                shape.StrokeColor = ColorFrameOff;
+            }
+        }
+
+        if (FrameOn != null)
+        {
+            FrameOn.IsVisible = false;
+        }
+        
+        if (ViewCheckOn != null)
+        {
+            ViewCheckOn.IsVisible = false;
         }
     }
 
-    public virtual void ApplyOn()
+    public SkiaControl FrameOff;
+    public SkiaControl FrameOn;
+    protected SkiaControl ViewCheckOn;
+
+    public override void OnChildrenChanged()
     {
-        if (ViewOn != null)
-        {
-            ViewOn.IsVisible = true;
-        }
+        base.OnChildrenChanged();
+
+        FindViews();
     }
-
-    public SkiaControl ViewOff;
-    public SkiaControl ViewOn;
-
 
     protected virtual void FindViews()
     {
-        ViewOn = FindView<SkiaControl>("ViewOn");
-        ViewOff = FindView<SkiaControl>("ViewOff");
+        FrameOn = FindView<SkiaControl>("FrameOn");
+        FrameOff = FindView<SkiaControl>("FrameOff");
+        
+        // Try to find ViewCheckOn - could be either a SkiaShape or SkiaSvg depending on style
+        ViewCheckOn = FindView<SkiaControl>("ViewCheckOn");
+        
+        // If we couldn't find it directly, it might be nested inside FrameOn
+        if (ViewCheckOn == null && FrameOn != null)
+        {
+            if (FrameOn is SkiaLayout layout)
+            {
+                ViewCheckOn = layout.FindView<SkiaControl>("ViewCheckOn");
+            }
+        }
     }
 
     public override void ApplyProperties()
     {
-        if (ViewOn == null)
-        {
-            FindViews();
-        }
-
         if (IsToggled)
         {
             ApplyOn();
@@ -126,5 +387,15 @@ public class SkiaCheckbox : SkiaToggle
         return base.ProcessGestures(args, apply);
     }
 
+    public static readonly BindableProperty ColorCheckOnProperty = BindableProperty.Create(
+        nameof(ColorCheckOn),
+        typeof(Color),
+        typeof(SkiaToggle),
+        Colors.Red, propertyChanged: NeedUpdateProperties);
 
+    public Color ColorCheckOn
+    {
+        get { return (Color)GetValue(ColorCheckOnProperty); }
+        set { SetValue(ColorCheckOnProperty, value); }
+    }
 }

@@ -2557,8 +2557,8 @@ namespace DrawnUi.Maui.Views
             {
                 if (_focusedChild != null)
                 {
-                    Debug.WriteLine($"[UNFOCUSED] {_focusedChild}");
-                    if (_focusedChild != setter || setter == null)
+                    Debug.WriteLine($"[UNFOCUSED] DrawnView ReportFocus to {_focusedChild}");
+                    if (_focusedChild != value || setter == null)
                         _focusedChild.OnFocusChanged(false);
 
                     FocusedItemChanged?.Invoke(this, new(_focusedChild as SkiaControl, false));
@@ -2576,18 +2576,15 @@ namespace DrawnUi.Maui.Views
                         }
                     }
 
-                    if (value != null)
-                    {
-                        FocusedItemChanged?.Invoke(this, new(value as SkiaControl, true));
-                    }
+                    FocusedItemChanged?.Invoke(this, new(value as SkiaControl, true));
                 }
 
                 _focusedChild = value;
-                Debug.WriteLine($"[FOCUSED] {_focusedChild}");
+                Debug.WriteLine($"[FOCUSED] 1 DrawnView ReportFocus to {_focusedChild}");
 
                 if (_focusedChild == null)
                 {
-                    Debug.WriteLine($"[FOCUSED] {_focusedChild}");
+                    Debug.WriteLine($"[FOCUSED] 2 DrawnView ReportFocus to {_focusedChild}");
 
                     //with delay maybe some other control will focus itsself in that time
                     ResetFocusWithDelay(150);
@@ -2612,17 +2609,19 @@ namespace DrawnUi.Maui.Views
                         {
                             try
                             {
+#if WINDOWS
+                                Super.SetFocus(IntPtr.Zero); // Removes focus from all
+#elif ANDROID
+                                ResetFocus();
+#else
                                 this.Focus();
+                                TouchEffect.CloseKeyboard();
+#endif
                             }
                             catch (Exception e)
                             {
                                 Super.Log(e);
                             }
-#if ANDROID
-                            ResetFocus();
-#else
-                            TouchEffect.CloseKeyboard();
-#endif
                         });
                     }
                 });

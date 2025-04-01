@@ -103,18 +103,17 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     protected void FocusNative()
     {
-        //Debug.WriteLine($"[SKiaMauiEntry] Focusing native control..");
-        Control.Focus();
+        MainThread.BeginInvokeOnMainThread(() => { Control.Focus(); });
     }
 
     protected void UnfocusNative()
     {
-        //Debug.WriteLine($"[SKiaMauiEntry] Unfocusing native control..");
-#if IOS || MACCATALYST //dealing with maui differences
-        Control?.Unfocus();
-#endif
-        IsFocused = false;
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            Control?.Unfocus();
+        });
     }
+
 
     public void SetFocus(bool focus)
     {
@@ -128,10 +127,10 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             {
                 UnfocusNative();
             }
-
             UpdateControl();
         }
     }
+
 
 
     protected virtual void AdaptControlSize()
@@ -208,6 +207,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     }
 
     static object lockFocus = new();
+    private bool internalFocus;
 
     /// <summary>
     /// Invoked by Maui control
@@ -216,10 +216,13 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     /// <param name="e"></param>
     private void OnControlFocused(object sender, FocusEventArgs e)
     {
-        //Debug.WriteLine($"[SKiaMauiEntry] Focused by native");
+        Debug.WriteLine($"[SKiaMauiEditor] Focused by native");
+        //IsFocused = true;
         lock (lockFocus)
         {
-            Superview.FocusedChild = this;
+            internalFocus = true;
+            IsFocused = true;
+            Superview.ReportFocus(this, this);
         }
     }
 
@@ -230,13 +233,18 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     /// <param name="e"></param>
     private void OnControlUnfocused(object sender, FocusEventArgs e)
     {
-        //Debug.WriteLine($"[SKiaMauiEntry] Unfocused by native");
+        Debug.WriteLine($"[SKiaMauiEditor] Unfocused by native");
+        //IsFocused = false;
         lock (lockFocus)
         {
+            internalFocus = true;
+            IsFocused = false;
             if (Superview.FocusedChild == this)
             {
-                Superview.FocusedChild = null;
-            };
+                Superview.ReportFocus(null, this);
+            }
+
+            ;
         }
     }
 
@@ -248,16 +256,17 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     {
         lock (lockFocus)
         {
+            if (!IsFocused)
+                return false; //reject focus
+
             if (Control != null)
             {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    if (!focus)
-                        UnfocusNative();
-                    else
-                        FocusNative();
-                });
+                if (!focus)
+                    UnfocusNative();
+                else
+                    FocusNative();
             }
+
             return true;
         }
     }
@@ -285,20 +294,26 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     protected void SetFocusInternal(bool value)
     {
-        if (Control != null)
+        lock (lockFocus)
         {
-            if (!Control.IsFocused && value || Control.IsFocused && !value)
+            if (internalFocus)
             {
-                Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
+                internalFocus = false;
+                return;
+            }
+
+            if (Control != null)
+            {
+                if (!Control.IsFocused && value || Control.IsFocused && !value)
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
                     {
                         if (value)
                             FocusNative();
                         else
                             UnfocusNative();
                     });
-                });
+                }
             }
         }
     }

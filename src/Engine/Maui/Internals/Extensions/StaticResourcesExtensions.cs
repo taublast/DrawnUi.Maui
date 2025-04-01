@@ -32,14 +32,15 @@ public static class StaticResourcesExtensions
                         }
                     }
                 }
-                throw new Exception($"[StaticResources] {typeof(T).Name} not found \"{name}\"");
+
+                throw new XamlParseException($"StaticResource not found for key {name}");
             }
 
             return (T)retVal;
         }
         catch (Exception e)
         {
-            Trace.WriteLine(e);
+            Super.Log(e);
             return default;
         }
     }

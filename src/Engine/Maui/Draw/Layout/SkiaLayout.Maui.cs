@@ -6,6 +6,13 @@ namespace DrawnUi.Maui.Draw
 	{
 		#region HOTRELOAD
 
+        public new void Clear()
+        {
+            //ClearChildren();
+
+            base.Clear();
+        }
+
 		public override void ReportHotreloadChildRemoved(SkiaControl control)
 		{
 			if (control == null)
@@ -61,6 +68,19 @@ namespace DrawnUi.Maui.Draw
 
 			try
 			{
+                if (IsTemplated && RenderTree!=null)
+                {
+                    //todo return from
+                    var ret = new List<IVisualTreeElement>();
+                    foreach (SkiaControlWithRect cell in RenderTree)
+                    {
+                        if (cell.Control != null)
+                        {
+                            ret.Add(cell.Control);
+                        }
+                    }
+                    return ret;
+                }
 				return base.GetVisualChildren();
 			}
 			catch (Exception e)

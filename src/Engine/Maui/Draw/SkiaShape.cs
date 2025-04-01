@@ -265,13 +265,18 @@ namespace DrawnUi.Maui.Draw
 
             if (willStroke)
             {
-                pixelsStrokeWidth = (float)Math.Round(StrokeWidth * scale);
+                pixelsStrokeWidth = (float)(StrokeWidth * scale);
                 halfStroke = (float)(pixelsStrokeWidth / 2.0f);
 
                 strokeAwareSize =
                     SKRect.Inflate(strokeAwareSize, -halfStroke, -halfStroke);
 
-                strokeAwareChildrenSize = strokeAwareSize;
+                strokeAwareChildrenSize = new SKRect(
+                    (float)Math.Round(strokeAwareSize.Left),
+                    (float)Math.Round(strokeAwareSize.Top),
+                    (float)Math.Round(strokeAwareSize.Right),
+                    (float)Math.Round(strokeAwareSize.Bottom)
+                );
             }
 
             MeasuredStrokeAwareSize = strokeAwareSize;
@@ -611,7 +616,7 @@ namespace DrawnUi.Maui.Draw
             //we gonna set stroke On only when drawing the last pass
             //otherwise stroke antialiasing will not work
             var willStroke = StrokeColor != TransparentColor && StrokeWidth > 0;
-            float pixelsStrokeWidth = (float)Math.Round(StrokeWidth * scale);
+            float pixelsStrokeWidth = (float)StrokeWidth * scale;//(float)Math.Round(StrokeWidth * scale);
 
             RenderingPaint ??= new SKPaint()
             {

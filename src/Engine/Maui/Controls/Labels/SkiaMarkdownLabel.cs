@@ -19,6 +19,8 @@ public class SkiaMarkdownLabel : SkiaLabel
     }
 
     //properties defaults
+    #region PROPERTIES DEFAULTS
+
     public static Color ColorLink = Colors.CornflowerBlue;
     public static Color ColorCodeBackground = Colors.DimGray;
     public static Color ColorCodeBlock = Color.Parse("#222222");
@@ -26,8 +28,10 @@ public class SkiaMarkdownLabel : SkiaLabel
     public static Color ColorStrikeout = Colors.Red;
 
     //customizable
-    public static string PrefixBullet = "• ";
-    public static string PrefixNumbered = "{0}. ";
+    public static string MaskPrefixBullet = "• ";
+    public static string MaskPrefixNumbered = "{0}. ";
+
+    #endregion
 
     public override void InvalidateText()
     {
@@ -600,7 +604,8 @@ public class SkiaMarkdownLabel : SkiaLabel
         {
             span.Tag = link.Url;
             span.TextColor = this.LinkColor;
-            span.Underline = true;
+            span.Underline = this.UnderlineLink;
+            span.UnderlineWidth = this.UnderlineWidth;
             span.ForceCaptureInput = true;
         });
 
@@ -706,6 +711,58 @@ public class SkiaMarkdownLabel : SkiaLabel
     {
         get { return (Color)GetValue(CodeBackgroundColorProperty); }
         set { SetValue(CodeBackgroundColorProperty, value); }
+    }
+
+    public static readonly BindableProperty PrefixBulletProperty = BindableProperty.Create(
+        nameof(PrefixBullet),
+        typeof(string),
+        typeof(SkiaLabel),
+        MaskPrefixBullet,
+        propertyChanged: NeedUpdateFont);
+
+    public string PrefixBullet
+    {
+        get { return (string)GetValue(PrefixBulletProperty); }
+        set { SetValue(PrefixBulletProperty, value); }
+    }
+
+    public static readonly BindableProperty PrefixNumberedProperty = BindableProperty.Create(
+        nameof(PrefixNumbered),
+        typeof(string),
+        typeof(SkiaLabel),
+        MaskPrefixNumbered,
+        propertyChanged: NeedUpdateFont);
+
+    public string PrefixNumbered
+    {
+        get { return (string)GetValue(PrefixNumberedProperty); }
+        set { SetValue(PrefixNumberedProperty, value); }
+    }
+
+    public static readonly BindableProperty UnderlineLinkProperty = BindableProperty.Create(
+        nameof(UnderlineLink),
+        typeof(bool),
+        typeof(SkiaLabel),
+        true,
+        propertyChanged: NeedUpdateFont);
+
+    public bool UnderlineLink
+    {
+        get { return (bool)GetValue(UnderlineLinkProperty); }
+        set { SetValue(UnderlineLinkProperty, value); }
+    }
+
+    public static readonly BindableProperty UnderlineWidthProperty = BindableProperty.Create(
+        nameof(UnderlineWidth),
+        typeof(double),
+        typeof(SkiaLabel),
+        1.0,
+        propertyChanged: NeedUpdateFont);
+
+    public double UnderlineWidth
+    {
+        get { return (double)GetValue(UnderlineWidthProperty); }
+        set { SetValue(UnderlineWidthProperty, value); }
     }
 
 }

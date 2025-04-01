@@ -245,6 +245,12 @@
         <AutoGen>True</AutoGen>
         <DependentUpon>ResStrings.resx</DependentUpon>
       </Compile>
+ 
+
+ 
+      <Compile Update="Views\Controls\DrawnCheckbox.xaml.cs">
+        <DependentUpon>DrawnCheckbox.xaml</DependentUpon>
+      </Compile>
 
              
       <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
@@ -369,6 +375,14 @@
 
   <ItemGroup>
     <Folder Include="TabsBase\" />
+  </ItemGroup>
+
+ 
+
+  <ItemGroup>
+    <MauiXaml Update="Views\Controls\DrawnCheckbox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
  

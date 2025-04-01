@@ -152,7 +152,7 @@ public class SkiaToggle : SkiaLayout
         nameof(ColorThumbOn),
         typeof(Color),
         typeof(SkiaToggle),
-        Colors.Red, propertyChanged: NeedUpdateProperties);
+        Colors.White, propertyChanged: NeedUpdateProperties);
 
     public Color ColorThumbOn
     {
@@ -164,7 +164,7 @@ public class SkiaToggle : SkiaLayout
         nameof(ColorFrameOn),
         typeof(Color),
         typeof(SkiaToggle),
-        Colors.White, propertyChanged: NeedUpdateProperties);
+        Colors.Red, propertyChanged: NeedUpdateProperties);
 
     public Color ColorFrameOn
     {

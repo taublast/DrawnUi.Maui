@@ -106,13 +106,16 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
         ViewText = FindView<SkiaLabel>("Text");
     }
 
+    public override void OnChildrenChanged()
+    {
+        base.OnChildrenChanged();
+
+        FindViews();
+    }
+
+
     public override void ApplyProperties()
     {
-        if (ViewOn == null)
-        {
-            FindViews();
-        }
-
         if (ViewText != null)
         {
             ViewText.Text = this.Text;

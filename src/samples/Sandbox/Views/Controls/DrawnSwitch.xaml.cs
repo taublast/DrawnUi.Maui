@@ -9,9 +9,9 @@ public partial class DrawnSwitch : SkiaSwitch
         InitializeComponent();
     }
 
-    protected void OnTapped(object sender, SkiaGesturesParameters skiaGesturesParameters)
-    {
-        IsToggled = !IsToggled;
-    }
+    //protected void OnTapped(object sender, SkiaGesturesParameters skiaGesturesParameters)
+    //{
+    //    IsToggled = !IsToggled;
+    //}
 
 }

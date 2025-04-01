@@ -81,44 +81,54 @@ public partial class SkiaMauiElement
     {
         if (element.Handler?.PlatformView is FrameworkElement nativeView)
         {
-            nativeView.Visibility = !VisualTransformNative.IsVisible ? Visibility.Collapsed : Visibility.Visible;
+            nativeView.Visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Collapsed;
 
-            //UIElement
-            nativeView.Width = VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right);
-            nativeView.Height = VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom);
-
-            nativeView.Opacity = VisualTransformNative.Opacity;
-
-            // Creating a new CompositeTransform to handle the transforms
-            var transform = new CompositeTransform
+            Debug.WriteLine($"Visibility {nativeView.Visibility}");
+            
+            if (nativeView.Visibility == Visibility.Visible)
             {
-                TranslateX = VisualTransformNative.Translation.X,
-                TranslateY = VisualTransformNative.Translation.Y,
-                Rotation = VisualTransformNative.Rotation, // Assuming rotation is in degrees
-                ScaleX = VisualTransformNative.Scale.X,
-                ScaleY = VisualTransformNative.Scale.Y
-            };
+                //UIElement
+                nativeView.Width = VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right);
+                nativeView.Height = VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom);
 
-            nativeView.RenderTransform = transform;
+                nativeView.Opacity = VisualTransformNative.Opacity;
 
-            nativeView.UpdateLayout();
 
-            Windows.Foundation.Size availableSize = new(
-                VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
-                VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom));
-            nativeView.Measure(availableSize);
+                // Creating a new CompositeTransform to handle the transforms
+                var transform = new CompositeTransform
+                {
+                    TranslateX = VisualTransformNative.Translation.X,
+                    TranslateY = VisualTransformNative.Translation.Y,
+                    Rotation = VisualTransformNative.Rotation, // Assuming rotation is in degrees
+                    ScaleX = VisualTransformNative.Scale.X,
+                    ScaleY = VisualTransformNative.Scale.Y
+                };
 
-            nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+                nativeView.RenderTransform = transform;
+
+                nativeView.UpdateLayout(); //place the view at correct destination
+
+                Windows.Foundation.Size availableSize = new(
+                    VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
+                    VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom));
+
+                if (MeasuredFor != availableSize)
+                {
+                    MeasuredFor = availableSize;
+                    nativeView.Measure(availableSize);
+                }
+
+                nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+            }
 
             if (!WasRendered)
                 WasRendered = nativeView.RenderSize.Width > 0;
 
             nativeView.UpdateLayout(); //required. in maui this is also needed to be called as fix for after IsVisible is set to true sometimes the view just doesn't show up.
-
-            //Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {nativeView.Opacity} " +
-            //$"{this.IsDisposing}{this.IsDisposed} TY {VisualTransformNative.Translation.Y}");
         }
     }
+
+    public Windows.Foundation.Size MeasuredFor { get; set; } 
 
     public void UpdateNativeLayout()
     {

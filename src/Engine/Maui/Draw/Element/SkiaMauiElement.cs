@@ -1,25 +1,24 @@
 ﻿namespace DrawnUi.Maui.Draw
 {
-
     /*
-	The concept:
-	
-	To create and move/transform the native view to where the skia placeholder is sitting.
-	
-	ANDROID + WINDOWS:
-	To respond to fast skia updates (ex: while scrolling) we are forced to make a native view snapshot, 
-	hide the native view and draw the snapshot while we are animating.
-	Basically we launch a restarting timer everytime the native view detects it needs to 
-	change its layout/tansform, we display the snapshot instead of native view until 
-	restarting timer expires (its relaunched every time we detect a layout/transform change), 
-	after that we can show the real maui view again.
-	This snapshot activation mechanics is an option set by static property bool AnimateSnapshot. 
-	So inside scroll this property must be set to true to have the maui view scroll smoothly with 
-	other skia elements.
-	
-	OTHER PLATFORMS:
-	Do not need a snapshot, maui view is moved/transformed directly.
-	 */
+    The concept:
+
+    To create and move/transform the native view to where the skia placeholder is sitting.
+
+    ANDROID + WINDOWS:
+    To respond to fast skia updates (ex: while scrolling) we are forced to make a native view snapshot,
+    hide the native view and draw the snapshot while we are animating.
+    Basically we launch a restarting timer everytime the native view detects it needs to
+    change its layout/tansform, we display the snapshot instead of native view until
+    restarting timer expires (its relaunched every time we detect a layout/transform change),
+    after that we can show the real maui view again.
+    This snapshot activation mechanics is an option set by static property bool AnimateSnapshot.
+    So inside scroll this property must be set to true to have the maui view scroll smoothly with
+    other skia elements.
+
+    OTHER PLATFORMS:
+    Do not need a snapshot, maui view is moved/transformed directly.
+     */
 
     [ContentProperty("Content")]
     public partial class SkiaMauiElement : SkiaControl
@@ -51,7 +50,7 @@
                     var measured = view.Measure(
                         ptsWidth - (this.Padding.Left + this.Padding.Right),
                         ptsHeight - (this.Padding.Top + this.Padding.Bottom)
-                        );
+                    );
                     //var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
                     return measured;
                 }
@@ -66,7 +65,8 @@
 #if ANDROID
                 return new(VisualTransformNative.Rect.Size.Width - (this.Padding.Left + this.Padding.Right) * RenderingScale, VisualTransformNative.Rect.Size.Height - (this.Padding.Top + this.Padding.Bottom) * RenderingScale);
 #else
-                return new(VisualTransformNative.Rect.Size.Width - (this.Padding.Left + this.Padding.Right), VisualTransformNative.Rect.Size.Height - (this.Padding.Top + this.Padding.Bottom));
+                return new(VisualTransformNative.Rect.Size.Width - (this.Padding.Left + this.Padding.Right),
+                    VisualTransformNative.Rect.Size.Height - (this.Padding.Top + this.Padding.Bottom));
 #endif
             }
             catch (Exception e)
@@ -78,7 +78,6 @@
         }
 
         private object lockLayout = new();
-
 
         public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
         {
@@ -100,12 +99,8 @@
             }
         }
 
-
         protected Size ContentSizeUnits;
-
-
 #if ANDROID || WINDOWS
-
         public SKImage GetSnapshot()
         {
             if (CachedBitmap != null)
@@ -160,12 +155,8 @@
             TakeNativeSnapshot(CachedBitmap);
 
         }
-
-
 #endif
-
         public SKSurface CachedBitmap { get; protected set; }
-
         public SKImageInfo CacheSurfaceInfo { get; set; }
 
         public override void OnWillDisposeWithChildren()
@@ -179,11 +170,8 @@
             base.OnWillDisposeWithChildren();
         }
 
-
-
         public override void OnDisposing()
         {
-
             CachedBitmap?.Dispose();
 
             CachedBitmap = null;
@@ -207,6 +195,7 @@
 #if ANDROID || WINDOWS
                         MainThread.BeginInvokeOnMainThread(() =>
                         {
+                            Debug.WriteLine("** HIDE ** SNAPSHOT");
                             ShowSnapshot = false;
                             if (ContentSizeUnits == Size.Zero)
                             {
@@ -238,7 +227,9 @@
             {
                 ret.Add(Content);
             }
-            return ret.AsReadOnly(); ;
+
+            return ret.AsReadOnly();
+            ;
         }
 
         /// <summary>
@@ -269,11 +260,7 @@
         {
             base.SuperViewChanged();
 
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                SetContent(Content);
-            });
-
+            MainThread.BeginInvokeOnMainThread(() => { SetContent(Content); });
         }
 
         /// <summary>
@@ -296,7 +283,14 @@
                         Invalidate();
                     }
 
+try 
+	{	        
+		
+	}
+	catch (global::System.Exception)
+	{
                     LayoutNativeView(Element);
+	}
                 });
 #else
                 LayoutNativeView(Element);
@@ -306,7 +300,6 @@
 
             if (Superview != null && Element != null)
             {
-
 #if ONPLATFORM
                 RemoveMauiElement(Element);
 #endif
@@ -353,13 +346,12 @@
 
             //Debug.WriteLine($"[ME] {native.IsVisible}");
 
-            if (native != VisualTransformNative)// && !ShowSnapshot)
+            if (native != VisualTransformNative) // && !ShowSnapshot)
             {
                 UpdateElementSize();
                 VisualTransformNative = native;
                 NeedsLayoutNative = true;
             }
-
         }
 
         public void Refresh()
@@ -383,9 +375,7 @@
         }
 
         SKRect _destination;
-
         bool _rendered;
-
         VisualTreeChain _chain;
 
         protected void SubscribeToRenderingChain(bool subscribe)
@@ -464,12 +454,13 @@
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
+                        Debug.WriteLine("** SHOW ** SNAPSHOT");
+
                         SetNativeVisibility(false);
                     });
                 }
             }
         }
-
 #endif
 
         public bool IsNativeVisible
@@ -498,19 +489,23 @@
                 {
                     if (manageMainThread)
                     {
-                        Tasks.StartDelayed(TimeSpan.FromMilliseconds(10), () =>
-                        {
-                            MainThread.BeginInvokeOnMainThread(() =>
+                        Tasks.StartDelayed(TimeSpan.FromMilliseconds(10),
+                            () =>
                             {
-                                Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                                MainThread.BeginInvokeOnMainThread(() =>
+                                {
+                                    Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals
+                                        .InvalidationTrigger.HorizontalOptionsChanged);
+                                });
                             });
-                        });
                     }
                     else
                     {
-                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger.HorizontalOptionsChanged);
+                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger
+                            .HorizontalOptionsChanged);
                     }
                 }
+
                 return;
             }
 
@@ -521,7 +516,6 @@
                 LayoutNativeView(Element);
 
 #if ANDROID || WINDOWS
-
                 if (AnimateSnapshot && WasRendered && VisualTransformNative.IsVisible)
                 {
                     if (!ShowSnapshot)
@@ -560,7 +554,6 @@
 #else
             Act();
 #endif
-
         }
 
         public override void SetVisualTransform(VisualTransform transform)
@@ -574,7 +567,6 @@
 #endif
         }
 
-
         /// <summary>
         /// Maui Element to be rendered
         /// </summary>
@@ -584,7 +576,6 @@
         /// PIXELS, for faster checks
         /// </summary>
         public SKPoint ElementSize { get; set; }
-
 
         #region PROPERTIES
 
@@ -623,18 +614,13 @@
             propertyChanged: OnReplaceContent);
 
         private VisualTransform _transform;
-        private bool _isNativeVisible;
+        private bool _isNativeVisible = true;
 
         private static void OnReplaceContent(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is SkiaMauiElement control)
             {
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    control.SetContent(newvalue as VisualElement);
-                });
-
+                MainThread.BeginInvokeOnMainThread(() => { control.SetContent(newvalue as VisualElement); });
             }
         }
 
@@ -649,7 +635,6 @@
         #endregion
 
 #if !ONPLATFORM
-
         protected virtual void LayoutNativeView(VisualElement element)
         {
             throw new NotImplementedException();
@@ -661,7 +646,6 @@
         }
 
         public bool ShowSnapshot => false;
-
 #endif
     }
 }

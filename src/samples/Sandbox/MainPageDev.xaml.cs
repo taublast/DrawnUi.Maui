@@ -74,7 +74,7 @@ public partial class MainPageDev : BasePageCodeBehind
         }
     }
 
-    public async Task<ISelectableOption> PresentSelection(IEnumerable<ISelectableOption> options,
+    public async Task<SelectableAction> PresentSelection(IEnumerable<SelectableAction> options,
         string title = null, string cancel = null)
     {
         if (string.IsNullOrEmpty(title))

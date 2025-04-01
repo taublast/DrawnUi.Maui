@@ -41,6 +41,24 @@ namespace DrawnUi.Maui.Draw
 
         public static float PanThreshold = 5;
 
+        private bool _TouchDown;
+        public bool TouchDown
+        {
+            get
+            {
+                return _TouchDown;
+            }
+            set
+            {
+                if (_TouchDown != value)
+                {
+                    _TouchDown = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
             //Trace.WriteLine($"SkiaHotspot. {type} {args.Action} {args.Event.Location.X} {args.Event.Location.Y}");
@@ -48,11 +66,13 @@ namespace DrawnUi.Maui.Draw
             if (args.Type == TouchActionResult.Down)
             {
                 TotalDown++;
+                TouchDown = true;
                 Down?.Invoke(this, args);
             }
             else
             if (args.Type == TouchActionResult.Up)
             {
+                TouchDown = false;
                 Up?.Invoke(this, args);
             }
             else

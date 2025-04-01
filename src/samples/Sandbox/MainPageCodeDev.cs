@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
+﻿using DrawnUi.Maui.Views;
 using Sandbox.Views;
-using Canvas = DrawnUi.Maui.Views.Canvas;
 
 namespace Sandbox
 {
@@ -19,19 +18,19 @@ namespace Sandbox
             base.Dispose(isDisposing);
         }
 
-        public class MyDataTemplateSelector : DataTemplateSelector
-        {
-            protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
-            {
-                return new DataTemplate(() =>
-                {
-                    return new SkiaLabel()
-                    {
-                        HeightRequest = 32, BackgroundColor = Colors.Red, HorizontalOptions = LayoutOptions.Fill
-                    };
-                });
-            }
-        }
+        //public class MyDataTemplateSelector : DataTemplateSelector
+        //{
+        //    protected override DataTemplate? OnSelectTemplate(object item, BindableObject container)
+        //    {
+        //        return new DataTemplate(() =>
+        //        {
+        //            return new SkiaLabel()
+        //            {
+        //                HeightRequest = 32, BackgroundColor = Colors.Red, HorizontalOptions = LayoutOptions.Fill
+        //            };
+        //        });
+        //    }
+        //}
 
         public override void Build()
         {
@@ -59,53 +58,61 @@ namespace Sandbox
 
                 Content =
                     new SkiaLayout() //wrapper
-                    {
-                        VerticalOptions = LayoutOptions.Fill,
-                        HorizontalOptions = LayoutOptions.Fill,
-                        BackgroundColor = Colors.Gray
-                    }
-                        .WithChildren(
-                        new SkiaLayout()
                         {
-                            Tag = "1",
-                            BackgroundColor = Colors.Yellow,
                             VerticalOptions = LayoutOptions.Fill,
                             HorizontalOptions = LayoutOptions.Fill,
-                            //Children = new List<SkiaControl>()
-                            //{
-                            //    //new SkiaMarkdownLabel()
-                            //    //{
-                            //    //    Margin=16,
-                            //    //    FontFamily="OpenSansRegular",
-                            //    //    FontSize=15,
-                            //    //    Text="`CODE` xx",
-                            //    //    TextColor=Colors.White,
-                            //    //}.CenterX(),
-                            //}
-                        },
-                        //new SkiaLabel()
-                        //{
-                        //    Margin = new(8),
-                        //    VerticalOptions = LayoutOptions.Center,
-                        //    ZIndex = 100,
-                        //    FontSize = 8,
-                        //    TextColor = Colors.White,
-                        //    BackgroundColor = Colors.Black,
-                        //}.Adjust((c) =>
-                        //{
-                        //    c.SetBinding(SkiaLabel.TextProperty, static (WheelScroll x) => x.DebugWheel, source: wheel);
-                        //}),
-                        new SkiaLabelFps()
-                        {
-                            Margin = new(0, 0, 4, 24),
-                            VerticalOptions = LayoutOptions.End,
-                            HorizontalOptions = LayoutOptions.End,
-                            Rotation = -45,
-                            BackgroundColor = Colors.DarkRed,
-                            TextColor = Colors.White,
-                            ZIndex = 110,
+                            BackgroundColor = Colors.Gray
                         }
-                    )
+                        .WithChildren(
+                            new PinPanel()
+                            {
+                                Limit = 4,
+                                BackgroundColor = Colors.Red,
+                                HorizontalOptions = LayoutOptions.Fill,
+                                HeightRequest = 60
+                            },
+
+                            //new SkiaLayout()
+                            //{
+                            //    Tag = "1",
+                            //    BackgroundColor = Colors.Yellow,
+                            //    VerticalOptions = LayoutOptions.Fill,
+                            //    HorizontalOptions = LayoutOptions.Fill,
+                            //    //Children = new List<SkiaControl>()
+                            //    //{
+                            //    //    //new SkiaMarkdownLabel()
+                            //    //    //{
+                            //    //    //    Margin=16,
+                            //    //    //    FontFamily="OpenSansRegular",
+                            //    //    //    FontSize=15,
+                            //    //    //    Text="`CODE` xx",
+                            //    //    //    TextColor=Colors.White,
+                            //    //    //}.CenterX(),
+                            //    //}
+                            //},
+                            //new SkiaLabel()
+                            //{
+                            //    Margin = new(8),
+                            //    VerticalOptions = LayoutOptions.Center,
+                            //    ZIndex = 100,
+                            //    FontSize = 8,
+                            //    TextColor = Colors.White,
+                            //    BackgroundColor = Colors.Black,
+                            //}.Adapt((c) =>
+                            //{
+                            //    c.SetBinding(SkiaLabel.TextProperty, static (WheelScroll x) => x.DebugWheel, source: wheel);
+                            //}),
+                            new SkiaLabelFps()
+                            {
+                                Margin = new(0, 0, 4, 24),
+                                VerticalOptions = LayoutOptions.End,
+                                HorizontalOptions = LayoutOptions.End,
+                                Rotation = -45,
+                                BackgroundColor = Colors.DarkRed,
+                                TextColor = Colors.White,
+                                ZIndex = 110,
+                            }
+                        )
             };
 
             this.Content = Canvas;

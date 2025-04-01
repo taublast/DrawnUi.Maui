@@ -10,16 +10,21 @@ public class BasePageReloadable : DrawnUiBasePage, IDisposable
 
     public BasePageReloadable()
     {
-	    this.Loaded += (s,a) =>
-	    {
-		    Build();
-		};
+        this.Loaded += (s, a) =>
+        {
+            if (!wasBuilt)
+            {
+                Build();
+            }
+        };
 
         if (Debugger.IsAttached)
         {
             Super.HotReload += ReloadUi;
         }
     }
+
+    private bool wasBuilt;
 
     public int CountReloads { get; protected set; }
 
@@ -41,7 +46,7 @@ public class BasePageReloadable : DrawnUiBasePage, IDisposable
     /// </summary>
     public virtual void Build()
     {
-
+        wasBuilt = true;
     }
 
     public void Dispose()

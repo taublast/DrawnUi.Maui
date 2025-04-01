@@ -9,6 +9,7 @@
     <Import_RootNamespace>Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\ObservableAttachedItemsCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\SkiaControl.Cache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\SkiaControl.Effects.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\SkiaControl.Invalidation.cs" />
@@ -49,7 +50,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\UpdateMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\ViewportScrollType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\VirtualizationType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Extensions\FluentExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Extensions\FluentExtensions.Shared.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Extensions\InternalExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Extensions\PointExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Helpers\IntersectionUtils.cs" />

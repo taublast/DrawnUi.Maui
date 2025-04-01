@@ -96,7 +96,7 @@ namespace Sandbox.Views
                         VerticalOptions = LayoutOptions.Fill,
                         HorizontalOptions = LayoutOptions.Fill,
                         Content = content,
-                    }.Adjust((c) =>
+                    }.Adapt((c) =>
                     {
                         viewport = c;
                     })},

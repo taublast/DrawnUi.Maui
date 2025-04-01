@@ -46,19 +46,17 @@
                         Type="Wrap"
                         UseCache="ImageComposite">
 
+
+
                         <controls:DrawnRadioButton Text="Flowers" />
 
-                        <controls:DrawnRadioButton
-                            HorizontalOptions="Start"
-                            Text="Food" />
+                        <controls:DrawnRadioButton HorizontalOptions="Start" Text="Food" />
 
                         <controls:DrawnRadioButton Text="Origami" />
 
                         <controls:DrawnRadioButton Text="Lego Bricks" />
 
-                        <controls:DrawnRadioButton
-                            Tag="CheckMe"
-                            Text="Something else" />
+                        <controls:DrawnRadioButton Tag="CheckMe" Text="Something else" />
 
                         <controls:DrawnRadioButton Text="Various" />
 
@@ -122,6 +120,15 @@
                         <controls:DrawnSwitch />
 
                         <controls:DrawnSlider />
+
+                        <controls:DrawnCheckbox VerticalOptions="End" />
+
+                        <!--  default stuff  -->
+
+                        <draw:SkiaSwitch />
+
+                        <draw:SkiaCheckbox VerticalOptions="Center" />
+
 
                     </draw:SkiaLayout>
 

@@ -260,7 +260,7 @@ namespace Sandbox
             float opacityStart = 1.0f; // Fully visible
             float opacityEnd = 0.0f; // Fully transparent
 
-            // Adjust ranges for flexible StartAnimationRange and EndAnimationRange breakpoints
+            // Adapt ranges for flexible StartAnimationRange and EndAnimationRange breakpoints
             double startRange, endRange;
 
             // Starting phase: 0.0 to StartAnimationRange (outgoing animations)

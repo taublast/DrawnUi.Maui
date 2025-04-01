@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -32,6 +31,43 @@ namespace DrawnUi.Maui.Draw
         public SkiaControl()
         {
             Init();
+        }
+
+        private void Init()
+        {
+            NeedMeasure = true;
+            IsLayoutDirty = true;
+
+            SizeChanged += ViewSizeChanged;
+
+            CalculateMargins();
+            CalculateSizeRequest();
+
+            AttachEffects();
+
+        }
+
+
+        public static readonly BindableProperty ChildrenProperty = BindableProperty.Create(
+            nameof(Children),
+            typeof(IList<SkiaControl>),
+            typeof(SkiaControl),
+            defaultValueCreator: (instance) =>
+            {
+                var created = new ObservableAttachedItemsCollection<SkiaControl>();
+                created.CollectionChanged += ((SkiaControl)instance).OnChildrenCollectionChanged;
+                return created;
+            },
+            validateValue: (bo, v) => v is IList<SkiaControl>,
+            propertyChanged: ChildrenPropertyChanged);
+
+        /// <summary>
+        /// This is used by MAUI to set content from XAML. 
+        /// </summary>
+        public IList<SkiaControl> Children
+        {
+            get => (IList<SkiaControl>)GetValue(ChildrenProperty);
+            set => SetValue(ChildrenProperty, value);
         }
 
         protected static SKBlendMode DefaultBlendMode = SKBlendMode.SrcOver;
@@ -206,10 +242,19 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public bool SkipRendering { get; set; }
 
-        protected bool DefaultChildrenCreated { get; set; }
+        protected bool DefaultContentCreated { get; set; }
 
         protected virtual void CreateDefaultContent()
         {
+        }
+
+        protected virtual void SetDefaultContentSize(double width, double height)
+        {
+            if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill && (LockRatio == 0 || HeightRequest < 0))
+                this.WidthRequest = width;
+            if (this.HeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill && (LockRatio == 0 || WidthRequest < 0))
+                this.HeightRequest = height;
+
         }
 
         /// <summary>
@@ -1223,19 +1268,6 @@ namespace DrawnUi.Maui.Draw
             {
                 UpdateInternal();
             }
-        }
-
-        private void Init()
-        {
-            NeedMeasure = true;
-            IsLayoutDirty = true;
-
-            SizeChanged += ViewSizeChanged;
-
-            CalculateMargins();
-            CalculateSizeRequest();
-
-            AttachEffects();
         }
 
         public static readonly BindableProperty ClipFromProperty = BindableProperty.Create(
@@ -3211,7 +3243,11 @@ namespace DrawnUi.Maui.Draw
 
             if (FillGradient != null)
                 FillGradient.BindingContext = BindingContext;
+
+            ApplyingBindingContext?.Invoke(this, EventArgs.Empty);
         }
+
+        public event EventHandler ApplyingBindingContext;
 
         protected bool BindingContextWasSet { get; set; }
 
@@ -3295,9 +3331,9 @@ namespace DrawnUi.Maui.Draw
                     return MeasuredSize;
                 }
 
-                if (!DefaultChildrenCreated)
+                if (!DefaultContentCreated)
                 {
-                    DefaultChildrenCreated = true;
+                    DefaultContentCreated = true;
                     CreateDefaultContent();
                 }
 
@@ -3759,6 +3795,12 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
+        /// This will be executed when the control is being disposed, use to avoid memory leaks.
+        /// Example of usage, an extension that would subscribe to something and add unsubscribtion here.
+        /// </summary>
+        public Dictionary<string, Action> ExecuteUponDisposal { get; } = new();
+
+        /// <summary>
         /// Avoid setting parent to null before calling this, or set SuperView prop manually for proper cleanup of animations and gestures if any used
         /// </summary>
         public void Dispose()
@@ -3775,6 +3817,13 @@ namespace DrawnUi.Maui.Draw
             //for the double buffering case it's safer to delay
             Tasks.StartDelayed(DisposalDelay, () =>
             {
+                // Execute all cleanup actions
+                foreach (var action in ExecuteUponDisposal.Values)
+                {
+                    action?.Invoke();
+                }
+                ExecuteUponDisposal.Clear();
+
                 RenderObject = null;
 
                 PaintSystem?.Dispose();
@@ -5703,10 +5752,18 @@ namespace DrawnUi.Maui.Draw
 
         protected virtual void OnChildAdded(SkiaControl child)
         {
-            Invalidate();
+            OnChildrenChanged();
         }
 
         protected virtual void OnChildRemoved(SkiaControl child)
+        {
+            OnChildrenChanged();
+        }
+
+        /// <summary>
+        /// Happens when child was added or removed, will call Invalidate() in base
+        /// </summary>
+        public virtual void OnChildrenChanged()
         {
             Invalidate();
         }
@@ -5887,28 +5944,7 @@ namespace DrawnUi.Maui.Draw
             get { return (Type)GetValue(ItemTemplateTypeProperty); }
             set { SetValue(ItemTemplateTypeProperty, value); }
         }
-
-        public static readonly BindableProperty ChildrenProperty = BindableProperty.Create(
-            nameof(Children),
-            typeof(IList<SkiaControl>),
-            typeof(SkiaControl),
-            defaultValueCreator: (instance) =>
-            {
-                var created = new ObservableCollection<SkiaControl>();
-                created.CollectionChanged += ((SkiaControl)instance).OnChildrenCollectionChanged;
-                return created;
-            },
-            validateValue: (bo, v) => v is IList<SkiaControl>,
-            propertyChanged: ChildrenPropertyChanged);
-
-        /// <summary>
-        /// This is used by MAUI to set content from XAML. 
-        /// </summary>
-        public IList<SkiaControl> Children
-        {
-            get => (IList<SkiaControl>)GetValue(ChildrenProperty);
-            set => SetValue(ChildrenProperty, value);
-        }
+ 
 
         protected void AddOrRemoveView(SkiaControl subView, bool add)
         {

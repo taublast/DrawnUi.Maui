@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
 using Microsoft.UI.Xaml.Media;
+using Windows.Storage;
 
 namespace DrawnUi.Maui.Draw
 {
@@ -81,6 +82,10 @@ namespace DrawnUi.Maui.Draw
                 Looper.StartOnMainThread(120);
             }
         }
+
+
+        [DllImport("user32.dll")]
+        public static extern bool SetFocus(IntPtr hWnd);
 
         static Looper Looper { get; set; }
 

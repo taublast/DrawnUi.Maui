@@ -66,13 +66,13 @@ namespace Sandbox
                                         TextColor = Colors.White,
                                         VerticalOptions = LayoutOptions.Center,
                                         Text="Placeholder"
-                                    }.Adjust((c) =>
+                                    }.Adapt((c) =>
                                     {
                                         _label = c;
                                     })
                                 }
                             }
-                        }.Adjust((c) =>
+                        }.Adapt((c) =>
                         {
                             c.Shadows.Add(new ()
                             {

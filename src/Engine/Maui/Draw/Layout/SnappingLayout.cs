@@ -8,7 +8,7 @@ public class SnappingLayout : SkiaLayout
 {
     #region EVENTS
 
-    public event EventHandler OnViewportReady;
+    public event EventHandler ViewportReady;
 
     public event EventHandler<bool> TransitionChanged;
 
@@ -436,7 +436,7 @@ public class SnappingLayout : SkiaLayout
     /// <summary>
     /// Invokes TransitionChanged event
     /// </summary>
-    protected virtual void OnTransitionChanged()
+    public virtual void OnTransitionChanged()
     {
         TransitionChanged?.Invoke(this, InTransition);
     }

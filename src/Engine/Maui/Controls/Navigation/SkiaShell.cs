@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 namespace DrawnUi.Maui.Controls
 {
     /*
-       The main concept is we take the maui shell implementation 
-      and add additional actions that would draw skia content 
-      on the MainPage Canvas instead of using maui INavigation 
+       The main concept is we take the maui shell implementation
+      and add additional actions that would draw skia content
+      on the MainPage Canvas instead of using maui INavigation
       implementation. This drawn action fully support maui routing,
 
       Can also routes use  ex:
@@ -26,20 +26,22 @@ namespace DrawnUi.Maui.Controls
     /// <summary>
     /// A Canvas with Navigation capabilities
     /// </summary>
-    public partial class SkiaShell : DrawnUiBasePage, IDisposable
+    public partial class SkiaShell : BasePageReloadable, IDisposable
     {
-
-
-        public void Dispose()
+        protected override void Dispose(bool isDisposing)
         {
-            Super.InsetsChanged += OnInsetsChanged;
+            base.Dispose(isDisposing);
 
-            OnDisposing();
+            if (isDisposing)
+            {
+                Super.InsetsChanged += OnInsetsChanged;
+
+                OnDisposing();
+            }
         }
 
         protected virtual void OnDisposing()
         {
-
         }
 
         protected override void OnHandlerChanged()
@@ -58,9 +60,7 @@ namespace DrawnUi.Maui.Controls
         #region EVENTS
 
         public event EventHandler<SkiaShellNavigatedArgs> Navigated;
-
         public event EventHandler<SkiaShellNavigatingArgs> Navigating;
-
         public event EventHandler RouteChanged;
 
         //public event EventHandler<ShellNavigatedEventArgs> Navigated;
@@ -133,7 +133,6 @@ namespace DrawnUi.Maui.Controls
         //    };
         //    return defaultCanvas;
         //}
-
         public static Color ToastBackgroundColor = Color.Parse("#CC000000");
         public static Color ToastTextColor = Colors.White;
         public static string ToastTextFont = null;
@@ -150,11 +149,10 @@ namespace DrawnUi.Maui.Controls
         /// Default background blur amount for freezing popups/modals etc
         /// </summary>
         public static float PopupsBackgroundBlur = 6;
+
         public static float PopupsAnimationSpeed = 250;
         public static int PopupsCancelAnimationsAfterMs = 1500;
-
         public static bool LogEnabled = false;
-
         public static int ZIndexModals = 1000;
         public static int ZIndexPopups = 2000;
         public static int ZIndexToasts = 3000;
@@ -200,6 +198,7 @@ namespace DrawnUi.Maui.Controls
                 {
                     return popup;
                 }
+
                 return null;
             }
         }
@@ -216,6 +215,7 @@ namespace DrawnUi.Maui.Controls
                         return control;
                     }
                 }
+
                 return null;
             }
         }
@@ -230,7 +230,6 @@ namespace DrawnUi.Maui.Controls
         /// <returns></returns>
         public SkiaControl GetTopmostViewInternal()
         {
-
             SkiaControl topmost = null;
 
             if (ZIndexModals > ZIndexPopups)
@@ -287,7 +286,8 @@ namespace DrawnUi.Maui.Controls
 
         #region SCREENS
 
-        public virtual async Task<SkiaControl> RemoveAsync(SkiaControl modal, bool? animate, IDictionary<string, object> arguments = null)
+        public virtual async Task<SkiaControl> RemoveAsync(SkiaControl modal, bool? animate,
+            IDictionary<string, object> arguments = null)
         {
             if (modal == null)
                 return null;
@@ -306,11 +306,13 @@ namespace DrawnUi.Maui.Controls
                     }
                 }
 
-                if (presentation == PresentationMode.ModalNotAnimated || presentation == PresentationMode.ModalAnimated || presentation == PresentationMode.Modal)
+                if (presentation == PresentationMode.ModalNotAnimated ||
+                    presentation == PresentationMode.ModalAnimated || presentation == PresentationMode.Modal)
                 {
-
                     //todo find the existing drawer if any
-                    var inStack = NavigationStackModals.FirstOrDefault(x => x.Page is SkiaDrawer drawer && drawer.Content == modal);
+                    var inStack =
+                        NavigationStackModals.FirstOrDefault(
+                            x => x.Page is SkiaDrawer drawer && drawer.Content == modal);
                     if (inStack != null)
                     {
                         modal = inStack.Page as SkiaDrawer;
@@ -339,7 +341,9 @@ namespace DrawnUi.Maui.Controls
                 //LockNavigation.Release();
             }
         }
-        public virtual async Task<SkiaControl> PresentAsync(string registered, bool? animate, IDictionary<string, object> arguments = null)
+
+        public virtual async Task<SkiaControl> PresentAsync(string registered, bool? animate,
+            IDictionary<string, object> arguments = null)
         {
             //await LockNavigation.WaitAsync();
 
@@ -363,7 +367,8 @@ namespace DrawnUi.Maui.Controls
                         }
                     }
 
-                    if (presentation == PresentationMode.ModalNotAnimated || presentation == PresentationMode.ModalAnimated || presentation == PresentationMode.Modal)
+                    if (presentation == PresentationMode.ModalNotAnimated ||
+                        presentation == PresentationMode.ModalAnimated || presentation == PresentationMode.Modal)
                     {
                         if (animate == null)
                         {
@@ -372,6 +377,7 @@ namespace DrawnUi.Maui.Controls
                                 animate = true;
                             }
                         }
+
                         skia = await this.PushModalAsync(skia, false, animate.GetValueOrDefault());
                     }
                     else
@@ -392,10 +398,10 @@ namespace DrawnUi.Maui.Controls
             {
                 //LockNavigation.Release();
             }
-
         }
 
-        public virtual async Task PushRegisteredPageAsync(string registered, bool animate, IDictionary<string, object> arguments = null)
+        public virtual async Task PushRegisteredPageAsync(string registered, bool animate,
+            IDictionary<string, object> arguments = null)
         {
             //await LockNavigation.WaitAsync();
 
@@ -419,10 +425,7 @@ namespace DrawnUi.Maui.Controls
             {
                 //LockNavigation.Release();
             }
-
         }
-
-
 
         /// <summary>
         /// Uses ViewSwitcher to push a view on the canvas, into the current tab if any.
@@ -432,6 +435,11 @@ namespace DrawnUi.Maui.Controls
         /// <returns></returns>
         public virtual async Task PushAsync(BindableObject page, bool animated = true, bool notify = true)
         {
+            if (NavigationLayout == null)
+            {
+                throw new Exception("You must have a NavigationLayout in order to use nagigation methods");
+            }
+
             await AwaitNavigationLock();
 
             if (notify)
@@ -443,10 +451,7 @@ namespace DrawnUi.Maui.Controls
             try
             {
                 NavigationLayout.PushView(page as SkiaControl, animated, false);
-                NavigationStackScreens.AddLast(new PageInStack
-                {
-                    Page = page
-                });
+                NavigationStackScreens.AddLast(new PageInStack { Page = page });
 
                 if (notify)
                     OnNavigated(new(page as SkiaControl, null, NavigationSource.Push));
@@ -456,13 +461,15 @@ namespace DrawnUi.Maui.Controls
                 UnlockNavigation();
             }
         }
+
         /// <summary>
         /// Uses ViewSwitcher to push a view on the canvas, into the current tab if any. We can use a route with arguments to instantiate the view instead of passing an instance.
         /// </summary>
         /// <param name="page"></param>
         /// <param name="animated"></param>
         /// <returns></returns>
-        public virtual async Task PushAsync(string registered, bool animated = true, IDictionary<string, object> arguments = null)
+        public virtual async Task PushAsync(string registered, bool animated = true,
+            IDictionary<string, object> arguments = null)
         {
             if (!NotifyAndCheckCanNavigate(null, registered, NavigationSource.Push))
                 return;
@@ -510,14 +517,12 @@ namespace DrawnUi.Maui.Controls
                     ClosePopupAsync(animate).ConfigureAwait(false);
                     consumed = true;
                 }
-                else
-                if (ModalStack.Any())
+                else if (ModalStack.Any())
                 {
                     PopModalAsync(animate).ConfigureAwait(false);
                     consumed = true;
                 }
-                else
-                if (NavigationStackScreens.Any())
+                else if (NavigationStackScreens.Any())
                 {
                     PopAsync(animate).ConfigureAwait(false);
                     consumed = true;
@@ -538,7 +543,6 @@ namespace DrawnUi.Maui.Controls
         /// <returns></returns>
         protected async Task<SkiaControl> GoBackInRoute(bool animate)
         {
-
             if (ModalStack.Any())
             {
                 return await PopModalAsync(animate) as SkiaControl;
@@ -551,8 +555,6 @@ namespace DrawnUi.Maui.Controls
 
             return null;
         }
-
-
 
         /// <summary>
         /// Returns the page so you could dispose it if needed. Uses ViewSwitcher.
@@ -568,7 +570,6 @@ namespace DrawnUi.Maui.Controls
                 var inStack = NavigationStackScreens.LastOrDefault();
                 if (inStack != null)
                 {
-
                     if (!NotifyAndCheckCanNavigate(inStack.Page as SkiaControl, inStack.Route, NavigationSource.Pop))
                         return null;
 
@@ -651,8 +652,6 @@ namespace DrawnUi.Maui.Controls
             return background;
         }
 
-
-
         #endregion
 
         #region MODALS
@@ -701,10 +700,7 @@ namespace DrawnUi.Maui.Controls
                 var modalWrapper = CreateModalDrawer(useGestures, animated,
                     willFreeze, SkiaShell.PopupBackgroundColor);
 
-                NavigationStackModals.AddLast(new PageInStack
-                {
-                    Page = modalWrapper
-                });
+                NavigationStackModals.AddLast(new PageInStack { Page = modalWrapper });
 
                 //if (CanFreezeLayout() && frozenLayerBackgroundParameters.Value.IsVisible)
                 //    await FreezeRootLayout(drawer, animated, SkiaShell.PopupBackgroundColor, SkiaShell.PopupsBackgroundBlur);
@@ -726,7 +722,7 @@ namespace DrawnUi.Maui.Controls
                     {
                         if (sender is SkiaDrawer control)
                         {
-                            control.OnViewportReady -= ViewportReadyHandler;
+                            control.ViewportReady -= ViewportReadyHandler;
 
                             Tasks.StartDelayed(TimeSpan.FromMicroseconds(50), async () =>
                             {
@@ -735,6 +731,7 @@ namespace DrawnUi.Maui.Controls
                                 {
                                     aware.OnAppearing();
                                 }
+
                                 if (willFreeze) //freeze background first, open later
                                 {
                                     while (!modalWrapper.IsFrozen)
@@ -752,6 +749,8 @@ namespace DrawnUi.Maui.Controls
                     }
 
                     modalWrapper.SetParent(ShellLayout);
+
+                    ShellLayout.Repaint();
 
                     while (!_pushModalWaitingAnimatedOpen)
                     {
@@ -772,13 +771,11 @@ namespace DrawnUi.Maui.Controls
                 }
 
                 return null;
-
             }
             finally
             {
                 UnlockNavigation();
             }
-
         }
 
         volatile bool _pushModalWaitingAnimatedOpen;
@@ -815,10 +812,8 @@ namespace DrawnUi.Maui.Controls
                         OnNavigated(new(control, CurrentRouteAuto, NavigationSource.Pop));
                     }
                 }
-
             }
         }
-
 
         protected void SetCurrentRouteNodes(List<ShellStackChild> children)
         {
@@ -831,11 +826,7 @@ namespace DrawnUi.Maui.Controls
         {
             if (created != null)
             {
-                CurrentRoute.Nodes.Add(new()
-                {
-                    Control = created,
-                    Part = registered
-                });
+                CurrentRoute.Nodes.Add(new() { Control = created, Part = registered });
                 OnCurrentRouteChanged();
             }
         }
@@ -858,8 +849,6 @@ namespace DrawnUi.Maui.Controls
             return false;
         }
 
-
-
         public string CurrentRouteAuto
         {
             get
@@ -868,11 +857,13 @@ namespace DrawnUi.Maui.Controls
                 {
                     return string.Empty;
                 }
+
                 var build = "//";
                 foreach (var node in CurrentRoute.Nodes)
                 {
                     build += "/" + node.Part;
                 }
+
                 return build; //todo use stringbuilder?
             }
         }
@@ -940,7 +931,6 @@ namespace DrawnUi.Maui.Controls
             {
                 if (modal.IsVisibleInViewTree())
                 {
-
                     if (modal is ModalWrapper modalWrapper)
                     {
                         if (modalWrapper.Content is SkiaDrawer drawer)
@@ -950,6 +940,7 @@ namespace DrawnUi.Maui.Controls
                             {
                                 drawer.IsOpen = false; //gonna kill manually upstairs
                             }
+
                             removed = drawer.Content;
                         }
                     }
@@ -959,9 +950,7 @@ namespace DrawnUi.Maui.Controls
 
                         removed = modal;
                     }
-
                 }
-
             }
 
             OnNavigated(new(removed, CurrentRouteAuto, NavigationSource.Pop));
@@ -1008,7 +997,6 @@ namespace DrawnUi.Maui.Controls
                             {
                                 Super.Log(e);
                             }
-
                         }
                     }
                     else
@@ -1022,17 +1010,13 @@ namespace DrawnUi.Maui.Controls
                     OnLayersChanged(control);
 
                     control.SetParent(null); //unregister gestures etc
-                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(1500), () =>
-                    {
-                        ShellLayout?.DisposeObject(control);
-                    });
+                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(1500), () => { ShellLayout?.DisposeObject(control); });
                 }
             }
             catch (Exception e)
             {
                 Super.Log(e);
             }
-
         }
 
         bool isBusyClosingModal;
@@ -1108,7 +1092,6 @@ namespace DrawnUi.Maui.Controls
         }
 
         protected SemaphoreSlim LockLayers = new(1, 1);
-
         protected SemaphoreSlim LockNavigation = new(1, 1);
 
         protected void SetupFrozenLayersVisibility(SkiaControl except)
@@ -1121,7 +1104,6 @@ namespace DrawnUi.Maui.Controls
         }
 
         public List<SkiaControl> FreezingModals { get; protected set; } = new();
-
 
         /// <summary>
         /// Display or hide the background scrrenshot assotiated with an overlay control
@@ -1196,13 +1178,11 @@ namespace DrawnUi.Maui.Controls
                         RootLayout.DisposeObject(screenshot);
                     }
                 }
-
             }
             finally
             {
                 UnlockLayers();
             }
-
         }
 
         /// <summary>
@@ -1231,7 +1211,6 @@ namespace DrawnUi.Maui.Controls
                 UnlockLayers();
             });
         }
-
 
         public virtual async Task FreezeRootLayout(
             SkiaControl control,
@@ -1276,7 +1255,6 @@ namespace DrawnUi.Maui.Controls
                     if (LogEnabled)
                         Super.Log("[SHELL] Frozen layout", LogLevel.Information);
                 }
-
             }
             finally
             {
@@ -1320,8 +1298,8 @@ namespace DrawnUi.Maui.Controls
 
         //todo weakreference !!!!!!!!
         protected SkiaControl _topmost;
-
         protected object _lockLayers = new();
+
         /// <summary>
         /// Setup _topmost and send OnAppeared / OnDisappeared to views.
         /// Occurs when layers configuration changes,
@@ -1331,7 +1309,6 @@ namespace DrawnUi.Maui.Controls
         {
             lock (_lockLayers)
             {
-
                 var newTopmost = GetTopmostViewInternal();
 
                 if (_topmost != newTopmost)
@@ -1340,6 +1317,7 @@ namespace DrawnUi.Maui.Controls
                     {
                         dissapeared = null;
                     }
+
                     SetupDisappeared(_topmost);
                     _topmost = GetTopmostViewInternal();
                     SetupAppeared(_topmost);
@@ -1378,7 +1356,6 @@ namespace DrawnUi.Maui.Controls
             }
         }
 
-
         #region POPUPS
 
         /// <summary>
@@ -1387,7 +1364,6 @@ namespace DrawnUi.Maui.Controls
         public Dictionary<SkiaControl, SkiaControl> FrozenLayers { get; } = new();
 
         public Controls.SkiaShell.NavigationLayer<SkiaControl> Popups { get; }
-
 
         /// <summary>
         /// Close topmost popup
@@ -1441,7 +1417,6 @@ namespace DrawnUi.Maui.Controls
                 }
             }
         }
-
 
         /// <summary>
         /// Pass pixelsScaleInFrom you you want popup to animate appearing from a specific point instead of screen center.
@@ -1528,8 +1503,6 @@ namespace DrawnUi.Maui.Controls
                         {
                             OnNavigated(new(popup, CurrentRouteAuto, NavigationSource.Push));
                         }
-
-
                     }
                     catch (Exception e)
                     {
@@ -1541,10 +1514,7 @@ namespace DrawnUi.Maui.Controls
                     }
                 };
 
-                control.Disposing += (sender, a) =>
-                {
-                    popup = null;
-                };
+                control.Disposing += (sender, a) => { popup = null; };
 
                 popup = control;
 
@@ -1558,7 +1528,8 @@ namespace DrawnUi.Maui.Controls
 
                 if (animated)
                 {
-                    var completedTask = await Task.WhenAny(taskCompletionSource.Task, Task.Delay(PopupsCancelAnimationsAfterMs));
+                    var completedTask = await Task.WhenAny(taskCompletionSource.Task,
+                        Task.Delay(PopupsCancelAnimationsAfterMs));
 
                     if (completedTask == taskCompletionSource.Task)
                     {
@@ -1578,19 +1549,16 @@ namespace DrawnUi.Maui.Controls
 
                     return await taskCompletionSource.Task;
                 }
-
             }
             finally
             {
                 UnlockNavigation();
             }
-
         }
 
         #endregion
 
         #region TOASTS
-
 
         /*
                      await LockNavigation.WaitAsync();
@@ -1610,7 +1578,6 @@ namespace DrawnUi.Maui.Controls
         {
             Task.Run(async () =>
             {
-
                 await AwaitNavigationLock();
 
                 try
@@ -1628,10 +1595,7 @@ namespace DrawnUi.Maui.Controls
                         VerticalOptions = LayoutOptions.End,
                         BackgroundColor = ToastBackgroundColor
                     }.WithChildren(
-                        new SkiaLayout()
-                        {
-                            HorizontalOptions = LayoutOptions.Fill
-                        }.WithChildren(content));
+                        new SkiaLayout() { HorizontalOptions = LayoutOptions.Fill }.WithChildren(content));
 
                     control.LayoutIsReady += (s, o) =>
                     {
@@ -1657,7 +1621,6 @@ namespace DrawnUi.Maui.Controls
                 {
                     UnlockNavigation();
                 }
-
             });
         }
 
@@ -1692,7 +1655,6 @@ namespace DrawnUi.Maui.Controls
         public virtual void ShowToast(string text,
             int msShowTime = 4000)
         {
-
             var content = new SkiaMarkdownLabel()
             {
                 TextColor = ToastTextColor,
@@ -1706,10 +1668,7 @@ namespace DrawnUi.Maui.Controls
             ShowToast(content, msShowTime);
         }
 
-
-
         #endregion
-
 
         public bool HasTopmostModalBindingContext<T>()
         {
@@ -1720,14 +1679,13 @@ namespace DrawnUi.Maui.Controls
                     return true;
                 }
             }
+
             return false;
         }
-
 
         //todo pass canvas props to content
         public virtual void ApplyShellPropertiesToCanvas()
         {
-
         }
 
         //        protected override void OnHandlerChanged()
@@ -1745,10 +1703,7 @@ namespace DrawnUi.Maui.Controls
 
         public Canvas Canvas
         {
-            get
-            {
-                return Content as Canvas;
-            }
+            get { return Content as Canvas; }
         }
 
         protected virtual void ReplaceShellLayout(ISkiaControl newLayout)
@@ -1759,24 +1714,24 @@ namespace DrawnUi.Maui.Controls
             var kill = ShellLayout;
             ShellLayout = newLayout as SkiaControl;
 
-            ImportShellLayout();
+            ImportRootLayout();
 
             var canvas = Content as Canvas;
+
             void Act()
             {
                 canvas.Content = ShellLayout;
             }
+
             if (MainThread.IsMainThread)
             {
                 Act();
             }
             else
             {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    Act();
-                });
+                MainThread.BeginInvokeOnMainThread(() => { Act(); });
             }
+
             if (kill != null)
                 ShellLayout?.DisposeObject(kill);
         }
@@ -1797,33 +1752,50 @@ namespace DrawnUi.Maui.Controls
 
             ShellLayout.AddSubView(RootLayout);
 
-            ImportRootLayout();
+            ImportNavigationLayout();
 
             if (kill != null)
                 ShellLayout?.DisposeObject(kill);
         }
 
-        protected virtual void ImportShellLayout()
+
+
+        protected virtual void ImportRootLayout(bool replace = false)
         {
-            if (ShellLayout != null)
+            if (ShellLayout == null || replace)
             {
+                ShellLayout = this.Canvas.Content as SkiaControl;
+
                 RootLayout = ShellLayout.FindViewByTag("RootLayout");
                 if (RootLayout == null)
                 {
                     throw new Exception("[DrawnUi] `RootLayout` Tag not found while initializing SkiaShell");
                 }
-                ImportRootLayout();
+
+                ImportNavigationLayout();
             }
         }
 
-        protected virtual void ImportRootLayout()
+        protected virtual void ImportNavigationLayout(bool replace = false)
         {
-            if (RootLayout != null)
+            if (RootLayout != null || replace)
             {
                 //optional
                 NavigationLayout = RootLayout.FindView<SkiaViewSwitcher>("NavigationLayout");
+                if (NavigationLayout == null)
+                {
+                     Super.Log("NavigationLayout is null", LogLevel.Warning);
+                }
             }
         }
+
+        protected virtual void ResetRoutes()
+        {
+            _rootRoute = string.Empty;
+            CurrentRoute.Nodes.Clear();
+        }
+
+        protected bool Initialized { get; set; }
 
         public virtual void Initialize(string route)
         {
@@ -1839,10 +1811,11 @@ namespace DrawnUi.Maui.Controls
                 throw new Exception("Shell must contain a Canvas with content.");
             }
 
-            //required
-            ShellLayout = content.Content as SkiaControl;
+            ImportRootLayout(true);
 
-            ImportShellLayout();
+            Initialized = true;
+
+            ResetRoutes();
 
             ParsedRoute startupRoute = null;
             if (!string.IsNullOrEmpty(route))
@@ -1851,7 +1824,7 @@ namespace DrawnUi.Maui.Controls
                     return;
 
                 //we support  a route with subroutes for startup ex: "//main/chats?id-123"
-                GoToAsync(route, false);
+                _ = GoToAsync(route, false);
             }
 
             OnStarted();
@@ -1861,7 +1834,6 @@ namespace DrawnUi.Maui.Controls
         {
 
         }
-
 
         public static void RegisterActionRoute(string route, Action switchToTab)
         {
@@ -1878,6 +1850,7 @@ namespace DrawnUi.Maui.Controls
                 action?.Invoke();
                 return true;
             }
+
             return false;
         }
 
@@ -1965,15 +1938,13 @@ namespace DrawnUi.Maui.Controls
 
                         return (BindableObject)o;
                     }
+
                     return (BindableObject)Activator.CreateInstance(_type);
                 }
                 catch (Exception e)
                 {
                     Trace.WriteLine(e);
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        _shell.DisplayAlert("SkiaShell", $"{e}", "OK");
-                    });
+                    MainThread.BeginInvokeOnMainThread(() => { _shell.DisplayAlert("SkiaShell", $"{e}", "OK"); });
                 }
 
                 return null;
@@ -1991,6 +1962,7 @@ namespace DrawnUi.Maui.Controls
 
                     return (Element)o;
                 }
+
                 return (Element)Activator.CreateInstance(_type);
             }
 
@@ -2007,12 +1979,14 @@ namespace DrawnUi.Maui.Controls
                 return _type.GetHashCode();
             }
         }
+
         static void ValidateRoute(string route, RouteFactory routeFactory)
         {
             if (string.IsNullOrWhiteSpace(route))
                 throw new ArgumentNullException(nameof(route), "Route cannot be an empty string");
 
-            routeFactory = routeFactory ?? throw new ArgumentNullException(nameof(routeFactory), "Route Factory cannot be null");
+            routeFactory = routeFactory ??
+                           throw new ArgumentNullException(nameof(routeFactory), "Route Factory cannot be null");
 
             var uri = new Uri(route, UriKind.RelativeOrAbsolute);
 
@@ -2028,10 +2002,12 @@ namespace DrawnUi.Maui.Controls
             if (s_routes.TryGetValue(route, out existingRegistration) && !existingRegistration.Equals(routeFactory))
                 throw new ArgumentException($"Duplicated Route: \"{route}\"");
         }
+
         internal static bool IsImplicit(string source)
         {
             return source.StartsWith(ImplicitPrefix, StringComparison.Ordinal);
         }
+
         public static string FormatRoute(List<string> segments)
         {
             var route = FormatRoute(String.Join(PathSeparator, segments));
@@ -2056,13 +2032,9 @@ namespace DrawnUi.Maui.Controls
         const string DefaultPrefix = "D_FAULT_";
         internal const string PathSeparator = "/";
 
-
         #endregion
 
-
         #region TODO INavigation
-
-
 
         public async Task PopToRootAsync()
         {
@@ -2095,7 +2067,6 @@ namespace DrawnUi.Maui.Controls
         }
 
         public LinkedList<PageInStack> NavigationStackScreens { get; } = new LinkedList<PageInStack>();
-
         public LinkedList<PageInStack> NavigationStackModals { get; } = new LinkedList<PageInStack>();
 
         //public static PageInStack GetItemAtIndex(LinkedList<PageInStack> linkedStack, int index)
@@ -2114,7 +2085,6 @@ namespace DrawnUi.Maui.Controls
 
         //    return currentNode.Value;
         //}
-
 
         #endregion
 
@@ -2137,7 +2107,6 @@ namespace DrawnUi.Maui.Controls
         }
 
         protected string _rootRoute;
-
         protected readonly IServiceProvider Services;
         private string _orderedRoute = "";
 
@@ -2152,8 +2121,10 @@ namespace DrawnUi.Maui.Controls
                     ret += $"{key.Key}={key.Value}&";
                 }
             }
+
             return ret;
         }
+
 
         /// <summary>
         /// Main control inside RootLayout
@@ -2161,7 +2132,6 @@ namespace DrawnUi.Maui.Controls
         /// <param name="shellLayout"></param>
         protected virtual void SetupRoot(ISkiaControl shellLayout)
         {
-
         }
 
         /// <summary>
@@ -2187,11 +2157,11 @@ namespace DrawnUi.Maui.Controls
 
                 if (page is SkiaControl control)
                 {
-                    ReplaceRootLayout(page as SkiaControl);
+                    control.Tag = "RootLayout";
+                    ReplaceRootLayout(control);
 
                     return control;
                 }
-
             }
 
             throw new Exception($"SkiaShell failed to create page for '{host}'!");
@@ -2205,8 +2175,7 @@ namespace DrawnUi.Maui.Controls
                 {
                     needQuery.ApplyQueryAttributes(arguments);
                 }
-                else
-                if (page.BindingContext != null)
+                else if (page.BindingContext != null)
                 {
                     var type = page.BindingContext.GetType();
                     var t = type.GetAttribute<QueryPropertyAttribute>();
@@ -2233,12 +2202,12 @@ namespace DrawnUi.Maui.Controls
                 var route = state.Location.OriginalString.Trim();
                 return ParseRoute(route);
             }
+
             return null;
         }
 
         public static ParsedRoute ParseRoute(string route)
         {
-
             var fix = new Uri("fix://" + route.Trim('/'));
 
             var arguments = System.Web.HttpUtility.ParseQueryString(fix.Query);
@@ -2248,10 +2217,7 @@ namespace DrawnUi.Maui.Controls
                 dict.Add(key, arguments[key]);
             }
 
-            List<string> parts = new List<string>
-            {
-                fix.Host
-            };
+            List<string> parts = new List<string> { fix.Host };
             foreach (var segment in fix.Segments)
             {
                 var part = segment.Replace("/", "");
@@ -2261,20 +2227,12 @@ namespace DrawnUi.Maui.Controls
                 }
             }
 
-            return new ParsedRoute
-            {
-                Original = route,
-                Parts = parts.ToArray(),
-                Arguments = dict
-            };
-
+            return new ParsedRoute { Original = route, Parts = parts.ToArray(), Arguments = dict };
         }
 
-
-
-        public virtual T GetOrCreateContentSetArguments<T>(string part, IDictionary<string, object> arguments) where T : BindableObject
+        public virtual T GetOrCreateContentSetArguments<T>(string part, IDictionary<string, object> arguments)
+            where T : BindableObject
         {
-
             var content = GetOrCreateContent(part) as T;
             if (content != null)
             {
@@ -2283,6 +2241,7 @@ namespace DrawnUi.Maui.Controls
                     SetArguments(content, arguments);
                 }
             }
+
             return content;
         }
 
@@ -2298,11 +2257,7 @@ namespace DrawnUi.Maui.Controls
             public List<ShellStackChild> Nodes { get; set; }
         }
 
-        public ShellCurrentRoute CurrentRoute { get; protected set; } = new()
-        {
-            Nodes = new()
-        };
-
+        public ShellCurrentRoute CurrentRoute { get; protected set; } = new() { Nodes = new() };
 
         /// <summary>
         /// Navigate to a registered route. Arguments will be taken from query string of can be passed as parameter. You can receive them by implementing IQueryAttributable or using attribute [QueryProperty] in the page itsself or in the ViewModel that must be the screen's BindingContext upon registered screen instatiation.
@@ -2312,7 +2267,8 @@ namespace DrawnUi.Maui.Controls
         /// <param name="animate"></param>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        public virtual async Task GoToAsync(ShellNavigationState state, bool? animate = null, IDictionary<string, object> arguments = null)
+        public virtual async Task GoToAsync(ShellNavigationState state, bool? animate = null,
+            IDictionary<string, object> arguments = null)
         {
             if (state == null || state.Location == null)
                 return;
@@ -2325,7 +2281,6 @@ namespace DrawnUi.Maui.Controls
                 bool replaceChain = false;
                 if (parsed != null)
                 {
-
                     try
                     {
                         IDictionary<string, object> passArguments = null;
@@ -2368,11 +2323,7 @@ namespace DrawnUi.Maui.Controls
                                     }
                                 }
 
-                                children.Add(new()
-                                {
-                                    Part = part,
-                                    Control = null
-                                });
+                                children.Add(new() { Part = part, Control = null });
 
                                 //todo go up the tree as ..\something
                                 break;
@@ -2383,27 +2334,20 @@ namespace DrawnUi.Maui.Controls
                                 if (!ExecuteActionRoute(part))
                                 {
                                     var created = await PresentAsync(part, animate, passArguments);
-                                    children.Add(new()
-                                    {
-                                        Part = part,
-                                        Control = created
-                                    });
+                                    children.Add(new() { Part = part, Control = created });
                                 }
                             }
 
                             //set root
                             if (index == 1)
                             {
-                                if (route.Left(2) == "//" || CurrentRoute.Nodes.Count == 0) //root specified or no root yet
+                                if (route.Left(2) == "//" ||
+                                    CurrentRoute.Nodes.Count == 0) //root specified or no root yet
                                 {
                                     var created = SetRoot(part, false, passArguments);
                                     if (created != null)
                                     {
-                                        children.Add(new()
-                                        {
-                                            Part = part,
-                                            Control = created
-                                        });
+                                        children.Add(new() { Part = part, Control = created });
                                     }
                                     else
                                     {
@@ -2414,7 +2358,6 @@ namespace DrawnUi.Maui.Controls
                                 }
                                 else
                                 {
-
                                     if (parsed.Parts.Length == 1)
                                     {
                                         //just add to current route
@@ -2486,12 +2429,10 @@ namespace DrawnUi.Maui.Controls
 
                     return;
                 }
-
             }
 
             Trace.WriteLine($"[FastShell] Unsupported URI {route}");
         }
-
 
         public void UpdateLayout()
         {
@@ -2500,7 +2441,8 @@ namespace DrawnUi.Maui.Controls
 
         public virtual void OnLayoutInvalidated()
         {
-            TopInsets = Super.Screen.BottomInset; ;
+            TopInsets = Super.Screen.BottomInset;
+            ;
             BottomInsets = Super.Screen.BottomInset;
             StatusBarHeight = Super.StatusBarHeight;
 
@@ -2508,12 +2450,10 @@ namespace DrawnUi.Maui.Controls
         }
 
         private double _BottomInsets;
+
         public double BottomInsets
         {
-            get
-            {
-                return _BottomInsets;
-            }
+            get { return _BottomInsets; }
             set
             {
                 if (_BottomInsets != value)
@@ -2525,12 +2465,10 @@ namespace DrawnUi.Maui.Controls
         }
 
         private double _TopInsets;
+
         public double TopInsets
         {
-            get
-            {
-                return _TopInsets;
-            }
+            get { return _TopInsets; }
             set
             {
                 if (_TopInsets != value)
@@ -2542,12 +2480,10 @@ namespace DrawnUi.Maui.Controls
         }
 
         private double _StatusBarHeight;
+
         public double StatusBarHeight
         {
-            get
-            {
-                return _StatusBarHeight;
-            }
+            get { return _StatusBarHeight; }
             set
             {
                 if (_StatusBarHeight != value)
@@ -2559,7 +2495,6 @@ namespace DrawnUi.Maui.Controls
         }
 
         public event EventHandler<RotationEventArgs> OnRotation;
-
         public event EventHandler<IndexArgs> TabReselected;
         public ObservableCollection<MenuPageItem> MenuItems { get; } = new ObservableCollection<MenuPageItem>();
 
@@ -2573,6 +2508,5 @@ namespace DrawnUi.Maui.Controls
         public static Dictionary<string, object> Buffer { get; } = new();
 
         #endregion
-
     }
 }

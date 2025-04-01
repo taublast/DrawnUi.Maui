@@ -39,7 +39,7 @@ half4 main(float2 fragCoord)
     // Calculate the delay based on the distance
     float delay = distance / speed;
 
-    // Adjust the time for the delay and clamp to 0
+    // Adapt the time for the delay and clamp to 0
     float time = max(0.0, progress * duration - delay);
 
     // Calculate the ripple amount

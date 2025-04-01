@@ -15,9 +15,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
 
-            <Style
-                x:Key="TextSubTitle"
-                TargetType="draw:SkiaLabel">
+            <Style x:Key="TextSubTitle" TargetType="draw:SkiaLabel">
                 <Setter Property="TextColor" Value="DarkBlue" />
                 <Setter Property="BackgroundColor" Value="#11000000" />
                 <Setter Property="FontSize" Value="20" />
@@ -52,9 +50,7 @@
                 TextColor="DarkGray">
                 <Label.IsVisible>
                     <OnPlatform x:TypeArguments="system:Boolean">
-                        <On
-                            Platform="WinUI"
-                            Value="True" />
+                        <On Platform="WinUI" Value="True" />
                     </OnPlatform>
                 </Label.IsVisible>
             </Label>
@@ -130,9 +126,7 @@
 
                         <draw:TextSpan Text="Use colored emojis " />
 
-                        <draw:TextSpan
-                            AutoFindFont="True"
-                            Text="🌐🚒🙎🏽👻🤖" />
+                        <draw:TextSpan AutoFindFont="True" Text="🌐🚒🙎🏽👻🤖" />
 
                         <draw:TextSpan Text=" Format text as " />
 
@@ -155,9 +149,7 @@
                             TextColor="DarkOliveGreen"
                             Underline="True" />
 
-                        <draw:TextSpan
-                            FontSize="14"
-                            Text=" " />
+                        <draw:TextSpan FontSize="14" Text=" " />
 
                         <draw:TextSpan
                             FontSize="14"
@@ -165,9 +157,7 @@
                             Text="Still in development but.."
                             TextColor="Black" />
 
-                        <draw:TextSpan
-                            FontSize="14"
-                            Text=" " />
+                        <draw:TextSpan FontSize="14" Text=" " />
 
                         <draw:TextSpan
                             BackgroundColor="#11ff0000"

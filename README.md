@@ -20,10 +20,11 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 New nugets: for NET 9 you need version not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
 
-### Nuget 1.4.0.5
-_for SkiaSharp 3.116.1 NET 9_
-* Improved crash-free hardware-accelerated handler for WIndows.
-* `Backdrop` blur scale fix.
+### Nuget 1.4.0.6
+_SkiaSharp 3.116.1 NET 9_
+* Yet another Canvas auto-size fix.
+* HotReload fixes for: XAML full page reload support, XAML DataTemplate changes in recycled lists.
+* `SkiaCheckbox`, `SkiaSwitch`, `SkiaButton` got their default content fixes to be used out-of-the-box, added customization exmaples inside Sandbox project.
 * Few small fixes and improvements.
 
 ___Please star ⭐ if you like it!___

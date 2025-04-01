@@ -72,13 +72,13 @@ public partial class SkiaScroll
         }
         _scrollMaxY = 0;
 
-        ViewportReady = true;
+        IsViewportReady = true;
         onceAfterInitializeViewport = true;
     }
 
     bool onceAfterInitializeViewport;
 
-    public bool ViewportReady { get; protected set; }
+    public bool IsViewportReady { get; protected set; }
 
     public LinearDirectionType ScrollingDirection { get; protected set; }
 

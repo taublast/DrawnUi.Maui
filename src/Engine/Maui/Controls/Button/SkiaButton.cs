@@ -1,6 +1,5 @@
 ﻿using System.Windows.Input;
 
-
 namespace DrawnUi.Maui.Draw;
 
 /// <summary>
@@ -29,40 +28,30 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
         if (this.Views.Count == 0)
         {
+            SetDefaultContentSize(100, 40);
 
+            this.AddSubView(new SkiaShape
             {
-                if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill)
-                    this.WidthRequest = 100;
+                Tag = "BtnShape",
+                BackgroundColor = this.InitialBackgroundColor,
+                Background = this.InitialBackground,
+                CornerRadius = 8,
+                HorizontalOptions = LayoutOptions.Fill,
+                IsClippedToBounds = true,
+                VerticalOptions = LayoutOptions.Fill,
+            });
 
-                if (this.HeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill)
-                    this.HeightRequest = 40;
+            this.AddSubView(new SkiaLabel()
+            {
+                UseCache = SkiaCacheType.Operations,
+                Tag = "BtnText",
+                Text = "Test",
+                TextColor = this.TextColor,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+            });
 
-                var shape = new SkiaShape
-                {
-                    Tag = "BtnShape",
-                    BackgroundColor = this.InitialBackgroundColor,
-                    Background = this.InitialBackground,
-                    CornerRadius = 8,
-                    HorizontalOptions = LayoutOptions.Fill,
-                    IsClippedToBounds = true,
-                    VerticalOptions = LayoutOptions.Fill,
-                };
-
-                this.AddSubView(shape);
-
-                this.AddSubView(new SkiaLabel()
-                {
-                    UseCache = SkiaCacheType.Operations,
-                    Tag = "BtnText",
-                    Text = "Test",
-                    TextColor = this.TextColor,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
-                });
-
-                ApplyProperties();
-            }
-
+            ApplyProperties();
         }
         else
         {
@@ -91,8 +80,14 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     }
 
     protected SkiaLabel MainLabel;
-
     protected SkiaShape MainFrame;
+
+    public override void OnChildrenChanged()
+    {
+        base.OnChildrenChanged();
+
+        FindViews();
+    }
 
     public virtual void FindViews()
     {
@@ -100,6 +95,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         {
             MainLabel = FindView<SkiaLabel>("BtnText");
         }
+
         if (MainFrame == null)
         {
             MainFrame = FindView<SkiaShape>("BtnShape");
@@ -108,8 +104,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public virtual void ApplyProperties()
     {
-        FindViews();
-
         if (MainLabel != null)
         {
             MainLabel.Text = this.Text;
@@ -134,7 +128,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public virtual bool OnDown(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-
         //todo check we are inside mainframe OR inside the rect accounting for margins
 
         Pressed?.Invoke(this, args);
@@ -152,8 +145,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                 var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
                 control.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
             }
-            else
-            if (ApplyEffect == SkiaTouchAnimation.Shimmer)
+            else if (ApplyEffect == SkiaTouchAnimation.Shimmer)
             {
                 var color = ShimmerEffectColor;
                 control.PlayShimmerAnimation(color, ShimmerEffectWidth, ShimmerEffectAngle, ShimmerEffectSpeed);
@@ -179,32 +171,32 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                 ret = true;
                 Tapped?.Invoke(this, args);
             }
+
             if (Clicked != null)
             {
                 ret = true;
                 Clicked(this, args);
             }
+
             if (CommandTapped != null)
             {
                 ret = true;
-                Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(DelayCallbackMs), async () =>
-                {
-                    await Task.Run(() => { CommandTapped?.Execute(CommandTappedParameter); }).ConfigureAwait(false);
-                });
+                Tasks.StartDelayedAsync(TimeSpan.FromMilliseconds(DelayCallbackMs),
+                    async () =>
+                    {
+                        await Task.Run(() => { CommandTapped?.Execute(CommandTappedParameter); }).ConfigureAwait(false);
+                    });
             }
-
         }
 
         return ret;
     }
 
     bool hadDown;
-
     public static float PanThreshold = 5;
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-
         //Debug.WriteLine($"SkiaButton {Text}. {args.Type} {args.Event.Distance.Delta}");
 
         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
@@ -257,8 +249,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                 return null;
             }
         }
-        else
-        if (args.Type == TouchActionResult.Up)
+        else if (args.Type == TouchActionResult.Up)
         {
             //todo track multifingers?
             SetUp();
@@ -266,8 +257,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             //Up?.Invoke(this, args);
             //OnUp();
         }
-        else
-        if (args.Type == TouchActionResult.Tapped)
+        else if (args.Type == TouchActionResult.Tapped)
         {
             TotalTapped++;
             return OnTapped(args, apply.childOffset) ? this : null;
@@ -282,9 +272,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     public static int DelayCallbackMs = 0;
 
     public event EventHandler<SkiaGesturesParameters> Up;
-
     public event EventHandler<SkiaGesturesParameters> Down;
-
     public event EventHandler<SkiaGesturesParameters> Tapped;
 
     /// <summary>
@@ -303,12 +291,10 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     public Action<SkiaButton, SkiaGesturesParameters> Pressed;
 
     private long _TotalTapped;
+
     public long TotalTapped
     {
-        get
-        {
-            return _TotalTapped;
-        }
+        get { return _TotalTapped; }
         set
         {
             if (_TotalTapped != value)
@@ -320,12 +306,10 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     }
 
     private long _TotalDown;
+
     public long TotalDown
     {
-        get
-        {
-            return _TotalDown;
-        }
+        get { return _TotalDown; }
         set
         {
             if (_TotalDown != value)
@@ -335,9 +319,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             }
         }
     }
-
-
-
 
     #region PROPERTIES
 
@@ -353,6 +334,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         typeof(bool),
         typeof(SkiaButton),
         false);
+
     public bool LockPanning
     {
         get { return (bool)GetValue(LockPanningProperty); }
@@ -410,7 +392,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(IsPressedProperty, value); }
     }
 
-
     public static readonly BindableProperty TextProperty = BindableProperty.Create(
         nameof(Text),
         typeof(string),
@@ -426,51 +407,59 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(TextProperty, value); }
     }
 
-
-    public static readonly BindableProperty ShimmerEffectColorProperty = BindableProperty.Create(nameof(ShimmerEffectColor),
+    public static readonly BindableProperty ShimmerEffectColorProperty = BindableProperty.Create(
+        nameof(ShimmerEffectColor),
         typeof(Color),
         typeof(SkiaButton),
         WhiteColor.WithAlpha(0.33f));
+
     public Color ShimmerEffectColor
     {
         get { return (Color)GetValue(ShimmerEffectColorProperty); }
         set { SetValue(ShimmerEffectColorProperty, value); }
     }
 
-    public static readonly BindableProperty ShimmerEffectAngleProperty = BindableProperty.Create(nameof(ShimmerEffectAngle),
+    public static readonly BindableProperty ShimmerEffectAngleProperty = BindableProperty.Create(
+        nameof(ShimmerEffectAngle),
         typeof(float),
         typeof(SkiaButton),
         33.0f);
+
     public float ShimmerEffectAngle
     {
         get { return (float)GetValue(ShimmerEffectAngleProperty); }
         set { SetValue(ShimmerEffectAngleProperty, value); }
     }
 
-    public static readonly BindableProperty ShimmerEffectWidthProperty = BindableProperty.Create(nameof(ShimmerEffectWidth),
+    public static readonly BindableProperty ShimmerEffectWidthProperty = BindableProperty.Create(
+        nameof(ShimmerEffectWidth),
         typeof(float),
         typeof(SkiaButton),
         150.0f);
+
     public float ShimmerEffectWidth
     {
         get { return (float)GetValue(ShimmerEffectWidthProperty); }
         set { SetValue(ShimmerEffectWidthProperty, value); }
     }
 
-    public static readonly BindableProperty ShimmerEffectSpeedProperty = BindableProperty.Create(nameof(ShimmerEffectSpeed),
+    public static readonly BindableProperty ShimmerEffectSpeedProperty = BindableProperty.Create(
+        nameof(ShimmerEffectSpeed),
         typeof(int),
         typeof(SkiaButton),
         500);
+
     public int ShimmerEffectSpeed
     {
         get { return (int)GetValue(ShimmerEffectSpeedProperty); }
         set { SetValue(ShimmerEffectSpeedProperty, value); }
     }
 
-
-    public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor), typeof(Color),
-         typeof(SkiaButton),
+    public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor),
+        typeof(Color),
+        typeof(SkiaButton),
         WhiteColor);
+
     public Color TouchEffectColor
     {
         get { return (Color)GetValue(TouchEffectColorProperty); }
@@ -480,56 +469,66 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     public static readonly BindableProperty ApplyEffectProperty = BindableProperty.Create(nameof(ApplyEffect),
         typeof(SkiaTouchAnimation),
         typeof(SkiaButton), SkiaTouchAnimation.Ripple);
+
     public SkiaTouchAnimation ApplyEffect
     {
         get { return (SkiaTouchAnimation)GetValue(ApplyEffectProperty); }
         set { SetValue(ApplyEffectProperty, value); }
     }
 
-    public static readonly BindableProperty TransformViewProperty = BindableProperty.Create(nameof(TransformView), typeof(object),
+    public static readonly BindableProperty TransformViewProperty = BindableProperty.Create(nameof(TransformView),
+        typeof(object),
         typeof(SkiaButton), null);
+
     public object TransformView
     {
         get { return (object)GetValue(TransformViewProperty); }
         set { SetValue(TransformViewProperty, value); }
     }
 
-    public static readonly BindableProperty CommandTappedProperty = BindableProperty.Create(nameof(CommandTapped), typeof(ICommand),
+    public static readonly BindableProperty CommandTappedProperty = BindableProperty.Create(nameof(CommandTapped),
+        typeof(ICommand),
         typeof(SkiaButton),
         null);
+
     public ICommand CommandTapped
     {
         get { return (ICommand)GetValue(CommandTappedProperty); }
         set { SetValue(CommandTappedProperty, value); }
     }
 
-    public static readonly BindableProperty CommandTappedParameterProperty = BindableProperty.Create(nameof(CommandTappedParameter), typeof(object),
+    public static readonly BindableProperty CommandTappedParameterProperty = BindableProperty.Create(
+        nameof(CommandTappedParameter), typeof(object),
         typeof(SkiaButton),
         null);
+
     public object CommandTappedParameter
     {
         get { return GetValue(CommandTappedParameterProperty); }
         set { SetValue(CommandTappedParameterProperty, value); }
     }
 
-    public static readonly BindableProperty CommandLongPressingProperty = BindableProperty.Create(nameof(CommandLongPressing), typeof(ICommand),
+    public static readonly BindableProperty CommandLongPressingProperty = BindableProperty.Create(
+        nameof(CommandLongPressing), typeof(ICommand),
         typeof(SkiaButton),
         null);
+
     public ICommand CommandLongPressing
     {
         get { return (ICommand)GetValue(CommandLongPressingProperty); }
         set { SetValue(CommandLongPressingProperty, value); }
     }
 
-    public static readonly BindableProperty CommandLongPressingParameterProperty = BindableProperty.Create(nameof(CommandLongPressingParameter), typeof(object),
+    public static readonly BindableProperty CommandLongPressingParameterProperty = BindableProperty.Create(
+        nameof(CommandLongPressingParameter), typeof(object),
         typeof(SkiaButton),
         null);
+
     public object CommandLongPressingParameter
     {
         get { return GetValue(CommandLongPressingParameterProperty); }
         set { SetValue(CommandLongPressingParameterProperty, value); }
     }
-
 
     protected SKPoint _lastDownPts;
 
@@ -589,5 +588,4 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
         return false;
     }
-
 }

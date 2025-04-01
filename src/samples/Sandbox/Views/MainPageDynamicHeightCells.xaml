@@ -27,8 +27,9 @@
         Gestures="Enabled"
         HardwareAcceleration="Enabled"
         HeightRequest="500"
-        HorizontalOptions="Fill"
-        VerticalOptions="Center">
+        HorizontalOptions="Center"
+        VerticalOptions="Center"
+        WidthRequest="350">
 
         <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
@@ -84,7 +85,7 @@
                                     CornerRadius="8">
 
                                     <draw:SkiaLabel
-                                        FontSize="14"
+                                        FontSize="13"
                                         Tag="LabelText"
                                         Text="{Binding Text}"
                                         TextColor="White" />

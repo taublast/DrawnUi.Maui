@@ -71,6 +71,7 @@ public class VisualTransform
         };
 
 #endif
+
         return new VisualTransformNative
         {
             IsVisible = IsVisible,

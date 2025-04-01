@@ -12,6 +12,22 @@ namespace DrawnUi.Maui.Controls;
 
 public partial class MauiEntryHandler : EntryHandler
 {
+    static MauiEntryHandler()
+    {
+        var transparentBrush = Colors.Transparent.ToPlatform();
+
+
+        var backgroundKeys = new[]
+        {
+            "TextControlBackgroundFocused",         
+            "TextControlBorderBrushFocused",      
+        };
+
+        foreach (var key in backgroundKeys)
+        {
+            //resources[key] = transparentBrush;
+        }
+    }
 
     TextBox _control;
 
@@ -21,26 +37,40 @@ public partial class MauiEntryHandler : EntryHandler
 
         _control = platformView;
 
+        platformView.Text = this.VirtualView.Text;
+
         //platformView.EditorAction += OnEditorAction;
         platformView.TextChanged += OnTextChanged;
 
         ApplySettings();
     }
 
+
     void ApplySettings()
     {
         if (_control != null)
         {
-            _control.Background = null; //new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Red.ToWindowsColor()); //or null
+            //var brush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Transparent.ToWindowsColor());
+
+            _control.Background = null;
             _control.BorderBrush = null;
-            _control.Padding = new Microsoft.UI.Xaml.Thickness(0, 0, 0, 0);
+          //  _control.Padding = new Microsoft.UI.Xaml.Thickness(0, 0, 0, 0);
 
             //todo not working
-            var brush = Colors.Transparent.ToPlatform();
-            _control.Resources["TextControlBackgroundFocused"] = brush;
-            _control.Resources["TextControlBackgroundPointerOver"] = brush;
-            RefreshThemeResources(_control);
+            ////var brush = Colors.Transparent.ToPlatform();
+            //_control.Resources["TextControlBackgroundFocused"] = brush;
+            ////_control.Resources["TextControlBackgroundPointerOver"] = brush;
+            //_control.Resources["FocusVisualPrimaryBrush"] = brush;
+            //_control.Resources["FocusVisualSecondaryBrush"] = brush;
+            //RefreshThemeResources(_control);
         }
+    }
+
+    public override void PlatformArrange(Rect frame)
+    {
+        base.PlatformArrange(frame);
+
+        ApplySettings();
     }
 
     protected override TextBox CreatePlatformView()
@@ -72,13 +102,6 @@ public partial class MauiEntryHandler : EntryHandler
         {
             resources[key] = value;
         }
-    }
-
-    public override void PlatformArrange(Rect frame)
-    {
-        base.PlatformArrange(frame);
-
-        ApplySettings();
     }
 
     protected override void DisconnectHandler(TextBox platformView)
