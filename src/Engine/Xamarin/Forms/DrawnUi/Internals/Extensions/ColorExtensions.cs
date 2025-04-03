@@ -2,7 +2,7 @@
 
 using AppoMobi.Specials;
 
-namespace DrawnUi.Maui.Infrastructure.Extensions;
+namespace DrawnUi.Infrastructure.Extensions;
 
 public static partial class ColorExtensions
 {

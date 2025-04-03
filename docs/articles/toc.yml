@@ -1,0 +1,22 @@
+- name: Introduction
+  href: index.md
+- name: Getting Started
+  items:
+    - name: Installation and Setup
+      href: getting-started.md
+    - name: Your First DrawnUi App
+      href: first-app.md
+    - name: Understanding the Drawing Pipeline
+      href: drawing-pipeline.md
+- name: Controls
+  href: controls/toc.yml
+- name: Advanced Topics
+  items:
+    - name: Performance Optimization
+      href: advanced/performance.md
+    - name: Custom Controls
+      href: advanced/custom-controls.md
+    - name: Animation
+      href: advanced/animation.md
+    - name: Platform-Specific Styling
+      href: advanced/platform-styling.md

@@ -1,4 +1,4 @@
-﻿using DrawnUi.Maui.Infrastructure;
+﻿using DrawnUi.Infrastructure;
 using System.Numerics;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;

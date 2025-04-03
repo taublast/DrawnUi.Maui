@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Globalization;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// Forked from Microsoft.Maui.Controls as using original class was breaking XAML HotReload for some unknown reason

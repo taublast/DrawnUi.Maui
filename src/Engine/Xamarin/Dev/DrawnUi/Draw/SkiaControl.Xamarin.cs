@@ -9,11 +9,11 @@ Normally other partial code definitions should be framework independent.
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using SkiaSharp.Views.Forms;
 using Color = Xamarin.Forms.Color;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaControl : VisualElement, IDrawnBase
     //,

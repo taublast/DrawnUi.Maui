@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw
+﻿namespace DrawnUi.Draw
 {
     /// <summary>
     /// Provides the ability to create/draw views directly while scrolling.

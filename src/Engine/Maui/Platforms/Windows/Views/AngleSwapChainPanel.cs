@@ -3,7 +3,7 @@ using Windows.UI.Core;
 
 Not COMPILED !!!
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
     public class AngleSwapChainPanel : SwapChainPanel
     {

@@ -2,7 +2,7 @@
 using System.Text;
 using System.Windows.Input;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 [DebuggerDisplay("{DebugString}")]
 public class TextSpan : Element, IDisposable //we subclassed Element to be able to use internal IElementNode..

@@ -1,5 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using SomeBenchmarks;
 using System.Collections.Generic;
 

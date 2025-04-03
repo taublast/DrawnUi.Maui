@@ -4,7 +4,7 @@ using Foundation;
 using Microsoft.Maui.Controls;
 using UIKit;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class Super
     {

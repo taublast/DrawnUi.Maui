@@ -1,7 +1,7 @@
 ﻿using AppoMobi.Maui.Gestures;
 using AppoMobi.Specials;
 using CoreAnimation;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using ExCSS;
 using Foundation;
 using SkiaSharp;

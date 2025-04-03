@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw
+﻿namespace DrawnUi.Draw
 {
     public class TrackedObject<T> where T : IDisposable
     {

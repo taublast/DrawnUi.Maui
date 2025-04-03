@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

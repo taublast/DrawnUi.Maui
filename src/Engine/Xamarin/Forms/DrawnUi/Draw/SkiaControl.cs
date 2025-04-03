@@ -13,7 +13,7 @@ using Color = Xamarin.Forms.Color;
 using Size = Xamarin.Forms.Size;
 
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]

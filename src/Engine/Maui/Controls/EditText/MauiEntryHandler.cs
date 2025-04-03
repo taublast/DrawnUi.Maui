@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Maui.Handlers;
 
-namespace DrawnUi.Maui.Controls
+namespace DrawnUi.Controls
 {
     public partial class MauiEntryHandler : EntryHandler
     {

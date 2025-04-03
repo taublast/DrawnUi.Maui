@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Controls;
+﻿namespace DrawnUi.Controls;
 
 
 public partial class MauiEntry : Entry, IEditor

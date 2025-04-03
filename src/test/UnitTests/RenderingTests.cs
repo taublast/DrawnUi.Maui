@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Maui.Markup;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using SkiaSharp;
 using Xunit;
 
@@ -56,7 +56,7 @@ public class RenderingTests : DrawnTestsBase
 
         var picture = RenderWithOperationsContext(destination, (ctx) =>
         {
-            layout.Render(ctx, layout.DrawingRect, 1);
+            layout.Render(ctx.WithDestination(layout.DrawingRect));
         });
 
         var cache = layout.RenderObject;

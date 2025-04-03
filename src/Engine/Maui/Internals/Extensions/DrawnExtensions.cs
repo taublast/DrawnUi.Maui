@@ -1,12 +1,12 @@
-﻿using DrawnUi.Maui.Controls;
-using DrawnUi.Maui.Features.Images;
+﻿using DrawnUi.Controls;
+using DrawnUi.Features.Images;
 using EasyCaching.InMemory;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.LifecycleEvents;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public static partial class DrawnExtensions
 {

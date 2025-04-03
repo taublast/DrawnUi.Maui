@@ -1,13 +1,13 @@
-﻿global using DrawnUi.Maui.Draw;
+﻿global using DrawnUi.Draw;
 global using SkiaSharp;
 using AppoMobi.Specials;
-using DrawnUi.Maui.Views;
+using DrawnUi.Views;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Color = Microsoft.Maui.Graphics.Color;
 
-namespace DrawnUi.Maui.Camera;
+namespace DrawnUi.Camera;
 
 public partial class SkiaCamera : SkiaControl
 {

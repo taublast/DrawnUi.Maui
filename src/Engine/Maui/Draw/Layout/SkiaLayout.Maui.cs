@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Layouts;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
 	public partial class SkiaLayout
 	{

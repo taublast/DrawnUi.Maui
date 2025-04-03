@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 [ContentProperty("Shadows")]
 public class ChainDropShadowsEffect : BaseChainedEffect

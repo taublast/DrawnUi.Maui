@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     [ContentProperty(nameof(SvgString))]
     public class SkiaSvg : SkiaControl

@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using DrawnUi.Maui.Infrastructure.Xaml;
+using DrawnUi.Infrastructure.Xaml;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 [ContentProperty("Shadows")]
 public class ChainDropShadowsEffect : BaseChainedEffect

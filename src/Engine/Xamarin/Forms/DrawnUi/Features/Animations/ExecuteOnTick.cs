@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 /// <summary>
 /// Just register this animator to run custom code on every frame creating a kind of game loop if needed.

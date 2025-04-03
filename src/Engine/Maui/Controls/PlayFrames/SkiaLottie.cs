@@ -4,12 +4,12 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-using DrawnUi.Maui.Features.Images;
+using DrawnUi.Features.Images;
 using Microsoft.Maui.Storage;
 using Newtonsoft.Json.Linq;
 using Animation = SkiaSharp.Skottie.Animation;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class SkiaLottie : AnimatedFramesRenderer
 {
@@ -328,7 +328,7 @@ public class SkiaLottie : AnimatedFramesRenderer
             {
                 if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri) && uri.Scheme != "file")
                 {
-                    using HttpClient client = Super.Services.CreateLoadImagesHttpClient();
+                    using HttpClient client = Super.Services.CreateHttpClient();
                     var data = await client.GetByteArrayAsync(uri);
                     //var client = new WebClient();
                     //var data = await client.DownloadDataTaskAsync(uri);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
 
-namespace DrawnUi.Maui.Extensions;
+namespace DrawnUi.Extensions;
 
 public static partial class InternalExtensions
 {

@@ -6,7 +6,7 @@ using MetalKit;
 using ObjCRuntime;
 using SkiaSharp.Views.iOS;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
 
     [Register(nameof(SKMetalViewRetained))]

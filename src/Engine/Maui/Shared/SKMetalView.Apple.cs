@@ -8,7 +8,7 @@ using Microsoft.Maui.Handlers;
 using UIKit;
 using SkiaSharp.Views.iOS;
 
-namespace DrawnUi.Maui.Views;
+namespace DrawnUi.Views;
 
 /// <summary>
 /// APPLE

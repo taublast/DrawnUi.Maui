@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public record CellWIthHeight(float Height, SkiaControl view);
 

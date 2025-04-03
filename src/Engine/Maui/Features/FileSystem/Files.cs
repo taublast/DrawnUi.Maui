@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrawnUi.Maui.Infrastructure
+namespace DrawnUi.Infrastructure
 {
     public partial class Files
     {

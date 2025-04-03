@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SkiaControlsObservable : ObservableCollection<SkiaControl>
 {

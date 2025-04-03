@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// This control is responsible for updating screen for running animators

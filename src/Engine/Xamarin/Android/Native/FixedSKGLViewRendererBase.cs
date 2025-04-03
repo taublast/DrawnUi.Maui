@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using Android.Content;
 using AppoMobi.Xamarin.DrawnUi.Droid.Native;
-using DrawnUi.Maui.Views;
+using DrawnUi.Views;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using Xamarin.Forms;

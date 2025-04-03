@@ -1,4 +1,4 @@
-﻿global using DrawnUi.Maui.Draw;
+﻿global using DrawnUi.Draw;
 using Microsoft.Extensions.Logging;
 
 namespace CanvasHeightIssue;

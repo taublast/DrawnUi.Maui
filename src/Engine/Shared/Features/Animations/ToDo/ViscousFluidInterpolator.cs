@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 /// <summary>
 /// Ported from google android

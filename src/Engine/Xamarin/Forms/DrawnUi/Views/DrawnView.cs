@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Infrastructure.Extensions;
+using DrawnUi.Infrastructure.Extensions;
 using SkiaSharp.Views.Forms;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
@@ -12,7 +12,7 @@ using System.Text;
 using Xamarin.Essentials;
 using VisualElement = Xamarin.Forms.VisualElement;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
 
     [ContentProperty("Children")]
@@ -1554,7 +1554,7 @@ namespace DrawnUi.Maui.Views
             {
 
                 if (!OnStartRendering(canvas))
-                    return UpdateMode == DrawnUi.Maui.Infrastructure.Enums.UpdateMode.Constant;
+                    return UpdateMode == DrawnUi.Infrastructure.Enums.UpdateMode.Constant;
 
                 try
                 {
@@ -1583,7 +1583,7 @@ namespace DrawnUi.Maui.Views
                     WasRendered = true;
                 }
 
-                return IsDirty || UpdateMode == DrawnUi.Maui.Infrastructure.Enums.UpdateMode.Constant;
+                return IsDirty || UpdateMode == DrawnUi.Infrastructure.Enums.UpdateMode.Constant;
             }
 
         }
@@ -1607,7 +1607,7 @@ namespace DrawnUi.Maui.Views
             TimeDrawingStarted = DateTime.Now;
             IsRendering = true;
 
-            if (UpdateMode != DrawnUi.Maui.Infrastructure.Enums.UpdateMode.Constant)
+            if (UpdateMode != DrawnUi.Infrastructure.Enums.UpdateMode.Constant)
             {
                 IsDirty = false; //any control can set to true after that
             }
@@ -1622,7 +1622,7 @@ namespace DrawnUi.Maui.Views
 
             IsRendering = false;
 
-            if (UpdateMode == DrawnUi.Maui.Infrastructure.Enums.UpdateMode.Constant)
+            if (UpdateMode == DrawnUi.Infrastructure.Enums.UpdateMode.Constant)
                 IsDirty = true;
 
             if (IsDirty)
@@ -2414,9 +2414,9 @@ namespace DrawnUi.Maui.Views
 
         public static readonly BindableProperty UpdateModeProperty = BindableProperty.Create(
             nameof(UpdateMode),
-            typeof(DrawnUi.Maui.Infrastructure.Enums.UpdateMode),
+            typeof(DrawnUi.Infrastructure.Enums.UpdateMode),
             typeof(DrawnView),
-            DrawnUi.Maui.Infrastructure.Enums.UpdateMode.Dynamic, propertyChanged: ChangeUpdateMode);
+            DrawnUi.Infrastructure.Enums.UpdateMode.Dynamic, propertyChanged: ChangeUpdateMode);
 
         private static void ChangeUpdateMode(BindableObject bindable, object oldvalue, object newvalue)
         {
@@ -2426,9 +2426,9 @@ namespace DrawnUi.Maui.Views
             }
         }
 
-        public DrawnUi.Maui.Infrastructure.Enums.UpdateMode UpdateMode
+        public DrawnUi.Infrastructure.Enums.UpdateMode UpdateMode
         {
-            get { return (DrawnUi.Maui.Infrastructure.Enums.UpdateMode)GetValue(UpdateModeProperty); }
+            get { return (DrawnUi.Infrastructure.Enums.UpdateMode)GetValue(UpdateModeProperty); }
             set { SetValue(UpdateModeProperty, value); }
         }
 

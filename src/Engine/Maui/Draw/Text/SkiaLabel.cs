@@ -9,7 +9,7 @@ using Color = Microsoft.Maui.Graphics.Color;
 using Font = Microsoft.Maui.Font;
 using PropertyChangingEventArgs = Microsoft.Maui.Controls.PropertyChangingEventArgs;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     //todo add accesibility features
 

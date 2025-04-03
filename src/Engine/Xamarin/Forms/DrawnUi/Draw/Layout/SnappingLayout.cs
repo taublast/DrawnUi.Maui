@@ -1,13 +1,13 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Infrastructure.Helpers;
+﻿using DrawnUi.Draw;
+using DrawnUi.Draw;
+using DrawnUi.Infrastructure.Helpers;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SnappingLayout : SkiaLayout
 {

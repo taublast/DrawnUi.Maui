@@ -1,8 +1,8 @@
-﻿using DrawnUi.Maui.Infrastructure.Models;
-using DrawnUi.Maui.Infrastructure.Xaml;
+﻿using DrawnUi.Infrastructure.Models;
+using DrawnUi.Infrastructure.Xaml;
 using System.IO;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SkiaImage : SkiaControl
 {

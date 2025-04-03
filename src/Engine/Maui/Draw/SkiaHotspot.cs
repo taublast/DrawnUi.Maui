@@ -1,10 +1,10 @@
 ﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using System.Windows.Input;
 using Color = Microsoft.Maui.Graphics.Color;
 using Colors = Microsoft.Maui.Graphics.Colors;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public class SkiaHotspot : SkiaControl, ISkiaGestureListener
     {

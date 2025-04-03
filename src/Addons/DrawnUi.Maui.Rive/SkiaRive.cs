@@ -1,10 +1,10 @@
 ﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
 
-namespace DrawnUi.Maui.Rive;
+namespace DrawnUi.Rive;
 
 /// <summary>
 /// todo subclass AnimatedFramesRenderer

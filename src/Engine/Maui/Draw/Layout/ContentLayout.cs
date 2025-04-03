@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 [ContentProperty("Content")]
 public partial class ContentLayout : SkiaLayout, IVisibilityAware, ISkiaGestureListener, IWithContent

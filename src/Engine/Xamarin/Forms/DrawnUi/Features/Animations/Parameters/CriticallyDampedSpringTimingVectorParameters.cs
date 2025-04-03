@@ -2,7 +2,7 @@
 
 using System.Numerics;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public struct CriticallyDampedSpringTimingVectorParameters : IDampingTimingVectorParameters
 {

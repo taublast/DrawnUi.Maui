@@ -3,7 +3,7 @@ using Microsoft.Maui.Platform;
 using UIKit;
 using ContentView = Microsoft.Maui.Platform.ContentView;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class DrawnUiBasePageHandler : Microsoft.Maui.Handlers.PageHandler
 {

@@ -1,4 +1,4 @@
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// Interpolated time between frames, works in seconds. See examples..

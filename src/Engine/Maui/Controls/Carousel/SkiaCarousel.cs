@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Numerics;
-using SkiaControl = DrawnUi.Maui.Draw.SkiaControl;
+using SkiaControl = DrawnUi.Draw.SkiaControl;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class SkiaCarousel : SnappingLayout
 {

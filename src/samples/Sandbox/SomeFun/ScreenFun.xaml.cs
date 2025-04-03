@@ -1,5 +1,5 @@
-using DrawnUi.Maui;
-using DrawnUi.Maui;
+using DrawnUi;
+using DrawnUi;
 
 namespace Reversi.Views.Partials;
 

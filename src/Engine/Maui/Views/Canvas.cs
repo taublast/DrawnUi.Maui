@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Maui.Controls.Internals;
 using Size = Microsoft.Maui.Graphics.Size;
 
-namespace DrawnUi.Maui.Views;
+namespace DrawnUi.Views;
 
 /// <summary>
 /// Optimized DrawnView having only one child inside Content property. Can autosize to to children size.

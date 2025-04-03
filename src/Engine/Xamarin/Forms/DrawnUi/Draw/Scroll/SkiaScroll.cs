@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Infrastructure.Helpers;
+using DrawnUi.Infrastructure.Helpers;
 using SkiaSharp.Views.Forms;
 using System.Drawing;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Windows.Input;
 using Color = Xamarin.Forms.Color;
 
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     [ContentProperty("Content")]
     public partial class SkiaScroll : SkiaControl, ISkiaGestureListener, IDefinesViewport

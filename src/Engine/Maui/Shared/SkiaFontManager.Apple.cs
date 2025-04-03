@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaFontManager
     {

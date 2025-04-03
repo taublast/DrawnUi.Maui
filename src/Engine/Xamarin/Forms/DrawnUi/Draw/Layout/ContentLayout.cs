@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 [ContentProperty("Content")]
 public partial class ContentLayout : SkiaControl, IVisibilityAware, ISkiaGestureListener

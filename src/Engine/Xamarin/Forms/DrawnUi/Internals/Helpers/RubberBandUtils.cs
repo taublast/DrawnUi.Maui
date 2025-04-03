@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Infrastructure.Extensions;
+﻿using DrawnUi.Infrastructure.Extensions;
 using System.Numerics;
 
-namespace DrawnUi.Maui.Infrastructure.Helpers;
+namespace DrawnUi.Infrastructure.Helpers;
 
 public static class RubberBandUtils
 {

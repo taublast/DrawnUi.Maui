@@ -1,11 +1,11 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 public class RippleAnimator : RenderingAnimator
 {
     public RippleAnimator(IDrawnBase control) : base(control)
     {
         IsPostAnimator = true;
-        Speed = 500;//250;
+        Speed = 500; //250;
         mMinValue = 0;
         mMaxValue = 1;
         Color = SKColor.Parse("#FFFFFF");
@@ -13,11 +13,8 @@ public class RippleAnimator : RenderingAnimator
     }
 
     protected static long count;
-
     public SKColor Color { get; set; }
-
     public static double DiameterDefault = 300.0;
-
     public static double OpacityDefault = 0.20;
 
     /// <summary>
@@ -31,7 +28,6 @@ public class RippleAnimator : RenderingAnimator
     public double Y { get; set; }
 
     public double Diameter { get; set; }
-
     public double Opacity { get; set; }
 
     public override void Dispose()
@@ -51,6 +47,12 @@ public class RippleAnimator : RenderingAnimator
         if (IsRunning && control != null && !control.IsDisposed && !control.IsDisposing)
         {
             var touchOffset = new SKPoint((float)(X * context.Scale), (float)(Y * context.Scale));
+
+            if (control is SkiaControl skia && skia.ClippedEffectsWith != null)
+            {
+                control = skia.ClippedEffectsWith;
+            }
+
             var selfDrawingLocation = GetSelfDrawingLocation(control);
 
             DrawWithClipping(context, control, selfDrawingLocation, () =>
@@ -60,7 +62,8 @@ public class RippleAnimator : RenderingAnimator
                 Paint.Color = Color.WithAlpha((byte)(Opacity * 255));
 
                 touchOffset.Offset(selfDrawingLocation);
-                context.Context.Canvas.DrawCircle(touchOffset.X, touchOffset.Y, (float)(Diameter * context.Scale), Paint);
+                context.Context.Canvas.DrawCircle(touchOffset.X, touchOffset.Y, (float)(Diameter * context.Scale),
+                    Paint);
             });
 
             return true;
@@ -71,7 +74,6 @@ public class RippleAnimator : RenderingAnimator
 
     protected override double TransformReportedValue(long deltaT)
     {
-
         var progress = base.TransformReportedValue(deltaT);
 
         var opacityProgress = progress * 1.15;
@@ -84,5 +86,4 @@ public class RippleAnimator : RenderingAnimator
 
         return progress;
     }
-
 }

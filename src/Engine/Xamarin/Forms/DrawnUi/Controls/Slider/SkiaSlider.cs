@@ -1,10 +1,10 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Infrastructure.Extensions;
+using DrawnUi.Infrastructure.Extensions;
 using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SkiaSlider : SkiaLayout
 {

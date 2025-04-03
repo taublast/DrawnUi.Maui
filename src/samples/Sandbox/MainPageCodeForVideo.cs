@@ -1,6 +1,6 @@
 ﻿using AppoMobi.Maui.Gestures;
 using Sandbox.Views;
-using Canvas = DrawnUi.Maui.Views.Canvas;
+using Canvas = DrawnUi.Views.Canvas;
 
 namespace Sandbox
 {

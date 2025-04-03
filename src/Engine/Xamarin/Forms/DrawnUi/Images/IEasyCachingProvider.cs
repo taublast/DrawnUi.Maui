@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 internal interface IEasyCachingProvider
 {

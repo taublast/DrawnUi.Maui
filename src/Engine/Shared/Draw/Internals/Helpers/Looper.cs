@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class Looper : IDisposable
 {

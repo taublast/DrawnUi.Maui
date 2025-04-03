@@ -1,10 +1,10 @@
 ﻿global using AppoMobi.Specials;
-global using DrawnUi.Maui.Draw;
-global using DrawnUi.Maui.Extensions;
-global using DrawnUi.Maui.Infrastructure;
-global using DrawnUi.Maui.Infrastructure.Models;
-global using DrawnUi.Maui.Models;
-//global using DrawnUi.Maui.Views;
+global using DrawnUi.Draw;
+global using DrawnUi.Extensions;
+global using DrawnUi.Infrastructure;
+global using DrawnUi.Infrastructure.Models;
+global using DrawnUi.Models;
+//global using DrawnUi.Views;
 global using DrawnUi.Views;
 global using SkiaSharp;
 //global using SkiaSharp.Views.Maui;
@@ -15,7 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class Super
     {

@@ -1,6 +1,6 @@
 ﻿using SkiaSharp;
 
-namespace DrawnUi.Maui.Camera;
+namespace DrawnUi.Camera;
 
 public interface ICameraViewRenderer
 {

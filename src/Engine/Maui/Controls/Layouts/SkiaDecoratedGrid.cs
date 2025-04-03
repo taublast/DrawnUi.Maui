@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public partial class SkiaDecoratedGrid : SkiaLayout
 {

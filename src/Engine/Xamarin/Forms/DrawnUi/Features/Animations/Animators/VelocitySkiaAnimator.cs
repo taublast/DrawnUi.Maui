@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 using System.Diagnostics;
 
-namespace DrawnUi.Maui.Animate.Animators;
+namespace DrawnUi.Animate.Animators;
 
 /*
 #region IOS STYLE TODO

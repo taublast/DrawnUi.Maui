@@ -1,14 +1,14 @@
-//global using DrawnUi.Maui.Extensions;
+//global using DrawnUi.Extensions;
 //global using SkiaSharp.Views.Maui;
 //global using SkiaSharp.Views.Maui.Controls;
 global using System.Diagnostics;
 global using AppoMobi.Maui.Gestures;
 global using AppoMobi.Specials;
-global using DrawnUi.Maui.Draw;
-global using DrawnUi.Maui.Infrastructure;
-global using DrawnUi.Maui.Infrastructure.Models;
-global using DrawnUi.Maui.Models;
-global using DrawnUi.Maui.Views;
+global using DrawnUi.Draw;
+global using DrawnUi.Infrastructure;
+global using DrawnUi.Infrastructure.Models;
+global using DrawnUi.Models;
+global using DrawnUi.Views;
 global using SkiaSharp;
 using Xamarin.Forms.Xaml;
 

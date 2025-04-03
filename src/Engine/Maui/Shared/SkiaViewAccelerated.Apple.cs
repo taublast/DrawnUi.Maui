@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrawnUi.Maui.Views;
+namespace DrawnUi.Views;
 
 public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 {

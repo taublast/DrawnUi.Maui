@@ -1,6 +1,6 @@
 using SKBitmap = SkiaSharp.SKBitmap;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// Base shader effect class that has 2 input textures. 

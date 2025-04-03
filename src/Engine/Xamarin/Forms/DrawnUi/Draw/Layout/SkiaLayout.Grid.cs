@@ -1,10 +1,10 @@
 ﻿//Adapted code from the Xamarin.Forms Grid implementation
 
-using DrawnUi.Maui.Infrastructure.Xaml;
+using DrawnUi.Infrastructure.Xaml;
 using System.ComponentModel;
 using System.Linq;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaLayout
 {

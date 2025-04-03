@@ -46,14 +46,10 @@
 	</PropertyGroup>
 
 
-    <ItemGroup Condition="'$(UseNet9)' == 'true'">
+    <ItemGroup>
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.22" />
         <PackageReference Include="CommunityToolkit.Maui" Version="10.0.0" />
-    </ItemGroup>
-    
-    <ItemGroup Condition="'$(UseNet9)' != 'true'">
-        <PackageReference Include="CommunityToolkit.Maui" Version="8.0.1" />
     </ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net*-ios|AnyCPU'">
@@ -61,15 +57,7 @@
         <CodesignKey>iPhone Developer</CodesignKey>
 	</PropertyGroup>
 
-    <!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net*-ios|AnyCPU'">
-        <CreatePackage>false</CreatePackage>
-        <CodesignKey>iPhone Developer</CodesignKey>
-        <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
-        <MtouchLink>None</MtouchLink>
-        <RuntimeIdentifier>iossimulator-x64</RuntimeIdentifier>
-        <ForceSimulatorX64ArchitectureInIDE>true</ForceSimulatorX64ArchitectureInIDE>
-    </PropertyGroup>-->
-    
+   
   <ItemGroup>
 	  <MauiImage Include="Resources\Raw\Svg\dotnet_bot.svg">
 	    <BaseSize>168,208</BaseSize>
@@ -208,12 +196,9 @@
     <None Remove="Models\**" />
 	</ItemGroup>
 
-    <!--<ItemGroup Condition="'$(UseNet9)' == 'true'" >
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
-    </ItemGroup>-->
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	</ItemGroup>
  
     <!--for development-->
@@ -223,37 +208,10 @@
       <ProjectReference Include="..\..\Addons\DrawnUi.MauiGraphics\DrawnUi.MauiGraphics.csproj" />
     </ItemGroup>
 
-    <!--production-->
-    <ItemGroup Condition="'$(UseNuget)' == 'true'">
-      <PackageReference Include="DrawnUi.Maui.Game" Version="1.2.4.5" />
-      <PackageReference Include="DrawnUi.Maui.MapsUi" Version="1.2.4.5" />
-      <PackageReference Include="DrawnUi.MauiGraphics" Version="1.2.4.5" />
-    </ItemGroup>
 
     <ItemGroup>
  
-
- 
-      <Compile Update="DevPagePdfFixes.xaml.cs">
-        <DependentUpon>DevPagePdfFixes.xaml</DependentUpon>
-      </Compile>
- 
-
- 
-      <Compile Update="Resources\Strings\ResStrings.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>ResStrings.resx</DependentUpon>
-      </Compile>
- 
-
- 
-      <Compile Update="Views\Controls\DrawnCheckbox.xaml.cs">
-        <DependentUpon>DrawnCheckbox.xaml</DependentUpon>
-      </Compile>
-
-             
-      <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
+    <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>ResStrings.Designer.cs</LastGenOutput>
       </EmbeddedResource>
@@ -378,13 +336,6 @@
   </ItemGroup>
 
  
-
-  <ItemGroup>
-    <MauiXaml Update="Views\Controls\DrawnCheckbox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-  </ItemGroup>
-
  
 
  

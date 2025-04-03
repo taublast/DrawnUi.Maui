@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 /// <summary>
 /// This animator renders on canvas instead of just updating a value

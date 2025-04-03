@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public partial class SkiaShell
 {

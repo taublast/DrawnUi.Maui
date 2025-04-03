@@ -1,9 +1,9 @@
-﻿using DrawnUi.Maui.Infrastructure.Models;
-using DrawnUi.Maui.Views;
+﻿using DrawnUi.Infrastructure.Models;
+using DrawnUi.Views;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaControl
 {

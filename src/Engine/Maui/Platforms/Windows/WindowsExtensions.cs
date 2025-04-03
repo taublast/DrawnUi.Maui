@@ -1,12 +1,12 @@
 ﻿using System.Buffers;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using Microsoft.Maui.Controls.Compatibility.Platform.UWP;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Handlers;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Storage.Streams;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public static class WindowsExtensions
 {

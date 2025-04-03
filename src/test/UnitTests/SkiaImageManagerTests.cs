@@ -1,5 +1,5 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Features.Images;
+﻿using DrawnUi.Draw;
+using DrawnUi.Features.Images;
 using NSubstitute;
 using Xunit;
 
@@ -11,7 +11,7 @@ public class SkiaImageManagerTests : DrawnTestsBase
     void SetupApplicationWithHttpClient(Action<IServiceCollection> services = null)
     {
         var builder = MauiApp.CreateBuilder(useDefaults: false);
-        builder.Services.AddUriImageSourceHttpClient();
+        //builder.Services.AddUriImageSourceHttpClient();
         services?.Invoke(builder.Services);
         var mauiApp = builder
             .Build();
@@ -29,7 +29,7 @@ public class SkiaImageManagerTests : DrawnTestsBase
     {
         SetupApplicationWithHttpClient();
 
-        var client = Super.Services.CreateLoadImagesHttpClient();
+        var client = Super.Services.CreateHttpClient();
 
         return client;
     }
@@ -61,24 +61,11 @@ public class SkiaImageManagerTests : DrawnTestsBase
     [Fact]
     public async Task LoadImageFromInternetWIthCustomizedClient()
     {
-        SetupApplicationWithHttpClient(services =>
+        Super.CreateHttpClient = (services =>
         {
-            services.AddUriImageSourceHttpClient(
-                client =>
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", "Tests");
-                }, builder =>
-                {
-                    return builder.ConfigurePrimaryHttpMessageHandler(() =>
-                    {
-                        var handler = new HttpClientHandler();
-                        if (handler.SupportsAutomaticDecompression)
-                        {
-                            handler.MaxAutomaticRedirections = 2;
-                        }
-                        return handler;
-                    });
-                });
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Tests");
+            return client;
         });
 
         var source = new UriImageSource

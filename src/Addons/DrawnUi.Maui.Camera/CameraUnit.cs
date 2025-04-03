@@ -1,7 +1,7 @@
 ﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Controls;
+using DrawnUi.Controls;
 
-namespace DrawnUi.Maui.Camera;
+namespace DrawnUi.Camera;
 
 public class CameraUnit : IHasStringId
 {

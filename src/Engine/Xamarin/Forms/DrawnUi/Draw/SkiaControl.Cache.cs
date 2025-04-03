@@ -1,5 +1,5 @@
-﻿using DrawnUi.Maui.Infrastructure.Models;
-using DrawnUi.Maui.Views;
+﻿using DrawnUi.Infrastructure.Models;
+using DrawnUi.Views;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaControl
 {

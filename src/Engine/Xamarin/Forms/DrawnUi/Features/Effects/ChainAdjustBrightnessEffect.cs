@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Infrastructure.Extensions;
+﻿using DrawnUi.Infrastructure.Extensions;
 using Newtonsoft.Json.Linq;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class ChainAdjustBrightnessEffect : BaseChainedEffect
 {

@@ -1,4 +1,4 @@
-﻿using DrawnUi.MauiGraphics;
+﻿using DrawnUiGraphics;
 using System.Collections.ObjectModel;
 
 namespace Sandbox.Views.Aloha;

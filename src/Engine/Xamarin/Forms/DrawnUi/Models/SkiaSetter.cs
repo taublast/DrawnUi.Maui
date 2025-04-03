@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 [ContentProperty(nameof(Value))]
 //[ProvideCompiled("Microsoft.Maui.Controls.XamlC.SetterValueProvider")]

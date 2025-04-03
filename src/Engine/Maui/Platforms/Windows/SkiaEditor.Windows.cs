@@ -1,9 +1,9 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Visibility = Microsoft.UI.Xaml.Visibility;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaEditor : SkiaLayout, ISkiaGestureListener
     {

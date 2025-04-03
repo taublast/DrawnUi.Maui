@@ -1,5 +1,5 @@
 ﻿
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class SkiaMediaImage : SkiaImage
 {

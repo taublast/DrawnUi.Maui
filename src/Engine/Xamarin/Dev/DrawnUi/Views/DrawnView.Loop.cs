@@ -1,10 +1,10 @@
 ﻿//#define LEGACY
 
-using DrawnUi.Maui.Infrastructure.Enums;
+using DrawnUi.Infrastructure.Enums;
 using System.Runtime.CompilerServices;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Views;
+namespace DrawnUi.Views;
 
 public partial class DrawnView
 {

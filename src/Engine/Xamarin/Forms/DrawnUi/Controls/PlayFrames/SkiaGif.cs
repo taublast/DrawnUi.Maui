@@ -1,4 +1,4 @@
-﻿using DrawnUi.Maui.Infrastructure.Models;
+﻿using DrawnUi.Infrastructure.Models;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Http;
@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class SkiaGif : AnimatedFramesRenderer
 {

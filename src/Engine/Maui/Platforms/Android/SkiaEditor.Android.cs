@@ -4,11 +4,11 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.AppCompat.Widget;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using Java.Lang;
 using System.Diagnostics;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaEditor : SkiaLayout, ISkiaGestureListener
     {

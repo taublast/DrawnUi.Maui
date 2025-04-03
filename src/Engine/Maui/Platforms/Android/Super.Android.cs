@@ -8,7 +8,7 @@ using Canvas = Android.Graphics.Canvas;
 using Context = Android.Content.Context;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class Super
 {

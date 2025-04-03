@@ -4,7 +4,7 @@ using Microsoft.Maui.Platform;
 using UIKit;
 
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaMauiElement
 {

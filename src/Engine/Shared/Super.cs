@@ -2,10 +2,18 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class Super
 {
+
+
+    /// <summary>
+    /// Since we removed IHttpClientFactory for faster app startup one can set this delegate to be used to create a custom client that would be used for loading internet sources.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static Func<IServiceProvider, HttpClient> CreateHttpClient;
 
 
     /// <summary>

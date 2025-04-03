@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public partial class SkiaShell
 {

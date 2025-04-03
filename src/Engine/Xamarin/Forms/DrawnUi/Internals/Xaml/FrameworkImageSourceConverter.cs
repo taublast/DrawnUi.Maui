@@ -1,11 +1,11 @@
-﻿using DrawnUi.Maui.Infrastructure.Models;
+﻿using DrawnUi.Infrastructure.Models;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace DrawnUi.Maui.Infrastructure.Xaml;
+namespace DrawnUi.Infrastructure.Xaml;
 
 public class FrameworkImageSourceConverter : System.ComponentModel.TypeConverter
 {

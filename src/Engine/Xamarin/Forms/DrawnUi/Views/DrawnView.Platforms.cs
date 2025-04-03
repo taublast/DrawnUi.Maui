@@ -1,7 +1,7 @@
 ﻿
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
 
     public partial class DrawnView

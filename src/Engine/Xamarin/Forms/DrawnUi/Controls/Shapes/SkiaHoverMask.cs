@@ -1,7 +1,7 @@
 ﻿using SkiaSharp.Views.Forms;
 using Color = Xamarin.Forms.Color;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// Paints the parent view with the background color with a clipped viewport oth this view size

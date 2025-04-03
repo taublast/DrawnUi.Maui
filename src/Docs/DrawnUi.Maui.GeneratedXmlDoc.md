@@ -1,4 +1,4 @@
-# DrawnUi.Maui #
+# DrawnUi #
 
 ## Type Draw.SkiaButton
 
@@ -50,7 +50,7 @@
 
 
 ---
-#### Method Draw.SkiaMarkdownLabel.OnSpanTapped(DrawnUi.Maui.Draw.TextSpan)
+#### Method Draw.SkiaMarkdownLabel.OnSpanTapped(DrawnUi.Draw.TextSpan)
 
  Url will be inside Tag 
 
@@ -253,7 +253,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.DrawUsingRenderObject(DrawnUi.Maui.Draw.SkiaDrawingContext,System.Single,System.Single,SkiaSharp.SKRect,System.Single)
+#### Method Draw.SkiaControl.DrawUsingRenderObject(DrawnUi.Draw.SkiaDrawingContext,System.Single,System.Single,SkiaSharp.SKRect,System.Single)
 
  Returns true if had drawn. 
 
@@ -269,7 +269,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.CreateRenderingObjectAndPaint(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,SkiaSharp.SKRect,System.Action{DrawnUi.Maui.Draw.SkiaDrawingContext})
+#### Method Draw.SkiaControl.CreateRenderingObjectAndPaint(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,SkiaSharp.SKRect,System.Action{DrawnUi.Draw.SkiaDrawingContext})
 
  This is NOT calling FinalizeDraw()! parameter 'area' Usually is equal to DrawingRect 
 
@@ -295,7 +295,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.InvalidateByChild(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.SkiaControl.InvalidateByChild(DrawnUi.Draw.SkiaControl)
 
  To be able to fast track dirty children 
 
@@ -319,7 +319,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.SetupGradient(SkiaSharp.SKPaint,DrawnUi.Maui.Draw.SkiaGradient,SkiaSharp.SKRect)
+#### Method Draw.SkiaControl.SetupGradient(SkiaSharp.SKPaint,DrawnUi.Draw.SkiaGradient,SkiaSharp.SKRect)
 
  Creates Shader for gradient and sets it to passed SKPaint along with BlendMode 
 
@@ -408,7 +408,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.SetVisualTransform(DrawnUi.Maui.Infrastructure.VisualTransform)
+#### Method Draw.SkiaControl.SetVisualTransform(DrawnUi.Infrastructure.VisualTransform)
 
  //todo base. this is actually used by SkiaMauiElement only 
 
@@ -869,7 +869,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.MeasureChild(DrawnUi.Maui.Draw.SkiaControl,System.Double,System.Double,System.Single)
+#### Method Draw.SkiaControl.MeasureChild(DrawnUi.Draw.SkiaControl,System.Double,System.Double,System.Single)
 
  PIXELS 
 
@@ -884,7 +884,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.MeasureContent(System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl},SkiaSharp.SKRect,System.Single)
+#### Method Draw.SkiaControl.MeasureContent(System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl},SkiaSharp.SKRect,System.Single)
 
  Measuring as absolute layout for passed children 
 
@@ -910,7 +910,7 @@ Gets or sets the orientation. This is a bindable property.
 ---
 #### Method Draw.SkiaControl.ApplyBindingContext
 
- https://github.com/taublast/DrawnUi.Maui/issues/92#issuecomment-2408805077 
+ https://github.com/taublast/DrawnUi/issues/92#issuecomment-2408805077 
 
 
 
@@ -1049,7 +1049,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.FinalizeDrawingWithRenderObject(DrawnUi.Maui.Draw.SkiaDrawingContext,System.Double)
+#### Method Draw.SkiaControl.FinalizeDrawingWithRenderObject(DrawnUi.Draw.SkiaDrawingContext,System.Double)
 
  Execute post drawing operations, like post-animators etc 
 
@@ -1067,7 +1067,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.DrawViews(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Boolean)
+#### Method Draw.SkiaControl.DrawViews(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Boolean)
 
  Base method will call RenderViewsList. Return number of drawn views. 
 
@@ -1135,7 +1135,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.Paint(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Object)
+#### Method Draw.SkiaControl.Paint(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Object)
 
  This is the main drawing routine you should override to draw something. Base one paints background color inside DrawingRect that was defined by Arrange inside base.Draw. Pass arguments if you want to use some time-frozen data for painting at any time from any thread.. 
 
@@ -1166,7 +1166,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.DrawRenderObject(DrawnUi.Maui.Draw.CachedObject,DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect)
+#### Method Draw.SkiaControl.DrawRenderObject(DrawnUi.Draw.CachedObject,DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect)
 
  Drawing cache, applying clip and transforms as well 
 
@@ -1178,7 +1178,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.RenderViewsList(System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl},DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Boolean)
+#### Method Draw.SkiaControl.RenderViewsList(System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl},DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Boolean)
 
  Use to render Absolute layout. Base method is not supporting templates, override it to implemen your logic. Returns number of drawn children. 
 
@@ -1204,7 +1204,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.SkiaControlWithRect.#ctor(DrawnUi.Maui.Draw.SkiaControl,SkiaSharp.SKRect,SkiaSharp.SKRect,System.Int32)
+#### Method Draw.SkiaControl.SkiaControlWithRect.#ctor(DrawnUi.Draw.SkiaControl,SkiaSharp.SKRect,SkiaSharp.SKRect,System.Int32)
 
  Rect is real drawing position 
 
@@ -1320,7 +1320,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.InvalidateChildrenTree(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.SkiaControl.InvalidateChildrenTree(DrawnUi.Draw.SkiaControl)
 
  Will invoke InvalidateInternal on controls and subviews 
 
@@ -1330,7 +1330,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.InvalidateChildren(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.SkiaControl.InvalidateChildren(DrawnUi.Draw.SkiaControl)
 
  Will invoke InvalidateInternal on controls and subviews 
 
@@ -1360,7 +1360,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaControl.SetupShadow(SkiaSharp.SKPaint,DrawnUi.Maui.Draw.SkiaShadow,System.Single)
+#### Method Draw.SkiaControl.SetupShadow(SkiaSharp.SKPaint,DrawnUi.Draw.SkiaShadow,System.Single)
 
  Creates and sets an ImageFilter for SKPaint 
 
@@ -1586,7 +1586,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaMauiElement.SetChildren(System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl})
+#### Method Draw.SkiaMauiElement.SetChildren(System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl})
 
  Prevent usage of subviews as we are using Content property for this control 
 
@@ -1596,7 +1596,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaMauiElement.OnChildAdded(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.SkiaMauiElement.OnChildAdded(DrawnUi.Draw.SkiaControl)
 
  Prevent usage of subviews as we are using Content property for this control 
 
@@ -1648,7 +1648,7 @@ Gets or sets the orientation. This is a bindable property.
 
 
 ---
-#### Method Draw.SkiaImage.SetImage(DrawnUi.Maui.Draw.LoadedImageSource)
+#### Method Draw.SkiaImage.SetImage(DrawnUi.Draw.LoadedImageSource)
 
  Do not call this directly, use InstancedBitmap prop 
 
@@ -1859,7 +1859,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaLayout.SecondPassArrange.#ctor(DrawnUi.Maui.Draw.ControlInStack,DrawnUi.Maui.Draw.SkiaControl,System.Single)
+#### Method Draw.SkiaLayout.SecondPassArrange.#ctor(DrawnUi.Draw.ControlInStack,DrawnUi.Draw.SkiaControl,System.Single)
 
  Cell.Area contains the area for layout 
 
@@ -1970,7 +1970,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaLayout.SetupRenderingWithComposition(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect)
+#### Method Draw.SkiaLayout.SetupRenderingWithComposition(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect)
 
  Find intersections between changed children and DrawingRect, add intersecting ones to DirtyChildrenInternal and set IsRenderingWithComposition = true if any. 
 
@@ -2016,7 +2016,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaLayout.DrawChildrenGrid(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single)
+#### Method Draw.SkiaLayout.DrawChildrenGrid(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single)
 
  Returns number of drawn children 
 
@@ -2078,7 +2078,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaLayout.DrawStack(DrawnUi.Maui.Draw.LayoutStructure,DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single)
+#### Method Draw.SkiaLayout.DrawStack(DrawnUi.Draw.LayoutStructure,DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single)
 
  Renders stack/wrap layout. Returns number of drawn children. 
 
@@ -2550,14 +2550,14 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaScroll.CalculateVisibleIndex(DrawnUi.Maui.Draw.RelativePositionType)
+#### Method Draw.SkiaScroll.CalculateVisibleIndex(DrawnUi.Draw.RelativePositionType)
 
  Calculates CurrentIndex 
 
 
 
 ---
-#### Method Draw.SkiaScroll.CalculateScrollOffsetForIndex(System.Int32,DrawnUi.Maui.Draw.RelativePositionType)
+#### Method Draw.SkiaScroll.CalculateScrollOffsetForIndex(System.Int32,DrawnUi.Draw.RelativePositionType)
 
  ToDo this actually work only for Stack and Row 
 
@@ -2645,7 +2645,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaScroll.SetContent(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.SkiaScroll.SetContent(DrawnUi.Draw.SkiaControl)
 
  Use Content property for direct access 
 
@@ -2978,7 +2978,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaLabel.AddEmptyLine(System.Collections.Generic.List{DrawnUi.Maui.Draw.TextLine},DrawnUi.Maui.Draw.TextSpan,System.Single,System.Single,System.Boolean,System.Boolean)
+#### Method Draw.SkiaLabel.AddEmptyLine(System.Collections.Generic.List{DrawnUi.Draw.TextLine},DrawnUi.Draw.TextSpan,System.Single,System.Single,System.Boolean,System.Boolean)
 
  Returns new totalHeight 
 
@@ -3028,7 +3028,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaLabel.OnSpanTapped(DrawnUi.Maui.Draw.TextSpan)
+#### Method Draw.SkiaLabel.OnSpanTapped(DrawnUi.Draw.TextSpan)
 
  Return null if you wish not to consume 
 
@@ -3172,7 +3172,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.RenderingAnimator.OnRendering(DrawnUi.Maui.Draw.IDrawnBase,DrawnUi.Maui.Draw.SkiaDrawingContext,System.Double)
+#### Method Draw.RenderingAnimator.OnRendering(DrawnUi.Draw.IDrawnBase,DrawnUi.Draw.SkiaDrawingContext,System.Double)
 
  return true if has drawn something and rendering needs to be applied 
 
@@ -3259,7 +3259,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.AnimateExtensions.AnimateWith(DrawnUi.Maui.Draw.SkiaControl,System.Func{DrawnUi.Maui.Draw.SkiaControl,System.Threading.Tasks.Task}[])
+#### Method Draw.AnimateExtensions.AnimateWith(DrawnUi.Draw.SkiaControl,System.Func{DrawnUi.Draw.SkiaControl,System.Threading.Tasks.Task}[])
 
  Animate several tasks at the same time with WhenAll 
 
@@ -3279,7 +3279,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.IAfterEffectDelete.Render(DrawnUi.Maui.Draw.IDrawnBase,DrawnUi.Maui.Draw.SkiaDrawingContext,System.Double)
+#### Method Draw.IAfterEffectDelete.Render(DrawnUi.Draw.IDrawnBase,DrawnUi.Draw.SkiaDrawingContext,System.Double)
 
  Called when drawing parent control frame 
 
@@ -3291,7 +3291,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.ICanRenderOnCanvas.Render(DrawnUi.Maui.Draw.IDrawnBase,DrawnUi.Maui.Draw.SkiaDrawingContext,System.Double)
+#### Method Draw.ICanRenderOnCanvas.Render(DrawnUi.Draw.IDrawnBase,DrawnUi.Draw.SkiaDrawingContext,System.Double)
 
  Renders effect overlay to canvas, return true if has drawn something and rendering needs to be applied. 
 
@@ -3429,7 +3429,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.IRenderEffect.Draw(SkiaSharp.SKRect,DrawnUi.Maui.Draw.SkiaDrawingContext,System.Action{DrawnUi.Maui.Draw.SkiaDrawingContext})
+#### Method Draw.IRenderEffect.Draw(SkiaSharp.SKRect,DrawnUi.Draw.SkiaDrawingContext,System.Action{DrawnUi.Draw.SkiaDrawingContext})
 
  Returns true if has drawn control itsself, otherwise it will be drawn over it 
 
@@ -3471,7 +3471,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaShaderEffect.CreateSnapshot(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect)
+#### Method Draw.SkiaShaderEffect.CreateSnapshot(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect)
 
  Create snapshot from the current parent control drawing state to use as input texture for the shader 
 
@@ -3484,7 +3484,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaShaderEffect.Render(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect)
+#### Method Draw.SkiaShaderEffect.Render(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect)
 
  EffectPostRenderer 
 
@@ -3618,7 +3618,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.SkiaImageManager.LoadImageManagedAsync(Microsoft.Maui.Controls.ImageSource,System.Threading.CancellationTokenSource,DrawnUi.Maui.Draw.LoadPriority)
+#### Method Draw.SkiaImageManager.LoadImageManagedAsync(Microsoft.Maui.Controls.ImageSource,System.Threading.CancellationTokenSource,DrawnUi.Draw.LoadPriority)
 
  Uses queue and manager cache 
 
@@ -4148,7 +4148,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.IDefinesViewport.InvalidateByChild(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.IDefinesViewport.InvalidateByChild(DrawnUi.Draw.SkiaControl)
 
  So child can call parent to invalidate scrolling offset etc if child size changes 
 
@@ -4213,7 +4213,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.IDrawnBase.AddSubView(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.IDrawnBase.AddSubView(DrawnUi.Draw.SkiaControl)
 
  Directly adds a view to the control, without any layouting. Use this instead of Views.Add() to avoid memory leaks etc 
 
@@ -4223,7 +4223,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.IDrawnBase.RemoveSubView(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.IDrawnBase.RemoveSubView(DrawnUi.Draw.SkiaControl)
 
  Directly removes a view from the control, without any layouting. Use this instead of Views.Remove() to avoid memory leaks etc 
 
@@ -4233,7 +4233,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.IDrawnBase.InvalidateByChild(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.IDrawnBase.InvalidateByChild(DrawnUi.Draw.SkiaControl)
 
  This is needed by layout to track which child changed to sometimes avoid recalculating other children 
 
@@ -4243,7 +4243,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.IDrawnBase.UpdateByChild(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Draw.IDrawnBase.UpdateByChild(DrawnUi.Draw.SkiaControl)
 
  To track dirty area when Updating parent 
 
@@ -4332,7 +4332,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Draw.ISkiaGestureListener.OnSkiaGestureEvent(DrawnUi.Maui.Draw.SkiaGesturesParameters,DrawnUi.Maui.Draw.GestureEventProcessingInfo)
+#### Method Draw.ISkiaGestureListener.OnSkiaGestureEvent(DrawnUi.Draw.SkiaGesturesParameters,DrawnUi.Draw.GestureEventProcessingInfo)
 
  Called when a gesture is detected. 
 
@@ -5130,7 +5130,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaShell.WrapScreenshot(DrawnUi.Maui.Draw.SkiaControl,SkiaSharp.SKImage,Microsoft.Maui.Graphics.Color,System.Single,System.Boolean)
+#### Method Controls.SkiaShell.WrapScreenshot(DrawnUi.Draw.SkiaControl,SkiaSharp.SKImage,Microsoft.Maui.Graphics.Color,System.Single,System.Boolean)
 
  Override this to create your own image with your own effect of the screenshot to be placed under modal controls. Default is image with Darken Effect. 
 
@@ -5173,7 +5173,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaShell.SetFrozenLayerVisibility(DrawnUi.Maui.Draw.SkiaControl,System.Boolean)
+#### Method Controls.SkiaShell.SetFrozenLayerVisibility(DrawnUi.Draw.SkiaControl,System.Boolean)
 
  Display or hide the background scrrenshot assotiated with an overlay control 
 
@@ -5186,7 +5186,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaShell.UnfreezeRootLayout(DrawnUi.Maui.Draw.SkiaControl,System.Boolean)
+#### Method Controls.SkiaShell.UnfreezeRootLayout(DrawnUi.Draw.SkiaControl,System.Boolean)
 
  pass who frozen the layout 
 
@@ -5199,14 +5199,14 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaShell.FreezeRootLayout(DrawnUi.Maui.Draw.SkiaControl,System.Boolean,Microsoft.Maui.Graphics.Color,System.Single)
+#### Method Controls.SkiaShell.FreezeRootLayout(DrawnUi.Draw.SkiaControl,System.Boolean,Microsoft.Maui.Graphics.Color,System.Single)
 
  Freezes layout below the overlay: takes screenshot of RootLayout, places it over, then hides RootLayout to avoid rendering it. Can override 
 
 
 
 ---
-#### Method Controls.SkiaShell.OnLayersChanged(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Controls.SkiaShell.OnLayersChanged(DrawnUi.Draw.SkiaControl)
 
  Setup _topmost and send OnAppeared / OnDisappeared to views. Occurs when layers configuration changes, some layer go visible, some not, some are added, some are removed. 
 
@@ -5232,7 +5232,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaShell.OpenPopupAsync(DrawnUi.Maui.Draw.SkiaControl,System.Boolean,System.Boolean,System.Boolean,Microsoft.Maui.Graphics.Color,System.Nullable{SkiaSharp.SKPoint})
+#### Method Controls.SkiaShell.OpenPopupAsync(DrawnUi.Draw.SkiaControl,System.Boolean,System.Boolean,System.Boolean,Microsoft.Maui.Graphics.Color,System.Nullable{SkiaSharp.SKPoint})
 
  Pass pixelsScaleInFrom you you want popup to animate appearing from a specific point instead of screen center. Set freezeBackground to False to keep animations running below popup, default is True for performance reasons. 
 
@@ -5247,7 +5247,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaShell.SetupRoot(DrawnUi.Maui.Draw.ISkiaControl)
+#### Method Controls.SkiaShell.SetupRoot(DrawnUi.Draw.ISkiaControl)
 
  Main control inside RootLayout 
 
@@ -5294,7 +5294,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaShell.NavigationLayer`1.#ctor(DrawnUi.Maui.Controls.SkiaShell,System.Boolean)
+#### Method Controls.SkiaShell.NavigationLayer`1.#ctor(DrawnUi.Controls.SkiaShell,System.Boolean)
 
  if isModel is true than will try to freeze background before showing. otherwise will be just an overlay like toast etc. 
 
@@ -5424,7 +5424,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaGif.#ctor(DrawnUi.Maui.Draw.SkiaImage)
+#### Method Controls.SkiaGif.#ctor(DrawnUi.Draw.SkiaImage)
 
  For building custom controls 
 
@@ -5534,7 +5534,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Controls.SkiaViewSwitcher.RevealNavigationView(DrawnUi.Maui.Controls.SkiaViewSwitcher.NavigationStackEntry)
+#### Method Controls.SkiaViewSwitcher.RevealNavigationView(DrawnUi.Controls.SkiaViewSwitcher.NavigationStackEntry)
 
  Set IsVisible, reset transforms and opacity and send OnAppeared event 
 
@@ -5676,7 +5676,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Infrastructure.Helpers.RubberBandUtils.RubberBandClamp(System.Single,System.Single,DrawnUi.Maui.Draw.RangeF,System.Single,System.Single)
+#### Method Infrastructure.Helpers.RubberBandUtils.RubberBandClamp(System.Single,System.Single,DrawnUi.Draw.RangeF,System.Single,System.Single)
 
  onEmpty - how much to simulate scrollable area when its zero 
 
@@ -5878,7 +5878,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Views.DrawnView.RegisterAnimator(DrawnUi.Maui.Draw.ISkiaAnimator)
+#### Method Views.DrawnView.RegisterAnimator(DrawnUi.Draw.ISkiaAnimator)
 
  Called by a control that whats to be constantly animated or doesn't anymore, so we know whether we should refresh canvas non-stop 
 
@@ -6062,7 +6062,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Views.DrawnView.ReportFocus(DrawnUi.Maui.Draw.ISkiaGestureListener,DrawnUi.Maui.Draw.ISkiaGestureListener)
+#### Method Views.DrawnView.ReportFocus(DrawnUi.Draw.ISkiaGestureListener,DrawnUi.Draw.ISkiaGestureListener)
 
  Internal call by control, after reporting will affect FocusedChild but will not get FocusedItemChanged as it was its own call 
 
@@ -6086,7 +6086,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Views.Canvas.SetContent(DrawnUi.Maui.Draw.SkiaControl)
+#### Method Views.Canvas.SetContent(DrawnUi.Draw.SkiaControl)
 
  Use Content property for direct access 
 
@@ -6132,7 +6132,7 @@ Gets or sets the scrolling direction of the ScrollView. This is a bindable prope
 
 
 ---
-#### Method Views.Canvas.MeasureChild(DrawnUi.Maui.Draw.SkiaControl,System.Double,System.Double,System.Double)
+#### Method Views.Canvas.MeasureChild(DrawnUi.Draw.SkiaControl,System.Double,System.Double,System.Double)
 
  PIXELS 
 

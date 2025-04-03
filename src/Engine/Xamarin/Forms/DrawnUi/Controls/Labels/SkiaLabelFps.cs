@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Color = Xamarin.Forms.Color;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Handlers;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
     public partial class SKGLViewHandlerRetained : ViewHandler<ISKGLView, SKSwapChainPanelRetained>
     {

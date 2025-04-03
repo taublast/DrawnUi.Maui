@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:xaml="clr-namespace:DrawnUi.Maui.Infrastructure.Xaml;assembly=DrawnUi.Maui">
+    xmlns:xaml="clr-namespace:DrawnUi.Infrastructure.Xaml;assembly=DrawnUi.Maui">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

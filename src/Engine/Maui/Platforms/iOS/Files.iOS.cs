@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace DrawnUi.Maui.Infrastructure
+namespace DrawnUi.Infrastructure
 {
     public partial class Files
     {

@@ -3,7 +3,7 @@ using BruTile.Cache;
 using BruTile.Web;
 using SkiaSharp;
 
-namespace DrawnUi.Maui.MapsUi;
+namespace DrawnUi.MapsUi;
 
 public class CustomizeDownloadedTiles : HttpTileSource
 {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using Color = Xamarin.Forms.Color;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// Will internally create spans from markdown.

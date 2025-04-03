@@ -2,7 +2,7 @@
 using Android.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class MyLayoutListener : Java.Lang.Object, ViewTreeObserver.IOnGlobalLayoutListener
 {

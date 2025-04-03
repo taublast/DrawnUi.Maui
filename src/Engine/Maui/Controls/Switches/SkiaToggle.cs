@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// Base control for toggling between 2 states.

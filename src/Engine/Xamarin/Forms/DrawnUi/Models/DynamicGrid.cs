@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class DynamicGrid<T>
 {

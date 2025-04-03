@@ -1,4 +1,4 @@
-﻿global using DrawnUi.Maui.Draw;
+﻿global using DrawnUi.Draw;
 global using SkiaSharp;
 using AppoMobi.Maui.Gestures;
 using CommunityToolkit.Maui;

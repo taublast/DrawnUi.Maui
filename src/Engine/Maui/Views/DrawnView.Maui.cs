@@ -4,9 +4,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
-using DrawnUi.Maui.Infrastructure.Enums;
+using DrawnUi.Infrastructure.Enums;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
 
     [ContentProperty("Children")]

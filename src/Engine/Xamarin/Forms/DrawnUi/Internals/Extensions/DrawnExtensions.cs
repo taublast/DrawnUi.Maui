@@ -1,11 +1,11 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using FontWeight = DrawnUi.Maui.Draw.FontWeight;
+using FontWeight = DrawnUi.Draw.FontWeight;
 
 
-namespace DrawnUi.Maui.Infrastructure.Extensions;
+namespace DrawnUi.Infrastructure.Extensions;
 
 public static class DrawnExtensions
 {

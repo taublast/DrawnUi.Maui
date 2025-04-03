@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 [DebuggerDisplay("{ToString(),nq}")]
 public struct ScaledRect

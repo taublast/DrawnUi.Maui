@@ -4,7 +4,7 @@ using AndroidX.Core.Content;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Platform;
 
-namespace DrawnUi.Maui.Controls
+namespace DrawnUi.Controls
 {
     // All the code in this file is only included on Android.
     public partial class SkiaShell

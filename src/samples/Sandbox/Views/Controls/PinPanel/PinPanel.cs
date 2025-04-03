@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using AppoMobi.Maui.Gestures;
 using AppoMobi.Specials;
-using SkiaLabel = DrawnUi.Maui.Draw.SkiaLabel;
+using SkiaLabel = DrawnUi.Draw.SkiaLabel;
 
 namespace Sandbox
 {

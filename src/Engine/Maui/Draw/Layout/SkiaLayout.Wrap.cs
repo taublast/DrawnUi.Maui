@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaLayout
     {
@@ -47,6 +47,7 @@ namespace DrawnUi.Maui.Draw
 
             var needrebuild = templatesInvalidated;
             List<ControlInStack> visibleElements = new();
+            bool updateInternal = false;
 
             if (structure != null)
             {
@@ -119,6 +120,8 @@ namespace DrawnUi.Maui.Draw
 
                 int countRendered = 0;
 
+
+
                 foreach (var cell in CollectionsMarshal.AsSpan(visibleElements))
                 {
                     if (!cell.WasMeasured)
@@ -178,7 +181,12 @@ namespace DrawnUi.Maui.Draw
 
                         if (IsRenderingWithComposition)
                         {
-                            if (DirtyChildrenInternal.Contains(child))
+                            if (child.PostAnimators.Count > 0)
+                            {
+                                updateInternal = true;
+                            }
+
+                            if (DirtyChildrenInternal.Contains(child) || child.PostAnimators.Count > 0)
                             {
                                 DrawChild(ctx.WithDestination(destinationRect), child);
                                 countRendered++;
@@ -230,6 +238,11 @@ namespace DrawnUi.Maui.Draw
             //{
             //    Trace.WriteLine(ChildrenFactory.GetDebugInfo());
             //}
+
+            if (updateInternal)
+            {
+                Update();
+            }
 
             return drawn;
         }

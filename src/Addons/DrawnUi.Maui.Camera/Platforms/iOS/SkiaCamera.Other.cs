@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 using SkiaSharp;
 
-namespace DrawnUi.Maui.Camera;
+namespace DrawnUi.Camera;
 
 public partial class SkiaCamera : SkiaControl
 {

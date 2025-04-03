@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Maui.Controls;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
 
 

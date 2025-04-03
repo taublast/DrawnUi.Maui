@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 
 public class StateEffect : SkiaEffect, IStateEffect

@@ -8,7 +8,7 @@
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
-    xmlns:mauiGraphics="clr-namespace:DrawnUi.MauiGraphics;assembly=DrawnUi.MauiGraphics"
+    xmlns:mauiGraphics="clr-namespace:DrawnUiGraphics;assembly=DrawnUi.MauiGraphics"
     xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"

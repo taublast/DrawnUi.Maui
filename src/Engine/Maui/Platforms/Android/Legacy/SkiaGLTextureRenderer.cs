@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using SKPaintGLSurfaceEventArgs = SkiaSharp.Views.Android.SKPaintGLSurfaceEventArgs;
 
-namespace DrawnUi.Maui;
+namespace DrawnUi;
 
 public abstract partial class SkiaGLTextureRenderer : Java.Lang.Object, SkiaGLTextureView.IRenderer
 {

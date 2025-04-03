@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Camera;
+﻿namespace DrawnUi.Camera;
 
 public interface INativeCamera : IDisposable
 {

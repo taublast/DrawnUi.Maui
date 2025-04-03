@@ -2,9 +2,9 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using DrawnUi.Maui.Infrastructure.Helpers;
+using DrawnUi.Infrastructure.Helpers;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     [ContentProperty("Content")]
     public partial class SkiaScroll : SkiaControl, ISkiaGestureListener, IDefinesViewport, IWithContent

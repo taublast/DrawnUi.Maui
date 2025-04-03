@@ -1,11 +1,11 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrawnUi.Maui.Game
+namespace DrawnUi.Game
 {
     public interface IMauiGame
     {

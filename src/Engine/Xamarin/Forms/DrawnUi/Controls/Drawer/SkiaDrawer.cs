@@ -1,11 +1,11 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Infrastructure.Helpers;
+using DrawnUi.Infrastructure.Helpers;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Input;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Controls
+namespace DrawnUi.Controls
 {
     [ContentProperty("Content")]
     public class SkiaDrawer : SnappingLayout, IVisibilityAware

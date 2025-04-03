@@ -15,7 +15,7 @@ using EGLDisplay = Android.Opengl.EGLDisplay;
 using EGLSurface = Android.Opengl.EGLSurface;
 using View = Android.Views.View;
 
-namespace DrawnUi.Maui;
+namespace DrawnUi;
 
 public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListener, View.IOnLayoutChangeListener
 {

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class SkiaTabsSelector : SkiaLayout
 {

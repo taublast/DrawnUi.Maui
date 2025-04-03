@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 /// <summary>
 /// Switch-like control, can include any content inside. It's aither you use default content (todo templates?..)

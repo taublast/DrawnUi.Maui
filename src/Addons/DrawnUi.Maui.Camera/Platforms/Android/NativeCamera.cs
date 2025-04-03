@@ -17,7 +17,7 @@ using SkiaSharp.Views.Android;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using static global::DrawnUi.Maui.Camera.NativeCamera;
+using static global::DrawnUi.Camera.NativeCamera;
 using Boolean = System.Boolean;
 using Debug = System.Diagnostics.Debug;
 using Exception = System.Exception;
@@ -29,7 +29,7 @@ using Size = Android.Util.Size;
 using StringBuilder = System.Text.StringBuilder;
 using Trace = System.Diagnostics.Trace;
 
-namespace DrawnUi.Maui.Camera;
+namespace DrawnUi.Camera;
 
 public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvailableListener, INativeCamera
 {

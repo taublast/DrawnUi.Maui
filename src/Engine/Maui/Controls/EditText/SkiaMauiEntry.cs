@@ -1,9 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using System.Windows.Input;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 /// <summary>
 /// Used to draw maui element over a skia canvas.

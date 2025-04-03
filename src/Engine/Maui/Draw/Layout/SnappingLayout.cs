@@ -1,8 +1,8 @@
-﻿using DrawnUi.Maui.Infrastructure.Helpers;
+﻿using DrawnUi.Infrastructure.Helpers;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SnappingLayout : SkiaLayout
 {

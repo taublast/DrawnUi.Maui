@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Controls;
+﻿using DrawnUi.Controls;
 using Microsoft.Maui.Handlers;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public static partial class DrawnExtensions
     {
@@ -37,7 +37,7 @@ namespace DrawnUi.Maui.Draw
         }
     }
 
-    namespace DrawnUi.Maui.Views
+    namespace DrawnUi.Views
     {
     }
 

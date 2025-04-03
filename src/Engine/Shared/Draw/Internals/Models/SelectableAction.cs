@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Internals;
+﻿namespace DrawnUi.Internals;
 
 public class SelectableAction : TitleWithStringId//, ISelectableOption
 {

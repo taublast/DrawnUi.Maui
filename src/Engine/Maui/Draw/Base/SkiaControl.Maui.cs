@@ -8,7 +8,7 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using Microsoft.Maui.HotReload;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     [ContentProperty(nameof(Children))]
     public partial class SkiaControl : VisualElement,

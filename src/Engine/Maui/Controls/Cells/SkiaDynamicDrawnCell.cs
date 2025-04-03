@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Controls;
+﻿namespace DrawnUi.Controls;
 
 /// <summary>
 /// This cell can watch binding context property changing

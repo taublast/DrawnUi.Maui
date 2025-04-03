@@ -7,7 +7,7 @@ using SkiaSharp.Views.iOS;
 using UIKit;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
 
     public partial class Super

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
 
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout

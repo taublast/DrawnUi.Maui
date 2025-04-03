@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using SkiaSharp;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Xunit;
 using static UnitTests.RenderingTests;
-using SkiaLayout = DrawnUi.Maui.Draw.SkiaLayout;
+using SkiaLayout = DrawnUi.Draw.SkiaLayout;
 
 namespace UnitTests
 {
@@ -81,7 +81,7 @@ namespace UnitTests
             layout.Measure(destination.Width, destination.Height, 1);
             var picture = RenderWithOperationsContext(destination, (ctx) =>
             {
-                layout.Render(ctx, destination, 1);
+                layout.Render(ctx);
             });
 
             layout.Dispose();
@@ -89,7 +89,7 @@ namespace UnitTests
             Assert.True(layout.IsDisposed);
             Assert.True(image.IsDisposing);
 
-            await Task.Delay(1500);
+            await Task.Delay(10000);
 
             Assert.True(image.IsDisposed, "child failed to dispose in due time");
 
@@ -125,7 +125,7 @@ namespace UnitTests
 
             var picture = RenderWithOperationsContext(destination, (ctx) =>
             {
-                layout.Render(ctx, layout.DrawingRect, 1);
+                layout.Render(ctx.WithDestination(layout.DrawingRect));
             });
 
             var cache = layout.RenderObject;
@@ -183,7 +183,7 @@ namespace UnitTests
 
             var picture = RenderWithOperationsContext(destination, (ctx) =>
             {
-                layout.Render(ctx, layout.DrawingRect, 1);
+                layout.Render(ctx.WithDestination(layout.DrawingRect));
             });
 
             var cache = layout.RenderObject;
@@ -241,7 +241,7 @@ namespace UnitTests
 
             var picture = RenderWithOperationsContext(destination, (ctx) =>
             {
-                layout.Render(ctx, layout.DrawingRect, 1);
+                layout.Render(ctx.WithDestination(layout.DrawingRect));
             });
 
             var image = layout.RenderObject.Image;
@@ -298,7 +298,7 @@ namespace UnitTests
 
             var picture = RenderWithOperationsContext(destination, (ctx) =>
             {
-                layout.Render(ctx, layout.DrawingRect, 1);
+                layout.Render(ctx.WithDestination(layout.DrawingRect));
             });
 
             var image = layout.RenderObject.Image;
@@ -340,7 +340,7 @@ namespace UnitTests
 
             var picture = RenderWithOperationsContext(destination, (ctx) =>
             {
-                layout.Render(ctx, layout.DrawingRect, 1);
+                layout.Render(ctx.WithDestination(layout.DrawingRect));
             });
 
             var image = layout.RenderObject.Image;

@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Features.Images;
+﻿using DrawnUi.Features.Images;
 using Microsoft.Maui.Storage;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 
 public class SkiaGif : AnimatedFramesRenderer
@@ -265,7 +265,7 @@ public class SkiaGif : AnimatedFramesRenderer
             {
                 if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri) && uri.Scheme != "file")
                 {
-                    using HttpClient client = Super.Services.CreateLoadImagesHttpClient();
+                    using HttpClient client = Super.Services.CreateHttpClient();
                     using var dataStream = await client.GetStreamAsync(uri);
                     animation.LoadFromStream(dataStream);
                 }

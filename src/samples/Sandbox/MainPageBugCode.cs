@@ -1,4 +1,4 @@
-﻿using DrawnUi.Maui.Views;
+﻿using DrawnUi.Views;
 
 namespace Sandbox;
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public struct DrawingContext
 {

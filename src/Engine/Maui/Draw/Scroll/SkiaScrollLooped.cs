@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// Cycles content, so the scroll never ands but cycles from the start

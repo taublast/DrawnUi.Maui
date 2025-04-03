@@ -1,12 +1,12 @@
 ﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Infrastructure.Xaml;
+using DrawnUi.Infrastructure.Xaml;
 using SkiaSharp.Views.Forms;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
 	/// <summary>
 	/// Implements ISkiaGestureListener to pass gestures to children

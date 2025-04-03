@@ -1,6 +1,6 @@
 ﻿using SkiaSharp.Views.Android;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaImageManager
 {

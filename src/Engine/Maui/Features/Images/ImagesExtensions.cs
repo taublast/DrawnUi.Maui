@@ -4,7 +4,7 @@
 //using Polly.Timeout;
 using System.Net;
 
-namespace DrawnUi.Maui.Features.Images
+namespace DrawnUi.Features.Images
 {
     public static class ImagesExtensions
     {
@@ -64,17 +64,24 @@ namespace DrawnUi.Maui.Features.Images
         */
 
         /// <summary>
-        /// Do not forget to dispose the client
+        /// Will create a HttpClient with a UserAgent in headers defined by `Super.UserAgent`.
+        /// You can define your own delegate to create HttpClient by setting Super.CreateHttpClient.
+        /// Do not forget to dispose the client after usage, we do not use IHttpClientFactory by default.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static HttpClient? CreateLoadImagesHttpClient(this IServiceProvider services)
+        public static HttpClient? CreateHttpClient(this IServiceProvider services)
         {
+            if (Super.CreateHttpClient != null) 
+            {
+                return Super.CreateHttpClient(services);
+            }
+
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.UserAgent.ParseAdd(Super.UserAgent);
-
             return client;
-            //return services.GetService<IHttpClientFactory>()?.CreateClient(HttpClientKey);
+
+            //return services.GetService<IHttpClientFactory>()?.CreateClient(HttpClientKey); :( we removed IHttpClientFactory for faster app startup
         }
 
     }

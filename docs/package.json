@@ -1,0 +1,14 @@
+{
+  "name": "drawnui-maui-docs",
+  "version": "1.0.0",
+  "description": "Documentation for DrawnUi",
+  "main": "index.js",
+  "scripts": {
+    "install-docfx": "npm install --no-save @docfx/lib",
+    "build": "npx docfx build",
+    "serve": "npx docfx serve _site"
+  },
+  "keywords": ["documentation", "docfx", "maui"],
+  "author": "",
+  "license": "ISC"
+}

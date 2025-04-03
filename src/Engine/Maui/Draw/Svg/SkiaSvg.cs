@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using DrawnUi.Maui.Features.Images;
+using DrawnUi.Features.Images;
 using Svg.Skia;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     [ContentProperty("SvgString")]
     public class SkiaSvg : SkiaControl
     {
+ 
 
         public static readonly BindableProperty TintColorProperty = BindableProperty.Create(nameof(TintColor), typeof(Color), typeof(SkiaSvg),
             Colors.Transparent,
@@ -624,7 +625,7 @@ namespace DrawnUi.Maui.Draw
                 string json;
                 if (Uri.TryCreate(fileName, UriKind.Absolute, out var uri))
                 {
-                    using HttpClient client = Super.Services.CreateLoadImagesHttpClient();
+                    using HttpClient client = Super.Services.CreateHttpClient();
                     using var stream = await client.GetStreamAsync(uri);
                     using var reader = new StreamReader(stream);
                     json = await reader.ReadToEndAsync();
@@ -795,10 +796,6 @@ namespace DrawnUi.Maui.Draw
 
         }
         */
-        public static Func<HttpClient> CreateHttpClient = () =>
-        {
-            return new HttpClient();
-        };
 
         private async void ActionLoadFromUrl()
         {
@@ -806,7 +803,8 @@ namespace DrawnUi.Maui.Draw
 
             try
             {
-                var client = CreateHttpClient();
+                var client = Super.Services.CreateHttpClient();
+
                 SvgString = await client.GetStringAsync(IconFilePath);
 
                 //using (var stream = await ImageService.Instance.LoadUrl(IconFilePath).AsPNGStreamAsync())

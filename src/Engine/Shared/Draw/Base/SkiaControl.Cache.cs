@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaControl
 {
@@ -631,16 +631,21 @@ public partial class SkiaControl
     }
 
     /// <summary>
-    /// Normally cache is recorded inside DrawingRect, but you might want to exapnd this to include shadows around, for example.
+    /// Normally cache is recorded inside DrawingRect, but you might want to expand this to include shadows around, for example.
     /// </summary>
-    protected virtual SKRect GetCacheArea(SKRect drawingRect)
+    protected virtual SKRect GetCacheArea(SKRect value)
     {
-        var pixels = ExpandCacheRecordingArea * RenderingScale;
-        return new SKRect(
-            (float)(drawingRect.Left - pixels),
-            (float)(drawingRect.Top - pixels),
-            (float)(drawingRect.Right + pixels),
-            (float)(drawingRect.Bottom + pixels));
+        var dirty = value;
+        if (ExpandDirtyRegion != Thickness.Zero)
+        {
+            dirty = new(
+                value.Left - (float)Math.Round(ExpandDirtyRegion.Left * RenderingScale),
+                value.Top - (float)Math.Round(ExpandDirtyRegion.Top * RenderingScale),
+                value.Right + (float)Math.Round(ExpandDirtyRegion.Right * RenderingScale),
+                value.Bottom + (float)Math.Round(ExpandDirtyRegion.Bottom * RenderingScale)
+            );
+        }
+        return dirty;
     }
 
     /// <summary>

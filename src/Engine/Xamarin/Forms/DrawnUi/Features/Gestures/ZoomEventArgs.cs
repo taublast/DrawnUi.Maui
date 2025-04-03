@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class ZoomEventArgs : EventArgs
 {

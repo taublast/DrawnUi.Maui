@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Infrastructure;
+namespace DrawnUi.Infrastructure;
 
 public static class SkSl
 {

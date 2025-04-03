@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DrawnUi.Maui.Controls
+namespace DrawnUi.Controls
 {
     public class RadioButtonGroupManager
     {

@@ -5,7 +5,7 @@ using Microsoft.Maui.Controls.Compatibility;
 using SKFormsView = SkiaSharp.Views.Maui.Controls.SKCanvasView;
 using SKNativeView = SkiaSharp.Views.Windows.SKXamlCanvas;
 
-namespace DrawnUi.Maui.Views.Compatibility
+namespace DrawnUi.Views.Compatibility
 {
     public class SKCanvasViewRenderer : SKCanvasViewRendererBase<SKFormsView, SKNativeView>
     {

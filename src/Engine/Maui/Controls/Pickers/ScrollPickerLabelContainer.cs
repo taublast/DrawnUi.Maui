@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class ScrollPickerLabelContainer : SkiaLayout, IInsideWheelStack
 {

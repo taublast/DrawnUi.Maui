@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Models;
+﻿namespace DrawnUi.Models;
 
 public partial class Screen : BindableObject
 {

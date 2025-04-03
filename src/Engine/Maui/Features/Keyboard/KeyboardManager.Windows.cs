@@ -3,7 +3,7 @@
 using Windows.System;
 using Microsoft.UI.Xaml;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class KeyboardManager
 {

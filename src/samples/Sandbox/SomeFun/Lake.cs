@@ -1,12 +1,12 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui;
-using DrawnUi.Maui;
-using DrawnUi.Maui;
-using DrawnUi.Maui.Animate.Animators;
-using DrawnUi.Maui.Draw;
+using DrawnUi;
+using DrawnUi;
+using DrawnUi;
+using DrawnUi.Animate.Animators;
+using DrawnUi.Draw;
 using SkiaSharp;
 
-namespace DrawnUi.Maui.Demo.Views.Controls;
+namespace DrawnUi.Demo.Views.Controls;
 
 public partial class Lake : SkiaLayout
 {

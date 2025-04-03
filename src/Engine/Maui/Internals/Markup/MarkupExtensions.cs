@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Internals.Markup
+﻿namespace DrawnUi.Internals.Markup
 {
 
     public static class MarkupExtensions

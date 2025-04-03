@@ -1,9 +1,9 @@
 ﻿using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaEditor : SkiaLayout, ISkiaGestureListener
     {

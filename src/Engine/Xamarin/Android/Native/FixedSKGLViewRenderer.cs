@@ -4,7 +4,7 @@ using AppoMobi.Xamarin.DrawnUi.Droid;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms;
-using SKFormsView = DrawnUi.Maui.Views.SkiaViewAccelerated;//SkiaSharp.Views.Forms.SKGLView;
+using SKFormsView = DrawnUi.Views.SkiaViewAccelerated;//SkiaSharp.Views.Forms.SKGLView;
 using SKNativeView = AppoMobi.Xamarin.DrawnUi.Droid.Native.SkiaGLTexture;
 
 [assembly: ExportRenderer(typeof(SKFormsView), typeof(FixedSKGLViewRenderer))]

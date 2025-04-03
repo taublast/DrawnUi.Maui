@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
 
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
@@ -1110,7 +1110,6 @@ namespace DrawnUi.Maui.Draw
             {
                 DirtyChildrenInternal.Clear();
 
-
                 var previousCache = RenderObjectPrevious;
 
                 if (previousCache != null && ctx.Context.IsRecycled) //not the first draw
@@ -1134,7 +1133,7 @@ namespace DrawnUi.Maui.Draw
                     foreach (var cell in asSpan)
                     {
                         if (!DirtyChildrenInternal.Contains(cell.Control) &&
-                            DirtyChildrenInternal.Any(dirtyChild => dirtyChild.DrawingRect.IntersectsWith(cell.Control.DrawingRect)))
+                            DirtyChildrenInternal.Any(dirtyChild => dirtyChild.DirtyRegion.IntersectsWith(cell.Control.DirtyRegion)))
                         {
                             DirtyChildrenInternal.Add(cell.Control);
                         }
@@ -1145,7 +1144,7 @@ namespace DrawnUi.Maui.Draw
                     var count = 0;
                     foreach (var dirtyChild in DirtyChildrenInternal)
                     {
-                        var clip = dirtyChild.DrawingRect;
+                        var clip = dirtyChild.DirtyRegion;
                         clip.Offset(offset);
 
                         previousCache.Surface.Canvas.DrawRect(clip, PaintErase);

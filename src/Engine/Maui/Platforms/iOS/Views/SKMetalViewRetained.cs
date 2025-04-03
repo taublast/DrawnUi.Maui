@@ -5,7 +5,7 @@ using Metal;
 using MetalKit;
 using SkiaSharp.Views.iOS;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
     /// <summary>
     /// A Metal-backed SkiaSharp view that implements retained rendering  

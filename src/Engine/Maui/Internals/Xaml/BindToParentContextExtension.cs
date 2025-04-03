@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 /// <summary>
 /// Compiled-bindings-friendly implementation for "Source.Parent.BindingContext.Path"

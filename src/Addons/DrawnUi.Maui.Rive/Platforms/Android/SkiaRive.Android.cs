@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 
-namespace DrawnUi.Maui.Rive;
+namespace DrawnUi.Rive;
 
 public partial class SkiaRive : SkiaControl
 {

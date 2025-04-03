@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Infrastructure.Enums;
+﻿namespace DrawnUi.Infrastructure.Enums;
 
 public enum UpdateMode
 {

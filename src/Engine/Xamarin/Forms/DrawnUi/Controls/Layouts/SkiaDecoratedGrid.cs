@@ -2,7 +2,7 @@
 using System.Linq;
 using Color = Xamarin.Forms.Color;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public partial class SkiaDecoratedGrid : SkiaLayout
 {

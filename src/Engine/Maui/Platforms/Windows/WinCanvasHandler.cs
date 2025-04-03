@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml;
 using SkiaSharp.Views.Windows;
 using SKPaintSurfaceEventArgs = SkiaSharp.Views.Maui.SKPaintSurfaceEventArgs;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public partial class WinCanvasHandler : ViewHandler<ISKCanvasView, SKXamlCanvas>
 {

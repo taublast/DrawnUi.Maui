@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Extensions;
+﻿using DrawnUi.Extensions;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class PointIsInsideResult
 {

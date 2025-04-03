@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Infrastructure.Extensions;
+using DrawnUi.Infrastructure.Extensions;
 using SkiaSharp.HarfBuzz;
 using SkiaSharp.Views.Forms;
 using System.Collections.Concurrent;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using PropertyChangingEventArgs = Xamarin.Forms.PropertyChangingEventArgs;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
 
     //todo

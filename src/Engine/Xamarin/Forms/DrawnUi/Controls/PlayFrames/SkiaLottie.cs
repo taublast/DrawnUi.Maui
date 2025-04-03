@@ -1,4 +1,4 @@
-﻿using DrawnUi.Maui.Infrastructure.Extensions;
+﻿using DrawnUi.Infrastructure.Extensions;
 using ExCSS;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
@@ -14,7 +14,7 @@ using Xamarin.Essentials;
 using Animation = SkiaSharp.Skottie.Animation;
 using Color = Xamarin.Forms.Color;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class SkiaLottie : AnimatedFramesRenderer
 {

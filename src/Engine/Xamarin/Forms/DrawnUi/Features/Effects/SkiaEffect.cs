@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 public class SkiaEffect : BindableObject, IDisposable, ICanBeUpdatedWithContext
 {

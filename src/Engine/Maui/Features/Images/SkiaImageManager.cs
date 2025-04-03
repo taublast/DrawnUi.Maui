@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using DrawnUi.Maui.Features.Images;
-using DrawnUi.Maui.Infrastructure.Xaml;
+using DrawnUi.Features.Images;
+using DrawnUi.Infrastructure.Xaml;
 using EasyCaching.Core;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaImageManager : IDisposable
 {
@@ -818,7 +818,7 @@ public partial class SkiaImageManager : IDisposable
 
     public static async Task<SKBitmap> LoadImageFromInternetAsync(UriImageSource uriSource, CancellationToken cancel)
     {
-        using HttpClient client = Super.Services.CreateLoadImagesHttpClient();
+        using HttpClient client = Super.Services.CreateHttpClient();
         var response = await client.GetAsync(uriSource.Uri, cancel);
         if (response.IsSuccessStatusCode)
         {

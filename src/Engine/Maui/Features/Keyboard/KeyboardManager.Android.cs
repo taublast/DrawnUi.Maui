@@ -6,7 +6,7 @@ using Activity = Android.App.Activity;
 using Keycode = Android.Views.Keycode;
 using View = Android.Views.View;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class KeyboardManager
 {

@@ -3,7 +3,7 @@
 using System.Runtime.CompilerServices;
 using Microsoft.Maui.Primitives;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaLayout
 {

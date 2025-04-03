@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Infrastructure.Extensions;
+﻿using DrawnUi.Infrastructure.Extensions;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class ChainTintWithAlphaEffect : BaseChainedEffect
 {

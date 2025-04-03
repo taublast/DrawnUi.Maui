@@ -33,7 +33,8 @@
                 <draw:SkiaLayout
                     HorizontalOptions="Fill"
                     Tag="Wrapper"
-                    Type="Column">
+                    Type="Column"
+                    UseCache="ImageComposite">
 
                     <draw:SkiaLayout
                         Margin="16,20,16,16"
@@ -67,14 +68,14 @@
                     <draw:SkiaLayout
                         Padding="32,32"
                         HorizontalOptions="Center"
-                        Spacing="20"
+                        Spacing="24"
                         Tag="Content"
                         Type="Wrap"
                         UseCache="ImageComposite"
                         WidthRequest="-1">
 
                         <!--  Controls inside frame  -->
-                        <draw:SkiaLayout>
+                        <draw:SkiaLayout ExpandDirtyRegion="1">
 
                             <draw:SkiaShape
                                 AddMarginTop="10"

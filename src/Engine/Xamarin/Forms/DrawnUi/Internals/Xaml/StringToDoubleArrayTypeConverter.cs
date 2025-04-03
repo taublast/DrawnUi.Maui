@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace DrawnUi.Maui.Infrastructure.Xaml;
+namespace DrawnUi.Infrastructure.Xaml;
 
 public class StringToDoubleArrayTypeConverter : System.ComponentModel.TypeConverter
 {

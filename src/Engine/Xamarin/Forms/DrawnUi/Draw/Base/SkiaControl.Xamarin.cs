@@ -6,14 +6,14 @@ Normally other partial code definitions should be framework independent.
 
 //using Microsoft.Maui.HotReload;
 
-using DrawnUi.Maui.Infrastructure.Extensions;
+using DrawnUi.Infrastructure.Extensions;
 using SkiaSharp.Views.Forms;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Color = Xamarin.Forms.Color;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaControl : VisualElement
     //,

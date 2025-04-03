@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Infrastructure;
+﻿namespace DrawnUi.Infrastructure;
 
 /// <summary>
 /// Will enhance this in the future to include more properties

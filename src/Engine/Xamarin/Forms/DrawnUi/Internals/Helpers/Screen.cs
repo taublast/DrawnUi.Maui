@@ -1,7 +1,7 @@
 ﻿using AppoMobi.Maui.Gestures;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Models;
+namespace DrawnUi.Models;
 
 public class Screen : BindableObject
 {

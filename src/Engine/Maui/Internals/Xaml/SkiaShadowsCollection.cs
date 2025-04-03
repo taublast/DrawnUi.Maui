@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 
-namespace DrawnUi.Maui.Infrastructure.Xaml
+namespace DrawnUi.Infrastructure.Xaml
 {
 
     public class SkiaShadowsCollection : ObservableCollection<SkiaShadow>, IList

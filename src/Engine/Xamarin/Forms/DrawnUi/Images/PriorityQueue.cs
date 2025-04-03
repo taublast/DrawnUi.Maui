@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 ///  Represents a min priority queue.

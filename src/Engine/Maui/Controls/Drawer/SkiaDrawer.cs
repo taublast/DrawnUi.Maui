@@ -1,8 +1,8 @@
-﻿using DrawnUi.Maui.Infrastructure.Helpers;
+﻿using DrawnUi.Infrastructure.Helpers;
 using System.Numerics;
 using System.Windows.Input;
 
-namespace DrawnUi.Maui.Controls
+namespace DrawnUi.Controls
 {
     [ContentProperty("Content")]
     public class SkiaDrawer : SnappingLayout, IVisibilityAware

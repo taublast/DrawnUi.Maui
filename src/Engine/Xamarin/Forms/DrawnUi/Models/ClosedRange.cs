@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Infrastructure;
+﻿namespace DrawnUi.Infrastructure;
 
 public struct ClosedRange<T> where T : IComparable<T>
 {

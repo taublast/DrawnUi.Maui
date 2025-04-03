@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     /// <summary>
     /// Provides extension methods for fluent API design pattern with DrawnUI controls

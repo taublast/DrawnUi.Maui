@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Views;
+﻿namespace DrawnUi.Views;
 
 public partial class SkiaView : SKCanvasView, ISkiaDrawable
 {

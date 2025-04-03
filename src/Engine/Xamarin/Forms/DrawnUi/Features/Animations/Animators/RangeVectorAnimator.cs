@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 using System.Numerics;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public struct LinearInterpolationTimingParameters : ITimingVectorParameters
 {

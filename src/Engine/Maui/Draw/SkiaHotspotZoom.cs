@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Draw;
+﻿using DrawnUi.Draw;
 using System.Windows.Input;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SkiaHotspotZoom : SkiaHotspot
 {

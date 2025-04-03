@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 [ContentProperty(nameof(Tag))]
 public class FindTagExtension : IMarkupExtension

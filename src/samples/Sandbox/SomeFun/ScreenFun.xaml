@@ -3,7 +3,7 @@
     x:Class="Reversi.Views.Partials.ScreenFun"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:DrawnUi.Maui.Demo.Views.Controls"
+    xmlns:controls="clr-namespace:DrawnUi.Demo.Views.Controls"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     BackgroundColor="DarkBlue"
     HorizontalOptions="Fill"
@@ -19,9 +19,7 @@
 
         <!--  Text="This is Drawn UI Canvas, a SkiaSharp view filled with virtual drawn views, XAML-friendly with HotReload support!"  -->
 
-        <draw:SkiaLayout
-            Tag="Banner"
-            UseCache="Operations">
+        <draw:SkiaLayout Tag="Banner" UseCache="Operations">
 
             <draw:SkiaLabel
                 FontFamily="FontText"
@@ -60,8 +58,8 @@
 
         <draw:SkiaLayout
             Padding="24,0"
-            HorizontalOptions="Fill"
             AddMarginTop="80"
+            HorizontalOptions="Fill"
             Type="Column"
             UseCache="GPU">
 
@@ -122,9 +120,7 @@
 
 
         <!--  still don't know why fps is better here with Operations instead of Bitmap ahaha  -->
-        <draw:SkiaLayout
-            Tag="Duck"
-            UseCache="GPU">
+        <draw:SkiaLayout Tag="Duck" UseCache="GPU">
 
             <!--  SvgString="{StaticResource SvgDuck}"  -->
 
@@ -135,9 +131,9 @@
                 Source="Svg/dotnet_bot.svg" />
 
             <draw:SkiaLabel
+                AddMarginTop="50"
                 FontFamily="FontText"
                 HorizontalOptions="Center"
-                AddMarginTop="50"
                 MaxLines="1"
                 Tag="LabelDrag"
                 Text=".Net Maui"

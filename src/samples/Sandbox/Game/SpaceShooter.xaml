@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:game="clr-namespace:SpaceShooter.Game"
-    xmlns:game1="clr-namespace:DrawnUi.Maui.Game;assembly=DrawnUi.Maui.Game"
+    xmlns:game1="clr-namespace:DrawnUi.Game;assembly=DrawnUi.Maui.Game"
     x:DataType="game:SpaceShooter"
     BackgroundColor="#000011"
     HorizontalOptions="Fill"

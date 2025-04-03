@@ -6,13 +6,13 @@ using SkiaSharp.Views.Maui.Controls.Compatibility;
 using SkiaSharp.Views.Maui.Platform;
 using System;
 using System;
-using SKFormsView = DrawnUi.Maui.Views.SkiaViewAccelerated;
-using SKNativeView = DrawnUi.Maui.SkiaGLTexture;
+using SKFormsView = DrawnUi.Views.SkiaViewAccelerated;
+using SKNativeView = DrawnUi.SkiaGLTexture;
 
 //[assembly: ExportRenderer(typeof(SKFormsView), typeof(FixedSKGLViewRenderer))]
 // =>
 // handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(FixedSKGLViewRenderer));
-namespace DrawnUi.Maui;
+namespace DrawnUi;
 
 public class FixedSKGLViewRenderer : FixedSKGLViewRendererBase<SKFormsView, SKNativeView>
 {

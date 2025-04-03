@@ -4,7 +4,7 @@ using Microsoft.Maui.Platform;
 using System.Runtime.CompilerServices;
 using Visibility = Microsoft.UI.Xaml.Visibility;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
 
     public partial class DrawnView

@@ -1,4 +1,4 @@
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// These are platform-independent. They correspond to JavaScript keys.

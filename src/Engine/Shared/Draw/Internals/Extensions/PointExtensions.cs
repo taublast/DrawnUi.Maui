@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace DrawnUi.Maui.Extensions;
+namespace DrawnUi.Extensions;
 
 public static class FloatingPointExtensions
 {

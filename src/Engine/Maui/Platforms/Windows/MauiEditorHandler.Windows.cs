@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Brush = Microsoft.UI.Xaml.Media.Brush;
 using TextChangedEventArgs = Microsoft.UI.Xaml.Controls.TextChangedEventArgs;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 
 public partial class MauiEditorHandlerBack : EditorHandler

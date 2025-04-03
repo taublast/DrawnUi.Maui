@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public interface ITimingVectorParameters
 {

@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Views;
+﻿namespace DrawnUi.Views;
 
 /// <summary>
 ///     Actually used to: respond to keyboard resizing on mobile and keyboard key presses on Mac. Other than for that this

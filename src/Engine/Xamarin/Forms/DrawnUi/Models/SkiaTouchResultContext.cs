@@ -1,6 +1,6 @@
 ﻿using AppoMobi.Maui.Gestures;
 
-namespace DrawnUi.Maui.Infrastructure;
+namespace DrawnUi.Infrastructure;
 
 public struct SkiaTouchResultContext
 {

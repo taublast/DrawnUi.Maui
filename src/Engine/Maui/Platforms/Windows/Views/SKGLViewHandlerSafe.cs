@@ -4,7 +4,7 @@ using SkiaSharp.Views.Windows;
 using Rect = Windows.Foundation.Rect;
 using SKPaintGLSurfaceEventArgs = SkiaSharp.Views.Maui.SKPaintGLSurfaceEventArgs;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
 
     public partial class SKGLViewHandlerSafe : SKGLViewHandler

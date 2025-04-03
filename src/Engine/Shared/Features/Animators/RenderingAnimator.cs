@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 /// <summary>
 /// This animator renders on canvas instead of just updating a value
@@ -54,7 +54,7 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 		{
 			if (control.ClipEffects)
 			{
-				using (SKPath clipInsideParent = new SKPath())
+                using (SKPath clipInsideParent = new SKPath())
 				{
 					ApplyControlClipping(control, clipInsideParent, selfDrawingLocation);
 
@@ -92,7 +92,7 @@ public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 		SKPath clipContent;
 		if (control is SkiaControl skia)
 		{
-			clipContent = skia.CreateClip(null, false);
+            clipContent = skia.CreateClip(null, false);
 			clipContent.Offset(selfDrawingLocation);
 			clipInsideParent.AddPath(clipContent);
 		}

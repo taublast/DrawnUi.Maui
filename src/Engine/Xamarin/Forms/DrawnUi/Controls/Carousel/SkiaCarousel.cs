@@ -1,15 +1,15 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
+using DrawnUi.Draw;
+using DrawnUi.Draw;
 
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using Xamarin.Essentials;
-using SkiaControl = DrawnUi.Maui.Draw.SkiaControl;
+using SkiaControl = DrawnUi.Draw.SkiaControl;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 public class SkiaCarousel : SnappingLayout
 {

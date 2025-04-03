@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Models;
+﻿namespace DrawnUi.Models;
 
 [Flags]
 public enum GridLengthType

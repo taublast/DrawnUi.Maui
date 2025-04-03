@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Infrastructure;
+﻿namespace DrawnUi.Infrastructure;
 
 /// <summary>
 /// Standard paper formats

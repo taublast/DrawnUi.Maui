@@ -1,12 +1,12 @@
 ﻿using AppoMobi.Maui.Gestures;
 using AppoMobi.Specials;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Infrastructure.Extensions;
+using DrawnUi.Draw;
+using DrawnUi.Infrastructure.Extensions;
 using SkiaSharp.Views.Forms;
 using System.Windows.Input;
 
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
 	public class SkiaHotspot : SkiaControl, ISkiaGestureListener
 	{

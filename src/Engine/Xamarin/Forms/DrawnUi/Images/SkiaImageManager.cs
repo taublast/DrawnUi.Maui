@@ -1,10 +1,10 @@
-﻿using DrawnUi.Maui.Infrastructure.Models;
-using DrawnUi.Maui.Infrastructure.Xaml;
+﻿using DrawnUi.Infrastructure.Models;
+using DrawnUi.Infrastructure.Xaml;
 using System.Collections.Concurrent;
 using System.IO;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public interface IHasBanner
 {

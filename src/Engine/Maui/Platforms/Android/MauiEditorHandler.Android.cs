@@ -12,7 +12,7 @@ using Size = Microsoft.Maui.Graphics.Size;
 using TextChangedEventArgs = Android.Text.TextChangedEventArgs;
 
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 /*
 public partial class MauiEditorHandler : EditorHandler
 {

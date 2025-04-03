@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using UIKit;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaImageManager
 {

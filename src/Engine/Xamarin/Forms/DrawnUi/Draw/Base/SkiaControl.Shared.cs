@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Views;
+using DrawnUi.Views;
 using ExCSS;
 using SkiaSharp.Views.Forms;
 using System.Collections.ObjectModel;
@@ -33,7 +33,7 @@ using SKSize = SkiaSharp.SKSize;
  some code was adapted for a lower .NET version.
  */
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     [DebuggerDisplay("{DebugString}")]
     [ContentProperty("Children")]
@@ -5889,7 +5889,7 @@ namespace DrawnUi.Maui.Draw
         static object lockParent = new();
 
         /// <summary>
-        /// https://github.com/taublast/DrawnUi.Maui/issues/92#issuecomment-2408805077
+        /// https://github.com/taublast/DrawnUi/issues/92#issuecomment-2408805077
         /// </summary>
         public virtual void ApplyBindingContext()
         {

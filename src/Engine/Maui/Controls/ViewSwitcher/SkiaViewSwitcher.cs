@@ -1,9 +1,9 @@
 ﻿// Deeply inspired by the Sharpnado ViewSwitcher https://github.com/roubachof/Sharpnado.Tabs
 
-using DrawnUi.Maui.Infrastructure.Enums;
+using DrawnUi.Infrastructure.Enums;
 using Microsoft.Maui.Controls.Shapes;
 
-namespace DrawnUi.Maui.Controls
+namespace DrawnUi.Controls
 {
     /*
         public interface INavigationTransitionAnimation
@@ -119,12 +119,12 @@ namespace DrawnUi.Maui.Controls
             set { SetValue(IsAnimatingProperty, value); }
         }
 
-        public static readonly BindableProperty ClipWithProperty = BindableProperty.Create(nameof(ClipWith), typeof(Geometry), typeof(SkiaViewSwitcher), null);
-        public Geometry ClipWith
-        {
-            get { return (Geometry)GetValue(ClipWithProperty); }
-            set { SetValue(ClipWithProperty, value); }
-        }
+        //public static readonly BindableProperty ClipWithProperty = BindableProperty.Create(nameof(ClipWith), typeof(Geometry), typeof(SkiaViewSwitcher), null);
+        //public Geometry ClipWith
+        //{
+        //    get { return (Geometry)GetValue(ClipWithProperty); }
+        //    set { SetValue(ClipWithProperty, value); }
+        //}
 
         #region Tabs
 

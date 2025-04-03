@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using AppoMobi.Maui.Navigation;
 using Microsoft.Extensions.Logging;
 
-namespace DrawnUi.Maui.Controls
+namespace DrawnUi.Controls
 {
     /*
        The main concept is we take the maui shell implementation

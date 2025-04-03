@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SkPatch3D
 {

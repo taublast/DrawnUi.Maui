@@ -5,10 +5,10 @@
 global using System.Collections.Generic;
 global using System.Diagnostics;
 global using AppoMobi.Specials;
-global using DrawnUi.Maui.Draw;
-global using DrawnUi.Maui.Extensions;
-global using DrawnUi.Maui.Infrastructure;
-global using DrawnUi.Maui.Models;
+global using DrawnUi.Draw;
+global using DrawnUi.Extensions;
+global using DrawnUi.Infrastructure;
+global using DrawnUi.Models;
 global using SkiaSharp;
 global using Xamarin.Forms;
 using System.Globalization;
@@ -16,15 +16,15 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 [assembly: XmlnsDefinition("http://schemas.appomobi.com/drawnUi/2023/draw",
-    "DrawnUi.Maui.Draw")]
+    "DrawnUi.Draw")]
 
 [assembly: XmlnsDefinition("http://schemas.appomobi.com/drawnUi/2023/draw",
-    "DrawnUi.Maui.Controls")]
+    "DrawnUi.Controls")]
 
 [assembly: XmlnsDefinition("http://schemas.appomobi.com/drawnUi/2023/draw",
-    "DrawnUi.Maui.Views")]
+    "DrawnUi.Views")]
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class Super
 {

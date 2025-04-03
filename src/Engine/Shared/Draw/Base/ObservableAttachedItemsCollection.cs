@@ -2,7 +2,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     /// <summary>
     /// We have to subclass ObservableCollection to avoid it sending empty oldItems upon Reset.

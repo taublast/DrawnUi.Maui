@@ -1,845 +1,845 @@
 <a name='assembly'></a>
-# DrawnUi.Maui
+# DrawnUi
 
 ## Contents
 
-- [ActionOnTickAnimator](#T-DrawnUi-Maui-Draw-ActionOnTickAnimator 'DrawnUi.Maui.Draw.ActionOnTickAnimator')
-- [AddGestures](#T-DrawnUi-Maui-Draw-AddGestures 'DrawnUi.Maui.Draw.AddGestures')
-- [AnimateExtensions](#T-DrawnUi-Maui-Draw-AnimateExtensions 'DrawnUi.Maui.Draw.AnimateExtensions')
-  - [AnimateWith(control,animations)](#M-DrawnUi-Maui-Draw-AnimateExtensions-AnimateWith-DrawnUi-Maui-Draw-SkiaControl,System-Func{DrawnUi-Maui-Draw-SkiaControl,System-Threading-Tasks-Task}[]- 'DrawnUi.Maui.Draw.AnimateExtensions.AnimateWith(DrawnUi.Maui.Draw.SkiaControl,System.Func{DrawnUi.Maui.Draw.SkiaControl,System.Threading.Tasks.Task}[])')
-- [AnimatedFramesRenderer](#T-DrawnUi-Maui-Controls-AnimatedFramesRenderer 'DrawnUi.Maui.Controls.AnimatedFramesRenderer')
-  - [Repeat](#P-DrawnUi-Maui-Controls-AnimatedFramesRenderer-Repeat 'DrawnUi.Maui.Controls.AnimatedFramesRenderer.Repeat')
-  - [GetFrameAt()](#M-DrawnUi-Maui-Controls-AnimatedFramesRenderer-GetFrameAt-System-Single- 'DrawnUi.Maui.Controls.AnimatedFramesRenderer.GetFrameAt(System.Single)')
-  - [OnAnimatorUpdated(value)](#M-DrawnUi-Maui-Controls-AnimatedFramesRenderer-OnAnimatorUpdated-System-Double- 'DrawnUi.Maui.Controls.AnimatedFramesRenderer.OnAnimatorUpdated(System.Double)')
-- [AutoSizeType](#T-DrawnUi-Maui-Draw-AutoSizeType 'DrawnUi.Maui.Draw.AutoSizeType')
-  - [FillHorizontal](#F-DrawnUi-Maui-Draw-AutoSizeType-FillHorizontal 'DrawnUi.Maui.Draw.AutoSizeType.FillHorizontal')
-  - [FillVertical](#F-DrawnUi-Maui-Draw-AutoSizeType-FillVertical 'DrawnUi.Maui.Draw.AutoSizeType.FillVertical')
-  - [FitFillHorizontal](#F-DrawnUi-Maui-Draw-AutoSizeType-FitFillHorizontal 'DrawnUi.Maui.Draw.AutoSizeType.FitFillHorizontal')
-  - [FitFillVertical](#F-DrawnUi-Maui-Draw-AutoSizeType-FitFillVertical 'DrawnUi.Maui.Draw.AutoSizeType.FitFillVertical')
-  - [FitHorizontal](#F-DrawnUi-Maui-Draw-AutoSizeType-FitHorizontal 'DrawnUi.Maui.Draw.AutoSizeType.FitHorizontal')
-  - [FitVertical](#F-DrawnUi-Maui-Draw-AutoSizeType-FitVertical 'DrawnUi.Maui.Draw.AutoSizeType.FitVertical')
-- [BindToParentContextExtension](#T-DrawnUi-Maui-Draw-BindToParentContextExtension 'DrawnUi.Maui.Draw.BindToParentContextExtension')
-- [BuildWrapLayout](#T-DrawnUi-Maui-Draw-SkiaLayout-BuildWrapLayout 'DrawnUi.Maui.Draw.SkiaLayout.BuildWrapLayout')
-- [CachedObject](#T-DrawnUi-Maui-Draw-CachedObject 'DrawnUi.Maui.Draw.CachedObject')
-  - [SurfaceIsRecycled](#P-DrawnUi-Maui-Draw-CachedObject-SurfaceIsRecycled 'DrawnUi.Maui.Draw.CachedObject.SurfaceIsRecycled')
-- [Canvas](#T-DrawnUi-Maui-Views-Canvas 'DrawnUi.Maui.Views.Canvas')
-  - [FirstPanThreshold](#F-DrawnUi-Maui-Views-Canvas-FirstPanThreshold 'DrawnUi.Maui.Views.Canvas.FirstPanThreshold')
-  - [AdaptSizeRequestToContent(widthRequest,heightRequest)](#M-DrawnUi-Maui-Views-Canvas-AdaptSizeRequestToContent-System-Double,System-Double- 'DrawnUi.Maui.Views.Canvas.AdaptSizeRequestToContent(System.Double,System.Double)')
-  - [ArrangeOverride(bounds)](#M-DrawnUi-Maui-Views-Canvas-ArrangeOverride-Microsoft-Maui-Graphics-Rect- 'DrawnUi.Maui.Views.Canvas.ArrangeOverride(Microsoft.Maui.Graphics.Rect)')
-  - [DisableUpdates()](#M-DrawnUi-Maui-Views-Canvas-DisableUpdates 'DrawnUi.Maui.Views.Canvas.DisableUpdates')
-  - [EnableUpdates()](#M-DrawnUi-Maui-Views-Canvas-EnableUpdates 'DrawnUi.Maui.Views.Canvas.EnableUpdates')
-  - [GetMeasuringRectForChildren(widthConstraint,heightConstraint,scale)](#M-DrawnUi-Maui-Views-Canvas-GetMeasuringRectForChildren-System-Single,System-Single,System-Single- 'DrawnUi.Maui.Views.Canvas.GetMeasuringRectForChildren(System.Single,System.Single,System.Single)')
-  - [MeasureChild(child,availableWidth,availableHeight,scale)](#M-DrawnUi-Maui-Views-Canvas-MeasureChild-DrawnUi-Maui-Draw-SkiaControl,System-Double,System-Double,System-Double- 'DrawnUi.Maui.Views.Canvas.MeasureChild(DrawnUi.Maui.Draw.SkiaControl,System.Double,System.Double,System.Double)')
-  - [OnGestureEvent(type,args1,args1,)](#M-DrawnUi-Maui-Views-Canvas-OnGestureEvent-AppoMobi-Maui-Gestures-TouchActionType,AppoMobi-Maui-Gestures-TouchActionEventArgs,AppoMobi-Maui-Gestures-TouchActionResult- 'DrawnUi.Maui.Views.Canvas.OnGestureEvent(AppoMobi.Maui.Gestures.TouchActionType,AppoMobi.Maui.Gestures.TouchActionEventArgs,AppoMobi.Maui.Gestures.TouchActionResult)')
-  - [SetContent()](#M-DrawnUi-Maui-Views-Canvas-SetContent-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Views.Canvas.SetContent(DrawnUi.Maui.Draw.SkiaControl)')
-- [Cell](#T-DrawnUi-Maui-Draw-SkiaLayout-Cell 'DrawnUi.Maui.Draw.SkiaLayout.Cell')
-  - [ColumnGridLengthType](#P-DrawnUi-Maui-Draw-SkiaLayout-Cell-ColumnGridLengthType 'DrawnUi.Maui.Draw.SkiaLayout.Cell.ColumnGridLengthType')
-  - [RowGridLengthType](#P-DrawnUi-Maui-Draw-SkiaLayout-Cell-RowGridLengthType 'DrawnUi.Maui.Draw.SkiaLayout.Cell.RowGridLengthType')
-- [ChainAdjustBrightnessEffect](#T-DrawnUi-Maui-Draw-ChainAdjustBrightnessEffect 'DrawnUi.Maui.Draw.ChainAdjustBrightnessEffect')
-  - [CreateBrightnessFilter(value)](#M-DrawnUi-Maui-Draw-ChainAdjustBrightnessEffect-CreateBrightnessFilter-System-Single- 'DrawnUi.Maui.Draw.ChainAdjustBrightnessEffect.CreateBrightnessFilter(System.Single)')
-  - [CreateLightnessFilter(value)](#M-DrawnUi-Maui-Draw-ChainAdjustBrightnessEffect-CreateLightnessFilter-System-Single- 'DrawnUi.Maui.Draw.ChainAdjustBrightnessEffect.CreateLightnessFilter(System.Single)')
-- [ChainAdjustLightnessEffect](#T-DrawnUi-Maui-Draw-ChainAdjustLightnessEffect 'DrawnUi.Maui.Draw.ChainAdjustLightnessEffect')
-  - [CreateLightnessFilter(value)](#M-DrawnUi-Maui-Draw-ChainAdjustLightnessEffect-CreateLightnessFilter-System-Single- 'DrawnUi.Maui.Draw.ChainAdjustLightnessEffect.CreateLightnessFilter(System.Single)')
-- [ChainEffectResult](#T-DrawnUi-Maui-Draw-ChainEffectResult 'DrawnUi.Maui.Draw.ChainEffectResult')
-  - [DrawnControl](#P-DrawnUi-Maui-Draw-ChainEffectResult-DrawnControl 'DrawnUi.Maui.Draw.ChainEffectResult.DrawnControl')
-- [ColorExtensions](#T-DrawnUi-Maui-Infrastructure-Extensions-ColorExtensions 'DrawnUi.Maui.Draw.ColorExtensions')
-  - [ToColorFromHex()](#M-DrawnUi-Maui-Infrastructure-Extensions-ColorExtensions-ToColorFromHex-System-String- 'DrawnUi.Maui.Draw.ColorExtensions.ToColorFromHex(System.String)')
-- [ContentLayout](#T-DrawnUi-Maui-Draw-ContentLayout 'DrawnUi.Maui.Draw.ContentLayout')
-  - [Orientation](#P-DrawnUi-Maui-Draw-ContentLayout-Orientation 'DrawnUi.Maui.Draw.ContentLayout.Orientation')
-  - [ScrollType](#P-DrawnUi-Maui-Draw-ContentLayout-ScrollType 'DrawnUi.Maui.Draw.ContentLayout.ScrollType')
-  - [Virtualisation](#P-DrawnUi-Maui-Draw-ContentLayout-Virtualisation 'DrawnUi.Maui.Draw.ContentLayout.Virtualisation')
-  - [GetContentAvailableRect(destination)](#M-DrawnUi-Maui-Draw-ContentLayout-GetContentAvailableRect-SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.ContentLayout.GetContentAvailableRect(SkiaSharp.SKRect)')
-- [ControlInStack](#T-DrawnUi-Maui-Draw-ControlInStack 'DrawnUi.Maui.Draw.ControlInStack')
-  - [Area](#P-DrawnUi-Maui-Draw-ControlInStack-Area 'DrawnUi.Maui.Draw.ControlInStack.Area')
-  - [ControlIndex](#P-DrawnUi-Maui-Draw-ControlInStack-ControlIndex 'DrawnUi.Maui.Draw.ControlInStack.ControlIndex')
-  - [Destination](#P-DrawnUi-Maui-Draw-ControlInStack-Destination 'DrawnUi.Maui.Draw.ControlInStack.Destination')
-  - [Drawn](#P-DrawnUi-Maui-Draw-ControlInStack-Drawn 'DrawnUi.Maui.Draw.ControlInStack.Drawn')
-  - [Measured](#P-DrawnUi-Maui-Draw-ControlInStack-Measured 'DrawnUi.Maui.Draw.ControlInStack.Measured')
-  - [Offset](#P-DrawnUi-Maui-Draw-ControlInStack-Offset 'DrawnUi.Maui.Draw.ControlInStack.Offset')
-  - [View](#P-DrawnUi-Maui-Draw-ControlInStack-View 'DrawnUi.Maui.Draw.ControlInStack.View')
-- [DecelerationTimingVectorParameters](#T-DrawnUi-Maui-Draw-DecelerationTimingVectorParameters 'DrawnUi.Maui.Draw.DecelerationTimingVectorParameters')
-  - [ValueAt(offsetSecs,time)](#M-DrawnUi-Maui-Draw-DecelerationTimingVectorParameters-ValueAt-System-Single- 'DrawnUi.Maui.Draw.DecelerationTimingVectorParameters.ValueAt(System.Single)')
-- [DecomposedText](#T-DrawnUi-Maui-Draw-SkiaLabel-DecomposedText 'DrawnUi.Maui.Draw.SkiaLabel.DecomposedText')
-  - [HasMoreHorizontalSpace](#P-DrawnUi-Maui-Draw-SkiaLabel-DecomposedText-HasMoreHorizontalSpace 'DrawnUi.Maui.Draw.SkiaLabel.DecomposedText.HasMoreHorizontalSpace')
-  - [HasMoreVerticalSpace](#P-DrawnUi-Maui-Draw-SkiaLabel-DecomposedText-HasMoreVerticalSpace 'DrawnUi.Maui.Draw.SkiaLabel.DecomposedText.HasMoreVerticalSpace')
-- [DragForce](#T-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-DragForce 'DrawnUi.Maui.Animate.Animators.VelocitySkiaAnimator.DragForce')
-  - [GetInitialVelocity(initialPosition,finalPosition,durationTime)](#M-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-DragForce-GetInitialVelocity-System-Single,System-Single,System-Single- 'DrawnUi.Maui.Animate.Animators.VelocitySkiaAnimator.DragForce.GetInitialVelocity(System.Single,System.Single,System.Single)')
-- [DrawnFontAttributesConverter](#T-DrawnUi-Maui-Draw-DrawnFontAttributesConverter 'DrawnUi.Maui.Draw.DrawnFontAttributesConverter')
-- [DrawnUiBasePage](#T-DrawnUi-Maui-Controls-DrawnUiBasePage 'DrawnUi.Maui.Controls.DrawnUiBasePage')
-- [DrawnView](#T-DrawnUi-Maui-Views-DrawnView 'DrawnUi.Maui.Views.DrawnView')
-  - [_orderedChildren](#F-DrawnUi-Maui-Views-DrawnView-_orderedChildren 'DrawnUi.Maui.Views.DrawnView._orderedChildren')
-  - [AnimatingControls](#P-DrawnUi-Maui-Views-DrawnView-AnimatingControls 'DrawnUi.Maui.Views.DrawnView.AnimatingControls')
-  - [CanDraw](#P-DrawnUi-Maui-Views-DrawnView-CanDraw 'DrawnUi.Maui.Views.DrawnView.CanDraw')
-  - [CanRenderOffScreen](#P-DrawnUi-Maui-Views-DrawnView-CanRenderOffScreen 'DrawnUi.Maui.Views.DrawnView.CanRenderOffScreen')
-  - [CanvasFps](#P-DrawnUi-Maui-Views-DrawnView-CanvasFps 'DrawnUi.Maui.Views.DrawnView.CanvasFps')
-  - [DrawingThreadId](#P-DrawnUi-Maui-Views-DrawnView-DrawingThreadId 'DrawnUi.Maui.Views.DrawnView.DrawingThreadId')
-  - [DrawingThreads](#P-DrawnUi-Maui-Views-DrawnView-DrawingThreads 'DrawnUi.Maui.Views.DrawnView.DrawingThreads')
-  - [FPS](#P-DrawnUi-Maui-Views-DrawnView-FPS 'DrawnUi.Maui.Views.DrawnView.FPS')
-  - [FrameTime](#P-DrawnUi-Maui-Views-DrawnView-FrameTime 'DrawnUi.Maui.Views.DrawnView.FrameTime')
-  - [GestureListeners](#P-DrawnUi-Maui-Views-DrawnView-GestureListeners 'DrawnUi.Maui.Views.DrawnView.GestureListeners')
-  - [InvalidatedCanvas](#P-DrawnUi-Maui-Views-DrawnView-InvalidatedCanvas 'DrawnUi.Maui.Views.DrawnView.InvalidatedCanvas')
-  - [IsHiddenInViewTree](#P-DrawnUi-Maui-Views-DrawnView-IsHiddenInViewTree 'DrawnUi.Maui.Views.DrawnView.IsHiddenInViewTree')
-  - [PostAnimators](#P-DrawnUi-Maui-Views-DrawnView-PostAnimators 'DrawnUi.Maui.Views.DrawnView.PostAnimators')
-  - [StopDrawingWhenUpdateIsLocked](#P-DrawnUi-Maui-Views-DrawnView-StopDrawingWhenUpdateIsLocked 'DrawnUi.Maui.Views.DrawnView.StopDrawingWhenUpdateIsLocked')
-  - [Arrange(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Views-DrawnView-Arrange-SkiaSharp-SKRect,System-Double,System-Double,System-Double- 'DrawnUi.Maui.Views.DrawnView.Arrange(SkiaSharp.SKRect,System.Double,System.Double,System.Double)')
-  - [CalculateLayout(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Views-DrawnView-CalculateLayout-SkiaSharp-SKRect,System-Double,System-Double,System-Double- 'DrawnUi.Maui.Views.DrawnView.CalculateLayout(SkiaSharp.SKRect,System.Double,System.Double,System.Double)')
-  - [CheckElementVisibility(element)](#M-DrawnUi-Maui-Views-DrawnView-CheckElementVisibility-Microsoft-Maui-Controls-VisualElement- 'DrawnUi.Maui.Views.DrawnView.CheckElementVisibility(Microsoft.Maui.Controls.VisualElement)')
-  - [CreateSkiaView()](#M-DrawnUi-Maui-Views-DrawnView-CreateSkiaView 'DrawnUi.Maui.Views.DrawnView.CreateSkiaView')
-  - [GetOrderedSubviews()](#M-DrawnUi-Maui-Views-DrawnView-GetOrderedSubviews 'DrawnUi.Maui.Views.DrawnView.GetOrderedSubviews')
-  - [Invalidate()](#M-DrawnUi-Maui-Views-DrawnView-Invalidate 'DrawnUi.Maui.Views.DrawnView.Invalidate')
-  - [InvalidateCanvas()](#M-DrawnUi-Maui-Views-DrawnView-InvalidateCanvas 'DrawnUi.Maui.Views.DrawnView.InvalidateCanvas')
-  - [InvalidateChildren()](#M-DrawnUi-Maui-Views-DrawnView-InvalidateChildren 'DrawnUi.Maui.Views.DrawnView.InvalidateChildren')
-  - [InvalidateViewsList()](#M-DrawnUi-Maui-Views-DrawnView-InvalidateViewsList 'DrawnUi.Maui.Views.DrawnView.InvalidateViewsList')
-  - [KickOffscreenCacheRendering()](#M-DrawnUi-Maui-Views-DrawnView-KickOffscreenCacheRendering 'DrawnUi.Maui.Views.DrawnView.KickOffscreenCacheRendering')
-  - [OnCanRenderChanged(state)](#M-DrawnUi-Maui-Views-DrawnView-OnCanRenderChanged-System-Boolean- 'DrawnUi.Maui.Views.DrawnView.OnCanRenderChanged(System.Boolean)')
-  - [PostponeExecutionAfterDraw(action)](#M-DrawnUi-Maui-Views-DrawnView-PostponeExecutionAfterDraw-System-Action- 'DrawnUi.Maui.Views.DrawnView.PostponeExecutionAfterDraw(System.Action)')
-  - [PostponeExecutionBeforeDraw(action)](#M-DrawnUi-Maui-Views-DrawnView-PostponeExecutionBeforeDraw-System-Action- 'DrawnUi.Maui.Views.DrawnView.PostponeExecutionBeforeDraw(System.Action)')
-  - [RegisterAnimator(uid,animating)](#M-DrawnUi-Maui-Views-DrawnView-RegisterAnimator-DrawnUi-Maui-Draw-ISkiaAnimator- 'DrawnUi.Maui.Views.DrawnView.RegisterAnimator(DrawnUi.Maui.Draw.ISkiaAnimator)')
-  - [ReportFocus(listener)](#M-DrawnUi-Maui-Views-DrawnView-ReportFocus-DrawnUi-Maui-Draw-ISkiaGestureListener,DrawnUi-Maui-Draw-ISkiaGestureListener- 'DrawnUi.Maui.Views.DrawnView.ReportFocus(DrawnUi.Maui.Draw.ISkiaGestureListener,DrawnUi.Maui.Draw.ISkiaGestureListener)')
-- [DynamicGrid\`1](#T-DrawnUi-Maui-Draw-DynamicGrid`1 'DrawnUi.Maui.Draw.DynamicGrid`1')
-  - [GetColumnCountForRow(row)](#M-DrawnUi-Maui-Draw-DynamicGrid`1-GetColumnCountForRow-System-Int32- 'DrawnUi.Maui.Draw.DynamicGrid`1.GetColumnCountForRow(System.Int32)')
-- [EmojiData](#T-DrawnUi-Maui-Draw-SkiaLabel-EmojiData 'DrawnUi.Maui.Draw.SkiaLabel.EmojiData')
-  - [IsEmojiModifierSequence(text,index)](#M-DrawnUi-Maui-Draw-SkiaLabel-EmojiData-IsEmojiModifierSequence-System-String,System-Int32- 'DrawnUi.Maui.Draw.SkiaLabel.EmojiData.IsEmojiModifierSequence(System.String,System.Int32)')
-- [Files](#T-DrawnUi-Maui-Infrastructure-Files 'DrawnUi.Maui.Infrastructure.Files')
-  - [ListAssets()](#M-DrawnUi-Maui-Infrastructure-Files-ListAssets-System-String- 'DrawnUi.Maui.Infrastructure.Files.ListAssets(System.String)')
-- [FontWeight](#T-DrawnUi-Maui-Draw-FontWeight 'DrawnUi.Maui.Draw.FontWeight')
-  - [Black](#F-DrawnUi-Maui-Draw-FontWeight-Black 'DrawnUi.Maui.Draw.FontWeight.Black')
-  - [Bold](#F-DrawnUi-Maui-Draw-FontWeight-Bold 'DrawnUi.Maui.Draw.FontWeight.Bold')
-  - [ExtraBold](#F-DrawnUi-Maui-Draw-FontWeight-ExtraBold 'DrawnUi.Maui.Draw.FontWeight.ExtraBold')
-  - [ExtraLight](#F-DrawnUi-Maui-Draw-FontWeight-ExtraLight 'DrawnUi.Maui.Draw.FontWeight.ExtraLight')
-  - [Light](#F-DrawnUi-Maui-Draw-FontWeight-Light 'DrawnUi.Maui.Draw.FontWeight.Light')
-  - [Medium](#F-DrawnUi-Maui-Draw-FontWeight-Medium 'DrawnUi.Maui.Draw.FontWeight.Medium')
-  - [Regular](#F-DrawnUi-Maui-Draw-FontWeight-Regular 'DrawnUi.Maui.Draw.FontWeight.Regular')
-  - [SemiBold](#F-DrawnUi-Maui-Draw-FontWeight-SemiBold 'DrawnUi.Maui.Draw.FontWeight.SemiBold')
-  - [Thin](#F-DrawnUi-Maui-Draw-FontWeight-Thin 'DrawnUi.Maui.Draw.FontWeight.Thin')
-- [GesturesMode](#T-DrawnUi-Maui-Draw-GesturesMode 'DrawnUi.Maui.Draw.GesturesMode')
-  - [Disabled](#F-DrawnUi-Maui-Draw-GesturesMode-Disabled 'DrawnUi.Maui.Draw.GesturesMode.Disabled')
-  - [Enabled](#F-DrawnUi-Maui-Draw-GesturesMode-Enabled 'DrawnUi.Maui.Draw.GesturesMode.Enabled')
-  - [Lock](#F-DrawnUi-Maui-Draw-GesturesMode-Lock 'DrawnUi.Maui.Draw.GesturesMode.Lock')
-  - [Share](#F-DrawnUi-Maui-Draw-GesturesMode-Share 'DrawnUi.Maui.Draw.GesturesMode.Share')
-- [GifAnimation](#T-DrawnUi-Maui-Controls-GifAnimation 'DrawnUi.Maui.Controls.GifAnimation')
-  - [Frame](#P-DrawnUi-Maui-Controls-GifAnimation-Frame 'DrawnUi.Maui.Controls.GifAnimation.Frame')
-  - [SeekFrame(frame)](#M-DrawnUi-Maui-Controls-GifAnimation-SeekFrame-System-Int32- 'DrawnUi.Maui.Controls.GifAnimation.SeekFrame(System.Int32)')
-- [GlideExtensions](#T-DrawnUi-Maui-Views-GlideExtensions 'DrawnUi.Maui.Views.GlideExtensions')
-  - [Clear()](#M-DrawnUi-Maui-Views-GlideExtensions-Clear-Bumptech-Glide-RequestManager,Android-Widget-ImageView- 'DrawnUi.Maui.Views.GlideExtensions.Clear(Bumptech.Glide.RequestManager,Android.Widget.ImageView)')
-  - [IsActivityAlive()](#M-DrawnUi-Maui-Views-GlideExtensions-IsActivityAlive-Android-Content-Context,Microsoft-Maui-Controls-ImageSource- 'DrawnUi.Maui.Views.GlideExtensions.IsActivityAlive(Android.Content.Context,Microsoft.Maui.Controls.ImageSource)')
-- [GridLayout](#T-DrawnUi-Maui-Controls-GridLayout 'DrawnUi.Maui.Controls.GridLayout')
-- [HStack](#T-DrawnUi-Maui-Controls-HStack 'DrawnUi.Maui.Controls.HStack')
-- [HardwareAccelerationMode](#T-DrawnUi-Maui-Draw-HardwareAccelerationMode 'DrawnUi.Maui.Draw.HardwareAccelerationMode')
-  - [Disabled](#F-DrawnUi-Maui-Draw-HardwareAccelerationMode-Disabled 'DrawnUi.Maui.Draw.HardwareAccelerationMode.Disabled')
-  - [Enabled](#F-DrawnUi-Maui-Draw-HardwareAccelerationMode-Enabled 'DrawnUi.Maui.Draw.HardwareAccelerationMode.Enabled')
-  - [Prerender](#F-DrawnUi-Maui-Draw-HardwareAccelerationMode-Prerender 'DrawnUi.Maui.Draw.HardwareAccelerationMode.Prerender')
-- [IAfterEffectDelete](#T-DrawnUi-Maui-Draw-IAfterEffectDelete 'DrawnUi.Maui.Draw.IAfterEffectDelete')
-  - [TypeId](#P-DrawnUi-Maui-Draw-IAfterEffectDelete-TypeId 'DrawnUi.Maui.Draw.IAfterEffectDelete.TypeId')
-  - [Render(control,canvas,scale)](#M-DrawnUi-Maui-Draw-IAfterEffectDelete-Render-DrawnUi-Maui-Draw-IDrawnBase,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double- 'DrawnUi.Maui.Draw.IAfterEffectDelete.Render(DrawnUi.Maui.Draw.IDrawnBase,DrawnUi.Maui.Draw.SkiaDrawingContext,System.Double)')
-- [IAnimatorsManager](#T-DrawnUi-Maui-Draw-IAnimatorsManager 'DrawnUi.Maui.Draw.IAnimatorsManager')
-- [ICanBeUpdated](#T-DrawnUi-Maui-Draw-ICanBeUpdated 'DrawnUi.Maui.Draw.ICanBeUpdated')
-  - [Update()](#M-DrawnUi-Maui-Draw-ICanBeUpdated-Update 'DrawnUi.Maui.Draw.ICanBeUpdated.Update')
-- [ICanRenderOnCanvas](#T-DrawnUi-Maui-Draw-ICanRenderOnCanvas 'DrawnUi.Maui.Draw.ICanRenderOnCanvas')
-  - [Render(control,context,scale)](#M-DrawnUi-Maui-Draw-ICanRenderOnCanvas-Render-DrawnUi-Maui-Draw-IDrawnBase,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double- 'DrawnUi.Maui.Draw.ICanRenderOnCanvas.Render(DrawnUi.Maui.Draw.IDrawnBase,DrawnUi.Maui.Draw.SkiaDrawingContext,System.Double)')
-- [IDefinesViewport](#T-DrawnUi-Maui-Draw-IDefinesViewport 'DrawnUi.Maui.Draw.IDefinesViewport')
-  - [InvalidateByChild()](#M-DrawnUi-Maui-Draw-IDefinesViewport-InvalidateByChild-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.IDefinesViewport.InvalidateByChild(DrawnUi.Maui.Draw.SkiaControl)')
-- [IDrawnBase](#T-DrawnUi-Maui-Draw-IDrawnBase 'DrawnUi.Maui.Draw.IDrawnBase')
-  - [PostAnimators](#P-DrawnUi-Maui-Draw-IDrawnBase-PostAnimators 'DrawnUi.Maui.Draw.IDrawnBase.PostAnimators')
-  - [Views](#P-DrawnUi-Maui-Draw-IDrawnBase-Views 'DrawnUi.Maui.Draw.IDrawnBase.Views')
-  - [AddSubView(view)](#M-DrawnUi-Maui-Draw-IDrawnBase-AddSubView-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.IDrawnBase.AddSubView(DrawnUi.Maui.Draw.SkiaControl)')
-  - [ClipSmart(canvas,path,operation)](#M-DrawnUi-Maui-Draw-IDrawnBase-ClipSmart-SkiaSharp-SKCanvas,SkiaSharp-SKPath,SkiaSharp-SKClipOperation- 'DrawnUi.Maui.Draw.IDrawnBase.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)')
-  - [CreateClip()](#M-DrawnUi-Maui-Draw-IDrawnBase-CreateClip-System-Object,System-Boolean,SkiaSharp-SKPath- 'DrawnUi.Maui.Draw.IDrawnBase.CreateClip(System.Object,System.Boolean,SkiaSharp.SKPath)')
-  - [GetOnScreenVisibleArea()](#M-DrawnUi-Maui-Draw-IDrawnBase-GetOnScreenVisibleArea-System-Single- 'DrawnUi.Maui.Draw.IDrawnBase.GetOnScreenVisibleArea(System.Single)')
-  - [Invalidate()](#M-DrawnUi-Maui-Draw-IDrawnBase-Invalidate 'DrawnUi.Maui.Draw.IDrawnBase.Invalidate')
-  - [InvalidateByChild(skiaControl)](#M-DrawnUi-Maui-Draw-IDrawnBase-InvalidateByChild-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.IDrawnBase.InvalidateByChild(DrawnUi.Maui.Draw.SkiaControl)')
-  - [InvalidateParents()](#M-DrawnUi-Maui-Draw-IDrawnBase-InvalidateParents 'DrawnUi.Maui.Draw.IDrawnBase.InvalidateParents')
-  - [RemoveSubView(view)](#M-DrawnUi-Maui-Draw-IDrawnBase-RemoveSubView-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.IDrawnBase.RemoveSubView(DrawnUi.Maui.Draw.SkiaControl)')
-  - [UpdateByChild(skiaControl)](#M-DrawnUi-Maui-Draw-IDrawnBase-UpdateByChild-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.IDrawnBase.UpdateByChild(DrawnUi.Maui.Draw.SkiaControl)')
-- [IHandleGoBack](#T-DrawnUi-Maui-Controls-SkiaShell-IHandleGoBack 'DrawnUi.Maui.Controls.SkiaShell.IHandleGoBack')
-  - [OnShellGoBack()](#M-DrawnUi-Maui-Controls-SkiaShell-IHandleGoBack-OnShellGoBack-System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.IHandleGoBack.OnShellGoBack(System.Boolean)')
-- [IHasBanner](#T-DrawnUi-Maui-Draw-IHasBanner 'DrawnUi.Maui.Draw.IHasBanner')
-  - [Banner](#P-DrawnUi-Maui-Draw-IHasBanner-Banner 'DrawnUi.Maui.Draw.IHasBanner.Banner')
-  - [BannerPreloadOrdered](#P-DrawnUi-Maui-Draw-IHasBanner-BannerPreloadOrdered 'DrawnUi.Maui.Draw.IHasBanner.BannerPreloadOrdered')
-- [IInsideViewport](#T-DrawnUi-Maui-Draw-IInsideViewport 'DrawnUi.Maui.Draw.IInsideViewport')
-  - [OnLoaded()](#M-DrawnUi-Maui-Draw-IInsideViewport-OnLoaded 'DrawnUi.Maui.Draw.IInsideViewport.OnLoaded')
-- [IInsideWheelStack](#T-DrawnUi-Maui-Draw-IInsideWheelStack 'DrawnUi.Maui.Draw.IInsideWheelStack')
-  - [OnPositionChanged(offsetRatio,isSelected)](#M-DrawnUi-Maui-Draw-IInsideWheelStack-OnPositionChanged-System-Single,System-Boolean- 'DrawnUi.Maui.Draw.IInsideWheelStack.OnPositionChanged(System.Single,System.Boolean)')
-- [ILayoutInsideViewport](#T-DrawnUi-Maui-Draw-ILayoutInsideViewport 'DrawnUi.Maui.Draw.ILayoutInsideViewport')
-  - [GetChildIndexAt(point)](#M-DrawnUi-Maui-Draw-ILayoutInsideViewport-GetChildIndexAt-SkiaSharp-SKPoint- 'DrawnUi.Maui.Draw.ILayoutInsideViewport.GetChildIndexAt(SkiaSharp.SKPoint)')
-  - [GetVisibleChildIndexAt(point)](#M-DrawnUi-Maui-Draw-ILayoutInsideViewport-GetVisibleChildIndexAt-SkiaSharp-SKPoint- 'DrawnUi.Maui.Draw.ILayoutInsideViewport.GetVisibleChildIndexAt(SkiaSharp.SKPoint)')
-- [IRefreshIndicator](#T-DrawnUi-Maui-Draw-IRefreshIndicator 'DrawnUi.Maui.Draw.IRefreshIndicator')
-  - [SetDragRatio(ratio)](#M-DrawnUi-Maui-Draw-IRefreshIndicator-SetDragRatio-System-Single- 'DrawnUi.Maui.Draw.IRefreshIndicator.SetDragRatio(System.Single)')
-- [IRenderEffect](#T-DrawnUi-Maui-Draw-IRenderEffect 'DrawnUi.Maui.Draw.IRenderEffect')
-  - [Draw(destination,ctx,drawControl)](#M-DrawnUi-Maui-Draw-IRenderEffect-Draw-SkiaSharp-SKRect,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Action{DrawnUi-Maui-Draw-SkiaDrawingContext}- 'DrawnUi.Maui.Draw.IRenderEffect.Draw(SkiaSharp.SKRect,DrawnUi.Maui.Draw.SkiaDrawingContext,System.Action{DrawnUi.Maui.Draw.SkiaDrawingContext})')
-- [ISkiaAnimator](#T-DrawnUi-Maui-Draw-ISkiaAnimator 'DrawnUi.Maui.Draw.ISkiaAnimator')
-  - [IsDeactivated](#P-DrawnUi-Maui-Draw-ISkiaAnimator-IsDeactivated 'DrawnUi.Maui.Draw.ISkiaAnimator.IsDeactivated')
-  - [IsHiddenInViewTree](#P-DrawnUi-Maui-Draw-ISkiaAnimator-IsHiddenInViewTree 'DrawnUi.Maui.Draw.ISkiaAnimator.IsHiddenInViewTree')
-  - [IsPaused](#P-DrawnUi-Maui-Draw-ISkiaAnimator-IsPaused 'DrawnUi.Maui.Draw.ISkiaAnimator.IsPaused')
-  - [Pause()](#M-DrawnUi-Maui-Draw-ISkiaAnimator-Pause 'DrawnUi.Maui.Draw.ISkiaAnimator.Pause')
-  - [Resume()](#M-DrawnUi-Maui-Draw-ISkiaAnimator-Resume 'DrawnUi.Maui.Draw.ISkiaAnimator.Resume')
-  - [TickFrame(frameTime)](#M-DrawnUi-Maui-Draw-ISkiaAnimator-TickFrame-System-Int64- 'DrawnUi.Maui.Draw.ISkiaAnimator.TickFrame(System.Int64)')
-- [ISkiaControl](#T-DrawnUi-Maui-Draw-ISkiaControl 'DrawnUi.Maui.Draw.ISkiaControl')
-  - [IsGhost](#P-DrawnUi-Maui-Draw-ISkiaControl-IsGhost 'DrawnUi.Maui.Draw.ISkiaControl.IsGhost')
-  - [Measure(widthConstraint,heightConstraint)](#M-DrawnUi-Maui-Draw-ISkiaControl-Measure-System-Single,System-Single,System-Single- 'DrawnUi.Maui.Draw.ISkiaControl.Measure(System.Single,System.Single,System.Single)')
-- [ISkiaDrawable](#T-DrawnUi-Maui-Draw-ISkiaDrawable 'DrawnUi.Maui.Draw.ISkiaDrawable')
-  - [OnDraw](#P-DrawnUi-Maui-Draw-ISkiaDrawable-OnDraw 'DrawnUi.Maui.Draw.ISkiaDrawable.OnDraw')
-- [ISkiaGestureListener](#T-DrawnUi-Maui-Draw-ISkiaGestureListener 'DrawnUi.Maui.Draw.ISkiaGestureListener')
-  - [OnFocusChanged(focus)](#M-DrawnUi-Maui-Draw-ISkiaGestureListener-OnFocusChanged-System-Boolean- 'DrawnUi.Maui.Draw.ISkiaGestureListener.OnFocusChanged(System.Boolean)')
-  - [OnSkiaGestureEvent(type,args,args.Action.Action,inside)](#M-DrawnUi-Maui-Draw-ISkiaGestureListener-OnSkiaGestureEvent-DrawnUi-Maui-Draw-SkiaGesturesParameters,DrawnUi-Maui-Draw-GestureEventProcessingInfo- 'DrawnUi.Maui.Draw.ISkiaGestureListener.OnSkiaGestureEvent(DrawnUi.Maui.Draw.SkiaGesturesParameters,DrawnUi.Maui.Draw.GestureEventProcessingInfo)')
-- [ISkiaGridLayout](#T-DrawnUi-Maui-Draw-ISkiaGridLayout 'DrawnUi.Maui.Draw.ISkiaGridLayout')
-  - [ColumnDefinitions](#P-DrawnUi-Maui-Draw-ISkiaGridLayout-ColumnDefinitions 'DrawnUi.Maui.Draw.ISkiaGridLayout.ColumnDefinitions')
-  - [ColumnSpacing](#P-DrawnUi-Maui-Draw-ISkiaGridLayout-ColumnSpacing 'DrawnUi.Maui.Draw.ISkiaGridLayout.ColumnSpacing')
-  - [RowDefinitions](#P-DrawnUi-Maui-Draw-ISkiaGridLayout-RowDefinitions 'DrawnUi.Maui.Draw.ISkiaGridLayout.RowDefinitions')
-  - [RowSpacing](#P-DrawnUi-Maui-Draw-ISkiaGridLayout-RowSpacing 'DrawnUi.Maui.Draw.ISkiaGridLayout.RowSpacing')
-  - [GetColumn(view)](#M-DrawnUi-Maui-Draw-ISkiaGridLayout-GetColumn-Microsoft-Maui-Controls-BindableObject- 'DrawnUi.Maui.Draw.ISkiaGridLayout.GetColumn(Microsoft.Maui.Controls.BindableObject)')
-  - [GetColumnSpan(view)](#M-DrawnUi-Maui-Draw-ISkiaGridLayout-GetColumnSpan-Microsoft-Maui-Controls-BindableObject- 'DrawnUi.Maui.Draw.ISkiaGridLayout.GetColumnSpan(Microsoft.Maui.Controls.BindableObject)')
-  - [GetRow(view)](#M-DrawnUi-Maui-Draw-ISkiaGridLayout-GetRow-Microsoft-Maui-Controls-BindableObject- 'DrawnUi.Maui.Draw.ISkiaGridLayout.GetRow(Microsoft.Maui.Controls.BindableObject)')
-  - [GetRowSpan(view)](#M-DrawnUi-Maui-Draw-ISkiaGridLayout-GetRowSpan-Microsoft-Maui-Controls-BindableObject- 'DrawnUi.Maui.Draw.ISkiaGridLayout.GetRowSpan(Microsoft.Maui.Controls.BindableObject)')
-- [ISkiaLayer](#T-DrawnUi-Maui-Draw-ISkiaLayer 'DrawnUi.Maui.Draw.ISkiaLayer')
-  - [HasValidSnapshot](#P-DrawnUi-Maui-Draw-ISkiaLayer-HasValidSnapshot 'DrawnUi.Maui.Draw.ISkiaLayer.HasValidSnapshot')
-  - [LayerPaintArgs](#P-DrawnUi-Maui-Draw-ISkiaLayer-LayerPaintArgs 'DrawnUi.Maui.Draw.ISkiaLayer.LayerPaintArgs')
-- [ISkiaSharpView](#T-DrawnUi-Maui-Draw-ISkiaSharpView 'DrawnUi.Maui.Draw.ISkiaSharpView')
-  - [CreateStandaloneSurface(width,height)](#M-DrawnUi-Maui-Draw-ISkiaSharpView-CreateStandaloneSurface-System-Int32,System-Int32- 'DrawnUi.Maui.Draw.ISkiaSharpView.CreateStandaloneSurface(System.Int32,System.Int32)')
-  - [Update()](#M-DrawnUi-Maui-Draw-ISkiaSharpView-Update-System-Int64- 'DrawnUi.Maui.Draw.ISkiaSharpView.Update(System.Int64)')
-- [IStateEffect](#T-DrawnUi-Maui-Draw-IStateEffect 'DrawnUi.Maui.Draw.IStateEffect')
-  - [UpdateState()](#M-DrawnUi-Maui-Draw-IStateEffect-UpdateState 'DrawnUi.Maui.Draw.IStateEffect.UpdateState')
-- [IVisibilityAware](#T-DrawnUi-Maui-Draw-IVisibilityAware 'DrawnUi.Maui.Draw.IVisibilityAware')
-  - [OnAppeared()](#M-DrawnUi-Maui-Draw-IVisibilityAware-OnAppeared 'DrawnUi.Maui.Draw.IVisibilityAware.OnAppeared')
-  - [OnAppearing()](#M-DrawnUi-Maui-Draw-IVisibilityAware-OnAppearing 'DrawnUi.Maui.Draw.IVisibilityAware.OnAppearing')
-- [InternalExtensions](#T-DrawnUi-Maui-Extensions-InternalExtensions 'DrawnUi.Maui.Extensions.InternalExtensions')
-  - [ContainsInclusive(rect,point)](#M-DrawnUi-Maui-Extensions-InternalExtensions-ContainsInclusive-SkiaSharp-SKRect,SkiaSharp-SKPoint- 'DrawnUi.Maui.Extensions.InternalExtensions.ContainsInclusive(SkiaSharp.SKRect,SkiaSharp.SKPoint)')
-  - [ContainsInclusive()](#M-DrawnUi-Maui-Extensions-InternalExtensions-ContainsInclusive-SkiaSharp-SKRect,System-Single,System-Single- 'DrawnUi.Maui.Extensions.InternalExtensions.ContainsInclusive(SkiaSharp.SKRect,System.Single,System.Single)')
-- [LayoutType](#T-DrawnUi-Maui-Draw-LayoutType 'DrawnUi.Maui.Draw.LayoutType')
-  - [Absolute](#F-DrawnUi-Maui-Draw-LayoutType-Absolute 'DrawnUi.Maui.Draw.LayoutType.Absolute')
-  - [Column](#F-DrawnUi-Maui-Draw-LayoutType-Column 'DrawnUi.Maui.Draw.LayoutType.Column')
-  - [Grid](#F-DrawnUi-Maui-Draw-LayoutType-Grid 'DrawnUi.Maui.Draw.LayoutType.Grid')
-  - [Row](#F-DrawnUi-Maui-Draw-LayoutType-Row 'DrawnUi.Maui.Draw.LayoutType.Row')
-  - [Wrap](#F-DrawnUi-Maui-Draw-LayoutType-Wrap 'DrawnUi.Maui.Draw.LayoutType.Wrap')
-- [LineGlyph](#T-DrawnUi-Maui-Draw-LineGlyph 'DrawnUi.Maui.Draw.LineGlyph')
-  - [Width](#P-DrawnUi-Maui-Draw-LineGlyph-Width 'DrawnUi.Maui.Draw.LineGlyph.Width')
-- [LoadedImageSource](#T-DrawnUi-Maui-Draw-LoadedImageSource 'DrawnUi.Maui.Draw.LoadedImageSource')
-  - [ProtectFromDispose](#P-DrawnUi-Maui-Draw-LoadedImageSource-ProtectFromDispose 'DrawnUi.Maui.Draw.LoadedImageSource.ProtectFromDispose')
-- [LockTouch](#T-DrawnUi-Maui-Draw-LockTouch 'DrawnUi.Maui.Draw.LockTouch')
-  - [Enabled](#F-DrawnUi-Maui-Draw-LockTouch-Enabled 'DrawnUi.Maui.Draw.LockTouch.Enabled')
-  - [PassNone](#F-DrawnUi-Maui-Draw-LockTouch-PassNone 'DrawnUi.Maui.Draw.LockTouch.PassNone')
-  - [PassTap](#F-DrawnUi-Maui-Draw-LockTouch-PassTap 'DrawnUi.Maui.Draw.LockTouch.PassTap')
-  - [PassTapAndLongPress](#F-DrawnUi-Maui-Draw-LockTouch-PassTapAndLongPress 'DrawnUi.Maui.Draw.LockTouch.PassTapAndLongPress')
-- [MauiEditor](#T-DrawnUi-Maui-Controls-MauiEditor 'DrawnUi.Maui.Controls.MauiEditor')
-  - [MaxLines](#P-DrawnUi-Maui-Controls-MauiEditor-MaxLines 'DrawnUi.Maui.Controls.MauiEditor.MaxLines')
-- [MauiEntry](#T-DrawnUi-Maui-Controls-MauiEntry 'DrawnUi.Maui.Controls.MauiEntry')
-  - [MaxLines](#P-DrawnUi-Maui-Controls-MauiEntry-MaxLines 'DrawnUi.Maui.Controls.MauiEntry.MaxLines')
-- [MauiKey](#T-DrawnUi-Maui-Draw-MauiKey 'DrawnUi.Maui.Draw.MauiKey')
-- [MeasuringConstraints](#T-DrawnUi-Maui-Infrastructure-MeasuringConstraints 'DrawnUi.Maui.Infrastructure.MeasuringConstraints')
-  - [TotalMargins](#P-DrawnUi-Maui-Infrastructure-MeasuringConstraints-TotalMargins 'DrawnUi.Maui.Infrastructure.MeasuringConstraints.TotalMargins')
-- [MyTextWatcher](#T-DrawnUi-Maui-Draw-SkiaEditor-MyTextWatcher 'DrawnUi.Maui.Draw.SkiaEditor.MyTextWatcher')
-  - [NativeSelectionStart](#P-DrawnUi-Maui-Draw-SkiaEditor-MyTextWatcher-NativeSelectionStart 'DrawnUi.Maui.Draw.SkiaEditor.MyTextWatcher.NativeSelectionStart')
-- [NavigationLayer\`1](#T-DrawnUi-Maui-Controls-SkiaShell-NavigationLayer`1 'DrawnUi.Maui.Controls.SkiaShell.NavigationLayer`1')
-  - [#ctor(shell,isModal)](#M-DrawnUi-Maui-Controls-SkiaShell-NavigationLayer`1-#ctor-DrawnUi-Maui-Controls-SkiaShell,System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.NavigationLayer`1.#ctor(DrawnUi.Maui.Controls.SkiaShell,System.Boolean)')
-- [PanningModeType](#T-DrawnUi-Maui-Draw-PanningModeType 'DrawnUi.Maui.Draw.PanningModeType')
-  - [Enabled](#F-DrawnUi-Maui-Draw-PanningModeType-Enabled 'DrawnUi.Maui.Draw.PanningModeType.Enabled')
-- [PendulumAnimator](#T-DrawnUi-Maui-Draw-PendulumAnimator 'DrawnUi.Maui.Draw.PendulumAnimator')
-  - [InitialVelocity](#P-DrawnUi-Maui-Draw-PendulumAnimator-InitialVelocity 'DrawnUi.Maui.Draw.PendulumAnimator.InitialVelocity')
-  - [IsOneDirectional](#P-DrawnUi-Maui-Draw-PendulumAnimator-IsOneDirectional 'DrawnUi.Maui.Draw.PendulumAnimator.IsOneDirectional')
-- [PointExtensions](#T-DrawnUi-Maui-Extensions-PointExtensions 'DrawnUi.Maui.Extensions.PointExtensions')
-  - [Add(first,second)](#M-DrawnUi-Maui-Extensions-PointExtensions-Add-Microsoft-Maui-Graphics-Point,Microsoft-Maui-Graphics-Point- 'DrawnUi.Maui.Extensions.PointExtensions.Add(Microsoft.Maui.Graphics.Point,Microsoft.Maui.Graphics.Point)')
-  - [Center(touches)](#M-DrawnUi-Maui-Extensions-PointExtensions-Center-Microsoft-Maui-Graphics-Point[]- 'DrawnUi.Maui.Extensions.PointExtensions.Center(Microsoft.Maui.Graphics.Point[])')
-  - [Subtract(first,second)](#M-DrawnUi-Maui-Extensions-PointExtensions-Subtract-Microsoft-Maui-Graphics-Point,Microsoft-Maui-Graphics-Point- 'DrawnUi.Maui.Extensions.PointExtensions.Subtract(Microsoft.Maui.Graphics.Point,Microsoft.Maui.Graphics.Point)')
-- [RecycleTemplateType](#T-DrawnUi-Maui-Draw-RecycleTemplateType 'DrawnUi.Maui.Draw.RecycleTemplateType')
-  - [FillViewport](#F-DrawnUi-Maui-Draw-RecycleTemplateType-FillViewport 'DrawnUi.Maui.Draw.RecycleTemplateType.FillViewport')
-  - [None](#F-DrawnUi-Maui-Draw-RecycleTemplateType-None 'DrawnUi.Maui.Draw.RecycleTemplateType.None')
-  - [Single](#F-DrawnUi-Maui-Draw-RecycleTemplateType-Single 'DrawnUi.Maui.Draw.RecycleTemplateType.Single')
-- [RefreshIndicator](#T-DrawnUi-Maui-Draw-RefreshIndicator 'DrawnUi.Maui.Draw.RefreshIndicator')
-  - [IsRunning](#P-DrawnUi-Maui-Draw-RefreshIndicator-IsRunning 'DrawnUi.Maui.Draw.RefreshIndicator.IsRunning')
-  - [Orientation](#P-DrawnUi-Maui-Draw-RefreshIndicator-Orientation 'DrawnUi.Maui.Draw.RefreshIndicator.Orientation')
-  - [SetDragRatio(ratio)](#M-DrawnUi-Maui-Draw-RefreshIndicator-SetDragRatio-System-Single- 'DrawnUi.Maui.Draw.RefreshIndicator.SetDragRatio(System.Single)')
-- [RenderingAnimator](#T-DrawnUi-Maui-Draw-RenderingAnimator 'DrawnUi.Maui.Draw.RenderingAnimator')
-  - [OnRendering(control,context,scale)](#M-DrawnUi-Maui-Draw-RenderingAnimator-OnRendering-DrawnUi-Maui-Draw-IDrawnBase,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double- 'DrawnUi.Maui.Draw.RenderingAnimator.OnRendering(DrawnUi.Maui.Draw.IDrawnBase,DrawnUi.Maui.Draw.SkiaDrawingContext,System.Double)')
-- [RippleAnimator](#T-DrawnUi-Maui-Draw-RippleAnimator 'DrawnUi.Maui.Draw.RippleAnimator')
-  - [X](#P-DrawnUi-Maui-Draw-RippleAnimator-X 'DrawnUi.Maui.Draw.RippleAnimator.X')
-  - [Y](#P-DrawnUi-Maui-Draw-RippleAnimator-Y 'DrawnUi.Maui.Draw.RippleAnimator.Y')
-- [RubberBandUtils](#T-DrawnUi-Maui-Infrastructure-Helpers-RubberBandUtils 'DrawnUi.Maui.Infrastructure.Helpers.RubberBandUtils')
-  - [ClampOnTrack(point,track,coeff)](#M-DrawnUi-Maui-Infrastructure-Helpers-RubberBandUtils-ClampOnTrack-System-Numerics-Vector2,SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Infrastructure.Helpers.RubberBandUtils.ClampOnTrack(System.Numerics.Vector2,SkiaSharp.SKRect,System.Single)')
-  - [RubberBandClamp(coord,coeff,dim,limits,onEmpty)](#M-DrawnUi-Maui-Infrastructure-Helpers-RubberBandUtils-RubberBandClamp-System-Single,System-Single,DrawnUi-Maui-Draw-RangeF,System-Single,System-Single- 'DrawnUi.Maui.Infrastructure.Helpers.RubberBandUtils.RubberBandClamp(System.Single,System.Single,DrawnUi.Maui.Draw.RangeF,System.Single,System.Single)')
-- [ScrollingInteractionState](#T-DrawnUi-Maui-Draw-SkiaScroll-ScrollingInteractionState 'DrawnUi.Maui.Draw.SkiaScroll.ScrollingInteractionState')
-- [SecondPassArrange](#T-DrawnUi-Maui-Draw-SkiaLayout-SecondPassArrange 'DrawnUi.Maui.Draw.SkiaLayout.SecondPassArrange')
-  - [#ctor(cell,child,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-SecondPassArrange-#ctor-DrawnUi-Maui-Draw-ControlInStack,DrawnUi-Maui-Draw-SkiaControl,System-Single- 'DrawnUi.Maui.Draw.SkiaLayout.SecondPassArrange.#ctor(DrawnUi.Maui.Draw.ControlInStack,DrawnUi.Maui.Draw.SkiaControl,System.Single)')
-- [ShapeType](#T-DrawnUi-Maui-Draw-ShapeType 'DrawnUi.Maui.Draw.ShapeType')
-  - [Squricle](#F-DrawnUi-Maui-Draw-ShapeType-Squricle 'DrawnUi.Maui.Draw.ShapeType.Squricle')
-- [Sk3dView](#T-DrawnUi-Maui-Draw-Sk3dView 'DrawnUi.Maui.Draw.Sk3dView')
-  - [CameraDistance](#F-DrawnUi-Maui-Draw-Sk3dView-CameraDistance 'DrawnUi.Maui.Draw.Sk3dView.CameraDistance')
-  - [Reset()](#M-DrawnUi-Maui-Draw-Sk3dView-Reset 'DrawnUi.Maui.Draw.Sk3dView.Reset')
-- [SkSl](#T-DrawnUi-Maui-Infrastructure-SkSl 'DrawnUi.Maui.Infrastructure.SkSl')
-  - [Compile(shaderCode,filename)](#M-DrawnUi-Maui-Infrastructure-SkSl-Compile-System-String,System-String- 'DrawnUi.Maui.Infrastructure.SkSl.Compile(System.String,System.String)')
-- [SkiaBackdrop](#T-DrawnUi-Maui-Draw-SkiaBackdrop 'DrawnUi.Maui.Draw.SkiaBackdrop')
-  - [ImagePaint](#F-DrawnUi-Maui-Draw-SkiaBackdrop-ImagePaint 'DrawnUi.Maui.Draw.SkiaBackdrop.ImagePaint')
-  - [PaintColorFilter](#F-DrawnUi-Maui-Draw-SkiaBackdrop-PaintColorFilter 'DrawnUi.Maui.Draw.SkiaBackdrop.PaintColorFilter')
-  - [PaintImageFilter](#F-DrawnUi-Maui-Draw-SkiaBackdrop-PaintImageFilter 'DrawnUi.Maui.Draw.SkiaBackdrop.PaintImageFilter')
-  - [UseContext](#P-DrawnUi-Maui-Draw-SkiaBackdrop-UseContext 'DrawnUi.Maui.Draw.SkiaBackdrop.UseContext')
-  - [AttachSource()](#M-DrawnUi-Maui-Draw-SkiaBackdrop-AttachSource 'DrawnUi.Maui.Draw.SkiaBackdrop.AttachSource')
-  - [GetImage()](#M-DrawnUi-Maui-Draw-SkiaBackdrop-GetImage 'DrawnUi.Maui.Draw.SkiaBackdrop.GetImage')
-- [SkiaButton](#T-DrawnUi-Maui-Draw-SkiaButton 'DrawnUi.Maui.Draw.SkiaButton')
-  - [DelayCallbackMs](#F-DrawnUi-Maui-Draw-SkiaButton-DelayCallbackMs 'DrawnUi.Maui.Draw.SkiaButton.DelayCallbackMs')
-  - [Text](#P-DrawnUi-Maui-Draw-SkiaButton-Text 'DrawnUi.Maui.Draw.SkiaButton.Text')
-  - [CreateClip()](#M-DrawnUi-Maui-Draw-SkiaButton-CreateClip-System-Object,System-Boolean,SkiaSharp-SKPath- 'DrawnUi.Maui.Draw.SkiaButton.CreateClip(System.Object,System.Boolean,SkiaSharp.SKPath)')
-- [SkiaCacheType](#T-DrawnUi-Maui-Draw-SkiaCacheType 'DrawnUi.Maui.Draw.SkiaCacheType')
-  - [GPU](#F-DrawnUi-Maui-Draw-SkiaCacheType-GPU 'DrawnUi.Maui.Draw.SkiaCacheType.GPU')
-  - [Image](#F-DrawnUi-Maui-Draw-SkiaCacheType-Image 'DrawnUi.Maui.Draw.SkiaCacheType.Image')
-  - [ImageComposite](#F-DrawnUi-Maui-Draw-SkiaCacheType-ImageComposite 'DrawnUi.Maui.Draw.SkiaCacheType.ImageComposite')
-  - [ImageDoubleBuffered](#F-DrawnUi-Maui-Draw-SkiaCacheType-ImageDoubleBuffered 'DrawnUi.Maui.Draw.SkiaCacheType.ImageDoubleBuffered')
-  - [None](#F-DrawnUi-Maui-Draw-SkiaCacheType-None 'DrawnUi.Maui.Draw.SkiaCacheType.None')
-  - [Operations](#F-DrawnUi-Maui-Draw-SkiaCacheType-Operations 'DrawnUi.Maui.Draw.SkiaCacheType.Operations')
-  - [OperationsFull](#F-DrawnUi-Maui-Draw-SkiaCacheType-OperationsFull 'DrawnUi.Maui.Draw.SkiaCacheType.OperationsFull')
-- [SkiaCarousel](#T-DrawnUi-Maui-Controls-SkiaCarousel 'DrawnUi.Maui.Controls.SkiaCarousel')
-  - [DynamicSize](#P-DrawnUi-Maui-Controls-SkiaCarousel-DynamicSize 'DrawnUi.Maui.Controls.SkiaCarousel.DynamicSize')
-  - [IsLooped](#P-DrawnUi-Maui-Controls-SkiaCarousel-IsLooped 'DrawnUi.Maui.Controls.SkiaCarousel.IsLooped')
-  - [IsRightToLeft](#P-DrawnUi-Maui-Controls-SkiaCarousel-IsRightToLeft 'DrawnUi.Maui.Controls.SkiaCarousel.IsRightToLeft')
-  - [IsVertical](#P-DrawnUi-Maui-Controls-SkiaCarousel-IsVertical 'DrawnUi.Maui.Controls.SkiaCarousel.IsVertical')
-  - [LinearSpeedMs](#P-DrawnUi-Maui-Controls-SkiaCarousel-LinearSpeedMs 'DrawnUi.Maui.Controls.SkiaCarousel.LinearSpeedMs')
-  - [PreloadNeighboors](#P-DrawnUi-Maui-Controls-SkiaCarousel-PreloadNeighboors 'DrawnUi.Maui.Controls.SkiaCarousel.PreloadNeighboors')
-  - [ScrollAmount](#P-DrawnUi-Maui-Controls-SkiaCarousel-ScrollAmount 'DrawnUi.Maui.Controls.SkiaCarousel.ScrollAmount')
-  - [ScrollProgress](#P-DrawnUi-Maui-Controls-SkiaCarousel-ScrollProgress 'DrawnUi.Maui.Controls.SkiaCarousel.ScrollProgress')
-  - [SelectedIndex](#P-DrawnUi-Maui-Controls-SkiaCarousel-SelectedIndex 'DrawnUi.Maui.Controls.SkiaCarousel.SelectedIndex')
-  - [SidesOffset](#P-DrawnUi-Maui-Controls-SkiaCarousel-SidesOffset 'DrawnUi.Maui.Controls.SkiaCarousel.SidesOffset')
-  - [AdaptChildren()](#M-DrawnUi-Maui-Controls-SkiaCarousel-AdaptChildren 'DrawnUi.Maui.Controls.SkiaCarousel.AdaptChildren')
-  - [ApplyPosition(currentPosition)](#M-DrawnUi-Maui-Controls-SkiaCarousel-ApplyPosition-System-Numerics-Vector2- 'DrawnUi.Maui.Controls.SkiaCarousel.ApplyPosition(System.Numerics.Vector2)')
-  - [GetContentOffsetBounds()](#M-DrawnUi-Maui-Controls-SkiaCarousel-GetContentOffsetBounds 'DrawnUi.Maui.Controls.SkiaCarousel.GetContentOffsetBounds')
-  - [InitializeChildren()](#M-DrawnUi-Maui-Controls-SkiaCarousel-InitializeChildren 'DrawnUi.Maui.Controls.SkiaCarousel.InitializeChildren')
-  - [OnTemplatesAvailable()](#M-DrawnUi-Maui-Controls-SkiaCarousel-OnTemplatesAvailable 'DrawnUi.Maui.Controls.SkiaCarousel.OnTemplatesAvailable')
-- [SkiaCheckbox](#T-DrawnUi-Maui-Draw-SkiaCheckbox 'DrawnUi.Maui.Draw.SkiaCheckbox')
-- [SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl')
-  - [LockDraw](#F-DrawnUi-Maui-Draw-SkiaControl-LockDraw 'DrawnUi.Maui.Draw.SkiaControl.LockDraw')
-  - [LockRenderObject](#F-DrawnUi-Maui-Draw-SkiaControl-LockRenderObject 'DrawnUi.Maui.Draw.SkiaControl.LockRenderObject')
-  - [AllowCaching](#P-DrawnUi-Maui-Draw-SkiaControl-AllowCaching 'DrawnUi.Maui.Draw.SkiaControl.AllowCaching')
-  - [Bounds](#P-DrawnUi-Maui-Draw-SkiaControl-Bounds 'DrawnUi.Maui.Draw.SkiaControl.Bounds')
-  - [CanUseCacheDoubleBuffering](#P-DrawnUi-Maui-Draw-SkiaControl-CanUseCacheDoubleBuffering 'DrawnUi.Maui.Draw.SkiaControl.CanUseCacheDoubleBuffering')
-  - [ClipEffects](#P-DrawnUi-Maui-Draw-SkiaControl-ClipEffects 'DrawnUi.Maui.Draw.SkiaControl.ClipEffects')
-  - [ClipFrom](#P-DrawnUi-Maui-Draw-SkiaControl-ClipFrom 'DrawnUi.Maui.Draw.SkiaControl.ClipFrom')
-  - [CommandChildTapped](#P-DrawnUi-Maui-Draw-SkiaControl-CommandChildTapped 'DrawnUi.Maui.Draw.SkiaControl.CommandChildTapped')
-  - [CreateChildren](#P-DrawnUi-Maui-Draw-SkiaControl-CreateChildren 'DrawnUi.Maui.Draw.SkiaControl.CreateChildren')
-  - [CustomizeLayerPaint](#P-DrawnUi-Maui-Draw-SkiaControl-CustomizeLayerPaint 'DrawnUi.Maui.Draw.SkiaControl.CustomizeLayerPaint')
-  - [Destination](#P-DrawnUi-Maui-Draw-SkiaControl-Destination 'DrawnUi.Maui.Draw.SkiaControl.Destination')
-  - [DrawingRect](#P-DrawnUi-Maui-Draw-SkiaControl-DrawingRect 'DrawnUi.Maui.Draw.SkiaControl.DrawingRect')
-  - [ExpandCacheRecordingArea](#P-DrawnUi-Maui-Draw-SkiaControl-ExpandCacheRecordingArea 'DrawnUi.Maui.Draw.SkiaControl.ExpandCacheRecordingArea')
-  - [GestureListeners](#P-DrawnUi-Maui-Draw-SkiaControl-GestureListeners 'DrawnUi.Maui.Draw.SkiaControl.GestureListeners')
-  - [HeightRequestRatio](#P-DrawnUi-Maui-Draw-SkiaControl-HeightRequestRatio 'DrawnUi.Maui.Draw.SkiaControl.HeightRequestRatio')
-  - [Hero](#P-DrawnUi-Maui-Draw-SkiaControl-Hero 'DrawnUi.Maui.Draw.SkiaControl.Hero')
-  - [HitBoxAuto](#P-DrawnUi-Maui-Draw-SkiaControl-HitBoxAuto 'DrawnUi.Maui.Draw.SkiaControl.HitBoxAuto')
-  - [IsClippedToBounds](#P-DrawnUi-Maui-Draw-SkiaControl-IsClippedToBounds 'DrawnUi.Maui.Draw.SkiaControl.IsClippedToBounds')
-  - [IsLayoutDirty](#P-DrawnUi-Maui-Draw-SkiaControl-IsLayoutDirty 'DrawnUi.Maui.Draw.SkiaControl.IsLayoutDirty')
-  - [IsMeasuring](#P-DrawnUi-Maui-Draw-SkiaControl-IsMeasuring 'DrawnUi.Maui.Draw.SkiaControl.IsMeasuring')
-  - [IsOverlay](#P-DrawnUi-Maui-Draw-SkiaControl-IsOverlay 'DrawnUi.Maui.Draw.SkiaControl.IsOverlay')
-  - [IsRenderingWithComposition](#P-DrawnUi-Maui-Draw-SkiaControl-IsRenderingWithComposition 'DrawnUi.Maui.Draw.SkiaControl.IsRenderingWithComposition')
-  - [ItemTemplate](#P-DrawnUi-Maui-Draw-SkiaControl-ItemTemplate 'DrawnUi.Maui.Draw.SkiaControl.ItemTemplate')
-  - [ItemTemplateType](#P-DrawnUi-Maui-Draw-SkiaControl-ItemTemplateType 'DrawnUi.Maui.Draw.SkiaControl.ItemTemplateType')
-  - [LastDrawnAt](#P-DrawnUi-Maui-Draw-SkiaControl-LastDrawnAt 'DrawnUi.Maui.Draw.SkiaControl.LastDrawnAt')
-  - [LockChildrenGestures](#P-DrawnUi-Maui-Draw-SkiaControl-LockChildrenGestures 'DrawnUi.Maui.Draw.SkiaControl.LockChildrenGestures')
-  - [LockRatio](#P-DrawnUi-Maui-Draw-SkiaControl-LockRatio 'DrawnUi.Maui.Draw.SkiaControl.LockRatio')
-  - [Margins](#P-DrawnUi-Maui-Draw-SkiaControl-Margins 'DrawnUi.Maui.Draw.SkiaControl.Margins')
-  - [NeedDispose](#P-DrawnUi-Maui-Draw-SkiaControl-NeedDispose 'DrawnUi.Maui.Draw.SkiaControl.NeedDispose')
-  - [NeedUpdate](#P-DrawnUi-Maui-Draw-SkiaControl-NeedUpdate 'DrawnUi.Maui.Draw.SkiaControl.NeedUpdate')
-  - [NeedUpdateFrontCache](#P-DrawnUi-Maui-Draw-SkiaControl-NeedUpdateFrontCache 'DrawnUi.Maui.Draw.SkiaControl.NeedUpdateFrontCache')
-  - [Parent](#P-DrawnUi-Maui-Draw-SkiaControl-Parent 'DrawnUi.Maui.Draw.SkiaControl.Parent')
-  - [PostAnimators](#P-DrawnUi-Maui-Draw-SkiaControl-PostAnimators 'DrawnUi.Maui.Draw.SkiaControl.PostAnimators')
-  - [RenderObject](#P-DrawnUi-Maui-Draw-SkiaControl-RenderObject 'DrawnUi.Maui.Draw.SkiaControl.RenderObject')
-  - [RenderObjectNeedsUpdate](#P-DrawnUi-Maui-Draw-SkiaControl-RenderObjectNeedsUpdate 'DrawnUi.Maui.Draw.SkiaControl.RenderObjectNeedsUpdate')
-  - [RenderObjectPreparing](#P-DrawnUi-Maui-Draw-SkiaControl-RenderObjectPreparing 'DrawnUi.Maui.Draw.SkiaControl.RenderObjectPreparing')
-  - [RenderObjectPrevious](#P-DrawnUi-Maui-Draw-SkiaControl-RenderObjectPrevious 'DrawnUi.Maui.Draw.SkiaControl.RenderObjectPrevious')
-  - [RenderTree](#P-DrawnUi-Maui-Draw-SkiaControl-RenderTree 'DrawnUi.Maui.Draw.SkiaControl.RenderTree')
-  - [Scale](#P-DrawnUi-Maui-Draw-SkiaControl-Scale 'DrawnUi.Maui.Draw.SkiaControl.Scale')
-  - [ShouldClipAntialiased](#P-DrawnUi-Maui-Draw-SkiaControl-ShouldClipAntialiased 'DrawnUi.Maui.Draw.SkiaControl.ShouldClipAntialiased')
-  - [SizeRequest](#P-DrawnUi-Maui-Draw-SkiaControl-SizeRequest 'DrawnUi.Maui.Draw.SkiaControl.SizeRequest')
-  - [SkipRendering](#P-DrawnUi-Maui-Draw-SkiaControl-SkipRendering 'DrawnUi.Maui.Draw.SkiaControl.SkipRendering')
-  - [Superview](#P-DrawnUi-Maui-Draw-SkiaControl-Superview 'DrawnUi.Maui.Draw.SkiaControl.Superview')
-  - [UseCache](#P-DrawnUi-Maui-Draw-SkiaControl-UseCache 'DrawnUi.Maui.Draw.SkiaControl.UseCache')
-  - [UsesCacheDoubleBuffering](#P-DrawnUi-Maui-Draw-SkiaControl-UsesCacheDoubleBuffering 'DrawnUi.Maui.Draw.SkiaControl.UsesCacheDoubleBuffering')
-  - [ViewportHeightLimit](#P-DrawnUi-Maui-Draw-SkiaControl-ViewportHeightLimit 'DrawnUi.Maui.Draw.SkiaControl.ViewportHeightLimit')
-  - [ViewportWidthLimit](#P-DrawnUi-Maui-Draw-SkiaControl-ViewportWidthLimit 'DrawnUi.Maui.Draw.SkiaControl.ViewportWidthLimit')
-  - [WasDrawn](#P-DrawnUi-Maui-Draw-SkiaControl-WasDrawn 'DrawnUi.Maui.Draw.SkiaControl.WasDrawn')
-  - [WidthRequestRatio](#P-DrawnUi-Maui-Draw-SkiaControl-WidthRequestRatio 'DrawnUi.Maui.Draw.SkiaControl.WidthRequestRatio')
-  - [WillClipBounds](#P-DrawnUi-Maui-Draw-SkiaControl-WillClipBounds 'DrawnUi.Maui.Draw.SkiaControl.WillClipBounds')
-  - [X](#P-DrawnUi-Maui-Draw-SkiaControl-X 'DrawnUi.Maui.Draw.SkiaControl.X')
-  - [Y](#P-DrawnUi-Maui-Draw-SkiaControl-Y 'DrawnUi.Maui.Draw.SkiaControl.Y')
-  - [AdaptHeightContraintToRequest(heightConstraint,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-AdaptHeightContraintToRequest-System-Single,Microsoft-Maui-Thickness,System-Double- 'DrawnUi.Maui.Draw.SkiaControl.AdaptHeightContraintToRequest(System.Single,Microsoft.Maui.Thickness,System.Double)')
-  - [AdaptSizeRequestToContent(widthRequestPts,heightRequestPts)](#M-DrawnUi-Maui-Draw-SkiaControl-AdaptSizeRequestToContent-System-Double,System-Double- 'DrawnUi.Maui.Draw.SkiaControl.AdaptSizeRequestToContent(System.Double,System.Double)')
-  - [AdaptWidthConstraintToRequest(widthConstraint,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-AdaptWidthConstraintToRequest-System-Single,Microsoft-Maui-Thickness,System-Double- 'DrawnUi.Maui.Draw.SkiaControl.AdaptWidthConstraintToRequest(System.Single,Microsoft.Maui.Thickness,System.Double)')
-  - [AnimateAsync(callback,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-AnimateAsync-System-Action{System-Double},System-Action,System-Single,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Maui.Draw.SkiaControl.AnimateAsync(System.Action{System.Double},System.Action,System.Single,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
-  - [ApplyBindingContext()](#M-DrawnUi-Maui-Draw-SkiaControl-ApplyBindingContext 'DrawnUi.Maui.Draw.SkiaControl.ApplyBindingContext')
-  - [ApplyMeasureResult()](#M-DrawnUi-Maui-Draw-SkiaControl-ApplyMeasureResult 'DrawnUi.Maui.Draw.SkiaControl.ApplyMeasureResult')
-  - [AreClose(value1,value2)](#M-DrawnUi-Maui-Draw-SkiaControl-AreClose-System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.AreClose(System.Single,System.Single)')
-  - [AreClose(value1,value2)](#M-DrawnUi-Maui-Draw-SkiaControl-AreClose-System-Double,System-Double- 'DrawnUi.Maui.Draw.SkiaControl.AreClose(System.Double,System.Double)')
-  - [Arrange(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-Arrange-SkiaSharp-SKRect,System-Single,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.Arrange(SkiaSharp.SKRect,System.Single,System.Single,System.Single)')
-  - [CalculateLayout(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-CalculateLayout-SkiaSharp-SKRect,System-Single,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.CalculateLayout(SkiaSharp.SKRect,System.Single,System.Single,System.Single)')
-  - [CalculateMargins()](#M-DrawnUi-Maui-Draw-SkiaControl-CalculateMargins 'DrawnUi.Maui.Draw.SkiaControl.CalculateMargins')
-  - [ClipSmart(canvas,path,operation)](#M-DrawnUi-Maui-Draw-SkiaControl-ClipSmart-SkiaSharp-SKCanvas,SkiaSharp-SKPath,SkiaSharp-SKClipOperation- 'DrawnUi.Maui.Draw.SkiaControl.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)')
-  - [CommitInvalidations()](#M-DrawnUi-Maui-Draw-SkiaControl-CommitInvalidations 'DrawnUi.Maui.Draw.SkiaControl.CommitInvalidations')
-  - [CreateChildrenFromCode()](#M-DrawnUi-Maui-Draw-SkiaControl-CreateChildrenFromCode 'DrawnUi.Maui.Draw.SkiaControl.CreateChildrenFromCode')
-  - [CreateClip(arguments)](#M-DrawnUi-Maui-Draw-SkiaControl-CreateClip-System-Object,System-Boolean,SkiaSharp-SKPath- 'DrawnUi.Maui.Draw.SkiaControl.CreateClip(System.Object,System.Boolean,SkiaSharp.SKPath)')
-  - [CreateRenderingObjectAndPaint(context,recordArea,action)](#M-DrawnUi-Maui-Draw-SkiaControl-CreateRenderingObjectAndPaint-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,SkiaSharp-SKRect,System-Action{DrawnUi-Maui-Draw-SkiaDrawingContext}- 'DrawnUi.Maui.Draw.SkiaControl.CreateRenderingObjectAndPaint(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,SkiaSharp.SKRect,System.Action{DrawnUi.Maui.Draw.SkiaDrawingContext})')
-  - [DefineAvailableSize(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-DefineAvailableSize-SkiaSharp-SKRect,System-Single,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.DefineAvailableSize(SkiaSharp.SKRect,System.Single,System.Single,System.Single)')
-  - [Dispose()](#M-DrawnUi-Maui-Draw-SkiaControl-Dispose 'DrawnUi.Maui.Draw.SkiaControl.Dispose')
-  - [DisposeObject(disposable)](#M-DrawnUi-Maui-Draw-SkiaControl-DisposeObject-System-IDisposable- 'DrawnUi.Maui.Draw.SkiaControl.DisposeObject(System.IDisposable)')
-  - [DrawRenderObject(cache,ctx,destination)](#M-DrawnUi-Maui-Draw-SkiaControl-DrawRenderObject-DrawnUi-Maui-Draw-CachedObject,DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaControl.DrawRenderObject(DrawnUi.Maui.Draw.CachedObject,DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect)')
-  - [DrawUsingRenderObject(context,widthRequest,heightRequest,destination,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-DrawUsingRenderObject-DrawnUi-Maui-Draw-SkiaDrawingContext,System-Single,System-Single,SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.DrawUsingRenderObject(DrawnUi.Maui.Draw.SkiaDrawingContext,System.Single,System.Single,SkiaSharp.SKRect,System.Single)')
-  - [DrawViews(context,destination,scale,debug)](#M-DrawnUi-Maui-Draw-SkiaControl-DrawViews-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single,System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.DrawViews(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Boolean)')
-  - [FadeToAsync(end,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-FadeToAsync-System-Double,System-Single,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Maui.Draw.SkiaControl.FadeToAsync(System.Double,System.Single,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
-  - [FinalizeDrawingWithRenderObject(context,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-FinalizeDrawingWithRenderObject-DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double- 'DrawnUi.Maui.Draw.SkiaControl.FinalizeDrawingWithRenderObject(DrawnUi.Maui.Draw.SkiaDrawingContext,System.Double)')
-  - [GenerateParentChain()](#M-DrawnUi-Maui-Draw-SkiaControl-GenerateParentChain 'DrawnUi.Maui.Draw.SkiaControl.GenerateParentChain')
-  - [GestureIsInside(args)](#M-DrawnUi-Maui-Draw-SkiaControl-GestureIsInside-AppoMobi-Maui-Gestures-TouchActionEventArgs,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.GestureIsInside(AppoMobi.Maui.Gestures.TouchActionEventArgs,System.Single,System.Single)')
-  - [GestureStartedInside(args)](#M-DrawnUi-Maui-Draw-SkiaControl-GestureStartedInside-AppoMobi-Maui-Gestures-TouchActionEventArgs,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.GestureStartedInside(AppoMobi.Maui.Gestures.TouchActionEventArgs,System.Single,System.Single)')
-  - [GetCacheArea()](#M-DrawnUi-Maui-Draw-SkiaControl-GetCacheArea-SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaControl.GetCacheArea(SkiaSharp.SKRect)')
-  - [GetCacheRecordingArea()](#M-DrawnUi-Maui-Draw-SkiaControl-GetCacheRecordingArea-SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaControl.GetCacheRecordingArea(SkiaSharp.SKRect)')
-  - [GetFuturePositionOnCanvas()](#M-DrawnUi-Maui-Draw-SkiaControl-GetFuturePositionOnCanvas-System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.GetFuturePositionOnCanvas(System.Boolean)')
-  - [GetFuturePositionOnCanvasInPoints()](#M-DrawnUi-Maui-Draw-SkiaControl-GetFuturePositionOnCanvasInPoints-System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.GetFuturePositionOnCanvasInPoints(System.Boolean)')
-  - [GetOnScreenVisibleArea()](#M-DrawnUi-Maui-Draw-SkiaControl-GetOnScreenVisibleArea-System-Single- 'DrawnUi.Maui.Draw.SkiaControl.GetOnScreenVisibleArea(System.Single)')
-  - [GetPositionOnCanvas()](#M-DrawnUi-Maui-Draw-SkiaControl-GetPositionOnCanvas-System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.GetPositionOnCanvas(System.Boolean)')
-  - [GetPositionOnCanvasInPoints()](#M-DrawnUi-Maui-Draw-SkiaControl-GetPositionOnCanvasInPoints-System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.GetPositionOnCanvasInPoints(System.Boolean)')
-  - [GetRenderingScaleFor(width,height)](#M-DrawnUi-Maui-Draw-SkiaControl-GetRenderingScaleFor-System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.GetRenderingScaleFor(System.Single,System.Single)')
-  - [GetSelfDrawingPosition()](#M-DrawnUi-Maui-Draw-SkiaControl-GetSelfDrawingPosition 'DrawnUi.Maui.Draw.SkiaControl.GetSelfDrawingPosition')
-  - [GetTopParentView()](#M-DrawnUi-Maui-Draw-SkiaControl-GetTopParentView 'DrawnUi.Maui.Draw.SkiaControl.GetTopParentView')
-  - [HitIsInside()](#M-DrawnUi-Maui-Draw-SkiaControl-HitIsInside-System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.HitIsInside(System.Single,System.Single)')
-  - [Invalidate()](#M-DrawnUi-Maui-Draw-SkiaControl-Invalidate 'DrawnUi.Maui.Draw.SkiaControl.Invalidate')
-  - [InvalidateByChild(child)](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateByChild-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.SkiaControl.InvalidateByChild(DrawnUi.Maui.Draw.SkiaControl)')
-  - [InvalidateChildren(control)](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateChildren-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.SkiaControl.InvalidateChildren(DrawnUi.Maui.Draw.SkiaControl)')
-  - [InvalidateChildrenTree(control)](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateChildrenTree-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.SkiaControl.InvalidateChildrenTree(DrawnUi.Maui.Draw.SkiaControl)')
-  - [InvalidateInternal()](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateInternal 'DrawnUi.Maui.Draw.SkiaControl.InvalidateInternal')
-  - [InvalidateViewport()](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateViewport 'DrawnUi.Maui.Draw.SkiaControl.InvalidateViewport')
-  - [IsOne(value)](#M-DrawnUi-Maui-Draw-SkiaControl-IsOne-System-Double- 'DrawnUi.Maui.Draw.SkiaControl.IsOne(System.Double)')
-  - [IsPixelInside(x,y)](#M-DrawnUi-Maui-Draw-SkiaControl-IsPixelInside-System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.IsPixelInside(System.Single,System.Single)')
-  - [IsPointInside(x,y,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-IsPointInside-System-Single,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.IsPointInside(System.Single,System.Single,System.Single)')
-  - [Measure(widthConstraint,heightConstraint,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-Measure-System-Single,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.Measure(System.Single,System.Single,System.Single)')
-  - [MeasureAbsoluteBase(rectForChildrenPixels,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-MeasureAbsoluteBase-SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.MeasureAbsoluteBase(SkiaSharp.SKRect,System.Single)')
-  - [MeasureChild(child,availableWidth,availableHeight,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-MeasureChild-DrawnUi-Maui-Draw-SkiaControl,System-Double,System-Double,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.MeasureChild(DrawnUi.Maui.Draw.SkiaControl,System.Double,System.Double,System.Single)')
-  - [MeasureContent(children,rectForChildrenPixels,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-MeasureContent-System-Collections-Generic-IEnumerable{DrawnUi-Maui-Draw-SkiaControl},SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.MeasureContent(System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl},SkiaSharp.SKRect,System.Single)')
-  - [NeedRepaint()](#M-DrawnUi-Maui-Draw-SkiaControl-NeedRepaint-Microsoft-Maui-Controls-BindableObject,System-Object,System-Object- 'DrawnUi.Maui.Draw.SkiaControl.NeedRepaint(Microsoft.Maui.Controls.BindableObject,System.Object,System.Object)')
-  - [OnBindingContextChanged()](#M-DrawnUi-Maui-Draw-SkiaControl-OnBindingContextChanged 'DrawnUi.Maui.Draw.SkiaControl.OnBindingContextChanged')
-  - [OnDisposing()](#M-DrawnUi-Maui-Draw-SkiaControl-OnDisposing 'DrawnUi.Maui.Draw.SkiaControl.OnDisposing')
-  - [OnLayoutReady()](#M-DrawnUi-Maui-Draw-SkiaControl-OnLayoutReady 'DrawnUi.Maui.Draw.SkiaControl.OnLayoutReady')
-  - [OnParentVisibilityChanged(newvalue)](#M-DrawnUi-Maui-Draw-SkiaControl-OnParentVisibilityChanged-System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.OnParentVisibilityChanged(System.Boolean)')
-  - [OnVisibilityChanged(newvalue)](#M-DrawnUi-Maui-Draw-SkiaControl-OnVisibilityChanged-System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.OnVisibilityChanged(System.Boolean)')
-  - [OnWillDisposeWithChildren()](#M-DrawnUi-Maui-Draw-SkiaControl-OnWillDisposeWithChildren 'DrawnUi.Maui.Draw.SkiaControl.OnWillDisposeWithChildren')
-  - [Paint(ctx,destination,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-Paint-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single,System-Object- 'DrawnUi.Maui.Draw.SkiaControl.Paint(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Object)')
-  - [PaintTintBackground(canvas,destination)](#M-DrawnUi-Maui-Draw-SkiaControl-PaintTintBackground-SkiaSharp-SKCanvas,SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaControl.PaintTintBackground(SkiaSharp.SKCanvas,SkiaSharp.SKRect)')
-  - [PlayRippleAnimation(color,x,y,removePrevious)](#M-DrawnUi-Maui-Draw-SkiaControl-PlayRippleAnimation-Microsoft-Maui-Graphics-Color,System-Double,System-Double,System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.PlayRippleAnimation(Microsoft.Maui.Graphics.Color,System.Double,System.Double,System.Boolean)')
-  - [PostponeInvalidation(key,action)](#M-DrawnUi-Maui-Draw-SkiaControl-PostponeInvalidation-System-String,System-Action- 'DrawnUi.Maui.Draw.SkiaControl.PostponeInvalidation(System.String,System.Action)')
-  - [PreArrange()](#M-DrawnUi-Maui-Draw-SkiaControl-PreArrange-SkiaSharp-SKRect,System-Single,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.PreArrange(SkiaSharp.SKRect,System.Single,System.Single,System.Single)')
-  - [Reload()](#M-DrawnUi-Maui-Draw-SkiaControl-Reload 'DrawnUi.Maui.Draw.SkiaControl.Reload')
-  - [RenderViewsList(skiaControls,context,destination,scale,debug)](#M-DrawnUi-Maui-Draw-SkiaControl-RenderViewsList-System-Collections-Generic-IEnumerable{DrawnUi-Maui-Draw-SkiaControl},DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single,System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.RenderViewsList(System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl},DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Boolean)')
-  - [Repaint()](#M-DrawnUi-Maui-Draw-SkiaControl-Repaint 'DrawnUi.Maui.Draw.SkiaControl.Repaint')
-  - [RotateToAsync(end,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-RotateToAsync-System-Double,System-UInt32,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Maui.Draw.SkiaControl.RotateToAsync(System.Double,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
-  - [SafeAction(action)](#M-DrawnUi-Maui-Draw-SkiaControl-SafeAction-System-Action- 'DrawnUi.Maui.Draw.SkiaControl.SafeAction(System.Action)')
-  - [SafePostAction(action)](#M-DrawnUi-Maui-Draw-SkiaControl-SafePostAction-System-Action- 'DrawnUi.Maui.Draw.SkiaControl.SafePostAction(System.Action)')
-  - [ScaleToAsync(x,y,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-ScaleToAsync-System-Double,System-Double,System-Single,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Maui.Draw.SkiaControl.ScaleToAsync(System.Double,System.Double,System.Single,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
-  - [SetInheritedBindingContext(context)](#M-DrawnUi-Maui-Draw-SkiaControl-SetInheritedBindingContext-System-Object- 'DrawnUi.Maui.Draw.SkiaControl.SetInheritedBindingContext(System.Object)')
-  - [SetMeasured(width,height,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-SetMeasured-System-Single,System-Single,System-Boolean,System-Boolean,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.SetMeasured(System.Single,System.Single,System.Boolean,System.Boolean,System.Single)')
-  - [SetVisualTransform(transform)](#M-DrawnUi-Maui-Draw-SkiaControl-SetVisualTransform-DrawnUi-Maui-Infrastructure-VisualTransform- 'DrawnUi.Maui.Draw.SkiaControl.SetVisualTransform(DrawnUi.Maui.Infrastructure.VisualTransform)')
-  - [SetupGradient(paint,gradient,destination)](#M-DrawnUi-Maui-Draw-SkiaControl-SetupGradient-SkiaSharp-SKPaint,DrawnUi-Maui-Draw-SkiaGradient,SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaControl.SetupGradient(SkiaSharp.SKPaint,DrawnUi.Maui.Draw.SkiaGradient,SkiaSharp.SKRect)')
-  - [SetupShadow(paint,shadow)](#M-DrawnUi-Maui-Draw-SkiaControl-SetupShadow-SkiaSharp-SKPaint,DrawnUi-Maui-Draw-SkiaShadow,System-Single- 'DrawnUi.Maui.Draw.SkiaControl.SetupShadow(SkiaSharp.SKPaint,DrawnUi.Maui.Draw.SkiaShadow,System.Single)')
-  - [TranslateInputCoords(childOffset)](#M-DrawnUi-Maui-Draw-SkiaControl-TranslateInputCoords-SkiaSharp-SKPoint,System-Boolean- 'DrawnUi.Maui.Draw.SkiaControl.TranslateInputCoords(SkiaSharp.SKPoint,System.Boolean)')
-  - [TranslateToAsync(x,y,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-TranslateToAsync-System-Double,System-Double,System-Single,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Maui.Draw.SkiaControl.TranslateToAsync(System.Double,System.Double,System.Single,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
-  - [Update()](#M-DrawnUi-Maui-Draw-SkiaControl-Update 'DrawnUi.Maui.Draw.SkiaControl.Update')
-- [SkiaControlWithRect](#T-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect 'DrawnUi.Maui.Draw.SkiaControl.SkiaControlWithRect')
-  - [#ctor(Control,Rect,Index)](#M-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-#ctor-DrawnUi-Maui-Draw-SkiaControl,SkiaSharp-SKRect,SkiaSharp-SKRect,System-Int32- 'DrawnUi.Maui.Draw.SkiaControl.SkiaControlWithRect.#ctor(DrawnUi.Maui.Draw.SkiaControl,SkiaSharp.SKRect,SkiaSharp.SKRect,System.Int32)')
-  - [Control](#P-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-Control 'DrawnUi.Maui.Draw.SkiaControl.SkiaControlWithRect.Control')
-  - [Index](#P-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-Index 'DrawnUi.Maui.Draw.SkiaControl.SkiaControlWithRect.Index')
-  - [Rect](#P-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-Rect 'DrawnUi.Maui.Draw.SkiaControl.SkiaControlWithRect.Rect')
-- [SkiaDrawer](#T-DrawnUi-Maui-Controls-SkiaDrawer 'DrawnUi.Maui.Controls.SkiaDrawer')
-  - [AmplitudeSize](#P-DrawnUi-Maui-Controls-SkiaDrawer-AmplitudeSize 'DrawnUi.Maui.Controls.SkiaDrawer.AmplitudeSize')
-  - [HeaderSize](#P-DrawnUi-Maui-Controls-SkiaDrawer-HeaderSize 'DrawnUi.Maui.Controls.SkiaDrawer.HeaderSize')
-  - [ClampOffsetWithRubberBand(x,y)](#M-DrawnUi-Maui-Controls-SkiaDrawer-ClampOffsetWithRubberBand-System-Single,System-Single- 'DrawnUi.Maui.Controls.SkiaDrawer.ClampOffsetWithRubberBand(System.Single,System.Single)')
-  - [GetClosestSidePoint(overscrollPoint,contentRect,viewportSize)](#M-DrawnUi-Maui-Controls-SkiaDrawer-GetClosestSidePoint-SkiaSharp-SKPoint,SkiaSharp-SKRect,SkiaSharp-SKSize- 'DrawnUi.Maui.Controls.SkiaDrawer.GetClosestSidePoint(SkiaSharp.SKPoint,SkiaSharp.SKRect,SkiaSharp.SKSize)')
-  - [GetOffsetToHide()](#M-DrawnUi-Maui-Controls-SkiaDrawer-GetOffsetToHide 'DrawnUi.Maui.Controls.SkiaDrawer.GetOffsetToHide')
-- [SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext')
-  - [IsRecycled](#P-DrawnUi-Maui-Draw-SkiaDrawingContext-IsRecycled 'DrawnUi.Maui.Draw.SkiaDrawingContext.IsRecycled')
-  - [IsVirtual](#P-DrawnUi-Maui-Draw-SkiaDrawingContext-IsVirtual 'DrawnUi.Maui.Draw.SkiaDrawingContext.IsVirtual')
-- [SkiaDrawnCell](#T-DrawnUi-Maui-Controls-SkiaDrawnCell 'DrawnUi.Maui.Controls.SkiaDrawnCell')
-- [SkiaDynamicDrawnCell](#T-DrawnUi-Maui-Controls-SkiaDynamicDrawnCell 'DrawnUi.Maui.Controls.SkiaDynamicDrawnCell')
-- [SkiaEditor](#T-DrawnUi-Maui-Draw-SkiaEditor 'DrawnUi.Maui.Draw.SkiaEditor')
-  - [GetCursorPosition(x,y)](#M-DrawnUi-Maui-Draw-SkiaEditor-GetCursorPosition-System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaEditor.GetCursorPosition(System.Single,System.Single)')
-  - [MoveCursorTo(x,y)](#M-DrawnUi-Maui-Draw-SkiaEditor-MoveCursorTo-System-Double,System-Double- 'DrawnUi.Maui.Draw.SkiaEditor.MoveCursorTo(System.Double,System.Double)')
-  - [MoveInternalCursor()](#M-DrawnUi-Maui-Draw-SkiaEditor-MoveInternalCursor 'DrawnUi.Maui.Draw.SkiaEditor.MoveInternalCursor')
-  - [SetCursorPositionWithDelay(ms,position)](#M-DrawnUi-Maui-Draw-SkiaEditor-SetCursorPositionWithDelay-System-Int32,System-Int32- 'DrawnUi.Maui.Draw.SkiaEditor.SetCursorPositionWithDelay(System.Int32,System.Int32)')
-  - [Submit()](#M-DrawnUi-Maui-Draw-SkiaEditor-Submit 'DrawnUi.Maui.Draw.SkiaEditor.Submit')
-  - [UpdateCursorVisibility()](#M-DrawnUi-Maui-Draw-SkiaEditor-UpdateCursorVisibility 'DrawnUi.Maui.Draw.SkiaEditor.UpdateCursorVisibility')
-- [SkiaEffect](#T-DrawnUi-Maui-Draw-SkiaEffect 'DrawnUi.Maui.Draw.SkiaEffect')
-  - [Parent](#P-DrawnUi-Maui-Draw-SkiaEffect-Parent 'DrawnUi.Maui.Draw.SkiaEffect.Parent')
-- [SkiaFontManager](#T-DrawnUi-Maui-Draw-SkiaFontManager 'DrawnUi.Maui.Draw.SkiaFontManager')
-  - [GetEmbeddedResourceNames()](#M-DrawnUi-Maui-Draw-SkiaFontManager-GetEmbeddedResourceNames 'DrawnUi.Maui.Draw.SkiaFontManager.GetEmbeddedResourceNames')
-  - [GetEmbeddedResourceStream(resourceName)](#M-DrawnUi-Maui-Draw-SkiaFontManager-GetEmbeddedResourceStream-System-String- 'DrawnUi.Maui.Draw.SkiaFontManager.GetEmbeddedResourceStream(System.String)')
-  - [GetWeightEnum(weight)](#M-DrawnUi-Maui-Draw-SkiaFontManager-GetWeightEnum-System-Int32- 'DrawnUi.Maui.Draw.SkiaFontManager.GetWeightEnum(System.Int32)')
-- [SkiaGif](#T-DrawnUi-Maui-Controls-SkiaGif 'DrawnUi.Maui.Controls.SkiaGif')
-  - [#ctor()](#M-DrawnUi-Maui-Controls-SkiaGif-#ctor 'DrawnUi.Maui.Controls.SkiaGif.#ctor')
-  - [#ctor(display)](#M-DrawnUi-Maui-Controls-SkiaGif-#ctor-DrawnUi-Maui-Draw-SkiaImage- 'DrawnUi.Maui.Controls.SkiaGif.#ctor(DrawnUi.Maui.Draw.SkiaImage)')
-  - [OnAnimatorSeeking(frame)](#M-DrawnUi-Maui-Controls-SkiaGif-OnAnimatorSeeking-System-Double- 'DrawnUi.Maui.Controls.SkiaGif.OnAnimatorSeeking(System.Double)')
-  - [OnAnimatorUpdated(value)](#M-DrawnUi-Maui-Controls-SkiaGif-OnAnimatorUpdated-System-Double- 'DrawnUi.Maui.Controls.SkiaGif.OnAnimatorUpdated(System.Double)')
-- [SkiaGridStructure](#T-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure 'DrawnUi.Maui.Draw.SkiaLayout.SkiaGridStructure')
-  - [_gridHeightConstraint](#F-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure-_gridHeightConstraint 'DrawnUi.Maui.Draw.SkiaLayout.SkiaGridStructure._gridHeightConstraint')
-  - [_gridWidthConstraint](#F-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure-_gridWidthConstraint 'DrawnUi.Maui.Draw.SkiaLayout.SkiaGridStructure._gridWidthConstraint')
-  - [InitializeCells()](#M-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure-InitializeCells 'DrawnUi.Maui.Draw.SkiaLayout.SkiaGridStructure.InitializeCells')
-- [SkiaHotspot](#T-DrawnUi-Maui-Draw-SkiaHotspot 'DrawnUi.Maui.Draw.SkiaHotspot')
-  - [DelayCallbackMs](#F-DrawnUi-Maui-Draw-SkiaHotspot-DelayCallbackMs 'DrawnUi.Maui.Draw.SkiaHotspot.DelayCallbackMs')
-- [SkiaHotspotZoom](#T-DrawnUi-Maui-Draw-SkiaHotspotZoom 'DrawnUi.Maui.Draw.SkiaHotspotZoom')
-  - [LastValue](#F-DrawnUi-Maui-Draw-SkiaHotspotZoom-LastValue 'DrawnUi.Maui.Draw.SkiaHotspotZoom.LastValue')
-  - [ZoomSpeed](#P-DrawnUi-Maui-Draw-SkiaHotspotZoom-ZoomSpeed 'DrawnUi.Maui.Draw.SkiaHotspotZoom.ZoomSpeed')
-- [SkiaHoverMask](#T-DrawnUi-Maui-Draw-SkiaHoverMask 'DrawnUi.Maui.Draw.SkiaHoverMask')
-- [SkiaImage](#T-DrawnUi-Maui-Draw-SkiaImage 'DrawnUi.Maui.Draw.SkiaImage')
-  - [ImagePaint](#F-DrawnUi-Maui-Draw-SkiaImage-ImagePaint 'DrawnUi.Maui.Draw.SkiaImage.ImagePaint')
-  - [PaintColorFilter](#F-DrawnUi-Maui-Draw-SkiaImage-PaintColorFilter 'DrawnUi.Maui.Draw.SkiaImage.PaintColorFilter')
-  - [PaintImageFilter](#F-DrawnUi-Maui-Draw-SkiaImage-PaintImageFilter 'DrawnUi.Maui.Draw.SkiaImage.PaintImageFilter')
-  - [Aspect](#P-DrawnUi-Maui-Draw-SkiaImage-Aspect 'DrawnUi.Maui.Draw.SkiaImage.Aspect')
-  - [EraseChangedContent](#P-DrawnUi-Maui-Draw-SkiaImage-EraseChangedContent 'DrawnUi.Maui.Draw.SkiaImage.EraseChangedContent')
-  - [ImageBitmap](#P-DrawnUi-Maui-Draw-SkiaImage-ImageBitmap 'DrawnUi.Maui.Draw.SkiaImage.ImageBitmap')
-  - [LastSource](#P-DrawnUi-Maui-Draw-SkiaImage-LastSource 'DrawnUi.Maui.Draw.SkiaImage.LastSource')
-  - [LoadSourceOnFirstDraw](#P-DrawnUi-Maui-Draw-SkiaImage-LoadSourceOnFirstDraw 'DrawnUi.Maui.Draw.SkiaImage.LoadSourceOnFirstDraw')
-  - [PreviewBase64](#P-DrawnUi-Maui-Draw-SkiaImage-PreviewBase64 'DrawnUi.Maui.Draw.SkiaImage.PreviewBase64')
-  - [RescalingQuality](#P-DrawnUi-Maui-Draw-SkiaImage-RescalingQuality 'DrawnUi.Maui.Draw.SkiaImage.RescalingQuality')
-  - [SourceHeight](#P-DrawnUi-Maui-Draw-SkiaImage-SourceHeight 'DrawnUi.Maui.Draw.SkiaImage.SourceHeight')
-  - [SourceWidth](#P-DrawnUi-Maui-Draw-SkiaImage-SourceWidth 'DrawnUi.Maui.Draw.SkiaImage.SourceWidth')
-  - [GetRenderedSource()](#M-DrawnUi-Maui-Draw-SkiaImage-GetRenderedSource 'DrawnUi.Maui.Draw.SkiaImage.GetRenderedSource')
-  - [SetBitmapInternal(bitmap)](#M-DrawnUi-Maui-Draw-SkiaImage-SetBitmapInternal-SkiaSharp-SKBitmap,System-Boolean- 'DrawnUi.Maui.Draw.SkiaImage.SetBitmapInternal(SkiaSharp.SKBitmap,System.Boolean)')
-  - [SetImage(loaded)](#M-DrawnUi-Maui-Draw-SkiaImage-SetImage-DrawnUi-Maui-Draw-LoadedImageSource- 'DrawnUi.Maui.Draw.SkiaImage.SetImage(DrawnUi.Maui.Draw.LoadedImageSource)')
-- [SkiaImageEffect](#T-DrawnUi-Maui-Draw-SkiaImageEffect 'DrawnUi.Maui.Draw.SkiaImageEffect')
-  - [Tint](#F-DrawnUi-Maui-Draw-SkiaImageEffect-Tint 'DrawnUi.Maui.Draw.SkiaImageEffect.Tint')
-- [SkiaImageEffects](#T-DrawnUi-Maui-Draw-SkiaImageEffects 'DrawnUi.Maui.Draw.SkiaImageEffects')
-  - [Brightness(amount)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Brightness-System-Single- 'DrawnUi.Maui.Draw.SkiaImageEffects.Brightness(System.Single)')
-  - [Contrast(amount)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Contrast-System-Single- 'DrawnUi.Maui.Draw.SkiaImageEffects.Contrast(System.Single)')
-  - [Gamma(gamma)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Gamma-System-Single- 'DrawnUi.Maui.Draw.SkiaImageEffects.Gamma(System.Single)')
-  - [Grayscale()](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Grayscale 'DrawnUi.Maui.Draw.SkiaImageEffects.Grayscale')
-  - [Grayscale2()](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Grayscale2 'DrawnUi.Maui.Draw.SkiaImageEffects.Grayscale2')
-  - [InvertColors()](#M-DrawnUi-Maui-Draw-SkiaImageEffects-InvertColors 'DrawnUi.Maui.Draw.SkiaImageEffects.InvertColors')
-  - [Lightness(amount)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Lightness-System-Single- 'DrawnUi.Maui.Draw.SkiaImageEffects.Lightness(System.Single)')
-  - [Saturation(amount)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Saturation-System-Single- 'DrawnUi.Maui.Draw.SkiaImageEffects.Saturation(System.Single)')
-  - [Sepia()](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Sepia 'DrawnUi.Maui.Draw.SkiaImageEffects.Sepia')
-  - [Tint(color,mode)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Tint-Microsoft-Maui-Graphics-Color,SkiaSharp-SKBlendMode- 'DrawnUi.Maui.Draw.SkiaImageEffects.Tint(Microsoft.Maui.Graphics.Color,SkiaSharp.SKBlendMode)')
-- [SkiaImageManager](#T-DrawnUi-Maui-Draw-SkiaImageManager 'DrawnUi.Maui.Draw.SkiaImageManager')
-  - [CacheLongevitySecs](#F-DrawnUi-Maui-Draw-SkiaImageManager-CacheLongevitySecs 'DrawnUi.Maui.Draw.SkiaImageManager.CacheLongevitySecs')
-  - [NativeFilePrefix](#F-DrawnUi-Maui-Draw-SkiaImageManager-NativeFilePrefix 'DrawnUi.Maui.Draw.SkiaImageManager.NativeFilePrefix')
-  - [ReuseBitmaps](#F-DrawnUi-Maui-Draw-SkiaImageManager-ReuseBitmaps 'DrawnUi.Maui.Draw.SkiaImageManager.ReuseBitmaps')
-  - [AddToCache(uri,bitmap,cacheLongevityMinutes)](#M-DrawnUi-Maui-Draw-SkiaImageManager-AddToCache-System-String,SkiaSharp-SKBitmap,System-Int32- 'DrawnUi.Maui.Draw.SkiaImageManager.AddToCache(System.String,SkiaSharp.SKBitmap,System.Int32)')
-  - [LoadImageAsync(source,token)](#M-DrawnUi-Maui-Draw-SkiaImageManager-LoadImageAsync-Microsoft-Maui-Controls-ImageSource,System-Threading-CancellationToken- 'DrawnUi.Maui.Draw.SkiaImageManager.LoadImageAsync(Microsoft.Maui.Controls.ImageSource,System.Threading.CancellationToken)')
-  - [LoadImageManagedAsync(source,token)](#M-DrawnUi-Maui-Draw-SkiaImageManager-LoadImageManagedAsync-Microsoft-Maui-Controls-ImageSource,System-Threading-CancellationTokenSource,DrawnUi-Maui-Draw-LoadPriority- 'DrawnUi.Maui.Draw.SkiaImageManager.LoadImageManagedAsync(Microsoft.Maui.Controls.ImageSource,System.Threading.CancellationTokenSource,DrawnUi.Maui.Draw.LoadPriority)')
-- [SkiaImageTiles](#T-DrawnUi-Maui-Draw-SkiaImageTiles 'DrawnUi.Maui.Draw.SkiaImageTiles')
-  - [DrawTiles](#P-DrawnUi-Maui-Draw-SkiaImageTiles-DrawTiles 'DrawnUi.Maui.Draw.SkiaImageTiles.DrawTiles')
-  - [Tile](#P-DrawnUi-Maui-Draw-SkiaImageTiles-Tile 'DrawnUi.Maui.Draw.SkiaImageTiles.Tile')
-  - [TileAspect](#P-DrawnUi-Maui-Draw-SkiaImageTiles-TileAspect 'DrawnUi.Maui.Draw.SkiaImageTiles.TileAspect')
-  - [OnSourceSuccess()](#M-DrawnUi-Maui-Draw-SkiaImageTiles-OnSourceSuccess 'DrawnUi.Maui.Draw.SkiaImageTiles.OnSourceSuccess')
-- [SkiaLabel](#T-DrawnUi-Maui-Draw-SkiaLabel 'DrawnUi.Maui.Draw.SkiaLabel')
-  - [CharacterSpacing](#P-DrawnUi-Maui-Draw-SkiaLabel-CharacterSpacing 'DrawnUi.Maui.Draw.SkiaLabel.CharacterSpacing')
-  - [DropShadowOffsetX](#P-DrawnUi-Maui-Draw-SkiaLabel-DropShadowOffsetX 'DrawnUi.Maui.Draw.SkiaLabel.DropShadowOffsetX')
-  - [FallbackCharacter](#P-DrawnUi-Maui-Draw-SkiaLabel-FallbackCharacter 'DrawnUi.Maui.Draw.SkiaLabel.FallbackCharacter')
-  - [Font](#P-DrawnUi-Maui-Draw-SkiaLabel-Font 'DrawnUi.Maui.Draw.SkiaLabel.Font')
-  - [LineHeightUniform](#P-DrawnUi-Maui-Draw-SkiaLabel-LineHeightUniform 'DrawnUi.Maui.Draw.SkiaLabel.LineHeightUniform')
-  - [LineHeightWithSpacing](#P-DrawnUi-Maui-Draw-SkiaLabel-LineHeightWithSpacing 'DrawnUi.Maui.Draw.SkiaLabel.LineHeightWithSpacing')
-  - [MonoForDigits](#P-DrawnUi-Maui-Draw-SkiaLabel-MonoForDigits 'DrawnUi.Maui.Draw.SkiaLabel.MonoForDigits')
-  - [SpaceBetweenParagraphs](#P-DrawnUi-Maui-Draw-SkiaLabel-SpaceBetweenParagraphs 'DrawnUi.Maui.Draw.SkiaLabel.SpaceBetweenParagraphs')
-  - [AddEmptyLine(result,span,totalHeight,heightBlock,isNewParagraph,needsShaping)](#M-DrawnUi-Maui-Draw-SkiaLabel-AddEmptyLine-System-Collections-Generic-List{DrawnUi-Maui-Draw-TextLine},DrawnUi-Maui-Draw-TextSpan,System-Single,System-Single,System-Boolean,System-Boolean- 'DrawnUi.Maui.Draw.SkiaLabel.AddEmptyLine(System.Collections.Generic.List{DrawnUi.Maui.Draw.TextLine},DrawnUi.Maui.Draw.TextSpan,System.Single,System.Single,System.Boolean,System.Boolean)')
-  - [DrawCharacter(canvas,lineIndex,letterIndex,text,x,y,paint,paintStroke,scale)](#M-DrawnUi-Maui-Draw-SkiaLabel-DrawCharacter-SkiaSharp-SKCanvas,System-Int32,System-Int32,System-String,System-Single,System-Single,SkiaSharp-SKPaint,SkiaSharp-SKPaint,SkiaSharp-SKPaint,SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.SkiaLabel.DrawCharacter(SkiaSharp.SKCanvas,System.Int32,System.Int32,System.String,System.Single,System.Single,SkiaSharp.SKPaint,SkiaSharp.SKPaint,SkiaSharp.SKPaint,SkiaSharp.SKRect,System.Single)')
-  - [DrawText(canvas,x,y,text,textPaint,strokePaint,scale)](#M-DrawnUi-Maui-Draw-SkiaLabel-DrawText-SkiaSharp-SKCanvas,System-Single,System-Single,System-String,SkiaSharp-SKPaint,SkiaSharp-SKPaint,SkiaSharp-SKPaint,System-Single- 'DrawnUi.Maui.Draw.SkiaLabel.DrawText(SkiaSharp.SKCanvas,System.Single,System.Single,System.String,SkiaSharp.SKPaint,SkiaSharp.SKPaint,SkiaSharp.SKPaint,System.Single)')
-  - [MeasureText(paint,text,bounds)](#M-DrawnUi-Maui-Draw-SkiaLabel-MeasureText-SkiaSharp-SKPaint,System-String,SkiaSharp-SKRect@- 'DrawnUi.Maui.Draw.SkiaLabel.MeasureText(SkiaSharp.SKPaint,System.String,SkiaSharp.SKRect@)')
-  - [OnFontUpdated()](#M-DrawnUi-Maui-Draw-SkiaLabel-OnFontUpdated 'DrawnUi.Maui.Draw.SkiaLabel.OnFontUpdated')
-  - [OnSpanTapped(span)](#M-DrawnUi-Maui-Draw-SkiaLabel-OnSpanTapped-DrawnUi-Maui-Draw-TextSpan- 'DrawnUi.Maui.Draw.SkiaLabel.OnSpanTapped(DrawnUi.Maui.Draw.TextSpan)')
-- [SkiaLayout](#T-DrawnUi-Maui-Draw-SkiaLayout 'DrawnUi.Maui.Draw.SkiaLayout')
-  - [DefaultColumnDefinition](#P-DrawnUi-Maui-Draw-SkiaLayout-DefaultColumnDefinition 'DrawnUi.Maui.Draw.SkiaLayout.DefaultColumnDefinition')
-  - [DefaultRowDefinition](#P-DrawnUi-Maui-Draw-SkiaLayout-DefaultRowDefinition 'DrawnUi.Maui.Draw.SkiaLayout.DefaultRowDefinition')
-  - [DynamicColumns](#P-DrawnUi-Maui-Draw-SkiaLayout-DynamicColumns 'DrawnUi.Maui.Draw.SkiaLayout.DynamicColumns')
-  - [InitializeTemplatesInBackgroundDelay](#P-DrawnUi-Maui-Draw-SkiaLayout-InitializeTemplatesInBackgroundDelay 'DrawnUi.Maui.Draw.SkiaLayout.InitializeTemplatesInBackgroundDelay')
-  - [IsStack](#P-DrawnUi-Maui-Draw-SkiaLayout-IsStack 'DrawnUi.Maui.Draw.SkiaLayout.IsStack')
-  - [ItemTemplatePoolSize](#P-DrawnUi-Maui-Draw-SkiaLayout-ItemTemplatePoolSize 'DrawnUi.Maui.Draw.SkiaLayout.ItemTemplatePoolSize')
-  - [RecyclingTemplate](#P-DrawnUi-Maui-Draw-SkiaLayout-RecyclingTemplate 'DrawnUi.Maui.Draw.SkiaLayout.RecyclingTemplate')
-  - [Split](#P-DrawnUi-Maui-Draw-SkiaLayout-Split 'DrawnUi.Maui.Draw.SkiaLayout.Split')
-  - [SplitAlign](#P-DrawnUi-Maui-Draw-SkiaLayout-SplitAlign 'DrawnUi.Maui.Draw.SkiaLayout.SplitAlign')
-  - [SplitSpace](#P-DrawnUi-Maui-Draw-SkiaLayout-SplitSpace 'DrawnUi.Maui.Draw.SkiaLayout.SplitSpace')
-  - [StackStructure](#P-DrawnUi-Maui-Draw-SkiaLayout-StackStructure 'DrawnUi.Maui.Draw.SkiaLayout.StackStructure')
-  - [StackStructureMeasured](#P-DrawnUi-Maui-Draw-SkiaLayout-StackStructureMeasured 'DrawnUi.Maui.Draw.SkiaLayout.StackStructureMeasured')
-  - [TemplatedFooter](#P-DrawnUi-Maui-Draw-SkiaLayout-TemplatedFooter 'DrawnUi.Maui.Draw.SkiaLayout.TemplatedFooter')
-  - [TemplatedHeader](#P-DrawnUi-Maui-Draw-SkiaLayout-TemplatedHeader 'DrawnUi.Maui.Draw.SkiaLayout.TemplatedHeader')
-  - [Virtualisation](#P-DrawnUi-Maui-Draw-SkiaLayout-Virtualisation 'DrawnUi.Maui.Draw.SkiaLayout.Virtualisation')
-  - [VirtualisationInflated](#P-DrawnUi-Maui-Draw-SkiaLayout-VirtualisationInflated 'DrawnUi.Maui.Draw.SkiaLayout.VirtualisationInflated')
-  - [DrawChildrenGrid(context,destination,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-DrawChildrenGrid-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.SkiaLayout.DrawChildrenGrid(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single)')
-  - [DrawStack()](#M-DrawnUi-Maui-Draw-SkiaLayout-DrawStack-DrawnUi-Maui-Draw-LayoutStructure,DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.SkiaLayout.DrawStack(DrawnUi.Maui.Draw.LayoutStructure,DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single)')
-  - [Measure(widthConstraint,heightConstraint,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-Measure-System-Single,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaLayout.Measure(System.Single,System.Single,System.Single)')
-  - [MeasureStack(rectForChildrenPixels,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-MeasureStack-SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.SkiaLayout.MeasureStack(SkiaSharp.SKRect,System.Single)')
-  - [MeasureWrap(rectForChildrenPixels,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-MeasureWrap-SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.SkiaLayout.MeasureWrap(SkiaSharp.SKRect,System.Single)')
-  - [OnTemplatesAvailable()](#M-DrawnUi-Maui-Draw-SkiaLayout-OnTemplatesAvailable 'DrawnUi.Maui.Draw.SkiaLayout.OnTemplatesAvailable')
-  - [SetupRenderingWithComposition(ctx,destination)](#M-DrawnUi-Maui-Draw-SkiaLayout-SetupRenderingWithComposition-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaLayout.SetupRenderingWithComposition(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect)')
-- [SkiaLottie](#T-DrawnUi-Maui-Controls-SkiaLottie 'DrawnUi.Maui.Controls.SkiaLottie')
-  - [CachedAnimations](#F-DrawnUi-Maui-Controls-SkiaLottie-CachedAnimations 'DrawnUi.Maui.Controls.SkiaLottie.CachedAnimations')
-  - [DefaultFrameWhenOn](#P-DrawnUi-Maui-Controls-SkiaLottie-DefaultFrameWhenOn 'DrawnUi.Maui.Controls.SkiaLottie.DefaultFrameWhenOn')
-  - [LoadAnimationFromJson(json)](#M-DrawnUi-Maui-Controls-SkiaLottie-LoadAnimationFromJson-System-String- 'DrawnUi.Maui.Controls.SkiaLottie.LoadAnimationFromJson(System.String)')
-  - [OnJsonLoaded()](#M-DrawnUi-Maui-Controls-SkiaLottie-OnJsonLoaded-System-String- 'DrawnUi.Maui.Controls.SkiaLottie.OnJsonLoaded(System.String)')
-- [SkiaMarkdownLabel](#T-DrawnUi-Maui-Draw-SkiaMarkdownLabel 'DrawnUi.Maui.Draw.SkiaMarkdownLabel')
-  - [OnSpanTapped(span)](#M-DrawnUi-Maui-Draw-SkiaMarkdownLabel-OnSpanTapped-DrawnUi-Maui-Draw-TextSpan- 'DrawnUi.Maui.Draw.SkiaMarkdownLabel.OnSpanTapped(DrawnUi.Maui.Draw.TextSpan)')
-  - [ProcessSpanData(spanData,originalTypeFace)](#M-DrawnUi-Maui-Draw-SkiaMarkdownLabel-ProcessSpanData-System-Collections-Generic-List{System-ValueTuple{System-String,SkiaSharp-SKTypeface,System-Int32,System-Boolean}}@,SkiaSharp-SKTypeface- 'DrawnUi.Maui.Draw.SkiaMarkdownLabel.ProcessSpanData(System.Collections.Generic.List{System.ValueTuple{System.String,SkiaSharp.SKTypeface,System.Int32,System.Boolean}}@,SkiaSharp.SKTypeface)')
-- [SkiaMauiEditor](#T-DrawnUi-Maui-Controls-SkiaMauiEditor 'DrawnUi.Maui.Controls.SkiaMauiEditor')
-  - [LockFocus](#P-DrawnUi-Maui-Controls-SkiaMauiEditor-LockFocus 'DrawnUi.Maui.Controls.SkiaMauiEditor.LockFocus')
-  - [MaxLines](#P-DrawnUi-Maui-Controls-SkiaMauiEditor-MaxLines 'DrawnUi.Maui.Controls.SkiaMauiEditor.MaxLines')
-  - [OnControlFocused(sender,e)](#M-DrawnUi-Maui-Controls-SkiaMauiEditor-OnControlFocused-System-Object,Microsoft-Maui-Controls-FocusEventArgs- 'DrawnUi.Maui.Controls.SkiaMauiEditor.OnControlFocused(System.Object,Microsoft.Maui.Controls.FocusEventArgs)')
-  - [OnControlUnfocused(sender,e)](#M-DrawnUi-Maui-Controls-SkiaMauiEditor-OnControlUnfocused-System-Object,Microsoft-Maui-Controls-FocusEventArgs- 'DrawnUi.Maui.Controls.SkiaMauiEditor.OnControlUnfocused(System.Object,Microsoft.Maui.Controls.FocusEventArgs)')
-  - [OnFocusChanged(focus)](#M-DrawnUi-Maui-Controls-SkiaMauiEditor-OnFocusChanged-System-Boolean- 'DrawnUi.Maui.Controls.SkiaMauiEditor.OnFocusChanged(System.Boolean)')
-- [SkiaMauiElement](#T-DrawnUi-Maui-Draw-SkiaMauiElement 'DrawnUi.Maui.Draw.SkiaMauiElement')
-  - [AnimateSnapshot](#P-DrawnUi-Maui-Draw-SkiaMauiElement-AnimateSnapshot 'DrawnUi.Maui.Draw.SkiaMauiElement.AnimateSnapshot')
-  - [Element](#P-DrawnUi-Maui-Draw-SkiaMauiElement-Element 'DrawnUi.Maui.Draw.SkiaMauiElement.Element')
-  - [ElementSize](#P-DrawnUi-Maui-Draw-SkiaMauiElement-ElementSize 'DrawnUi.Maui.Draw.SkiaMauiElement.ElementSize')
-  - [GetVisualChildren()](#M-DrawnUi-Maui-Draw-SkiaMauiElement-GetVisualChildren 'DrawnUi.Maui.Draw.SkiaMauiElement.GetVisualChildren')
-  - [MeasureAndArrangeMauiElement(ptsWidth,ptsHeight)](#M-DrawnUi-Maui-Draw-SkiaMauiElement-MeasureAndArrangeMauiElement-System-Double,System-Double- 'DrawnUi.Maui.Draw.SkiaMauiElement.MeasureAndArrangeMauiElement(System.Double,System.Double)')
-  - [OnChildAdded()](#M-DrawnUi-Maui-Draw-SkiaMauiElement-OnChildAdded-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.SkiaMauiElement.OnChildAdded(DrawnUi.Maui.Draw.SkiaControl)')
-  - [SetChildren(views)](#M-DrawnUi-Maui-Draw-SkiaMauiElement-SetChildren-System-Collections-Generic-IEnumerable{DrawnUi-Maui-Draw-SkiaControl}- 'DrawnUi.Maui.Draw.SkiaMauiElement.SetChildren(System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl})')
-  - [SetContent()](#M-DrawnUi-Maui-Draw-SkiaMauiElement-SetContent-Microsoft-Maui-Controls-VisualElement- 'DrawnUi.Maui.Draw.SkiaMauiElement.SetContent(Microsoft.Maui.Controls.VisualElement)')
-  - [SetNativeVisibility(state)](#M-DrawnUi-Maui-Draw-SkiaMauiElement-SetNativeVisibility-System-Boolean- 'DrawnUi.Maui.Draw.SkiaMauiElement.SetNativeVisibility(System.Boolean)')
-- [SkiaMauiEntry](#T-DrawnUi-Maui-Controls-SkiaMauiEntry 'DrawnUi.Maui.Controls.SkiaMauiEntry')
-  - [LockFocus](#P-DrawnUi-Maui-Controls-SkiaMauiEntry-LockFocus 'DrawnUi.Maui.Controls.SkiaMauiEntry.LockFocus')
-  - [MaxLines](#P-DrawnUi-Maui-Controls-SkiaMauiEntry-MaxLines 'DrawnUi.Maui.Controls.SkiaMauiEntry.MaxLines')
-  - [OnControlFocused(sender,e)](#M-DrawnUi-Maui-Controls-SkiaMauiEntry-OnControlFocused-System-Object,Microsoft-Maui-Controls-FocusEventArgs- 'DrawnUi.Maui.Controls.SkiaMauiEntry.OnControlFocused(System.Object,Microsoft.Maui.Controls.FocusEventArgs)')
-  - [OnControlUnfocused(sender,e)](#M-DrawnUi-Maui-Controls-SkiaMauiEntry-OnControlUnfocused-System-Object,Microsoft-Maui-Controls-FocusEventArgs- 'DrawnUi.Maui.Controls.SkiaMauiEntry.OnControlUnfocused(System.Object,Microsoft.Maui.Controls.FocusEventArgs)')
-  - [OnFocusChanged(focus)](#M-DrawnUi-Maui-Controls-SkiaMauiEntry-OnFocusChanged-System-Boolean- 'DrawnUi.Maui.Controls.SkiaMauiEntry.OnFocusChanged(System.Boolean)')
-- [SkiaRadioButton](#T-DrawnUi-Maui-Controls-SkiaRadioButton 'DrawnUi.Maui.Controls.SkiaRadioButton')
-  - [Text](#P-DrawnUi-Maui-Controls-SkiaRadioButton-Text 'DrawnUi.Maui.Controls.SkiaRadioButton.Text')
-- [SkiaScroll](#T-DrawnUi-Maui-Draw-SkiaScroll 'DrawnUi.Maui.Draw.SkiaScroll')
-  - [BouncesProperty](#F-DrawnUi-Maui-Draw-SkiaScroll-BouncesProperty 'DrawnUi.Maui.Draw.SkiaScroll.BouncesProperty')
-  - [InterpolationFactor](#F-DrawnUi-Maui-Draw-SkiaScroll-InterpolationFactor 'DrawnUi.Maui.Draw.SkiaScroll.InterpolationFactor')
-  - [OrderedScrollTo](#F-DrawnUi-Maui-Draw-SkiaScroll-OrderedScrollTo 'DrawnUi.Maui.Draw.SkiaScroll.OrderedScrollTo')
-  - [OrderedScrollToIndex](#F-DrawnUi-Maui-Draw-SkiaScroll-OrderedScrollToIndex 'DrawnUi.Maui.Draw.SkiaScroll.OrderedScrollToIndex')
-  - [ScrollVelocityThreshold](#F-DrawnUi-Maui-Draw-SkiaScroll-ScrollVelocityThreshold 'DrawnUi.Maui.Draw.SkiaScroll.ScrollVelocityThreshold')
-  - [SystemAnimationTimeSecs](#F-DrawnUi-Maui-Draw-SkiaScroll-SystemAnimationTimeSecs 'DrawnUi.Maui.Draw.SkiaScroll.SystemAnimationTimeSecs')
-  - [ThesholdSwipeOnUp](#F-DrawnUi-Maui-Draw-SkiaScroll-ThesholdSwipeOnUp 'DrawnUi.Maui.Draw.SkiaScroll.ThesholdSwipeOnUp')
-  - [_animatorFlingX](#F-DrawnUi-Maui-Draw-SkiaScroll-_animatorFlingX 'DrawnUi.Maui.Draw.SkiaScroll._animatorFlingX')
-  - [_animatorFlingY](#F-DrawnUi-Maui-Draw-SkiaScroll-_animatorFlingY 'DrawnUi.Maui.Draw.SkiaScroll._animatorFlingY')
-  - [_scrollMinX](#F-DrawnUi-Maui-Draw-SkiaScroll-_scrollMinX 'DrawnUi.Maui.Draw.SkiaScroll._scrollMinX')
-  - [_scrollMinY](#F-DrawnUi-Maui-Draw-SkiaScroll-_scrollMinY 'DrawnUi.Maui.Draw.SkiaScroll._scrollMinY')
-  - [_scrollerX](#F-DrawnUi-Maui-Draw-SkiaScroll-_scrollerX 'DrawnUi.Maui.Draw.SkiaScroll._scrollerX')
-  - [_scrollerY](#F-DrawnUi-Maui-Draw-SkiaScroll-_scrollerY 'DrawnUi.Maui.Draw.SkiaScroll._scrollerY')
-  - [snapMinimumVelocity](#F-DrawnUi-Maui-Draw-SkiaScroll-snapMinimumVelocity 'DrawnUi.Maui.Draw.SkiaScroll.snapMinimumVelocity')
-  - [AutoScrollingSpeedMs](#P-DrawnUi-Maui-Draw-SkiaScroll-AutoScrollingSpeedMs 'DrawnUi.Maui.Draw.SkiaScroll.AutoScrollingSpeedMs')
-  - [Bounces](#P-DrawnUi-Maui-Draw-SkiaScroll-Bounces 'DrawnUi.Maui.Draw.SkiaScroll.Bounces')
-  - [CanScrollUsingHeader](#P-DrawnUi-Maui-Draw-SkiaScroll-CanScrollUsingHeader 'DrawnUi.Maui.Draw.SkiaScroll.CanScrollUsingHeader')
-  - [ChangeDistancePanned](#P-DrawnUi-Maui-Draw-SkiaScroll-ChangeDistancePanned 'DrawnUi.Maui.Draw.SkiaScroll.ChangeDistancePanned')
-  - [ChangeVelocityScrolled](#P-DrawnUi-Maui-Draw-SkiaScroll-ChangeVelocityScrolled 'DrawnUi.Maui.Draw.SkiaScroll.ChangeVelocityScrolled')
-  - [ContentOffsetBounds](#P-DrawnUi-Maui-Draw-SkiaScroll-ContentOffsetBounds 'DrawnUi.Maui.Draw.SkiaScroll.ContentOffsetBounds')
-  - [ContentRectWithOffset](#P-DrawnUi-Maui-Draw-SkiaScroll-ContentRectWithOffset 'DrawnUi.Maui.Draw.SkiaScroll.ContentRectWithOffset')
-  - [FrictionScrolled](#P-DrawnUi-Maui-Draw-SkiaScroll-FrictionScrolled 'DrawnUi.Maui.Draw.SkiaScroll.FrictionScrolled')
-  - [HeaderSticky](#P-DrawnUi-Maui-Draw-SkiaScroll-HeaderSticky 'DrawnUi.Maui.Draw.SkiaScroll.HeaderSticky')
-  - [IgnoreWrongDirection](#P-DrawnUi-Maui-Draw-SkiaScroll-IgnoreWrongDirection 'DrawnUi.Maui.Draw.SkiaScroll.IgnoreWrongDirection')
-  - [InternalViewportOffset](#P-DrawnUi-Maui-Draw-SkiaScroll-InternalViewportOffset 'DrawnUi.Maui.Draw.SkiaScroll.InternalViewportOffset')
-  - [MaxBounceVelocity](#P-DrawnUi-Maui-Draw-SkiaScroll-MaxBounceVelocity 'DrawnUi.Maui.Draw.SkiaScroll.MaxBounceVelocity')
-  - [MaxVelocity](#P-DrawnUi-Maui-Draw-SkiaScroll-MaxVelocity 'DrawnUi.Maui.Draw.SkiaScroll.MaxVelocity')
-  - [Orientation](#P-DrawnUi-Maui-Draw-SkiaScroll-Orientation 'DrawnUi.Maui.Draw.SkiaScroll.Orientation')
-  - [OverscrollDistance](#P-DrawnUi-Maui-Draw-SkiaScroll-OverscrollDistance 'DrawnUi.Maui.Draw.SkiaScroll.OverscrollDistance')
-  - [RefreshDistanceLimit](#P-DrawnUi-Maui-Draw-SkiaScroll-RefreshDistanceLimit 'DrawnUi.Maui.Draw.SkiaScroll.RefreshDistanceLimit')
-  - [RefreshShowDistance](#P-DrawnUi-Maui-Draw-SkiaScroll-RefreshShowDistance 'DrawnUi.Maui.Draw.SkiaScroll.RefreshShowDistance')
-  - [RespondsToGestures](#P-DrawnUi-Maui-Draw-SkiaScroll-RespondsToGestures 'DrawnUi.Maui.Draw.SkiaScroll.RespondsToGestures')
-  - [RubberDamping](#P-DrawnUi-Maui-Draw-SkiaScroll-RubberDamping 'DrawnUi.Maui.Draw.SkiaScroll.RubberDamping')
-  - [RubberEffect](#P-DrawnUi-Maui-Draw-SkiaScroll-RubberEffect 'DrawnUi.Maui.Draw.SkiaScroll.RubberEffect')
-  - [ScrollType](#P-DrawnUi-Maui-Draw-SkiaScroll-ScrollType 'DrawnUi.Maui.Draw.SkiaScroll.ScrollType')
-  - [ScrollingSpeedMs](#P-DrawnUi-Maui-Draw-SkiaScroll-ScrollingSpeedMs 'DrawnUi.Maui.Draw.SkiaScroll.ScrollingSpeedMs')
-  - [SnapToChildren](#P-DrawnUi-Maui-Draw-SkiaScroll-SnapToChildren 'DrawnUi.Maui.Draw.SkiaScroll.SnapToChildren')
-  - [TrackIndexPosition](#P-DrawnUi-Maui-Draw-SkiaScroll-TrackIndexPosition 'DrawnUi.Maui.Draw.SkiaScroll.TrackIndexPosition')
-  - [VelocityImageLoaderLock](#P-DrawnUi-Maui-Draw-SkiaScroll-VelocityImageLoaderLock 'DrawnUi.Maui.Draw.SkiaScroll.VelocityImageLoaderLock')
-  - [Virtualisation](#P-DrawnUi-Maui-Draw-SkiaScroll-Virtualisation 'DrawnUi.Maui.Draw.SkiaScroll.Virtualisation')
-  - [WasSwiping](#P-DrawnUi-Maui-Draw-SkiaScroll-WasSwiping 'DrawnUi.Maui.Draw.SkiaScroll.WasSwiping')
-  - [ZoomScaleInternal](#P-DrawnUi-Maui-Draw-SkiaScroll-ZoomScaleInternal 'DrawnUi.Maui.Draw.SkiaScroll.ZoomScaleInternal')
-  - [CalculateScrollOffsetForIndex(index,option)](#M-DrawnUi-Maui-Draw-SkiaScroll-CalculateScrollOffsetForIndex-System-Int32,DrawnUi-Maui-Draw-RelativePositionType- 'DrawnUi.Maui.Draw.SkiaScroll.CalculateScrollOffsetForIndex(System.Int32,DrawnUi.Maui.Draw.RelativePositionType)')
-  - [CalculateVisibleIndex()](#M-DrawnUi-Maui-Draw-SkiaScroll-CalculateVisibleIndex-DrawnUi-Maui-Draw-RelativePositionType- 'DrawnUi.Maui.Draw.SkiaScroll.CalculateVisibleIndex(DrawnUi.Maui.Draw.RelativePositionType)')
-  - [ClampOffsetWithRubberBand(x,y)](#M-DrawnUi-Maui-Draw-SkiaScroll-ClampOffsetWithRubberBand-System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaScroll.ClampOffsetWithRubberBand(System.Single,System.Single)')
-  - [GetClosestSidePoint(overscrollPoint,contentRect,viewportSize)](#M-DrawnUi-Maui-Draw-SkiaScroll-GetClosestSidePoint-SkiaSharp-SKPoint,SkiaSharp-SKRect,SkiaSharp-SKSize- 'DrawnUi.Maui.Draw.SkiaScroll.GetClosestSidePoint(SkiaSharp.SKPoint,SkiaSharp.SKRect,SkiaSharp.SKSize)')
-  - [GetContentAvailableRect(destination)](#M-DrawnUi-Maui-Draw-SkiaScroll-GetContentAvailableRect-SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaScroll.GetContentAvailableRect(SkiaSharp.SKRect)')
-  - [GetContentOffsetBounds()](#M-DrawnUi-Maui-Draw-SkiaScroll-GetContentOffsetBounds 'DrawnUi.Maui.Draw.SkiaScroll.GetContentOffsetBounds')
-  - [OnScrolled()](#M-DrawnUi-Maui-Draw-SkiaScroll-OnScrolled 'DrawnUi.Maui.Draw.SkiaScroll.OnScrolled')
-  - [PositionViewport(destination,offsetPtsX,offsetPtsY,viewportScale,scale)](#M-DrawnUi-Maui-Draw-SkiaScroll-PositionViewport-SkiaSharp-SKRect,SkiaSharp-SKPoint,System-Single,System-Single- 'DrawnUi.Maui.Draw.SkiaScroll.PositionViewport(SkiaSharp.SKRect,SkiaSharp.SKPoint,System.Single,System.Single)')
-  - [ScrollToOffset(offset,animate)](#M-DrawnUi-Maui-Draw-SkiaScroll-ScrollToOffset-System-Numerics-Vector2,System-Single- 'DrawnUi.Maui.Draw.SkiaScroll.ScrollToOffset(System.Numerics.Vector2,System.Single)')
-  - [ScrollToX(offset,animate)](#M-DrawnUi-Maui-Draw-SkiaScroll-ScrollToX-System-Single,System-Boolean- 'DrawnUi.Maui.Draw.SkiaScroll.ScrollToX(System.Single,System.Boolean)')
-  - [ScrollToY(offset,animate)](#M-DrawnUi-Maui-Draw-SkiaScroll-ScrollToY-System-Single,System-Boolean- 'DrawnUi.Maui.Draw.SkiaScroll.ScrollToY(System.Single,System.Boolean)')
-  - [SetContent(view)](#M-DrawnUi-Maui-Draw-SkiaScroll-SetContent-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Draw.SkiaScroll.SetContent(DrawnUi.Maui.Draw.SkiaControl)')
-- [SkiaScrollLooped](#T-DrawnUi-Maui-Draw-SkiaScrollLooped 'DrawnUi.Maui.Draw.SkiaScrollLooped')
-  - [CycleSpace](#P-DrawnUi-Maui-Draw-SkiaScrollLooped-CycleSpace 'DrawnUi.Maui.Draw.SkiaScrollLooped.CycleSpace')
-  - [IsBanner](#P-DrawnUi-Maui-Draw-SkiaScrollLooped-IsBanner 'DrawnUi.Maui.Draw.SkiaScrollLooped.IsBanner')
-- [SkiaShaderEffect](#T-DrawnUi-Maui-Draw-SkiaShaderEffect 'DrawnUi.Maui.Draw.SkiaShaderEffect')
-  - [AutoCreateInputTexture](#P-DrawnUi-Maui-Draw-SkiaShaderEffect-AutoCreateInputTexture 'DrawnUi.Maui.Draw.SkiaShaderEffect.AutoCreateInputTexture')
-  - [UseContext](#P-DrawnUi-Maui-Draw-SkiaShaderEffect-UseContext 'DrawnUi.Maui.Draw.SkiaShaderEffect.UseContext')
-  - [CreateSnapshot(ctx,destination)](#M-DrawnUi-Maui-Draw-SkiaShaderEffect-CreateSnapshot-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaShaderEffect.CreateSnapshot(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect)')
-  - [Render(ctx,destination)](#M-DrawnUi-Maui-Draw-SkiaShaderEffect-Render-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect- 'DrawnUi.Maui.Draw.SkiaShaderEffect.Render(DrawnUi.Maui.Draw.SkiaDrawingContext,SkiaSharp.SKRect)')
-- [SkiaShape](#T-DrawnUi-Maui-Draw-SkiaShape 'DrawnUi.Maui.Draw.SkiaShape')
-  - [ClipBackgroundColor](#P-DrawnUi-Maui-Draw-SkiaShape-ClipBackgroundColor 'DrawnUi.Maui.Draw.SkiaShape.ClipBackgroundColor')
-  - [DrawPath](#P-DrawnUi-Maui-Draw-SkiaShape-DrawPath 'DrawnUi.Maui.Draw.SkiaShape.DrawPath')
-  - [PathData](#P-DrawnUi-Maui-Draw-SkiaShape-PathData 'DrawnUi.Maui.Draw.SkiaShape.PathData')
-- [SkiaShell](#T-DrawnUi-Maui-Controls-SkiaShell 'DrawnUi.Maui.Controls.SkiaShell')
-  - [PopupBackgroundColor](#F-DrawnUi-Maui-Controls-SkiaShell-PopupBackgroundColor 'DrawnUi.Maui.Controls.SkiaShell.PopupBackgroundColor')
-  - [PopupsBackgroundBlur](#F-DrawnUi-Maui-Controls-SkiaShell-PopupsBackgroundBlur 'DrawnUi.Maui.Controls.SkiaShell.PopupsBackgroundBlur')
-  - [Buffer](#P-DrawnUi-Maui-Controls-SkiaShell-Buffer 'DrawnUi.Maui.Controls.SkiaShell.Buffer')
-  - [FrozenLayers](#P-DrawnUi-Maui-Controls-SkiaShell-FrozenLayers 'DrawnUi.Maui.Controls.SkiaShell.FrozenLayers')
-  - [NavigationLayout](#P-DrawnUi-Maui-Controls-SkiaShell-NavigationLayout 'DrawnUi.Maui.Controls.SkiaShell.NavigationLayout')
-  - [RootLayout](#P-DrawnUi-Maui-Controls-SkiaShell-RootLayout 'DrawnUi.Maui.Controls.SkiaShell.RootLayout')
-  - [CanFreezeLayout()](#M-DrawnUi-Maui-Controls-SkiaShell-CanFreezeLayout 'DrawnUi.Maui.Controls.SkiaShell.CanFreezeLayout')
-  - [CanUnfreezeLayout()](#M-DrawnUi-Maui-Controls-SkiaShell-CanUnfreezeLayout 'DrawnUi.Maui.Controls.SkiaShell.CanUnfreezeLayout')
-  - [ClosePopupAsync(animated)](#M-DrawnUi-Maui-Controls-SkiaShell-ClosePopupAsync-System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.ClosePopupAsync(System.Boolean)')
-  - [FreezeRootLayout()](#M-DrawnUi-Maui-Controls-SkiaShell-FreezeRootLayout-DrawnUi-Maui-Draw-SkiaControl,System-Boolean,Microsoft-Maui-Graphics-Color,System-Single- 'DrawnUi.Maui.Controls.SkiaShell.FreezeRootLayout(DrawnUi.Maui.Draw.SkiaControl,System.Boolean,Microsoft.Maui.Graphics.Color,System.Single)')
-  - [GetTopmostView()](#M-DrawnUi-Maui-Controls-SkiaShell-GetTopmostView 'DrawnUi.Maui.Controls.SkiaShell.GetTopmostView')
-  - [GetTopmostViewInternal()](#M-DrawnUi-Maui-Controls-SkiaShell-GetTopmostViewInternal 'DrawnUi.Maui.Controls.SkiaShell.GetTopmostViewInternal')
-  - [GoBackInRoute(animate)](#M-DrawnUi-Maui-Controls-SkiaShell-GoBackInRoute-System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.GoBackInRoute(System.Boolean)')
-  - [GoToAsync(state,animate,arguments)](#M-DrawnUi-Maui-Controls-SkiaShell-GoToAsync-Microsoft-Maui-Controls-ShellNavigationState,System-Nullable{System-Boolean},System-Collections-Generic-IDictionary{System-String,System-Object}- 'DrawnUi.Maui.Controls.SkiaShell.GoToAsync(Microsoft.Maui.Controls.ShellNavigationState,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,System.Object})')
-  - [InitializeNative(handler)](#M-DrawnUi-Maui-Controls-SkiaShell-InitializeNative-Microsoft-Maui-IViewHandler- 'DrawnUi.Maui.Controls.SkiaShell.InitializeNative(Microsoft.Maui.IViewHandler)')
-  - [OnLayersChanged()](#M-DrawnUi-Maui-Controls-SkiaShell-OnLayersChanged-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Maui.Controls.SkiaShell.OnLayersChanged(DrawnUi.Maui.Draw.SkiaControl)')
-  - [OpenPopupAsync(content,animated,closeWhenBackgroundTapped,scaleInFrom)](#M-DrawnUi-Maui-Controls-SkiaShell-OpenPopupAsync-DrawnUi-Maui-Draw-SkiaControl,System-Boolean,System-Boolean,System-Boolean,Microsoft-Maui-Graphics-Color,System-Nullable{SkiaSharp-SKPoint}- 'DrawnUi.Maui.Controls.SkiaShell.OpenPopupAsync(DrawnUi.Maui.Draw.SkiaControl,System.Boolean,System.Boolean,System.Boolean,Microsoft.Maui.Graphics.Color,System.Nullable{SkiaSharp.SKPoint})')
-  - [PopAsync(animated)](#M-DrawnUi-Maui-Controls-SkiaShell-PopAsync-System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.PopAsync(System.Boolean)')
-  - [PushAsync(page,animated)](#M-DrawnUi-Maui-Controls-SkiaShell-PushAsync-Microsoft-Maui-Controls-BindableObject,System-Boolean,System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.PushAsync(Microsoft.Maui.Controls.BindableObject,System.Boolean,System.Boolean)')
-  - [PushAsync(page,animated)](#M-DrawnUi-Maui-Controls-SkiaShell-PushAsync-System-String,System-Boolean,System-Collections-Generic-IDictionary{System-String,System-Object}- 'DrawnUi.Maui.Controls.SkiaShell.PushAsync(System.String,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})')
-  - [PushModalAsync(page,animated)](#M-DrawnUi-Maui-Controls-SkiaShell-PushModalAsync-Microsoft-Maui-Controls-BindableObject,System-Boolean,System-Boolean,System-Boolean,System-Collections-Generic-IDictionary{System-String,System-Object}- 'DrawnUi.Maui.Controls.SkiaShell.PushModalAsync(Microsoft.Maui.Controls.BindableObject,System.Boolean,System.Boolean,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})')
-  - [SetFrozenLayerVisibility(control,parameters)](#M-DrawnUi-Maui-Controls-SkiaShell-SetFrozenLayerVisibility-DrawnUi-Maui-Draw-SkiaControl,System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.SetFrozenLayerVisibility(DrawnUi.Maui.Draw.SkiaControl,System.Boolean)')
-  - [SetRoot(host,replace,arguments)](#M-DrawnUi-Maui-Controls-SkiaShell-SetRoot-System-String,System-Boolean,System-Collections-Generic-IDictionary{System-String,System-Object}- 'DrawnUi.Maui.Controls.SkiaShell.SetRoot(System.String,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})')
-  - [SetupRoot(shellLayout)](#M-DrawnUi-Maui-Controls-SkiaShell-SetupRoot-DrawnUi-Maui-Draw-ISkiaControl- 'DrawnUi.Maui.Controls.SkiaShell.SetupRoot(DrawnUi.Maui.Draw.ISkiaControl)')
-  - [UnfreezeRootLayout(control,animated)](#M-DrawnUi-Maui-Controls-SkiaShell-UnfreezeRootLayout-DrawnUi-Maui-Draw-SkiaControl,System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.UnfreezeRootLayout(DrawnUi.Maui.Draw.SkiaControl,System.Boolean)')
-  - [WrapScreenshot(screenshot)](#M-DrawnUi-Maui-Controls-SkiaShell-WrapScreenshot-DrawnUi-Maui-Draw-SkiaControl,SkiaSharp-SKImage,Microsoft-Maui-Graphics-Color,System-Single,System-Boolean- 'DrawnUi.Maui.Controls.SkiaShell.WrapScreenshot(DrawnUi.Maui.Draw.SkiaControl,SkiaSharp.SKImage,Microsoft.Maui.Graphics.Color,System.Single,System.Boolean)')
-- [SkiaShellNavigatedArgs](#T-DrawnUi-Maui-Controls-SkiaShellNavigatedArgs 'DrawnUi.Maui.Controls.SkiaShellNavigatedArgs')
-  - [Route](#P-DrawnUi-Maui-Controls-SkiaShellNavigatedArgs-Route 'DrawnUi.Maui.Controls.SkiaShellNavigatedArgs.Route')
-  - [View](#P-DrawnUi-Maui-Controls-SkiaShellNavigatedArgs-View 'DrawnUi.Maui.Controls.SkiaShellNavigatedArgs.View')
-- [SkiaShellNavigatingArgs](#T-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs 'DrawnUi.Maui.Controls.SkiaShellNavigatingArgs')
-  - [Cancel](#P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-Cancel 'DrawnUi.Maui.Controls.SkiaShellNavigatingArgs.Cancel')
-  - [Previous](#P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-Previous 'DrawnUi.Maui.Controls.SkiaShellNavigatingArgs.Previous')
-  - [Route](#P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-Route 'DrawnUi.Maui.Controls.SkiaShellNavigatingArgs.Route')
-  - [View](#P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-View 'DrawnUi.Maui.Controls.SkiaShellNavigatingArgs.View')
-- [SkiaSlider](#T-DrawnUi-Maui-Draw-SkiaSlider 'DrawnUi.Maui.Draw.SkiaSlider')
-  - [moreHotspotSize](#F-DrawnUi-Maui-Draw-SkiaSlider-moreHotspotSize 'DrawnUi.Maui.Draw.SkiaSlider.moreHotspotSize')
-  - [touchArea](#F-DrawnUi-Maui-Draw-SkiaSlider-touchArea 'DrawnUi.Maui.Draw.SkiaSlider.touchArea')
-  - [End](#P-DrawnUi-Maui-Draw-SkiaSlider-End 'DrawnUi.Maui.Draw.SkiaSlider.End')
-  - [IgnoreWrongDirection](#P-DrawnUi-Maui-Draw-SkiaSlider-IgnoreWrongDirection 'DrawnUi.Maui.Draw.SkiaSlider.IgnoreWrongDirection')
-  - [Orientation](#P-DrawnUi-Maui-Draw-SkiaSlider-Orientation 'DrawnUi.Maui.Draw.SkiaSlider.Orientation')
-  - [RespondsToGestures](#P-DrawnUi-Maui-Draw-SkiaSlider-RespondsToGestures 'DrawnUi.Maui.Draw.SkiaSlider.RespondsToGestures')
-  - [Start](#P-DrawnUi-Maui-Draw-SkiaSlider-Start 'DrawnUi.Maui.Draw.SkiaSlider.Start')
-- [SkiaSvg](#T-DrawnUi-Maui-Draw-SkiaSvg 'DrawnUi.Maui.Draw.SkiaSvg')
-  - [LoadSource(fileName)](#M-DrawnUi-Maui-Draw-SkiaSvg-LoadSource-System-String- 'DrawnUi.Maui.Draw.SkiaSvg.LoadSource(System.String)')
-- [SkiaSwitch](#T-DrawnUi-Maui-Draw-SkiaSwitch 'DrawnUi.Maui.Draw.SkiaSwitch')
-- [SkiaTabsSelector](#T-DrawnUi-Maui-Controls-SkiaTabsSelector 'DrawnUi.Maui.Controls.SkiaTabsSelector')
-  - [TabType](#P-DrawnUi-Maui-Controls-SkiaTabsSelector-TabType 'DrawnUi.Maui.Controls.SkiaTabsSelector.TabType')
-  - [ApplySelectedIndex()](#M-DrawnUi-Maui-Controls-SkiaTabsSelector-ApplySelectedIndex-System-Int32- 'DrawnUi.Maui.Controls.SkiaTabsSelector.ApplySelectedIndex(System.Int32)')
-- [SkiaToggle](#T-DrawnUi-Maui-Draw-SkiaToggle 'DrawnUi.Maui.Draw.SkiaToggle')
-  - [ApplyProperties()](#M-DrawnUi-Maui-Draw-SkiaToggle-ApplyProperties 'DrawnUi.Maui.Draw.SkiaToggle.ApplyProperties')
-  - [OnToggledChanged()](#M-DrawnUi-Maui-Draw-SkiaToggle-OnToggledChanged 'DrawnUi.Maui.Draw.SkiaToggle.OnToggledChanged')
-- [SkiaValueAnimator](#T-DrawnUi-Maui-Draw-SkiaValueAnimator 'DrawnUi.Maui.Draw.SkiaValueAnimator')
-  - [CycleFInished](#P-DrawnUi-Maui-Draw-SkiaValueAnimator-CycleFInished 'DrawnUi.Maui.Draw.SkiaValueAnimator.CycleFInished')
-  - [Finished](#P-DrawnUi-Maui-Draw-SkiaValueAnimator-Finished 'DrawnUi.Maui.Draw.SkiaValueAnimator.Finished')
-  - [Progress](#P-DrawnUi-Maui-Draw-SkiaValueAnimator-Progress 'DrawnUi.Maui.Draw.SkiaValueAnimator.Progress')
-  - [Repeat](#P-DrawnUi-Maui-Draw-SkiaValueAnimator-Repeat 'DrawnUi.Maui.Draw.SkiaValueAnimator.Repeat')
-  - [TransformReportedValue(deltaT)](#M-DrawnUi-Maui-Draw-SkiaValueAnimator-TransformReportedValue-System-Int64- 'DrawnUi.Maui.Draw.SkiaValueAnimator.TransformReportedValue(System.Int64)')
-  - [UpdateValue(deltaT)](#M-DrawnUi-Maui-Draw-SkiaValueAnimator-UpdateValue-System-Int64,System-Int64- 'DrawnUi.Maui.Draw.SkiaValueAnimator.UpdateValue(System.Int64,System.Int64)')
-- [SkiaView](#T-DrawnUi-Maui-Views-SkiaView 'DrawnUi.Maui.Views.SkiaView')
-  - [CalculateFPS(currentTimestamp,averageAmount)](#M-DrawnUi-Maui-Views-SkiaView-CalculateFPS-System-Int64,System-Int32- 'DrawnUi.Maui.Views.SkiaView.CalculateFPS(System.Int64,System.Int32)')
-- [SkiaViewAccelerated](#T-DrawnUi-Maui-Views-SkiaViewAccelerated 'DrawnUi.Maui.Views.SkiaViewAccelerated')
-  - [CalculateFPS(currentTimestamp,averageAmount)](#M-DrawnUi-Maui-Views-SkiaViewAccelerated-CalculateFPS-System-Int64,System-Int32- 'DrawnUi.Maui.Views.SkiaViewAccelerated.CalculateFPS(System.Int64,System.Int32)')
-  - [OnPaintingSurface(sender,paintArgs)](#M-DrawnUi-Maui-Views-SkiaViewAccelerated-OnPaintingSurface-System-Object,SkiaSharp-Views-Maui-SKPaintGLSurfaceEventArgs- 'DrawnUi.Maui.Views.SkiaViewAccelerated.OnPaintingSurface(System.Object,SkiaSharp.Views.Maui.SKPaintGLSurfaceEventArgs)')
-- [SkiaViewSwitcher](#T-DrawnUi-Maui-Controls-SkiaViewSwitcher 'DrawnUi.Maui.Controls.SkiaViewSwitcher')
-  - [NavigationStacks](#F-DrawnUi-Maui-Controls-SkiaViewSwitcher-NavigationStacks 'DrawnUi.Maui.Controls.SkiaViewSwitcher.NavigationStacks')
-  - [GetTopView(selectedIndex)](#M-DrawnUi-Maui-Controls-SkiaViewSwitcher-GetTopView-System-Int32- 'DrawnUi.Maui.Controls.SkiaViewSwitcher.GetTopView(System.Int32)')
-  - [PopTabToRoot()](#M-DrawnUi-Maui-Controls-SkiaViewSwitcher-PopTabToRoot 'DrawnUi.Maui.Controls.SkiaViewSwitcher.PopTabToRoot')
-  - [RevealNavigationView(newVisibleView)](#M-DrawnUi-Maui-Controls-SkiaViewSwitcher-RevealNavigationView-DrawnUi-Maui-Controls-SkiaViewSwitcher-NavigationStackEntry- 'DrawnUi.Maui.Controls.SkiaViewSwitcher.RevealNavigationView(DrawnUi.Maui.Controls.SkiaViewSwitcher.NavigationStackEntry)')
-- [Snapping](#T-DrawnUi-Maui-Draw-Snapping 'DrawnUi.Maui.Draw.Snapping')
-  - [SnapPointsToPixel(initialPosition,translation,scale)](#M-DrawnUi-Maui-Draw-Snapping-SnapPointsToPixel-System-Single,System-Single,System-Double- 'DrawnUi.Maui.Draw.Snapping.SnapPointsToPixel(System.Single,System.Single,System.Double)')
-- [SnappingLayout](#T-DrawnUi-Maui-Draw-SnappingLayout 'DrawnUi.Maui.Draw.SnappingLayout')
-  - [AutoVelocityMultiplyPts](#P-DrawnUi-Maui-Draw-SnappingLayout-AutoVelocityMultiplyPts 'DrawnUi.Maui.Draw.SnappingLayout.AutoVelocityMultiplyPts')
-  - [ContentOffsetBounds](#P-DrawnUi-Maui-Draw-SnappingLayout-ContentOffsetBounds 'DrawnUi.Maui.Draw.SnappingLayout.ContentOffsetBounds')
-  - [IgnoreWrongDirection](#P-DrawnUi-Maui-Draw-SnappingLayout-IgnoreWrongDirection 'DrawnUi.Maui.Draw.SnappingLayout.IgnoreWrongDirection')
-  - [RespondsToGestures](#P-DrawnUi-Maui-Draw-SnappingLayout-RespondsToGestures 'DrawnUi.Maui.Draw.SnappingLayout.RespondsToGestures')
-  - [RubberDamping](#P-DrawnUi-Maui-Draw-SnappingLayout-RubberDamping 'DrawnUi.Maui.Draw.SnappingLayout.RubberDamping')
-  - [RubberEffect](#P-DrawnUi-Maui-Draw-SnappingLayout-RubberEffect 'DrawnUi.Maui.Draw.SnappingLayout.RubberEffect')
-  - [SnapDistanceRatio](#P-DrawnUi-Maui-Draw-SnappingLayout-SnapDistanceRatio 'DrawnUi.Maui.Draw.SnappingLayout.SnapDistanceRatio')
-  - [Viewport](#P-DrawnUi-Maui-Draw-SnappingLayout-Viewport 'DrawnUi.Maui.Draw.SnappingLayout.Viewport')
-  - [ClampOffsetWithRubberBand(x,y)](#M-DrawnUi-Maui-Draw-SnappingLayout-ClampOffsetWithRubberBand-System-Single,System-Single- 'DrawnUi.Maui.Draw.SnappingLayout.ClampOffsetWithRubberBand(System.Single,System.Single)')
-  - [GetAutoVelocity(displacement)](#M-DrawnUi-Maui-Draw-SnappingLayout-GetAutoVelocity-System-Numerics-Vector2- 'DrawnUi.Maui.Draw.SnappingLayout.GetAutoVelocity(System.Numerics.Vector2)')
-  - [GetContentOffsetBounds()](#M-DrawnUi-Maui-Draw-SnappingLayout-GetContentOffsetBounds 'DrawnUi.Maui.Draw.SnappingLayout.GetContentOffsetBounds')
-  - [ScrollToOffset(offset,animate)](#M-DrawnUi-Maui-Draw-SnappingLayout-ScrollToOffset-System-Numerics-Vector2,System-Numerics-Vector2,System-Boolean- 'DrawnUi.Maui.Draw.SnappingLayout.ScrollToOffset(System.Numerics.Vector2,System.Numerics.Vector2,System.Boolean)')
-  - [SelectNextAnchor(origin,velocity)](#M-DrawnUi-Maui-Draw-SnappingLayout-SelectNextAnchor-System-Numerics-Vector2,System-Numerics-Vector2- 'DrawnUi.Maui.Draw.SnappingLayout.SelectNextAnchor(System.Numerics.Vector2,System.Numerics.Vector2)')
-- [SpaceDistribution](#T-DrawnUi-Maui-Draw-SpaceDistribution 'DrawnUi.Maui.Draw.SpaceDistribution')
-  - [Auto](#F-DrawnUi-Maui-Draw-SpaceDistribution-Auto 'DrawnUi.Maui.Draw.SpaceDistribution.Auto')
-  - [Full](#F-DrawnUi-Maui-Draw-SpaceDistribution-Full 'DrawnUi.Maui.Draw.SpaceDistribution.Full')
-- [StackLayoutStructure](#T-DrawnUi-Maui-Draw-StackLayoutStructure 'DrawnUi.Maui.Draw.StackLayoutStructure')
-  - [Build()](#M-DrawnUi-Maui-Draw-StackLayoutStructure-Build-SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Draw.StackLayoutStructure.Build(SkiaSharp.SKRect,System.Single)')
-- [Super](#T-DrawnUi-Maui-Draw-Super 'DrawnUi.Maui.Draw.Super')
-  - [CanUseHardwareAcceleration](#F-DrawnUi-Maui-Draw-Super-CanUseHardwareAcceleration 'DrawnUi.Maui.Draw.Super.CanUseHardwareAcceleration')
-  - [CapMicroSecs](#F-DrawnUi-Maui-Draw-Super-CapMicroSecs 'DrawnUi.Maui.Draw.Super.CapMicroSecs')
-  - [InsetsChanged](#F-DrawnUi-Maui-Draw-Super-InsetsChanged 'DrawnUi.Maui.Draw.Super.InsetsChanged')
-  - [OnMauiAppCreated](#F-DrawnUi-Maui-Draw-Super-OnMauiAppCreated 'DrawnUi.Maui.Draw.Super.OnMauiAppCreated')
-  - [BottomTabsHeight](#P-DrawnUi-Maui-Draw-Super-BottomTabsHeight 'DrawnUi.Maui.Draw.Super.BottomTabsHeight')
-  - [FontSubPixelRendering](#P-DrawnUi-Maui-Draw-Super-FontSubPixelRendering 'DrawnUi.Maui.Draw.Super.FontSubPixelRendering')
-  - [IsRtl](#P-DrawnUi-Maui-Draw-Super-IsRtl 'DrawnUi.Maui.Draw.Super.IsRtl')
-  - [NavBarHeight](#P-DrawnUi-Maui-Draw-Super-NavBarHeight 'DrawnUi.Maui.Draw.Super.NavBarHeight')
-  - [StatusBarHeight](#P-DrawnUi-Maui-Draw-Super-StatusBarHeight 'DrawnUi.Maui.Draw.Super.StatusBarHeight')
-  - [DisplayException(view,e)](#M-DrawnUi-Maui-Draw-Super-DisplayException-Microsoft-Maui-Controls-Element,System-Exception- 'DrawnUi.Maui.Draw.Super.DisplayException(Microsoft.Maui.Controls.Element,System.Exception)')
-  - [ListResources(subfolder)](#M-DrawnUi-Maui-Draw-Super-ListResources-System-String- 'DrawnUi.Maui.Draw.Super.ListResources(System.String)')
-  - [NeedGlobalUpdate()](#M-DrawnUi-Maui-Draw-Super-NeedGlobalUpdate 'DrawnUi.Maui.Draw.Super.NeedGlobalUpdate')
-  - [OpenLink(link)](#M-DrawnUi-Maui-Draw-Super-OpenLink-System-String- 'DrawnUi.Maui.Draw.Super.OpenLink(System.String)')
-  - [ResizeWindow(window,width,height,isFixed)](#M-DrawnUi-Maui-Draw-Super-ResizeWindow-Microsoft-Maui-Controls-Window,System-Int32,System-Int32,System-Boolean- 'DrawnUi.Maui.Draw.Super.ResizeWindow(Microsoft.Maui.Controls.Window,System.Int32,System.Int32,System.Boolean)')
-  - [SetFullScreen(activity)](#M-DrawnUi-Maui-Draw-Super-SetFullScreen-Android-App-Activity- 'DrawnUi.Maui.Draw.Super.SetFullScreen(Android.App.Activity)')
-- [TemplatedViewsPool](#T-DrawnUi-Maui-Draw-ViewsAdapter-TemplatedViewsPool 'DrawnUi.Maui.Draw.ViewsAdapter.TemplatedViewsPool')
-  - [CreateFromTemplate()](#M-DrawnUi-Maui-Draw-ViewsAdapter-TemplatedViewsPool-CreateFromTemplate 'DrawnUi.Maui.Draw.ViewsAdapter.TemplatedViewsPool.CreateFromTemplate')
-  - [Reserve()](#M-DrawnUi-Maui-Draw-ViewsAdapter-TemplatedViewsPool-Reserve 'DrawnUi.Maui.Draw.ViewsAdapter.TemplatedViewsPool.Reserve')
-- [TextLine](#T-DrawnUi-Maui-Draw-TextLine 'DrawnUi.Maui.Draw.TextLine')
-  - [Bounds](#P-DrawnUi-Maui-Draw-TextLine-Bounds 'DrawnUi.Maui.Draw.TextLine.Bounds')
-- [TextSpan](#T-DrawnUi-Maui-Draw-TextSpan 'DrawnUi.Maui.Draw.TextSpan')
-  - [Rects](#F-DrawnUi-Maui-Draw-TextSpan-Rects 'DrawnUi.Maui.Draw.TextSpan.Rects')
-  - [AutoFindFont](#P-DrawnUi-Maui-Draw-TextSpan-AutoFindFont 'DrawnUi.Maui.Draw.TextSpan.AutoFindFont')
-  - [DrawingOffset](#P-DrawnUi-Maui-Draw-TextSpan-DrawingOffset 'DrawnUi.Maui.Draw.TextSpan.DrawingOffset')
-  - [ForceCaptureInput](#P-DrawnUi-Maui-Draw-TextSpan-ForceCaptureInput 'DrawnUi.Maui.Draw.TextSpan.ForceCaptureInput')
-  - [Glyphs](#P-DrawnUi-Maui-Draw-TextSpan-Glyphs 'DrawnUi.Maui.Draw.TextSpan.Glyphs')
-  - [HasTapHandler](#P-DrawnUi-Maui-Draw-TextSpan-HasTapHandler 'DrawnUi.Maui.Draw.TextSpan.HasTapHandler')
-  - [Shape](#P-DrawnUi-Maui-Draw-TextSpan-Shape 'DrawnUi.Maui.Draw.TextSpan.Shape')
-  - [StrikeoutWidth](#P-DrawnUi-Maui-Draw-TextSpan-StrikeoutWidth 'DrawnUi.Maui.Draw.TextSpan.StrikeoutWidth')
-  - [UnderlineWidth](#P-DrawnUi-Maui-Draw-TextSpan-UnderlineWidth 'DrawnUi.Maui.Draw.TextSpan.UnderlineWidth')
-  - [CheckGlyphsCanBeRendered()](#M-DrawnUi-Maui-Draw-TextSpan-CheckGlyphsCanBeRendered 'DrawnUi.Maui.Draw.TextSpan.CheckGlyphsCanBeRendered')
-  - [SetupPaint()](#M-DrawnUi-Maui-Draw-TextSpan-SetupPaint-System-Double,SkiaSharp-SKPaint- 'DrawnUi.Maui.Draw.TextSpan.SetupPaint(System.Double,SkiaSharp.SKPaint)')
-- [TransformAspect](#T-DrawnUi-Maui-Draw-TransformAspect 'DrawnUi.Maui.Draw.TransformAspect')
-  - [AspectCover](#F-DrawnUi-Maui-Draw-TransformAspect-AspectCover 'DrawnUi.Maui.Draw.TransformAspect.AspectCover')
-  - [AspectFill](#F-DrawnUi-Maui-Draw-TransformAspect-AspectFill 'DrawnUi.Maui.Draw.TransformAspect.AspectFill')
-  - [AspectFit](#F-DrawnUi-Maui-Draw-TransformAspect-AspectFit 'DrawnUi.Maui.Draw.TransformAspect.AspectFit')
-  - [AspectFitFill](#F-DrawnUi-Maui-Draw-TransformAspect-AspectFitFill 'DrawnUi.Maui.Draw.TransformAspect.AspectFitFill')
-  - [Cover](#F-DrawnUi-Maui-Draw-TransformAspect-Cover 'DrawnUi.Maui.Draw.TransformAspect.Cover')
-  - [Fill](#F-DrawnUi-Maui-Draw-TransformAspect-Fill 'DrawnUi.Maui.Draw.TransformAspect.Fill')
-  - [Fit](#F-DrawnUi-Maui-Draw-TransformAspect-Fit 'DrawnUi.Maui.Draw.TransformAspect.Fit')
-  - [FitFill](#F-DrawnUi-Maui-Draw-TransformAspect-FitFill 'DrawnUi.Maui.Draw.TransformAspect.FitFill')
-  - [Tile](#F-DrawnUi-Maui-Draw-TransformAspect-Tile 'DrawnUi.Maui.Draw.TransformAspect.Tile')
-- [UiSettings](#T-DrawnUi-Maui-Draw-UiSettings 'DrawnUi.Maui.Draw.UiSettings')
-  - [DesktopWindow](#P-DrawnUi-Maui-Draw-UiSettings-DesktopWindow 'DrawnUi.Maui.Draw.UiSettings.DesktopWindow')
-  - [MobileIsFullscreen](#P-DrawnUi-Maui-Draw-UiSettings-MobileIsFullscreen 'DrawnUi.Maui.Draw.UiSettings.MobileIsFullscreen')
-  - [UseDesktopKeyboard](#P-DrawnUi-Maui-Draw-UiSettings-UseDesktopKeyboard 'DrawnUi.Maui.Draw.UiSettings.UseDesktopKeyboard')
-- [UpdateMode](#T-DrawnUi-Maui-Infrastructure-Enums-UpdateMode 'DrawnUi.Maui.Infrastructure.Enums.UpdateMode')
-  - [Constant](#F-DrawnUi-Maui-Infrastructure-Enums-UpdateMode-Constant 'DrawnUi.Maui.Infrastructure.Enums.UpdateMode.Constant')
-  - [Dynamic](#F-DrawnUi-Maui-Infrastructure-Enums-UpdateMode-Dynamic 'DrawnUi.Maui.Infrastructure.Enums.UpdateMode.Dynamic')
-  - [Manual](#F-DrawnUi-Maui-Infrastructure-Enums-UpdateMode-Manual 'DrawnUi.Maui.Infrastructure.Enums.UpdateMode.Manual')
-- [VStack](#T-DrawnUi-Maui-Controls-VStack 'DrawnUi.Maui.Controls.VStack')
-- [VelocitySkiaAnimator](#T-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator 'DrawnUi.Maui.Animate.Animators.VelocitySkiaAnimator')
-  - [Friction](#P-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-Friction 'DrawnUi.Maui.Animate.Animators.VelocitySkiaAnimator.Friction')
-  - [RemainingVelocity](#P-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-RemainingVelocity 'DrawnUi.Maui.Animate.Animators.VelocitySkiaAnimator.RemainingVelocity')
-  - [mMaxOverscrollValue](#P-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-mMaxOverscrollValue 'DrawnUi.Maui.Animate.Animators.VelocitySkiaAnimator.mMaxOverscrollValue')
-  - [mMinOverscrollValue](#P-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-mMinOverscrollValue 'DrawnUi.Maui.Animate.Animators.VelocitySkiaAnimator.mMinOverscrollValue')
-- [ViewsAdapter](#T-DrawnUi-Maui-Draw-ViewsAdapter 'DrawnUi.Maui.Draw.ViewsAdapter')
-  - [_dicoCellsInUse](#F-DrawnUi-Maui-Draw-ViewsAdapter-_dicoCellsInUse 'DrawnUi.Maui.Draw.ViewsAdapter._dicoCellsInUse')
-  - [TemplatesAvailable](#P-DrawnUi-Maui-Draw-ViewsAdapter-TemplatesAvailable 'DrawnUi.Maui.Draw.ViewsAdapter.TemplatesAvailable')
-  - [AddMoreToPool(oversize)](#M-DrawnUi-Maui-Draw-ViewsAdapter-AddMoreToPool-System-Int32- 'DrawnUi.Maui.Draw.ViewsAdapter.AddMoreToPool(System.Int32)')
-  - [FillPool(size)](#M-DrawnUi-Maui-Draw-ViewsAdapter-FillPool-System-Int32,System-Collections-IList- 'DrawnUi.Maui.Draw.ViewsAdapter.FillPool(System.Int32,System.Collections.IList)')
-  - [FillPool(size)](#M-DrawnUi-Maui-Draw-ViewsAdapter-FillPool-System-Int32- 'DrawnUi.Maui.Draw.ViewsAdapter.FillPool(System.Int32)')
-  - [InitializeTemplates(template,dataContexts,poolSize,reserve)](#M-DrawnUi-Maui-Draw-ViewsAdapter-InitializeTemplates-System-Func{System-Object},System-Collections-IList,System-Int32,System-Int32- 'DrawnUi.Maui.Draw.ViewsAdapter.InitializeTemplates(System.Func{System.Object},System.Collections.IList,System.Int32,System.Int32)')
-- [ViewsIterator](#T-DrawnUi-Maui-Draw-ViewsAdapter-ViewsIterator 'DrawnUi.Maui.Draw.ViewsAdapter.ViewsIterator')
-- [VirtualisationType](#T-DrawnUi-Maui-Draw-VirtualisationType 'DrawnUi.Maui.Draw.VirtualisationType')
-  - [Disabled](#F-DrawnUi-Maui-Draw-VirtualisationType-Disabled 'DrawnUi.Maui.Draw.VirtualisationType.Disabled')
-  - [Enabled](#F-DrawnUi-Maui-Draw-VirtualisationType-Enabled 'DrawnUi.Maui.Draw.VirtualisationType.Enabled')
-  - [Smart](#F-DrawnUi-Maui-Draw-VirtualisationType-Smart 'DrawnUi.Maui.Draw.VirtualisationType.Smart')
-- [ViscousFluidInterpolator](#T-DrawnUi-Maui-Draw-ViscousFluidInterpolator 'DrawnUi.Maui.Draw.ViscousFluidInterpolator')
-  - [VISCOUS_FLUID_SCALE](#F-DrawnUi-Maui-Draw-ViscousFluidInterpolator-VISCOUS_FLUID_SCALE 'DrawnUi.Maui.Draw.ViscousFluidInterpolator.VISCOUS_FLUID_SCALE')
-- [VisualTransform](#T-DrawnUi-Maui-Infrastructure-VisualTransform 'DrawnUi.Maui.Infrastructure.VisualTransform')
-  - [Scale](#P-DrawnUi-Maui-Infrastructure-VisualTransform-Scale 'DrawnUi.Maui.Infrastructure.VisualTransform.Scale')
-  - [Translation](#P-DrawnUi-Maui-Infrastructure-VisualTransform-Translation 'DrawnUi.Maui.Infrastructure.VisualTransform.Translation')
-  - [ToNative(rect,clipRect,scale)](#M-DrawnUi-Maui-Infrastructure-VisualTransform-ToNative-SkiaSharp-SKRect,System-Single- 'DrawnUi.Maui.Infrastructure.VisualTransform.ToNative(SkiaSharp.SKRect,System.Single)')
-- [VisualTransformNative](#T-DrawnUi-Maui-Infrastructure-VisualTransformNative 'DrawnUi.Maui.Infrastructure.VisualTransformNative')
-  - [Rect](#P-DrawnUi-Maui-Infrastructure-VisualTransformNative-Rect 'DrawnUi.Maui.Infrastructure.VisualTransformNative.Rect')
-- [VisualTreeChain](#T-DrawnUi-Maui-Infrastructure-VisualTreeChain 'DrawnUi.Maui.Infrastructure.VisualTreeChain')
-  - [Child](#P-DrawnUi-Maui-Infrastructure-VisualTreeChain-Child 'DrawnUi.Maui.Infrastructure.VisualTreeChain.Child')
-  - [NodeIndices](#P-DrawnUi-Maui-Infrastructure-VisualTreeChain-NodeIndices 'DrawnUi.Maui.Infrastructure.VisualTreeChain.NodeIndices')
-  - [Nodes](#P-DrawnUi-Maui-Infrastructure-VisualTreeChain-Nodes 'DrawnUi.Maui.Infrastructure.VisualTreeChain.Nodes')
-  - [Transform](#P-DrawnUi-Maui-Infrastructure-VisualTreeChain-Transform 'DrawnUi.Maui.Infrastructure.VisualTreeChain.Transform')
-- [WindowParameters](#T-DrawnUi-Maui-Draw-WindowParameters 'DrawnUi.Maui.Draw.WindowParameters')
-  - [IsFixedSize](#P-DrawnUi-Maui-Draw-WindowParameters-IsFixedSize 'DrawnUi.Maui.Draw.WindowParameters.IsFixedSize')
-- [ZoomContent](#T-DrawnUi-Maui-Draw-ZoomContent 'DrawnUi.Maui.Draw.ZoomContent')
-  - [LastValue](#F-DrawnUi-Maui-Draw-ZoomContent-LastValue 'DrawnUi.Maui.Draw.ZoomContent.LastValue')
-  - [ZoomSpeed](#P-DrawnUi-Maui-Draw-ZoomContent-ZoomSpeed 'DrawnUi.Maui.Draw.ZoomContent.ZoomSpeed')
+- [ActionOnTickAnimator](#T-DrawnUi-Maui-Draw-ActionOnTickAnimator 'DrawnUi.Draw.ActionOnTickAnimator')
+- [AddGestures](#T-DrawnUi-Maui-Draw-AddGestures 'DrawnUi.Draw.AddGestures')
+- [AnimateExtensions](#T-DrawnUi-Maui-Draw-AnimateExtensions 'DrawnUi.Draw.AnimateExtensions')
+  - [AnimateWith(control,animations)](#M-DrawnUi-Maui-Draw-AnimateExtensions-AnimateWith-DrawnUi-Maui-Draw-SkiaControl,System-Func{DrawnUi-Maui-Draw-SkiaControl,System-Threading-Tasks-Task}[]- 'DrawnUi.Draw.AnimateExtensions.AnimateWith(DrawnUi.Draw.SkiaControl,System.Func{DrawnUi.Draw.SkiaControl,System.Threading.Tasks.Task}[])')
+- [AnimatedFramesRenderer](#T-DrawnUi-Maui-Controls-AnimatedFramesRenderer 'DrawnUi.Controls.AnimatedFramesRenderer')
+  - [Repeat](#P-DrawnUi-Maui-Controls-AnimatedFramesRenderer-Repeat 'DrawnUi.Controls.AnimatedFramesRenderer.Repeat')
+  - [GetFrameAt()](#M-DrawnUi-Maui-Controls-AnimatedFramesRenderer-GetFrameAt-System-Single- 'DrawnUi.Controls.AnimatedFramesRenderer.GetFrameAt(System.Single)')
+  - [OnAnimatorUpdated(value)](#M-DrawnUi-Maui-Controls-AnimatedFramesRenderer-OnAnimatorUpdated-System-Double- 'DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorUpdated(System.Double)')
+- [AutoSizeType](#T-DrawnUi-Maui-Draw-AutoSizeType 'DrawnUi.Draw.AutoSizeType')
+  - [FillHorizontal](#F-DrawnUi-Maui-Draw-AutoSizeType-FillHorizontal 'DrawnUi.Draw.AutoSizeType.FillHorizontal')
+  - [FillVertical](#F-DrawnUi-Maui-Draw-AutoSizeType-FillVertical 'DrawnUi.Draw.AutoSizeType.FillVertical')
+  - [FitFillHorizontal](#F-DrawnUi-Maui-Draw-AutoSizeType-FitFillHorizontal 'DrawnUi.Draw.AutoSizeType.FitFillHorizontal')
+  - [FitFillVertical](#F-DrawnUi-Maui-Draw-AutoSizeType-FitFillVertical 'DrawnUi.Draw.AutoSizeType.FitFillVertical')
+  - [FitHorizontal](#F-DrawnUi-Maui-Draw-AutoSizeType-FitHorizontal 'DrawnUi.Draw.AutoSizeType.FitHorizontal')
+  - [FitVertical](#F-DrawnUi-Maui-Draw-AutoSizeType-FitVertical 'DrawnUi.Draw.AutoSizeType.FitVertical')
+- [BindToParentContextExtension](#T-DrawnUi-Maui-Draw-BindToParentContextExtension 'DrawnUi.Draw.BindToParentContextExtension')
+- [BuildWrapLayout](#T-DrawnUi-Maui-Draw-SkiaLayout-BuildWrapLayout 'DrawnUi.Draw.SkiaLayout.BuildWrapLayout')
+- [CachedObject](#T-DrawnUi-Maui-Draw-CachedObject 'DrawnUi.Draw.CachedObject')
+  - [SurfaceIsRecycled](#P-DrawnUi-Maui-Draw-CachedObject-SurfaceIsRecycled 'DrawnUi.Draw.CachedObject.SurfaceIsRecycled')
+- [Canvas](#T-DrawnUi-Maui-Views-Canvas 'DrawnUi.Views.Canvas')
+  - [FirstPanThreshold](#F-DrawnUi-Maui-Views-Canvas-FirstPanThreshold 'DrawnUi.Views.Canvas.FirstPanThreshold')
+  - [AdaptSizeRequestToContent(widthRequest,heightRequest)](#M-DrawnUi-Maui-Views-Canvas-AdaptSizeRequestToContent-System-Double,System-Double- 'DrawnUi.Views.Canvas.AdaptSizeRequestToContent(System.Double,System.Double)')
+  - [ArrangeOverride(bounds)](#M-DrawnUi-Maui-Views-Canvas-ArrangeOverride-Microsoft-Maui-Graphics-Rect- 'DrawnUi.Views.Canvas.ArrangeOverride(Microsoft.Maui.Graphics.Rect)')
+  - [DisableUpdates()](#M-DrawnUi-Maui-Views-Canvas-DisableUpdates 'DrawnUi.Views.Canvas.DisableUpdates')
+  - [EnableUpdates()](#M-DrawnUi-Maui-Views-Canvas-EnableUpdates 'DrawnUi.Views.Canvas.EnableUpdates')
+  - [GetMeasuringRectForChildren(widthConstraint,heightConstraint,scale)](#M-DrawnUi-Maui-Views-Canvas-GetMeasuringRectForChildren-System-Single,System-Single,System-Single- 'DrawnUi.Views.Canvas.GetMeasuringRectForChildren(System.Single,System.Single,System.Single)')
+  - [MeasureChild(child,availableWidth,availableHeight,scale)](#M-DrawnUi-Maui-Views-Canvas-MeasureChild-DrawnUi-Maui-Draw-SkiaControl,System-Double,System-Double,System-Double- 'DrawnUi.Views.Canvas.MeasureChild(DrawnUi.Draw.SkiaControl,System.Double,System.Double,System.Double)')
+  - [OnGestureEvent(type,args1,args1,)](#M-DrawnUi-Maui-Views-Canvas-OnGestureEvent-AppoMobi-Maui-Gestures-TouchActionType,AppoMobi-Maui-Gestures-TouchActionEventArgs,AppoMobi-Maui-Gestures-TouchActionResult- 'DrawnUi.Views.Canvas.OnGestureEvent(AppoMobi.Maui.Gestures.TouchActionType,AppoMobi.Maui.Gestures.TouchActionEventArgs,AppoMobi.Maui.Gestures.TouchActionResult)')
+  - [SetContent()](#M-DrawnUi-Maui-Views-Canvas-SetContent-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Views.Canvas.SetContent(DrawnUi.Draw.SkiaControl)')
+- [Cell](#T-DrawnUi-Maui-Draw-SkiaLayout-Cell 'DrawnUi.Draw.SkiaLayout.Cell')
+  - [ColumnGridLengthType](#P-DrawnUi-Maui-Draw-SkiaLayout-Cell-ColumnGridLengthType 'DrawnUi.Draw.SkiaLayout.Cell.ColumnGridLengthType')
+  - [RowGridLengthType](#P-DrawnUi-Maui-Draw-SkiaLayout-Cell-RowGridLengthType 'DrawnUi.Draw.SkiaLayout.Cell.RowGridLengthType')
+- [ChainAdjustBrightnessEffect](#T-DrawnUi-Maui-Draw-ChainAdjustBrightnessEffect 'DrawnUi.Draw.ChainAdjustBrightnessEffect')
+  - [CreateBrightnessFilter(value)](#M-DrawnUi-Maui-Draw-ChainAdjustBrightnessEffect-CreateBrightnessFilter-System-Single- 'DrawnUi.Draw.ChainAdjustBrightnessEffect.CreateBrightnessFilter(System.Single)')
+  - [CreateLightnessFilter(value)](#M-DrawnUi-Maui-Draw-ChainAdjustBrightnessEffect-CreateLightnessFilter-System-Single- 'DrawnUi.Draw.ChainAdjustBrightnessEffect.CreateLightnessFilter(System.Single)')
+- [ChainAdjustLightnessEffect](#T-DrawnUi-Maui-Draw-ChainAdjustLightnessEffect 'DrawnUi.Draw.ChainAdjustLightnessEffect')
+  - [CreateLightnessFilter(value)](#M-DrawnUi-Maui-Draw-ChainAdjustLightnessEffect-CreateLightnessFilter-System-Single- 'DrawnUi.Draw.ChainAdjustLightnessEffect.CreateLightnessFilter(System.Single)')
+- [ChainEffectResult](#T-DrawnUi-Maui-Draw-ChainEffectResult 'DrawnUi.Draw.ChainEffectResult')
+  - [DrawnControl](#P-DrawnUi-Maui-Draw-ChainEffectResult-DrawnControl 'DrawnUi.Draw.ChainEffectResult.DrawnControl')
+- [ColorExtensions](#T-DrawnUi-Maui-Infrastructure-Extensions-ColorExtensions 'DrawnUi.Draw.ColorExtensions')
+  - [ToColorFromHex()](#M-DrawnUi-Maui-Infrastructure-Extensions-ColorExtensions-ToColorFromHex-System-String- 'DrawnUi.Draw.ColorExtensions.ToColorFromHex(System.String)')
+- [ContentLayout](#T-DrawnUi-Maui-Draw-ContentLayout 'DrawnUi.Draw.ContentLayout')
+  - [Orientation](#P-DrawnUi-Maui-Draw-ContentLayout-Orientation 'DrawnUi.Draw.ContentLayout.Orientation')
+  - [ScrollType](#P-DrawnUi-Maui-Draw-ContentLayout-ScrollType 'DrawnUi.Draw.ContentLayout.ScrollType')
+  - [Virtualisation](#P-DrawnUi-Maui-Draw-ContentLayout-Virtualisation 'DrawnUi.Draw.ContentLayout.Virtualisation')
+  - [GetContentAvailableRect(destination)](#M-DrawnUi-Maui-Draw-ContentLayout-GetContentAvailableRect-SkiaSharp-SKRect- 'DrawnUi.Draw.ContentLayout.GetContentAvailableRect(SkiaSharp.SKRect)')
+- [ControlInStack](#T-DrawnUi-Maui-Draw-ControlInStack 'DrawnUi.Draw.ControlInStack')
+  - [Area](#P-DrawnUi-Maui-Draw-ControlInStack-Area 'DrawnUi.Draw.ControlInStack.Area')
+  - [ControlIndex](#P-DrawnUi-Maui-Draw-ControlInStack-ControlIndex 'DrawnUi.Draw.ControlInStack.ControlIndex')
+  - [Destination](#P-DrawnUi-Maui-Draw-ControlInStack-Destination 'DrawnUi.Draw.ControlInStack.Destination')
+  - [Drawn](#P-DrawnUi-Maui-Draw-ControlInStack-Drawn 'DrawnUi.Draw.ControlInStack.Drawn')
+  - [Measured](#P-DrawnUi-Maui-Draw-ControlInStack-Measured 'DrawnUi.Draw.ControlInStack.Measured')
+  - [Offset](#P-DrawnUi-Maui-Draw-ControlInStack-Offset 'DrawnUi.Draw.ControlInStack.Offset')
+  - [View](#P-DrawnUi-Maui-Draw-ControlInStack-View 'DrawnUi.Draw.ControlInStack.View')
+- [DecelerationTimingVectorParameters](#T-DrawnUi-Maui-Draw-DecelerationTimingVectorParameters 'DrawnUi.Draw.DecelerationTimingVectorParameters')
+  - [ValueAt(offsetSecs,time)](#M-DrawnUi-Maui-Draw-DecelerationTimingVectorParameters-ValueAt-System-Single- 'DrawnUi.Draw.DecelerationTimingVectorParameters.ValueAt(System.Single)')
+- [DecomposedText](#T-DrawnUi-Maui-Draw-SkiaLabel-DecomposedText 'DrawnUi.Draw.SkiaLabel.DecomposedText')
+  - [HasMoreHorizontalSpace](#P-DrawnUi-Maui-Draw-SkiaLabel-DecomposedText-HasMoreHorizontalSpace 'DrawnUi.Draw.SkiaLabel.DecomposedText.HasMoreHorizontalSpace')
+  - [HasMoreVerticalSpace](#P-DrawnUi-Maui-Draw-SkiaLabel-DecomposedText-HasMoreVerticalSpace 'DrawnUi.Draw.SkiaLabel.DecomposedText.HasMoreVerticalSpace')
+- [DragForce](#T-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-DragForce 'DrawnUi.Animate.Animators.VelocitySkiaAnimator.DragForce')
+  - [GetInitialVelocity(initialPosition,finalPosition,durationTime)](#M-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-DragForce-GetInitialVelocity-System-Single,System-Single,System-Single- 'DrawnUi.Animate.Animators.VelocitySkiaAnimator.DragForce.GetInitialVelocity(System.Single,System.Single,System.Single)')
+- [DrawnFontAttributesConverter](#T-DrawnUi-Maui-Draw-DrawnFontAttributesConverter 'DrawnUi.Draw.DrawnFontAttributesConverter')
+- [DrawnUiBasePage](#T-DrawnUi-Maui-Controls-DrawnUiBasePage 'DrawnUi.Controls.DrawnUiBasePage')
+- [DrawnView](#T-DrawnUi-Maui-Views-DrawnView 'DrawnUi.Views.DrawnView')
+  - [_orderedChildren](#F-DrawnUi-Maui-Views-DrawnView-_orderedChildren 'DrawnUi.Views.DrawnView._orderedChildren')
+  - [AnimatingControls](#P-DrawnUi-Maui-Views-DrawnView-AnimatingControls 'DrawnUi.Views.DrawnView.AnimatingControls')
+  - [CanDraw](#P-DrawnUi-Maui-Views-DrawnView-CanDraw 'DrawnUi.Views.DrawnView.CanDraw')
+  - [CanRenderOffScreen](#P-DrawnUi-Maui-Views-DrawnView-CanRenderOffScreen 'DrawnUi.Views.DrawnView.CanRenderOffScreen')
+  - [CanvasFps](#P-DrawnUi-Maui-Views-DrawnView-CanvasFps 'DrawnUi.Views.DrawnView.CanvasFps')
+  - [DrawingThreadId](#P-DrawnUi-Maui-Views-DrawnView-DrawingThreadId 'DrawnUi.Views.DrawnView.DrawingThreadId')
+  - [DrawingThreads](#P-DrawnUi-Maui-Views-DrawnView-DrawingThreads 'DrawnUi.Views.DrawnView.DrawingThreads')
+  - [FPS](#P-DrawnUi-Maui-Views-DrawnView-FPS 'DrawnUi.Views.DrawnView.FPS')
+  - [FrameTime](#P-DrawnUi-Maui-Views-DrawnView-FrameTime 'DrawnUi.Views.DrawnView.FrameTime')
+  - [GestureListeners](#P-DrawnUi-Maui-Views-DrawnView-GestureListeners 'DrawnUi.Views.DrawnView.GestureListeners')
+  - [InvalidatedCanvas](#P-DrawnUi-Maui-Views-DrawnView-InvalidatedCanvas 'DrawnUi.Views.DrawnView.InvalidatedCanvas')
+  - [IsHiddenInViewTree](#P-DrawnUi-Maui-Views-DrawnView-IsHiddenInViewTree 'DrawnUi.Views.DrawnView.IsHiddenInViewTree')
+  - [PostAnimators](#P-DrawnUi-Maui-Views-DrawnView-PostAnimators 'DrawnUi.Views.DrawnView.PostAnimators')
+  - [StopDrawingWhenUpdateIsLocked](#P-DrawnUi-Maui-Views-DrawnView-StopDrawingWhenUpdateIsLocked 'DrawnUi.Views.DrawnView.StopDrawingWhenUpdateIsLocked')
+  - [Arrange(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Views-DrawnView-Arrange-SkiaSharp-SKRect,System-Double,System-Double,System-Double- 'DrawnUi.Views.DrawnView.Arrange(SkiaSharp.SKRect,System.Double,System.Double,System.Double)')
+  - [CalculateLayout(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Views-DrawnView-CalculateLayout-SkiaSharp-SKRect,System-Double,System-Double,System-Double- 'DrawnUi.Views.DrawnView.CalculateLayout(SkiaSharp.SKRect,System.Double,System.Double,System.Double)')
+  - [CheckElementVisibility(element)](#M-DrawnUi-Maui-Views-DrawnView-CheckElementVisibility-Microsoft-Maui-Controls-VisualElement- 'DrawnUi.Views.DrawnView.CheckElementVisibility(Microsoft.Maui.Controls.VisualElement)')
+  - [CreateSkiaView()](#M-DrawnUi-Maui-Views-DrawnView-CreateSkiaView 'DrawnUi.Views.DrawnView.CreateSkiaView')
+  - [GetOrderedSubviews()](#M-DrawnUi-Maui-Views-DrawnView-GetOrderedSubviews 'DrawnUi.Views.DrawnView.GetOrderedSubviews')
+  - [Invalidate()](#M-DrawnUi-Maui-Views-DrawnView-Invalidate 'DrawnUi.Views.DrawnView.Invalidate')
+  - [InvalidateCanvas()](#M-DrawnUi-Maui-Views-DrawnView-InvalidateCanvas 'DrawnUi.Views.DrawnView.InvalidateCanvas')
+  - [InvalidateChildren()](#M-DrawnUi-Maui-Views-DrawnView-InvalidateChildren 'DrawnUi.Views.DrawnView.InvalidateChildren')
+  - [InvalidateViewsList()](#M-DrawnUi-Maui-Views-DrawnView-InvalidateViewsList 'DrawnUi.Views.DrawnView.InvalidateViewsList')
+  - [KickOffscreenCacheRendering()](#M-DrawnUi-Maui-Views-DrawnView-KickOffscreenCacheRendering 'DrawnUi.Views.DrawnView.KickOffscreenCacheRendering')
+  - [OnCanRenderChanged(state)](#M-DrawnUi-Maui-Views-DrawnView-OnCanRenderChanged-System-Boolean- 'DrawnUi.Views.DrawnView.OnCanRenderChanged(System.Boolean)')
+  - [PostponeExecutionAfterDraw(action)](#M-DrawnUi-Maui-Views-DrawnView-PostponeExecutionAfterDraw-System-Action- 'DrawnUi.Views.DrawnView.PostponeExecutionAfterDraw(System.Action)')
+  - [PostponeExecutionBeforeDraw(action)](#M-DrawnUi-Maui-Views-DrawnView-PostponeExecutionBeforeDraw-System-Action- 'DrawnUi.Views.DrawnView.PostponeExecutionBeforeDraw(System.Action)')
+  - [RegisterAnimator(uid,animating)](#M-DrawnUi-Maui-Views-DrawnView-RegisterAnimator-DrawnUi-Maui-Draw-ISkiaAnimator- 'DrawnUi.Views.DrawnView.RegisterAnimator(DrawnUi.Draw.ISkiaAnimator)')
+  - [ReportFocus(listener)](#M-DrawnUi-Maui-Views-DrawnView-ReportFocus-DrawnUi-Maui-Draw-ISkiaGestureListener,DrawnUi-Maui-Draw-ISkiaGestureListener- 'DrawnUi.Views.DrawnView.ReportFocus(DrawnUi.Draw.ISkiaGestureListener,DrawnUi.Draw.ISkiaGestureListener)')
+- [DynamicGrid\`1](#T-DrawnUi-Maui-Draw-DynamicGrid`1 'DrawnUi.Draw.DynamicGrid`1')
+  - [GetColumnCountForRow(row)](#M-DrawnUi-Maui-Draw-DynamicGrid`1-GetColumnCountForRow-System-Int32- 'DrawnUi.Draw.DynamicGrid`1.GetColumnCountForRow(System.Int32)')
+- [EmojiData](#T-DrawnUi-Maui-Draw-SkiaLabel-EmojiData 'DrawnUi.Draw.SkiaLabel.EmojiData')
+  - [IsEmojiModifierSequence(text,index)](#M-DrawnUi-Maui-Draw-SkiaLabel-EmojiData-IsEmojiModifierSequence-System-String,System-Int32- 'DrawnUi.Draw.SkiaLabel.EmojiData.IsEmojiModifierSequence(System.String,System.Int32)')
+- [Files](#T-DrawnUi-Maui-Infrastructure-Files 'DrawnUi.Infrastructure.Files')
+  - [ListAssets()](#M-DrawnUi-Maui-Infrastructure-Files-ListAssets-System-String- 'DrawnUi.Infrastructure.Files.ListAssets(System.String)')
+- [FontWeight](#T-DrawnUi-Maui-Draw-FontWeight 'DrawnUi.Draw.FontWeight')
+  - [Black](#F-DrawnUi-Maui-Draw-FontWeight-Black 'DrawnUi.Draw.FontWeight.Black')
+  - [Bold](#F-DrawnUi-Maui-Draw-FontWeight-Bold 'DrawnUi.Draw.FontWeight.Bold')
+  - [ExtraBold](#F-DrawnUi-Maui-Draw-FontWeight-ExtraBold 'DrawnUi.Draw.FontWeight.ExtraBold')
+  - [ExtraLight](#F-DrawnUi-Maui-Draw-FontWeight-ExtraLight 'DrawnUi.Draw.FontWeight.ExtraLight')
+  - [Light](#F-DrawnUi-Maui-Draw-FontWeight-Light 'DrawnUi.Draw.FontWeight.Light')
+  - [Medium](#F-DrawnUi-Maui-Draw-FontWeight-Medium 'DrawnUi.Draw.FontWeight.Medium')
+  - [Regular](#F-DrawnUi-Maui-Draw-FontWeight-Regular 'DrawnUi.Draw.FontWeight.Regular')
+  - [SemiBold](#F-DrawnUi-Maui-Draw-FontWeight-SemiBold 'DrawnUi.Draw.FontWeight.SemiBold')
+  - [Thin](#F-DrawnUi-Maui-Draw-FontWeight-Thin 'DrawnUi.Draw.FontWeight.Thin')
+- [GesturesMode](#T-DrawnUi-Maui-Draw-GesturesMode 'DrawnUi.Draw.GesturesMode')
+  - [Disabled](#F-DrawnUi-Maui-Draw-GesturesMode-Disabled 'DrawnUi.Draw.GesturesMode.Disabled')
+  - [Enabled](#F-DrawnUi-Maui-Draw-GesturesMode-Enabled 'DrawnUi.Draw.GesturesMode.Enabled')
+  - [Lock](#F-DrawnUi-Maui-Draw-GesturesMode-Lock 'DrawnUi.Draw.GesturesMode.Lock')
+  - [Share](#F-DrawnUi-Maui-Draw-GesturesMode-Share 'DrawnUi.Draw.GesturesMode.Share')
+- [GifAnimation](#T-DrawnUi-Maui-Controls-GifAnimation 'DrawnUi.Controls.GifAnimation')
+  - [Frame](#P-DrawnUi-Maui-Controls-GifAnimation-Frame 'DrawnUi.Controls.GifAnimation.Frame')
+  - [SeekFrame(frame)](#M-DrawnUi-Maui-Controls-GifAnimation-SeekFrame-System-Int32- 'DrawnUi.Controls.GifAnimation.SeekFrame(System.Int32)')
+- [GlideExtensions](#T-DrawnUi-Maui-Views-GlideExtensions 'DrawnUi.Views.GlideExtensions')
+  - [Clear()](#M-DrawnUi-Maui-Views-GlideExtensions-Clear-Bumptech-Glide-RequestManager,Android-Widget-ImageView- 'DrawnUi.Views.GlideExtensions.Clear(Bumptech.Glide.RequestManager,Android.Widget.ImageView)')
+  - [IsActivityAlive()](#M-DrawnUi-Maui-Views-GlideExtensions-IsActivityAlive-Android-Content-Context,Microsoft-Maui-Controls-ImageSource- 'DrawnUi.Views.GlideExtensions.IsActivityAlive(Android.Content.Context,Microsoft.Maui.Controls.ImageSource)')
+- [GridLayout](#T-DrawnUi-Maui-Controls-GridLayout 'DrawnUi.Controls.GridLayout')
+- [HStack](#T-DrawnUi-Maui-Controls-HStack 'DrawnUi.Controls.HStack')
+- [HardwareAccelerationMode](#T-DrawnUi-Maui-Draw-HardwareAccelerationMode 'DrawnUi.Draw.HardwareAccelerationMode')
+  - [Disabled](#F-DrawnUi-Maui-Draw-HardwareAccelerationMode-Disabled 'DrawnUi.Draw.HardwareAccelerationMode.Disabled')
+  - [Enabled](#F-DrawnUi-Maui-Draw-HardwareAccelerationMode-Enabled 'DrawnUi.Draw.HardwareAccelerationMode.Enabled')
+  - [Prerender](#F-DrawnUi-Maui-Draw-HardwareAccelerationMode-Prerender 'DrawnUi.Draw.HardwareAccelerationMode.Prerender')
+- [IAfterEffectDelete](#T-DrawnUi-Maui-Draw-IAfterEffectDelete 'DrawnUi.Draw.IAfterEffectDelete')
+  - [TypeId](#P-DrawnUi-Maui-Draw-IAfterEffectDelete-TypeId 'DrawnUi.Draw.IAfterEffectDelete.TypeId')
+  - [Render(control,canvas,scale)](#M-DrawnUi-Maui-Draw-IAfterEffectDelete-Render-DrawnUi-Maui-Draw-IDrawnBase,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double- 'DrawnUi.Draw.IAfterEffectDelete.Render(DrawnUi.Draw.IDrawnBase,DrawnUi.Draw.SkiaDrawingContext,System.Double)')
+- [IAnimatorsManager](#T-DrawnUi-Maui-Draw-IAnimatorsManager 'DrawnUi.Draw.IAnimatorsManager')
+- [ICanBeUpdated](#T-DrawnUi-Maui-Draw-ICanBeUpdated 'DrawnUi.Draw.ICanBeUpdated')
+  - [Update()](#M-DrawnUi-Maui-Draw-ICanBeUpdated-Update 'DrawnUi.Draw.ICanBeUpdated.Update')
+- [ICanRenderOnCanvas](#T-DrawnUi-Maui-Draw-ICanRenderOnCanvas 'DrawnUi.Draw.ICanRenderOnCanvas')
+  - [Render(control,context,scale)](#M-DrawnUi-Maui-Draw-ICanRenderOnCanvas-Render-DrawnUi-Maui-Draw-IDrawnBase,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double- 'DrawnUi.Draw.ICanRenderOnCanvas.Render(DrawnUi.Draw.IDrawnBase,DrawnUi.Draw.SkiaDrawingContext,System.Double)')
+- [IDefinesViewport](#T-DrawnUi-Maui-Draw-IDefinesViewport 'DrawnUi.Draw.IDefinesViewport')
+  - [InvalidateByChild()](#M-DrawnUi-Maui-Draw-IDefinesViewport-InvalidateByChild-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.IDefinesViewport.InvalidateByChild(DrawnUi.Draw.SkiaControl)')
+- [IDrawnBase](#T-DrawnUi-Maui-Draw-IDrawnBase 'DrawnUi.Draw.IDrawnBase')
+  - [PostAnimators](#P-DrawnUi-Maui-Draw-IDrawnBase-PostAnimators 'DrawnUi.Draw.IDrawnBase.PostAnimators')
+  - [Views](#P-DrawnUi-Maui-Draw-IDrawnBase-Views 'DrawnUi.Draw.IDrawnBase.Views')
+  - [AddSubView(view)](#M-DrawnUi-Maui-Draw-IDrawnBase-AddSubView-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.IDrawnBase.AddSubView(DrawnUi.Draw.SkiaControl)')
+  - [ClipSmart(canvas,path,operation)](#M-DrawnUi-Maui-Draw-IDrawnBase-ClipSmart-SkiaSharp-SKCanvas,SkiaSharp-SKPath,SkiaSharp-SKClipOperation- 'DrawnUi.Draw.IDrawnBase.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)')
+  - [CreateClip()](#M-DrawnUi-Maui-Draw-IDrawnBase-CreateClip-System-Object,System-Boolean,SkiaSharp-SKPath- 'DrawnUi.Draw.IDrawnBase.CreateClip(System.Object,System.Boolean,SkiaSharp.SKPath)')
+  - [GetOnScreenVisibleArea()](#M-DrawnUi-Maui-Draw-IDrawnBase-GetOnScreenVisibleArea-System-Single- 'DrawnUi.Draw.IDrawnBase.GetOnScreenVisibleArea(System.Single)')
+  - [Invalidate()](#M-DrawnUi-Maui-Draw-IDrawnBase-Invalidate 'DrawnUi.Draw.IDrawnBase.Invalidate')
+  - [InvalidateByChild(skiaControl)](#M-DrawnUi-Maui-Draw-IDrawnBase-InvalidateByChild-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.IDrawnBase.InvalidateByChild(DrawnUi.Draw.SkiaControl)')
+  - [InvalidateParents()](#M-DrawnUi-Maui-Draw-IDrawnBase-InvalidateParents 'DrawnUi.Draw.IDrawnBase.InvalidateParents')
+  - [RemoveSubView(view)](#M-DrawnUi-Maui-Draw-IDrawnBase-RemoveSubView-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.IDrawnBase.RemoveSubView(DrawnUi.Draw.SkiaControl)')
+  - [UpdateByChild(skiaControl)](#M-DrawnUi-Maui-Draw-IDrawnBase-UpdateByChild-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.IDrawnBase.UpdateByChild(DrawnUi.Draw.SkiaControl)')
+- [IHandleGoBack](#T-DrawnUi-Maui-Controls-SkiaShell-IHandleGoBack 'DrawnUi.Controls.SkiaShell.IHandleGoBack')
+  - [OnShellGoBack()](#M-DrawnUi-Maui-Controls-SkiaShell-IHandleGoBack-OnShellGoBack-System-Boolean- 'DrawnUi.Controls.SkiaShell.IHandleGoBack.OnShellGoBack(System.Boolean)')
+- [IHasBanner](#T-DrawnUi-Maui-Draw-IHasBanner 'DrawnUi.Draw.IHasBanner')
+  - [Banner](#P-DrawnUi-Maui-Draw-IHasBanner-Banner 'DrawnUi.Draw.IHasBanner.Banner')
+  - [BannerPreloadOrdered](#P-DrawnUi-Maui-Draw-IHasBanner-BannerPreloadOrdered 'DrawnUi.Draw.IHasBanner.BannerPreloadOrdered')
+- [IInsideViewport](#T-DrawnUi-Maui-Draw-IInsideViewport 'DrawnUi.Draw.IInsideViewport')
+  - [OnLoaded()](#M-DrawnUi-Maui-Draw-IInsideViewport-OnLoaded 'DrawnUi.Draw.IInsideViewport.OnLoaded')
+- [IInsideWheelStack](#T-DrawnUi-Maui-Draw-IInsideWheelStack 'DrawnUi.Draw.IInsideWheelStack')
+  - [OnPositionChanged(offsetRatio,isSelected)](#M-DrawnUi-Maui-Draw-IInsideWheelStack-OnPositionChanged-System-Single,System-Boolean- 'DrawnUi.Draw.IInsideWheelStack.OnPositionChanged(System.Single,System.Boolean)')
+- [ILayoutInsideViewport](#T-DrawnUi-Maui-Draw-ILayoutInsideViewport 'DrawnUi.Draw.ILayoutInsideViewport')
+  - [GetChildIndexAt(point)](#M-DrawnUi-Maui-Draw-ILayoutInsideViewport-GetChildIndexAt-SkiaSharp-SKPoint- 'DrawnUi.Draw.ILayoutInsideViewport.GetChildIndexAt(SkiaSharp.SKPoint)')
+  - [GetVisibleChildIndexAt(point)](#M-DrawnUi-Maui-Draw-ILayoutInsideViewport-GetVisibleChildIndexAt-SkiaSharp-SKPoint- 'DrawnUi.Draw.ILayoutInsideViewport.GetVisibleChildIndexAt(SkiaSharp.SKPoint)')
+- [IRefreshIndicator](#T-DrawnUi-Maui-Draw-IRefreshIndicator 'DrawnUi.Draw.IRefreshIndicator')
+  - [SetDragRatio(ratio)](#M-DrawnUi-Maui-Draw-IRefreshIndicator-SetDragRatio-System-Single- 'DrawnUi.Draw.IRefreshIndicator.SetDragRatio(System.Single)')
+- [IRenderEffect](#T-DrawnUi-Maui-Draw-IRenderEffect 'DrawnUi.Draw.IRenderEffect')
+  - [Draw(destination,ctx,drawControl)](#M-DrawnUi-Maui-Draw-IRenderEffect-Draw-SkiaSharp-SKRect,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Action{DrawnUi-Maui-Draw-SkiaDrawingContext}- 'DrawnUi.Draw.IRenderEffect.Draw(SkiaSharp.SKRect,DrawnUi.Draw.SkiaDrawingContext,System.Action{DrawnUi.Draw.SkiaDrawingContext})')
+- [ISkiaAnimator](#T-DrawnUi-Maui-Draw-ISkiaAnimator 'DrawnUi.Draw.ISkiaAnimator')
+  - [IsDeactivated](#P-DrawnUi-Maui-Draw-ISkiaAnimator-IsDeactivated 'DrawnUi.Draw.ISkiaAnimator.IsDeactivated')
+  - [IsHiddenInViewTree](#P-DrawnUi-Maui-Draw-ISkiaAnimator-IsHiddenInViewTree 'DrawnUi.Draw.ISkiaAnimator.IsHiddenInViewTree')
+  - [IsPaused](#P-DrawnUi-Maui-Draw-ISkiaAnimator-IsPaused 'DrawnUi.Draw.ISkiaAnimator.IsPaused')
+  - [Pause()](#M-DrawnUi-Maui-Draw-ISkiaAnimator-Pause 'DrawnUi.Draw.ISkiaAnimator.Pause')
+  - [Resume()](#M-DrawnUi-Maui-Draw-ISkiaAnimator-Resume 'DrawnUi.Draw.ISkiaAnimator.Resume')
+  - [TickFrame(frameTime)](#M-DrawnUi-Maui-Draw-ISkiaAnimator-TickFrame-System-Int64- 'DrawnUi.Draw.ISkiaAnimator.TickFrame(System.Int64)')
+- [ISkiaControl](#T-DrawnUi-Maui-Draw-ISkiaControl 'DrawnUi.Draw.ISkiaControl')
+  - [IsGhost](#P-DrawnUi-Maui-Draw-ISkiaControl-IsGhost 'DrawnUi.Draw.ISkiaControl.IsGhost')
+  - [Measure(widthConstraint,heightConstraint)](#M-DrawnUi-Maui-Draw-ISkiaControl-Measure-System-Single,System-Single,System-Single- 'DrawnUi.Draw.ISkiaControl.Measure(System.Single,System.Single,System.Single)')
+- [ISkiaDrawable](#T-DrawnUi-Maui-Draw-ISkiaDrawable 'DrawnUi.Draw.ISkiaDrawable')
+  - [OnDraw](#P-DrawnUi-Maui-Draw-ISkiaDrawable-OnDraw 'DrawnUi.Draw.ISkiaDrawable.OnDraw')
+- [ISkiaGestureListener](#T-DrawnUi-Maui-Draw-ISkiaGestureListener 'DrawnUi.Draw.ISkiaGestureListener')
+  - [OnFocusChanged(focus)](#M-DrawnUi-Maui-Draw-ISkiaGestureListener-OnFocusChanged-System-Boolean- 'DrawnUi.Draw.ISkiaGestureListener.OnFocusChanged(System.Boolean)')
+  - [OnSkiaGestureEvent(type,args,args.Action.Action,inside)](#M-DrawnUi-Maui-Draw-ISkiaGestureListener-OnSkiaGestureEvent-DrawnUi-Maui-Draw-SkiaGesturesParameters,DrawnUi-Maui-Draw-GestureEventProcessingInfo- 'DrawnUi.Draw.ISkiaGestureListener.OnSkiaGestureEvent(DrawnUi.Draw.SkiaGesturesParameters,DrawnUi.Draw.GestureEventProcessingInfo)')
+- [ISkiaGridLayout](#T-DrawnUi-Maui-Draw-ISkiaGridLayout 'DrawnUi.Draw.ISkiaGridLayout')
+  - [ColumnDefinitions](#P-DrawnUi-Maui-Draw-ISkiaGridLayout-ColumnDefinitions 'DrawnUi.Draw.ISkiaGridLayout.ColumnDefinitions')
+  - [ColumnSpacing](#P-DrawnUi-Maui-Draw-ISkiaGridLayout-ColumnSpacing 'DrawnUi.Draw.ISkiaGridLayout.ColumnSpacing')
+  - [RowDefinitions](#P-DrawnUi-Maui-Draw-ISkiaGridLayout-RowDefinitions 'DrawnUi.Draw.ISkiaGridLayout.RowDefinitions')
+  - [RowSpacing](#P-DrawnUi-Maui-Draw-ISkiaGridLayout-RowSpacing 'DrawnUi.Draw.ISkiaGridLayout.RowSpacing')
+  - [GetColumn(view)](#M-DrawnUi-Maui-Draw-ISkiaGridLayout-GetColumn-Microsoft-Maui-Controls-BindableObject- 'DrawnUi.Draw.ISkiaGridLayout.GetColumn(Microsoft.Maui.Controls.BindableObject)')
+  - [GetColumnSpan(view)](#M-DrawnUi-Maui-Draw-ISkiaGridLayout-GetColumnSpan-Microsoft-Maui-Controls-BindableObject- 'DrawnUi.Draw.ISkiaGridLayout.GetColumnSpan(Microsoft.Maui.Controls.BindableObject)')
+  - [GetRow(view)](#M-DrawnUi-Maui-Draw-ISkiaGridLayout-GetRow-Microsoft-Maui-Controls-BindableObject- 'DrawnUi.Draw.ISkiaGridLayout.GetRow(Microsoft.Maui.Controls.BindableObject)')
+  - [GetRowSpan(view)](#M-DrawnUi-Maui-Draw-ISkiaGridLayout-GetRowSpan-Microsoft-Maui-Controls-BindableObject- 'DrawnUi.Draw.ISkiaGridLayout.GetRowSpan(Microsoft.Maui.Controls.BindableObject)')
+- [ISkiaLayer](#T-DrawnUi-Maui-Draw-ISkiaLayer 'DrawnUi.Draw.ISkiaLayer')
+  - [HasValidSnapshot](#P-DrawnUi-Maui-Draw-ISkiaLayer-HasValidSnapshot 'DrawnUi.Draw.ISkiaLayer.HasValidSnapshot')
+  - [LayerPaintArgs](#P-DrawnUi-Maui-Draw-ISkiaLayer-LayerPaintArgs 'DrawnUi.Draw.ISkiaLayer.LayerPaintArgs')
+- [ISkiaSharpView](#T-DrawnUi-Maui-Draw-ISkiaSharpView 'DrawnUi.Draw.ISkiaSharpView')
+  - [CreateStandaloneSurface(width,height)](#M-DrawnUi-Maui-Draw-ISkiaSharpView-CreateStandaloneSurface-System-Int32,System-Int32- 'DrawnUi.Draw.ISkiaSharpView.CreateStandaloneSurface(System.Int32,System.Int32)')
+  - [Update()](#M-DrawnUi-Maui-Draw-ISkiaSharpView-Update-System-Int64- 'DrawnUi.Draw.ISkiaSharpView.Update(System.Int64)')
+- [IStateEffect](#T-DrawnUi-Maui-Draw-IStateEffect 'DrawnUi.Draw.IStateEffect')
+  - [UpdateState()](#M-DrawnUi-Maui-Draw-IStateEffect-UpdateState 'DrawnUi.Draw.IStateEffect.UpdateState')
+- [IVisibilityAware](#T-DrawnUi-Maui-Draw-IVisibilityAware 'DrawnUi.Draw.IVisibilityAware')
+  - [OnAppeared()](#M-DrawnUi-Maui-Draw-IVisibilityAware-OnAppeared 'DrawnUi.Draw.IVisibilityAware.OnAppeared')
+  - [OnAppearing()](#M-DrawnUi-Maui-Draw-IVisibilityAware-OnAppearing 'DrawnUi.Draw.IVisibilityAware.OnAppearing')
+- [InternalExtensions](#T-DrawnUi-Maui-Extensions-InternalExtensions 'DrawnUi.Extensions.InternalExtensions')
+  - [ContainsInclusive(rect,point)](#M-DrawnUi-Maui-Extensions-InternalExtensions-ContainsInclusive-SkiaSharp-SKRect,SkiaSharp-SKPoint- 'DrawnUi.Extensions.InternalExtensions.ContainsInclusive(SkiaSharp.SKRect,SkiaSharp.SKPoint)')
+  - [ContainsInclusive()](#M-DrawnUi-Maui-Extensions-InternalExtensions-ContainsInclusive-SkiaSharp-SKRect,System-Single,System-Single- 'DrawnUi.Extensions.InternalExtensions.ContainsInclusive(SkiaSharp.SKRect,System.Single,System.Single)')
+- [LayoutType](#T-DrawnUi-Maui-Draw-LayoutType 'DrawnUi.Draw.LayoutType')
+  - [Absolute](#F-DrawnUi-Maui-Draw-LayoutType-Absolute 'DrawnUi.Draw.LayoutType.Absolute')
+  - [Column](#F-DrawnUi-Maui-Draw-LayoutType-Column 'DrawnUi.Draw.LayoutType.Column')
+  - [Grid](#F-DrawnUi-Maui-Draw-LayoutType-Grid 'DrawnUi.Draw.LayoutType.Grid')
+  - [Row](#F-DrawnUi-Maui-Draw-LayoutType-Row 'DrawnUi.Draw.LayoutType.Row')
+  - [Wrap](#F-DrawnUi-Maui-Draw-LayoutType-Wrap 'DrawnUi.Draw.LayoutType.Wrap')
+- [LineGlyph](#T-DrawnUi-Maui-Draw-LineGlyph 'DrawnUi.Draw.LineGlyph')
+  - [Width](#P-DrawnUi-Maui-Draw-LineGlyph-Width 'DrawnUi.Draw.LineGlyph.Width')
+- [LoadedImageSource](#T-DrawnUi-Maui-Draw-LoadedImageSource 'DrawnUi.Draw.LoadedImageSource')
+  - [ProtectFromDispose](#P-DrawnUi-Maui-Draw-LoadedImageSource-ProtectFromDispose 'DrawnUi.Draw.LoadedImageSource.ProtectFromDispose')
+- [LockTouch](#T-DrawnUi-Maui-Draw-LockTouch 'DrawnUi.Draw.LockTouch')
+  - [Enabled](#F-DrawnUi-Maui-Draw-LockTouch-Enabled 'DrawnUi.Draw.LockTouch.Enabled')
+  - [PassNone](#F-DrawnUi-Maui-Draw-LockTouch-PassNone 'DrawnUi.Draw.LockTouch.PassNone')
+  - [PassTap](#F-DrawnUi-Maui-Draw-LockTouch-PassTap 'DrawnUi.Draw.LockTouch.PassTap')
+  - [PassTapAndLongPress](#F-DrawnUi-Maui-Draw-LockTouch-PassTapAndLongPress 'DrawnUi.Draw.LockTouch.PassTapAndLongPress')
+- [MauiEditor](#T-DrawnUi-Maui-Controls-MauiEditor 'DrawnUi.Controls.MauiEditor')
+  - [MaxLines](#P-DrawnUi-Maui-Controls-MauiEditor-MaxLines 'DrawnUi.Controls.MauiEditor.MaxLines')
+- [MauiEntry](#T-DrawnUi-Maui-Controls-MauiEntry 'DrawnUi.Controls.MauiEntry')
+  - [MaxLines](#P-DrawnUi-Maui-Controls-MauiEntry-MaxLines 'DrawnUi.Controls.MauiEntry.MaxLines')
+- [MauiKey](#T-DrawnUi-Maui-Draw-MauiKey 'DrawnUi.Draw.MauiKey')
+- [MeasuringConstraints](#T-DrawnUi-Maui-Infrastructure-MeasuringConstraints 'DrawnUi.Infrastructure.MeasuringConstraints')
+  - [TotalMargins](#P-DrawnUi-Maui-Infrastructure-MeasuringConstraints-TotalMargins 'DrawnUi.Infrastructure.MeasuringConstraints.TotalMargins')
+- [MyTextWatcher](#T-DrawnUi-Maui-Draw-SkiaEditor-MyTextWatcher 'DrawnUi.Draw.SkiaEditor.MyTextWatcher')
+  - [NativeSelectionStart](#P-DrawnUi-Maui-Draw-SkiaEditor-MyTextWatcher-NativeSelectionStart 'DrawnUi.Draw.SkiaEditor.MyTextWatcher.NativeSelectionStart')
+- [NavigationLayer\`1](#T-DrawnUi-Maui-Controls-SkiaShell-NavigationLayer`1 'DrawnUi.Controls.SkiaShell.NavigationLayer`1')
+  - [#ctor(shell,isModal)](#M-DrawnUi-Maui-Controls-SkiaShell-NavigationLayer`1-#ctor-DrawnUi-Maui-Controls-SkiaShell,System-Boolean- 'DrawnUi.Controls.SkiaShell.NavigationLayer`1.#ctor(DrawnUi.Controls.SkiaShell,System.Boolean)')
+- [PanningModeType](#T-DrawnUi-Maui-Draw-PanningModeType 'DrawnUi.Draw.PanningModeType')
+  - [Enabled](#F-DrawnUi-Maui-Draw-PanningModeType-Enabled 'DrawnUi.Draw.PanningModeType.Enabled')
+- [PendulumAnimator](#T-DrawnUi-Maui-Draw-PendulumAnimator 'DrawnUi.Draw.PendulumAnimator')
+  - [InitialVelocity](#P-DrawnUi-Maui-Draw-PendulumAnimator-InitialVelocity 'DrawnUi.Draw.PendulumAnimator.InitialVelocity')
+  - [IsOneDirectional](#P-DrawnUi-Maui-Draw-PendulumAnimator-IsOneDirectional 'DrawnUi.Draw.PendulumAnimator.IsOneDirectional')
+- [PointExtensions](#T-DrawnUi-Maui-Extensions-PointExtensions 'DrawnUi.Extensions.PointExtensions')
+  - [Add(first,second)](#M-DrawnUi-Maui-Extensions-PointExtensions-Add-Microsoft-Maui-Graphics-Point,Microsoft-Maui-Graphics-Point- 'DrawnUi.Extensions.PointExtensions.Add(Microsoft.Maui.Graphics.Point,Microsoft.Maui.Graphics.Point)')
+  - [Center(touches)](#M-DrawnUi-Maui-Extensions-PointExtensions-Center-Microsoft-Maui-Graphics-Point[]- 'DrawnUi.Extensions.PointExtensions.Center(Microsoft.Maui.Graphics.Point[])')
+  - [Subtract(first,second)](#M-DrawnUi-Maui-Extensions-PointExtensions-Subtract-Microsoft-Maui-Graphics-Point,Microsoft-Maui-Graphics-Point- 'DrawnUi.Extensions.PointExtensions.Subtract(Microsoft.Maui.Graphics.Point,Microsoft.Maui.Graphics.Point)')
+- [RecycleTemplateType](#T-DrawnUi-Maui-Draw-RecycleTemplateType 'DrawnUi.Draw.RecycleTemplateType')
+  - [FillViewport](#F-DrawnUi-Maui-Draw-RecycleTemplateType-FillViewport 'DrawnUi.Draw.RecycleTemplateType.FillViewport')
+  - [None](#F-DrawnUi-Maui-Draw-RecycleTemplateType-None 'DrawnUi.Draw.RecycleTemplateType.None')
+  - [Single](#F-DrawnUi-Maui-Draw-RecycleTemplateType-Single 'DrawnUi.Draw.RecycleTemplateType.Single')
+- [RefreshIndicator](#T-DrawnUi-Maui-Draw-RefreshIndicator 'DrawnUi.Draw.RefreshIndicator')
+  - [IsRunning](#P-DrawnUi-Maui-Draw-RefreshIndicator-IsRunning 'DrawnUi.Draw.RefreshIndicator.IsRunning')
+  - [Orientation](#P-DrawnUi-Maui-Draw-RefreshIndicator-Orientation 'DrawnUi.Draw.RefreshIndicator.Orientation')
+  - [SetDragRatio(ratio)](#M-DrawnUi-Maui-Draw-RefreshIndicator-SetDragRatio-System-Single- 'DrawnUi.Draw.RefreshIndicator.SetDragRatio(System.Single)')
+- [RenderingAnimator](#T-DrawnUi-Maui-Draw-RenderingAnimator 'DrawnUi.Draw.RenderingAnimator')
+  - [OnRendering(control,context,scale)](#M-DrawnUi-Maui-Draw-RenderingAnimator-OnRendering-DrawnUi-Maui-Draw-IDrawnBase,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double- 'DrawnUi.Draw.RenderingAnimator.OnRendering(DrawnUi.Draw.IDrawnBase,DrawnUi.Draw.SkiaDrawingContext,System.Double)')
+- [RippleAnimator](#T-DrawnUi-Maui-Draw-RippleAnimator 'DrawnUi.Draw.RippleAnimator')
+  - [X](#P-DrawnUi-Maui-Draw-RippleAnimator-X 'DrawnUi.Draw.RippleAnimator.X')
+  - [Y](#P-DrawnUi-Maui-Draw-RippleAnimator-Y 'DrawnUi.Draw.RippleAnimator.Y')
+- [RubberBandUtils](#T-DrawnUi-Maui-Infrastructure-Helpers-RubberBandUtils 'DrawnUi.Infrastructure.Helpers.RubberBandUtils')
+  - [ClampOnTrack(point,track,coeff)](#M-DrawnUi-Maui-Infrastructure-Helpers-RubberBandUtils-ClampOnTrack-System-Numerics-Vector2,SkiaSharp-SKRect,System-Single- 'DrawnUi.Infrastructure.Helpers.RubberBandUtils.ClampOnTrack(System.Numerics.Vector2,SkiaSharp.SKRect,System.Single)')
+  - [RubberBandClamp(coord,coeff,dim,limits,onEmpty)](#M-DrawnUi-Maui-Infrastructure-Helpers-RubberBandUtils-RubberBandClamp-System-Single,System-Single,DrawnUi-Maui-Draw-RangeF,System-Single,System-Single- 'DrawnUi.Infrastructure.Helpers.RubberBandUtils.RubberBandClamp(System.Single,System.Single,DrawnUi.Draw.RangeF,System.Single,System.Single)')
+- [ScrollingInteractionState](#T-DrawnUi-Maui-Draw-SkiaScroll-ScrollingInteractionState 'DrawnUi.Draw.SkiaScroll.ScrollingInteractionState')
+- [SecondPassArrange](#T-DrawnUi-Maui-Draw-SkiaLayout-SecondPassArrange 'DrawnUi.Draw.SkiaLayout.SecondPassArrange')
+  - [#ctor(cell,child,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-SecondPassArrange-#ctor-DrawnUi-Maui-Draw-ControlInStack,DrawnUi-Maui-Draw-SkiaControl,System-Single- 'DrawnUi.Draw.SkiaLayout.SecondPassArrange.#ctor(DrawnUi.Draw.ControlInStack,DrawnUi.Draw.SkiaControl,System.Single)')
+- [ShapeType](#T-DrawnUi-Maui-Draw-ShapeType 'DrawnUi.Draw.ShapeType')
+  - [Squricle](#F-DrawnUi-Maui-Draw-ShapeType-Squricle 'DrawnUi.Draw.ShapeType.Squricle')
+- [Sk3dView](#T-DrawnUi-Maui-Draw-Sk3dView 'DrawnUi.Draw.Sk3dView')
+  - [CameraDistance](#F-DrawnUi-Maui-Draw-Sk3dView-CameraDistance 'DrawnUi.Draw.Sk3dView.CameraDistance')
+  - [Reset()](#M-DrawnUi-Maui-Draw-Sk3dView-Reset 'DrawnUi.Draw.Sk3dView.Reset')
+- [SkSl](#T-DrawnUi-Maui-Infrastructure-SkSl 'DrawnUi.Infrastructure.SkSl')
+  - [Compile(shaderCode,filename)](#M-DrawnUi-Maui-Infrastructure-SkSl-Compile-System-String,System-String- 'DrawnUi.Infrastructure.SkSl.Compile(System.String,System.String)')
+- [SkiaBackdrop](#T-DrawnUi-Maui-Draw-SkiaBackdrop 'DrawnUi.Draw.SkiaBackdrop')
+  - [ImagePaint](#F-DrawnUi-Maui-Draw-SkiaBackdrop-ImagePaint 'DrawnUi.Draw.SkiaBackdrop.ImagePaint')
+  - [PaintColorFilter](#F-DrawnUi-Maui-Draw-SkiaBackdrop-PaintColorFilter 'DrawnUi.Draw.SkiaBackdrop.PaintColorFilter')
+  - [PaintImageFilter](#F-DrawnUi-Maui-Draw-SkiaBackdrop-PaintImageFilter 'DrawnUi.Draw.SkiaBackdrop.PaintImageFilter')
+  - [UseContext](#P-DrawnUi-Maui-Draw-SkiaBackdrop-UseContext 'DrawnUi.Draw.SkiaBackdrop.UseContext')
+  - [AttachSource()](#M-DrawnUi-Maui-Draw-SkiaBackdrop-AttachSource 'DrawnUi.Draw.SkiaBackdrop.AttachSource')
+  - [GetImage()](#M-DrawnUi-Maui-Draw-SkiaBackdrop-GetImage 'DrawnUi.Draw.SkiaBackdrop.GetImage')
+- [SkiaButton](#T-DrawnUi-Maui-Draw-SkiaButton 'DrawnUi.Draw.SkiaButton')
+  - [DelayCallbackMs](#F-DrawnUi-Maui-Draw-SkiaButton-DelayCallbackMs 'DrawnUi.Draw.SkiaButton.DelayCallbackMs')
+  - [Text](#P-DrawnUi-Maui-Draw-SkiaButton-Text 'DrawnUi.Draw.SkiaButton.Text')
+  - [CreateClip()](#M-DrawnUi-Maui-Draw-SkiaButton-CreateClip-System-Object,System-Boolean,SkiaSharp-SKPath- 'DrawnUi.Draw.SkiaButton.CreateClip(System.Object,System.Boolean,SkiaSharp.SKPath)')
+- [SkiaCacheType](#T-DrawnUi-Maui-Draw-SkiaCacheType 'DrawnUi.Draw.SkiaCacheType')
+  - [GPU](#F-DrawnUi-Maui-Draw-SkiaCacheType-GPU 'DrawnUi.Draw.SkiaCacheType.GPU')
+  - [Image](#F-DrawnUi-Maui-Draw-SkiaCacheType-Image 'DrawnUi.Draw.SkiaCacheType.Image')
+  - [ImageComposite](#F-DrawnUi-Maui-Draw-SkiaCacheType-ImageComposite 'DrawnUi.Draw.SkiaCacheType.ImageComposite')
+  - [ImageDoubleBuffered](#F-DrawnUi-Maui-Draw-SkiaCacheType-ImageDoubleBuffered 'DrawnUi.Draw.SkiaCacheType.ImageDoubleBuffered')
+  - [None](#F-DrawnUi-Maui-Draw-SkiaCacheType-None 'DrawnUi.Draw.SkiaCacheType.None')
+  - [Operations](#F-DrawnUi-Maui-Draw-SkiaCacheType-Operations 'DrawnUi.Draw.SkiaCacheType.Operations')
+  - [OperationsFull](#F-DrawnUi-Maui-Draw-SkiaCacheType-OperationsFull 'DrawnUi.Draw.SkiaCacheType.OperationsFull')
+- [SkiaCarousel](#T-DrawnUi-Maui-Controls-SkiaCarousel 'DrawnUi.Controls.SkiaCarousel')
+  - [DynamicSize](#P-DrawnUi-Maui-Controls-SkiaCarousel-DynamicSize 'DrawnUi.Controls.SkiaCarousel.DynamicSize')
+  - [IsLooped](#P-DrawnUi-Maui-Controls-SkiaCarousel-IsLooped 'DrawnUi.Controls.SkiaCarousel.IsLooped')
+  - [IsRightToLeft](#P-DrawnUi-Maui-Controls-SkiaCarousel-IsRightToLeft 'DrawnUi.Controls.SkiaCarousel.IsRightToLeft')
+  - [IsVertical](#P-DrawnUi-Maui-Controls-SkiaCarousel-IsVertical 'DrawnUi.Controls.SkiaCarousel.IsVertical')
+  - [LinearSpeedMs](#P-DrawnUi-Maui-Controls-SkiaCarousel-LinearSpeedMs 'DrawnUi.Controls.SkiaCarousel.LinearSpeedMs')
+  - [PreloadNeighboors](#P-DrawnUi-Maui-Controls-SkiaCarousel-PreloadNeighboors 'DrawnUi.Controls.SkiaCarousel.PreloadNeighboors')
+  - [ScrollAmount](#P-DrawnUi-Maui-Controls-SkiaCarousel-ScrollAmount 'DrawnUi.Controls.SkiaCarousel.ScrollAmount')
+  - [ScrollProgress](#P-DrawnUi-Maui-Controls-SkiaCarousel-ScrollProgress 'DrawnUi.Controls.SkiaCarousel.ScrollProgress')
+  - [SelectedIndex](#P-DrawnUi-Maui-Controls-SkiaCarousel-SelectedIndex 'DrawnUi.Controls.SkiaCarousel.SelectedIndex')
+  - [SidesOffset](#P-DrawnUi-Maui-Controls-SkiaCarousel-SidesOffset 'DrawnUi.Controls.SkiaCarousel.SidesOffset')
+  - [AdaptChildren()](#M-DrawnUi-Maui-Controls-SkiaCarousel-AdaptChildren 'DrawnUi.Controls.SkiaCarousel.AdaptChildren')
+  - [ApplyPosition(currentPosition)](#M-DrawnUi-Maui-Controls-SkiaCarousel-ApplyPosition-System-Numerics-Vector2- 'DrawnUi.Controls.SkiaCarousel.ApplyPosition(System.Numerics.Vector2)')
+  - [GetContentOffsetBounds()](#M-DrawnUi-Maui-Controls-SkiaCarousel-GetContentOffsetBounds 'DrawnUi.Controls.SkiaCarousel.GetContentOffsetBounds')
+  - [InitializeChildren()](#M-DrawnUi-Maui-Controls-SkiaCarousel-InitializeChildren 'DrawnUi.Controls.SkiaCarousel.InitializeChildren')
+  - [OnTemplatesAvailable()](#M-DrawnUi-Maui-Controls-SkiaCarousel-OnTemplatesAvailable 'DrawnUi.Controls.SkiaCarousel.OnTemplatesAvailable')
+- [SkiaCheckbox](#T-DrawnUi-Maui-Draw-SkiaCheckbox 'DrawnUi.Draw.SkiaCheckbox')
+- [SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl')
+  - [LockDraw](#F-DrawnUi-Maui-Draw-SkiaControl-LockDraw 'DrawnUi.Draw.SkiaControl.LockDraw')
+  - [LockRenderObject](#F-DrawnUi-Maui-Draw-SkiaControl-LockRenderObject 'DrawnUi.Draw.SkiaControl.LockRenderObject')
+  - [AllowCaching](#P-DrawnUi-Maui-Draw-SkiaControl-AllowCaching 'DrawnUi.Draw.SkiaControl.AllowCaching')
+  - [Bounds](#P-DrawnUi-Maui-Draw-SkiaControl-Bounds 'DrawnUi.Draw.SkiaControl.Bounds')
+  - [CanUseCacheDoubleBuffering](#P-DrawnUi-Maui-Draw-SkiaControl-CanUseCacheDoubleBuffering 'DrawnUi.Draw.SkiaControl.CanUseCacheDoubleBuffering')
+  - [ClipEffects](#P-DrawnUi-Maui-Draw-SkiaControl-ClipEffects 'DrawnUi.Draw.SkiaControl.ClipEffects')
+  - [ClipFrom](#P-DrawnUi-Maui-Draw-SkiaControl-ClipFrom 'DrawnUi.Draw.SkiaControl.ClipFrom')
+  - [CommandChildTapped](#P-DrawnUi-Maui-Draw-SkiaControl-CommandChildTapped 'DrawnUi.Draw.SkiaControl.CommandChildTapped')
+  - [CreateChildren](#P-DrawnUi-Maui-Draw-SkiaControl-CreateChildren 'DrawnUi.Draw.SkiaControl.CreateChildren')
+  - [CustomizeLayerPaint](#P-DrawnUi-Maui-Draw-SkiaControl-CustomizeLayerPaint 'DrawnUi.Draw.SkiaControl.CustomizeLayerPaint')
+  - [Destination](#P-DrawnUi-Maui-Draw-SkiaControl-Destination 'DrawnUi.Draw.SkiaControl.Destination')
+  - [DrawingRect](#P-DrawnUi-Maui-Draw-SkiaControl-DrawingRect 'DrawnUi.Draw.SkiaControl.DrawingRect')
+  - [ExpandCacheRecordingArea](#P-DrawnUi-Maui-Draw-SkiaControl-ExpandCacheRecordingArea 'DrawnUi.Draw.SkiaControl.ExpandCacheRecordingArea')
+  - [GestureListeners](#P-DrawnUi-Maui-Draw-SkiaControl-GestureListeners 'DrawnUi.Draw.SkiaControl.GestureListeners')
+  - [HeightRequestRatio](#P-DrawnUi-Maui-Draw-SkiaControl-HeightRequestRatio 'DrawnUi.Draw.SkiaControl.HeightRequestRatio')
+  - [Hero](#P-DrawnUi-Maui-Draw-SkiaControl-Hero 'DrawnUi.Draw.SkiaControl.Hero')
+  - [HitBoxAuto](#P-DrawnUi-Maui-Draw-SkiaControl-HitBoxAuto 'DrawnUi.Draw.SkiaControl.HitBoxAuto')
+  - [IsClippedToBounds](#P-DrawnUi-Maui-Draw-SkiaControl-IsClippedToBounds 'DrawnUi.Draw.SkiaControl.IsClippedToBounds')
+  - [IsLayoutDirty](#P-DrawnUi-Maui-Draw-SkiaControl-IsLayoutDirty 'DrawnUi.Draw.SkiaControl.IsLayoutDirty')
+  - [IsMeasuring](#P-DrawnUi-Maui-Draw-SkiaControl-IsMeasuring 'DrawnUi.Draw.SkiaControl.IsMeasuring')
+  - [IsOverlay](#P-DrawnUi-Maui-Draw-SkiaControl-IsOverlay 'DrawnUi.Draw.SkiaControl.IsOverlay')
+  - [IsRenderingWithComposition](#P-DrawnUi-Maui-Draw-SkiaControl-IsRenderingWithComposition 'DrawnUi.Draw.SkiaControl.IsRenderingWithComposition')
+  - [ItemTemplate](#P-DrawnUi-Maui-Draw-SkiaControl-ItemTemplate 'DrawnUi.Draw.SkiaControl.ItemTemplate')
+  - [ItemTemplateType](#P-DrawnUi-Maui-Draw-SkiaControl-ItemTemplateType 'DrawnUi.Draw.SkiaControl.ItemTemplateType')
+  - [LastDrawnAt](#P-DrawnUi-Maui-Draw-SkiaControl-LastDrawnAt 'DrawnUi.Draw.SkiaControl.LastDrawnAt')
+  - [LockChildrenGestures](#P-DrawnUi-Maui-Draw-SkiaControl-LockChildrenGestures 'DrawnUi.Draw.SkiaControl.LockChildrenGestures')
+  - [LockRatio](#P-DrawnUi-Maui-Draw-SkiaControl-LockRatio 'DrawnUi.Draw.SkiaControl.LockRatio')
+  - [Margins](#P-DrawnUi-Maui-Draw-SkiaControl-Margins 'DrawnUi.Draw.SkiaControl.Margins')
+  - [NeedDispose](#P-DrawnUi-Maui-Draw-SkiaControl-NeedDispose 'DrawnUi.Draw.SkiaControl.NeedDispose')
+  - [NeedUpdate](#P-DrawnUi-Maui-Draw-SkiaControl-NeedUpdate 'DrawnUi.Draw.SkiaControl.NeedUpdate')
+  - [NeedUpdateFrontCache](#P-DrawnUi-Maui-Draw-SkiaControl-NeedUpdateFrontCache 'DrawnUi.Draw.SkiaControl.NeedUpdateFrontCache')
+  - [Parent](#P-DrawnUi-Maui-Draw-SkiaControl-Parent 'DrawnUi.Draw.SkiaControl.Parent')
+  - [PostAnimators](#P-DrawnUi-Maui-Draw-SkiaControl-PostAnimators 'DrawnUi.Draw.SkiaControl.PostAnimators')
+  - [RenderObject](#P-DrawnUi-Maui-Draw-SkiaControl-RenderObject 'DrawnUi.Draw.SkiaControl.RenderObject')
+  - [RenderObjectNeedsUpdate](#P-DrawnUi-Maui-Draw-SkiaControl-RenderObjectNeedsUpdate 'DrawnUi.Draw.SkiaControl.RenderObjectNeedsUpdate')
+  - [RenderObjectPreparing](#P-DrawnUi-Maui-Draw-SkiaControl-RenderObjectPreparing 'DrawnUi.Draw.SkiaControl.RenderObjectPreparing')
+  - [RenderObjectPrevious](#P-DrawnUi-Maui-Draw-SkiaControl-RenderObjectPrevious 'DrawnUi.Draw.SkiaControl.RenderObjectPrevious')
+  - [RenderTree](#P-DrawnUi-Maui-Draw-SkiaControl-RenderTree 'DrawnUi.Draw.SkiaControl.RenderTree')
+  - [Scale](#P-DrawnUi-Maui-Draw-SkiaControl-Scale 'DrawnUi.Draw.SkiaControl.Scale')
+  - [ShouldClipAntialiased](#P-DrawnUi-Maui-Draw-SkiaControl-ShouldClipAntialiased 'DrawnUi.Draw.SkiaControl.ShouldClipAntialiased')
+  - [SizeRequest](#P-DrawnUi-Maui-Draw-SkiaControl-SizeRequest 'DrawnUi.Draw.SkiaControl.SizeRequest')
+  - [SkipRendering](#P-DrawnUi-Maui-Draw-SkiaControl-SkipRendering 'DrawnUi.Draw.SkiaControl.SkipRendering')
+  - [Superview](#P-DrawnUi-Maui-Draw-SkiaControl-Superview 'DrawnUi.Draw.SkiaControl.Superview')
+  - [UseCache](#P-DrawnUi-Maui-Draw-SkiaControl-UseCache 'DrawnUi.Draw.SkiaControl.UseCache')
+  - [UsesCacheDoubleBuffering](#P-DrawnUi-Maui-Draw-SkiaControl-UsesCacheDoubleBuffering 'DrawnUi.Draw.SkiaControl.UsesCacheDoubleBuffering')
+  - [ViewportHeightLimit](#P-DrawnUi-Maui-Draw-SkiaControl-ViewportHeightLimit 'DrawnUi.Draw.SkiaControl.ViewportHeightLimit')
+  - [ViewportWidthLimit](#P-DrawnUi-Maui-Draw-SkiaControl-ViewportWidthLimit 'DrawnUi.Draw.SkiaControl.ViewportWidthLimit')
+  - [WasDrawn](#P-DrawnUi-Maui-Draw-SkiaControl-WasDrawn 'DrawnUi.Draw.SkiaControl.WasDrawn')
+  - [WidthRequestRatio](#P-DrawnUi-Maui-Draw-SkiaControl-WidthRequestRatio 'DrawnUi.Draw.SkiaControl.WidthRequestRatio')
+  - [WillClipBounds](#P-DrawnUi-Maui-Draw-SkiaControl-WillClipBounds 'DrawnUi.Draw.SkiaControl.WillClipBounds')
+  - [X](#P-DrawnUi-Maui-Draw-SkiaControl-X 'DrawnUi.Draw.SkiaControl.X')
+  - [Y](#P-DrawnUi-Maui-Draw-SkiaControl-Y 'DrawnUi.Draw.SkiaControl.Y')
+  - [AdaptHeightContraintToRequest(heightConstraint,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-AdaptHeightContraintToRequest-System-Single,Microsoft-Maui-Thickness,System-Double- 'DrawnUi.Draw.SkiaControl.AdaptHeightContraintToRequest(System.Single,Microsoft.Maui.Thickness,System.Double)')
+  - [AdaptSizeRequestToContent(widthRequestPts,heightRequestPts)](#M-DrawnUi-Maui-Draw-SkiaControl-AdaptSizeRequestToContent-System-Double,System-Double- 'DrawnUi.Draw.SkiaControl.AdaptSizeRequestToContent(System.Double,System.Double)')
+  - [AdaptWidthConstraintToRequest(widthConstraint,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-AdaptWidthConstraintToRequest-System-Single,Microsoft-Maui-Thickness,System-Double- 'DrawnUi.Draw.SkiaControl.AdaptWidthConstraintToRequest(System.Single,Microsoft.Maui.Thickness,System.Double)')
+  - [AnimateAsync(callback,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-AnimateAsync-System-Action{System-Double},System-Action,System-Single,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Draw.SkiaControl.AnimateAsync(System.Action{System.Double},System.Action,System.Single,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
+  - [ApplyBindingContext()](#M-DrawnUi-Maui-Draw-SkiaControl-ApplyBindingContext 'DrawnUi.Draw.SkiaControl.ApplyBindingContext')
+  - [ApplyMeasureResult()](#M-DrawnUi-Maui-Draw-SkiaControl-ApplyMeasureResult 'DrawnUi.Draw.SkiaControl.ApplyMeasureResult')
+  - [AreClose(value1,value2)](#M-DrawnUi-Maui-Draw-SkiaControl-AreClose-System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.AreClose(System.Single,System.Single)')
+  - [AreClose(value1,value2)](#M-DrawnUi-Maui-Draw-SkiaControl-AreClose-System-Double,System-Double- 'DrawnUi.Draw.SkiaControl.AreClose(System.Double,System.Double)')
+  - [Arrange(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-Arrange-SkiaSharp-SKRect,System-Single,System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.Arrange(SkiaSharp.SKRect,System.Single,System.Single,System.Single)')
+  - [CalculateLayout(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-CalculateLayout-SkiaSharp-SKRect,System-Single,System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.CalculateLayout(SkiaSharp.SKRect,System.Single,System.Single,System.Single)')
+  - [CalculateMargins()](#M-DrawnUi-Maui-Draw-SkiaControl-CalculateMargins 'DrawnUi.Draw.SkiaControl.CalculateMargins')
+  - [ClipSmart(canvas,path,operation)](#M-DrawnUi-Maui-Draw-SkiaControl-ClipSmart-SkiaSharp-SKCanvas,SkiaSharp-SKPath,SkiaSharp-SKClipOperation- 'DrawnUi.Draw.SkiaControl.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)')
+  - [CommitInvalidations()](#M-DrawnUi-Maui-Draw-SkiaControl-CommitInvalidations 'DrawnUi.Draw.SkiaControl.CommitInvalidations')
+  - [CreateChildrenFromCode()](#M-DrawnUi-Maui-Draw-SkiaControl-CreateChildrenFromCode 'DrawnUi.Draw.SkiaControl.CreateChildrenFromCode')
+  - [CreateClip(arguments)](#M-DrawnUi-Maui-Draw-SkiaControl-CreateClip-System-Object,System-Boolean,SkiaSharp-SKPath- 'DrawnUi.Draw.SkiaControl.CreateClip(System.Object,System.Boolean,SkiaSharp.SKPath)')
+  - [CreateRenderingObjectAndPaint(context,recordArea,action)](#M-DrawnUi-Maui-Draw-SkiaControl-CreateRenderingObjectAndPaint-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,SkiaSharp-SKRect,System-Action{DrawnUi-Maui-Draw-SkiaDrawingContext}- 'DrawnUi.Draw.SkiaControl.CreateRenderingObjectAndPaint(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,SkiaSharp.SKRect,System.Action{DrawnUi.Draw.SkiaDrawingContext})')
+  - [DefineAvailableSize(destination,widthRequest,heightRequest,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-DefineAvailableSize-SkiaSharp-SKRect,System-Single,System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.DefineAvailableSize(SkiaSharp.SKRect,System.Single,System.Single,System.Single)')
+  - [Dispose()](#M-DrawnUi-Maui-Draw-SkiaControl-Dispose 'DrawnUi.Draw.SkiaControl.Dispose')
+  - [DisposeObject(disposable)](#M-DrawnUi-Maui-Draw-SkiaControl-DisposeObject-System-IDisposable- 'DrawnUi.Draw.SkiaControl.DisposeObject(System.IDisposable)')
+  - [DrawRenderObject(cache,ctx,destination)](#M-DrawnUi-Maui-Draw-SkiaControl-DrawRenderObject-DrawnUi-Maui-Draw-CachedObject,DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaControl.DrawRenderObject(DrawnUi.Draw.CachedObject,DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect)')
+  - [DrawUsingRenderObject(context,widthRequest,heightRequest,destination,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-DrawUsingRenderObject-DrawnUi-Maui-Draw-SkiaDrawingContext,System-Single,System-Single,SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.SkiaControl.DrawUsingRenderObject(DrawnUi.Draw.SkiaDrawingContext,System.Single,System.Single,SkiaSharp.SKRect,System.Single)')
+  - [DrawViews(context,destination,scale,debug)](#M-DrawnUi-Maui-Draw-SkiaControl-DrawViews-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single,System-Boolean- 'DrawnUi.Draw.SkiaControl.DrawViews(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Boolean)')
+  - [FadeToAsync(end,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-FadeToAsync-System-Double,System-Single,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Draw.SkiaControl.FadeToAsync(System.Double,System.Single,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
+  - [FinalizeDrawingWithRenderObject(context,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-FinalizeDrawingWithRenderObject-DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double- 'DrawnUi.Draw.SkiaControl.FinalizeDrawingWithRenderObject(DrawnUi.Draw.SkiaDrawingContext,System.Double)')
+  - [GenerateParentChain()](#M-DrawnUi-Maui-Draw-SkiaControl-GenerateParentChain 'DrawnUi.Draw.SkiaControl.GenerateParentChain')
+  - [GestureIsInside(args)](#M-DrawnUi-Maui-Draw-SkiaControl-GestureIsInside-AppoMobi-Maui-Gestures-TouchActionEventArgs,System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.GestureIsInside(AppoMobi.Maui.Gestures.TouchActionEventArgs,System.Single,System.Single)')
+  - [GestureStartedInside(args)](#M-DrawnUi-Maui-Draw-SkiaControl-GestureStartedInside-AppoMobi-Maui-Gestures-TouchActionEventArgs,System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.GestureStartedInside(AppoMobi.Maui.Gestures.TouchActionEventArgs,System.Single,System.Single)')
+  - [GetCacheArea()](#M-DrawnUi-Maui-Draw-SkiaControl-GetCacheArea-SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaControl.GetCacheArea(SkiaSharp.SKRect)')
+  - [GetCacheRecordingArea()](#M-DrawnUi-Maui-Draw-SkiaControl-GetCacheRecordingArea-SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaControl.GetCacheRecordingArea(SkiaSharp.SKRect)')
+  - [GetFuturePositionOnCanvas()](#M-DrawnUi-Maui-Draw-SkiaControl-GetFuturePositionOnCanvas-System-Boolean- 'DrawnUi.Draw.SkiaControl.GetFuturePositionOnCanvas(System.Boolean)')
+  - [GetFuturePositionOnCanvasInPoints()](#M-DrawnUi-Maui-Draw-SkiaControl-GetFuturePositionOnCanvasInPoints-System-Boolean- 'DrawnUi.Draw.SkiaControl.GetFuturePositionOnCanvasInPoints(System.Boolean)')
+  - [GetOnScreenVisibleArea()](#M-DrawnUi-Maui-Draw-SkiaControl-GetOnScreenVisibleArea-System-Single- 'DrawnUi.Draw.SkiaControl.GetOnScreenVisibleArea(System.Single)')
+  - [GetPositionOnCanvas()](#M-DrawnUi-Maui-Draw-SkiaControl-GetPositionOnCanvas-System-Boolean- 'DrawnUi.Draw.SkiaControl.GetPositionOnCanvas(System.Boolean)')
+  - [GetPositionOnCanvasInPoints()](#M-DrawnUi-Maui-Draw-SkiaControl-GetPositionOnCanvasInPoints-System-Boolean- 'DrawnUi.Draw.SkiaControl.GetPositionOnCanvasInPoints(System.Boolean)')
+  - [GetRenderingScaleFor(width,height)](#M-DrawnUi-Maui-Draw-SkiaControl-GetRenderingScaleFor-System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.GetRenderingScaleFor(System.Single,System.Single)')
+  - [GetSelfDrawingPosition()](#M-DrawnUi-Maui-Draw-SkiaControl-GetSelfDrawingPosition 'DrawnUi.Draw.SkiaControl.GetSelfDrawingPosition')
+  - [GetTopParentView()](#M-DrawnUi-Maui-Draw-SkiaControl-GetTopParentView 'DrawnUi.Draw.SkiaControl.GetTopParentView')
+  - [HitIsInside()](#M-DrawnUi-Maui-Draw-SkiaControl-HitIsInside-System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.HitIsInside(System.Single,System.Single)')
+  - [Invalidate()](#M-DrawnUi-Maui-Draw-SkiaControl-Invalidate 'DrawnUi.Draw.SkiaControl.Invalidate')
+  - [InvalidateByChild(child)](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateByChild-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.SkiaControl.InvalidateByChild(DrawnUi.Draw.SkiaControl)')
+  - [InvalidateChildren(control)](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateChildren-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.SkiaControl.InvalidateChildren(DrawnUi.Draw.SkiaControl)')
+  - [InvalidateChildrenTree(control)](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateChildrenTree-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.SkiaControl.InvalidateChildrenTree(DrawnUi.Draw.SkiaControl)')
+  - [InvalidateInternal()](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateInternal 'DrawnUi.Draw.SkiaControl.InvalidateInternal')
+  - [InvalidateViewport()](#M-DrawnUi-Maui-Draw-SkiaControl-InvalidateViewport 'DrawnUi.Draw.SkiaControl.InvalidateViewport')
+  - [IsOne(value)](#M-DrawnUi-Maui-Draw-SkiaControl-IsOne-System-Double- 'DrawnUi.Draw.SkiaControl.IsOne(System.Double)')
+  - [IsPixelInside(x,y)](#M-DrawnUi-Maui-Draw-SkiaControl-IsPixelInside-System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.IsPixelInside(System.Single,System.Single)')
+  - [IsPointInside(x,y,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-IsPointInside-System-Single,System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.IsPointInside(System.Single,System.Single,System.Single)')
+  - [Measure(widthConstraint,heightConstraint,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-Measure-System-Single,System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.Measure(System.Single,System.Single,System.Single)')
+  - [MeasureAbsoluteBase(rectForChildrenPixels,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-MeasureAbsoluteBase-SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.SkiaControl.MeasureAbsoluteBase(SkiaSharp.SKRect,System.Single)')
+  - [MeasureChild(child,availableWidth,availableHeight,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-MeasureChild-DrawnUi-Maui-Draw-SkiaControl,System-Double,System-Double,System-Single- 'DrawnUi.Draw.SkiaControl.MeasureChild(DrawnUi.Draw.SkiaControl,System.Double,System.Double,System.Single)')
+  - [MeasureContent(children,rectForChildrenPixels,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-MeasureContent-System-Collections-Generic-IEnumerable{DrawnUi-Maui-Draw-SkiaControl},SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.SkiaControl.MeasureContent(System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl},SkiaSharp.SKRect,System.Single)')
+  - [NeedRepaint()](#M-DrawnUi-Maui-Draw-SkiaControl-NeedRepaint-Microsoft-Maui-Controls-BindableObject,System-Object,System-Object- 'DrawnUi.Draw.SkiaControl.NeedRepaint(Microsoft.Maui.Controls.BindableObject,System.Object,System.Object)')
+  - [OnBindingContextChanged()](#M-DrawnUi-Maui-Draw-SkiaControl-OnBindingContextChanged 'DrawnUi.Draw.SkiaControl.OnBindingContextChanged')
+  - [OnDisposing()](#M-DrawnUi-Maui-Draw-SkiaControl-OnDisposing 'DrawnUi.Draw.SkiaControl.OnDisposing')
+  - [OnLayoutReady()](#M-DrawnUi-Maui-Draw-SkiaControl-OnLayoutReady 'DrawnUi.Draw.SkiaControl.OnLayoutReady')
+  - [OnParentVisibilityChanged(newvalue)](#M-DrawnUi-Maui-Draw-SkiaControl-OnParentVisibilityChanged-System-Boolean- 'DrawnUi.Draw.SkiaControl.OnParentVisibilityChanged(System.Boolean)')
+  - [OnVisibilityChanged(newvalue)](#M-DrawnUi-Maui-Draw-SkiaControl-OnVisibilityChanged-System-Boolean- 'DrawnUi.Draw.SkiaControl.OnVisibilityChanged(System.Boolean)')
+  - [OnWillDisposeWithChildren()](#M-DrawnUi-Maui-Draw-SkiaControl-OnWillDisposeWithChildren 'DrawnUi.Draw.SkiaControl.OnWillDisposeWithChildren')
+  - [Paint(ctx,destination,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-Paint-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single,System-Object- 'DrawnUi.Draw.SkiaControl.Paint(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Object)')
+  - [PaintTintBackground(canvas,destination)](#M-DrawnUi-Maui-Draw-SkiaControl-PaintTintBackground-SkiaSharp-SKCanvas,SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaControl.PaintTintBackground(SkiaSharp.SKCanvas,SkiaSharp.SKRect)')
+  - [PlayRippleAnimation(color,x,y,removePrevious)](#M-DrawnUi-Maui-Draw-SkiaControl-PlayRippleAnimation-Microsoft-Maui-Graphics-Color,System-Double,System-Double,System-Boolean- 'DrawnUi.Draw.SkiaControl.PlayRippleAnimation(Microsoft.Maui.Graphics.Color,System.Double,System.Double,System.Boolean)')
+  - [PostponeInvalidation(key,action)](#M-DrawnUi-Maui-Draw-SkiaControl-PostponeInvalidation-System-String,System-Action- 'DrawnUi.Draw.SkiaControl.PostponeInvalidation(System.String,System.Action)')
+  - [PreArrange()](#M-DrawnUi-Maui-Draw-SkiaControl-PreArrange-SkiaSharp-SKRect,System-Single,System-Single,System-Single- 'DrawnUi.Draw.SkiaControl.PreArrange(SkiaSharp.SKRect,System.Single,System.Single,System.Single)')
+  - [Reload()](#M-DrawnUi-Maui-Draw-SkiaControl-Reload 'DrawnUi.Draw.SkiaControl.Reload')
+  - [RenderViewsList(skiaControls,context,destination,scale,debug)](#M-DrawnUi-Maui-Draw-SkiaControl-RenderViewsList-System-Collections-Generic-IEnumerable{DrawnUi-Maui-Draw-SkiaControl},DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single,System-Boolean- 'DrawnUi.Draw.SkiaControl.RenderViewsList(System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl},DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single,System.Boolean)')
+  - [Repaint()](#M-DrawnUi-Maui-Draw-SkiaControl-Repaint 'DrawnUi.Draw.SkiaControl.Repaint')
+  - [RotateToAsync(end,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-RotateToAsync-System-Double,System-UInt32,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Draw.SkiaControl.RotateToAsync(System.Double,System.UInt32,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
+  - [SafeAction(action)](#M-DrawnUi-Maui-Draw-SkiaControl-SafeAction-System-Action- 'DrawnUi.Draw.SkiaControl.SafeAction(System.Action)')
+  - [SafePostAction(action)](#M-DrawnUi-Maui-Draw-SkiaControl-SafePostAction-System-Action- 'DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)')
+  - [ScaleToAsync(x,y,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-ScaleToAsync-System-Double,System-Double,System-Single,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Draw.SkiaControl.ScaleToAsync(System.Double,System.Double,System.Single,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
+  - [SetInheritedBindingContext(context)](#M-DrawnUi-Maui-Draw-SkiaControl-SetInheritedBindingContext-System-Object- 'DrawnUi.Draw.SkiaControl.SetInheritedBindingContext(System.Object)')
+  - [SetMeasured(width,height,scale)](#M-DrawnUi-Maui-Draw-SkiaControl-SetMeasured-System-Single,System-Single,System-Boolean,System-Boolean,System-Single- 'DrawnUi.Draw.SkiaControl.SetMeasured(System.Single,System.Single,System.Boolean,System.Boolean,System.Single)')
+  - [SetVisualTransform(transform)](#M-DrawnUi-Maui-Draw-SkiaControl-SetVisualTransform-DrawnUi-Maui-Infrastructure-VisualTransform- 'DrawnUi.Draw.SkiaControl.SetVisualTransform(DrawnUi.Infrastructure.VisualTransform)')
+  - [SetupGradient(paint,gradient,destination)](#M-DrawnUi-Maui-Draw-SkiaControl-SetupGradient-SkiaSharp-SKPaint,DrawnUi-Maui-Draw-SkiaGradient,SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaControl.SetupGradient(SkiaSharp.SKPaint,DrawnUi.Draw.SkiaGradient,SkiaSharp.SKRect)')
+  - [SetupShadow(paint,shadow)](#M-DrawnUi-Maui-Draw-SkiaControl-SetupShadow-SkiaSharp-SKPaint,DrawnUi-Maui-Draw-SkiaShadow,System-Single- 'DrawnUi.Draw.SkiaControl.SetupShadow(SkiaSharp.SKPaint,DrawnUi.Draw.SkiaShadow,System.Single)')
+  - [TranslateInputCoords(childOffset)](#M-DrawnUi-Maui-Draw-SkiaControl-TranslateInputCoords-SkiaSharp-SKPoint,System-Boolean- 'DrawnUi.Draw.SkiaControl.TranslateInputCoords(SkiaSharp.SKPoint,System.Boolean)')
+  - [TranslateToAsync(x,y,length,easing,cancel)](#M-DrawnUi-Maui-Draw-SkiaControl-TranslateToAsync-System-Double,System-Double,System-Single,Microsoft-Maui-Easing,System-Threading-CancellationTokenSource- 'DrawnUi.Draw.SkiaControl.TranslateToAsync(System.Double,System.Double,System.Single,Microsoft.Maui.Easing,System.Threading.CancellationTokenSource)')
+  - [Update()](#M-DrawnUi-Maui-Draw-SkiaControl-Update 'DrawnUi.Draw.SkiaControl.Update')
+- [SkiaControlWithRect](#T-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect 'DrawnUi.Draw.SkiaControl.SkiaControlWithRect')
+  - [#ctor(Control,Rect,Index)](#M-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-#ctor-DrawnUi-Maui-Draw-SkiaControl,SkiaSharp-SKRect,SkiaSharp-SKRect,System-Int32- 'DrawnUi.Draw.SkiaControl.SkiaControlWithRect.#ctor(DrawnUi.Draw.SkiaControl,SkiaSharp.SKRect,SkiaSharp.SKRect,System.Int32)')
+  - [Control](#P-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-Control 'DrawnUi.Draw.SkiaControl.SkiaControlWithRect.Control')
+  - [Index](#P-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-Index 'DrawnUi.Draw.SkiaControl.SkiaControlWithRect.Index')
+  - [Rect](#P-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-Rect 'DrawnUi.Draw.SkiaControl.SkiaControlWithRect.Rect')
+- [SkiaDrawer](#T-DrawnUi-Maui-Controls-SkiaDrawer 'DrawnUi.Controls.SkiaDrawer')
+  - [AmplitudeSize](#P-DrawnUi-Maui-Controls-SkiaDrawer-AmplitudeSize 'DrawnUi.Controls.SkiaDrawer.AmplitudeSize')
+  - [HeaderSize](#P-DrawnUi-Maui-Controls-SkiaDrawer-HeaderSize 'DrawnUi.Controls.SkiaDrawer.HeaderSize')
+  - [ClampOffsetWithRubberBand(x,y)](#M-DrawnUi-Maui-Controls-SkiaDrawer-ClampOffsetWithRubberBand-System-Single,System-Single- 'DrawnUi.Controls.SkiaDrawer.ClampOffsetWithRubberBand(System.Single,System.Single)')
+  - [GetClosestSidePoint(overscrollPoint,contentRect,viewportSize)](#M-DrawnUi-Maui-Controls-SkiaDrawer-GetClosestSidePoint-SkiaSharp-SKPoint,SkiaSharp-SKRect,SkiaSharp-SKSize- 'DrawnUi.Controls.SkiaDrawer.GetClosestSidePoint(SkiaSharp.SKPoint,SkiaSharp.SKRect,SkiaSharp.SKSize)')
+  - [GetOffsetToHide()](#M-DrawnUi-Maui-Controls-SkiaDrawer-GetOffsetToHide 'DrawnUi.Controls.SkiaDrawer.GetOffsetToHide')
+- [SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext')
+  - [IsRecycled](#P-DrawnUi-Maui-Draw-SkiaDrawingContext-IsRecycled 'DrawnUi.Draw.SkiaDrawingContext.IsRecycled')
+  - [IsVirtual](#P-DrawnUi-Maui-Draw-SkiaDrawingContext-IsVirtual 'DrawnUi.Draw.SkiaDrawingContext.IsVirtual')
+- [SkiaDrawnCell](#T-DrawnUi-Maui-Controls-SkiaDrawnCell 'DrawnUi.Controls.SkiaDrawnCell')
+- [SkiaDynamicDrawnCell](#T-DrawnUi-Maui-Controls-SkiaDynamicDrawnCell 'DrawnUi.Controls.SkiaDynamicDrawnCell')
+- [SkiaEditor](#T-DrawnUi-Maui-Draw-SkiaEditor 'DrawnUi.Draw.SkiaEditor')
+  - [GetCursorPosition(x,y)](#M-DrawnUi-Maui-Draw-SkiaEditor-GetCursorPosition-System-Single,System-Single- 'DrawnUi.Draw.SkiaEditor.GetCursorPosition(System.Single,System.Single)')
+  - [MoveCursorTo(x,y)](#M-DrawnUi-Maui-Draw-SkiaEditor-MoveCursorTo-System-Double,System-Double- 'DrawnUi.Draw.SkiaEditor.MoveCursorTo(System.Double,System.Double)')
+  - [MoveInternalCursor()](#M-DrawnUi-Maui-Draw-SkiaEditor-MoveInternalCursor 'DrawnUi.Draw.SkiaEditor.MoveInternalCursor')
+  - [SetCursorPositionWithDelay(ms,position)](#M-DrawnUi-Maui-Draw-SkiaEditor-SetCursorPositionWithDelay-System-Int32,System-Int32- 'DrawnUi.Draw.SkiaEditor.SetCursorPositionWithDelay(System.Int32,System.Int32)')
+  - [Submit()](#M-DrawnUi-Maui-Draw-SkiaEditor-Submit 'DrawnUi.Draw.SkiaEditor.Submit')
+  - [UpdateCursorVisibility()](#M-DrawnUi-Maui-Draw-SkiaEditor-UpdateCursorVisibility 'DrawnUi.Draw.SkiaEditor.UpdateCursorVisibility')
+- [SkiaEffect](#T-DrawnUi-Maui-Draw-SkiaEffect 'DrawnUi.Draw.SkiaEffect')
+  - [Parent](#P-DrawnUi-Maui-Draw-SkiaEffect-Parent 'DrawnUi.Draw.SkiaEffect.Parent')
+- [SkiaFontManager](#T-DrawnUi-Maui-Draw-SkiaFontManager 'DrawnUi.Draw.SkiaFontManager')
+  - [GetEmbeddedResourceNames()](#M-DrawnUi-Maui-Draw-SkiaFontManager-GetEmbeddedResourceNames 'DrawnUi.Draw.SkiaFontManager.GetEmbeddedResourceNames')
+  - [GetEmbeddedResourceStream(resourceName)](#M-DrawnUi-Maui-Draw-SkiaFontManager-GetEmbeddedResourceStream-System-String- 'DrawnUi.Draw.SkiaFontManager.GetEmbeddedResourceStream(System.String)')
+  - [GetWeightEnum(weight)](#M-DrawnUi-Maui-Draw-SkiaFontManager-GetWeightEnum-System-Int32- 'DrawnUi.Draw.SkiaFontManager.GetWeightEnum(System.Int32)')
+- [SkiaGif](#T-DrawnUi-Maui-Controls-SkiaGif 'DrawnUi.Controls.SkiaGif')
+  - [#ctor()](#M-DrawnUi-Maui-Controls-SkiaGif-#ctor 'DrawnUi.Controls.SkiaGif.#ctor')
+  - [#ctor(display)](#M-DrawnUi-Maui-Controls-SkiaGif-#ctor-DrawnUi-Maui-Draw-SkiaImage- 'DrawnUi.Controls.SkiaGif.#ctor(DrawnUi.Draw.SkiaImage)')
+  - [OnAnimatorSeeking(frame)](#M-DrawnUi-Maui-Controls-SkiaGif-OnAnimatorSeeking-System-Double- 'DrawnUi.Controls.SkiaGif.OnAnimatorSeeking(System.Double)')
+  - [OnAnimatorUpdated(value)](#M-DrawnUi-Maui-Controls-SkiaGif-OnAnimatorUpdated-System-Double- 'DrawnUi.Controls.SkiaGif.OnAnimatorUpdated(System.Double)')
+- [SkiaGridStructure](#T-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure 'DrawnUi.Draw.SkiaLayout.SkiaGridStructure')
+  - [_gridHeightConstraint](#F-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure-_gridHeightConstraint 'DrawnUi.Draw.SkiaLayout.SkiaGridStructure._gridHeightConstraint')
+  - [_gridWidthConstraint](#F-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure-_gridWidthConstraint 'DrawnUi.Draw.SkiaLayout.SkiaGridStructure._gridWidthConstraint')
+  - [InitializeCells()](#M-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure-InitializeCells 'DrawnUi.Draw.SkiaLayout.SkiaGridStructure.InitializeCells')
+- [SkiaHotspot](#T-DrawnUi-Maui-Draw-SkiaHotspot 'DrawnUi.Draw.SkiaHotspot')
+  - [DelayCallbackMs](#F-DrawnUi-Maui-Draw-SkiaHotspot-DelayCallbackMs 'DrawnUi.Draw.SkiaHotspot.DelayCallbackMs')
+- [SkiaHotspotZoom](#T-DrawnUi-Maui-Draw-SkiaHotspotZoom 'DrawnUi.Draw.SkiaHotspotZoom')
+  - [LastValue](#F-DrawnUi-Maui-Draw-SkiaHotspotZoom-LastValue 'DrawnUi.Draw.SkiaHotspotZoom.LastValue')
+  - [ZoomSpeed](#P-DrawnUi-Maui-Draw-SkiaHotspotZoom-ZoomSpeed 'DrawnUi.Draw.SkiaHotspotZoom.ZoomSpeed')
+- [SkiaHoverMask](#T-DrawnUi-Maui-Draw-SkiaHoverMask 'DrawnUi.Draw.SkiaHoverMask')
+- [SkiaImage](#T-DrawnUi-Maui-Draw-SkiaImage 'DrawnUi.Draw.SkiaImage')
+  - [ImagePaint](#F-DrawnUi-Maui-Draw-SkiaImage-ImagePaint 'DrawnUi.Draw.SkiaImage.ImagePaint')
+  - [PaintColorFilter](#F-DrawnUi-Maui-Draw-SkiaImage-PaintColorFilter 'DrawnUi.Draw.SkiaImage.PaintColorFilter')
+  - [PaintImageFilter](#F-DrawnUi-Maui-Draw-SkiaImage-PaintImageFilter 'DrawnUi.Draw.SkiaImage.PaintImageFilter')
+  - [Aspect](#P-DrawnUi-Maui-Draw-SkiaImage-Aspect 'DrawnUi.Draw.SkiaImage.Aspect')
+  - [EraseChangedContent](#P-DrawnUi-Maui-Draw-SkiaImage-EraseChangedContent 'DrawnUi.Draw.SkiaImage.EraseChangedContent')
+  - [ImageBitmap](#P-DrawnUi-Maui-Draw-SkiaImage-ImageBitmap 'DrawnUi.Draw.SkiaImage.ImageBitmap')
+  - [LastSource](#P-DrawnUi-Maui-Draw-SkiaImage-LastSource 'DrawnUi.Draw.SkiaImage.LastSource')
+  - [LoadSourceOnFirstDraw](#P-DrawnUi-Maui-Draw-SkiaImage-LoadSourceOnFirstDraw 'DrawnUi.Draw.SkiaImage.LoadSourceOnFirstDraw')
+  - [PreviewBase64](#P-DrawnUi-Maui-Draw-SkiaImage-PreviewBase64 'DrawnUi.Draw.SkiaImage.PreviewBase64')
+  - [RescalingQuality](#P-DrawnUi-Maui-Draw-SkiaImage-RescalingQuality 'DrawnUi.Draw.SkiaImage.RescalingQuality')
+  - [SourceHeight](#P-DrawnUi-Maui-Draw-SkiaImage-SourceHeight 'DrawnUi.Draw.SkiaImage.SourceHeight')
+  - [SourceWidth](#P-DrawnUi-Maui-Draw-SkiaImage-SourceWidth 'DrawnUi.Draw.SkiaImage.SourceWidth')
+  - [GetRenderedSource()](#M-DrawnUi-Maui-Draw-SkiaImage-GetRenderedSource 'DrawnUi.Draw.SkiaImage.GetRenderedSource')
+  - [SetBitmapInternal(bitmap)](#M-DrawnUi-Maui-Draw-SkiaImage-SetBitmapInternal-SkiaSharp-SKBitmap,System-Boolean- 'DrawnUi.Draw.SkiaImage.SetBitmapInternal(SkiaSharp.SKBitmap,System.Boolean)')
+  - [SetImage(loaded)](#M-DrawnUi-Maui-Draw-SkiaImage-SetImage-DrawnUi-Maui-Draw-LoadedImageSource- 'DrawnUi.Draw.SkiaImage.SetImage(DrawnUi.Draw.LoadedImageSource)')
+- [SkiaImageEffect](#T-DrawnUi-Maui-Draw-SkiaImageEffect 'DrawnUi.Draw.SkiaImageEffect')
+  - [Tint](#F-DrawnUi-Maui-Draw-SkiaImageEffect-Tint 'DrawnUi.Draw.SkiaImageEffect.Tint')
+- [SkiaImageEffects](#T-DrawnUi-Maui-Draw-SkiaImageEffects 'DrawnUi.Draw.SkiaImageEffects')
+  - [Brightness(amount)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Brightness-System-Single- 'DrawnUi.Draw.SkiaImageEffects.Brightness(System.Single)')
+  - [Contrast(amount)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Contrast-System-Single- 'DrawnUi.Draw.SkiaImageEffects.Contrast(System.Single)')
+  - [Gamma(gamma)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Gamma-System-Single- 'DrawnUi.Draw.SkiaImageEffects.Gamma(System.Single)')
+  - [Grayscale()](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Grayscale 'DrawnUi.Draw.SkiaImageEffects.Grayscale')
+  - [Grayscale2()](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Grayscale2 'DrawnUi.Draw.SkiaImageEffects.Grayscale2')
+  - [InvertColors()](#M-DrawnUi-Maui-Draw-SkiaImageEffects-InvertColors 'DrawnUi.Draw.SkiaImageEffects.InvertColors')
+  - [Lightness(amount)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Lightness-System-Single- 'DrawnUi.Draw.SkiaImageEffects.Lightness(System.Single)')
+  - [Saturation(amount)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Saturation-System-Single- 'DrawnUi.Draw.SkiaImageEffects.Saturation(System.Single)')
+  - [Sepia()](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Sepia 'DrawnUi.Draw.SkiaImageEffects.Sepia')
+  - [Tint(color,mode)](#M-DrawnUi-Maui-Draw-SkiaImageEffects-Tint-Microsoft-Maui-Graphics-Color,SkiaSharp-SKBlendMode- 'DrawnUi.Draw.SkiaImageEffects.Tint(Microsoft.Maui.Graphics.Color,SkiaSharp.SKBlendMode)')
+- [SkiaImageManager](#T-DrawnUi-Maui-Draw-SkiaImageManager 'DrawnUi.Draw.SkiaImageManager')
+  - [CacheLongevitySecs](#F-DrawnUi-Maui-Draw-SkiaImageManager-CacheLongevitySecs 'DrawnUi.Draw.SkiaImageManager.CacheLongevitySecs')
+  - [NativeFilePrefix](#F-DrawnUi-Maui-Draw-SkiaImageManager-NativeFilePrefix 'DrawnUi.Draw.SkiaImageManager.NativeFilePrefix')
+  - [ReuseBitmaps](#F-DrawnUi-Maui-Draw-SkiaImageManager-ReuseBitmaps 'DrawnUi.Draw.SkiaImageManager.ReuseBitmaps')
+  - [AddToCache(uri,bitmap,cacheLongevityMinutes)](#M-DrawnUi-Maui-Draw-SkiaImageManager-AddToCache-System-String,SkiaSharp-SKBitmap,System-Int32- 'DrawnUi.Draw.SkiaImageManager.AddToCache(System.String,SkiaSharp.SKBitmap,System.Int32)')
+  - [LoadImageAsync(source,token)](#M-DrawnUi-Maui-Draw-SkiaImageManager-LoadImageAsync-Microsoft-Maui-Controls-ImageSource,System-Threading-CancellationToken- 'DrawnUi.Draw.SkiaImageManager.LoadImageAsync(Microsoft.Maui.Controls.ImageSource,System.Threading.CancellationToken)')
+  - [LoadImageManagedAsync(source,token)](#M-DrawnUi-Maui-Draw-SkiaImageManager-LoadImageManagedAsync-Microsoft-Maui-Controls-ImageSource,System-Threading-CancellationTokenSource,DrawnUi-Maui-Draw-LoadPriority- 'DrawnUi.Draw.SkiaImageManager.LoadImageManagedAsync(Microsoft.Maui.Controls.ImageSource,System.Threading.CancellationTokenSource,DrawnUi.Draw.LoadPriority)')
+- [SkiaImageTiles](#T-DrawnUi-Maui-Draw-SkiaImageTiles 'DrawnUi.Draw.SkiaImageTiles')
+  - [DrawTiles](#P-DrawnUi-Maui-Draw-SkiaImageTiles-DrawTiles 'DrawnUi.Draw.SkiaImageTiles.DrawTiles')
+  - [Tile](#P-DrawnUi-Maui-Draw-SkiaImageTiles-Tile 'DrawnUi.Draw.SkiaImageTiles.Tile')
+  - [TileAspect](#P-DrawnUi-Maui-Draw-SkiaImageTiles-TileAspect 'DrawnUi.Draw.SkiaImageTiles.TileAspect')
+  - [OnSourceSuccess()](#M-DrawnUi-Maui-Draw-SkiaImageTiles-OnSourceSuccess 'DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess')
+- [SkiaLabel](#T-DrawnUi-Maui-Draw-SkiaLabel 'DrawnUi.Draw.SkiaLabel')
+  - [CharacterSpacing](#P-DrawnUi-Maui-Draw-SkiaLabel-CharacterSpacing 'DrawnUi.Draw.SkiaLabel.CharacterSpacing')
+  - [DropShadowOffsetX](#P-DrawnUi-Maui-Draw-SkiaLabel-DropShadowOffsetX 'DrawnUi.Draw.SkiaLabel.DropShadowOffsetX')
+  - [FallbackCharacter](#P-DrawnUi-Maui-Draw-SkiaLabel-FallbackCharacter 'DrawnUi.Draw.SkiaLabel.FallbackCharacter')
+  - [Font](#P-DrawnUi-Maui-Draw-SkiaLabel-Font 'DrawnUi.Draw.SkiaLabel.Font')
+  - [LineHeightUniform](#P-DrawnUi-Maui-Draw-SkiaLabel-LineHeightUniform 'DrawnUi.Draw.SkiaLabel.LineHeightUniform')
+  - [LineHeightWithSpacing](#P-DrawnUi-Maui-Draw-SkiaLabel-LineHeightWithSpacing 'DrawnUi.Draw.SkiaLabel.LineHeightWithSpacing')
+  - [MonoForDigits](#P-DrawnUi-Maui-Draw-SkiaLabel-MonoForDigits 'DrawnUi.Draw.SkiaLabel.MonoForDigits')
+  - [SpaceBetweenParagraphs](#P-DrawnUi-Maui-Draw-SkiaLabel-SpaceBetweenParagraphs 'DrawnUi.Draw.SkiaLabel.SpaceBetweenParagraphs')
+  - [AddEmptyLine(result,span,totalHeight,heightBlock,isNewParagraph,needsShaping)](#M-DrawnUi-Maui-Draw-SkiaLabel-AddEmptyLine-System-Collections-Generic-List{DrawnUi-Maui-Draw-TextLine},DrawnUi-Maui-Draw-TextSpan,System-Single,System-Single,System-Boolean,System-Boolean- 'DrawnUi.Draw.SkiaLabel.AddEmptyLine(System.Collections.Generic.List{DrawnUi.Draw.TextLine},DrawnUi.Draw.TextSpan,System.Single,System.Single,System.Boolean,System.Boolean)')
+  - [DrawCharacter(canvas,lineIndex,letterIndex,text,x,y,paint,paintStroke,scale)](#M-DrawnUi-Maui-Draw-SkiaLabel-DrawCharacter-SkiaSharp-SKCanvas,System-Int32,System-Int32,System-String,System-Single,System-Single,SkiaSharp-SKPaint,SkiaSharp-SKPaint,SkiaSharp-SKPaint,SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.SkiaLabel.DrawCharacter(SkiaSharp.SKCanvas,System.Int32,System.Int32,System.String,System.Single,System.Single,SkiaSharp.SKPaint,SkiaSharp.SKPaint,SkiaSharp.SKPaint,SkiaSharp.SKRect,System.Single)')
+  - [DrawText(canvas,x,y,text,textPaint,strokePaint,scale)](#M-DrawnUi-Maui-Draw-SkiaLabel-DrawText-SkiaSharp-SKCanvas,System-Single,System-Single,System-String,SkiaSharp-SKPaint,SkiaSharp-SKPaint,SkiaSharp-SKPaint,System-Single- 'DrawnUi.Draw.SkiaLabel.DrawText(SkiaSharp.SKCanvas,System.Single,System.Single,System.String,SkiaSharp.SKPaint,SkiaSharp.SKPaint,SkiaSharp.SKPaint,System.Single)')
+  - [MeasureText(paint,text,bounds)](#M-DrawnUi-Maui-Draw-SkiaLabel-MeasureText-SkiaSharp-SKPaint,System-String,SkiaSharp-SKRect@- 'DrawnUi.Draw.SkiaLabel.MeasureText(SkiaSharp.SKPaint,System.String,SkiaSharp.SKRect@)')
+  - [OnFontUpdated()](#M-DrawnUi-Maui-Draw-SkiaLabel-OnFontUpdated 'DrawnUi.Draw.SkiaLabel.OnFontUpdated')
+  - [OnSpanTapped(span)](#M-DrawnUi-Maui-Draw-SkiaLabel-OnSpanTapped-DrawnUi-Maui-Draw-TextSpan- 'DrawnUi.Draw.SkiaLabel.OnSpanTapped(DrawnUi.Draw.TextSpan)')
+- [SkiaLayout](#T-DrawnUi-Maui-Draw-SkiaLayout 'DrawnUi.Draw.SkiaLayout')
+  - [DefaultColumnDefinition](#P-DrawnUi-Maui-Draw-SkiaLayout-DefaultColumnDefinition 'DrawnUi.Draw.SkiaLayout.DefaultColumnDefinition')
+  - [DefaultRowDefinition](#P-DrawnUi-Maui-Draw-SkiaLayout-DefaultRowDefinition 'DrawnUi.Draw.SkiaLayout.DefaultRowDefinition')
+  - [DynamicColumns](#P-DrawnUi-Maui-Draw-SkiaLayout-DynamicColumns 'DrawnUi.Draw.SkiaLayout.DynamicColumns')
+  - [InitializeTemplatesInBackgroundDelay](#P-DrawnUi-Maui-Draw-SkiaLayout-InitializeTemplatesInBackgroundDelay 'DrawnUi.Draw.SkiaLayout.InitializeTemplatesInBackgroundDelay')
+  - [IsStack](#P-DrawnUi-Maui-Draw-SkiaLayout-IsStack 'DrawnUi.Draw.SkiaLayout.IsStack')
+  - [ItemTemplatePoolSize](#P-DrawnUi-Maui-Draw-SkiaLayout-ItemTemplatePoolSize 'DrawnUi.Draw.SkiaLayout.ItemTemplatePoolSize')
+  - [RecyclingTemplate](#P-DrawnUi-Maui-Draw-SkiaLayout-RecyclingTemplate 'DrawnUi.Draw.SkiaLayout.RecyclingTemplate')
+  - [Split](#P-DrawnUi-Maui-Draw-SkiaLayout-Split 'DrawnUi.Draw.SkiaLayout.Split')
+  - [SplitAlign](#P-DrawnUi-Maui-Draw-SkiaLayout-SplitAlign 'DrawnUi.Draw.SkiaLayout.SplitAlign')
+  - [SplitSpace](#P-DrawnUi-Maui-Draw-SkiaLayout-SplitSpace 'DrawnUi.Draw.SkiaLayout.SplitSpace')
+  - [StackStructure](#P-DrawnUi-Maui-Draw-SkiaLayout-StackStructure 'DrawnUi.Draw.SkiaLayout.StackStructure')
+  - [StackStructureMeasured](#P-DrawnUi-Maui-Draw-SkiaLayout-StackStructureMeasured 'DrawnUi.Draw.SkiaLayout.StackStructureMeasured')
+  - [TemplatedFooter](#P-DrawnUi-Maui-Draw-SkiaLayout-TemplatedFooter 'DrawnUi.Draw.SkiaLayout.TemplatedFooter')
+  - [TemplatedHeader](#P-DrawnUi-Maui-Draw-SkiaLayout-TemplatedHeader 'DrawnUi.Draw.SkiaLayout.TemplatedHeader')
+  - [Virtualisation](#P-DrawnUi-Maui-Draw-SkiaLayout-Virtualisation 'DrawnUi.Draw.SkiaLayout.Virtualisation')
+  - [VirtualisationInflated](#P-DrawnUi-Maui-Draw-SkiaLayout-VirtualisationInflated 'DrawnUi.Draw.SkiaLayout.VirtualisationInflated')
+  - [DrawChildrenGrid(context,destination,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-DrawChildrenGrid-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.SkiaLayout.DrawChildrenGrid(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single)')
+  - [DrawStack()](#M-DrawnUi-Maui-Draw-SkiaLayout-DrawStack-DrawnUi-Maui-Draw-LayoutStructure,DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.SkiaLayout.DrawStack(DrawnUi.Draw.LayoutStructure,DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,System.Single)')
+  - [Measure(widthConstraint,heightConstraint,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-Measure-System-Single,System-Single,System-Single- 'DrawnUi.Draw.SkiaLayout.Measure(System.Single,System.Single,System.Single)')
+  - [MeasureStack(rectForChildrenPixels,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-MeasureStack-SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.SkiaLayout.MeasureStack(SkiaSharp.SKRect,System.Single)')
+  - [MeasureWrap(rectForChildrenPixels,scale)](#M-DrawnUi-Maui-Draw-SkiaLayout-MeasureWrap-SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.SkiaLayout.MeasureWrap(SkiaSharp.SKRect,System.Single)')
+  - [OnTemplatesAvailable()](#M-DrawnUi-Maui-Draw-SkiaLayout-OnTemplatesAvailable 'DrawnUi.Draw.SkiaLayout.OnTemplatesAvailable')
+  - [SetupRenderingWithComposition(ctx,destination)](#M-DrawnUi-Maui-Draw-SkiaLayout-SetupRenderingWithComposition-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaLayout.SetupRenderingWithComposition(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect)')
+- [SkiaLottie](#T-DrawnUi-Maui-Controls-SkiaLottie 'DrawnUi.Controls.SkiaLottie')
+  - [CachedAnimations](#F-DrawnUi-Maui-Controls-SkiaLottie-CachedAnimations 'DrawnUi.Controls.SkiaLottie.CachedAnimations')
+  - [DefaultFrameWhenOn](#P-DrawnUi-Maui-Controls-SkiaLottie-DefaultFrameWhenOn 'DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOn')
+  - [LoadAnimationFromJson(json)](#M-DrawnUi-Maui-Controls-SkiaLottie-LoadAnimationFromJson-System-String- 'DrawnUi.Controls.SkiaLottie.LoadAnimationFromJson(System.String)')
+  - [OnJsonLoaded()](#M-DrawnUi-Maui-Controls-SkiaLottie-OnJsonLoaded-System-String- 'DrawnUi.Controls.SkiaLottie.OnJsonLoaded(System.String)')
+- [SkiaMarkdownLabel](#T-DrawnUi-Maui-Draw-SkiaMarkdownLabel 'DrawnUi.Draw.SkiaMarkdownLabel')
+  - [OnSpanTapped(span)](#M-DrawnUi-Maui-Draw-SkiaMarkdownLabel-OnSpanTapped-DrawnUi-Maui-Draw-TextSpan- 'DrawnUi.Draw.SkiaMarkdownLabel.OnSpanTapped(DrawnUi.Draw.TextSpan)')
+  - [ProcessSpanData(spanData,originalTypeFace)](#M-DrawnUi-Maui-Draw-SkiaMarkdownLabel-ProcessSpanData-System-Collections-Generic-List{System-ValueTuple{System-String,SkiaSharp-SKTypeface,System-Int32,System-Boolean}}@,SkiaSharp-SKTypeface- 'DrawnUi.Draw.SkiaMarkdownLabel.ProcessSpanData(System.Collections.Generic.List{System.ValueTuple{System.String,SkiaSharp.SKTypeface,System.Int32,System.Boolean}}@,SkiaSharp.SKTypeface)')
+- [SkiaMauiEditor](#T-DrawnUi-Maui-Controls-SkiaMauiEditor 'DrawnUi.Controls.SkiaMauiEditor')
+  - [LockFocus](#P-DrawnUi-Maui-Controls-SkiaMauiEditor-LockFocus 'DrawnUi.Controls.SkiaMauiEditor.LockFocus')
+  - [MaxLines](#P-DrawnUi-Maui-Controls-SkiaMauiEditor-MaxLines 'DrawnUi.Controls.SkiaMauiEditor.MaxLines')
+  - [OnControlFocused(sender,e)](#M-DrawnUi-Maui-Controls-SkiaMauiEditor-OnControlFocused-System-Object,Microsoft-Maui-Controls-FocusEventArgs- 'DrawnUi.Controls.SkiaMauiEditor.OnControlFocused(System.Object,Microsoft.Maui.Controls.FocusEventArgs)')
+  - [OnControlUnfocused(sender,e)](#M-DrawnUi-Maui-Controls-SkiaMauiEditor-OnControlUnfocused-System-Object,Microsoft-Maui-Controls-FocusEventArgs- 'DrawnUi.Controls.SkiaMauiEditor.OnControlUnfocused(System.Object,Microsoft.Maui.Controls.FocusEventArgs)')
+  - [OnFocusChanged(focus)](#M-DrawnUi-Maui-Controls-SkiaMauiEditor-OnFocusChanged-System-Boolean- 'DrawnUi.Controls.SkiaMauiEditor.OnFocusChanged(System.Boolean)')
+- [SkiaMauiElement](#T-DrawnUi-Maui-Draw-SkiaMauiElement 'DrawnUi.Draw.SkiaMauiElement')
+  - [AnimateSnapshot](#P-DrawnUi-Maui-Draw-SkiaMauiElement-AnimateSnapshot 'DrawnUi.Draw.SkiaMauiElement.AnimateSnapshot')
+  - [Element](#P-DrawnUi-Maui-Draw-SkiaMauiElement-Element 'DrawnUi.Draw.SkiaMauiElement.Element')
+  - [ElementSize](#P-DrawnUi-Maui-Draw-SkiaMauiElement-ElementSize 'DrawnUi.Draw.SkiaMauiElement.ElementSize')
+  - [GetVisualChildren()](#M-DrawnUi-Maui-Draw-SkiaMauiElement-GetVisualChildren 'DrawnUi.Draw.SkiaMauiElement.GetVisualChildren')
+  - [MeasureAndArrangeMauiElement(ptsWidth,ptsHeight)](#M-DrawnUi-Maui-Draw-SkiaMauiElement-MeasureAndArrangeMauiElement-System-Double,System-Double- 'DrawnUi.Draw.SkiaMauiElement.MeasureAndArrangeMauiElement(System.Double,System.Double)')
+  - [OnChildAdded()](#M-DrawnUi-Maui-Draw-SkiaMauiElement-OnChildAdded-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.SkiaMauiElement.OnChildAdded(DrawnUi.Draw.SkiaControl)')
+  - [SetChildren(views)](#M-DrawnUi-Maui-Draw-SkiaMauiElement-SetChildren-System-Collections-Generic-IEnumerable{DrawnUi-Maui-Draw-SkiaControl}- 'DrawnUi.Draw.SkiaMauiElement.SetChildren(System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl})')
+  - [SetContent()](#M-DrawnUi-Maui-Draw-SkiaMauiElement-SetContent-Microsoft-Maui-Controls-VisualElement- 'DrawnUi.Draw.SkiaMauiElement.SetContent(Microsoft.Maui.Controls.VisualElement)')
+  - [SetNativeVisibility(state)](#M-DrawnUi-Maui-Draw-SkiaMauiElement-SetNativeVisibility-System-Boolean- 'DrawnUi.Draw.SkiaMauiElement.SetNativeVisibility(System.Boolean)')
+- [SkiaMauiEntry](#T-DrawnUi-Maui-Controls-SkiaMauiEntry 'DrawnUi.Controls.SkiaMauiEntry')
+  - [LockFocus](#P-DrawnUi-Maui-Controls-SkiaMauiEntry-LockFocus 'DrawnUi.Controls.SkiaMauiEntry.LockFocus')
+  - [MaxLines](#P-DrawnUi-Maui-Controls-SkiaMauiEntry-MaxLines 'DrawnUi.Controls.SkiaMauiEntry.MaxLines')
+  - [OnControlFocused(sender,e)](#M-DrawnUi-Maui-Controls-SkiaMauiEntry-OnControlFocused-System-Object,Microsoft-Maui-Controls-FocusEventArgs- 'DrawnUi.Controls.SkiaMauiEntry.OnControlFocused(System.Object,Microsoft.Maui.Controls.FocusEventArgs)')
+  - [OnControlUnfocused(sender,e)](#M-DrawnUi-Maui-Controls-SkiaMauiEntry-OnControlUnfocused-System-Object,Microsoft-Maui-Controls-FocusEventArgs- 'DrawnUi.Controls.SkiaMauiEntry.OnControlUnfocused(System.Object,Microsoft.Maui.Controls.FocusEventArgs)')
+  - [OnFocusChanged(focus)](#M-DrawnUi-Maui-Controls-SkiaMauiEntry-OnFocusChanged-System-Boolean- 'DrawnUi.Controls.SkiaMauiEntry.OnFocusChanged(System.Boolean)')
+- [SkiaRadioButton](#T-DrawnUi-Maui-Controls-SkiaRadioButton 'DrawnUi.Controls.SkiaRadioButton')
+  - [Text](#P-DrawnUi-Maui-Controls-SkiaRadioButton-Text 'DrawnUi.Controls.SkiaRadioButton.Text')
+- [SkiaScroll](#T-DrawnUi-Maui-Draw-SkiaScroll 'DrawnUi.Draw.SkiaScroll')
+  - [BouncesProperty](#F-DrawnUi-Maui-Draw-SkiaScroll-BouncesProperty 'DrawnUi.Draw.SkiaScroll.BouncesProperty')
+  - [InterpolationFactor](#F-DrawnUi-Maui-Draw-SkiaScroll-InterpolationFactor 'DrawnUi.Draw.SkiaScroll.InterpolationFactor')
+  - [OrderedScrollTo](#F-DrawnUi-Maui-Draw-SkiaScroll-OrderedScrollTo 'DrawnUi.Draw.SkiaScroll.OrderedScrollTo')
+  - [OrderedScrollToIndex](#F-DrawnUi-Maui-Draw-SkiaScroll-OrderedScrollToIndex 'DrawnUi.Draw.SkiaScroll.OrderedScrollToIndex')
+  - [ScrollVelocityThreshold](#F-DrawnUi-Maui-Draw-SkiaScroll-ScrollVelocityThreshold 'DrawnUi.Draw.SkiaScroll.ScrollVelocityThreshold')
+  - [SystemAnimationTimeSecs](#F-DrawnUi-Maui-Draw-SkiaScroll-SystemAnimationTimeSecs 'DrawnUi.Draw.SkiaScroll.SystemAnimationTimeSecs')
+  - [ThesholdSwipeOnUp](#F-DrawnUi-Maui-Draw-SkiaScroll-ThesholdSwipeOnUp 'DrawnUi.Draw.SkiaScroll.ThesholdSwipeOnUp')
+  - [_animatorFlingX](#F-DrawnUi-Maui-Draw-SkiaScroll-_animatorFlingX 'DrawnUi.Draw.SkiaScroll._animatorFlingX')
+  - [_animatorFlingY](#F-DrawnUi-Maui-Draw-SkiaScroll-_animatorFlingY 'DrawnUi.Draw.SkiaScroll._animatorFlingY')
+  - [_scrollMinX](#F-DrawnUi-Maui-Draw-SkiaScroll-_scrollMinX 'DrawnUi.Draw.SkiaScroll._scrollMinX')
+  - [_scrollMinY](#F-DrawnUi-Maui-Draw-SkiaScroll-_scrollMinY 'DrawnUi.Draw.SkiaScroll._scrollMinY')
+  - [_scrollerX](#F-DrawnUi-Maui-Draw-SkiaScroll-_scrollerX 'DrawnUi.Draw.SkiaScroll._scrollerX')
+  - [_scrollerY](#F-DrawnUi-Maui-Draw-SkiaScroll-_scrollerY 'DrawnUi.Draw.SkiaScroll._scrollerY')
+  - [snapMinimumVelocity](#F-DrawnUi-Maui-Draw-SkiaScroll-snapMinimumVelocity 'DrawnUi.Draw.SkiaScroll.snapMinimumVelocity')
+  - [AutoScrollingSpeedMs](#P-DrawnUi-Maui-Draw-SkiaScroll-AutoScrollingSpeedMs 'DrawnUi.Draw.SkiaScroll.AutoScrollingSpeedMs')
+  - [Bounces](#P-DrawnUi-Maui-Draw-SkiaScroll-Bounces 'DrawnUi.Draw.SkiaScroll.Bounces')
+  - [CanScrollUsingHeader](#P-DrawnUi-Maui-Draw-SkiaScroll-CanScrollUsingHeader 'DrawnUi.Draw.SkiaScroll.CanScrollUsingHeader')
+  - [ChangeDistancePanned](#P-DrawnUi-Maui-Draw-SkiaScroll-ChangeDistancePanned 'DrawnUi.Draw.SkiaScroll.ChangeDistancePanned')
+  - [ChangeVelocityScrolled](#P-DrawnUi-Maui-Draw-SkiaScroll-ChangeVelocityScrolled 'DrawnUi.Draw.SkiaScroll.ChangeVelocityScrolled')
+  - [ContentOffsetBounds](#P-DrawnUi-Maui-Draw-SkiaScroll-ContentOffsetBounds 'DrawnUi.Draw.SkiaScroll.ContentOffsetBounds')
+  - [ContentRectWithOffset](#P-DrawnUi-Maui-Draw-SkiaScroll-ContentRectWithOffset 'DrawnUi.Draw.SkiaScroll.ContentRectWithOffset')
+  - [FrictionScrolled](#P-DrawnUi-Maui-Draw-SkiaScroll-FrictionScrolled 'DrawnUi.Draw.SkiaScroll.FrictionScrolled')
+  - [HeaderSticky](#P-DrawnUi-Maui-Draw-SkiaScroll-HeaderSticky 'DrawnUi.Draw.SkiaScroll.HeaderSticky')
+  - [IgnoreWrongDirection](#P-DrawnUi-Maui-Draw-SkiaScroll-IgnoreWrongDirection 'DrawnUi.Draw.SkiaScroll.IgnoreWrongDirection')
+  - [InternalViewportOffset](#P-DrawnUi-Maui-Draw-SkiaScroll-InternalViewportOffset 'DrawnUi.Draw.SkiaScroll.InternalViewportOffset')
+  - [MaxBounceVelocity](#P-DrawnUi-Maui-Draw-SkiaScroll-MaxBounceVelocity 'DrawnUi.Draw.SkiaScroll.MaxBounceVelocity')
+  - [MaxVelocity](#P-DrawnUi-Maui-Draw-SkiaScroll-MaxVelocity 'DrawnUi.Draw.SkiaScroll.MaxVelocity')
+  - [Orientation](#P-DrawnUi-Maui-Draw-SkiaScroll-Orientation 'DrawnUi.Draw.SkiaScroll.Orientation')
+  - [OverscrollDistance](#P-DrawnUi-Maui-Draw-SkiaScroll-OverscrollDistance 'DrawnUi.Draw.SkiaScroll.OverscrollDistance')
+  - [RefreshDistanceLimit](#P-DrawnUi-Maui-Draw-SkiaScroll-RefreshDistanceLimit 'DrawnUi.Draw.SkiaScroll.RefreshDistanceLimit')
+  - [RefreshShowDistance](#P-DrawnUi-Maui-Draw-SkiaScroll-RefreshShowDistance 'DrawnUi.Draw.SkiaScroll.RefreshShowDistance')
+  - [RespondsToGestures](#P-DrawnUi-Maui-Draw-SkiaScroll-RespondsToGestures 'DrawnUi.Draw.SkiaScroll.RespondsToGestures')
+  - [RubberDamping](#P-DrawnUi-Maui-Draw-SkiaScroll-RubberDamping 'DrawnUi.Draw.SkiaScroll.RubberDamping')
+  - [RubberEffect](#P-DrawnUi-Maui-Draw-SkiaScroll-RubberEffect 'DrawnUi.Draw.SkiaScroll.RubberEffect')
+  - [ScrollType](#P-DrawnUi-Maui-Draw-SkiaScroll-ScrollType 'DrawnUi.Draw.SkiaScroll.ScrollType')
+  - [ScrollingSpeedMs](#P-DrawnUi-Maui-Draw-SkiaScroll-ScrollingSpeedMs 'DrawnUi.Draw.SkiaScroll.ScrollingSpeedMs')
+  - [SnapToChildren](#P-DrawnUi-Maui-Draw-SkiaScroll-SnapToChildren 'DrawnUi.Draw.SkiaScroll.SnapToChildren')
+  - [TrackIndexPosition](#P-DrawnUi-Maui-Draw-SkiaScroll-TrackIndexPosition 'DrawnUi.Draw.SkiaScroll.TrackIndexPosition')
+  - [VelocityImageLoaderLock](#P-DrawnUi-Maui-Draw-SkiaScroll-VelocityImageLoaderLock 'DrawnUi.Draw.SkiaScroll.VelocityImageLoaderLock')
+  - [Virtualisation](#P-DrawnUi-Maui-Draw-SkiaScroll-Virtualisation 'DrawnUi.Draw.SkiaScroll.Virtualisation')
+  - [WasSwiping](#P-DrawnUi-Maui-Draw-SkiaScroll-WasSwiping 'DrawnUi.Draw.SkiaScroll.WasSwiping')
+  - [ZoomScaleInternal](#P-DrawnUi-Maui-Draw-SkiaScroll-ZoomScaleInternal 'DrawnUi.Draw.SkiaScroll.ZoomScaleInternal')
+  - [CalculateScrollOffsetForIndex(index,option)](#M-DrawnUi-Maui-Draw-SkiaScroll-CalculateScrollOffsetForIndex-System-Int32,DrawnUi-Maui-Draw-RelativePositionType- 'DrawnUi.Draw.SkiaScroll.CalculateScrollOffsetForIndex(System.Int32,DrawnUi.Draw.RelativePositionType)')
+  - [CalculateVisibleIndex()](#M-DrawnUi-Maui-Draw-SkiaScroll-CalculateVisibleIndex-DrawnUi-Maui-Draw-RelativePositionType- 'DrawnUi.Draw.SkiaScroll.CalculateVisibleIndex(DrawnUi.Draw.RelativePositionType)')
+  - [ClampOffsetWithRubberBand(x,y)](#M-DrawnUi-Maui-Draw-SkiaScroll-ClampOffsetWithRubberBand-System-Single,System-Single- 'DrawnUi.Draw.SkiaScroll.ClampOffsetWithRubberBand(System.Single,System.Single)')
+  - [GetClosestSidePoint(overscrollPoint,contentRect,viewportSize)](#M-DrawnUi-Maui-Draw-SkiaScroll-GetClosestSidePoint-SkiaSharp-SKPoint,SkiaSharp-SKRect,SkiaSharp-SKSize- 'DrawnUi.Draw.SkiaScroll.GetClosestSidePoint(SkiaSharp.SKPoint,SkiaSharp.SKRect,SkiaSharp.SKSize)')
+  - [GetContentAvailableRect(destination)](#M-DrawnUi-Maui-Draw-SkiaScroll-GetContentAvailableRect-SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaScroll.GetContentAvailableRect(SkiaSharp.SKRect)')
+  - [GetContentOffsetBounds()](#M-DrawnUi-Maui-Draw-SkiaScroll-GetContentOffsetBounds 'DrawnUi.Draw.SkiaScroll.GetContentOffsetBounds')
+  - [OnScrolled()](#M-DrawnUi-Maui-Draw-SkiaScroll-OnScrolled 'DrawnUi.Draw.SkiaScroll.OnScrolled')
+  - [PositionViewport(destination,offsetPtsX,offsetPtsY,viewportScale,scale)](#M-DrawnUi-Maui-Draw-SkiaScroll-PositionViewport-SkiaSharp-SKRect,SkiaSharp-SKPoint,System-Single,System-Single- 'DrawnUi.Draw.SkiaScroll.PositionViewport(SkiaSharp.SKRect,SkiaSharp.SKPoint,System.Single,System.Single)')
+  - [ScrollToOffset(offset,animate)](#M-DrawnUi-Maui-Draw-SkiaScroll-ScrollToOffset-System-Numerics-Vector2,System-Single- 'DrawnUi.Draw.SkiaScroll.ScrollToOffset(System.Numerics.Vector2,System.Single)')
+  - [ScrollToX(offset,animate)](#M-DrawnUi-Maui-Draw-SkiaScroll-ScrollToX-System-Single,System-Boolean- 'DrawnUi.Draw.SkiaScroll.ScrollToX(System.Single,System.Boolean)')
+  - [ScrollToY(offset,animate)](#M-DrawnUi-Maui-Draw-SkiaScroll-ScrollToY-System-Single,System-Boolean- 'DrawnUi.Draw.SkiaScroll.ScrollToY(System.Single,System.Boolean)')
+  - [SetContent(view)](#M-DrawnUi-Maui-Draw-SkiaScroll-SetContent-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Draw.SkiaScroll.SetContent(DrawnUi.Draw.SkiaControl)')
+- [SkiaScrollLooped](#T-DrawnUi-Maui-Draw-SkiaScrollLooped 'DrawnUi.Draw.SkiaScrollLooped')
+  - [CycleSpace](#P-DrawnUi-Maui-Draw-SkiaScrollLooped-CycleSpace 'DrawnUi.Draw.SkiaScrollLooped.CycleSpace')
+  - [IsBanner](#P-DrawnUi-Maui-Draw-SkiaScrollLooped-IsBanner 'DrawnUi.Draw.SkiaScrollLooped.IsBanner')
+- [SkiaShaderEffect](#T-DrawnUi-Maui-Draw-SkiaShaderEffect 'DrawnUi.Draw.SkiaShaderEffect')
+  - [AutoCreateInputTexture](#P-DrawnUi-Maui-Draw-SkiaShaderEffect-AutoCreateInputTexture 'DrawnUi.Draw.SkiaShaderEffect.AutoCreateInputTexture')
+  - [UseContext](#P-DrawnUi-Maui-Draw-SkiaShaderEffect-UseContext 'DrawnUi.Draw.SkiaShaderEffect.UseContext')
+  - [CreateSnapshot(ctx,destination)](#M-DrawnUi-Maui-Draw-SkiaShaderEffect-CreateSnapshot-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaShaderEffect.CreateSnapshot(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect)')
+  - [Render(ctx,destination)](#M-DrawnUi-Maui-Draw-SkiaShaderEffect-Render-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect- 'DrawnUi.Draw.SkiaShaderEffect.Render(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect)')
+- [SkiaShape](#T-DrawnUi-Maui-Draw-SkiaShape 'DrawnUi.Draw.SkiaShape')
+  - [ClipBackgroundColor](#P-DrawnUi-Maui-Draw-SkiaShape-ClipBackgroundColor 'DrawnUi.Draw.SkiaShape.ClipBackgroundColor')
+  - [DrawPath](#P-DrawnUi-Maui-Draw-SkiaShape-DrawPath 'DrawnUi.Draw.SkiaShape.DrawPath')
+  - [PathData](#P-DrawnUi-Maui-Draw-SkiaShape-PathData 'DrawnUi.Draw.SkiaShape.PathData')
+- [SkiaShell](#T-DrawnUi-Maui-Controls-SkiaShell 'DrawnUi.Controls.SkiaShell')
+  - [PopupBackgroundColor](#F-DrawnUi-Maui-Controls-SkiaShell-PopupBackgroundColor 'DrawnUi.Controls.SkiaShell.PopupBackgroundColor')
+  - [PopupsBackgroundBlur](#F-DrawnUi-Maui-Controls-SkiaShell-PopupsBackgroundBlur 'DrawnUi.Controls.SkiaShell.PopupsBackgroundBlur')
+  - [Buffer](#P-DrawnUi-Maui-Controls-SkiaShell-Buffer 'DrawnUi.Controls.SkiaShell.Buffer')
+  - [FrozenLayers](#P-DrawnUi-Maui-Controls-SkiaShell-FrozenLayers 'DrawnUi.Controls.SkiaShell.FrozenLayers')
+  - [NavigationLayout](#P-DrawnUi-Maui-Controls-SkiaShell-NavigationLayout 'DrawnUi.Controls.SkiaShell.NavigationLayout')
+  - [RootLayout](#P-DrawnUi-Maui-Controls-SkiaShell-RootLayout 'DrawnUi.Controls.SkiaShell.RootLayout')
+  - [CanFreezeLayout()](#M-DrawnUi-Maui-Controls-SkiaShell-CanFreezeLayout 'DrawnUi.Controls.SkiaShell.CanFreezeLayout')
+  - [CanUnfreezeLayout()](#M-DrawnUi-Maui-Controls-SkiaShell-CanUnfreezeLayout 'DrawnUi.Controls.SkiaShell.CanUnfreezeLayout')
+  - [ClosePopupAsync(animated)](#M-DrawnUi-Maui-Controls-SkiaShell-ClosePopupAsync-System-Boolean- 'DrawnUi.Controls.SkiaShell.ClosePopupAsync(System.Boolean)')
+  - [FreezeRootLayout()](#M-DrawnUi-Maui-Controls-SkiaShell-FreezeRootLayout-DrawnUi-Maui-Draw-SkiaControl,System-Boolean,Microsoft-Maui-Graphics-Color,System-Single- 'DrawnUi.Controls.SkiaShell.FreezeRootLayout(DrawnUi.Draw.SkiaControl,System.Boolean,Microsoft.Maui.Graphics.Color,System.Single)')
+  - [GetTopmostView()](#M-DrawnUi-Maui-Controls-SkiaShell-GetTopmostView 'DrawnUi.Controls.SkiaShell.GetTopmostView')
+  - [GetTopmostViewInternal()](#M-DrawnUi-Maui-Controls-SkiaShell-GetTopmostViewInternal 'DrawnUi.Controls.SkiaShell.GetTopmostViewInternal')
+  - [GoBackInRoute(animate)](#M-DrawnUi-Maui-Controls-SkiaShell-GoBackInRoute-System-Boolean- 'DrawnUi.Controls.SkiaShell.GoBackInRoute(System.Boolean)')
+  - [GoToAsync(state,animate,arguments)](#M-DrawnUi-Maui-Controls-SkiaShell-GoToAsync-Microsoft-Maui-Controls-ShellNavigationState,System-Nullable{System-Boolean},System-Collections-Generic-IDictionary{System-String,System-Object}- 'DrawnUi.Controls.SkiaShell.GoToAsync(Microsoft.Maui.Controls.ShellNavigationState,System.Nullable{System.Boolean},System.Collections.Generic.IDictionary{System.String,System.Object})')
+  - [InitializeNative(handler)](#M-DrawnUi-Maui-Controls-SkiaShell-InitializeNative-Microsoft-Maui-IViewHandler- 'DrawnUi.Controls.SkiaShell.InitializeNative(Microsoft.Maui.IViewHandler)')
+  - [OnLayersChanged()](#M-DrawnUi-Maui-Controls-SkiaShell-OnLayersChanged-DrawnUi-Maui-Draw-SkiaControl- 'DrawnUi.Controls.SkiaShell.OnLayersChanged(DrawnUi.Draw.SkiaControl)')
+  - [OpenPopupAsync(content,animated,closeWhenBackgroundTapped,scaleInFrom)](#M-DrawnUi-Maui-Controls-SkiaShell-OpenPopupAsync-DrawnUi-Maui-Draw-SkiaControl,System-Boolean,System-Boolean,System-Boolean,Microsoft-Maui-Graphics-Color,System-Nullable{SkiaSharp-SKPoint}- 'DrawnUi.Controls.SkiaShell.OpenPopupAsync(DrawnUi.Draw.SkiaControl,System.Boolean,System.Boolean,System.Boolean,Microsoft.Maui.Graphics.Color,System.Nullable{SkiaSharp.SKPoint})')
+  - [PopAsync(animated)](#M-DrawnUi-Maui-Controls-SkiaShell-PopAsync-System-Boolean- 'DrawnUi.Controls.SkiaShell.PopAsync(System.Boolean)')
+  - [PushAsync(page,animated)](#M-DrawnUi-Maui-Controls-SkiaShell-PushAsync-Microsoft-Maui-Controls-BindableObject,System-Boolean,System-Boolean- 'DrawnUi.Controls.SkiaShell.PushAsync(Microsoft.Maui.Controls.BindableObject,System.Boolean,System.Boolean)')
+  - [PushAsync(page,animated)](#M-DrawnUi-Maui-Controls-SkiaShell-PushAsync-System-String,System-Boolean,System-Collections-Generic-IDictionary{System-String,System-Object}- 'DrawnUi.Controls.SkiaShell.PushAsync(System.String,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})')
+  - [PushModalAsync(page,animated)](#M-DrawnUi-Maui-Controls-SkiaShell-PushModalAsync-Microsoft-Maui-Controls-BindableObject,System-Boolean,System-Boolean,System-Boolean,System-Collections-Generic-IDictionary{System-String,System-Object}- 'DrawnUi.Controls.SkiaShell.PushModalAsync(Microsoft.Maui.Controls.BindableObject,System.Boolean,System.Boolean,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})')
+  - [SetFrozenLayerVisibility(control,parameters)](#M-DrawnUi-Maui-Controls-SkiaShell-SetFrozenLayerVisibility-DrawnUi-Maui-Draw-SkiaControl,System-Boolean- 'DrawnUi.Controls.SkiaShell.SetFrozenLayerVisibility(DrawnUi.Draw.SkiaControl,System.Boolean)')
+  - [SetRoot(host,replace,arguments)](#M-DrawnUi-Maui-Controls-SkiaShell-SetRoot-System-String,System-Boolean,System-Collections-Generic-IDictionary{System-String,System-Object}- 'DrawnUi.Controls.SkiaShell.SetRoot(System.String,System.Boolean,System.Collections.Generic.IDictionary{System.String,System.Object})')
+  - [SetupRoot(shellLayout)](#M-DrawnUi-Maui-Controls-SkiaShell-SetupRoot-DrawnUi-Maui-Draw-ISkiaControl- 'DrawnUi.Controls.SkiaShell.SetupRoot(DrawnUi.Draw.ISkiaControl)')
+  - [UnfreezeRootLayout(control,animated)](#M-DrawnUi-Maui-Controls-SkiaShell-UnfreezeRootLayout-DrawnUi-Maui-Draw-SkiaControl,System-Boolean- 'DrawnUi.Controls.SkiaShell.UnfreezeRootLayout(DrawnUi.Draw.SkiaControl,System.Boolean)')
+  - [WrapScreenshot(screenshot)](#M-DrawnUi-Maui-Controls-SkiaShell-WrapScreenshot-DrawnUi-Maui-Draw-SkiaControl,SkiaSharp-SKImage,Microsoft-Maui-Graphics-Color,System-Single,System-Boolean- 'DrawnUi.Controls.SkiaShell.WrapScreenshot(DrawnUi.Draw.SkiaControl,SkiaSharp.SKImage,Microsoft.Maui.Graphics.Color,System.Single,System.Boolean)')
+- [SkiaShellNavigatedArgs](#T-DrawnUi-Maui-Controls-SkiaShellNavigatedArgs 'DrawnUi.Controls.SkiaShellNavigatedArgs')
+  - [Route](#P-DrawnUi-Maui-Controls-SkiaShellNavigatedArgs-Route 'DrawnUi.Controls.SkiaShellNavigatedArgs.Route')
+  - [View](#P-DrawnUi-Maui-Controls-SkiaShellNavigatedArgs-View 'DrawnUi.Controls.SkiaShellNavigatedArgs.View')
+- [SkiaShellNavigatingArgs](#T-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs 'DrawnUi.Controls.SkiaShellNavigatingArgs')
+  - [Cancel](#P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-Cancel 'DrawnUi.Controls.SkiaShellNavigatingArgs.Cancel')
+  - [Previous](#P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-Previous 'DrawnUi.Controls.SkiaShellNavigatingArgs.Previous')
+  - [Route](#P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-Route 'DrawnUi.Controls.SkiaShellNavigatingArgs.Route')
+  - [View](#P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-View 'DrawnUi.Controls.SkiaShellNavigatingArgs.View')
+- [SkiaSlider](#T-DrawnUi-Maui-Draw-SkiaSlider 'DrawnUi.Draw.SkiaSlider')
+  - [moreHotspotSize](#F-DrawnUi-Maui-Draw-SkiaSlider-moreHotspotSize 'DrawnUi.Draw.SkiaSlider.moreHotspotSize')
+  - [touchArea](#F-DrawnUi-Maui-Draw-SkiaSlider-touchArea 'DrawnUi.Draw.SkiaSlider.touchArea')
+  - [End](#P-DrawnUi-Maui-Draw-SkiaSlider-End 'DrawnUi.Draw.SkiaSlider.End')
+  - [IgnoreWrongDirection](#P-DrawnUi-Maui-Draw-SkiaSlider-IgnoreWrongDirection 'DrawnUi.Draw.SkiaSlider.IgnoreWrongDirection')
+  - [Orientation](#P-DrawnUi-Maui-Draw-SkiaSlider-Orientation 'DrawnUi.Draw.SkiaSlider.Orientation')
+  - [RespondsToGestures](#P-DrawnUi-Maui-Draw-SkiaSlider-RespondsToGestures 'DrawnUi.Draw.SkiaSlider.RespondsToGestures')
+  - [Start](#P-DrawnUi-Maui-Draw-SkiaSlider-Start 'DrawnUi.Draw.SkiaSlider.Start')
+- [SkiaSvg](#T-DrawnUi-Maui-Draw-SkiaSvg 'DrawnUi.Draw.SkiaSvg')
+  - [LoadSource(fileName)](#M-DrawnUi-Maui-Draw-SkiaSvg-LoadSource-System-String- 'DrawnUi.Draw.SkiaSvg.LoadSource(System.String)')
+- [SkiaSwitch](#T-DrawnUi-Maui-Draw-SkiaSwitch 'DrawnUi.Draw.SkiaSwitch')
+- [SkiaTabsSelector](#T-DrawnUi-Maui-Controls-SkiaTabsSelector 'DrawnUi.Controls.SkiaTabsSelector')
+  - [TabType](#P-DrawnUi-Maui-Controls-SkiaTabsSelector-TabType 'DrawnUi.Controls.SkiaTabsSelector.TabType')
+  - [ApplySelectedIndex()](#M-DrawnUi-Maui-Controls-SkiaTabsSelector-ApplySelectedIndex-System-Int32- 'DrawnUi.Controls.SkiaTabsSelector.ApplySelectedIndex(System.Int32)')
+- [SkiaToggle](#T-DrawnUi-Maui-Draw-SkiaToggle 'DrawnUi.Draw.SkiaToggle')
+  - [ApplyProperties()](#M-DrawnUi-Maui-Draw-SkiaToggle-ApplyProperties 'DrawnUi.Draw.SkiaToggle.ApplyProperties')
+  - [OnToggledChanged()](#M-DrawnUi-Maui-Draw-SkiaToggle-OnToggledChanged 'DrawnUi.Draw.SkiaToggle.OnToggledChanged')
+- [SkiaValueAnimator](#T-DrawnUi-Maui-Draw-SkiaValueAnimator 'DrawnUi.Draw.SkiaValueAnimator')
+  - [CycleFInished](#P-DrawnUi-Maui-Draw-SkiaValueAnimator-CycleFInished 'DrawnUi.Draw.SkiaValueAnimator.CycleFInished')
+  - [Finished](#P-DrawnUi-Maui-Draw-SkiaValueAnimator-Finished 'DrawnUi.Draw.SkiaValueAnimator.Finished')
+  - [Progress](#P-DrawnUi-Maui-Draw-SkiaValueAnimator-Progress 'DrawnUi.Draw.SkiaValueAnimator.Progress')
+  - [Repeat](#P-DrawnUi-Maui-Draw-SkiaValueAnimator-Repeat 'DrawnUi.Draw.SkiaValueAnimator.Repeat')
+  - [TransformReportedValue(deltaT)](#M-DrawnUi-Maui-Draw-SkiaValueAnimator-TransformReportedValue-System-Int64- 'DrawnUi.Draw.SkiaValueAnimator.TransformReportedValue(System.Int64)')
+  - [UpdateValue(deltaT)](#M-DrawnUi-Maui-Draw-SkiaValueAnimator-UpdateValue-System-Int64,System-Int64- 'DrawnUi.Draw.SkiaValueAnimator.UpdateValue(System.Int64,System.Int64)')
+- [SkiaView](#T-DrawnUi-Maui-Views-SkiaView 'DrawnUi.Views.SkiaView')
+  - [CalculateFPS(currentTimestamp,averageAmount)](#M-DrawnUi-Maui-Views-SkiaView-CalculateFPS-System-Int64,System-Int32- 'DrawnUi.Views.SkiaView.CalculateFPS(System.Int64,System.Int32)')
+- [SkiaViewAccelerated](#T-DrawnUi-Maui-Views-SkiaViewAccelerated 'DrawnUi.Views.SkiaViewAccelerated')
+  - [CalculateFPS(currentTimestamp,averageAmount)](#M-DrawnUi-Maui-Views-SkiaViewAccelerated-CalculateFPS-System-Int64,System-Int32- 'DrawnUi.Views.SkiaViewAccelerated.CalculateFPS(System.Int64,System.Int32)')
+  - [OnPaintingSurface(sender,paintArgs)](#M-DrawnUi-Maui-Views-SkiaViewAccelerated-OnPaintingSurface-System-Object,SkiaSharp-Views-Maui-SKPaintGLSurfaceEventArgs- 'DrawnUi.Views.SkiaViewAccelerated.OnPaintingSurface(System.Object,SkiaSharp.Views.Maui.SKPaintGLSurfaceEventArgs)')
+- [SkiaViewSwitcher](#T-DrawnUi-Maui-Controls-SkiaViewSwitcher 'DrawnUi.Controls.SkiaViewSwitcher')
+  - [NavigationStacks](#F-DrawnUi-Maui-Controls-SkiaViewSwitcher-NavigationStacks 'DrawnUi.Controls.SkiaViewSwitcher.NavigationStacks')
+  - [GetTopView(selectedIndex)](#M-DrawnUi-Maui-Controls-SkiaViewSwitcher-GetTopView-System-Int32- 'DrawnUi.Controls.SkiaViewSwitcher.GetTopView(System.Int32)')
+  - [PopTabToRoot()](#M-DrawnUi-Maui-Controls-SkiaViewSwitcher-PopTabToRoot 'DrawnUi.Controls.SkiaViewSwitcher.PopTabToRoot')
+  - [RevealNavigationView(newVisibleView)](#M-DrawnUi-Maui-Controls-SkiaViewSwitcher-RevealNavigationView-DrawnUi-Maui-Controls-SkiaViewSwitcher-NavigationStackEntry- 'DrawnUi.Controls.SkiaViewSwitcher.RevealNavigationView(DrawnUi.Controls.SkiaViewSwitcher.NavigationStackEntry)')
+- [Snapping](#T-DrawnUi-Maui-Draw-Snapping 'DrawnUi.Draw.Snapping')
+  - [SnapPointsToPixel(initialPosition,translation,scale)](#M-DrawnUi-Maui-Draw-Snapping-SnapPointsToPixel-System-Single,System-Single,System-Double- 'DrawnUi.Draw.Snapping.SnapPointsToPixel(System.Single,System.Single,System.Double)')
+- [SnappingLayout](#T-DrawnUi-Maui-Draw-SnappingLayout 'DrawnUi.Draw.SnappingLayout')
+  - [AutoVelocityMultiplyPts](#P-DrawnUi-Maui-Draw-SnappingLayout-AutoVelocityMultiplyPts 'DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPts')
+  - [ContentOffsetBounds](#P-DrawnUi-Maui-Draw-SnappingLayout-ContentOffsetBounds 'DrawnUi.Draw.SnappingLayout.ContentOffsetBounds')
+  - [IgnoreWrongDirection](#P-DrawnUi-Maui-Draw-SnappingLayout-IgnoreWrongDirection 'DrawnUi.Draw.SnappingLayout.IgnoreWrongDirection')
+  - [RespondsToGestures](#P-DrawnUi-Maui-Draw-SnappingLayout-RespondsToGestures 'DrawnUi.Draw.SnappingLayout.RespondsToGestures')
+  - [RubberDamping](#P-DrawnUi-Maui-Draw-SnappingLayout-RubberDamping 'DrawnUi.Draw.SnappingLayout.RubberDamping')
+  - [RubberEffect](#P-DrawnUi-Maui-Draw-SnappingLayout-RubberEffect 'DrawnUi.Draw.SnappingLayout.RubberEffect')
+  - [SnapDistanceRatio](#P-DrawnUi-Maui-Draw-SnappingLayout-SnapDistanceRatio 'DrawnUi.Draw.SnappingLayout.SnapDistanceRatio')
+  - [Viewport](#P-DrawnUi-Maui-Draw-SnappingLayout-Viewport 'DrawnUi.Draw.SnappingLayout.Viewport')
+  - [ClampOffsetWithRubberBand(x,y)](#M-DrawnUi-Maui-Draw-SnappingLayout-ClampOffsetWithRubberBand-System-Single,System-Single- 'DrawnUi.Draw.SnappingLayout.ClampOffsetWithRubberBand(System.Single,System.Single)')
+  - [GetAutoVelocity(displacement)](#M-DrawnUi-Maui-Draw-SnappingLayout-GetAutoVelocity-System-Numerics-Vector2- 'DrawnUi.Draw.SnappingLayout.GetAutoVelocity(System.Numerics.Vector2)')
+  - [GetContentOffsetBounds()](#M-DrawnUi-Maui-Draw-SnappingLayout-GetContentOffsetBounds 'DrawnUi.Draw.SnappingLayout.GetContentOffsetBounds')
+  - [ScrollToOffset(offset,animate)](#M-DrawnUi-Maui-Draw-SnappingLayout-ScrollToOffset-System-Numerics-Vector2,System-Numerics-Vector2,System-Boolean- 'DrawnUi.Draw.SnappingLayout.ScrollToOffset(System.Numerics.Vector2,System.Numerics.Vector2,System.Boolean)')
+  - [SelectNextAnchor(origin,velocity)](#M-DrawnUi-Maui-Draw-SnappingLayout-SelectNextAnchor-System-Numerics-Vector2,System-Numerics-Vector2- 'DrawnUi.Draw.SnappingLayout.SelectNextAnchor(System.Numerics.Vector2,System.Numerics.Vector2)')
+- [SpaceDistribution](#T-DrawnUi-Maui-Draw-SpaceDistribution 'DrawnUi.Draw.SpaceDistribution')
+  - [Auto](#F-DrawnUi-Maui-Draw-SpaceDistribution-Auto 'DrawnUi.Draw.SpaceDistribution.Auto')
+  - [Full](#F-DrawnUi-Maui-Draw-SpaceDistribution-Full 'DrawnUi.Draw.SpaceDistribution.Full')
+- [StackLayoutStructure](#T-DrawnUi-Maui-Draw-StackLayoutStructure 'DrawnUi.Draw.StackLayoutStructure')
+  - [Build()](#M-DrawnUi-Maui-Draw-StackLayoutStructure-Build-SkiaSharp-SKRect,System-Single- 'DrawnUi.Draw.StackLayoutStructure.Build(SkiaSharp.SKRect,System.Single)')
+- [Super](#T-DrawnUi-Maui-Draw-Super 'DrawnUi.Draw.Super')
+  - [CanUseHardwareAcceleration](#F-DrawnUi-Maui-Draw-Super-CanUseHardwareAcceleration 'DrawnUi.Draw.Super.CanUseHardwareAcceleration')
+  - [CapMicroSecs](#F-DrawnUi-Maui-Draw-Super-CapMicroSecs 'DrawnUi.Draw.Super.CapMicroSecs')
+  - [InsetsChanged](#F-DrawnUi-Maui-Draw-Super-InsetsChanged 'DrawnUi.Draw.Super.InsetsChanged')
+  - [OnMauiAppCreated](#F-DrawnUi-Maui-Draw-Super-OnMauiAppCreated 'DrawnUi.Draw.Super.OnMauiAppCreated')
+  - [BottomTabsHeight](#P-DrawnUi-Maui-Draw-Super-BottomTabsHeight 'DrawnUi.Draw.Super.BottomTabsHeight')
+  - [FontSubPixelRendering](#P-DrawnUi-Maui-Draw-Super-FontSubPixelRendering 'DrawnUi.Draw.Super.FontSubPixelRendering')
+  - [IsRtl](#P-DrawnUi-Maui-Draw-Super-IsRtl 'DrawnUi.Draw.Super.IsRtl')
+  - [NavBarHeight](#P-DrawnUi-Maui-Draw-Super-NavBarHeight 'DrawnUi.Draw.Super.NavBarHeight')
+  - [StatusBarHeight](#P-DrawnUi-Maui-Draw-Super-StatusBarHeight 'DrawnUi.Draw.Super.StatusBarHeight')
+  - [DisplayException(view,e)](#M-DrawnUi-Maui-Draw-Super-DisplayException-Microsoft-Maui-Controls-Element,System-Exception- 'DrawnUi.Draw.Super.DisplayException(Microsoft.Maui.Controls.Element,System.Exception)')
+  - [ListResources(subfolder)](#M-DrawnUi-Maui-Draw-Super-ListResources-System-String- 'DrawnUi.Draw.Super.ListResources(System.String)')
+  - [NeedGlobalUpdate()](#M-DrawnUi-Maui-Draw-Super-NeedGlobalUpdate 'DrawnUi.Draw.Super.NeedGlobalUpdate')
+  - [OpenLink(link)](#M-DrawnUi-Maui-Draw-Super-OpenLink-System-String- 'DrawnUi.Draw.Super.OpenLink(System.String)')
+  - [ResizeWindow(window,width,height,isFixed)](#M-DrawnUi-Maui-Draw-Super-ResizeWindow-Microsoft-Maui-Controls-Window,System-Int32,System-Int32,System-Boolean- 'DrawnUi.Draw.Super.ResizeWindow(Microsoft.Maui.Controls.Window,System.Int32,System.Int32,System.Boolean)')
+  - [SetFullScreen(activity)](#M-DrawnUi-Maui-Draw-Super-SetFullScreen-Android-App-Activity- 'DrawnUi.Draw.Super.SetFullScreen(Android.App.Activity)')
+- [TemplatedViewsPool](#T-DrawnUi-Maui-Draw-ViewsAdapter-TemplatedViewsPool 'DrawnUi.Draw.ViewsAdapter.TemplatedViewsPool')
+  - [CreateFromTemplate()](#M-DrawnUi-Maui-Draw-ViewsAdapter-TemplatedViewsPool-CreateFromTemplate 'DrawnUi.Draw.ViewsAdapter.TemplatedViewsPool.CreateFromTemplate')
+  - [Reserve()](#M-DrawnUi-Maui-Draw-ViewsAdapter-TemplatedViewsPool-Reserve 'DrawnUi.Draw.ViewsAdapter.TemplatedViewsPool.Reserve')
+- [TextLine](#T-DrawnUi-Maui-Draw-TextLine 'DrawnUi.Draw.TextLine')
+  - [Bounds](#P-DrawnUi-Maui-Draw-TextLine-Bounds 'DrawnUi.Draw.TextLine.Bounds')
+- [TextSpan](#T-DrawnUi-Maui-Draw-TextSpan 'DrawnUi.Draw.TextSpan')
+  - [Rects](#F-DrawnUi-Maui-Draw-TextSpan-Rects 'DrawnUi.Draw.TextSpan.Rects')
+  - [AutoFindFont](#P-DrawnUi-Maui-Draw-TextSpan-AutoFindFont 'DrawnUi.Draw.TextSpan.AutoFindFont')
+  - [DrawingOffset](#P-DrawnUi-Maui-Draw-TextSpan-DrawingOffset 'DrawnUi.Draw.TextSpan.DrawingOffset')
+  - [ForceCaptureInput](#P-DrawnUi-Maui-Draw-TextSpan-ForceCaptureInput 'DrawnUi.Draw.TextSpan.ForceCaptureInput')
+  - [Glyphs](#P-DrawnUi-Maui-Draw-TextSpan-Glyphs 'DrawnUi.Draw.TextSpan.Glyphs')
+  - [HasTapHandler](#P-DrawnUi-Maui-Draw-TextSpan-HasTapHandler 'DrawnUi.Draw.TextSpan.HasTapHandler')
+  - [Shape](#P-DrawnUi-Maui-Draw-TextSpan-Shape 'DrawnUi.Draw.TextSpan.Shape')
+  - [StrikeoutWidth](#P-DrawnUi-Maui-Draw-TextSpan-StrikeoutWidth 'DrawnUi.Draw.TextSpan.StrikeoutWidth')
+  - [UnderlineWidth](#P-DrawnUi-Maui-Draw-TextSpan-UnderlineWidth 'DrawnUi.Draw.TextSpan.UnderlineWidth')
+  - [CheckGlyphsCanBeRendered()](#M-DrawnUi-Maui-Draw-TextSpan-CheckGlyphsCanBeRendered 'DrawnUi.Draw.TextSpan.CheckGlyphsCanBeRendered')
+  - [SetupPaint()](#M-DrawnUi-Maui-Draw-TextSpan-SetupPaint-System-Double,SkiaSharp-SKPaint- 'DrawnUi.Draw.TextSpan.SetupPaint(System.Double,SkiaSharp.SKPaint)')
+- [TransformAspect](#T-DrawnUi-Maui-Draw-TransformAspect 'DrawnUi.Draw.TransformAspect')
+  - [AspectCover](#F-DrawnUi-Maui-Draw-TransformAspect-AspectCover 'DrawnUi.Draw.TransformAspect.AspectCover')
+  - [AspectFill](#F-DrawnUi-Maui-Draw-TransformAspect-AspectFill 'DrawnUi.Draw.TransformAspect.AspectFill')
+  - [AspectFit](#F-DrawnUi-Maui-Draw-TransformAspect-AspectFit 'DrawnUi.Draw.TransformAspect.AspectFit')
+  - [AspectFitFill](#F-DrawnUi-Maui-Draw-TransformAspect-AspectFitFill 'DrawnUi.Draw.TransformAspect.AspectFitFill')
+  - [Cover](#F-DrawnUi-Maui-Draw-TransformAspect-Cover 'DrawnUi.Draw.TransformAspect.Cover')
+  - [Fill](#F-DrawnUi-Maui-Draw-TransformAspect-Fill 'DrawnUi.Draw.TransformAspect.Fill')
+  - [Fit](#F-DrawnUi-Maui-Draw-TransformAspect-Fit 'DrawnUi.Draw.TransformAspect.Fit')
+  - [FitFill](#F-DrawnUi-Maui-Draw-TransformAspect-FitFill 'DrawnUi.Draw.TransformAspect.FitFill')
+  - [Tile](#F-DrawnUi-Maui-Draw-TransformAspect-Tile 'DrawnUi.Draw.TransformAspect.Tile')
+- [UiSettings](#T-DrawnUi-Maui-Draw-UiSettings 'DrawnUi.Draw.UiSettings')
+  - [DesktopWindow](#P-DrawnUi-Maui-Draw-UiSettings-DesktopWindow 'DrawnUi.Draw.UiSettings.DesktopWindow')
+  - [MobileIsFullscreen](#P-DrawnUi-Maui-Draw-UiSettings-MobileIsFullscreen 'DrawnUi.Draw.UiSettings.MobileIsFullscreen')
+  - [UseDesktopKeyboard](#P-DrawnUi-Maui-Draw-UiSettings-UseDesktopKeyboard 'DrawnUi.Draw.UiSettings.UseDesktopKeyboard')
+- [UpdateMode](#T-DrawnUi-Maui-Infrastructure-Enums-UpdateMode 'DrawnUi.Infrastructure.Enums.UpdateMode')
+  - [Constant](#F-DrawnUi-Maui-Infrastructure-Enums-UpdateMode-Constant 'DrawnUi.Infrastructure.Enums.UpdateMode.Constant')
+  - [Dynamic](#F-DrawnUi-Maui-Infrastructure-Enums-UpdateMode-Dynamic 'DrawnUi.Infrastructure.Enums.UpdateMode.Dynamic')
+  - [Manual](#F-DrawnUi-Maui-Infrastructure-Enums-UpdateMode-Manual 'DrawnUi.Infrastructure.Enums.UpdateMode.Manual')
+- [VStack](#T-DrawnUi-Maui-Controls-VStack 'DrawnUi.Controls.VStack')
+- [VelocitySkiaAnimator](#T-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator 'DrawnUi.Animate.Animators.VelocitySkiaAnimator')
+  - [Friction](#P-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-Friction 'DrawnUi.Animate.Animators.VelocitySkiaAnimator.Friction')
+  - [RemainingVelocity](#P-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-RemainingVelocity 'DrawnUi.Animate.Animators.VelocitySkiaAnimator.RemainingVelocity')
+  - [mMaxOverscrollValue](#P-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-mMaxOverscrollValue 'DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxOverscrollValue')
+  - [mMinOverscrollValue](#P-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-mMinOverscrollValue 'DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinOverscrollValue')
+- [ViewsAdapter](#T-DrawnUi-Maui-Draw-ViewsAdapter 'DrawnUi.Draw.ViewsAdapter')
+  - [_dicoCellsInUse](#F-DrawnUi-Maui-Draw-ViewsAdapter-_dicoCellsInUse 'DrawnUi.Draw.ViewsAdapter._dicoCellsInUse')
+  - [TemplatesAvailable](#P-DrawnUi-Maui-Draw-ViewsAdapter-TemplatesAvailable 'DrawnUi.Draw.ViewsAdapter.TemplatesAvailable')
+  - [AddMoreToPool(oversize)](#M-DrawnUi-Maui-Draw-ViewsAdapter-AddMoreToPool-System-Int32- 'DrawnUi.Draw.ViewsAdapter.AddMoreToPool(System.Int32)')
+  - [FillPool(size)](#M-DrawnUi-Maui-Draw-ViewsAdapter-FillPool-System-Int32,System-Collections-IList- 'DrawnUi.Draw.ViewsAdapter.FillPool(System.Int32,System.Collections.IList)')
+  - [FillPool(size)](#M-DrawnUi-Maui-Draw-ViewsAdapter-FillPool-System-Int32- 'DrawnUi.Draw.ViewsAdapter.FillPool(System.Int32)')
+  - [InitializeTemplates(template,dataContexts,poolSize,reserve)](#M-DrawnUi-Maui-Draw-ViewsAdapter-InitializeTemplates-System-Func{System-Object},System-Collections-IList,System-Int32,System-Int32- 'DrawnUi.Draw.ViewsAdapter.InitializeTemplates(System.Func{System.Object},System.Collections.IList,System.Int32,System.Int32)')
+- [ViewsIterator](#T-DrawnUi-Maui-Draw-ViewsAdapter-ViewsIterator 'DrawnUi.Draw.ViewsAdapter.ViewsIterator')
+- [VirtualisationType](#T-DrawnUi-Maui-Draw-VirtualisationType 'DrawnUi.Draw.VirtualisationType')
+  - [Disabled](#F-DrawnUi-Maui-Draw-VirtualisationType-Disabled 'DrawnUi.Draw.VirtualisationType.Disabled')
+  - [Enabled](#F-DrawnUi-Maui-Draw-VirtualisationType-Enabled 'DrawnUi.Draw.VirtualisationType.Enabled')
+  - [Smart](#F-DrawnUi-Maui-Draw-VirtualisationType-Smart 'DrawnUi.Draw.VirtualisationType.Smart')
+- [ViscousFluidInterpolator](#T-DrawnUi-Maui-Draw-ViscousFluidInterpolator 'DrawnUi.Draw.ViscousFluidInterpolator')
+  - [VISCOUS_FLUID_SCALE](#F-DrawnUi-Maui-Draw-ViscousFluidInterpolator-VISCOUS_FLUID_SCALE 'DrawnUi.Draw.ViscousFluidInterpolator.VISCOUS_FLUID_SCALE')
+- [VisualTransform](#T-DrawnUi-Maui-Infrastructure-VisualTransform 'DrawnUi.Infrastructure.VisualTransform')
+  - [Scale](#P-DrawnUi-Maui-Infrastructure-VisualTransform-Scale 'DrawnUi.Infrastructure.VisualTransform.Scale')
+  - [Translation](#P-DrawnUi-Maui-Infrastructure-VisualTransform-Translation 'DrawnUi.Infrastructure.VisualTransform.Translation')
+  - [ToNative(rect,clipRect,scale)](#M-DrawnUi-Maui-Infrastructure-VisualTransform-ToNative-SkiaSharp-SKRect,System-Single- 'DrawnUi.Infrastructure.VisualTransform.ToNative(SkiaSharp.SKRect,System.Single)')
+- [VisualTransformNative](#T-DrawnUi-Maui-Infrastructure-VisualTransformNative 'DrawnUi.Infrastructure.VisualTransformNative')
+  - [Rect](#P-DrawnUi-Maui-Infrastructure-VisualTransformNative-Rect 'DrawnUi.Infrastructure.VisualTransformNative.Rect')
+- [VisualTreeChain](#T-DrawnUi-Maui-Infrastructure-VisualTreeChain 'DrawnUi.Infrastructure.VisualTreeChain')
+  - [Child](#P-DrawnUi-Maui-Infrastructure-VisualTreeChain-Child 'DrawnUi.Infrastructure.VisualTreeChain.Child')
+  - [NodeIndices](#P-DrawnUi-Maui-Infrastructure-VisualTreeChain-NodeIndices 'DrawnUi.Infrastructure.VisualTreeChain.NodeIndices')
+  - [Nodes](#P-DrawnUi-Maui-Infrastructure-VisualTreeChain-Nodes 'DrawnUi.Infrastructure.VisualTreeChain.Nodes')
+  - [Transform](#P-DrawnUi-Maui-Infrastructure-VisualTreeChain-Transform 'DrawnUi.Infrastructure.VisualTreeChain.Transform')
+- [WindowParameters](#T-DrawnUi-Maui-Draw-WindowParameters 'DrawnUi.Draw.WindowParameters')
+  - [IsFixedSize](#P-DrawnUi-Maui-Draw-WindowParameters-IsFixedSize 'DrawnUi.Draw.WindowParameters.IsFixedSize')
+- [ZoomContent](#T-DrawnUi-Maui-Draw-ZoomContent 'DrawnUi.Draw.ZoomContent')
+  - [LastValue](#F-DrawnUi-Maui-Draw-ZoomContent-LastValue 'DrawnUi.Draw.ZoomContent.LastValue')
+  - [ZoomSpeed](#P-DrawnUi-Maui-Draw-ZoomContent-ZoomSpeed 'DrawnUi.Draw.ZoomContent.ZoomSpeed')
 
 <a name='T-DrawnUi-Maui-Draw-ActionOnTickAnimator'></a>
 ## ActionOnTickAnimator `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -850,7 +850,7 @@ Just register this animator to run custom code on every frame creating a kind of
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -861,7 +861,7 @@ For fast and lazy gestures handling to attach to dran controls inside the canvas
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-AnimateExtensions-AnimateWith-DrawnUi-Maui-Draw-SkiaControl,System-Func{DrawnUi-Maui-Draw-SkiaControl,System-Threading-Tasks-Task}[]-'></a>
 ### AnimateWith(control,animations) `method`
@@ -878,15 +878,15 @@ Animate several tasks at the same time with WhenAll
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| control | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
-| animations | [System.Func{DrawnUi.Maui.Draw.SkiaControl,System.Threading.Tasks.Task}[]](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Func 'System.Func{DrawnUi.Maui.Draw.SkiaControl,System.Threading.Tasks.Task}[]') |  |
+| control | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
+| animations | [System.Func{DrawnUi.Draw.SkiaControl,System.Threading.Tasks.Task}[]](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Func 'System.Func{DrawnUi.Draw.SkiaControl,System.Threading.Tasks.Task}[]') |  |
 
 <a name='T-DrawnUi-Maui-Controls-AnimatedFramesRenderer'></a>
 ## AnimatedFramesRenderer `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -934,7 +934,7 @@ Override this to react on animator running.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-AutoSizeType-FillHorizontal'></a>
 ### FillHorizontal `constants`
@@ -983,7 +983,7 @@ If you have dynamically changing text think about using FitFillVertical instead
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -994,7 +994,7 @@ Compiled-bindings-friendly implementation for "Source.Parent.BindingContext.Path
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaLayout
+DrawnUi.Draw.SkiaLayout
 
 ##### Summary
 
@@ -1005,7 +1005,7 @@ Implementation for LayoutType.Wrap
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-CachedObject-SurfaceIsRecycled'></a>
 ### SurfaceIsRecycled `property`
@@ -1019,7 +1019,7 @@ An existing surface was reused for creating this object
 
 ##### Namespace
 
-DrawnUi.Maui.Views
+DrawnUi.Views
 
 ##### Summary
 
@@ -1126,7 +1126,7 @@ PIXELS
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| child | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| child | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 | availableWidth | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 | availableHeight | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 | scale | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
@@ -1162,7 +1162,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaLayout
+DrawnUi.Draw.SkiaLayout
 
 <a name='P-DrawnUi-Maui-Draw-SkiaLayout-Cell-ColumnGridLengthType'></a>
 ### ColumnGridLengthType `property`
@@ -1183,7 +1183,7 @@ A combination of all the measurement types in the rows this cell spans
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-ChainAdjustBrightnessEffect-CreateBrightnessFilter-System-Single-'></a>
 ### CreateBrightnessFilter(value) `method`
@@ -1224,7 +1224,7 @@ DrawnUi.Maui.Draw
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-ChainAdjustLightnessEffect-CreateLightnessFilter-System-Single-'></a>
 ### CreateLightnessFilter(value) `method`
@@ -1248,7 +1248,7 @@ DrawnUi.Maui.Draw
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-ChainEffectResult-DrawnControl'></a>
 ### DrawnControl `property`
@@ -1262,7 +1262,7 @@ Set this to true if you drawn the control of false if you just rendered somethin
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Infrastructure-Extensions-ColorExtensions-ToColorFromHex-System-String-'></a>
 ### ToColorFromHex() `method`
@@ -1276,7 +1276,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-ContentLayout-Orientation'></a>
 ### Orientation `property`
@@ -1321,7 +1321,7 @@ In PIXELS
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-ControlInStack-Area'></a>
 ### Area `property`
@@ -1377,7 +1377,7 @@ This will be null for recycled views
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-DecelerationTimingVectorParameters-ValueAt-System-Single-'></a>
 ### ValueAt(offsetSecs,time) `method`
@@ -1401,7 +1401,7 @@ time is in seconds
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaLabel
+DrawnUi.Draw.SkiaLabel
 
 <a name='P-DrawnUi-Maui-Draw-SkiaLabel-DecomposedText-HasMoreHorizontalSpace'></a>
 ### HasMoreHorizontalSpace `property`
@@ -1422,7 +1422,7 @@ pixels
 
 ##### Namespace
 
-DrawnUi.Maui.Animate.Animators.VelocitySkiaAnimator
+DrawnUi.Animate.Animators.VelocitySkiaAnimator
 
 <a name='M-DrawnUi-Maui-Animate-Animators-VelocitySkiaAnimator-DragForce-GetInitialVelocity-System-Single,System-Single,System-Single-'></a>
 ### GetInitialVelocity(initialPosition,finalPosition,durationTime) `method`
@@ -1448,7 +1448,7 @@ inverse of updateValueAndVelocity
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -1459,7 +1459,7 @@ Forked from Microsoft.Maui.Controls as using original class was breaking XAML Ho
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -1471,7 +1471,7 @@ Actually used to: respond to keyboard resizing on mobile and keyboard key presse
 
 ##### Namespace
 
-DrawnUi.Maui.Views
+DrawnUi.Views
 
 <a name='F-DrawnUi-Maui-Views-DrawnView-_orderedChildren'></a>
 ### _orderedChildren `constants`
@@ -1756,7 +1756,7 @@ so we know whether we should refresh canvas non-stop
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| uid | [DrawnUi.Maui.Draw.ISkiaAnimator](#T-DrawnUi-Maui-Draw-ISkiaAnimator 'DrawnUi.Maui.Draw.ISkiaAnimator') |  |
+| uid | [DrawnUi.Draw.ISkiaAnimator](#T-DrawnUi-Maui-Draw-ISkiaAnimator 'DrawnUi.Draw.ISkiaAnimator') |  |
 
 <a name='M-DrawnUi-Maui-Views-DrawnView-ReportFocus-DrawnUi-Maui-Draw-ISkiaGestureListener,DrawnUi-Maui-Draw-ISkiaGestureListener-'></a>
 ### ReportFocus(listener) `method`
@@ -1769,14 +1769,14 @@ Internal call by control, after reporting will affect FocusedChild but will not 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| listener | [DrawnUi.Maui.Draw.ISkiaGestureListener](#T-DrawnUi-Maui-Draw-ISkiaGestureListener 'DrawnUi.Maui.Draw.ISkiaGestureListener') |  |
+| listener | [DrawnUi.Draw.ISkiaGestureListener](#T-DrawnUi-Maui-Draw-ISkiaGestureListener 'DrawnUi.Draw.ISkiaGestureListener') |  |
 
 <a name='T-DrawnUi-Maui-Draw-DynamicGrid`1'></a>
 ## DynamicGrid\`1 `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-DynamicGrid`1-GetColumnCountForRow-System-Int32-'></a>
 ### GetColumnCountForRow(row) `method`
@@ -1801,7 +1801,7 @@ Number of columns in the specified row.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaLabel
+DrawnUi.Draw.SkiaLabel
 
 <a name='M-DrawnUi-Maui-Draw-SkiaLabel-EmojiData-IsEmojiModifierSequence-System-String,System-Int32-'></a>
 ### IsEmojiModifierSequence(text,index) `method`
@@ -1826,7 +1826,7 @@ Returns the length of EmojiModifierSequence if found at index ins
 
 ##### Namespace
 
-DrawnUi.Maui.Infrastructure
+DrawnUi.Infrastructure
 
 <a name='M-DrawnUi-Maui-Infrastructure-Files-ListAssets-System-String-'></a>
 ### ListAssets() `method`
@@ -1848,7 +1848,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-FontWeight-Black'></a>
 ### Black `constants`
@@ -1918,7 +1918,7 @@ The thin
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -1957,7 +1957,7 @@ Tries to let other views consume the touch event if this view doesn't handle it
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-GifAnimation-Frame'></a>
 ### Frame `property`
@@ -1984,7 +1984,7 @@ Select frame. If you pass a negative value the last frame will be set.
 
 ##### Namespace
 
-DrawnUi.Maui.Views
+DrawnUi.Views
 
 <a name='M-DrawnUi-Maui-Views-GlideExtensions-Clear-Bumptech-Glide-RequestManager,Android-Widget-ImageView-'></a>
 ### Clear() `method`
@@ -2013,7 +2013,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -2024,7 +2024,7 @@ Helper class for SkiaLayout Type = LayoutType.Grid
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -2035,7 +2035,7 @@ Helper class for SkiaLayout Type = LayoutType.Stack,  SplitMax = 0
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-HardwareAccelerationMode-Disabled'></a>
 ### Disabled `constants`
@@ -2063,7 +2063,7 @@ A non-accelerated view will be created first to avoid blank screen while graphic
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-IAfterEffectDelete-TypeId'></a>
 ### TypeId `property`
@@ -2083,8 +2083,8 @@ Called when drawing parent control frame
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| control | [DrawnUi.Maui.Draw.IDrawnBase](#T-DrawnUi-Maui-Draw-IDrawnBase 'DrawnUi.Maui.Draw.IDrawnBase') |  |
-| canvas | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| control | [DrawnUi.Draw.IDrawnBase](#T-DrawnUi-Maui-Draw-IDrawnBase 'DrawnUi.Draw.IDrawnBase') |  |
+| canvas | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | scale | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 
 <a name='T-DrawnUi-Maui-Draw-IAnimatorsManager'></a>
@@ -2092,7 +2092,7 @@ Called when drawing parent control frame
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -2103,7 +2103,7 @@ This control is responsible for updating screen for running animators
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-ICanBeUpdated-Update'></a>
 ### Update() `method`
@@ -2125,7 +2125,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-ICanRenderOnCanvas-Render-DrawnUi-Maui-Draw-IDrawnBase,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Double-'></a>
 ### Render(control,context,scale) `method`
@@ -2142,8 +2142,8 @@ Renders effect overlay to canvas, return true if has drawn something and renderi
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| control | [DrawnUi.Maui.Draw.IDrawnBase](#T-DrawnUi-Maui-Draw-IDrawnBase 'DrawnUi.Maui.Draw.IDrawnBase') |  |
-| context | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| control | [DrawnUi.Draw.IDrawnBase](#T-DrawnUi-Maui-Draw-IDrawnBase 'DrawnUi.Draw.IDrawnBase') |  |
+| context | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | scale | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 
 <a name='T-DrawnUi-Maui-Draw-IDefinesViewport'></a>
@@ -2151,7 +2151,7 @@ Renders effect overlay to canvas, return true if has drawn something and renderi
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-IDefinesViewport-InvalidateByChild-DrawnUi-Maui-Draw-SkiaControl-'></a>
 ### InvalidateByChild() `method`
@@ -2169,7 +2169,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-IDrawnBase-PostAnimators'></a>
 ### PostAnimators `property`
@@ -2196,7 +2196,7 @@ Directly adds a view to the control, without any layouting. Use this instead of 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| view | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| view | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='M-DrawnUi-Maui-Draw-IDrawnBase-ClipSmart-SkiaSharp-SKCanvas,SkiaSharp-SKPath,SkiaSharp-SKClipOperation-'></a>
 ### ClipSmart(canvas,path,operation) `method`
@@ -2268,7 +2268,7 @@ This is needed by layout to track which child changed to sometimes avoid recalcu
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| skiaControl | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| skiaControl | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='M-DrawnUi-Maui-Draw-IDrawnBase-InvalidateParents'></a>
 ### InvalidateParents() `method`
@@ -2293,7 +2293,7 @@ Use this instead of Views.Remove() to avoid memory leaks etc
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| view | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| view | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='M-DrawnUi-Maui-Draw-IDrawnBase-UpdateByChild-DrawnUi-Maui-Draw-SkiaControl-'></a>
 ### UpdateByChild(skiaControl) `method`
@@ -2306,14 +2306,14 @@ To track dirty area when Updating parent
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| skiaControl | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| skiaControl | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='T-DrawnUi-Maui-Controls-SkiaShell-IHandleGoBack'></a>
 ## IHandleGoBack `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Controls.SkiaShell
+DrawnUi.Controls.SkiaShell
 
 <a name='M-DrawnUi-Maui-Controls-SkiaShell-IHandleGoBack-OnShellGoBack-System-Boolean-'></a>
 ### OnShellGoBack() `method`
@@ -2335,7 +2335,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-IHasBanner-Banner'></a>
 ### Banner `property`
@@ -2356,7 +2356,7 @@ Indicates that it's already preloading
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-IInsideViewport-OnLoaded'></a>
 ### OnLoaded() `method`
@@ -2374,7 +2374,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-IInsideWheelStack-OnPositionChanged-System-Single,System-Boolean-'></a>
 ### OnPositionChanged(offsetRatio,isSelected) `method`
@@ -2395,7 +2395,7 @@ Called by parent stack inside picker wheel when position changes
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-ILayoutInsideViewport-GetChildIndexAt-SkiaSharp-SKPoint-'></a>
 ### GetChildIndexAt(point) `method`
@@ -2436,7 +2436,7 @@ The point here is the rendering location, always on screen
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-IRefreshIndicator-SetDragRatio-System-Single-'></a>
 ### SetDragRatio(ratio) `method`
@@ -2456,7 +2456,7 @@ DrawnUi.Maui.Draw
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-IRenderEffect-Draw-SkiaSharp-SKRect,DrawnUi-Maui-Draw-SkiaDrawingContext,System-Action{DrawnUi-Maui-Draw-SkiaDrawingContext}-'></a>
 ### Draw(destination,ctx,drawControl) `method`
@@ -2474,15 +2474,15 @@ Returns true if has drawn control itsself, otherwise it will be drawn over it
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
-| ctx | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
-| drawControl | [System.Action{DrawnUi.Maui.Draw.SkiaDrawingContext}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Action 'System.Action{DrawnUi.Maui.Draw.SkiaDrawingContext}') |  |
+| ctx | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
+| drawControl | [System.Action{DrawnUi.Draw.SkiaDrawingContext}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Action 'System.Action{DrawnUi.Draw.SkiaDrawingContext}') |  |
 
 <a name='T-DrawnUi-Maui-Draw-ISkiaAnimator'></a>
 ## ISkiaAnimator `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-ISkiaAnimator-IsDeactivated'></a>
 ### IsDeactivated `property`
@@ -2549,7 +2549,7 @@ Is Finished
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-ISkiaControl-IsGhost'></a>
 ### IsGhost `property`
@@ -2582,7 +2582,7 @@ sets NeedMeasure to false
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-ISkiaDrawable-OnDraw'></a>
 ### OnDraw `property`
@@ -2596,7 +2596,7 @@ Return true if need force invalidation on next frame
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-ISkiaGestureListener-OnFocusChanged-System-Boolean-'></a>
 ### OnFocusChanged(focus) `method`
@@ -2632,15 +2632,15 @@ If you pass this to subview you must set your own offset parameters, do not pass
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| type | [DrawnUi.Maui.Draw.SkiaGesturesParameters](#T-DrawnUi-Maui-Draw-SkiaGesturesParameters 'DrawnUi.Maui.Draw.SkiaGesturesParameters') |  |
-| args | [DrawnUi.Maui.Draw.GestureEventProcessingInfo](#T-DrawnUi-Maui-Draw-GestureEventProcessingInfo 'DrawnUi.Maui.Draw.GestureEventProcessingInfo') |  |
+| type | [DrawnUi.Draw.SkiaGesturesParameters](#T-DrawnUi-Maui-Draw-SkiaGesturesParameters 'DrawnUi.Draw.SkiaGesturesParameters') |  |
+| args | [DrawnUi.Draw.GestureEventProcessingInfo](#T-DrawnUi-Maui-Draw-GestureEventProcessingInfo 'DrawnUi.Draw.GestureEventProcessingInfo') |  |
 
 <a name='T-DrawnUi-Maui-Draw-ISkiaGridLayout'></a>
 ## ISkiaGridLayout `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-ISkiaGridLayout-ColumnDefinitions'></a>
 ### ColumnDefinitions `property`
@@ -2743,7 +2743,7 @@ The row that the child element is in.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-ISkiaLayer-HasValidSnapshot'></a>
 ### HasValidSnapshot `property`
@@ -2764,7 +2764,7 @@ Cached layer image
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-ISkiaSharpView-CreateStandaloneSurface-System-Int32,System-Int32-'></a>
 ### CreateStandaloneSurface(width,height) `method`
@@ -2800,7 +2800,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-IStateEffect-UpdateState'></a>
 ### UpdateState() `method`
@@ -2818,7 +2818,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-IVisibilityAware-OnAppeared'></a>
 ### OnAppeared() `method`
@@ -2847,7 +2847,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Extensions
+DrawnUi.Extensions
 
 <a name='M-DrawnUi-Maui-Extensions-InternalExtensions-ContainsInclusive-SkiaSharp-SKRect,SkiaSharp-SKPoint-'></a>
 ### ContainsInclusive(rect,point) `method`
@@ -2883,7 +2883,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-LayoutType-Absolute'></a>
 ### Absolute `constants`
@@ -2925,7 +2925,7 @@ Think of wrap panel
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-LineGlyph-Width'></a>
 ### Width `property`
@@ -2939,7 +2939,7 @@ Measured text with advance
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-LoadedImageSource-ProtectFromDispose'></a>
 ### ProtectFromDispose `property`
@@ -2953,7 +2953,7 @@ As this can be disposed automatically by the consuming control like SkiaImage et
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-LockTouch-Enabled'></a>
 ### Enabled `constants`
@@ -2988,7 +2988,7 @@ Pass only Tapped and LongPressing below
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-MauiEditor-MaxLines'></a>
 ### MaxLines `property`
@@ -3002,7 +3002,7 @@ WIth 1 will behave like an ordinary Entry, with -1 (auto) or explicitly set you 
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-MauiEntry-MaxLines'></a>
 ### MaxLines `property`
@@ -3016,7 +3016,7 @@ WIth 1 will behave like an ordinary Entry, with -1 (auto) or explicitly set you 
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -3027,7 +3027,7 @@ These are platform-independent. They correspond to JavaScript keys.
 
 ##### Namespace
 
-DrawnUi.Maui.Infrastructure
+DrawnUi.Infrastructure
 
 <a name='P-DrawnUi-Maui-Infrastructure-MeasuringConstraints-TotalMargins'></a>
 ### TotalMargins `property`
@@ -3041,7 +3041,7 @@ Include padding
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaEditor
+DrawnUi.Draw.SkiaEditor
 
 <a name='P-DrawnUi-Maui-Draw-SkiaEditor-MyTextWatcher-NativeSelectionStart'></a>
 ### NativeSelectionStart `property`
@@ -3055,7 +3055,7 @@ This will be read by the parent to check the cursor position at will
 
 ##### Namespace
 
-DrawnUi.Maui.Controls.SkiaShell
+DrawnUi.Controls.SkiaShell
 
 <a name='M-DrawnUi-Maui-Controls-SkiaShell-NavigationLayer`1-#ctor-DrawnUi-Maui-Controls-SkiaShell,System-Boolean-'></a>
 ### #ctor(shell,isModal) `constructor`
@@ -3068,7 +3068,7 @@ if isModel is true than will try to freeze background before showing. otherwise 
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| shell | [DrawnUi.Maui.Controls.SkiaShell](#T-DrawnUi-Maui-Controls-SkiaShell 'DrawnUi.Maui.Controls.SkiaShell') |  |
+| shell | [DrawnUi.Controls.SkiaShell](#T-DrawnUi-Maui-Controls-SkiaShell 'DrawnUi.Controls.SkiaShell') |  |
 | isModal | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
 
 <a name='T-DrawnUi-Maui-Draw-PanningModeType'></a>
@@ -3076,7 +3076,7 @@ if isModel is true than will try to freeze background before showing. otherwise 
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-PanningModeType-Enabled'></a>
 ### Enabled `constants`
@@ -3090,7 +3090,7 @@ DrawnUi.Maui.Draw
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-PendulumAnimator-InitialVelocity'></a>
 ### InitialVelocity `property`
@@ -3111,7 +3111,7 @@ Returns absolute value, instead of going -/+ along the axis. Basically if true s
 
 ##### Namespace
 
-DrawnUi.Maui.Extensions
+DrawnUi.Extensions
 
 <a name='M-DrawnUi-Maui-Extensions-PointExtensions-Add-Microsoft-Maui-Graphics-Point,Microsoft-Maui-Graphics-Point-'></a>
 ### Add(first,second) `method`
@@ -3171,7 +3171,7 @@ Subtracts the coordinates of one Point from another.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-RecycleTemplateType-FillViewport'></a>
 ### FillViewport `constants`
@@ -3201,7 +3201,7 @@ ToDo investigate case of async data changes like images loading from web.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-RefreshIndicator-IsRunning'></a>
 ### IsRunning `property`
@@ -3235,7 +3235,7 @@ ReadOnly
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -3256,8 +3256,8 @@ return true if has drawn something and rendering needs to be applied
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| control | [DrawnUi.Maui.Draw.IDrawnBase](#T-DrawnUi-Maui-Draw-IDrawnBase 'DrawnUi.Maui.Draw.IDrawnBase') |  |
-| context | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| control | [DrawnUi.Draw.IDrawnBase](#T-DrawnUi-Maui-Draw-IDrawnBase 'DrawnUi.Draw.IDrawnBase') |  |
+| context | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | scale | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 
 <a name='T-DrawnUi-Maui-Draw-RippleAnimator'></a>
@@ -3265,7 +3265,7 @@ return true if has drawn something and rendering needs to be applied
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-RippleAnimator-X'></a>
 ### X `property`
@@ -3286,7 +3286,7 @@ In pts relative to control X,Y. These are coords inside the control and not insi
 
 ##### Namespace
 
-DrawnUi.Maui.Infrastructure.Helpers
+DrawnUi.Infrastructure.Helpers
 
 <a name='M-DrawnUi-Maui-Infrastructure-Helpers-RubberBandUtils-ClampOnTrack-System-Numerics-Vector2,SkiaSharp-SKRect,System-Single-'></a>
 ### ClampOnTrack(point,track,coeff) `method`
@@ -3324,7 +3324,7 @@ onEmpty - how much to simulate scrollable area when its zero
 | ---- | ---- | ----------- |
 | coord | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 | coeff | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
-| dim | [DrawnUi.Maui.Draw.RangeF](#T-DrawnUi-Maui-Draw-RangeF 'DrawnUi.Maui.Draw.RangeF') |  |
+| dim | [DrawnUi.Draw.RangeF](#T-DrawnUi-Maui-Draw-RangeF 'DrawnUi.Draw.RangeF') |  |
 | limits | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 | onEmpty | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 
@@ -3333,7 +3333,7 @@ onEmpty - how much to simulate scrollable area when its zero
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaScroll
+DrawnUi.Draw.SkiaScroll
 
 ##### Summary
 
@@ -3344,7 +3344,7 @@ TODO impement this
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaLayout
+DrawnUi.Draw.SkiaLayout
 
 ##### Summary
 
@@ -3354,7 +3354,7 @@ Cell.Area contains the area for layout
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| cell | [T:DrawnUi.Maui.Draw.SkiaLayout.SecondPassArrange](#T-T-DrawnUi-Maui-Draw-SkiaLayout-SecondPassArrange 'T:DrawnUi.Maui.Draw.SkiaLayout.SecondPassArrange') |  |
+| cell | [T:DrawnUi.Draw.SkiaLayout.SecondPassArrange](#T-T-DrawnUi-Maui-Draw-SkiaLayout-SecondPassArrange 'T:DrawnUi.Draw.SkiaLayout.SecondPassArrange') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaLayout-SecondPassArrange-#ctor-DrawnUi-Maui-Draw-ControlInStack,DrawnUi-Maui-Draw-SkiaControl,System-Single-'></a>
 ### #ctor(cell,child,scale) `constructor`
@@ -3367,8 +3367,8 @@ Cell.Area contains the area for layout
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| cell | [DrawnUi.Maui.Draw.ControlInStack](#T-DrawnUi-Maui-Draw-ControlInStack 'DrawnUi.Maui.Draw.ControlInStack') |  |
-| child | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| cell | [DrawnUi.Draw.ControlInStack](#T-DrawnUi-Maui-Draw-ControlInStack 'DrawnUi.Draw.ControlInStack') |  |
+| child | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 | scale | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 
 <a name='T-DrawnUi-Maui-Draw-ShapeType'></a>
@@ -3376,7 +3376,7 @@ Cell.Area contains the area for layout
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-ShapeType-Squricle'></a>
 ### Squricle `constants`
@@ -3390,7 +3390,7 @@ TODO
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -3419,7 +3419,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Infrastructure
+DrawnUi.Infrastructure
 
 <a name='M-DrawnUi-Maui-Infrastructure-SkSl-Compile-System-String,System-String-'></a>
 ### Compile(shaderCode,filename) `method`
@@ -3445,7 +3445,7 @@ The filename parameter is used for debugging purposes only
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -3512,7 +3512,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -3553,7 +3553,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaCacheType-GPU'></a>
 ### GPU `constants`
@@ -3615,7 +3615,7 @@ Do not use this when dropping shadows or with other effects, better use Bitmap.
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-SkiaCarousel-DynamicSize'></a>
 ### DynamicSize `property`
@@ -3755,7 +3755,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -3767,7 +3767,7 @@ or can include any content inside, and properties will by applied by convention 
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaControl-LockDraw'></a>
 ### LockDraw `constants`
@@ -4221,7 +4221,7 @@ Creates a new animator, animates from 0 to 1 over a given time, and calls your c
 
 ##### Summary
 
-https://github.com/taublast/DrawnUi.Maui/issues/92#issuecomment-2408805077
+https://github.com/taublast/DrawnUi/issues/92#issuecomment-2408805077
 
 ##### Parameters
 
@@ -4386,7 +4386,7 @@ parameter 'area' Usually is equal to DrawingRect
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| context | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| context | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | recordArea | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 | action | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 
@@ -4445,8 +4445,8 @@ Drawing cache, applying clip and transforms as well
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| cache | [DrawnUi.Maui.Draw.CachedObject](#T-DrawnUi-Maui-Draw-CachedObject 'DrawnUi.Maui.Draw.CachedObject') |  |
-| ctx | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| cache | [DrawnUi.Draw.CachedObject](#T-DrawnUi-Maui-Draw-CachedObject 'DrawnUi.Draw.CachedObject') |  |
+| ctx | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-DrawUsingRenderObject-DrawnUi-Maui-Draw-SkiaDrawingContext,System-Single,System-Single,SkiaSharp-SKRect,System-Single-'></a>
@@ -4464,7 +4464,7 @@ Returns true if had drawn.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| context | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| context | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | widthRequest | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 | heightRequest | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
@@ -4486,7 +4486,7 @@ Return number of drawn views.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| context | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| context | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 | scale | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 | debug | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
@@ -4522,7 +4522,7 @@ Execute post drawing operations, like post-animators etc
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| context | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| context | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | scale | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-GenerateParentChain'></a>
@@ -4752,7 +4752,7 @@ To be able to fast track dirty children
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| child | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| child | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-InvalidateChildren-DrawnUi-Maui-Draw-SkiaControl-'></a>
 ### InvalidateChildren(control) `method`
@@ -4765,7 +4765,7 @@ Will invoke InvalidateInternal on controls and subviews
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| control | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| control | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-InvalidateChildrenTree-DrawnUi-Maui-Draw-SkiaControl-'></a>
 ### InvalidateChildrenTree(control) `method`
@@ -4778,7 +4778,7 @@ Will invoke InvalidateInternal on controls and subviews
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| control | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| control | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-InvalidateInternal'></a>
 ### InvalidateInternal() `method`
@@ -4905,7 +4905,7 @@ PIXELS
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| child | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| child | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 | availableWidth | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 | availableHeight | [System.Double](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Double 'System.Double') |  |
 | scale | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
@@ -4925,7 +4925,7 @@ Measuring as absolute layout for passed children
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| children | [System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.IEnumerable 'System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl}') |  |
+| children | [System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.IEnumerable 'System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl}') |  |
 | rectForChildrenPixels | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 | scale | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 
@@ -5024,7 +5024,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| ctx | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| ctx | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 | scale | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 
@@ -5110,8 +5110,8 @@ Returns number of drawn children.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| skiaControls | [System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.IEnumerable 'System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl}') |  |
-| context | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| skiaControls | [System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.IEnumerable 'System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl}') |  |
+| context | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 | scale | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 | debug | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
@@ -5239,7 +5239,7 @@ Parameters in PIXELS. sets IsLayoutDirty = true;
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| transform | [DrawnUi.Maui.Infrastructure.VisualTransform](#T-DrawnUi-Maui-Infrastructure-VisualTransform 'DrawnUi.Maui.Infrastructure.VisualTransform') |  |
+| transform | [DrawnUi.Infrastructure.VisualTransform](#T-DrawnUi-Maui-Infrastructure-VisualTransform 'DrawnUi.Infrastructure.VisualTransform') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-SetupGradient-SkiaSharp-SKPaint,DrawnUi-Maui-Draw-SkiaGradient,SkiaSharp-SKRect-'></a>
 ### SetupGradient(paint,gradient,destination) `method`
@@ -5253,7 +5253,7 @@ Creates Shader for gradient and sets it to passed SKPaint along with BlendMode
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | paint | [SkiaSharp.SKPaint](#T-SkiaSharp-SKPaint 'SkiaSharp.SKPaint') |  |
-| gradient | [DrawnUi.Maui.Draw.SkiaGradient](#T-DrawnUi-Maui-Draw-SkiaGradient 'DrawnUi.Maui.Draw.SkiaGradient') |  |
+| gradient | [DrawnUi.Draw.SkiaGradient](#T-DrawnUi-Maui-Draw-SkiaGradient 'DrawnUi.Draw.SkiaGradient') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-SetupShadow-SkiaSharp-SKPaint,DrawnUi-Maui-Draw-SkiaShadow,System-Single-'></a>
@@ -5268,7 +5268,7 @@ Creates and sets an ImageFilter for SKPaint
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | paint | [SkiaSharp.SKPaint](#T-SkiaSharp-SKPaint 'SkiaSharp.SKPaint') |  |
-| shadow | [DrawnUi.Maui.Draw.SkiaShadow](#T-DrawnUi-Maui-Draw-SkiaShadow 'DrawnUi.Maui.Draw.SkiaShadow') |  |
+| shadow | [DrawnUi.Draw.SkiaShadow](#T-DrawnUi-Maui-Draw-SkiaShadow 'DrawnUi.Draw.SkiaShadow') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-TranslateInputCoords-SkiaSharp-SKPoint,System-Boolean-'></a>
 ### TranslateInputCoords(childOffset) `method`
@@ -5325,7 +5325,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaControl
+DrawnUi.Draw.SkiaControl
 
 ##### Summary
 
@@ -5335,7 +5335,7 @@ Rect is real drawing position
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| Control | [T:DrawnUi.Maui.Draw.SkiaControl.SkiaControlWithRect](#T-T-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect 'T:DrawnUi.Maui.Draw.SkiaControl.SkiaControlWithRect') |  |
+| Control | [T:DrawnUi.Draw.SkiaControl.SkiaControlWithRect](#T-T-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect 'T:DrawnUi.Draw.SkiaControl.SkiaControlWithRect') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaControl-SkiaControlWithRect-#ctor-DrawnUi-Maui-Draw-SkiaControl,SkiaSharp-SKRect,SkiaSharp-SKRect,System-Int32-'></a>
 ### #ctor(Control,Rect,Index) `constructor`
@@ -5348,7 +5348,7 @@ Rect is real drawing position
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| Control | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| Control | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 | Rect | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 | Index | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 
@@ -5378,7 +5378,7 @@ Rect is real drawing position
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-SkiaDrawer-AmplitudeSize'></a>
 ### AmplitudeSize `property`
@@ -5451,7 +5451,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SkiaDrawingContext-IsRecycled'></a>
 ### IsRecycled `property`
@@ -5472,7 +5472,7 @@ Recording cache
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -5483,7 +5483,7 @@ Base ISkiaCell implementation
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -5494,7 +5494,7 @@ This cell can watch binding context property changing
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-SkiaEditor-GetCursorPosition-System-Single,System-Single-'></a>
 ### GetCursorPosition(x,y) `method`
@@ -5581,7 +5581,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SkiaEffect-Parent'></a>
 ### Parent `property`
@@ -5595,7 +5595,7 @@ For public set use Attach/Detach
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-SkiaFontManager-GetEmbeddedResourceNames'></a>
 ### GetEmbeddedResourceNames() `method`
@@ -5655,7 +5655,7 @@ Gets the closest enum value to the given weight. Like 590 would return Semibold.
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='M-DrawnUi-Maui-Controls-SkiaGif-#ctor'></a>
 ### #ctor() `constructor`
@@ -5679,7 +5679,7 @@ For building custom controls
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| display | [DrawnUi.Maui.Draw.SkiaImage](#T-DrawnUi-Maui-Draw-SkiaImage 'DrawnUi.Maui.Draw.SkiaImage') |  |
+| display | [DrawnUi.Draw.SkiaImage](#T-DrawnUi-Maui-Draw-SkiaImage 'DrawnUi.Draw.SkiaImage') |  |
 
 <a name='M-DrawnUi-Maui-Controls-SkiaGif-OnAnimatorSeeking-System-Double-'></a>
 ### OnAnimatorSeeking(frame) `method`
@@ -5712,7 +5712,7 @@ invoked by internal animator
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.SkiaLayout
+DrawnUi.Draw.SkiaLayout
 
 <a name='F-DrawnUi-Maui-Draw-SkiaLayout-SkiaGridStructure-_gridHeightConstraint'></a>
 ### _gridHeightConstraint `constants`
@@ -5744,7 +5744,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaHotspot-DelayCallbackMs'></a>
 ### DelayCallbackMs `constants`
@@ -5758,7 +5758,7 @@ You might want to pause to show effect before executing command. Default is 0.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaHotspotZoom-LastValue'></a>
 ### LastValue `constants`
@@ -5779,7 +5779,7 @@ How much of finger movement will afect zoom change
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -5790,7 +5790,7 @@ Paints the parent view with the background color with a clipped viewport oth thi
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaImage-ImagePaint'></a>
 ### ImagePaint `constants`
@@ -5921,14 +5921,14 @@ Do not call this directly, use InstancedBitmap prop
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| loaded | [DrawnUi.Maui.Draw.LoadedImageSource](#T-DrawnUi-Maui-Draw-LoadedImageSource 'DrawnUi.Maui.Draw.LoadedImageSource') |  |
+| loaded | [DrawnUi.Draw.LoadedImageSource](#T-DrawnUi-Maui-Draw-LoadedImageSource 'DrawnUi.Draw.LoadedImageSource') |  |
 
 <a name='T-DrawnUi-Maui-Draw-SkiaImageEffect'></a>
 ## SkiaImageEffect `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaImageEffect-Tint'></a>
 ### Tint `constants`
@@ -5942,7 +5942,7 @@ Background color will be used to tint
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-SkiaImageEffects-Brightness-System-Single-'></a>
 ### Brightness(amount) `method`
@@ -6118,7 +6118,7 @@ If you want to Tint: SKBlendMode.SrcATop + ColorTint with alpha below 1
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaImageManager-CacheLongevitySecs'></a>
 ### CacheLongevitySecs `constants`
@@ -6201,7 +6201,7 @@ Uses queue and manager cache
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SkiaImageTiles-DrawTiles'></a>
 ### DrawTiles `property`
@@ -6240,7 +6240,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SkiaLabel-CharacterSpacing'></a>
 ### CharacterSpacing `property`
@@ -6311,8 +6311,8 @@ Returns new totalHeight
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| result | [System.Collections.Generic.List{DrawnUi.Maui.Draw.TextLine}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.List 'System.Collections.Generic.List{DrawnUi.Maui.Draw.TextLine}') |  |
-| span | [DrawnUi.Maui.Draw.TextSpan](#T-DrawnUi-Maui-Draw-TextSpan 'DrawnUi.Maui.Draw.TextSpan') |  |
+| result | [System.Collections.Generic.List{DrawnUi.Draw.TextLine}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.List 'System.Collections.Generic.List{DrawnUi.Draw.TextLine}') |  |
+| span | [DrawnUi.Draw.TextSpan](#T-DrawnUi-Maui-Draw-TextSpan 'DrawnUi.Draw.TextSpan') |  |
 | totalHeight | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 | heightBlock | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 | isNewParagraph | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
@@ -6400,14 +6400,14 @@ Return null if you wish not to consume
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| span | [DrawnUi.Maui.Draw.TextSpan](#T-DrawnUi-Maui-Draw-TextSpan 'DrawnUi.Maui.Draw.TextSpan') |  |
+| span | [DrawnUi.Draw.TextSpan](#T-DrawnUi-Maui-Draw-TextSpan 'DrawnUi.Draw.TextSpan') |  |
 
 <a name='T-DrawnUi-Maui-Draw-SkiaLayout'></a>
 ## SkiaLayout `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SkiaLayout-DefaultColumnDefinition'></a>
 ### DefaultColumnDefinition `property`
@@ -6544,7 +6544,7 @@ Returns number of drawn children
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| context | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| context | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 | scale | [System.Single](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Single 'System.Single') |  |
 
@@ -6643,7 +6643,7 @@ add intersecting ones to DirtyChildrenInternal and set IsRenderingWithCompositio
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| ctx | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| ctx | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 
 <a name='T-DrawnUi-Maui-Controls-SkiaLottie'></a>
@@ -6651,7 +6651,7 @@ add intersecting ones to DirtyChildrenInternal and set IsRenderingWithCompositio
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='F-DrawnUi-Maui-Controls-SkiaLottie-CachedAnimations'></a>
 ### CachedAnimations `constants`
@@ -6702,7 +6702,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -6724,7 +6724,7 @@ Url will be inside Tag
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| span | [DrawnUi.Maui.Draw.TextSpan](#T-DrawnUi-Maui-Draw-TextSpan 'DrawnUi.Maui.Draw.TextSpan') |  |
+| span | [DrawnUi.Draw.TextSpan](#T-DrawnUi-Maui-Draw-TextSpan 'DrawnUi.Draw.TextSpan') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaMarkdownLabel-ProcessSpanData-System-Collections-Generic-List{System-ValueTuple{System-String,SkiaSharp-SKTypeface,System-Int32,System-Boolean}}@,SkiaSharp-SKTypeface-'></a>
 ### ProcessSpanData(spanData,originalTypeFace) `method`
@@ -6745,7 +6745,7 @@ Do not let spans with non-default typeface end with standart symbols like ' ', m
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-SkiaMauiEditor-LockFocus'></a>
 ### LockFocus `property`
@@ -6807,7 +6807,7 @@ Called by DrawnUi when the focus changes
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SkiaMauiElement-AnimateSnapshot'></a>
 ### AnimateSnapshot `property`
@@ -6886,7 +6886,7 @@ Prevent usage of subviews as we are using Content property for this control
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| views | [System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.IEnumerable 'System.Collections.Generic.IEnumerable{DrawnUi.Maui.Draw.SkiaControl}') |  |
+| views | [System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl}](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Collections.Generic.IEnumerable 'System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl}') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaMauiElement-SetContent-Microsoft-Maui-Controls-VisualElement-'></a>
 ### SetContent() `method`
@@ -6917,7 +6917,7 @@ This is mainly ued by show/hide to display Snapshot instead the native view
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -6983,7 +6983,7 @@ Called by DrawnUi when the focus changes
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -7002,7 +7002,7 @@ Bind to your own content!
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaScroll-BouncesProperty'></a>
 ### BouncesProperty `constants`
@@ -7015,7 +7015,7 @@ ToDo adapt this to same logic as ScrollLooped has !
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| force | [F:DrawnUi.Maui.Draw.SkiaScroll.BouncesProperty](#T-F-DrawnUi-Maui-Draw-SkiaScroll-BouncesProperty 'F:DrawnUi.Maui.Draw.SkiaScroll.BouncesProperty') |  |
+| force | [F:DrawnUi.Draw.SkiaScroll.BouncesProperty](#T-F-DrawnUi-Maui-Draw-SkiaScroll-BouncesProperty 'F:DrawnUi.Draw.SkiaScroll.BouncesProperty') |  |
 
 <a name='F-DrawnUi-Maui-Draw-SkiaScroll-InterpolationFactor'></a>
 ### InterpolationFactor `constants`
@@ -7323,7 +7323,7 @@ ToDo this actually work only for Stack and Row
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | index | [System.Int32](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Int32 'System.Int32') |  |
-| option | [DrawnUi.Maui.Draw.RelativePositionType](#T-DrawnUi-Maui-Draw-RelativePositionType 'DrawnUi.Maui.Draw.RelativePositionType') |  |
+| option | [DrawnUi.Draw.RelativePositionType](#T-DrawnUi-Maui-Draw-RelativePositionType 'DrawnUi.Draw.RelativePositionType') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaScroll-CalculateVisibleIndex-DrawnUi-Maui-Draw-RelativePositionType-'></a>
 ### CalculateVisibleIndex() `method`
@@ -7482,14 +7482,14 @@ Use Content property for direct access
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| view | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| view | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='T-DrawnUi-Maui-Draw-SkiaScrollLooped'></a>
 ## SkiaScrollLooped `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -7514,7 +7514,7 @@ Whether this should look like an infinite scrolling text banner
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SkiaShaderEffect-AutoCreateInputTexture'></a>
 ### AutoCreateInputTexture `property`
@@ -7545,7 +7545,7 @@ Create snapshot from the current parent control drawing state to use as input te
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| ctx | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| ctx | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 
 <a name='M-DrawnUi-Maui-Draw-SkiaShaderEffect-Render-DrawnUi-Maui-Draw-SkiaDrawingContext,SkiaSharp-SKRect-'></a>
@@ -7559,7 +7559,7 @@ EffectPostRenderer
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| ctx | [DrawnUi.Maui.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Maui.Draw.SkiaDrawingContext') |  |
+| ctx | [DrawnUi.Draw.SkiaDrawingContext](#T-DrawnUi-Maui-Draw-SkiaDrawingContext 'DrawnUi.Draw.SkiaDrawingContext') |  |
 | destination | [SkiaSharp.SKRect](#T-SkiaSharp-SKRect 'SkiaSharp.SKRect') |  |
 
 <a name='T-DrawnUi-Maui-Draw-SkiaShape'></a>
@@ -7567,7 +7567,7 @@ EffectPostRenderer
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -7599,7 +7599,7 @@ For Type = Path, use the path markup syntax
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -7824,7 +7824,7 @@ Set freezeBackground to False to keep animations running below popup, default is
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| content | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| content | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 | animated | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
 | closeWhenBackgroundTapped | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
 | scaleInFrom | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
@@ -7916,7 +7916,7 @@ Display or hide the background scrrenshot assotiated with an overlay control
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| control | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| control | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 | parameters | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
 
 <a name='M-DrawnUi-Maui-Controls-SkiaShell-SetRoot-System-String,System-Boolean,System-Collections-Generic-IDictionary{System-String,System-Object}-'></a>
@@ -7955,7 +7955,7 @@ Main control inside RootLayout
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| shellLayout | [DrawnUi.Maui.Draw.ISkiaControl](#T-DrawnUi-Maui-Draw-ISkiaControl 'DrawnUi.Maui.Draw.ISkiaControl') |  |
+| shellLayout | [DrawnUi.Draw.ISkiaControl](#T-DrawnUi-Maui-Draw-ISkiaControl 'DrawnUi.Draw.ISkiaControl') |  |
 
 <a name='M-DrawnUi-Maui-Controls-SkiaShell-UnfreezeRootLayout-DrawnUi-Maui-Draw-SkiaControl,System-Boolean-'></a>
 ### UnfreezeRootLayout(control,animated) `method`
@@ -7972,7 +7972,7 @@ pass who frozen the layout
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| control | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| control | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 | animated | [System.Boolean](http://msdn.microsoft.com/query/dev14.query?appId=Dev14IDEF1&l=EN-US&k=k:System.Boolean 'System.Boolean') |  |
 
 <a name='M-DrawnUi-Maui-Controls-SkiaShell-WrapScreenshot-DrawnUi-Maui-Draw-SkiaControl,SkiaSharp-SKImage,Microsoft-Maui-Graphics-Color,System-Single,System-Boolean-'></a>
@@ -7990,14 +7990,14 @@ Override this to create your own image with your own effect of the screenshot to
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| screenshot | [DrawnUi.Maui.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Maui.Draw.SkiaControl') |  |
+| screenshot | [DrawnUi.Draw.SkiaControl](#T-DrawnUi-Maui-Draw-SkiaControl 'DrawnUi.Draw.SkiaControl') |  |
 
 <a name='T-DrawnUi-Maui-Controls-SkiaShellNavigatedArgs'></a>
 ## SkiaShellNavigatedArgs `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-SkiaShellNavigatedArgs-Route'></a>
 ### Route `property`
@@ -8018,7 +8018,7 @@ The SkiaControl that went upfront
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-SkiaShellNavigatingArgs-Cancel'></a>
 ### Cancel `property`
@@ -8053,7 +8053,7 @@ The SkiaControl that will navigate
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SkiaSlider-moreHotspotSize'></a>
 ### moreHotspotSize `constants`
@@ -8109,7 +8109,7 @@ Enabled for ranged
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-SkiaSvg-LoadSource-System-String-'></a>
 ### LoadSource(fileName) `method`
@@ -8133,7 +8133,7 @@ This is not replacing current animation, use SetAnimation for that.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -8145,7 +8145,7 @@ or can include any content inside, and properties will by applied by convention 
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 <a name='P-DrawnUi-Maui-Controls-SkiaTabsSelector-TabType'></a>
 ### TabType `property`
@@ -8170,7 +8170,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -8203,7 +8203,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SkiaValueAnimator-CycleFInished'></a>
 ### CycleFInished `property`
@@ -8273,7 +8273,7 @@ Return true if anims is finished.
 
 ##### Namespace
 
-DrawnUi.Maui.Views
+DrawnUi.Views
 
 <a name='M-DrawnUi-Maui-Views-SkiaView-CalculateFPS-System-Int64,System-Int32-'></a>
 ### CalculateFPS(currentTimestamp,averageAmount) `method`
@@ -8294,7 +8294,7 @@ Calculates the frames per second (FPS) and updates the rolling average FPS every
 
 ##### Namespace
 
-DrawnUi.Maui.Views
+DrawnUi.Views
 
 <a name='M-DrawnUi-Maui-Views-SkiaViewAccelerated-CalculateFPS-System-Int64,System-Int32-'></a>
 ### CalculateFPS(currentTimestamp,averageAmount) `method`
@@ -8329,7 +8329,7 @@ We are drawing the frame
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -8381,14 +8381,14 @@ Set IsVisible, reset transforms and opacity and send OnAppeared event
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| newVisibleView | [DrawnUi.Maui.Controls.SkiaViewSwitcher.NavigationStackEntry](#T-DrawnUi-Maui-Controls-SkiaViewSwitcher-NavigationStackEntry 'DrawnUi.Maui.Controls.SkiaViewSwitcher.NavigationStackEntry') |  |
+| newVisibleView | [DrawnUi.Controls.SkiaViewSwitcher.NavigationStackEntry](#T-DrawnUi-Maui-Controls-SkiaViewSwitcher-NavigationStackEntry 'DrawnUi.Controls.SkiaViewSwitcher.NavigationStackEntry') |  |
 
 <a name='T-DrawnUi-Maui-Draw-Snapping'></a>
 ## Snapping `type`
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-Snapping-SnapPointsToPixel-System-Single,System-Single,System-Double-'></a>
 ### SnapPointsToPixel(initialPosition,translation,scale) `method`
@@ -8414,7 +8414,7 @@ Used by the layout system to round a position translation value applying scale a
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-SnappingLayout-AutoVelocityMultiplyPts'></a>
 ### AutoVelocityMultiplyPts `property`
@@ -8555,7 +8555,7 @@ Return an anchor depending on direction and strength of of the velocity
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-SpaceDistribution-Auto'></a>
 ### Auto `constants`
@@ -8576,7 +8576,7 @@ Distribute space evenly between all items but do not affect empty space
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='M-DrawnUi-Maui-Draw-StackLayoutStructure-Build-SkiaSharp-SKRect,System-Single-'></a>
 ### Build() `method`
@@ -8594,7 +8594,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-Super-CanUseHardwareAcceleration'></a>
 ### CanUseHardwareAcceleration `constants`
@@ -8748,7 +8748,7 @@ ToDo resolve obsolete for android api 30 and later
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.ViewsAdapter
+DrawnUi.Draw.ViewsAdapter
 
 ##### Summary
 
@@ -8785,7 +8785,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-TextLine-Bounds'></a>
 ### Bounds `property`
@@ -8799,7 +8799,7 @@ Set during rendering
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-TextSpan-Rects'></a>
 ### Rects `constants`
@@ -8891,7 +8891,7 @@ This method has no parameters.
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-TransformAspect-AspectCover'></a>
 ### AspectCover `constants`
@@ -8962,7 +8962,7 @@ TODO very soon!
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-UiSettings-DesktopWindow'></a>
 ### DesktopWindow `property`
@@ -8990,7 +8990,7 @@ Listen to desktop keyboard keys with KeyboardManager. Windows and Catalyst avail
 
 ##### Namespace
 
-DrawnUi.Maui.Infrastructure.Enums
+DrawnUi.Infrastructure.Enums
 
 <a name='F-DrawnUi-Maui-Infrastructure-Enums-UpdateMode-Constant'></a>
 ### Constant `constants`
@@ -9018,7 +9018,7 @@ Will not update until manually invalidated.
 
 ##### Namespace
 
-DrawnUi.Maui.Controls
+DrawnUi.Controls
 
 ##### Summary
 
@@ -9029,7 +9029,7 @@ Helper class for SkiaLayout Type = LayoutType.Stack,  SplitMax = 1
 
 ##### Namespace
 
-DrawnUi.Maui.Animate.Animators
+DrawnUi.Animate.Animators
 
 ##### Summary
 
@@ -9068,7 +9068,7 @@ Must be over 0
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -9151,7 +9151,7 @@ Main method to initialize templates, can use InitializeTemplatesInBackground as 
 
 ##### Namespace
 
-DrawnUi.Maui.Draw.ViewsAdapter
+DrawnUi.Draw.ViewsAdapter
 
 ##### Summary
 
@@ -9162,7 +9162,7 @@ To iterate over virtual views
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='F-DrawnUi-Maui-Draw-VirtualisationType-Disabled'></a>
 ### Disabled `constants`
@@ -9190,7 +9190,7 @@ Only the creation of a cached object is permitted for children not within visibl
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 
@@ -9204,7 +9204,7 @@ Ported from google android
 
 ##### Namespace
 
-DrawnUi.Maui.Infrastructure
+DrawnUi.Infrastructure
 
 ##### Summary
 
@@ -9247,7 +9247,7 @@ All input rects are in pixels
 
 ##### Namespace
 
-DrawnUi.Maui.Infrastructure
+DrawnUi.Infrastructure
 
 <a name='P-DrawnUi-Maui-Infrastructure-VisualTransformNative-Rect'></a>
 ### Rect `property`
@@ -9261,7 +9261,7 @@ Pixels only
 
 ##### Namespace
 
-DrawnUi.Maui.Infrastructure
+DrawnUi.Infrastructure
 
 <a name='P-DrawnUi-Maui-Infrastructure-VisualTreeChain-Child'></a>
 ### Child `property`
@@ -9296,7 +9296,7 @@ Final transform of the chain
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 <a name='P-DrawnUi-Maui-Draw-WindowParameters-IsFixedSize'></a>
 ### IsFixedSize `property`
@@ -9310,7 +9310,7 @@ For desktop: if you set this to true the app window will not be allowed to be re
 
 ##### Namespace
 
-DrawnUi.Maui.Draw
+DrawnUi.Draw
 
 ##### Summary
 

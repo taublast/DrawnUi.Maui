@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Infrastructure.Models
+﻿namespace DrawnUi.Infrastructure.Models
 {
 
 	public class BitmapLoadedEventArgs : ContentLoadedEventArgs

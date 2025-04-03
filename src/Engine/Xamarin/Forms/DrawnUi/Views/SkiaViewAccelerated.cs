@@ -1,7 +1,7 @@
 ﻿using SkiaSharp.Views.Forms;
 using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Views;
+namespace DrawnUi.Views;
 
 public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 {

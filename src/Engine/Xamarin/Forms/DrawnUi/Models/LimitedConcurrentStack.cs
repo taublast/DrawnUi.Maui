@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
 
-namespace DrawnUi.Maui.Infrastructure.Models;
+namespace DrawnUi.Infrastructure.Models;
 
 public class LimitedQueue<T>
 {

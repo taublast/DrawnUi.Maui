@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Views;
+﻿using DrawnUi.Views;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public interface IDefinesViewport
 {

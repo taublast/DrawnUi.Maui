@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Reflection;
 
-namespace DrawnUi.Maui.Infrastructure.Xaml
+namespace DrawnUi.Infrastructure.Xaml
 {
 
     public class FrameworkImageSourceConverter : TypeConverter

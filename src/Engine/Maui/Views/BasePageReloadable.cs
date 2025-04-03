@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Views;
+﻿namespace DrawnUi.Views;
 
 /// <summary>
 /// Base class for a page with canvas, supports C# HotReload for building UI with code (not XAML).

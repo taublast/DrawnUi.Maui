@@ -10,7 +10,7 @@ using Math = System.Math;
 using Object = Java.Lang.Object;
 using StringBuilder = System.Text.StringBuilder;
 
-namespace DrawnUi.Maui.Camera;
+namespace DrawnUi.Camera;
 
 public class TriDiagonalMatrixF
 {

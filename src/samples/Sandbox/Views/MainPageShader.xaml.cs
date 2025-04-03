@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Infrastructure;
+using DrawnUi.Infrastructure;
 
 namespace Sandbox.Views
 {

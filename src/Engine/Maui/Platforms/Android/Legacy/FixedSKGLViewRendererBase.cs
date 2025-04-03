@@ -3,7 +3,7 @@ using Android.Content;
 using Microsoft.Maui.Controls.Platform;
 using SKPaintGLSurfaceEventArgs = SkiaSharp.Views.Android.SKPaintGLSurfaceEventArgs;
 
-namespace DrawnUi.Maui;
+namespace DrawnUi;
 
 public abstract class FixedSKGLViewRendererBase<TFormsView, TNativeView> : Microsoft.Maui.Controls.Handlers.Compatibility.ViewRenderer<TFormsView, TNativeView>
 	where TFormsView : SkiaViewAccelerated

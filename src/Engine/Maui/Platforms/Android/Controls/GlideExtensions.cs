@@ -12,7 +12,7 @@ using Bumptech.Glide.Load.Model;
 using Activity = Android.App.Activity;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
-namespace DrawnUi.Maui.Views;
+namespace DrawnUi.Views;
 
 public static class GlideExtensions
 {

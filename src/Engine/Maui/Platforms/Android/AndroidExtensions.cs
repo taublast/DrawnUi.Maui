@@ -5,7 +5,7 @@ using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using Timer = System.Timers.Timer;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public static class AndroidExtensions
 {

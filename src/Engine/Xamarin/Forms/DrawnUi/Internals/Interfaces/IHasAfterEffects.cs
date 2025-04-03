@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using Color = Xamarin.Forms.Color;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public interface IHasAfterEffects
 {

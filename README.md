@@ -1,5 +1,5 @@
 # DrawnUI for .NET MAUI
-![License](https://img.shields.io/github/license/taublast/DrawnUi.Maui.svg)
+![License](https://img.shields.io/github/license/taublast/DrawnUi.svg)
 ![NuGet Version](https://img.shields.io/nuget/v/AppoMobi.Maui.DrawnUi.svg)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/AppoMobi.Maui.DrawnUi.svg)
 
@@ -110,7 +110,7 @@ ___Please star ⭐ if you like it!___
 * [Shaders Carousel Demo](https://github.com/taublast/ShadersCarousel/) featuring SkiaSharp v3 capabilities
 * For production published apps list - scroll to bottom!
 
- [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
+ [ShaderEffect.webm](https://github.com/taublast/DrawnUi/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
 
 V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect` when compiled for SkiaSharp v3 preview.
 
@@ -171,7 +171,7 @@ As you can see in this example the Maui view `Canvas` will adapt its size to dra
 
 #### Code behind
 
-Can use basic [FluentExtensions](https://github.com/taublast/DrawnUi.Maui/blob/main/src/Engine/Internals/Extensions/FluentExtensions.cs) will be adding more
+Can use basic [FluentExtensions](https://github.com/taublast/DrawnUi/blob/main/src/Engine/Internals/Extensions/FluentExtensions.cs) will be adding more
 
 ```csharp
             Canvas = new Canvas()

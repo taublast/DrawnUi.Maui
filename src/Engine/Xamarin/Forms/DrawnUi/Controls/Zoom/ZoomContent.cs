@@ -1,12 +1,12 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Infrastructure.Extensions;
+using DrawnUi.Draw;
+using DrawnUi.Draw;
+using DrawnUi.Infrastructure.Extensions;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 /// <summary>
 /// Wrapper to zoom and pan content by changing the rendering scale so not affecting quality, this is not a transform.TODO add animated movement

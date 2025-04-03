@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     /// <summary>
     /// Implements ISkiaGestureListener to pass gestures to children

@@ -3,7 +3,7 @@ using CoreAnimation;
 using Foundation;
 using Microsoft.Maui.Handlers;
 
-namespace DrawnUi.Maui.Views;
+namespace DrawnUi.Views;
 
 public partial class DrawnView
 {

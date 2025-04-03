@@ -1,8 +1,8 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using System.ComponentModel;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
 /// <summary>
 /// Base ISkiaCell implementation

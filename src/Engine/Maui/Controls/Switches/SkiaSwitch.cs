@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Draw;
+﻿namespace DrawnUi.Draw;
 
 /// <summary>
 /// Switch-like control, can include any content inside. It's aither you use default content (todo templates?..)
@@ -78,6 +78,8 @@ public class SkiaSwitch : SkiaToggle
     {
         SetDefaultContentSize(51, 31);
 
+        ExpandDirtyRegion = new Thickness(3, 6);
+
         Children = new List<SkiaControl>()
         {
             new SkiaShape
@@ -125,6 +127,7 @@ public class SkiaSwitch : SkiaToggle
     {
         SetDefaultContentSize(46, 28);
 
+        ExpandDirtyRegion = new (5, 6);
 
         Children = new List<SkiaControl>()
         {

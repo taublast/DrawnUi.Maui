@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Xamarin.DrawnUi.iOS;
-using DrawnUi.Maui.Views;
+using DrawnUi.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 

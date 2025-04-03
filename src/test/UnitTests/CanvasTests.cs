@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Maui.Markup;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using SkiaSharp;
 using Xunit;
 

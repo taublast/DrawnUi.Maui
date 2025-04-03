@@ -21,7 +21,7 @@ using SKRect = SkiaSharp.SKRect;
 using SKShader = SkiaSharp.SKShader;
 using SKSize = SkiaSharp.SKSize;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     [DebuggerDisplay("{DebugString}")]
     public partial class SkiaControl :
@@ -47,6 +47,35 @@ namespace DrawnUi.Maui.Draw
 
         }
 
+        public static readonly BindableProperty ClippedEffectsWithProperty = BindableProperty.Create(
+            nameof(ClippedEffectsWith),
+            typeof(SkiaControl),
+            typeof(SkiaControl),
+            null);
+
+        /// <summary>
+        /// Can specify another control that would provide the clipping region to be used by post animattors etc.
+        /// </summary>
+        public SkiaControl ClippedEffectsWith
+        {
+            get { return (SkiaControl)GetValue(ClippedEffectsWithProperty); }
+            set { SetValue(ClippedEffectsWithProperty, value); }
+        }
+
+        public static readonly BindableProperty ClipWithProperty = BindableProperty.Create(
+            nameof(ClipWith),
+            typeof(SkiaControl),
+            typeof(SkiaControl),
+            null);
+
+        /// <summary>
+        /// Can specify another control that would provide the clipping region for this one. 
+        /// </summary>
+        public SkiaControl ClipWith
+        {
+            get { return (SkiaControl)GetValue(ClipWithProperty); }
+            set { SetValue(ClipWithProperty, value); }
+        }
 
         public static readonly BindableProperty ChildrenProperty = BindableProperty.Create(
             nameof(Children),
@@ -1270,22 +1299,6 @@ namespace DrawnUi.Maui.Draw
             }
         }
 
-        public static readonly BindableProperty ClipFromProperty = BindableProperty.Create(
-            nameof(ClipFrom),
-            typeof(SkiaControl),
-            typeof(SkiaControl),
-            default(SkiaControl),
-            propertyChanged: OnControlClipFromChanged);
-
-        /// <summary>
-        /// Use clipping area from another control
-        /// </summary>
-        public new SkiaControl ClipFrom
-        {
-            get { return (SkiaControl)GetValue(ClipFromProperty); }
-            set { SetValue(ClipFromProperty, value); }
-        }
-
         public Element NativeParent
         {
             get { return base.Parent; }
@@ -1425,7 +1438,7 @@ namespace DrawnUi.Maui.Draw
         /// </summary>
         public virtual void OnDisposing()
         {
-            ClippedBy = null;
+            ClipWith = null;
             Disposing?.Invoke(this, null);
             Superview?.UnregisterGestureListener(this as ISkiaGestureListener);
             Superview?.UnregisterAllAnimatorsByParent(this);
@@ -1938,13 +1951,7 @@ namespace DrawnUi.Maui.Draw
         //    }
         //}
 
-        private static void OnControlClipFromChanged(BindableObject bindable, object oldvalue, object newvalue)
-        {
-            if (bindable is SkiaControl control)
-            {
-                control.ClippedBy = newvalue as SkiaControl;
-            }
-        }
+ 
 
         private static void OnControlParentChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
@@ -2089,46 +2096,30 @@ namespace DrawnUi.Maui.Draw
             set { SetValue(AddTranslationXProperty, value); }
         }
 
-        public static readonly BindableProperty ExpandCacheRecordingAreaProperty
-            = BindableProperty.Create(nameof(ExpandCacheRecordingArea),
-                typeof(double), typeof(SkiaControl),
-                0.0, propertyChanged: NeedDraw);
+        public static readonly BindableProperty ExpandDirtyRegionProperty = BindableProperty.Create(
+            nameof(ExpandDirtyRegion),
+            typeof(Thickness),
+            typeof(SkiaControl),
+            defaultValueCreator: (instance) =>
+            {
+                return new Thickness(0);
+            },
+            propertyChanged: NeedDraw);
 
         /// <summary>
-        /// Normally cache is recorded inside DrawingRect, but you might want to exapnd this to include shadows around, for example.
+        /// Thickness In points.
+        /// You might want to expand this when your control drops shadows or does something else depassing normal bounds.
+        /// This will be used for ImageComposite dirty regions management and when caching rectangles
+        /// Normally cache is recorded inside DrawingRect, but you might want to expand this to include shadows around, for example.
         /// Specify number of points by which you want to expand the recording area.
         /// Also you might maybe want to include a bigger area if your control is not inside the DrawingRect due to transforms/translations.
         /// Override GetCacheRecordingArea method for a similar action.
         /// </summary>
-        public double ExpandCacheRecordingArea
+        public Thickness ExpandDirtyRegion
         {
-            get { return (double)GetValue(ExpandCacheRecordingAreaProperty); }
-            set { SetValue(ExpandCacheRecordingAreaProperty, value); }
+            get { return (Thickness)GetValue(ExpandDirtyRegionProperty); }
+            set { SetValue(ExpandDirtyRegionProperty, value); }
         }
-
-        /*
-        public static readonly BindableProperty AlignContentVerticalProperty = BindableProperty.Create(nameof(AlignContentVertical),
-            typeof(LayoutOptions),
-            typeof(SkiaControl),
-            LayoutOptions.Start,
-            propertyChanged: NeedInvalidateMeasure);
-        public LayoutOptions AlignContentVertical
-        {
-            get { return (LayoutOptions)GetValue(AlignContentVerticalProperty); }
-            set { SetValue(AlignContentVerticalProperty, value); }
-        }
-
-        public static readonly BindableProperty AlignContentHorizontalProperty = BindableProperty.Create(nameof(AlignContentHorizontal),
-            typeof(LayoutOptions),
-            typeof(SkiaControl),
-            LayoutOptions.Start,
-            propertyChanged: NeedInvalidateMeasure);
-        public LayoutOptions AlignContentHorizontal
-        {
-            get { return (LayoutOptions)GetValue(AlignContentHorizontalProperty); }
-            set { SetValue(AlignContentHorizontalProperty, value); }
-        }
-        */
 
         public static readonly BindableProperty IsClippedToBoundsProperty = BindableProperty.Create(
             nameof(IsClippedToBounds),
@@ -2442,7 +2433,6 @@ namespace DrawnUi.Maui.Draw
         }
 
         public Action<SKPath, SKRect> Clipping { get; set; }
-        public SkiaControl ClippedBy { get; set; }
 
         /// <summary>
         /// Optional scene hero control identifier
@@ -2731,7 +2721,27 @@ namespace DrawnUi.Maui.Draw
         /// <summary>
         /// This is the destination in PIXELS with margins applied, using this to paint background. Since we enabled subpixel drawing (for smooth scroll etc) expect this to have non-rounded values, use CompareRects and similar for comparison.
         /// </summary>
-        public SKRect DrawingRect { get; set; }
+        public SKRect DrawingRect
+        {
+            get => drawingRect;
+            set
+            {
+                drawingRect = value;
+                var dirty = value;
+                if (ExpandDirtyRegion != Thickness.Zero)
+                {
+                    dirty = new (
+                        value.Left - (float)Math.Round(ExpandDirtyRegion.Left*RenderingScale),
+                        value.Top - (float)Math.Round(ExpandDirtyRegion.Top * RenderingScale),
+                        value.Right + (float)Math.Round(ExpandDirtyRegion.Right * RenderingScale),
+                        value.Bottom + (float)Math.Round(ExpandDirtyRegion.Bottom * RenderingScale)
+                        );
+                }
+                DirtyRegion = dirty;
+            }
+        }
+
+        public SKRect DirtyRegion { get; set; }
 
         /// <summary>
         /// Overriding VisualElement property, use DrawingRect instead.
@@ -3270,7 +3280,7 @@ namespace DrawnUi.Maui.Draw
         }
 
         /// <summary>
-        /// https://github.com/taublast/DrawnUi.Maui/issues/92#issuecomment-2408805077
+        /// https://github.com/taublast/DrawnUi/issues/92#issuecomment-2408805077
         /// </summary>
         public virtual void ApplyBindingContext()
         {
@@ -4348,7 +4358,7 @@ namespace DrawnUi.Maui.Draw
             Action<DrawingContext> draw)
         {
             bool isClipping = (WillClipBounds || Clipping != null
-                                              || ClippedBy != null || HasPlatformClip()) && useClipping;
+                                              || ClipWith != null || HasPlatformClip()) && useClipping;
 
 
             if (isClipping)
@@ -4360,9 +4370,9 @@ namespace DrawnUi.Maui.Draw
                 {
                     GetPlatformClip(_preparedClipBounds, ctx.Destination, RenderingScale);
                 }
-                else if (ClippedBy != null)
+                else if (ClipWith != null)
                 {
-                    ClippedBy.CreateClip(null, true, _preparedClipBounds);
+                    ClipWith.CreateClip(null, true, _preparedClipBounds);
                 }
                 else
                 {
@@ -5197,7 +5207,7 @@ namespace DrawnUi.Maui.Draw
 
                     foreach (var dirtyChild in DirtyChildrenInternal)
                     {
-                        var clip = dirtyChild.DrawingRect;
+                        var clip = dirtyChild.DirtyRegion;
                         clip.Offset(offset);
                         clipPreviousCachePath.AddRect(clip);
                     }
@@ -6183,6 +6193,7 @@ namespace DrawnUi.Maui.Draw
         private Thickness _margins;
         private double _lastArrangedForScale;
         private bool _needUpdateFrontCache;
+        private SKRect drawingRect;
 
         public static Color GetRandomColor()
         {

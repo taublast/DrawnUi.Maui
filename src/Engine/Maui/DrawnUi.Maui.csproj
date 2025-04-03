@@ -86,7 +86,6 @@
     <Compile Remove="Platforms\Android\Legacy\**" />
   </ItemGroup>
 
-
   <ItemGroup>
     <None Include="..\..\..\icon128.png">
 	    <Pack>True</Pack>

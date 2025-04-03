@@ -3,7 +3,7 @@
 using System.Collections.Immutable;
 using System.Numerics;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaScroll
     {

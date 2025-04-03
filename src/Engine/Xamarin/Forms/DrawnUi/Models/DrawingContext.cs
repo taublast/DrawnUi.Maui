@@ -1,7 +1,7 @@
-﻿using DrawnUi.Maui.Views;
+﻿using DrawnUi.Views;
 using Xamarin.Essentials;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SkiaDrawingContext
 {

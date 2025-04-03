@@ -1,7 +1,7 @@
 ﻿using Android.Content;
 
 
-namespace DrawnUi.Maui.Camera;
+namespace DrawnUi.Camera;
 
 public partial class SkiaCamera
 {

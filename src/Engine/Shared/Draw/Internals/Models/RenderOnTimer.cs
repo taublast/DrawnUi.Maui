@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace DrawnUi.Maui.Infrastructure;
+namespace DrawnUi.Infrastructure;
 
 public class RenderOnTimer
 {

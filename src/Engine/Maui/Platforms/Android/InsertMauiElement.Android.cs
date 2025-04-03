@@ -3,7 +3,7 @@ using Android.Views;
 using Microsoft.Maui.Platform;
 using View = Android.Views.View;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaMauiElement
 {

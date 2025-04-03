@@ -1,11 +1,11 @@
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using SkiaSharp;
 
 namespace UnitTests;
 
 public class DrawnTestsBase : TestsBase
 {
-    public static SKPicture RenderWithOperationsContext(SKRect cacheRecordingArea, Action<SkiaDrawingContext> draw)
+    public static SKPicture RenderWithOperationsContext(SKRect cacheRecordingArea, Action<DrawingContext> draw)
     {
         using (var recorder = new SKPictureRecorder())
         {
@@ -20,8 +20,9 @@ public class DrawnTestsBase : TestsBase
                 Height = canvas.DeviceClipBounds.Height
             };
 
-
-            draw(recordingContext);
+            var ctx = new DrawingContext(recordingContext, cacheRecordingArea, 1);
+            
+            draw(ctx);
 
             var skPicture = recorder.EndRecording();
 

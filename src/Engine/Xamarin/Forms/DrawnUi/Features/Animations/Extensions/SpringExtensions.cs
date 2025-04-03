@@ -1,6 +1,6 @@
-﻿using DrawnUi.Maui.Infrastructure;
+﻿using DrawnUi.Infrastructure;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public static class SpringExtensions
 {

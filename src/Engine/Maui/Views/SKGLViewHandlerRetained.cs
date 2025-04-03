@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Maui.Handlers;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
 #if WINDOWS || MACCATALYST || IOS
 

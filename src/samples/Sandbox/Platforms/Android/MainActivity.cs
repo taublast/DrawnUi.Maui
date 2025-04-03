@@ -2,7 +2,7 @@
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
-using DrawnUi.Maui;
+using DrawnUi;
  
 namespace Sandbox
 {

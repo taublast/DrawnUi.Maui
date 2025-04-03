@@ -1,5 +1,5 @@
 ﻿using AppoMobi.Maui.Gestures;
-using DrawnUi.Maui.Draw;
+using DrawnUi.Draw;
 using Mapsui;
 using Mapsui.Disposing;
 using Mapsui.Extensions;
@@ -18,7 +18,7 @@ using System.ComponentModel;
 using System.Net;
 using Map = Mapsui.Map;
 
-namespace DrawnUi.Maui.MapsUi;
+namespace DrawnUi.MapsUi;
 
 
 /// <summary>

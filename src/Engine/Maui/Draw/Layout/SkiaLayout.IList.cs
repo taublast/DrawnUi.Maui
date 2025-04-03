@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     /*
 

@@ -5,7 +5,7 @@ using CameraError = Android.Hardware.Camera2.CameraError;
 using Exception = System.Exception;
 using Image = Android.Media.Image;
 
-namespace DrawnUi.Maui.Camera;
+namespace DrawnUi.Camera;
 
 public partial class NativeCamera
 {

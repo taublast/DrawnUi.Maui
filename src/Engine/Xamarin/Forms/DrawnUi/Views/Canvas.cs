@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using Xamarin.Essentials;
 using Xamarin.Forms.Internals;
 
-namespace DrawnUi.Maui.Views;
+namespace DrawnUi.Views;
 
 /// <summary>
 /// Optimized DrawnView having only one child inside Content property. Can autosize to to children size.

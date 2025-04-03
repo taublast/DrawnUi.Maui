@@ -5,7 +5,7 @@ using SkiaSharp;
 using Windows.Foundation.Collections;
 using WinRT;
 
-namespace DrawnUi.Maui.Infrastructure
+namespace DrawnUi.Infrastructure
 {
     /// <summary>
     /// A public wrapper for OpenGL ES functionality across different platforms.

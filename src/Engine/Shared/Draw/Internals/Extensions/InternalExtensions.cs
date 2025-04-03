@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace DrawnUi.Maui.Extensions;
+namespace DrawnUi.Extensions;
 
 public static partial class InternalExtensions
 {

@@ -9,7 +9,7 @@ using SkiaSharp.Views.Windows;
 using SKPaintSurfaceEventArgs = SkiaSharp.Views.Maui.SKPaintSurfaceEventArgs;
 using Stretch = Microsoft.UI.Xaml.Media.Stretch;
 
-namespace DrawnUi.Maui.Platforms.Windows
+namespace DrawnUi.Platforms.Windows
 {
     public partial class WinCanvas : Microsoft.UI.Xaml.Controls.Canvas
     {

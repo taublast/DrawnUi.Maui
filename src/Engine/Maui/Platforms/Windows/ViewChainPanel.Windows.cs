@@ -3,7 +3,7 @@ using SkiaSharp.Views.Windows;
 using System;
 using Windows.Foundation;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 {
 	public class SKSwapChainPanel : AngleSwapChainPanel
 {

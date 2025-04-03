@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Infrastructure.Models;
+﻿namespace DrawnUi.Infrastructure.Models;
 
 public record OrderedIndex(int Index, bool? Animate)
 {

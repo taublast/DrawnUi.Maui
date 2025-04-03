@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Xamarin.Forms.Internals;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public class SkiaFontManager
 {

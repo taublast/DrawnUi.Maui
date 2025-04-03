@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Controls.Compatibility.Platform.iOS;
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public static class IOSExtensions
 {

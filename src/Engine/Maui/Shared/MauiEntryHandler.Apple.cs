@@ -3,7 +3,7 @@ using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using UIKit;
 
-namespace DrawnUi.Maui.Controls;
+namespace DrawnUi.Controls;
 
  
 public partial class MauiEntryHandler : EntryHandler

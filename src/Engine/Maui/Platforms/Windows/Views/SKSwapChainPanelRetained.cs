@@ -7,7 +7,7 @@ using SkiaSharp;
 using SkiaSharp.Views.Windows;
 using Application = Microsoft.Maui.Controls.Application;
 
-namespace DrawnUi.Maui.Views
+namespace DrawnUi.Views
 {
     /*
 

@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Demo.Views.Controls;
+﻿namespace DrawnUi.Demo.Views.Controls;
 
 public class DroppingLetters : SkiaLabel
 {

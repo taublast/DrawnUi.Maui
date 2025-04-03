@@ -8,7 +8,7 @@ using CompositeTransform = Microsoft.UI.Xaml.Media.CompositeTransform;
 using Visibility = Microsoft.UI.Xaml.Visibility;
 
 
-namespace DrawnUi.Maui.Draw;
+namespace DrawnUi.Draw;
 
 public partial class SkiaMauiElement
 {

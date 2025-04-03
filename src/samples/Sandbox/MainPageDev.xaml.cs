@@ -1,7 +1,7 @@
 ﻿
 using AppoMobi.Specials;
-using DrawnUi.Maui.Infrastructure;
-using DrawnUi.Maui.Internals;
+using DrawnUi.Infrastructure;
+using DrawnUi.Internals;
 using Sandbox;
 using Sandbox.Views;
 

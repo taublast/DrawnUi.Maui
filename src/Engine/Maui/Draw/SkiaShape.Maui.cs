@@ -1,5 +1,5 @@
-﻿using DrawnUi.Maui.Draw;
-using DrawnUi.Maui.Infrastructure.Xaml;
+﻿using DrawnUi.Draw;
+using DrawnUi.Infrastructure.Xaml;
 using Microsoft.Maui.Controls.Shapes;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -7,7 +7,7 @@ using System.ComponentModel;
 using Color = Microsoft.Maui.Graphics.Color;
 using Path = Microsoft.Maui.Controls.Shapes.Path;
 
-namespace DrawnUi.Maui.Draw
+namespace DrawnUi.Draw
 {
     public partial class SkiaShape
 	{

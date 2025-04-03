@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrawnUi.Maui.Internals
+namespace DrawnUi.Internals
 {
     public class TitleWithStringId : IHasTitleWithId
     {

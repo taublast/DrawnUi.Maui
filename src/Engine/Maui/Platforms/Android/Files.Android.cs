@@ -1,7 +1,7 @@
 ﻿using Android.Content.Res;
 using Android.Media;
 
-namespace DrawnUi.Maui.Infrastructure
+namespace DrawnUi.Infrastructure
 {
     public partial class Files
     {

@@ -1,8 +1,8 @@
-﻿using DrawnUi.Maui;
-using DrawnUi.Maui;
-using DrawnUi.Maui;
+﻿using DrawnUi;
+using DrawnUi;
+using DrawnUi;
 
-namespace DrawnUi.Maui.Demo.Views.Controls;
+namespace DrawnUi.Demo.Views.Controls;
 
 public class ScrollingBanner : SkiaScrollLooped
 {

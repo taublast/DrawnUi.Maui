@@ -1,4 +1,4 @@
-﻿namespace DrawnUi.Maui.Controls;
+﻿namespace DrawnUi.Controls;
 
 public enum DrawerDirection
 {
