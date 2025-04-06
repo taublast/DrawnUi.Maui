@@ -41,7 +41,11 @@ namespace DrawnUi.Draw
         {
             if (OnGestures != null)
             {
-                return OnGestures(args, apply);
+                var consumed = OnGestures(args, apply);
+                if (consumed != null)
+                {
+                    return consumed;
+                }
             }
 
             return base.ProcessGestures(args, apply);

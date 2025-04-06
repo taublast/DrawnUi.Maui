@@ -536,8 +536,12 @@ public class Canvas : DrawnView, IGestureListener
 
                     var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
 
-                    consumed = listener.OnSkiaGestureEvent(args, adjust);
-
+                    var maybeconsumed = listener.OnSkiaGestureEvent(args, adjust);
+                    if (maybeconsumed != null)
+                    {
+                        consumed = maybeconsumed;
+                    }
+                    
                     if (consumed != null)
                     {
                         if (args.Type != TouchActionResult.Up)
@@ -570,9 +574,10 @@ public class Canvas : DrawnView, IGestureListener
                     HadInput.Clear();
                 }
 
-                if (manageChildFocus || FocusedChild != null && consumed != FocusedChild)
+                if (manageChildFocus || FocusedChild != null 
+                && consumed != FocusedChild)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[Canvas] set FocusedChild to {consumed}");
+                    System.Diagnostics.Debug.WriteLine($"[Canvas] set FocusedChild to '{consumed}' we had '{FocusedChild}' and consumed was '{consumed}'");
                     FocusedChild = consumed;
                 }
             }

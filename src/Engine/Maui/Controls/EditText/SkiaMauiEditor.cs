@@ -9,12 +9,12 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     {
         if (args.Type == TouchActionResult.Up)
         {
-            var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
-            if (!DrawingRect.Contains(point))
-            {
-                //we got this gesture because we were focused, but it's now outside our bounds, can unfocus
-                return base.ProcessGestures(args, apply);
-            }
+            // var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+            // if (!DrawingRect.Contains(point))
+            // {
+            //     //we got this gesture because we were focused, but it's now outside our bounds, can unfocus
+            //     return base.ProcessGestures(args, apply);
+            // }
         }
 
         return this;
