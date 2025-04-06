@@ -20,7 +20,7 @@
     Do not need a snapshot, maui view is moved/transformed directly.
      */
 
-    [ContentProperty("Content")]
+    [ContentProperty(nameof(Content))]
     public partial class SkiaMauiElement : SkiaControl
     {
         protected override void OnBindingContextChanged()

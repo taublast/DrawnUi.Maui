@@ -50,7 +50,7 @@ public partial class SkiaShell
         public virtual void SetupAppearingAnimation(SkiaControl content)
         {
             content.Scale = 0.5;
-            content.Opacity = 0.1;
+            Opacity = 0.1;
         }
 
         public async Task CloseAsync()
@@ -64,7 +64,7 @@ public partial class SkiaShell
                 {
                     var animate = Task.WhenAll(
                         FadeToAsync(0, PopupsAnimationSpeed, null, cts),
-                        ScaleToAsync(0, 0, PopupsAnimationSpeed, null, cts));
+                        Content.ScaleToAsync(0, 0, PopupsAnimationSpeed, null, cts));
 
                     var completedTask = await Task.WhenAny(animate, timeoutTask);
                     if (completedTask == timeoutTask)
@@ -81,9 +81,10 @@ public partial class SkiaShell
                     cts.Dispose();
                 }
 
-                await _shell.Popups.Close(this, _animated);
+
             }
 
+            await _shell.Popups.Close(this, _animated);
         }
 
         protected override void OnLayoutReady()
@@ -93,7 +94,7 @@ public partial class SkiaShell
             if (Content != null && _animated)
             {
                 Task.WhenAll(
-                    Content.FadeToAsync(1, PopupsAnimationSpeed),
+                    FadeToAsync(1, PopupsAnimationSpeed),
                     Content.ScaleToAsync(1, 1, PopupsAnimationSpeed));
             }
 

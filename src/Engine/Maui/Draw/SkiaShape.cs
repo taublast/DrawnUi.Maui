@@ -388,15 +388,18 @@ namespace DrawnUi.Draw
                 strokeAwareSize =
                     SKRect.Inflate(strokeAwareSize, -halfStroke, -halfStroke);
 
-                strokeAwareChildrenSize = new SKRect(
-                    (float)Math.Round(strokeAwareSize.Left),
-                    (float)Math.Round(strokeAwareSize.Top),
-                    (float)Math.Round(strokeAwareSize.Right),
-                    (float)Math.Round(strokeAwareSize.Bottom)
+                strokeAwareSize = new SKRect(
+                    (float)Math.Floor(strokeAwareSize.Left),
+                    (float)Math.Floor(strokeAwareSize.Top),
+                    (float)Math.Ceiling(strokeAwareSize.Right),
+                    (float)Math.Ceiling(strokeAwareSize.Bottom)
                 );
+
+                strokeAwareChildrenSize = strokeAwareSize;
             }
 
             MeasuredStrokeAwareSize = strokeAwareSize;
+
             MeasuredStrokeAwareChildrenSize = strokeAwareChildrenSize;
 
             //rescale the path to match container

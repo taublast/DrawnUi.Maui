@@ -44,7 +44,21 @@ namespace DrawnUi.Draw
             CalculateSizeRequest();
 
             AttachEffects();
+        }
 
+        public static readonly BindableProperty ControlStyleProperty = BindableProperty.Create(
+            nameof(PrebuiltControlStyle),
+            typeof(PrebuiltControlStyle), typeof(SkiaControl),
+            PrebuiltControlStyle.Unset,
+            propertyChanged: NeedDraw);
+
+        /// <summary>
+        /// Will be used by control CreateDefaultContent to create appropriate look. Then controls use a virtual `UsingControlStyle` property to define their look.
+        /// </summary>
+        public PrebuiltControlStyle ControlStyle
+        {
+            get { return (PrebuiltControlStyle)GetValue(ControlStyleProperty); }
+            set { SetValue(ControlStyleProperty, value); }
         }
 
         public static readonly BindableProperty ClippedEffectsWithProperty = BindableProperty.Create(
@@ -279,11 +293,12 @@ namespace DrawnUi.Draw
 
         protected virtual void SetDefaultContentSize(double width, double height)
         {
-            if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill && (LockRatio == 0 || HeightRequest < 0))
+            if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill &&
+                (LockRatio == 0 || HeightRequest < 0))
                 this.WidthRequest = width;
-            if (this.HeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill && (LockRatio == 0 || WidthRequest < 0))
+            if (this.HeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill &&
+                (LockRatio == 0 || WidthRequest < 0))
                 this.HeightRequest = height;
-
         }
 
         /// <summary>
@@ -1951,8 +1966,6 @@ namespace DrawnUi.Draw
         //    }
         //}
 
- 
-
         private static void OnControlParentChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is SkiaControl control)
@@ -2100,10 +2113,7 @@ namespace DrawnUi.Draw
             nameof(ExpandDirtyRegion),
             typeof(Thickness),
             typeof(SkiaControl),
-            defaultValueCreator: (instance) =>
-            {
-                return new Thickness(0);
-            },
+            defaultValueCreator: (instance) => { return new Thickness(0); },
             propertyChanged: NeedDraw);
 
         /// <summary>
@@ -2539,7 +2549,6 @@ namespace DrawnUi.Draw
             return new SKRect((float)left, (float)top, (float)right, (float)bottom);
         }
 
-
         /// <summary>
         ///  destination in PIXELS, requests in UNITS. resulting Destination prop will be filed in PIXELS.
         /// Not using Margins nor Padding
@@ -2730,13 +2739,14 @@ namespace DrawnUi.Draw
                 var dirty = value;
                 if (ExpandDirtyRegion != Thickness.Zero)
                 {
-                    dirty = new (
-                        value.Left - (float)Math.Round(ExpandDirtyRegion.Left*RenderingScale),
+                    dirty = new(
+                        value.Left - (float)Math.Round(ExpandDirtyRegion.Left * RenderingScale),
                         value.Top - (float)Math.Round(ExpandDirtyRegion.Top * RenderingScale),
                         value.Right + (float)Math.Round(ExpandDirtyRegion.Right * RenderingScale),
                         value.Bottom + (float)Math.Round(ExpandDirtyRegion.Bottom * RenderingScale)
-                        );
+                    );
                 }
+
                 DirtyRegion = dirty;
             }
         }
@@ -3301,7 +3311,6 @@ namespace DrawnUi.Draw
         }
 
         public event EventHandler ApplyingBindingContext;
-
         protected bool BindingContextWasSet { get; set; }
 
         /// <summary>
@@ -3875,6 +3884,7 @@ namespace DrawnUi.Draw
                 {
                     action?.Invoke();
                 }
+
                 ExecuteUponDisposal.Clear();
 
                 RenderObject = null;
@@ -5997,7 +6007,6 @@ namespace DrawnUi.Draw
             get { return (Type)GetValue(ItemTemplateTypeProperty); }
             set { SetValue(ItemTemplateTypeProperty, value); }
         }
- 
 
         protected void AddOrRemoveView(SkiaControl subView, bool add)
         {

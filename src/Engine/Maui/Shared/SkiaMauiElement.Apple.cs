@@ -18,20 +18,27 @@ public partial class SkiaMauiElement
             var visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Hidden;
             nativeView.UpdateVisibility(visibility);
 
-            nativeView.ClipsToBounds = true;
+            System.Diagnostics.Debug.WriteLine($"[Layout] {visibility}");
 
-            nativeView.Transform = CGAffineTransform.MakeIdentity();
-            nativeView.Frame = new CGRect(
-                VisualTransformNative.Rect.Left + this.Padding.Left,
-                VisualTransformNative.Rect.Top + this.Padding.Top,
-                VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
-                VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
-            );
+            if (visibility == Visibility.Visible)
+            {
+                nativeView.ClipsToBounds = true;
 
-            nativeView.Transform = CGAffineTransform.MakeTranslation(VisualTransformNative.Translation.X, VisualTransformNative.Translation.Y);
-            nativeView.Transform = CGAffineTransform.Rotate(nativeView.Transform, VisualTransformNative.Rotation); // Assuming rotation in radians
-            nativeView.Transform = CGAffineTransform.Scale(nativeView.Transform, VisualTransformNative.Scale.X, VisualTransformNative.Scale.Y);
-            nativeView.Alpha = VisualTransformNative.Opacity;
+                nativeView.Transform = CGAffineTransform.MakeIdentity();
+                nativeView.Frame = new CGRect(
+                    VisualTransformNative.Rect.Left + this.Padding.Left,
+                    VisualTransformNative.Rect.Top + this.Padding.Top,
+                    VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
+                    VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
+                );
+
+                nativeView.Transform = CGAffineTransform.MakeTranslation(VisualTransformNative.Translation.X, VisualTransformNative.Translation.Y);
+                nativeView.Transform = CGAffineTransform.Rotate(nativeView.Transform, VisualTransformNative.Rotation); // Assuming rotation in radians
+                nativeView.Transform = CGAffineTransform.Scale(nativeView.Transform, VisualTransformNative.Scale.X, VisualTransformNative.Scale.Y);
+                nativeView.Alpha = VisualTransformNative.Opacity;
+            }
+
+
 
             //Debug.WriteLine($"Layout Maui : {VisualTransformNative.Opacity} {VisualTransformNative.Translation} {VisualTransformNative.IsVisible}");
         }

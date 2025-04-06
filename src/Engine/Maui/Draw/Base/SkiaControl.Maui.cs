@@ -1,6 +1,5 @@
-﻿
-/*
-All the MAUI-related base SkiaControl implementation. 
+﻿/*
+All the MAUI-related base SkiaControl implementation.
 Normally other partial code definitions should be framework independent.
 */
 
@@ -15,7 +14,6 @@ namespace DrawnUi.Draw
         IVisualTreeElement, // to support VS HotReload
         IContainer // to support VS HotReload full page reload mode
     {
-
         #region IContainer
 
         public IEnumerator<IView> GetEnumerator()
@@ -53,7 +51,9 @@ namespace DrawnUi.Draw
             if (arrayIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(arrayIndex), "Array index must be non-negative.");
             if (arrayIndex + Children.Count > array.Length)
-                throw new ArgumentException("The array is too small to accommodate the collection starting at the specified index.", nameof(array));
+                throw new ArgumentException(
+                    "The array is too small to accommodate the collection starting at the specified index.",
+                    nameof(array));
 
             for (int i = 0; i < Children.Count; i++)
             {
@@ -72,6 +72,7 @@ namespace DrawnUi.Draw
                     Children.Remove(skia);
                 }
             }
+
             return found;
         }
 
@@ -89,6 +90,7 @@ namespace DrawnUi.Draw
             {
                 return Children.IndexOf(skia);
             }
+
             return found;
         }
 
@@ -107,15 +109,12 @@ namespace DrawnUi.Draw
 
         public IView this[int index]
         {
-            get
-            {
-                return Children[index];
-            }
+            get { return Children[index]; }
             set
             {
-                if (value is SkiaControl skia)  
+                if (value is SkiaControl skia)
                 {
-                    Children[index] = skia; 
+                    Children[index] = skia;
                 }
                 else
                 {
@@ -133,7 +132,7 @@ namespace DrawnUi.Draw
             return Views.ToList().Cast<IVisualTreeElement>().ToList();
         }
 
-        public virtual IVisualTreeElement GetVisualParent()  //working fine
+        public virtual IVisualTreeElement GetVisualParent() //working fine
         {
             return Parent as IVisualTreeElement;
         }
@@ -167,28 +166,33 @@ namespace DrawnUi.Draw
         }
 
         #endregion
-        
 
         public static Color TransparentColor = Colors.Transparent;
         public static Color WhiteColor = Colors.White;
         public static Color BlackColor = Colors.Black;
         public static Color RedColor = Colors.Red;
 
-        public static readonly BindableProperty ControlStyleProperty = BindableProperty.Create(nameof(PrebuiltControlStyle),
-            typeof(PrebuiltControlStyle), typeof(SkiaControl),
-            PrebuiltControlStyle.Unset,
-            propertyChanged: NeedDraw);
-
-        /// <summary>
-        /// Will be used by control CreateDefaultContent to create appropriate look.
-        /// </summary>
-        public PrebuiltControlStyle ControlStyle
+        public virtual PrebuiltControlStyle UsingControlStyle
         {
-            get { return (PrebuiltControlStyle)GetValue(ControlStyleProperty); }
-            set { SetValue(ControlStyleProperty, value); }
+            get
+            {
+                if (ControlStyle == PrebuiltControlStyle.Platform)
+                {
+#if IOS || MACCATALYST
+                    return PrebuiltControlStyle.Cupertino;
+#elif ANDROID
+                    return PrebuiltControlStyle.Material;
+#elif WINDOWS
+                    return PrebuiltControlStyle.Windows;
+#endif
+                }
+
+                return ControlStyle;
+            }
         }
 
-        public static readonly BindableProperty ClearColorProperty = BindableProperty.Create(nameof(ClearColor), typeof(Color), typeof(SkiaControl),
+        public static readonly BindableProperty ClearColorProperty = BindableProperty.Create(nameof(ClearColor),
+            typeof(Color), typeof(SkiaControl),
             Colors.Transparent,
             propertyChanged: NeedDraw);
 
@@ -203,7 +207,6 @@ namespace DrawnUi.Draw
 
         protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-
             try
             {
                 base.OnPropertyChanged(propertyName);
@@ -228,48 +231,42 @@ namespace DrawnUi.Draw
                 Parent?.InvalidateViewsList();
                 Repaint();
             }
-            else
-            if (propertyName.IsEither(
-                    nameof(Opacity),
-                    nameof(TranslationX), nameof(TranslationY),
-                    nameof(Rotation),
-                    nameof(AnchorX), nameof(AnchorY),
-                    nameof(RotationX), nameof(RotationY),
-                    nameof(ScaleX), nameof(ScaleY)
-                ))
+            else if (propertyName.IsEither(
+                         nameof(Opacity),
+                         nameof(TranslationX), nameof(TranslationY),
+                         nameof(Rotation),
+                         nameof(AnchorX), nameof(AnchorY),
+                         nameof(RotationX), nameof(RotationY),
+                         nameof(ScaleX), nameof(ScaleY)
+                     ))
             {
                 Repaint();
             }
-            else
-            if (propertyName.IsEither(nameof(BackgroundColor),
-                    nameof(IsClippedToBounds)
-                ))
+            else if (propertyName.IsEither(nameof(BackgroundColor),
+                         nameof(IsClippedToBounds)
+                     ))
             {
                 Update();
             }
-            else
-            if (propertyName == nameof(Shadow))
+            else if (propertyName == nameof(Shadow))
             {
                 UpdatePlatformShadow();
             }
-            else
-            if (propertyName == nameof(Clip))
+            else if (propertyName == nameof(Clip))
             {
                 Update();
             }
-            else
-            if (propertyName.IsEither(
-                    nameof(Padding),
-                    nameof(HorizontalOptions), nameof(VerticalOptions),
-                    nameof(HeightRequest), nameof(WidthRequest),
-                    nameof(MaximumWidthRequest), nameof(MinimumWidthRequest),
-                    nameof(MaximumHeightRequest), nameof(MinimumHeightRequest)
-                ))
+            else if (propertyName.IsEither(
+                         nameof(Padding),
+                         nameof(HorizontalOptions), nameof(VerticalOptions),
+                         nameof(HeightRequest), nameof(WidthRequest),
+                         nameof(MaximumWidthRequest), nameof(MinimumWidthRequest),
+                         nameof(MaximumHeightRequest), nameof(MinimumHeightRequest)
+                     ))
             {
                 InvalidateMeasure();
             }
-            else
-            if (propertyName.IsEither(nameof(IsVisible)))
+            else if (propertyName.IsEither(nameof(IsVisible)))
             {
                 OnVisibilityChanged(IsVisible);
 
@@ -278,8 +275,6 @@ namespace DrawnUi.Draw
 
             #endregion
         }
-
-
 
         public virtual void AddSubView(SkiaControl control)
         {
@@ -290,10 +285,7 @@ namespace DrawnUi.Draw
             OnChildAdded(control);
 
             if (Debugger.IsAttached)
-                Superview?.PostponeExecutionAfterDraw(() =>
-                {
-                    ReportHotreloadChildAdded(control);
-                });
+                Superview?.PostponeExecutionAfterDraw(() => { ReportHotreloadChildAdded(control); });
         }
 
         public virtual void RemoveSubView(SkiaControl control)
@@ -302,10 +294,7 @@ namespace DrawnUi.Draw
                 return;
 
             if (Debugger.IsAttached)
-                Superview?.PostponeExecutionAfterDraw(() =>
-                {
-                    ReportHotreloadChildRemoved(control);
-                });
+                Superview?.PostponeExecutionAfterDraw(() => { ReportHotreloadChildRemoved(control); });
 
             try
             {
@@ -331,6 +320,7 @@ namespace DrawnUi.Draw
                     //Frame = new Rect(DrawingRect.Left, DrawingRect.Top, DrawingRect.Width, DrawingRect.Height);
                 }
             }
+
             LayoutReady = ready;
         }
 
@@ -378,6 +368,7 @@ namespace DrawnUi.Draw
             {
                 colorShadow = shadow.Color.WithAlpha((float)shadow.Opacity);
             }
+
             if (shadow.ShadowOnly)
             {
                 return SKImageFilter.CreateDropShadowOnly(
@@ -436,8 +427,5 @@ namespace DrawnUi.Draw
         {
             return (float)Super.Screen.Density;
         }
-
-
-
     }
 }

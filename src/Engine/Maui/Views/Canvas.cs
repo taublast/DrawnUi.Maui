@@ -572,6 +572,7 @@ public class Canvas : DrawnView, IGestureListener
 
                 if (manageChildFocus || FocusedChild != null && consumed != FocusedChild)
                 {
+                    System.Diagnostics.Debug.WriteLine($"[Canvas] set FocusedChild to {consumed}");
                     FocusedChild = consumed;
                 }
             }

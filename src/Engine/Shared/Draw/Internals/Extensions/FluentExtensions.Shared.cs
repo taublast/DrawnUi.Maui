@@ -22,6 +22,12 @@ namespace DrawnUi.Draw
             return control;
         }
 
+        public static T AssignTo<T>(this T control, out T variable) where T : VisualElement
+        {
+            variable = control;
+            return control;
+        }
+
         /// <summary>
         /// Performs an action on the control and returns it to continue the fluent chain
         /// </summary>

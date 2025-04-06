@@ -68,6 +68,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     {
         if (Control == null)
         {
+            this.AnimateSnapshot = false;
             //var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
             Control = new MauiEntry()
             {
@@ -94,7 +95,10 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     protected void FocusNative()
     {
-        MainThread.BeginInvokeOnMainThread(() => { Control.Focus(); });
+        if (!Control.IsFocused)
+        {
+            MainThread.BeginInvokeOnMainThread(() => { Control.Focus(); });
+        }
     }
 
     protected void UnfocusNative()

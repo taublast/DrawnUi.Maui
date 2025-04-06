@@ -1,23 +1,12 @@
-﻿using DrawnUi.Draw;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DrawnUi.Draw;
 
-namespace DrawnUi.Game
+namespace DrawnUi.Gaming
 {
-    public interface IMauiGame
-    {
-        void OnKeyDown(MauiKey key);
-        void OnKeyUp(MauiKey key);
-
-        void Pause();
-        void Resume();
-        void StopLoop();
-        void StartLoop(int delayMs = 0);
-    }
-
     /// <summary>
     /// Base class for implementing a game. StartLoop, StopLoop, override GameLoop(..) etc.
     /// </summary>

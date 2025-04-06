@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace DrawnUi.Draw
 {
-
+    
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
     {
 

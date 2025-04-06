@@ -12,7 +12,7 @@ public class SkiaSwitch : SkiaToggle
     {
         if (this.Views.Count == 0)
         {
-            switch (ControlStyle)
+            switch (UsingControlStyle)
             {
                 case PrebuiltControlStyle.Cupertino:
                     CreateCupertinoStyleContent();
@@ -23,18 +23,6 @@ public class SkiaSwitch : SkiaToggle
                 case PrebuiltControlStyle.Windows:
                     CreateWindowsStyleContent();
                     break;
-                case PrebuiltControlStyle.Platform:
-#if IOS || MACCATALYST
-                    CreateCupertinoStyleContent();
-#elif ANDROID
-                    CreateMaterialStyleContent();
-#elif WINDOWS
-                    CreateWindowsStyleContent();
-#else
-                    CreateDefaultStyleContent();
-#endif
-                    break;
-                case PrebuiltControlStyle.Unset:
                 default:
                     CreateDefaultStyleContent();
                     break;

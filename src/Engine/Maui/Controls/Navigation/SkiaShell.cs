@@ -342,6 +342,7 @@ namespace DrawnUi.Controls
             }
         }
 
+
         public virtual async Task<SkiaControl> PresentAsync(string registered, bool? animate,
             IDictionary<string, object> arguments = null)
         {
@@ -378,7 +379,8 @@ namespace DrawnUi.Controls
                             }
                         }
 
-                        skia = await this.PushModalAsync(skia, false, animate.GetValueOrDefault());
+                        skia = await PushModalRoute(skia, registered, animate);
+                        //skia = await this.PushModalAsync(skia, false, animate.GetValueOrDefault());
                     }
                     else
                     {
@@ -398,6 +400,12 @@ namespace DrawnUi.Controls
             {
                 //LockNavigation.Release();
             }
+        }
+
+        protected virtual async Task<SkiaControl> PushModalRoute(SkiaControl skia, string route, bool? animate)
+        {
+            skia = await this.PushModalAsync(skia, false, animate.GetValueOrDefault());
+            return skia;
         }
 
         public virtual async Task PushRegisteredPageAsync(string registered, bool animate,
@@ -1420,7 +1428,6 @@ namespace DrawnUi.Controls
 
         /// <summary>
         /// Pass pixelsScaleInFrom you you want popup to animate appearing from a specific point instead of screen center.
-        /// Set freezeBackground to False to keep animations running below popup, default is True for performance reasons.
         /// </summary>
         /// <param name="content"></param>
         /// <param name="animated"></param>
@@ -1431,7 +1438,7 @@ namespace DrawnUi.Controls
             SkiaControl content,
             bool animated = true,
             bool closeWhenBackgroundTapped = true,
-            bool freezeBackground = true,
+            bool showOverlay = true,
             Color backgroundColor = null,
             SKPoint? pixelsScaleInFrom = null)
         {
@@ -1450,7 +1457,7 @@ namespace DrawnUi.Controls
                 SkiaControl popup = null;
                 SkiaControl control = null;
 
-                bool willFreeze = CanFreezeLayout() && freezeBackground;
+                bool willFreeze = CanFreezeLayout() && showOverlay;
 
                 control = new PopupWrapper(closeWhenBackgroundTapped,
                     animated,
@@ -1789,10 +1796,18 @@ namespace DrawnUi.Controls
             }
         }
 
-        protected virtual void ResetRoutes()
+        protected virtual void Reset()
         {
             _rootRoute = string.Empty;
             CurrentRoute.Nodes.Clear();
+
+            Task.Run(async () =>
+            {
+                while (NavigationStackModals.Count > 0)
+                {
+                    await RemoveModal(NavigationStackModals.Last().Page as SkiaControl, false);
+                }
+            });
         }
 
         protected bool Initialized { get; set; }
@@ -1815,7 +1830,7 @@ namespace DrawnUi.Controls
 
             Initialized = true;
 
-            ResetRoutes();
+            Reset();
 
             ParsedRoute startupRoute = null;
             if (!string.IsNullOrEmpty(route))
@@ -2347,6 +2362,8 @@ namespace DrawnUi.Controls
                                     var created = SetRoot(part, false, passArguments);
                                     if (created != null)
                                     {
+                                        OnNavigated(new (created, part, NavigationSource.Unknown));
+
                                         children.Add(new() { Part = part, Control = created });
                                     }
                                     else

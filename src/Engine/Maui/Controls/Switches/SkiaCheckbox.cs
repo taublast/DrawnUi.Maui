@@ -24,7 +24,7 @@ public class SkiaCheckbox : SkiaToggle
     {
         if (this.Views.Count == 0)
         {
-            switch (ControlStyle)
+            switch (UsingControlStyle)
             {
                 case PrebuiltControlStyle.Cupertino:
                     CreateCupertinoStyleContent();
@@ -35,18 +35,6 @@ public class SkiaCheckbox : SkiaToggle
                 case PrebuiltControlStyle.Windows:
                     CreateWindowsStyleContent();
                     break;
-                case PrebuiltControlStyle.Platform:
-                    #if IOS || MACCATALYST
-                    CreateCupertinoStyleContent();
-                    #elif ANDROID
-                    CreateMaterialStyleContent();
-                    #elif WINDOWS
-                    CreateWindowsStyleContent();
-                    #else
-                    CreateDefaultStyleContent();
-                    #endif
-                    break;
-                case PrebuiltControlStyle.Unset:
                 default:
                     CreateDefaultStyleContent();
                     break;
@@ -252,7 +240,7 @@ public class SkiaCheckbox : SkiaToggle
             if (FrameOn is SkiaShape shape)
             {
                 // Update the color based on control style
-                switch (ControlStyle)
+                switch (UsingControlStyle)
                 {
                     case PrebuiltControlStyle.Cupertino:
                     case PrebuiltControlStyle.Material:

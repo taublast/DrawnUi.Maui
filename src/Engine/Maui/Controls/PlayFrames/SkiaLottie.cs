@@ -908,4 +908,3 @@ public class SkiaLottie : AnimatedFramesRenderer
 
     #endregion
 }
-

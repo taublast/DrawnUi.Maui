@@ -756,7 +756,12 @@ public class SkiaMarkdownLabel : SkiaLabel
         nameof(UnderlineWidth),
         typeof(double),
         typeof(SkiaLabel),
-        1.0,
+        defaultValueCreator: (instance) =>
+        {
+            if (Super.Screen.Density == 0)
+                return 1.0;
+            return 1 / Super.Screen.Density; //1 px
+        },
         propertyChanged: NeedUpdateFont);
 
     public double UnderlineWidth

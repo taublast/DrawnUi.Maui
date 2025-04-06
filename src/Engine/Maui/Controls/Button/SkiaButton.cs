@@ -31,7 +31,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             InitialBackgroundColor = this.BackgroundColor;
             InitialBackground = this.Background;
 
-            switch (ControlStyle)
+            switch (UsingControlStyle)
             {
                 case PrebuiltControlStyle.Cupertino:
                     CreateCupertinoStyleContent();
@@ -42,18 +42,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                 case PrebuiltControlStyle.Windows:
                     CreateWindowsStyleContent();
                     break;
-                case PrebuiltControlStyle.Platform:
-                    #if IOS || MACCATALYST
-                    CreateCupertinoStyleContent();
-                    #elif ANDROID
-                    CreateMaterialStyleContent();
-                    #elif WINDOWS
-                    CreateWindowsStyleContent();
-                    #else
-                    CreateDefaultStyleContent();
-                    #endif
-                    break;
-                case PrebuiltControlStyle.Unset:
                 default:
                     CreateDefaultStyleContent();
                     break;
@@ -286,7 +274,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                 }
                 
                 // Apply platform-specific shadow adjustments
-                switch (ControlStyle)
+                switch (UsingControlStyle)
                 {
                     case PrebuiltControlStyle.Cupertino:
                         // iOS uses more subtle shadows
@@ -471,7 +459,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             MainFrame.Background = this.Background;
             
             // Apply platform-specific corner radius adjustments
-            switch (ControlStyle)
+            switch (UsingControlStyle)
             {
                 case PrebuiltControlStyle.Cupertino:
                     // iOS uses more rounded corners
@@ -521,7 +509,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                     var shadow = MainFrame.Shadows.FirstOrDefault();
                     if (shadow != null)
                     {
-                        switch (ControlStyle)
+                        switch (UsingControlStyle)
                         {
                             case PrebuiltControlStyle.Cupertino:
                                 // iOS uses subtle shadows
