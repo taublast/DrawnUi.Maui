@@ -15,7 +15,7 @@ public partial class SkiaMauiElement
     {
         if (element.Handler?.PlatformView is UIView nativeView)
         {
-            var visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Hidden;
+            var visibility = IsVisibleInViewTree() && VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Hidden;
             nativeView.UpdateVisibility(visibility);
 
             System.Diagnostics.Debug.WriteLine($"[Layout] {visibility}");
