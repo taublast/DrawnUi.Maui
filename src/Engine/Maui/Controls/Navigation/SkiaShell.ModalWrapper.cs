@@ -54,8 +54,9 @@ public partial class SkiaShell
         {
             base.OnWillDisposeWithChildren();
 
-            _snapshot?.Dispose();
-            _snapshot = null;
+            if (_snapshot!=null)
+                DisposeObject(_snapshot);
+
             Backdrop?.Dispose();
         }
 
