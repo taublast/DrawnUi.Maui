@@ -1,9 +1,11 @@
-﻿using Microsoft.Maui.Platform;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Microsoft.Maui.Platform;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Hosting;
+using Microsoft.UI.Xaml.Media.Imaging;
 using CompositeTransform = Microsoft.UI.Xaml.Media.CompositeTransform;
 using Visibility = Microsoft.UI.Xaml.Visibility;
 
@@ -77,6 +79,7 @@ public partial class SkiaMauiElement
         }
     }
 
+
     protected virtual void LayoutNativeView(VisualElement element)
     {
         if (element.Handler?.PlatformView is FrameworkElement nativeView)
@@ -84,7 +87,8 @@ public partial class SkiaMauiElement
             nativeView.Visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Collapsed;
 
             Debug.WriteLine($"Visibility {nativeView.Visibility}");
-            
+            bool needLayout = false;
+
             if (nativeView.Visibility == Visibility.Visible)
             {
                 //UIElement
@@ -106,7 +110,11 @@ public partial class SkiaMauiElement
 
                 nativeView.RenderTransform = transform;
 
-                nativeView.UpdateLayout(); //place the view at correct destination
+                if (!WasRendered)
+                {
+                    nativeView.UpdateLayout(); //place the view at correct destination
+                    needLayout = true;
+                }
 
                 Windows.Foundation.Size availableSize = new(
                     VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
@@ -116,17 +124,21 @@ public partial class SkiaMauiElement
                 {
                     MeasuredFor = availableSize;
                     nativeView.Measure(availableSize);
+                    needLayout = true;
                 }
 
                 nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+
+                if (!WasRendered)
+                    WasRendered = nativeView.RenderSize.Width > 0;
             }
 
-            if (!WasRendered)
-                WasRendered = nativeView.RenderSize.Width > 0;
 
-            nativeView.UpdateLayout(); //required. in maui this is also needed to be called as fix for after IsVisible is set to true sometimes the view just doesn't show up.
+            if (needLayout)
+                nativeView.UpdateLayout(); //required. in maui this is also needed to be called as fix for after IsVisible is set to true sometimes the view just doesn't show up.
         }
     }
+
 
     public Windows.Foundation.Size MeasuredFor { get; set; } 
 

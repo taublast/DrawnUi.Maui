@@ -7,16 +7,18 @@ namespace DrawnUi.Draw;
 
 public partial class SkiaMauiElement
 {
-    protected async Task TakeNativeSnapshot(SKSurface skiaSurface)
+    protected void TakeNativeSnapshot(SKSurface skiaSurface)
     {
         if (Element.Handler?.PlatformView is View nativeView)
         {
+            Debug.WriteLine($"Taking snapshot..");
             if (nativeView.Width > 0 && nativeView.Height > 0)
             {
                 using var snapshot = CreateBitmapFromView(nativeView);
                 CachedBitmap.Canvas.DrawBitmap(snapshot, 0, 0);
                 // Make sure to call Flush() to ensure that the drawing commands are executed
                 CachedBitmap.Canvas.Flush();
+                Debug.WriteLine($"Took snapshot !!!");
                 SnapshotReady = true;
             }
         }

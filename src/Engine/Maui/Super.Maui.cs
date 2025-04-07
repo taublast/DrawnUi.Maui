@@ -42,7 +42,7 @@ namespace DrawnUi.Draw
             HotReload?.Invoke(obj);
         }
 
-        public static Color ColorAccent { get; set; } = Colors.Orange;
+        public static Color ColorAccent { get; set; } = Colors.Red;
 
         public static Color ColorPrimary { get; set; } = Colors.Gray;
 

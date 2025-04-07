@@ -76,7 +76,7 @@ namespace DrawnUi.Draw
             Cursor = new()
             {
                 ZIndex = 1,
-                BackgroundColor = Colors.Red,
+                //BackgroundColor = Colors.Red,
                 WidthRequest = 1,
                 Margin = new Thickness(1),
                 HorizontalOptions = LayoutOptions.Start,

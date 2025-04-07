@@ -68,12 +68,15 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     {
         if (Control == null)
         {
-            this.AnimateSnapshot = false;
-            //var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
+            //this.AnimateSnapshot = false;
+
             Control = new MauiEntry()
             {
-                IsSpellCheckEnabled = this.IsSpellCheckEnabled
+                IsSpellCheckEnabled = this.IsSpellCheckEnabled,
+                BackgroundColor = Colors.Transparent,
+                Background = Colors.Transparent
             };
+
             MapProps(Control);
             AdaptControlSize();
 
@@ -138,14 +141,6 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     protected virtual void MapProps(MauiEntry control)
     {
-        //if (control.Handler == null)
-        //    return;
-
-        //if (test1)
-        //    return;
-
-        test1 = true;
-
         var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
         control.FontFamily = alias;
         control.MaxLines = MaxLines;

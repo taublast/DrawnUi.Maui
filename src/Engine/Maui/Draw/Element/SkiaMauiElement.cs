@@ -445,7 +445,7 @@ try
         {
             if (SnapshotReady)
             {
-                //Debug.WriteLine($"Drawing snapshot");
+                Debug.WriteLine($"Drawing snapshot");
 
                 var point = new SKPoint(destination.Left, destination.Top);
                 canvas.DrawSurface(CachedBitmap, point);
@@ -515,7 +515,7 @@ try
             {
                 LayoutNativeView(Element);
 
-#if ANDROID || WINDOWS
+#if ANDROID// || WINDOWS
                 if (AnimateSnapshot && WasRendered && VisualTransformNative.IsVisible)
                 {
                     if (!ShowSnapshot)

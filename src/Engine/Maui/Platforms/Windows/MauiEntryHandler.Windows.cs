@@ -14,19 +14,7 @@ public partial class MauiEntryHandler : EntryHandler
 {
     static MauiEntryHandler()
     {
-        var transparentBrush = Colors.Transparent.ToPlatform();
-
-
-        var backgroundKeys = new[]
-        {
-            "TextControlBackgroundFocused",         
-            "TextControlBorderBrushFocused",      
-        };
-
-        foreach (var key in backgroundKeys)
-        {
-            //resources[key] = transparentBrush;
-        }
+       
     }
 
     TextBox _control;
@@ -37,6 +25,23 @@ public partial class MauiEntryHandler : EntryHandler
 
         _control = platformView;
 
+        //var transparentBrush = Colors.Transparent.ToPlatform();
+
+        //var backgroundKeys = new[]
+        //{
+        //    "TextControlBackground",
+        //    "TextControlBackgroundPointerOver",
+        //    "TextControlBackgroundFocused",
+        //    "TextControlBackgroundDisabled",
+        //};
+
+        //foreach (var key in backgroundKeys)
+        //{
+        //    platformView.Resources[key] = transparentBrush;
+        //}
+
+        //RefreshThemeResources(platformView);
+
         platformView.Text = this.VirtualView.Text;
 
         //platformView.EditorAction += OnEditorAction;
@@ -45,24 +50,13 @@ public partial class MauiEntryHandler : EntryHandler
         ApplySettings();
     }
 
-
     void ApplySettings()
     {
         if (_control != null)
         {
-            //var brush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Transparent.ToWindowsColor());
-
-            _control.Background = null;
+            _control.Background = null; // new Microsoft.UI.Xaml.Media.SolidColorBrush(Colors.Transparent.ToWindowsColor());
             _control.BorderBrush = null;
-          //  _control.Padding = new Microsoft.UI.Xaml.Thickness(0, 0, 0, 0);
-
-            //todo not working
-            ////var brush = Colors.Transparent.ToPlatform();
-            //_control.Resources["TextControlBackgroundFocused"] = brush;
-            ////_control.Resources["TextControlBackgroundPointerOver"] = brush;
-            //_control.Resources["FocusVisualPrimaryBrush"] = brush;
-            //_control.Resources["FocusVisualSecondaryBrush"] = brush;
-            //RefreshThemeResources(_control);
+            _control.Padding = new Microsoft.UI.Xaml.Thickness(0, 0, 0, 0);
         }
     }
 
@@ -79,8 +73,15 @@ public partial class MauiEntryHandler : EntryHandler
 
         _control = view;
 
+        //_control.GotFocus += (sender, args) =>
+        //{
+        //    (VirtualView as MauiEntry).Background = Microsoft.Maui.Controls.Brush.Transparent;
+        //};
+
         return _control;
     }
+
+    
 
     internal static void RefreshThemeResources(FrameworkElement nativeView)
     {
@@ -118,6 +119,8 @@ public partial class MauiEntryHandler : EntryHandler
 
     private void OnTextChanged(object sender, TextChangedEventArgs textChangedEventArgs)
     {
+       
+   
 
     }
 

@@ -75,7 +75,8 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
         control.TextColor = this.TextColor;
         control.ReturnType = this.ReturnType;
         control.Keyboard = this.KeyboardType;
-        control.Text = Text;
+        if (Text != control.Text)
+            control.Text = Text;
         //todo customize
         control.Placeholder = this.Placeholder;
     }
@@ -84,8 +85,12 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     {
         if (Control == null)
         {
-            var alias = SkiaFontManager.GetRegisteredAlias(this.FontFamily, this.FontWeight);
-            Control = new MauiEditor();
+            Control = new MauiEditor()
+            {
+                BackgroundColor = Colors.Transparent,
+                Background = Colors.Transparent
+            };
+
             MapProps(Control);
             AdaptControlSize();
 
@@ -96,6 +101,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             if (IsFocused)
                 SetFocusInternal(true);
         }
+
         return Control;
     }
 
