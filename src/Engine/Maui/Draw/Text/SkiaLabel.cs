@@ -1023,7 +1023,7 @@ namespace DrawnUi.Draw
                                            (float)constraints.Content.Height,
                                            MaxLines,
                                            needsShaping,
-                                           null);
+                                           null, scale);
                     }
                     else
                     {
@@ -1055,7 +1055,7 @@ namespace DrawnUi.Draw
                                                    constraints.Content.Height,
                                                    MaxLines,
                                                    span.NeedShape,
-                                                   span);
+                                                   span, scale);
 
                             if (lines != null && lines.Length > 0)
                             {
@@ -1198,14 +1198,14 @@ namespace DrawnUi.Draw
         }
 
         protected float MeasurePartialTextWidth(SKPaint paint, ReadOnlySpan<char> textSpan,
-            bool needsShaping)
+            bool needsShaping, float scale)
         {
             string text = textSpan.ToString();
-            var (w, _) = MeasureLineGlyphs(paint, text, needsShaping);
+            var (w, _) = MeasureLineGlyphs(paint, text, needsShaping, scale);
             return w;
         }
 
-        protected (float Width, LineGlyph[] Glyphs) MeasureLineGlyphs(SKPaint paint, string text, bool needsShaping)
+        protected (float Width, LineGlyph[] Glyphs) MeasureLineGlyphs(SKPaint paint, string text, bool needsShaping, float scale)
         {
             if (string.IsNullOrEmpty(text))
                 return (0.0f, null);
@@ -1284,7 +1284,7 @@ namespace DrawnUi.Draw
 
             if (requiresComplexMeasuring)
             {
-                var spacingModifier = (int)Math.Round(MeasuredSize.Scale * (CharacterSpacing - 1));
+                var spacingModifier = (float)(scale * (CharacterSpacing - 1));
                 var pos = 0;
                 var addAtIndex = -1;
 
@@ -1331,7 +1331,7 @@ namespace DrawnUi.Draw
             float maxHeight,//-1
             int maxLines,//-1
             bool needsShaping,
-            TextSpan span)
+            TextSpan span, float scale)
         {
 
             var ret = new DecomposedText();
@@ -1343,7 +1343,7 @@ namespace DrawnUi.Draw
 
                 if (span is IDrawnTextSpan drawn)
                 {
-                    var drawnMeasured = drawn.Measure(maxWidth, maxHeight, this.RenderingScale);
+                    var drawnMeasured = drawn.Measure(maxWidth, maxHeight, scale);
 
                     //todo check we fit
                     var fitWidth = maxWidth - firstLineOffset.X;
@@ -1470,7 +1470,7 @@ namespace DrawnUi.Draw
                             }
                         }
 
-                        var smartMeasure = MeasureLineGlyphs(paint, adding, needsShaping);
+                        var smartMeasure = MeasureLineGlyphs(paint, adding, needsShaping, scale);
 
                         var widthBlock = (float)Math.Round(smartMeasure.Width);
                         var heightBlock = LineHeightPixels;
@@ -1564,7 +1564,7 @@ namespace DrawnUi.Draw
                         severalWords = true;
                     }
 
-                    var textWidth = MeasureLineGlyphs(paint, textLine, needsShaping).Width;
+                    var textWidth = MeasureLineGlyphs(paint, textLine, needsShaping, scale).Width;
 
                     //apply
 
@@ -1628,7 +1628,7 @@ namespace DrawnUi.Draw
                                 //remove one last character to maybe fit?
                                 var chunk = textLine.Substring(posInsideWord, lenInsideWord - 1);
 
-                                width = MeasureLineGlyphs(paint, chunk, needsShaping).Width;
+                                width = MeasureLineGlyphs(paint, chunk, needsShaping, scale).Width;
 
                                 var pass = textLine;
                                 if (paragraphs.Length > 1)
@@ -1768,7 +1768,7 @@ namespace DrawnUi.Draw
     float maxHeight,
     int maxLines,
     bool needsShaping,
-    TextSpan span)
+    TextSpan span, float scale)
         {
             if (string.IsNullOrEmpty(text) || paint.Typeface == null)
             {
@@ -1802,7 +1802,7 @@ namespace DrawnUi.Draw
 
             while (needCalc)
             {
-                decomposedText = DecomposeText(measureText, paint, firstLineOffset, maxWidth, maxHeight, maxLines, needsShaping, span);
+                decomposedText = DecomposeText(measureText, paint, firstLineOffset, maxWidth, maxHeight, maxLines, needsShaping, span, scale);
 
                 if (autosize != AutoSizeType.None && maxWidth > 0 && maxHeight > 0)
                 {
@@ -1863,7 +1863,7 @@ namespace DrawnUi.Draw
                     {
                         calculatingMask = false;
                         measureText = text;
-                        decomposedText = DecomposeText(measureText, paint, firstLineOffset, maxWidth, maxHeight, maxLines, needsShaping, span);
+                        decomposedText = DecomposeText(measureText, paint, firstLineOffset, maxWidth, maxHeight, maxLines, needsShaping, span, scale);
                     }
                 }
 
