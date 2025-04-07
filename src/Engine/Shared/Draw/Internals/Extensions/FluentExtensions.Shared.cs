@@ -57,7 +57,7 @@ namespace DrawnUi.Draw
             where T : SkiaControl
             where TSource : INotifyPropertyChanged
         {
-            return control.Subscribe(target, callback, propertyFilter);
+            return control.Observe(target, callback, propertyFilter);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace DrawnUi.Draw
         /// <param name="callback">Callback that receives the property name when changed</param>
         /// <param name="propertyFilter">Optional filter to only trigger on specific properties</param>
         /// <returns>The target control for chaining</returns>
-        public static T Subscribe<T, TSource>(
+        public static T Observe<T, TSource>(
             this T control,
             TSource target,
             Action<T, string> callback,
@@ -108,8 +108,7 @@ namespace DrawnUi.Draw
             return control;
         }
 
-      
-
+        
         /// <summary>
          /// Watches for property changes on the control's BindingContext of type TSource.
          /// Works with both immediate and delayed BindingContext assignment scenarios.
@@ -127,7 +126,7 @@ namespace DrawnUi.Draw
          /// The callback will be invoked immediately after subscription with an empty property name,
          /// allowing initialization based on the current state.
          /// </remarks>
-        public static T WatchBindingContext<T, TSource>(
+        public static T ObserveBindingContext<T, TSource>(
             this T control,
             Action<T, TSource, string> callback)
             where T : SkiaControl
@@ -137,7 +136,7 @@ namespace DrawnUi.Draw
             void SubscribeToViewModel(TSource tvm)
             {
                 // Subscribe directly
-                Subscribe(control, tvm, (me, prop) =>
+                Observe(control, tvm, (me, prop) =>
                 {
                     InvokeCallback(me, tvm, prop);
                 });
@@ -207,7 +206,7 @@ namespace DrawnUi.Draw
         /// 1. The target's BindingContext is already set when the method is called
         /// 2. The target's BindingContext will be set sometime after the method is called
         /// </remarks>
-        public static T WatchTargetBindingContext<T, TTarget, TSource>(
+        public static T ObserveTargetBindingContext<T, TTarget, TSource>(
             this T control,
             TTarget target,
             Action<T, TTarget, TSource, string> callback)
@@ -219,7 +218,7 @@ namespace DrawnUi.Draw
             void SubscribeToViewModel(TSource tvm)
             {
                 // Subscribe directly
-                Subscribe(control, tvm, (me, prop) =>
+                Observe(control, tvm, (me, prop) =>
                 {
                     InvokeCallback(me, target, tvm, prop);
                 });

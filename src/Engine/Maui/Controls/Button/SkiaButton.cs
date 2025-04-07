@@ -48,7 +48,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             }
             
             // Subscribe to property changes and handle gesture more efficiently
-            this.Subscribe(this, OnButtonPropertyChanged);
+            this.Observe(this, OnButtonPropertyChanged);
             
             // Set up gesture handling with cleaner pattern
             OnGestures = (parameters, info) =>
