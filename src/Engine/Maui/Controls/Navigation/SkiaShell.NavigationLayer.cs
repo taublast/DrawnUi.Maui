@@ -67,6 +67,8 @@ public partial class SkiaShell
                     aware.OnDisappearing();
                 }
 
+                control.IsVisible = false; //instantly stop animators
+
                 NavigationStack.Remove(control);
 
                 control?.SetParent(null);

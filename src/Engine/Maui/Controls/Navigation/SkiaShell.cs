@@ -958,6 +958,8 @@ namespace DrawnUi.Controls
 
                         removed = modal;
                     }
+
+                    modal.IsVisible = false; //will stop internally running animators if any
                 }
             }
 
