@@ -5,8 +5,16 @@
 /// </summary>
 public class RenderingAnimator : SkiaValueAnimator, IOverlayEffect
 {
+    public override void Stop()
+    {
+        var parent = Parent;
 
-	public bool Render(DrawingContext context, IDrawnBase control)
+        base.Stop();
+
+        parent?.Repaint();
+    }
+
+    public bool Render(DrawingContext context, IDrawnBase control)
 	{
 		return OnRendering(context, control);
 	}
