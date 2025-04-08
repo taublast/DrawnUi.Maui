@@ -1367,7 +1367,7 @@ namespace DrawnUi.Draw
         /// todo override for templated skialayout to use ViewsProvider
         /// </summary>
         /// <param name="newvalue"></param>
-        protected virtual void OnParentVisibilityChanged(bool newvalue)
+        public virtual void OnParentVisibilityChanged(bool newvalue)
         {
             if (!newvalue)
             {
@@ -1390,9 +1390,14 @@ namespace DrawnUi.Draw
                 return;
             }
 
+            PropagateVisibilityChanged(newvalue);
+        }
+
+        protected virtual void PropagateVisibilityChanged(bool newvalue)
+        {
             try
             {
-                foreach (var child in Views)
+                foreach (var child in Views.ToList())
                 {
                     child.OnParentVisibilityChanged(newvalue);
                 }

@@ -33,6 +33,28 @@ namespace DrawnUi.Draw
             base.OnFirstDrawn();
         }
 
+        protected override void PropagateVisibilityChanged(bool newvalue)
+        {
+            if (IsTemplated && RenderTree!=null)
+            {
+                try
+                {
+                    foreach (var cell in RenderTree.ToList())
+                    {
+                        cell.Control?.OnParentVisibilityChanged(newvalue);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Super.Log(e);
+                }
+
+                return;
+            }
+
+            base.PropagateVisibilityChanged(newvalue);
+        }
+
         /// <summary>
         /// Renders stack/wrap layout.
         /// Returns number of drawn children.
