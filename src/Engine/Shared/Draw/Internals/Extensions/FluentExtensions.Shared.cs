@@ -108,27 +108,29 @@ namespace DrawnUi.Draw
             return control;
         }
 
-        
+
         /// <summary>
-         /// Watches for property changes on the control's BindingContext of type TSource.
-         /// Works with both immediate and delayed BindingContext assignment scenarios.
-         /// </summary>
-         /// <typeparam name="T">Type of the control</typeparam>
-         /// <typeparam name="TSource">Expected type of the BindingContext</typeparam>
-         /// <param name="control">The control to watch</param>
-         /// <param name="callback">Callback executed when properties change, receiving the control, the typed BindingContext, and the property name</param>
-         /// <returns>The control for chaining</returns>
-         /// <remarks>
-         /// This method handles two scenarios:
-         /// 1. The BindingContext is already set when the method is called
-         /// 2. The BindingContext will be set sometime after the method is called
-         /// 
-         /// The callback will be invoked immediately after subscription with an empty property name,
-         /// allowing initialization based on the current state.
-         /// </remarks>
+        /// Watches for property changes on the control's BindingContext of type TSource.
+        /// Works with both immediate and delayed BindingContext assignment scenarios.
+        /// </summary>
+        /// <typeparam name="T">Type of the control</typeparam>
+        /// <typeparam name="TSource">Expected type of the BindingContext</typeparam>
+        /// <param name="control">The control to watch</param>
+        /// <param name="callback">Callback executed when properties change, receiving the control, the typed BindingContext, and the property name</param>
+        /// <param name="debugTypeMismatch">Whether to log a warning when the actual BindingContext type doesn't match TSource (default: true)</param>
+        /// <returns>The control for chaining</returns>
+        /// <remarks>
+        /// This method handles two scenarios:
+        /// 1. The BindingContext is already set when the method is called
+        /// 2. The BindingContext will be set sometime after the method is called
+        /// 
+        /// The callback will be invoked immediately after subscription with an empty property name,
+        /// allowing initialization based on the current state.
+        /// </remarks>
         public static T ObserveBindingContext<T, TSource>(
             this T control,
-            Action<T, TSource, string> callback)
+            Action<T, TSource, string> callback,
+            bool debugTypeMismatch = true)
             where T : SkiaControl
             where TSource : INotifyPropertyChanged
         {
@@ -163,33 +165,275 @@ namespace DrawnUi.Draw
             {
                 SubscribeToViewModel(tvm);
             }
-            else
+            else if (control.BindingContext != null && debugTypeMismatch)
             {
-                // Set up subscription for when BindingContext changes
-                string subscriptionKey = $"watch_{Guid.NewGuid()}";
-
-                void ControlOnApplyingBindingContext(object sender, EventArgs e)
-                {
-                    if (control.BindingContext is TSource tvm)
-                    {
-                        // Clean up the temporary event handler
-                        control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
-                        control.ExecuteUponDisposal.Remove(subscriptionKey);
-
-                        // Set up the actual subscription
-                        SubscribeToViewModel(tvm);
-                    }
-                }
-
-                // Register the temporary event handler and its cleanup
-                control.ApplyingBindingContext += ControlOnApplyingBindingContext;
-                control.ExecuteUponDisposal[subscriptionKey] = () => {
-                    control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
-                };
+                // BindingContext exists but is of the wrong type - log a warning
+                Trace.WriteLine($"[WARNING] ObserveBindingContext: Expected BindingContext type {typeof(TSource).Name} but got {control.BindingContext.GetType().Name} for control {control.GetType().Name}");
             }
+
+            // Set up subscription for when BindingContext changes
+            string subscriptionKey = $"watch_{Guid.NewGuid()}";
+
+            void ControlOnApplyingBindingContext(object sender, EventArgs e)
+            {
+                if (control.BindingContext is TSource tvm)
+                {
+                    // Clean up the temporary event handler
+                    control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
+                    control.ExecuteUponDisposal.Remove(subscriptionKey);
+
+                    // Set up the actual subscription
+                    SubscribeToViewModel(tvm);
+                }
+                else if (control.BindingContext != null && debugTypeMismatch)
+                {
+                    // BindingContext changed but is still the wrong type - log a warning
+                    Trace.WriteLine($"[WARNING] ObserveBindingContext: Expected BindingContext type {typeof(TSource).Name} but got {control.BindingContext.GetType().Name} for control {control.GetType().Name}");
+                }
+            }
+
+            // Register the temporary event handler and its cleanup
+            control.ApplyingBindingContext += ControlOnApplyingBindingContext;
+            control.ExecuteUponDisposal[subscriptionKey] = () => {
+                control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
+            };
 
             return control;
         }
+
+        /// <summary>
+        /// Observes a deeply nested property on the control's BindingContext in a type-safe manner.
+        /// </summary>
+        /// <typeparam name="T">Type of the control</typeparam>
+        /// <typeparam name="TSource">Expected type of the BindingContext</typeparam>
+        /// <typeparam name="TIntermediate1">Type of the first intermediate object</typeparam>
+        /// <typeparam name="TIntermediate2">Type of the second intermediate object</typeparam>
+        /// <typeparam name="TProperty">Type of the final property</typeparam>
+        /// <param name="control">The control to watch</param>
+        /// <param name="intermediate1Selector">Function to select the first intermediate object</param>
+        /// <param name="intermediate1PropertyName">Name of the first intermediate property</param>
+        /// <param name="intermediate2Selector">Function to select the second intermediate object</param>
+        /// <param name="intermediate2PropertyName">Name of the second intermediate property</param>
+        /// <param name="propertySelector">Function to select the final property</param>
+        /// <param name="propertyName">Name of the final property</param>
+        /// <param name="callback">Callback that receives the control and current property value</param>
+        /// <param name="defaultValue">Default value to use when any intermediate is null</param>
+        /// <param name="debugTypeMismatch">Whether to log warnings for type mismatches</param>
+        /// <returns>The control for chaining</returns>
+        public static T ObserveDeepNestedProperty<T, TSource, TIntermediate1, TIntermediate2, TProperty>(
+            this T control,
+            Func<TSource, TIntermediate1> intermediate1Selector,
+            string intermediate1PropertyName,
+            Func<TIntermediate1, TIntermediate2> intermediate2Selector,
+            string intermediate2PropertyName,
+            Func<TIntermediate2, TProperty> propertySelector,
+            string propertyName,
+            Action<T, TProperty> callback,
+            TProperty defaultValue = default,
+            bool debugTypeMismatch = true)
+            where T : SkiaControl
+            where TSource : INotifyPropertyChanged
+            where TIntermediate1 : class, INotifyPropertyChanged
+            where TIntermediate2 : class, INotifyPropertyChanged
+        {
+            // Dictionary to track all subscriptions for cleanup
+            Dictionary<string, PropertyChangedEventHandler> subscriptions = new Dictionary<string, PropertyChangedEventHandler>();
+            string mainKey = $"ObserveDeepNested_{Guid.NewGuid()}";
+
+            // Helper method to safely invoke callback
+            void InvokeCallback(T ctrl, TProperty value)
+            {
+                try
+                {
+                    callback(ctrl, value);
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"ObserveDeepNestedProperty: Error in callback: {ex.Message}");
+                }
+            }
+
+            // Helper to clean up a specific subscription
+            void CleanupSubscription(string key, object target)
+            {
+                if (subscriptions.TryGetValue(key, out var handler) && target != null)
+                {
+                    if (target is INotifyPropertyChanged notifyTarget)
+                    {
+                        notifyTarget.PropertyChanged -= handler;
+                    }
+                    subscriptions.Remove(key);
+                }
+            }
+
+            // Helper to observe the final property
+            void ObserveFinalProperty(T ctrl, TIntermediate2 intermediate2)
+            {
+                // If intermediate2 is null, call callback with default value and skip subscription
+                if (intermediate2 == null)
+                {
+                    InvokeCallback(ctrl, defaultValue);
+                    return;
+                }
+
+                // Clean up any existing subscription for this level
+                CleanupSubscription($"Final_{intermediate2.GetHashCode()}", intermediate2);
+
+                // Create new subscription
+                PropertyChangedEventHandler handler = (sender, args) =>
+                {
+                    if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == propertyName)
+                    {
+                        try
+                        {
+                            TProperty value = propertySelector(intermediate2);
+                            InvokeCallback(ctrl, value);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.WriteLine($"ObserveDeepNestedProperty: Error accessing final property: {ex.Message}");
+                        }
+                    }
+                };
+
+                // Register the handler
+                intermediate2.PropertyChanged += handler;
+                subscriptions[$"Final_{intermediate2.GetHashCode()}"] = handler;
+
+                // Initial callback
+                try
+                {
+                    TProperty value = propertySelector(intermediate2);
+                    InvokeCallback(ctrl, value);
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"ObserveDeepNestedProperty: Error in initial final callback: {ex.Message}");
+                }
+            }
+
+            // Helper to observe the second level
+            void ObserveSecondLevel(T ctrl, TIntermediate1 intermediate1)
+            {
+                // If intermediate1 is null, call callback with default value and skip subscription
+                if (intermediate1 == null)
+                {
+                    InvokeCallback(ctrl, defaultValue);
+                    return;
+                }
+
+                // Clean up any existing subscription for this level
+                CleanupSubscription($"Second_{intermediate1.GetHashCode()}", intermediate1);
+
+                // Create new subscription
+                PropertyChangedEventHandler handler = (sender, args) =>
+                {
+                    if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == intermediate2PropertyName)
+                    {
+                        // Clean up any existing final property subscriptions
+                        foreach (var key in subscriptions.Keys.Where(k => k.StartsWith("Final_")).ToList())
+                        {
+                            CleanupSubscription(key, null); // We don't have direct reference to the object
+                        }
+
+                        // Get new intermediate2 and observe it
+                        TIntermediate2 intermediate2 = intermediate2Selector(intermediate1);
+                        ObserveFinalProperty(ctrl, intermediate2);
+                    }
+                };
+
+                // Register the handler
+                intermediate1.PropertyChanged += handler;
+                subscriptions[$"Second_{intermediate1.GetHashCode()}"] = handler;
+
+                // Initial setup for second level
+                TIntermediate2 intermediate2 = intermediate2Selector(intermediate1);
+                ObserveFinalProperty(ctrl, intermediate2);
+            }
+
+            // Set up root observation
+            control.ObserveBindingContext<T, TSource>((ctrl, vm, prop) =>
+            {
+                if (prop == nameof(SkiaControl.BindingContext) || string.IsNullOrEmpty(prop))
+                {
+                    // When BindingContext is assigned, set up the first observation level
+                    TIntermediate1 intermediate1 = intermediate1Selector(vm);
+                    ObserveSecondLevel(ctrl, intermediate1);
+
+                    // Also set up subscription to intermediate1 property changes
+                    CleanupSubscription("Root", vm);
+
+                    PropertyChangedEventHandler rootHandler = (sender, args) =>
+                    {
+                        if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == intermediate1PropertyName)
+                        {
+                            // Clean up any existing second level subscriptions
+                            foreach (var key in subscriptions.Keys.Where(k => k.StartsWith("Second_") || k.StartsWith("Final_")).ToList())
+                            {
+                                CleanupSubscription(key, null); // We don't have direct reference to the object
+                            }
+
+                            // Get new intermediate1 and observe it
+                            TIntermediate1 newIntermediate1 = intermediate1Selector(vm);
+                            ObserveSecondLevel(ctrl, newIntermediate1);
+                        }
+                    };
+
+                    vm.PropertyChanged += rootHandler;
+                    subscriptions["Root"] = rootHandler;
+                }
+                else if (prop == intermediate1PropertyName)
+                {
+                    // The intermediate1 property changed on the ViewModel
+                    TIntermediate1 newIntermediate1 = intermediate1Selector(vm);
+
+                    // Clean up any existing second level subscriptions
+                    foreach (var key in subscriptions.Keys.Where(k => k.StartsWith("Second_") || k.StartsWith("Final_")).ToList())
+                    {
+                        CleanupSubscription(key, null);
+                    }
+
+                    ObserveSecondLevel(ctrl, newIntermediate1);
+                }
+            }, debugTypeMismatch);
+
+            // Set up cleanup
+            control.ExecuteUponDisposal[mainKey] = () =>
+            {
+                foreach (var subscription in subscriptions)
+                {
+                    if (subscription.Key == "Root" && control.BindingContext is TSource sourceT)
+                    {
+                        sourceT.PropertyChanged -= subscription.Value;
+                    }
+                    else if (subscription.Key.StartsWith("Second_") && control.BindingContext is TSource sourceT2)
+                    {
+                        var intermediate1 = intermediate1Selector(sourceT2);
+                        if (intermediate1 != null)
+                        {
+                            intermediate1.PropertyChanged -= subscription.Value;
+                        }
+                    }
+                    else if (subscription.Key.StartsWith("Final_") && control.BindingContext is TSource sourceVm)
+                    {
+                        var intermediate1 = intermediate1Selector(sourceVm);
+                        if (intermediate1 != null)
+                        {
+                            var intermediate2 = intermediate2Selector(intermediate1);
+                            if (intermediate2 != null)
+                            {
+                                intermediate2.PropertyChanged -= subscription.Value;
+                            }
+                        }
+                    }
+                }
+                subscriptions.Clear();
+            };
+
+            return control;
+        }
+
+
 
         /// <summary>
         /// Watches for property changes on another control's BindingContext of type TSource.
@@ -200,6 +444,7 @@ namespace DrawnUi.Draw
         /// <param name="control">The control to extend</param>
         /// <param name="target">The target control whose BindingContext to watch</param>
         /// <param name="callback">Callback executed when properties change, receiving the control, the target control, the typed BindingContext, and the property name</param>
+        /// <param name="debugTypeMismatch">Whether to log a warning when the actual BindingContext type doesn't match TSource (default: true)</param>
         /// <returns>The original control for chaining</returns>
         /// <remarks>
         /// This method handles two scenarios:
@@ -209,7 +454,8 @@ namespace DrawnUi.Draw
         public static T ObserveTargetBindingContext<T, TTarget, TSource>(
             this T control,
             TTarget target,
-            Action<T, TTarget, TSource, string> callback)
+            Action<T, TTarget, TSource, string> callback,
+            bool debugTypeMismatch = true)
             where T : SkiaControl
             where TTarget : SkiaControl
             where TSource : INotifyPropertyChanged
@@ -245,33 +491,236 @@ namespace DrawnUi.Draw
             {
                 SubscribeToViewModel(tvm);
             }
-            else
+            else if (target.BindingContext != null && debugTypeMismatch)
             {
-                // Set up subscription for when the target's BindingContext changes
-                string subscriptionKey = $"watch_other_{Guid.NewGuid()}";
-
-                void TargetOnApplyingBindingContext(object sender, EventArgs e)
-                {
-                    if (target.BindingContext is TSource tvm)
-                    {
-                        // Clean up the temporary event handler
-                        target.ApplyingBindingContext -= TargetOnApplyingBindingContext;
-                        control.ExecuteUponDisposal.Remove(subscriptionKey);
-
-                        // Set up the actual subscription
-                        SubscribeToViewModel(tvm);
-                    }
-                }
-
-                // Register the temporary event handler and its cleanup
-                target.ApplyingBindingContext += TargetOnApplyingBindingContext;
-                control.ExecuteUponDisposal[subscriptionKey] = () => {
-                    target.ApplyingBindingContext -= TargetOnApplyingBindingContext;
-                };
+                // BindingContext exists but is of the wrong type - log a warning
+                Trace.WriteLine($"[WARNING] ObserveTargetBindingContext: Expected BindingContext type {typeof(TSource).Name} but got {target.BindingContext.GetType().Name} for target control {target.GetType().Name}");
             }
+
+            // Set up subscription for when the target's BindingContext changes
+            string subscriptionKey = $"watch_other_{Guid.NewGuid()}";
+
+            void TargetOnApplyingBindingContext(object sender, EventArgs e)
+            {
+                if (target.BindingContext is TSource tvm)
+                {
+                    // Clean up the temporary event handler
+                    target.ApplyingBindingContext -= TargetOnApplyingBindingContext;
+                    control.ExecuteUponDisposal.Remove(subscriptionKey);
+
+                    // Set up the actual subscription
+                    SubscribeToViewModel(tvm);
+                }
+                else if (target.BindingContext != null && debugTypeMismatch)
+                {
+                    // BindingContext changed but is still the wrong type - log a warning
+                    Trace.WriteLine($"[WARNING] ObserveTargetBindingContext: Expected BindingContext type {typeof(TSource).Name} but got {target.BindingContext.GetType().Name} for target control {target.GetType().Name}");
+                }
+            }
+
+            // Register the temporary event handler and its cleanup
+            target.ApplyingBindingContext += TargetOnApplyingBindingContext;
+            control.ExecuteUponDisposal[subscriptionKey] = () => {
+                target.ApplyingBindingContext -= TargetOnApplyingBindingContext;
+            };
 
             return control;
         }
+
+
+
+        /// <summary>
+        /// Observes a nested property on the control's BindingContext in a type-safe manner.
+        /// </summary>
+        /// <typeparam name="T">Type of the control</typeparam>
+        /// <typeparam name="TSource">Expected type of the BindingContext</typeparam>
+        /// <typeparam name="TIntermediate">Type of the intermediate object</typeparam>
+        /// <typeparam name="TProperty">Type of the final property</typeparam>
+        /// <param name="control">The control to watch</param>
+        /// <param name="intermediateSelector">Function to select the intermediate object</param>
+        /// <param name="intermediatePropertyName">Name of the intermediate property</param>
+        /// <param name="propertySelector">Function to select the final property</param>
+        /// <param name="propertyName">Name of the final property</param>
+        /// <param name="callback">Callback that receives the control and current property value</param>
+        /// <param name="defaultValue">Default value to use when intermediate is null</param>
+        /// <param name="debugTypeMismatch">Whether to log warnings for type mismatches</param>
+        /// <returns>The control for chaining</returns>
+        public static T ObserveNestedProperty<T, TSource, TIntermediate, TProperty>(
+            this T control,
+            Func<TSource, TIntermediate> intermediateSelector,
+            string intermediatePropertyName,
+            Func<TIntermediate, TProperty> propertySelector,
+            string propertyName,
+            Action<T, TProperty> callback,
+            TProperty defaultValue = default,
+            bool debugTypeMismatch = true)
+            where T : SkiaControl
+            where TSource : INotifyPropertyChanged
+            where TIntermediate : class, INotifyPropertyChanged
+        {
+            // Dictionary to track all subscriptions for cleanup
+            Dictionary<string, PropertyChangedEventHandler> subscriptions = new Dictionary<string, PropertyChangedEventHandler>();
+            string mainKey = $"ObserveNested_{intermediatePropertyName}_{propertyName}_{Guid.NewGuid()}";
+
+            // Helper method to safely invoke callback
+            void InvokeCallback(T ctrl, TProperty value)
+            {
+                try
+                {
+                    callback(ctrl, value);
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"ObserveNestedProperty: Error in callback: {ex.Message}");
+                }
+            }
+
+            // Helper method to clean up an intermediate subscription
+            void CleanupIntermediateSubscription(TIntermediate intermediate)
+            {
+                string key = $"Intermediate_{intermediate?.GetHashCode()}";
+                if (subscriptions.TryGetValue(key, out var handler) && intermediate != null)
+                {
+                    intermediate.PropertyChanged -= handler;
+                    subscriptions.Remove(key);
+                }
+            }
+
+            // Helper method to observe the nested property
+            void ObserveIntermediateProperty(T ctrl, TIntermediate intermediate)
+            {
+                // If intermediate is null, call callback with default value and skip subscription
+                if (intermediate == null)
+                {
+                    InvokeCallback(ctrl, defaultValue);
+                    return;
+                }
+
+                // Clean up any existing subscription for this intermediate
+                CleanupIntermediateSubscription(intermediate);
+
+                // Create new subscription
+                PropertyChangedEventHandler handler = (sender, args) =>
+                {
+                    if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == propertyName)
+                    {
+                        try
+                        {
+                            TProperty value = propertySelector(intermediate);
+                            InvokeCallback(ctrl, value);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.WriteLine($"ObserveNestedProperty: Error accessing property: {ex.Message}");
+                        }
+                    }
+                };
+
+                // Register the handler
+                intermediate.PropertyChanged += handler;
+                subscriptions[$"Intermediate_{intermediate.GetHashCode()}"] = handler;
+
+                // Initial callback
+                try
+                {
+                    TProperty value = propertySelector(intermediate);
+                    InvokeCallback(ctrl, value);
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"ObserveNestedProperty: Error in initial callback: {ex.Message}");
+                }
+            }
+
+            // Set up root observation
+            control.ObserveBindingContext<T, TSource>((ctrl, vm, prop) =>
+            {
+                if (prop == nameof(SkiaControl.BindingContext) || string.IsNullOrEmpty(prop))
+                {
+                    // When BindingContext is assigned, set up the first observation level
+                    var intermediate = intermediateSelector(vm);
+                    ObserveIntermediateProperty(ctrl, intermediate);
+
+                    // Also set up subscription to intermediate property changes
+                    if (subscriptions.TryGetValue("Root", out var oldHandler))
+                    {
+                        vm.PropertyChanged -= oldHandler;
+                    }
+
+                    PropertyChangedEventHandler rootHandler = (sender, args) =>
+                    {
+                        if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == intermediatePropertyName)
+                        {
+                            var newIntermediate = intermediateSelector(vm);
+
+                            // If the intermediate changed, update subscription
+                            ObserveIntermediateProperty(ctrl, newIntermediate);
+                        }
+                    };
+
+                    vm.PropertyChanged += rootHandler;
+                    subscriptions["Root"] = rootHandler;
+                }
+                else if (prop == intermediatePropertyName)
+                {
+                    // The intermediate property changed on the ViewModel
+                    var newIntermediate = intermediateSelector(vm);
+                    ObserveIntermediateProperty(ctrl, newIntermediate);
+                }
+                else if (prop == propertyName)
+                {
+                    // The specific property we're watching changed
+                    var intermediate = intermediateSelector(vm);
+                    if (intermediate != null)
+                    {
+                        try
+                        {
+                            TProperty value = propertySelector(intermediate);
+                            InvokeCallback(ctrl, value);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.WriteLine($"ObserveNestedProperty: Error accessing property after change: {ex.Message}");
+                        }
+                    }
+                    else
+                    {
+                        InvokeCallback(ctrl, defaultValue);
+                    }
+                }
+            }, debugTypeMismatch);
+
+            // Set up cleanup
+            control.ExecuteUponDisposal[mainKey] = () =>
+            {
+                foreach (var subscription in subscriptions)
+                {
+                    if (subscription.Key == "Root" && control.BindingContext is TSource sourceT)
+                    {
+                        sourceT.PropertyChanged -= subscription.Value;
+                    }
+                    else if (subscription.Key.StartsWith("Intermediate_"))
+                    {
+                        // Extract the hash code from the key
+                        if (int.TryParse(subscription.Key.Substring("Intermediate_".Length), out int hashCode))
+                        {
+                            if (control.BindingContext is TSource sourceVm)
+                            {
+                                var intermediate = intermediateSelector(sourceVm);
+                                if (intermediate != null && intermediate.GetHashCode() == hashCode)
+                                {
+                                    intermediate.PropertyChanged -= subscription.Value;
+                                }
+                            }
+                        }
+                    }
+                }
+                subscriptions.Clear();
+            };
+
+            return control;
+        }
+
 
         /// <summary>
         /// Simple non-compiled binding
