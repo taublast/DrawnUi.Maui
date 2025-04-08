@@ -1371,7 +1371,7 @@ namespace DrawnUi.Draw
         {
             if (!newvalue)
             {
-                //DestroyRenderingObject();
+                StopPostAnimators();
             }
 
             Superview?.SetViewTreeVisibilityByParent(this, newvalue);
@@ -1441,10 +1441,23 @@ namespace DrawnUi.Draw
                 Superview?.SetViewTreeVisibilityByParent(this, newvalue);
 
                 Superview?.UpdateRenderingChains(this);
+
+                if (!newvalue)
+                {
+                    StopPostAnimators();
+                }
             }
             catch (Exception e)
             {
                 Super.Log(e);
+            }
+        }
+
+        void StopPostAnimators()
+        {
+            foreach (IOverlayEffect effect in PostAnimators.ToList())
+            {
+                effect.Stop();
             }
         }
 
@@ -3875,6 +3888,8 @@ namespace DrawnUi.Draw
             IsDisposed = true;
 
             SizeChanged -= ViewSizeChanged;
+
+            StopPostAnimators();
 
             //for the double buffering case it's safer to delay
             Tasks.StartDelayed(DisposalDelay, () =>
