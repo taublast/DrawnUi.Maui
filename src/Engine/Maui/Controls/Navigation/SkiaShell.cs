@@ -959,7 +959,6 @@ namespace DrawnUi.Controls
                         removed = modal;
                     }
 
-                    modal.IsVisible = false; //will stop internally running animators if any
                 }
             }
 
@@ -996,6 +995,8 @@ namespace DrawnUi.Controls
                                 {
                                     aware.OnDisappearing();
                                 }
+
+                                removed.IsVisible = false; //will stop internally running animators if any
 
                                 var inStack = NavigationStackModals.FirstOrDefault(x => x.Page == modalWrapper);
                                 if (inStack != null)
