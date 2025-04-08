@@ -603,14 +603,32 @@ namespace DrawnUi.Draw
 
         public void StopScrolling()
         {
-            _scrollerX?.Stop();
-            _scrollerY?.Stop();
+            if (_scrollerX!=null && _scrollerX.IsRunning)
+            {
+                _scrollerX.Stop();
+            }
+            if (_scrollerY != null && _scrollerY.IsRunning)
+            {
+                _scrollerY.Stop();
+            }
 
-            _animatorFlingX?.Stop();
-            _animatorFlingY?.Stop();
+            if (_animatorFlingX != null && _animatorFlingX.IsRunning)
+            {
+                _animatorFlingX.Stop();
+            }
+            if (_animatorFlingY != null && _animatorFlingY.IsRunning)
+            {
+                _animatorFlingY.Stop();
+            }
 
-            _vectorAnimatorBounceX?.Stop();
-            _vectorAnimatorBounceY?.Stop();
+            if (_vectorAnimatorBounceX != null && _vectorAnimatorBounceX.IsRunning)
+            {
+                _vectorAnimatorBounceX.Stop();
+            }
+            if (_vectorAnimatorBounceY != null && _vectorAnimatorBounceY.IsRunning)
+            {
+                _vectorAnimatorBounceY.Stop();
+            }
 
             VelocityTrackerPan.Clear();
             VelocityTrackerScale.Clear();

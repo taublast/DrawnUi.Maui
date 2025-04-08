@@ -206,7 +206,10 @@ public class SnappingLayout : SkiaLayout
 
         if (animate && Height > 0)
         {
-            VectorAnimatorSpring?.Stop();
+            if (VectorAnimatorSpring != null && VectorAnimatorSpring.IsRunning)
+            {
+                VectorAnimatorSpring?.Stop();
+            }
 
             var start = new Vector2((float)TranslationX, (float)TranslationY);
             var end = new Vector2((float)targetOffset.X, (float)targetOffset.Y);

@@ -84,9 +84,17 @@ public partial class SkiaMauiElement
     {
         if (element.Handler?.PlatformView is FrameworkElement nativeView)
         {
-            nativeView.Visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Collapsed;
+            var visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Collapsed;
 
             Debug.WriteLine($"Visibility {nativeView.Visibility}");
+
+            if (nativeView.FocusState != FocusState.Unfocused && visibility == Visibility.Collapsed)
+            {
+                nativeView.Unfocus(this);
+            }
+
+            nativeView.Visibility = visibility;
+
             bool needLayout = false;
 
             if (nativeView.Visibility == Visibility.Visible)
@@ -127,7 +135,8 @@ public partial class SkiaMauiElement
                     needLayout = true;
                 }
 
-                nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+                if (needLayout)
+                    nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
 
                 if (!WasRendered)
                     WasRendered = nativeView.RenderSize.Width > 0;

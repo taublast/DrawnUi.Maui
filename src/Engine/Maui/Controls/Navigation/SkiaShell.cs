@@ -1771,7 +1771,23 @@ namespace DrawnUi.Controls
         {
             if (ShellLayout == null || replace)
             {
-                ShellLayout = this.Canvas.Content as SkiaControl;
+                SkiaControl previousRoot = null;
+                if (replace)
+                {
+                    previousRoot = ShellLayout;
+                }
+
+                var root = ShellLayout = this.Canvas.Content as SkiaControl;
+                ShellLayout = root.FindViewByTag("ShellLayout");
+                if (ShellLayout == null)
+                {
+                    ShellLayout = root;
+                }
+
+                if (ShellLayout == null)
+                {
+                    throw new Exception("[DrawnUi] `ShellLayout` element couldn't be imported by SkiaShell");
+                }
 
                 RootLayout = ShellLayout.FindViewByTag("RootLayout");
                 if (RootLayout == null)
@@ -1780,6 +1796,11 @@ namespace DrawnUi.Controls
                 }
 
                 ImportNavigationLayout();
+
+                if (previousRoot != null && previousRoot != ShellLayout)
+                {
+                    ShellLayout.DisposeObject(previousRoot);
+                }
             }
         }
 
