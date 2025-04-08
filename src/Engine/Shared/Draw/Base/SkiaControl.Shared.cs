@@ -1455,9 +1455,14 @@ namespace DrawnUi.Draw
 
         void StopPostAnimators()
         {
-            foreach (IOverlayEffect effect in PostAnimators.ToList())
+            var process = PostAnimators.ToList();
+            if (process.Count > 0)
             {
-                effect.Stop();
+                foreach (IOverlayEffect effect in process)
+                {
+                    effect.Stop();
+                }
+                Repaint();
             }
         }
 
