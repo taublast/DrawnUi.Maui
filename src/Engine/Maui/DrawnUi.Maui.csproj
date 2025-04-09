@@ -103,24 +103,21 @@
 	</ItemGroup>
 
   <ItemGroup>
-      <PackageReference Include="AppoMobi.Specials" Version="9.0.2" />
+      <!--MIT open source-->
       <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.4" />
-    <!--for parsing markdown text-->
-    <PackageReference Include="Markdig" Version="0.34.0" />
-    <!--for caching images-->
-    <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
-    <!--core tools-->
-
-      
+      <!--MIT open source .net helpers and extensions-->
+      <PackageReference Include="AppoMobi.Specials" Version="9.0.2" />
+      <!--parsing markdown text-->
+      <PackageReference Include="Markdig" Version="0.34.0" />
+      <!--caching bitmaps etc-->
+      <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
   </ItemGroup>
 
-  <!--ANDROID-->
+  <!--ANDROID ONLY-->
   <ItemGroup Condition="$(TargetFramework.Contains('android')) == true">
-
       <!--fix android bad alignement-->
       <PackageReference Include="HarfBuzzSharp" Version="8.3.0.1" />
-
-      <!--native interop helpers-->
+      <!--native interop todo expose source-->
     <PackageReference Include="AppoMobi.Maui.Native" Version="1.0.1.0-pre" />
   </ItemGroup>
 
