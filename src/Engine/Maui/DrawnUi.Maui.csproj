@@ -103,7 +103,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-
+      <PackageReference Include="AppoMobi.Specials" Version="9.0.2" />
       <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.4" />
     <!--for parsing markdown text-->
     <PackageReference Include="Markdig" Version="0.34.0" />
