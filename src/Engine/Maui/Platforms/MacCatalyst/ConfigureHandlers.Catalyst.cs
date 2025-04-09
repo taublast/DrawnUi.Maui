@@ -15,7 +15,6 @@ namespace DrawnUi.Draw
 #else
             handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKMetalViewRenderer));
 #endif
-
         }
     }
 }
