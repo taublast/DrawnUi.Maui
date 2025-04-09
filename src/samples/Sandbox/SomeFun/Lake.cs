@@ -172,7 +172,7 @@ public partial class Lake : SkiaLayout
         _duck.TranslationY = _moveToY;
     }
 
-    protected override void OnParentVisibilityChanged(bool newvalue)
+    public override void OnParentVisibilityChanged(bool newvalue)
     {
         if (!newvalue)
         {

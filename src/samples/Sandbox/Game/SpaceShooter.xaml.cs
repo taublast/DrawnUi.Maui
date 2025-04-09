@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using AppoMobi.Maui.Gestures;
 using AppoMobi.Specials;
-using DrawnUi.Game;
+using DrawnUi.Gaming;
 
 namespace SpaceShooter.Game;
 

@@ -82,7 +82,7 @@ namespace Sandbox
                                         })
                                     }
                                 }
-                                .Subscribe(EntryHidden, (me, prop) =>
+                                .Observe(EntryHidden, (me, prop) =>
                                 {
                                     //programmatic triggers
                                     if (prop == nameof(EntryHidden.IsFocused))

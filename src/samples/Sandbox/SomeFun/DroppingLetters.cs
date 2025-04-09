@@ -18,7 +18,7 @@ public class DroppingLetters : SkiaLabel
         base.OnDisposing();
     }
 
-    protected override void OnParentVisibilityChanged(bool newvalue)
+    public override void OnParentVisibilityChanged(bool newvalue)
     {
         if (!newvalue)
         {

@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:game="clr-namespace:SpaceShooter.Game"
-    xmlns:game1="clr-namespace:DrawnUi.Game;assembly=DrawnUi.Maui.Game"
+    xmlns:game1="clr-namespace:DrawnUi.Gaming;assembly=DrawnUi.Maui.Game"
     x:DataType="game:SpaceShooter"
     BackgroundColor="#000011"
     HorizontalOptions="Fill"
@@ -40,10 +40,10 @@
 
     <!--  STARS PARALLAX  -->
     <draw:SkiaImageTiles
-        Tag="ParallaxLayer"
         x:Name="ParallaxLayer"
         HorizontalOptions="Fill"
         Source="Space/Sprites/stars.png"
+        Tag="ParallaxLayer"
         TileAspect="Cover"
         TileCacheType="Image"
         TileHeight="600"
@@ -288,9 +288,7 @@
 
                 </draw:SkiaShape.Shadows>
 
-                <draw:SkiaLayout
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Start">
+                <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Start">
 
                     <draw:SkiaImage
                         Aspect="AspectCover"
