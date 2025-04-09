@@ -9,6 +9,9 @@ using SkiaSharp.Views.iOS;
 namespace DrawnUi.Views
 {
 
+    /// <summary>
+    /// A Metal-backed SkiaSharp view that implements retained rendering  
+    /// </summary>
     [Register(nameof(SKMetalViewRetained))]
     [DesignTimeVisible(true)]
     public class SKMetalViewRetained : MTKView, IMTKViewDelegate, IComponent
@@ -24,24 +27,39 @@ namespace DrawnUi.Views
             remove { DisposedInternal -= value; }
         }
 
-        private bool designMode;
+        private bool _designMode;
+        private IMTLDevice _device;
+        private GRMtlBackendContext _backendContext;
+        private GRContext _context;
+        private SKSize _canvasSize;
 
-        private GRMtlBackendContext backendContext;
-        private GRContext context;
+        // Double-buffering for thread safety
+        private IMTLTexture _retainedTexture; // Current texture being rendered
+        private IMTLTexture _pendingTexture; // New texture awaiting swap
+        private readonly object _textureSwapLock = new object();
+        private volatile bool _swapPending; // Flag to signal swap
+        private bool _firstFrame = true; // Track first frame for initial setup
+        private bool _needsFullRedraw = true; // For initial frame or size change
 
-        public bool ManualRefresh
-        {
-            get
-            {
-                return Paused && EnableSetNeedsDisplay;
-            }
-        }
+        /// <summary>
+        /// Gets a value indicating whether the view is using manual refresh mode.
+        /// </summary>
+        public bool ManualRefresh => Paused && EnableSetNeedsDisplay;
+
+        /// <summary>
+        /// Gets the current canvas size.
+        /// </summary>
+        public SKSize CanvasSize => _canvasSize;
+
+        /// <summary>
+        /// Gets the SkiaSharp GRContext used for rendering.
+        /// </summary>
+        public GRContext GRContext => _context;
 
         // created in code
         public SKMetalViewRetained()
             : this(CGRect.Empty)
         {
-            Initialize();
         }
 
         // created in code
@@ -67,28 +85,29 @@ namespace DrawnUi.Views
         // created via designer
         public override void AwakeFromNib()
         {
+            base.AwakeFromNib();
             Initialize();
         }
 
         private void Initialize()
         {
-            designMode = ((IComponent)this).Site?.DesignMode == true;// || !EnvironmentExtensions.IsValidEnvironment;
+            _designMode = ((IComponent)this).Site?.DesignMode == true;
 
-            if (designMode)
+            if (_designMode)
                 return;
 
-            var device = MTLDevice.SystemDefault;
-            if (device == null)
+            _device = Device ?? MTLDevice.SystemDefault;
+            if (_device == null)
             {
                 Console.WriteLine("Metal is not supported on this device.");
                 return;
             }
 
+            // Configure the Metal view
             ColorPixelFormat = MTLPixelFormat.BGRA8Unorm;
             DepthStencilPixelFormat = MTLPixelFormat.Depth32Float_Stencil8;
 
-            //https://developer.apple.com/documentation/metal/developing-metal-apps-that-run-in-simulator?language=objc
-            //make simulator performant
+            // Make simulator performant
             if (DeviceInfo.Current.DeviceType == DeviceType.Virtual)
             {
                 DepthStencilStorageMode = MTLStorageMode.Private;
@@ -100,117 +119,195 @@ namespace DrawnUi.Views
                 SampleCount = 2;
             }
 
-            //gpu memory used NOT only for rendering
-            //but could be read by skiasharp too
+            // GPU memory used not only for rendering but could be read by SkiaSharp too
             FramebufferOnly = false;
 
-            Device = device;
-            backendContext = new GRMtlBackendContext
+            Device = _device;
+            _backendContext = new GRMtlBackendContext
             {
-                Device = device,
-                Queue = device.CreateCommandQueue(),
+                Device = _device,
+                Queue = _device.CreateCommandQueue()
             };
 
-            // hook up the drawing
+            // Hook up the drawing
             Delegate = this;
         }
 
-        public SKSize CanvasSize { get; private set; }
-
-        public GRContext GRContext => context;
-
         void IMTKViewDelegate.DrawableSizeWillChange(MTKView view, CGSize size)
         {
-            CanvasSize = size.ToSKSize();
+            var newSize = size.ToSKSize();
+
+            // Only update if the size actually changed
+            if (newSize.Width != _canvasSize.Width || newSize.Height != _canvasSize.Height)
+            {
+                _canvasSize = newSize;
+                PrepareNewTexture(); // Schedule texture update
+            }
 
             if (ManualRefresh)
                 SetNeedsDisplay();
         }
 
-        SKSurface _surface;
-        GRBackendRenderTarget _lastTarget;
-        SKSize _lastTargetInfo;
-
-
-        public override void Draw()
-        {
-            base.Draw();
-
-        }
-
         void IMTKViewDelegate.Draw(MTKView view)
         {
-            if (designMode)
+            if (_designMode || _backendContext.Queue == null || CurrentDrawable?.Texture == null)
                 return;
 
-            if (backendContext.Device == null || backendContext.Queue == null || CurrentDrawable?.Texture == null)
+            _canvasSize = DrawableSize.ToSKSize();
+            if (_canvasSize.Width <= 0 || _canvasSize.Height <= 0)
                 return;
 
-            CanvasSize = DrawableSize.ToSKSize();
+            // Create context if needed
+            _context ??= GRContext.CreateMetal(_backendContext);
 
-            if (CanvasSize.Width <= 0 || CanvasSize.Height <= 0)
-                return;
-
-            // create the contexts if not done already
-            context ??= GRContext.CreateMetal(backendContext);
-
-            const SKColorType colorType = SKColorType.Bgra8888;
-            const GRSurfaceOrigin surfaceOrigin = GRSurfaceOrigin.TopLeft;
-
-            bool needsNewSurface = _surface == null ||
-                                   _lastTarget == null ||
-                                   !_lastTarget.IsValid ||
-                                   _lastTargetInfo != CanvasSize;
-
-            if (needsNewSurface)
+            // Handle initial frame or ensure texture exists
+            if (_firstFrame || _retainedTexture == null)
             {
-                DisposeTarget();
-
-                _lastTargetInfo = CanvasSize;
-
-                // create the render target
-                var metalInfo = new GRMtlTextureInfo(CurrentDrawable.Texture);
-                _lastTarget = new GRBackendRenderTarget((int)CanvasSize.Width, (int)CanvasSize.Height, (int)SampleCount, metalInfo);
-
-                // create the surface
-                _surface = SKSurface.Create(context, _lastTarget, surfaceOrigin, colorType);
+                PrepareNewTexture();
+                PerformTextureSwap(); // Immediate swap for first frame
+                _firstFrame = false;
             }
 
-            // start drawing
-            var e = new SkiaSharp.Views.iOS.SKPaintMetalSurfaceEventArgs(_surface, _lastTarget, surfaceOrigin, colorType);
+            // Get current texture (snapshot to avoid changes during rendering)
+            IMTLTexture textureToUse;
+            lock (_textureSwapLock)
+            {
+                // Check for pending texture swap
+                if (_swapPending && _pendingTexture != null)
+                {
+                    PerformTextureSwap();
+                }
+
+                textureToUse = _retainedTexture;
+                if (textureToUse == null)
+                {
+                    // Emergency texture creation if somehow we still don't have one
+                    PrepareNewTexture();
+                    PerformTextureSwap();
+                    textureToUse = _retainedTexture;
+
+                    // Still null? Can't continue.
+                    if (textureToUse == null)
+                        return;
+                }
+            }
+
+            // Create Metal texture info
+            var metalInfo = new GRMtlTextureInfo(textureToUse);
+            // Create render target
+            using var renderTarget = new GRBackendRenderTarget(
+                (int)_canvasSize.Width,
+                (int)_canvasSize.Height,
+                1, // Sample count must be 1 for render targets
+                metalInfo);
+
+            // Create surface from the render target
+            using var surface = SKSurface.Create(_context, renderTarget, GRSurfaceOrigin.TopLeft, SKColorType.Bgra8888);
+            using var canvas = surface.Canvas;
+
+            // Pass surface to user for incremental updates
+            var e = new SKPaintMetalSurfaceEventArgs(surface, renderTarget, GRSurfaceOrigin.TopLeft, SKColorType.Bgra8888);
             OnPaintSurface(e);
 
-            // flush the SkiaSharp contents
-            _surface.Canvas.Flush();
-            _surface.Flush();
-            context.Flush();
+            // Flush SkiaSharp contents
+            canvas.Flush();
+            surface.Flush();
+            _context.Flush();
 
-            // present
-            using var commandBuffer = backendContext.Queue.CommandBuffer();
-            commandBuffer.AddCompletedHandler(buffer => {
+            // Copy retained texture to screen
+            using var commandBuffer = _backendContext.Queue.CommandBuffer();
+            if (commandBuffer == null) return;
+            using var blitEncoder = commandBuffer.BlitCommandEncoder;
 
-                // GPU finished rendering
-                // runs on background thread
+            blitEncoder.CopyFromTexture(
+                textureToUse, 0, 0, new MTLOrigin(0, 0, 0),
+                new MTLSize((int)_canvasSize.Width, (int)_canvasSize.Height, 1),
+                CurrentDrawable.Texture, 0, 0, new MTLOrigin(0, 0, 0));
 
-
-
-
-            });
+            blitEncoder.EndEncoding();
             commandBuffer.PresentDrawable(CurrentDrawable);
             commandBuffer.Commit();
         }
 
-        void DisposeTarget()
+        /// <summary>
+        /// Creates a new texture for future use
+        /// </summary>
+        private void PrepareNewTexture()
         {
-            _lastTarget?.Dispose();
-            _surface?.Dispose();
+            if (_canvasSize.Width <= 0 || _canvasSize.Height <= 0 || _device == null)
+                return;
+
+            var descriptor = new MTLTextureDescriptor
+            {
+                TextureType = MTLTextureType.k2D,
+                Width = (nuint)_canvasSize.Width,
+                Height = (nuint)_canvasSize.Height,
+                PixelFormat = ColorPixelFormat,
+                Usage = MTLTextureUsage.RenderTarget | MTLTextureUsage.ShaderRead,
+                StorageMode = DeviceInfo.Current.DeviceType == DeviceType.Virtual
+                    ? MTLStorageMode.Private
+                    : MTLStorageMode.Shared,
+                SampleCount = 1 //required 1 for skiasharp 
+            };
+
+            lock (_textureSwapLock)
+            {
+                // Dispose any existing pending texture
+                _pendingTexture?.Dispose();
+                _pendingTexture = _device.CreateTexture(descriptor);
+                _swapPending = true;
+            }
         }
 
-        public event EventHandler<SkiaSharp.Views.iOS.SKPaintMetalSurfaceEventArgs> PaintSurface;
+        /// <summary>
+        /// Performs the actual texture swap. Must be called within the _textureSwapLock.
+        /// </summary>
+        private void PerformTextureSwap()
+        {
+            // This should only be called from within a lock(_textureSwapLock) block
+            if (_pendingTexture != null)
+            {
+                _retainedTexture?.Dispose();
+                _retainedTexture = _pendingTexture;
+                _pendingTexture = null;
+                _swapPending = false;
+            }
+        }
 
-        protected virtual void OnPaintSurface(SkiaSharp.Views.iOS.SKPaintMetalSurfaceEventArgs e)
+        public event EventHandler<SKPaintMetalSurfaceEventArgs> PaintSurface;
+
+        /// <summary>
+        /// Raises the PaintSurface event.
+        /// </summary>
+        protected virtual void OnPaintSurface(SKPaintMetalSurfaceEventArgs e)
         {
             PaintSurface?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Forces the view to redraw its contents.
+        /// </summary>
+        public void InvalidateSurface()
+        {
+            SetNeedsDisplay();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                lock (_textureSwapLock)
+                {
+                    _retainedTexture?.Dispose();
+                    _pendingTexture?.Dispose();
+                    _retainedTexture = null;
+                    _pendingTexture = null;
+                    _swapPending = false;
+                }
+                _context?.Dispose();
+                _context = null;
+            }
+            base.Dispose(disposing);
         }
     }
 }
