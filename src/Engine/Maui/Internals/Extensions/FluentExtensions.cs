@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.ComponentModel;
+using System.Windows.Input;
 
 namespace DrawnUi.Draw
 {
@@ -159,9 +160,31 @@ namespace DrawnUi.Draw
         /// <param name="path">The binding path</param>
         /// <param name="mode">The binding mode</param>
         /// <returns>The control for chaining</returns>
-        public static T WithBinding<T, TProperty>(this T view, BindableProperty targetProperty, string path, BindingMode mode = BindingMode.Default) where T : SkiaControl
+        public static T BindProperty<T, TProperty>(this T view, BindableProperty targetProperty, string path, BindingMode mode = BindingMode.Default) where T : SkiaControl
         {
             view.SetBinding(targetProperty, path, mode);
+            return view;
+        }
+
+        /// <summary>
+        /// Binds a property of a view to a source property using a specified path and binding mode.
+        /// </summary>
+        /// <typeparam name="T">Represents a type that extends SkiaControl, allowing for binding operations on UI elements.</typeparam>
+        /// <param name="view">The UI element that will have its property bound to a source property.</param>
+        /// <param name="targetProperty">The property of the view that will receive the binding.</param>
+        /// <param name="source">The object that implements property change notifications and serves as the data source.</param>
+        /// <param name="path">The path to the property on the source object that will be bound to the target property.</param>
+        /// <param name="mode">Specifies the binding mode, determining how the source and target properties interact.</param>
+        /// <returns>Returns the view after setting up the binding.</returns>
+        public static T BindProperty<T>(this T view,
+            BindableProperty targetProperty,
+            INotifyPropertyChanged source,
+            string path,
+            BindingMode mode = BindingMode.Default)
+            where T : SkiaControl
+        {
+            view.SetBinding(targetProperty, new Binding { Path = path, Mode = mode, Source = source });
+
             return view;
         }
 
@@ -177,7 +200,7 @@ namespace DrawnUi.Draw
         /// <param name="converterParameter">The converter parameter</param>
         /// <param name="mode">The binding mode</param>
         /// <returns>The control for chaining</returns>
-        public static T WithBinding<T, TProperty>(this T view, BindableProperty targetProperty, string path, IValueConverter converter, object converterParameter = null, BindingMode mode = BindingMode.Default) where T : SkiaControl
+        public static T BindProperty<T, TProperty>(this T view, BindableProperty targetProperty, string path, IValueConverter converter, object converterParameter = null, BindingMode mode = BindingMode.Default) where T : SkiaControl
         {
             view.SetBinding(targetProperty, new Binding(path, mode, converter, converterParameter));
             return view;

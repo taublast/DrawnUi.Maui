@@ -466,7 +466,8 @@ public class SnappingLayout : SkiaLayout
         25.0);
 
     /// <summary>
-    /// If velocity is near 0 define how much we multiply the auto-velocity used to animate snappoing point. For example when in carousel you cancel the swipe and release finger..
+    /// If velocity is near 0 define how much we multiply the auto-velocity used to animate snappoing point.
+    /// For example when in carousel you cancel the swipe and release finger..
     /// </summary>
     public double AutoVelocityMultiplyPts
     {

@@ -243,8 +243,8 @@ public partial class SkiaLayout
             colDef.ItemSizeChanged += ((SkiaLayout)bindable).DefinitionsChanged;
             return colDef;
         });
-    [TypeConverter(typeof(ColumnDefinitionCollectionTypeConverter))]
 
+    [TypeConverter(typeof(ColumnDefinitionCollectionTypeConverter))]
     public ColumnDefinitionCollection ColumnDefinitions
     {
         get { return (ColumnDefinitionCollection)GetValue(ColumnDefinitionsProperty); }
