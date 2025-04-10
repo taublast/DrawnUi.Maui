@@ -756,14 +756,12 @@ public class SkiaMarkdownLabel : SkiaLabel
         nameof(UnderlineWidth),
         typeof(double),
         typeof(SkiaLabel),
-        defaultValueCreator: (instance) =>
-        {
-            if (Super.Screen.Density == 0)
-                return 1.0;
-            return 1 / Super.Screen.Density; //1 px
-        },
+        -1,
         propertyChanged: NeedUpdateFont);
 
+    /// <summary>
+    /// Used for underlining text, in points. If you set it negative it will be in PIXELS instead of points. Default is -1 (1 pixel).
+    /// </summary>
     public double UnderlineWidth
     {
         get { return (double)GetValue(UnderlineWidthProperty); }

@@ -204,7 +204,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
     {
         get
         {
-            return (this.Underline && UnderlineWidth > 0) || this.Strikeout;
+            return (this.Underline && UnderlineWidth != 0) || this.Strikeout;
         }
     }
 
@@ -225,9 +225,9 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         }
     }
 
-    private double _UnderlineWidth = 1.0;
+    private double _UnderlineWidth = -1.0;
     /// <summary>
-    /// In points
+    /// In points, if set to negative will be in pixels instead.
     /// </summary>
     public double UnderlineWidth
     {

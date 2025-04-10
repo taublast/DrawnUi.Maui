@@ -918,13 +918,7 @@ namespace DrawnUi.Draw
                 {
                     IsMeasuring = true;
 
-                    //LockUpdate(true);  never enable this here, breaks stuff
-
-                    if (!DefaultContentCreated)
-                    {
-                        DefaultContentCreated = true;
-                        CreateDefaultContent();
-                    }
+                    InitializeDefaultContent();
 
                     var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
                     if (request.IsSame)

@@ -22,12 +22,6 @@ namespace DrawnUi.Draw
             return control;
         }
 
-        public static T AssignTo<T>(this T control, out T variable) where T : VisualElement
-        {
-            variable = control;
-            return control;
-        }
-
         /// <summary>
         /// Performs an action on the control and returns it to continue the fluent chain
         /// </summary>
@@ -46,6 +40,22 @@ namespace DrawnUi.Draw
                 Super.Log(e);
             }
 
+            return view;
+        }
+
+        /// <summary>
+        /// This will be executed ones along and just before the CreateDefaultContent. This lets you execute initialization code after the control is already in the view tree and all variables you might want to use are already filled.
+        /// </summary>
+        /// <typeparam name="T">Represents a type that extends SkiaControl, allowing for specific control initialization.</typeparam>
+        /// <param name="view">The control instance that will be initialized with the provided action.</param>
+        /// <param name="action">An operation to perform on the control instance during initialization.</param>
+        /// <returns>The initialized control instance after the action has been applied.</returns>
+        public static T Initialize<T>(this T view, Action<T> action) where T : SkiaControl
+        {
+            view.ExecuteAfterCreated[Guid.NewGuid().ToString()] = control =>
+            {
+                action.Invoke((T)control);
+            };
             return view;
         }
 
@@ -107,7 +117,6 @@ namespace DrawnUi.Draw
 
             return control;
         }
-
 
         /// <summary>
         /// Watches for property changes on the control's BindingContext of type TSource.
@@ -821,6 +830,31 @@ namespace DrawnUi.Draw
             view.VerticalOptions = LayoutOptions.Fill;
             return view;
         }
+
+        /// <summary>
+        /// Fills horizontally
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="view"></param>
+        /// <returns></returns>
+        public static T FillHorizontally<T>(this T view) where T : SkiaControl
+        {
+            view.HorizontalOptions = LayoutOptions.Fill;
+            return view;
+        }
+
+        /// <summary>
+        /// Fills vertically
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="view"></param>
+        /// <returns></returns>
+        public static T FillVertically<T>(this T view) where T : SkiaControl
+        {
+            view.VerticalOptions = LayoutOptions.Fill;
+            return view;
+        }
+
 
         /// <summary>
         /// Centers the control both horizontally and vertically

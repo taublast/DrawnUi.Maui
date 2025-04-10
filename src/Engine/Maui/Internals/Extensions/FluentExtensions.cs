@@ -7,6 +7,11 @@ namespace DrawnUi.Draw
     /// </summary>
     public static partial class FluentExtensions
     {
+        public static T AssignNative<T>(this T control, out T variable) where T : VisualElement
+        {
+            variable = control;
+            return control;
+        }
 
         #region GRID
         /// <summary>

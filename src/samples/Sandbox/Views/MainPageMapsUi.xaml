@@ -6,8 +6,8 @@
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:views="clr-namespace:Sandbox.Views"
     xmlns:mapsUi="clr-namespace:DrawnUi.MapsUi;assembly=DrawnUi.Maui.MapsUi"
+    xmlns:views="clr-namespace:Sandbox.Views"
     x:Name="ThisPage"
     x:DataType="demo:MainPageViewModel">
 
@@ -20,23 +20,17 @@
         <draw:Canvas.Resources>
             <ResourceDictionary>
 
-                <Style
-                    x:Key="SkiaStyleControlInTable"
-                    TargetType="draw:SkiaControl">
+                <Style x:Key="SkiaStyleControlInTable" TargetType="draw:SkiaControl">
                     <Setter Property="VerticalOptions" Value="Center" />
                     <Setter Property="AddMarginLeft" Value="120" />
                 </Style>
 
-                <Style
-                    x:Key="SkiaStyleControLabel"
-                    TargetType="draw:SkiaLabel">
+                <Style x:Key="SkiaStyleControLabel" TargetType="draw:SkiaLabel">
                     <Setter Property="VerticalOptions" Value="Center" />
                     <Setter Property="TextColor" Value="Black" />
                 </Style>
 
-                <Style
-                    x:Key="SkiaStyleControlContainer"
-                    TargetType="draw:SkiaLayout">
+                <Style x:Key="SkiaStyleControlContainer" TargetType="draw:SkiaLayout">
                     <Setter Property="HeightRequest" Value="44" />
                     <Setter Property="HorizontalOptions" Value="Fill" />
                     <Setter Property="UseCache" Value="Image" />
@@ -46,18 +40,18 @@
         </draw:Canvas.Resources>
 
         <draw:SkiaLayout
-            Tag="WithMap"
             HorizontalOptions="Fill"
+            Tag="WithMap"
             VerticalOptions="Fill">
 
             <!--  MAP  -->
 
             <!--  GPU cache makes a huge difference  -->
             <mapsUi:SkiaMapsUi
-                x:Name="mapControl" 
+                x:Name="mapControl"
+                AddMarginBottom="{Binding OffsetMap}"
                 DisableEffects="{Binding ValueSwitch, Converter={x:StaticResource NotConverter}}"
                 HorizontalOptions="Fill"
-                AddMarginBottom="{Binding OffsetMap}"
                 UseCache="GPU"
                 VerticalOptions="Fill"
                 ZIndex="-1">
@@ -69,17 +63,11 @@
                         Alpha="{Binding Value3}"
                         ColorTint="{Binding SelectedColor}" />
 
-                    <draw:ChainAdjustContrastEffect
-                        x:DataType="demo:MainPageViewModel"
-                        Value="{Binding Value1}" />
+                    <draw:ChainAdjustContrastEffect x:DataType="demo:MainPageViewModel" Value="{Binding Value1}" />
 
-                    <draw:ChainAdjustLightnessEffect
-                        x:DataType="demo:MainPageViewModel"
-                        Value="{Binding Value2}" />
+                    <draw:ChainAdjustLightnessEffect x:DataType="demo:MainPageViewModel" Value="{Binding Value2}" />
 
-                    <draw:ChainSaturationEffect
-                        x:DataType="demo:MainPageViewModel"
-                        Value="{Binding Value6}" />
+                    <draw:ChainSaturationEffect x:DataType="demo:MainPageViewModel" Value="{Binding Value6}" />
 
 
                 </draw:SkiaControl.VisualEffects>
@@ -145,9 +133,9 @@
                     <!--  CONTENT  -->
                     <draw:SkiaLayout
                         Padding="24,16"
+                        AddMarginTop="{Binding DrawerHeaderSize}"
                         BackgroundColor="White"
                         HorizontalOptions="Fill"
-                        AddMarginTop="{Binding DrawerHeaderSize}"
                         Spacing="0"
                         Tag="InsideDrawer"
                         Type="Column"
@@ -163,8 +151,7 @@
                             <controls:DrawnSwitch
                                 IsToggled="{Binding ValueSwitch, Mode=TwoWay}"
                                 Style="{x:StaticResource SkiaStyleControlInTable}"
-                                TranslationX="-4"
-                                 />
+                                TranslationX="-4" />
                         </draw:SkiaLayout>
 
                         <!--  Brightness  -->
@@ -180,8 +167,7 @@
                                 Min="0"
                                 MinMaxStringFormat="P0"
                                 Step="0.01"
-                                Style="{x:StaticResource SkiaStyleControlInTable}"
-                                 />
+                                Style="{x:StaticResource SkiaStyleControlInTable}" />
                         </draw:SkiaLayout>
 
                         <!--  Contrast  -->
@@ -197,8 +183,7 @@
                                 Min="0"
                                 MinMaxStringFormat="P0"
                                 Step="0.01"
-                                Style="{x:StaticResource SkiaStyleControlInTable}"
-                                />
+                                Style="{x:StaticResource SkiaStyleControlInTable}" />
                         </draw:SkiaLayout>
 
                         <!--  Saturation  -->
@@ -214,8 +199,7 @@
                                 Min="0"
                                 MinMaxStringFormat="P0"
                                 Step="0.01"
-                                Style="{x:StaticResource SkiaStyleControlInTable}"
-                                />
+                                Style="{x:StaticResource SkiaStyleControlInTable}" />
                         </draw:SkiaLayout>
 
                         <!--  Tint  -->
@@ -231,16 +215,15 @@
                                 Min="0"
                                 MinMaxStringFormat="P0"
                                 Step="0.01"
-                                Style="{x:StaticResource SkiaStyleControlInTable}"
-                             />
+                                Style="{x:StaticResource SkiaStyleControlInTable}" />
                         </draw:SkiaLayout>
 
 
                         <!--  Tint  COLOR Picker  -->
                         <draw:SkiaLayout
-                            HeightRequest="100"
                             AddMarginBottom="{Binding BottomInsets}"
                             AddMarginTop="16"
+                            HeightRequest="100"
                             Style="{x:StaticResource SkiaStyleControlContainer}">
 
                             <draw:SkiaLabel

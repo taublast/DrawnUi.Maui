@@ -815,7 +815,13 @@ namespace DrawnUi.Draw
                     moveY = span.RenderingScale;
                 }
                 var yLevel = (float)Math.Round(y + moveY);
-                PaintDeco.StrokeWidth = (float)(span.UnderlineWidth * span.RenderingScale);
+
+                float lineWidth = span.UnderlineWidth > 0
+                    ? (float)(span.UnderlineWidth * span.RenderingScale)
+                    : (float)(-span.UnderlineWidth);
+
+                PaintDeco.StrokeWidth = lineWidth;
+
                 canvas.DrawLine(xStart, yLevel, xEnd, yLevel, PaintDeco);
             }
             if (span.Strikeout)

@@ -3416,17 +3416,29 @@ namespace DrawnUi.Draw
                     return MeasuredSize;
                 }
 
-                if (!DefaultContentCreated)
-                {
-                    DefaultContentCreated = true;
-                    CreateDefaultContent();
-                }
+                InitializeDefaultContent();
 
                 return MeasureInternal(request);
             }
             finally
             {
                 IsMeasuring = false;
+            }
+        }
+
+        protected void InitializeDefaultContent()
+        {
+            if (!DefaultContentCreated)
+            {
+                DefaultContentCreated = true;
+
+                foreach (var action in ExecuteAfterCreated.Values)
+                {
+                    action?.Invoke(this);
+                }
+                ExecuteAfterCreated.Clear();
+
+                CreateDefaultContent();
             }
         }
 
@@ -3884,6 +3896,11 @@ namespace DrawnUi.Draw
         /// Example of usage, an extension that would subscribe to something and add unsubscribtion here.
         /// </summary>
         public Dictionary<string, Action> ExecuteUponDisposal { get; } = new();
+
+        /// <summary>
+        /// This will be executed ones along and just before the CreateDefaultContent. This lets you execute initialization code after the control is already in the view tree and all variables you might want to use are already filled.
+        /// </summary>
+        public Dictionary<string, Action<SkiaControl>> ExecuteAfterCreated { get; } = new();
 
         /// <summary>
         /// Avoid setting parent to null before calling this, or set SuperView prop manually for proper cleanup of animations and gestures if any used
@@ -6457,6 +6474,7 @@ namespace DrawnUi.Draw
         }
 
         #endregion
+
     }
 
     public static class Snapping
@@ -6504,5 +6522,8 @@ namespace DrawnUi.Draw
 
             return snappedTranslation;
         }
+
+
+
     }
 }

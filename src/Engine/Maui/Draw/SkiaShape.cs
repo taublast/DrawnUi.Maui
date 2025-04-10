@@ -195,7 +195,7 @@ namespace DrawnUi.Draw
             propertyChanged: NeedInvalidateMeasure);
 
         /// <summary>
-        /// Gets or sets the width of the stroke (outline) in device-independent units.
+        /// Gets or sets the width of the stroke (outline) in device-independent units. If you set it negative it will be in PIXELS instead of point.
         /// </summary>
         /// <remarks>
         /// - A value of 0 (default) means no stroke will be drawn
@@ -376,13 +376,16 @@ namespace DrawnUi.Draw
             var strokeAwareChildrenSize = strokeAwareSize;
             ContractPixelsRect(strokeAwareChildrenSize, scale, Padding);
 
-            var willStroke = StrokeColor != TransparentColor && StrokeWidth > 0;
+            var willStroke = StrokeColor != TransparentColor && StrokeWidth != 0;
             float pixelsStrokeWidth = 0;
             float halfStroke = 0;
 
             if (willStroke)
             {
-                pixelsStrokeWidth = (float)(StrokeWidth * scale);
+                pixelsStrokeWidth = StrokeWidth > 0
+                    ? (float)(StrokeWidth * scale)
+                    : (float)(-StrokeWidth);
+
                 halfStroke = (float)(pixelsStrokeWidth / 2.0f);
 
                 strokeAwareSize =
@@ -748,8 +751,11 @@ namespace DrawnUi.Draw
 
             //we gonna set stroke On only when drawing the last pass
             //otherwise stroke antialiasing will not work
-            var willStroke = StrokeColor != TransparentColor && StrokeWidth > 0;
-            float pixelsStrokeWidth = (float)StrokeWidth * scale; //(float)Math.Round(StrokeWidth * scale);
+            var willStroke = StrokeColor != TransparentColor && StrokeWidth != 0;
+
+            float pixelsStrokeWidth = StrokeWidth > 0
+                ? (float)(StrokeWidth * scale)
+                : (float)(-StrokeWidth);
 
             RenderingPaint ??= new SKPaint() { IsAntialias = true, };
 
