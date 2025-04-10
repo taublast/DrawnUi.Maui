@@ -1,5 +1,9 @@
 # Controls Overview
 
+DrawnUi positions itsself as an angine providing a toolset to create and use custom drawn controls. Out-of-the box it provides you with base controls that can be used a lego-bricks to composite custom controls, and proposes some useful pre-made custom controls.
+
+The main spirit is to have all controlls subclassable and customizable at the maximum possible extent.
+
 DrawnUi provides a comprehensive set of UI controls rendered with SkiaSharp for optimal performance. All controls support platform-specific styling and extensive customization options.
 
 ## Control Categories
