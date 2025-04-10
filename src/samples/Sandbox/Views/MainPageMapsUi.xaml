@@ -6,7 +6,6 @@
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:maui="using:Mapsui.Samples.Maui"
     xmlns:views="clr-namespace:Sandbox.Views"
     xmlns:mapsUi="clr-namespace:DrawnUi.MapsUi;assembly=DrawnUi.Maui.MapsUi"
     x:Name="ThisPage"
@@ -47,6 +46,7 @@
         </draw:Canvas.Resources>
 
         <draw:SkiaLayout
+            Tag="WithMap"
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 

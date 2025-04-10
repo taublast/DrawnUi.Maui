@@ -64,13 +64,7 @@ namespace Sandbox
                             BackgroundColor = Colors.Gray
                         }
                         .WithChildren(
-                            new PinPanel()
-                            {
-                                Limit = 4,
-                                BackgroundColor = Colors.Red,
-                                HorizontalOptions = LayoutOptions.Fill,
-                                HeightRequest = 60
-                            },
+                           
 
                             //new SkiaLayout()
                             //{
