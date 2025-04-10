@@ -1044,7 +1044,7 @@ namespace DrawnUi.Draw
                 var canvas = _superview as Canvas;
                 if (canvas != null)
                 {
-                    if (!canvas.SignalInput(listener, args.Type))
+                    if (args.Type == TouchActionResult.Up && !canvas.SignalInput(listener, args.Type))
                     {
                         return null; //avoid being called twice for same gesture
                     }
@@ -1132,8 +1132,8 @@ namespace DrawnUi.Draw
                 {
                     var asSpan = CollectionsMarshal.AsSpan(RenderTree);
                     for (int i = asSpan.Length - 1; i >= 0; i--)
-                        //for (int i = 0; i < RenderTree.Length; i++)
                     {
+
                         var child = asSpan[i];
 
                         if (child == Superview.FocusedChild)

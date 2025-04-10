@@ -475,6 +475,7 @@ public class Canvas : DrawnView, IGestureListener
 
 
             //first process those who already had input
+            bool secondPass = true;
             if (HadInput.Count > 0)
             {
                 if (IsSavedGesture(args.Type))
@@ -497,7 +498,10 @@ public class Canvas : DrawnView, IGestureListener
                                 wasConsumed = consumed;
 
                             if (args.Type != TouchActionResult.Up)
+                            {
+                                secondPass = false;
                                 break;
+                            }
                         }
                     }
                 }
@@ -505,54 +509,61 @@ public class Canvas : DrawnView, IGestureListener
 
 
             //USUAL PROCESSING
-            //var listeners = CollectionsMarshal.AsSpan(GestureListeners.GetListeners());
-            foreach (var listener in GestureListeners.GetListeners())
+            if (secondPass)
             {
-                if (listener == null || !listener.CanDraw || listener.InputTransparent)
+                //var listeners = CollectionsMarshal.AsSpan(GestureListeners.GetListeners());
+                foreach (var listener in GestureListeners.GetListeners())
                 {
-                    continue;
-                }
-
-                if (HadInput.Values.Contains(listener) && IsSavedGesture(args.Type))
-                {
-                    continue;
-                }
-
-                if (listener == FocusedChild)
-                    manageChildFocus = true;
-
-                var forChild = true;
-                if (args.Type != TouchActionResult.Up)
-                    forChild = ((SkiaControl)listener).HitIsInside(args.Event.StartingLocation.X,
-                        args.Event.StartingLocation.Y) || listener == FocusedChild;
-
-                if (forChild)
-                {
-                    //Debug.WriteLine($"[Passed] to {listener}");
-                    if (manageChildFocus && listener == FocusedChild)
+                    if (listener == null || !listener.CanDraw || listener.InputTransparent)
                     {
-                        manageChildFocus = false;
+                        continue;
                     }
 
-                    var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
-
-                    var maybeconsumed = listener.OnSkiaGestureEvent(args, adjust);
-                    if (maybeconsumed != null)
-                    {
-                        consumed = maybeconsumed;
-                    }
-                    
-                    if (consumed != null)
+                    if (HadInput.Values.Contains(listener) && IsSavedGesture(args.Type))
                     {
                         if (args.Type != TouchActionResult.Up)
+                            break;
+
+                        continue;
+                    }
+
+                    if (listener == FocusedChild)
+                        manageChildFocus = true;
+
+                    var forChild = true;
+                    if (args.Type != TouchActionResult.Up)
+                        forChild = ((SkiaControl)listener).HitIsInside(args.Event.StartingLocation.X,
+                            args.Event.StartingLocation.Y) || listener == FocusedChild;
+
+                    if (forChild)
+                    {
+                        //Debug.WriteLine($"[Passed] to {listener}");
+                        if (manageChildFocus && listener == FocusedChild)
                         {
-                            HadInput.TryAdd(listener.Uid, consumed);
+                            manageChildFocus = false;
                         }
 
-                        break;
+                        var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
+
+                        var maybeconsumed = listener.OnSkiaGestureEvent(args, adjust);
+                        if (maybeconsumed != null)
+                        {
+                            consumed = maybeconsumed;
+                        }
+
+                        if (consumed != null)
+                        {
+                            if (args.Type != TouchActionResult.Up)
+                            {
+                                HadInput.TryAdd(listener.Uid, consumed);
+                            }
+
+                            break;
+                        }
                     }
                 }
             }
+
 
             if (TouchEffect.LogEnabled)
             {
