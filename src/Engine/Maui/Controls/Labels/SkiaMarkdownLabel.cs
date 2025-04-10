@@ -756,7 +756,7 @@ public class SkiaMarkdownLabel : SkiaLabel
         nameof(UnderlineWidth),
         typeof(double),
         typeof(SkiaLabel),
-        -1,
+        -1.0,
         propertyChanged: NeedUpdateFont);
 
     /// <summary>
