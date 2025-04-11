@@ -186,7 +186,6 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Creates bevel effect paths for a rounded rectangle
         /// </summary>
-        // Updated: All corners split correctly — final fix for bottom-left corner shadow
         private void CreateBevelPathsForRoundRect(SKRect rect, SKPoint[] radii, SKPath topLeftPath, SKPath bottomRightPath, float depth)
         {
             float topLeftRadius = radii[0].X;
@@ -231,7 +230,7 @@ namespace DrawnUi.Draw
                     rect.Left + 2 * bottomLeftRadius - halfDepth,
                     rect.Bottom - halfDepth
                 );
-                topLeftPath.AddArc(arcRect, 135, 45); // now split at 45° for light only
+                topLeftPath.AddArc(arcRect, 135, 45);  
             }
 
             topLeftPath.MoveTo(rect.Left + halfDepth, rect.Top + topLeftRadius);
@@ -299,7 +298,7 @@ namespace DrawnUi.Draw
                     rect.Right - halfDepth,
                     rect.Bottom - halfDepth
                 );
-                arcPath.AddArc(adjustedRect, 180, 180);
+                arcPath.AddArc(adjustedRect, 135, 180); //0
                 topLeftPath.AddPath(arcPath);
             }
             
@@ -313,9 +312,10 @@ namespace DrawnUi.Draw
                     rect.Right - halfDepth,
                     rect.Bottom - halfDepth
                 );
-                arcPath.AddArc(adjustedRect, 0, 180);
+                arcPath.AddArc(adjustedRect, 315, 180); //180
                 bottomRightPath.AddPath(arcPath);
             }
+
         }
 
         /// <summary>

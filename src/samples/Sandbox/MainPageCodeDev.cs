@@ -67,14 +67,14 @@ namespace Sandbox
 
                             new SkiaShape()
                             {
-                                CornerRadius = 0,
-                                BevelType = BevelType.Emboss,
+                                CornerRadius = 6,
+                                BevelType = BevelType.Bevel,
                                 Bevel = new SkiaBevel()
                                 {
                                     Depth = 4,
                                     LightColor = Colors.White,
-                                    ShadowColor = Colors.Black,
-                                    Opacity = 1
+                                    ShadowColor = Color.Parse("#333333"),
+                                    Opacity = 0.75
                                 },
                                 HorizontalOptions = LayoutOptions.Center,
                                 VerticalOptions = LayoutOptions.Center,
@@ -82,6 +82,24 @@ namespace Sandbox
                                 HeightRequest = 40,
                                 BackgroundColor = Colors.Yellow
                             },
+
+                            //new SkiaShape()
+                            //{
+                            //    Type = ShapeType.Circle,
+                            //    BevelType = BevelType.Bevel,
+                            //    Bevel = new SkiaBevel()
+                            //    {
+                            //        Depth = 4,
+                            //        LightColor = Colors.White,
+                            //        ShadowColor = Colors.Black,
+                            //        Opacity = 0.75
+                            //    },
+                            //    HorizontalOptions = LayoutOptions.Center,
+                            //    VerticalOptions = LayoutOptions.Center,
+                            //    WidthRequest = 100,
+                            //    HeightRequest = 100,
+                            //    BackgroundColor = Colors.Yellow
+                            //},
 
                             //new SkiaLayout()
                             //{
