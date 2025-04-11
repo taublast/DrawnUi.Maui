@@ -30,6 +30,11 @@ namespace DrawnUi.Draw
                 shade.BindingContext = BindingContext;
             }
 
+            if (Bevel != null)
+            {
+                Bevel.BindingContext = BindingContext;
+            }
+
             base.ApplyBindingContext();
         }
 
@@ -962,6 +967,13 @@ namespace DrawnUi.Draw
                     PaintBackground(ctx.Context, outRect, radii, minSize, RenderingPaint);
                 }
             });
+
+            // Apply bevel or emboss effect if enabled
+            if (BevelType != BevelType.None && Bevel != null)
+            {
+                float pixelsBevelDepth = (float)(Bevel.Depth * scale);
+                PaintBevelEffect(ctx.Context, outRect, radii, pixelsBevelDepth);
+            }
 
             //draw children views clipped with shape
             ClipContentPath ??= new();

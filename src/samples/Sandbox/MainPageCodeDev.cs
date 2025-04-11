@@ -64,7 +64,24 @@ namespace Sandbox
                             BackgroundColor = Colors.Gray
                         }
                         .WithChildren(
-                           
+
+                            new SkiaShape()
+                            {
+                                CornerRadius = 0,
+                                BevelType = BevelType.Emboss,
+                                Bevel = new SkiaBevel()
+                                {
+                                    Depth = 4,
+                                    LightColor = Colors.White,
+                                    ShadowColor = Colors.Black,
+                                    Opacity = 1
+                                },
+                                HorizontalOptions = LayoutOptions.Center,
+                                VerticalOptions = LayoutOptions.Center,
+                                WidthRequest = 100,
+                                HeightRequest = 40,
+                                BackgroundColor = Colors.Yellow
+                            },
 
                             //new SkiaLayout()
                             //{
