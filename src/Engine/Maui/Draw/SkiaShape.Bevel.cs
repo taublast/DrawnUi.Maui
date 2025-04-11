@@ -186,94 +186,100 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Creates bevel effect paths for a rounded rectangle
         /// </summary>
+        // Updated: All corners split correctly — final fix for bottom-left corner shadow
         private void CreateBevelPathsForRoundRect(SKRect rect, SKPoint[] radii, SKPath topLeftPath, SKPath bottomRightPath, float depth)
         {
-            // Get corner radii
             float topLeftRadius = radii[0].X;
             float topRightRadius = radii[1].X;
             float bottomRightRadius = radii[2].X;
             float bottomLeftRadius = radii[3].X;
 
-            // Adjust rect for stroke width
-            float halfDepth = depth / 2;
+            float halfDepth = depth / 2f;
 
-            // Top edge (excluding corners)
-            if (topLeftRadius + topRightRadius < rect.Width)
-            {
-                topLeftPath.MoveTo(rect.Left + topLeftRadius, rect.Top + halfDepth);
-                topLeftPath.LineTo(rect.Right - topRightRadius, rect.Top + halfDepth);
-            }
-
-            // Left edge (excluding corners)
-            if (topLeftRadius + bottomLeftRadius < rect.Height)
-            {
-                topLeftPath.MoveTo(rect.Left + halfDepth, rect.Top + topLeftRadius);
-                topLeftPath.LineTo(rect.Left + halfDepth, rect.Bottom - bottomLeftRadius);
-            }
-
-            // Draw top-left corner arc if radius is large enough
+            // --- LIGHT PATH ---
             if (topLeftRadius > halfDepth)
             {
-                // Calculate the center and radius of the corner arc
-                SKRect arcRect = new SKRect(
+                var arcRect = new SKRect(
                     rect.Left + halfDepth,
                     rect.Top + halfDepth,
-                    rect.Left + topLeftRadius * 2 - halfDepth,
-                    rect.Top + topLeftRadius * 2 - halfDepth
+                    rect.Left + 2 * topLeftRadius - halfDepth,
+                    rect.Top + 2 * topLeftRadius - halfDepth
                 );
-                topLeftPath.AddArc(arcRect, 180, 90);
+                topLeftPath.AddArc(arcRect, 180, 90); // full top-left corner
             }
 
-            // Bottom edge (excluding corners)
-            if (bottomLeftRadius + bottomRightRadius < rect.Width)
-            {
-                bottomRightPath.MoveTo(rect.Left + bottomLeftRadius, rect.Bottom - halfDepth);
-                bottomRightPath.LineTo(rect.Right - bottomRightRadius, rect.Bottom - halfDepth);
-            }
+            topLeftPath.MoveTo(rect.Left + topLeftRadius, rect.Top + halfDepth);
+            topLeftPath.LineTo(rect.Right - topRightRadius, rect.Top + halfDepth);
 
-            // Right edge (excluding corners)
-            if (topRightRadius + bottomRightRadius < rect.Height)
-            {
-                bottomRightPath.MoveTo(rect.Right - halfDepth, rect.Top + topRightRadius);
-                bottomRightPath.LineTo(rect.Right - halfDepth, rect.Bottom - bottomRightRadius);
-            }
-
-            // Draw top-right corner arc if radius is large enough
+            // Top-right arc (light part only: 270° → 315°)
             if (topRightRadius > halfDepth)
             {
-                SKRect arcRect = new SKRect(
-                    rect.Right - topRightRadius * 2 + halfDepth,
+                var arcRect = new SKRect(
+                    rect.Right - 2 * topRightRadius + halfDepth,
                     rect.Top + halfDepth,
                     rect.Right - halfDepth,
-                    rect.Top + topRightRadius * 2 - halfDepth
+                    rect.Top + 2 * topRightRadius - halfDepth
                 );
-                bottomRightPath.AddArc(arcRect, 270, 90);
+                topLeftPath.AddArc(arcRect, 270, 45);
             }
 
-            // Draw bottom-right corner arc if radius is large enough
+            if (bottomLeftRadius > halfDepth)
+            {
+                var arcRect = new SKRect(
+                    rect.Left + halfDepth,
+                    rect.Bottom - 2 * bottomLeftRadius + halfDepth,
+                    rect.Left + 2 * bottomLeftRadius - halfDepth,
+                    rect.Bottom - halfDepth
+                );
+                topLeftPath.AddArc(arcRect, 135, 45); // now split at 45° for light only
+            }
+
+            topLeftPath.MoveTo(rect.Left + halfDepth, rect.Top + topLeftRadius);
+            topLeftPath.LineTo(rect.Left + halfDepth, rect.Bottom - bottomLeftRadius);
+
+            // --- SHADOW PATH ---
+            // Top-right arc (shadow part only: 315° → 360°)
+            if (topRightRadius > halfDepth)
+            {
+                var arcRect = new SKRect(
+                    rect.Right - 2 * topRightRadius + halfDepth,
+                    rect.Top + halfDepth,
+                    rect.Right - halfDepth,
+                    rect.Top + 2 * topRightRadius - halfDepth
+                );
+                bottomRightPath.AddArc(arcRect, 315, 45);
+            }
+
+            bottomRightPath.MoveTo(rect.Right - halfDepth, rect.Top + topRightRadius);
+            bottomRightPath.LineTo(rect.Right - halfDepth, rect.Bottom - bottomRightRadius);
+
             if (bottomRightRadius > halfDepth)
             {
-                SKRect arcRect = new SKRect(
-                    rect.Right - bottomRightRadius * 2 + halfDepth,
-                    rect.Bottom - bottomRightRadius * 2 + halfDepth,
+                var arcRect = new SKRect(
+                    rect.Right - 2 * bottomRightRadius + halfDepth,
+                    rect.Bottom - 2 * bottomRightRadius + halfDepth,
                     rect.Right - halfDepth,
                     rect.Bottom - halfDepth
                 );
-                bottomRightPath.AddArc(arcRect, 0, 90);
+                bottomRightPath.AddArc(arcRect, 0, 90); // full bottom-right corner
             }
 
-            // Draw bottom-left corner arc if radius is large enough
+            // Bottom-left arc (shadow part only: 135° → 180°)
             if (bottomLeftRadius > halfDepth)
             {
-                SKRect arcRect = new SKRect(
+                var arcRect = new SKRect(
                     rect.Left + halfDepth,
-                    rect.Bottom - bottomLeftRadius * 2 + halfDepth,
-                    rect.Left + bottomLeftRadius * 2 - halfDepth,
+                    rect.Bottom - 2 * bottomLeftRadius + halfDepth,
+                    rect.Left + 2 * bottomLeftRadius - halfDepth,
                     rect.Bottom - halfDepth
                 );
-                topLeftPath.AddArc(arcRect, 90, 90);
+                bottomRightPath.AddArc(arcRect, 90, 45);
             }
+
+            bottomRightPath.MoveTo(rect.Left + bottomLeftRadius, rect.Bottom - halfDepth);
+            bottomRightPath.LineTo(rect.Right - bottomRightRadius, rect.Bottom - halfDepth);
         }
+
 
         /// <summary>
         /// Creates bevel effect paths for an ellipse or circle
