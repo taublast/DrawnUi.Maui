@@ -730,21 +730,7 @@ namespace DrawnUi.Draw
             return control;
         }
 
-
-        /// <summary>
-        /// Simple non-compiled binding
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="view"></param>
-        /// <param name="property"></param>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static T BindProperty<T>(this T view, BindableProperty property, string path) where T : SkiaControl
-        {
-            view.SetBinding(property, path);
-
-            return view;
-        }
+ 
 
 
         #endregion
@@ -840,6 +826,18 @@ namespace DrawnUi.Draw
         public static T FillHorizontally<T>(this T view) where T : SkiaControl
         {
             view.HorizontalOptions = LayoutOptions.Fill;
+            return view;
+        }
+
+        public static T AlignHorizontallyEnd<T>(this T view) where T : SkiaControl
+        {
+            view.HorizontalOptions = LayoutOptions.End;
+            return view;
+        }
+
+        public static T AlignHorizontallyCenter<T>(this T view) where T : SkiaControl
+        {
+            view.HorizontalOptions = LayoutOptions.Center;
             return view;
         }
 

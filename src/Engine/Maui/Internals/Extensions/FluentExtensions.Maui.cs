@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Windows.Input;
 
 namespace DrawnUi.Draw
@@ -151,7 +153,7 @@ namespace DrawnUi.Draw
         #region BINDING
 
         /// <summary>
-        /// Sets up a simple binding for a property
+        /// Sets up a simple non-compiled binding for a property
         /// </summary>
         /// <typeparam name="T">Type of SkiaControl</typeparam>
         /// <typeparam name="TProperty">Type of the property</typeparam>
@@ -160,9 +162,10 @@ namespace DrawnUi.Draw
         /// <param name="path">The binding path</param>
         /// <param name="mode">The binding mode</param>
         /// <returns>The control for chaining</returns>
-        public static T BindProperty<T, TProperty>(this T view, BindableProperty targetProperty, string path, BindingMode mode = BindingMode.Default) where T : SkiaControl
+        public static T BindProperty<T>(this T view, BindableProperty property, string path, BindingMode mode = BindingMode.Default) where T : SkiaControl
         {
-            view.SetBinding(targetProperty, path, mode);
+            view.SetBinding(property, path, mode);
+
             return view;
         }
 
