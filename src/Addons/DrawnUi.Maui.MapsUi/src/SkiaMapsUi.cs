@@ -898,6 +898,35 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         }
     }
 
+    /// <summary>
+    /// Converts screen pixel coordinates to geographic coordinates (latitude, longitude)
+    /// taking into account current map state and pixel density.
+    /// </summary>
+    /// <param name="pixelX">Screen X coordinate in pixels</param>
+    /// <param name="pixelY">Screen Y coordinate in pixels</param>
+    /// <returns>Tuple containing (latitude, longitude) or null if conversion fails</returns>
+    protected (double Latitude, double Longitude)? GetGeographicCoordinate(double pixelX, double pixelY)
+    {
+        try
+        {
+            // Convert from canvas pixel coordinates to screen coordinates (remove offset and pixel density)
+            var screenX = pixelX / RenderingScale; ;//(pixelX - DrawingRect.Left) / RenderingScale;
+            var screenY = pixelY / RenderingScale; ;//(pixelY - DrawingRect.Top) / RenderingScale;
+
+            // Convert screen coordinates to world coordinates
+            var worldCoords = Map.Navigator.Viewport.ScreenToWorld(screenX, screenY);
+
+            // Convert world coordinates (spherical mercator) to lat/lon
+            var geographic = SphericalMercator.ToLonLat(worldCoords.X, worldCoords.Y);
+
+            return (Latitude: geographic.lat, Longitude: geographic.lon);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     #endregion
 
 }
