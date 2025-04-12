@@ -160,7 +160,7 @@ namespace DrawnUi.Draw
             nameof(FontAwesomeSecondaryColor),
             typeof(Color),
             typeof(SkiaSvg),
-            Colors.Black);
+            Colors.Gray);
 
         public Color FontAwesomeSecondaryColor
         {
