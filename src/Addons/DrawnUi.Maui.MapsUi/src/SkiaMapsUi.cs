@@ -1,4 +1,7 @@
-﻿using AppoMobi.Maui.Gestures;
+﻿using System.Collections.Concurrent;
+using System.ComponentModel;
+using System.Net;
+using AppoMobi.Maui.Gestures;
 using DrawnUi.Draw;
 using Mapsui;
 using Mapsui.Disposing;
@@ -7,15 +10,13 @@ using Mapsui.Fetcher;
 using Mapsui.Layers;
 using Mapsui.Logging;
 using Mapsui.Manipulations;
+using Mapsui.Projections;
 using Mapsui.Rendering;
 using Mapsui.Rendering.Skia;
 using Mapsui.UI;
 using Mapsui.Utilities;
 using Mapsui.Widgets;
 using SkiaSharp;
-using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Net;
 using Map = Mapsui.Map;
 
 namespace DrawnUi.MapsUi;
@@ -24,7 +25,7 @@ namespace DrawnUi.MapsUi;
 /// <summary>
 /// MapControl for MAUI DrawnUi
 /// </summary>
-public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
+public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 {
     public class SkiaMapLayer : SkiaControl
     {
@@ -51,8 +52,13 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
 
     protected override void Paint(DrawingContext ctx)
     {
-        base.Paint(ctx); //paint background
+        //paint background
+        if (ctx.Destination.Width == 0 || ctx.Destination.Height == 0 || IsDisposing || IsDisposed)
+            return;
+        PaintTintBackground(ctx.Context.Canvas, ctx.Destination);
+        WasDrawn = true;
 
+        //map
         ctx.Context.Canvas.Save();
         ctx.Context.Canvas.ClipRect(ctx.Destination);
         ctx.Context.Canvas.Translate(ctx.Destination.Left, ctx.Destination.Top);
@@ -62,6 +68,18 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
         CommonDrawControl(ctx.Context.Canvas);
 
         ctx.Context.Canvas.Restore();
+
+        //children overlay
+        DirtyChildrenTracker.Clear();
+
+        var rectForChildren = ContractPixelsRect(ctx.Destination, ctx.Scale, Padding);
+
+        //absolute layout
+        DrawViews(ctx.WithDestination(rectForChildren));
+        if (LayoutReady)
+        {
+            OnAppeared();
+        }
     }
 
     protected override void OnLayoutChanged()
@@ -843,4 +861,43 @@ public partial class SkiaMapsUi : SkiaControl, IMapControl, ISkiaGestureListener
         OnMapInfo(CreateMapInfoEventArgs(position, TapType.Single));
         return false;
     }
+
+    #region HELPERS
+
+    /// <summary>
+    /// Converts geographic coordinates to screen coordinates taking into account current map state.
+    /// Returns null if the point is outside the visible area.
+    /// The result is in PIXELS
+    /// </summary>
+    protected SKPoint? GetScreenPosition(double longitude, double latitude)
+    {
+        try
+        {
+            // Convert to spherical mercator
+            var worldPos = SphericalMercator.FromLonLat(longitude, latitude);
+            // Convert to screen coordinates
+            var screen = Map.Navigator.Viewport.WorldToScreen(worldPos.x, worldPos.y);
+
+            // Check if point is within visible bounds
+            if (screen.X < 0 || screen.Y < 0 ||
+                screen.X > DrawingRect.Width / RenderingScale ||
+                screen.Y > DrawingRect.Height / RenderingScale)
+            {
+                return null;
+            }
+
+            // Convert to actual pixel coordinates on our canvas
+            return new SKPoint(
+                (float)Math.Round(screen.X * RenderingScale + DrawingRect.Left),
+                (float)Math.Round(screen.Y * RenderingScale + DrawingRect.Top)
+            );
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    #endregion
+
 }

@@ -26,7 +26,7 @@ namespace Sandbox
         }
 
 
-        private string _Search = "Cocc";
+        private string _Search = "";
         public string Search
         {
             get
