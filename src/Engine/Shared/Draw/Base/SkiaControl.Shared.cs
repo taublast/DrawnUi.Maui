@@ -1092,9 +1092,23 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// WIll be executed if a child implements ISkiaGestureListener and was Tapped. If this is set then the Tapped gesture will be consumed by this control after passing it to child.
+        /// WIll be called if a child implements ISkiaGestureListener and was Tapped. If this is set then the Tapped gesture will be consumed by this control after passing it to child.
         /// </summary>
-        public Action<ISkiaGestureListener, SkiaGesturesParameters, GestureEventProcessingInfo> OnChildTapped;
+        public event EventHandler<ChildTappedEventArgs> ChildTapped;
+
+        public class ChildTappedEventArgs : EventArgs
+        {
+            public ISkiaGestureListener Child { get; set; }
+            public SkiaGesturesParameters Parameters { get; set; }
+            public GestureEventProcessingInfo ProcessingInfo { get; set; }
+
+            public ChildTappedEventArgs(ISkiaGestureListener listener, SkiaGesturesParameters args, GestureEventProcessingInfo info)
+            {
+                Child = listener;
+                Parameters = args;
+                ProcessingInfo = info;
+            }
+        }
 
         public virtual ISkiaGestureListener ProcessGestures(
             SkiaGesturesParameters args,
@@ -1161,10 +1175,10 @@ namespace DrawnUi.Draw
                             {
                                 if (args.Type == TouchActionResult.Tapped)
                                 {
-                                    if (OnChildTapped != null)
+                                    if (ChildTapped != null)
                                     {
                                         breakForChild = listener;
-                                        OnChildTapped.Invoke(listener, args, apply);
+                                        ChildTapped.Invoke(this, new (listener, args, apply));
                                     }
                                     if (CommandChildTapped != null)
                                     {
@@ -1241,8 +1255,9 @@ namespace DrawnUi.Draw
 
                         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
-                        if (consumed == null ||
-                            args.Type == TouchActionResult.Up) // !GestureListeners.Contains(consumed))
+                        ISkiaGestureListener breakForChild = null;
+
+                        if (consumed == null || args.Type == TouchActionResult.Up) // !GestureListeners.Contains(consumed))
                             foreach (var listener in GestureListeners.GetListeners())
                             {
                                 if (listener == null || !listener.CanDraw || listener.InputTransparent ||
@@ -1267,8 +1282,16 @@ namespace DrawnUi.Draw
                                 {
                                     if (args.Type == TouchActionResult.Tapped)
                                     {
-                                        OnChildTapped?.Invoke(listener, args, apply);
-                                        CommandChildTapped?.Execute(listener);
+                                        if (ChildTapped != null)
+                                        {
+                                            breakForChild = listener;
+                                            ChildTapped.Invoke(this, new(listener, args, apply));
+                                        }
+                                        if (CommandChildTapped != null)
+                                        {
+                                            breakForChild = listener;
+                                            CommandChildTapped.Execute(listener);
+                                        }
                                     }
 
                                     if (manageChildFocus && listener == Superview.FocusedChild)
@@ -1290,6 +1313,13 @@ namespace DrawnUi.Draw
 
                                         break;
                                     }
+
+                                    if (breakForChild != null)
+                                    {
+                                        consumed = breakForChild;
+                                        break;
+                                    }
+
                                 }
                             }
 
