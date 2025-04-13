@@ -75,11 +75,23 @@ namespace DrawnUi.Draw
 
         public static bool DebugSpans = false;
 
-        public SkiaLabel() : base()
+        void Constructor()
         {
             _spans.CollectionChanged += OnCollectionChanged;
 
             UpdateFont();
+        }
+
+        public SkiaLabel() : base()
+        {
+            Constructor();
+        }
+
+        public SkiaLabel(string text) : base()
+        {
+            Constructor();
+
+            Text = text;
         }
 
         public override void Invalidate()

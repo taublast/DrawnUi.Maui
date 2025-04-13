@@ -10,7 +10,7 @@
     <PackageReference Include="SkiaSharp.Skottie" Version="3.116.1" />
     <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
       <!--<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.0" />-->
-      <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.9.1.1-pre1" />
+      <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.9.2-pre" />
   </ItemGroup>
   <PropertyGroup>
       <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>

@@ -780,6 +780,52 @@ namespace DrawnUi.Draw
             return view;
         }
 
+        #region TEXT
+
+        /// <summary>
+        /// Sets the label font size in points (double)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="view"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static T SetFontSize<T>(this T view, double size) where T : SkiaLabel
+        {
+            view.FontSize = size;
+            return view;
+        }
+
+        #endregion
+
+        #region LAYOUT
+
+        /// <summary>
+        /// Sets the height of a SkiaControl to a specified size and returns the modified control.
+        /// </summary>
+        /// <typeparam name="T">Represents a control that can be modified to set its height.</typeparam>
+        /// <param name="view">The control whose height is being set.</param>
+        /// <param name="size">The new height value to be applied to the control.</param>
+        /// <returns>The modified control with the updated height.</returns>
+        public static T SetHeight<T>(this T view, double size) where T : SkiaControl
+        {
+            view.HeightRequest = size;
+            return view;
+        }
+
+
+        /// <summary>
+        /// Sets the width of a SkiaControl to a specified size and returns the modified control.
+        /// </summary>
+        /// <typeparam name="T">Represents a type that extends SkiaControl, allowing for width adjustments.</typeparam>
+        /// <param name="view">The control whose width is being set to a new value.</param>
+        /// <param name="size">The new width value to be applied to the control.</param>
+        /// <returns>The modified control with the updated width.</returns>
+        public static T SetWidth<T>(this T view, double size) where T : SkiaControl
+        {
+            view.WidthRequest = size;
+            return view;
+        }
+
         /// <summary>
         /// Sets the control's horizontal options to center
         /// </summary>
@@ -823,23 +869,18 @@ namespace DrawnUi.Draw
         /// <typeparam name="T"></typeparam>
         /// <param name="view"></param>
         /// <returns></returns>
-        public static T FillHorizontally<T>(this T view) where T : SkiaControl
+        public static T FillX<T>(this T view) where T : SkiaControl
         {
             view.HorizontalOptions = LayoutOptions.Fill;
             return view;
         }
 
-        public static T AlignHorizontallyEnd<T>(this T view) where T : SkiaControl
+        public static T EndX<T>(this T view) where T : SkiaControl
         {
             view.HorizontalOptions = LayoutOptions.End;
             return view;
         }
-
-        public static T AlignHorizontallyCenter<T>(this T view) where T : SkiaControl
-        {
-            view.HorizontalOptions = LayoutOptions.Center;
-            return view;
-        }
+        
 
         /// <summary>
         /// Fills vertically
@@ -847,7 +888,7 @@ namespace DrawnUi.Draw
         /// <typeparam name="T"></typeparam>
         /// <param name="view"></param>
         /// <returns></returns>
-        public static T FillVertically<T>(this T view) where T : SkiaControl
+        public static T FillY<T>(this T view) where T : SkiaControl
         {
             view.VerticalOptions = LayoutOptions.Fill;
             return view;
@@ -866,6 +907,8 @@ namespace DrawnUi.Draw
             view.VerticalOptions = LayoutOptions.Center;
             return view;
         }
+
+        #endregion
 
         /// <summary>
         /// Sets the margin for the control

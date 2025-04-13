@@ -106,7 +106,7 @@
       <!--MIT open source-->
       <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.4" />
       <!--MIT open source .net helpers and extensions-->
-      <PackageReference Include="AppoMobi.Specials" Version="9.0.2" />
+      <PackageReference Include="AppoMobi.Specials" Version="9.0.3" />
       <!--parsing markdown text-->
       <PackageReference Include="Markdig" Version="0.34.0" />
       <!--caching bitmaps etc-->
