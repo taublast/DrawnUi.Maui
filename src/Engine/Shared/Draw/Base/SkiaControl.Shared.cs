@@ -1080,13 +1080,21 @@ namespace DrawnUi.Draw
             null);
 
         /// <summary>
-        /// Child was tapped. Will pass the tapped child as parameter. You might want then read child's BindingContext etc.. This works only if your control implements ISkiaGestureListener.
+        /// Child was tapped. Will pass the tapped child as parameter.
+        /// You might want then read child's BindingContext etc..
+        /// This works only if your control implements ISkiaGestureListener.
+        /// If this is set then the Tapped gesture will be consumed by this control after passing it to child.
         /// </summary>
         public ICommand CommandChildTapped
         {
             get { return (ICommand)GetValue(CommandChildTappedProperty); }
             set { SetValue(CommandChildTappedProperty, value); }
         }
+
+        /// <summary>
+        /// WIll be executed if a child implements ISkiaGestureListener and was Tapped. If this is set then the Tapped gesture will be consumed by this control after passing it to child.
+        /// </summary>
+        public Action<ISkiaGestureListener, SkiaGesturesParameters, GestureEventProcessingInfo> OnChildTapped;
 
         public virtual ISkiaGestureListener ProcessGestures(
             SkiaGesturesParameters args,
@@ -1145,14 +1153,24 @@ namespace DrawnUi.Draw
                             listener = listen;
                         }
 
+                        ISkiaGestureListener breakForChild = null;
                         if (listener != null)
                         {
                             var forChild = IsGestureForChild(child, touchLocationWIthOffset);
                             if (forChild)
                             {
-                                if (args.Type == TouchActionResult.Tapped && CommandChildTapped != null)
+                                if (args.Type == TouchActionResult.Tapped)
                                 {
-                                    CommandChildTapped.Execute(child);
+                                    if (OnChildTapped != null)
+                                    {
+                                        breakForChild = listener;
+                                        OnChildTapped.Invoke(listener, args, apply);
+                                    }
+                                    if (CommandChildTapped != null)
+                                    {
+                                        breakForChild = listener;
+                                        CommandChildTapped.Execute(listener);
+                                    }
                                 }
 
                                 //Trace.WriteLine($"[HIT] for cell {i} at Y {y:0.0}");
@@ -1190,6 +1208,12 @@ namespace DrawnUi.Draw
 
                                 if (consumed != null)
                                 {
+                                    break;
+                                }
+
+                                if (breakForChild != null)
+                                {
+                                    consumed = breakForChild;
                                     break;
                                 }
                             }
@@ -1241,9 +1265,10 @@ namespace DrawnUi.Draw
 
                                 if (forChild)
                                 {
-                                    if (args.Type == TouchActionResult.Tapped && CommandChildTapped != null)
+                                    if (args.Type == TouchActionResult.Tapped)
                                     {
-                                        CommandChildTapped.Execute(listener);
+                                        OnChildTapped?.Invoke(listener, args, apply);
+                                        CommandChildTapped?.Execute(listener);
                                     }
 
                                     if (manageChildFocus && listener == Superview.FocusedChild)

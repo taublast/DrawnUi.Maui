@@ -917,7 +917,7 @@ namespace DrawnUi.Draw
         /// <param name="view">The control to set margin for</param>
         /// <param name="uniformMargin">The uniform margin to apply to all sides</param>
         /// <returns>The control for chaining</returns>
-        public static T WithMargin<T>(this T view, double uniformMargin) where T : SkiaControl
+        public static T SetMargin<T>(this T view, double uniformMargin) where T : SkiaControl
         {
             view.Margin = new Thickness(uniformMargin);
             return view;
@@ -931,7 +931,7 @@ namespace DrawnUi.Draw
         /// <param name="horizontal">The left and right margin</param>
         /// <param name="vertical">The top and bottom margin</param>
         /// <returns>The control for chaining</returns>
-        public static T WithMargin<T>(this T view, double horizontal, double vertical) where T : SkiaControl
+        public static T SetMargin<T>(this T view, double horizontal, double vertical) where T : SkiaControl
         {
             view.Margin = new Thickness(horizontal, vertical);
             return view;
@@ -947,7 +947,7 @@ namespace DrawnUi.Draw
         /// <param name="right">The right margin</param>
         /// <param name="bottom">The bottom margin</param>
         /// <returns>The control for chaining</returns>
-        public static T WithMargin<T>(this T view, double left, double top, double right, double bottom)
+        public static T SetMargin<T>(this T view, double left, double top, double right, double bottom)
             where T : SkiaControl
         {
             view.Margin = new Thickness(left, top, right, bottom);
