@@ -444,7 +444,12 @@ namespace DrawnUi.Controls
 
             snap = IsOpen ? SnapPoints[0] : SnapPoints[1];
 
-            ScrollToOffset(snap, Vector2.Zero, Animated && WasDrawn);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                ScrollToOffset(snap, Vector2.Zero, Animated && WasDrawn);
+            });
+
         }
 
         protected override void Paint(DrawingContext ctx)

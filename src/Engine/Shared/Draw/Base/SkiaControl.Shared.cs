@@ -291,14 +291,38 @@ namespace DrawnUi.Draw
         {
         }
 
+        protected virtual void SetDefaultMinimumContentSize(double width, double height)
+        {
+            if (width > 0)
+            {
+                if (this.MinimumWidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill &&
+                    (LockRatio == 0 || MinimumWidthRequest < 0))
+                    this.MinimumWidthRequest = width;
+            }
+
+            if (height > 0)
+            {
+                if (this.MinimumHeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill &&
+                    (LockRatio == 0 || MinimumHeightRequest < 0))
+                    this.MinimumHeightRequest = height;
+            }
+        }
+
         protected virtual void SetDefaultContentSize(double width, double height)
         {
-            if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill &&
-                (LockRatio == 0 || HeightRequest < 0))
-                this.WidthRequest = width;
-            if (this.HeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill &&
-                (LockRatio == 0 || WidthRequest < 0))
-                this.HeightRequest = height;
+            if (width > 0)
+            {
+                if (this.WidthRequest < 0 && HorizontalOptions.Alignment != LayoutAlignment.Fill &&
+                    (LockRatio == 0 || HeightRequest < 0))
+                    this.WidthRequest = width;
+            }
+
+            if (height > 0)
+            {
+                if (this.HeightRequest < 0 && VerticalOptions.Alignment != LayoutAlignment.Fill &&
+                    (LockRatio == 0 || WidthRequest < 0))
+                    this.HeightRequest = height;
+            }
         }
 
         /// <summary>
@@ -3625,7 +3649,7 @@ namespace DrawnUi.Draw
             return new MeasureRequest(widthConstraint, heightConstraint, scale) { IsSame = isSame };
         }
 
-        public SKRect GetMeasuringRectForChildren(float widthConstraint, float heightConstraint, double scale)
+        public virtual SKRect GetMeasuringRectForChildren(float widthConstraint, float heightConstraint, double scale)
         {
             var constraintLeft = (Padding.Left + Margins.Left) * scale;
             var constraintRight = (Padding.Right + Margins.Right) * scale;

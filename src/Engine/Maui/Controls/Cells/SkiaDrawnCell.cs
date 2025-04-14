@@ -25,7 +25,6 @@ public class SkiaDrawnCell : SkiaLayout, ISkiaCell
 
     private bool _isAttaching;
 
-
     protected INotifyPropertyChanged _lastContext;
 
     public override void OnDisposing()

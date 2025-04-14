@@ -104,7 +104,7 @@
 
   <ItemGroup>
       <!--MIT open source-->
-      <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.4" />
+      <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.5" />
       <!--MIT open source .net helpers and extensions-->
       <PackageReference Include="AppoMobi.Specials" Version="9.0.3" />
       <!--parsing markdown text-->

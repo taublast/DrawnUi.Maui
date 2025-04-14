@@ -76,7 +76,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     
     protected virtual void CreateDefaultStyleContent()
     {
-        SetDefaultContentSize(100, 41);
+        SetDefaultMinimumContentSize(100, 41);
 
         this.AddSubView(new SkiaShape
         {
@@ -103,7 +103,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     protected virtual void CreateCupertinoStyleContent()
     {
         // iOS buttons have specific dimensions and styling
-        SetDefaultContentSize(100, 36);
+        SetDefaultMinimumContentSize(100, 36);
 
         this.BackgroundColor = Color.FromRgba(0, 122, 255, 255); // iOS blue
 
@@ -152,7 +152,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     protected virtual void CreateMaterialStyleContent()
     {
         // Material buttons follow specific design guidelines
-        SetDefaultContentSize(100, 40);
+        SetDefaultMinimumContentSize(100, 40);
 
         this.BackgroundColor = Color.FromRgba(33, 150, 243, 255); // Material blue
 
@@ -201,7 +201,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     protected virtual void CreateWindowsStyleContent()
     {
         // Windows buttons are typically more rectangular
-        SetDefaultContentSize(100, 32);
+        SetDefaultMinimumContentSize(100, 32);
 
         BackgroundColor = Color.FromRgba(0, 120, 215, 255); // Windows blue
 
