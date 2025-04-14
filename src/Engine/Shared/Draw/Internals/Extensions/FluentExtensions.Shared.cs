@@ -730,8 +730,29 @@ namespace DrawnUi.Draw
             return control;
         }
 
- 
 
+
+
+        #endregion
+
+        #region GESTURES
+
+        public static T OnTapped<T>(this T view, Action<T> action) where T : SkiaControl
+        {
+            try
+            {
+                AddGestures.SetCommandTapped(view, new Command((ctx) =>
+                {
+                    action?.Invoke(view);
+                }));
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
+
+            return view;
+        }
 
         #endregion
 
