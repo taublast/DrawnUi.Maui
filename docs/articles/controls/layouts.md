@@ -1,19 +1,17 @@
 # Layout Controls
 
-DrawnUi.Maui provides a powerful and flexible layout system that allows you to arrange controls in various ways while maintaining high performance. The layout system is designed to be similar to MAUI's native layout system but with optimizations specifically for direct rendering with SkiaSharp.
+DrawnUi.Maui provides a powerful and flexible layout system for arranging controls with high performance. The system is similar to MAUI's native layout system but optimized for direct rendering with SkiaSharp.
 
 ## Core Layout Types
 
-DrawnUi.Maui offers several core layout types to handle different arrangement needs:
+DrawnUi.Maui offers several core layout types:
 
 ### SkiaLayout
 
-The base layout control that handles the measurement, arrangement, and rendering of child elements with different layout strategies through its LayoutType property. It provides fundamental layout capabilities:
+The base layout control for measurement, arrangement, and rendering of child elements. It supports different layout strategies via the `LayoutType` property:
 
 - Managing child controls
-- Template recycling for improved performance
-- Virtualization support for efficiently rendering large collections
-- DataTemplate support for data-driven UIs
+- Performance optimizations (see below)
 
 ```xml
 <DrawUi:SkiaLayout
@@ -26,7 +24,7 @@ The base layout control that handles the measurement, arrangement, and rendering
 
 ### ContentLayout
 
-A specialized layout type designed to host a single content element with optional attached elements. Ideal for scenarios where you need to position a main content with overlaid controls.
+A specialized layout for hosting a single content element with optional overlays.
 
 ```xml
 <DrawUi:ContentLayout>
@@ -36,17 +34,16 @@ A specialized layout type designed to host a single content element with optiona
 
 ## Layout Types
 
-The `LayoutType` property on `SkiaLayout` supports several layout strategies:
+The `LayoutType` property on `SkiaLayout` supports:
 
-- **Absolute**: Free positioning of elements using explicit coordinates
-- **Grid**: Row and column-based grid layout
-- **Column**: Vertical stacking of elements (similar to VStack)
-- **Row**: Horizontal stacking of elements (similar to HStack)
-- **Wrap**: Arranges elements in rows with automatic wrapping when space runs out
+- **Absolute**: Free positioning using explicit coordinates
+- **Grid**: Row and column-based layout
+- **Column**: Vertical stacking (like VStack)
+- **Row**: Horizontal stacking (like HStack)
+- **Wrap**: Items wrap to new lines when space runs out
 
 ```xml
 <DrawUi:SkiaLayout LayoutType="Wrap" Spacing="5,5">
-    <!-- Items will wrap to new lines when they exceed available width -->
     <DrawUi:SkiaLabel Text="Item 1" />
     <DrawUi:SkiaLabel Text="Item 2" />
     <!-- More items -->
@@ -57,7 +54,7 @@ The `LayoutType` property on `SkiaLayout` supports several layout strategies:
 
 ### InfiniteLayout
 
-Extends ContentLayout to provide infinite scrolling capabilities in horizontal, vertical, or both directions.
+Provides infinite scrolling in horizontal, vertical, or both directions.
 
 ```xml
 <DrawUi:InfiniteLayout ScrollOrientation="Both">
@@ -67,7 +64,7 @@ Extends ContentLayout to provide infinite scrolling capabilities in horizontal, 
 
 ### SnappingLayout
 
-A specialized layout supporting snap points for controlled scrolling experience, ideal for carousel-like interfaces or paginated scrolling.
+Supports snap points for controlled scrolling, ideal for carousels or paginated interfaces.
 
 ```xml
 <DrawUi:SnappingLayout Orientation="Horizontal">
@@ -79,63 +76,35 @@ A specialized layout supporting snap points for controlled scrolling experience,
 
 ## Performance Optimization
 
-The layout system in DrawnUi.Maui is designed with performance in mind:
-
-### Template Recycling
-
-When displaying collections using ItemsSource and ItemTemplate, the layout system can recycle template instances to reduce object creation and improve performance:
-
-```xml
-<DrawUi:SkiaLayout
-    LayoutType="Column"
-    ItemsSource="{Binding Items}"
-    RecyclingTemplate="Enabled">
-    <DrawUi:SkiaLayout.ItemTemplate>
-        <DataTemplate>
-            <DrawUi:SkiaLabel Text="{Binding Name}" />
-        </DataTemplate>
-    </DrawUi:SkiaLayout.ItemTemplate>
-</DrawUi:SkiaLayout>
-```
-
-### Virtualization
-
-The layout system supports virtualization to only render items that are currently visible:
-
-```xml
-<DrawUi:SkiaLayout
-    LayoutType="Column"
-    ItemsSource="{Binding LargeCollection}"
-    VirtualizationMode="Enabled">
-    <!-- Template definition -->
-</DrawUi:SkiaLayout>
-```
+The layout system is designed for performance:
 
 ### Measurement Strategies
 
-Different measurement strategies control how and when items are measured:
+Control how and when items are measured using the `MeasureItemsStrategy` property:
 
 - **MeasureFirst**: Measures all items before rendering (good for static content)
-- **MeasureAll**: Continuously measures all items (useful for dynamic content)
+- **MeasureAll**: Continuously measures all items (for dynamic content)
 - **MeasureVisible**: Only measures visible items (most efficient for large collections)
 
 ```xml
 <DrawUi:SkiaLayout
-    MeasuringStrategy="MeasureVisible"
-    ItemsSource="{Binding LargeCollection}">
-    <!-- Template definition -->
+    MeasureItemsStrategy="MeasureVisible">
+    <!-- Child controls -->
 </DrawUi:SkiaLayout>
 ```
 
-## Example: Creating a Grid Layout
+> **Note:** Data templating and collection binding (e.g., `ItemsSource`, `ItemTemplate`) are not currently available as direct properties in SkiaLayout. If you need dynamic content, you must add/remove child controls programmatically.
 
-Here's an example of creating a grid layout with defined rows and columns:
+### Virtualization
+
+Virtualization is handled internally by the measurement strategy. When using `MeasureVisible`, only visible items are measured and rendered, improving performance for large collections.
+
+## Example: Creating a Grid Layout
 
 ```xml
 <DrawUi:SkiaLayout LayoutType="Grid" 
     ColumnDefinitions="Auto,*,100" 
     RowDefinitions="Auto,*,50">
-    
     <!-- Header spanning all columns -->
     <DrawUi:SkiaLabel 
         Text="Grid Header" 
@@ -143,7 +112,6 @@ Here's an example of creating a grid layout with defined rows and columns:
         ColumnSpan="3"
         Row="0" 
         HorizontalOptions="Center" />
-    
     <!-- Sidebar -->
     <DrawUi:SkiaLayout 
         LayoutType="Column" 
@@ -152,12 +120,10 @@ Here's an example of creating a grid layout with defined rows and columns:
         RowSpan="2"
         BackgroundColor="LightGray"
         Padding="10">
-        
         <DrawUi:SkiaLabel Text="Menu Item 1" />
         <DrawUi:SkiaLabel Text="Menu Item 2" />
         <DrawUi:SkiaLabel Text="Menu Item 3" />
     </DrawUi:SkiaLayout>
-    
     <!-- Main content -->
     <DrawUi:ContentLayout 
         Column="1" 
@@ -167,7 +133,6 @@ Here's an example of creating a grid layout with defined rows and columns:
             HorizontalOptions="Center" 
             VerticalOptions="Center" />
     </DrawUi:ContentLayout>
-    
     <!-- Right panel -->
     <DrawUi:SkiaLayout 
         LayoutType="Column" 
@@ -175,10 +140,8 @@ Here's an example of creating a grid layout with defined rows and columns:
         Row="1"
         BackgroundColor="LightBlue"
         Padding="5">
-        
         <DrawUi:SkiaLabel Text="Panel Info" />
     </DrawUi:SkiaLayout>
-    
     <!-- Footer spanning columns 1-2 -->
     <DrawUi:SkiaLabel 
         Text="Footer" 
@@ -190,13 +153,15 @@ Here's an example of creating a grid layout with defined rows and columns:
 </DrawUi:SkiaLayout>
 ```
 
-Note that all grid functionality is handled by the SkiaLayout with LayoutType="Grid", not through a separate GridLayout class.
+All grid functionality is handled by SkiaLayout with `LayoutType="Grid"`.
 
 ## Under the Hood
 
-The layout system is built on top of the `SkiaControl` base class, which provides core rendering capabilities. The layout controls extend this to add child management, measurement, and arrangement functionality. Internally, the system uses specialized structures like `LayoutStructure` and `GridStructure` to efficiently track and manage layout information.
+The layout system is built on top of the `SkiaControl` base class. Layout controls extend this for child management, measurement, and arrangement. Internally, structures like `LayoutStructure` and `GridStructure` efficiently track and manage layout information.
 
-Understanding the cache system is crucial for optimal performance. The caching options allow you to balance between CPU usage and memory consumption based on your specific needs:
+### Caching
+
+Caching options help balance CPU and memory usage:
 
 - **None**: No caching, recalculated every frame
 - **Operations**: Caches drawing commands

@@ -15,7 +15,7 @@
       <link rel="stylesheet" href="../../styles/docfx.css">
       <link rel="stylesheet" href="../../styles/main.css">
       <meta property="docfx:navrel" content="../../toc.html">
-      <meta property="docfx:tocrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../../">
     
@@ -79,9 +79,12 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="button-controls">Button Controls</h1>
 
-<p>DrawnUi provides highly customizable button controls with platform-specific styling.</p>
+<p>DrawnUi provides highly customizable button controls with platform-specific styling and support for custom content.</p>
 <h2 id="skiabutton">SkiaButton</h2>
-<p><code>SkiaButton</code> is a versatile button control with support for different button styles and platform-specific appearance.</p>
+<p><code>SkiaButton</code> is a versatile button control supporting different button styles, platform-specific appearance, and custom content. You can use the default content or provide your own child views. If you use conventional tags (<code>BtnText</code>, <code>BtnShape</code>), SkiaButton will apply its properties (like <code>Text</code>, <code>TextColor</code>, etc.) to those views automatically.</p>
+<blockquote>
+<p><strong>Note:</strong> If you provide custom content, use the tags <code>BtnText</code> for your main label and <code>BtnShape</code> for the button background to enable property binding.</p>
+</blockquote>
 <h3 id="basic-usage">Basic Usage</h3>
 <pre><code class="lang-xml">&lt;draw:SkiaButton
     Text=&quot;Click Me&quot;
@@ -91,6 +94,12 @@
     TextColor=&quot;White&quot;
     CornerRadius=&quot;8&quot;
     Clicked=&quot;OnButtonClicked&quot; /&gt;
+</code></pre>
+<h3 id="custom-content-example">Custom Content Example</h3>
+<pre><code class="lang-xml">&lt;draw:SkiaButton&gt;
+    &lt;draw:SkiaShape Tag=&quot;BtnShape&quot; BackgroundColor=&quot;Red&quot; CornerRadius=&quot;12&quot; /&gt;
+    &lt;draw:SkiaLabel Tag=&quot;BtnText&quot; Text=&quot;Custom&quot; TextColor=&quot;Yellow&quot; /&gt;
+&lt;/draw:SkiaButton&gt;
 </code></pre>
 <h3 id="button-style-types">Button Style Types</h3>
 <p>SkiaButton supports multiple style variants through the <code>ButtonStyle</code> property:</p>
@@ -106,17 +115,15 @@
     TextColor=&quot;Blue&quot; /&gt;
 </code></pre>
 <h3 id="platform-specific-styling">Platform-Specific Styling</h3>
-<p>Set the <code>ControlStyle</code> property to apply platform-specific styling:</p>
+<p>Platform-specific styles are selected automatically or can be set in code via the <code>UsingControlStyle</code> property (not bindable in XAML). Styles include:</p>
 <ul>
-<li><code>Platform</code>: Automatically selects the appropriate style for the current platform</li>
 <li><code>Cupertino</code>: iOS-style button</li>
 <li><code>Material</code>: Android Material Design button</li>
 <li><code>Windows</code>: Windows-style button</li>
 </ul>
-<pre><code class="lang-xml">&lt;draw:SkiaButton
-    Text=&quot;iOS Style&quot;
-    ControlStyle=&quot;Cupertino&quot; /&gt;
-</code></pre>
+<blockquote>
+<p><strong>Note:</strong> There is no <code>ControlStyle</code> bindable property. Platform style is set internally or in code.</p>
+</blockquote>
 <h3 id="elevation">Elevation</h3>
 <p>Buttons can have elevation (shadow) effects:</p>
 <pre><code class="lang-xml">&lt;draw:SkiaButton
@@ -151,17 +158,12 @@
 <tr>
 <td><code>CornerRadius</code></td>
 <td>float</td>
-<td>The corner radius of the button</td>
+<td>The corner radius of the button (applied via <code>BtnShape</code>)</td>
 </tr>
 <tr>
 <td><code>ButtonStyle</code></td>
 <td>ButtonStyleType</td>
 <td>The button style (Contained, Outlined, Text)</td>
-</tr>
-<tr>
-<td><code>ControlStyle</code></td>
-<td>PrebuiltControlStyle</td>
-<td>The platform-specific style</td>
 </tr>
 <tr>
 <td><code>ElevationEnabled</code></td>
@@ -173,6 +175,36 @@
 <td>TextTransform</td>
 <td>The text case transformation (None, Uppercase, Lowercase)</td>
 </tr>
+<tr>
+<td><code>FontSize</code></td>
+<td>double</td>
+<td>The font size of the button text</td>
+</tr>
+<tr>
+<td><code>FontFamily</code></td>
+<td>string</td>
+<td>The font family of the button text</td>
+</tr>
+<tr>
+<td><code>IsDisabled</code></td>
+<td>bool</td>
+<td>Disables the button if true</td>
+</tr>
+<tr>
+<td><code>IsPressed</code></td>
+<td>bool</td>
+<td>True while the button is pressed</td>
+</tr>
+<tr>
+<td><code>IconPosition</code></td>
+<td>IconPositionType</td>
+<td>Position of icon (icon support planned)</td>
+</tr>
+<tr>
+<td><code>ApplyEffect</code></td>
+<td>SkiaTouchAnimation</td>
+<td>Touch animation effect (Ripple, Shimmer, etc.)</td>
+</tr>
 </tbody>
 </table>
 <h3 id="events">Events</h3>
@@ -180,7 +212,19 @@
 <li><code>Clicked</code>: Raised when the button is clicked/tapped</li>
 <li><code>Pressed</code>: Raised when the button is pressed down</li>
 <li><code>Released</code>: Raised when the button is released</li>
+<li><code>Up</code>, <code>Down</code>, <code>Tapped</code>: Additional gesture events</li>
 </ul>
+<h3 id="icon-support">Icon Support</h3>
+<p>Icon support is planned. The <code>IconPosition</code> property exists, but icon rendering is not yet implemented.</p>
+<hr>
+<h2 id="api-xml-documentation">API XML Documentation</h2>
+<blockquote>
+<p>The following methods in SkiaButton have been updated with XML documentation in the codebase:</p>
+<ul>
+<li><code>OnDown</code>, <code>OnUp</code>, <code>OnTapped</code>, <code>ApplyProperties</code>, <code>CreateDefaultContent</code>, <code>CreateCupertinoStyleContent</code>, <code>CreateMaterialStyleContent</code>, <code>CreateWindowsStyleContent</code>, <code>OnButtonPropertyChanged</code>, <code>FindViews</code>, <code>CreateClip</code>.</li>
+</ul>
+</blockquote>
+<p>For more details, see the source code in <code>src/Engine/Maui/Controls/Button/SkiaButton.cs</code>.</p>
 
 </article>
           </div>

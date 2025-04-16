@@ -23,13 +23,30 @@ SkiaImage is the core image control in DrawnUi.Maui, providing efficient image l
 | Property | Type | Description |
 |----------|------|-------------|
 | `Source` | ImageSource | Source of the image (URL, file, resource, stream) |
-| `Aspect` | Aspect | How the image scales to fit (AspectFit, AspectFill, etc.) |
-| `HorizontalAlignment` | SKAlignment | Horizontal positioning of the image |
-| `VerticalAlignment` | SKAlignment | Vertical positioning of the image |
+| `Aspect` | TransformAspect | How the image scales to fit (AspectFit, AspectFill, etc.) |
+| `HorizontalAlignment` | DrawImageAlignment | Horizontal positioning of the image |
+| `VerticalAlignment` | DrawImageAlignment | Vertical positioning of the image |
 | `RescalingQuality` | SKFilterQuality | Quality of image rescaling |
 | `LoadSourceOnFirstDraw` | bool | Whether to defer loading until first render |
 | `PreviewBase64` | string | Base64 encoded preview image to show while loading |
 | `ImageBitmap` | LoadedImageSource | Loaded image source (internal representation) |
+| `AddEffect` | SkiaImageEffect | Built-in image effect (None, Sepia, Tint, etc.) |
+| `ColorTint` | Color | Tint color for image effect |
+| `Brightness` | double | Adjusts image brightness |
+| `Contrast` | double | Adjusts image contrast |
+| `Saturation` | double | Adjusts image saturation |
+| `Blur` | double | Applies blur effect |
+| `Gamma` | double | Adjusts gamma |
+| `Darken` | double | Darkens the image |
+| `Lighten` | double | Lightens the image |
+| `ZoomX`/`ZoomY` | double | Zoom/scaling factors |
+| `HorizontalOffset`/`VerticalOffset` | double | Offset for image position |
+| `SpriteWidth`/`SpriteHeight` | double | Sprite sheet cell size |
+| `SpriteIndex` | int | Index of sprite to display |
+
+> **Note:** The `UseCache` property is not directly on SkiaImage, but caching is handled by the SkiaControl base class or internally. You can set `Cache` on SkiaImage for caching strategies (e.g., `Cache="Image"`).
+
+> **Note:** The `VisualEffects` property is inherited from SkiaControl. You can use `<DrawUi:SkiaControl.VisualEffects>` in XAML to apply effects like drop shadow or color presets.
 
 ### Aspect Modes
 

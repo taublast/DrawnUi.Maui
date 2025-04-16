@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-      <title>Getting Started with DrawnUi | DrawnUi Documentation </title>
+      <title>Your First DrawnUi App | DrawnUi Documentation </title>
       <meta name="viewport" content="width=device-width">
-      <meta name="title" content="Getting Started with DrawnUi | DrawnUi Documentation ">
+      <meta name="title" content="Your First DrawnUi App | DrawnUi Documentation ">
     
     
       <link rel="shortcut icon" href="../images/favicon.ico">
@@ -77,97 +77,52 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-<h1 id="getting-started-with-drawnui">Getting Started with DrawnUi</h1>
+<h1 id="your-first-drawnui-app">Your First DrawnUi App</h1>
 
-<p>This guide will help you get started with DrawnUi in your .NET MAUI application.</p>
-<h2 id="installation">Installation</h2>
-<h3 id="1-add-the-nuget-package">1. Add the NuGet Package</h3>
-<p>Install the DrawnUi NuGet package in your .NET MAUI project:</p>
+<p>This quickstart guide will help you create your first DrawnUi.Maui application from scratch.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>.NET 8 or later</li>
+<li>Visual Studio 2022+ (with MAUI workload) or VS Code</li>
+</ul>
+<h2 id="1-create-a-new-maui-project">1. Create a New MAUI Project</h2>
+<pre><code class="lang-bash">dotnet new maui -n MyDrawnUiApp
+cd MyDrawnUiApp
+</code></pre>
+<h2 id="2-add-drawnui-to-your-project">2. Add DrawnUi to Your Project</h2>
 <pre><code class="lang-bash">dotnet add package DrawnUi
 </code></pre>
-<p>Or via the NuGet Package Manager in Visual Studio.</p>
-<h3 id="2-initialize-in-your-maui-app">2. Initialize in Your MAUI App</h3>
-<p>Update your <code>MauiProgram.cs</code> file to initialize DrawnUi:</p>
-<pre><code class="lang-csharp">using DrawnUi;
-
-public static class MauiProgram
-{
-    public static MauiApp CreateMauiApp()
-    {
-        var builder = MauiApp.CreateBuilder();
-        builder
-            .UseMauiApp&lt;App&gt;()
-            .UseDrawnUi() // Add this line
-            .ConfigureFonts(fonts =&gt;
-            {
-                fonts.AddFont(&quot;OpenSans-Regular.ttf&quot;, &quot;OpenSansRegular&quot;);
-                fonts.AddFont(&quot;OpenSans-Semibold.ttf&quot;, &quot;OpenSansSemibold&quot;);
-            });
-
-        return builder.Build();
-    }
-}
-</code></pre>
-<h2 id="using-drawnui-controls">using DrawnUi Controls</h2>
-<h3 id="add-namespace-to-xaml">Add Namespace to XAML</h3>
-<p>Add the DrawnUi namespace to your XAML files:</p>
+<h2 id="3-add-a-drawnui-canvas-to-mainpage">3. Add a DrawnUi Canvas to MainPage</h2>
+<p>Open <code>MainPage.xaml</code> and replace the content with:</p>
 <pre><code class="lang-xml">&lt;ContentPage xmlns=&quot;http://schemas.microsoft.com/dotnet/2021/maui&quot;
              xmlns:x=&quot;http://schemas.microsoft.com/winfx/2009/xaml&quot;
-             xmlns:draw=&quot;http://schemas.appomobi.com/drawnUi/2023/draw&quot;
-             x:Class=&quot;YourNamespace.YourPage&quot;&gt;
-    &lt;!-- Page content --&gt;
+             xmlns:draw=&quot;clr-namespace:DrawnUi.Maui;assembly=DrawnUi.Maui&quot;
+             x:Class=&quot;MyDrawnUiApp.MainPage&quot;&gt;
+    &lt;draw:Canvas HorizontalOptions=&quot;Fill&quot; VerticalOptions=&quot;Fill&quot;&gt;
+        &lt;draw:SkiaLayout LayoutType=&quot;Column&quot; Padding=&quot;32&quot; Spacing=&quot;24&quot;&gt;
+            &lt;draw:SkiaLabel Text=&quot;Hello, DrawnUi!&quot; FontSize=&quot;32&quot; TextColor=&quot;Blue&quot; /&gt;
+            &lt;draw:SkiaButton Text=&quot;Click Me&quot; Tapped=&quot;OnButtonTapped&quot; /&gt;
+        &lt;/draw:SkiaLayout&gt;
+    &lt;/draw:Canvas&gt;
 &lt;/ContentPage&gt;
 </code></pre>
-<h3 id="using-drawnui-controls-1">using DrawnUi Controls</h3>
-<p>Now you can add DrawnUi controls to your page:</p>
-<pre><code class="lang-xml">&lt;draw:DrawnUiBasePage&gt;
-    &lt;draw:SkiaLayout&gt;
-        &lt;draw:SkiaLabel 
-            Text=&quot;Hello DrawnUi!&quot; 
-            FontSize=&quot;24&quot;
-            HorizontalOptions=&quot;Center&quot;
-            VerticalOptions=&quot;Center&quot; /&gt;
-            
-        &lt;draw:SkiaButton
-            Text=&quot;Click Me&quot;
-            WidthRequest=&quot;120&quot;
-            HeightRequest=&quot;40&quot;
-            CornerRadius=&quot;8&quot;
-            BackgroundColor=&quot;Blue&quot;
-            TextColor=&quot;White&quot;
-            VerticalOptions=&quot;Center&quot;
-            HorizontalOptions=&quot;Center&quot;
-            Margin=&quot;0,50,0,0&quot;
-            Clicked=&quot;OnButtonClicked&quot; /&gt;
-    &lt;/draw:SkiaLayout&gt;
-&lt;/draw:DrawnUiBasePage&gt;
-</code></pre>
-<h3 id="handling-events">Handling Events</h3>
-<p>Handle control events in your code-behind:</p>
-<pre><code class="lang-csharp">private void OnButtonClicked(object sender, SkiaGesturesParameters e)
+<h2 id="4-handle-button-tap-in-code">4. Handle Button Tap in Code</h2>
+<p>In <code>MainPage.xaml.cs</code>:</p>
+<pre><code class="lang-csharp">private void OnButtonTapped(object sender, EventArgs e)
 {
-    // Handle button click
+    // Show a message or update UI
+    DisplayAlert(&quot;DrawnUi&quot;, &quot;Button tapped!&quot;, &quot;OK&quot;);
 }
 </code></pre>
-<h2 id="using-platform-specific-styles">Using Platform-Specific Styles</h2>
-<p>DrawnUi controls support platform-specific styling:</p>
-<pre><code class="lang-xml">&lt;draw:SkiaButton
-    Text=&quot;Platform Style&quot;
-    ControlStyle=&quot;Platform&quot;
-    WidthRequest=&quot;150&quot;
-    HeightRequest=&quot;40&quot; /&gt;
-    
-&lt;draw:SkiaSwitch
-    ControlStyle=&quot;Platform&quot;
-    IsToggled=&quot;true&quot;
-    Margin=&quot;0,20,0,0&quot; /&gt;
-</code></pre>
+<h2 id="5-run-your-app">5. Run Your App</h2>
+<p>Build and run your app on Windows, Android, iOS, or Mac.</p>
 <h2 id="next-steps">Next Steps</h2>
 <ul>
-<li>Explore the <a href="controls/index.html">Controls documentation</a> to learn about available controls</li>
-<li>See <a href="advanced/platform-styling.html">Platform-Specific Styling</a> for more styling options</li>
-<li>Check out the <a href="samples.html">Sample Applications</a> for complete examples</li>
+<li>Explore the <a href="controls/index.html">Controls documentation</a></li>
+<li>Try out <a href="samples.html">Samples</a></li>
+<li>Read about <a href="advanced/index.md">Advanced features</a></li>
 </ul>
+<p>Welcome to the DrawnUi community!</p>
 
 </article>
           </div>
@@ -177,7 +132,7 @@ public static class MauiProgram
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/taublast/DrawnUi.Maui/blob/master/docs/articles/getting-started.md/#L1" class="contribution-link">Edit this page</a>
+                    <a href="https://github.com/taublast/DrawnUi.Maui/blob/master/docs/articles/first-app.md/#L1" class="contribution-link">Edit this page</a>
                   </li>
                 </ul>
               </div>

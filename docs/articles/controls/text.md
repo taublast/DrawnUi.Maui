@@ -26,15 +26,25 @@ SkiaLabel is the primary text rendering control in DrawnUi.Maui, rendering text 
 | `FontFamily` | string | Font family name |
 | `FontSize` | float | Font size in logical pixels |
 | `FontWeight` | int | Font weight (100-900 scale, 400=normal, 700=bold) |
-| `FontItalic` | bool | Whether text should be italic |
+| `FontAttributes` | FontAttributes | Bold/Italic/None |
 | `HorizontalTextAlignment` | DrawTextAlignment | Text horizontal alignment (Start, Center, End, Fill) |
 | `VerticalTextAlignment` | DrawTextAlignment | Text vertical alignment (Start, Center, End) |
 | `LineBreakMode` | LineBreakMode | How text should wrap or truncate |
 | `MaxLines` | int | Maximum number of lines to display |
-| `IsUnderline` | bool | Whether text should be underlined |
-| `IsStrikeThrough` | bool | Whether text should have strikethrough |
+| `StrokeColor` | Color | Outline color |
+| `StrokeWidth` | double | Outline width |
+| `DropShadowColor` | Color | Shadow color |
+| `DropShadowSize` | double | Shadow blur radius |
+| `DropShadowOffsetX`/`DropShadowOffsetY` | double | Shadow offset |
+| `AutoSize` | AutoSizeType | Auto-sizing mode |
+| `AutoSizeText` | string | Text to use for auto-sizing calculations |
+| `LineSpacing` | double | Line spacing multiplier |
+| `ParagraphSpacing` | double | Paragraph spacing multiplier |
+| `CharacterSpacing` | double | Character spacing multiplier |
+| `IsMonospaced` | bool | Enables monospaced text rendering |
+| `MonoForDigits` | string | Use mono width for digits (e.g. "8") |
 
-### Formatting Text
+### Rich Text Formatting (Spans)
 
 SkiaLabel supports rich text formatting through its `Spans` collection:
 
@@ -43,7 +53,7 @@ SkiaLabel supports rich text formatting through its `Spans` collection:
     <DrawUi:SkiaLabel.Spans>
         <DrawUi:TextSpan Text="Hello " TextColor="Black" FontSize="18" />
         <DrawUi:TextSpan Text="Beautiful " TextColor="Red" FontSize="20" FontWeight="700" />
-        <DrawUi:TextSpan Text="World!" TextColor="Blue" FontSize="18" FontItalic="True" />
+        <DrawUi:TextSpan Text="World!" TextColor="Blue" FontSize="18" FontAttributes="Italic" />
     </DrawUi:SkiaLabel.Spans>
 </DrawUi:SkiaLabel>
 ```
@@ -81,8 +91,8 @@ private void OnSpanTapped(object sender, EventArgs e)
 TextSpan supports various styling options:
 
 ```xml
-<DrawUi:TextSpan Text="Bold text" IsBold="True" />
-<DrawUi:TextSpan Text="Italic text" IsItalic="True" />
+<DrawUi:TextSpan Text="Bold text" FontAttributes="Bold" />
+<DrawUi:TextSpan Text="Italic text" FontAttributes="Italic" />
 <DrawUi:TextSpan Text="Underlined text" Underline="True" />
 <DrawUi:TextSpan Text="Strikethrough text" Strikeout="True" />
 <DrawUi:TextSpan Text="Highlighted text" BackgroundColor="Yellow" />
@@ -90,11 +100,11 @@ TextSpan supports various styling options:
 
 #### Emoji Support
 
-For emoji rendering, use the `AutoFindFont` property:
+For emoji rendering, use the `AutoFont` property:
 
 ```xml
 <DrawUi:TextSpan Text="Regular text " />
-<DrawUi:TextSpan AutoFindFont="True" Text="🌐🚒🙎🏽👻🤖" />
+<DrawUi:TextSpan AutoFont="True" Text="🌐🚒🙎🏽👻🤖" />
 <DrawUi:TextSpan Text=" more text..." />
 ```
 
@@ -104,66 +114,22 @@ This ensures proper emoji rendering by finding and using appropriate fonts.
 
 SkiaLabel supports various text effects:
 
-#### Text Shadow
+#### Drop Shadow
 
-SkiaLabel provides powerful shadow effects through the `Shadows` collection property. You can add multiple shadows with different offsets, colors, and blur radii:
+Use the following properties for shadow effects:
+- `DropShadowColor`: Shadow color
+- `DropShadowSize`: Blur radius
+- `DropShadowOffsetX`, `DropShadowOffsetY`: Shadow offset
 
 ```xml
 <DrawUi:SkiaLabel 
     Text="Shadowed Text" 
     FontSize="24" 
-    TextColor="White">
-    <DrawUi:SkiaLabel.Shadows>
-        <DrawUi:SkiaShadow 
-            Color="#80000000" 
-            BlurRadius="3" 
-            Offset="1,1" />
-    </DrawUi:SkiaLabel.Shadows>
-</DrawUi:SkiaLabel>
-```
-
-For more advanced shadow effects, you can layer multiple shadows:
-
-```xml
-<DrawUi:SkiaLabel 
-    Text="Advanced Shadows" 
-    FontSize="28" 
-    TextColor="White">
-    <DrawUi:SkiaLabel.Shadows>
-        <!-- Inner shadow -->
-        <DrawUi:SkiaShadow 
-            Color="#80000000" 
-            BlurRadius="2" 
-            Offset="0,1" />
-        <!-- Outer glow -->
-        <DrawUi:SkiaShadow 
-            Color="#4000BBFF" 
-            BlurRadius="8" 
-            Offset="0,0" />
-    </DrawUi:SkiaLabel.Shadows>
-</DrawUi:SkiaLabel>
-```
-
-You can create various text effects using shadows:
-- Text outlines by using zero offset and small blur radius
-- Glow effects by using a bright color with larger blur
-- 3D text effects with strategically placed shadows
-
-#### Text Gradient
-
-```xml
-<DrawUi:SkiaLabel 
-    Text="Gradient Text" 
-    FontSize="24">
-    <DrawUi:SkiaLabel.TextGradient>
-        <DrawUi:SkiaGradient 
-            Type="Linear" 
-            StartColor="Red" 
-            EndColor="Blue" 
-            StartPoint="0,0" 
-            EndPoint="1,1" />
-    </DrawUi:SkiaLabel.TextGradient>
-</DrawUi:SkiaLabel>
+    TextColor="White"
+    DropShadowColor="#80000000"
+    DropShadowSize="3"
+    DropShadowOffsetX="1"
+    DropShadowOffsetY="1" />
 ```
 
 #### Outlined Text
@@ -177,6 +143,15 @@ You can create various text effects using shadows:
     StrokeWidth="1" />
 ```
 
+#### Gradient Text
+
+```xml
+<DrawUi:SkiaLabel 
+    Text="Gradient Text" 
+    FontSize="24"
+    FillGradient="{StaticResource MyGradient}" />
+```
+
 ### Auto-sizing Text
 
 SkiaLabel features powerful automatic font sizing capabilities that can dynamically adjust text to fit your container:
@@ -184,84 +159,13 @@ SkiaLabel features powerful automatic font sizing capabilities that can dynamica
 ```xml
 <DrawUi:SkiaLabel 
     Text="This text will resize to fit the available space" 
-    AutoSizeText="True" 
+    AutoSize="TextToView" 
     FontSize="24" 
     MaxLines="1" />
 ```
 
-There are two different auto-sizing mechanisms in SkiaLabel:
-
-#### 1. AutoSizeText Property
-
-When you set `AutoSizeText="True"`, the label will automatically select the optimal font size to fit the text within the available space. This is ideal for when you want the text to fill the available area but still remain legible.
-
-```xml
-<DrawUi:SkiaLabel
-    Text="FIT TEXT"
-    AutoSizeText="True"
-    WidthRequest="200"
-    HeightRequest="50"
-    HorizontalTextAlignment="Center"
-    VerticalTextAlignment="Center"
-    TextColor="Black" />
-```
-
-#### 2. AutoSize Enumeration
-
-For more granular control, you can use the `AutoSize` property with the following options:
-
-```xml
-<DrawUi:SkiaLabel 
-    Text="This text will adjust to width constraints" 
-    AutoSize="Width" 
-    FontSize="24" 
-    MaxLines="2" 
-    MinAutoSizeFontSize="12" />
-```
-
-The `AutoSize` property accepts:
-- `None`: No auto-sizing
-- `Width`: Adjust font size to fit width
-- `Height`: Adjust font size to fit height
-- `Both`: Adjust font size to fit both dimensions
-
-### Auto-size Configuration
-
-Control the auto-sizing behavior with these properties:
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `AutoSizeText` | bool | Enable automatic text fitting (fills available space) |
-| `AutoSize` | AutoSizeType | More granular control over which dimensions to auto-size |
-| `MinAutoSizeFontSize` | float | Minimum font size when auto-sizing |
-| `AutoSizeFontStep` | float | Step size for font reduction during auto-sizing process |
-| `ScaleX` | float | Horizontal scaling factor for text |
-| `IsAutoFontSilent` | bool | Whether to suppress exceptions in auto-sizing calculations |
-
-The difference between `AutoSizeText` and `AutoSize` is that `AutoSizeText` is designed to maximize text size to fill the available space, while `AutoSize` is designed to reduce text size until it fits within constraints.
-
-### Emoji Support
-
-SkiaLabel has built-in support for emoji rendering:
-
-```xml
-<DrawUi:SkiaLabel 
-    Text="I ❤️ DrawnUi.Maui! 🚀" 
-    FontSize="18" />
-```
-
-### Character Animation
-
-For special effects, SkiaLabel supports character-by-character rendering:
-
-```xml
-<DrawUi:SkiaLabel 
-    Text="Animated Text" 
-    FontSize="18" 
-    CharByChar="True" />
-```
-
-This allows for advanced animations like typing effects or character-by-character color changes.
+- `AutoSize`: Controls auto-sizing mode (None, TextToWidth, TextToHeight, TextToView)
+- `AutoSizeText`: Text to use for sizing calculations
 
 ### Monospaced Text Rendering
 
@@ -271,23 +175,10 @@ SkiaLabel provides the ability to render text in a monospaced style, regardless 
 <DrawUi:SkiaLabel 
     Text="This text will be monospaced" 
     FontSize="18" 
-    IsMonospaced="True" />
+    MonoForDigits="8" />
 ```
 
-This is particularly useful for:
-- Code displays where character alignment is important
-- Creating tabular data without using a monospace font
-- Ensuring consistent character widths for animations or special layouts
-
-You can customize the monospace behavior with these properties:
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `IsMonospaced` | bool | Enables monospaced text rendering |
-| `MonoSpacedDigitsOnly` | bool | Only make digits monospaced (useful for numbers in mixed text) |
-| `ForceMonoWidth` | float | Force a specific width for all characters (leave at 0 to use auto-calculated width) |
-
-The monospacer determines the width by finding the widest glyph and making all characters use that width, or by using the `ForceMonoWidth` value if specified.
+- `MonoForDigits`: Use mono width for digits (e.g. "8")
 
 ### Performance Considerations
 
@@ -295,7 +186,7 @@ The monospacer determines the width by finding the widest glyph and making all c
 - For frequently updated text, use `Cache="Operations"` for best performance
 - Consider setting `MaxLines` when appropriate to avoid unnecessary layout calculations
 - For large blocks of text, monitor performance and consider breaking into multiple labels
-- Use `IsMonospaced` only when needed as it adds some calculation overhead
+- Use monospaced features only when needed as it adds some calculation overhead
 - For complex shadow effects, consider using `Cache="Image"` to optimize rendering
 
 ## SkiaMarkdownLabel

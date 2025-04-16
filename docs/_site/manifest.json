@@ -32,10 +32,83 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/advanced/game-ui.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/advanced/game-ui.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/advanced/gestures.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/advanced/gestures.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/advanced/gradients.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/advanced/gradients.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/advanced/layout-system.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/advanced/layout-system.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/advanced/platform-styling.md",
       "output": {
         ".html": {
           "relative_path": "articles/advanced/platform-styling.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/advanced/skiascroll.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/advanced/skiascroll.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/advanced/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/advanced/toc.html"
+        },
+        ".json": {
+          "relative_path": "articles/advanced/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/animations.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/animations.html"
         }
       },
       "version": ""
@@ -52,10 +125,90 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/controls/carousels.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/carousels.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/drawers.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/drawers.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/images.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/images.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/controls/index.md",
       "output": {
         ".html": {
           "relative_path": "articles/controls/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/layouts.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/layouts.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/scroll.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/scroll.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/shapes.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/shapes.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/shell.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/shell.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/sprites.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/sprites.html"
         }
       },
       "version": ""
@@ -71,6 +224,16 @@
       "version": ""
     },
     {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/text.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/text.html"
+        }
+      },
+      "version": ""
+    },
+    {
       "type": "Toc",
       "source_relative_path": "articles/controls/toc.yml",
       "output": {
@@ -79,6 +242,16 @@
         },
         ".json": {
           "relative_path": "articles/controls/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/first-app.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/first-app.html"
         }
       },
       "version": ""
@@ -99,6 +272,16 @@
       "output": {
         ".html": {
           "relative_path": "articles/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/samples.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/samples.html"
         }
       },
       "version": ""
