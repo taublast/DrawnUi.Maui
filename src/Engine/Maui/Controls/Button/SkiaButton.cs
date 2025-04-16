@@ -586,10 +586,9 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         if (!IsDisabled)
         {
-            if (Tapped != null)
+            if (SendTapped(this, args, GestureEventProcessingInfo.Empty, Super.SendTapsOnMainThread))
             {
                 ret = true;
-                Tapped?.Invoke(this, args);
             }
 
             if (Clicked != null)
@@ -693,7 +692,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     public event EventHandler<SkiaGesturesParameters> Up;
     public event EventHandler<SkiaGesturesParameters> Down;
-    public event EventHandler<SkiaGesturesParameters> Tapped;
+    //public event EventHandler<SkiaGesturesParameters> Tapped;
 
     /// <summary>
     /// Occurs when the button is clicked/tapped (Tapped event).

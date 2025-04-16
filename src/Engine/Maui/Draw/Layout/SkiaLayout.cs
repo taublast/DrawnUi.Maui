@@ -449,7 +449,7 @@ namespace DrawnUi.Draw
         {
             get
             {
-                var output = $"{this.GetType().Name} {Type} {MeasuredSize.Pixels.Width:0}x{MeasuredSize.Pixels.Height:0}, ";
+                var output = $"{this.GetType().Name} {Type} Tag: `{Tag}`, {MeasuredSize.Pixels.Width:0}x{MeasuredSize.Pixels.Height:0}, ";
 
                 if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
                 {

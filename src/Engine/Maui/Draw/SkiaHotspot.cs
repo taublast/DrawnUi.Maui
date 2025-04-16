@@ -59,6 +59,7 @@ namespace DrawnUi.Draw
         }
 
 
+
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
         {
             //Trace.WriteLine($"SkiaHotspot. {type} {args.Action} {args.Event.Location.X} {args.Event.Location.Y}");
@@ -80,10 +81,9 @@ namespace DrawnUi.Draw
             {
                 var consumed = false;
 
-                if (Tapped != null)
+                if (SendTapped(this, args, GestureEventProcessingInfo.Empty, Super.SendTapsOnMainThread))
                 {
                     consumed = true;
-                    Tapped.Invoke(this, args);
                 }
 
                 TotalTapped++;
@@ -188,7 +188,7 @@ namespace DrawnUi.Draw
 
         public event EventHandler<SkiaGesturesParameters> Down;
 
-        public event EventHandler<SkiaGesturesParameters> Tapped;
+        //public event EventHandler<SkiaGesturesParameters> Tapped;
 
         #region PROPERTIES
 

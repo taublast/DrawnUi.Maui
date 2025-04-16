@@ -15,6 +15,10 @@ public partial class Super
     /// <returns></returns>
     public static Func<IServiceProvider, HttpClient> CreateHttpClient;
 
+    /// <summary>
+    /// Used by Tapped event handler, default is false
+    /// </summary>
+    public static bool SendTapsOnMainThread = false;
 
     /// <summary>
     /// Experimental for dev use. Set OffscreenRenderingAtCanvasLevel to true when this is true.
