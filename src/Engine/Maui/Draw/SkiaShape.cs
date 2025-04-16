@@ -384,6 +384,8 @@ namespace DrawnUi.Draw
             var willStroke = StrokeColor != TransparentColor && StrokeWidth != 0;
             float pixelsStrokeWidth = 0;
             float halfStroke = 0;
+            double maxValue = Math.Max(Math.Max(Padding.Left, Padding.Top), Math.Max(Padding.Right, Padding.Bottom));
+            float inflate;
 
             if (willStroke)
             {
@@ -392,7 +394,7 @@ namespace DrawnUi.Draw
                     : (float)(-StrokeWidth);
 
                 halfStroke = (float)(pixelsStrokeWidth / 2.0f);
-                var inflate = - (float)Math.Ceiling(halfStroke);
+                inflate = - (float)Math.Ceiling(halfStroke);
 
                 strokeAwareSize =
                     SKRect.Inflate(strokeAwareSize, inflate, inflate);
@@ -403,16 +405,16 @@ namespace DrawnUi.Draw
                     (float)Math.Floor(strokeAwareSize.Right),
                     (float)Math.Floor(strokeAwareSize.Bottom));
 
-                double maxValue = Math.Max(Math.Max(Padding.Left, Padding.Top), Math.Max(Padding.Right, Padding.Bottom));
 
-                inflate = (float)(halfStroke + maxValue*scale);
-
-                strokeAwareChildrenSize = new SKRect(
-                    (float)Math.Ceiling(strokeAwareChildrenSize.Left + inflate),
-                    (float)Math.Ceiling(strokeAwareChildrenSize.Top + inflate),
-                    (float)Math.Floor(strokeAwareChildrenSize.Right - inflate),
-                    (float)Math.Floor(strokeAwareChildrenSize.Bottom - inflate));
             }
+
+            inflate = (float)(halfStroke + maxValue * scale);
+
+            strokeAwareChildrenSize = new SKRect(
+                (float)Math.Ceiling(strokeAwareChildrenSize.Left + inflate),
+                (float)Math.Ceiling(strokeAwareChildrenSize.Top + inflate),
+                (float)Math.Floor(strokeAwareChildrenSize.Right - inflate),
+                (float)Math.Floor(strokeAwareChildrenSize.Bottom - inflate));
 
 
             MeasuredStrokeAwareSize = strokeAwareSize;
