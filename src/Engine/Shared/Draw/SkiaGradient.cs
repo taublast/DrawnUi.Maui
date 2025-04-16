@@ -66,7 +66,7 @@ public partial class SkiaGradient : BindableObject, ICloneable
     }
 
     public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type), typeof(GradientType), typeof(SkiaGradient),
-        GradientType.None,
+        GradientType.Linear,
         propertyChanged: RedrawCanvas);
     public GradientType Type
     {
@@ -112,7 +112,7 @@ public partial class SkiaGradient : BindableObject, ICloneable
         set { SetValue(OpacityProperty, value); }
     }
 
-    public static readonly BindableProperty StartXRatioProperty = BindableProperty.Create(nameof(StartXRatio), typeof(float), typeof(SkiaGradient), 0.1f,
+    public static readonly BindableProperty StartXRatioProperty = BindableProperty.Create(nameof(StartXRatio), typeof(float), typeof(SkiaGradient), 0.0f,
         propertyChanged: RedrawCanvas);
     public float StartXRatio
     {
@@ -120,7 +120,7 @@ public partial class SkiaGradient : BindableObject, ICloneable
         set { SetValue(StartXRatioProperty, value); }
     }
 
-    public static readonly BindableProperty StartYRatioProperty = BindableProperty.Create(nameof(StartYRatio), typeof(float), typeof(SkiaGradient), 1.0f,
+    public static readonly BindableProperty StartYRatioProperty = BindableProperty.Create(nameof(StartYRatio), typeof(float), typeof(SkiaGradient), 0.0f,
         propertyChanged: RedrawCanvas);
     public float StartYRatio
     {
@@ -128,7 +128,7 @@ public partial class SkiaGradient : BindableObject, ICloneable
         set { SetValue(StartYRatioProperty, value); }
     }
 
-    public static readonly BindableProperty EndXRatioProperty = BindableProperty.Create(nameof(EndXRatio), typeof(float), typeof(SkiaGradient), 0.5f,
+    public static readonly BindableProperty EndXRatioProperty = BindableProperty.Create(nameof(EndXRatio), typeof(float), typeof(SkiaGradient), 0.0f,
         propertyChanged: RedrawCanvas);
     public float EndXRatio
     {
@@ -136,7 +136,7 @@ public partial class SkiaGradient : BindableObject, ICloneable
         set { SetValue(EndXRatioProperty, value); }
     }
 
-    public static readonly BindableProperty EndYRatioProperty = BindableProperty.Create(nameof(EndYRatio), typeof(float), typeof(SkiaGradient), 0.0f,
+    public static readonly BindableProperty EndYRatioProperty = BindableProperty.Create(nameof(EndYRatio), typeof(float), typeof(SkiaGradient), 1.0f,
         propertyChanged: RedrawCanvas);
     public float EndYRatio
     {
