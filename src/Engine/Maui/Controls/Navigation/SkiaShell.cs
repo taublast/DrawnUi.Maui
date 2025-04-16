@@ -1834,7 +1834,7 @@ namespace DrawnUi.Controls
             });
         }
 
-        protected bool Initialized { get; set; }
+        public bool Initialized { get; protected set; }
 
         public virtual void Initialize(string route)
         {
