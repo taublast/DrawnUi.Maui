@@ -772,7 +772,7 @@ namespace DrawnUi.Draw
                 var min = double.MinValue;
                 if (double.IsFinite(minRequest))
                 {
-                    min = Math.Round(minRequest * scale);
+                    min = (minRequest * scale);
                 }
 
                 constraintPixels = (float)Math.Max(constraintPixels, min);
@@ -783,13 +783,13 @@ namespace DrawnUi.Draw
                 var max = double.MaxValue;
                 if (double.IsFinite(maxRequest))
                 {
-                    max = Math.Round(maxRequest * scale);
+                    max = (maxRequest * scale);
                 }
 
                 constraintPixels = (float)Math.Min(constraintPixels, max);
             }
 
-            return (float)Math.Round(constraintPixels);
+            return (float)(constraintPixels);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1116,19 +1116,53 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
+        /// Fast usage event handler to handle taps. For more control over gestures use AddGestures or code-behind ProcessGestures override.
+        /// If this is set then the Tapped gesture will be consumed by this control without alternatives.
+        /// </summary>
+        public event EventHandler<ControlTappedEventArgs> Tapped;
+
+        /// <summary>
+        /// If Tapped handler was defined, activates it and return true of false it was defined.
+        /// </summary>
+        /// <param name="listener"></param>
+        /// <param name="args"></param>
+        /// <param name="apply"></param>
+        /// <param name="useMainThread"></param>
+        /// <returns></returns>
+        protected bool SendTapped(ISkiaGestureListener listener, SkiaGesturesParameters args, GestureEventProcessingInfo apply, bool useMainThread)
+        {
+            if (Tapped != null)
+            {
+                if (useMainThread)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Tapped?.Invoke(this, new(listener, args, apply));
+                    });
+                }
+                else
+                {
+                    Tapped?.Invoke(this, new(listener, args, apply));
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// WIll be called if a child implements ISkiaGestureListener and was Tapped. If this is set then the Tapped gesture will be consumed by this control after passing it to child.
         /// </summary>
-        public event EventHandler<ChildTappedEventArgs> ChildTapped;
+        public event EventHandler<ControlTappedEventArgs> ChildTapped;
 
-        public class ChildTappedEventArgs : EventArgs
+        public class ControlTappedEventArgs : EventArgs
         {
-            public ISkiaGestureListener Child { get; set; }
+            public ISkiaGestureListener Control { get; set; }
             public SkiaGesturesParameters Parameters { get; set; }
             public GestureEventProcessingInfo ProcessingInfo { get; set; }
 
-            public ChildTappedEventArgs(ISkiaGestureListener listener, SkiaGesturesParameters args, GestureEventProcessingInfo info)
+            public ControlTappedEventArgs(ISkiaGestureListener listener, SkiaGesturesParameters args, GestureEventProcessingInfo info)
             {
-                Child = listener;
+                Control = listener;
                 Parameters = args;
                 ProcessingInfo = info;
             }
@@ -1151,6 +1185,14 @@ namespace DrawnUi.Draw
             if (TouchEffect.LogEnabled)
             {
                 Super.Log($"[BASE] {this.Tag} Got {args.Type}.. {Uid}");
+            }
+
+            if (args.Type == TouchActionResult.Tapped && this is ISkiaGestureListener meAsListener)
+            {
+                if (SendTapped(meAsListener, args, apply, Super.SendTapsOnMainThread))
+                {
+                    return meAsListener;
+                }
             }
 
             if (EffectsGestureProcessors.Count > 0)
@@ -2683,7 +2725,7 @@ namespace DrawnUi.Draw
             {
                 case LayoutAlignment.Center when float.IsFinite(availableWidth) && availableWidth > useMaxWidth:
                 {
-                    left += (float)Math.Round(availableWidth / 2.0f - useMaxWidth / 2.0f);
+                    left += (float)Math.Ceiling(availableWidth / 2.0f - useMaxWidth / 2.0f);
                     right = left + useMaxWidth;
 
                     if (left < destination.Left)
@@ -2729,7 +2771,7 @@ namespace DrawnUi.Draw
             {
                 case LayoutAlignment.Center when float.IsFinite(availableHeight) && availableHeight > useMaxHeight:
                 {
-                    top += (float)Math.Round(availableHeight / 2.0f - useMaxHeight / 2.0f);
+                    top += (float)Math.Ceiling(availableHeight / 2.0f - useMaxHeight / 2.0f);
                     bottom = top + useMaxHeight;
 
                     if (top < destination.Top)
@@ -3703,10 +3745,10 @@ namespace DrawnUi.Draw
         public static SKRect ContractPixelsRect(SKRect rect, float scale, Thickness amount)
         {
             return new SKRect(
-                rect.Left + (float)Math.Round((float)amount.Left * scale),
-                rect.Top + (float)Math.Round((float)amount.Top * scale),
-                rect.Right - (float)Math.Round((float)amount.Right * scale),
-                rect.Bottom - (float)Math.Round((float)amount.Bottom * scale)
+                rect.Left + (float)((float)amount.Left * scale),
+                rect.Top + (float)((float)amount.Top * scale),
+                rect.Right - (float)((float)amount.Right * scale),
+                rect.Bottom - (float)((float)amount.Bottom * scale)
             );
         }
 

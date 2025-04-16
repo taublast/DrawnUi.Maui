@@ -371,8 +371,8 @@ namespace DrawnUi.Draw
 
         protected void CalculateSizeForStroke(SKRect destination, float scale)
         {
-            var x = (int)Math.Round(destination.Left);
-            var y = (int)Math.Round(destination.Top);
+            var x = destination.Left;
+            var y = destination.Top;
 
             var strokeAwareSize = new SKRect(x, y,
                 (float)(x + (destination.Width)),
@@ -392,22 +392,30 @@ namespace DrawnUi.Draw
                     : (float)(-StrokeWidth);
 
                 halfStroke = (float)(pixelsStrokeWidth / 2.0f);
+                var inflate = - (float)Math.Ceiling(halfStroke);
 
                 strokeAwareSize =
-                    SKRect.Inflate(strokeAwareSize, -halfStroke, -halfStroke);
+                    SKRect.Inflate(strokeAwareSize, inflate, inflate);
 
                 strokeAwareSize = new SKRect(
-                    (float)Math.Floor(strokeAwareSize.Left),
-                    (float)Math.Floor(strokeAwareSize.Top),
-                    (float)Math.Ceiling(strokeAwareSize.Right),
-                    (float)Math.Ceiling(strokeAwareSize.Bottom)
-                );
+                    (float)Math.Ceiling(strokeAwareSize.Left),
+                    (float)Math.Ceiling(strokeAwareSize.Top),
+                    (float)Math.Floor(strokeAwareSize.Right),
+                    (float)Math.Floor(strokeAwareSize.Bottom));
 
-                strokeAwareChildrenSize = strokeAwareSize;
+                double maxValue = Math.Max(Math.Max(Padding.Left, Padding.Top), Math.Max(Padding.Right, Padding.Bottom));
+
+                inflate = (float)(halfStroke + maxValue*scale);
+
+                strokeAwareChildrenSize = new SKRect(
+                    (float)Math.Ceiling(strokeAwareChildrenSize.Left + inflate),
+                    (float)Math.Ceiling(strokeAwareChildrenSize.Top + inflate),
+                    (float)Math.Floor(strokeAwareChildrenSize.Right - inflate),
+                    (float)Math.Floor(strokeAwareChildrenSize.Bottom - inflate));
             }
 
-            MeasuredStrokeAwareSize = strokeAwareSize;
 
+            MeasuredStrokeAwareSize = strokeAwareSize;
             MeasuredStrokeAwareChildrenSize = strokeAwareChildrenSize;
 
             //rescale the path to match container
@@ -582,7 +590,7 @@ namespace DrawnUi.Draw
                     {
                         ShouldClipAntialiased = true;
 
-                        //path.AddRect(strokeAwareChildrenSize);
+                        //path.AddRect(strokeAwareSize); //was debugging
 
                         var scaledRadiusLeftTop = (float)(CornerRadius.TopLeft * RenderingScale);
                         var scaledRadiusRightTop = (float)(CornerRadius.TopRight * RenderingScale);
@@ -591,15 +599,19 @@ namespace DrawnUi.Draw
                         var rrect = new SKRoundRect(strokeAwareChildrenSize);
 
                         // Step 3: Calculate the inner rounded rectangle corner radii
-                        float strokeWidth = (float)Math.Floor(Math.Round(StrokeWidth * RenderingScale));
+                        double maxValue = Math.Max(Math.Max(Padding.Left, Padding.Top), Math.Max(Padding.Right, Padding.Bottom));
+                        var strokeWidth = StrokeWidth > 0
+                            ? (float)(StrokeWidth * RenderingScale)
+                            : (float)(-StrokeWidth);
 
-                        float cornerRadiusDifference = (float)strokeWidth / 2.0f;
+                        float cornerRadiusDifference = -
+                            (float)(strokeWidth + maxValue * RenderingScale) / 2.0f;
 
-                        scaledRadiusLeftTop = (float)(Math.Max(scaledRadiusLeftTop - cornerRadiusDifference, 0));
-                        scaledRadiusRightTop = (float)(Math.Max(scaledRadiusRightTop - cornerRadiusDifference, 0));
-                        scaledRadiusLeftBottom = (float)(Math.Max(scaledRadiusLeftBottom - cornerRadiusDifference, 0));
+                        scaledRadiusLeftTop = (float)(Math.Max(scaledRadiusLeftTop + cornerRadiusDifference, 0));
+                        scaledRadiusRightTop = (float)(Math.Max(scaledRadiusRightTop + cornerRadiusDifference, 0));
+                        scaledRadiusLeftBottom = (float)(Math.Max(scaledRadiusLeftBottom + cornerRadiusDifference, 0));
                         scaledRadiusRightBottom =
-                            (float)(Math.Max(scaledRadiusRightBottom - cornerRadiusDifference, 0));
+                            (float)(Math.Max(scaledRadiusRightBottom + cornerRadiusDifference, 0));
 
                         rrect.SetRectRadii(strokeAwareChildrenSize,
                             new[]
@@ -610,6 +622,8 @@ namespace DrawnUi.Draw
                                 new SKPoint(scaledRadiusLeftBottom, scaledRadiusLeftBottom),
                             });
                         path.AddRoundRect(rrect);
+
+
                         //path.AddRoundRect(strokeAwareChildrenSize, innerCornerRadius, innerCornerRadius);
                     }
                     else
@@ -985,7 +999,7 @@ namespace DrawnUi.Draw
 
             ClipSmart(ctx.Context.Canvas, ClipContentPath);
 
-            var rectForChildren = ContractPixelsRect(strokeAwareChildrenSize, scale, Padding);
+            var rectForChildren = strokeAwareChildrenSize;
 
             DrawViews(ctx.WithDestination(rectForChildren));
 
