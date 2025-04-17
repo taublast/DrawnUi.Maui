@@ -16,7 +16,14 @@ Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
 _The current development state is __ALPHA__, features remain to be implemented, documentation incoming._
 
-## What's New
+## What's Up
+
+* Currently working on a new totally drawn app, no XAML at all, still MVVM, just code-behind with C# HotReload and custom fluent extensions, along with custom binding mechanics.
+* Working on docs, in progress, AI helps much here, the first release will come out after the new drawn app gets finished.
+* Working on a more (current is retained, but still) retained rendering pipeline, the priority is on top of all other new feats.
+* A Blazor version will be out this year.
+
+## What's New In This Version
 
 New nugets: for NET 9 you need version not lower than 1.3.x.  
 For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
