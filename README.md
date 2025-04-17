@@ -18,7 +18,7 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 ## What's Up
 
-* Currently working on a new totally drawn app, no XAML at all, still MVVM, just code-behind with C# HotReload and custom fluent extensions, along with custom binding mechanics.
+* Currently working on a new totally drawn commercial app, no XAML at all, still MVVM, just code-behind with C# HotReload and custom fluent extensions, along with custom binding mechanics.
 * Working on docs, in progress, AI helps much here, the first release will come out after the new drawn app gets finished.
 * Working on a more (current is retained, but still) retained rendering pipeline, the priority is on top of all other new feats.
 * A Blazor version will be out this year.
