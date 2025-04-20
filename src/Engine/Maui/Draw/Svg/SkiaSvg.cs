@@ -1091,6 +1091,10 @@ namespace DrawnUi.Draw
                 var scale = ctx.Scale;
                 var area = ContractPixelsRect(ctx.Destination, ctx.Scale, Padding);
 
+                //actually Skia.Svg cant render well with subpixel so...
+                area = new SKRect((float)Math.Round(area.Left), (float)Math.Round(area.Top),
+                    (float)Math.Round(area.Right), (float)Math.Round(area.Bottom));
+
                 RenderingPaint ??= new SKPaint()
                 {
                     IsAntialias = true
