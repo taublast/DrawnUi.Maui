@@ -210,14 +210,14 @@ namespace DrawnUi.Draw
             {
                 InternalRefreshIndicator = indicator;
 
-                if (Orientation == ScrollOrientation.Vertical)
-                {
-                    newControl.HeightRequest = RefreshDistanceLimit;
-                }
-                else if (Orientation == ScrollOrientation.Horizontal)
-                {
-                    newControl.WidthRequest = RefreshDistanceLimit;
-                }
+                //if (Orientation == ScrollOrientation.Vertical)
+                //{
+                //    newControl.HeightRequest = RefreshDistanceLimit;
+                //}
+                //else if (Orientation == ScrollOrientation.Horizontal)
+                //{
+                //    newControl.WidthRequest = RefreshDistanceLimit;
+                //}
 
                 newControl.ZIndex = 1000;
                 AddSubView(newControl);
@@ -434,16 +434,21 @@ namespace DrawnUi.Draw
         {
             Vector2 clampedElastic = Vector2.Zero;
             var add = Elastic * RenderingScale;
+            var limit = RefreshDistanceLimit * RenderingScale;
 
             bool clamped = false;
             if (RefreshEnabled)
             {
-                add += RefreshDistanceLimit * RenderingScale * 10;
-
+                
                 if (Orientation == ScrollOrientation.Vertical && y > 0) //pulling down
                 {
                     clamped = true;
-                    float adjusted = (float)(RefreshIndicator.Height * RenderingScale + add);
+
+                    float adjusted = contentOffsetBounds.Height + limit;
+                    var min = MeasuredSize.Pixels.Height + limit;
+                    if (adjusted < min)
+                        adjusted = min;
+
                     var customDims = new Vector2(contentOffsetBounds.Width, adjusted);
                     clampedElastic = RubberBandUtils.ClampOnTrack(
                         new Vector2(x, y),
@@ -455,7 +460,12 @@ namespace DrawnUi.Draw
                 else if (Orientation == ScrollOrientation.Horizontal && x > 0) //pulling right
                 {
                     clamped = true;
-                    float adjusted = (float)(RefreshIndicator.Width * RenderingScale + add);
+
+                    float adjusted = contentOffsetBounds.Width + limit;
+                    var min = MeasuredSize.Pixels.Width + limit;
+                    if (adjusted < min)
+                        adjusted = min;
+
                     var customDims = new Vector2(adjusted, contentOffsetBounds.Height);
 
                     clampedElastic = RubberBandUtils.ClampOnTrack(
@@ -2063,7 +2073,7 @@ namespace DrawnUi.Draw
 
         protected virtual void HideRefreshIndicator()
         {
-            RefreshIndicator?.SetDragRatio(0);
+            RefreshIndicator?.SetDragRatio(0,0);
             ScrollLocked = false;
             wasRefreshing = false;
         }
@@ -2094,23 +2104,28 @@ namespace DrawnUi.Draw
         protected virtual void ApplyScrollPositionToRefreshViewUnsafe()
         {
             var ratio = 0.0f;
+            bool canRefresh = false;
+
             if (Orientation == ScrollOrientation.Vertical)
             {
-                ratio = (OverscrollDistance.Y - RefreshShowDistance) / (RefreshDistanceLimit - RefreshShowDistance);
+                ratio = (OverscrollDistance.Y) / (RefreshShowDistance);
                 if (ratio >= 0)
-                    RefreshIndicator.SetDragRatio(ratio);
+                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.Y);
+                canRefresh = InternalViewportOffset.Units.Y > RefreshDistanceLimit;
             }
             else if (Orientation == ScrollOrientation.Horizontal)
             {
-                ratio = (OverscrollDistance.X - RefreshShowDistance) / (RefreshDistanceLimit - RefreshShowDistance);
+                ratio = OverscrollDistance.X - RefreshShowDistance;
                 if (ratio >= 0)
-                    RefreshIndicator.SetDragRatio(ratio);
+                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.X);
+                canRefresh = InternalViewportOffset.Units.X > RefreshDistanceLimit;
             }
 
 
             if (IsUserPanning)
             {
-                if (!IsRefreshing && RefreshCommand != null && ratio >= 1 && !wasRefreshing && !ScrollLocked)
+                if (canRefresh && !IsRefreshing && RefreshCommand != null
+                                            && !wasRefreshing && !ScrollLocked)
                 {
                     StopVelocityPanning();
                     //SetIsRefreshing(true);
@@ -2234,13 +2249,8 @@ namespace DrawnUi.Draw
             {
                 ApplyPannedOffsetWithVelocity(context.Context);
 
-                //rounding work smoothly with subpixels
-                //var posX = (float)Math.Round(ViewportOffsetX * _zoomedScale);
-                //var posY = (float)Math.Round(ViewportOffsetY * _zoomedScale);
-
-                var posX = (float)(ViewportOffsetX * _zoomedScale);
-                var posY = (float)(ViewportOffsetY * _zoomedScale);
-
+                var posX = (float)Math.Round(ViewportOffsetX * _zoomedScale);
+                var posY = (float)Math.Round(ViewportOffsetY * _zoomedScale);
 
                 IsScrolling = _animatorFlingY.IsRunning || _animatorFlingX.IsRunning ||
                               _vectorAnimatorBounceY.IsRunning || _vectorAnimatorBounceX.IsRunning

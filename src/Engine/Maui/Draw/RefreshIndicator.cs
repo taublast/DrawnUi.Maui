@@ -7,7 +7,7 @@ public class RefreshIndicator : SkiaLayout, IRefreshIndicator
         InputTransparent = true;
         HorizontalOptions = LayoutOptions.Fill;
         VerticalOptions = LayoutOptions.Start;
-        SetDragRatio(0);
+        SetDragRatio(0,0);
     }
 
     public static readonly BindableProperty OrientationProperty = BindableProperty.Create(nameof(Orientation),
@@ -55,7 +55,7 @@ public class RefreshIndicator : SkiaLayout, IRefreshIndicator
     /// 0 - 1
     /// </summary>
     /// <param name="ratio"></param>
-    public virtual void SetDragRatio(float ratio)
+    public virtual void SetDragRatio(float ratio, float ptsScrollOffset)
     {
         double VisibleRatio = Math.Min(1.0, ratio / 0.98);
 
