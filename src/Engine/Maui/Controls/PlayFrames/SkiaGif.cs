@@ -9,6 +9,10 @@ public class SkiaGif : AnimatedFramesRenderer
     public SkiaImage Display { get; protected set; }
 
     //public override bool CanUseCacheDoubleBuffering => false;
+    public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+    {
+        return base.Measure(widthConstraint, heightConstraint, scale);
+    }
 
     /// <summary>
     /// For standalone use
@@ -17,6 +21,7 @@ public class SkiaGif : AnimatedFramesRenderer
     {
         this.Display = new()
         {
+            Tag="GifDisplay",
             LoadSourceOnFirstDraw = false,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
@@ -133,7 +138,6 @@ public class SkiaGif : AnimatedFramesRenderer
     }
 
     private readonly object _lockSource = new();
-
 
     public void SetAnimation(GifAnimation animation, bool disposePrevious)
     {
