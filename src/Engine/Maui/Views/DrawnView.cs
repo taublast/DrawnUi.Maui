@@ -503,7 +503,7 @@ namespace DrawnUi.Views
 
                     //Debug.WriteLine($"Animators: {animatorKeys.Count}");
 
-                    foreach (var key in AnimatingControls.Keys.ToList())
+                    foreach (var key in animatorKeys)
                     {
                         if (AnimatingControls.TryGetValue(key, out var skiaAnimation))
                         {
