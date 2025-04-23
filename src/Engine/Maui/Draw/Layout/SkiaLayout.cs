@@ -728,7 +728,6 @@ namespace DrawnUi.Draw
 
         public override ScaledSize MeasureAbsolute(SKRect rectForChildrenPixels, float scale)
         {
-
             var childrenCount = ChildrenFactory.GetChildrenCount();
             if (childrenCount > 0)
             {
@@ -813,6 +812,7 @@ namespace DrawnUi.Draw
                 return ScaledSize.CreateEmpty(scale);
                 //return SetMeasured(0, 0, scale);
             }
+
 
             return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
         }

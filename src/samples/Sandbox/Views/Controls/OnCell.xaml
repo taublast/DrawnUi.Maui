@@ -16,9 +16,7 @@
         Tag="MainPage">
 
 
-        <draw:SkiaLayout
-            HorizontalOptions="Fill"
-            VerticalOptions="Fill">
+        <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
             <!--  Simulate SwipeView  -->
             <draw:SkiaDrawnCell
@@ -128,9 +126,7 @@
                 </draw:SkiaDrawer>
 
                 <!--  cell controls behind using Z order  -->
-                <draw:SkiaLayout
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
+                <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
                     <draw:SkiaShape
                         Margin="0,0,12,0"

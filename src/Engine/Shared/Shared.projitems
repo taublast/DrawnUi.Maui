@@ -70,7 +70,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\IInsideWheelStack.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\ILayoutInsideViewport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\IRefreshIndicator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\ISelectableOption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\ISkiaCell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\ISkiaControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Interfaces\ISkiaDrawable.cs" />

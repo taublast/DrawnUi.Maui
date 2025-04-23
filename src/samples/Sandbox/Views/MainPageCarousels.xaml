@@ -3,14 +3,14 @@
     x:Class="Sandbox.Views.MainPageCarousels"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
     xmlns:demo="clr-namespace:Sandbox"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
     xmlns:gestures="clr-namespace:AppoMobi.Maui.Gestures;assembly=AppoMobi.Maui.Gestures"
-    xmlns:system="clr-namespace:System;assembly=System.Runtime"
-    x:Name="ThisPage"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:views="clr-namespace:Sandbox.Views"
+    x:Name="ThisPage"
     ios:Page.UseSafeArea="True"
     x:DataType="demo:MainPageViewModel">
 
@@ -21,9 +21,7 @@
 
 
 
-        <draw:SkiaLayout
-            HorizontalOptions="Fill"
-            VerticalOptions="Fill">
+        <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
             <!--  CAROUSEL  -->
 
@@ -72,9 +70,7 @@
 
                 </draw:SkiaLayout>
 
-                <draw:SkiaLayout
-                    BackgroundColor="Fuchsia"
-                    Tag="Buggy">
+                <draw:SkiaLayout BackgroundColor="Fuchsia" Tag="Buggy">
 
                     <draw:SkiaLabel
                         FontSize="40"
@@ -162,8 +158,8 @@
                 TextColor="Red"
                 TranslationY="80" />
 
-            <controls:ButtonToRoot/>
-            
+            <controls:ButtonToRoot />
+
             <draw:SkiaLabelFps
                 Margin="0,0,4,24"
                 BackgroundColor="DarkRed"

@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Thickness = Microsoft.Maui.Thickness;
 
 namespace DrawnUi.Draw;
 
@@ -23,6 +24,18 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     }
 
     #region DEFAULT CONTENT
+
+    public class ButtonLabel : SkiaLabel
+    {
+        public ButtonLabel()
+        {
+            Margin = new Thickness(10, 0);
+            UseCache = SkiaCacheType.Operations;
+            Tag = "BtnText";
+            HorizontalOptions = LayoutOptions.Center;
+            VerticalOptions = LayoutOptions.Center;
+        }
+    }
 
     protected override void CreateDefaultContent()
     {
@@ -89,14 +102,10 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             VerticalOptions = LayoutOptions.Fill,
         });
 
-        this.AddSubView(new SkiaLabel()
+        this.AddSubView(new ButtonLabel()
         {
-            UseCache = SkiaCacheType.Operations,
-            Tag = "BtnText",
             Text = "Test",
             TextColor = this.TextColor,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center,
         });
     }
     
@@ -131,16 +140,12 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         this.AddSubView(frame);
         
         // iOS button text is typically semibold
-        var label = new SkiaLabel()
+        var label = new ButtonLabel()
         {
-            UseCache = SkiaCacheType.Operations,
-            Tag = "BtnText",
             Text = "Test",
             TextColor = Colors.White,
             FontSize = 17, // iOS typical size
             FontWeight = FontWeights.SemiBold,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center,
         };
         this.AddSubView(label);
         
@@ -180,15 +185,11 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         this.AddSubView(frame);
         
         // Material Design prefers uppercase text
-        var label = new SkiaLabel()
+        var label = new ButtonLabel()
         {
-            UseCache = SkiaCacheType.Operations,
-            Tag = "BtnText",
             Text = "Test",
             TextColor = Colors.White,
             FontSize = 14, // Material typical size
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center,
             TextTransform = TextTransform.Uppercase, // Material uses uppercase
         };
         this.AddSubView(label);
@@ -229,16 +230,12 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         this.AddSubView(frame);
         
         // Windows text is typically regular weight
-        var label = new SkiaLabel()
+        var label = new ButtonLabel()
         {
-            UseCache = SkiaCacheType.Operations,
-            Tag = "BtnText",
             Text = "Test",
             TextColor = Colors.White,
             FontSize = 15,
             FontWeight = FontWeights.Medium,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center,
         };
         this.AddSubView(label);
         
@@ -975,16 +972,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(ShimmerEffectSpeedProperty, value); }
     }
 
-    public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor),
-        typeof(Color),
-        typeof(SkiaButton),
-        WhiteColor);
-
-    public Color TouchEffectColor
-    {
-        get { return (Color)GetValue(TouchEffectColorProperty); }
-        set { SetValue(TouchEffectColorProperty, value); }
-    }
+ 
 
     public static readonly BindableProperty ApplyEffectProperty = BindableProperty.Create(nameof(ApplyEffect),
         typeof(SkiaTouchAnimation),
@@ -996,15 +984,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(ApplyEffectProperty, value); }
     }
 
-    public static readonly BindableProperty TransformViewProperty = BindableProperty.Create(nameof(TransformView),
-        typeof(object),
-        typeof(SkiaButton), null);
-
-    public object TransformView
-    {
-        get { return (object)GetValue(TransformViewProperty); }
-        set { SetValue(TransformViewProperty, value); }
-    }
+ 
 
     public static readonly BindableProperty CommandTappedProperty = BindableProperty.Create(nameof(CommandTapped),
         typeof(ICommand),

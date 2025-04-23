@@ -11,8 +11,6 @@ public partial class ContentLayout : SkiaLayout, IVisibilityAware, ISkiaGestureL
         Update();
     }
 
-
-
     protected bool IsContentActive
     {
         get
@@ -20,54 +18,6 @@ public partial class ContentLayout : SkiaLayout, IVisibilityAware, ISkiaGestureL
             return Content != null && Content.IsVisible;
         }
     }
-
-    /*
-    public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
-    {
-        if (IsMeasuring)
-        {
-            NeedRemeasuring = true;
-            return MeasuredSize;
-        }
-
-        //background measuring or invisible or self measure from draw because layout will never pass -1
-        if (!CanDraw || widthConstraint < 0 || heightConstraint < 0)
-        {
-            return MeasuredSize;
-        }
-
-        try
-        {
-            IsMeasuring = true;
-
-            var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-            if (request.IsSame)
-            {
-                return MeasuredSize;
-            }
-
-            if (request.WidthRequest == 0 || request.HeightRequest == 0)
-            {
-                InvalidateCacheWithPrevious();
-
-                return SetMeasuredAsEmpty(request.Scale);
-            }
-
-            var constraints = GetMeasuringConstraints(request);
-
-            var children = new List<SkiaControl> { Content };
-            ContentSize = MeasureContent(children, constraints.Content, scale);
-
-            return SetMeasuredAdaptToContentSize(constraints, scale);
-        }
-        finally
-        {
-            IsMeasuring = false;
-        }
-
-
-    }
-    */
 
     public ScaledRect Viewport { get; protected set; } = new();
 

@@ -1,6 +1,6 @@
 ﻿namespace DrawnUi.Internals;
 
-public class SelectableAction : TitleWithStringId//, ISelectableOption
+public class SelectableAction : TitleWithStringId
 {
     public SelectableAction()
     {

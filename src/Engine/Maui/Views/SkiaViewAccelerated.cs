@@ -171,7 +171,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     {
         if (
             Super.EnableRendering &&
-            this.Handler != null && this.Handler.PlatformView != null && CanvasSize is { Width: > 0, Height: > 0 })
+            this.Handler != null && this.Handler.PlatformView != null  )
         {
             IsDrawing = true;
 
@@ -241,18 +241,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
             }
 #endif
 
-#if ANDROID_LEGACY
-            if (maybeLowEnd && FPS > 160)
-            {
-                maybeLowEnd = false;
-            }
-
-            if (maybeLowEnd && isDirty && _fps < 55) //kick refresh for low-end devices
-            {
-                InvalidateSurface();
-                return;
-            }
-#endif
+ 
         }
 
         HasDrawn = maybeDrawn;

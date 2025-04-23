@@ -46,6 +46,10 @@ namespace DrawnUi.Draw
             AttachEffects();
         }
 
+        public double Left { get; set; }
+
+        public double Top { get; set; }
+
         public static readonly BindableProperty ControlStyleProperty = BindableProperty.Create(
             nameof(PrebuiltControlStyle),
             typeof(PrebuiltControlStyle), typeof(SkiaControl),
@@ -1121,6 +1125,33 @@ namespace DrawnUi.Draw
         /// </summary>
         public event EventHandler<ControlTappedEventArgs> Tapped;
 
+        public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor), typeof(Color),
+            typeof(SkiaControl),
+            Colors.White);
+        public Color TouchEffectColor
+        {
+            get { return (Color)GetValue(TouchEffectColorProperty); }
+            set { SetValue(TouchEffectColorProperty, value); }
+        }
+
+        public static readonly BindableProperty AnimationTappedProperty = BindableProperty.Create(nameof(AnimationTapped),
+            typeof(SkiaTouchAnimation),
+            typeof(SkiaControl), SkiaTouchAnimation.None);
+        public SkiaTouchAnimation AnimationTapped
+        {
+            get { return (SkiaTouchAnimation)GetValue(AnimationTappedProperty); }
+            set { SetValue(AnimationTappedProperty, value); }
+        }
+
+
+        public static readonly BindableProperty TransformViewProperty = BindableProperty.Create(nameof(TransformView), typeof(object),
+            typeof(SkiaControl), null);
+        public object TransformView
+        {
+            get { return (object)GetValue(TransformViewProperty); }
+            set { SetValue(TransformViewProperty, value); }
+        }
+
         /// <summary>
         /// If Tapped handler was defined, activates it and return true of false it was defined.
         /// </summary>
@@ -1129,10 +1160,32 @@ namespace DrawnUi.Draw
         /// <param name="apply"></param>
         /// <param name="useMainThread"></param>
         /// <returns></returns>
-        protected bool SendTapped(ISkiaGestureListener listener, SkiaGesturesParameters args, GestureEventProcessingInfo apply, bool useMainThread)
+        protected bool SendTapped(object listener, SkiaGesturesParameters args, GestureEventProcessingInfo apply, bool useMainThread)
         {
             if (Tapped != null)
             {
+                if (this.AnimationTapped != SkiaTouchAnimation.None)
+                {
+
+                    var control = this as SkiaControl;
+                    if (this.TransformView is SkiaControl other)
+                    {
+                        control = other;
+                    }
+
+                    if (AnimationTapped == SkiaTouchAnimation.Ripple)
+                    {
+                        var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+                        control.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
+                    }
+                    else
+                    if (AnimationTapped == SkiaTouchAnimation.Shimmer)
+                    {
+                        var color = TouchEffectColor;
+                        control.PlayShimmerAnimation(color, 150, 33, 300);
+                    }
+                }
+
                 if (useMainThread)
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
@@ -1156,13 +1209,13 @@ namespace DrawnUi.Draw
 
         public class ControlTappedEventArgs : EventArgs
         {
-            public ISkiaGestureListener Control { get; set; }
+            public object Control { get; set; }
             public SkiaGesturesParameters Parameters { get; set; }
             public GestureEventProcessingInfo ProcessingInfo { get; set; }
 
-            public ControlTappedEventArgs(ISkiaGestureListener listener, SkiaGesturesParameters args, GestureEventProcessingInfo info)
+            public ControlTappedEventArgs(object control, SkiaGesturesParameters args, GestureEventProcessingInfo info)
             {
-                Control = listener;
+                Control = control;
                 Parameters = args;
                 ProcessingInfo = info;
             }
@@ -1244,7 +1297,7 @@ namespace DrawnUi.Draw
                                     if (ChildTapped != null)
                                     {
                                         breakForChild = listener;
-                                        ChildTapped.Invoke(this, new (listener, args, apply));
+                                        ChildTapped.Invoke(this, new (child.Control, args, apply));
                                     }
                                     if (CommandChildTapped != null)
                                     {
@@ -2704,6 +2757,7 @@ namespace DrawnUi.Draw
         /// <param name="scale"></param>
         public SKRect CalculateLayout(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
+
             var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale);
 
             var useMaxWidth = rectAvailable.Pixels.Width;
@@ -2719,6 +2773,9 @@ namespace DrawnUi.Draw
             var top = destination.Top;
             var right = 0f;
             var bottom = 0f;
+
+            bool snapX = layoutHorizontal.Alignment != LayoutAlignment.Center;
+            bool snapY = layoutVertical.Alignment != LayoutAlignment.Center;
 
             // layoutHorizontal
             switch (layoutHorizontal.Alignment)
@@ -2824,6 +2881,15 @@ namespace DrawnUi.Draw
             if (float.IsFinite(availableWidth))
             {
                 offsetX = (float)HorizontalPositionOffsetRatio * layout.Width;
+            }
+
+            if (snapX)
+            {
+                offsetX = (float)Math.Round(offsetX);
+            }
+            if (snapY)
+            {
+                offsetY = (float)Math.Round(offsetY);
             }
 
             layout.Offset(offsetX, offsetY);
@@ -3568,15 +3634,29 @@ namespace DrawnUi.Draw
             return SetMeasured(0, 0, false, false, scale);
         }
 
+        /// <summary>
+        /// Override this if you need to adjust the measured ContentSize for the parent to adapt to it. For example SkiaShape overrides this to expand by adding the needed size for stroke.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual SKSize GetContentSizeForAutosizeInPixels()
+        {
+            return new SKSize(
+                (float)(ContentSize.Pixels.Width),
+                (float)(ContentSize.Pixels.Height));
+        }
+
         public virtual ScaledSize SetMeasuredAdaptToContentSize(MeasuringConstraints constraints,
             float scale)
         {
+
+            var needSizePixels = GetContentSizeForAutosizeInPixels();
+
             var contentWidth = NeedAutoWidth
-                ? ContentSize.Pixels.Width
-                : SmartMax(ContentSize.Pixels.Width, constraints.Request.Width);
+                ? needSizePixels.Width
+                : SmartMax(needSizePixels.Width, constraints.Request.Width);
             var contentHeight = NeedAutoHeight
-                ? ContentSize.Pixels.Height
-                : SmartMax(ContentSize.Pixels.Height, constraints.Request.Height);
+                ? needSizePixels.Height
+                : SmartMax(needSizePixels.Height, constraints.Request.Height);
 
             var width = AdaptWidthConstraintToContentRequest(constraints, contentWidth, HorizontalOptions.Expands);
             var height = AdaptHeightConstraintToContentRequest(constraints, contentHeight, VerticalOptions.Expands);
@@ -3711,12 +3791,19 @@ namespace DrawnUi.Draw
             return rectForChild;
         }
 
+        /// <summary>
+        /// Measure children inside absolute layout
+        /// </summary>
+        /// <param name="rectForChildrenPixels"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
         public virtual ScaledSize MeasureAbsolute(SKRect rectForChildrenPixels, float scale)
         {
             return MeasureAbsoluteBase(rectForChildrenPixels, scale);
         }
 
         /// <summary>
+        /// Measure children inside absolute layout
         /// Base method, not aware of any views provider, not virtual, silly measuring Children.
         /// </summary>
         /// <param name="rectForChildrenPixels"></param>
@@ -3749,6 +3836,16 @@ namespace DrawnUi.Draw
                 rect.Top + (float)((float)amount.Top * scale),
                 rect.Right - (float)((float)amount.Right * scale),
                 rect.Bottom - (float)((float)amount.Bottom * scale)
+            );
+        }
+
+        public static SKRect ExpandPixelsRect(SKRect rect, float scale, Thickness amount)
+        {
+            return new SKRect(
+                rect.Left - (float)((float)amount.Left * scale),
+                rect.Top - (float)((float)amount.Top * scale),
+                rect.Right + (float)((float)amount.Right * scale),
+                rect.Bottom + (float)((float)amount.Bottom * scale)
             );
         }
 
@@ -4198,7 +4295,7 @@ namespace DrawnUi.Draw
                 InvalidateMeasureInternal();
             }
 
-            if (NeedMeasure)
+            if (WillInvalidateMeasure || NeedMeasure)
             {
                 //self measuring
                 //var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
@@ -4555,7 +4652,7 @@ namespace DrawnUi.Draw
             }
 
             bool applyOpacity = useOpacity && Opacity < 1;
-            bool needTransform = HasTransform;
+            bool needTransform = HasTransform || Left!=0 || Top !=0;
 
             if (applyOpacity || isClipping || needTransform || CustomizeLayerPaint != null)
             {
@@ -4820,7 +4917,7 @@ namespace DrawnUi.Draw
             }
         }
 
-        protected virtual void PaintWithEffects(DrawingContext ctx)
+        public virtual void PaintWithEffects(DrawingContext ctx)
         {
             if (IsDisposed || IsDisposing)
                 return;
@@ -4953,12 +5050,12 @@ namespace DrawnUi.Draw
 
         public double UseTranslationY
         {
-            get { return TranslationY + AddTranslationY; }
+            get { return TranslationY + AddTranslationY + Top; }
         }
 
         public double UseTranslationX
         {
-            get { return TranslationX + AddTranslationX; }
+            get { return TranslationX + AddTranslationX + Left; }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -6045,6 +6142,12 @@ namespace DrawnUi.Draw
         {
             Parent = null;
             SetInheritedBindingContext(null);
+        }
+
+        public virtual void StopAnimations()
+        {
+            StopPostAnimators();
+            Superview?.UnregisterAllAnimatorsByParent(this);
         }
 
         public virtual void SetParent(IDrawnBase parent)

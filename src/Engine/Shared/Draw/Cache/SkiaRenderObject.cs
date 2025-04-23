@@ -87,6 +87,7 @@ public class CachedObject : IDisposable
             {
                 canvas.DrawImage(Image, x, y, paint);
             }
+
         }
         catch (Exception e)
         {

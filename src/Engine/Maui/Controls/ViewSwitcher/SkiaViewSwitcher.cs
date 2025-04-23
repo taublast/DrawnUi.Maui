@@ -970,16 +970,16 @@ namespace DrawnUi.Controls
         {
             try
             {
-                Superview.FocusedChild = null;
-
                 var selectedIndex = index.Index;
 
                 DisplayingIndex = selectedIndex;
 
-                if (selectedIndex < 0)
+                if (selectedIndex < 0 || Superview == null)
                 {
                     return;
                 }
+
+                Superview.FocusedChild = null;
 
                 lastSelectedIndex = selectedIndex;
 

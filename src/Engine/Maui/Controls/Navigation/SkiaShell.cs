@@ -765,9 +765,9 @@ namespace DrawnUi.Controls
                         await Task.Delay(20); //switch thread, wait until drawer animation completes
                     }
 
-                    OnNavigated(new(modalWrapper.Drawer.Content,
-                        CurrentRouteAuto,
-                        NavigationSource.Push));
+                    //OnNavigated(new(modalWrapper.Drawer.Content,
+                    //    CurrentRouteAuto,
+                    //    NavigationSource.Push));
 
                     return modalWrapper.Drawer.Content;
                 }
@@ -817,7 +817,7 @@ namespace DrawnUi.Controls
                         _pushModalWasOpen = false;
                         await RemoveModal(control.Parent as SkiaControl, true);
 
-                        OnNavigated(new(control, CurrentRouteAuto, NavigationSource.Pop));
+                        //OnNavigated(new(control, CurrentRouteAuto, NavigationSource.Pop));
                     }
                 }
             }
@@ -962,7 +962,7 @@ namespace DrawnUi.Controls
                 }
             }
 
-            OnNavigated(new(removed, CurrentRouteAuto, NavigationSource.Pop));
+            //OnNavigated(new(removed, CurrentRouteAuto, NavigationSource.Pop));
 
             return removed;
         }
@@ -2142,7 +2142,7 @@ namespace DrawnUi.Controls
 
         public virtual async Task GoToAsync(ShellNavigationState state)
         {
-            await GoToAsync(state, false);
+            await GoToAsync(state, this.Canvas.WasRendered);
         }
 
         protected string _rootRoute;
@@ -2208,8 +2208,13 @@ namespace DrawnUi.Controls
 
         protected virtual void SetArguments(BindableObject page, IDictionary<string, object> arguments)
         {
-            if (page != null && arguments != null)
+            if (page != null)
             {
+                if (arguments == null)
+                {
+                    arguments = new Dictionary<string, object>();
+                }
+
                 if (page.BindingContext is IQueryAttributable needQuery)
                 {
                     needQuery.ApplyQueryAttributes(arguments);
@@ -2275,10 +2280,7 @@ namespace DrawnUi.Controls
             var content = GetOrCreateContent(part) as T;
             if (content != null)
             {
-                if (arguments != null)
-                {
-                    SetArguments(content, arguments);
-                }
+                SetArguments(content, arguments);
             }
 
             return content;

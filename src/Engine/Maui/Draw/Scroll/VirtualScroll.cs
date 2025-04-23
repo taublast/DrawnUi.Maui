@@ -73,7 +73,8 @@ namespace DrawnUi.Draw
             return null;
         }
 
-        protected override bool PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale, float scale)
+ 
+        protected override bool PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale, float scale, bool forceSyncOffsets)
         {
             if (!IsSnapping)
                 Snapped = false;
@@ -92,6 +93,12 @@ namespace DrawnUi.Draw
 
             //okay... hmm
             ContentViewport = ScaledRect.FromPixels(DrawingRect, scale);
+
+            if (forceSyncOffsets)
+            {
+                _viewportOffsetX = InternalViewportOffset.Units.X;
+                _viewportOffsetY = InternalViewportOffset.Units.Y;
+            }
 
             //POST EVENTS
 

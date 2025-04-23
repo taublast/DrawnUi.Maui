@@ -13,14 +13,14 @@ public partial class SkiaScroll
     {
         get
         {
-            return _orderedOffsetY;
+            return _viewportOffsetY;
         }
 
         set
         {
-            if (_orderedOffsetY != value)
+            if (_viewportOffsetY != value)
             {
-                _orderedOffsetY = value;
+                _viewportOffsetY = value;
                 if (!NeedUpdate)
                     Update();
                 //OnPropertyChanged();
@@ -28,7 +28,7 @@ public partial class SkiaScroll
         }
     }
 
-    protected float _orderedOffsetY;
+    protected float _viewportOffsetY;
 
     public float ViewportOffsetX
     {
@@ -48,7 +48,8 @@ public partial class SkiaScroll
             }
         }
     }
-    float _viewportOffsetX;
+
+    protected float _viewportOffsetX;
 
     protected virtual void InitializeViewport(float scale)
     {

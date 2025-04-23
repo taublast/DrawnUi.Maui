@@ -29,14 +29,14 @@ public partial class SkiaLayout
             spacing = (GridStructureMeasured.Columns.Length - 1) * ColumnSpacing;
         }
 
-        var contentWidth = (float)Math.Round((GridStructureMeasured.Columns.Sum(x => x.Size) + spacing + Padding.Left + Padding.Right) * scale);
+        var contentWidth = (float)((GridStructureMeasured.Columns.Sum(x => x.Size) + spacing + Padding.Left + Padding.Right) * scale);
 
         spacing = 0.0;
         if (GridStructureMeasured.Rows.Length > 1)
         {
             spacing = (GridStructureMeasured.Rows.Length - 1) * RowSpacing;
         }
-        var contentHeight = (float)(Math.Round(GridStructureMeasured.Rows.Sum(x => x.Size) + spacing + Padding.Top + Padding.Bottom) * scale);
+        var contentHeight = (float)((GridStructureMeasured.Rows.Sum(x => x.Size) + spacing + Padding.Top + Padding.Bottom) * scale);
 
         if (contentWidth > maxWidth)
             maxWidth = contentWidth;
@@ -82,8 +82,8 @@ public partial class SkiaLayout
                 //Trace.WriteLine($"cell {cellIndex++} rect {cell}");
 
                 //GetCellBoundsFor is in pixels
-                SKRect cellRect = new((float)Math.Round(cell.Left * scale), (float)Math.Round(cell.Top * scale),
-                    (float)Math.Round(cell.Right * scale), (float)Math.Round(cell.Bottom * scale));
+                SKRect cellRect = new((float)(cell.Left * scale), (float)(cell.Top * scale),
+                    (float)(cell.Right * scale), (float)(cell.Bottom * scale));
 
 
                 if (IsRenderingWithComposition)

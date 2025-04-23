@@ -1901,7 +1901,7 @@ namespace DrawnUi.Draw
         /// <param name="scale"></param>
         /// <returns>Whether we changed viewport and cache changed</returns>
         protected virtual bool PositionViewport(SKRect destination, SKPoint offsetPixels, float viewportScale,
-            float scale)
+            float scale, bool forceSyncOffsets)
         {
             if (!IsContentActive || Content == null)
                 return false;
@@ -1937,16 +1937,20 @@ namespace DrawnUi.Draw
                 onceAfterInitializeViewport = false;
                 var clamped = ClampOffset(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y,
                     ContentOffsetBounds, true);
-                //AdjustHeaderParallax(ScaledPoint.FromUnits(clamped.X, clamped.Y, scale));
 
-                ViewportOffsetX = clamped.X;
-                ViewportOffsetY = clamped.Y;
-
-                if (ViewportOffsetX == 0 && ViewportOffsetY == 0)
+                if (clamped.X == 0 && clamped.Y == 0)
                 {
                     HideRefreshIndicator();
                     ScrollTo(0, 0, 0);
                 }
+
+                forceSyncOffsets = true;
+            }
+
+            if (forceSyncOffsets)
+            {
+                _viewportOffsetX = InternalViewportOffset.Units.X;
+                _viewportOffsetY = InternalViewportOffset.Units.Y;
             }
 
             OverscrollDistance =
@@ -2100,6 +2104,26 @@ namespace DrawnUi.Draw
         public event EventHandler<ScaledPoint> ScrollingEnded;
         public event EventHandler<ScaledPoint> Scrolled;
 
+        protected virtual void ShowRefreshIndicatorForced()
+        {
+            if (RefreshIndicator != null)
+            {
+                var ratio = 1.0f;
+                var overscroll = RefreshShowDistance * RenderingScale;
+                if (Orientation == ScrollOrientation.Vertical)
+                {
+                    SetScrollOffset(DrawingRect, _updatedViewportForPixX, overscroll, _zoomedScale, RenderingScale, true);
+                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.Y);
+                }
+                else if (Orientation == ScrollOrientation.Horizontal)
+                {
+                    SetScrollOffset(DrawingRect, overscroll, _updatedViewportForPixY, _zoomedScale, RenderingScale, true);
+                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.X);
+                }
+                Update();
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected virtual void ApplyScrollPositionToRefreshViewUnsafe()
         {
@@ -2108,14 +2132,14 @@ namespace DrawnUi.Draw
 
             if (Orientation == ScrollOrientation.Vertical)
             {
-                ratio = (OverscrollDistance.Y) / (RefreshShowDistance);
+                ratio = OverscrollDistance.Y / RefreshShowDistance;
                 if (ratio >= 0)
                     RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.Y);
                 canRefresh = InternalViewportOffset.Units.Y > RefreshDistanceLimit;
             }
             else if (Orientation == ScrollOrientation.Horizontal)
             {
-                ratio = OverscrollDistance.X - RefreshShowDistance;
+                ratio = OverscrollDistance.X / RefreshShowDistance;
                 if (ratio >= 0)
                     RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.X);
                 canRefresh = InternalViewportOffset.Units.X > RefreshDistanceLimit;
@@ -2133,16 +2157,21 @@ namespace DrawnUi.Draw
                     IsRefreshing = true;
                 }
             }
-            else
-            {
-                HideRefreshIndicator();
-            }
+            //else
+            //{
+            //    HideRefreshIndicator();
+            //}
         }
 
         public virtual void CheckNeedRefresh()
         {
             if (IsRefreshing)
             {
+                if (RefreshIndicator != null && !RefreshIndicator.IsVisible)
+                {
+                    RefreshIndicator.IsVisible = true;
+                    ShowRefreshIndicatorForced();
+                }
                 return;
             }
 
@@ -2152,6 +2181,7 @@ namespace DrawnUi.Draw
                 {
                     ApplyScrollPositionToRefreshViewUnsafe();
                 }
+                //stop and hide when when back from overscroll
                 else if (RefreshIndicator.IsVisible)
                 {
                     StopVelocityPanning();
@@ -2242,76 +2272,30 @@ namespace DrawnUi.Draw
             }
 
             Arrange(context.Destination, SizeRequest.Width, SizeRequest.Height, context.Scale);
+            //we exit with DrawingRect assigned to new destination
 
-            _zoomedScale = (float)(context.Scale * ViewportZoom);
+            var zoomedScale = (float)(context.Scale * ViewportZoom);
 
             if (!CheckIsGhost())
             {
                 ApplyPannedOffsetWithVelocity(context.Context);
-
-                var posX = (float)Math.Round(ViewportOffsetX * _zoomedScale);
-                var posY = (float)Math.Round(ViewportOffsetY * _zoomedScale);
+                var posX = (float)Math.Round(ViewportOffsetX * zoomedScale);
+                var posY = (float)Math.Round(ViewportOffsetY * zoomedScale);
 
                 IsScrolling = _animatorFlingY.IsRunning || _animatorFlingX.IsRunning ||
                               _vectorAnimatorBounceY.IsRunning || _vectorAnimatorBounceX.IsRunning
                               || _scrollerX.IsRunning || _scrollerY.IsRunning || IsUserPanning;
 
                 var needReposition =
+                    zoomedScale != _zoomedScale ||
                     _updatedViewportForPixY != posY
                     || _updatedViewportForPixX != posX
-                    || _destination != context.Destination;
+                    || _destination != DrawingRect;
 
                 //reposition viewport (scroll)
                 if (needReposition)
                 {
-                    if (Orientation == ScrollOrientation.Vertical)
-                    {
-                        if (posY < _updatedViewportForPixY)
-                        {
-                            ScrollingDirection = LinearDirectionType.Forward;
-                        }
-                        else if (posY > _updatedViewportForPixY)
-                        {
-                            ScrollingDirection = LinearDirectionType.Backward;
-                        }
-                        else
-                        {
-                            ScrollingDirection = LinearDirectionType.None;
-                        }
-                    }
-                    else if (Orientation == ScrollOrientation.Horizontal)
-                    {
-                        if (posX < _updatedViewportForPixX)
-                        {
-                            ScrollingDirection = LinearDirectionType.Forward;
-                        }
-                        else if (posX > _updatedViewportForPixX)
-                        {
-                            ScrollingDirection = LinearDirectionType.Backward;
-                        }
-                        else
-                        {
-                            ScrollingDirection = LinearDirectionType.None;
-                        }
-                    }
-                    else
-                    {
-                        ScrollingDirection = LinearDirectionType.None;
-                    }
-
-
-                    _updatedViewportForPixX = posX;
-                    _updatedViewportForPixY = posY;
-                    _destination = context.Destination;
-
-                    if (PositionViewport(DrawingRect, new(posX, posY), _zoomedScale, context.Scale))
-                    {
-                        InvalidateCache();
-
-                        //POST EVENTS
-                        if (IsScrolling)
-                            SendScrolled();
-                    }
+                    SetScrollOffset(DrawingRect, posX, posY, zoomedScale, context.Scale, false);
                 }
 
                 var clone = AddPaintArguments(context).WithDestination(DrawingRect);
@@ -2323,6 +2307,59 @@ namespace DrawnUi.Draw
             OnDrawn(context.WithScale(_zoomedScale));
 
             isDrawing = false;
+        }
+
+
+        protected virtual void SetScrollOffset(SKRect destination, float posX, float posY, float zoomedScale, float scale, bool forceSyncOffsets)
+        {
+            if (Orientation == ScrollOrientation.Vertical)
+            {
+                if (posY < _updatedViewportForPixY)
+                {
+                    ScrollingDirection = LinearDirectionType.Forward;
+                }
+                else if (posY > _updatedViewportForPixY)
+                {
+                    ScrollingDirection = LinearDirectionType.Backward;
+                }
+                else
+                {
+                    ScrollingDirection = LinearDirectionType.None;
+                }
+            }
+            else if (Orientation == ScrollOrientation.Horizontal)
+            {
+                if (posX < _updatedViewportForPixX)
+                {
+                    ScrollingDirection = LinearDirectionType.Forward;
+                }
+                else if (posX > _updatedViewportForPixX)
+                {
+                    ScrollingDirection = LinearDirectionType.Backward;
+                }
+                else
+                {
+                    ScrollingDirection = LinearDirectionType.None;
+                }
+            }
+            else
+            {
+                ScrollingDirection = LinearDirectionType.None;
+            }
+
+            _destination = destination;
+            _updatedViewportForPixX = posX;
+            _updatedViewportForPixY = posY;
+            _zoomedScale = zoomedScale;
+
+            if (PositionViewport(destination, new(posX, posY), zoomedScale, scale, forceSyncOffsets))
+            {
+                InvalidateCache();
+
+                //POST EVENTS
+                if (IsScrolling)
+                    SendScrolled();
+            }
         }
 
         public double ParallaxComputedValue
@@ -2479,9 +2516,9 @@ namespace DrawnUi.Draw
                         Footer.AddTranslationY = offsetFooter / ctx.Scale;
 
                         //draw only if onscreen
-                        var hitbox = new SKRect(ctx.Destination.Left, ctx.Destination.Top + offsetFooter,
-                            ctx.Destination.Right,
-                            ctx.Destination.Top + offsetFooter + Footer.MeasuredSize.Pixels.Height);
+                        var hitbox = new SKRect(Viewport.Pixels.Left, Viewport.Pixels.Top + offsetFooter,
+                            Viewport.Pixels.Right,
+                            Viewport.Pixels.Top + offsetFooter + Footer.MeasuredSize.Pixels.Height);
                         if (hitbox.IntersectsWith(this.Viewport.Pixels))
                             drawViews.Add(Footer);
                     }
@@ -2496,10 +2533,10 @@ namespace DrawnUi.Draw
 
                         //draw only if onscreen
                         var hitbox = new SKRect(
-                            ctx.Destination.Left + offsetFooter,
-                            ctx.Destination.Top,
-                            ctx.Destination.Left + offsetFooter + Footer.MeasuredSize.Pixels.Width,
-                            ctx.Destination.Bottom);
+                            Viewport.Pixels.Left + offsetFooter,
+                            Viewport.Pixels.Top,
+                            Viewport.Pixels.Left + offsetFooter + Footer.MeasuredSize.Pixels.Width,
+                            Viewport.Pixels.Bottom);
                         if (hitbox.IntersectsWith(this.Viewport.Pixels))
                             drawViews.Add(Footer);
                     }

@@ -44,12 +44,12 @@ namespace Sandbox.Views
             }
         }
 
-        private void SkiaButton_OnTapped(object sender, SkiaGesturesParameters e)
+        private void SkiaButton_OnTapped(object sender, SkiaControl.ControlTappedEventArgs controlTappedEventArgs)
         {
             _ = CreatePdf(PaperFormat.A4, 150);
         }
 
-        private void SkiaButton_OnTapped2(object sender, SkiaGesturesParameters e)
+        private void SkiaButton_OnTapped2(object sender, SkiaControl.ControlTappedEventArgs controlTappedEventArgs)
         {
             _ = CreatePdf(PaperFormat.A6, 150);
         }

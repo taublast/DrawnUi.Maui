@@ -669,7 +669,7 @@ public partial class SkiaLayout
                 var measure = rectCell;
 
                 var scale = (float)control.RenderingScale;
-                control.Measure((float)Math.Round(rectCell.Width * scale), (float)Math.Round(rectCell.Height * scale),
+                control.Measure((float)(rectCell.Width * scale), (float)Math.Round(rectCell.Height * scale),
                     scale);
 
                 if (cell.IsColumnSpanStar && cell.ColumnSpan > 1)

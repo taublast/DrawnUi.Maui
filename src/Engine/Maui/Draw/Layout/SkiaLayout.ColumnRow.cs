@@ -462,12 +462,24 @@ namespace DrawnUi.Draw
                                     cell.WasMeasured = true;
                                 }
                             }
+                            //todo !!!
+                            //else
+                            //if (Type == LayoutType.Column && child.VerticalOptions == LayoutOptions.Fill)
+                            //{
+                            //    listSecondPass.Add(new(cell, child, scale));
+                            //}
+                            //else
+                            //if (Type == LayoutType.Row && child.HorizontalOptions == LayoutOptions.Fill)
+                            //{
+                            //    listSecondPass.Add(new(cell, child, scale));
+                            //}
                             else
                             {
                                 measured = MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels, scale);
 
                                 if (maybeSecondPass) //has infinity in destination
                                 {
+
                                     if (Type == LayoutType.Column && child.HorizontalOptions != LayoutOptions.Start)
                                     {
                                         listSecondPass.Add(new(cell, child, scale));
@@ -608,6 +620,8 @@ namespace DrawnUi.Draw
 
             return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
         }
+        
+
 
         private LayoutStructure BuildStackStructure(float scale)
         {

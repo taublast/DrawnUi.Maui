@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Input;
+using static DrawnUi.Draw.SkiaControl;
 
 namespace DrawnUi.Draw;
 
@@ -327,7 +328,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
 
     public virtual void FireTap()
     {
-        Tapped?.Invoke(this, null);
+        Tapped?.Invoke(this, new ControlTappedEventArgs(this, SkiaGesturesParameters.Empty, GestureEventProcessingInfo.Empty));
         CommandTapped?.Execute(null);
     }
 
@@ -371,7 +372,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
         }
     }
 
-    public event EventHandler<TouchActionEventArgs> Tapped;
+    public event EventHandler<ControlTappedEventArgs> Tapped;
 
     protected SkiaControl ParentControl
     {

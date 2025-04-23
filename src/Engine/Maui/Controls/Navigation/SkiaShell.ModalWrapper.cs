@@ -24,6 +24,8 @@ public partial class SkiaShell
             _useGestures = useGestures;
         }
 
+
+
         public virtual void WrapContent(SkiaControl content)
         {
             var drawer = new SkiaDrawer()
@@ -175,4 +177,6 @@ public partial class SkiaShell
 
 
     }
+
+
 }

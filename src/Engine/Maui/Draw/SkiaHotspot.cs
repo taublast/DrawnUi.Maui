@@ -239,31 +239,6 @@ namespace DrawnUi.Draw
         }
 
 
-        public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor), typeof(Color),
-             typeof(SkiaHotspot),
-            Colors.White);
-        public Color TouchEffectColor
-        {
-            get { return (Color)GetValue(TouchEffectColorProperty); }
-            set { SetValue(TouchEffectColorProperty, value); }
-        }
-
-        public static readonly BindableProperty AnimationTappedProperty = BindableProperty.Create(nameof(AnimationTapped),
-            typeof(SkiaTouchAnimation),
-            typeof(SkiaHotspot), SkiaTouchAnimation.None);
-        public SkiaTouchAnimation AnimationTapped
-        {
-            get { return (SkiaTouchAnimation)GetValue(AnimationTappedProperty); }
-            set { SetValue(AnimationTappedProperty, value); }
-        }
-
-        public static readonly BindableProperty TransformViewProperty = BindableProperty.Create(nameof(TransformView), typeof(object),
-            typeof(SkiaHotspot), null);
-        public object TransformView
-        {
-            get { return (object)GetValue(TransformViewProperty); }
-            set { SetValue(TransformViewProperty, value); }
-        }
 
         public static readonly BindableProperty CommandTappedProperty = BindableProperty.Create(nameof(CommandTapped), typeof(ICommand),
             typeof(SkiaHotspot),

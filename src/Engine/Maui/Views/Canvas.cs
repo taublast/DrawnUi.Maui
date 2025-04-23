@@ -620,6 +620,14 @@ public class Canvas : DrawnView, IGestureListener
     private SKPoint _PressedPosition;
     public event EventHandler Tapped;
 
+
+    /// <summary>
+    /// To filter micro-gestures on super sensitive screens, start passing panning only when threshold is once overpassed
+    /// </summary>
+    public static float FirstPanThreshold = 5;
+
+    bool _isPanning;
+
     /// <summary>
     /// IGestureListener implementation
     /// </summary>
@@ -631,27 +639,71 @@ public class Canvas : DrawnView, IGestureListener
     {
         //Super.Log($"[Touch] Canvas got {args1.Type} {type} => {touchAction}");
 
-        if (touchAction == TouchActionResult.Tapped && Tapped != null)
+        if (touchAction == TouchActionResult.Tapped)
         {
-            Tapped.Invoke(this, EventArgs.Empty);
-            return;
+            var velocityX = Math.Abs(args1.Distance.Velocity.X / RenderingScale);
+            var velocityY = Math.Abs(args1.Distance.Velocity.Y / RenderingScale);
+
+            //var distX = Math.Abs(args1.Distance.Total.X / RenderingScale);
+            //var distY = Math.Abs(args1.Distance.Total.Y / RenderingScale);
+
+            //var vvelocityX = Math.Abs(args1.Distance.TotalVelocity.X / RenderingScale);
+            //var vvelocityY = Math.Abs(args1.Distance.TotalVelocity.X / RenderingScale);
+            Debug.WriteLine($"[Touch] Tvv {velocityX} {velocityY}");
+            //Debug.WriteLine($"[Touch] Tvv {distX} {distY}");
+
+            //anti lag-spike false tap
+            var threshold = 8;
+
+            if (velocityY > threshold || velocityX > threshold)
+                return;
+
+            if (Tapped != null)
+            {
+                Tapped.Invoke(this, EventArgs.Empty);
+                return;
+            }
+        }
+
+        if (touchAction == TouchActionResult.Panning)
+        {
+            //filter micro-gestures
+            if ((Math.Abs(args1.Distance.Delta.X) < 1 && Math.Abs(args1.Distance.Delta.Y) < 1)
+                || (Math.Abs(args1.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args1.Distance.Velocity.Y / RenderingScale) < 1))
+            {
+                return;
+            }
+
+            var threshold = FirstPanThreshold * RenderingScale;
+
+            if (!_isPanning)
+            {
+                //filter first panning movement on super sensitive screens
+                if (Math.Abs(args1.Distance.Total.X) < threshold && Math.Abs(args1.Distance.Total.Y) < threshold)
+                {
+                    _panningOffset = SKPoint.Empty;
+                    return;
+                }
+
+                if (_panningOffset == SKPoint.Empty)
+                {
+                    _panningOffset = args1.Distance.Total.ToSKPoint();
+                }
+
+                //args.PanningOffset = _panningOffset;
+
+                _isPanning = true;
+            }
+        }
+
+        if (touchAction == TouchActionResult.Down)
+        {
+            _isPanning = false;
         }
 
         var args = SkiaGesturesParameters.Create(touchAction, args1);
 
-        //anti lag-spike false tap
-        if (args != null)
-        {
-            if (args.Type == TouchActionResult.Tapped)
-            {
-                var threshold = TouchEffect.TappedWhenMovedThresholdPoints * RenderingScale;
-                if (Math.Abs(args.Event.Distance.Total.X) > threshold ||
-                    Math.Abs(args.Event.Distance.Total.Y) > threshold)
-                {
-                    return;
-                }
-            }
-        }
+
 
         if (GesturesDebugColor.Alpha > 0)
         {

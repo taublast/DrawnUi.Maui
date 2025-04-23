@@ -20,7 +20,7 @@
             }
         }
 
-        private void SkiaButton_Tapped(object sender, SkiaGesturesParameters skiaGesturesParameters)
+        private void SkiaButton_Tapped(object sender, SkiaControl.ControlTappedEventArgs controlTappedEventArgs)
         {
             //MainCarousel.ChildrenFactory.PrintDebugVisible();
         }

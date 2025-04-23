@@ -39,7 +39,7 @@ namespace Sandbox.Views
             });
         }
 
-        private void OnSpanTapped(object sender, TouchActionEventArgs e)
+        private void OnSpanTapped(object sender, SkiaControl.ControlTappedEventArgs controlTappedEventArgs)
         {
             if (sender is TextSpan span)
             {

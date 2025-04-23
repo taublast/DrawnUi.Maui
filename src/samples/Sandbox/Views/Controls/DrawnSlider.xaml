@@ -14,10 +14,7 @@
     UseCache="ImageDoubleBuffered">
 
     <draw:SkiaSlider.Resources>
-        <ResourceDictionary>
-
-
-        </ResourceDictionary>
+        <ResourceDictionary />
     </draw:SkiaSlider.Resources>
 
     <!--  MAIN GRID  -->
@@ -37,9 +34,7 @@
             StrokeColor="{StaticResource Gray400}"
             StrokeWidth="2"
             UseCache="Operations"
-            VerticalOptions="Center">
-
-        </draw:SkiaShape>
+            VerticalOptions="Center" />
 
         <!--  SELECTED TRAIL  -->
         <draw:SliderTrail
@@ -55,9 +50,7 @@
             Tag="SelectedTrail"
             VerticalOptions="Center"
             XPos="0"
-            XPosEnd="{Binding Source={x:Reference EndThumb}, Path=TranslationX}">
-
-        </draw:SliderTrail>
+            XPosEnd="{Binding Source={x:Reference EndThumb}, Path=TranslationX}" />
 
         <!--  THUMB  -->
         <draw:SliderThumb

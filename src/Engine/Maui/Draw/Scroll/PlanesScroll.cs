@@ -271,6 +271,7 @@
 
             recordingContext.Context.Canvas.Flush();
             DisposeObject(plane.CachedObject);
+
             plane.CachedObject = new CachedObject(
                 SkiaCacheType.Image,
                 plane.Surface,

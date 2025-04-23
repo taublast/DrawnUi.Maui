@@ -23,13 +23,9 @@
             Tag="Warning"
             VerticalOptions="Center">
 
-            <draw:SkiaLayout
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
+            <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
-                <draw:SkiaScroll
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Start">
+                <draw:SkiaScroll HorizontalOptions="Fill" VerticalOptions="Start">
                     <draw:SkiaLayout HorizontalOptions="Fill">
 
                         <!--
@@ -54,9 +50,7 @@
                                 TextColor="Yellow" />
 
                             <!--  REPORT  -->
-                            <xaml2Pdf:ReportSample
-                                BackgroundColor="White"
-                                HorizontalOptions="Center" />
+                            <xaml2Pdf:ReportSample BackgroundColor="White" HorizontalOptions="Center" />
 
                             <draw:SkiaLayout
                                 ColumnDefinitions="1*,1*"

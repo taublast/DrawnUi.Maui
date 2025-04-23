@@ -2920,6 +2920,9 @@ namespace DrawnUi.Draw
             null,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// Can use this text for auto-sizing the font instead if the real Text
+        /// </summary>
         public string AutoSizeText
         {
             get { return (string)GetValue(AutoSizeTextProperty); }
@@ -3380,15 +3383,7 @@ namespace DrawnUi.Draw
 
         #region GESTURES
 
-        public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor), typeof(Color),
-            typeof(SkiaLabel),
-            Colors.White);
-        public Color TouchEffectColor
-        {
-            get { return (Color)GetValue(TouchEffectColorProperty); }
-            set { SetValue(TouchEffectColorProperty, value); }
-        }
-
+ 
         /// <summary>
         /// Return null if you wish not to consume
         /// </summary>

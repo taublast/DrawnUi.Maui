@@ -11,7 +11,7 @@ public partial class ButtonToRoot
         InitializeComponent();
     }
 
-    private void GoToRoot(object sender, SkiaGesturesParameters skiaGesturesParameters)
+    private void GoToRoot(object sender, ControlTappedEventArgs controlTappedEventArgs)
     {
         if (TouchEffect.CheckLockAndSet())
             return;

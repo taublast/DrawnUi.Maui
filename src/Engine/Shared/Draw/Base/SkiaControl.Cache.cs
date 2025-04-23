@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 
 namespace DrawnUi.Draw;
@@ -68,7 +69,7 @@ public partial class SkiaControl
     /// <summary>
     /// The cached representation of the control. Will be used on redraws without calling Paint etc, until the control is requested to be updated.
     /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
+    //[EditorBrowsable(EditorBrowsableState.Never)]
     public CachedObject RenderObject
     {
         get
@@ -143,11 +144,58 @@ public partial class SkiaControl
         RenderObject = null;
     }
 
+    /// <summary>
+    /// Technical optional method for some custom logic. Actually used by SkiaMap only.
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="cache"></param>
+    public void DrawRenderObject(DrawingContext ctx, float x, float y, CachedObject cache = null)
+    {
+        cache ??= RenderObject;
+        if (cache == null)
+            return;
+        var destinationRect = new SKRect(x, y, x + cache.Bounds.Width, y + cache.Bounds.Height);
+        var context = AddPaintArguments(ctx).WithDestination(destinationRect);
+        DrawRenderObjectInternal(context, cache);
+    }
+
+    public bool IsRenderObjectValid(SKSize size, CachedObject cache = null)
+    {
+        cache ??= RenderObject;
+
+        if (cache == null || cache.Bounds.Size != size)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Technical optional method for some custom logic. Will create as SKImage or SKPicture (asOperations=true).
+    /// WIll not affect current RenderObject property.
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <param name="area"></param>
+    /// <param name="asOperations"></param>
+    /// <returns></returns>
+    public CachedObject CreateRenderedObject(DrawingContext ctx, SKRect area, bool asOperations)
+    {
+        var usingCacheType = asOperations ? SkiaCacheType.Operations : SkiaCacheType.Image;
+
+        var renderObject = CreateRenderingObject(ctx, area, null, usingCacheType, (context) =>
+        {
+            PaintWithEffects(context.WithDestination(area));
+        });
+
+        return renderObject;
+    }
+
     protected virtual bool CheckCachedObjectValid(CachedObject cache, SKRect recordingArea, SkiaDrawingContext context)
     {
         if (cache != null)
         {
-            if (cache.Bounds.Size != recordingArea.Size)
+            if (cache.RecordingArea.Size != recordingArea.Size)
                 return false;
 
             //check hardware context maybe changed
@@ -206,10 +254,11 @@ public partial class SkiaControl
         }
     }
 
-    protected virtual CachedObject CreateRenderingObject(
+    public virtual CachedObject CreateRenderingObject(
         DrawingContext context,
     SKRect recordingArea,
     CachedObject reuseSurfaceFrom,
+    SkiaCacheType usingCacheType,
     Action<DrawingContext> action)
     {
         if (recordingArea.Height == 0 || recordingArea.Width == 0 || IsDisposed || IsDisposing)
@@ -231,11 +280,24 @@ public partial class SkiaControl
 
             NeedUpdate = false; //if some child changes this while rendering to cache we will erase resulting RenderObject
 
-            var usingCacheType = UsingCacheType;
-
             GRContext grContext = null;
 
-            if (IsCacheImage)
+            if (usingCacheType == SkiaCacheType.Operations || usingCacheType == SkiaCacheType.OperationsFull)
+            {
+                var cacheRecordingArea = GetCacheRecordingArea(recordingArea);
+
+                using (var recorder = new SKPictureRecorder())
+                {
+                    var recordingContext = context.CreateForRecordingOperations(recorder, cacheRecordingArea);
+
+                    action(recordingContext);
+
+                    var skPicture = recorder.EndRecording();
+                    renderObject = new(UsingCacheType, skPicture, context.Destination, cacheRecordingArea);
+                }
+            }
+            else
+            if (usingCacheType != SkiaCacheType.None)
             {
                 var width = (int)recordArea.Width;
                 var height = (int)recordArea.Height;
@@ -313,21 +375,8 @@ public partial class SkiaControl
                     SurfaceIsRecycled = recordingContext.Context.IsRecycled
                 };
             }
-            else
-            if (IsCacheOperations)
-            {
-                var cacheRecordingArea = GetCacheRecordingArea(recordingArea);
-
-                using (var recorder = new SKPictureRecorder())
-                {
-                    var recordingContext = context.CreateForRecordingOperations(recorder, cacheRecordingArea);
-
-                    action(recordingContext);
-
-                    var skPicture = recorder.EndRecording();
-                    renderObject = new(UsingCacheType, skPicture, context.Destination, cacheRecordingArea);
-                }
-            }
+         
+ 
 
             //else we landed here with no cache type at all..
         }
@@ -340,6 +389,7 @@ public partial class SkiaControl
     }
 
     public Action<DrawingContext, CachedObject> DelegateDrawCache { get; set; }
+
 
     protected virtual void DrawRenderObjectInternal(
         DrawingContext ctx,
@@ -434,7 +484,7 @@ public partial class SkiaControl
                 {
                     //will be executed on background thread in parallel
                     var oldObject = RenderObjectPreparing;
-                    RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, (ctx) =>
+                    RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, UsingCacheType, (ctx) =>
                     {
                         PaintWithEffects(ctx);
                     });
@@ -687,7 +737,7 @@ public partial class SkiaControl
                         {
                             //will be executed on background thread in parallel
                             var oldObject = RenderObjectPreparing;
-                            RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, (ctx) =>
+                            RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, UsingCacheType, (ctx) =>
                             {
                                 PaintWithEffects(ctx);
                             });
@@ -768,7 +818,7 @@ public partial class SkiaControl
             oldObject = RenderObjectPrevious;
         }
 
-        var created = CreateRenderingObject(context, recordingArea, oldObject, action);
+        var created = CreateRenderingObject(context, recordingArea, oldObject, UsingCacheType, action);
 
         if (created == null)
         {

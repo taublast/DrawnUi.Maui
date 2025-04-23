@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +13,13 @@ namespace DrawnUi.Gaming
     /// </summary>
     public class MauiGame : SkiaLayout, IMauiGame
     {
-
         private ActionOnTickAnimator _appLoop;
         protected long LastFrameTimeNanos;
 
         public MauiGame()
         {
+            Trace.WriteLine("****************** MAUIGAME CREATED **********************");
+
             KeyboardManager.KeyDown += OnKeyboardDownEvent;
             KeyboardManager.KeyUp += OnKeyboardUpEvent;
         }
@@ -29,7 +31,6 @@ namespace DrawnUi.Gaming
 
             base.OnDisposing();
         }
-
 
         protected virtual void OnResumed()
         {
@@ -45,7 +46,6 @@ namespace DrawnUi.Gaming
         /// <param name="deltaSeconds"></param>
         public virtual void GameLoop(float deltaSeconds)
         {
-
         }
 
         /// <summary>
@@ -66,6 +66,8 @@ namespace DrawnUi.Gaming
             {
                 _appLoop = new(this, GameTick);
             }
+
+            Trace.WriteLine("****************** GAMELOOP STARTED **********************");
             _appLoop.Start(delayMs);
         }
 
@@ -90,12 +92,10 @@ namespace DrawnUi.Gaming
         }
 
         private bool _IsPaused;
+
         public bool IsPaused
         {
-            get
-            {
-                return _IsPaused;
-            }
+            get { return _IsPaused; }
             set
             {
                 if (_IsPaused != value)
@@ -127,7 +127,6 @@ namespace DrawnUi.Gaming
         /// <param name="key"></param>
         public virtual void OnKeyDown(MauiKey key)
         {
-
         }
 
         /// <summary>
@@ -136,9 +135,7 @@ namespace DrawnUi.Gaming
         /// <param name="key"></param>
         public virtual void OnKeyUp(MauiKey key)
         {
-
         }
-
 
         /// <summary>
         /// Do not use directly. It's public to be able to send keys to game manually if needed.
@@ -160,8 +157,6 @@ namespace DrawnUi.Gaming
             OnKeyUp(key);
         }
 
-
         #endregion
-
     }
 }

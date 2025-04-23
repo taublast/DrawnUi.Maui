@@ -149,7 +149,7 @@ public class SkiaImageTiles : SkiaImage
         var image = ApplyNewSource;
         if (image == null)
         {
-            image = ImageBitmap;
+            image = LoadedSource;
         }
 
         if (TileWidth > 0 && TileHeight > 0 && image != null)

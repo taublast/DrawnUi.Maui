@@ -277,11 +277,11 @@ public partial class SkiaScroll
 
                         SwipeVelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY));
 
-                        var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDistancePanned;
                         var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDistancePanned;
+                        var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDistancePanned;
 
-                        var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.85f;
-                        var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.85f;
+                        var interpolatedMoveToX = movedPtsX;//_panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.85f;
+                        var interpolatedMoveToY = movedPtsY;//_panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.85f;
 
                         _panningLastDelta = new Vector2(interpolatedMoveToX, interpolatedMoveToY);
 

@@ -89,7 +89,7 @@ namespace DrawnUi.Views
 
         private void OnChoreographer(object sender, EventArgs e)
         {
-            lock (lockFrame)
+            //lock (lockFrame)
             {
                 if (CheckCanDraw())
                 {

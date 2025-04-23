@@ -1,8 +1,11 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Buffers;
+using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Net;
 using AppoMobi.Maui.Gestures;
 using DrawnUi.Draw;
+using HarfBuzzSharp;
 using Mapsui;
 using Mapsui.Disposing;
 using Mapsui.Extensions;
@@ -17,16 +20,131 @@ using Mapsui.UI;
 using Mapsui.Utilities;
 using Mapsui.Widgets;
 using SkiaSharp;
+using InvalidOperationException = System.InvalidOperationException;
 using Map = Mapsui.Map;
 
 namespace DrawnUi.MapsUi;
 
+public class MapPin : BindableObject
+{
+    public string Id { get; set; }
+    public string Label { get; set; }
+    public string Address { get; set; }
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public int ZIndex { get; set; }
+    public bool IsVisible { get; set; } = true;
+    public SkiaControl Icon { get; set; } // Can be an SVG or custom drawn icon
+
+    public event EventHandler<MapPin> Tapped;
+    public event EventHandler<MapPin> InfoWindowTapped;
+}
 
 /// <summary>
-/// MapControl for MAUI DrawnUi
+/// MapControl for MAUI DrawnUi.
+/// Beware whole world mainly uses LAT LON, MapsUi uses mainly LON LAT
 /// </summary>
 public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 {
+    /// <summary>
+    /// Lat Lon
+    /// </summary>
+    public event EventHandler<Point> ClickedPoint;
+
+    protected virtual void SendClicked(Point point)
+    {
+        LastClicked = point;
+
+        ClickedPoint?.Invoke(this, point);
+    }
+
+    public Point LastClicked;
+
+    #region PINS
+
+    public void CenterTo(double lat, double lon, double zoom, long duration = -1, Mapsui.Animations.Easing? easing = null)
+    {
+        var point = new MPoint(lat, lon);
+        var sphericalMercatorCoordinate = SphericalMercator.FromLonLat(point.Y, point.X).ToMPoint();
+
+        Map.Navigator.CenterOnAndZoomTo(
+            sphericalMercatorCoordinate, zoom, duration, easing);
+    }
+
+    public int GetCurrentZoomLevel()
+    {
+        var currentResolution = Map.Navigator.Viewport.Resolution;
+        var resolutions = Map.Navigator.Resolutions.ToList();
+
+        for (int i = 0; i < resolutions.Count; i++)
+        {
+            if (Math.Abs(resolutions[i] - currentResolution) < 0.0001)
+            {
+                return i;
+            }
+        }
+
+        return resolutions.FindIndex(r => r <= currentResolution);
+    }
+
+    protected SKPaint PaintPins;
+
+    protected void RenderPin(DrawingContext ctx, MapPin pin)
+    {
+        if (pin.Icon == null || !pin.IsVisible)
+            return;
+
+        // X Y
+        var screenPos = GetScreenPosition(pin.Longitude, pin.Latitude);
+        //var screenPos = GetScreenPosition(LastClicked.X, LastClicked.Y);
+
+        if (!screenPos.HasValue)
+            return;
+
+        //center control
+        var x = screenPos.Value.X;
+        var y = screenPos.Value.Y;
+
+        var pinSize = pin.Icon.MeasuredSize.Pixels;
+
+        if (!pin.Icon.IsRenderObjectValid(pinSize))
+        {
+            RasterizeIcon(ctx, pin.Icon);
+            pinSize = pin.Icon.MeasuredSize.Pixels;
+        }
+
+        var positionX = (float)(x - pinSize.Width / 2.0);
+        var positionY = (float)(y - pinSize.Height);
+
+        pin.Icon.DrawRenderObject(ctx, positionX, positionY);
+    }
+
+    protected void RasterizeIcon(DrawingContext ctx, SkiaControl icon)
+    {
+        if (icon==null)
+        {
+            return;
+        }
+
+        var destination = new SKRect(0, 0, float.PositiveInfinity, float.PositiveInfinity);
+
+        var measuredSize = icon.Measure(destination.Width, destination.Height, ctx.Scale);
+        var size = measuredSize.Pixels;
+
+        icon.Arrange(
+            new SKRect(0, 0, size.Width, size.Height),
+            size.Width, size.Height, ctx.Scale);
+
+        icon.RenderObject = icon.CreateRenderedObject(ctx, icon.DrawingRect, false);
+    }
+
+    /// <summary>
+    /// Please use UI thread to change this observable collection
+    /// </summary>
+    public ObservableRangeCollection<MapPin> Pins { get; } = new();
+
+    #endregion
+
     public class SkiaMapLayer : SkiaControl
     {
         public SkiaMapLayer()
@@ -34,7 +152,6 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
             HorizontalOptions = LayoutOptions.Fill;
             VerticalOptions = LayoutOptions.Fill;
         }
-
     }
 
     public SkiaMapsUi()
@@ -99,12 +216,10 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     }
 
     private static bool GetShiftPressed() => KeyboardManager.IsShiftPressed;
-
     private readonly ConcurrentDictionary<long, ScreenPosition> _positions = new();
     private Size _oldSize;
     private static List<WeakReference<SkiaMapsUi>>? _listeners;
     private readonly ManipulationTracker _manipulationTracker = new();
-
 
     /// <summary>
     /// Pixels
@@ -117,6 +232,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     private double ViewportHeight => Height;
 
     #region GESTURES
+
     /// <summary>
     /// Clears the Touch State
     /// </summary>
@@ -132,12 +248,12 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-
         var consumed = this; //   e.Handled = true;
 
         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
 
-        var position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
+        var position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale,
+            (point.Y - DrawingRect.Top) / RenderingScale);
 
         if (args.Type == TouchActionResult.Down)
         {
@@ -153,8 +269,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
             return base.ProcessGestures(args, apply);
         }
-        else
-        if (args.Type == TouchActionResult.Panning)
+        else if (args.Type == TouchActionResult.Panning)
         {
             _positions[args.Event.Id] = position;
 
@@ -165,8 +280,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
             RefreshGraphics();
         }
-        else
-        if (args.Type == TouchActionResult.Up)
+        else if (args.Type == TouchActionResult.Up)
         {
             //            _positions.Remove(args.Id, out var releasedTouch);
             _positions.Clear();
@@ -179,8 +293,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         //{
         //    OnZoomInOrOut(e.WheelDelta, position);
         //}
-        else
-        if (args.Type == TouchActionResult.Wheel)
+        else if (args.Type == TouchActionResult.Wheel)
         {
             _wasPinching = true;
 
@@ -222,11 +335,12 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
                     {
                         point = TranslateInputOffsetToPixels(args.Event.Wheel.Center, apply.childOffset);
 
-                        position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale, (point.Y - DrawingRect.Top) / RenderingScale);
+                        position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale,
+                            (point.Y - DrawingRect.Top) / RenderingScale);
 
                         var intZoom = (int)Math.Round(delta);
 
-                        Super.Log($"[G] {delta} => {intZoom}");
+                        //Super.Log($"[G] {delta} => {intZoom}");
 
                         if (Math.Abs(intZoom) >= 0.1)
                             OnZoomInOrOut(intZoom, position);
@@ -236,8 +350,8 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
                 {
                     //attach
                     _lastPinch = args.Event.Wheel.Scale;
-
                 }
+
                 return this;
             }
         }
@@ -281,10 +395,11 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     /// </summary>
     public static float PinchMultiplier = 55.0f;
 
-    private ScreenPosition GetScreenPosition(SKPoint point) => new ScreenPosition(point.X / PixelDensity, point.Y / PixelDensity);
+    private ScreenPosition GetScreenPosition(SKPoint point) =>
+        new ScreenPosition(point.X / PixelDensity, point.Y / PixelDensity);
 
     private void OnZoomInOrOut(int mouseWheelDelta, ScreenPosition centerOfZoom)
-    => Map.Navigator.MouseWheelZoom(mouseWheelDelta, centerOfZoom);
+        => Map.Navigator.MouseWheelZoom(mouseWheelDelta, centerOfZoom);
     //{
     //    var resolution = Map.Navigator.MouseWheelAnimation.GetResolution(
     //        mouseWheelDelta, Map.Navigator.Viewport.Resolution, Map.Navigator.ZoomBounds, Map.Navigator.Resolutions);
@@ -298,7 +413,6 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     /// <summary>
     /// Public functions
     /// </summary>
-
     public void OpenInBrowser(string url)
     {
         Catch.TaskRun(() => _ = Launcher.OpenAsync(new Uri(url)));
@@ -325,18 +439,21 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
     // Flag indicating if a drawing process is running
     private bool _drawing;
+
     // Flag indicating if the control has to be redrawn
     private bool _invalidated;
+
     // Flag indicating if a new drawing process should start
     private bool _refresh;
-
     private IRenderer _renderer = new MapRenderer();
     //private IRenderer _renderer = new DrawnUiSkiaMapRenderer();
 
     // Timer for loop to invalidating the control
     private Timer? _invalidateTimer;
+
     // Interval between two calls of the invalidate function in ms
     private int _updateInterval = 16;
+
     // Stopwatch for measuring drawing times
     private readonly System.Diagnostics.Stopwatch _stopwatch = new();
     private readonly TapGestureTracker _tapGestureTracker = new();
@@ -392,7 +509,6 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         _drawing = false;
         _invalidated = false;
     }
-
 
     private void InvalidateTimerCallback(object? state)
     {
@@ -486,7 +602,8 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         set
         {
             if (value <= 0)
-                throw new ArgumentOutOfRangeException(nameof(UpdateInterval), value, "Parameter must be greater than zero");
+                throw new ArgumentOutOfRangeException(nameof(UpdateInterval), value,
+                    "Parameter must be greater than zero");
 
             if (_updateInterval != value)
             {
@@ -553,7 +670,6 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         map.RefreshGraphicsRequest += Map_RefreshGraphicsRequest;
     }
 
-
     private void Map_RefreshGraphicsRequest(object? sender, EventArgs e)
     {
         RefreshGraphics();
@@ -600,11 +716,13 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
             //}
             else if (e.Error is WebException)
             {
-                Logger.Log(LogLevel.Warning, $"A WebException occurred. Do you have internet? Exception: {e.Error?.Message}", e.Error);
+                Logger.Log(LogLevel.Warning,
+                    $"A WebException occurred. Do you have internet? Exception: {e.Error?.Message}", e.Error);
             }
             else if (e.Error != null)
             {
-                Logger.Log(LogLevel.Warning, $"An error occurred while fetching data. Exception: {e.Error?.Message}", e.Error);
+                Logger.Log(LogLevel.Warning, $"An error occurred while fetching data. Exception: {e.Error?.Message}",
+                    e.Error);
             }
             else // no problems
             {
@@ -616,8 +734,8 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
             Logger.Log(LogLevel.Warning, $"Unexpected exception in {nameof(Map_DataChanged)}", exception);
         }
     }
-    // ReSharper disable RedundantNameQualifier - needed for iOS for disambiguation
 
+    // ReSharper disable RedundantNameQualifier - needed for iOS for disambiguation
     private void Map_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Mapsui.Layers.Layer.Enabled))
@@ -669,25 +787,24 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         mapControl.AfterSetMap((Map)newValue);
     }
 
-
     public Map Map
     {
         get => (Map)GetValue(MapProperty);
         set => SetValue(MapProperty, value);
     }
 
-
-
     private void BeforeSetMap()
     {
-        if (Map is null) return; // Although the Map property can not null the map argument can null during initializing and binding.
+        if (Map is null)
+            return; // Although the Map property can not null the map argument can null during initializing and binding.
 
         UnsubscribeFromMapEvents(Map);
     }
 
     private void AfterSetMap(Map? map)
     {
-        if (map is null) return; // Although the Map property can not null the map argument can null during initializing and binding.
+        if (map is null)
+            return; // Although the Map property can not null the map argument can null during initializing and binding.
 
         map.Navigator.SetSize(ViewportWidth, ViewportHeight);
         SubscribeToMapEvents(map);
@@ -725,13 +842,15 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     /// <inheritdoc />
     public MapInfo GetMapInfo(ScreenPosition screenPosition, int margin = 0)
     {
-        return Renderer.GetMapInfo(screenPosition.X, screenPosition.Y, Map.Navigator.Viewport, Map?.Layers ?? [], margin);
+        return Renderer.GetMapInfo(screenPosition.X, screenPosition.Y, Map.Navigator.Viewport, Map?.Layers ?? [],
+            margin);
     }
 
     /// <inheritdoc />
     public byte[] GetSnapshot(IEnumerable<ILayer>? layers = null)
     {
-        using var stream = Renderer.RenderToBitmapStream(Map.Navigator.Viewport, layers ?? Map?.Layers ?? [], pixelDensity: PixelDensity);
+        using var stream = Renderer.RenderToBitmapStream(Map.Navigator.Viewport, layers ?? Map?.Layers ?? [],
+            pixelDensity: PixelDensity);
         return stream.ToArray();
     }
 
@@ -743,7 +862,8 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     /// <returns>True, if something done </returns>
     private MapInfoEventArgs CreateMapInfoEventArgs(ScreenPosition screenPosition, TapType tapType)
     {
-        var mapInfo = Renderer.GetMapInfo(screenPosition.X, screenPosition.Y, Map.Navigator.Viewport, Map?.Layers ?? []);
+        var mapInfo =
+            Renderer.GetMapInfo(screenPosition.X, screenPosition.Y, Map.Navigator.Viewport, Map?.Layers ?? []);
 
         return new MapInfoEventArgs(mapInfo, tapType, false);
     }
@@ -768,25 +888,28 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
             _map?.Dispose();
             _map = null;
         }
+
         _invalidateTimer = null;
     }
-
 
     private bool OnWidgetPointerPressed(ScreenPosition position, bool shiftPressed)
     {
         foreach (var widget in WidgetInput.GetWidgetsAtPosition(position, Map))
         {
             Logger.Log(LogLevel.Information, $"Widget.PointerPressed: {widget.GetType().Name}");
-            if (widget.OnPointerPressed(Map.Navigator, new WidgetEventArgs(position, 0, true, shiftPressed, () => GetMapInfo(position))))
+            if (widget.OnPointerPressed(Map.Navigator,
+                    new WidgetEventArgs(position, 0, true, shiftPressed, () => GetMapInfo(position))))
                 return true;
         }
+
         return false;
     }
 
     private bool OnWidgetPointerMoved(ScreenPosition position, bool leftButton, bool shiftPressed)
     {
         foreach (var widget in WidgetInput.GetWidgetsAtPosition(position, Map))
-            if (widget.OnPointerMoved(Map.Navigator, new WidgetEventArgs(position, 0, leftButton, shiftPressed, () => GetMapInfo(position))))
+            if (widget.OnPointerMoved(Map.Navigator,
+                    new WidgetEventArgs(position, 0, leftButton, shiftPressed, () => GetMapInfo(position))))
                 return true;
         return false;
     }
@@ -796,9 +919,11 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         foreach (var widget in WidgetInput.GetWidgetsAtPosition(position, Map))
         {
             Logger.Log(LogLevel.Information, $"Widget.Released: {widget.GetType().Name}");
-            if (widget.OnPointerReleased(Map.Navigator, new WidgetEventArgs(position, 0, true, shiftPressed, () => GetMapInfo(position))))
+            if (widget.OnPointerReleased(Map.Navigator,
+                    new WidgetEventArgs(position, 0, true, shiftPressed, () => GetMapInfo(position))))
                 return true;
         }
+
         return false;
     }
 
@@ -807,7 +932,8 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         var touchedWidgets = WidgetInput.GetWidgetsAtPosition(position, Map);
         foreach (var widget in touchedWidgets)
         {
-            Logger.Log(LogLevel.Information, $"Widget.Tapped: {widget.GetType().Name} TapType: {tapType} KeyState: {shiftPressed}");
+            Logger.Log(LogLevel.Information,
+                $"Widget.Tapped: {widget.GetType().Name} TapType: {tapType} KeyState: {shiftPressed}");
             var e = new WidgetEventArgs(position, tapType, true, shiftPressed, () => GetMapInfo(position));
             if (widget.OnTapped(Map.Navigator, e))
                 return true;
@@ -910,8 +1036,10 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         try
         {
             // Convert from canvas pixel coordinates to screen coordinates (remove offset and pixel density)
-            var screenX = pixelX / RenderingScale; ;//(pixelX - DrawingRect.Left) / RenderingScale;
-            var screenY = pixelY / RenderingScale; ;//(pixelY - DrawingRect.Top) / RenderingScale;
+            var screenX = pixelX / RenderingScale;
+            ; //(pixelX - DrawingRect.Left) / RenderingScale;
+            var screenY = pixelY / RenderingScale;
+            ; //(pixelY - DrawingRect.Top) / RenderingScale;
 
             // Convert screen coordinates to world coordinates
             var worldCoords = Map.Navigator.Viewport.ScreenToWorld(screenX, screenY);
@@ -928,5 +1056,4 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     }
 
     #endregion
-
 }

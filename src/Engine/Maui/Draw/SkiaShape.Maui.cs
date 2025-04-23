@@ -68,7 +68,7 @@ namespace DrawnUi.Draw
 			nameof(StrokeColor),
 			typeof(Color),
 			typeof(SkiaShape),
-			Colors.Transparent,
+			Colors.Gray,
 			propertyChanged: NeedDraw);
 
 		/// <summary>

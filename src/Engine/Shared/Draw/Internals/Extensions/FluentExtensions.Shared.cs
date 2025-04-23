@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Linq.Expressions;
+using DrawnUi.Controls;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DrawnUi.Draw
 {
@@ -59,19 +62,41 @@ namespace DrawnUi.Draw
             return view;
         }
 
-        public static T SubscribeDebug<T, TSource>(
+        public static T OnBindingContextSet<T>(
             this T control,
-            TSource target,
-            Action<T, string> callback,
+            Action<T, object> callback,
             string[] propertyFilter = null)
             where T : SkiaControl
-            where TSource : INotifyPropertyChanged
         {
-            return control.Observe(target, callback, propertyFilter);
+
+            void thisHandler(object? sender, EventArgs args)
+            {
+                control.ApplyingBindingContext -= thisHandler;
+                callback?.Invoke(control, control.BindingContext);
+            }
+
+            control.ApplyingBindingContext += thisHandler;
+
+            return control;
+        }
+
+        /// <summary>
+        /// Subscribes to PropertyChanged of this control, will unsubscribe upon control disposal.
+        /// </summary>
+        /// <typeparam name="T">Type of the target control (the one being extended)</typeparam>
+        /// <typeparam name="TSource">Type of the source control (the one being observed)</typeparam>
+        /// <param name="control">The control subscribing to changes</param>
+        /// <param name="callback">Callback that receives the property name when changed</param>
+        /// <param name="propertyFilter">Optional filter to only trigger on specific properties</param>
+        /// <returns>The target control for chaining</returns>
+        public static T ObserveSelf<T>(this T view, Action<T, string> action) where T : SkiaControl
+        {
+            return view.Observe(view, action);
         }
 
         /// <summary>
         /// Subscribes to property changes on a source control and executes a callback when they occur.
+        /// Will unsubscribe upon control disposal.
         /// </summary>
         /// <typeparam name="T">Type of the target control (the one being extended)</typeparam>
         /// <typeparam name="TSource">Type of the source control (the one being observed)</typeparam>
@@ -111,6 +136,9 @@ namespace DrawnUi.Draw
 
             // Subscribe to the event
             target.PropertyChanged += handler;
+
+            //initial
+            handler?.Invoke(target, new PropertyChangedEventArgs("BindingContext"));
 
             // Will unsubscrbe when control is disposed 
             control.ExecuteUponDisposal[subscriptionKey] = () => { target.PropertyChanged -= handler; };
@@ -731,8 +759,165 @@ namespace DrawnUi.Draw
         }
 
 
+        //NEW STUFF
 
+        /// <summary>
+        /// Observes a nested property on the control's BindingContext using expression trees to extract property names.
+        /// </summary>
+        public static T ObserveTargetProperty<T, TSource, TIntermediate, TProperty>(
+            this T control,
+            Expression<Func<TSource, TIntermediate>> intermediateSelector,
+            Expression<Func<TIntermediate, TProperty>> propertySelector,
+            Action<T, TProperty> callback,
+            TProperty defaultValue = default,
+            bool debugTypeMismatch = true)
+            where T : SkiaControl
+            where TSource : INotifyPropertyChanged
+            where TIntermediate : class, INotifyPropertyChanged
+        {
+            // Extract property names from expressions
+            string intermediatePropertyName = GetPropertyName(intermediateSelector);
+            string propertyName = GetPropertyName(propertySelector);
 
+            // Compile the selectors
+            Func<TSource, TIntermediate> intermediateFunc = intermediateSelector.Compile();
+            Func<TIntermediate, TProperty> propertyFunc = propertySelector.Compile();
+
+            // Local method to handle subscription and initial call
+            void SubscribeToViewModel(TSource tvm)
+            {
+                var intermediate = intermediateFunc(tvm);
+                if (intermediate != null)
+                {
+                    ObserveIntermediateProperty(control, intermediate);
+
+                    // Also set up subscription to intermediate property changes on the ViewModel
+                    PropertyChangedEventHandler rootHandler = (sender, args) =>
+                    {
+                        if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == intermediatePropertyName)
+                        {
+                            var newIntermediate = intermediateFunc(tvm);
+                            ObserveIntermediateProperty(control, newIntermediate);
+                        }
+                    };
+
+                    tvm.PropertyChanged += rootHandler;
+                    string rootKey = $"Root_{Guid.NewGuid()}";
+                    control.ExecuteUponDisposal[rootKey] = () => { tvm.PropertyChanged -= rootHandler; };
+                }
+                else
+                {
+                    // If intermediate is null, call with default value
+                    InvokeCallback(control, defaultValue);
+                }
+            }
+
+            // Helper to observe intermediate property changes
+            void ObserveIntermediateProperty(T ctrl, TIntermediate intermediate)
+            {
+                if (intermediate == null)
+                {
+                    InvokeCallback(ctrl, defaultValue);
+                    return;
+                }
+
+                // Subscribe to intermediate property changes
+                PropertyChangedEventHandler handler = (sender, args) =>
+                {
+                    if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == propertyName)
+                    {
+                        try
+                        {
+                            TProperty value = propertyFunc(intermediate);
+                            InvokeCallback(ctrl, value);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.WriteLine($"ObserveNestedProperty: Error accessing property: {ex.Message}");
+                        }
+                    }
+                };
+
+                intermediate.PropertyChanged += handler;
+                string key = $"Intermediate_{intermediate.GetHashCode()}_{Guid.NewGuid()}";
+                control.ExecuteUponDisposal[key] = () => { intermediate.PropertyChanged -= handler; };
+
+                // Initial callback
+                try
+                {
+                    TProperty value = propertyFunc(intermediate);
+                    InvokeCallback(ctrl, value);
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"ObserveNestedProperty: Error in initial callback: {ex.Message}");
+                }
+            }
+
+            // Helper method to safely invoke callback
+            void InvokeCallback(T ctrl, TProperty value)
+            {
+                try
+                {
+                    callback(ctrl, value);
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine($"ObserveNestedProperty: Error in callback: {ex.Message}");
+                }
+            }
+
+            // Set up observation based on ObserveTargetBindingContext pattern
+            if (control.BindingContext is TSource tvm)
+            {
+                SubscribeToViewModel(tvm);
+            }
+            else if (control.BindingContext != null && debugTypeMismatch)
+            {
+                Trace.WriteLine($"[WARNING] ObserveNestedProperty: Expected BindingContext type {typeof(TSource).Name} but got {control.BindingContext.GetType().Name} for control {control.GetType().Name}");
+            }
+
+            // Set up subscription for when BindingContext changes
+            string subscriptionKey = $"watch_{Guid.NewGuid()}";
+
+            void ControlOnApplyingBindingContext(object sender, EventArgs e)
+            {
+                if (control.BindingContext is TSource newTvm)
+                {
+                    // Clean up the temporary event handler
+                    control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
+                    control.ExecuteUponDisposal.Remove(subscriptionKey);
+
+                    // Set up the actual subscription
+                    SubscribeToViewModel(newTvm);
+                }
+                else if (control.BindingContext != null && debugTypeMismatch)
+                {
+                    Trace.WriteLine($"[WARNING] ObserveNestedProperty: Expected BindingContext type {typeof(TSource).Name} but got {control.BindingContext.GetType().Name} for control {control.GetType().Name}");
+                }
+            }
+
+            // Register the temporary event handler and its cleanup
+            control.ApplyingBindingContext += ControlOnApplyingBindingContext;
+            control.ExecuteUponDisposal[subscriptionKey] = () => {
+                control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
+            };
+
+            return control;
+        }
+
+        /// <summary>
+        /// Extracts the property name from a property expression
+        /// </summary>
+        private static string GetPropertyName<TSource, TProperty>(Expression<Func<TSource, TProperty>> expression)
+        {
+            if (expression.Body is MemberExpression memberExpression)
+            {
+                return memberExpression.Member.Name;
+            }
+
+            throw new ArgumentException("Expression is not a property access expression", nameof(expression));
+        }
         #endregion
 
         #region GESTURES
@@ -1033,5 +1218,45 @@ namespace DrawnUi.Draw
         }
 
         #endregion
+
+        #region ENTRY
+
+        public static SkiaMauiEntry OnTextChanged(this SkiaMauiEntry control, Action<SkiaMauiEntry, string> action)  
+        {
+
+            control.TextChanged += (sender, text) =>
+            {
+                action?.Invoke(control, text);
+            };
+
+            return control;
+        }
+
+        public static SkiaMauiEditor OnTextChanged(this SkiaMauiEditor control, Action<SkiaMauiEditor, string> action)
+        {
+
+            control.TextChanged += (sender, text) =>
+            {
+                action?.Invoke(control, text);
+            };
+
+            return control;
+        }
+
+        #endregion
+
+        public static SkiaLabel OnTextChanged(this SkiaLabel control, Action<SkiaLabel, string> action)
+        {
+            control.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(SkiaLabel.Text))
+                {
+                    action?.Invoke(control, control.Text);
+                }
+            };
+
+            return control;
+        }
+
     }
 }

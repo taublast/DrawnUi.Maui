@@ -27,6 +27,7 @@
 
                 <draw:SkiaLayout
                     Padding="20,20,20,20"
+                    BackgroundColor="DarkSlateGrey"
                     HorizontalOptions="Fill"
                     Spacing="20"
                     Tag="VStack"
@@ -51,13 +52,12 @@
                         WidthRequest="200" />
 
                     <draw:SkiaMediaImage
-                        BackgroundColor="Red"
-                        HorizontalOptions="Center"
+                        HorizontalOptions="Fill"
                         IsVisible="{Binding Visibility}"
                         Source="Anims/look.webp" />
 
                     <draw:SkiaGif
-                        BackgroundColor="Red"
+                        BackgroundColor="Gainsboro"
                         HorizontalOptions="Fill"
                         IsVisible="{Binding Visibility}"
                         Repeat="-1"

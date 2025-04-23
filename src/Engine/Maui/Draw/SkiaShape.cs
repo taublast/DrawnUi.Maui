@@ -369,6 +369,37 @@ namespace DrawnUi.Draw
             CalculateSizeForStroke(DrawingRect, scale);
         }
 
+        protected override SKSize GetContentSizeForAutosizeInPixels()
+        {
+            if (WillStroke)
+            {
+                var halfStroke = GetHalfStroke(RenderingScale);
+                var inflate = GetInflationForStroke(halfStroke);
+                return new(ContentSize.Pixels.Width - inflate * 2, ContentSize.Pixels.Height - inflate * 2);
+            }
+
+            return base.GetContentSizeForAutosizeInPixels();
+        }
+
+        public virtual bool WillStroke
+        {
+            get { return StrokeColor != TransparentColor && StrokeWidth != 0; }
+        }
+
+        protected float GetHalfStroke(float scale)
+        {
+            var pixelsStrokeWidth = StrokeWidth > 0
+                ? (float)(StrokeWidth * scale)
+                : (float)(-StrokeWidth);
+
+            return (float)(pixelsStrokeWidth / 2.0f);
+        }
+
+        protected float GetInflationForStroke(float halfStroke)
+        {
+            return -(float)Math.Ceiling(halfStroke);
+        }
+
         protected void CalculateSizeForStroke(SKRect destination, float scale)
         {
             var x = destination.Left;
@@ -378,23 +409,16 @@ namespace DrawnUi.Draw
                 (float)(x + (destination.Width)),
                 (float)(y + (destination.Height)));
 
-            var strokeAwareChildrenSize = strokeAwareSize;
-            ContractPixelsRect(strokeAwareChildrenSize, scale, Padding);
+            var willStroke = WillStroke;
+            //float pixelsStrokeWidth = 0;
 
-            var willStroke = StrokeColor != TransparentColor && StrokeWidth != 0;
-            float pixelsStrokeWidth = 0;
             float halfStroke = 0;
-            double maxValue = Math.Max(Math.Max(Padding.Left, Padding.Top), Math.Max(Padding.Right, Padding.Bottom));
             float inflate;
 
             if (willStroke)
             {
-                pixelsStrokeWidth = StrokeWidth > 0
-                    ? (float)(StrokeWidth * scale)
-                    : (float)(-StrokeWidth);
-
-                halfStroke = (float)(pixelsStrokeWidth / 2.0f);
-                inflate = - (float)Math.Ceiling(halfStroke);
+                halfStroke = GetHalfStroke(scale);
+                inflate = GetInflationForStroke(halfStroke);
 
                 strokeAwareSize =
                     SKRect.Inflate(strokeAwareSize, inflate, inflate);
@@ -404,18 +428,14 @@ namespace DrawnUi.Draw
                     (float)Math.Ceiling(strokeAwareSize.Top),
                     (float)Math.Floor(strokeAwareSize.Right),
                     (float)Math.Floor(strokeAwareSize.Bottom));
-
-
             }
 
-            inflate = (float)(halfStroke + maxValue * scale);
+            var strokeAwareChildrenSize = ContractPixelsRect(strokeAwareSize, scale, Padding);
 
-            strokeAwareChildrenSize = new SKRect(
-                (float)Math.Ceiling(strokeAwareChildrenSize.Left + inflate),
-                (float)Math.Ceiling(strokeAwareChildrenSize.Top + inflate),
-                (float)Math.Floor(strokeAwareChildrenSize.Right - inflate),
-                (float)Math.Floor(strokeAwareChildrenSize.Bottom - inflate));
-
+            if (Tag == "Status")
+            {
+                var stop = 1;
+            }
 
             MeasuredStrokeAwareSize = strokeAwareSize;
             MeasuredStrokeAwareChildrenSize = strokeAwareChildrenSize;
@@ -510,6 +530,11 @@ namespace DrawnUi.Draw
             base.OnDisposing();
         }
 
+        public override MeasuringConstraints GetMeasuringConstraints(MeasureRequest request)
+        {
+            return base.GetMeasuringConstraints(request);
+        }
+
         public override SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
         {
             path ??= new SKPath();
@@ -601,7 +626,8 @@ namespace DrawnUi.Draw
                         var rrect = new SKRoundRect(strokeAwareChildrenSize);
 
                         // Step 3: Calculate the inner rounded rectangle corner radii
-                        double maxValue = Math.Max(Math.Max(Padding.Left, Padding.Top), Math.Max(Padding.Right, Padding.Bottom));
+                        double maxValue = Math.Max(Math.Max(Padding.Left, Padding.Top),
+                            Math.Max(Padding.Right, Padding.Bottom));
                         var strokeWidth = StrokeWidth > 0
                             ? (float)(StrokeWidth * RenderingScale)
                             : (float)(-StrokeWidth);
@@ -1002,6 +1028,12 @@ namespace DrawnUi.Draw
             ClipSmart(ctx.Context.Canvas, ClipContentPath);
 
             var rectForChildren = strokeAwareChildrenSize;
+
+            if (Tag == "Status")
+            {
+                var stop = 1;
+            }
+
 
             DrawViews(ctx.WithDestination(rectForChildren));
 
