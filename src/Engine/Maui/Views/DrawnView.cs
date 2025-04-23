@@ -501,7 +501,7 @@ namespace DrawnUi.Views
 
                     var animatorKeys = AnimatingControls.Keys.ToList();
 
-                    Debug.WriteLine($"Animators: {animatorKeys.Count}");
+                    //Debug.WriteLine($"Animators: {animatorKeys.Count}");
 
                     foreach (var key in AnimatingControls.Keys.ToList())
                     {
@@ -510,7 +510,7 @@ namespace DrawnUi.Views
                             if (skiaAnimation.IsDeactivated
                                 || skiaAnimation.Parent != null && skiaAnimation.Parent.IsDisposed)
                             {
-                                Debug.WriteLine($"Animators: removing {key}");
+                                //Debug.WriteLine($"Animators: removing {key}");
                                 _listRemoveAnimators.Add(key);
                                 continue;
                             }
@@ -529,8 +529,6 @@ namespace DrawnUi.Views
                             }
                             else
                             {
-                                Debug.WriteLine($"Animators: cannot play {key}");
-
                                 if (!skiaAnimation.IsPaused)
                                 {
                                     skiaAnimation.Pause();
