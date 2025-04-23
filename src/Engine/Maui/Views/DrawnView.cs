@@ -11,7 +11,6 @@ namespace DrawnUi.Views
 {
     public partial class DrawnView : IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
-
         public class DiagnosticData
         {
             public int LayersSaved { get; set; }
@@ -284,19 +283,21 @@ namespace DrawnUi.Views
 
         public void AddAnimator(ISkiaAnimator animator)
         {
-            PostponeExecutionBeforeDraw(() =>
+            lock (LockAnimatingControls)
             {
-                lock (LockAnimatingControls)
+                animator.IsDeactivated = false;
+                if (animator.Parent != null && !animator.Parent.IsVisible)
                 {
-                    animator.IsDeactivated = false;
-                    if (animator.Parent != null && !animator.Parent.IsVisible)
-                    {
-                        animator.IsHiddenInViewTree = true;
-                    }
-
-                    AnimatingControls.TryAdd(animator.Uid, animator);
+                    animator.IsHiddenInViewTree = true;
                 }
-            });
+                else
+                {
+                    animator.IsHiddenInViewTree = false;
+                }
+
+                AnimatingControls.TryAdd(animator.Uid, animator);
+            }
+
 
             Update();
         }
@@ -475,7 +476,7 @@ namespace DrawnUi.Views
             var executed = 0;
 
 
-            //lock (LockAnimatingControls)
+            lock (LockAnimatingControls)
             {
                 try
                 {
@@ -498,35 +499,43 @@ namespace DrawnUi.Views
 
                     _listRemoveAnimators.Clear();
 
-                    foreach (var key in AnimatingControls.Keys)
+                    var animatorKeys = AnimatingControls.Keys.ToList();
+
+                    Debug.WriteLine($"Animators: {animatorKeys.Count}");
+
+                    foreach (var key in AnimatingControls.Keys.ToList())
                     {
-                        var skiaAnimation = AnimatingControls[key];
-
-                        if (skiaAnimation.IsDeactivated
-                            || skiaAnimation.Parent != null && skiaAnimation.Parent.IsDisposed)
+                        if (AnimatingControls.TryGetValue(key, out var skiaAnimation))
                         {
-                            _listRemoveAnimators.Add(key);
-                            continue;
-                        }
-
-                        bool canPlay =
-                            !skiaAnimation
-                                .IsHiddenInViewTree; //!(skiaAnimation.Parent != null && !skiaAnimation.Parent.IsVisibleInViewTree());
-
-                        if (canPlay)
-                        {
-                            if (skiaAnimation.IsPaused)
-                                skiaAnimation.Resume(); //continue anim from current time instead of the old one
-
-                            skiaAnimation.TickFrame(nanos);
-                            executed++;
-                        }
-                        else
-                        {
-                            if (!skiaAnimation.IsPaused)
+                            if (skiaAnimation.IsDeactivated
+                                || skiaAnimation.Parent != null && skiaAnimation.Parent.IsDisposed)
                             {
-                                skiaAnimation.Pause();
-                                //Debug.WriteLine($"ANIMATORS - PAUSED {key}");
+                                Debug.WriteLine($"Animators: removing {key}");
+                                _listRemoveAnimators.Add(key);
+                                continue;
+                            }
+
+                            bool canPlay =
+                                !skiaAnimation
+                                    .IsHiddenInViewTree; //!(skiaAnimation.Parent != null && !skiaAnimation.Parent.IsVisibleInViewTree());
+
+                            if (canPlay)
+                            {
+                                if (skiaAnimation.IsPaused)
+                                    skiaAnimation.Resume(); //continue anim from current time instead of the old one
+
+                                skiaAnimation.TickFrame(nanos);
+                                executed++;
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"Animators: cannot play {key}");
+
+                                if (!skiaAnimation.IsPaused)
+                                {
+                                    skiaAnimation.Pause();
+                                    //Debug.WriteLine($"ANIMATORS - PAUSED {key}");
+                                }
                             }
                         }
                     }
@@ -1344,7 +1353,7 @@ namespace DrawnUi.Views
         /// </summary>
         public int DrawingThreadId { get; protected set; }
 
-        protected bool WasRendered { get; set; }
+        public bool WasRendered { get; set; }
 
         /// <summary>
         /// OnDrawSurface will call that
