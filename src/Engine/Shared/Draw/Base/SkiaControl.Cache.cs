@@ -59,7 +59,10 @@ public partial class SkiaControl
                 if (kill != null
                     && UsingCacheType != SkiaCacheType.Image
                     && UsingCacheType == SkiaCacheType.ImageComposite)
-                    DisposeObject(kill);
+                {
+                    kill.Dispose();
+                    //DisposeObject(kill);
+                }
             }
         }
     }
