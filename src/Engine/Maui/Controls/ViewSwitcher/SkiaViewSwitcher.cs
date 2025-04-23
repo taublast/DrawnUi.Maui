@@ -34,6 +34,7 @@ namespace DrawnUi.Controls
         }
 
         private NavigationStackEntry _ActiveView;
+
         public NavigationStackEntry ActiveView
         {
             get { return _ActiveView; }
@@ -60,7 +61,6 @@ namespace DrawnUi.Controls
                 aware.OnAppearing();
             }
         }
-
 
         public void SendOnAppeared(SkiaControl view)
         {
@@ -106,13 +106,13 @@ namespace DrawnUi.Controls
         }
 
         public bool IsRendered;
-
         private bool ChildrenInvalidated;
 
         public static readonly BindableProperty IsAnimatingProperty = BindableProperty.Create(nameof(IsAnimating),
             typeof(bool),
             typeof(SkiaViewSwitcher),
             false, BindingMode.OneWayToSource);
+
         public bool IsAnimating
         {
             get { return (bool)GetValue(IsAnimatingProperty); }
@@ -142,16 +142,12 @@ namespace DrawnUi.Controls
                 HideView(view as SkiaControl, Views.Count - 1, false);
         }
 
-
         public override void SetChildren(IEnumerable<SkiaControl> views)
         {
             base.SetChildren(views);
 
             UpdateSelectedView(SelectedIndex, false);
         }
-
-
-
 
         #endregion
 
@@ -164,6 +160,7 @@ namespace DrawnUi.Controls
                 {
                     return getStack;
                 }
+
                 NavigationStacks[index] = stack;
                 return stack;
             }
@@ -197,7 +194,6 @@ namespace DrawnUi.Controls
             }
 
             return null;
-
         }
 
         public NavigationStackEntry GetRootView(int selectedIndex)
@@ -268,7 +264,6 @@ namespace DrawnUi.Controls
             }
         }
 
-
         public SkiaControl GetCurrentPage(int tab = -1)
         {
             List<NavigationStackEntry> stack;
@@ -283,6 +278,7 @@ namespace DrawnUi.Controls
                 {
                     return subView.View;
                 }
+
                 return null;
             }
             catch (Exception e)
@@ -290,6 +286,7 @@ namespace DrawnUi.Controls
                 Debug.WriteLine(e);
                 //NavigationStacks[SelectedIndex] = stack;
             }
+
             return null;
         }
 
@@ -312,6 +309,7 @@ namespace DrawnUi.Controls
                 Debug.WriteLine(e);
                 //NavigationStacks[SelectedIndex] = stack;
             }
+
             return default(T);
         }
 
@@ -359,6 +357,7 @@ namespace DrawnUi.Controls
                         //todo make visible
                         UpdateSelectedView(tab, false);
                     }
+
                     return true;
                 }
             }
@@ -367,12 +366,12 @@ namespace DrawnUi.Controls
                 Debug.WriteLine(e);
                 //NavigationStacks[SelectedIndex] = stack;
             }
+
             return false;
         }
 
         public void PopModal(bool animated)
         {
-
         }
 
         public async Task PopPage(int tab = -1)
@@ -412,7 +411,6 @@ namespace DrawnUi.Controls
             {
                 SemaphoreNavigationStack.Release();
             }
-
         }
 
         public int GetCurrentTabNavigationIndex()
@@ -454,7 +452,6 @@ namespace DrawnUi.Controls
         /// </summary>
         public async Task PopTabToRoot()
         {
-
             while (IsApplyingIdex)
             {
                 await Task.Delay(10);
@@ -497,7 +494,6 @@ namespace DrawnUi.Controls
             {
                 SemaphoreNavigationStack.Release();
             }
-
         }
 
         public void PopAllTabsToRoot()
@@ -538,7 +534,6 @@ namespace DrawnUi.Controls
         }
 
         public bool AnimatePages { get; set; } = true;
-
         public bool AnimateTabs { get; set; } = false;
 
         public void Reset()
@@ -553,7 +548,6 @@ namespace DrawnUi.Controls
             PreviousVisibleViewIndex = -1;
             PreviousVisibleView = null;
         }
-
 
         public override void OnAppearing()
         {
@@ -585,15 +579,12 @@ namespace DrawnUi.Controls
             }
         }
 
-
         private static void SelectedIndexPropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
-
             if (bindable is SkiaViewSwitcher viewSwitcher)
             {
                 viewSwitcher.UpdateSelectedView((int)newvalue, null);
             }
-
         }
 
         public bool IsPushing { get; protected set; }
@@ -603,64 +594,68 @@ namespace DrawnUi.Controls
         // NavigationBusy
         //-------------------------------------------------------------
         private const string nameNavigationBusy = "NavigationBusy";
+
         public static readonly BindableProperty NavigationBusyProperty = BindableProperty.Create(nameNavigationBusy,
             typeof(bool), typeof(SkiaViewSwitcher), false, BindingMode.OneWayToSource);
+
         public bool NavigationBusy
         {
             get { return (bool)GetValue(NavigationBusyProperty); }
             set { SetValue(NavigationBusyProperty, value); }
         }
 
-        public static readonly BindableProperty TabsAnimationSpeedProperty = BindableProperty.Create(nameof(TabsAnimationSpeed),
+        public static readonly BindableProperty TabsAnimationSpeedProperty = BindableProperty.Create(
+            nameof(TabsAnimationSpeed),
             typeof(int), typeof(SkiaViewSwitcher), 150);
+
         public int TabsAnimationSpeed
         {
             get { return (int)GetValue(TabsAnimationSpeedProperty); }
             set { SetValue(TabsAnimationSpeedProperty, value); }
         }
 
-        public static readonly BindableProperty PagesAnimationSpeedProperty = BindableProperty.Create(nameof(PagesAnimationSpeed),
+        public static readonly BindableProperty PagesAnimationSpeedProperty = BindableProperty.Create(
+            nameof(PagesAnimationSpeed),
             typeof(int), typeof(SkiaViewSwitcher), 200);
+
         public int PagesAnimationSpeed
         {
             get { return (int)GetValue(PagesAnimationSpeedProperty); }
             set { SetValue(PagesAnimationSpeedProperty, value); }
         }
 
-        public static readonly BindableProperty TabsAnimationEasingProperty = BindableProperty.Create(nameof(TabsAnimationEasing),
+        public static readonly BindableProperty TabsAnimationEasingProperty = BindableProperty.Create(
+            nameof(TabsAnimationEasing),
             typeof(Easing), typeof(SkiaViewSwitcher), Custom);
+
         public Easing TabsAnimationEasing
         {
             get { return (Easing)GetValue(TabsAnimationEasingProperty); }
             set { SetValue(TabsAnimationEasingProperty, value); }
         }
 
-        public static readonly BindableProperty PagesAnimationEasingProperty = BindableProperty.Create(nameof(PagesAnimationEasing),
+        public static readonly BindableProperty PagesAnimationEasingProperty = BindableProperty.Create(
+            nameof(PagesAnimationEasing),
             typeof(Easing), typeof(SkiaViewSwitcher), Easing.Linear);
+
         public Easing PagesAnimationEasing
         {
             get { return (Easing)GetValue(PagesAnimationEasingProperty); }
             set { SetValue(PagesAnimationEasingProperty, value); }
         }
 
-        public static readonly Easing Custom = new Easing((x) => (x - 1) * (x - 1) * ((_sideCoeff + 1) * (x - 1) + _sideCoeff) + 1);
+        public static readonly Easing Custom =
+            new Easing((x) => (x - 1) * (x - 1) * ((_sideCoeff + 1) * (x - 1) + _sideCoeff) + 1);
 
         protected int PreviousVisibleViewIndex = -1;
-
-        public NavigationStackEntry PreviousVisibleView
-        {
-            get;
-            set;
-        }
+        public NavigationStackEntry PreviousVisibleView { get; set; }
 
         protected void LauchTimerOnLock(int seconds, (int index, bool animate) args)
         {
             if (TimerUpdateLocked == null)
             {
-                TimerUpdateLocked = new RestartingTimer<(int, bool)>(TimeSpan.FromSeconds(seconds), (args) =>
-                {
-                    UpdateSelectedView(args.Item1, args.Item2);
-                });
+                TimerUpdateLocked = new RestartingTimer<(int, bool)>(TimeSpan.FromSeconds(seconds),
+                    (args) => { UpdateSelectedView(args.Item1, args.Item2); });
                 TimerUpdateLocked.Start(args);
             }
             else
@@ -670,13 +665,7 @@ namespace DrawnUi.Controls
         }
 
         protected RestartingTimer<(int, bool)> TimerUpdateLocked;
-
-
-        public SkiaControl TopView
-        {
-            get;
-            protected set;
-        }
+        public SkiaControl TopView { get; protected set; }
 
         protected void ChangeViewVisibility(SkiaControl view, bool state)
         {
@@ -692,15 +681,12 @@ namespace DrawnUi.Controls
         }
 
         private object lockIdex = new();
-
         private int lastSelectedIndex = -1;
 
         //protected CancellationTokenSource CancelLastNavigation;
-
-
         private readonly LimitedQueue<OrderedIndex> _queue = new();
-
         private bool _processing = false;
+
         public void PushIndex(OrderedIndex index)
         {
             //Debug.WriteLine($"[INDEX] Push {index.Index}");
@@ -721,7 +707,6 @@ namespace DrawnUi.Controls
                 ProcessIndexBufferAsync().ConfigureAwait(false);
             }
         }
-
 
         protected SemaphoreSlim SemaphoreNavigationStack = new(1, 1);
 
@@ -780,10 +765,12 @@ namespace DrawnUi.Controls
                         IsApplyingIdex = false;
                     }
                 }
+
                 if (applyMe != null)
                 {
                     await ApplySelectedIndex(applyMe);
                 }
+
                 applyMe = null;
             }
             catch (Exception e)
@@ -796,7 +783,6 @@ namespace DrawnUi.Controls
                 _processing = false;
                 SemaphoreNavigationStack.Release();
             }
-
         }
 
         //void FadeInFromRight(SKPaint paint, SKRect destination)
@@ -811,7 +797,6 @@ namespace DrawnUi.Controls
         //	// Apply the shader to the paint object
         //	paint.Shader = shader;
         //}
-
 
         //void FadeInFromLeft(SKPaint paint, SKRect destination)
         //{
@@ -874,14 +859,15 @@ namespace DrawnUi.Controls
             }
         }
 
-
         protected virtual async Task ExecuteTransitionAnimation(
             DoubleViewTransitionType doubleViewTransitionType,
-            SkiaControl previousVisibleView, SkiaControl newVisibleView)
+            SkiaControl? previousVisibleView, SkiaControl newVisibleView)
         {
             int speed = TabsAnimationSpeed;
             Easing easing = TabsAnimationEasing;
             var translateTo = this.Width;
+
+            var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
 
             switch (doubleViewTransitionType)
             {
@@ -889,18 +875,21 @@ namespace DrawnUi.Controls
                     //from left to right
                     easing = PagesAnimationEasing;
                     speed = PagesAnimationSpeed;
-                    Task animateOld1 = previousVisibleView.TranslateToAsync(translateTo, 0, speed, easing);
-                    Task animateOld2 = previousVisibleView.FadeToAsync(0.9, speed, easing);
 
-                    try
+                    if (previousVisibleView != null)
                     {
-                        var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                        await Task.WhenAll(animateOld1, animateOld2).WithCancellation(cancelAnimation.Token);
+                        Task animateOld1 = previousVisibleView.TranslateToAsync(translateTo, 0, speed, easing);
+                        Task animateOld2 = previousVisibleView.FadeToAsync(0.9, speed, easing);
+                        try
+                        {
+                            await Task.WhenAll(animateOld1, animateOld2).WithCancellation(cancelAnimation.Token);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                    }
+
                     break;
 
                 case DoubleViewTransitionType.Push:
@@ -911,55 +900,81 @@ namespace DrawnUi.Controls
                     Task in2 = newVisibleView.FadeToAsync(1.0, speed, easing);
                     try
                     {
-                        var cancelAnimation = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                        await Task.WhenAll(in1, in2).WithCancellation(cancelAnimation.Token).WithCancellation(cancelAnimation.Token);
+                        await Task.WhenAll(in1, in2).WithCancellation(cancelAnimation.Token)
+                            .WithCancellation(cancelAnimation.Token);
                     }
                     catch (Exception e)
                     {
                         Debug.WriteLine(e);
                     }
+
                     break;
 
                 case DoubleViewTransitionType.SelectLeftTab:
                     translateTo = -this.Width;
 
-                    Task animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
                     Task animateNewM = newVisibleView.TranslateToAsync(0, 0, (uint)speed, easing);
                     Task animateNewM1 = newVisibleView.FadeToAsync(1.0, (uint)speed, Easing.Linear);
 
-                    try
+                    if (previousVisibleView != null)
                     {
-                        var cancelAnimation =
-                            new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                        Task animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
+                        try
+                        {
+                            await Task.WhenAll(animateOldM, animateNewM, animateNewM1)
+                                .WithCancellation(cancelAnimation.Token);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            await Task.WhenAll(animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e);
+                        }
+                    }
 
-                        await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                    }
                     break;
 
                 case DoubleViewTransitionType.SelectRightTab:
                     translateTo = this.Width;
 
-                    animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
                     animateNewM = newVisibleView.TranslateToAsync(0, 0, (uint)speed, easing);
                     animateNewM1 = newVisibleView.FadeToAsync(1.0, (uint)speed, Easing.Linear);
 
-                    try
+                    if (previousVisibleView != null)
                     {
-                        var cancelAnimation =
-                            new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                        Task animateOldM = previousVisibleView.TranslateToAsync(-translateTo, 0, (uint)speed, easing);
+                        try
+                        {
+                            await Task.WhenAll(animateOldM, animateNewM, animateNewM1)
+                                .WithCancellation(cancelAnimation.Token);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e);
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            await Task.WhenAll(animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e);
+                        }
+                    }
 
-                        await Task.WhenAll(animateOldM, animateNewM, animateNewM1).WithCancellation(cancelAnimation.Token);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                    }
                     break;
-
             }
         }
 
@@ -994,7 +1009,7 @@ namespace DrawnUi.Controls
                 bool shown = false;
                 bool isAnimating = false;
 
-                var previousVisibleView = PreviousVisibleView;
+                NavigationStackEntry? previousVisibleView = PreviousVisibleView;
                 TopView = newVisibleView.View;
 
                 void OnViewLoaded(SkiaControl loadedView)
@@ -1006,7 +1021,7 @@ namespace DrawnUi.Controls
                     }
                 }
 
-                if (previousVisibleView?.View != newVisibleView?.View)
+                if (previousVisibleView?.View != newVisibleView.View)
                 {
                     void Reveal()
                     {
@@ -1018,7 +1033,6 @@ namespace DrawnUi.Controls
                             ChangeViewVisibility(previousVisibleView.View, false);
                             SendOnDisappeared(previousVisibleView.View);
                         }
-
                     }
 
                     //Show view without animation. For first view etc
@@ -1041,17 +1055,18 @@ namespace DrawnUi.Controls
                             needAnimate = AnimateTabs;
                     }
 
-                    //have a pair of views to animate
-                    if (previousVisibleView != null
-                        && previousVisibleView.View.CanDraw)
+                    if (previousVisibleView != null && !previousVisibleView.View.CanDraw)
                     {
+                        previousVisibleView = null;
+                    }
 
+                    if (needAnimate)
+                    {
                         if (needAnimate && //base flag
                             ((IsPushing || IsPopping) // navigating
                              || (PreviousVisibleViewIndex != selectedIndex &&
                                  PreviousVisibleViewIndex > -1))) //switching tabs
                         {
-
                             isAnimating = true;
 
                             try
@@ -1059,8 +1074,7 @@ namespace DrawnUi.Controls
                                 var transitionType = DoubleViewTransitionType.Push;
                                 if (IsPopping)
                                     transitionType = DoubleViewTransitionType.Pop;
-                                else
-                                if (!IsPushing)
+                                else if (!IsPushing)
                                 {
                                     if (selectedIndex > PreviousVisibleViewIndex)
                                     {
@@ -1073,13 +1087,18 @@ namespace DrawnUi.Controls
                                 }
 
                                 //prepare
-                                await SetupTransitionAnimation(transitionType, previousVisibleView.View, newVisibleView.View);
+                                if (previousVisibleView != null)
+                                {
+                                    await SetupTransitionAnimation(transitionType, previousVisibleView.View,
+                                        newVisibleView.View);
+                                }
 
                                 ChangeViewVisibility(newVisibleView.View, true);
                                 SendOnLoaded(newVisibleView.View);
 
                                 //animate
-                                await ExecuteTransitionAnimation(transitionType, previousVisibleView.View, newVisibleView.View);
+                                var previousView = previousVisibleView != null ? previousVisibleView.View : null;
+                                await ExecuteTransitionAnimation(transitionType, previousView, newVisibleView.View);
 
                                 SetNewVisibleViewAsOneVisible();
 
@@ -1090,7 +1109,6 @@ namespace DrawnUi.Controls
                                 }
 
                                 UnloadView(previousVisibleView);
-
                             }
                             catch (Exception e)
                             {
@@ -1103,18 +1121,18 @@ namespace DrawnUi.Controls
                                 newVisibleView.View.TranslationY = 0;
                                 newVisibleView.View.Opacity = 1.0;
                                 ChangeViewVisibility(newVisibleView.View, true);
-                                ChangeViewVisibility(previousVisibleView.View, false);
+
+                                if (previousVisibleView != null)
+                                {
+                                    ChangeViewVisibility(previousVisibleView.View, false);
+                                }
 
                                 PreviousVisibleViewIndex = selectedIndex;
                                 PreviousVisibleView = newVisibleView;
 
                                 IsPushing = false;
                                 IsPopping = false;
-
-
                             }
-
-
                         }
                         else
                         {
@@ -1131,9 +1149,6 @@ namespace DrawnUi.Controls
 
                             UnloadView(new NavigationStackEntry(view, false, false));
                         }
-
-
-
                     }
                     else
                     {
@@ -1144,9 +1159,7 @@ namespace DrawnUi.Controls
 
                     PreviousVisibleView = newVisibleView;
                     PreviousVisibleViewIndex = selectedIndex;
-
                 }
-
             }
             catch (Exception e)
             {
@@ -1154,17 +1167,12 @@ namespace DrawnUi.Controls
             }
             finally
             {
-
                 Invalidate();
 
                 NavigationBusy = false; //can be still animating!
 
                 //PrintDebug();
-
-
             }
-
-
         }
 
         private async void UpdateSelectedView(int selectedIndex, bool? animate = null)
@@ -1177,21 +1185,19 @@ namespace DrawnUi.Controls
 
         public event EventHandler<bool> BusyChanged;
         public event EventHandler<SkiaControl> LoadedLazyView;
-
-
-
         private static readonly double _sideCoeff = 0.55;
-        private readonly Easing _easing = new Easing((x) => (x - 1) * (x - 1) * ((_sideCoeff + 1) * (x - 1) + _sideCoeff) + 1);
+
+        private readonly Easing _easing =
+            new Easing((x) => (x - 1) * (x - 1) * ((_sideCoeff + 1) * (x - 1) + _sideCoeff) + 1);
 
         public void SendOnDisappearing(SkiaControl view)
         {
-
             if (view is IVisibilityAware aware)
             {
                 aware.OnDisappearing();
             }
-
         }
+
         protected void UnloadView(NavigationStackEntry view)
         {
             if (view == null)
@@ -1214,10 +1220,7 @@ namespace DrawnUi.Controls
             }
             else
             {
-                Task.Run(() =>
-                {
-                    SendOnDisappearing(view.View);
-                }).ConfigureAwait(false);
+                Task.Run(() => { SendOnDisappearing(view.View); }).ConfigureAwait(false);
             }
         }
 
@@ -1232,17 +1235,14 @@ namespace DrawnUi.Controls
 
         public void UpdateVisibleIndex()
         {
-
         }
 
         public RelativePositionType TrackIndexPosition { get; }
 
         public void ScrollTo(float x, float y, float maxTimeSecs)
         {
-
         }
 
         #endregion
-
     }
 }
