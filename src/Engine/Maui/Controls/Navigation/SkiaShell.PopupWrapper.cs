@@ -32,6 +32,7 @@ public partial class SkiaShell
                 if (_willFreeze)
                 {
                     Backdrop.Blur = 0;
+                    BackgroundColor = _color;
                 }
                 else
                 {
