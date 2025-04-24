@@ -983,6 +983,8 @@ namespace DrawnUi.Draw
 
                 IsMeasuring = true;
 
+                InitializeDefaultContent();
+
                 try
                 {
                     var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);

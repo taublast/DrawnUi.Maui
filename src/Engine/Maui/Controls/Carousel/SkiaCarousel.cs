@@ -1009,15 +1009,7 @@ public class SkiaCarousel : SnappingLayout
 
     #region PROPERTIES
 
-    //public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
-    //{
-    //    var measured = base.Measure(widthConstraint, heightConstraint, scale);
-
-    //    //todo use DynamicSize
-
-
-    //    return measured;
-    //}
+    
 
     public static readonly BindableProperty PreloadNeighboorsProperty = BindableProperty.Create(
         nameof(PreloadNeighboors),
