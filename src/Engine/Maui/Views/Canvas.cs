@@ -644,14 +644,6 @@ public class Canvas : DrawnView, IGestureListener
             var velocityX = Math.Abs(args1.Distance.Velocity.X / RenderingScale);
             var velocityY = Math.Abs(args1.Distance.Velocity.Y / RenderingScale);
 
-            //var distX = Math.Abs(args1.Distance.Total.X / RenderingScale);
-            //var distY = Math.Abs(args1.Distance.Total.Y / RenderingScale);
-
-            //var vvelocityX = Math.Abs(args1.Distance.TotalVelocity.X / RenderingScale);
-            //var vvelocityY = Math.Abs(args1.Distance.TotalVelocity.X / RenderingScale);
-            Debug.WriteLine($"[Touch] Tvv {velocityX} {velocityY}");
-            //Debug.WriteLine($"[Touch] Tvv {distX} {distY}");
-
             //anti lag-spike false tap
             var threshold = 8;
 
@@ -664,6 +656,8 @@ public class Canvas : DrawnView, IGestureListener
                 return;
             }
         }
+
+        #if ANDROID
 
         if (touchAction == TouchActionResult.Panning)
         {
@@ -695,6 +689,7 @@ public class Canvas : DrawnView, IGestureListener
                 _isPanning = true;
             }
         }
+        #endif
 
         if (touchAction == TouchActionResult.Down)
         {

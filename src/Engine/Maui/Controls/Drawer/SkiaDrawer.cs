@@ -104,7 +104,22 @@ namespace DrawnUi.Controls
             }
         }
 
+        public override void OnTransitionChanged()
+        {
+            base.OnTransitionChanged();
+
+            if (!InTransition)
+                SendStateTransitionComplete();
+        }
+
         #region EVENTS
+
+        public virtual void SendStateTransitionComplete()
+        {
+            StateTransitionComplete?.Invoke(this, IsOpen);
+        }
+
+        public event EventHandler<bool> StateTransitionComplete;
 
         public event EventHandler<bool> IsOpenChanged;
         public event EventHandler<Vector2> Stopped;
@@ -451,7 +466,13 @@ namespace DrawnUi.Controls
                     isOpen = false;
             }
 
-            MainThread.BeginInvokeOnMainThread(() => { IsOpen = isOpen; });
+            if (!InTransition)
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IsOpen = isOpen;
+                });
+            }
         }
 
         /// <summary>
@@ -513,6 +534,7 @@ namespace DrawnUi.Controls
         private SKRect _lastViewport;
         protected VelocityAccumulator VelocityAccumulator { get; } = new();
         private bool _inContact;
+        protected bool ChildWasTapped;
 
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args,
             GestureEventProcessingInfo apply)
@@ -540,6 +562,10 @@ namespace DrawnUi.Controls
                 consumed = PassToChildren();
                 if (consumed != null && args.Type != TouchActionResult.Up)
                 {
+                    if (args.Type == TouchActionResult.Tapped)
+                    {
+                        ChildWasTapped = true;
+                    }
                     return consumed;
                 }
             }
@@ -555,6 +581,7 @@ namespace DrawnUi.Controls
             {
                 IsUserFocused = true;
                 IsUserPanning = false;
+                ChildWasTapped = false;
 
                 AnimatorRange?.Stop();
                 VectorAnimatorSpring.Stop();
@@ -582,15 +609,12 @@ namespace DrawnUi.Controls
 
                 switch (args.Type)
                 {
-                    //---------------------------------------------------------------------------------------------------------
                     case TouchActionResult.Tapped:
                     case TouchActionResult.LongPressing:
-                        //---------------------------------------------------------------------------------------------------------
 
                         consumed = this;
                         break;
 
-                    //---------------------------------------------------------------------------------------------------------
                     case TouchActionResult.Down:
                         //---------------------------------------------------------------------------------------------------------
                         if (args.Event.NumberOfTouches == 1) //first finger down
@@ -602,7 +626,6 @@ namespace DrawnUi.Controls
 
                         break;
 
-                    //---------------------------------------------------------------------------------------------------------
                     case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
                         //---------------------------------------------------------------------------------------------------------
 
@@ -724,9 +747,10 @@ namespace DrawnUi.Controls
 
                         break;
 
-                    //---------------------------------------------------------------------------------------------------------
                     case TouchActionResult.Up:
-                        //---------------------------------------------------------------------------------------------------------
+
+                        if (ChildWasTapped)
+                            break;
 
                         direction = DirectionType.None;
                         var Velocity = Vector2.Zero;

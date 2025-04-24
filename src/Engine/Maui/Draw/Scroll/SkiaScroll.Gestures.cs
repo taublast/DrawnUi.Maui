@@ -59,8 +59,36 @@ public partial class SkiaScroll
     /// </summary>
     protected bool WasSwiping { get; set; }
 
-    public bool IsUserFocused { get; protected set; }
-    public bool IsUserPanning { get; protected set; }
+    public bool IsUserFocused
+    {
+        get => isUserFocused;
+        protected set
+        {
+            if (value == isUserFocused)
+            {
+                return;
+            }
+
+            isUserFocused = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public bool IsUserPanning
+    {
+        get => isUserPanning;
+        protected set
+        {
+            if (value == isUserPanning)
+            {
+                return;
+            }
+
+            isUserPanning = value;
+            OnPropertyChanged();
+        }
+    }
+
     public bool HadDown { get; protected set; }
 
     protected virtual void ResetPan()
@@ -177,7 +205,9 @@ public partial class SkiaScroll
             }
         }
 
-        if (!IsUserPanning || wrongDirection || args.Type == TouchActionResult.Up || args.Type == TouchActionResult.Tapped || !RespondsToGestures)
+        if (!IsUserPanning && (wrongDirection
+                           || args.Type == TouchActionResult.Up
+                           || args.Type == TouchActionResult.Tapped || !RespondsToGestures))
         {
             var childConsumed = PassToChildren();
             if (childConsumed != null)
@@ -186,7 +216,8 @@ public partial class SkiaScroll
                 {
                     ChildWasPanning = true;
                 }
-                else if (args.Type == TouchActionResult.Tapped && HadDown)
+                else
+                if (args.Type == TouchActionResult.Tapped && HadDown)
                 {
                     ChildWasTapped = true;
                 }
@@ -225,8 +256,8 @@ public partial class SkiaScroll
             switch (args.Type)
             {
                 case TouchActionResult.Tapped:
-                case TouchActionResult.LongPressing:
-                    if (!passedToChildren)
+                //case TouchActionResult.LongPressing:
+                    if (!passedToChildren && !IsUserPanning)
                     {
                         ResetPan();
                         //_panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
@@ -236,19 +267,25 @@ public partial class SkiaScroll
 
                 case TouchActionResult.Panning when RespondsToGestures:
 
+                    if (ChildWasTapped)
+                        break;
 
                     bool canPan = !ScrollLocked;
-                    if (Orientation == ScrollOrientation.Vertical)
+
+                    if (!IsUserPanning)
                     {
-                        canPan &= Math.Abs(VelocityY) > ScrollVelocityThreshold;
-                    }
-                    else if (Orientation == ScrollOrientation.Horizontal)
-                    {
-                        canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold;
-                    }
-                    else if (Orientation == ScrollOrientation.Both)
-                    {
-                        canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold || Math.Abs(VelocityY) > ScrollVelocityThreshold;
+                        if (Orientation == ScrollOrientation.Vertical)
+                        {
+                            canPan &= Math.Abs(VelocityY) > ScrollVelocityThreshold;
+                        }
+                        else if (Orientation == ScrollOrientation.Horizontal)
+                        {
+                            canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold;
+                        }
+                        else if (Orientation == ScrollOrientation.Both)
+                        {
+                            canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold || Math.Abs(VelocityY) > ScrollVelocityThreshold;
+                        }
                     }
 
                     if (lockHeader && !CanScrollUsingHeader)
@@ -266,12 +303,19 @@ public partial class SkiaScroll
                             checkOverscroll = false;
                         }
 
+                        if (!IsUserPanning)
+                        {
+                            if (IgnoreWrongDirection && wrongDirection)
+                            {
+                                IsUserFocused = false;
+                                return null;
+                            }
+                        }
+
                         IsUserPanning = true;
 
                         if (IgnoreWrongDirection && wrongDirection)
                         {
-                            IsUserPanning = false;
-                            IsUserFocused = false;
                             return null;
                         }
 
@@ -280,8 +324,8 @@ public partial class SkiaScroll
                         var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDistancePanned;
                         var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDistancePanned;
 
-                        var interpolatedMoveToX = movedPtsX;//_panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.85f;
-                        var interpolatedMoveToY = movedPtsY;//_panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.85f;
+                        var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.85f;
+                        var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.85f;
 
                         _panningLastDelta = new Vector2(interpolatedMoveToX, interpolatedMoveToY);
 
@@ -369,7 +413,7 @@ public partial class SkiaScroll
 
                             if (OverScrolled || swipe)
                             {
-                                IsUserPanning = false;
+                               IsUserPanning = false;
 
                                 bool bounceX = false, bounceY = false;
                                 if (OverScrolled)
@@ -477,7 +521,7 @@ public partial class SkiaScroll
             return consumed ?? this;
         }
 
-        if (!passedToChildren)
+        if (!passedToChildren) //will not pass when panning
             return PassToChildren();
 
         return null;
@@ -492,7 +536,8 @@ public partial class SkiaScroll
     private static long logLine;
 
     float _dragFriction = 0.9f;
-
+    private bool isUserFocused;
+    private bool isUserPanning;
 
     /// <summary>
     /// Applies panning on draw every frame, to be able to smoothly animate frames between panning changes.
