@@ -434,7 +434,9 @@ public class SkiaSprite : AnimatedFramesRenderer
 
                 // Only dispose if we know it's not in the cache
                 if (kill != null && disposePrevious && !IsInCache(kill))
-                    DisposeObject(kill);
+                {
+                    kill.Dispose();
+                }
 
                 Invalidate();
             }

@@ -166,7 +166,9 @@ public class SkiaGif : AnimatedFramesRenderer
                 Start();
 
             if (kill != null && disposePrevious)
-                DisposeObject(kill);
+            {
+                kill.Dispose();
+            }
 
             Invalidate();
 
