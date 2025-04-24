@@ -1659,6 +1659,7 @@ namespace DrawnUi.Draw
         /// </summary>
         public virtual void OnDisposing()
         {
+            Rendered = null;
             ClipWith = null;
             Disposing?.Invoke(this, null);
             Superview?.UnregisterGestureListener(this as ISkiaGestureListener);
@@ -3170,6 +3171,7 @@ namespace DrawnUi.Draw
         long _layoutChanged = 0;
         public SKRect ArrangedDestination { get; protected set; }
         private SKSize _lastSize;
+
         public event EventHandler LayoutIsReady;
         public event EventHandler Disposing;
 

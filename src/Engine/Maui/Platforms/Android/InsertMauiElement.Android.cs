@@ -84,7 +84,7 @@ public partial class SkiaMauiElement
             if (!WasRendered)
                 WasRendered = nativeView.Width > 0;
 
-            //Super.Log($"[LayoutNativeView] at {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} width {nativeView.Width}");
+            Debug.WriteLine($"[LayoutNativeView] {nativeView.Visibility} at {VisualTransformNative.Rect.Left}, {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} size {nativeView.Width}x{nativeView.Height}");
         }
     }
 
@@ -129,9 +129,18 @@ public partial class SkiaMauiElement
             {
                 if (element.Handler == null)
                 {
-                    //create handler
-                    var childHandler = element.ToHandler(handler.MauiContext);
-                    LayoutNativeView(Element);
+                    try
+                    {
+                        //create handler
+                        var childHandler = element.ToHandler(handler.MauiContext);
+                        LayoutNativeView(Element);
+                    }
+                    catch (Exception e)
+                    {
+                        Super.Log(e);
+                        //Java.Lang.NullPointerException: 'Attempt to read from field 'int android.view.ViewGroup$LayoutParams.width' on a null object reference'
+                        return;
+                    }
                 }
 
                 //add native view to canvas

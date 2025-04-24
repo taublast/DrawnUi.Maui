@@ -13,6 +13,15 @@ namespace DrawnUi.Draw
 
         public override bool WillClipBounds => true;
 
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            TextChanged = null;
+            FocusChanged = null;
+            TextSubmitted = null;
+        }
+
         #region EVENTS
 
         public event EventHandler<string> TextChanged;

@@ -86,7 +86,7 @@ public partial class SkiaMauiElement
         {
             var visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Collapsed;
 
-            Debug.WriteLine($"Visibility {nativeView.Visibility}");
+            //Debug.WriteLine($"Visibility {nativeView.Visibility}");
 
             if (nativeView.FocusState != FocusState.Unfocused && visibility == Visibility.Collapsed)
             {

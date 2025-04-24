@@ -23,7 +23,7 @@ public partial class SkiaMauiElement
 
             nativeView.UpdateVisibility(visibility);
 
-            System.Diagnostics.Debug.WriteLine($"[Layout] {visibility}");
+            System.Diagnostics.Debug.WriteLine($"[SkiaMauiElement] {visibility}");
 
             if (visibility == Visibility.Visible)
             {

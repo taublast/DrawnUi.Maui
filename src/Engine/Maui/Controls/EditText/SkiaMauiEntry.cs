@@ -17,14 +17,11 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
+        Debug.WriteLine($"[SkiaMauiEntry] consuming {args.Type}'");
+
         if (args.Type == TouchActionResult.Up)
-        {            
-            // var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
-            // if (!DrawingRect.Contains(point))
-            // {
-            //     //we got this gesture because we were focused, but it's now outside our bounds, can unfocus
-            //     return base.ProcessGestures(args, apply);
-            // }
+        {
+            var top = 2;
         }
 
         return this;
@@ -106,10 +103,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     protected void UnfocusNative()
     {
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            Control?.Unfocus();
-        });
+        MainThread.BeginInvokeOnMainThread(() => { Control?.Unfocus(); });
     }
 
     public void SetFocus(bool focus)
@@ -124,6 +118,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
             {
                 UnfocusNative();
             }
+
             UpdateControl();
         }
     }
@@ -134,6 +129,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         {
             Control.WidthRequest = this.Width;
             Control.HeightRequest = this.Height;
+            Debug.WriteLine($"[SkiaMauiEntry] Size native control {Width} by {Height}");
         }
     }
 
@@ -148,8 +144,11 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         control.TextColor = this.TextColor;
         control.ReturnType = this.ReturnType;
         control.Keyboard = this.KeyboardType;
+        ;
+
         if (Text != control.Text)
             control.Text = Text;
+
         //todo customize
         control.Placeholder = this.Placeholder;
     }
@@ -267,6 +266,9 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     {
         lock (lockFocus)
         {
+
+            Debug.WriteLine($"[SkiaMauiEntry] OnFocusChanged {focus}" );
+
             if (!IsFocused)
                 return false; //reject focus
 
@@ -284,6 +286,10 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     public override void OnDisposing()
     {
+        TextChanged=null;
+        FocusChanged=null;
+        TextSubmitted=null;
+
         if (Control != null)
         {
             SubscribeToControl(false);

@@ -742,6 +742,7 @@ namespace DrawnUi.Controls
                             }
 
                             ApplyPosition(clamped);
+
                             consumed = this;
                             //var clamped = ClampOffset((float)x, (float)y, Bounces);                   
                         }
@@ -754,7 +755,7 @@ namespace DrawnUi.Controls
 
                     case TouchActionResult.Up:
 
-                        if (ChildWasTapped)
+                        if (ChildWasTapped || !IsUserPanning)
                             break;
 
                         direction = DirectionType.None;

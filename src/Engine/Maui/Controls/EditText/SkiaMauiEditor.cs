@@ -54,6 +54,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     #endregion
 
+
     #region EVENTS
 
     public event EventHandler<string> TextChanged;
@@ -285,6 +286,11 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             Control.DisposeControlAndChildren();
             Control = null;
         }
+
+        TextChanged = null;
+        FocusChanged = null;
+        TextSubmitted = null;
+
         base.OnDisposing();
     }
 

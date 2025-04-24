@@ -2570,7 +2570,7 @@ namespace DrawnUi.Views
             {
                 if (_focusedChild != null)
                 {
-                    Debug.WriteLine($"[UNFOCUSED] DrawnView ReportFocus to {_focusedChild}");
+                    Debug.WriteLine($"[UNFOCUSED] DrawnView ReportFocus to {_focusedChild} will go to {value}");
                     if (_focusedChild != value || setter == null)
                         _focusedChild.OnFocusChanged(false);
 
@@ -2646,6 +2646,9 @@ namespace DrawnUi.Views
             }
         }
 
+        /// <summary>
+        /// Is set upon the consumer of the DOWN gesture. Calls ReportFocus methos when set.
+        /// </summary>
         public ISkiaGestureListener FocusedChild
         {
             get { return _focusedChild; }

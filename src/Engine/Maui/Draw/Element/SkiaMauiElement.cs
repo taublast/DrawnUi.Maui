@@ -31,6 +31,30 @@
                 Element.BindingContext = this.BindingContext;
         }
 
+        public override ScaledSize MeasureAbsolute(SKRect rectForChildrenPixels, float scale)
+        {
+            try
+            {
+                if (Element is IView view && Element.Handler != null && rectForChildrenPixels.Width > 0
+                    && rectForChildrenPixels.Height > 0 && LayoutReady)
+                {
+                    var measured = view.Measure(rectForChildrenPixels.Width / scale,
+                        rectForChildrenPixels.Height / scale);
+
+                    Debug.WriteLine($"[SkiaMauiElement] Calling native measure for pixels {rectForChildrenPixels}");
+
+                    //var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
+                    return ScaledSize.FromUnits((float)measured.Width, (float)measured.Height, scale);
+                }
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
+
+            return ScaledSize.Default;
+        }
+
         /// <summary>
         /// Measure and arrange VisualElement using Maui methods
         /// </summary>
@@ -47,10 +71,13 @@
                 {
                     //todo System.InvalidOperationException: Unable to convert DrawnUi.Controls.MauiEditor to Android.Views.View
 
-                    var measured = view.Measure(
-                        ptsWidth - (this.Padding.Left + this.Padding.Right),
-                        ptsHeight - (this.Padding.Top + this.Padding.Bottom)
-                    );
+                    //var width = ptsWidth - (this.Padding.Left + this.Padding.Right);
+                    //var height = ptsHeight - (this.Padding.Top + this.Padding.Bottom);
+
+                    var measured = view.Measure(ptsWidth, ptsHeight);
+
+                    Debug.WriteLine($"[SkiaMauiElement] Calling native measure {ptsWidth} x {ptsHeight}");
+
                     //var arranged = view.Arrange(new Rect(0, 0, ptsWidth, ptsHeight));
                     return measured;
                 }
@@ -63,10 +90,10 @@
             try
             {
 #if ANDROID
-                return new(VisualTransformNative.Rect.Size.Width - (this.Padding.Left + this.Padding.Right) * RenderingScale, VisualTransformNative.Rect.Size.Height - (this.Padding.Top + this.Padding.Bottom) * RenderingScale);
+                return new(VisualTransformNative.Rect.Size.Width, VisualTransformNative.Rect.Size.Height);
 #else
-                return new(VisualTransformNative.Rect.Size.Width - (this.Padding.Left + this.Padding.Right),
-                    VisualTransformNative.Rect.Size.Height - (this.Padding.Top + this.Padding.Bottom));
+                return new(VisualTransformNative.Rect.Size.Width,
+                    VisualTransformNative.Rect.Size.Height);
 #endif
             }
             catch (Exception e)
@@ -79,26 +106,27 @@
 
         private object lockLayout = new();
 
-        public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
-        {
-            if (IsDisposed || IsDisposing)
-                return ScaledSize.Default;
+        //public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+        //{
+        //    if (IsDisposed || IsDisposing)
+        //        return ScaledSize.Default;
 
-            //lock (lockLayout)
-            {
-                var bounds = base.Measure(widthConstraint, heightConstraint, scale);
+        //    lock (lockLayout)
+        //    {
+        //        var bounds = base.Measure(widthConstraint, heightConstraint, scale);
 
-                if (Element is IView view && Element.Handler != null)
-                {
-                    ContentSizeUnits = MeasureAndArrangeMauiElement(bounds.Units.Width, bounds.Units.Height);
+        //        Debug.WriteLine($"[SkiaMauiElement] drawn measure to {bounds.Units.Width} x {bounds.Units.Height} pts from constraints {widthConstraint} x {heightConstraint}");
 
-                    //Super.Log($"[Measure] ContentSizeUnits {ContentSizeUnits}");
-                }
+        //        if (Element is IView view && Element.Handler != null)
+        //        {
+        //            ContentSizeUnits = MeasureAndArrangeMauiElement(bounds.Units.Width, bounds.Units.Height);
 
-                return bounds;
-            }
-        }
+        //            //Super.Log($"[Measure] ContentSizeUnits {ContentSizeUnits}");
+        //        }
 
+        //        return bounds;
+        //    }
+        //}
         protected Size ContentSizeUnits;
 #if ANDROID || WINDOWS
         public SKImage GetSnapshot()
@@ -107,16 +135,13 @@
             {
                 return CachedBitmap.Snapshot();
             }
+
             return null;
         }
 
         public bool ShowSnapshot
         {
-            get
-            {
-                return _showSnapshot;
-            }
-
+            get { return _showSnapshot; }
             protected set
             {
                 if (_showSnapshot != value)
@@ -128,9 +153,8 @@
                 }
             }
         }
+
         bool _showSnapshot;
-
-
         public virtual void TakeSnapshot()
         {
             var width = (int)(ElementSize.X);
@@ -153,7 +177,6 @@
             //flush native view into snapshot container
 
             TakeNativeSnapshot(CachedBitmap);
-
         }
 #endif
         public SKSurface CachedBitmap { get; protected set; }
@@ -201,6 +224,7 @@
                             {
                                 Invalidate();
                             }
+
                             SetNativeVisibility(true);
                         });
 #else
@@ -283,14 +307,13 @@
                         Invalidate();
                     }
 
-try 
-	{	        
-		
-	}
-	catch (global::System.Exception)
-	{
-                    LayoutNativeView(Element);
-	}
+                    try
+                    {
+                    }
+                    catch (global::System.Exception)
+                    {
+                        LayoutNativeView(Element);
+                    }
                 });
 #else
                 LayoutNativeView(Element);
@@ -307,17 +330,18 @@ try
 
             Element = null;
 
-            if (Superview != null && view != null && LayoutReady)
+            if (Superview != null && view != null)
             {
                 CreateMauiElement(view);
             }
         }
 
-        protected override void OnLayoutReady()
+        protected override void OnFirstDrawn()
         {
-            base.OnLayoutReady();
+            base.OnFirstDrawn();
 
             SetContent(this.Content);
+
         }
 
         public void CreateMauiElement(VisualElement element)
@@ -440,7 +464,6 @@ try
         }
 
         protected bool SnapshotReady { get; set; }
-
         protected virtual void DrawSnapshot(SKCanvas canvas, SKRect destination)
         {
             if (SnapshotReady)
@@ -515,7 +538,7 @@ try
             {
                 LayoutNativeView(Element);
 
-#if ANDROID// || WINDOWS
+#if ANDROID // || WINDOWS
                 if (AnimateSnapshot && WasRendered && VisualTransformNative.IsVisible)
                 {
                     if (!ShowSnapshot)
@@ -547,10 +570,7 @@ try
             }
 
 #if ANDROID || WINDOWS
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Act();
-            });
+            MainThread.BeginInvokeOnMainThread(() => { Act(); });
 #else
             Act();
 #endif
@@ -595,7 +615,7 @@ try
             nameof(AnimateSnapshot),
             typeof(bool),
             typeof(SkiaMauiElement),
-            true);
+            false);
 
         /// <summary>
         /// Set to true if you are hosting the control inside a scroll or similar case
