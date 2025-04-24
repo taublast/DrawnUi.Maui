@@ -197,6 +197,9 @@ public class AnimatorBase : ISkiaAnimator
     {
         Stop();
         Parent = null;
+
+        OnStart = null;
+        OnStop = null;
     }
 
     protected virtual void OnRunningStateChanged(bool isRunning)

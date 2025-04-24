@@ -49,6 +49,13 @@ public class SkiaToggle : SkiaLayout
         CommandToggled?.Execute(IsToggled);
     }
 
+    public override void OnDisposing()
+    {
+        base.OnDisposing();
+
+        Toggled = null;
+    }
+
     public event EventHandler<bool> Toggled;
 
     /// <summary>

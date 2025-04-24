@@ -14,6 +14,15 @@ public class SnappingLayout : SkiaLayout
 
     #endregion
 
+    public override void OnWillDisposeWithChildren()
+    {
+        base.OnWillDisposeWithChildren();
+
+        ViewportReady = null;
+        TransitionChanged = null;
+        Scrolled = null;
+    }
+
     #region SCROLLING
 
 

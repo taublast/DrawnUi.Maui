@@ -1079,6 +1079,9 @@ namespace DrawnUi.Draw
 
         public override void OnDisposing()
         {
+
+            IsEmptyChanged = null;
+
             ChildrenFactory?.Dispose();
 
             ClearChildren();

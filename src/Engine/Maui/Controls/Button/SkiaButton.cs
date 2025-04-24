@@ -687,6 +687,17 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     /// </summary>
     public static int DelayCallbackMs = 0;
 
+    public override void OnDisposing()
+    {
+        base.OnDisposing();
+
+        Up = null;
+        Down = null;
+        Clicked = null;
+        Released = null;
+        Pressed = null;
+    }
+
     public event EventHandler<SkiaGesturesParameters> Up;
     public event EventHandler<SkiaGesturesParameters> Down;
     //public event EventHandler<SkiaGesturesParameters> Tapped;

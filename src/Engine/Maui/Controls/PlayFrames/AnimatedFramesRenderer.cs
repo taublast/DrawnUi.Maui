@@ -294,6 +294,14 @@
             }
         }
 
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            Finished = null;
+            Started = null;
+        }
+
         #region EVENTS
 
         /// <summary>

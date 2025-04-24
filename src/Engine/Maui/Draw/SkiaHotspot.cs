@@ -189,6 +189,14 @@ namespace DrawnUi.Draw
         public event EventHandler<SkiaGesturesParameters> Down;
 
         //public event EventHandler<SkiaGesturesParameters> Tapped;
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            Up = null;
+            Down = null;
+            //Tapped = null;
+        }
 
         #region PROPERTIES
 

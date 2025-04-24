@@ -42,6 +42,11 @@ namespace DrawnUi.Controls
 
         protected virtual void OnDisposing()
         {
+            Navigated = null;
+            Navigating = null;
+            RouteChanged = null;
+            OnRotation = null;
+            TabReselected = null;
         }
 
         protected override void OnHandlerChanged()
@@ -56,6 +61,8 @@ namespace DrawnUi.Controls
 #endif
             }
         }
+
+
 
         #region EVENTS
 

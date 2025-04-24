@@ -622,6 +622,13 @@ public class SkiaMarkdownLabel : SkiaLabel
 
     public event EventHandler<string> LinkTapped;
 
+    public override void OnDisposing()
+    {
+        base.OnDisposing();
+
+        LinkTapped = null;
+    }
+
     public virtual void OnLinkTapped(string url, string text)
     {
         LinkTapped?.Invoke(this, url);

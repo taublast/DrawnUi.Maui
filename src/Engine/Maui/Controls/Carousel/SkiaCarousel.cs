@@ -54,6 +54,16 @@ public class SkiaCarousel : SnappingLayout
         base.ScrollToNearestAnchor(location, velocity);
     }
 
+    public override void OnDisposing()
+    {
+        base.OnDisposing();
+
+        SelectedIndexChanged = null;
+        ItemAppearing = null;
+        ItemDisappearing = null;
+        Stopped = null;
+    }
+
     #region EVENTS
 
     public event EventHandler<int> SelectedIndexChanged;

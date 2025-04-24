@@ -2560,6 +2560,10 @@ namespace DrawnUi.Views
         /// <param name="listener"></param>
         public void ReportFocus(ISkiaGestureListener value, ISkiaGestureListener setter = null)
         {
+
+            if (value == _focusedChild)
+                return;
+
             System.Diagnostics.Debug.WriteLine($"[Canvas] ReportFocus {value} from {setter}");
 
             if (_focusedChild != value && !FocusLocked)

@@ -186,4 +186,10 @@ public class SkiaHotspotZoom : SkiaHotspot
         set { SetValue(ZoomLockedProperty, value); }
     }
 
+    public override void OnWillDisposeWithChildren()
+    {
+        base.OnWillDisposeWithChildren();
+
+        Zoomed = null;
+    }
 }

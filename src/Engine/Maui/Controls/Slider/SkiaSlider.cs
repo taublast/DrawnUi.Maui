@@ -522,6 +522,14 @@ public class SkiaSlider : SkiaLayout
         StartChanged?.Invoke(this, Start);
     }
 
+    public override void OnDisposing()
+    {
+        base.OnDisposing();
+
+        StartChanged = null;
+        EndChanged = null;
+    }
+
     public event EventHandler<double> StartChanged;
     public event EventHandler<double> EndChanged;
 

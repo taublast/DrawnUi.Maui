@@ -28,6 +28,10 @@ namespace DrawnUi.Draw
         {
             base.OnWillDisposeWithChildren();
 
+            IndexChanged = null;
+            ScrollingEnded = null;
+            Scrolled = null;
+
             Content?.Dispose();
             Header?.Dispose();
             Footer?.Dispose();

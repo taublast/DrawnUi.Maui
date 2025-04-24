@@ -1582,6 +1582,13 @@ namespace DrawnUi.Draw
             }
         }
 
+        public event EventHandler<bool> VisibilityChanged;
+
+        public void SendVisibilityChanged()
+        {
+            VisibilityChanged?.Invoke(this, IsVisible);
+        }
+
         /// <summary>
         /// todo override for templated skialayout to use ViewsProvider
         /// </summary>
@@ -1630,6 +1637,8 @@ namespace DrawnUi.Draw
             {
                 Super.Log(e);
             }
+
+            SendVisibilityChanged();
         }
 
         void StopPostAnimators()
@@ -6023,6 +6032,10 @@ namespace DrawnUi.Draw
         public virtual void OnWillDisposeWithChildren()
         {
             IsDisposing = true;
+
+            DelegateDrawCache = null;
+            Clipping = null;
+            CustomizeLayerPaint = null;
 
             foreach (var child in Views.ToList())
             {

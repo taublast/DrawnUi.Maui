@@ -299,6 +299,10 @@ public class SkiaImage : SkiaControl
     {
         CancelLoading?.Cancel();
 
+        OnCleared = null;
+        OnError = null;
+        OnSuccess = null;
+
         base.OnWillDisposeWithChildren();
     }
 

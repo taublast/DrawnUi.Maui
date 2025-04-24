@@ -1183,6 +1183,14 @@ namespace DrawnUi.Controls
             }
         }
 
+        public override void OnDisposing()
+        {
+            base.OnDisposing();
+
+            BusyChanged = null;
+            LoadedLazyView = null;
+        }
+
         public event EventHandler<bool> BusyChanged;
         public event EventHandler<SkiaControl> LoadedLazyView;
         private static readonly double _sideCoeff = 0.55;

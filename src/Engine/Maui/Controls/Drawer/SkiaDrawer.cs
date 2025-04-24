@@ -7,12 +7,6 @@ namespace DrawnUi.Controls
     [ContentProperty("Content")]
     public class SkiaDrawer : SnappingLayout, IVisibilityAware
     {
-        public override void OnWillDisposeWithChildren()
-        {
-            base.OnWillDisposeWithChildren();
-
-            Content?.Dispose();
-        }
 
         public override void ApplyBindingContext()
         {
@@ -110,6 +104,17 @@ namespace DrawnUi.Controls
 
             if (!InTransition)
                 SendStateTransitionComplete();
+        }
+
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            StateTransitionComplete = null;
+            IsOpenChanged = null;
+            Stopped = null;
+
+            Content?.Dispose();
         }
 
         #region EVENTS

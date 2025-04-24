@@ -275,6 +275,13 @@ namespace DrawnUi.Draw
 
         #endregion
 
+        public override void OnWillDisposeWithChildren()
+        {
+            base.OnWillDisposeWithChildren();
+
+            SpansCollectionChanged = null;
+        }
+
         #region PAINT
 
         protected override void Paint(DrawingContext ctx)
