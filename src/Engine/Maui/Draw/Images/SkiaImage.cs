@@ -1020,6 +1020,9 @@ public class SkiaImage : SkiaControl
     /// </summary>
     protected SKImageFilter PaintImageFilter;
 
+    //will reuse
+    SKPath _preparedClipBounds = null;
+
     /// <summary>
     /// Reusing this
     /// </summary>
@@ -1037,6 +1040,21 @@ public class SkiaImage : SkiaControl
     public virtual void InvalidateColorFilter()
     {
         NeedInvalidateColorFilter = true;
+    }
+
+    void CreateClippedPaintForImage()
+    {
+        if (ImagePaint == null)
+        {
+            ImagePaint = new()
+            {
+                IsAntialias = true,
+                IsDither = IsDistorted,
+                //FilterQuality = SKFilterQuality.Medium
+            };
+        }
+        _preparedClipBounds ??= new SKPath();
+        _preparedClipBounds.AddRect(DrawingRect);
     }
 
     protected override void Paint(DrawingContext ctx)
@@ -1063,16 +1081,8 @@ public class SkiaImage : SkiaControl
 
         if (source != null && !CheckIsGhost())
         {
-            if (ImagePaint == null)
-            {
-                ImagePaint = new() { IsAntialias = true, IsDither = IsDistorted, FilterQuality = SKFilterQuality.High };
-            }
-            else
-            {
-                ImagePaint.ImageFilter = PaintImageFilter;
-                ImagePaint.ColorFilter = PaintColorFilter;
-            }
-
+            ImagePaint.ImageFilter = PaintImageFilter;
+            ImagePaint.ColorFilter = PaintColorFilter;
 
             //ImageFilter
             if (PaintImageFilter == null && Blur > 0)
@@ -1081,6 +1091,9 @@ public class SkiaImage : SkiaControl
             }
 
             ImagePaint.ImageFilter = PaintImageFilter;
+
+            //need to clip source image not to depass drawingrect
+
 
             //ColorFilter
             if (PaintColorFilter == null)
@@ -1138,7 +1151,13 @@ public class SkiaImage : SkiaControl
             DrawImageAlignment horizontal = HorizontalAlignment;
             DrawImageAlignment vertical = VerticalAlignment;
 
+            var restore = ctx.Context.Canvas.Save();
+
+            ClipSmart(ctx.Context.Canvas, _preparedClipBounds);
+
             DrawSource(ctx, source, stretch, horizontal, vertical, ImagePaint);
+
+            ctx.Context.Canvas.RestoreToCount(restore);
         }
     }
 
@@ -1238,6 +1257,8 @@ public class SkiaImage : SkiaControl
         if (DrawingRect != SKRect.Empty && LoadedSource != null)
         {
             SetAspectScale(LoadedSource.Width, LoadedSource.Height, DrawingRect, this.Aspect, RenderingScale);
+
+            CreateClippedPaintForImage();
         }
     }
 
@@ -1249,6 +1270,7 @@ public class SkiaImage : SkiaControl
         ImagePaint?.Dispose();
         PaintColorFilter?.Dispose();
         PaintImageFilter?.Dispose();
+        _preparedClipBounds?.Dispose();
         LoadedSource?.Dispose();
         ImagePaint = null;
         PaintColorFilter = null;
