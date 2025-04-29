@@ -6,6 +6,7 @@ namespace DrawnUi.Draw;
 /// <summary>
 /// Button-like control, can include any content inside. It's either you use default content (todo templates?..)
 /// or can include any content inside, and properties will by applied by convention to a SkiaLabel with Tag `MainLabel`, SkiaShape with Tag `MainFrame`. At the same time you can override ApplyProperties() and apply them to your content yourself.
+/// Convention elements tags: BtnText, BtnShape.
 /// </summary>
 public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 {
@@ -380,8 +381,8 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         return base.CreateClip(arguments, usePosition);
     }
 
-    protected SkiaLabel MainLabel;
-    protected SkiaShape MainFrame;
+    public SkiaLabel MainLabel;
+    public SkiaShape MainFrame;
 
     public override void OnChildrenChanged()
     {

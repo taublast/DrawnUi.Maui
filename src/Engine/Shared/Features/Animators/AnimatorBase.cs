@@ -79,6 +79,7 @@ public class AnimatorBase : ISkiaAnimator
 
 
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
     private readonly object _cancellationLock = new object();
 
     public virtual void Cancel()
@@ -88,8 +89,8 @@ public class AnimatorBase : ISkiaAnimator
             if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
             {
                 _cancellationTokenSource.Cancel();
-                _cancellationTokenSource.Dispose();
             }
+            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
         }
     }

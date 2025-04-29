@@ -17,6 +17,7 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
     {
         Superview = superview;
         EnableTouchEvents = false;
+        //this.HasRenderLoop = true;
     }
 
 

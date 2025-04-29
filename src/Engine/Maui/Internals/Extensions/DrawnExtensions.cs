@@ -21,8 +21,6 @@ public static partial class DrawnExtensions
     {
         StartupSettings = settings;
 
-        TouchEffect.TappedWhenMovedThresholdPoints = 55;
-
         builder.ConfigureMauiHandlers(handlers =>
         {
 #if ANDROID

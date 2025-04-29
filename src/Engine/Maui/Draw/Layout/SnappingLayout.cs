@@ -263,50 +263,48 @@ public class SnappingLayout : SkiaLayout
             //FlingTo(contentOffset, targetOffset, 0.200f);
         }
         else
+        if (CanDraw)
         {
+            CurrentSnap = targetOffset;
             ApplyPosition(targetOffset);
         }
 
         CurrentSnap = targetOffset;
-
+        UpdateReportedPosition();
         return true;
 
     }
 
 
-    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        base.OnPropertyChanged(propertyName);
+    //protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    //{
+    //    base.OnPropertyChanged(propertyName);
 
-        if (propertyName.IsEither(nameof(TranslationX), nameof(TranslationY)))
-        {
-            CurrentPosition = new((float)TranslationX, (float)TranslationY);
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                InTransition = !CheckTransitionEnded();
-            });
-        }
-    }
+    //    if (propertyName.IsEither(nameof(TranslationX), nameof(TranslationY)))
+    //    {
+    //        CurrentPosition = new((float)TranslationX, (float)TranslationY);
 
-    protected Vector2 _appliedPosition;
+    //        InTransition = !CheckTransitionEnded();
+    //    }
+    //}
+
+    //protected Vector2 _appliedPosition;
     public virtual void ApplyPosition(Vector2 position)
     {
-        _appliedPosition = position;
+        CurrentPosition = position;
 
-        TranslationX = position.X;
-        TranslationY = position.Y;
+        //Debug.WriteLine($"CurrentPosition {CurrentPosition}");
 
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            InTransition = !CheckTransitionEnded();
-        });
+        InTransition = !CheckTransitionEnded();
+
+        UpdateReportedPosition();
 
         SendScrolled();
     }
 
     public virtual void SendScrolled()
     {
-        Scrolled?.Invoke(this, _appliedPosition);
+        Scrolled?.Invoke(this, CurrentPosition);
     }
 
     public event EventHandler<Vector2> Scrolled;
@@ -430,12 +428,8 @@ public class SnappingLayout : SkiaLayout
         {
             if (b is SnappingLayout control)
             {
-                var changed = (bool)n;
+                var newValue = (bool)n;
                 control.OnTransitionChanged();
-                if (!changed)
-                {
-                    control.SendScrolled();
-                }
             }
         });
 

@@ -26,7 +26,6 @@ namespace DrawnUi.Views
 
      */
 
-  
 
     public class SKSwapChainPanelRetained : AngleSwapChainPanel
     {
@@ -42,16 +41,32 @@ namespace DrawnUi.Views
 
         private readonly object _surfaceLock = new();
 
+        // Track surfaces with their disposal time
+        private readonly ConcurrentDictionary<SKSurface, DateTime> _trashBag = new();
+        private bool _cleanupRunning;
+        private GRBackendRenderTarget renderTarget;
+
         public SKSwapChainPanelRetained()
         {
             _cleanupRunning = true;
-            Tasks.StartTimerAsync(TimeSpan.FromSeconds(2), async () =>
+            Tasks.StartTimerAsync(TimeSpan.FromSeconds(0.5), async () =>
             {
-                while (_trashBag.TryTake(out var pooledSurface))
+                var now = DateTime.Now;
+                var disposalAge = TimeSpan.FromSeconds(2);
+
+                // Get all surfaces older than 2 seconds
+                var oldSurfaces = _trashBag
+                    .Where(kvp => (now - kvp.Value) >= disposalAge)
+                    .Select(kvp => kvp.Key)
+                    .ToList();
+
+                foreach (var surface in oldSurfaces)
                 {
-                    // After a long delay, GPU is guaranteed done
-                    pooledSurface.Dispose();
-                    Debug.WriteLine("Disposed pooled surface safely after delay");
+                    if (_trashBag.TryRemove(surface, out _))
+                    {
+                        surface.Dispose();
+                        Debug.WriteLine($"Disposed pooled surface safely after {disposalAge.TotalSeconds} seconds");
+                    }
                 }
 
                 return _cleanupRunning;
@@ -62,11 +77,13 @@ namespace DrawnUi.Views
         public GRContext GRContext => _context;
         public event EventHandler<SkiaSharp.Views.Windows.SKPaintGLSurfaceEventArgs> PaintSurface;
 
+        /// <summary>
+        /// Raises the PaintSurface event
+        /// </summary>
         protected virtual void OnPaintSurface(SkiaSharp.Views.Windows.SKPaintGLSurfaceEventArgs e)
         {
             PaintSurface?.Invoke(this, e);
         }
-
 
         protected override void OnRenderFrame(Windows.Foundation.Rect rect)
         {
@@ -109,7 +126,6 @@ namespace DrawnUi.Views
 
                 if (needNewSurfaces)
                 {
-
                     if (_retainedSurface != null)
                     {
                         Debug.WriteLine("Abandon surface to pool");
@@ -118,8 +134,8 @@ namespace DrawnUi.Views
                         _retainedSurface.Flush();
                         _context.Flush();
 
-                        // Put the old surface into a recycling pool for later safe disposal
-                        _trashBag.Add(_retainedSurface);
+                        // Add the surface to the trash bag with the current timestamp
+                        _trashBag[_retainedSurface] = DateTime.Now;
                         Debug.WriteLine("Deferred previous retained surface to pool");
 
                         _retainedSurface = null;
@@ -148,18 +164,12 @@ namespace DrawnUi.Views
                 _needsFullRedraw = false;
             }
         }
-     
-
-        private readonly ConcurrentBag<SKSurface> _trashBag = new();
-
-        private bool _cleanupRunning;
-        private GRBackendRenderTarget renderTarget;
 
         protected override void OnDestroyingContext()
         {
             base.OnDestroyingContext();
 
-        //    lock (_surfaceLock)
+            //lock (_surfaceLock)
             {
                 renderTarget?.Dispose();
 
@@ -167,6 +177,15 @@ namespace DrawnUi.Views
 
                 _retainedSurface?.Dispose();
                 _retainedSurface = null;
+
+                // Dispose all remaining surfaces in the trash bag
+                foreach (var surface in _trashBag.Keys.ToList())
+                {
+                    if (_trashBag.TryRemove(surface, out _))
+                    {
+                        surface.Dispose();
+                    }
+                }
 
                 _context?.AbandonContext(false);
                 _context?.Dispose();
@@ -179,91 +198,5 @@ namespace DrawnUi.Views
                 _needsFullRedraw = true;
             }
         }
-
-        //backup
-        //protected override void OnRenderFrame(Windows.Foundation.Rect rect)
-        //{
-
-        //    // create the SkiaSharp context
-        //    if (context == null)
-        //    {
-        //        glInterface = GRGlInterface.Create();
-        //        context = GRContext.CreateGl(glInterface);
-        //    }
-
-        //    // get the new surface size
-        //    var newSize = new SKSizeI((int)rect.Width, (int)rect.Height);
-
-        //    // manage the drawing surface
-        //    if (renderTarget == null || lastSize != newSize || !renderTarget.IsValid)
-        //    {
-        //        // create or update the dimensions
-        //        lastSize = newSize;
-
-        //        // read the info from the buffer
-        //        OpenGles.GetIntegerv(OpenGles.GL_FRAMEBUFFER_BINDING, out var framebuffer);
-        //        OpenGles.GetIntegerv(OpenGles.GL_STENCIL_BITS, out var stencil);
-        //        OpenGles.GetIntegerv(OpenGles.GL_SAMPLES, out var samples);
-        //        var maxSamples = context.GetMaxSurfaceSampleCount(colorType);
-        //        if (samples > maxSamples)
-        //            samples = maxSamples;
-
-        //        glInfo = new GRGlFramebufferInfo((uint)framebuffer, colorType.ToGlSizedFormat());
-
-        //        // destroy the old surface
-        //        _surface?.Dispose();
-        //        _surface = null;
-
-        //        // re-create the render target
-        //        renderTarget?.Dispose();
-        //        renderTarget = new GRBackendRenderTarget(newSize.Width, newSize.Height, samples, stencil, glInfo);
-        //    }
-
-        //    // create the surface
-        //    if (_surface == null)
-        //    {
-        //        _surface = SKSurface.Create(context, renderTarget, surfaceOrigin, colorType);
-
-        //        // clear everything
-        //        OpenGles.Clear(OpenGles.GL_COLOR_BUFFER_BIT | OpenGles.GL_DEPTH_BUFFER_BIT |
-        //                       OpenGles.GL_STENCIL_BUFFER_BIT);
-
-        //    }
-
-        //    var canvas = _surface.Canvas;
-
-        //    using (new SKAutoCanvasRestore(canvas, true))
-        //    {
-        //        // start drawing
-        //        OnPaintSurface(new(_surface, renderTarget, surfaceOrigin, colorType));
-        //    }
-
-        //    // update the control
-        //    canvas.Flush();
-        //    _surface.Flush();
-        //    context.Flush();
-        //}
-
-        //protected override void OnDestroyingContext()
-        //{
-        //    base.OnDestroyingContext();
-
-        //    lastSize = default;
-
-        //    _surface?.Dispose();
-        //    _surface = null;
-
-        //    renderTarget?.Dispose();
-        //    renderTarget = null;
-
-        //    glInfo = default;
-
-        //    context?.AbandonContext(false);
-        //    context?.Dispose();
-        //    context = null;
-
-        //    glInterface?.Dispose();
-        //    glInterface = null;
-        //}
     }
 }

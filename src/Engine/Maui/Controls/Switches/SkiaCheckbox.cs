@@ -8,17 +8,13 @@ public class SkiaCheckbox : SkiaToggle
 {
     #region DEFAULT CONTENT
 
-    /// <summary>
-    /// SVG checkmark paths for different styles
-    /// </summary>
+    // SVG checkmark paths for different styles
+ 
     protected static string SvgCupertinoCheck = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M4 12.6111L8.92308 17.5L20 6.5\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n</svg>";
     
     protected static string SvgMaterialCheck = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M5 13L9 17L19 7\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n</svg>";
     
     protected static string SvgWindowsCheck = "<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 24 24\" fill=\"none\">\n<path d=\"M4 11.6L10 17.6L20 7.6\" stroke=\"#000000\" stroke-width=\"2.5\" stroke-linecap=\"square\" stroke-linejoin=\"round\"/>\n</svg>";
-    
-    // Checkmark path data for use with SkiaShape
-    protected static string CheckmarkPathData = "M6 12 L10 16 L18 8";
 
     protected override void CreateDefaultContent()
     {
@@ -381,6 +377,7 @@ public class SkiaCheckbox : SkiaToggle
     protected override void OnToggledChanged()
     {
         cancelAnimation?.Cancel();
+        cancelAnimation?.Dispose();
         cancelAnimation = new CancellationTokenSource();
 
         if (CanAnimate() && ViewCheckOn != null && FrameOff!=null && FrameOn !=null)

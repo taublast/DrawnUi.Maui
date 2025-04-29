@@ -147,14 +147,14 @@
                 Margin="16"
                 BackgroundColor="Black"
                 FontSize="20"
-                Text="{Binding SelectedIndex}"
+                Text="{Binding SelectedIndex, StringFormat='Index {0}'}"
                 TextColor="Red" />
 
             <draw:SkiaLabel
                 Margin="16"
                 BackgroundColor="Black"
                 FontSize="20"
-                Text="{Binding Source={x:Reference MainCarousel}, Path=InTransition}"
+                Text="{Binding Source={x:Reference MainCarousel}, Path=InTransition, StringFormat='InTransition {0}'}"
                 TextColor="Red"
                 TranslationY="80" />
 

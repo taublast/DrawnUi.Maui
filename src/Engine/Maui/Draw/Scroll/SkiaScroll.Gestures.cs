@@ -205,9 +205,9 @@ public partial class SkiaScroll
             }
         }
 
-        if (!IsUserPanning && (wrongDirection
-                           || args.Type == TouchActionResult.Up
-                           || args.Type == TouchActionResult.Tapped || !RespondsToGestures))
+        if (args.Type == TouchActionResult.Up ||
+            !IsUserPanning && (wrongDirection
+            || args.Type == TouchActionResult.Tapped || !RespondsToGestures))
         {
             var childConsumed = PassToChildren();
             if (childConsumed != null)

@@ -27,6 +27,7 @@
 	
   	</PropertyGroup>
 
+
   <PropertyGroup Condition="$(TargetFramework.Contains('windows')) == true Or $(TargetFramework.Contains('droid')) == true Or $(TargetFramework.Contains('ios')) == true Or $(TargetFramework.Contains('catalyst')) == true">
     <DefineConstants>$(DefineConstants);ONPLATFORM</DefineConstants>
   </PropertyGroup>
@@ -50,6 +51,7 @@
     <RepositoryUrl>https://github.com/taublast/DrawnUi.Maui</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <IncludeSymbols>true</IncludeSymbols>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <Packable>true</Packable>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <CreatePackage>false</CreatePackage>
@@ -104,7 +106,7 @@
 
   <ItemGroup>
       <!--MIT open source-->
-      <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.5" />
+      <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.7" />
       <!--MIT open source .net helpers and extensions-->
       <PackageReference Include="AppoMobi.Specials" Version="9.0.3" />
       <!--parsing markdown text-->

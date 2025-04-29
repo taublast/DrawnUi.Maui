@@ -186,21 +186,30 @@
 
             <!--  software button  -->
             <draw:SkiaButton
-                Margin="10"
+                Margin="0,0,16,0"
                 CommandTapped="{Binding CommandTest}"
+                ControlStyle="Platform"
                 HorizontalOptions="End"
                 Text="Toggle"
                 TranslationY="50"
                 VerticalOptions="Start" />
 
- 
+            <draw:SkiaLabel
+                Margin="16"
+                BackgroundColor="Black"
+                FontSize="20"
+                Text="{Binding IsOpen, StringFormat='IsOpen {0}'}"
+                TextColor="White" />
 
             <draw:SkiaLabel
                 Margin="16"
                 BackgroundColor="Black"
                 FontSize="20"
-                Text="{Binding IsOpen}"
-                TextColor="White" />
+                Text="{Binding Source={x:Reference Drawer}, Path=InTransition, StringFormat='InTransition {0}'}"
+                TextColor="White"
+                TranslationY="80" />
+
+
 
             <controls:ButtonToRoot />
 

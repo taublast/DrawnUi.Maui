@@ -4,8 +4,8 @@
     <Warning Text="------ Building $(TargetFramework) for SkiaSharp 3.xx ------"   />
   </Target>  
   <ItemGroup>
-      <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
-      <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.22" />
+      <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.30" />
+      <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.30" />
       <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1" />
     <PackageReference Include="SkiaSharp.Skottie" Version="3.116.1" />
     <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
@@ -16,6 +16,14 @@
       <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
       <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.2</SupportedOSPlatformVersion>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' ">
+      <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(Configuration)'=='Release' ">
+      <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
 
     <!--<ItemGroup>
       <ProjectReference Include="..\..\..\AppoMobi.Maui.Navigation\src\AppoMobi.Maui.Navigation.csproj" />

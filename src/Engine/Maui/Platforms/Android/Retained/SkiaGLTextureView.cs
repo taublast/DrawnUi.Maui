@@ -288,6 +288,7 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
                 EglHelper.EGL_CONTEXT_CLIENT_VERSION, textureView.eglContextClientVersion, EGL14.EglNone
             };
 
+
             return EGL14.EglCreateContext(
                 display, config,
                 EGL14.EglNoContext,
@@ -317,6 +318,7 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
             try
             {
                 int[] attribList = { EGL14.EglNone };
+
                 result = EGL14.EglCreateWindowSurface(display, config, nativeWindow, attribList, 0);
             }
             catch (Exception ex)
@@ -511,6 +513,7 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
 
         public void Start()
         {
+            thread.Priority = ThreadPriority.Highest;
             thread.Start();
         }
 
@@ -554,6 +557,7 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
             eglHelper = new EglHelper(textureViewWeakRef);
             haveEglContext = false;
             haveEglSurface = false;
+
             try
             {
                 var createEglContext = false;
@@ -570,6 +574,19 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
 
                 while (true)
                 {
+                    // when everything is already set up (context and surface are valid)
+                    if (requestRender && haveEglContext && haveEglSurface && IsReadyToDraw())
+                    {
+                        // fast path for render requests
+                        requestRender = false;
+                        if (textureViewWeakRef.TryGetTarget(out SkiaGLTextureView view))
+                        {
+                            view.renderer.OnDrawFrame();
+                        }
+                        eglHelper.Swap();
+                        continue;  
+                    }
+
                     lock (threadManager)
                     {
                         while (true)
@@ -906,6 +923,8 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
         {
             lock (threadManager)
             {
+                GLES20.GlHint(GLES20.GlGenerateMipmapHint, GLES20.GlFastest);
+
                 LogDebug($"[GLThread {Id}] OnSurfaceCreated");
 
                 hasSurface = true;
@@ -1358,16 +1377,13 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
                 return false;
             }
 
+            EGL14.EglSwapInterval(eglDisplay, 1);
+
             return true;
         }
 
         public int Swap()
         {
-            //GLES20.GlFlush();
-
-            //VSync ON
-            EGL14.EglSwapInterval(eglDisplay, 1);
-
             if (!EGL14.EglSwapBuffers(eglDisplay, eglSurface))
             {
                 return EGL14.EglGetError();

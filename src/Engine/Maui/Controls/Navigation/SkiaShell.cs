@@ -796,36 +796,42 @@ namespace DrawnUi.Controls
         volatile bool _pushModalWaitingAnimatedOpen;
         private volatile bool _pushModalWasOpen;
 
-        async void OnModalDrawerScrolled(object sender, Vector2 vector2)
+        async void FinalizeTransition(SkiaDrawer control)
+        {
+            if (control.IsOpen)
+            {
+                if (!_pushModalWasOpen)
+                {
+                    _pushModalWasOpen = true;
+                    //animated to open, display frozen layer if any
+                    if (CanUnfreezeLayout())
+                    {
+                        await SetFrozenLayerVisibility(control, true);
+                    }
+
+                    OnLayersChanged();
+
+                    _pushModalWaitingAnimatedOpen = true;
+                }
+            }
+            else
+            {
+                //animated to closed
+                _pushModalWasOpen = false;
+                await RemoveModal(control.Parent as SkiaControl, true);
+
+                //OnNavigated(new(control, CurrentRouteAuto, NavigationSource.Pop));
+            }
+        }
+
+
+        void OnModalDrawerScrolled(object sender, Vector2 vector2)
         {
             if (sender is SkiaDrawer control)
             {
                 if (!control.InTransition)
                 {
-                    if (control.IsOpen)
-                    {
-                        if (!_pushModalWasOpen)
-                        {
-                            _pushModalWasOpen = true;
-                            //animated to open, display frozen layer if any
-                            if (CanUnfreezeLayout())
-                            {
-                                await SetFrozenLayerVisibility(control, true);
-                            }
-
-                            OnLayersChanged();
-
-                            _pushModalWaitingAnimatedOpen = true;
-                        }
-                    }
-                    else
-                    {
-                        //animated to closed
-                        _pushModalWasOpen = false;
-                        await RemoveModal(control.Parent as SkiaControl, true);
-
-                        //OnNavigated(new(control, CurrentRouteAuto, NavigationSource.Pop));
-                    }
+                    FinalizeTransition(control);
                 }
             }
         }

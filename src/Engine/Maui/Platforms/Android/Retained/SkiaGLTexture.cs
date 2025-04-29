@@ -41,7 +41,7 @@ namespace DrawnUi
             PaintSurface?.Invoke(this, e);
         }
 
-        private class InternalRenderer : SkiaGLTextureRenderer
+        private class InternalRenderer : RetainedSkiaGLTextureRenderer//SkiaGLTextureRenderer
         {
             private readonly SkiaGLTexture textureView;
 

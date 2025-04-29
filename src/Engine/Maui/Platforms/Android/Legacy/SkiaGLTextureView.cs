@@ -8,6 +8,7 @@ using Android.Runtime;
 using Android.Util;
 using Android.Views;
 using Javax.Microedition.Khronos.Egl;
+using System.Threading;
 using Application = Android.App.Application;
 using EGLConfig = Android.Opengl.EGLConfig;
 using EGLContext = Android.Opengl.EGLContext;
@@ -129,7 +130,22 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
 
     public void RequestRender()
     {
-        glThread.RequestRender();
+        // Get access to the actual GL thread to directly schedule work
+        QueueEvent(() => {
+            // This will be executed on the GL thread at the right time
+            if (renderer != null)
+            {
+                renderer.OnDrawFrame();
+            }
+
+            // Ensure buffer swap happens right after drawing
+            if (glThread != null && glThread.eglHelper != null)
+            {
+                glThread.eglHelper.Swap();
+            }
+        });
+
+        //glThread.RequestRender();
     }
 
     public void OnSurfaceTextureUpdated(SurfaceTexture surface)
@@ -514,6 +530,7 @@ public class SkiaGLTextureView : TextureView, TextureView.ISurfaceTextureListene
 
         public void Start()
         {
+            //thread.Priority = ThreadPriority.Highest;
             thread.Start();
         }
 

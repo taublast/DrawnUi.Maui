@@ -184,7 +184,6 @@ namespace DrawnUi.Controls
             {
                 if (b is SkiaDrawer control)
                 {
-                    control.InTransition = true;
                     control.IsOpenChanged?.Invoke(control, (bool)n);
                     control.ApplyOptions();
                     //Trace.WriteLine($"Drawer {(bool)n}");
@@ -255,13 +254,13 @@ namespace DrawnUi.Controls
                 VectorAnimatorSpring = new(this)
                 {
                     OnStart = () => { },
-                    OnStop = () => { Stopped?.Invoke(this, _appliedPosition); },
+                    OnStop = () => { Stopped?.Invoke(this, CurrentPosition); },
                     OnVectorUpdated = (value) => { ApplyPosition(value); }
                 };
                 AnimatorRange = new(this)
                 {
                     OnVectorUpdated = (value) => { ApplyPosition(value); },
-                    OnStop = () => { Stopped?.Invoke(this, _appliedPosition); }
+                    OnStop = () => { Stopped?.Invoke(this, CurrentPosition); }
                 };
             }
 
@@ -393,6 +392,14 @@ namespace DrawnUi.Controls
             }
         }
 
+        public override void ApplyPosition(Vector2 position)
+        {
+            TranslationX = position.X;
+            TranslationY = position.Y;
+
+            base.ApplyPosition(position);
+        }
+
         public override void ApplyOptions()
         {
             if (Parent == null)
@@ -422,8 +429,7 @@ namespace DrawnUi.Controls
 
             snap = IsOpen ? SnapPoints[0] : SnapPoints[1];
 
-
-            MainThread.BeginInvokeOnMainThread(() => { ScrollToOffset(snap, Vector2.Zero, Animated && WasDrawn); });
+            ScrollToOffset(snap, Vector2.Zero, Animated && WasDrawn);
         }
 
         protected override void Paint(DrawingContext ctx)
@@ -437,23 +443,23 @@ namespace DrawnUi.Controls
         protected override bool ScrollToOffset(Vector2 targetOffset, Vector2 velocity, bool animate)
         {
             var scrolled = base.ScrollToOffset(targetOffset, velocity, animate);
-            if (scrolled)
-            {
-                UpdateReportedPosition();
-            }
+            //if (scrolled)
+            //{
+            //    UpdateReportedPosition();
+            //}
 
             return scrolled;
         }
 
-        public override bool CheckTransitionEnded()
-        {
-            if (this.IsOpen)
-            {
-                return AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
-            }
+        //public override bool CheckTransitionEnded()
+        //{
+        //    if (this.IsOpen)
+        //    {
+        //        return AreVectorsEqual(CurrentPosition, SnapPoints[0], 1);
+        //    }
 
-            return AreVectorsEqual(CurrentPosition, SnapPoints[1], 1);
-        }
+        //    return AreVectorsEqual(CurrentPosition, SnapPoints[1], 1);
+        //}
 
         public bool CheckNeedToSnap()
         {
@@ -471,12 +477,11 @@ namespace DrawnUi.Controls
                     isOpen = false;
             }
 
+            Debug.WriteLine($"UpdateReportedPosition: {isOpen} moving {InTransition}");
+
             if (!InTransition)
             {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    IsOpen = isOpen;
-                });
+                IsOpen = isOpen;
             }
         }
 

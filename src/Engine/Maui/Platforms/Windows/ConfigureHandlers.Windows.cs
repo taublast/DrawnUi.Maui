@@ -11,8 +11,8 @@ namespace DrawnUi.Draw
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
 
 #if SKIA3
-            //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerRetained));
-            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerSafe));
+            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerRetained));
+            //handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerSafe));
 #endif
         }
     }

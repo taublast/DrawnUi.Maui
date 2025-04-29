@@ -1149,7 +1149,14 @@ namespace DrawnUi.Draw
                             }
                         }
 
-                        Lines = mergedLines.ToArray();
+                        if (MaxLines > 0)
+                        {
+                            Lines = mergedLines.Take(MaxLines).ToArray();
+                        }
+                        else
+                        {
+                            Lines = mergedLines.ToArray();
+                        }
                     }
 
                     GliphsInvalidated = false;

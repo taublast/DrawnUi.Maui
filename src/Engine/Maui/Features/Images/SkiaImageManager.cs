@@ -10,13 +10,19 @@ public partial class SkiaImageManager : IDisposable
 
     #region HELPERS
 
+    /// <summary>
+    /// Preloads an image from the given source.
+    /// </summary>
+    /// <param name="source">The image source to preload</param>
     public virtual async Task PreloadImage(ImageSource source, CancellationTokenSource cancel = default)
     {
+        CancellationTokenSource localCancel = null;
         try
         {
             if (cancel == null)
             {
-                cancel = new();
+                localCancel = new CancellationTokenSource();
+                cancel = localCancel;
             }
 
             if (source != null && !cancel.IsCancellationRequested)
@@ -28,15 +34,21 @@ public partial class SkiaImageManager : IDisposable
         {
             Super.Log(e);
         }
+        finally
+        {
+            localCancel?.Dispose();
+        }
     }
 
     public virtual async Task PreloadImage(string source, CancellationTokenSource cancel = default)
     {
+        CancellationTokenSource localCancel = null;
         try
         {
             if (cancel == null)
             {
-                cancel = new();
+                localCancel = new CancellationTokenSource();
+                cancel = localCancel;
             }
 
             if (!string.IsNullOrEmpty(source) && !cancel.IsCancellationRequested)
@@ -48,15 +60,21 @@ public partial class SkiaImageManager : IDisposable
         {
             Super.Log(e);
         }
-    }
+        finally
+        {
+            localCancel?.Dispose();
+        }
+     }
 
     public virtual async Task PreloadImages(IList<string> list, CancellationTokenSource cancel = default)
     {
+        CancellationTokenSource localCancel = null;
         try
         {
             if (cancel == null)
             {
-                cancel = new();
+                localCancel = new CancellationTokenSource();
+                cancel = localCancel;
             }
 
             if (list.Count > 0 && !cancel.IsCancellationRequested)
@@ -70,20 +88,20 @@ public partial class SkiaImageManager : IDisposable
                     }
                 }
 
-                // Await all the preload tasks at once.
-                using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancel.Token);
-
                 if (tasks.Count > 0)
                 {
+                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancel.Token);
+                    var task = Task.WhenAll(tasks);
 
-                    var cancellationCompletionSource = new TaskCompletionSource<bool>();
-                    cts.Token.Register(() => cancellationCompletionSource.TrySetResult(true));
-
-                    var whenAnyTask = Task.WhenAny(Task.WhenAll(tasks), cancellationCompletionSource.Task);
-
-                    await whenAnyTask;
-
-                    cts.Token.ThrowIfCancellationRequested();
+                    try
+                    {
+                        // Either await completion or cancellation
+                        await task.WaitAsync(cts.Token);
+                    }
+                    catch (OperationCanceledException) when (cts.Token.IsCancellationRequested)
+                    {
+                        // Expected cancellation, just return
+                    }
                 }
             }
         }
@@ -91,16 +109,22 @@ public partial class SkiaImageManager : IDisposable
         {
             Super.Log(e);
         }
-
+        finally
+        {
+            localCancel?.Dispose();
+        }
     }
+
 
     public virtual async Task PreloadBanners<T>(IList<T> list, CancellationTokenSource cancel = default) where T : IHasBanner
     {
+        CancellationTokenSource localCancel = null;
         try
         {
             if (cancel == null)
             {
-                cancel = new();
+                localCancel = new CancellationTokenSource();
+                cancel = localCancel;
             }
 
             if (list.Count > 0 && !cancel.IsCancellationRequested)
@@ -108,28 +132,27 @@ public partial class SkiaImageManager : IDisposable
                 var tasks = new List<Task>();
                 foreach (var item in list)
                 {
-                    if (!cancel.IsCancellationRequested && !item.BannerPreloadOrdered)
+                    if (!cancel.IsCancellationRequested)
                     {
                         item.BannerPreloadOrdered = true;
-                        // Add the task to the list without awaiting it immediately.
                         tasks.Add(Preload(item.Banner, cancel));
                     }
                 }
 
-                //await Task.WhenAll(tasks);
-                using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancel.Token);
-
                 if (tasks.Count > 0)
                 {
+                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancel.Token);
+                    var task = Task.WhenAll(tasks);
 
-                    var cancellationCompletionSource = new TaskCompletionSource<bool>();
-                    cts.Token.Register(() => cancellationCompletionSource.TrySetResult(true));
-
-                    var whenAnyTask = Task.WhenAny(Task.WhenAll(tasks), cancellationCompletionSource.Task);
-
-                    await whenAnyTask;
-
-                    cts.Token.ThrowIfCancellationRequested();
+                    try
+                    {
+                        // Either await completion or cancellation
+                        await task.WaitAsync(cts.Token);
+                    }
+                    catch (OperationCanceledException) when (cts.Token.IsCancellationRequested)
+                    {
+                        // Expected cancellation, just return
+                    }
                 }
             }
         }
@@ -137,8 +160,12 @@ public partial class SkiaImageManager : IDisposable
         {
             Super.Log(e);
         }
-
+        finally
+        {
+            localCancel?.Dispose();
+        }
     }
+ 
 
     #endregion
 
@@ -240,18 +267,29 @@ public partial class SkiaImageManager : IDisposable
         }
     }
 
-    public record QueueItem
+    public record QueueItem : IDisposable
     {
-        public QueueItem(ImageSource source, CancellationTokenSource cancel, TaskCompletionSource<SKBitmap> task)
+        private readonly bool _ownsCancel;
+
+        public QueueItem(ImageSource source, CancellationTokenSource cancel, TaskCompletionSource<SKBitmap> task, bool ownsCancel = false)
         {
             Source = source;
             Cancel = cancel;
             Task = task;
+            _ownsCancel = ownsCancel;
         }
 
         public ImageSource Source { get; init; }
         public CancellationTokenSource Cancel { get; init; }
         public TaskCompletionSource<SKBitmap> Task { get; init; }
+
+        public void Dispose()
+        {
+            if (_ownsCancel)
+            {
+                Cancel?.Dispose();
+            }
+        }
     }
 
     private readonly SortedDictionary<LoadPriority, Queue<QueueItem>> _priorityQueue = new();
@@ -529,6 +567,8 @@ public partial class SkiaImageManager : IDisposable
             {
                 if (useSemaphore)
                     semaphoreLoad.Release();
+
+                queueItem.Dispose();
             }
         }
     }

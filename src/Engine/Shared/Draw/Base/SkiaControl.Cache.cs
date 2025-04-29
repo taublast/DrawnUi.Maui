@@ -60,8 +60,8 @@ public partial class SkiaControl
                     && UsingCacheType != SkiaCacheType.Image
                     && UsingCacheType == SkiaCacheType.ImageComposite)
                 {
-                    kill.Dispose();
-                    //DisposeObject(kill);
+                    //kill.Dispose();
+                    DisposeObject(kill);
                 }
             }
         }
@@ -398,14 +398,26 @@ public partial class SkiaControl
         DrawingContext ctx,
         CachedObject cache)
     {
+        //new absolute offsets
+        var destination = ctx.Destination;
+        destination.Offset((float)(Left * ctx.Scale), (float)(Top * ctx.Scale));
         if (DelegateDrawCache != null)
         {
-            DelegateDrawCache(ctx, cache);
+            DelegateDrawCache(ctx.WithDestination(destination), cache);
         }
         else
         {
-            DrawRenderObject(ctx, cache);
+            DrawRenderObject(ctx.WithDestination(destination), cache);
         }
+
+        //if (DelegateDrawCache != null)
+        //{
+        //    DelegateDrawCache(ctx, cache);
+        //}
+        //else
+        //{
+        //    DrawRenderObject(ctx, cache);
+        //}
     }
 
     public bool IsCacheImage
@@ -720,8 +732,9 @@ public partial class SkiaControl
         {
             if (UsingCacheType != SkiaCacheType.None)
             {
-                var drawingArea = DrawingRect;
-                var recordArea = drawingArea;
+                var destination = DrawingRect;
+
+                var recordArea = destination;
                 if (UsingCacheType == SkiaCacheType.OperationsFull)
                 {
                     //recordArea = destination;
@@ -729,7 +742,7 @@ public partial class SkiaControl
                 }
 
                 //paint from cache
-                var clone = AddPaintArguments(context).WithDestination(drawingArea);
+                var clone = AddPaintArguments(context).WithDestination(destination);
                 if (!UseRenderingObject(clone, recordArea))
                 {
                     //record to cache and paint 
@@ -763,6 +776,7 @@ public partial class SkiaControl
             else
             {
                 var destination = context.Destination;
+ 
                 var clone = AddPaintArguments(context).WithDestination(DrawingRect);
                 DrawWithClipAndTransforms(clone, DrawingRect, true, true, (ctx) =>
                 {

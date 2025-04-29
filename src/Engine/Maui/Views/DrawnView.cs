@@ -11,6 +11,28 @@ namespace DrawnUi.Views
 {
     public partial class DrawnView : IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
+
+        public RenderedNode RenderedNode { get; set; }
+
+        public void DumpTree(RenderedNode node, string prefix = "", bool isLast = true, int level = 0)
+        {
+            string indent = new string(' ', level * 4);
+
+            // Box drawing characters for tree structure
+            string connector = isLast ? "└─ " : "├─ ";
+            string childPrefix = isLast ? "   " : "│  ";
+
+            // Print the current node with appropriate prefix
+            Console.WriteLine($"{indent}{prefix}{connector}{node.Control.GetType().Name} ({node.Children.Count} children)");
+
+            // Process children
+            for (int i = 0; i < node.Children.Count; i++)
+            {
+                bool childIsLast = (i == node.Children.Count - 1);
+                DumpTree(node.Children[i], prefix + childPrefix, childIsLast, level);
+            }
+        }
+
         public class DiagnosticData
         {
             public int LayersSaved { get; set; }
@@ -1923,11 +1945,13 @@ namespace DrawnUi.Views
 
             //Debug.WriteLine($"[DRAW] {Tag}");
 
+            RenderedNode = new(this);
 
             if (IsDisposing || IsDisposed || UpdateLocks > 0)
             {
                 return;
             }
+
 
 
             var destination = context.Destination;

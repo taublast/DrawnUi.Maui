@@ -19,7 +19,8 @@ public class Looper : IDisposable
     public void Start(int targetFps, bool useLegacy = false)
     {
         var existingCanel = Cancel;
-        existingCanel?.Cancel(); ;
+        existingCanel?.Cancel(); 
+        existingCanel?.Dispose();
         Cancel = new();
         Tasks.StartDelayed(TimeSpan.FromMilliseconds(1), async () =>
         {
@@ -58,7 +59,8 @@ public class Looper : IDisposable
                             _loopStarted = true;
 
                             var existingCanel = Cancel;
-                            existingCanel?.Cancel(); ;
+                            existingCanel?.Cancel();
+                            existingCanel?.Dispose();
                             Cancel = new();
                             SetTargetFps(targetFps);
                             if (useLegacy)

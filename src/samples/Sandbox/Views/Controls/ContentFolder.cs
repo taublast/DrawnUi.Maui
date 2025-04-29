@@ -304,6 +304,8 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
 
         ISkiaGestureListener consumed = null;
 
+        var K = 2;
+
         switch (args.Type)
         {
         case TouchActionResult.Down when args.Event.NumberOfTouches == 1:
@@ -313,8 +315,8 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
 
         case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
         _offset = new(
-            _origin.X - args.Event.Distance.Total.X,
-            _origin.Y - args.Event.Distance.Total.Y
+            _origin.X - args.Event.Distance.Total.X*K,
+            _origin.Y - args.Event.Distance.Total.Y*K
         );
         consumed = this;
         Repaint();

@@ -7,7 +7,7 @@ using Microsoft.Maui.Handlers;
 
 namespace DrawnUi.Views
 {
-#if WINDOWS || MACCATALYST || IOS
+#if WINDOWS || MACCATALYST || IOS || ANDROID
 
     /// <summary>
     /// SHARED

@@ -23,6 +23,23 @@ using SKSize = SkiaSharp.SKSize;
 
 namespace DrawnUi.Draw
 {
+
+
+    public class RenderedNode
+    {
+
+        public RenderedNode(IDrawnBase control)
+        {
+            Control = control;
+            Children = new();
+        }
+
+        public IDrawnBase Control { get;set; }
+
+        public List<RenderedNode> Children { get; set; }
+    }
+
+
     [DebuggerDisplay("{DebugString}")]
     public partial class SkiaControl :
         IHasAfterEffects,
@@ -32,6 +49,8 @@ namespace DrawnUi.Draw
         {
             Init();
         }
+
+        public RenderedNode RenderedNode{ get; set; }
 
         private void Init()
         {
@@ -46,15 +65,35 @@ namespace DrawnUi.Draw
             AttachEffects();
         }
 
+        /// <summary>
+        /// Offset cache (RenderObject) in points.
+        /// This works similar to TranslationX but uses no matrix transform, works faster.
+        /// For code-behind fast reposition of cached controls, background thread friendly, no bindings involved.
+        /// Cached controls only, not a bindable property, doesn't trigger repaint, would need to do this manually if needed.
+        /// </summary>
         public double Left { get; set; }
 
+        /// <summary>
+        /// Offset cache (RenderObject) in points.
+        /// This works similar to TranslationY but uses no matrix transform, works faster.
+        /// For code-behind fast reposition of cached controls, background thread friendly, no bindings involved.
+        /// Cached controls only, not a bindable property, doesn't trigger repaint, would need to do this manually if needed.
+        /// </summary>
         public double Top { get; set; }
 
         public static readonly BindableProperty ControlStyleProperty = BindableProperty.Create(
             nameof(PrebuiltControlStyle),
             typeof(PrebuiltControlStyle), typeof(SkiaControl),
             PrebuiltControlStyle.Unset,
-            propertyChanged: NeedDraw);
+            propertyChanged: NeedInitialize);
+
+        private static void NeedInitialize(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SkiaControl control)
+            {
+                control.InitializeDefaultContent(true);
+            }
+        }
 
         /// <summary>
         /// Will be used by control CreateDefaultContent to create appropriate look. Then controls use a virtual `UsingControlStyle` property to define their look.
@@ -157,7 +196,7 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// Absolute position in pixels afetr drawn.
+        /// Absolute position in pixels after drawn.
         /// </summary>
         /// <returns></returns>
         public virtual SKPoint GetPositionOnCanvas(bool useTranslation = true)
@@ -178,6 +217,8 @@ namespace DrawnUi.Draw
         public virtual SKPoint GetFuturePositionOnCanvas(bool useTranslation = true)
         {
             var position = BuildDrawnOffsetRecursive(DrawingRect.Location, this, true, useTranslation);
+
+
             return new(position.X, position.Y);
         }
 
@@ -229,6 +270,12 @@ namespace DrawnUi.Draw
 
             var drawingOffset = control.GetFuturePositionOffsetInPixels(false, ignoreCache);
             drawingOffset.Offset(offset);
+
+            //if (UsingCacheType != SkiaCacheType.None)
+            //{
+            //    drawingOffset.Offset((float)(Left * RenderingScale), (float)(Top * RenderingScale));
+            //}
+
             var parent = control.Parent as SkiaControl;
             if (parent == null)
             {
@@ -249,6 +296,12 @@ namespace DrawnUi.Draw
 
             var drawingOffset = control.GetPositionOffsetInPixels(false, ignoreCache);
             drawingOffset.Offset(offset);
+
+            //if (UsingCacheType != SkiaCacheType.None)
+            //{
+            //    drawingOffset.Offset((float)(Left * RenderingScale), (float)(Top * RenderingScale));
+            //}
+
             var parent = control.Parent as SkiaControl;
             if (parent == null)
             {
@@ -453,6 +506,7 @@ namespace DrawnUi.Draw
 
             if (cancel == default)
                 cancel = new CancellationTokenSource();
+
             var tcs = new TaskCompletionSource<bool>(cancel.Token);
 
             // Update animator parameters
@@ -499,9 +553,28 @@ namespace DrawnUi.Draw
         public Task FadeToAsync(double end, float ms = 250, Easing easing = null,
             CancellationTokenSource cancel = default)
         {
-            // Cancel previous animation if it exists and is still running.
-            _fadeCancelTokenSource?.Cancel();
-            _fadeCancelTokenSource = new CancellationTokenSource();
+            if (_fadeCancelTokenSource != null)
+            {
+                try
+                {
+                    _fadeCancelTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+                finally
+                {
+                    try
+                    {
+                        _fadeCancelTokenSource.Dispose();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                    _fadeCancelTokenSource = null; // Clear reference
+                }
+            }
+            _fadeCancelTokenSource = cancel ?? new CancellationTokenSource();
 
             var startOpacity = this.Opacity;
             return AnimateAsync(
@@ -530,9 +603,28 @@ namespace DrawnUi.Draw
         public Task ScaleToAsync(double x, double y, float length = 250, Easing easing = null,
             CancellationTokenSource cancel = default)
         {
-            // Cancel previous animation if it exists and is still running.
-            _scaleCancelTokenSource?.Cancel();
-            _scaleCancelTokenSource = new CancellationTokenSource();
+            if (_scaleCancelTokenSource != null)
+            {
+                try
+                {
+                    _scaleCancelTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+                finally
+                {
+                    try
+                    {
+                        _scaleCancelTokenSource.Dispose();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                    _scaleCancelTokenSource = null;  
+                }
+            }
+            _scaleCancelTokenSource = cancel ?? new CancellationTokenSource();
 
             var startScaleX = this.ScaleX;
             var startScaleY = this.ScaleY;
@@ -563,9 +655,28 @@ namespace DrawnUi.Draw
         public Task TranslateToAsync(double x, double y, float length = 250, Easing easing = null,
             CancellationTokenSource cancel = default)
         {
-            // Cancel previous animation if it exists and is still running.
-            _translateCancelTokenSource?.Cancel();
-            _translateCancelTokenSource = new CancellationTokenSource();
+            if (_translateCancelTokenSource != null)
+            {
+                try
+                {
+                    _translateCancelTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+                finally
+                {
+                    try
+                    {
+                        _translateCancelTokenSource.Dispose();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                    _translateCancelTokenSource = null;
+                }
+            }
+            _translateCancelTokenSource = cancel ?? new CancellationTokenSource();
 
             var startTranslationX = this.TranslationX;
             var startTranslationY = this.TranslationY;
@@ -596,9 +707,28 @@ namespace DrawnUi.Draw
         public Task RotateToAsync(double end, uint length = 250, Easing easing = null,
             CancellationTokenSource cancel = default)
         {
-            // Cancel previous animation if it exists and is still running.
-            _rotateCancelTokenSource?.Cancel();
-            _rotateCancelTokenSource = new CancellationTokenSource();
+            if (_rotateCancelTokenSource != null)
+            {
+                try
+                {
+                    _rotateCancelTokenSource.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+                finally
+                {
+                    try
+                    {
+                        _rotateCancelTokenSource.Dispose();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                    _rotateCancelTokenSource = null;
+                }
+            }
+            _rotateCancelTokenSource = cancel ?? new CancellationTokenSource();
 
             var startRotation = this.Rotation;
 
@@ -1240,14 +1370,6 @@ namespace DrawnUi.Draw
                 Super.Log($"[BASE] {this.Tag} Got {args.Type}.. {Uid}");
             }
 
-            if (args.Type == TouchActionResult.Tapped && this is ISkiaGestureListener meAsListener)
-            {
-                if (SendTapped(meAsListener, args, apply, Super.SendTapsOnMainThread))
-                {
-                    return meAsListener;
-                }
-            }
-
             if (EffectsGestureProcessors.Count > 0)
             {
                 foreach (var effect in EffectsGestureProcessors)
@@ -1457,6 +1579,14 @@ namespace DrawnUi.Draw
                 }
             }
 
+            if (args.Type == TouchActionResult.Tapped && this is ISkiaGestureListener meAsListener && consumed==null)
+            {
+                if (SendTapped(meAsListener, args, apply, Super.SendTapsOnMainThread))
+                {
+                    return meAsListener;
+                }
+            }
+
             return consumed;
         }
 
@@ -1659,6 +1789,7 @@ namespace DrawnUi.Draw
         /// </summary>
         public virtual void OnDisposing()
         {
+            ExecuteAfterCreated.Clear();
             Rendered = null;
             ClipWith = null;
             Disposing?.Invoke(this, null);
@@ -3036,10 +3167,10 @@ namespace DrawnUi.Draw
         {
             //Debug.WriteLine($"[Transforming] {rect}");
 
-            return new SKRect(rect.Left + (float)(UseTranslationX * RenderingScale),
-                rect.Top + (float)(UseTranslationY * RenderingScale),
-                rect.Right + (float)(UseTranslationX * RenderingScale),
-                rect.Bottom + (float)(UseTranslationY * RenderingScale));
+            return new SKRect(rect.Left + (float)((Left +UseTranslationX) * RenderingScale),
+                rect.Top + (float)((Top+UseTranslationY) * RenderingScale),
+                rect.Right + (float)((Left+ UseTranslationX) * RenderingScale),
+                rect.Bottom + (float)((Top+UseTranslationY) * RenderingScale));
         }
 
         public virtual SKPoint TranslateInputDirectOffsetToPoints(PointF location, SKPoint childOffsetDirect)
@@ -3116,8 +3247,8 @@ namespace DrawnUi.Draw
             var thisOffset = SKPoint.Empty;
             if (!cacheOnly && useTranlsation)
             {
-                thisOffset = new SKPoint((float)(UseTranslationX * RenderingScale),
-                    (float)(UseTranslationY * RenderingScale));
+                thisOffset = new SKPoint((float)((Left+UseTranslationX) * RenderingScale),
+                    (float)((Top+UseTranslationY) * RenderingScale));
             }
 
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
@@ -3147,8 +3278,8 @@ namespace DrawnUi.Draw
             var thisOffset = SKPoint.Empty;
             if (!cacheOnly && useTranlsation)
             {
-                thisOffset = new SKPoint((float)(UseTranslationX * RenderingScale),
-                    (float)(UseTranslationY * RenderingScale));
+                thisOffset = new SKPoint((float)((Left+UseTranslationX) * RenderingScale),
+                    (float)((Top+UseTranslationY) * RenderingScale));
             }
 
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
@@ -3184,7 +3315,11 @@ namespace DrawnUi.Draw
             LayoutIsReady?.Invoke(this, null);
         }
 
+        /// <summary>
+        /// Will be set by OnLayoutReady
+        /// </summary>
         public bool IsLayoutReady { get; protected set; }
+
 
         public bool LayoutReady
         {
@@ -3624,9 +3759,9 @@ namespace DrawnUi.Draw
             }
         }
 
-        protected void InitializeDefaultContent()
+        public virtual void InitializeDefaultContent(bool force=false)
         {
-            if (!DefaultContentCreated)
+            if (!DefaultContentCreated || force)
             {
                 DefaultContentCreated = true;
 
@@ -3634,7 +3769,6 @@ namespace DrawnUi.Draw
                 {
                     action?.Invoke(this);
                 }
-                ExecuteAfterCreated.Clear();
 
                 CreateDefaultContent();
             }
@@ -4336,6 +4470,12 @@ namespace DrawnUi.Draw
 
             IsRendering = true;
 
+            RenderedNode = new RenderedNode(this);
+            if (Parent != null && Parent.RenderedNode != null)
+            {
+                Parent.RenderedNode.Children.Add(RenderedNode);
+            }
+
             Superview = context.Context.Superview;
             RenderingScale = context.Scale;
             NeedUpdate = false;
@@ -4663,7 +4803,7 @@ namespace DrawnUi.Draw
             }
 
             bool applyOpacity = useOpacity && Opacity < 1;
-            bool needTransform = HasTransform || Left!=0 || Top !=0;
+            bool needTransform = HasTransform;
 
             if (applyOpacity || isClipping || needTransform || CustomizeLayerPaint != null)
             {
@@ -5061,12 +5201,12 @@ namespace DrawnUi.Draw
 
         public double UseTranslationY
         {
-            get { return TranslationY + AddTranslationY + Top; }
+            get { return TranslationY + AddTranslationY; }
         }
 
         public double UseTranslationX
         {
-            get { return TranslationX + AddTranslationX + Left; }
+            get { return TranslationX + AddTranslationX; }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]

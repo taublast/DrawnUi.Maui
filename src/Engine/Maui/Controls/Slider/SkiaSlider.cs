@@ -6,6 +6,446 @@ namespace DrawnUi.Draw;
 
 public class SkiaSlider : SkiaLayout
 {
+    #region DEFAULT CONTENT
+
+    protected override void CreateDefaultContent()
+    {
+        if (this.Views.Count == 0)
+        {
+            switch (UsingControlStyle)
+            {
+                case PrebuiltControlStyle.Cupertino: 
+                    CreateCupertinoStyleContent();
+                    break;
+                //case PrebuiltControlStyle.Material:
+                //    CreateMaterialStyleContent();
+                //    break;
+                //case PrebuiltControlStyle.Windows:
+                //    CreateWindowsStyleContent();
+                //    break;
+                default:
+                    CreateDefaultStyleContent();
+                    break;
+            }
+
+            ApplyProperties();
+        }
+    }
+
+    protected virtual void FindViews()
+    {
+        if (Trail==null)
+            Trail = FindView<SkiaLayout>("Trail");
+
+        if (SelectedTrail==null)
+            SelectedTrail = FindView<SliderTrail>("SelectedTrail");
+
+        if(EndThumb==null)
+            EndThumb = FindView<SliderThumb>("EndThumb");
+    }
+
+    public virtual void ApplyProperties()
+    {
+        if (UsingControlStyle == PrebuiltControlStyle.Cupertino)
+        {
+            UpdateCupertinoAppearance();
+        }
+    }
+
+    public SkiaControl Trail;
+    private SliderTrail SelectedTrail;
+    private SliderThumb EndThumb;
+
+    protected virtual void CreateDefaultStyleContent()
+    {
+        //SetDefaultContentSize(64, 35);
+
+        
+        AvailableWidthAdjustment = 1.5;
+        HorizontalOptions = LayoutOptions.Fill;
+        MinimumWidthRequest = 64;
+        SliderHeight = 35;
+        Type = LayoutType.Column;
+        UseCache = SkiaCacheType.ImageDoubleBuffered;
+
+        Children = new List<SkiaControl>()
+        {
+            //main grid
+            new SkiaLayout
+                {
+                    Tag="Trail",
+                    HeightRequest = SliderHeight,
+                    HorizontalOptions = LayoutOptions.Fill,
+                    Children = new List<SkiaControl>()
+                    {
+                        //unselected trail
+                        new SkiaShape()
+                        {
+                            BackgroundColor = Colors.DarkGray,
+                            HeightRequest = 8,
+                            CornerRadius = 6,
+                            HorizontalOptions = LayoutOptions.Fill,
+                            StrokeColor = Colors.Grey,
+                            StrokeWidth = 2,
+                            UseCache = SkiaCacheType.Operations,
+                            VerticalOptions = LayoutOptions.Center
+                        },
+                        //selected trail
+                        new SliderTrail()
+                        {
+                            Tag = "SelectedTrail",
+                            BackgroundColor = Colors.Red,
+                            HeightRequest = 10,
+                            CornerRadius = 6,
+                            HorizontalOptions = LayoutOptions.Start,
+                            StrokeBlendMode = SKBlendMode.Color,
+                            StrokeColor = Colors.DarkRed,
+                            StrokeWidth = 2,
+                            UseCache = SkiaCacheType.Operations,
+                            VerticalOptions = LayoutOptions.Center,
+                            ModifyXPosEnd = 20,
+                            SideOffset = 0,
+                            XPos = 0,
+                        }.Assign(out SelectedTrail)
+                        //{Binding Source={x:Reference EndThumb}, Path=TranslationX}"
+                        .Observe(()=>EndThumb, (me, prop) =>
+                        {
+                            if (prop.IsEither(nameof(BindingContext), nameof(TranslationX)))
+                            {
+                                me.XPosEnd = EndThumb.TranslationX;
+                            }
+                        }),
+                          
+                        //thumb
+                        new SliderThumb()
+                        {
+                            Tag="EndThumb",
+                            UseCache = SkiaCacheType.Image,
+                            Children = new List<SkiaControl>()
+                            {
+                                //thumb circle
+                                new SkiaShape()
+                                {
+                                    Margin = 4,
+                                    BackgroundColor = Colors.Red,
+                                    HorizontalOptions = LayoutOptions.Fill,
+                                    StrokeColor = Colors.DarkRed,
+                                    StrokeWidth = 1,
+                                    Type = ShapeType.Circle,
+                                    VerticalOptions = LayoutOptions.Fill,
+                                    Shadows = new List<SkiaShadow>()
+                                    {
+                                        new SkiaShadow()
+                                        {
+                                            Blur = 2,
+                                            Opacity = 0.5,
+                                            X = 1,
+                                            Y = 1,
+                                            Color = Colors.DarkRed
+                                        }
+                                    }
+                                },
+                                //point inside circle
+                                new SkiaShape()
+                                {
+                                    LockRatio = 1,
+                                    WidthRequest = 6,
+                                    BackgroundColor = Colors.White,
+                                    HorizontalOptions = LayoutOptions.Center,
+                                    StrokeColor = Colors.DarkRed,
+                                    Type = ShapeType.Circle,
+                                    VerticalOptions = LayoutOptions.Center,
+                                },
+                            }
+                        }.Assign(out EndThumb)
+                        //HeightRequest="{Binding Source={x:Reference SliderContainer}, Path=Height}"
+                        //WidthRequest="{Binding Source={x:Reference SliderContainer}, Path=Height}"
+                        .Observe(()=>Trail, (me, prop) =>
+                        {
+                            if (prop.IsEither(nameof(BindingContext), nameof(Height)))
+                            {
+                                me.HeightRequest = Trail.Height;
+                                me.WidthRequest = Trail.Height;
+                            }
+                        })
+                        //TranslationX="{Binding Source={x:Reference This}, Path=EndThumbX}"
+                        .Observe(this, (me, prop) =>
+                        {
+                            if (prop.IsEither(nameof(BindingContext), nameof(EndThumbX)))
+                            {
+                                me.TranslationX = this.EndThumbX;
+                            }
+                        }),
+
+                    }
+                }
+                //same as {Binding Source={x:Reference This}, Path=SliderHeight}"
+                .Observe(this, (me, prop) =>
+                {
+                    if (prop.IsEither(nameof(BindingContext), nameof(SliderHeight)))
+                    {
+                        me.HeightRequest = SliderHeight;
+                    }
+                })
+                .Assign(out Trail)
+        };
+
+ 
+
+    }
+
+    /// <summary>
+    /// Creates a Cupertino (iOS) style slider following Apple's design guidelines
+    /// </summary>
+    protected virtual void CreateCupertinoStyleContent()
+    {
+        // Set default properties
+        AvailableWidthAdjustment = -1;
+        HorizontalOptions = LayoutOptions.Fill;
+        MinimumWidthRequest = 64;
+        SliderHeight = CupertinoThumbDiameter; // Set slider height to match thumb diameter
+        Type = LayoutType.Column;
+        UseCache = SkiaCacheType.ImageDoubleBuffered;
+
+        Children = new List<SkiaControl>()
+        {
+            // Main track container
+            new SkiaLayout
+            {
+                Tag = "Trail",
+                HeightRequest = SliderHeight,
+                HorizontalOptions = LayoutOptions.Fill,
+                Children = new List<SkiaControl>()
+                {
+                    // Unselected track (gray part)
+                    new SkiaShape()
+                    {
+                        BackgroundColor = TrackColor,
+                        HeightRequest = CupertinoTrackHeight,
+                        CornerRadius = CupertinoTrackHeight / 2, // Round corners (pill shape)
+                        HorizontalOptions = LayoutOptions.Fill,
+                        UseCache = SkiaCacheType.Operations,
+                        VerticalOptions = LayoutOptions.Center
+                    },
+                    
+                    // Selected track (iOS blue part)
+                    new SliderTrail()
+                    {
+                        Tag = "SelectedTrail",
+                        BackgroundColor = TrackSelectedColor,
+                        HeightRequest = CupertinoTrackHeight,
+                        CornerRadius = CupertinoTrackHeight / 2, // Round corners
+                        HorizontalOptions = LayoutOptions.Start,
+                        UseCache = SkiaCacheType.Operations,
+                        VerticalOptions = LayoutOptions.Center,
+                        ModifyXPosEnd = CupertinoThumbDiameter / 2,
+                        SideOffset = 0,
+                        XPos = 0,
+                    }.Assign(out SelectedTrail)
+                    .Observe(() => EndThumb, (me, prop) =>
+                    {
+                        if (prop.IsEither(nameof(BindingContext), nameof(TranslationX)))
+                        {
+                            me.XPosEnd = EndThumb.TranslationX;
+                        }
+                    }),
+                    
+                    // iOS thumb (circular)
+                    new SliderThumb()
+                    {
+                        Tag = "EndThumb",
+                        UseCache = SkiaCacheType.Image,
+                        Children = new List<SkiaControl>()
+                        {
+                            // Main thumb circle
+                            new SkiaShape()
+                            {
+                                BackgroundColor = ThumbColor,
+                                HorizontalOptions = LayoutOptions.Fill,
+                                StrokeColor = new Color(0.8f, 0.8f, 0.8f), // Light gray border
+                                StrokeWidth = CupertinoThumbBorderWidth,
+                                Type = ShapeType.Circle,
+                                VerticalOptions = LayoutOptions.Fill,
+                                Shadows = new List<SkiaShadow>()
+                                {
+                                    new SkiaShadow()
+                                    {
+                                        Blur = 3,
+                                        Opacity = 0.2,
+                                        X = 0,
+                                        Y = 1,
+                                        Color = Colors.Gray
+                                    }
+                                }
+                            }
+                        }
+                    }.Assign(out EndThumb)
+                    .Observe(() => Trail, (me, prop) =>
+                    {
+                        if (prop.IsEither(nameof(BindingContext), nameof(Height)))
+                        {
+                            me.HeightRequest = CupertinoThumbDiameter;
+                            me.WidthRequest = CupertinoThumbDiameter;
+                        }
+                    })
+                    .Observe(this, (me, prop) =>
+                    {
+                        if (prop.IsEither(nameof(BindingContext), nameof(EndThumbX)))
+                        {
+                            me.TranslationX = this.EndThumbX;
+                        }
+                    }),
+                }
+            }
+            .Observe(this, (me, prop) =>
+            {
+                if (prop.IsEither(nameof(BindingContext), nameof(SliderHeight)))
+                {
+                    me.HeightRequest = SliderHeight;
+                }
+            })
+            .Assign(out Trail)
+        };
+    }
+
+    bool UpdateCupertinoProperties(string propertyName)
+    {
+        // Handle Cupertino style property changes
+        if (UsingControlStyle == PrebuiltControlStyle.Cupertino &&
+            propertyName.IsEither(
+                nameof(CupertinoTrackHeight),
+                nameof(CupertinoThumbDiameter),
+                nameof(ThumbColor),
+                nameof(TrackColor),
+                nameof(TrackSelectedColor),
+                nameof(CupertinoThumbBorderWidth)))
+        {
+            UpdateCupertinoAppearance();
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Updates the appearance of the Cupertino slider based on the current property values
+    /// </summary>
+    private void UpdateCupertinoAppearance()
+    {
+        // Only proceed if views have been created
+        if (Trail == null || SelectedTrail == null || EndThumb == null)
+            return;
+
+        // Find and update the track
+        var unselectedTrack = Trail.Children.FirstOrDefault(c => c is SkiaShape && c != SelectedTrail) as SkiaShape;
+        if (unselectedTrack != null)
+        {
+            unselectedTrack.HeightRequest = CupertinoTrackHeight;
+            unselectedTrack.CornerRadius = CupertinoTrackHeight / 2;
+            unselectedTrack.BackgroundColor = TrackColor;
+        }
+
+        // Update the selected trail
+        SelectedTrail.HeightRequest = CupertinoTrackHeight;
+        SelectedTrail.CornerRadius = CupertinoTrackHeight / 2;
+        SelectedTrail.BackgroundColor = TrackSelectedColor;
+        SelectedTrail.ModifyXPosEnd = CupertinoThumbDiameter / 2;
+
+        // Update the thumb size and border
+        EndThumb.HeightRequest = CupertinoThumbDiameter;
+        EndThumb.WidthRequest = CupertinoThumbDiameter;
+
+        var thumbShape = EndThumb.Children.FirstOrDefault(c => c is SkiaShape) as SkiaShape;
+        if (thumbShape != null)
+        {
+            thumbShape.StrokeWidth = CupertinoThumbBorderWidth;
+            thumbShape.BackgroundColor = ThumbColor;
+        }
+
+        // Update the overall slider height to match the thumb
+        SliderHeight = CupertinoThumbDiameter;
+        Trail.HeightRequest = SliderHeight;
+
+        Invalidate();
+    }
+
+    public static readonly BindableProperty ThumbColorProperty =
+        BindableProperty.Create(nameof(ThumbColor), typeof(Color), typeof(SkiaSlider),
+            new Color(1f, 1f, 1f));
+
+    public Color ThumbColor
+    {
+        get { return (Color)GetValue(ThumbColorProperty); }
+        set { SetValue(ThumbColorProperty, value); }
+    }
+
+    #region CUPERTINO STYLE PROPERTIES
+
+    public static readonly BindableProperty CupertinoTrackHeightProperty =
+        BindableProperty.Create(nameof(CupertinoTrackHeight), typeof(double), typeof(SkiaSlider), 2.0);
+
+    /// <summary>
+    /// The height of the iOS slider track in points (default is 2pt per iOS guidelines)
+    /// </summary>
+    public double CupertinoTrackHeight
+    {
+        get { return (double)GetValue(CupertinoTrackHeightProperty); }
+        set { SetValue(CupertinoTrackHeightProperty, value); }
+    }
+
+    public static readonly BindableProperty CupertinoThumbDiameterProperty =
+        BindableProperty.Create(nameof(CupertinoThumbDiameter), typeof(double), typeof(SkiaSlider), 28.0);
+
+    /// <summary>
+    /// The diameter of the iOS slider thumb in points (default is 28pt per iOS guidelines)
+    /// </summary>
+    public double CupertinoThumbDiameter
+    {
+        get { return (double)GetValue(CupertinoThumbDiameterProperty); }
+        set { SetValue(CupertinoThumbDiameterProperty, value); }
+    }
+
+    public static readonly BindableProperty TrackColorProperty =
+        BindableProperty.Create(nameof(TrackColor), typeof(Color), typeof(SkiaSlider), new Color(0.8f, 0.8f, 0.8f));
+
+    /// <summary>
+    /// The color of the unselected track in iOS style (default light gray)
+    /// </summary>
+    public Color TrackColor
+    {
+        get { return (Color)GetValue(TrackColorProperty); }
+        set { SetValue(TrackColorProperty, value); }
+    }
+
+    public static readonly BindableProperty TrackSelectedColorProperty =
+        BindableProperty.Create(nameof(TrackSelectedColor), typeof(Color), typeof(SkiaSlider),
+            new Color(0f, 0.478f, 1f));
+
+    /// <summary>
+    /// The color of the selected track in iOS style (default iOS blue #007AFF)
+    /// </summary>
+    public Color TrackSelectedColor
+    {
+        get { return (Color)GetValue(TrackSelectedColorProperty); }
+        set { SetValue(TrackSelectedColorProperty, value); }
+    }
+
+    public static readonly BindableProperty CupertinoThumbBorderWidthProperty =
+        BindableProperty.Create(nameof(CupertinoThumbBorderWidth), typeof(double), typeof(SkiaSlider), 0.5);
+
+    /// <summary>
+    /// The width of the border around the iOS slider thumb (default 0.5pt)
+    /// </summary>
+    public double CupertinoThumbBorderWidth
+    {
+        get { return (double)GetValue(CupertinoThumbBorderWidthProperty); }
+        set { SetValue(CupertinoThumbBorderWidthProperty, value); }
+    }
+
+    #endregion
+
+    #endregion
+
     #region GESTURES
 
     protected bool IsUserPanning { get; set; }
@@ -28,13 +468,10 @@ public class SkiaSlider : SkiaLayout
     {
         base.OnLayoutChanged();
 
-        if (Trail == null)
-        {
-            Trail = FindViewByTag("Trail");
-        }
+        FindViews();
     }
 
-    public SkiaControl Trail { get; set; }
+
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
@@ -99,9 +536,8 @@ public class SkiaSlider : SkiaLayout
                 {
                     touchArea = RangeZone.Start;
                 }
-                else
-                if (locationX >= EndThumbX - moreHotspotSize &&
-                    locationX <= EndThumbX + SliderHeight + moreHotspotSize)
+                else if (locationX >= EndThumbX - moreHotspotSize &&
+                         locationX <= EndThumbX + SliderHeight + moreHotspotSize)
                 {
                     touchArea = RangeZone.End;
                 }
@@ -114,8 +550,10 @@ public class SkiaSlider : SkiaLayout
                 if (Trail != null)
                 {
                     var trailOffset = Trail.TranslateInputCoords(thisOffset);
-                    onTrail = Trail.HitIsInside(args.Event.Location.X + trailOffset.X, args.Event.Location.Y + trailOffset.Y);
+                    onTrail = Trail.HitIsInside(args.Event.Location.X + trailOffset.X,
+                        args.Event.Location.Y + trailOffset.Y);
                 }
+
                 if (onTrail || touchArea == RangeZone.Start || touchArea == RangeZone.End)
                     IsPressed = true;
 
@@ -135,8 +573,7 @@ public class SkiaSlider : SkiaLayout
                             {
                                 MoveEndThumbHere(locationX - halfThumb);
                             }
-                            else
-                            if (locationX <= half)
+                            else if (locationX <= half)
                             {
                                 MoveStartThumbHere(locationX - halfThumb);
                             }
@@ -146,7 +583,6 @@ public class SkiaSlider : SkiaLayout
                             MoveEndThumbHere(locationX - halfThumb);
                         }
                     }
-
                 }
 
                 if (touchArea == RangeZone.Start)
@@ -154,8 +590,7 @@ public class SkiaSlider : SkiaLayout
                     consumed = this;
                     lastTouchX = StartThumbX;
                 }
-                else
-                if (touchArea == RangeZone.End)
+                else if (touchArea == RangeZone.End)
                 {
                     consumed = this;
                     lastTouchX = EndThumbX;
@@ -169,12 +604,15 @@ public class SkiaSlider : SkiaLayout
                 if (!IsUserPanning && IgnoreWrongDirection)
                 {
                     //first panning gesture..
-                    var panDirection = GetDirectionType(_panningStartOffsetPts, new Vector2(_panningStartOffsetPts.X + args.Event.Distance.Total.X, _panningStartOffsetPts.Y + args.Event.Distance.Total.Y), 0.8f);
+                    var panDirection = GetDirectionType(_panningStartOffsetPts,
+                        new Vector2(_panningStartOffsetPts.X + args.Event.Distance.Total.X,
+                            _panningStartOffsetPts.Y + args.Event.Distance.Total.Y), 0.8f);
 
                     if (Orientation == OrientationType.Vertical && panDirection != DirectionType.Vertical)
                     {
                         return null;
                     }
+
                     if (Orientation == OrientationType.Horizontal && panDirection != DirectionType.Horizontal)
                     {
                         return null;
@@ -188,8 +626,7 @@ public class SkiaSlider : SkiaLayout
                 //synch this
                 if (touchArea == RangeZone.Start)
                     lastTouchX = StartThumbX;
-                else
-                if (touchArea == RangeZone.End)
+                else if (touchArea == RangeZone.End)
                     lastTouchX = EndThumbX;
 
 
@@ -199,11 +636,10 @@ public class SkiaSlider : SkiaLayout
 
                     if (touchArea == RangeZone.Start)
                     {
-                        var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;//args.TotalDistance.X;
+                        var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale; //args.TotalDistance.X;
                         SetStartOffsetClamped(maybe);
                     }
-                    else
-                    if (touchArea == RangeZone.End)
+                    else if (touchArea == RangeZone.End)
                     {
                         var maybe = lastTouchX + args.Event.Distance.Delta.X / RenderingScale;
                         SetEndOffsetClamped(maybe);
@@ -221,10 +657,9 @@ public class SkiaSlider : SkiaLayout
                 IsUserPanning = false;
                 IsPressed = false;
                 break;
-
         }
 
-        if (consumed != null || IsUserPanning)// || args.Event.NumberOfTouches > 1)
+        if (consumed != null || IsUserPanning) // || args.Event.NumberOfTouches > 1)
         {
             return consumed ?? this;
         }
@@ -235,21 +670,25 @@ public class SkiaSlider : SkiaLayout
         return null;
     }
 
-
     private bool TouchBusy;
 
     #endregion
 
     #region PROPERTIES
 
-    public static readonly BindableProperty ClickOnTrailEnabledProperty = BindableProperty.Create(nameof(ClickOnTrailEnabled), typeof(bool), typeof(SkiaSlider), true);
+    public static readonly BindableProperty ClickOnTrailEnabledProperty =
+        BindableProperty.Create(nameof(ClickOnTrailEnabled), typeof(bool),
+            typeof(SkiaSlider), true);
+
     public bool ClickOnTrailEnabled
     {
         get { return (bool)GetValue(ClickOnTrailEnabledProperty); }
         set { SetValue(ClickOnTrailEnabledProperty, value); }
     }
 
-    public static readonly BindableProperty EnableRangeProperty = BindableProperty.Create(nameof(EnableRange), typeof(bool), typeof(SkiaSlider), false);
+    public static readonly BindableProperty EnableRangeProperty =
+        BindableProperty.Create(nameof(EnableRange), typeof(bool), typeof(SkiaSlider), false);
+
     public bool EnableRange
     {
         get { return (bool)GetValue(EnableRangeProperty); }
@@ -271,21 +710,27 @@ public class SkiaSlider : SkiaLayout
         set { SetValue(RespondsToGesturesProperty, value); }
     }
 
-    public static readonly BindableProperty SliderHeightProperty = BindableProperty.Create(nameof(SliderHeight), typeof(double), typeof(SkiaSlider), 22.0); //, BindingMode.TwoWay
+    public static readonly BindableProperty SliderHeightProperty =
+        BindableProperty.Create(nameof(SliderHeight), typeof(double), typeof(SkiaSlider), 22.0); //, BindingMode.TwoWay
+
     public double SliderHeight
     {
         get { return (double)GetValue(SliderHeightProperty); }
         set { SetValue(SliderHeightProperty, value); }
     }
 
-    public static readonly BindableProperty MinProperty = BindableProperty.Create(nameof(Min), typeof(double), typeof(SkiaSlider), 0.0); //, BindingMode.TwoWay
+    public static readonly BindableProperty MinProperty =
+        BindableProperty.Create(nameof(Min), typeof(double), typeof(SkiaSlider), 0.0); //, BindingMode.TwoWay
+
     public double Min
     {
         get { return (double)GetValue(MinProperty); }
         set { SetValue(MinProperty, value); }
     }
 
-    public static readonly BindableProperty MaxProperty = BindableProperty.Create(nameof(Max), typeof(double), typeof(SkiaSlider), 100.0);
+    public static readonly BindableProperty MaxProperty =
+        BindableProperty.Create(nameof(Max), typeof(double), typeof(SkiaSlider), 100.0);
+
     public double Max
     {
         get { return (double)GetValue(MaxProperty); }
@@ -325,12 +770,12 @@ public class SkiaSlider : SkiaLayout
             {
                 return Math.Clamp(adjusted, slider.Min, slider.Max);
             }
+
             return adjusted;
         }
 
         return value;
     }
-
 
     public static readonly BindableProperty EndProperty = BindableProperty.Create(
         nameof(End),
@@ -349,6 +794,7 @@ public class SkiaSlider : SkiaLayout
         get { return (double)GetValue(EndProperty); }
         set { SetValue(EndProperty, value); }
     }
+
     private static void OnEndPropertyChanged(BindableObject bindable, object oldValue, object newValue)
     {
         if (bindable is SkiaSlider slider && newValue is double newEndValue)
@@ -357,34 +803,45 @@ public class SkiaSlider : SkiaLayout
         }
     }
 
-    public static readonly BindableProperty StartThumbXProperty = BindableProperty.Create(nameof(StartThumbX), typeof(double), typeof(SkiaSlider), 0.0);
+    public static readonly BindableProperty StartThumbXProperty =
+        BindableProperty.Create(nameof(StartThumbX), typeof(double), typeof(SkiaSlider), 0.0);
+
     public double StartThumbX
     {
         get { return (double)GetValue(StartThumbXProperty); }
         set { SetValue(StartThumbXProperty, value); }
     }
-    public static readonly BindableProperty EndThumbXProperty = BindableProperty.Create(nameof(EndThumbX), typeof(double), typeof(SkiaSlider), 0.0);
+
+    public static readonly BindableProperty EndThumbXProperty =
+        BindableProperty.Create(nameof(EndThumbX), typeof(double), typeof(SkiaSlider), 0.0);
+
     public double EndThumbX
     {
         get { return (double)GetValue(EndThumbXProperty); }
         set { SetValue(EndThumbXProperty, value); }
     }
 
-    public static readonly BindableProperty StepProperty = BindableProperty.Create(nameof(Step), typeof(double), typeof(SkiaSlider), 1.0); //, BindingMode.TwoWay
+    public static readonly BindableProperty StepProperty =
+        BindableProperty.Create(nameof(Step), typeof(double), typeof(SkiaSlider), 1.0); //, BindingMode.TwoWay
+
     public double Step
     {
         get { return (double)GetValue(StepProperty); }
         set { SetValue(StepProperty, value); }
     }
 
-    public static readonly BindableProperty RangeMinProperty = BindableProperty.Create(nameof(RangeMin), typeof(double), typeof(SkiaSlider), 0.0); //, BindingMode.TwoWay
+    public static readonly BindableProperty RangeMinProperty =
+        BindableProperty.Create(nameof(RangeMin), typeof(double), typeof(SkiaSlider), 0.0); //, BindingMode.TwoWay
+
     public double RangeMin
     {
         get { return (double)GetValue(RangeMinProperty); }
         set { SetValue(RangeMinProperty, value); }
     }
 
-    public static readonly BindableProperty ValueStringFormatProperty = BindableProperty.Create(nameof(ValueStringFormat), typeof(string), typeof(SkiaSlider), "### ### ##0.##"); //, BindingMode.TwoWay
+    public static readonly BindableProperty ValueStringFormatProperty =
+        BindableProperty.Create(nameof(ValueStringFormat), typeof(string), typeof(SkiaSlider),
+            "### ### ##0.##"); //, BindingMode.TwoWay
 
     public string ValueStringFormat
     {
@@ -392,7 +849,9 @@ public class SkiaSlider : SkiaLayout
         set { SetValue(ValueStringFormatProperty, value); }
     }
 
-    public static readonly BindableProperty MinMaxStringFormatProperty = BindableProperty.Create(nameof(MinMaxStringFormat), typeof(string), typeof(SkiaSlider), "### ### ##0.##"); //, BindingMode.TwoWay
+    public static readonly BindableProperty MinMaxStringFormatProperty =
+        BindableProperty.Create(nameof(MinMaxStringFormat), typeof(string), typeof(SkiaSlider),
+            "### ### ##0.##"); //, BindingMode.TwoWay
 
     public string MinMaxStringFormat
     {
@@ -400,16 +859,23 @@ public class SkiaSlider : SkiaLayout
         set { SetValue(MinMaxStringFormatProperty, value); }
     }
 
-    public static readonly BindableProperty AvailableWidthAdjustmentProperty = BindableProperty.Create(nameof(AvailableWidthAdjustment), typeof(double), typeof(SkiaSlider), 0.0);
+    public static readonly BindableProperty AvailableWidthAdjustmentProperty =
+        BindableProperty.Create(nameof(AvailableWidthAdjustment), typeof(double), typeof(SkiaSlider), 0.0);
+
+    /// <summary>
+    /// Padding for the Thumb to go, to be able to leave some space around for shadows etc.
+    /// </summary>
     public double AvailableWidthAdjustment
     {
         get { return (double)GetValue(AvailableWidthAdjustmentProperty); }
         set { SetValue(AvailableWidthAdjustmentProperty, value); }
     }
 
-    public static readonly BindableProperty OrientationProperty = BindableProperty.Create(nameof(Orientation), typeof(OrientationType), typeof(SkiaSlider),
+    public static readonly BindableProperty OrientationProperty = BindableProperty.Create(nameof(Orientation),
+        typeof(OrientationType), typeof(SkiaSlider),
         OrientationType.Horizontal,
         propertyChanged: NeedDraw);
+
     /// <summary>
     /// <summary>Gets or sets the orientation. This is a bindable property.</summary>
     /// </summary>
@@ -450,11 +916,12 @@ public class SkiaSlider : SkiaLayout
 
     #region ENGINE
 
-
-
     protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         base.OnPropertyChanged(propertyName);
+
+        if (UpdateCupertinoProperties(propertyName))
+            return;
 
         if (propertyName.IsEither(nameof(Min),
                 nameof(MinMaxStringFormat), nameof(Max)))
@@ -468,11 +935,10 @@ public class SkiaSlider : SkiaLayout
             return;
 
         if (propertyName.IsEither(nameof(Width),
-            nameof(Min), nameof(Max), nameof(StartThumbX),
-            nameof(EndThumbX), nameof(Step), nameof(Start),
-            nameof(End), nameof(AvailableWidthAdjustment)))
+                nameof(Min), nameof(Max), nameof(StartThumbX),
+                nameof(EndThumbX), nameof(Step), nameof(Start),
+                nameof(End), nameof(AvailableWidthAdjustment)))
         {
-
             if (Width > -1)
             {
                 if (EnableRange)
@@ -503,12 +969,11 @@ public class SkiaSlider : SkiaLayout
                         StartThumbX = PositionFromValue(Start) + AvailableWidthAdjustment;
                         StartDesc = string.Format(mask, Start).Trim();
                     }
+
                     EndThumbX = PositionFromValue(End) - AvailableWidthAdjustment;
                     EndDesc = string.Format(mask, End).Trim();
                 }
-
             }
-
         }
     }
 
@@ -542,9 +1007,6 @@ public class SkiaSlider : SkiaLayout
         return adjustedStep + minValue;
     }
 
-
-
-
     protected virtual void RecalculateValues()
     {
         lockInternal = true;
@@ -555,6 +1017,7 @@ public class SkiaSlider : SkiaLayout
         {
             StartDesc = string.Format(mask, Start).Trim();
         }
+
         EndDesc = string.Format(mask, End).Trim();
 
         lockInternal = false;
@@ -590,10 +1053,9 @@ public class SkiaSlider : SkiaLayout
         RecalculateValues();
     }
 
-
     private volatile bool lockInternal;
-
     private string _StartDesc;
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string StartDesc
     {
@@ -609,6 +1071,7 @@ public class SkiaSlider : SkiaLayout
     }
 
     private string _EndDesc;
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string EndDesc
     {
@@ -624,6 +1087,7 @@ public class SkiaSlider : SkiaLayout
     }
 
     private string _MinDesc;
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string MinDesc
     {
@@ -639,6 +1103,7 @@ public class SkiaSlider : SkiaLayout
     }
 
     private string _MaxDesc;
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     public string MaxDesc
     {
@@ -654,13 +1119,11 @@ public class SkiaSlider : SkiaLayout
     }
 
     private double _StepValue;
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     public double StepValue
     {
-        get
-        {
-            return _StepValue;
-        }
+        get { return _StepValue; }
         set
         {
             if (_StepValue != value)
@@ -672,12 +1135,10 @@ public class SkiaSlider : SkiaLayout
     }
 
     private bool _IsPressed;
+
     public bool IsPressed
     {
-        get
-        {
-            return _IsPressed;
-        }
+        get { return _IsPressed; }
         set
         {
             if (_IsPressed != value)
@@ -687,7 +1148,6 @@ public class SkiaSlider : SkiaLayout
             }
         }
     }
-
 
     #endregion
 
@@ -781,7 +1241,6 @@ public class SkiaSlider : SkiaLayout
         }
     }
 
-
     protected virtual void ConvertOffsetsToValues()
     {
         if (EnableRange)
@@ -795,12 +1254,11 @@ public class SkiaSlider : SkiaLayout
         }
     }
 
-
     #region Invert
 
     private double ValueFromPosition(double position)
     {
-        double totalLength = Width + AvailableWidthAdjustment - SliderHeight;
+        double totalLength = Width + AvailableWidthAdjustment*2 - SliderHeight;
         if (totalLength <= 0) return Min; // Avoid division by zero
 
         double ratio = position / totalLength;
@@ -828,6 +1286,7 @@ public class SkiaSlider : SkiaLayout
         {
             ratio = (value - Min) / (Max - Min);
         }
+
         return ratio * totalLength;
     }
 
@@ -907,7 +1366,5 @@ public class SkiaSlider : SkiaLayout
         }
     }
 
-
     #endregion
-
 }

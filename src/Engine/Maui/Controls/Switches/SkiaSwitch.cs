@@ -290,6 +290,7 @@ public class SkiaSwitch : SkiaToggle
     protected override void OnToggledChanged()
     {
         cancelAnimation?.Cancel();
+        cancelAnimation?.Dispose();
         cancelAnimation = new CancellationTokenSource();
 
         if (CanAnimate() && Thumb != null)

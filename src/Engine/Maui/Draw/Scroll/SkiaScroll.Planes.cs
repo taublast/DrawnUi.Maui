@@ -202,6 +202,7 @@ namespace DrawnUi.Draw
             }
 
             // Create a fresh CTS and mark building
+            state.Cts?.Dispose();
             state.Cts = new CancellationTokenSource();
             state.IsBuilding = true;
             var token = state.Cts.Token;

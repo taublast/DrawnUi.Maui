@@ -122,14 +122,7 @@ public class SkiaCarousel : SnappingLayout
     /// <param name="currentPosition"></param>
     public override void ApplyPosition(Vector2 currentPosition)
     {
-        CurrentPosition = currentPosition;
-
-        //Debug.WriteLine($"CurrentPosition {currentPosition}");
-
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            InTransition = !CheckTransitionEnded();
-        });
+        base.ApplyPosition(currentPosition);
 
         Update();
     }
@@ -608,7 +601,7 @@ public class SkiaCarousel : SnappingLayout
         else
         if (CanDraw)
         {
-            //Debug.WriteLine($"[ScrollToOffset] setting offset {targetOffset}");
+            CurrentSnap = targetOffset;
             ApplyPosition(targetOffset);
         }
 
@@ -664,7 +657,7 @@ public class SkiaCarousel : SnappingLayout
                     },
                     OnStop = () =>
                     {
-                        Stopped?.Invoke(this, _appliedPosition);
+                        Stopped?.Invoke(this, CurrentPosition);
                     },
                     OnVectorUpdated = (value) =>
                     {
@@ -684,7 +677,7 @@ public class SkiaCarousel : SnappingLayout
                     },
                     OnStop = () =>
                     {
-                        Stopped?.Invoke(this, _appliedPosition);
+                        Stopped?.Invoke(this, CurrentPosition);
                     },
                     Finished = () =>
                     {
@@ -1162,6 +1155,8 @@ public class SkiaCarousel : SnappingLayout
         _itemsSourceChangedNeedResetIndex = false;
 
         SelectedIndexChanged?.Invoke(this, index);
+
+        Debug.WriteLine($"[CAROUSEL] Index set to {index}");
 
         //forced to use ui-tread for maui not to randomly crash 
         MainThread.BeginInvokeOnMainThread(() =>

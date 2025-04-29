@@ -2081,7 +2081,7 @@ namespace DrawnUi.Draw
 
         protected virtual void HideRefreshIndicator()
         {
-            RefreshIndicator?.SetDragRatio(0,0);
+            RefreshIndicator?.SetDragRatio(0,0, RefreshShowDistance);
             ScrollLocked = false;
             wasRefreshing = false;
         }
@@ -2108,6 +2108,19 @@ namespace DrawnUi.Draw
         public event EventHandler<ScaledPoint> ScrollingEnded;
         public event EventHandler<ScaledPoint> Scrolled;
 
+        protected double UsingRefreshDistanceLimit
+        {
+            get
+            {
+                var refreshAt = RefreshDistanceLimit;
+                if (refreshAt < RefreshShowDistance)
+                {
+                    refreshAt = RefreshShowDistance;
+                }
+                return refreshAt;
+            }
+        }
+
         protected virtual void ShowRefreshIndicatorForced()
         {
             if (RefreshIndicator != null)
@@ -2117,12 +2130,12 @@ namespace DrawnUi.Draw
                 if (Orientation == ScrollOrientation.Vertical)
                 {
                     SetScrollOffset(DrawingRect, _updatedViewportForPixX, overscroll, _zoomedScale, RenderingScale, true);
-                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.Y);
+                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.Y, RefreshShowDistance);
                 }
                 else if (Orientation == ScrollOrientation.Horizontal)
                 {
                     SetScrollOffset(DrawingRect, overscroll, _updatedViewportForPixY, _zoomedScale, RenderingScale, true);
-                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.X);
+                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.X, RefreshShowDistance);
                 }
                 Update();
             }
@@ -2133,20 +2146,22 @@ namespace DrawnUi.Draw
         {
             var ratio = 0.0f;
             bool canRefresh = false;
+            var refreshAt = UsingRefreshDistanceLimit;
 
             if (Orientation == ScrollOrientation.Vertical)
             {
                 ratio = OverscrollDistance.Y / RefreshShowDistance;
                 if (ratio >= 0)
-                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.Y);
-                canRefresh = InternalViewportOffset.Units.Y > RefreshDistanceLimit;
+                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.Y, RefreshShowDistance);
+                canRefresh = InternalViewportOffset.Units.Y > refreshAt;
             }
+
             else if (Orientation == ScrollOrientation.Horizontal)
             {
                 ratio = OverscrollDistance.X / RefreshShowDistance;
                 if (ratio >= 0)
-                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.X);
-                canRefresh = InternalViewportOffset.Units.X > RefreshDistanceLimit;
+                    RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.X, RefreshShowDistance);
+                canRefresh = InternalViewportOffset.Units.X > refreshAt;
             }
 
 
@@ -2156,15 +2171,9 @@ namespace DrawnUi.Draw
                                             && !wasRefreshing && !ScrollLocked)
                 {
                     StopVelocityPanning();
-                    //SetIsRefreshing(true);
-                    //RefreshCommand.Execute(this);
                     IsRefreshing = true;
                 }
             }
-            //else
-            //{
-            //    HideRefreshIndicator();
-            //}
         }
 
         public virtual void CheckNeedRefresh()
@@ -2283,8 +2292,8 @@ namespace DrawnUi.Draw
             if (!CheckIsGhost())
             {
                 ApplyPannedOffsetWithVelocity(context.Context);
-                var posX = (float)Math.Round(ViewportOffsetX * zoomedScale);
-                var posY = (float)Math.Round(ViewportOffsetY * zoomedScale);
+                var posX = (float)(ViewportOffsetX * zoomedScale);
+                var posY = (float)(ViewportOffsetY * zoomedScale);
 
                 IsScrolling = _animatorFlingY.IsRunning || _animatorFlingX.IsRunning ||
                               _vectorAnimatorBounceY.IsRunning || _vectorAnimatorBounceX.IsRunning

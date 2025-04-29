@@ -585,10 +585,11 @@ public class Canvas : DrawnView, IGestureListener
                     HadInput.Clear();
                 }
 
-                if (manageChildFocus || FocusedChild != null 
-                && consumed != FocusedChild)
+                if (manageChildFocus || FocusedChild != null
+                    && consumed != FocusedChild)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[Canvas] set FocusedChild to '{consumed}' we had '{FocusedChild}' and consumed was '{consumed}'");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"[Canvas] set FocusedChild to '{consumed}' we had '{FocusedChild}' and consumed was '{consumed}'");
                     FocusedChild = consumed;
                 }
             }
@@ -620,7 +621,6 @@ public class Canvas : DrawnView, IGestureListener
     private SKPoint _PressedPosition;
     public event EventHandler Tapped;
 
-
     /// <summary>
     /// To filter micro-gestures on super sensitive screens, start passing panning only when threshold is once overpassed
     /// </summary>
@@ -637,33 +637,15 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name=""></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
-        //Super.Log($"[Touch] Canvas got {args1.Type} {type} => {touchAction}");
+        //Debug.WriteLine($"[Canvas] {touchAction}");
 
-        if (touchAction == TouchActionResult.Tapped)
-        {
-            var velocityX = Math.Abs(args1.Distance.Velocity.X / RenderingScale);
-            var velocityY = Math.Abs(args1.Distance.Velocity.Y / RenderingScale);
-
-            //anti lag-spike false tap
-            var threshold = 8;
-
-            if (velocityY > threshold || velocityX > threshold)
-                return;
-
-            if (Tapped != null)
-            {
-                Tapped.Invoke(this, EventArgs.Empty);
-                return;
-            }
-        }
-
-        #if ANDROID
-
+#if ANDROID
         if (touchAction == TouchActionResult.Panning)
         {
             //filter micro-gestures
             if ((Math.Abs(args1.Distance.Delta.X) < 1 && Math.Abs(args1.Distance.Delta.Y) < 1)
-                || (Math.Abs(args1.Distance.Velocity.X / RenderingScale) < 1 && Math.Abs(args1.Distance.Velocity.Y / RenderingScale) < 1))
+                || (Math.Abs(args1.Distance.Velocity.X / RenderingScale) < 1 &&
+                    Math.Abs(args1.Distance.Velocity.Y / RenderingScale) < 1))
             {
                 return;
             }
@@ -676,6 +658,7 @@ public class Canvas : DrawnView, IGestureListener
                 if (Math.Abs(args1.Distance.Total.X) < threshold && Math.Abs(args1.Distance.Total.Y) < threshold)
                 {
                     _panningOffset = SKPoint.Empty;
+                    Debug.WriteLine($"[Canvas] Blocked micro-pan");
                     return;
                 }
 
@@ -689,7 +672,14 @@ public class Canvas : DrawnView, IGestureListener
                 _isPanning = true;
             }
         }
-        #endif
+
+#endif
+
+
+        if (touchAction == TouchActionResult.Tapped)
+        {
+            Tapped?.Invoke(this, EventArgs.Empty);
+        }
 
         if (touchAction == TouchActionResult.Down)
         {
@@ -697,7 +687,6 @@ public class Canvas : DrawnView, IGestureListener
         }
 
         var args = SkiaGesturesParameters.Create(touchAction, args1);
-
 
 
         if (GesturesDebugColor.Alpha > 0)
@@ -924,46 +913,51 @@ public class Canvas : DrawnView, IGestureListener
 
         Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
 
+        var skia = Content as SkiaControl;
+        bool paintOver = !RetainedMode || skia.NeedUpdate;
+
         if (!IsGhost)
         {
-            if (RetainedMode && Content is SkiaControl skia)
+            if (RetainedMode)
             {
-                //to debug RETAINED MODE
                 if (skia.NeedUpdate)
                 {
                     Debug.WriteLine("PAINT");
 
                     PaintTintBackground(context.Context.Canvas);
-
-                    base.Draw(context.WithDestination(Destination));
-
-                    if (GesturesDebugColor.Alpha > 0 && _PressedPosition != SKPoint.Empty)
-                    {
-                        if (_debugIsDown)
-                        {
-                            using (SKPaint paint = new SKPaint
-                                   {
-                                       Style = SKPaintStyle.StrokeAndFill, Color = GesturesDebugColor.ToSKColor()
-                                   })
-                            {
-                                var circleRadius = 10f * RenderingScale; //half size
-                                this.CanvasView.Surface.Canvas.DrawCircle(_PressedPosition.X, _PressedPosition.Y,
-                                    circleRadius, paint);
-                            }
-                        }
-
-                        var offsetHandX = (float)(-13) * RenderingScale;
-                        var offsetHandY = (float)(-6) * RenderingScale;
-                        DebugPointer.Parent = this;
-
-                        DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX,
-                            _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
-                    }
                 }
                 else
                 {
                     Debug.WriteLine("RETAINED");
                 }
+
+
+                base.Draw(context.WithDestination(Destination));
+
+                if (GesturesDebugColor.Alpha > 0 && _PressedPosition != SKPoint.Empty)
+                {
+                    if (_debugIsDown)
+                    {
+                        using (SKPaint paint = new SKPaint
+                               {
+                                   Style = SKPaintStyle.StrokeAndFill,
+                                   Color = GesturesDebugColor.ToSKColor()
+                               })
+                        {
+                            var circleRadius = 10f * RenderingScale; //half size
+                            this.CanvasView.Surface.Canvas.DrawCircle(_PressedPosition.X, _PressedPosition.Y,
+                                circleRadius, paint);
+                        }
+                    }
+
+                    var offsetHandX = (float)(-13) * RenderingScale;
+                    var offsetHandY = (float)(-6) * RenderingScale;
+                    DebugPointer.Parent = this;
+
+                    DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX,
+                        _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
+                }
+
             }
             else
             {

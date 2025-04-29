@@ -64,7 +64,7 @@ public class SkiaImage : SkiaControl
 
         // see HasUnstableSize help for explanation
         if (NeedAutoSize && (HasUnstableSize
-            || MeasuredSize.Pixels.Width <1 || MeasuredSize.Pixels.Height <1))
+                             || MeasuredSize.Pixels.Width < 1 || MeasuredSize.Pixels.Height < 1))
         {
             Invalidate();
         }
@@ -77,7 +77,7 @@ public class SkiaImage : SkiaControl
     }
 
     /// <summary>
-    /// Will containt all the effects and other rendering properties applied, size will correspond to source.
+    /// Will render on an off-screen surface and return result. Contains all the effects and other rendering properties applied, size will correspond to source.
     /// </summary>
     /// <returns></returns>
     public virtual SKImage GetRenderedSource()
@@ -1042,26 +1042,20 @@ public class SkiaImage : SkiaControl
         NeedInvalidateColorFilter = true;
     }
 
-    void CreateClippedPaintForImage()
-    {
-        if (ImagePaint == null)
-        {
-            ImagePaint = new()
-            {
-                IsAntialias = true,
-                IsDither = IsDistorted,
-                //FilterQuality = SKFilterQuality.Medium
-            };
-        }
-        _preparedClipBounds ??= new SKPath();
-        _preparedClipBounds.AddRect(DrawingRect);
-    }
-
     protected override void Paint(DrawingContext ctx)
     {
         base.Paint(ctx);
 
         var source = LoadedSource;
+
+        if (ImagePaint == null)
+        {
+            ImagePaint = new()
+            {
+                IsAntialias = true, IsDither = IsDistorted,
+                //FilterQuality = SKFilterQuality.Medium
+            };
+        }
 
         if (NeedInvalidateImageFilter)
         {
@@ -1091,8 +1085,6 @@ public class SkiaImage : SkiaControl
             }
 
             ImagePaint.ImageFilter = PaintImageFilter;
-
-            //need to clip source image not to depass drawingrect
 
 
             //ColorFilter
@@ -1151,16 +1143,26 @@ public class SkiaImage : SkiaControl
             DrawImageAlignment horizontal = HorizontalAlignment;
             DrawImageAlignment vertical = VerticalAlignment;
 
-            var restore = ctx.Context.Canvas.Save();
+            if (ClipSource)
+            {
+                _preparedClipBounds ??= new SKPath();
+                _preparedClipBounds.Reset();
+                _preparedClipBounds.AddRect(ctx.Destination);
+                var restore = ctx.Context.Canvas.Save();
+                ClipSmart(ctx.Context.Canvas, _preparedClipBounds);
 
-            ClipSmart(ctx.Context.Canvas, _preparedClipBounds);
+                DrawSource(ctx, source, stretch, horizontal, vertical, ImagePaint);
 
-            DrawSource(ctx, source, stretch, horizontal, vertical, ImagePaint);
-
-            ctx.Context.Canvas.RestoreToCount(restore);
+                ctx.Context.Canvas.RestoreToCount(restore);
+            }
+            else
+            {
+                DrawSource(ctx, source, stretch, horizontal, vertical, ImagePaint);
+            }
         }
     }
 
+    public bool ClipSource = true;
     object lockDraw = new();
     private bool _hasError;
     private RescaledBitmap _scaledSource;
@@ -1254,11 +1256,9 @@ public class SkiaImage : SkiaControl
     {
         base.OnLayoutChanged();
 
-        if (DrawingRect != SKRect.Empty && LoadedSource != null)
+        if (DrawingRect != SKRect.Empty && LoadSource != null)
         {
             SetAspectScale(LoadedSource.Width, LoadedSource.Height, DrawingRect, this.Aspect, RenderingScale);
-
-            CreateClippedPaintForImage();
         }
     }
 
