@@ -18,7 +18,7 @@
             Margin="8,44"
             BackgroundColor="#66000000"
             Gestures="Enabled"
-            HardwareAcceleration="Enabled"
+            RenderingMode = "Accelerated"
             HorizontalOptions="Fill"
             Tag="Warning"
             VerticalOptions="Center">

@@ -17,11 +17,7 @@ namespace Sandbox
             canvas.Translate(100, 300);
 
             // the "3D camera"
-#if SKIA3
             var view = new Sk3dView();
-#else
-            var view = new SK3dView();
-#endif
 
             // rotate to a nice 3D view
             view.RotateXDegrees(-25);
@@ -116,7 +112,7 @@ namespace Sandbox
             Canvas = new Canvas()
             {
                 Gestures = GesturesMode.Enabled,
-                HardwareAcceleration = HardwareAccelerationMode.Enabled,
+                RenderingMode = RenderingModeType.Accelerated,
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
                 BackgroundColor = Colors.Black,

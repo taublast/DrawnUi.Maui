@@ -4765,11 +4765,7 @@ namespace DrawnUi.Draw
         /// </summary>
         public Action<SKPaint, SKRect> CustomizeLayerPaint { get; set; }
 
-#if SKIA3
         public Sk3dView Helper3d;
-#else
-        public SK3dView Helper3d;
-#endif
 
         public void DrawWithClipAndTransforms(
             DrawingContext ctx,
@@ -4901,7 +4897,6 @@ namespace DrawnUi.Draw
                 draw3d = true;
 
                 Helper3d ??= new();
-#if SKIA3
                 Helper3d.Reset();
                 Helper3d.RotateXDegrees((float)RotationX);
                 Helper3d.RotateYDegrees((float)RotationY);
@@ -4909,17 +4904,6 @@ namespace DrawnUi.Draw
                 Helper3d.Translate(0, 0, (float)TranslationZ);
 
                 drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
-#else
-                Helper3d.Save();
-                Helper3d.RotateXDegrees((float)RotationX);
-                Helper3d.RotateYDegrees((float)RotationY);
-                Helper3d.RotateZDegrees(-(float)RotationZ);
-                Helper3d.TranslateZ((float)TranslationZ);
-
-                drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
-
-                Helper3d.Restore();
-#endif
 
                 draw3d = !(RotationX != 0 || RotationY != 0 || RotationZ != 0 || TranslationZ != 0);
             }

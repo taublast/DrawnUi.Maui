@@ -20,7 +20,6 @@
             x:Name="MainCanvas"
             BackgroundColor="DarkSeaGreen"
             Gestures="Enabled"
-            HardwareAcceleration="Disabled"
             HorizontalOptions="Fill"
             Tag="Main"
             VerticalOptions="Fill">

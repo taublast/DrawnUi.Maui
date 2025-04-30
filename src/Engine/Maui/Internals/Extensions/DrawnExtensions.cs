@@ -37,12 +37,7 @@ public static partial class DrawnExtensions
         builder
             .ConfigureAnimations();
 
-        builder
-#if SKIA3
-            .UseSkiaSharp();
-#else
-            .UseSkiaSharp(true);
-#endif
+        builder.UseSkiaSharp();
 
         builder.UseGestures();
 

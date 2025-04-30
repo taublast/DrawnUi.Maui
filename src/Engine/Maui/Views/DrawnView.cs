@@ -56,14 +56,8 @@ namespace DrawnUi.Views
             {
                 if (!Super.CanUseHardwareAcceleration)
                     return false;
-#if SKIA3
-                return HardwareAcceleration != HardwareAccelerationMode.Disabled;
-#else
-                return HardwareAcceleration != HardwareAccelerationMode.Disabled
-                       && !(DeviceInfo.Current.DeviceType == DeviceType.Virtual && DeviceInfo.Platform == DevicePlatform.iOS) //simulator
-                       && DeviceInfo.Platform != DevicePlatform.WinUI //no Angle yet
-                       && DeviceInfo.Platform != DevicePlatform.MacCatalyst; //bug, create GRContext returns null
-#endif
+
+                return RenderingMode != RenderingModeType.Default;
             }
         }
 
@@ -775,22 +769,6 @@ namespace DrawnUi.Views
             return Super.Screen.Density;
         }
 
-        protected void SwapToDelayed()
-        {
-            if (Delayed != null)
-            {
-                var normal = Delayed.Children[0] as SkiaView;
-                var accel = Delayed.Children[1] as SkiaViewAccelerated;
-                var kill = CanvasView;
-                kill.OnDraw = null;
-                accel.OnDraw = OnDrawSurface;
-                CanvasView = accel;
-                Delayed = null;
-
-                normal?.Disconnect();
-            }
-        }
-
         /// <summary>
         /// Will safely destroy existing if any
         /// </summary>
@@ -804,27 +782,9 @@ namespace DrawnUi.Views
 
             if (IsUsingHardwareAcceleration)
             {
-                if (HardwareAcceleration == HardwareAccelerationMode.Prerender)
-                {
-                    //create normal view, then after it has rendered 3 frames swap to the accelerated view, to avoid the blank screen when accelerated view is initializing (slow)
-                    var pre = new SkiaView(this);
-                    pre.OnDraw = OnDrawSurface;
-                    CanvasView = pre;
-                    var accel = new SkiaViewAccelerated(this);
-
-                    var content = new Grid() { };
-                    content.Children.Add(pre);
-                    content.Children.Add(accel);
-                    Content = content;
-                    Delayed = content;
-                    return;
-                }
-                else if (HardwareAcceleration == HardwareAccelerationMode.Enabled)
-                {
-                    var view = new SkiaViewAccelerated(this);
-                    view.OnDraw = OnDrawSurface;
-                    CanvasView = view;
-                }
+                var view = new SkiaViewAccelerated(this);
+                view.OnDraw = OnDrawSurface;
+                CanvasView = view;
             }
             else
             {
@@ -2066,12 +2026,6 @@ namespace DrawnUi.Views
                     }
                 }
 
-                if (HardwareAcceleration == HardwareAccelerationMode.Prerender && renderedFrames is >= 3 and < 5)
-                {
-                    //looks like we have finally loaded
-                    SwapToDelayed();
-                }
-
                 NeedMeasureDrawn = false;
             }
             catch (Exception e)
@@ -2088,28 +2042,6 @@ namespace DrawnUi.Views
                 DrawingThreads--;
             }
         }
-
-        //public static readonly BindableProperty TintColorProperty = BindableProperty.Create(nameof(TintColor),
-        //    typeof(Color), typeof(DrawnView),
-        //    Colors.Transparent,
-        //    propertyChanged: RedrawCanvas);
-
-        //public Color TintColor
-        //{
-        //    get { return (Color)GetValue(TintColorProperty); }
-        //    set { SetValue(TintColorProperty, value); }
-        //}
-
-        //public static readonly BindableProperty ClearColorProperty = BindableProperty.Create(nameof(ClearColor),
-        //    typeof(Color), typeof(DrawnView),
-        //    Colors.Transparent,
-        //    propertyChanged: RedrawCanvas);
-
-        //public Color ClearColor
-        //{
-        //    get { return (Color)GetValue(ClearColorProperty); }
-        //    set { SetValue(ClearColorProperty, value); }
-        //}
 
         public static readonly BindableProperty RenderingScaleProperty = BindableProperty.Create(nameof(RenderingScale),
             typeof(float), typeof(DrawnView),
@@ -2160,17 +2092,17 @@ namespace DrawnUi.Views
             }
         }
 
-        public static readonly BindableProperty HardwareAccelerationProperty = BindableProperty.Create(
-            nameof(HardwareAcceleration),
-            typeof(HardwareAccelerationMode),
+        public static readonly BindableProperty RenderingModeProperty = BindableProperty.Create(
+            nameof(RenderingMode),
+            typeof(RenderingModeType),
             typeof(DrawnView),
-            HardwareAccelerationMode.Disabled,
+            RenderingModeType.Default,
             propertyChanged: OnHardwareModeChanged);
 
-        public HardwareAccelerationMode HardwareAcceleration
+        public RenderingModeType RenderingMode
         {
-            get { return (HardwareAccelerationMode)GetValue(HardwareAccelerationProperty); }
-            set { SetValue(HardwareAccelerationProperty, value); }
+            get { return (RenderingModeType)GetValue(RenderingModeProperty); }
+            set { SetValue(RenderingModeProperty, value); }
         }
 
         public static readonly BindableProperty CanRenderOffScreenProperty = BindableProperty.Create(

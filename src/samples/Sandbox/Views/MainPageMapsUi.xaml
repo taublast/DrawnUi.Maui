@@ -14,7 +14,7 @@
     <draw:Canvas
         BackgroundColor="Gainsboro"
         Gestures="Enabled"
-        HardwareAcceleration="Enabled"
+        RenderingMode = "Accelerated"
         Tag="MainPage">
 
         <draw:Canvas.Resources>

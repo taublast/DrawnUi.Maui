@@ -902,8 +902,6 @@ public class Canvas : DrawnView, IGestureListener
         UpdateLocks = 1;
     }
 
-    public bool RetainedMode = false;
-
     protected override void Draw(DrawingContext context)
     {
         Context = context;
@@ -914,11 +912,10 @@ public class Canvas : DrawnView, IGestureListener
         Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
 
         var skia = Content as SkiaControl;
-        bool paintOver = !RetainedMode || skia.NeedUpdate;
 
         if (!IsGhost)
         {
-            if (RetainedMode)
+            if (RenderingMode == RenderingModeType.AcceleratedRetained)
             {
                 if (skia.NeedUpdate)
                 {

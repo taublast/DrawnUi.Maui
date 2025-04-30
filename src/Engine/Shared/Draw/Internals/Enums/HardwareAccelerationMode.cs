@@ -1,19 +1,20 @@
 ﻿namespace DrawnUi.Draw;
 
-public enum HardwareAccelerationMode
+public enum RenderingModeType
 {
     /// <summary>
-    /// Default
+    /// No hardware acceleration, lightweight and fast native renderers creation, best for static content, use cache for top layers.
     /// </summary>
-    Disabled,
+    Default,
 
     /// <summary>
-    /// Gestures attached
+    /// Will use hardware accelerated renderers. Currently Metal for Apple, GL on Android and Angle on Windows. Windows note: canvas background will be opaque.
     /// </summary>
-    Enabled,
+    Accelerated,
 
     /// <summary>
-    /// A non-accelerated view will be created first to avoid blank screen while graphic context is being initialized, then swapped with accelerated view
+    /// Experimental: will retain rendering result across frames, you can draw only changed areas over previous result.
+    /// Will use hardware accelerated renderers. Currently Metal for Apple, GL on Android and Angle on Windows. Windows note: canvas background will be opaque.
     /// </summary>
-    Prerender,
+    AcceleratedRetained
 }

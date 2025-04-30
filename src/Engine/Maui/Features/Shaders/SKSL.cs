@@ -60,11 +60,7 @@ public static class SkSl
         }
 
         string errors;
-#if SKIA3
         compiled = SKRuntimeEffect.CreateShader(shaderCode, out errors);
-#else
-        compiled = SKRuntimeEffect.Create(shaderCode, out errors);
-#endif
         if (!string.IsNullOrEmpty(errors))
         {
             ThrowCompilationError(shaderCode, errors);
@@ -114,7 +110,7 @@ public static class SkSl
         }
     }
 
-#if SKIA3
+ 
     public static SKShader CreateShader(SKRuntimeEffect compiled, SKRuntimeEffectUniforms uniforms, Dictionary<string, SKShader> textures)
     {
 
@@ -126,20 +122,7 @@ public static class SkSl
 
         return compiled.ToShader(uniforms, children); ;
     }
-#else
-    public static SKShader CreateShader(SKRuntimeEffect compiled, SKRuntimeEffectUniforms uniforms, Dictionary<string, SKShader> textures)
-    {
-
-        var children = new SKRuntimeEffectChildren(compiled);
-        foreach (var texture in textures)
-        {
-            children.Add(texture.Key, texture.Value);
-        }
-
-        return compiled.ToShader(true, uniforms, children); ;
-    }
-#endif
-
+ 
 
 
 }

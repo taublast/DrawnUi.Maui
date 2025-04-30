@@ -457,14 +457,9 @@ namespace DrawnUi.Draw
                     float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 -
                                        bounds.Top * scaleY;
 
-#if SKIA3
                     SKMatrix matrix = SKMatrix.CreateScale(scaleX, scaleY);
                     matrix = SKMatrix.Concat(matrix, SKMatrix.CreateTranslation(translateX / 2, translateY / 2));
-#else
-                    SKMatrix matrix = SKMatrix.CreateIdentity();
-                    SKMatrix.PreConcat(ref matrix, SKMatrix.CreateScale(scaleX, scaleY));
-                    SKMatrix.PreConcat(ref matrix, SKMatrix.CreateTranslation(translateX, translateY));
-#endif
+
                     stretched.Transform(matrix);
                     stretched.Offset(halfStroke, halfStroke);
 

@@ -6,9 +6,6 @@ namespace DrawnUi.Draw
     {
         public static void ConfigureHandlers(IMauiHandlersCollection handlers)
         {
-#if !SKIA3
-            handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(FixedSKGLViewRenderer));
-#endif
             handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerRetained));
 
             handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));

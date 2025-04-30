@@ -34,7 +34,7 @@
         <draw:Canvas
             BackgroundColor="Black"
             Gestures="Enabled"
-            HardwareAcceleration="Enabled"
+            RenderingMode = "Accelerated"
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 

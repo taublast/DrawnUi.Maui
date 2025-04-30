@@ -41,7 +41,7 @@ namespace Sandbox
                 WidthRequest = 210,
                 HorizontalOptions = LayoutOptions.Center,
                 Gestures = GesturesMode.Lock,
-                HardwareAcceleration = HardwareAccelerationMode.Enabled,
+                RenderingMode = RenderingModeType.Accelerated,
                 VerticalOptions = LayoutOptions.Fill,
                 HeightRequest = 250,
                 BackgroundColor = Colors.Green,

@@ -27,7 +27,6 @@ namespace Sandbox
             Canvas = new Canvas()
             {
                 Gestures = GesturesMode.Enabled,
-                HardwareAcceleration = HardwareAccelerationMode.Disabled,
 
                 VerticalOptions = LayoutOptions.Fill,
                 HorizontalOptions = LayoutOptions.Fill,

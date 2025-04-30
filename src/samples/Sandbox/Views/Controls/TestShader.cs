@@ -106,27 +106,16 @@ public class TestShader : ContentLayout
                 _uniforms = BuildUniforms(snapshot);
             }
 
-#if SKIA3
             PaintShader = _compiledShader.ToShader(_uniforms, _passTextures);
-#else
-            PaintShader = _compiledShader.ToShader(false, _uniforms, _passTextures);
-#endif
 
             ImagePaint.Shader = PaintShader;
 
-#if IOS
-            //cannot really blur in realtime on GL simulator would be like 2 fps
-            //while on Metal and M1 the blur will just not work
-            if (DeviceInfo.Current.DeviceType != DeviceType.Virtual)
-#endif
             {
                 if (snapshot != null)
                 {
                     PaintTintBackground(ctx.Context.Canvas, ctx.Destination);
 
-#if !WINDOWS && !MACCATALYST
                     ctx.Context.Canvas.DrawRect(ctx.Destination, ImagePaint);
-#endif
                 }
 
             }

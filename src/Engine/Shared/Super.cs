@@ -381,15 +381,8 @@ public partial class Super
 
     public static string UserAgent { get; set; } = "Mozilla/5.0 AppleWebKit Chrome Mobile Safari";
 
-#if SKIA3
     public static int SkiaGeneration = 3;
-#else
-    public static int SkiaGeneration = 2;
-#endif
-
-
-
-
+    
     static readonly Queue<Func<Task>> _offscreenCacheRenderingQueue = new(1024);
     private static bool _processingOffscrenRendering;
 

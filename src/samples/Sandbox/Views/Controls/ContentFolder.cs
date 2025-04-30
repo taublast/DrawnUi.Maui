@@ -268,11 +268,7 @@ public class ContentFolder : ContentLayout, ISkiaGestureListener
 
             using var paintWithShader = new SKPaint();
 
-#if SKIA3 
             paintWithShader.Shader = _compiledShader.ToShader(uniforms, _passTextures);
-#else
-            paintWithShader.Shader = _compiledShader.ToShader(false, uniforms, _passTextures);
-#endif
 
             ctx.Context.Canvas.DrawRect(ctx.Destination, paintWithShader);
         }

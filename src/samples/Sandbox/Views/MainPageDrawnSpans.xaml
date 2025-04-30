@@ -13,7 +13,7 @@
         Margin="0,32,0,0"
         BackgroundColor="White"
         Gestures="Enabled"
-        HardwareAcceleration="Enabled"
+        RenderingMode = "Accelerated"
         HorizontalOptions="Fill"
         Tag="MainPage"
         VerticalOptions="Fill">

@@ -28,7 +28,7 @@
         Margin="0,32,0,0"
         x:DataType="demo:MockChatViewModel"
         Gestures="Enabled"
-        HardwareAcceleration="Enabled"
+        RenderingMode = "Accelerated"
         HeightRequest="500"
         HorizontalOptions="Fill"
         VerticalOptions="Start">

@@ -17,7 +17,7 @@
             <draw:Canvas
                 BackgroundColor="DarkSlateBlue"
                 Gestures="Lock"
-                HardwareAcceleration="Enabled"
+                RenderingMode = "Accelerated"
                 HorizontalOptions="Fill">
 
                 <draw:SkiaLayout

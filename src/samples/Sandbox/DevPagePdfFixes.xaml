@@ -9,7 +9,7 @@
     <draw:Canvas
         BackgroundColor="Gray"
         Gestures="Enabled"
-        HardwareAcceleration="Enabled"
+        RenderingMode = "Accelerated"
         HorizontalOptions="Fill"
         Tag="Main"
         VerticalOptions="Fill">

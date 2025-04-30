@@ -20,7 +20,7 @@
     <draw:Canvas
         BackgroundColor="Black"
         Gestures="Enabled"
-        HardwareAcceleration="Enabled"
+        RenderingMode = "Accelerated"
         HorizontalOptions="Fill"
         Tag="MainPage"
         VerticalOptions="Fill">

@@ -92,18 +92,10 @@ public class ScrollPickerWheel : SkiaLayout, ILayoutInsideViewport
                 control.Helper3d = new();
             }
 
-#if SKIA3
             control.Helper3d.Reset();
             control.Helper3d.RotateXDegrees(childViewAngle);
             control.Helper3d.Translate(0, 0, zDepth);
             var applyMatrix = control.Helper3d.Matrix;
-#else
-            control.Helper3d.Save();
-            control.Helper3d.RotateXDegrees(childViewAngle);
-            control.Helper3d.TranslateZ(zDepth);
-            var applyMatrix = control.Helper3d.Matrix;
-            control.Helper3d.Restore();
-#endif
 
             var saved = ctx.Context.Canvas.Save();
 

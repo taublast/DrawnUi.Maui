@@ -18,7 +18,7 @@
         VerticalOptions="FillAndExpand">
 
         <draw:Canvas
-            HardwareAcceleration="Enabled"
+            RenderingMode = "Accelerated"
             Margin="32,64"
             BackgroundColor="#66000000"
             Gestures="Enabled"

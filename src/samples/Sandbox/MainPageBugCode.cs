@@ -46,7 +46,7 @@ public class MainPageBugCode : BasePageReloadable
         Canvas = new Canvas()
         {
             Gestures = GesturesMode.Enabled,
-            HardwareAcceleration = HardwareAccelerationMode.Enabled,
+            RenderingMode = RenderingModeType.Accelerated,
 
             VerticalOptions = LayoutOptions.Start,
             HorizontalOptions = LayoutOptions.Fill,

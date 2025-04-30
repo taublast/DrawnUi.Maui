@@ -123,14 +123,7 @@
 
         }
 
-
-
-#if SKIA3
         public Sk3dView Helper3d;
-#else
-        public SK3dView Helper3d;
-#endif
-
 
     }
 

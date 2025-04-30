@@ -14,7 +14,7 @@
 
     <draw:Canvas
         Gestures="Enabled"
-        HardwareAcceleration="Enabled"
+        RenderingMode = "Accelerated"
         Tag="MainPage">
 
         <draw:SkiaLayout

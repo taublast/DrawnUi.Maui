@@ -20,7 +20,7 @@
 
     <draw:DrawnView
         BackgroundColor="Blue"
-        HardwareAcceleration="Enabled"
+        RenderingMode = "Accelerated"
         HorizontalOptions="Fill"
         Tag="MainPage"
         UpdateMode="Constant"
@@ -31,7 +31,7 @@
         x:Name="MainCanvas"
         Margin="0,0,0,32"
         BackgroundColor="Blue"
-        HardwareAcceleration="Enabled"
+        RenderingMode = "Accelerated"
         HorizontalOptions="Fill"
         Tag="MainPage"
         VerticalOptions="Fill">

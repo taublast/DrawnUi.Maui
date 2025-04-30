@@ -16,7 +16,7 @@
         <draw:Canvas
             BackgroundColor="DarkSlateBlue"
             Gestures="Enabled"
-            HardwareAcceleration="Enabled"
+            RenderingMode = "Accelerated"
             HorizontalOptions="Fill"
             Tag="Main"
             VerticalOptions="Fill">
