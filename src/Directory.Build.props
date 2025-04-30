@@ -3,18 +3,6 @@
     <!--For All-->
 
     <PropertyGroup>
-        <Version>1.5.0.1</Version>
-        <Authors>Nick Kovalsky aka AppoMobi</Authors>
-        <Copyright>(c) AppoMobi, 2023 - present day</Copyright>
-        <PackageProjectUrl>https://github.com/taublast/DrawnUi</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/taublast/DrawnUi</RepositoryUrl>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryType>git</RepositoryType>
-        <IncludeSymbols>true</IncludeSymbols>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    </PropertyGroup>
-
-    <PropertyGroup>
         <DefineConstants>$(DefineConstants);SKIA3</DefineConstants>
     </PropertyGroup>
 

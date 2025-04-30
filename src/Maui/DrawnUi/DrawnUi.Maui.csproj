@@ -73,6 +73,8 @@
         <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1" />
         <PackageReference Include="SkiaSharp.Skottie" Version="3.116.1" />
         <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
+
+        <!--todo move used code here-->
         <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.9.2-pre" />
 
         <!--MIT open source-->

@@ -7,7 +7,6 @@
         <Description>Base class for implementing a game with SkiaSharp in .NET MAUI</Description>
         <PackageTags>maui drawnui skia skiasharp draw game</PackageTags>
         <Packable>true</Packable>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <CreatePackage>false</CreatePackage>
     </PropertyGroup>
 
