@@ -14,143 +14,94 @@ The base layout control for measurement, arrangement, and rendering of child ele
 - Performance optimizations (see below)
 
 ```xml
-<DrawUi:SkiaLayout
+<draw:SkiaLayout
     LayoutType="Absolute"
     WidthRequest="400"
     HeightRequest="300">
     <!-- Child controls here -->
-</DrawUi:SkiaLayout>
-```
-
-### ContentLayout
-
-A specialized layout for hosting a single content element with optional overlays.
-
-```xml
-<DrawUi:ContentLayout>
-    <DrawUi:SkiaImage Source="background.png" />
-</DrawUi:ContentLayout>
+</draw:SkiaLayout>
 ```
 
 ## Layout Types
 
 The `LayoutType` property on `SkiaLayout` supports:
 
-- **Absolute**: Free positioning using explicit coordinates
-- **Grid**: Row and column-based layout
-- **Column**: Vertical stacking (like VStack)
-- **Row**: Horizontal stacking (like HStack)
-- **Wrap**: Items wrap to new lines when space runs out
+- **Absolute**: Free positioning, default. Think of it like a MAUI Grid with a single column and a single row.
+- **Grid**: Row and column-based layout, classic MAUI Grid.
+- **Column**: Vertical stacking (like MAUI VerticalStackLayout)
+- **Row**: Horizontal stacking (like MAUI HorizontalStackLayout)
+- **Wrap**: Items wrap to new lines when space runs out (similar to WPF Stackpanel)
 
 ```xml
-<DrawUi:SkiaLayout LayoutType="Wrap" Spacing="5,5">
-    <DrawUi:SkiaLabel Text="Item 1" />
-    <DrawUi:SkiaLabel Text="Item 2" />
+<draw:SkiaLayout LayoutType="Wrap" Spacing="5,5">
+    <draw:SkiaLabel Text="Item 1" />
+    <draw:SkiaLabel Text="Item 2" />
     <!-- More items -->
-</DrawUi:SkiaLayout>
+</draw:SkiaLayout>
 ```
 
 ## Specialized Layout Controls
 
-### InfiniteLayout
+### ContentLayout
 
-Provides infinite scrolling in horizontal, vertical, or both directions.
-
-```xml
-<DrawUi:InfiniteLayout ScrollOrientation="Both">
-    <DrawUi:SkiaImage Source="large_map.png" />
-</DrawUi:InfiniteLayout>
-```
+A specialized layout for hosting a single content element is `ContentLayout`, `SkiaShape` is subclassing it to be able to contain a single child inside a `Content` property, instead of using `Children`.
 
 ### SnappingLayout
 
-Supports snap points for controlled scrolling, ideal for carousels or paginated interfaces.
-
-```xml
-<DrawUi:SnappingLayout Orientation="Horizontal">
-    <DrawUi:SkiaLabel Text="Page 1" />
-    <DrawUi:SkiaLabel Text="Page 2" />
-    <DrawUi:SkiaLabel Text="Page 3" />
-</DrawUi:SnappingLayout>
-```
-
-## Performance Optimization
-
-The layout system is designed for performance:
-
-### Measurement Strategies
-
-Control how and when items are measured using the `MeasureItemsStrategy` property:
-
-- **MeasureFirst**: Measures all items before rendering (good for static content)
-- **MeasureAll**: Continuously measures all items (for dynamic content)
-- **MeasureVisible**: Only measures visible items (most efficient for large collections)
-
-```xml
-<DrawUi:SkiaLayout
-    MeasureItemsStrategy="MeasureVisible">
-    <!-- Child controls -->
-</DrawUi:SkiaLayout>
-```
-
-> **Note:** Data templating and collection binding (e.g., `ItemsSource`, `ItemTemplate`) are not currently available as direct properties in SkiaLayout. If you need dynamic content, you must add/remove child controls programmatically.
-
-### Virtualization
-
-Virtualization is handled internally by the measurement strategy. When using `MeasureVisible`, only visible items are measured and rendered, improving performance for large collections.
+Supports snap points for controlled scrolling, ideal for carousels or paginated interfaces. `SkiaDrawer`, `SkiaCarousel` are deriving from it.
 
 ## Example: Creating a Grid Layout
 
 ```xml
-<DrawUi:SkiaLayout LayoutType="Grid" 
+<draw:SkiaLayout LayoutType="Grid" 
     ColumnDefinitions="Auto,*,100" 
     RowDefinitions="Auto,*,50">
     <!-- Header spanning all columns -->
-    <DrawUi:SkiaLabel 
+    <draw:SkiaLabel 
         Text="Grid Header" 
         Column="0" 
         ColumnSpan="3"
         Row="0" 
         HorizontalOptions="Center" />
     <!-- Sidebar -->
-    <DrawUi:SkiaLayout 
+    <draw:SkiaLayout 
         LayoutType="Column" 
         Column="0" 
         Row="1" 
         RowSpan="2"
         BackgroundColor="LightGray"
         Padding="10">
-        <DrawUi:SkiaLabel Text="Menu Item 1" />
-        <DrawUi:SkiaLabel Text="Menu Item 2" />
-        <DrawUi:SkiaLabel Text="Menu Item 3" />
-    </DrawUi:SkiaLayout>
+        <draw:SkiaLabel Text="Menu Item 1" />
+        <draw:SkiaLabel Text="Menu Item 2" />
+        <draw:SkiaLabel Text="Menu Item 3" />
+    </draw:SkiaLayout>
     <!-- Main content -->
-    <DrawUi:ContentLayout 
+    <draw:ContentLayout 
         Column="1" 
         Row="1">
-        <DrawUi:SkiaLabel 
+        <draw:SkiaLabel 
             Text="Main Content Area" 
             HorizontalOptions="Center" 
             VerticalOptions="Center" />
-    </DrawUi:ContentLayout>
+    </draw:ContentLayout>
     <!-- Right panel -->
-    <DrawUi:SkiaLayout 
+    <draw:SkiaLayout 
         LayoutType="Column" 
         Column="2" 
         Row="1"
         BackgroundColor="LightBlue"
         Padding="5">
-        <DrawUi:SkiaLabel Text="Panel Info" />
-    </DrawUi:SkiaLayout>
+        <draw:SkiaLabel Text="Panel Info" />
+    </draw:SkiaLayout>
     <!-- Footer spanning columns 1-2 -->
-    <DrawUi:SkiaLabel 
+    <draw:SkiaLabel 
         Text="Footer" 
         Column="1" 
         ColumnSpan="2"
         Row="2" 
         HorizontalOptions="Center"
         VerticalOptions="Center" />
-</DrawUi:SkiaLayout>
+</draw:SkiaLayout>
 ```
 
 All grid functionality is handled by SkiaLayout with `LayoutType="Grid"`.

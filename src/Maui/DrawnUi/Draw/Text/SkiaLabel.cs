@@ -1713,11 +1713,6 @@ namespace DrawnUi.Draw
                             break;
                         }
 
-
-
-
-
-
                     }
                     else
                     {

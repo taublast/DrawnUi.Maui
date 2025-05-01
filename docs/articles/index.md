@@ -1,5 +1,7 @@
 # Articles
 
+__NOTE: this is under heavy construction AND NOT READY TO USE YET, may contain some outdated or non-exact information!!!.__  
+
 This section contains documentation articles and guides for using DrawnUi.
 
 ## Getting Started

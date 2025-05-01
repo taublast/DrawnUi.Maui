@@ -115,7 +115,7 @@ public class SkiaSwitch : SkiaToggle
     {
         SetDefaultContentSize(46, 28);
 
-        ExpandDirtyRegion = new (5, 6);
+        ExpandDirtyRegion = new(5, 6);
 
         Children = new List<SkiaControl>()
         {
@@ -164,26 +164,27 @@ public class SkiaSwitch : SkiaToggle
 
     protected virtual void CreateWindowsStyleContent()
     {
-        SetDefaultContentSize(44, 20);
+        SetDefaultContentSize(48, 22);
 
         // Windows style is more squared
         var shape = new SkiaShape
         {
             Tag = "Frame",
             Type = ShapeType.Rectangle,
-            CornerRadius = 10,
+            CornerRadius = 12,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
-            UseCache = SkiaCacheType.Operations
+            UseCache = SkiaCacheType.Operations,
+            StrokeColor = Color.Parse("#767676"),
+            StrokeWidth = 2.5
         };
         this.AddSubView(shape);
 
         this.AddSubView(new SkiaShape()
         {
+            Margin = 5.5,
             UseCache = SkiaCacheType.Operations,
-            Type = ShapeType.Rectangle,
-            CornerRadius = 8,
-            Margin = 2,
+            Type = ShapeType.Circle,
             LockRatio = -1,
             Tag = "Thumb",
             HorizontalOptions = LayoutOptions.Start,
@@ -195,9 +196,9 @@ public class SkiaSwitch : SkiaToggle
         this.AddSubView(hotspot);
 
         // Windows default colors
-        ColorFrameOff = Color.FromRgba(153, 153, 153, 255);
+        ColorFrameOff = Color.Parse("#767676");
         ColorFrameOn = Color.FromRgba(0, 120, 215, 255);
-        ColorThumbOff = Colors.White;
+        ColorThumbOff = Color.Parse("#767676");
         ColorThumbOn = Colors.White;
     }
 
@@ -210,6 +211,11 @@ public class SkiaSwitch : SkiaToggle
             Thumb.TranslationX = GetThumbPosForOn();
             Thumb.BackgroundColor = this.ColorThumbOn;
             Track.BackgroundColor = this.ColorFrameOn;
+
+            if (ControlStyle == PrebuiltControlStyle.Windows)
+            {
+                Track.StrokeColor = ColorFrameOn;
+            }
         }
     }
 
@@ -219,7 +225,16 @@ public class SkiaSwitch : SkiaToggle
         {
             Thumb.TranslationX = GetThumbPosForOff();
             Thumb.BackgroundColor = this.ColorThumbOff;
-            Track.BackgroundColor = this.ColorFrameOff;
+
+            if (ControlStyle == PrebuiltControlStyle.Windows)
+            {
+                Track.BackgroundColor = Colors.Transparent;
+                Track.StrokeColor = ColorFrameOff;
+            }
+            else
+            {
+                Track.BackgroundColor = this.ColorFrameOff;
+            }
         }
     }
 
@@ -239,17 +254,6 @@ public class SkiaSwitch : SkiaToggle
         FindViews();
     }
 
-    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
-    {
-        if (args.Type == TouchActionResult.Tapped)
-        {
-            IsToggled = !IsToggled;
-            return this;
-        }
-
-        return base.ProcessGestures(args, apply);
-    }
-
     public override void ApplyProperties()
     {
         if (IsToggled)
@@ -261,8 +265,6 @@ public class SkiaSwitch : SkiaToggle
             ApplyOff();
         }
     }
-
-
 
     #region ANIMATE
 

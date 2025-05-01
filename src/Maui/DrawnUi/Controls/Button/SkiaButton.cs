@@ -205,15 +205,13 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         BackgroundColor = Color.FromRgba(0, 120, 215, 255); // Windows blue
 
-        // Windows uses very subtle shadows and squarer corners
         var frame = new SkiaShape
         {
             Tag = "BtnShape",
-            CornerRadius = 3,  
+            CornerRadius = 4,  
             HorizontalOptions = LayoutOptions.Fill,
             IsClippedToBounds = true,
             VerticalOptions = LayoutOptions.Fill,
-            // Windows has very subtle shadow
             Shadows = new List<SkiaShadow>()
             {
                 new SkiaShadow

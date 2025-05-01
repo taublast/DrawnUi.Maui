@@ -186,8 +186,8 @@ public class SkiaCheckbox : SkiaToggle
             Tag = "FrameOff",
             StrokeWidth = 1,
             Type = ShapeType.Rectangle,
-            CornerRadius = 0, // Square corners for Windows
-            StrokeColor = Color.FromRgba(153, 153, 153, 255), // Windows gray
+            CornerRadius = 0,  
+            StrokeColor = Color.Parse("#767676"),
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
         });
@@ -342,16 +342,6 @@ public class SkiaCheckbox : SkiaToggle
         }
     }
 
-    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
-    {
-        if (args.Type == TouchActionResult.Tapped)
-        {
-            IsToggled = !IsToggled;
-            return this;
-        }
-
-        return base.ProcessGestures(args, apply);
-    }
 
     public static readonly BindableProperty ColorCheckOnProperty = BindableProperty.Create(
         nameof(ColorCheckOn),

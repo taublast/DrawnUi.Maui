@@ -9,17 +9,35 @@ This guide will help you get started with DrawnUi in your .NET MAUI application.
 Install the DrawnUi NuGet package in your .NET MAUI project:
 
 ```bash
-dotnet add package DrawnUi
+dotnet add package AppoMobi.Maui.DrawnUi
 ```
 
-Or via the NuGet Package Manager in Visual Studio.
+You might also need at least the following MAUI setup inside your csproj:
+
+```
+	<PropertyGroup>
+        <WindowsPackageType>MSIX</WindowsPackageType>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
+	</PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.30" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.30" />
+    </ItemGroup>
+
+```
+
 
 ### 2. Initialize in Your MAUI App
 
 Update your `MauiProgram.cs` file to initialize DrawnUi:
 
 ```csharp
-using DrawnUi;
+using DrawnUi.Draw;
 
 public static class MauiProgram
 {
@@ -28,7 +46,7 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
-            .UseDrawnUi() // Add this line
+            .UseDrawnUi() // <---- Add this line
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -39,8 +57,6 @@ public static class MauiProgram
     }
 }
 ```
-
-## using DrawnUi Controls
 
 ### Add Namespace to XAML
 
