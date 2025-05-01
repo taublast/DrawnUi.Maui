@@ -578,7 +578,7 @@ public class Canvas : DrawnView, IGestureListener
                 }
             }
 
-            if (args.Type == TouchActionResult.Down)
+            if (args.Type == TouchActionResult.Up)
             {
                 if (HadInput.Count > 0)
                 {
