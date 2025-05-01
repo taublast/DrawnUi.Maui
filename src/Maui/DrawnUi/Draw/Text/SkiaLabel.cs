@@ -1662,6 +1662,12 @@ namespace DrawnUi.Draw
                                 //remove one last character to maybe fit?
                                 var chunk = textLine.Substring(posInsideWord, lenInsideWord - 1);
 
+                                if (string.IsNullOrEmpty(chunk))
+                                {
+                                    needBreak = true;
+                                    break;
+                                }
+
                                 width = MeasureLineGlyphs(paint, chunk, needsShaping, scale).Width;
 
                                 var pass = textLine;
