@@ -149,7 +149,7 @@
 
                                 <draw:SkiaSwitch ControlStyle="Cupertino" VerticalOptions="Center" />
                                 <draw:SkiaCheckbox ControlStyle="Cupertino" VerticalOptions="Center" />
-                                <!--<draw:SkiaButton ControlStyle="Cupertino" Text="Button" />-->
+                                <draw:SkiaButton ControlStyle="Cupertino" Text="Button" />
 
                             </draw:SkiaLayout>
 
@@ -185,7 +185,7 @@
 
                                 <draw:SkiaSwitch ControlStyle="Material" VerticalOptions="Center" />
                                 <draw:SkiaCheckbox ControlStyle="Material" VerticalOptions="Center" />
-                                <!--<draw:SkiaButton ControlStyle="Material" Text="Button" />-->
+                                <draw:SkiaButton ControlStyle="Material" Text="Button" />
 
                             </draw:SkiaLayout>
 
@@ -221,7 +221,7 @@
 
                                 <draw:SkiaSwitch ControlStyle="Windows" VerticalOptions="Center" />
                                 <draw:SkiaCheckbox ControlStyle="Windows" VerticalOptions="Center" />
-                                <!--<draw:SkiaButton ControlStyle="Windows" Text="Button" />-->
+                                <draw:SkiaButton ControlStyle="Windows" Text="Button" />
 
                             </draw:SkiaLayout>
 

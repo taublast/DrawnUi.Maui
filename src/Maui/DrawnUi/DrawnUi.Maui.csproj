@@ -70,19 +70,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1" />
-        <PackageReference Include="SkiaSharp.Skottie" Version="3.116.1" />
-        <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.Skottie" Version="3.119.0" />
+        <PackageReference Include="Svg.Skia" Version="3.0.0" />
 
         <!--todo move used code here-->
-        <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.9.2-pre" />
+        <PackageReference Include="AppoMobi.Maui.Navigation" Version="1.9.3-pre" />
 
         <!--MIT open source-->
         <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.7" />
         <!--MIT open source .net helpers and extensions-->
         <PackageReference Include="AppoMobi.Specials" Version="9.0.3" />
         <!--parsing markdown text-->
-        <PackageReference Include="Markdig" Version="0.34.0" />
+        <PackageReference Include="Markdig" Version="0.41.1" />
         <!--caching bitmaps etc-->
         <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
     </ItemGroup>
@@ -90,7 +90,7 @@
     <!--ANDROID ONLY-->
     <ItemGroup Condition="$(TargetFramework.Contains('android')) == true">
         <!--fix android bad alignement-->
-        <PackageReference Include="HarfBuzzSharp" Version="8.3.0.1" />
+        <PackageReference Include="HarfBuzzSharp" Version="8.3.1.1" />
         <!--native interop todo expose source-->
         <PackageReference Include="AppoMobi.Maui.Native" Version="1.0.1.0-pre" />
     </ItemGroup>

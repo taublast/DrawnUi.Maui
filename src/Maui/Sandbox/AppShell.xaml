@@ -6,7 +6,7 @@
     xmlns:mauiNet8="clr-namespace:MauiNet8"
     xmlns:sandbox="clr-namespace:Sandbox"
     xmlns:views="clr-namespace:Sandbox.Views"
-    Title="MauiApp1"
+    Title="DrawnUI for .NET MAUI"
     Shell.FlyoutBehavior="Disabled">
 
     <ShellContent
