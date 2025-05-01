@@ -16,11 +16,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
         
     - name: Install MAUI workload
       run: dotnet workload install maui
       
     - name: Build
-      run: dotnet build src\Engine\DrawnUi.Maui.csproj
+      run: dotnet build src\Engine\Maui\DrawnUi.Maui.csproj
      

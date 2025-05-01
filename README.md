@@ -775,7 +775,3 @@ Video: https://www.youtube.com/watch?v=JQkJhXR9IMY
 * SkiaLayout received gestures events for easier use without subclassing. `ChildTapped`, `Tapped`. SkiaShape now has them too.
 * Gestures tuned to avoid false-taps when swiping.
 * Many fixes and new features here and there.
-
-
-
-
