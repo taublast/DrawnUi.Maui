@@ -168,8 +168,16 @@ namespace DrawnUi.Views
         protected override void OnDestroyingContext()
         {
             base.OnDestroyingContext();
+            foreach (var surface in _trashBag.Keys.ToList())
+            {
+                if (_trashBag.TryRemove(surface, out _))
+                {
+                    surface.Dispose();
+                }
+            }
 
-            //lock (_surfaceLock)
+            //without this we'll fall into gpu backbuffer still using this context
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(2500), () =>
             {
                 renderTarget?.Dispose();
 
@@ -177,15 +185,6 @@ namespace DrawnUi.Views
 
                 _retainedSurface?.Dispose();
                 _retainedSurface = null;
-
-                // Dispose all remaining surfaces in the trash bag
-                foreach (var surface in _trashBag.Keys.ToList())
-                {
-                    if (_trashBag.TryRemove(surface, out _))
-                    {
-                        surface.Dispose();
-                    }
-                }
 
                 _context?.AbandonContext(false);
                 _context?.Dispose();
@@ -196,7 +195,8 @@ namespace DrawnUi.Views
 
                 _lastSize = default;
                 _needsFullRedraw = true;
-            }
+
+            });
         }
     }
 }
