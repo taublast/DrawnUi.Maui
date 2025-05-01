@@ -1,24 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <UseNet9>true</UseNet9>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(UseNet9)' == 'true'">
     <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst;</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0;</TargetFrameworks>
       <ApplicationId>com.companyname.sandbox3</ApplicationId>
         <ApplicationIdGuid>330e07b0-ebc2-4fde-9ac8-074d5c3269b3</ApplicationIdGuid>
       <ApplicationTitle>Sandbox v3</ApplicationTitle>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(UseNet9)' != 'true'">
-        <TargetFrameworks>net8.0-android34.0;net8.0-ios17.0;net8.0-maccatalyst17.0;</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0;</TargetFrameworks>
-        <ApplicationId>com.companyname.sandbox2</ApplicationId>
-        <ApplicationIdGuid>230e07b0-ebc2-4fde-9ac8-074d5c3269b3</ApplicationIdGuid>
-        <ApplicationTitle>Sandbox</ApplicationTitle>
-        <NoWarn>$(NoWarn);NU1605</NoWarn>
     </PropertyGroup>
 
 	<PropertyGroup>
@@ -29,13 +16,6 @@
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-        <!--<WarningsAsErrors>CS0108</WarningsAsErrors>-->
-
-		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-        <Version>1</Version>
-		<ApplicationVersion>1</ApplicationVersion>
-
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -43,7 +23,6 @@
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
         <AssemblyName>$(MSBuildProjectName)</AssemblyName>
 	</PropertyGroup>
-
 
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Maui" Version="10.0.0" />
@@ -81,10 +60,7 @@
   <PropertyGroup Condition="$(TargetFramework.Contains('ios')) == true">
     <ProvisioningType>manual</ProvisioningType>
   </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
-  </PropertyGroup>  
+
 
   <ItemGroup>
 
@@ -197,12 +173,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	</ItemGroup>
- 
-    <!--for development-->
-    <ItemGroup Condition="'$(UseNuget)' != 'true'">
-
-    </ItemGroup>
-
 
     <ItemGroup>
  
@@ -212,27 +182,7 @@
       </EmbeddedResource>
     
     </ItemGroup>
- 
 
-
-    <ItemGroup Condition="'$(UseNet9)' != 'true'">
-
-        <Compile Remove="Views\Controls\Shaders\**" />
-    <Compile Remove="Views\Controls\ShaderTransition.cs" />
-      <Compile Remove="Views\MainPageShadersCarousel.xaml.cs" />
-      <MauiXaml Remove="Views\MainPageShadersCarousel.xaml" />
-    <Compile Remove="Views\MainPageShaderRipples.xaml.cs" />
-    <MauiXaml Remove="Views\MainPageShaderRipples.xaml" />
-    <Compile Remove="Views\MainPageShader.xaml.cs" />
-    <MauiXaml Remove="Views\MainPageShader.xaml" />
-    <Compile Remove="MainPageDev.xaml.cs" />
-    <MauiXaml Remove="MainPageDev.xaml" />
-    <Compile Remove="MainPageDev2.xaml.cs" />
-    <MauiXaml Remove="MainPageDev2.xaml" />
-
-    </ItemGroup>
-
- 
 
   <ItemGroup>
     <MauiAsset Update="Resources\Raw\Images\glass2.jpg">
