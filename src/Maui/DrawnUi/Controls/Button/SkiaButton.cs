@@ -72,11 +72,9 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                     IsPressed = true;
                     return this;
                 }
-                if (parameters.Type == TouchActionResult.Up)
-                {
-                    IsPressed = false;
-                }
-                
+
+                IsPressed = false;
+
                 return null;
             };
 
