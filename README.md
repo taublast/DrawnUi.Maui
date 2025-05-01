@@ -1,40 +1,21 @@
 # DrawnUI for .NET MAUI
-![License](https://img.shields.io/github/license/taublast/DrawnUi.Maui.svg)
+![License](https://img.shields.io/github/license/taublast/DrawnUi.svg)
 ![NuGet Version](https://img.shields.io/nuget/v/AppoMobi.Maui.DrawnUi.svg)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/AppoMobi.Maui.DrawnUi.svg)
 
-Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. 
-Create and render your custom controls on a hardware-accelerated Skia canvas with an improved common MAUI layout system.
-
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
+
+To replace native controls with with just one native view - the Canvas! 🤩
+
+Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. 
+Create and render your custom controls on a hardware-accelerated Skia canvas with an improved MAUI/WPF-like layout system.
 
 * To use inside a usual MAUI app, consume drawn controls here and there inside `Canvas` views.
 * Create a totally drawn app with just one `Canvas` as root view, `SkiaShell` is provided for navigation.
 * Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas.
-* Free to use under the MIT license, a nuget package is available.
-* A Light [version for Xamarin](https://github.com/taublast/DrawnUi.Xamarin) is there too.
+* Free to use and modify under the MIT license, a nuget package is available.
 
-_The current development state is __ALPHA__, features remain to be implemented, documentation incoming._
-
-## What's Up
-
-* Currently working on a new totally drawn commercial app, no XAML at all, still MVVM, just code-behind with C# HotReload and custom fluent extensions, along with custom binding mechanics.
-* Working on docs, in progress, AI helps much here, the first release will come out after the new drawn app gets finished.
-* Working on a more (current is retained, but still) retained rendering pipeline, the priority is on top of all other new feats.
-* A Blazor version will be out this year.
-
-## What's New In This Version
-
-New nugets: for NET 9 you need version not lower than 1.3.x.  
-For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
-
-### Nuget 1.4.0.5
-_for SkiaSharp 3.116.1 NET 9_
-* Improved crash-free hardware-accelerated handler for WIndows.
-* `Backdrop` blur scale fix.
-* Few small fixes and improvements.
-
-___Please star ⭐ if you like it, helps very much!___
+_The current development state is __ALPHA__, features remain to be implemented, documentation is being worked on._
 
 ## Features
 
@@ -49,8 +30,14 @@ ___Please star ⭐ if you like it, helps very much!___
 * __Optimized for performance__, rendering only visible elements, recycling templates etc
 * __Navigate__ on canvas using MAUI familiar Shell techniques 
 * __Designed for YOU to create your drawn controls__ with ease !
-* __Port existing native controls to be drawn__ - easy as a pie!
-* __Shipped with pre-built contols:__	
+* __Port existing native controls to be drawn!__
+
+___Please star ⭐ if you like it!___
+
+ 
+## Shipped With
+
+* __Base drawn controls__
 	* __SkiaControl__ Your lego brick to create anything
 	* __SkiaShape__ Path, Rectangle, Circle, Ellipse, Gauge etc, can wrap other elements to be clipped inside
 	* __SkiaLabel__, multiline with many options like dropshadow, gradients etc
@@ -61,7 +48,9 @@ ___Please star ⭐ if you like it, helps very much!___
 	* __SkiaHotspot__ to handle gestures in a lazy way
 	* __SkiaBackdrop__ to apply effects to background below, like blur etc
 	* __SkiaMauiElement__ to embed maui controls in your canvas
-	* __SkiaScrollLooped__ for neverending scrolls
+
+* __Derived custom controls__
+	* __SkiaScrollLooped__ a subclassed `SkiaScroll` for neverending scrolls
 	* __RefreshIndicator__ can use lottie and anything for your scroll refresh view
     * __SkiaDrawer__ to swipe in and out your controls
 	* __SkiaCarousel__ swipe and slide controls inside a carousel
@@ -77,7 +66,7 @@ ___Please star ⭐ if you like it, helps very much!___
 	* __SkiaSlider__ incuding range selction capability
 	* __SkiaHoverMask__ to overlay a clipping shape
 	* __SkiaLabelFps__ for developement
-	* __Create your own!__ 
+	* __Create your own!__      
 
 * Animated Effects
 	* __Ripple__
@@ -103,11 +92,6 @@ ___Please star ⭐ if you like it, helps very much!___
 * Keyboard support for desktop platforms.
   	* Not just accelerators, but full keyboard support, usage example inside __SpaceShooter__ game below. :)
 
-
-## About
-
-[A small article](https://taublast.github.io/posts/MauiJuly/) about the library and why it was created
-
 ## Demo Apps
 
 * This repo includes a Sandbox project for some custom controls, with playground examples, custom controls, maps etc
@@ -117,12 +101,13 @@ ___Please star ⭐ if you like it, helps very much!___
 * [Shaders Carousel Demo](https://github.com/taublast/ShadersCarousel/) featuring SkiaSharp v3 capabilities
 * For production published apps list - scroll to bottom!
 
- [ShaderEffect.webm](https://github.com/taublast/DrawnUi.Maui/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
+ [ShaderEffect.webm](https://github.com/taublast/DrawnUi/assets/25801194/47c97290-e16b-4928-bfa4-8b29fb0ff8e1)
 
 V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`, `IStateEffect` and `IPostRendererEffect` when compiled for SkiaSharp v3 preview.
 
  ## Development Notes
 
+ * .NET 9 only, Maui.Controls 9.0.30 minimum.
 * All files to be consumed (images etc) must be placed inside the MAUI app Resources/Raw folder, subfolders allowed. If you need to load from the native app folder use prefix "file://".
 * By default the main branch should be targeting NET 9 and use SkiaSharp v3.
  * To be able to use hardware accelerated Windows canvas with NET 9 you need to [pack your Windows project as MSIX](https://learn.microsoft.com/en-us/dotnet/maui/windows/setup?view=net-maui-9.0). In visua studio this might create a situation (until it's fixed) when you need to hit Build every time you change your code and only then hit Run, otherwise VS will run the previous package.
@@ -131,15 +116,26 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 
 ## Installation
 
-Install the package __AppoMobi.Maui.DrawnUi__ from NuGet, please install stable versions only. For NET 9 you need versions not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x.
+Install the package __AppoMobi.Maui.DrawnUi__ from NuGet, please install stable versions only.  
+For NET 9 you need versions not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x. but they are not updated any more, we stick with .NET 9, looking at upcoming .NET 10.
 
-In case of NET 9 you might need at least the following maui versions inside your csproj:
+You might also need at least the following MAUI setup inside your csproj:
 
 ```
+	<PropertyGroup>
+        <WindowsPackageType>MSIX</WindowsPackageType>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
+	</PropertyGroup>
+    
     <ItemGroup>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.22" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.22" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.30" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.30" />
     </ItemGroup>
+
 ```
 
 After that initialize the library inside your MauiProgram.cs file:
@@ -148,7 +144,7 @@ After that initialize the library inside your MauiProgram.cs file:
 builder.UseDrawnUi();
 ```
 
-## ___Docs are under construction!___
+## ___Docs are under construction, already working on!___
 
 ## Quick Start
 
@@ -178,7 +174,7 @@ As you can see in this example the Maui view `Canvas` will adapt its size to dra
 
 #### Code behind
 
-Can use basic [FluentExtensions](https://github.com/taublast/DrawnUi.Maui/blob/main/src/Engine/Internals/Extensions/FluentExtensions.cs) will be adding more
+Can use basic [FluentExtensions](https://github.com/taublast/DrawnUi/blob/main/src/Engine/Internals/Extensions/FluentExtensions.cs) will be adding more
 
 ```csharp
             Canvas = new Canvas()
@@ -672,8 +668,6 @@ You can also apply a gradient to your svg, either like to any control with a Vis
 UseGradient, StartXRatio, EndXRatio, StartYRatio, EndYRatio, StartColor, EndColor, GradientBlendMode
 
 
-
-
 ### `SkiaLabel`
 
 A multi-line label fighting for his place under the sun.
@@ -745,6 +739,16 @@ It will render a mask over its children when hovered, think of it as an inverted
 
 ## Published Apps powered by DrawnUI For .Net MAUI
 
+### Bug ID: Insect Identifier AI
+
+_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
+
+GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
+
+__Oops app API might be down, no control over it! But no worries, watch the video, link below:__
+
+Video: https://www.youtube.com/watch?v=5QIaM0xsLbA
+
 ### Racebox
 
 _MAUI pages with canvases, custom navigation. All scrolls, cells collections, maps, buttons, labels and custom controls are drawn._
@@ -752,13 +756,22 @@ _MAUI pages with canvases, custom navigation. All scrolls, cells collections, ma
 iOS: https://apps.apple.com/us/app/racebox-vehicle-dynamics/id6444165250  
 GooglePlay: https://play.google.com/store/apps/details?id=com.raceboxcompanion.app
 
-### Bug ID: Insect Identifier AI
+Video: https://www.youtube.com/watch?v=JQkJhXR9IMY
 
-_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
+## Since You Are Still Here
 
-__Ooops looks like the app API went dead, client maybe abandoned the project due to AI detecting stuff better than dedicated neural networks!__
+[A small article](https://taublast.github.io/posts/MauiJuly/) about the library and why it was created
 
-GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
+## Old School
 
+* A Light [version for Xamarin](https://github.com/taublast/DrawnUi.Xamarin) is there too.
 
+## Latest Update
 
+* A lot of fluent C# extensions to be used for constructing UI without XAML, without using MAUI bindings still being able to mimic one-way and two-way bindings, examples incoming.
+* Retained custom handlers for all platforms, `Canvas` property `RenderingMode` replaced `HardwareAcceleration`.
+* Selectable default look for controls: SkiaButton, SkiaSwitch, SkiaCheckbox, more to come. Example: `  <draw:SkiaButton ControlStyle="Cupertino" Text="Button" />`, check out Sandbox project.
+* Performance: `ImageComposite` cache now works inside another `ImageComposite`.
+* SkiaLayout received gestures events for easier use without subclassing. `ChildTapped`, `Tapped`. SkiaShape now has them too.
+* Gestures tuned to avoid false-taps when swiping.
+* Many fixes and new features here and there.

@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePageCodeBehind
+    x:Class="MauiNet8.MainPageDev"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Sandbox.Views.Controls"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+    xmlns:mauiNet8="clr-namespace:MauiNet8"
+    xmlns:views="clr-namespace:Sandbox.Views"
+    x:Name="ThisPage"
+    x:DataType="mauiNet8:MainPageDev">
+
+    <VerticalStackLayout>
+        <Border>
+            <Grid ColumnDefinitions="1*,*">
+                <Label
+                    x:Name="label"
+                    Grid.Column="0"
+                    Text="0"
+                    TextColor="Gray" />
+                <Entry
+                    Grid.Column="1"
+                    Placeholder="Placeholder"
+                    Text="Test"
+                    TextColor="White" />
+            </Grid>
+        </Border>
+        <Border>
+            <Grid ColumnDefinitions="1*,*">
+                <Label
+                    Grid.Column="0"
+                    Text="0"
+                    TextColor="Gray" />
+                <Entry
+                    Grid.Column="1"
+                    Placeholder="Placeholder"
+                    Text="Test"
+                    TextColor="White" />
+            </Grid>
+        </Border>
+
+        <draw:Canvas>
+
+            <draw:SkiaLayout HorizontalOptions="Fill">
+
+                <draw:SkiaShape
+                    Padding="5"
+                    BackgroundColor="Red"
+                    CornerRadius="5"
+                    HorizontalFillRatio="0.5"
+                    HorizontalOptions="Fill"
+                    StrokeColor="Gray"
+                    StrokeWidth="1">
+
+                    <draw:SkiaLayout
+                        ColumnDefinitions="*,*"
+                        HorizontalOptions="Fill"
+                        Type="Absolute">
+                        <draw:SkiaLabel
+                            Grid.Column="0"
+                            FontSize="14"
+                            HorizontalOptions="Fill"
+                            Text="0"
+                            TextColor="Gray" />
+                    </draw:SkiaLayout>
+
+                </draw:SkiaShape>
+
+                <draw:SkiaShape
+                    Padding="5"
+                    BackgroundColor="Yellow"
+                    CornerRadius="5"
+                    HorizontalFillRatio="0.5"
+                    HorizontalOptions="Fill"
+                    HorizontalPositionOffsetRatio="1.0"
+                    StrokeColor="Gray"
+                    StrokeWidth="1">
+
+                    <draw:SkiaLayout
+                        ColumnDefinitions="*,*"
+                        HorizontalOptions="Fill"
+                        Type="Absolute">
+                        <draw:SkiaLabel
+                            Grid.Column="0"
+                            FontSize="14"
+                            HorizontalOptions="Fill"
+                            Text="0"
+                            TextColor="Gray" />
+                    </draw:SkiaLayout>
+
+                </draw:SkiaShape>
+
+            </draw:SkiaLayout>
+        </draw:Canvas>
+    </VerticalStackLayout>
+
+</views:BasePageCodeBehind>

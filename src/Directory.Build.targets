@@ -1,0 +1,18 @@
+<Project>
+
+    <!--For All Post-Build Stuff -->
+
+    <PropertyGroup>
+        <Version>1.5.0.2</Version>
+        <Authors>Nick Kovalsky aka AppoMobi and contributors</Authors>
+        <Copyright>(c) AppoMobi and  and contributors 2023 - present day</Copyright>
+        <PackageProjectUrl>https://github.com/taublast/DrawnUi</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/taublast/DrawnUi</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+</Project>

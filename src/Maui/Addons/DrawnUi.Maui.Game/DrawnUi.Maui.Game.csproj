@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <!--using Directory.Build.props-->
+
+    <PropertyGroup>
+        <Title>Game creation addon to DrawnUI for .NET MAUI</Title>
+        <PackageId>DrawnUi.Maui.Game</PackageId>
+        <Description>Base class for implementing a game with SkiaSharp in .NET MAUI</Description>
+        <PackageTags>maui drawnui skia skiasharp draw game</PackageTags>
+        <Packable>true</Packable>
+        <CreatePackage>false</CreatePackage>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\DrawnUi\DrawnUi.Maui.csproj" />
+    </ItemGroup>
+
+
+
+
+</Project>

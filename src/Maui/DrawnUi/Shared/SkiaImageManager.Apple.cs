@@ -1,0 +1,64 @@
+﻿using SkiaSharp.Views.iOS;
+using System.Diagnostics;
+using UIKit;
+
+namespace DrawnUi.Draw;
+
+public partial class SkiaImageManager
+{
+    public static async Task<SKBitmap> LoadImageOnPlatformAsync(ImageSource source, CancellationToken cancel)
+    {
+        if (source == null)
+            return null;
+
+        try
+        {
+            if (source is FileImageSource fileSource)
+            {
+                return await LoadFromFile(fileSource.File, cancel);
+            }
+            else
+             if (source is UriImageSource uriSource)
+            {
+                return await LoadImageFromInternetAsync(uriSource, cancel);
+            }
+            else
+            {
+                var iosImage = await LoadNativeImage(source, cancel, 1.0f);
+                if (iosImage != null)
+                {
+                    return iosImage.ToSKBitmap();
+                }
+            }
+        }
+        catch (TaskCanceledException)
+        {
+
+        }
+        catch (Exception e)
+        {
+            SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync] {e}");
+        }
+
+        return null;
+    }
+
+    public static async Task<UIImage> LoadNativeImage(ImageSource source, CancellationToken token, float scale)
+    {
+        if (source == null)
+            return null;
+
+        try
+        {
+            var handler = source.GetHandler();
+            return await handler.LoadImageAsync(source, token);
+        }
+        catch (Exception e)
+        {
+            SkiaImageManager.TraceLog($"[LoadImageOnPlatformAsync] {e}");
+        }
+
+        return null;
+    }
+
+}

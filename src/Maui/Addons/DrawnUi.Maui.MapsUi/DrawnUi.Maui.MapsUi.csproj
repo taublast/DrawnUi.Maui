@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <!--using Directory.Build.props-->
+ 
+    <ItemGroup>
+        <!--<PackageReference Include="BruTile" Version="5.0.6" />-->
+        <PackageReference Include="BruTile.MbTiles" Version="6.0.0-beta.3" />
+        <PackageReference Include="Mapsui.ArcGIS" Version="5.0.0-beta.4" />
+        <PackageReference Include="Mapsui.Extensions" Version="5.0.0-beta.4" />
+        <PackageReference Include="MapsUi.Maui" Version="5.0.0-beta.4" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <Title>MapsUi addon to DrawnUI for .NET MAUI</Title>
+        <PackageId>DrawnUi.Maui.MapsUi</PackageId>
+        <Description>SkiaMapsUi DrawnUi control for .NET MAUI</Description>
+        <PackageTags>maui drawnui skia skiasharp draw maps mapsui</PackageTags>
+        <Packable>true</Packable>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <CreatePackage>false</CreatePackage>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\DrawnUi\DrawnUi.Maui.csproj" />
+    </ItemGroup>
+
+
+</Project>

@@ -1,17 +1,19 @@
 <Project>
-  <PropertyGroup>
-    <UseSkiaSharp3>true</UseSkiaSharp3>
-  </PropertyGroup>
 
-  <PropertyGroup Condition="'$(UseSkiaSharp3)' != 'true'">
-    <PackageReleaseNotes>Using SkiaSharp 2.xx. Checkout the DrawnUi Sandbox project for usage example.</PackageReleaseNotes>
-    <Version>1.2.99.1</Version>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(UseSkiaSharp3)' == 'true'">
-    <DefineConstants>$(DefineConstants);SKIA3</DefineConstants>
-    <PackageReleaseNotes>Using SkiaSharp 3. New handlers, SKSL, WinUI hardware acceleration etc..</PackageReleaseNotes>
-    <Version>1.4.0.5</Version>
-  </PropertyGroup>
+    <!--For All-->
+
+    <PropertyGroup>
+        <DefineConstants>$(DefineConstants);SKIA3</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup
+        Condition="$(TargetFramework.Contains('windows')) == true Or $(TargetFramework.Contains('droid')) == true Or $(TargetFramework.Contains('ios')) == true Or $(TargetFramework.Contains('catalyst')) == true">
+        <DefineConstants>$(DefineConstants);ONPLATFORM</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <NoWarn>1701;1702;XLS0505</NoWarn>
+        <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
+    </PropertyGroup>
 
 </Project>
