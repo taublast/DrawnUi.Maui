@@ -768,12 +768,12 @@ Video: https://www.youtube.com/watch?v=JQkJhXR9IMY
 
 ## Latest Update
 
-* Retained custom handlers for all platforms. Android one noticeably made animations more fluid, spoiler: another game example soon.
-* Started implementing selectable default look with controls: SkiaButton, SkiaSwitch, SkiaCheckbox. Example: `  <draw:SkiaButton ControlStyle="Cupertino" Text="Button" />`, check out Sandbox project.
-* SkiaLayout received gestures events for easier use without subclassing. `ChildTapped`, `Tapped`. SkiaShape now has them too.
 * A lot of fluent C# extensions to be used for constructing UI without XAML, without using MAUI bindings still being able to mimic one-way and two-way bindings, examples incoming.
-* Breaking: `Canvas` property `RenderingMode` replaced `HardwareAcceleration`.
-* Performance improvement: `ImageComposite` cache now works inside another `ImageComposite`.
+* Retained custom handlers for all platforms, `Canvas` property `RenderingMode` replaced `HardwareAcceleration`.
+* Selectable default look for controls: SkiaButton, SkiaSwitch, SkiaCheckbox, more to come. Example: `  <draw:SkiaButton ControlStyle="Cupertino" Text="Button" />`, check out Sandbox project.
+* Performance: `ImageComposite` cache now works inside another `ImageComposite`.
+* SkiaLayout received gestures events for easier use without subclassing. `ChildTapped`, `Tapped`. SkiaShape now has them too.
+* Gestures tuned to avoid false-taps when swiping.
 * Many fixes and new features here and there.
 
 

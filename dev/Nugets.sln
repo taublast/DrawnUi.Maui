@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui", "..\src\Maui\DrawnUi\DrawnUi.Maui.csproj", "{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{5B1CDC4F-5ED6-4662-8EC6-3DE3FF0B05BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.Camera", "..\src\Maui\Addons\DrawnUi.Maui.Camera\DrawnUi.Maui.Camera.csproj", "{DD2D491D-7046-41D2-A00E-FE65CBADE85E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.Game", "..\src\Maui\Addons\DrawnUi.Maui.Game\DrawnUi.Maui.Game.csproj", "{793E382E-815C-42A2-B045-44FF930BED07}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.Maui.Rive", "..\src\Maui\Addons\DrawnUi.Maui.Rive\DrawnUi.Maui.Rive.csproj", "{D7378AE6-03ED-4295-8821-DAA5B2A263FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrawnUi.MauiGraphics", "..\src\Maui\Addons\DrawnUi.MauiGraphics\DrawnUi.MauiGraphics.csproj", "{E1A7A5B7-8B7A-43CC-888B-4CF97783AFB7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{089100B1-113F-4E66-888A-E83F3999EAFD}"
+	ProjectSection(SolutionItems) = preProject
+		..\src\Maui\Directory.Build.props = ..\src\Maui\Directory.Build.props
+		..\src\Directory.Build.props = ..\src\Directory.Build.props
+		..\src\Directory.Build.targets = ..\src\Directory.Build.targets
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DrawnUi.Shared", "..\src\Shared\DrawnUi.Shared.shproj", "{83974207-9636-48DD-BDB3-98EDECBB1107}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawnUi.Maui.MapsUi", "..\src\Maui\Addons\DrawnUi.Maui.MapsUi\DrawnUi.Maui.MapsUi.csproj", "{C3582B3F-5D0A-D748-AA01-B8586FBDF745}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBAA2877-4197-44CE-9A0B-9548C1C2C4DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD2D491D-7046-41D2-A00E-FE65CBADE85E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD2D491D-7046-41D2-A00E-FE65CBADE85E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD2D491D-7046-41D2-A00E-FE65CBADE85E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD2D491D-7046-41D2-A00E-FE65CBADE85E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{793E382E-815C-42A2-B045-44FF930BED07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{793E382E-815C-42A2-B045-44FF930BED07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{793E382E-815C-42A2-B045-44FF930BED07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{793E382E-815C-42A2-B045-44FF930BED07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7378AE6-03ED-4295-8821-DAA5B2A263FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7378AE6-03ED-4295-8821-DAA5B2A263FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7378AE6-03ED-4295-8821-DAA5B2A263FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7378AE6-03ED-4295-8821-DAA5B2A263FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1A7A5B7-8B7A-43CC-888B-4CF97783AFB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1A7A5B7-8B7A-43CC-888B-4CF97783AFB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1A7A5B7-8B7A-43CC-888B-4CF97783AFB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1A7A5B7-8B7A-43CC-888B-4CF97783AFB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3582B3F-5D0A-D748-AA01-B8586FBDF745}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3582B3F-5D0A-D748-AA01-B8586FBDF745}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3582B3F-5D0A-D748-AA01-B8586FBDF745}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3582B3F-5D0A-D748-AA01-B8586FBDF745}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DD2D491D-7046-41D2-A00E-FE65CBADE85E} = {5B1CDC4F-5ED6-4662-8EC6-3DE3FF0B05BE}
+		{793E382E-815C-42A2-B045-44FF930BED07} = {5B1CDC4F-5ED6-4662-8EC6-3DE3FF0B05BE}
+		{D7378AE6-03ED-4295-8821-DAA5B2A263FB} = {5B1CDC4F-5ED6-4662-8EC6-3DE3FF0B05BE}
+		{E1A7A5B7-8B7A-43CC-888B-4CF97783AFB7} = {5B1CDC4F-5ED6-4662-8EC6-3DE3FF0B05BE}
+		{C3582B3F-5D0A-D748-AA01-B8586FBDF745} = {5B1CDC4F-5ED6-4662-8EC6-3DE3FF0B05BE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {329E3D0C-A3F7-4A3E-B61C-6B2D1BD7F708}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\src\Shared\Shared.projitems*{83974207-9636-48dd-bdb3-98edecbb1107}*SharedItemsImports = 13
+		..\src\Shared\Shared.projitems*{dbaa2877-4197-44ce-9a0b-9548c1c2c4dc}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal
