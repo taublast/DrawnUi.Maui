@@ -5,16 +5,15 @@
 
 Supports **iOS**, **MacCatalyst**, **Android**, **Windows**.
 
-Replace your native controls with with just one native view - the Canvas!
+To replace native controls with with just one native view - the Canvas! 🤩
 
 Rendering engine to draw your UI on a Skia canvas, with gestures and animations, designed to draw pixel-perfect custom controls instead of using native ones, powered by [SkiaSharp](https://github.com/mono/SkiaSharp)😍. 
-Create and render your custom controls on a hardware-accelerated Skia canvas with an improved common MAUI/WPF layout system.
+Create and render your custom controls on a hardware-accelerated Skia canvas with an improved MAUI/WPF-like layout system.
 
 * To use inside a usual MAUI app, consume drawn controls here and there inside `Canvas` views.
 * Create a totally drawn app with just one `Canvas` as root view, `SkiaShell` is provided for navigation.
 * Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas.
-* Free to use under the MIT license, a nuget package is available.
-* A Light [version for Xamarin](https://github.com/taublast/DrawnUi.Xamarin) is there too.
+* Free to use and modify under the MIT license, a nuget package is available.
 
 _The current development state is __ALPHA__, features remain to be implemented, documentation is being worked on._
 
@@ -669,8 +668,6 @@ You can also apply a gradient to your svg, either like to any control with a Vis
 UseGradient, StartXRatio, EndXRatio, StartYRatio, EndYRatio, StartColor, EndColor, GradientBlendMode
 
 
-
-
 ### `SkiaLabel`
 
 A multi-line label fighting for his place under the sun.
@@ -742,6 +739,16 @@ It will render a mask over its children when hovered, think of it as an inverted
 
 ## Published Apps powered by DrawnUI For .Net MAUI
 
+### Bug ID: Insect Identifier AI
+
+_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
+
+GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
+
+__Oops app API might be down, no control over it! But no worries, watch the video, link below:__
+
+Video: https://www.youtube.com/watch?v=5QIaM0xsLbA
+
 ### Racebox
 
 _MAUI pages with canvases, custom navigation. All scrolls, cells collections, maps, buttons, labels and custom controls are drawn._
@@ -749,17 +756,15 @@ _MAUI pages with canvases, custom navigation. All scrolls, cells collections, ma
 iOS: https://apps.apple.com/us/app/racebox-vehicle-dynamics/id6444165250  
 GooglePlay: https://play.google.com/store/apps/details?id=com.raceboxcompanion.app
 
-### Bug ID: Insect Identifier AI
+Video: https://www.youtube.com/watch?v=JQkJhXR9IMY
 
-_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
-
-__Ooops looks like the app API went dead, client maybe abandoned the project due to AI detecting stuff better than dedicated neural networks!__
-
-GooglePlay: https://play.google.com/store/apps/details?id=com.niroapps.insects
-
-## About
+## Since You Are Still Here
 
 [A small article](https://taublast.github.io/posts/MauiJuly/) about the library and why it was created
+
+## Old School
+
+* A Light [version for Xamarin](https://github.com/taublast/DrawnUi.Xamarin) is there too.
 
 ## Latest Update
 
