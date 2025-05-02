@@ -12,15 +12,13 @@
 
     <draw:Canvas
         Gestures="Enabled"
-        RenderingMode = "Accelerated"
         HorizontalOptions="Fill"
+        RenderingMode="Accelerated"
         Tag="MainPage"
         VerticalOptions="Fill">
 
 
-        <draw:SkiaLayout
-            HorizontalOptions="Fill"
-            VerticalOptions="Fill">
+        <draw:SkiaLayout HorizontalOptions="Fill" VerticalOptions="Fill">
 
             <draw:SkiaLayout
                 HorizontalOptions="Fill"
@@ -47,9 +45,7 @@
                         Tag="Content"
                         Type="Column">
 
-                        <draw:SkiaLayout
-                            HeightRequest="350"
-                            HorizontalOptions="Fill">
+                        <draw:SkiaLayout HeightRequest="350" HorizontalOptions="Fill">
 
                             <draw:SkiaLayout
                                 BackgroundColor="Black"
