@@ -280,7 +280,7 @@ public class SkiaSwitch : SkiaToggle
         return 0;
     }
 
-    public static uint AnimationSpeed = 150;
+    public static uint AnimationSpeed = 200;
 
     protected virtual bool CanAnimate()
     {
