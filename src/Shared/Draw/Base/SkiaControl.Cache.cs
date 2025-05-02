@@ -105,6 +105,8 @@ public partial class SkiaControl
 
                     if (value != null)
                         OnCacheCreated();
+                    else
+                        OnCacheDestroyed();
 
                     Monitor.PulseAll(LockDraw);
                 }
@@ -117,6 +119,11 @@ public partial class SkiaControl
     protected virtual void OnCacheCreated()
     {
         CreatedCache?.Invoke(this, RenderObject);
+    }
+
+    protected virtual void OnCacheDestroyed()
+    {
+        
     }
 
     /// <summary>
@@ -679,7 +686,8 @@ public partial class SkiaControl
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void InvalidateCacheWithPrevious()
     {
-        RenderObjectNeedsUpdate = true;
+        InvalidateCache();
+
         if (UsingCacheType == SkiaCacheType.ImageComposite)
         {
             RenderObjectPreviousNeedsUpdate = true;

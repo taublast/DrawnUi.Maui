@@ -401,16 +401,16 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
 
     #region FromControl
 
-    SkiaControl _controlTo;
+    protected SkiaControl AssignedControlTo;
 
-    protected void ImportCacheTo()
+    protected virtual void ImportCacheTo()
     {
-        if (_controlTo?.RenderObject?.Image == null || !ParentReady())
+        if (AssignedControlTo?.RenderObject?.Image == null || !ParentReady())
             return;
 
         //Debug.WriteLine($"ImportCacheTo {_controlTo.BindingContext}");
 
-        CompileSecondaryTexture(_controlTo.RenderObject.Image);
+        CompileSecondaryTexture(AssignedControlTo.RenderObject.Image);
     }
 
     private void OnCacheCreatedTo(object sender, CachedObject e)
@@ -418,26 +418,26 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
         ImportCacheTo();
     }
 
-    void ApplyControlTo(SkiaControl control)
+    protected virtual void ApplyControlTo(SkiaControl control)
     {
-        if (_controlTo == control)
+        if (AssignedControlTo == control)
             return;
 
         DetachTo();
-        _controlTo = control;
-        if (_controlTo != null)
+        AssignedControlTo = control;
+        if (AssignedControlTo != null)
         {
-            _controlTo.CreatedCache += OnCacheCreatedTo;
+            AssignedControlTo.CreatedCache += OnCacheCreatedTo;
             ImportCacheTo();
         }
     }
 
     void DetachTo()
     {
-        if (_controlTo != null)
+        if (AssignedControlTo != null)
         {
-            _controlTo.CreatedCache -= OnCacheCreatedTo;
-            _controlTo = null;
+            AssignedControlTo.CreatedCache -= OnCacheCreatedTo;
+            AssignedControlTo = null;
         }
     }
 

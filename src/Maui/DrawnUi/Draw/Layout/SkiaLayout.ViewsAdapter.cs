@@ -9,6 +9,16 @@ public record CellWIthHeight(float Height, SkiaControl view);
 /// </summary>
 public class ViewsAdapter : IDisposable
 {
+    /// <summary>
+    /// Creates view from template and returns already existing view for a specific index.
+    /// This uses cached views and tends to return same views matching index they already used.
+    /// When cell recycling is off this will be a perfect match at all times.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="template"></param>
+    /// <param name="height"></param>
+    /// <param name="isMeasuring"></param>
+    /// <returns></returns>
     public SkiaControl GetViewForIndex(int index, SkiaControl template = null, float height = 0, bool isMeasuring = false)
     {
         if (IsDisposed)
@@ -44,7 +54,7 @@ public class ViewsAdapter : IDisposable
                                 ReleaseView(ready);
                             }
 
-                            var view = GetViewAtIndex(index, height, template);
+                            var view = GetOrCreateViewForIndexInternal(index, height, template);
 
                             if (view == null)
                             {
@@ -91,7 +101,7 @@ public class ViewsAdapter : IDisposable
       return null;
     }
 
-    public SkiaControl GetViewAtIndex(int index, float height = 0, SkiaControl template = null)
+    public SkiaControl GetOrCreateViewForIndexInternal(int index, float height = 0, SkiaControl template = null)
     {
         if (_templatedViewsPool == null || _dataContexts == null)
         {

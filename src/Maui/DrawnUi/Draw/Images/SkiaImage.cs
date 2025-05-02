@@ -95,7 +95,7 @@ public class SkiaImage : SkiaControl
                 var destination = new SKRect(0, 0, info.Width, info.Height);
                 var ctx = new DrawingContext(context, destination, 1, null);
                 Render(ctx);
-                surface.Canvas.Flush();
+                surface.Flush();
                 return surface.Snapshot();
             }
         }
