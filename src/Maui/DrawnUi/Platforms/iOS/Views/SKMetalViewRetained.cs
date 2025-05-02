@@ -135,15 +135,11 @@ namespace DrawnUi.Views
         {
             var newSize = size.ToSKSize();
 
-            // Only update if the size actually changed
-            if (newSize.Width != _canvasSize.Width || newSize.Height != _canvasSize.Height)
-            {
-                _canvasSize = newSize;
-                PrepareNewTexture(); // Schedule texture update
-            }
+            _canvasSize = newSize;
+            PrepareNewTexture();
 
             if (ManualRefresh)
-                SetNeedsDisplay();
+                SetNeedsDisplay(); // only if size *really* changed
         }
 
         void IMTKViewDelegate.Draw(MTKView view)
@@ -179,14 +175,8 @@ namespace DrawnUi.Views
                 textureToUse = _retainedTexture;
                 if (textureToUse == null)
                 {
-                    // Emergency texture creation if somehow we still don't have one
-                    PrepareNewTexture();
-                    PerformTextureSwap();
-                    textureToUse = _retainedTexture;
-
-                    // Still null? Can't continue.
-                    if (textureToUse == null)
-                        return;
+                    //prevent mid-frame jank
+                    return;
                 }
             }
 
@@ -207,8 +197,7 @@ namespace DrawnUi.Views
             var e = new SKPaintMetalSurfaceEventArgs(surface, renderTarget, GRSurfaceOrigin.TopLeft, SKColorType.Bgra8888);
             OnPaintSurface(e);
 
-            // Flush SkiaSharp contents
-            canvas.Flush();
+            //canvas.Flush();
             surface.Flush();
             _context.Flush();
 
