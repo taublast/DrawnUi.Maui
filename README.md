@@ -180,7 +180,7 @@ Can use basic [FluentExtensions](https://github.com/taublast/DrawnUi/blob/main/s
             Canvas = new Canvas()
             {
                 Gestures = GesturesMode.Enabled,
-                HardwareAcceleration = HardwareAccelerationMode.Enabled,
+                RenderingMode = RenderingModeType.Accelerated,
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
                 BackgroundColor = Colors.Black,
@@ -767,6 +767,10 @@ Video: https://www.youtube.com/watch?v=JQkJhXR9IMY
 * A Light [version for Xamarin](https://github.com/taublast/DrawnUi.Xamarin) is there too.
 
 ## Latest Update
+
+* To avoid existing confusion `ViewsAdapter` props renamed:
+`GetViewForIndex` to `GetExistingViewAtIndex`,
+`GetViewAtIndex` to `GetOrCreateViewForIndex`
 
 * A lot of fluent C# extensions to be used for constructing UI without XAML, without using MAUI bindings still being able to mimic one-way and two-way bindings, examples incoming.
 * Retained custom handlers for all platforms, `Canvas` property `RenderingMode` replaced `HardwareAcceleration`.

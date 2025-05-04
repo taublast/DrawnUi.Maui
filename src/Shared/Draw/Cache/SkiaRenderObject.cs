@@ -138,11 +138,11 @@ public class CachedObject : IDisposable
             if (!PreserveSourceFromDispose)
             {
                 Surface?.Dispose();
+                Picture?.Dispose();
+                Image?.Dispose(); // todo crash was here
             }
             Surface = null;
-            Picture?.Dispose();
             Picture = null;
-            Image?.Dispose();
             Image = null;
         }
     }

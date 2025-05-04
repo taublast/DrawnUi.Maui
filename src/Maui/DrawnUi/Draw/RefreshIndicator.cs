@@ -197,7 +197,7 @@ public class RefreshIndicator : SkiaLayout, IRefreshIndicator
         {
             return _IsRunning;
         }
-        protected set
+        set
         {
             if (_IsRunning != value)
             {

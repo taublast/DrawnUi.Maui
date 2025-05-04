@@ -1,5 +1,7 @@
 - name: Home
   href: index.md
+- name: Demo
+  href: demo.md
 - name: Articles
   href: articles/
   homepage: articles/index.md
