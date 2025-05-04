@@ -34,7 +34,7 @@ You might also need at least the following MAUI setup inside your csproj:
 
 ### 2. Initialize in Your MAUI App
 
-Update your `MauiProgram.cs` file to initialize DrawnUi:
+Update your `MauiProgram.cs` file to initialize draw:
 
 ```csharp
 using DrawnUi.Draw;

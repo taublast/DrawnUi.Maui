@@ -480,7 +480,7 @@ public class Canvas : DrawnView, IGestureListener
             {
                 if (IsSavedGesture(args.Type))
                 {
-                    foreach (var hadInput in HadInput.Values)
+                    foreach (var hadInput in HadInput.Values.ToList())
                     {
                         if (!hadInput.CanDraw || hadInput.InputTransparent ||
                             hadInput.GestureListenerRegistrationTime == null)
@@ -500,6 +500,8 @@ public class Canvas : DrawnView, IGestureListener
                             if (args.Type != TouchActionResult.Up)
                             {
                                 secondPass = false;
+                                HadInput.TryAdd(consumed.Uid, consumed);
+                                Debug.WriteLine($"[Canvas] +HadInput: {consumed} for {args.Type}");
                                 break;
                             }
                         }
@@ -556,6 +558,7 @@ public class Canvas : DrawnView, IGestureListener
                             if (args.Type != TouchActionResult.Up)
                             {
                                 HadInput.TryAdd(listener.Uid, consumed);
+                                Debug.WriteLine($"[Canvas] +HadInput: {listener} for {args.Type}");
                             }
 
                             break;
