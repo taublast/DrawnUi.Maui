@@ -501,7 +501,7 @@ public class Canvas : DrawnView, IGestureListener
                             {
                                 secondPass = false;
                                 HadInput.TryAdd(consumed.Uid, consumed);
-                                Debug.WriteLine($"[Canvas] +HadInput: {consumed} for {args.Type}");
+                                //Debug.WriteLine($"[Canvas] +HadInput: {consumed} for {args.Type}");
                                 break;
                             }
                         }
@@ -558,7 +558,7 @@ public class Canvas : DrawnView, IGestureListener
                             if (args.Type != TouchActionResult.Up)
                             {
                                 HadInput.TryAdd(listener.Uid, consumed);
-                                Debug.WriteLine($"[Canvas] +HadInput: {listener} for {args.Type}");
+                                //Debug.WriteLine($"[Canvas] +HadInput: {listener} for {args.Type}");
                             }
 
                             break;
