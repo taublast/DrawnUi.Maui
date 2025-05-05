@@ -516,7 +516,7 @@ namespace DrawnUi.Draw
                 var clampedX = Math.Max(contentOffsetBounds.Left, Math.Min(contentOffsetBounds.Right, x));
                 var clampedY = Math.Max(contentOffsetBounds.Top, Math.Min(contentOffsetBounds.Bottom, y));
 
-                Debug.WriteLine($"Clamped {y} => {clampedY}");
+                //Debug.WriteLine($"Clamped {y} => {clampedY}");
 
                 return new Vector2(clampedX, clampedY);
             }
