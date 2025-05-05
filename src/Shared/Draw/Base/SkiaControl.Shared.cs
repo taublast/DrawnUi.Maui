@@ -6520,29 +6520,17 @@ namespace DrawnUi.Draw
                     aspectY = height < dest.Height ? s2 : 1;
                     break;
 
-                case TransformAspect.AspectFit:
-                    aspectX = Math.Min(s1, s2);
-                    aspectY = aspectX;
-                    break;
-
-
                 case TransformAspect.FitFill:
-                    if (width > dest.Width || height > dest.Height)
+                    //fill
+                    aspectX = width < dest.Width ? s1 : 1;
+                    aspectY = height < dest.Height ? s2 : 1;
+                    if (width * aspectX > dest.Width || height * aspectY > dest.Height)
                     {
+                        //fit
                         aspectX = dest.Width < width ? dest.Width / width : 1;
                         aspectY = dest.Height < height ? dest.Height / height : 1;
                     }
-                    else
-                    {
-                        aspectX = width < dest.Width ? s1 : 1;
-                        aspectY = height < dest.Height ? s2 : 1;
-                    }
 
-                    break;
-
-                case TransformAspect.AspectFill:
-                    aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
-                    aspectY = aspectX;
                     break;
 
                 case TransformAspect.Cover:
@@ -6555,18 +6543,26 @@ namespace DrawnUi.Draw
                     aspectY = aspectX;
                     break;
 
+                case TransformAspect.AspectFill:
+                    aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
+                    aspectY = aspectX;
+                    break;
+
+                case TransformAspect.AspectFit:
+                    aspectX = Math.Min(s1, s2);
+                    aspectY = aspectX;
+                    break;
+
                 case TransformAspect.AspectFitFill:
-                    if (width > dest.Width || height > dest.Height)
+                    //fill
+                    aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
+                    aspectY = aspectX;
+                    if (width*aspectX > dest.Width || height*aspectY > dest.Height)
                     {
+                        //fit
                         aspectX = Math.Min(s1, s2);
                         aspectY = aspectX;
                     }
-                    else
-                    {
-                        aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
-                        aspectY = aspectX;
-                    }
-
                     break;
             }
 
