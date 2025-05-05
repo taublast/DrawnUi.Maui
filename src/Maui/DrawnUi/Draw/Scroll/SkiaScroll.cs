@@ -2457,7 +2457,16 @@ namespace DrawnUi.Draw
                         else if (HeaderBehind)
                         {
                             if (hitboxHeader.IntersectsWith(this.Viewport.Pixels))
-                                Header.Render(context);
+                            {
+                                if (HeaderSticky)
+                                {
+                                    Header.Render(context.WithDestination(DrawingRect));
+                                }
+                                else
+                                {
+                                    Header.Render(context);
+                                }
+                            }
                         }
                     }
                     else if (this.Orientation == ScrollOrientation.Horizontal)
@@ -2512,7 +2521,16 @@ namespace DrawnUi.Draw
                         else if (HeaderBehind)
                         {
                             if (hitboxHeader.IntersectsWith(this.Viewport.Pixels))
-                                Header.Render(ctx);
+                            {
+                                if (HeaderSticky)
+                                {
+                                    Header.Render(ctx.WithDestination(DrawingRect));
+                                }
+                                else
+                                {
+                                    Header.Render(ctx);
+                                }
+                            }
                         }
                     }
                 }
@@ -2562,7 +2580,7 @@ namespace DrawnUi.Draw
 
             if (Header != null && HeaderSticky && !HeaderBehind)
             {
-                Header.Render(context);
+                Header.Render(context.WithDestination(DrawingRect));
                 drawn++;
             }
 
