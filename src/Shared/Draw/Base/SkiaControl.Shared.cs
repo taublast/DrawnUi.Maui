@@ -1670,6 +1670,8 @@ namespace DrawnUi.Draw
             }
 
             PropagateVisibilityChanged(newvalue);
+
+            Update(); //always redraw coming out of this (postanimators need update etc)
         }
 
         protected virtual void PropagateVisibilityChanged(bool newvalue)
