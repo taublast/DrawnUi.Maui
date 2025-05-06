@@ -25,6 +25,12 @@ namespace DrawnUi.Draw
             return control;
         }
 
+        public static T AssignParent<T>(this T control, SkiaControl parent) where T : SkiaControl
+        {
+            parent.AddSubView(control);
+            return control;
+        }
+
         /// <summary>
         /// Performs an action on the control and returns it to continue the fluent chain
         /// </summary>

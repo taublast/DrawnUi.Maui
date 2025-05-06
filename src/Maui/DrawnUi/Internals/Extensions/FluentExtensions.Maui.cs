@@ -100,7 +100,7 @@ namespace DrawnUi.Draw
         /// <exception cref="InvalidOperationException">Thrown if conversion fails</exception>
         public static SkiaLayout WithRowDefinitions(this SkiaLayout grid, string definitions)
         {
-            var converter = new ColumnDefinitionCollectionTypeConverter();
+            var converter = new RowDefinitionCollectionTypeConverter();
             if (converter.CanConvertFrom(typeof(string)))
             {
                 var defs = (RowDefinitionCollection)converter.ConvertFromInvariantString(definitions);
@@ -207,6 +207,52 @@ namespace DrawnUi.Draw
         {
             view.SetBinding(targetProperty, new Binding(path, mode, converter, converterParameter));
             return view;
+        }
+
+        #endregion
+
+
+        #region THICKNESS
+
+        public static Thickness WithTop(this Thickness existing, double value)
+        {
+            return new Thickness
+            {
+                Top = value,
+                Bottom = existing.Bottom,
+                Left = existing.Left,
+                Right = existing.Right
+            };
+        }
+        public static Thickness WithBottom(this Thickness existing, double value)
+        {
+            return new Thickness
+            {
+                Top = existing.Top,
+                Bottom = value,
+                Left = existing.Left,
+                Right = existing.Right
+            };
+        }
+        public static Thickness WithLeft(this Thickness existing, double value)
+        {
+            return new Thickness
+            {
+                Top = existing.Top,
+                Bottom = existing.Bottom,
+                Left = value,
+                Right = existing.Right
+            };
+        }
+        public static Thickness WithRight(this Thickness existing, double value)
+        {
+            return new Thickness
+            {
+                Top = existing.Top,
+                Bottom = existing.Bottom,
+                Left = existing.Left,
+                Right = value
+            };
         }
 
         #endregion
