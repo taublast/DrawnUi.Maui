@@ -432,11 +432,6 @@ namespace DrawnUi.Draw
 
             var strokeAwareChildrenSize = ContractPixelsRect(strokeAwareSize, scale, Padding);
 
-            if (Tag == "Status")
-            {
-                var stop = 1;
-            }
-
             MeasuredStrokeAwareSize = strokeAwareSize;
             MeasuredStrokeAwareChildrenSize = strokeAwareChildrenSize;
 
@@ -1023,12 +1018,6 @@ namespace DrawnUi.Draw
             ClipSmart(ctx.Context.Canvas, ClipContentPath);
 
             var rectForChildren = strokeAwareChildrenSize;
-
-            if (Tag == "Status")
-            {
-                var stop = 1;
-            }
-
 
             DrawViews(ctx.WithDestination(rectForChildren));
 

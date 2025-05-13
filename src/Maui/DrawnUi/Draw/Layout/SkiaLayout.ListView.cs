@@ -465,8 +465,7 @@ public partial class SkiaLayout
             templatesInvalidated = false;
         }
 
-        RenderTree = tree;
-        _builtRenderTreeStamp = _measuredStamp;
+        SetRenderingTree(tree);
 
         if (Parent is IDefinesViewport viewport &&
             viewport.TrackIndexPosition != RelativePositionType.None)

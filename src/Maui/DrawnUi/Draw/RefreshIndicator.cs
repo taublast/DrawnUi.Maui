@@ -38,7 +38,7 @@ public class LottieRefreshIndicator : RefreshIndicator
         if (FindLoader() && !IsRunning)
         {
             var frame = Loader.GetFrameAt(ratio);
-            Debug.WriteLine($"[Loader] set frame {frame}");
+            //Debug.WriteLine($"[Loader] set frame {frame}");
             Loader.Seek(frame);
         }
     }

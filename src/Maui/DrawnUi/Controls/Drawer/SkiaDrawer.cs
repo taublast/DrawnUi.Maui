@@ -605,7 +605,7 @@ namespace DrawnUi.Controls
             if (!_inContact && processInput && !InputTransparent && CanDraw && Content != null && Content.CanDraw &&
                 !Content.InputTransparent)
             {
-                var thisOffset = TranslateInputCoords(apply.childOffset);
+                var thisOffset = TranslateInputCoords(apply.ChildOffset);
                 var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X,
                     args.Event.Location.Y + thisOffset.Y);
 

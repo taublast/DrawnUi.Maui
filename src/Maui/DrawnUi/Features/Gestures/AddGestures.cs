@@ -156,7 +156,7 @@ public static partial class AddGestures
 
                 if (view is IHasAfterEffects hasEffects)
                 {
-                    var thisOffset = TranslateInputCoords(apply.childOffset, false);
+                    var thisOffset = TranslateInputCoords(apply.ChildOffset, false);
                     var pixX = args.Event.Location.X + thisOffset.X;
                     var pixY = args.Event.Location.Y + thisOffset.Y;
                     var x = pixX / RenderingScale;
@@ -165,7 +165,7 @@ public static partial class AddGestures
                     var color = GetTouchEffectColor(_parent);
                     if (anim == SkiaTouchAnimation.Ripple)
                     {
-                        var ptsInsideControl = hasEffects.GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+                        var ptsInsideControl = hasEffects.GetOffsetInsideControlInPoints(args.Event.Location, apply.ChildOffset);
                         hasEffects.PlayRippleAnimation(color, ptsInsideControl.X, ptsInsideControl.Y);
                     }
                     else

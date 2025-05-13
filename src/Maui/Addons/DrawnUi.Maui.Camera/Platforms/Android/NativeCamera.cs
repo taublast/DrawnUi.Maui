@@ -544,13 +544,15 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     private static readonly int MAX_PREVIEW_HEIGHT = 1000;
 
     // ID of the current {@link CameraDevice}.
-    private string mCameraId;
+    private string CameraId;
 
     // A {@link CameraCaptureSession } for camera preview.
     public CameraCaptureSession CaptureSession;
 
     // A reference to the opened CameraDevice
     public CameraDevice mCameraDevice;
+
+
 
     /// <summary>
     /// The size of the camera preview in pixels 
@@ -747,7 +749,77 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 	 */
 
 
+    public async Task<ExposureResult> MeasureExposure(
+   double shutterSpeed,
+   double iso,
+   double aperture,
+   double exposureCompensation,
+   MeteringMode meteringMode)
+    {
+        try
+        {
+            if (mCameraDevice == null || CaptureSession == null)
+                return new ExposureResult { Success = false, ErrorMessage = "Camera not initialized" };
 
+            // Create a task completion source to wait for the result
+            var tcs = new TaskCompletionSource<ExposureResult>();
+
+            // Set a flag in your CameraCaptureListener to capture the next result
+            mCaptureCallback.SetMeteringResultHandler(tcs, aperture);
+
+            // Create a new request builder with manual settings
+            var meteringRequestBuilder = mCameraDevice.CreateCaptureRequest(CameraTemplate.Preview);
+            meteringRequestBuilder.AddTarget(mImageReaderPreview.Surface);
+
+            // Set manual exposure mode
+            meteringRequestBuilder.Set(CaptureRequest.ControlMode, (int)ControlMode.Off);
+            meteringRequestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.Off);
+
+            // Set exposure parameters
+            long exposureNanos = (long)(shutterSpeed * 1_000_000_000);
+            meteringRequestBuilder.Set(CaptureRequest.SensorExposureTime, exposureNanos);
+            meteringRequestBuilder.Set(CaptureRequest.SensorSensitivity, (int)iso);
+
+            // Set metering mode
+            var manager = (CameraManager)Platform.CurrentActivity.GetSystemService(Context.CameraService);
+            var characteristics = manager.GetCameraCharacteristics(CameraId);
+            var activeArraySize = (Android.Graphics.Rect)characteristics.Get(CameraCharacteristics.SensorInfoActiveArraySize);
+
+            switch (meteringMode)
+            {
+                case MeteringMode.Spot:
+                    if (activeArraySize != null)
+                    {
+                        var meteringRectangles = new MeteringRectangle[]
+                        {
+                        new MeteringRectangle(
+                            (int)(activeArraySize.Width() * 0.45),
+                            (int)(activeArraySize.Height() * 0.45),
+                            (int)(activeArraySize.Width() * 0.1),
+                            (int)(activeArraySize.Height() * 0.1),
+                            MeteringRectangle.MeteringWeightMax)
+                        };
+                        meteringRequestBuilder.Set(CaptureRequest.ControlAeRegions, meteringRectangles);
+                    }
+                    break;
+            }
+
+            // Update the repeating request with manual settings
+            CaptureSession.SetRepeatingRequest(meteringRequestBuilder.Build(), mCaptureCallback, mBackgroundHandler);
+
+            // Wait for the result
+            var result = await tcs.Task;
+
+            // Restore the original preview settings
+            CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            return new ExposureResult { Success = false, ErrorMessage = e.Message };
+        }
+    }
 
     /// <summary>
     /// Pass preview size as params
@@ -956,7 +1028,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 //will notify forms control inside of the allocation size
                 AllocateOutSurface();
 
-                mCameraId = cameraUnit.Id;
+                CameraId = cameraUnit.Id;
 
                 FormsControl.CameraDevice = cameraUnit;
 
@@ -1143,10 +1215,10 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                     mStateCallback = new CameraStateListener(this);
 
                 var manager = (CameraManager)activity.GetSystemService(Context.CameraService);
-                manager.OpenCamera(mCameraId, mStateCallback, mBackgroundHandler);
+                manager.OpenCamera(CameraId, mStateCallback, mBackgroundHandler);
 
                 State = CameraProcessorState.Enabled;
-                Debug.WriteLine($"[CAMERA] {mCameraId} Started");
+                Debug.WriteLine($"[CAMERA] {CameraId} Started");
 
                 return true;
             }
@@ -1218,7 +1290,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
             State = CameraProcessorState.None;
 
-            Debug.WriteLine($"[CAMERA] {mCameraId} Stopped");
+            Debug.WriteLine($"[CAMERA] {CameraId} Stopped");
 
             StopBackgroundThread();
         }
@@ -1408,7 +1480,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         catch (CameraAccessException e)
         {
             Trace.WriteLine(e);
-            Trace.WriteLine($"[CAMERA] {mCameraId} Failed to start camera session");
+            Trace.WriteLine($"[CAMERA] {CameraId} Failed to start camera session");
 
             State = CameraProcessorState.Error;
         }

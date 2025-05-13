@@ -14,7 +14,7 @@ public struct ScaledRect
         Units = new();
         Pixels = new();
     }
-    public double Scale { get; set; }
+    public float Scale { get; set; }
     public SKRect Units { get; set; }
     public SKRect Pixels { get; set; }
 

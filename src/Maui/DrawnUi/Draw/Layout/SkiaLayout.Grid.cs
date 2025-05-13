@@ -107,8 +107,7 @@ public partial class SkiaLayout
                 drawn++;
             }
 
-            RenderTree = tree;
-            _builtRenderTreeStamp = _measuredStamp;
+            SetRenderingTree(tree);
 
         }
         return drawn;

@@ -14,7 +14,7 @@ public partial class DrawnRadioButton
 
         if (args.Type == TouchActionResult.Tapped)
         {
-            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.ChildOffset);
             this.PlayRippleAnimation(Colors.CornflowerBlue, ptsInsideControl.X, ptsInsideControl.Y);
         }
 

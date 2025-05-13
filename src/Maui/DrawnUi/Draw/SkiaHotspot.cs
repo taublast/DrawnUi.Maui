@@ -103,7 +103,7 @@ namespace DrawnUi.Draw
 
                     if (AnimationTapped == SkiaTouchAnimation.Ripple)
                     {
-                        var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+                        var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.ChildOffset);
                         control.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
 
                         delay = DelayCallbackMs;

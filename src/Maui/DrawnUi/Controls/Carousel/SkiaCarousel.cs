@@ -295,8 +295,7 @@ public class SkiaCarousel : SnappingLayout
 
             //Trace.WriteLine($"[CAROUSEL] {Tag}: {ChildrenFactory.GetDebugInfo()}");
 
-            RenderTree = tree;
-            _builtRenderTreeStamp = _measuredStamp;
+            SetRenderingTree(tree);
 
             return drawn;
         }

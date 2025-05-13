@@ -83,11 +83,11 @@ public class DrawnTabsHeader : SkiaLayout
         if (args.Type == TouchActionResult.Tapped)
         {
 
-            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.ChildOffset);
             this.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
 
             //apply transfroms
-            var thisOffset = TranslateInputCoords(apply.childOffset, true);
+            var thisOffset = TranslateInputCoords(apply.ChildOffset, true);
 
             //apply touch coords
             var x = (args.Event.Location.X + thisOffset.X) / RenderingScale;
@@ -100,7 +100,6 @@ public class DrawnTabsHeader : SkiaLayout
                 this.SelectedIndex = Index;
 
             return this;
-
         }
 
         return base.ProcessGestures(args, apply);

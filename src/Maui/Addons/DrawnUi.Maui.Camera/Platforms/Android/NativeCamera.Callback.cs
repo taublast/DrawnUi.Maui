@@ -178,7 +178,14 @@ public partial class NativeCamera
             this.owner = owner;
         }
 
+        private TaskCompletionSource<ExposureResult> _meteringTcs;
+        private double _meteringAperture;
 
+        public void SetMeteringResultHandler(TaskCompletionSource<ExposureResult> tcs, double aperture)
+        {
+            _meteringTcs = tcs;
+            _meteringAperture = aperture;
+        }
 
         public override void OnCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
         {
@@ -223,6 +230,44 @@ public partial class NativeCamera
 
         private void Process(CaptureResult result)
         {
+            // Check if we're waiting for a metering result
+            if (_meteringTcs != null && !_meteringTcs.Task.IsCompleted)
+            {
+                try
+                {
+                    var actualExposureTime = (long)result.Get(CaptureResult.SensorExposureTime);
+                    var actualSensitivity = (int)result.Get(CaptureResult.SensorSensitivity);
+                    var actualAperture = (float)result.Get(CaptureResult.LensAperture);
+
+                    double shutterSpeed = actualExposureTime / 1_000_000_000.0;
+                    double iso = actualSensitivity;
+                    double aperture = actualAperture;
+
+                    double ev = MathF.Log2((float)((aperture * aperture) / shutterSpeed)) - MathF.Log2((float)(iso / 100.0f));
+
+                    // Get exposure compensation
+                    var exposureCompensation = (int)result.Get(CaptureResult.ControlAeExposureCompensation);
+
+                    var exposureResult = new ExposureResult
+                    {
+                        Success = true,
+                        ExposureValue = ev,
+                        Brightness = exposureCompensation,
+                        SuggestedShutterSpeed = shutterSpeed,
+                        SuggestedIso = iso,
+                        SuggestedAperture = aperture
+                    };
+
+                    _meteringTcs.TrySetResult(exposureResult);
+                    _meteringTcs = null; 
+                }
+                catch (Exception e)
+                {
+                    _meteringTcs?.TrySetException(e);
+                    _meteringTcs = null;
+                }
+            }
+
             owner.FormsControl.CameraDevice.Meta.ISO = (int)result.Get(CaptureResult.SensorSensitivity);
             owner.FormsControl.CameraDevice.Meta.FocalLength = (float)result.Get(CaptureResult.LensFocalLength);
 

@@ -36,13 +36,48 @@ namespace Sandbox
                 //    HeightRequest = 100,
                 //    HorizontalOptions = LayoutOptions.Fill,
                 //}
-                Content = new SkiaLayout() { Children = new List<SkiaControl>()
+                Content = new SkiaLayout()
                 {
-                    new SkiaSwitch()
+                    BackgroundColor = Colors.Bisque,
+                    Tag = "Container",
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
+                    Children = new List<SkiaControl>()
                     {
-                        ControlStyle =  PrebuiltControlStyle.Windows
-                    }.Center()
-                } }.Fill()
+                        new SkiaLayout()
+                        {
+                            Tag = "LayoutWithOffset",
+                            TranslationY = 100,
+                            HorizontalOptions = LayoutOptions.Fill,
+                            VerticalOptions = LayoutOptions.Fill,
+                            BackgroundColor = Colors.Aqua,
+                            UseCache = SkiaCacheType.None,
+                            Children = new List<SkiaControl>()
+                            {
+                                new SkiaLayout()
+                                {
+                                    Tag = "ReproContainer",
+                                    UseCache = SkiaCacheType.None,
+                                    BackgroundColor = Colors.Red,
+                                    HeightRequest = 100,
+                                    WidthRequest = 20,
+                                    Children = new List<SkiaControl>()
+                                    {
+                                        new SkiaShape()
+                                        {
+                                            Tag = "Repro",
+                                            Top=20,
+                                            UseCache = SkiaCacheType.Image,
+                                            BackgroundColor = Colors.Firebrick,
+                                            HorizontalOptions = LayoutOptions.Fill,
+                                            VerticalOptions = LayoutOptions.Fill
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }.Fill()
             };
 
 

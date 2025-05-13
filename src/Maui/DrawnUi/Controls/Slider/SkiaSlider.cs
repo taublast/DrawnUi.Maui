@@ -520,7 +520,7 @@ public class SkiaSlider : SkiaLayout
                     ResetPan();
                 }
 
-                var thisOffset = TranslateInputCoords(apply.childOffset);
+                var thisOffset = TranslateInputCoords(apply.ChildOffset);
 
                 var x = args.Event.Location.X + thisOffset.X;
                 var y = args.Event.Location.Y + thisOffset.Y;

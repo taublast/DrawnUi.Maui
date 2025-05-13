@@ -3424,7 +3424,7 @@ namespace DrawnUi.Draw
             {
 
                 //apply transfroms
-                var thisOffset = TranslateInputCoords(apply.childOffset, true);
+                var thisOffset = TranslateInputCoords(apply.ChildOffset, true);
                 //apply touch coords
                 var x = args.Event.Location.X + thisOffset.X;
                 var y = args.Event.Location.Y + thisOffset.Y;
@@ -3435,7 +3435,7 @@ namespace DrawnUi.Draw
                     {
                         if (span.HitIsInside(x, y))
                         {
-                            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+                            var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.ChildOffset);
                             PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
 
                             return OnSpanTapped(span);

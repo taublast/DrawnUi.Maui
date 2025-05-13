@@ -218,7 +218,7 @@ namespace DrawnUi.Draw
 
             case TouchActionResult.Down:
 
-            var thisOffset = TranslateInputCoords(apply.childOffset);
+            var thisOffset = TranslateInputCoords(apply.ChildOffset);
 
             var x = args.Event.StartingLocation.X + thisOffset.X;
             var y = args.Event.StartingLocation.Y + thisOffset.Y;

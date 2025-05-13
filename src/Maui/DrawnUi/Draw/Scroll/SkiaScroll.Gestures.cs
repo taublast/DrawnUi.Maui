@@ -3,8 +3,11 @@
 namespace DrawnUi.Draw;
 
 
+
 public partial class SkiaScroll
 {
+    public bool ReverseGestures { get; set; }
+
     public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
     {
         if (lockHeader && child.Control != Header)
@@ -148,7 +151,7 @@ public partial class SkiaScroll
 
         var preciseStop = false;
         ContentGesturesHit = false;
-        var thisOffset = TranslateInputCoords(apply.childOffset);
+        var thisOffset = TranslateInputCoords(apply.ChildOffset);
         if (Content != null && Header != null)
         {
             var x = args.Event.Location.X + thisOffset.X;
@@ -176,6 +179,7 @@ public partial class SkiaScroll
 
 
         bool wrongDirection = false;
+        var velocityDirection = ReverseGestures ? -1 : 1;
 
         if (args.Type == TouchActionResult.Panning)
         {
@@ -231,13 +235,14 @@ public partial class SkiaScroll
         }
 
         ISkiaGestureListener consumed = null;
+
         if (Orientation == ScrollOrientation.Vertical || Orientation == ScrollOrientation.Both)
         {
-            VelocityY = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
+            VelocityY = (float)(args.Event.Distance.Velocity.Y / RenderingScale * velocityDirection);
         }
         if (Orientation == ScrollOrientation.Horizontal || Orientation == ScrollOrientation.Both)
         {
-            VelocityX = (float)(args.Event.Distance.Velocity.X / RenderingScale);
+            VelocityX = (float)(args.Event.Distance.Velocity.X / RenderingScale * velocityDirection);
         }
 
         var hadNumberOfTouches = lastNumberOfTouches;
@@ -321,8 +326,8 @@ public partial class SkiaScroll
 
                         SwipeVelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY));
 
-                        var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDistancePanned;
-                        var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDistancePanned;
+                        var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDistancePanned *velocityDirection;
+                        var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDistancePanned * velocityDirection;
 
                         var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.85f;
                         var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.85f;
@@ -362,7 +367,7 @@ public partial class SkiaScroll
 
                         StopVelocityPanning();
 
-                        if (apply.alreadyConsumed != null)
+                        if (apply.AlreadyConsumed != null)
                         {
                             //if (CheckNeedToSnap())
                             //    Snap(SystemAnimationTimeSecs);

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using HarfBuzzSharp;
 
 namespace DrawnUi.Draw;
 
@@ -175,7 +176,7 @@ public partial class SkiaControl
     {
         cache ??= RenderObject;
 
-        if (cache == null || cache.Bounds.Size != size)
+        if (cache == null || !CompareSize(cache.Bounds.Size, size, 1))
             return false;
 
         return true;
@@ -205,8 +206,11 @@ public partial class SkiaControl
     {
         if (cache != null)
         {
-            if (cache.RecordingArea.Size != recordingArea.Size)
+            if (!CompareSize(cache.RecordingArea.Size, recordingArea.Size, 1))
+            {
+                CacheValidity = CacheValidityType.SizeMismatch;
                 return false;
+            }
 
             //check hardware context maybe changed
             if (UsingCacheType == SkiaCacheType.GPU && cache.Surface != null &&
@@ -217,12 +221,15 @@ public partial class SkiaControl
                 if (hardware.GRContext == null || cache.Surface.Context == null
                                                || (int)hardware.GRContext.Handle != (int)cache.Surface.Context.Handle)
                 {
+                    CacheValidity = CacheValidityType.GraphicContextMismatch;
                     return false;
                 }
             }
-
+            CacheValidity = CacheValidityType.Valid;
             return true;
         }
+
+        CacheValidity = CacheValidityType.Missing;
         return false;
     }
 
@@ -399,15 +406,16 @@ public partial class SkiaControl
     }
 
     public Action<DrawingContext, CachedObject> DelegateDrawCache { get; set; }
-
+  
 
     protected virtual void DrawRenderObjectInternal(
         DrawingContext ctx,
         CachedObject cache)
     {
-        //new absolute offsets
         var destination = ctx.Destination;
+        // New absolute offsets
         destination.Offset((float)(Left * ctx.Scale), (float)(Top * ctx.Scale));
+
         if (DelegateDrawCache != null)
         {
             DelegateDrawCache(ctx.WithDestination(destination), cache);
@@ -417,16 +425,11 @@ public partial class SkiaControl
             DrawRenderObject(ctx.WithDestination(destination), cache);
         }
 
-        //if (DelegateDrawCache != null)
-        //{
-        //    DelegateDrawCache(ctx, cache);
-        //}
-        //else
-        //{
-        //    DrawRenderObject(ctx, cache);
-        //}
+        //todo creete node
+        CreateRenderedNode(DrawingRect, ctx.Scale);
     }
 
+ 
     public bool IsCacheImage
     {
         get
@@ -472,6 +475,7 @@ public partial class SkiaControl
 
             if (cache != null)
             {
+                //CacheValidity will be set by CheckCachedObjectValid
                 if (!UsesCacheDoubleBuffering && !CheckCachedObjectValid(cache, recordArea, context.Context))
                 {
                     return false;
@@ -485,7 +489,13 @@ public partial class SkiaControl
                 }
 
                 if (!UsesCacheDoubleBuffering || !NeedUpdateFrontCache)
+                {
                     return true;
+                }
+            }
+            else
+            {
+                CacheValidity = CacheValidityType.Missing;
             }
 
             if (UsesCacheDoubleBuffering)
@@ -525,6 +535,16 @@ public partial class SkiaControl
             return false;
         }
 
+    }
+
+    public CacheValidityType CacheValidity { get; protected set; }
+
+    public enum CacheValidityType
+    {
+        Valid,
+        Missing,
+        SizeMismatch,
+        GraphicContextMismatch
     }
 
     public Action GetOffscreenRenderingAction()
@@ -775,10 +795,12 @@ public partial class SkiaControl
                         });
                     }
                     else
+                    {
                         CreateRenderingObjectAndPaint(clone, recordArea, (ctx) =>
                         {
                             PaintWithEffects(ctx.WithDestination(DrawingRect));
                         });
+                    }
                 }
             }
             else

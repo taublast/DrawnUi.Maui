@@ -124,7 +124,7 @@ public partial class SkiaShell
                 && Content != null
                 && args.Type == TouchActionResult.Tapped)
             {
-                var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+                var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
                 if (!Content.HitIsInside(point.X, point.Y))
                 {
                     _shell.ClosePopupAsync(this, _animated).ConfigureAwait(false);

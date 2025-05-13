@@ -4,7 +4,7 @@ namespace DrawnUi.Draw;
 
 public interface IDrawnBase : IDisposable, ICanBeUpdatedWithContext
 {
-    RenderedNode RenderedNode { get; set; }
+
 
     SKRect DrawingRect { get; }
 

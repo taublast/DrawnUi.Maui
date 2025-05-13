@@ -6,13 +6,12 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using DrawnUi.Infrastructure.Enums;
+using HarfBuzzSharp;
 
 namespace DrawnUi.Views
 {
     public partial class DrawnView : IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
-
-        public RenderedNode RenderedNode { get; set; }
 
         public void DumpTree(RenderedNode node, string prefix = "", bool isLast = true, int level = 0)
         {
@@ -23,7 +22,19 @@ namespace DrawnUi.Views
             string childPrefix = isLast ? "   " : "│  ";
 
             // Print the current node with appropriate prefix
-            Console.WriteLine($"{indent}{prefix}{connector}{node.Control.GetType().Name} ({node.Children.Count} children)");
+            var line =
+                $"{indent}{prefix}{connector}{node.Control.GetType().Name} at {node.HitBoxWithTransforms.Pixels.Location} ({node.Children.Count})";
+
+            if (node.Cached != SkiaCacheType.None)
+            {
+                line += $" [{node.Cached}]";
+            }
+            if (!string.IsNullOrEmpty(node.Control.Tag))
+            {
+                line += $" - {node.Control.Tag}";
+            }
+
+            Trace.WriteLine(line);
 
             // Process children
             for (int i = 0; i < node.Children.Count; i++)
@@ -1359,7 +1370,7 @@ namespace DrawnUi.Views
                 if (CanvasView == null)
                     return false;
 
-                if (LastDrawnRect.Size != rect.Size)
+                if (!SkiaControl.CompareSize(LastDrawnRect.Size, rect.Size, 1))
                 {
                     LastDrawnRect = rect;
                     NeedMeasure = true;
@@ -1904,8 +1915,6 @@ namespace DrawnUi.Views
             ++renderedFrames;
 
             //Debug.WriteLine($"[DRAW] {Tag}");
-
-            RenderedNode = new(this);
 
             if (IsDisposing || IsDisposed || UpdateLocks > 0)
             {

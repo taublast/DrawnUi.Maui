@@ -5,6 +5,8 @@ using Size = Microsoft.Maui.Graphics.Size;
 
 namespace DrawnUi.Views;
 
+
+
 /// <summary>
 /// Optimized DrawnView having only one child inside Content property. Can autosize to to children size.
 /// For all drawn app put this directly inside the ContentPage as root view.
@@ -13,10 +15,29 @@ namespace DrawnUi.Views;
 [ContentProperty("Content")]
 public class Canvas : DrawnView, IGestureListener
 {
+    protected override void OnFinalizeRendering()
+    {
+        base.OnFinalizeRendering();
+
+        //DumpDebug();
+    }
+
     public override void SetChildren(IEnumerable<SkiaControl> views)
     {
         //do not use subviews as we are using Content property for this control
         // so we just override not calling base
+    }
+
+    public void DumpDebug()
+    {
+        if (IsRendering)
+        {
+            DumpTree(this.Content.LastRenderedNode);
+        }
+        else
+        {
+            DumpTree(this.Content.RenderedNode);
+        }
     }
 
     protected override void OnChildAdded(SkiaControl child)
@@ -119,11 +140,6 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
-        if (Tag == "Wheels")
-        {
-            var stop = heightConstraint;
-        }
-
         //we need this for NET 9, where we might have `heightConstraint` Infinity
         //while `HeightRequest` was defined to exact value
         if (!double.IsFinite(heightConstraint) && double.IsFinite(HeightRequest))
@@ -473,6 +489,8 @@ public class Canvas : DrawnView, IGestureListener
             IsHiddenInViewTree = false; //if we get a gesture, we are visible by design
             bool manageChildFocus = false;
 
+            var adjust = new GestureEventProcessingInfo(args.Event.Location.ToSKPoint(), SKPoint.Empty, SKPoint.Empty,
+                wasConsumed);
 
             //first process those who already had input
             bool secondPass = true;
@@ -487,8 +505,6 @@ public class Canvas : DrawnView, IGestureListener
                         {
                             continue;
                         }
-
-                        var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
 
                         consumed = hadInput.OnSkiaGestureEvent(args, adjust);
 
@@ -544,8 +560,6 @@ public class Canvas : DrawnView, IGestureListener
                         {
                             manageChildFocus = false;
                         }
-
-                        var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
 
                         var maybeconsumed = listener.OnSkiaGestureEvent(args, adjust);
                         if (maybeconsumed != null)
@@ -724,7 +738,8 @@ public class Canvas : DrawnView, IGestureListener
         }
 
         //this is intended to not lose gestures when fps drops and avoid crashes in double-buffering
-        PostponeExecutionBeforeDraw(() =>
+        PostponeExecutionBeforeDraw(
+        () =>
         {
             try
             {
@@ -995,7 +1010,7 @@ public class Canvas : DrawnView, IGestureListener
                     DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX,
                         _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
                 }
-            }
+           }
         }
     }
 

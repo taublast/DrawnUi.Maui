@@ -250,7 +250,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     {
         var consumed = this; //   e.Handled = true;
 
-        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
 
         var position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale,
             (point.Y - DrawingRect.Top) / RenderingScale);
@@ -333,7 +333,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
                     if (delta != 0)
                     {
-                        point = TranslateInputOffsetToPixels(args.Event.Wheel.Center, apply.childOffset);
+                        point = TranslateInputOffsetToPixels(args.Event.Wheel.Center, apply.ChildOffset);
 
                         position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale,
                             (point.Y - DrawingRect.Top) / RenderingScale);

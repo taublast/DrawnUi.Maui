@@ -25,7 +25,8 @@ namespace DrawnUi.Draw
             Init();
         }
 
-        public RenderedNode RenderedNode{ get; set; }
+        public RenderedNode RenderedNode { get; set; }
+        public RenderedNode LastRenderedNode { get; set; }
 
         private void Init()
         {
@@ -152,9 +153,9 @@ namespace DrawnUi.Draw
         /// Absolute position in points
         /// </summary>
         /// <returns></returns>
-        public virtual SKPoint GetPositionOnCanvasInPoints(bool useTranslation = true)
+        public virtual SKPoint GetPositionOnCanvasInPoints()
         {
-            var position = GetPositionOnCanvas(useTranslation);
+            var position = GetPositionOnCanvas();
 
             return new(position.X / RenderingScale, position.Y / RenderingScale);
         }
@@ -165,7 +166,7 @@ namespace DrawnUi.Draw
         /// <returns></returns>
         public virtual SKPoint GetFuturePositionOnCanvasInPoints(bool useTranslation = true)
         {
-            var position = GetFuturePositionOnCanvas(useTranslation);
+            var position = GetFuturePositionOnCanvas();
 
             return new(position.X / RenderingScale, position.Y / RenderingScale);
         }
@@ -174,14 +175,14 @@ namespace DrawnUi.Draw
         /// Absolute position in pixels after drawn.
         /// </summary>
         /// <returns></returns>
-        public virtual SKPoint GetPositionOnCanvas(bool useTranslation = true)
+        public virtual SKPoint GetPositionOnCanvas()
         {
-            //Debug.WriteLine($"GetPositionOnCanvas ------------------------START at {LastDrawnAt}");
+            //if (LastRenderedNode != null)
+            //{
+            //    return LastRenderedNode.HitBoxWithTransforms.Pixels.Location;
+            //}
 
-            //ignore cache for this specific control only
-            var position = BuildDrawnOffsetRecursive(LastDrawnAt.Location, this, true, useTranslation);
-
-            //Debug.WriteLine("GetPositionOnCanvas ------------------------END");
+            var position = BuildDrawnOffsetRecursive(LastDrawnAt.Location, this, true, true);
             return new(position.X, position.Y);
         }
 
@@ -189,11 +190,9 @@ namespace DrawnUi.Draw
         /// Absolute position in pixels before drawn.
         /// </summary>
         /// <returns></returns>
-        public virtual SKPoint GetFuturePositionOnCanvas(bool useTranslation = true)
+        public virtual SKPoint GetFuturePositionOnCanvas()
         {
-            var position = BuildDrawnOffsetRecursive(DrawingRect.Location, this, true, useTranslation);
-
-
+            var position = BuildDrawnOffsetRecursive(DrawingRect.Location, this, true, true);
             return new(position.X, position.Y);
         }
 
@@ -546,9 +545,11 @@ namespace DrawnUi.Draw
                     catch (ObjectDisposedException)
                     {
                     }
+
                     _fadeCancelTokenSource = null; // Clear reference
                 }
             }
+
             _fadeCancelTokenSource = cancel ?? new CancellationTokenSource();
 
             var startOpacity = this.Opacity;
@@ -596,9 +597,11 @@ namespace DrawnUi.Draw
                     catch (ObjectDisposedException)
                     {
                     }
-                    _scaleCancelTokenSource = null;  
+
+                    _scaleCancelTokenSource = null;
                 }
             }
+
             _scaleCancelTokenSource = cancel ?? new CancellationTokenSource();
 
             var startScaleX = this.ScaleX;
@@ -648,9 +651,11 @@ namespace DrawnUi.Draw
                     catch (ObjectDisposedException)
                     {
                     }
+
                     _translateCancelTokenSource = null;
                 }
             }
+
             _translateCancelTokenSource = cancel ?? new CancellationTokenSource();
 
             var startTranslationX = this.TranslationX;
@@ -700,9 +705,11 @@ namespace DrawnUi.Draw
                     catch (ObjectDisposedException)
                     {
                     }
+
                     _rotateCancelTokenSource = null;
                 }
             }
+
             _rotateCancelTokenSource = cancel ?? new CancellationTokenSource();
 
             var startRotation = this.Rotation;
@@ -1230,27 +1237,32 @@ namespace DrawnUi.Draw
         /// </summary>
         public event EventHandler<ControlTappedEventArgs> Tapped;
 
-        public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(nameof(TouchEffectColor), typeof(Color),
+        public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(
+            nameof(TouchEffectColor), typeof(Color),
             typeof(SkiaControl),
             Colors.White);
+
         public Color TouchEffectColor
         {
             get { return (Color)GetValue(TouchEffectColorProperty); }
             set { SetValue(TouchEffectColorProperty, value); }
         }
 
-        public static readonly BindableProperty AnimationTappedProperty = BindableProperty.Create(nameof(AnimationTapped),
+        public static readonly BindableProperty AnimationTappedProperty = BindableProperty.Create(
+            nameof(AnimationTapped),
             typeof(SkiaTouchAnimation),
             typeof(SkiaControl), SkiaTouchAnimation.None);
+
         public SkiaTouchAnimation AnimationTapped
         {
             get { return (SkiaTouchAnimation)GetValue(AnimationTappedProperty); }
             set { SetValue(AnimationTappedProperty, value); }
         }
 
-
-        public static readonly BindableProperty TransformViewProperty = BindableProperty.Create(nameof(TransformView), typeof(object),
+        public static readonly BindableProperty TransformViewProperty = BindableProperty.Create(nameof(TransformView),
+            typeof(object),
             typeof(SkiaControl), null);
+
         public object TransformView
         {
             get { return (object)GetValue(TransformViewProperty); }
@@ -1265,13 +1277,13 @@ namespace DrawnUi.Draw
         /// <param name="apply"></param>
         /// <param name="useMainThread"></param>
         /// <returns></returns>
-        protected bool SendTapped(object listener, SkiaGesturesParameters args, GestureEventProcessingInfo apply, bool useMainThread)
+        protected bool SendTapped(object listener, SkiaGesturesParameters args, GestureEventProcessingInfo apply,
+            bool useMainThread)
         {
             if (Tapped != null)
             {
                 if (this.AnimationTapped != SkiaTouchAnimation.None)
                 {
-
                     var control = this as SkiaControl;
                     if (this.TransformView is SkiaControl other)
                     {
@@ -1280,11 +1292,10 @@ namespace DrawnUi.Draw
 
                     if (AnimationTapped == SkiaTouchAnimation.Ripple)
                     {
-                        var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+                        var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.ChildOffset);
                         control.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
                     }
-                    else
-                    if (AnimationTapped == SkiaTouchAnimation.Shimmer)
+                    else if (AnimationTapped == SkiaTouchAnimation.Shimmer)
                     {
                         var color = TouchEffectColor;
                         control.PlayShimmerAnimation(color, 150, 33, 300);
@@ -1293,17 +1304,16 @@ namespace DrawnUi.Draw
 
                 if (useMainThread)
                 {
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        Tapped?.Invoke(this, new(listener, args, apply));
-                    });
+                    MainThread.BeginInvokeOnMainThread(() => { Tapped?.Invoke(this, new(listener, args, apply)); });
                 }
                 else
                 {
                     Tapped?.Invoke(this, new(listener, args, apply));
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -1326,6 +1336,24 @@ namespace DrawnUi.Draw
             }
         }
 
+        public SKPoint TransformPointToLocalSpace(SKPoint pointInParentSpace)
+        {
+            //if (RenderTransformMatrix != SKMatrix.Identity)
+            //{
+            //    return RenderTransformMatrix.MapPoint(pointInParentSpace);
+            //}
+
+            // Apply the inverse transformation matrix to get point in local space
+            if (RenderTransformMatrix != SKMatrix.Identity &&
+                RenderTransformMatrix.TryInvert(out SKMatrix inverse))
+            {
+                return inverse.MapPoint(pointInParentSpace);
+            }
+
+            // No transformations applied, return original point
+            return pointInParentSpace;
+        }
+
         public virtual ISkiaGestureListener ProcessGestures(
             SkiaGesturesParameters args,
             GestureEventProcessingInfo apply)
@@ -1345,6 +1373,21 @@ namespace DrawnUi.Draw
                 Super.Log($"[BASE] {this.Tag} Got {args.Type}.. {Uid}");
             }
 
+            if (HasTransform)
+            {
+                // Transform the mapped location using the inverse transformation matrix
+                if (RenderTransformMatrix.TryInvert(out SKMatrix inverse))
+                {
+                    // Create a new struct with the updated MappedLocation
+                    apply = new GestureEventProcessingInfo(
+                        inverse.MapPoint(apply.MappedLocation),
+                        apply.ChildOffset,
+                        apply.ChildOffsetDirect,
+                        apply.AlreadyConsumed
+                    );
+                }
+            }
+
             if (EffectsGestureProcessors.Count > 0)
             {
                 foreach (var effect in EffectsGestureProcessors)
@@ -1354,14 +1397,14 @@ namespace DrawnUi.Draw
             }
 
             ISkiaGestureListener consumed = null;
-            ISkiaGestureListener wasConsumed = apply.alreadyConsumed;
+            ISkiaGestureListener wasConsumed = apply.AlreadyConsumed;
             bool manageChildFocus = false;
 
             if (UsesRenderingTree && RenderTree != null)
             {
-                var thisOffset = TranslateInputCoords(apply.childOffset);
-                var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X,
-                    args.Event.Location.Y + thisOffset.Y);
+                var thisOffset = TranslateInputCoords(apply.ChildOffset);
+                var touchLocationWIthOffset = new SKPoint(apply.MappedLocation.X + thisOffset.X,
+                    apply.MappedLocation.Y + thisOffset.Y);
 
                 var hadInputConsumed = consumed;
 
@@ -1371,7 +1414,6 @@ namespace DrawnUi.Draw
                     var asSpan = CollectionsMarshal.AsSpan(RenderTree);
                     for (int i = asSpan.Length - 1; i >= 0; i--)
                     {
-
                         var child = asSpan[i];
 
                         if (child == Superview.FocusedChild)
@@ -1394,8 +1436,9 @@ namespace DrawnUi.Draw
                                     if (ChildTapped != null)
                                     {
                                         breakForChild = listener;
-                                        ChildTapped.Invoke(this, new (child.Control, args, apply));
+                                        ChildTapped.Invoke(this, new(child.Control, args, apply));
                                     }
+
                                     if (CommandChildTapped != null)
                                     {
                                         breakForChild = listener;
@@ -1409,15 +1452,16 @@ namespace DrawnUi.Draw
                                     manageChildFocus = false;
                                 }
 
-                                var childOffset = TranslateInputCoords(apply.childOffsetDirect, false);
+                                var childOffset = TranslateInputCoords(apply.ChildOffsetDirect, false);
 
                                 if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
                                 {
                                     var c = effect.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
+                                            apply.MappedLocation,
                                             thisOffset,
                                             childOffset,
-                                            apply.alreadyConsumed));
+                                            apply.AlreadyConsumed));
                                     if (c != null)
                                     {
                                         consumed = effect;
@@ -1427,9 +1471,10 @@ namespace DrawnUi.Draw
                                 {
                                     var c = listener.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
+                                            apply.MappedLocation,
                                             thisOffset,
                                             childOffset,
-                                            apply.alreadyConsumed));
+                                            apply.AlreadyConsumed));
                                     if (c != null)
                                     {
                                         consumed = c;
@@ -1469,11 +1514,12 @@ namespace DrawnUi.Draw
                         if (CheckChildrenGesturesLocked(args.Type))
                             return null;
 
-                        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+                        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
 
                         ISkiaGestureListener breakForChild = null;
 
-                        if (consumed == null || args.Type == TouchActionResult.Up) // !GestureListeners.Contains(consumed))
+                        if (consumed == null ||
+                            args.Type == TouchActionResult.Up) // !GestureListeners.Contains(consumed))
                             foreach (var listener in GestureListeners.GetListeners())
                             {
                                 if (listener == null || !listener.CanDraw || listener.InputTransparent ||
@@ -1503,6 +1549,7 @@ namespace DrawnUi.Draw
                                             breakForChild = listener;
                                             ChildTapped.Invoke(this, new(listener, args, apply));
                                         }
+
                                         if (CommandChildTapped != null)
                                         {
                                             breakForChild = listener;
@@ -1518,8 +1565,9 @@ namespace DrawnUi.Draw
                                     //Log($"[OnGestureEvent] sent {args.Action} to {listener.Tag}");
                                     consumed = listener.OnSkiaGestureEvent(args,
                                         new GestureEventProcessingInfo(
-                                            TranslateInputCoords(apply.childOffset, true),
-                                            TranslateInputCoords(apply.childOffsetDirect, false),
+                                            apply.MappedLocation,
+                                            TranslateInputCoords(apply.ChildOffset, true),
+                                            TranslateInputCoords(apply.ChildOffsetDirect, false),
                                             wasConsumed));
 
                                     if (consumed != null)
@@ -1535,7 +1583,6 @@ namespace DrawnUi.Draw
                                         consumed = breakForChild;
                                         break;
                                     }
-
                                 }
                             }
 
@@ -1554,7 +1601,7 @@ namespace DrawnUi.Draw
                 }
             }
 
-            if (args.Type == TouchActionResult.Tapped && this is ISkiaGestureListener meAsListener && consumed==null)
+            if (args.Type == TouchActionResult.Tapped && this is ISkiaGestureListener meAsListener && consumed == null)
             {
                 if (SendTapped(meAsListener, args, apply, Super.SendTapsOnMainThread))
                 {
@@ -1614,23 +1661,26 @@ namespace DrawnUi.Draw
             set { SetValue(ParentProperty, value); }
         }
 
-
-        public static readonly BindableProperty AlignContentVerticalProperty = BindableProperty.Create(nameof(AlignContentVertical),
+        public static readonly BindableProperty AlignContentVerticalProperty = BindableProperty.Create(
+            nameof(AlignContentVertical),
             typeof(LayoutOptions),
             typeof(SkiaControl),
             LayoutOptions.Start,
             propertyChanged: NeedInvalidateMeasure);
+
         public LayoutOptions AlignContentVertical
         {
             get { return (LayoutOptions)GetValue(AlignContentVerticalProperty); }
             set { SetValue(AlignContentVerticalProperty, value); }
         }
 
-        public static readonly BindableProperty AlignContentHorizontalProperty = BindableProperty.Create(nameof(AlignContentHorizontal),
+        public static readonly BindableProperty AlignContentHorizontalProperty = BindableProperty.Create(
+            nameof(AlignContentHorizontal),
             typeof(LayoutOptions),
             typeof(SkiaControl),
             LayoutOptions.Start,
             propertyChanged: NeedInvalidateMeasure);
+
         public LayoutOptions AlignContentHorizontal
         {
             get { return (LayoutOptions)GetValue(AlignContentHorizontalProperty); }
@@ -1780,6 +1830,7 @@ namespace DrawnUi.Draw
                 {
                     effect.Stop();
                 }
+
                 Repaint();
             }
         }
@@ -2898,7 +2949,6 @@ namespace DrawnUi.Draw
         /// <param name="scale"></param>
         public SKRect CalculateLayout(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
-
             var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale);
 
             var useMaxWidth = rectAvailable.Pixels.Width;
@@ -3028,6 +3078,7 @@ namespace DrawnUi.Draw
             {
                 offsetX = (float)Math.Round(offsetX);
             }
+
             if (snapY)
             {
                 offsetY = (float)Math.Round(offsetY);
@@ -3163,14 +3214,202 @@ namespace DrawnUi.Draw
             return hit;
         }
 
+        /// <summary>
+        /// Will apply additional offsets: Left and Top. This is for GESTURES ONLY! work in progress
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <returns></returns>
         public SKRect ApplyTransforms(SKRect rect)
         {
-            //Debug.WriteLine($"[Transforming] {rect}");
+            return new SKRect(rect.Left + (float)((Left + UseTranslationX) * RenderingScale),
+                rect.Top + (float)((Top + UseTranslationY) * RenderingScale),
+                rect.Right + (float)((Left + UseTranslationX) * RenderingScale),
+                rect.Bottom + (float)((Top + UseTranslationY) * RenderingScale));
 
-            return new SKRect(rect.Left + (float)((Left +UseTranslationX) * RenderingScale),
-                rect.Top + (float)((Top+UseTranslationY) * RenderingScale),
-                rect.Right + (float)((Left+ UseTranslationX) * RenderingScale),
-                rect.Bottom + (float)((Top+UseTranslationY) * RenderingScale));
+            return new SKRect(rect.Left + (float)((Left) * RenderingScale),
+                rect.Top + (float)((Top) * RenderingScale),
+                rect.Right + (float)((Left) * RenderingScale),
+                rect.Bottom + (float)((Top) * RenderingScale));
+        }
+
+        /// <summary>
+        /// Stores the transformation matrix used during rendering for hit testing
+        /// </summary>
+        public SKMatrix RenderTransformMatrix { get; protected set; } = SKMatrix.Identity;
+
+        /// <summary>
+        /// Gets the inverse of the rendering transformation matrix for hit testing
+        /// </summary>
+        public SKMatrix InverseRenderTransformMatrix
+        {
+            get
+            {
+                if (!RenderTransformMatrix.TryInvert(out SKMatrix inverse))
+                    return SKMatrix.Identity; // if matrix can't be inverted
+                return inverse;
+            }
+        }
+
+        protected virtual void ApplyTransformationMatrix(SkiaDrawingContext ctx)
+        {
+            var matrix = RenderTransformMatrix.PostConcat(ctx.Canvas.TotalMatrix);
+            ctx.Canvas.SetMatrix(matrix);
+        }
+
+        protected virtual void CreateTransformationMatrix(SkiaDrawingContext ctx, SKRect destination)
+        {
+            if (!HasTransform)
+            {
+                RenderTransformMatrix = SKMatrix.Identity;
+                return;
+            }
+
+            var moveX = UseTranslationX * RenderingScale;
+            var moveY = UseTranslationY * RenderingScale;
+
+            // Fast path for simple translation
+            if (Rotation == 0 &&
+                ScaleX == 1 && ScaleY == 1 &&
+                SkewX == 0 && SkewY == 0 &&
+                Perspective1 == 0 && Perspective2 == 0 &&
+                RotationX == 0 && RotationY == 0 && RotationZ == 0 && TranslationZ == 0)
+            {
+                RenderTransformMatrix = SKMatrix.CreateTranslation((float)moveX, (float)moveY);
+                return;
+            }
+
+            float pivotX = (float)(destination.Left + destination.Width * AnchorX);
+            float pivotY = (float)(destination.Top + destination.Height * AnchorY);
+            var centerX = moveX + destination.Left + destination.Width * AnchorX;
+            var centerY = moveY + destination.Top + destination.Height * AnchorY;
+            var skewX = SkewX > 0 ? (float)Math.Tan(Math.PI * SkewX / 180f) : 0f;
+            var skewY = SkewY > 0 ? (float)Math.Tan(Math.PI * SkewY / 180f) : 0f;
+
+            // Build transformation matrix step by step
+
+            // Start with translation to pivot point
+            SKMatrix matrix = SKMatrix.CreateTranslation(-pivotX, -pivotY);
+
+            // Apply transforms
+            var transformMatrix = new SKMatrix
+            {
+                TransX = (float)moveX,
+                TransY = (float)moveY,
+                Persp0 = Perspective1,
+                Persp1 = Perspective2,
+                SkewX = skewX,
+                SkewY = skewY,
+                Persp2 = 1,
+                ScaleX = (float)ScaleX,
+                ScaleY = (float)ScaleY
+            };
+            matrix = matrix.PostConcat(transformMatrix);
+
+            // Apply 3D transformations if needed
+            if (draw3d || RotationX != 0 || RotationY != 0 || RotationZ != 0 || TranslationZ != 0)
+            {
+                draw3d = true;
+                Helper3d ??= new();
+                Helper3d.Reset();
+                Helper3d.RotateXDegrees((float)RotationX);
+                Helper3d.RotateYDegrees((float)RotationY);
+                Helper3d.RotateZDegrees(-(float)RotationZ);
+                Helper3d.Translate(0, 0, (float)TranslationZ);
+                matrix = matrix.PostConcat(Helper3d.Matrix);
+            }
+
+            // Translate back from pivot point
+            matrix = matrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY));
+
+            // Apply rotation around center if needed
+            if (Rotation != 0)
+            {
+                SKMatrix rotationMatrix =
+                    SKMatrix.CreateRotationDegrees((float)Rotation, (float)centerX, (float)centerY);
+                matrix = matrix.PostConcat(rotationMatrix);
+            }
+
+            // Save the complete transformation matrix for hit testing
+            RenderTransformMatrix = matrix;
+        }
+
+        protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
+        {
+            var moveX = UseTranslationX * RenderingScale;
+            var moveY = UseTranslationY * RenderingScale;
+
+            // Fast path for simple translation
+            if (Rotation == 0 &&
+                ScaleX == 1 && ScaleY == 1 &&
+                SkewX == 0 && SkewY == 0 &&
+                Perspective1 == 0 && Perspective2 == 0 &&
+                RotationX == 0 && RotationY == 0 && RotationZ == 0 && TranslationZ == 0)
+            {
+                // Apply and save simple translation
+                ctx.Canvas.Translate((float)moveX, (float)moveY);
+                if (!NodeAttached)
+                    RenderTransformMatrix = SKMatrix.CreateTranslation((float)moveX, (float)moveY);
+                return;
+            }
+
+            float pivotX = (float)(destination.Left + destination.Width * AnchorX);
+            float pivotY = (float)(destination.Top + destination.Height * AnchorY);
+            var centerX = moveX + destination.Left + destination.Width * AnchorX;
+            var centerY = moveY + destination.Top + destination.Height * AnchorY;
+            var skewX = SkewX > 0 ? (float)Math.Tan(Math.PI * SkewX / 180f) : 0f;
+            var skewY = SkewY > 0 ? (float)Math.Tan(Math.PI * SkewY / 180f) : 0f;
+
+            // Build transformation matrix step by step
+
+            // Start with translation to pivot point
+            SKMatrix matrix = SKMatrix.CreateTranslation(-pivotX, -pivotY);
+
+            // Apply transforms
+            var transformMatrix = new SKMatrix
+            {
+                TransX = (float)moveX,
+                TransY = (float)moveY,
+                Persp0 = Perspective1,
+                Persp1 = Perspective2,
+                SkewX = skewX,
+                SkewY = skewY,
+                Persp2 = 1,
+                ScaleX = (float)ScaleX,
+                ScaleY = (float)ScaleY
+            };
+            matrix = matrix.PostConcat(transformMatrix);
+
+            // Apply 3D transformations if needed
+            if (draw3d || RotationX != 0 || RotationY != 0 || RotationZ != 0 || TranslationZ != 0)
+            {
+                draw3d = true;
+                Helper3d ??= new();
+                Helper3d.Reset();
+                Helper3d.RotateXDegrees((float)RotationX);
+                Helper3d.RotateYDegrees((float)RotationY);
+                Helper3d.RotateZDegrees(-(float)RotationZ);
+                Helper3d.Translate(0, 0, (float)TranslationZ);
+                matrix = matrix.PostConcat(Helper3d.Matrix);
+            }
+
+            // Translate back from pivot point
+            matrix = matrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY));
+
+            // Apply rotation around center if needed
+            if (Rotation != 0)
+            {
+                SKMatrix rotationMatrix =
+                    SKMatrix.CreateRotationDegrees((float)Rotation, (float)centerX, (float)centerY);
+                matrix = matrix.PostConcat(rotationMatrix);
+            }
+
+            // Save the complete transformation matrix for hit testing
+            if (!NodeAttached)
+                RenderTransformMatrix = matrix;
+
+            // Apply to canvas (concat with canvas total matrix)
+            matrix = matrix.PostConcat(ctx.Canvas.TotalMatrix);
+            ctx.Canvas.SetMatrix(matrix);
         }
 
         public virtual SKPoint TranslateInputDirectOffsetToPoints(PointF location, SKPoint childOffsetDirect)
@@ -3197,8 +3436,9 @@ namespace DrawnUi.Draw
         /// <returns></returns>
         public virtual SKPoint TranslateInputCoords(SKPoint childOffset, bool accountForCache = true)
         {
-            var thisOffset = new SKPoint(-(float)(UseTranslationX * RenderingScale),
-                -(float)(UseTranslationY * RenderingScale));
+            //removed translation because we use matrices now
+            var thisOffset =
+                SKPoint.Empty; //new SKPoint(-(float)(UseTranslationX * RenderingScale), -(float)(UseTranslationY * RenderingScale));
 
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
             //so we must offset the coordinates to match the current drawing rect
@@ -3247,8 +3487,8 @@ namespace DrawnUi.Draw
             var thisOffset = SKPoint.Empty;
             if (!cacheOnly && useTranlsation)
             {
-                thisOffset = new SKPoint((float)((Left+UseTranslationX) * RenderingScale),
-                    (float)((Top+UseTranslationY) * RenderingScale));
+                thisOffset = new SKPoint((float)((Left + UseTranslationX) * RenderingScale),
+                    (float)((Top + UseTranslationY) * RenderingScale));
             }
 
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
@@ -3278,8 +3518,8 @@ namespace DrawnUi.Draw
             var thisOffset = SKPoint.Empty;
             if (!cacheOnly && useTranlsation)
             {
-                thisOffset = new SKPoint((float)((Left+UseTranslationX) * RenderingScale),
-                    (float)((Top+UseTranslationY) * RenderingScale));
+                thisOffset = new SKPoint((float)((Left + UseTranslationX) * RenderingScale),
+                    (float)((Top + UseTranslationY) * RenderingScale));
             }
 
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
@@ -3302,7 +3542,6 @@ namespace DrawnUi.Draw
         long _layoutChanged = 0;
         public SKRect ArrangedDestination { get; protected set; }
         private SKSize _lastSize;
-
         public event EventHandler LayoutIsReady;
         public event EventHandler Disposing;
 
@@ -3319,7 +3558,6 @@ namespace DrawnUi.Draw
         /// Will be set by OnLayoutReady
         /// </summary>
         public bool IsLayoutReady { get; protected set; }
-
 
         public bool LayoutReady
         {
@@ -3389,6 +3627,10 @@ namespace DrawnUi.Draw
         /// <param name="scale"></param>
         public virtual void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
+            //todo
+            //CreateTransformationMatrix(context.Context, recordingArea);
+            //CreateRenderedNode(recordingArea, context.Scale);
+
             if (!PreArrange(destination, widthRequest, heightRequest, scale))
             {
                 DrawingRect = SKRect.Empty;
@@ -3759,7 +4001,7 @@ namespace DrawnUi.Draw
             }
         }
 
-        public virtual void InitializeDefaultContent(bool force=false)
+        public virtual void InitializeDefaultContent(bool force = false)
         {
             if (!DefaultContentCreated || force)
             {
@@ -3793,7 +4035,6 @@ namespace DrawnUi.Draw
         public virtual ScaledSize SetMeasuredAdaptToContentSize(MeasuringConstraints constraints,
             float scale)
         {
-
             var needSizePixels = GetContentSizeForAutosizeInPixels();
 
             var contentWidth = NeedAutoWidth
@@ -3958,20 +4199,24 @@ namespace DrawnUi.Draw
         {
             if (Views.Count > 0)
             {
-                var maxHeight = 0.0f;
-                var maxWidth = 0.0f;
-
                 var children = Views; //GetOrderedSubviews();
                 return MeasureContent(children, rectForChildrenPixels, scale);
             }
+
             //empty container
-            else if (NeedAutoHeight || NeedAutoWidth)
+            var width = 0f;
+            var height = 0f;
+            if (HorizontalOptions.Alignment == LayoutAlignment.Fill)
             {
-                return ScaledSize.CreateEmpty(scale);
-                //return SetMeasured(0, 0, scale);
+                width = rectForChildrenPixels.Width;
             }
 
-            return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
+            if (VerticalOptions.Alignment == LayoutAlignment.Fill)
+            {
+                height = rectForChildrenPixels.Height;
+            }
+
+            return ScaledSize.FromPixels(width, height, scale);
         }
 
         public static SKRect ContractPixelsRect(SKRect rect, float scale, Thickness amount)
@@ -4068,7 +4313,6 @@ namespace DrawnUi.Draw
 
         public object LockMeasure = new();
 
-     
         /// <summary>
         /// Parameters in PIXELS. sets IsLayoutDirty = true;
         /// </summary>
@@ -4463,6 +4707,18 @@ namespace DrawnUi.Draw
         }
 
         protected bool IsRendering { get; set; }
+        protected bool NodeAttached { get; set; }
+
+        public virtual void CreateRenderedNode(SKRect destination, float scale)
+        {
+            RenderedNode parentRenderedNode = (Parent as SkiaControl)?.RenderedNode;
+
+            RenderedNode = new RenderedNode(this, parentRenderedNode, destination, scale);
+            if (parentRenderedNode != null)
+                ((SkiaControl)Parent).RenderedNode.Children.Add(RenderedNode);
+
+            NodeAttached = true;
+        }
 
         public virtual void Render(DrawingContext context)
         {
@@ -4470,16 +4726,14 @@ namespace DrawnUi.Draw
                 return;
 
             IsRendering = true;
-
-            RenderedNode = new RenderedNode(this);
-            if (Parent != null && Parent.RenderedNode != null)
-            {
-                Parent.RenderedNode.Children.Add(RenderedNode);
-            }
+            NodeAttached = false;
 
             Superview = context.Context.Superview;
             RenderingScale = context.Scale;
             NeedUpdate = false;
+
+            LastRenderedNode = RenderedNode;
+            RenderedNode = null;
 
             OnBeforeDrawing(context);
 
@@ -4506,6 +4760,7 @@ namespace DrawnUi.Draw
             }
 
             OnAfterDrawing(context);
+
 
             Rendered?.Invoke(this, EventArgs.Empty);
 
@@ -4778,7 +5033,6 @@ namespace DrawnUi.Draw
             bool isClipping = (WillClipBounds || Clipping != null
                                               || ClipWith != null || HasPlatformClip()) && useClipping;
 
-
             if (isClipping)
             {
                 _preparedClipBounds ??= new SKPath();
@@ -4829,6 +5083,12 @@ namespace DrawnUi.Draw
                 {
                     ApplyTransforms(ctx.Context, transformsArea);
                 }
+                else
+                {
+                    RenderTransformMatrix = SKMatrix.Identity;
+                }
+
+                CreateRenderedNode(transformsArea, ctx.Scale);
 
                 if (isClipping)
                 {
@@ -4842,12 +5102,16 @@ namespace DrawnUi.Draw
             }
             else
             {
+                RenderTransformMatrix = SKMatrix.Identity;
+                CreateRenderedNode(transformsArea, ctx.Scale);
+
                 draw(ctx);
             }
         }
 
         private bool usePixelSnapping = false;
 
+        /*
         protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
         {
             var moveX = UseTranslationX * RenderingScale;
@@ -4915,7 +5179,7 @@ namespace DrawnUi.Draw
 
             ctx.Canvas.SetMatrix(drawingMatrix);
         }
-
+        */
         private bool draw3d;
 
         public static bool IsSimpleRectangle(SKPath path)
@@ -5270,9 +5534,7 @@ namespace DrawnUi.Draw
 
             List<SkiaControlWithRect> tree = new();
 
-            //todo
-            //var visibleArea = GetOnScreenVisibleArea();
-
+            //actually base control has NO virtualization on purpose. implemented only for layouts.
             foreach (var child in skiaControls)
             {
                 if (child != null)
@@ -5283,16 +5545,16 @@ namespace DrawnUi.Draw
                         child.Render(context);
 
                         tree.Add(new SkiaControlWithRect(child,
-                            context.Destination, //child.LastDrawnAt,
-                            child.LastDrawnAt, count));
+                            context.Destination,
+                            child.LastDrawnAt,
+                            count));
 
                         count++;
                     }
                 }
             }
 
-            RenderTree = tree;
-            _builtRenderTreeStamp = _measuredStamp;
+            SetRenderingTree(tree);
 
             return count;
         }
@@ -5307,9 +5569,15 @@ namespace DrawnUi.Draw
         protected long _builtRenderTreeStamp;
 
         /// <summary>
-        /// Last rendered controls tree. Used by gestures etc..
+        /// Last rendered controls tree. Used by gestures etc..Please use SetRenderingTree method for setting it correctly.
         /// </summary>
         public List<SkiaControlWithRect> RenderTree { get; protected set; }
+
+        public virtual void SetRenderingTree(List<SkiaControlWithRect> tree)
+        {
+            RenderTree = tree;
+            _builtRenderTreeStamp = _measuredStamp;
+        }
 
         #endregion
 
@@ -6581,12 +6849,13 @@ namespace DrawnUi.Draw
                     //fill
                     aspectX = width < dest.Width ? Math.Max(s1, s2) : 1;
                     aspectY = aspectX;
-                    if (width*aspectX > dest.Width || height*aspectY > dest.Height)
+                    if (width * aspectX > dest.Width || height * aspectY > dest.Height)
                     {
                         //fit
                         aspectX = Math.Min(s1, s2);
                         aspectY = aspectX;
                     }
+
                     break;
             }
 
@@ -6834,7 +7103,6 @@ namespace DrawnUi.Draw
         }
 
         #endregion
-
     }
 
     public static class Snapping
@@ -6882,8 +7150,5 @@ namespace DrawnUi.Draw
 
             return snappedTranslation;
         }
-
-
-
     }
 }
