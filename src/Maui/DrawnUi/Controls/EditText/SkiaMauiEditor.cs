@@ -80,6 +80,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             control.Text = Text;
         //todo customize
         control.Placeholder = this.Placeholder;
+        control.PlaceholderColor = this.PlaceholderColor;
     }
 
     protected virtual Editor GetOrCreateControl()
@@ -380,12 +381,22 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     public static readonly BindableProperty TextColorProperty = BindableProperty.Create(
         nameof(TextColor), typeof(Color), typeof(SkiaMauiEditor),
-        Colors.GreenYellow,
+        Colors.DarkSlateGray,
         propertyChanged: NeedUpdateControl);
     public Color TextColor
     {
         get { return (Color)GetValue(TextColorProperty); }
         set { SetValue(TextColorProperty, value); }
+    }
+
+    public static readonly BindableProperty PlaceholderColorProperty = BindableProperty.Create(
+        nameof(PlaceholderColor), typeof(Color), typeof(SkiaMauiEditor),
+        Colors.DarkGray,
+        propertyChanged: NeedUpdateControl);
+    public Color PlaceholderColor
+    {
+        get { return (Color)GetValue(PlaceholderColorProperty); }
+        set { SetValue(PlaceholderColorProperty, value); }
     }
 
     public static readonly BindableProperty FontWeightProperty = BindableProperty.Create(
