@@ -38,44 +38,23 @@ namespace Sandbox
                 //}
                 Content = new SkiaLayout()
                 {
-                    BackgroundColor = Colors.Bisque,
+                    BackgroundColor = Colors.Red,
                     Tag = "Container",
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill,
                     Children = new List<SkiaControl>()
                     {
-                        new SkiaLayout()
+
+
+                        new SkiaEditor()
                         {
-                            Tag = "LayoutWithOffset",
-                            TranslationY = 100,
-                            HorizontalOptions = LayoutOptions.Fill,
-                            VerticalOptions = LayoutOptions.Fill,
-                            BackgroundColor = Colors.Aqua,
-                            UseCache = SkiaCacheType.None,
-                            Children = new List<SkiaControl>()
-                            {
-                                new SkiaLayout()
-                                {
-                                    Tag = "ReproContainer",
-                                    UseCache = SkiaCacheType.None,
-                                    BackgroundColor = Colors.Red,
-                                    HeightRequest = 100,
-                                    WidthRequest = 20,
-                                    Children = new List<SkiaControl>()
-                                    {
-                                        new SkiaShape()
-                                        {
-                                            Tag = "Repro",
-                                            Top=20,
-                                            UseCache = SkiaCacheType.Image,
-                                            BackgroundColor = Colors.Firebrick,
-                                            HorizontalOptions = LayoutOptions.Fill,
-                                            VerticalOptions = LayoutOptions.Fill
-                                        }
-                                    }
-                                }
-                            }
+                            HeightRequest = 100,
+                            WidthRequest = 300,
+                            BackgroundColor = Colors.White,
+                            TextColor = Colors.Black,
+                            FontSize = 14
                         }
+
                     }
                 }.Fill()
             };

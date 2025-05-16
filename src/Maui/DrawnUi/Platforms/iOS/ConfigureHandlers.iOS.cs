@@ -30,6 +30,7 @@ namespace DrawnUi.Draw
                 }
             });
 
+            handlers.AddHandler(typeof(DrawnUiBasePage), typeof(DrawnUiBasePageHandler));
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
             handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerRetained));
