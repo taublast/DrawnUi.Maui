@@ -19,11 +19,6 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     {
         Debug.WriteLine($"[SkiaMauiEntry] consuming {args.Type}'");
 
-        if (args.Type == TouchActionResult.Up)
-        {
-            var top = 2;
-        }
-
         return this;
     }
 
@@ -142,6 +137,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         control.MaxLines = MaxLines;
         control.FontSize = FontSize;
         control.TextColor = this.TextColor;
+        control.PlaceholderColor = this.PlaceholderColor;
         control.ReturnType = this.ReturnType;
         control.Keyboard = this.KeyboardType;
         ;
@@ -394,6 +390,16 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     {
         get { return (Color)GetValue(TextColorProperty); }
         set { SetValue(TextColorProperty, value); }
+    }
+
+    public static readonly BindableProperty PlaceholderColorProperty = BindableProperty.Create(
+        nameof(PlaceholderColor), typeof(Color), typeof(SkiaMauiEntry),
+        Colors.DarkGray,
+        propertyChanged: NeedUpdateControl);
+    public Color PlaceholderColor
+    {
+        get { return (Color)GetValue(PlaceholderColorProperty); }
+        set { SetValue(PlaceholderColorProperty, value); }
     }
 
     public static readonly BindableProperty FontWeightProperty = BindableProperty.Create(
