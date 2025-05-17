@@ -1604,7 +1604,7 @@ namespace DrawnUi.Draw
 
                     width = textWidth;
 
-                    if (width > limitWidth)
+                    if (width - limitWidth > 1)
                     {
                         //the whole word is bigger than width,
 
