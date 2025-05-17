@@ -603,7 +603,7 @@ public class Canvas : DrawnView, IGestureListener
                 }
 
                 if (manageChildFocus || FocusedChild != null
-                    && consumed != FocusedChild)
+                    && consumed != FocusedChild && !FocusedChild.LockFocus)
                 {
                     System.Diagnostics.Debug.WriteLine(
                         $"[Canvas] set FocusedChild to '{consumed}' we had '{FocusedChild}' and consumed was '{consumed}'");
@@ -654,7 +654,7 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name=""></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
-        //Debug.WriteLine($"[Canvas] {touchAction}");
+        //Trace.WriteLine($"[Canvas] {touchAction}");
 
 #if ANDROID
         if (touchAction == TouchActionResult.Panning)

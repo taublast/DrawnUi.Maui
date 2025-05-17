@@ -128,7 +128,7 @@ namespace DrawnUi.Controls
 
         #region Tabs
 
-        protected override void OnChildAdded(SkiaControl view)
+        public override void OnChildAdded(SkiaControl view)
         {
             if (view is IInsideViewport viewport)
             {

@@ -211,7 +211,7 @@ public partial class SpaceShooter : MauiGame
         EnemiesPool.Add(enemy.Uid, enemy);
     }
 
-    protected override void OnChildAdded(SkiaControl child)
+    public override void OnChildAdded(SkiaControl child)
     {
         if (_initialized)
             return; //do not care
@@ -219,7 +219,7 @@ public partial class SpaceShooter : MauiGame
         base.OnChildAdded(child);
     }
 
-    protected override void OnChildRemoved(SkiaControl child)
+    public override void OnChildRemoved(SkiaControl child)
     {
         if (_initialized)
             return; //do not care

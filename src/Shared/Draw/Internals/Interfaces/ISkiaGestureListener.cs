@@ -15,6 +15,8 @@ public interface ISkiaGestureListener
 
     public bool InputTransparent { get; }
 
+    public bool LockFocus { get; }
+
     bool CanDraw { get; }
 
     string Tag { get; }

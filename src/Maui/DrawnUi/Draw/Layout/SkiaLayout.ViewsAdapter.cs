@@ -408,6 +408,7 @@ public class ViewsAdapter : IDisposable
                 return;
 
             view.IsParentIndependent = true; // uneven rows ultimate fix
+
             view.Parent = _parent;
             if (index == 0 || view.ContextIndex != index)
             //if (view.BindingContext == null || _parent.RecyclingTemplate == RecyclingTemplate.Enabled)
@@ -419,6 +420,7 @@ public class ViewsAdapter : IDisposable
                         var context = _dataContexts[index];
                         view.ContextIndex = index;
                         view.BindingContext = context;
+                        _parent.OnViewAttached();
                     }
                 }
                 catch (Exception e)

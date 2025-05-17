@@ -1206,7 +1206,7 @@ namespace DrawnUi.Draw
                 !child.Control.InputTransparent && child.Control.CanDraw)
             {
                 var transformed = child.Control.ApplyTransforms(child.HitRect);
-                inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
+                inside = transformed.ContainsInclusive(point.X, point.Y);// || child.Control == Superview.FocusedChild;
             }
 
             return inside;
@@ -1352,6 +1352,16 @@ namespace DrawnUi.Draw
 
             // No transformations applied, return original point
             return pointInParentSpace;
+        }
+
+        public bool IsGestureInside(GestureEventProcessingInfo apply)
+        {
+            var thisOffset = TranslateInputCoords(apply.ChildOffset);
+            var touchLocationWIthOffset = new SKPoint(apply.MappedLocation.X + thisOffset.X,
+                apply.MappedLocation.Y + thisOffset.Y);
+            var transformed = ApplyTransforms(DrawingRect);
+            var inside = transformed.ContainsInclusive(touchLocationWIthOffset.X, touchLocationWIthOffset.Y);
+            return inside;
         }
 
         public virtual ISkiaGestureListener ProcessGestures(
@@ -2520,6 +2530,16 @@ namespace DrawnUi.Draw
             set { SetValue(ExpandDirtyRegionProperty, value); }
         }
 
+        public static readonly BindableProperty LockFocusProperty = BindableProperty.Create(
+            nameof(LockFocus),
+            typeof(bool), typeof(SkiaControl), false);
+
+        public bool LockFocus
+        {
+            get { return (bool)GetValue(LockFocusProperty); }
+            set { SetValue(LockFocusProperty, value); }
+        }
+
         public static readonly BindableProperty IsClippedToBoundsProperty = BindableProperty.Create(
             nameof(IsClippedToBounds),
             typeof(bool), typeof(SkiaControl), false,
@@ -2938,6 +2958,8 @@ namespace DrawnUi.Draw
             return new SKRect((float)left, (float)top, (float)right, (float)bottom);
         }
 
+        public bool RoundCenterAlignment = true;
+
         /// <summary>
         ///  destination in PIXELS, requests in UNITS. resulting Destination prop will be filed in PIXELS.
         /// Not using Margins nor Padding
@@ -2973,7 +2995,15 @@ namespace DrawnUi.Draw
             {
                 case LayoutAlignment.Center when float.IsFinite(availableWidth) && availableWidth > useMaxWidth:
                 {
-                    left += (float)Math.Ceiling(availableWidth / 2.0f - useMaxWidth / 2.0f);
+                    var half = availableWidth / 2.0f - useMaxWidth / 2.0f;
+                    if (RoundCenterAlignment)
+                    {
+                        left += (float)Math.Ceiling(half);
+                    }
+                    else
+                    {
+                        left += (float)half;
+                    }
                     right = left + useMaxWidth;
 
                     if (left < destination.Left)
@@ -3019,7 +3049,15 @@ namespace DrawnUi.Draw
             {
                 case LayoutAlignment.Center when float.IsFinite(availableHeight) && availableHeight > useMaxHeight:
                 {
-                    top += (float)Math.Ceiling(availableHeight / 2.0f - useMaxHeight / 2.0f);
+                    var half = availableHeight / 2.0f - useMaxHeight / 2.0f;
+                    if (RoundCenterAlignment)
+                    {
+                        top += (float)Math.Ceiling(half);
+                    }
+                    else
+                    {
+                        top += (float)half;
+                    }
                     bottom = top + useMaxHeight;
 
                     if (top < destination.Top)
@@ -6481,12 +6519,12 @@ namespace DrawnUi.Draw
             //base.OnChildAdded(child);
         }
 
-        protected virtual void OnChildAdded(SkiaControl child)
+        public virtual void OnChildAdded(SkiaControl child)
         {
             OnChildrenChanged();
         }
 
-        protected virtual void OnChildRemoved(SkiaControl child)
+        public virtual void OnChildRemoved(SkiaControl child)
         {
             OnChildrenChanged();
         }
@@ -6497,6 +6535,16 @@ namespace DrawnUi.Draw
         public virtual void OnChildrenChanged()
         {
             Invalidate();
+        }
+
+        public virtual void OnViewAttached()
+        {
+
+        }
+
+        public virtual void OnViewDetached()
+        {
+
         }
 
         public DateTime? GestureListenerRegistrationTime { get; set; }

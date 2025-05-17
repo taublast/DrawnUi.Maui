@@ -332,11 +332,6 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         }
     }
 
-    /// <summary>
-    /// TODO
-    /// </summary>
-    bool LockFocus { get; set; }
-
     #region PROPERTIES
 
     private static void NeedUpdateControl(BindableObject bindable, object oldvalue, object newvalue)

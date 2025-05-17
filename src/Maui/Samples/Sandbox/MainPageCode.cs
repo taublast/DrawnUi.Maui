@@ -1,4 +1,5 @@
-﻿using Sandbox.Views;
+﻿using System.Diagnostics;
+using Sandbox.Views;
 using Canvas = DrawnUi.Views.Canvas;
 
 namespace Sandbox
@@ -22,6 +23,8 @@ namespace Sandbox
         {
             Canvas?.Dispose();
 
+            SkiaButton btn;
+
             Canvas = new Canvas()
             {
                 Gestures = GesturesMode.Enabled,
@@ -40,20 +43,33 @@ namespace Sandbox
                 {
                     BackgroundColor = Colors.Red,
                     Tag = "Container",
-                    HorizontalOptions = LayoutOptions.Fill,
-                    VerticalOptions = LayoutOptions.Fill,
+                    HorizontalOptions = LayoutOptions.Start,
+                    VerticalOptions = LayoutOptions.Center,
                     Children = new List<SkiaControl>()
                     {
-
-
-                        new SkiaEditor()
+                        new SkiaMauiEditor()
                         {
+                            LockFocus=true,
                             HeightRequest = 100,
                             WidthRequest = 300,
+                            VerticalOptions = LayoutOptions.Center,
                             BackgroundColor = Colors.White,
                             TextColor = Colors.Black,
                             FontSize = 14
-                        }
+                        },
+
+                        new SkiaButton()
+                        {
+                            Text = "BTN",
+                            WidthRequest = 50,
+                            HeightRequest = 90,
+                            BackgroundColor = Colors.DarkOliveGreen,
+                            HorizontalOptions = LayoutOptions.End,
+                            VerticalOptions = LayoutOptions.Center,
+                        }.OnTapped((me) =>
+                        {
+                            Trace.WriteLine("BTN TAPPED");
+                        })
 
                     }
                 }.Fill()

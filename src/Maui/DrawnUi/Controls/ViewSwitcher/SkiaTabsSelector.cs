@@ -161,14 +161,14 @@ public class SkiaTabsSelector : SkiaLayout
         SelectableTabs.Clear();
     }
 
-    protected override void OnChildAdded(SkiaControl child)
+    public override void OnChildAdded(SkiaControl child)
     {
         base.OnChildAdded(child);
 
         AddTab(child as SkiaControl);
     }
 
-    protected override void OnChildRemoved(SkiaControl child)
+    public override void OnChildRemoved(SkiaControl child)
     {
         base.OnChildRemoved(child);
 

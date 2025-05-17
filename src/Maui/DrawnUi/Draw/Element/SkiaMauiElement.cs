@@ -269,7 +269,7 @@
         /// <summary>
         /// Prevent usage of subviews as we are using Content property for this control
         /// </summary>
-        protected override void OnChildAdded(SkiaControl child)
+        public override void OnChildAdded(SkiaControl child)
         {
             if (this.Views.Count > 0)
             {
@@ -396,6 +396,8 @@
         void UpdateElementSize()
         {
             ElementSize = new(DrawingRect.Width, DrawingRect.Height);
+
+            Refresh();
         }
 
         SKRect _destination;

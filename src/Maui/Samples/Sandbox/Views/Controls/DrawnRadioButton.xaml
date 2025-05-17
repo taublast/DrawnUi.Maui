@@ -35,7 +35,7 @@
             Tag="On"
             Type="Circle"
             VerticalOptions="Center"
-            WidthRequest="11" />
+            WidthRequest="12" />
 
     </draw:SkiaLayout>
 

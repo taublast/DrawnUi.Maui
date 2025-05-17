@@ -149,7 +149,7 @@ public class DrawnTabsHeader : SkiaLayout
         set { SetValue(ClipOffsetProperty, value); }
     }
 
-    protected override void OnChildAdded(SkiaControl child)
+    public override void OnChildAdded(SkiaControl child)
     {
         base.OnChildAdded(child);
 

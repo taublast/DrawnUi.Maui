@@ -66,7 +66,7 @@ namespace DrawnUi.Draw
                     !child.Control.InputTransparent && child.Control.CanDraw)
                 {
                     var transformed = child.Control.ApplyTransforms(child.Rect); //instead of HitRect
-                    inside = transformed.ContainsInclusive(point.X, point.Y) || child.Control == Superview.FocusedChild;
+                    inside = transformed.ContainsInclusive(point.X, point.Y);// || child.Control == Superview.FocusedChild;
                 }
                 return inside;
             }
@@ -700,7 +700,6 @@ namespace DrawnUi.Draw
                 || IsTemplated && !NeedAutoSize)
             {
                 UpdateByChild(child);
-                return;
             }
 
             base.InvalidateByChild(child);

@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace DrawnUi.Controls;
 
@@ -7,6 +8,18 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
+
+        //if (!LockFocus)
+        //{
+        //    var thisOffset = TranslateInputCoords(apply.ChildOffset);
+        //    var touchLocationWIthOffset = new SKPoint(apply.MappedLocation.X + thisOffset.X,
+        //        apply.MappedLocation.Y + thisOffset.Y);
+        //    var transformed = ApplyTransforms(DrawingRect);
+        //    var inside = transformed.ContainsInclusive(touchLocationWIthOffset.X, touchLocationWIthOffset.Y);
+        //    if (!inside)
+        //        return null;
+        //}
+
         if (args.Type == TouchActionResult.Up)
         {
             // var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
@@ -348,11 +361,6 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             control.UpdateControl();
         }
     }
-
-    /// <summary>
-    /// TODO
-    /// </summary>
-    bool LockFocus { get; set; }
 
 
     #region   PROPERTIES
