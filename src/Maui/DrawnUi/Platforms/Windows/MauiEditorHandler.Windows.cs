@@ -8,7 +8,7 @@ using TextChangedEventArgs = Microsoft.UI.Xaml.Controls.TextChangedEventArgs;
 namespace DrawnUi.Controls;
 
 
-public partial class MauiEditorHandlerBack : EditorHandler
+public partial class MauiEditorHandler : EditorHandler
 {
 
     TextBox _control;
@@ -42,6 +42,21 @@ public partial class MauiEditorHandlerBack : EditorHandler
         base.PlatformArrange(frame);
 
         ApplySettings();
+    }
+
+
+    protected override TextBox CreatePlatformView()
+    {
+        var view = base.CreatePlatformView();
+
+        _control = view;
+
+        //_control.GotFocus += (sender, args) =>
+        //{
+        //    (VirtualView as MauiEntry).Background = Microsoft.Maui.Controls.Brush.Transparent;
+        //};
+
+        return _control;
     }
 
     protected override void DisconnectHandler(TextBox platformView)
