@@ -2207,6 +2207,7 @@ namespace DrawnUi.Draw
 
         public void SetIsRefreshing(bool state)
         {
+            Debug.WriteLine($"[SCROLL] IsRefreshing {state}");
             //lock scrolling at top
             if (state)
             {
@@ -2214,6 +2215,7 @@ namespace DrawnUi.Draw
                 wasRefreshing = true;
                 IsRefreshing = true;
                 ScrollLocked = true;
+                ShowRefreshIndicatorForced();
                 RefreshCommand?.Execute(this);
             }
             else
