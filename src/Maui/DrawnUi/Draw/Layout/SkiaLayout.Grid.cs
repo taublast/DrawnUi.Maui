@@ -43,7 +43,6 @@ public partial class SkiaLayout
         if (contentHeight > maxHeight)
             maxHeight = contentHeight;
 
-
         return ScaledSize.FromPixels(maxWidth, maxHeight, scale);
     }
 
@@ -84,7 +83,6 @@ public partial class SkiaLayout
                 //GetCellBoundsFor is in pixels
                 SKRect cellRect = new((float)(cell.Left * scale), (float)(cell.Top * scale),
                     (float)(cell.Right * scale), (float)(cell.Bottom * scale));
-
 
                 if (IsRenderingWithComposition)
                 {

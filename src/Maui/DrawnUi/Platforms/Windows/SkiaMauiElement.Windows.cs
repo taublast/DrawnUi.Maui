@@ -68,6 +68,19 @@ public partial class SkiaMauiElement
 
 
 
+    public void NativeInvalidate()
+    {
+        NativeInvalidated = true;
+        if (Element != null)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LayoutNativeView(Element);
+            });
+        }
+    }
+
+    private bool NativeInvalidated;
 
     public virtual void SetNativeVisibility(bool state)
     {
@@ -84,6 +97,9 @@ public partial class SkiaMauiElement
     {
         if (element.Handler?.PlatformView is FrameworkElement nativeView)
         {
+
+            Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView maybe at {VisualTransformNative.Rect.Location}");
+
             var visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Collapsed;
 
             //Debug.WriteLine($"Visibility {nativeView.Visibility}");
@@ -118,7 +134,7 @@ public partial class SkiaMauiElement
 
                 nativeView.RenderTransform = transform;
 
-                if (!WasRendered)
+                if (!WasRendered || ArrangedAt != VisualTransformNative.Rect.Location)
                 {
                     nativeView.UpdateLayout(); //place the view at correct destination
                     needLayout = true;
@@ -136,7 +152,11 @@ public partial class SkiaMauiElement
                 }
 
                 if (needLayout)
+                {
+                    Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView ARRANGED at {VisualTransformNative.Rect.Location}");
                     nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+                    ArrangedAt = VisualTransformNative.Rect.Location;
+                }
 
                 if (!WasRendered)
                     WasRendered = nativeView.RenderSize.Width > 0;
@@ -148,7 +168,7 @@ public partial class SkiaMauiElement
         }
     }
 
-
+    public SKPoint ArrangedAt { get; set; }
     public Windows.Foundation.Size MeasuredFor { get; set; } 
 
     public void UpdateNativeLayout()

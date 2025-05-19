@@ -40,8 +40,19 @@ namespace DrawnUi.Draw
     /// and intelligent rendering that only processes visible portions of text.
     /// </remarks>
     [ContentProperty("Spans")]
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public partial class SkiaLabel : SkiaControl, ISkiaGestureListener, IText
     {
+        private string DebuggerDisplay
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Text))
+                    return "[Empty]";
+
+                return Text.Length <= 16 ? Text : Text.Substring(0, 16) + "...";
+            }
+        }
 
         #region INFRASTRUCTURE
 
@@ -49,7 +60,7 @@ namespace DrawnUi.Draw
         {
             if (_spans != null)
             {
-                lock (_spanLock)
+                lock (SpanLock)
                 {
                     _spans.CollectionChanged -= OnCollectionChanged;
                     foreach (var span in _spans)
@@ -141,7 +152,7 @@ namespace DrawnUi.Draw
         public override void ApplyBindingContext()
         {
             base.ApplyBindingContext();
-            lock (_spanLock)
+            lock (SpanLock)
             {
                 for (int i = 0; i < Spans.Count; i++)
                     SetInheritedBindingContext(Spans[i], BindingContext);
@@ -160,7 +171,7 @@ namespace DrawnUi.Draw
 
         public override string ToString()
         {
-            lock (_spanLock)
+            lock (SpanLock)
             {
                 if (Spans.Count > 0)
                 {
@@ -2610,7 +2621,7 @@ namespace DrawnUi.Draw
         protected float fontUnderline;
 
         private DecomposedText _lastDecomposed;
-        private readonly object _spanLock = new object();
+        protected readonly object SpanLock = new object();
         private int _fontWeight;
         private static float _scaleResampleText = 1.0f;
         private SKTypeface _replaceFont;

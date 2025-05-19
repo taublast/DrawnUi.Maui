@@ -11,10 +11,27 @@ public partial class SkiaMauiElement
 
     public bool ShowSnapshot => false;
 
+    public void NativeInvalidate()
+    {
+        NativeInvalidated = true;
+        if (Element != null)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LayoutNativeView(Element);
+            });
+        }
+    }
+
+    private bool NativeInvalidated;
+    public SKPoint ArrangedAt { get; set; }
+
     protected virtual void LayoutNativeView(VisualElement element)
     {
         if (element.Handler?.PlatformView is UIView nativeView)
         {
+            Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView maybe at {VisualTransformNative.Rect.Location}");
+
             var visibility = IsVisibleInViewTree() && VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Hidden;
             if (nativeView.IsFirstResponder && visibility == Visibility.Hidden)
             {
@@ -36,6 +53,8 @@ public partial class SkiaMauiElement
                     VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
                     VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
                 );
+
+                Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView ARRANGED at {VisualTransformNative.Rect.Location}");
 
                 nativeView.Transform = CGAffineTransform.MakeTranslation(VisualTransformNative.Translation.X, VisualTransformNative.Translation.Y);
                 nativeView.Transform = CGAffineTransform.Rotate(nativeView.Transform, VisualTransformNative.Rotation); // Assuming rotation in radians

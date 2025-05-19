@@ -31,14 +31,27 @@
                 Element.BindingContext = this.BindingContext;
         }
 
+        public override bool NeedMeasure
+        {
+            get
+            {
+                return base.NeedMeasure;
+            }
+            set
+            {
+                Debug.WriteLine($"[SkiaMauiElement] NeedMeasure {value}");
+                base.NeedMeasure = value;
+            }
+        }
+
         public override ScaledSize MeasureAbsolute(SKRect rectForChildrenPixels, float scale)
         {
             try
             {
-                if (Element is IView view && Element.Handler != null && rectForChildrenPixels.Width > 0
-                    && rectForChildrenPixels.Height > 0 && LayoutReady)
+                if (Element is IView mauiNativeView && Element.Handler != null && rectForChildrenPixels.Width > 0
+                    && rectForChildrenPixels.Height > 0 && LayoutReady) //without layoutready we will get 0 as size from maui ty
                 {
-                    var measured = view.Measure(rectForChildrenPixels.Width / scale,
+                    var measured = mauiNativeView.Measure(rectForChildrenPixels.Width / scale,
                         rectForChildrenPixels.Height / scale);
 
                     Debug.WriteLine($"[SkiaMauiElement] Calling native measure for pixels {rectForChildrenPixels}");
@@ -512,23 +525,23 @@
                 }
                 else
                 {
-                    if (manageMainThread)
-                    {
-                        Tasks.StartDelayed(TimeSpan.FromMilliseconds(10),
-                            () =>
-                            {
-                                MainThread.BeginInvokeOnMainThread(() =>
-                                {
-                                    Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals
-                                        .InvalidationTrigger.HorizontalOptionsChanged);
-                                });
-                            });
-                    }
-                    else
-                    {
-                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger
-                            .HorizontalOptionsChanged);
-                    }
+                    //if (manageMainThread)
+                    //{
+                    //    Tasks.StartDelayed(TimeSpan.FromMilliseconds(10),
+                    //        () =>
+                    //        {
+                    //            MainThread.BeginInvokeOnMainThread(() =>
+                    //            {
+                    //                Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals
+                    //                    .InvalidationTrigger.HorizontalOptionsChanged);
+                    //            });
+                    //        });
+                    //}
+                    //else
+                    //{
+                    //    Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger
+                    //        .HorizontalOptionsChanged);
+                    //}
                 }
 
                 return;
@@ -657,6 +670,12 @@
         #endregion
 
 #if !ONPLATFORM
+
+        public void NativeInvalidate()
+        {
+            throw new NotImplementedException();
+        }
+
         protected virtual void LayoutNativeView(VisualElement element)
         {
             throw new NotImplementedException();

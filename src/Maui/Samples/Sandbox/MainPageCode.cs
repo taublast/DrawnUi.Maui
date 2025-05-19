@@ -1,12 +1,30 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using AppoMobi.Specials;
 using Sandbox.Views;
 using Canvas = DrawnUi.Views.Canvas;
 
 namespace Sandbox
 {
+
+    public class TrackCell : SkiaShape
+    {
+        public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+        {
+            var ret = base.Measure(widthConstraint, heightConstraint, scale);
+            Debug.WriteLine($"[CELL] {BindingContext} measured {ret.Pixels}");
+            return ret;
+        }
+    }
+
     public class MainPageCode : BasePageCodeBehind, IDisposable
     {
         Canvas Canvas;
+
+        public ObservableRangeCollection<string>Source { get; } = new ();
+
+        //case for developing partial cells changes
+        //without remeasuring all inside templated stack
 
         protected override void Dispose(bool isDisposing)
         {
@@ -23,6 +41,10 @@ namespace Sandbox
         {
             Canvas?.Dispose();
 
+            Source.Clear();
+            Source.AddRange( new [] { "one", "two", "three" });
+            BindingContext = this;
+
             SkiaButton btn;
 
             Canvas = new Canvas()
@@ -31,48 +53,79 @@ namespace Sandbox
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
                 BackgroundColor = Colors.White,
-                //Content = new SkiaLottie()
-                //{
-                //    DefaultFrame = -1,
-                //    Source = @"Lottie\ok.json",
-                //    WidthRequest = 100,
-                //    HeightRequest = 100,
-                //    HorizontalOptions = LayoutOptions.Fill,
-                //}
                 Content = new SkiaLayout()
                 {
-                    BackgroundColor = Colors.Red,
-                    Tag = "Container",
-                    HorizontalOptions = LayoutOptions.Start,
-                    VerticalOptions = LayoutOptions.Center,
+                    Type = LayoutType.Column,
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
                     Children = new List<SkiaControl>()
                     {
-                        new SkiaMauiEditor()
-                        {
-                            LockFocus=true,
-                            HeightRequest = 100,
-                            WidthRequest = 300,
-                            VerticalOptions = LayoutOptions.Center,
-                            BackgroundColor = Colors.White,
-                            TextColor = Colors.Black,
-                            FontSize = 14
-                        },
 
                         new SkiaButton()
                         {
-                            Text = "BTN",
-                            WidthRequest = 50,
-                            HeightRequest = 90,
-                            BackgroundColor = Colors.DarkOliveGreen,
-                            HorizontalOptions = LayoutOptions.End,
-                            VerticalOptions = LayoutOptions.Center,
+                            Text = "Add Item",
+                            HeightRequest = 40,
+                            HorizontalOptions = LayoutOptions.Center,
+                            WidthRequest = 200,
                         }.OnTapped((me) =>
                         {
-                            Trace.WriteLine("BTN TAPPED");
-                        })
+                            Source.Add("new item");
+                        }),
+
+                        new SkiaScroll()
+                        {
+                            BackgroundColor = Colors.Red,
+                            Tag = "MainScroll",
+                            HorizontalOptions = LayoutOptions.Start,
+                            VerticalOptions = LayoutOptions.Fill,
+                            Content = new SkiaLayout()
+                            {
+                                Type = LayoutType.Column,
+                                Spacing = 8,
+                                ItemsSource = Source,
+                                MeasureItemsStrategy = MeasuringStrategy.MeasureAll,
+                                RecyclingTemplate = RecyclingTemplate.Disabled,
+                                ItemTemplate = new DataTemplate(() =>
+                                {
+                                    var cell = new TrackCell()
+                                    {
+                                        BackgroundColor = Colors.Bisque,
+                                        UseCache = SkiaCacheType.Image,
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                        HeightRequest = 80,
+                                        Margin = 0,
+                                        Content = new SkiaLayout()
+                                        {
+                                            Children = new List<SkiaControl>()
+                                            {
+                                                new SkiaLabel()
+                                                {
+                                                    UseCache = SkiaCacheType.Operations,
+                                                }.Adapt((
+                                                    label) =>
+                                                {
+                                                    label.SetBinding(SkiaLabel.TextProperty, ".");
+                                                })
+                                            }
+                                        }.Fill()
+                                    };
+
+                                    cell.Tapped += (sender, args) =>
+                                    {
+                                        Debug.WriteLine($"TAPPED {(sender as SkiaControl).BindingContext}");
+                                    };
+
+                                    return cell;
+                                })
+                            }
+                        }
+
 
                     }
-                }.Fill()
+                }
+
+
+             
             };
 
 

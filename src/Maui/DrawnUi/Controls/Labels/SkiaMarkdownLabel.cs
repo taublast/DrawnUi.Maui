@@ -37,23 +37,25 @@ public class SkiaMarkdownLabel : SkiaLabel
     {
         base.InvalidateText();
 
-        var markdownDocument = Markdig.Markdown.Parse(TextInternal, _pipeline);
-
-        Spans.Clear();
-
-        isBold = false;
-        isItalic = false;
-        isHeading1 = false;
-        isHeading2 = false;
-        isCodeBlock = false;
-        hadParagraph = false;
-        isStrikethrough = false;
-
-        foreach (var block in markdownDocument)
+        lock (SpanLock)
         {
-            RenderBlock(block);
-        }
+            var markdownDocument = Markdig.Markdown.Parse(TextInternal, _pipeline);
 
+            Spans.Clear();
+
+            isBold = false;
+            isItalic = false;
+            isHeading1 = false;
+            isHeading2 = false;
+            isCodeBlock = false;
+            hadParagraph = false;
+            isStrikethrough = false;
+
+            foreach (var block in markdownDocument)
+            {
+                RenderBlock(block);
+            }
+        }
     }
 
     /// <summary>

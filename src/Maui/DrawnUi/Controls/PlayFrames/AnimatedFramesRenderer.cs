@@ -327,7 +327,7 @@
             });
 
         /// <summary>
-        /// Defauly is 0. If you set to -1 that would mean "last frame".
+        /// Default is 0. If you set to -1 that would mean "last frame".
         /// </summary>
         public int DefaultFrame
         {

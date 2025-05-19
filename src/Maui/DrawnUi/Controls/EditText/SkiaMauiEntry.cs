@@ -65,8 +65,8 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
             Control = new MauiEntry()
             {
                 IsSpellCheckEnabled = this.IsSpellCheckEnabled,
-                BackgroundColor = Colors.Transparent,
-                Background = Colors.Transparent
+                BackgroundColor = Colors.Yellow,
+                Background = Colors.Yellow
             };
 
             MapProps(Control);
@@ -306,10 +306,17 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         return base.Measure(widthConstraint, heightConstraint, scale);
     }
 
+    protected virtual void WhenFocusChanged(bool state)
+    {
+        FocusChanged?.Invoke(this, state);
+    }
+
     protected void SetFocusInternal(bool value)
     {
         lock (lockFocus)
         {
+            WhenFocusChanged(value);
+
             if (internalFocus)
             {
                 internalFocus = false;

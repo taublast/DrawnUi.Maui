@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Microsoft.Maui.Controls;
 
 namespace DrawnUi.Draw
 {
@@ -696,10 +697,10 @@ namespace DrawnUi.Draw
 
         public override void InvalidateByChild(SkiaControl child)
         {
-            if (!NeedAutoSize && child.NeedAutoSize
-                || IsTemplated && !NeedAutoSize)
+            if (!NeedAutoSize && (child.NeedAutoSize|| IsTemplated))
             {
                 UpdateByChild(child);
+                return;  
             }
 
             base.InvalidateByChild(child);
@@ -1400,17 +1401,40 @@ namespace DrawnUi.Draw
 
             lock (LockMeasure)
             {
-                ApplyNewItemsSource = false;
-                ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
-                    GetTemplatesPoolLimit(),
-                    GetTemplatesPoolPrefill());
-
-                if (args.Action == NotifyCollectionChangedAction.Reset)
+                switch (args.Action)
                 {
-                    ResetScroll();
-                }
+                    //todo
+                    //case NotifyCollectionChangedAction.Add:
+                    //    int newIndex = args.NewStartingIndex;
 
-                Invalidate();
+
+                    //    //...
+                    //    if (NeedAutoSize)
+                    //    {
+                    //        Invalidate();
+                    //    }
+                    //    else
+                    //    {
+                    //        // Update layout without full remeasure
+                    //        Update();
+                    //    }
+                    //    break;
+
+                    default:
+                        // full reset
+                        ApplyNewItemsSource = false;
+                        ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
+                            GetTemplatesPoolLimit(),
+                            GetTemplatesPoolPrefill());
+
+                        if (args.Action == NotifyCollectionChangedAction.Reset)
+                        {
+                            ResetScroll();
+                        }
+
+                        Invalidate();
+                        break;
+                } 
             }
 
 

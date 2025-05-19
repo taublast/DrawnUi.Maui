@@ -168,7 +168,7 @@ namespace DrawnUi.Controls
         {
             Services = Super.Services;
 
-            Popups = new(this, true);
+            Popups = new(this, false);
             Toasts = new(this, false);
 
             //close jeyboard on app startup

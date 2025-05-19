@@ -1,7 +1,14 @@
 ﻿namespace DrawnUi.Controls;
 
-public partial class MauiEditor : Editor
+public interface ISmartNative
 {
+    double NeededHeight { get; set; }
+}
+
+public partial class MauiEditor : Editor, ISmartNative
+{
+    public double NeededHeight { get; set; }
+
     public override SizeRequest Measure(double widthConstraint, double heightConstraint, MeasureFlags flags = MeasureFlags.None)
     {
         var ret = base.Measure(widthConstraint, heightConstraint, flags);

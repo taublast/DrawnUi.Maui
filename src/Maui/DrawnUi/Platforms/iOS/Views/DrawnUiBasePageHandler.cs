@@ -3,11 +3,80 @@ using Foundation;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
 using UIKit;
+using Foundation;
+using Microsoft.Maui.Platform;
+using UIKit;
+using ContentView = Microsoft.Maui.Platform.ContentView;
 
 namespace DrawnUi.Controls;
 
 public class DrawnUiBasePageHandler : PageHandler
 {
+
+    protected override ContentView CreatePlatformView()
+    {
+        //return base.CreatePlatformView();;
+        if (ViewController == null)
+        {
+            Debug.WriteLine($"[DrawnUiBasePageHandler] Created");
+            ViewController = new CustomView(VirtualView, MauiContext);
+        }
+
+        KeyboardAutoManagerScroll.Disconnect();
+
+        if (ViewController is PageViewController pc && pc.CurrentPlatformView is ContentView pv)
+            return pv;
+
+        if (ViewController.View is ContentView cv)
+            return cv;
+
+        throw new InvalidOperationException($"PageViewController.View must be a {nameof(ContentView)}");
+    }
+
+    public class CustomView : PageViewController
+    {
+        public bool TracksKeyboard => DrawnExtensions.StartupSettings != null &&
+                                      DrawnExtensions.StartupSettings.UseDesktopKeyboard;
+
+        //see catalyst handler
+        //public override bool CanBecomeFirstResponder
+        //{
+        //    get
+        //    {
+        //        if (TracksKeyboard)
+        //            return true;
+        //        return base.CanBecomeFirstResponder;
+        //    }
+        //}
+
+        public override bool AutomaticallyAdjustsScrollViewInsets
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+
+            }
+        }
+
+        public override UIEdgeInsets AdditionalSafeAreaInsets
+        {
+            get
+            {
+                return UIEdgeInsets.Zero;
+            }
+            set
+            {
+
+            }
+        }
+
+
+        public CustomView(IView page, IMauiContext mauiContext) : base(page, mauiContext)
+        { }
+    }
 
     protected override void ConnectHandler(Microsoft.Maui.Platform.ContentView platformView)
     {

@@ -1985,9 +1985,10 @@ namespace DrawnUi.Views
                     }
 
                     dirtyChilrenProcessing = true;
+                    //todo
                     foreach (var child in DirtyChildrenTracker.Values)
                     {
-                        if (child != null && !child.IsDisposing)
+                        if (child != null && !child.IsDisposed && !child.IsDisposing)
                         {
                             child.InvalidatedParent = false;
                             child?.InvalidateParent();

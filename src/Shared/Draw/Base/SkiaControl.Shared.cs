@@ -1,4 +1,5 @@
-﻿using SKBlendMode = SkiaSharp.SKBlendMode;
+﻿using System.Resources;
+using SKBlendMode = SkiaSharp.SKBlendMode;
 using SKCanvas = SkiaSharp.SKCanvas;
 using SKClipOperation = SkiaSharp.SKClipOperation;
 using SKColor = SkiaSharp.SKColor;
@@ -1815,7 +1816,6 @@ namespace DrawnUi.Draw
                 }
 
                 Superview?.SetViewTreeVisibilityByParent(this, newvalue);
-
                 Superview?.UpdateRenderingChains(this);
 
                 if (!newvalue)
@@ -4549,11 +4549,32 @@ namespace DrawnUi.Draw
         public Dictionary<string, Action<SkiaControl>> ExecuteAfterCreated { get; } = new();
 
         /// <summary>
-        /// Avoid setting parent to null before calling this, or set SuperView prop manually for proper cleanup of animations and gestures if any used
+        /// Releases unmanaged resources before the object is reclaimed by garbage collection.
         /// </summary>
-        public void Dispose()
+        ~SkiaControl()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Throws an <see cref="ObjectDisposedException"/> if this object has been disposed.
+        /// </summary>
+        protected void ThrowIfDisposed()
         {
             if (IsDisposed)
+                throw new ObjectDisposedException(GetType().Name);
+        }
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="ResourceManager"/> and
+        /// optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// true to release both managed and unmanaged resources; false to release only unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed)
                 return;
 
             OnWillDisposeWithChildren();
@@ -4625,7 +4646,16 @@ namespace DrawnUi.Draw
                 EffectsGestureProcessors = null;
                 EffectPostRenderer = null;
             });
+        }
 
+        /// <summary>
+        /// Avoid setting parent to null before calling this, or set SuperView prop manually for proper cleanup of animations and gestures if any used
+        /// </summary>
+        public void Dispose()
+        {
+            if (_isDisposed)
+                return;
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -5645,7 +5675,7 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Our canvas
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        //[EditorBrowsable(EditorBrowsableState.Never)]
         public DrawnView Superview
         {
             get
@@ -5663,7 +5693,7 @@ namespace DrawnUi.Draw
 
                 return _superview;
             }
-            set
+            protected set
             {
                 if (value != _superview)
                 {

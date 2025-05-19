@@ -359,6 +359,10 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             control.TextChanged?.Invoke(control, (string)newvalue);
             control.CommandOnTextChanged?.Execute((string)newvalue);
             control.UpdateControl();
+            if (control.NeedAutoSize)
+            {
+                control.NativeInvalidate();
+            }
         }
     }
 

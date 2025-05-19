@@ -241,7 +241,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         _positions.Clear();
     }
 
-    public bool OnFocusChanged(bool focus)
+    public new bool OnFocusChanged(bool focus)
     {
         return false;
     }

@@ -53,6 +53,21 @@ public partial class SkiaMauiElement
         LayoutNativeView(Element);
     }
 
+    public void NativeInvalidate()
+    {
+        NativeInvalidated = true;
+        if (Element != null)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LayoutNativeView(Element);
+            });
+        }
+    }
+
+    private bool NativeInvalidated;
+    public SKPoint ArrangedAt { get; set; }
+
     protected virtual void LayoutNativeView(VisualElement element)
     {
         if (element.Handler?.PlatformView is View nativeView)
@@ -75,6 +90,8 @@ public partial class SkiaMauiElement
                     (int)(VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale),
                     (int)(VisualTransformNative.Rect.Right + this.Padding.Right * RenderingScale),
                     (int)(VisualTransformNative.Rect.Bottom + this.Padding.Bottom * RenderingScale));
+
+                ArrangedAt = VisualTransformNative.Rect.Location;
             }
 
             //nativeView.Invalidate();

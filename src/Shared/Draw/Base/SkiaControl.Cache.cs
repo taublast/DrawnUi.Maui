@@ -455,8 +455,7 @@ public partial class SkiaControl
 
     protected virtual bool UseRenderingObject(DrawingContext context, SKRect recordArea)
     {
-
-        //lock (LockDraw)
+        lock (LockDraw) //prevent conflicts with erasing cache after we decided to use it
         {
             var cache = RenderObject;
             var cacheOffscreen = RenderObjectPrevious;
