@@ -65,8 +65,8 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
             Control = new MauiEntry()
             {
                 IsSpellCheckEnabled = this.IsSpellCheckEnabled,
-                BackgroundColor = Colors.Yellow,
-                Background = Colors.Yellow
+                BackgroundColor = this.BackgroundColor,
+                Background = null//Colors.Transparent,
             };
 
             MapProps(Control);
@@ -140,7 +140,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         control.PlaceholderColor = this.PlaceholderColor;
         control.ReturnType = this.ReturnType;
         control.Keyboard = this.KeyboardType;
-        ;
+        control.BackgroundColor = this.BackgroundColor;
 
         if (Text != control.Text)
             control.Text = Text;

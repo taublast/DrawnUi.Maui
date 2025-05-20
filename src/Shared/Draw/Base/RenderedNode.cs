@@ -5,6 +5,30 @@ namespace DrawnUi.Draw
     public class RenderedNode
     {
 
+        #region VisualTransforms
+
+        public double OpacityTotal { get; set; }
+        public double RotationTotal { get; set; }
+        public SKPoint ScaleTotal { get; set; }
+        public SKPoint TranslationTotal { get; set; }
+
+        public static void DecomposeMatrix(SKMatrix m, out SKPoint scale, out float rotation, out SKPoint translation)
+        {
+            // Extract translation
+            translation = new SKPoint(m.TransX, m.TransY);
+
+            // Extract scale
+            float scaleX = (float)Math.Sqrt(m.ScaleX * m.ScaleX + m.SkewY * m.SkewY);
+            float scaleY = (float)Math.Sqrt(m.ScaleY * m.ScaleY + m.SkewX * m.SkewX);
+            scale = new SKPoint(scaleX, scaleY);
+
+            // Extract rotation (in radians)
+            float rotationRad = (float)Math.Atan2(m.SkewY, m.ScaleX);
+            rotation = rotationRad * (180f / (float)Math.PI); 
+        }
+
+        #endregion
+
         /// <summary>
         /// Create this ONLY when DrawingRect and RenderTransformMatrix are ready
         /// </summary>
@@ -32,10 +56,17 @@ namespace DrawnUi.Draw
                     combinedMatrix = parent.TransformsTotal.PostConcat(combinedMatrix);
                     TransformsTotal = combinedMatrix;
                     HitBoxWithTransforms = ScaledRect.FromPixels(TransformRect(mapped, combinedMatrix), scale);
+
+                    DecomposeMatrix(TransformsTotal, out var combinedScale, out var rotation, out var translation);
+                    ScaleTotal = combinedScale;
+                    RotationTotal = rotation;
+                    TranslationTotal = translation;
+                    OpacityTotal = (parent?.OpacityTotal ?? 1f) * (Control?.Opacity ?? 1f);
                 }
                 else
                 {
                     // Root node - just use local transformation
+                    OpacityTotal = (Control?.Opacity ?? 1f);
                     HitBoxWithTransforms = ScaledRect.FromPixels(TransformRect(mapped, skiaControl.RenderTransformMatrix), scale);
                 }
             }

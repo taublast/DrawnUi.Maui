@@ -98,11 +98,9 @@ public partial class SkiaMauiElement
         if (element.Handler?.PlatformView is FrameworkElement nativeView)
         {
 
-            Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView maybe at {VisualTransformNative.Rect.Location}");
-
             var visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Collapsed;
 
-            //Debug.WriteLine($"Visibility {nativeView.Visibility}");
+            Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView maybe at {VisualTransformNative.Rect.Location} visibility {visibility}");
 
             if (nativeView.FocusState != FocusState.Unfocused && visibility == Visibility.Collapsed)
             {
@@ -118,9 +116,7 @@ public partial class SkiaMauiElement
                 //UIElement
                 nativeView.Width = VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right);
                 nativeView.Height = VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom);
-
                 nativeView.Opacity = VisualTransformNative.Opacity;
-
 
                 // Creating a new CompositeTransform to handle the transforms
                 var transform = new CompositeTransform

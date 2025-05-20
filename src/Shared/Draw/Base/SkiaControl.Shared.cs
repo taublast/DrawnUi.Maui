@@ -389,11 +389,12 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// //todo base. this is actually used by SkiaMauiElement only
+        /// Comes after all drawn, actually used by SkiaMauiElement only
         /// </summary>
         /// <param name="transform"></param>
         public virtual void SetVisualTransform(VisualTransform transform)
         {
+
         }
 
         /// <summary>
@@ -1816,7 +1817,6 @@ namespace DrawnUi.Draw
                 }
 
                 Superview?.SetViewTreeVisibilityByParent(this, newvalue);
-                Superview?.UpdateRenderingChains(this);
 
                 if (!newvalue)
                 {
@@ -4679,8 +4679,6 @@ namespace DrawnUi.Draw
 
         public virtual void OptionalOnBeforeDrawing()
         {
-            Superview?.UpdateRenderingChains(this);
-
             if (NeedRemeasuring)
             {
                 NeedRemeasuring = false;
@@ -4776,6 +4774,20 @@ namespace DrawnUi.Draw
 
         protected bool IsRendering { get; set; }
         protected bool NodeAttached { get; set; }
+
+        public RenderedNode? FindRenderedNode(SkiaControl control)
+        {
+            foreach (var node in this.RenderedNode.Children)
+            {
+                if (node.Control == control)
+                    return node;
+
+                var found = node.Control.FindRenderedNode(control);
+                if (found != null)
+                    return found;
+            }
+            return null;
+        }
 
         public virtual void CreateRenderedNode(SKRect destination, float scale)
         {

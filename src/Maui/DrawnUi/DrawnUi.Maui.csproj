@@ -82,7 +82,7 @@
         <!--MIT open source .net helpers and extensions-->
         <PackageReference Include="AppoMobi.Specials" Version="9.0.3" />
         <!--parsing markdown text-->
-        <PackageReference Include="Markdig" Version="0.41.1" />
+        <!--<PackageReference Include="Markdig" Version="0.41.1" />-->
         <!--caching bitmaps etc-->
         <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
     </ItemGroup>
@@ -134,6 +134,10 @@
         <Compile Include="Shared/**/*.*pple.cs">
             <Link>Platforms/iOS/%(RecursiveDir)%(Filename)%(Extension)</Link>
         </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\..\Markdig\src\Markdig\Markdig.csproj" />
     </ItemGroup>
 
     <Import Project="..\..\Shared\Shared.projitems" Label="Shared" />

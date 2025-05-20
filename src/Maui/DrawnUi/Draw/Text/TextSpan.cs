@@ -126,7 +126,7 @@ public class TextSpan : Element, IDisposable //we subclassed Element to be able 
                 Paint.Typeface = defaultPaint.Typeface;
         }
 
-        if (defaultPaint != null)
+        if (defaultPaint != null && defaultPaint.Typeface != null)
         {
             if (HasSetColor)
             {

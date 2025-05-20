@@ -13,9 +13,7 @@ public class SkiaMarkdownLabel : SkiaLabel
 {
     public SkiaMarkdownLabel()
     {
-        _pipeline = new MarkdownPipelineBuilder()
-            .UseEmphasisExtras()
-            .Build();
+ 
     }
 
     //properties defaults
@@ -33,29 +31,47 @@ public class SkiaMarkdownLabel : SkiaLabel
 
     #endregion
 
-    public override void InvalidateText()
+    public static object LockMarkdigStatic = new();
+
+    public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
-        base.InvalidateText();
-
-        lock (SpanLock)
+        lock (LockMarkdigStatic)
         {
-            var markdownDocument = Markdig.Markdown.Parse(TextInternal, _pipeline);
-
-            Spans.Clear();
-
-            isBold = false;
-            isItalic = false;
-            isHeading1 = false;
-            isHeading2 = false;
-            isCodeBlock = false;
-            hadParagraph = false;
-            isStrikethrough = false;
-
-            foreach (var block in markdownDocument)
+            if (needParse)
             {
-                RenderBlock(block);
+                needParse = false;
+
+                var maybe = TextInternal;
+                var text = maybe == null ? "" : maybe;
+                var markdownDocument = Markdig.Markdown.Parse(text, Pipeline);
+
+                Spans.Clear();
+
+                isBold = false;
+                isItalic = false;
+                isHeading1 = false;
+                isHeading2 = false;
+                isCodeBlock = false;
+                hadParagraph = false;
+                isStrikethrough = false;
+
+                foreach (var block in markdownDocument)
+                {
+                    RenderBlock(block);
+                }
             }
         }
+
+        return base.Measure(widthConstraint, heightConstraint, scale);
+    }
+
+    private bool needParse;
+
+    public override void InvalidateText()
+    {
+        needParse = true;
+
+        base.InvalidateText();
     }
 
     /// <summary>
@@ -101,7 +117,10 @@ public class SkiaMarkdownLabel : SkiaLabel
     protected bool isHeading1;
     protected bool isHeading2;
     protected bool isStrikethrough;
-    protected readonly MarkdownPipeline _pipeline;
+
+    protected static MarkdownPipeline Pipeline = new MarkdownPipelineBuilder()
+        .UseEmphasisExtras()
+        .Build();
 
     protected void RenderBlock(Block block, Inline prefix = null)
     {
@@ -356,7 +375,6 @@ public class SkiaMarkdownLabel : SkiaLabel
         isItalic = wasItalic;
         isStrikethrough = wasStrikethrough;
     }
-
 
 
     #endregion

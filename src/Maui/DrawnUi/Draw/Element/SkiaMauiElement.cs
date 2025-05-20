@@ -410,12 +410,8 @@
         {
             ElementSize = new(DrawingRect.Width, DrawingRect.Height);
 
-            Refresh();
+            Refresh(); // newly introduced
         }
-
-        SKRect _destination;
-        bool _rendered;
-        VisualTreeChain _chain;
 
         protected void SubscribeToRenderingChain(bool subscribe)
         {
@@ -423,16 +419,11 @@
             {
                 if (subscribe)
                 {
-                    if (_chain == null)
-                    {
-                        _chain = GenerateParentChain();
-                        _chain.AddNode(this); //this control might have its own transforms too
-                        Superview.RegisterRenderingChain(_chain);
-                    }
+                    Superview.SubscribeToRenderingFinished(this);
                 }
                 else
                 {
-                    Superview.UnregisterRenderingChain(this);
+                    Superview.UsubscribeFromRenderingFinished(this);
                 }
             }
         }
@@ -440,7 +431,6 @@
         public override void Render(DrawingContext context)
         {
             Superview = context.Context.Superview;
-            _destination = context.Destination;
 
             if (Content != null)
             {
@@ -525,23 +515,25 @@
                 }
                 else
                 {
-                    //if (manageMainThread)
-                    //{
-                    //    Tasks.StartDelayed(TimeSpan.FromMilliseconds(10),
-                    //        () =>
-                    //        {
-                    //            MainThread.BeginInvokeOnMainThread(() =>
-                    //            {
-                    //                Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals
-                    //                    .InvalidationTrigger.HorizontalOptionsChanged);
-                    //            });
-                    //        });
-                    //}
-                    //else
-                    //{
-                    //    Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger
-                    //        .HorizontalOptionsChanged);
-                    //}
+ /*
+                    if (manageMainThread)
+                    {
+                        Tasks.StartDelayed(TimeSpan.FromMilliseconds(10),
+                            () =>
+                            {
+                                MainThread.BeginInvokeOnMainThread(() =>
+                                {
+                                    Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals
+                                        .InvalidationTrigger.HorizontalOptionsChanged);
+                                });
+                            });
+                    }
+                    else
+                    {
+                        Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger
+                            .HorizontalOptionsChanged);
+                    }
+ */
                 }
 
                 return;
