@@ -1,5 +1,6 @@
 ﻿using DrawnUi.Controls;
 using Microsoft.Maui.Handlers;
+using UIKit;
 
 namespace DrawnUi.Draw
 {
@@ -34,6 +35,12 @@ namespace DrawnUi.Draw
             handlers.AddHandler(typeof(MauiEntry), typeof(MauiEntryHandler));
             handlers.AddHandler(typeof(MauiEditor), typeof(MauiEditorHandler));
             handlers.AddHandler(typeof(SkiaViewAccelerated), typeof(SKGLViewHandlerRetained));
+
+            UIApplication.Notifications.ObserveDidReceiveMemoryWarning((s, e) =>
+            {
+                Super.Log("MEMORY LOW !!!");
+            });
+
         }
     }
 

@@ -2923,8 +2923,8 @@ namespace DrawnUi.Draw
                 if (AdaptToKeyboardFor == null || AdaptToKeyboardSize == 0 || !this.LayoutReady)
                     return;
 
-                var myPos = AdaptToKeyboardFor.LastRenderedNode.HitBoxWithTransforms.Units.Location;
-                var scrollPos = LastRenderedNode.HitBoxWithTransforms.Units.Location;//this.GetPositionOnCanvasInPoints();
+                var myPos = AdaptToKeyboardFor.LastVisualNode.HitBoxWithTransforms.Units.Location;
+                var scrollPos = LastVisualNode.HitBoxWithTransforms.Units.Location;//this.GetPositionOnCanvasInPoints();
 
                 var scrollRect = new SKRect(0, scrollPos.Y, 10, (float)this.Height + scrollPos.Y);
                 var parentHeight = Superview.Height;

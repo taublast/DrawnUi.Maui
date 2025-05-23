@@ -477,7 +477,7 @@ namespace DrawnUi.Controls
                     isOpen = false;
             }
 
-            Debug.WriteLine($"UpdateReportedPosition: {isOpen} moving {InTransition}");
+            Debug.WriteLine($"[SkiaDrawer] UpdateReportedPosition: open {isOpen} moving {InTransition}");
 
             if (!InTransition)
             {

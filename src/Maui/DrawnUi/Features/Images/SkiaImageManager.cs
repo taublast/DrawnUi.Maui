@@ -768,7 +768,7 @@ public partial class SkiaImageManager : IDisposable
         }
         if (source is StreamImageSource)
         {
-            return Guid.NewGuid().ToString();
+            return Guid.CreateVersion7().ToString();
         }
         return null;
     }

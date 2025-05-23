@@ -2,6 +2,8 @@
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System.Diagnostics;
+using System.Threading;
 
 namespace DrawnUi.Draw;
 
@@ -13,7 +15,7 @@ public class SkiaMarkdownLabel : SkiaLabel
 {
     public SkiaMarkdownLabel()
     {
- 
+        // Removed pipeline acquisition from constructor
     }
 
     //properties defaults
@@ -35,7 +37,10 @@ public class SkiaMarkdownLabel : SkiaLabel
 
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
-        lock (LockMarkdigStatic)
+        if (IsDisposed || IsDisposing)
+            return ScaledSize.Default;
+
+        lock (LockSetup)
         {
             if (needParse)
             {
@@ -43,21 +48,31 @@ public class SkiaMarkdownLabel : SkiaLabel
 
                 var maybe = TextInternal;
                 var text = maybe == null ? "" : maybe;
-                var markdownDocument = Markdig.Markdown.Parse(text, Pipeline);
-
-                Spans.Clear();
-
-                isBold = false;
-                isItalic = false;
-                isHeading1 = false;
-                isHeading2 = false;
-                isCodeBlock = false;
-                hadParagraph = false;
-                isStrikethrough = false;
-
-                foreach (var block in markdownDocument)
+                MarkdownPipeline pipeline = null;
+                try
                 {
-                    RenderBlock(block);
+                    pipeline = MarkdownPipelinePool.AcquirePipeline();
+                    var markdownDocument = Markdig.Markdown.Parse(text, pipeline);
+
+                    Spans.Clear();
+
+                    isBold = false;
+                    isItalic = false;
+                    isHeading1 = false;
+                    isHeading2 = false;
+                    isCodeBlock = false;
+                    hadParagraph = false;
+                    isStrikethrough = false;
+
+                    foreach (var block in markdownDocument)
+                    {
+                        RenderBlock(block);
+                    }
+                }
+                finally
+                {
+                    
+                    MarkdownPipelinePool.ReleasePipeline(pipeline);
                 }
             }
         }
@@ -117,10 +132,11 @@ public class SkiaMarkdownLabel : SkiaLabel
     protected bool isHeading1;
     protected bool isHeading2;
     protected bool isStrikethrough;
+    private readonly MarkdownPipeline _pipeline;
 
-    protected static MarkdownPipeline Pipeline = new MarkdownPipelineBuilder()
-        .UseEmphasisExtras()
-        .Build();
+    //protected static MarkdownPipeline Pipeline = new MarkdownPipelineBuilder()
+    //    .UseEmphasisExtras()
+    //    .Build();
 
     protected void RenderBlock(Block block, Inline prefix = null)
     {

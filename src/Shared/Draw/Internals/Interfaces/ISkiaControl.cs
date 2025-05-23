@@ -2,8 +2,8 @@
 
 public interface ISkiaControl : IDrawnBase
 {
-    RenderedNode RenderedNode { get; set; }
-    RenderedNode LastRenderedNode { get; set; }
+    VisualNode VisualNode { get; set; }
+    VisualNode LastVisualNode { get; set; }
 
     IDrawnBase Parent { get; set; }
 

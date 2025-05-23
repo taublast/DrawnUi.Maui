@@ -118,10 +118,10 @@ namespace DrawnUi.Draw
         /// </summary>
         /// <typeparam name="T">Type of SkiaControl</typeparam>
         /// <param name="view">The control to set the grid position for</param>
-        /// <param name="row">The row index</param>
         /// <param name="column">The column index</param>
+        /// <param name="row">The row index</param>
         /// <returns>The control for chaining</returns>
-        public static T SetGrid<T>(this T view, int row, int column) where T : SkiaControl
+        public static T SetGrid<T>(this T view, int column, int row) where T : SkiaControl
         {
             Grid.SetRow(view, row);
             Grid.SetColumn(view, column);
@@ -138,7 +138,8 @@ namespace DrawnUi.Draw
         /// <param name="rowSpan">The number of rows to span</param>
         /// <param name="columnSpan">The number of columns to span</param>
         /// <returns>The control for chaining</returns>
-        public static T SetGrid<T>(this T view, int row, int column, int rowSpan, int columnSpan) where T : SkiaControl
+        public static T SetGrid<T>(this T view, int column, int row,
+            int columnSpan, int rowSpan) where T : SkiaControl
         {
             Grid.SetRow(view, row);
             Grid.SetColumn(view, column);

@@ -86,6 +86,7 @@ public partial class SkiaShell
             }
 
             await _shell.Popups.Close(this, _animated);
+            _shell.OnPopupsStackChanged(_shell.Popups.NavigationStack.Count);
         }
 
         protected override void OnLayoutReady()

@@ -28,6 +28,8 @@ namespace DrawnUi.Controls
     /// </summary>
     public partial class SkiaShell : BasePageReloadable, IDisposable
     {
+
+
         protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
@@ -62,9 +64,35 @@ namespace DrawnUi.Controls
             }
         }
 
+        public Dictionary<SkiaControl, SkiaControl> FrozenLayers { get; } = new();
+        public Controls.SkiaShell.NavigationLayer<SkiaControl> Toasts { get; }
+        public Controls.SkiaShell.NavigationLayer<SkiaControl> Popups { get; }
+        public LinkedList<PageInStack> NavigationStackScreens { get; } = new LinkedList<PageInStack>();
+        public LinkedList<PageInStack> NavigationStackModals { get; } = new LinkedList<PageInStack>();
 
+        public virtual void OnModalStackChanged(int count)
+        {
+            ModalStackChanged?.Invoke(this, count);
+        }
+        public virtual void OnToastsStackChanged(int count)
+        {
+            ToastsStackChanged?.Invoke(this, count);
+        }
+        public virtual void OnPopupsStackChanged(int count)
+        {
+            PopupsStackChanged?.Invoke(this, count);
+        }
+        public virtual void OnPagesStackChanged(int count)
+        {
+            PagesStackChanged?.Invoke(this, count);
+        }
 
         #region EVENTS
+
+        public event EventHandler<int> ModalStackChanged;
+        public event EventHandler<int> ToastsStackChanged;
+        public event EventHandler<int> PopupsStackChanged;
+        public event EventHandler<int> PagesStackChanged;
 
         public event EventHandler<SkiaShellNavigatedArgs> Navigated;
         public event EventHandler<SkiaShellNavigatingArgs> Navigating;
@@ -716,6 +744,7 @@ namespace DrawnUi.Controls
                     willFreeze, SkiaShell.PopupBackgroundColor);
 
                 NavigationStackModals.AddLast(new PageInStack { Page = modalWrapper });
+                OnModalStackChanged(NavigationStackModals.Count);
 
                 //if (CanFreezeLayout() && frozenLayerBackgroundParameters.Value.IsVisible)
                 //    await FreezeRootLayout(drawer, animated, SkiaShell.PopupBackgroundColor, SkiaShell.PopupsBackgroundBlur);
@@ -1015,6 +1044,7 @@ namespace DrawnUi.Controls
                                 if (inStack != null)
                                 {
                                     NavigationStackModals.Remove(inStack);
+                                    OnModalStackChanged(NavigationStackModals.Count);
                                 }
                             }
                             catch (Exception e)
@@ -1072,6 +1102,7 @@ namespace DrawnUi.Controls
                     else
                     {
                         NavigationStackModals.Remove(inStack);
+                        OnModalStackChanged(NavigationStackModals.Count);
                     }
 
                     //RootLayout?.Update();
@@ -1382,12 +1413,11 @@ namespace DrawnUi.Controls
 
         #region POPUPS
 
-        /// <summary>
-        /// TODO make this non-concurrent
-        /// </summary>
-        public Dictionary<SkiaControl, SkiaControl> FrozenLayers { get; } = new();
-
-        public Controls.SkiaShell.NavigationLayer<SkiaControl> Popups { get; }
+        public async Task CloseAllPopups()
+        {
+            await Popups.CloseAll();
+            OnToastsStackChanged(Popups.NavigationStack.Count);
+        }
 
         /// <summary>
         /// Close topmost popup
@@ -1429,6 +1459,7 @@ namespace DrawnUi.Controls
 
                         //popup disposed inside
                         await Popups.Close(popup, animated);
+                        OnPopupsStackChanged(Popups.NavigationStack.Count);
                     }
 
                     OnNavigated(new(reportControl, CurrentRouteAuto, NavigationSource.Pop));
@@ -1548,6 +1579,7 @@ namespace DrawnUi.Controls
                 }
 
                 await Popups.Open(control, animated);
+                OnPopupsStackChanged(Popups.NavigationStack.Count);
 
                 if (animated)
                 {
@@ -1595,7 +1627,12 @@ namespace DrawnUi.Controls
             }
 
          */
-        public Controls.SkiaShell.NavigationLayer<SkiaControl> Toasts { get; }
+
+        public async Task CloseAllToasts()
+        {
+            await Toasts.CloseAll();
+            OnToastsStackChanged(Toasts.NavigationStack.Count);
+        }
 
         public void ShowToast(SkiaControl content, int msShowTime = 4000)
         {
@@ -1634,11 +1671,13 @@ namespace DrawnUi.Controls
                                 sender.FadeToAsync(0, 250));
                             //disposed inside
                             await Toasts.Close(sender, true);
+                            OnToastsStackChanged(Toasts.NavigationStack.Count);
                         });
                     };
 
 
                     await Toasts.Open(control, true);
+                    OnToastsStackChanged(Toasts.NavigationStack.Count);
                 }
                 finally
                 {
@@ -2118,8 +2157,6 @@ namespace DrawnUi.Controls
             public BindableObject Page { get; set; }
         }
 
-        public LinkedList<PageInStack> NavigationStackScreens { get; } = new LinkedList<PageInStack>();
-        public LinkedList<PageInStack> NavigationStackModals { get; } = new LinkedList<PageInStack>();
 
         //public static PageInStack GetItemAtIndex(LinkedList<PageInStack> linkedStack, int index)
         //{

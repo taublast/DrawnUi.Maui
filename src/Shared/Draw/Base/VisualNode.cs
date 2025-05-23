@@ -2,15 +2,50 @@
 
 namespace DrawnUi.Draw
 {
-    public class RenderedNode
+    public class VisualNode
     {
-
-        #region VisualTransforms
-
+        public string Tag { get; set; }
+        public SkiaControl Control { get; set; }
+        public List<VisualNode> Children { get; set; }
+        public CachedObject Cache { get; set; }
+        public SkiaCacheType Cached { get; set; }
+        public SKRect Destination { get; set; }
+        public SKMatrix Transforms { get; protected set; }
+        public SKMatrix TransformsTotal { get; protected set; }
         public double OpacityTotal { get; set; }
         public double RotationTotal { get; set; }
         public SKPoint ScaleTotal { get; set; }
         public SKPoint TranslationTotal { get; set; }
+
+        /// <summary>
+        /// A hitbox rather for internal use, because it is same as LastDrawnAt. For exact position on canvas use HitBoxWithTransforms.
+        /// </summary>
+        public ScaledRect HitBox { get; set; }
+
+        /// <summary>
+        /// Exact position on canvas use HitBoxWithTransforms, all matrix transforms and Left, Top offset applied.
+        /// </summary>
+        public ScaledRect HitBoxWithTransforms { get; set; }
+
+        public void Render(DrawingContext context)
+        {
+            //todo draw cache or direct
+            if (Control == null)
+            {
+                throw new ApplicationException("VisualNode SkiaControl is not set");
+            }
+
+            if (Cache != null)
+            {
+                Control.DrawRenderObjectInternal(context.WithDestination(Cache.RecordingArea), Cache);
+            }
+            else
+            {
+                Control.DrawDirectInternal(context, Destination);
+            }
+        }
+
+        #region VisualTransforms
 
         public static void DecomposeMatrix(SKMatrix m, out SKPoint scale, out float rotation, out SKPoint translation)
         {
@@ -33,8 +68,13 @@ namespace DrawnUi.Draw
         /// Create this ONLY when DrawingRect and RenderTransformMatrix are ready
         /// </summary>
         /// <param name="control"></param>
-        public RenderedNode(SkiaControl control, RenderedNode parent, SKRect destination, float scale)
+        /// <param name="parent"></param>
+        /// <param name="destination"></param>
+        /// <param name="scale"></param>
+        /// <param name="tag"></param>
+        public VisualNode(SkiaControl control, VisualNode parent, SKRect destination, float scale, string tag)
         {
+            Tag = tag;
             Control = control;
             Children = new();
             Transforms = control.RenderTransformMatrix;
@@ -72,21 +112,23 @@ namespace DrawnUi.Draw
             }
         }
 
+
+
         /// <summary>
         /// Creates a deep clone of this rendered node tree and updates its positions based on new destination
         /// </summary>
         /// <param name="newDestination">The new destination rectangle</param>
         /// <param name="scale">The scale factor</param>
         /// <param name="parentNode">Optional parent rendered node for transform calculations</param>
-        /// <returns>A new RenderedNode with updated positions</returns>
-        public RenderedNode CloneAndUpdateTree(SKRect newDestination, float scale, RenderedNode parentNode = null)
+        /// <returns>A new VisualNode with updated positions</returns>
+        public VisualNode CloneAndUpdateTree(SKRect newDestination, float scale, VisualNode parentNode = null)
         {
             // Clone the node
-            RenderedNode clone = new RenderedNode(
+            VisualNode clone = new VisualNode(
                 Control,
                 null, // Parent will be set through parentNode parameter
                 newDestination,
-                scale
+                scale, this.Tag
             );
 
             // Copy essential properties
@@ -112,11 +154,11 @@ namespace DrawnUi.Draw
                     TransformRect(mappedHitBox, clone.TransformsTotal),
                     scale);
             }
-            else if (Control?.Parent is SkiaControl parent && parent.RenderedNode != null)
+            else if (Control?.Parent is SkiaControl parent && parent.VisualNode != null)
             {
                 // Use parent's rendered node if available
                 clone.TransformsTotal = clone.Transforms;
-                clone.TransformsTotal = parent.RenderedNode.TransformsTotal.PostConcat(clone.TransformsTotal);
+                clone.TransformsTotal = parent.VisualNode.TransformsTotal.PostConcat(clone.TransformsTotal);
 
                 var mappedHitBox = clone.HitBox.Pixels;
                 clone.HitBoxWithTransforms = ScaledRect.FromPixels(
@@ -132,7 +174,7 @@ namespace DrawnUi.Draw
             }
 
             // Recursively process children
-            clone.Children = new List<RenderedNode>();
+            clone.Children = new List<VisualNode>();
             foreach (var child in Children)
             {
                 // Calculate new child destination by applying the same delta
@@ -146,23 +188,7 @@ namespace DrawnUi.Draw
             return clone;
         }
 
-        public SkiaCacheType Cached { get; set; }
-        public SKRect Destination { get; set; }
-        public SKMatrix Transforms { get; protected set; }
-        public SKMatrix TransformsTotal { get; protected set; }
 
-        public SkiaControl Control { get; set; }
-        public List<RenderedNode> Children { get; set; }
-
-        /// <summary>
-        /// A hitbox rather for internal use, because it is same as LastDrawnAt. For exact position on canvas use HitBoxWithTransforms.
-        /// </summary>
-        public ScaledRect HitBox { get; set; }
-
-        /// <summary>
-        /// Exact position on canvas use HitBoxWithTransforms, all matrix transforms and Left, Top offset applied.
-        /// </summary>
-        public ScaledRect HitBoxWithTransforms { get; set; }
 
         /// <summary>
         /// Helper to transform a rectangle using a matrix

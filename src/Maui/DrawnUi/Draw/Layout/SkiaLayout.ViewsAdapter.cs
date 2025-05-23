@@ -186,6 +186,9 @@ public class ViewsAdapter : IDisposable
                         _parent?.DisposeObject(k);
                     });
 
+                    // Clear standalone pool when template changes
+                    kill?.ClearStandalonePool();
+
                     if (UsesGenericPool)
                     {
                         FillPool(reserve, dataContexts);
@@ -257,8 +260,8 @@ public class ViewsAdapter : IDisposable
                 return ret;
             }
 
-            var layoutChanged = true //todo cannot really optimize as can have same nb of cells, same references for  _dataContexts != dataContexts but different contexts
-             || _parent.RenderingScale != _forScale || _parent.Split != _forSplit;
+            var layoutChanged =  //todo cannot really optimize as can have same nb of cells, same references for  _dataContexts != dataContexts but different contexts
+              _parent.RenderingScale != _forScale || _parent.Split != _forSplit;
 
             if (layoutChanged || _templatedViewsPool == null || _dataContexts != dataContexts || CheckTemplateChanged())
             {
@@ -977,7 +980,7 @@ public class TemplatedViewsPool : IDisposable
     private Dictionary<int, Stack<SkiaControl>> _heightPools = new();
     private int _maxDistinctHeights = 10; // or configurable
     private readonly Stack<SkiaControl> _genericPool; // fallback pool for cells without specific height
-    private SkiaControl _standalone;
+    private Stack<SkiaControl> _standalonePool = new();
     private readonly object _syncLock = new object();
 
     public TemplatedViewsPool(Func<object> initialViewModel, int maxSize, Action<IDisposable> dispose)
@@ -1099,10 +1102,9 @@ public class TemplatedViewsPool : IDisposable
             if (IsDisposing)
                 return null;
 
-            if (_standalone != null && _standalone.IsParentIndependent && _standalone.ContextIndex == -1)
+            if (_standalonePool.Count > 0)
             {
-                // Reuse existing standalone if it's clean.
-                return _standalone;
+                return _standalonePool.Pop();
             }
 
             var ret = CreateFromTemplate();
@@ -1118,16 +1120,25 @@ public class TemplatedViewsPool : IDisposable
             if (IsDisposing)
                 return;
 
-            if (_standalone != null)
-            {
-                var kill = _standalone;
-                _standalone = null;
-                _dispose?.Invoke(kill);
-            }
-            _standalone = viewModel;
+            _standalonePool.Push(viewModel);
         }
     }
 
+    public void ClearStandalonePool()
+    {
+        lock (_syncLock)
+        {
+            while (_standalonePool.Count > 0)
+            {
+                var ctrl = _standalonePool.Pop();
+                if (ctrl != null)
+                {
+                    ctrl.ContextIndex = -1;
+                    ctrl.Dispose();
+                }
+            }
+        }
+    }
 
     public SkiaControl Get(float height = 0)
     {

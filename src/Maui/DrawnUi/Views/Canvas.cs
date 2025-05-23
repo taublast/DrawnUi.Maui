@@ -32,11 +32,11 @@ public class Canvas : DrawnView, IGestureListener
     {
         if (IsRendering)
         {
-            DumpTree(this.Content.LastRenderedNode);
+            DumpTree(this.Content.LastVisualNode);
         }
         else
         {
-            DumpTree(this.Content.RenderedNode);
+            DumpTree(this.Content.VisualNode);
         }
     }
 
@@ -945,7 +945,6 @@ public class Canvas : DrawnView, IGestureListener
                 {
                     Debug.WriteLine("RETAINED");
                 }
-
 
                 base.Draw(context.WithDestination(Destination));
 

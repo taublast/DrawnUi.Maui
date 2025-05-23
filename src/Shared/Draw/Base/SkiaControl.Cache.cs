@@ -289,7 +289,6 @@ public partial class SkiaControl
         {
             var recordArea = GetCacheArea(recordingArea);
 
-            //todo
             //if (UsingCacheType == SkiaCacheType.OperationsFull)
             //{
             //    recordArea = destination;
@@ -406,9 +405,9 @@ public partial class SkiaControl
     }
 
     public Action<DrawingContext, CachedObject> DelegateDrawCache { get; set; }
-  
 
-    protected virtual void DrawRenderObjectInternal(
+
+    public virtual void DrawRenderObjectInternal(
         DrawingContext ctx,
         CachedObject cache)
     {
@@ -425,8 +424,7 @@ public partial class SkiaControl
             DrawRenderObject(ctx.WithDestination(destination), cache);
         }
 
-        //todo creete node
-        CreateRenderedNode(DrawingRect, ctx.Scale);
+        //CreateRenderedNode(DrawingRect, ctx.Scale, "DrawRenderObjectInternal");
     }
 
  
@@ -752,6 +750,9 @@ public partial class SkiaControl
     public virtual bool DrawUsingRenderObject(DrawingContext context,
         float widthRequest, float heightRequest)
     {
+        if (IsDisposed || IsDisposing || !IsVisible)
+            return false;
+
         Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
 
         bool willDraw = !CheckIsGhost();
@@ -760,7 +761,6 @@ public partial class SkiaControl
             if (UsingCacheType != SkiaCacheType.None)
             {
                 var destination = DrawingRect;
-
                 var recordArea = destination;
                 if (UsingCacheType == SkiaCacheType.OperationsFull)
                 {
@@ -804,24 +804,90 @@ public partial class SkiaControl
             }
             else
             {
-                var destination = context.Destination;
- 
-                var clone = AddPaintArguments(context).WithDestination(DrawingRect);
-                DrawWithClipAndTransforms(clone, DrawingRect, true, true, (ctx) =>
-                {
-                    PaintWithEffects(ctx);
-
-                    if (EffectPostRenderer != null)
-                    {
-                        EffectPostRenderer.Render(ctx.WithDestination(destination));
-                    }
-                });
+                // NO CACHE, DIRECT PAINT
+                DrawDirectInternal(context, DrawingRect);
             }
         }
 
         FinalizeDrawingWithRenderObject(context); //NeedUpdate will go false
 
         return willDraw;
+    }
+
+    public virtual VisualNode? PrepareNode(DrawingContext context, float widthRequest, float heightRequest)
+    {
+        //this will measure too if needed including deeper
+        Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
+
+        bool willDraw = !CheckIsGhost();
+        if (willDraw)
+        {
+            CreateTransformationMatrix(context.Context, DrawingRect);
+            var node = CreateRenderedNode(DrawingRect, context.Scale, "PrepareNode");
+
+            //note UsesCacheDoubleBuffering is going deprecated with 2 passes rendering tree
+            //and new logic for ImageCacheComposite needs to be implemented for nodes
+            if (UsingCacheType != SkiaCacheType.None)
+            {
+                var destination = DrawingRect;
+                var recordArea = destination;
+                if (UsingCacheType == SkiaCacheType.OperationsFull)
+                {
+                    recordArea = context.Context.Canvas.LocalClipBounds;
+                }
+
+                var clone = AddPaintArguments(context).WithDestination(destination);
+                CachedObject cache = null;
+                if (RenderObject == null || !CheckCachedObjectValid(RenderObject, recordArea, clone.Context))
+                {
+                    cache = CreateRenderingObject(clone, recordArea, RenderObjectPrevious, UsingCacheType,
+                        (ctx) => { PaintWithEffects(ctx); });
+                }
+
+                node.Cache = cache;
+            }
+
+            // todo doubling children nodes for some reason
+            foreach (var child in Views)
+            {
+                if (child.CanDraw)
+                {
+                    var childNode = child.PrepareNode(context, SizeRequest.Width, SizeRequest.Height);
+                    if (childNode != null)
+                    {
+                        node.Children.Add(childNode);
+                    }
+                }
+            }
+
+            return node;
+        }
+
+        return null;
+    }
+
+
+
+    /// <summary>
+    ///  Not using cache
+    /// </summary>
+    /// <param name="context">context.Destination can be bigger than drawingRect</param>
+    /// <param name="drawingRect">normally equal to DrawingRect</param>
+    public virtual void DrawDirectInternal(DrawingContext context, SKRect drawingRect)
+    {
+        // NO CACHE, DIRECT PAINT
+        var destination = context.Destination;
+
+        var clone = AddPaintArguments(context).WithDestination(drawingRect);
+        DrawWithClipAndTransforms(clone, drawingRect, true, true, (ctx) =>
+        {
+            PaintWithEffects(ctx);
+
+            if (EffectPostRenderer != null)
+            {
+                EffectPostRenderer.Render(ctx.WithDestination(destination));
+            }
+        });
     }
 
     /// <summary>

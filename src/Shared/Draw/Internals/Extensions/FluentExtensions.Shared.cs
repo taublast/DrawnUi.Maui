@@ -70,7 +70,7 @@ namespace DrawnUi.Draw
         /// <returns>The initialized control instance after the action has been applied.</returns>
         public static T Initialize<T>(this T view, Action<T> action) where T : SkiaControl
         {
-            view.ExecuteAfterCreated[Guid.NewGuid().ToString()] = control => { action.Invoke((T)control); };
+            view.ExecuteAfterCreated[Guid.CreateVersion7().ToString()] = control => { action.Invoke((T)control); };
             return view;
         }
 
@@ -125,7 +125,7 @@ namespace DrawnUi.Draw
             where TSource : INotifyPropertyChanged
         {
             // Create a unique key for this subscription
-            string subscriptionKey = $"Subscribe_{target.GetHashCode()}_{Guid.NewGuid()}";
+            string subscriptionKey = $"Subscribe_{target.GetHashCode()}_{Guid.CreateVersion7()}";
 
             // Create the handler
             PropertyChangedEventHandler handler = (sender, args) =>
@@ -187,7 +187,7 @@ namespace DrawnUi.Draw
                 }
 
                 // Create a unique key for this subscription
-                string subscriptionKey = $"SubscribeLater_{source.GetHashCode()}_{Guid.NewGuid()}";
+                string subscriptionKey = $"SubscribeLater_{source.GetHashCode()}_{Guid.CreateVersion7()}";
 
                 // Create the handler
                 PropertyChangedEventHandler handler = (sender, args) =>
@@ -280,7 +280,7 @@ namespace DrawnUi.Draw
             }
 
             // Set up subscription for when BindingContext changes
-            string subscriptionKey = $"watch_{Guid.NewGuid()}";
+            string subscriptionKey = $"watch_{Guid.CreateVersion7()}";
 
             void ControlOnApplyingBindingContext(object sender, EventArgs e)
             {
@@ -349,7 +349,7 @@ namespace DrawnUi.Draw
             // Dictionary to track all subscriptions for cleanup
             Dictionary<string, PropertyChangedEventHandler> subscriptions =
                 new Dictionary<string, PropertyChangedEventHandler>();
-            string mainKey = $"ObserveDeepNested_{Guid.NewGuid()}";
+            string mainKey = $"ObserveDeepNested_{Guid.CreateVersion7()}";
 
             // Helper method to safely invoke callback
             void InvokeCallback(T ctrl, TProperty value)
@@ -610,7 +610,7 @@ namespace DrawnUi.Draw
             }
 
             // Set up subscription for when the target's BindingContext changes
-            string subscriptionKey = $"watch_other_{Guid.NewGuid()}";
+            string subscriptionKey = $"watch_other_{Guid.CreateVersion7()}";
 
             void TargetOnApplyingBindingContext(object sender, EventArgs e)
             {
@@ -673,7 +673,7 @@ namespace DrawnUi.Draw
             // Dictionary to track all subscriptions for cleanup
             Dictionary<string, PropertyChangedEventHandler> subscriptions =
                 new Dictionary<string, PropertyChangedEventHandler>();
-            string mainKey = $"ObserveNested_{intermediatePropertyName}_{propertyName}_{Guid.NewGuid()}";
+            string mainKey = $"ObserveNested_{intermediatePropertyName}_{propertyName}_{Guid.CreateVersion7()}";
 
             // Helper method to safely invoke callback
             void InvokeCallback(T ctrl, TProperty value)
@@ -879,7 +879,7 @@ namespace DrawnUi.Draw
                     };
 
                     tvm.PropertyChanged += rootHandler;
-                    string rootKey = $"Root_{Guid.NewGuid()}";
+                    string rootKey = $"Root_{Guid.CreateVersion7()}";
                     control.ExecuteUponDisposal[rootKey] = () => { tvm.PropertyChanged -= rootHandler; };
                 }
                 else
@@ -916,7 +916,7 @@ namespace DrawnUi.Draw
                 };
 
                 intermediate.PropertyChanged += handler;
-                string key = $"Intermediate_{intermediate.GetHashCode()}_{Guid.NewGuid()}";
+                string key = $"Intermediate_{intermediate.GetHashCode()}_{Guid.CreateVersion7()}";
                 control.ExecuteUponDisposal[key] = () => { intermediate.PropertyChanged -= handler; };
 
                 // Initial callback
@@ -956,7 +956,7 @@ namespace DrawnUi.Draw
             }
 
             // Set up subscription for when BindingContext changes
-            string subscriptionKey = $"watch_{Guid.NewGuid()}";
+            string subscriptionKey = $"watch_{Guid.CreateVersion7()}";
 
             void ControlOnApplyingBindingContext(object sender, EventArgs e)
             {
@@ -1008,6 +1008,20 @@ namespace DrawnUi.Draw
             try
             {
                 AddGestures.SetCommandTapped(view, new Command((ctx) => { action?.Invoke(view); }));
+            }
+            catch (Exception e)
+            {
+                Super.Log(e);
+            }
+
+            return view;
+        }
+
+        public static T OnLongPressing<T>(this T view, Action<T> action) where T : SkiaControl
+        {
+            try
+            {
+                AddGestures.SetCommandLongPressing(view, new Command((ctx) => { action?.Invoke(view); }));
             }
             catch (Exception e)
             {

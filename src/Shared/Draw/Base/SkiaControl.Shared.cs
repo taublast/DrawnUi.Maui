@@ -26,8 +26,8 @@ namespace DrawnUi.Draw
             Init();
         }
 
-        public RenderedNode RenderedNode { get; set; }
-        public RenderedNode LastRenderedNode { get; set; }
+        public VisualNode VisualNode { get; set; }
+        public VisualNode LastVisualNode { get; set; }
 
         private void Init()
         {
@@ -178,9 +178,9 @@ namespace DrawnUi.Draw
         /// <returns></returns>
         public virtual SKPoint GetPositionOnCanvas()
         {
-            //if (LastRenderedNode != null)
+            //if (LastVisualNode != null)
             //{
-            //    return LastRenderedNode.HitBoxWithTransforms.Pixels.Location;
+            //    return LastVisualNode.HitBoxWithTransforms.Pixels.Location;
             //}
 
             var position = BuildDrawnOffsetRecursive(LastDrawnAt.Location, this, true, true);
@@ -1466,30 +1466,32 @@ namespace DrawnUi.Draw
 
                                 var childOffset = TranslateInputCoords(apply.ChildOffsetDirect, false);
 
-                                if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
+                                //standart gesture processing
+                                var c = listener.OnSkiaGestureEvent(args,
+                                    new GestureEventProcessingInfo(
+                                        apply.MappedLocation,
+                                        thisOffset,
+                                        childOffset,
+                                        apply.AlreadyConsumed));
+                                if (c != null)
                                 {
-                                    var c = effect.OnSkiaGestureEvent(args,
-                                        new GestureEventProcessingInfo(
-                                            apply.MappedLocation,
-                                            thisOffset,
-                                            childOffset,
-                                            apply.AlreadyConsumed));
-                                    if (c != null)
-                                    {
-                                        consumed = effect;
-                                    }
+                                    consumed = c;
                                 }
                                 else
                                 {
-                                    var c = listener.OnSkiaGestureEvent(args,
-                                        new GestureEventProcessingInfo(
-                                            apply.MappedLocation,
-                                            thisOffset,
-                                            childOffset,
-                                            apply.AlreadyConsumed));
-                                    if (c != null)
+                                    //check attached listeners then
+                                    if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
                                     {
-                                        consumed = c;
+                                        c = effect.OnSkiaGestureEvent(args,
+                                            new GestureEventProcessingInfo(
+                                                apply.MappedLocation,
+                                                thisOffset,
+                                                childOffset,
+                                                apply.AlreadyConsumed));
+                                        if (c != null)
+                                        {
+                                            consumed = effect;
+                                        }
                                     }
                                 }
 
@@ -1793,7 +1795,6 @@ namespace DrawnUi.Draw
                 {
                     RenderObject = null;
                 }
-                //DestroyRenderingObject();?
             }
 
             // need to this to:
@@ -2725,7 +2726,7 @@ namespace DrawnUi.Draw
             this.SetValue(property, value);
         }
 
-        public Guid Uid { get; set; } = Guid.NewGuid();
+        public Guid Uid { get; set; } = Guid.CreateVersion7();
 
         //todo check adapt for MAUI
 
@@ -4577,6 +4578,12 @@ namespace DrawnUi.Draw
             if (_isDisposed)
                 return;
 
+            if (!disposing)
+            {
+                _isDisposed = true;
+                return;
+            }
+
             OnWillDisposeWithChildren();
 
             IsDisposed = true;
@@ -4775,9 +4782,9 @@ namespace DrawnUi.Draw
         protected bool IsRendering { get; set; }
         protected bool NodeAttached { get; set; }
 
-        public RenderedNode? FindRenderedNode(SkiaControl control)
+        public VisualNode? FindRenderedNode(SkiaControl control)
         {
-            foreach (var node in this.RenderedNode.Children)
+            foreach (var node in this.VisualNode.Children)
             {
                 if (node.Control == control)
                     return node;
@@ -4789,15 +4796,18 @@ namespace DrawnUi.Draw
             return null;
         }
 
-        public virtual void CreateRenderedNode(SKRect destination, float scale)
+        public virtual VisualNode CreateRenderedNode(SKRect destination, float scale, string tag)
         {
-            RenderedNode parentRenderedNode = (Parent as SkiaControl)?.RenderedNode;
+            VisualNode parentVisualNode = (Parent as SkiaControl)?.VisualNode;
 
-            RenderedNode = new RenderedNode(this, parentRenderedNode, destination, scale);
-            if (parentRenderedNode != null)
-                ((SkiaControl)Parent).RenderedNode.Children.Add(RenderedNode);
+            VisualNode = new VisualNode(this, parentVisualNode, destination, scale, tag);
+
+            if (parentVisualNode != null)
+                ((SkiaControl)Parent).VisualNode.Children.Add(VisualNode);
 
             NodeAttached = true;
+
+            return VisualNode;
         }
 
         public virtual void Render(DrawingContext context)
@@ -4812,8 +4822,8 @@ namespace DrawnUi.Draw
             RenderingScale = context.Scale;
             NeedUpdate = false;
 
-            LastRenderedNode = RenderedNode;
-            RenderedNode = null;
+            LastVisualNode = VisualNode;
+            VisualNode = null;
 
             OnBeforeDrawing(context);
 
@@ -5168,7 +5178,7 @@ namespace DrawnUi.Draw
                     RenderTransformMatrix = SKMatrix.Identity;
                 }
 
-                CreateRenderedNode(transformsArea, ctx.Scale);
+                CreateRenderedNode(transformsArea, ctx.Scale, "DrawWithClipAndTransforms");
 
                 if (isClipping)
                 {
@@ -5183,7 +5193,7 @@ namespace DrawnUi.Draw
             else
             {
                 RenderTransformMatrix = SKMatrix.Identity;
-                CreateRenderedNode(transformsArea, ctx.Scale);
+                CreateRenderedNode(transformsArea, ctx.Scale, "DrawWithClipAndTransforms");
 
                 draw(ctx);
             }

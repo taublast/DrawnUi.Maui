@@ -76,6 +76,14 @@ public static partial class AddGestures
             if (_parent == null || !_parent.CanDraw)
                 return null;
 
+            if (_parent is ISkiaGestureListener listener)
+            {
+                var consumed = listener.OnSkiaGestureEvent(args, apply);
+                if (consumed != null)
+                {
+                    return consumed;
+                }
+            }
 
             if (args.Type == TouchActionResult.LongPressing)
             {
@@ -131,10 +139,6 @@ public static partial class AddGestures
                 }
             }
 
-            if (_parent is ISkiaGestureListener listener)
-            {
-                return listener.OnSkiaGestureEvent(args, apply);
-            }
 
             return base.ProcessGestures(args, apply);
         }

@@ -15,7 +15,7 @@ public static class AndroidExtensions
     public static void StartTimerOnMainThreadAsync(TimeSpan when, CancellationToken cancellationToken, Func<Task<bool>> task)
     {
         var repeatDelayMs = when.TotalMilliseconds;
-        var id = Guid.NewGuid().ToString();
+        var id = Guid.CreateVersion7().ToString();
 
         async void TimerAction(object state)
         {
