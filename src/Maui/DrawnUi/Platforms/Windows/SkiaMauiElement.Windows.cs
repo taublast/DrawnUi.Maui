@@ -14,7 +14,6 @@ namespace DrawnUi.Draw;
 
 public partial class SkiaMauiElement
 {
-
     protected async Task TakeNativeSnapshot(SKSurface skiaSurface)
     {
         if (Element.Handler?.PlatformView is FrameworkElement nativeView)
@@ -66,17 +65,12 @@ public partial class SkiaMauiElement
     }
 
 
-
-
     public void NativeInvalidate()
     {
         NativeInvalidated = true;
         if (Element != null)
         {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                LayoutNativeView(Element);
-            });
+            MainThread.BeginInvokeOnMainThread(() => { LayoutNativeView(Element); });
         }
     }
 
@@ -97,11 +91,13 @@ public partial class SkiaMauiElement
     {
         if (element.Handler?.PlatformView is FrameworkElement nativeView)
         {
-
-            var visibility = VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Collapsed;
-
-            Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView maybe at {VisualTransformNative.Rect.Location} visibility {visibility}");
-
+            var visibility = VisualTransformNative.IsVisible && IsNativeVisible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+#if DEBUG
+            Trace.WriteLine(
+                $"[SkiaMauiElement] LayoutNativeView maybe at {VisualTransformNative.Rect.Location} visibility {visibility}");
+#endif
             if (nativeView.FocusState != FocusState.Unfocused && visibility == Visibility.Collapsed)
             {
                 nativeView.Unfocus(this);
@@ -111,7 +107,7 @@ public partial class SkiaMauiElement
 
             bool needLayout = false;
 
-            if (nativeView.Visibility == Visibility.Visible)
+            if (visibility == Visibility.Visible)
             {
                 //UIElement
                 nativeView.Width = VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right);
@@ -149,23 +145,32 @@ public partial class SkiaMauiElement
 
                 if (needLayout)
                 {
-                    Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView ARRANGED at {VisualTransformNative.Rect.Location}");
-                    nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Left + Padding.Left, VisualTransformNative.Rect.Top + Padding.Top, nativeView.DesiredSize.Width, nativeView.DesiredSize.Height));
+#if DEBUG
+                    Trace.WriteLine(
+                        $"[SkiaMauiElement] LayoutNativeView ARRANGED at {VisualTransformNative.Rect.Location}");
+#endif
+                    nativeView.Arrange(new Windows.Foundation.Rect(VisualTransformNative.Rect.Location.X + Padding.Left,
+                        VisualTransformNative.Rect.Location.Y + Padding.Top, nativeView.DesiredSize.Width,
+                        nativeView.DesiredSize.Height));
                     ArrangedAt = VisualTransformNative.Rect.Location;
                 }
 
                 if (!WasRendered)
                     WasRendered = nativeView.RenderSize.Width > 0;
             }
-
+            else
+            {
+                var debug = 1;
+            }
 
             if (needLayout)
-                nativeView.UpdateLayout(); //required. in maui this is also needed to be called as fix for after IsVisible is set to true sometimes the view just doesn't show up.
+                nativeView
+                    .UpdateLayout(); //required. in maui this is also needed to be called as fix for after IsVisible is set to true sometimes the view just doesn't show up.
         }
     }
 
     public SKPoint ArrangedAt { get; set; }
-    public Windows.Foundation.Size MeasuredFor { get; set; } 
+    public Windows.Foundation.Size MeasuredFor { get; set; }
 
     public void UpdateNativeLayout()
     {
@@ -225,5 +230,4 @@ public partial class SkiaMauiElement
             });
         }
     }
-
 }

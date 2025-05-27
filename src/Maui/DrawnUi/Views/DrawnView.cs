@@ -8,6 +8,11 @@ namespace DrawnUi.Views
     {
         public void DumpTree(VisualNode node, string prefix = "", bool isLast = true, int level = 0)
         {
+            if (node == null)
+            {
+                Debug.WriteLine("[DumpTree] root node is NULL");
+                return;
+            }
             string indent = new string(' ', level * 4);
 
             // Box drawing characters for tree structure

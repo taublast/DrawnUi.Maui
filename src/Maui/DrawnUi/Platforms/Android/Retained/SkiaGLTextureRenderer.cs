@@ -1,10 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using System.ComponentModel;
-using Android.Content;
 using Android.Opengl;
-using Markdig.Helpers;
-using SkiaSharp;
-using static Android.Icu.Text.IDNA;
 using SKPaintGLSurfaceEventArgs = SkiaSharp.Views.Android.SKPaintGLSurfaceEventArgs;
 
 namespace DrawnUi;

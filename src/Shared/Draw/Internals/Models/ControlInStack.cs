@@ -33,6 +33,13 @@ public class ControlInStack
     /// </summary>
     public SKRect Destination { get; set; }
 
+    public Vector2 OffsetOthers { get; set; }
+
+    /// <summary>
+    /// Was drawn during the last frame
+    /// </summary>
+    public bool WasLastDrawn { get; set; }
+
     /// <summary>
     /// This will be null for recycled views
     /// </summary>

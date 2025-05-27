@@ -151,24 +151,14 @@ public class SnappingLayout : SkiaLayout
         // Find the anchor that the current velocity would move towards
         Vector2 projectionAnchor = SelectNextAnchor(origin, velocity);
 
-        // Calculate the distance between the origin and the projectionAnchor
-        //float distance = Vector2.Distance(origin, projectionAnchor);
-
-        // Calculate the projected position along the direction of the velocity
-        //Vector2 projectedPosition = origin + velocity;
-
-        // Calculate the distance to the anchor in the opposite direction
-        //Vector2 oppositeAnchor = SelectNextAnchor(origin, -velocity);
-        //float oppositeDistance = Vector2.Distance(origin, oppositeAnchor);
-
-        //var targetAnchor = projectionAnchor;
-
         if (Vector2.Distance(location, projectionAnchor) >= 0.5) //todo move threshold to options
         {
             ScrollToOffset(projectionAnchor, velocity, CanAnimate);
         }
-
-        UpdateReportedPosition();
+        else
+        {
+            UpdateReportedPosition();
+        }
     }
 
     public virtual bool CanAnimate
@@ -202,7 +192,7 @@ public class SnappingLayout : SkiaLayout
 
 
     /// <summary>
-    /// In Units
+    /// 
     /// </summary>lo
     /// <param name="offset"></param>
     /// <param name="animate"></param>
@@ -232,6 +222,8 @@ public class SnappingLayout : SkiaLayout
 
             if (displacement != Vector2.Zero)
             {
+                InTransition = true;
+
                 if (Bounces)
                 {
                     var spring = new Spring((float)(1 * (1 + RubberDamping)), 200, (float)(0.5f * (1 + RubberDamping)));
@@ -295,9 +287,9 @@ public class SnappingLayout : SkiaLayout
 
         //Debug.WriteLine($"CurrentPosition {CurrentPosition}");
 
-        InTransition = !CheckTransitionEnded();
-
         UpdateReportedPosition();
+
+        InTransition = !CheckTransitionEnded();
 
         SendScrolled();
     }

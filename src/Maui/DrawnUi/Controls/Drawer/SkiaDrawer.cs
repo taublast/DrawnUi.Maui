@@ -103,7 +103,10 @@ namespace DrawnUi.Controls
             base.OnTransitionChanged();
 
             if (!InTransition)
+            {
+                SetIsOpen();
                 SendStateTransitionComplete();
+            }
         }
 
         public override void OnWillDisposeWithChildren()
@@ -440,16 +443,6 @@ namespace DrawnUi.Controls
             base.Paint(ctx);
         }
 
-        protected override bool ScrollToOffset(Vector2 targetOffset, Vector2 velocity, bool animate)
-        {
-            var scrolled = base.ScrollToOffset(targetOffset, velocity, animate);
-            //if (scrolled)
-            //{
-            //    UpdateReportedPosition();
-            //}
-
-            return scrolled;
-        }
 
         //public override bool CheckTransitionEnded()
         //{
@@ -468,7 +461,8 @@ namespace DrawnUi.Controls
             return !ok;
         }
 
-        public override void UpdateReportedPosition()
+
+        public void SetIsOpen()
         {
             var isOpen = true;
             if (SnapPoints.Any())
@@ -476,13 +470,17 @@ namespace DrawnUi.Controls
                 if (SnapPoints[1] == CurrentSnap)
                     isOpen = false;
             }
+            Debug.WriteLine($"[SkiaDrawer] SetIsOpen: open {isOpen} moving {InTransition}");
+            IsOpen = isOpen;
+        }
 
-            Debug.WriteLine($"[SkiaDrawer] UpdateReportedPosition: open {isOpen} moving {InTransition}");
-
+        public override void UpdateReportedPosition()
+        {
             if (!InTransition)
             {
-                IsOpen = isOpen;
+                SetIsOpen();
             }
+            Debug.WriteLine($"[SkiaDrawer] UpdateReportedPosition: open {IsOpen} moving {InTransition}");
         }
 
         /// <summary>

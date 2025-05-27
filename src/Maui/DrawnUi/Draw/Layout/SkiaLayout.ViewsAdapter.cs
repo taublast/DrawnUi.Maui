@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace DrawnUi.Draw;
 
@@ -9,6 +10,608 @@ public record CellWIthHeight(float Height, SkiaControl view);
 /// </summary>
 public class ViewsAdapter : IDisposable
 {
+    public static bool LogEnabled = false;
+
+    public void MarkViewAsAvailable(SkiaControl cell)
+    {
+    }
+
+    #region INITIALIZE
+
+    /// <summary>
+    /// Main method to initialize templates, can use InitializeTemplatesInBackground as an option. 
+    /// </summary>
+    /// <param name="template"></param>
+    /// <param name="dataContexts"></param>
+    /// <param name="poolSize"></param>
+    /// <param name="reserve">Pre-create number of views to avoid lag spikes later, useful to do in backgound.</param>
+    public void InitializeTemplates(NotifyCollectionChangedEventArgs args, Func<object> template, IList dataContexts,
+        int poolSize, int reserve = 0)
+    {
+        if (IsDisposed || _parent != null && _parent.IsDisposing)
+            return;
+
+
+        //Debug.WriteLine("[CELLS] InitializeTemplates");
+        if (template == null)
+        {
+            TemplatesInvalidated = false;
+            TemplesInvalidating = false;
+            return;
+        }
+
+        bool CheckTemplateChanged()
+        {
+            var ret = _templatedViewsPool.CreateTemplate != template
+                //|| _parent.SplitMax != _forColumns || _parent.MaxRows != _forRows
+                ;
+            return ret;
+        }
+
+        var
+            layoutChanged = //todo cannot really optimize as can have same nb of cells, same references for  _dataContexts != dataContexts but different contexts
+                _parent.RenderingScale != _forScale || _parent.Split != _forSplit;
+
+        var changedData = _dataContexts != dataContexts;
+
+        var needReset = args.Action == NotifyCollectionChangedAction.Reset
+                        || (layoutChanged || _templatedViewsPool == null || _dataContexts != dataContexts ||
+                         CheckTemplateChanged());
+
+        if (needReset)
+        {
+            //temporarily fixed to android until issue found
+            lock (_lockTemplates)
+            {
+                //kill provider ability to provide deprecated templates
+                _wrappers.Clear();
+                _forScale = _parent.RenderingScale;
+                _forSplit = _parent.Split;
+                _dataContexts = null;
+                AddedMore = 0;
+            }
+
+            if (_parent.InitializeTemplatesInBackgroundDelay > 0)
+            {
+                //postpone initialization to be executed in background
+                Tasks.StartDelayed(TimeSpan.FromMilliseconds(_parent.InitializeTemplatesInBackgroundDelay),
+                    () =>
+                    {
+                        Task.Run(async () => //100% background thread
+                        {
+                            try
+                            {
+                                InitializeFull(_parent.RecyclingTemplate == RecyclingTemplate.Disabled, template,
+                                    dataContexts, poolSize, reserve);
+                            }
+                            catch (Exception e)
+                            {
+                                Super.Log(e);
+                            }
+                        }).ConfigureAwait(false);
+                    });
+            }
+            else
+            {
+                InitializeFull(false, template, dataContexts, poolSize, reserve); //.ConfigureAwait(false);
+            }
+        }
+        else
+        {
+            CleanupInvalidCachedViews();
+            bool result = false;
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    result = HandleAdd(args, dataContexts);
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    result = HandleRemove(args, dataContexts);
+                    break;
+
+                case NotifyCollectionChangedAction.Replace:
+                    result = HandleReplace(args, dataContexts);
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    result = HandleMove(args, dataContexts);
+                    break;
+            }
+
+            if (LogEnabled)
+            {
+                Super.Log(
+                    $"[ViewsAdapter] Handle SmartCollectionChange: {args.Action} result {result}");
+            }
+
+            //looks like only itemssource has changed, resize pool, keep old templates, be fast
+            InitializeSoft(layoutChanged, dataContexts, poolSize);
+        }
+    }
+
+    void InitializeSoft(bool layoutChanged, IList dataContexts, int poolSize)
+    {
+        if (LogEnabled)
+            Super.Log("[ViewsAdapter] InitializeSoft");
+
+        lock (_lockTemplates)
+        {
+            TemplesInvalidating = false;
+
+            _templatedViewsPool.MaxSize = poolSize;
+            if (layoutChanged)
+            {
+                foreach (var view in _cellsInUseViews.Values)
+                {
+                    view.InvalidateChildrenTree();
+                }
+            }
+
+            //MarkAllViewsAsHidden(); //todo think
+            Monitor.PulseAll(_lockTemplates);
+        }
+
+        SetTemplatesAvailable(dataContexts);
+    }
+
+    void SetTemplatesAvailable(IList dataContexts)
+    {
+        _dataContexts = dataContexts;
+        TemplatesInvalidated = false;
+        TemplatesBusy = false;
+        _parent.OnTemplatesAvailable();
+    }
+
+    async void InitializeFull(bool measure, Func<object> template, IList dataContexts, int poolSize, int reserve = 0)
+    {
+        if (LogEnabled)
+            Super.Log("[ViewsAdapter] InitializeFull");
+
+        lock (_lockTemplates)
+        {
+            var kill = _templatedViewsPool;
+
+            lock (lockVisible)
+            {
+                _cellsInUseViews.Clear();
+            }
+
+            _templatedViewsPool = new TemplatedViewsPool(template, poolSize, (k) => { _parent?.DisposeObject(k); });
+
+            // Clear standalone pool when template changes
+            kill?.ClearStandalonePool();
+
+            if (UsesGenericPool)
+            {
+                FillPool(reserve, dataContexts);
+            }
+
+            if (kill != null)
+            {
+                kill.IsDisposing = true;
+
+                _parent?.DisposeObject(kill);
+            }
+
+            TemplesInvalidating = false;
+
+            Monitor.PulseAll(_lockTemplates);
+        }
+
+        if (measure)
+        {
+            TemplatesBusy = true;
+
+            while (_parent.IsMeasuring)
+            {
+                await Task.Delay(10);
+            }
+
+            _dataContexts = dataContexts;
+            TemplatesInvalidated = false; //enable TemplatesAvailable otherwise beackground measure will fail
+            _parent.MeasureLayout(
+                new(_parent._lastMeasuredForWidth, _parent._lastMeasuredForHeight, _parent.RenderingScale), true);
+        }
+
+        SetTemplatesAvailable(dataContexts);
+    }
+
+    #endregion
+
+    #region SHIFT
+
+    /// <summary>
+    /// Shifts cached view indexes when items are inserted/removed
+    /// </summary>
+    /// <param name="startIndex">Index where change occurred</param>
+    /// <param name="offset">Positive for insertions, negative for removals</param>
+    private void ShiftCachedViewIndexes(int startIndex, int offset)
+    {
+        if (offset == 0) return;
+
+        lock (lockVisible)
+        {
+            var itemsToUpdate = new List<(int oldIndex, int newIndex, SkiaControl view)>();
+
+            // Find all cached views that need index shifting
+            foreach (var kvp in _cellsInUseViews.ToArray())
+            {
+                var currentIndex = kvp.Key;
+                var view = kvp.Value;
+
+                if (currentIndex >= startIndex)
+                {
+                    var newIndex = currentIndex + offset;
+                    if (newIndex >= 0) // Only keep valid indexes
+                    {
+                        itemsToUpdate.Add((currentIndex, newIndex, view));
+                    }
+                    else
+                    {
+                        // Remove views that would have negative indexes
+                        _cellsInUseViews.Remove(currentIndex);
+                        ReleaseView(view);
+                    }
+                }
+            }
+
+            // Update the dictionary with new indexes
+            foreach (var (oldIndex, newIndex, view) in itemsToUpdate)
+            {
+                _cellsInUseViews.Remove(oldIndex);
+                _cellsInUseViews[newIndex] = view;
+
+                // Update the view's context index
+                view.ContextIndex = newIndex;
+
+                if (LogEnabled)
+                {
+                    Super.Log($"[ViewsAdapter] Shifted view {view.Uid} from index {oldIndex} to {newIndex}");
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Updates binding context for a specific cached view
+    /// </summary>
+    /// <param name="index">Index of the view to update</param>
+    /// <param name="newContext">New binding context</param>
+    private void UpdateCachedViewContext(int index, object newContext)
+    {
+        lock (lockVisible)
+        {
+            if (_cellsInUseViews.TryGetValue(index, out SkiaControl view))
+            {
+                if (!view.IsDisposed && !view.IsDisposing)
+                {
+                    view.BindingContext = newContext;
+
+                    if (LogEnabled)
+                    {
+                        Super.Log($"[ViewsAdapter] Updated context for view {view.Uid} at index {index}");
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enhanced collection change handling with validation and better error handling
+    /// </summary>
+    public bool _HandleSmartCollectionChange(NotifyCollectionChangedEventArgs args, IList newDataContexts,
+        int poolSize, int reserve = 0)
+    {
+        if (IsDisposed || !_parent.IsTemplated)
+            return false;
+
+        // Validate the new data contexts
+        if (newDataContexts == null)
+        {
+            if (LogEnabled)
+                Super.Log("[ViewsAdapter] HandleSmartCollectionChange: newDataContexts is null");
+            return false;
+        }
+
+        if (LogEnabled)
+        {
+            Super.Log(
+                $"[ViewsAdapter] HandleSmartCollectionChange: {args.Action}, old data count: {_dataContexts?.Count ?? -1}, new data count: {newDataContexts.Count}");
+        }
+
+        try
+        {
+            // Cleanup any invalid cached views before processing
+            CleanupInvalidCachedViews();
+
+            bool result = false;
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    result = HandleAdd(args, newDataContexts);
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    result = HandleRemove(args, newDataContexts);
+                    break;
+
+                case NotifyCollectionChangedAction.Replace:
+                    result = HandleReplace(args, newDataContexts);
+                    break;
+
+                case NotifyCollectionChangedAction.Move:
+                    result = HandleMove(args, newDataContexts);
+                    break;
+
+                case NotifyCollectionChangedAction.Reset:
+                    // Always do full reset for this
+                    if (LogEnabled)
+                        Super.Log(
+                            "[ViewsAdapter] HandleSmartCollectionChange: Reset action, falling back to full reset");
+                    return false;
+
+                default:
+                    if (LogEnabled)
+                        Super.Log(
+                            $"[ViewsAdapter] HandleSmartCollectionChange: Unknown action {args.Action}, falling back to full reset");
+                    return false;
+            }
+
+            if (LogEnabled)
+            {
+                Super.Log(
+                    $"[ViewsAdapter] HandleSmartCollectionChange: {args.Action} result: {result}, final data count: {_dataContexts?.Count ?? -1}");
+            }
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            Super.Log($"[ViewsAdapter] Smart collection change failed: {e}");
+
+            // If smart handling fails, clean up and fall back to full reset
+            lock (lockVisible)
+            {
+                _cellsInUseViews.Clear();
+            }
+
+            return false;
+        }
+        finally
+        {
+            // Always validate consistency after changes (in debug builds)
+            if (LogEnabled && !ValidateCacheConsistency())
+            {
+                Super.Log("[ViewsAdapter] Cache consistency validation failed after smart change");
+            }
+        }
+    }
+
+    private bool HandleAdd(NotifyCollectionChangedEventArgs args, IList newDataContexts)
+    {
+        if (args.NewItems == null || args.NewStartingIndex < 0)
+            return false;
+
+        var insertIndex = args.NewStartingIndex;
+        var insertCount = args.NewItems.Count;
+
+        // Shift existing cached views
+        ShiftCachedViewIndexes(insertIndex, insertCount);
+
+        if (LogEnabled)
+        {
+            Super.Log(
+                $"[ViewsAdapter] Added {insertCount} items at index {insertIndex}, new data count: {_dataContexts.Count}");
+        }
+
+        return true;
+    }
+
+    private bool HandleRemove(NotifyCollectionChangedEventArgs args, IList newDataContexts)
+    {
+        if (args.OldItems == null || args.OldStartingIndex < 0)
+            return false;
+
+        var removeIndex = args.OldStartingIndex;
+        var removeCount = args.OldItems.Count;
+
+        // Remove cached views that are being deleted
+        lock (lockVisible)
+        {
+            for (int i = removeIndex; i < removeIndex + removeCount; i++)
+            {
+                if (_cellsInUseViews.TryGetValue(i, out SkiaControl view))
+                {
+                    _cellsInUseViews.Remove(i);
+                    ReleaseView(view, true); // Reset the view
+                }
+            }
+        }
+
+        ShiftCachedViewIndexes(removeIndex + removeCount, -removeCount);
+
+        if (LogEnabled)
+        {
+            Super.Log($"[ViewsAdapter] Removed {removeCount} items from index {removeIndex}");
+        }
+ 
+        return true;
+    }
+
+    private bool HandleReplace(NotifyCollectionChangedEventArgs args, IList newDataContexts)
+    {
+        if (args.NewItems == null || args.OldItems == null ||
+            args.NewStartingIndex < 0 || args.NewItems.Count != args.OldItems.Count)
+            return false;
+
+        var startIndex = args.NewStartingIndex;
+
+        // Update data contexts first
+        _dataContexts = newDataContexts; //todo check if we need this here???
+
+        // Update cached views with new contexts
+        for (int i = 0; i < args.NewItems.Count; i++)
+        {
+            var index = startIndex + i;
+            var newContext = args.NewItems[i];
+            UpdateCachedViewContext(index, newContext);
+        }
+
+        if (LogEnabled)
+        {
+            Super.Log($"[ViewsAdapter] Replaced {args.NewItems.Count} items at index {startIndex}");
+        }
+
+        return true;
+    }
+
+    private bool HandleMove(NotifyCollectionChangedEventArgs args, IList newDataContexts)
+    {
+        if (args.NewItems == null || args.NewItems.Count != 1 ||
+            args.OldStartingIndex < 0 || args.NewStartingIndex < 0)
+            return false;
+
+        var oldIndex = args.OldStartingIndex;
+        var newIndex = args.NewStartingIndex;
+
+        if (oldIndex == newIndex)
+            return true; // No actual move
+
+        lock (lockVisible)
+        {
+            // Get the view being moved
+            _cellsInUseViews.TryGetValue(oldIndex, out SkiaControl movingView);
+
+            // Update all affected indexes
+            if (oldIndex < newIndex)
+            {
+                // Moving forward: shift items between oldIndex+1 and newIndex backward
+                for (int i = oldIndex + 1; i <= newIndex; i++)
+                {
+                    if (_cellsInUseViews.TryGetValue(i, out SkiaControl view))
+                    {
+                        _cellsInUseViews.Remove(i);
+                        _cellsInUseViews[i - 1] = view;
+                        view.ContextIndex = i - 1;
+                    }
+                }
+            }
+            else
+            {
+                // Moving backward: shift items between newIndex and oldIndex-1 forward
+                for (int i = oldIndex - 1; i >= newIndex; i--)
+                {
+                    if (_cellsInUseViews.TryGetValue(i, out SkiaControl view))
+                    {
+                        _cellsInUseViews.Remove(i);
+                        _cellsInUseViews[i + 1] = view;
+                        view.ContextIndex = i + 1;
+                    }
+                }
+            }
+
+            // Place the moved view in its new position
+            if (movingView != null)
+            {
+                _cellsInUseViews.Remove(oldIndex);
+                _cellsInUseViews[newIndex] = movingView;
+                movingView.ContextIndex = newIndex;
+            }
+        }
+
+        if (LogEnabled)
+        {
+            Super.Log($"[ViewsAdapter] Moved item from index {oldIndex} to {newIndex}");
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Validates that cached views are in sync with data contexts
+    /// </summary>
+    private bool ValidateCacheConsistency()
+    {
+        if (_dataContexts == null) return true;
+
+        lock (lockVisible)
+        {
+            foreach (var kvp in _cellsInUseViews)
+            {
+                var index = kvp.Key;
+                var view = kvp.Value;
+
+                // Check if index is valid
+                if (index < 0 || index >= _dataContexts.Count)
+                {
+                    if (LogEnabled)
+                    {
+                        Super.Log(
+                            $"[ViewsAdapter] Invalid index {index} in cache, data count: {_dataContexts.Count}");
+                    }
+
+                    return false;
+                }
+
+                // Check if binding context matches
+                var expectedContext = _dataContexts[index];
+                if (view.BindingContext != expectedContext)
+                {
+                    if (LogEnabled)
+                    {
+                        Super.Log($"[ViewsAdapter] Context mismatch at index {index}");
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Cleans up invalid cached views
+    /// </summary>
+    private void CleanupInvalidCachedViews()
+    {
+        if (_dataContexts == null) return;
+
+        lock (lockVisible)
+        {
+            var toRemove = new List<int>();
+
+            foreach (var kvp in _cellsInUseViews)
+            {
+                var index = kvp.Key;
+                var view = kvp.Value;
+
+                if (index < 0 || index >= _dataContexts.Count ||
+                    view.IsDisposed || view.IsDisposing)
+                {
+                    toRemove.Add(index);
+                }
+            }
+
+            foreach (var index in toRemove)
+            {
+                if (_cellsInUseViews.TryGetValue(index, out SkiaControl view))
+                {
+                    _cellsInUseViews.Remove(index);
+                    ReleaseView(view, true);
+                }
+            }
+
+            if (LogEnabled && toRemove.Count > 0)
+            {
+                Super.Log($"[ViewsAdapter] Cleaned up {toRemove.Count} invalid cached views");
+            }
+        }
+    }
+
+    #endregion
+
     /// <summary>
     /// Creates view from template and returns already existing view for a specific index.
     /// This uses cached views and tends to return same views matching index they already used.
@@ -19,7 +622,8 @@ public class ViewsAdapter : IDisposable
     /// <param name="height"></param>
     /// <param name="isMeasuring"></param>
     /// <returns></returns>
-    public SkiaControl GetViewForIndex(int index, SkiaControl template = null, float height = 0, bool isMeasuring = false)
+    public SkiaControl GetViewForIndex(int index, SkiaControl template = null, float height = 0,
+        bool isMeasuring = false)
     {
         if (IsDisposed)
             return null;
@@ -32,20 +636,20 @@ public class ViewsAdapter : IDisposable
                 {
                     if (_parent.IsTemplated)
                     {
-
                         lock (lockVisible)
                         {
-                            if (template == null && !isMeasuring && _cellsInUseViews.TryGetValue(index, out SkiaControl ready))
+                            if (template == null && !isMeasuring &&
+                                _cellsInUseViews.TryGetValue(index, out SkiaControl ready))
                             {
-
                                 if (LogEnabled)
                                 {
-                                    Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} returned a ready view {ready.Uid} for index {index} ({ready.ContextIndex})");
+                                    Super.Log(
+                                        $"[ViewsAdapter] {_parent.Tag} for index {index} returned a INUSE view {ready.Uid}  ({ready.ContextIndex})");
                                 }
 
                                 if (ready != null && !ready.IsDisposing)
                                 {
-                                    AttachView(ready, index);
+                                    AttachView(ready, index, isMeasuring);
                                     return ready;
                                 }
 
@@ -61,7 +665,7 @@ public class ViewsAdapter : IDisposable
                                 return null; //maybe pool is full, anyway unexpected
                             }
 
-                            AttachView(view, index);
+                            AttachView(view, index, isMeasuring);
 
                             //save visible view for future use only if template is not provided
                             if (template == null)
@@ -78,7 +682,6 @@ public class ViewsAdapter : IDisposable
                             }
 
                             return view;
-
                         }
                     }
                     else
@@ -89,16 +692,15 @@ public class ViewsAdapter : IDisposable
                     }
 
                     return null;
-
                 }
             }
-
         }
         catch (Exception e)
         {
             Super.Log(e);
         }
-      return null;
+
+        return null;
     }
 
     public SkiaControl GetOrCreateViewForIndexInternal(int index, float height = 0, SkiaControl template = null)
@@ -116,16 +718,18 @@ public class ViewsAdapter : IDisposable
         if (template == null)
         {
             template = _templatedViewsPool.Get(height);
+
             if (LogEnabled && template != null)
             {
-                Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} for index {index} returned tpl {template.Uid} with height={height}");
+                Super.Log(
+                    $"[ViewsAdapter] {_parent.Tag} for index {index} returned from POOL {template.Uid} with height={height}");
             }
         }
         else
         {
             if (LogEnabled)
             {
-                Trace.WriteLine($"[ViewsAdapter] {_parent.Tag} for index {index} used passed tpl {template.Uid}");
+                Super.Log($"[ViewsAdapter] {_parent.Tag} for index {index} used passed tpl {template.Uid}");
             }
         }
 
@@ -149,166 +753,6 @@ public class ViewsAdapter : IDisposable
         }
     }
 
-    /// <summary>
-    /// Main method to initialize templates, can use InitializeTemplatesInBackground as an option. 
-    /// </summary>
-    /// <param name="template"></param>
-    /// <param name="dataContexts"></param>
-    /// <param name="poolSize"></param>
-    /// <param name="reserve">Pre-create number of views to avoid lag spikes later, useful to do in backgound.</param>
-    public void InitializeTemplates(Func<object> template, IList dataContexts, int poolSize, int reserve = 0)
-    {
-        if (IsDisposed || _parent != null && _parent.IsDisposing)
-            return;
-
-        {
-            //Debug.WriteLine("[CELLS] InitializeTemplates");
-            if (template == null)
-            {
-                TemplatesInvalidated = false;
-                TemplesInvalidating = false;
-                return;
-            }
-
-            async Task InitializeFull(bool measure)
-            {
-                lock (_lockTemplates)
-                {
-                    var kill = _templatedViewsPool;
-
-                    lock (lockVisible)
-                    {
-                        _cellsInUseViews.Clear();
-                    }
-
-                    _templatedViewsPool = new TemplatedViewsPool(template, poolSize, (k) =>
-                    {
-                        _parent?.DisposeObject(k);
-                    });
-
-                    // Clear standalone pool when template changes
-                    kill?.ClearStandalonePool();
-
-                    if (UsesGenericPool)
-                    {
-                        FillPool(reserve, dataContexts);
-                    }
-
-                    if (kill != null)
-                    {
-                        kill.IsDisposing = true;
-
-                        _parent?.DisposeObject(kill);
-                    }
-
-                    TemplesInvalidating = false;
-
-                    Monitor.PulseAll(_lockTemplates);
-                }
-
-                if (measure)
-                {
-                    TemplatesBusy = true;
-
-                    while (_parent.IsMeasuring)
-                    {
-                        await Task.Delay(10);
-                    }
-                    _dataContexts = dataContexts;
-                    TemplatesInvalidated = false; //enable TemplatesAvailable otherwise beackground measure will fail
-                    _parent.MeasureLayout(new(_parent._lastMeasuredForWidth, _parent._lastMeasuredForHeight, _parent.RenderingScale), true);
-                }
-
-                TemplatesAvailable();
-            }
-
-            void InitializeSoft(bool layoutChanged)
-            {
-
-                lock (_lockTemplates)
-                {
-                    TemplesInvalidating = false;
-
-                    _templatedViewsPool.MaxSize = poolSize;
-                    if (layoutChanged)
-                    {
-                        foreach (var view in _cellsInUseViews.Values)
-                        {
-                            view.InvalidateChildrenTree();
-                        }
-                    }
-                    //MarkAllViewsAsHidden(); //todo think
-                    Monitor.PulseAll(_lockTemplates);
-                }
-
-                TemplatesAvailable();
-            }
-
-            void TemplatesAvailable()
-            {
-                _dataContexts = dataContexts;
-                TemplatesInvalidated = false;
-                TemplatesBusy = false;
-                _parent.OnTemplatesAvailable();
-            }
-
-            bool CheckTemplateChanged()
-            {
-                var ret = _templatedViewsPool.CreateTemplate != template
-                           //|| _parent.SplitMax != _forColumns || _parent.MaxRows != _forRows
-                           ;
-                return ret;
-            }
-
-            var layoutChanged =  //todo cannot really optimize as can have same nb of cells, same references for  _dataContexts != dataContexts but different contexts
-              _parent.RenderingScale != _forScale || _parent.Split != _forSplit;
-
-            if (layoutChanged || _templatedViewsPool == null || _dataContexts != dataContexts || CheckTemplateChanged())
-            {
-                //temporarily fixed to android until issue found
-                //lock (_lockTemplates)
-                {
-                    //kill provider ability to provide deprecated templates
-                    _wrappers.Clear();
-                    _forScale = _parent.RenderingScale;
-                    _forSplit = _parent.Split;
-                    _dataContexts = null;
-                    AddedMore = 0;
-                }
-
-                if (_parent.InitializeTemplatesInBackgroundDelay > 0)
-                {
-                    //postpone initialization to be executed in background
-                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(_parent.InitializeTemplatesInBackgroundDelay),
-                    () =>
-                    {
-                        Task.Run(async () => //100% background thread
-                        {
-                            try
-                            {
-                                await InitializeFull(_parent.RecyclingTemplate == RecyclingTemplate.Disabled);
-                            }
-                            catch (Exception e)
-                            {
-                                Super.Log(e);
-                            }
-
-                        }).ConfigureAwait(false);
-                    });
-                }
-                else
-                {
-                    InitializeFull(false);//.ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                //looks like only itemssource has changed, resize pool, keep old templates, be fast
-                InitializeSoft(layoutChanged);
-            }
-        }
-    }
-
 
     bool UsesGenericPool
     {
@@ -323,6 +767,7 @@ public class ViewsAdapter : IDisposable
                     return false;
                 }
             }
+
             return true;
         }
     }
@@ -336,16 +781,16 @@ public class ViewsAdapter : IDisposable
             {
                 hKey = (int)Math.Round(view.MeasuredSize.Pixels.Height);
             }
-            else
-            if (_parent.Type == LayoutType.Row)
+            else if (_parent.Type == LayoutType.Row)
             {
                 hKey = (int)Math.Round(view.MeasuredSize.Pixels.Width);
             }
         }
+
         return hKey;
     }
 
-    public static bool LogEnabled = false;
+
     public bool IsDisposed;
     private readonly SkiaLayout _parent;
 
@@ -374,7 +819,6 @@ public class ViewsAdapter : IDisposable
             {
                 view.InvalidateInternal();
             }
-
         }
     }
 
@@ -389,6 +833,7 @@ public class ViewsAdapter : IDisposable
             {
                 view.Dispose();
             }
+
             _cellsInUseViews.Clear();
         }
     }
@@ -402,43 +847,66 @@ public class ViewsAdapter : IDisposable
         DisposeVisibleViews();
     }
 
-    protected virtual void AttachView(SkiaControl view, int index)
+    protected virtual void AttachView(SkiaControl view, int index, bool isMeasuring)
     {
-        //todo check how it behaves when sources changes
-        //lock (_lockTemplates)
+        if (IsDisposed || view == null)
+            return;
+
+        try
         {
-            if (IsDisposed)
+            if (view.IsDisposed || view.IsDisposing)
+            {
+                if (LogEnabled)
+                    Super.Log($"[ViewsAdapter] Skipping disposed view {view.Uid} for index {index}");
                 return;
+            }
 
-            view.IsParentIndependent = true; // uneven rows ultimate fix
+            view.IsParentIndependent = true;
 
-            view.Parent = _parent;
             if (index == 0 || view.ContextIndex != index)
-            //if (view.BindingContext == null || _parent.RecyclingTemplate == RecyclingTemplate.Enabled)
             {
                 try
                 {
                     if (index < _dataContexts?.Count)
                     {
-                        var context = _dataContexts[index];
-                        view.ContextIndex = index;
-                        view.BindingContext = context;
-                        _parent.OnViewAttached();
+                        // Double-check before setting binding context
+                        if (!view.IsDisposed && !view.IsDisposing)
+                        {
+                            var context = _dataContexts[index];
+                            if (!isMeasuring)
+                            {
+                                view.Parent = _parent;
+                            }
+                            view.ContextIndex = index;
+                            view.BindingContext = context; // ← where crashes could happen
+                            if (!isMeasuring)
+                            {
+                                _parent.OnViewAttached();
+                            }
+                        }
                     }
                 }
-                catch (Exception e)
+                catch (ObjectDisposedException ex)
                 {
-                    Trace.WriteLine(e);
+                    // View disposed between checks 
+                    if (LogEnabled)
+                        Trace.WriteLine(
+                            $"[ViewsAdapter] View {view.Uid} disposed during binding context set: {ex.Message}");
                 }
             }
-
-
         }
-
+        catch (ObjectDisposedException ex)
+        {
+            if (LogEnabled)
+                Super.Log($"[ViewsAdapter] View disposed during AttachView: {ex.Message}");
+        }
+        catch (Exception e)
+        {
+            Super.Log($"[ViewsAdapter] AttachView failed: {e}");
+        }
     }
 
     #region POOL
-
 
     public int PoolMaxSize
     {
@@ -448,6 +916,7 @@ public class ViewsAdapter : IDisposable
             {
                 return int.MinValue;
             }
+
             return _templatedViewsPool.MaxSize;
         }
     }
@@ -460,6 +929,7 @@ public class ViewsAdapter : IDisposable
             {
                 return int.MinValue;
             }
+
             return _templatedViewsPool.Size;
         }
     }
@@ -468,7 +938,6 @@ public class ViewsAdapter : IDisposable
     /// Holds visible prepared views with appropriate context, index is inside ItemsSource 
     /// </summary>
     private readonly Dictionary<int, SkiaControl> _cellsInUseViews = new(256);
-
 
 
     public void MarkAllViewsAsHidden()
@@ -584,7 +1053,9 @@ public class ViewsAdapter : IDisposable
         {
             return "ViewsAdapter empty";
         }
-        return $"ItemsSource size {_dataContexts.Count}, using cells {_cellsInUseViews.Count}/{PoolSize + _cellsInUseViews.Count}";
+
+        return
+            $"ItemsSource size {_dataContexts.Count}, using cells {_cellsInUseViews.Count}/{PoolSize + _cellsInUseViews.Count}";
     }
 
     public int GetChildrenCount()
@@ -639,34 +1110,12 @@ public class ViewsAdapter : IDisposable
     private int _forSplit;
 
 
-
-    public void ContextCollectionChanged(Func<object> template, IList dataContexts, int poolSize, int reserve = 0)
-    {
-        //if (_templatedViewsPool == null)
-        {
-            InitializeTemplates(template, dataContexts, poolSize, reserve);
-            return;
-        }
-
-        _templatedViewsPool.MaxSize = poolSize;
-
-        lock (lockVisible)
-        {
-            foreach (var view in _cellsInUseViews.Values.ToList())
-            {
-                view.InvalidateChildrenTree();
-            }
-        }
-    }
-
     public void UpdateViews(IEnumerable<SkiaControl> views = null)
     {
-
         if (_parent.IsTemplated)
         {
             UpdateVisibleViews();
         }
-
     }
 
 
@@ -727,7 +1176,6 @@ public class ViewsAdapter : IDisposable
 
                 return iterator;
             }
-
         }
     }
 
@@ -750,11 +1198,11 @@ public class ViewsAdapter : IDisposable
             Trace.WriteLine($"Visible views {_cellsInUseViews.Count}:");
             foreach (var view in _cellsInUseViews.Values)
             {
-                Trace.WriteLine($"└─ {view} {view.Width:0.0}x{view.Height:0.0} pts ({view.MeasuredSize.Pixels.Width:0.0}x{view.MeasuredSize.Pixels.Height:0.0} px) ctx: {view.BindingContext}");
+                Trace.WriteLine(
+                    $"└─ {view} {view.Width:0.0}x{view.Height:0.0} pts ({view.MeasuredSize.Pixels.Width:0.0}x{view.MeasuredSize.Pixels.Height:0.0} px) ctx: {view.BindingContext}");
             }
         }
     }
-
 
 
     public SkiaControl GetTemplateInstance()
@@ -771,6 +1219,7 @@ public class ViewsAdapter : IDisposable
             return view;
         }
     }
+
     public void ReleaseTemplateInstance(SkiaControl viewModel, bool reset = false)
     {
         if (viewModel == null)
@@ -783,15 +1232,11 @@ public class ViewsAdapter : IDisposable
                 viewModel.SetParent(null);
                 //viewModel.BindingContext = null;
             }
+
             _templatedViewsPool.ReturnStandalone(viewModel);
         }
     }
-
-
 }
-
-
-
 
 /// <summary>
 /// To iterate over virtual views
@@ -850,7 +1295,6 @@ public class ViewsIterator : IEnumerable<SkiaControl>, IDisposable
     }
 }
 
-
 public class DataContextIterator : IEnumerator<SkiaControl>
 {
     private readonly ViewsIterator _viewsProvider;
@@ -871,13 +1315,14 @@ public class DataContextIterator : IEnumerator<SkiaControl>
             {
                 hKey = (int)Math.Round(view.MeasuredSize.Pixels.Height);
             }
-            else
-            if (_layoutType == LayoutType.Row)
+            else if (_layoutType == LayoutType.Row)
             {
                 hKey = (int)Math.Round(view.MeasuredSize.Pixels.Width);
             }
+
             return hKey;
         }
+
         return 0;
     }
 
@@ -904,7 +1349,6 @@ public class DataContextIterator : IEnumerator<SkiaControl>
     {
         if (_viewsProvider.IsTemplated)
         {
-
             // Dequeue and return the oldest view if we're at capacity.
             if (_viewsInUse.Count >= _viewsProvider.TemplatedViewsPool.MaxSize)
             {
@@ -922,7 +1366,7 @@ public class DataContextIterator : IEnumerator<SkiaControl>
                 if (_view == null)
                     return false;
 
-                _viewsInUse.Enqueue(_view);  // Keep track of the views in use.
+                _viewsInUse.Enqueue(_view); // Keep track of the views in use.
 
                 _view.ContextIndex = _currentIndex;
                 _view.BindingContext = _viewsProvider.DataContexts[_currentIndex];
@@ -937,8 +1381,8 @@ public class DataContextIterator : IEnumerator<SkiaControl>
         {
             _view = _viewEnumerator.Current;
         }
-        return hasMore;
 
+        return hasMore;
     }
 
     public void Reset()
@@ -1030,6 +1474,7 @@ public class TemplatedViewsPool : IDisposable
                 {
                     DisposeStack(kvp.Value);
                 }
+
                 _disposed = true;
             }
         }
@@ -1061,7 +1506,7 @@ public class TemplatedViewsPool : IDisposable
 
         var create = CreateTemplate();
         if (ViewsAdapter.LogEnabled)
-            Trace.WriteLine("[ViewsAdapter] created new view !");
+            Super.Log("[ViewsAdapter] created new view !");
 
         if (create is SkiaControl element)
         {
@@ -1152,10 +1597,8 @@ public class TemplatedViewsPool : IDisposable
                 if (_genericPool.Count > 0)
                 {
                     var generic = _genericPool.Pop();
-                    if (generic.IsDisposed)
-                    {
-                        //omg how on earth
-                    }
+                    if (!generic.IsDisposed)
+                        return generic;
                 }
 
                 if (Size < MaxSize)
@@ -1233,11 +1676,6 @@ public class TemplatedViewsPool : IDisposable
             {
                 _dispose?.Invoke(viewModel);
             }
-
         }
     }
-
-
 }
-
-

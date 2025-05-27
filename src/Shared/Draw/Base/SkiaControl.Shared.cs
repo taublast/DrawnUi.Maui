@@ -3962,7 +3962,7 @@ namespace DrawnUi.Draw
 
             try
             {
-                InvalidateCacheWithPrevious();
+                //InvalidateCacheWithPrevious();
 
                 //InvalidateViewsList(); //we might get different ZIndex which is bindable..
 
@@ -4784,6 +4784,9 @@ namespace DrawnUi.Draw
 
         public VisualNode? FindRenderedNode(SkiaControl control)
         {
+            if (VisualNode == null)
+                return null;
+
             foreach (var node in this.VisualNode.Children)
             {
                 if (node.Control == control)
@@ -5178,7 +5181,7 @@ namespace DrawnUi.Draw
                     RenderTransformMatrix = SKMatrix.Identity;
                 }
 
-                CreateRenderedNode(transformsArea, ctx.Scale, "DrawWithClipAndTransforms");
+                CreateRenderedNode(transformsArea, ctx.Scale, "dwct1");
 
                 if (isClipping)
                 {
@@ -5193,7 +5196,7 @@ namespace DrawnUi.Draw
             else
             {
                 RenderTransformMatrix = SKMatrix.Identity;
-                CreateRenderedNode(transformsArea, ctx.Scale, "DrawWithClipAndTransforms");
+                CreateRenderedNode(transformsArea, ctx.Scale, "dwct2");
 
                 draw(ctx);
             }
@@ -6111,7 +6114,7 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// Internal use folks, enable this to get console logs specifically from this instance
+        /// Enable this to get console logs specifically from this instance
         /// </summary>
         public bool OutputDebug { get; set; }
 

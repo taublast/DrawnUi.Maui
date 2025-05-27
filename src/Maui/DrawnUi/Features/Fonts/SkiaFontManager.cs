@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace DrawnUi.Draw;
 
@@ -10,21 +11,11 @@ public partial class SkiaFontManager
 
     public bool Initialized { get; set; }
 
-    static SKTypeface? defaultTypeface = null;
-
-    public static SKTypeface? DefaultTypeface
+    public static SKTypeface DefaultTypeface
     {
         get
         {
-            if (defaultTypeface == null)
-            {
-                defaultTypeface = SKTypeface.CreateDefault();
-            }
-            return defaultTypeface;
-        }
-        set
-        {
-            defaultTypeface = value;
+            return SKTypeface.CreateDefault();
         }
     }
 
@@ -91,6 +82,34 @@ public partial class SkiaFontManager
             }
 
             return _SKFontManager;
+        }
+    }
+
+    static Dictionary<SKTypeface, HashSet<int>>  typefaceCoverage = new();
+    private static object lockCharMatch = new();
+
+    public static (SKTypeface, int) FindBestTypefaceForString(string text)
+    {
+        lock (lockCharMatch)
+        {
+            int symbol = 0;
+            foreach (char c in text)
+            {
+                int codePoint = char.ConvertToUtf32(text, char.IsHighSurrogate(c) ? text.IndexOf(c) : 0);
+                var typeface = Manager.MatchCharacter(codePoint);
+                if (typeface != null)
+                {
+                    symbol = codePoint;
+
+                    if (!typefaceCoverage.ContainsKey(typeface))
+                    {
+                        typefaceCoverage[typeface] = new HashSet<int>();
+                    }
+                    typefaceCoverage[typeface].Add(codePoint);
+                }
+            }
+            var bestTypeface = typefaceCoverage.OrderByDescending(kvp => kvp.Value.Count).FirstOrDefault().Key;
+            return (bestTypeface, symbol);
         }
     }
 

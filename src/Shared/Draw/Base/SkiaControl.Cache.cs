@@ -32,7 +32,7 @@ public partial class SkiaControl
         propertyChanged: NeedDraw);
 
     /// <summary>
-    /// Might want to set this to False for certain cases..
+    /// Might want to set this to False for certain cases.
     /// </summary>
     public bool AllowCaching
     {
@@ -237,7 +237,7 @@ public partial class SkiaControl
     {
         get
         {
-            if (!AllowCaching)
+            if (!AllowCaching || !Super.CacheEnabled)
             {
                 return SkiaCacheType.None;
             }
@@ -764,7 +764,6 @@ public partial class SkiaControl
                 var recordArea = destination;
                 if (UsingCacheType == SkiaCacheType.OperationsFull)
                 {
-                    //recordArea = destination;
                     recordArea = context.Context.Canvas.LocalClipBounds;
                 }
 
@@ -823,7 +822,7 @@ public partial class SkiaControl
         if (willDraw)
         {
             CreateTransformationMatrix(context.Context, DrawingRect);
-            var node = CreateRenderedNode(DrawingRect, context.Scale, "PrepareNode");
+            var node = CreateRenderedNode(DrawingRect, context.Scale, "pn");
 
             //note UsesCacheDoubleBuffering is going deprecated with 2 passes rendering tree
             //and new logic for ImageCacheComposite needs to be implemented for nodes
@@ -928,6 +927,11 @@ public partial class SkiaControl
         || usingCacheType == SkiaCacheType.ImageComposite)
         {
             oldObject = RenderObjectPrevious;
+        }
+        else
+        if (usingCacheType == SkiaCacheType.OperationsFull)
+        {
+            var debug = 1;
         }
 
         var created = CreateRenderingObject(context, recordingArea, oldObject, UsingCacheType, action);

@@ -253,45 +253,60 @@ public class SkiaCarousel : SnappingLayout
             }
 
             //PASS 2 - draw only visible and thoses at sides that would be selected
-            var track = DrawingRect.Width - SidesOffset;
-            foreach (var cell in visibleElements)
+            var cellsToRelease = new List<SkiaControl>();
+
+            try
             {
-                var view = ChildrenFactory.GetViewForIndex(cell.ControlIndex);
-
-                //Debug.Write($"[Carousel] {Tag} obtained cell for index {cell.ControlIndex}, visible {cell.IsVisible}");
-
-                if (view == null)
+                var track = DrawingRect.Width - SidesOffset;
+                foreach (var cell in visibleElements)
                 {
-                    break; //looks like itemssource changed?..
-                }
+                    var view = ChildrenFactory.GetViewForIndex(cell.ControlIndex);
+                    cellsToRelease.Add(view);
 
-                if (cell.ControlIndex == SelectedIndex)
-                {
-                    //todo calculate ScrollAmount from 0 to 1
-                    var pixels = cell.Offset.X * RenderingScale;
-                    ScrollAmount = pixels / track;
-                }
+                    //Debug.Write($"[Carousel] {Tag} obtained cell for index {cell.ControlIndex}, visible {cell.IsVisible}");
 
-                if (cell.IsVisible || this.PreloadNeighboors)
-                {
-                    RenderVisibleChild(context, view, cell.Offset);
-                }
+                    if (view == null)
+                    {
+                        break; //looks like itemssource changed?..
+                    }
 
-                if (cell.IsVisible) //but handle gestures only for visible views
-                {
-                    drawn++;
+                    if (cell.ControlIndex == SelectedIndex)
+                    {
+                        //todo calculate ScrollAmount from 0 to 1
+                        var pixels = cell.Offset.X * RenderingScale;
+                        ScrollAmount = pixels / track;
+                    }
 
-                    //used by gestures etc..
-                    cell.Drawn.Set(view.DrawingRect.Left, view.DrawingRect.Top, view.DrawingRect.Right, view.DrawingRect.Bottom);
+                    if (cell.IsVisible || this.PreloadNeighboors)
+                    {
+                        RenderVisibleChild(context, view, cell.Offset);
+                    }
 
-                    var destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right, cell.Drawn.Bottom);
-                    tree.Add(new SkiaControlWithRect(view,
-                        destinationRect,
-                        view.LastDrawnAt,
-                        cell.ControlIndex));
+                    if (cell.IsVisible) //but handle gestures only for visible views
+                    {
+                        drawn++;
+
+                        //used by gestures etc..
+                        cell.Drawn.Set(view.DrawingRect.Left, view.DrawingRect.Top, view.DrawingRect.Right, view.DrawingRect.Bottom);
+
+                        var destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right, cell.Drawn.Bottom);
+                        tree.Add(new SkiaControlWithRect(view,
+                            destinationRect,
+                            view.LastDrawnAt,
+                            cell.ControlIndex));
+                    }
+
                 }
 
             }
+            finally  
+            {
+                foreach (var cell in cellsToRelease)
+                {
+                    ChildrenFactory.MarkViewAsAvailable(cell);
+                }
+            }
+
 
             //Trace.WriteLine($"[CAROUSEL] {Tag}: {ChildrenFactory.GetDebugInfo()}");
 
@@ -858,26 +873,39 @@ public class SkiaCarousel : SnappingLayout
         float currentPosition = 0;
 
         var cellSize = new SKSize((float)Width, (float)Height);
-
-        for (int index = 0; index < childrenCount; index++)
+        var cellsToRelease = new List<SkiaControl>();
+        try
         {
-            if (!IsTemplated || RecyclingTemplate == RecyclingTemplate.Disabled)
+            for (int index = 0; index < childrenCount; index++)
             {
-                var view = ChildrenFactory.GetViewForIndex(index);
-                view.InvalidateWithChildren();
+                if (!IsTemplated || RecyclingTemplate == RecyclingTemplate.Disabled)
+                {
+                    var view = ChildrenFactory.GetViewForIndex(index);
+                    cellsToRelease.Add(view);
+                    view.InvalidateWithChildren();
+                }
+
+                var offset = (float)(index * (-SidesOffset * 2 + Spacing));
+
+                var position = IsVertical
+                    ? new SKPoint(0, currentPosition + offset)
+                    : new SKPoint(currentPosition + offset, 0);
+
+                snapPoints.Add(new Vector2(-position.X, -position.Y));
+
+                currentPosition += (IsVertical ? cellSize.Height : cellSize.Width);
             }
 
-            var offset = (float)(index * (-SidesOffset * 2 + Spacing));
-
-            var position = IsVertical
-                ? new SKPoint(0, currentPosition + offset)
-                : new SKPoint(currentPosition + offset, 0);
-
-            snapPoints.Add(new Vector2(-position.X, -position.Y));
-
-            currentPosition += (IsVertical ? cellSize.Height : cellSize.Width);
+        }
+        finally
+        {
+            foreach (var cell in cellsToRelease)
+            {
+                ChildrenFactory.MarkViewAsAvailable(cell);
+            }
         }
 
+     
         CellSize = ScaledSize.FromUnits(cellSize.Width, cellSize.Height, RenderingScale);
 
         SnapPoints = snapPoints;
@@ -1073,7 +1101,7 @@ public class SkiaCarousel : SnappingLayout
     {
         if (ChildrenFactory.TemplatesAvailable)
         {
-            var child = ChildrenFactory.GetViewForIndex(index);
+           var child = ChildrenFactory.GetViewForIndex(index);
             if (child != null && !child.NeedMeasure)
             {
                 if (this.NeedAutoHeight)
@@ -1098,6 +1126,8 @@ public class SkiaCarousel : SnappingLayout
                     }
                 }
             }
+
+            ChildrenFactory.MarkViewAsAvailable(child);
         }
     }
 

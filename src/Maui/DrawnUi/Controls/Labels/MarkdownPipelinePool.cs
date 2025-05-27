@@ -1,5 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿/*
+
+using System.Collections.Concurrent;
 using Markdig;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DrawnUi.Draw
 {
@@ -54,7 +57,7 @@ namespace DrawnUi.Draw
         /// Creates a new MarkdownPipeline instance.
         /// </summary>
         /// <returns>A new MarkdownPipeline.</returns>
-        private static MarkdownPipeline CreatePipeline()
+        public static MarkdownPipeline CreatePipeline()
         {
             return new MarkdownPipelineBuilder()
                 .UseEmphasisExtras()
@@ -62,3 +65,5 @@ namespace DrawnUi.Draw
         }
     }
 }
+
+*/

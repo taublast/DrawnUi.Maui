@@ -69,7 +69,15 @@
         <None Remove="Platforms\Windows\Controls\**" />
     </ItemGroup>
 
+    <!--<ItemGroup>
+      <ProjectReference Include="..\..\..\..\Markdig\src\Markdig\Markdig.csproj" />
+    </ItemGroup>-->
+
     <ItemGroup>
+        <!--parsing markdown text-->
+        <!--<PackageReference Include="Markdig" Version="0.41.1" />-->
+        <PackageReference Include="CommonMark.NET" Version="0.15.1" />
+        
         <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
         <PackageReference Include="SkiaSharp.Skottie" Version="3.119.0" />
         <PackageReference Include="Svg.Skia" Version="3.0.0" />
@@ -81,8 +89,6 @@
         <PackageReference Include="AppoMobi.Maui.Gestures" Version="1.9.7" />
         <!--MIT open source .net helpers and extensions-->
         <PackageReference Include="AppoMobi.Specials" Version="9.0.3" />
-        <!--parsing markdown text-->
-        <!--<PackageReference Include="Markdig" Version="0.41.1" />-->
         <!--caching bitmaps etc-->
         <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
     </ItemGroup>
@@ -136,9 +142,7 @@
         </Compile>
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\..\..\Markdig\src\Markdig\Markdig.csproj" />
-    </ItemGroup>
+
 
     <Import Project="..\..\Shared\Shared.projitems" Label="Shared" />
 

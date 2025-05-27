@@ -331,10 +331,10 @@ namespace DrawnUi.Draw
                 PaintDefault = new SKPaint { IsAntialias = true, IsDither = true };
             }
 
-            PaintDefault.TextSize = (float)Math.Round(FontSize * scale);
             PaintDefault.StrokeWidth = 0;
+            //todo refactor obsolete
+            PaintDefault.TextSize = (float)Math.Round(FontSize * scale);
             PaintDefault.Typeface = this.TypeFace ?? SkiaFontManager.DefaultTypeface;
-
             PaintDefault.FakeBoldText = (this.FontAttributes & FontAttributes.Bold) != 0;
             PaintDefault.TextSkewX = (this.FontAttributes & FontAttributes.Italic) != 0 ? -0.25f : 0;
         }
@@ -890,8 +890,8 @@ namespace DrawnUi.Draw
             float y,
             SKPaint paint)
         {
-            if (string.IsNullOrEmpty(text) || paint == null)
-                return;
+            if (string.IsNullOrEmpty(text) || Shaper == null || paint == null || paint.Typeface == null)
+            return;
 
             SetupShaper(paint.Typeface);
             DrawShapedText(canvas, Shaper, text, x, y, paint);
@@ -906,7 +906,7 @@ namespace DrawnUi.Draw
             float y,
             SKPaint paint)
         {
-            if (string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text) || shaper==null || paint==null || paint.Typeface==null)
                 return;
 
             using var font = paint.ToFont();
@@ -1007,10 +1007,18 @@ namespace DrawnUi.Draw
 
                 IsMeasuring = true;
 
-                InitializeDefaultContent();
+
 
                 try
                 {
+                    if (NeedSetText)
+                    {
+                        NeedSetText = false;
+                        SetTextInternal();
+                    }
+
+                    InitializeDefaultContent();
+
                     var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
                     if (request.IsSame)
                     {
@@ -1018,9 +1026,8 @@ namespace DrawnUi.Draw
                     }
 
                     ReplaceFont();
-
                     if (TypeFace == null)
-                        return MeasuredSize; // Unexpected but we handle gracefully
+                        return MeasuredSize; // Unexpected  
 
                     SetupDefaultPaint(scale);
                     var constraints = GetMeasuringConstraints(request);
@@ -2551,11 +2558,20 @@ namespace DrawnUi.Draw
 
         void CleanAllocations()
         {
-            PaintDefault?.Dispose();
+            if (PaintDefault!=null)
+            {
+                PaintDefault.Typeface = null;
+                PaintDefault.Dispose();
+                PaintDefault = null;
+            }
             PaintStroke?.Dispose();
+            PaintStroke = null;
             PaintShadow?.Dispose();
+            PaintShadow = null;
             PaintDeco?.Dispose();
+            PaintDeco = null;
             Shaper?.Dispose();
+            Shaper = null;
         }
 
         public SKPaint PaintDefault = new SKPaint { IsAntialias = true, IsDither = true };
@@ -3034,7 +3050,7 @@ namespace DrawnUi.Draw
         {
             if (bindable is SkiaLabel control)
             {
-                control.OnTextChanged((string)newvalue);
+                control.OnTextChanged();
             }
         }
 
@@ -3071,7 +3087,7 @@ namespace DrawnUi.Draw
             set { SetValue(TextTransformProperty, value); }
         }
 
-        protected virtual void OnTextChanged(string value)
+        protected virtual void OnTextChanged()
         {
             InvalidateText();
         }
@@ -3082,9 +3098,11 @@ namespace DrawnUi.Draw
                 return;
 
             GliphsInvalidated = true;
-            SetTextInternal();
+            NeedSetText = true;
             InvalidateMeasure();
         }
+
+        protected bool NeedSetText { get; set; }
 
         private const string Splitter = " ";
 
@@ -3095,6 +3113,9 @@ namespace DrawnUi.Draw
         /// </summary>
         protected virtual void SetTextInternal()
         {
+            if (IsDisposed || IsDisposing)
+                return;
+
             var text = Text;
             if (text != null)
             {

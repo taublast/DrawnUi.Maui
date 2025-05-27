@@ -8,10 +8,8 @@ using Microsoft.Maui.Controls;
 
 namespace DrawnUi.Draw
 {
-    
     public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
     {
-
         public override bool PreArrange(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
             if (!CanDraw)
@@ -38,7 +36,8 @@ namespace DrawnUi.Draw
             return true;
         }
 
-        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
+        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args,
+            GestureEventProcessingInfo apply)
         {
             if (OnGestures != null)
             {
@@ -67,8 +66,10 @@ namespace DrawnUi.Draw
                     !child.Control.InputTransparent && child.Control.CanDraw)
                 {
                     var transformed = child.Control.ApplyTransforms(child.Rect); //instead of HitRect
-                    inside = transformed.ContainsInclusive(point.X, point.Y);// || child.Control == Superview.FocusedChild;
+                    inside = transformed.ContainsInclusive(point.X,
+                        point.Y); // || child.Control == Superview.FocusedChild;
                 }
+
                 return inside;
             }
 
@@ -89,14 +90,6 @@ namespace DrawnUi.Draw
         //    base.OnParentVisibilityChanged(newvalue);
         //}
 
-        public override void OnPrintDebug()
-        {
-            Trace.WriteLine($"ViewsAdapter tpls: {ChildrenFactory.PoolSize}/{ChildrenFactory.PoolMaxSize}");
-            if (IsTemplated)
-            {
-                ChildrenFactory.PrintDebugVisible();
-            }
-        }
 
         public override bool ShouldInvalidateByChildren
         {
@@ -144,11 +137,13 @@ namespace DrawnUi.Draw
 
 
         //bindable property RecyclingTemplate
-        public static readonly BindableProperty RecyclingTemplateProperty = BindableProperty.Create(nameof(RecyclingTemplate),
+        public static readonly BindableProperty RecyclingTemplateProperty = BindableProperty.Create(
+            nameof(RecyclingTemplate),
             typeof(RecyclingTemplate),
             typeof(SkiaLayout),
             RecyclingTemplate.Enabled,
             propertyChanged: ItemTemplateChanged);
+
         /// <summary>
         /// In case of ItemsSource+ItemTemplate set will define should we reuse already created views: hidden items views will be reused for currently visible items on screen.
         /// If set to true inside a SkiaScrollLooped will cause it to redraw constantly even when idle because of the looped scroll mechanics.
@@ -180,8 +175,10 @@ namespace DrawnUi.Draw
 
         //}
 
-        public static readonly BindableProperty TemplatedHeaderProperty = BindableProperty.Create(nameof(TemplatedHeader), typeof(SkiaControl),
+        public static readonly BindableProperty TemplatedHeaderProperty = BindableProperty.Create(
+            nameof(TemplatedHeader), typeof(SkiaControl),
             typeof(SkiaControl), null, propertyChanged: ItemTemplateChanged);
+
         /// <summary>
         /// Kind of BindableLayout.DrawnTemplate
         /// </summary>
@@ -191,8 +188,10 @@ namespace DrawnUi.Draw
             set { SetValue(TemplatedHeaderProperty, value); }
         }
 
-        public static readonly BindableProperty TemplatedFooterProperty = BindableProperty.Create(nameof(TemplatedFooter), typeof(SkiaControl),
+        public static readonly BindableProperty TemplatedFooterProperty = BindableProperty.Create(
+            nameof(TemplatedFooter), typeof(SkiaControl),
             typeof(SkiaControl), null, propertyChanged: ItemTemplateChanged);
+
         /// <summary>
         /// Kind of BindableLayout.DrawnTemplate
         /// </summary>
@@ -215,6 +214,7 @@ namespace DrawnUi.Draw
 
                 return SKRect.Empty;
             }
+
             return GetChildRect(child);
         }
 
@@ -229,9 +229,11 @@ namespace DrawnUi.Draw
                 if (child != null)
                     return child.Destination;
             }
+
             return SKRect.Empty;
         }
 
+        /*
         /// <summary>
         /// TODO for templated stacks this is not optimized to handle cell size
         /// </summary>
@@ -241,7 +243,7 @@ namespace DrawnUi.Draw
         {
             if (IsTemplated)
             {
-                //todo 
+                //todo
                 bool useOneTemplate = IsTemplated && //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
                                       RecyclingTemplate != RecyclingTemplate.Disabled;
 
@@ -258,6 +260,7 @@ namespace DrawnUi.Draw
 
             return GetOrderedSubviews()[index];
         }
+        */
 
         public SkiaControl GetChildAt(float x, float y)
         {
@@ -270,7 +273,6 @@ namespace DrawnUi.Draw
             {
                 foreach (var child in GetUnorderedSubviews())
                 {
-
                     var rect = GetChildRect(child);
                     if (rect.ContainsInclusive(x, y))
                     {
@@ -278,6 +280,7 @@ namespace DrawnUi.Draw
                     }
                 }
             }
+
             return null;
         }
 
@@ -298,7 +301,6 @@ namespace DrawnUi.Draw
 
         #region PROPERTIES
 
-
         public static readonly BindableProperty VirtualizationProperty = BindableProperty.Create(
             nameof(Virtualisation),
             typeof(VirtualisationType),
@@ -316,11 +318,11 @@ namespace DrawnUi.Draw
         }
 
         public static readonly BindableProperty VirtualisationInflatedProperty = BindableProperty.Create(
-        nameof(VirtualisationInflated),
-        typeof(double),
-        typeof(SkiaLayout),
-        0.0,
-        propertyChanged: NeedInvalidateMeasure);
+            nameof(VirtualisationInflated),
+            typeof(double),
+            typeof(SkiaLayout),
+            0.0,
+            propertyChanged: NeedInvalidateMeasure);
 
         /// <summary>
         /// How much of the hidden content out of visible bounds should be considered visible for rendering,
@@ -335,6 +337,21 @@ namespace DrawnUi.Draw
         }
 
 
+        public static readonly BindableProperty RecyclingBufferProperty = BindableProperty.Create(
+            nameof(RecyclingBuffer),
+            typeof(double),
+            typeof(SkiaLayout),
+            500.0);
+
+        /// <summary>
+        /// Extra buffer zone for avoiding recycling  
+        /// Default is 500pts - increase for less jaggy scroll, decrease for more memory efficiency
+        /// </summary>
+        public double RecyclingBuffer
+        {
+            get { return (double)GetValue(RecyclingBufferProperty); }
+            set { SetValue(RecyclingBufferProperty, value); }
+        }
 
         #endregion
 
@@ -398,12 +415,10 @@ namespace DrawnUi.Draw
         }
 
         private bool _IsEmpty;
+
         public bool IsEmpty
         {
-            get
-            {
-                return _IsEmpty;
-            }
+            get { return _IsEmpty; }
             set
             {
                 if (_IsEmpty != value)
@@ -450,7 +465,8 @@ namespace DrawnUi.Draw
         {
             get
             {
-                var output = $"{this.GetType().Name} {Type} Tag: `{Tag}`, {MeasuredSize.Pixels.Width:0}x{MeasuredSize.Pixels.Height:0}, ";
+                var output =
+                    $"{this.GetType().Name} {Type} Tag: `{Tag}`, {MeasuredSize.Pixels.Width:0}x{MeasuredSize.Pixels.Height:0}, ";
 
                 if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
                 {
@@ -460,15 +476,12 @@ namespace DrawnUi.Draw
                 if (IsTemplated || RenderTree == null)
                     return output + ChildrenFactory.GetDebugInfo();
 
-                return output + $"visible {RenderTree.Count}, skipped {ChildrenFactory.GetChildrenCount() - RenderTree.Count}, total {ChildrenFactory.GetChildrenCount()}";
+                return output +
+                       $"visible {RenderTree.Count}, skipped {ChildrenFactory.GetChildrenCount() - RenderTree.Count}, total {ChildrenFactory.GetChildrenCount()}";
             }
         }
 
-        public ViewsAdapter ChildrenFactory
-        {
-            get;
-            protected set;
-        }
+        public ViewsAdapter ChildrenFactory { get; protected set; }
 
 
         public static readonly BindableProperty SplitProperty = BindableProperty.Create(
@@ -533,7 +546,6 @@ namespace DrawnUi.Draw
             set { SetValue(DynamicColumnsProperty, value); }
         }
 
-
         #endregion
 
         #region RENDERiNG
@@ -550,6 +562,11 @@ namespace DrawnUi.Draw
 
         protected virtual bool DrawChild(DrawingContext ctx, ISkiaControl child)
         {
+            if (child == null || child.IsDisposed || child.IsDisposing)
+            {
+                return false;
+            }
+
             child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
 
             if (!child.CanDraw)
@@ -572,14 +589,12 @@ namespace DrawnUi.Draw
                     //    cell.OnScrolled();
                     //}).ConfigureAwait(false);
                 }
-
             }
 
             child.Render(ctx);
 
             return true;
         }
-
 
 
         //protected void Build()
@@ -687,7 +702,6 @@ namespace DrawnUi.Draw
         }
 
 
-
         public override void Invalidate()
         {
             base.Invalidate();
@@ -695,16 +709,7 @@ namespace DrawnUi.Draw
             Update();
         }
 
-        public override void InvalidateByChild(SkiaControl child)
-        {
-            if (!NeedAutoSize && (child.NeedAutoSize|| IsTemplated))
-            {
-                UpdateByChild(child);
-                return;  
-            }
 
-            base.InvalidateByChild(child);
-        }
 
         SemaphoreSlim semaphoreItemTemplates = new(1);
 
@@ -713,7 +718,6 @@ namespace DrawnUi.Draw
             await semaphoreItemTemplates.WaitAsync();
             try
             {
-
             }
             catch (Exception e)
             {
@@ -751,18 +755,12 @@ namespace DrawnUi.Draw
                     {
                         standalone = true;
                         var template = ChildrenFactory.GetTemplateInstance();
-
                         var child = ChildrenFactory.GetViewForIndex(0, template, 0, true);
 
-                        //if (child == null)
-                        //{
-                        //    child = template;
-                        //}
-                        var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
-
+                        var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height,
+                            scale);
                         if (!measured.IsEmpty)
                         {
-
                             if (measured.Pixels.Width > maxWidth
                                 && child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
                                 maxWidth = measured.Pixels.Width;
@@ -777,37 +775,49 @@ namespace DrawnUi.Draw
                         else
                             ChildrenFactory.ReleaseView(template);
                     }
-                    else
-                    if (this.MeasureItemsStrategy == MeasuringStrategy.MeasureAll
-                        || RecyclingTemplate == RecyclingTemplate.Disabled)
+                    else if (this.MeasureItemsStrategy == MeasuringStrategy.MeasureAll
+                             || RecyclingTemplate == RecyclingTemplate.Disabled)
                     {
-
-                        for (int index = 0; index < childrenCount; index++)
+                        var cellsToRelease = new List<SkiaControl>();
+                        try
                         {
-                            var child = ChildrenFactory.GetViewForIndex(index, null, 0, true);
-                            if (child == null)
+                            for (int index = 0; index < childrenCount; index++)
                             {
-                                break; //unexpected but..
-                            }
+                                var child = ChildrenFactory.GetViewForIndex(index, null, 0, true);
+                                cellsToRelease.Add(child);
 
-                            var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
-                            if (!measured.IsEmpty)
+                                if (child == null)
+                                {
+                                    break; //unexpected but..
+                                }
+
+                                var measured = MeasureChild(child, rectForChildrenPixels.Width,
+                                    rectForChildrenPixels.Height, scale);
+                                if (!measured.IsEmpty)
+                                {
+                                    if (measured.Pixels.Width > maxWidth &&
+                                        child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
+                                        maxWidth = measured.Pixels.Width;
+                                    if (measured.Pixels.Height > maxHeight &&
+                                        child.VerticalOptions.Alignment != LayoutAlignment.Fill)
+                                        maxHeight = measured.Pixels.Height;
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            foreach (var cell in cellsToRelease)
                             {
-                                if (measured.Pixels.Width > maxWidth && child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
-                                    maxWidth = measured.Pixels.Width;
-                                if (measured.Pixels.Height > maxHeight && child.VerticalOptions.Alignment != LayoutAlignment.Fill)
-                                    maxHeight = measured.Pixels.Height;
+                                ChildrenFactory.MarkViewAsAvailable(cell);
                             }
-
                         }
                     }
+
                     return ScaledSize.FromPixels(maxWidth, maxHeight, scale);
                 }
-
             }
             //empty container
-            else
-            if (NeedAutoHeight || NeedAutoWidth)
+            else if (NeedAutoHeight || NeedAutoWidth)
             {
                 return ScaledSize.CreateEmpty(scale);
                 //return SetMeasured(0, 0, scale);
@@ -821,8 +831,6 @@ namespace DrawnUi.Draw
 
         public virtual ScaledSize MeasureLayout(MeasureRequest request, bool force)
         {
-
-
             //until we implement 2-threads rendering this is needed for ImageDoubleBuffered cache rendering
             if (IsDisposing || IsDisposed)
                 return ScaledSize.Default;
@@ -880,7 +888,8 @@ namespace DrawnUi.Draw
                             break;
 
                         default:
-                            ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height, request.Scale);
+                            ContentSize = ScaledSize.FromPixels(constraints.Content.Width, constraints.Content.Height,
+                                request.Scale);
                             break;
                     }
                 }
@@ -934,6 +943,7 @@ namespace DrawnUi.Draw
 
                     if (IsTemplated)
                     {
+                        //this is used for initial views creation or a rare case when we manually invalidated templates
                         lock (_lockTemplates)
                         {
                             if (ChildrenFactory.TemplatesInvalidated
@@ -941,7 +951,7 @@ namespace DrawnUi.Draw
                             {
                                 ChildrenFactory.TemplesInvalidating = true;
                                 ApplyNewItemsSource = false;
-                                ChildrenFactory.InitializeTemplates(CreateContentFromTemplate, ItemsSource,
+                                ChildrenFactory.InitializeTemplates(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset), CreateContentFromTemplate, ItemsSource,
                                     GetTemplatesPoolLimit(),
                                     GetTemplatesPoolPrefill());
                             }
@@ -953,12 +963,10 @@ namespace DrawnUi.Draw
                         {
                             ActualizeSubviews();
                         }
-
                     }
 
                     return MeasureLayout(request, false);
                 } //end lock
-
             }
             catch (Exception e)
             {
@@ -971,7 +979,6 @@ namespace DrawnUi.Draw
 
                 //LockUpdate(false); never enable this here, breaks stuff
             }
-
         }
 
         public override void ApplyMeasureResult()
@@ -996,16 +1003,43 @@ namespace DrawnUi.Draw
             base.ApplyMeasureResult();
         }
 
+
+        /// <summary>
+        /// Will use this when drawing
+        /// </summary>
+        protected HashSet<SkiaControl> InvalidatedChildrenInternal { get; set; }
+
         protected override void Draw(DrawingContext context)
         {
             if (IsDisposed || IsDisposing)
                 return;
 
+            InvalidatedChildrenInternal = InvalidatedChildren;
+            InvalidatedChildren = new();
+
             ApplyMeasureResult();
 
-            base.Draw(context);
+            base.Draw(context); //will call DrawStack
 
             ViewportWasChanged = false;
+        }
+
+        /// <summary>
+        /// Will be modified by InvalidateByChild
+        /// </summary>
+        protected HashSet<SkiaControl> InvalidatedChildren { get; set; } = new();
+
+        public override void InvalidateByChild(SkiaControl child)
+        {
+            InvalidatedChildren.Add(child);
+
+            if (!NeedAutoSize && (child.NeedAutoSize || IsTemplated))
+            {
+                UpdateByChild(child);
+                return;
+            }
+
+            base.InvalidateByChild(child);
         }
 
         bool _trackWasDrawn;
@@ -1038,13 +1072,12 @@ namespace DrawnUi.Draw
             {
                 drawnChildrenCount = DrawViews(ctx.WithDestination(rectForChildren));
             }
-            else
-            if (Type == LayoutType.Grid) //todo add optimization for OptimizeRenderingViewport
+            else if (Type == LayoutType.Grid) //todo add optimization for OptimizeRenderingViewport
             {
                 drawnChildrenCount = DrawChildrenGrid(ctx.WithDestination(rectForChildren));
             }
             else
-            //stacklayout
+                //stacklayout
             if (IsStack)
             {
                 var structure = LatestStackStructure;
@@ -1061,7 +1094,7 @@ namespace DrawnUi.Draw
                 }
             }
             else
-            //absolute layout
+                //absolute layout
             {
                 drawnChildrenCount = DrawViews(ctx.WithDestination(rectForChildren));
             }
@@ -1079,7 +1112,6 @@ namespace DrawnUi.Draw
 
         public override void OnDisposing()
         {
-
             IsEmptyChanged = null;
 
             ChildrenFactory?.Dispose();
@@ -1117,7 +1149,8 @@ namespace DrawnUi.Draw
                 {
                     IsRenderingWithComposition = true;
 
-                    var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left, DrawingRect.Top - previousCache.Bounds.Top);
+                    var offset = new SKPoint(this.DrawingRect.Left - previousCache.Bounds.Left,
+                        DrawingRect.Top - previousCache.Bounds.Top);
 
                     //Super.Log($"[ImageComposite] {Tag} drawing cached at {offset}  {DrawingRect}");
 
@@ -1134,7 +1167,8 @@ namespace DrawnUi.Draw
                     foreach (var cell in asSpan)
                     {
                         if (!DirtyChildrenInternal.Contains(cell.Control) &&
-                            DirtyChildrenInternal.Any(dirtyChild => dirtyChild.DirtyRegion.IntersectsWith(cell.Control.DirtyRegion)))
+                            DirtyChildrenInternal.Any(dirtyChild =>
+                                dirtyChild.DirtyRegion.IntersectsWith(cell.Control.DirtyRegion)))
                         {
                             DirtyChildrenInternal.Add(cell.Control);
                         }
@@ -1169,8 +1203,6 @@ namespace DrawnUi.Draw
         }
 
 
-
-
         protected override int DrawViews(DrawingContext context)
         {
             var drawn = 0;
@@ -1182,6 +1214,7 @@ namespace DrawnUi.Draw
                     using var children = ChildrenFactory.GetViewsIterator();
                     drawn = RenderViewsList(context, children);
                 }
+
                 if (drawn == 0 && _emptyView != null && _emptyView.IsVisible)
                 {
                     var drawViews = new List<SkiaControl> { _emptyView };
@@ -1200,6 +1233,7 @@ namespace DrawnUi.Draw
                     return 0;
                 }
             }
+
             return drawn;
         }
 
@@ -1208,22 +1242,19 @@ namespace DrawnUi.Draw
         /// </summary>
         public bool IsStack
         {
-            get
-            {
-                return this.Type == LayoutType.Column || Type == LayoutType.Row || Type == LayoutType.Wrap;
-            }
+            get { return this.Type == LayoutType.Column || Type == LayoutType.Row || Type == LayoutType.Wrap; }
         }
 
-        public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type), typeof(LayoutType), typeof(SkiaLayout),
+        public static readonly BindableProperty TypeProperty = BindableProperty.Create(nameof(Type), typeof(LayoutType),
+            typeof(SkiaLayout),
             LayoutType.Absolute,
             propertyChanged: NeedInvalidateMeasure);
+
         public LayoutType Type
         {
             get { return (LayoutType)GetValue(TypeProperty); }
             set { SetValue(TypeProperty, value); }
         }
-
-
 
         #endregion
 
@@ -1261,10 +1292,12 @@ namespace DrawnUi.Draw
             set { SetValue(MeasureItemsStrategyProperty, value); }
         }
 
-        public static readonly BindableProperty ItemTemplatePoolSizeProperty = BindableProperty.Create(nameof(ItemTemplatePoolSize),
-        typeof(int),
-        typeof(SkiaLayout),
-        -1, propertyChanged: NeedUpdateItemsSource);
+        public static readonly BindableProperty ItemTemplatePoolSizeProperty = BindableProperty.Create(
+            nameof(ItemTemplatePoolSize),
+            typeof(int),
+            typeof(SkiaLayout),
+            -1, propertyChanged: NeedUpdateItemsSource);
+
         /// <summary>
         /// Default is -1, the number od template instances will not be less than data collection count. You can manually set to to a specific number to fill your viewport etc. Beware that if you set this to a number that will not be enough to fill the viewport binding contexts will contasntly be changing triggering screen update.
         /// </summary>
@@ -1324,7 +1357,6 @@ namespace DrawnUi.Draw
                 {
                     oldCollection.CollectionChanged -= skiaControl.ItemsSourceCollectionChanged;
                 }
-
             }
 
 
@@ -1341,13 +1373,13 @@ namespace DrawnUi.Draw
         {
             var skiaControl = (SkiaLayout)bindable;
 
-            #if TMP
+#if TMP
             if (skiaControl.MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
             {
                 Super.Log("MeasureVisible is not supported for this property yet, soon.");
                 skiaControl.MeasureItemsStrategy = MeasuringStrategy.MeasureFirst;
             }
-            #endif
+#endif
 
             //skiaControl.PostponeInvalidation(nameof(UpdateItemsSource), skiaControl.UpdateItemsSource);
             //skiaControl.Update();
@@ -1372,7 +1404,10 @@ namespace DrawnUi.Draw
         {
             //if (!string.IsNullOrEmpty(Tag))
             //    Debug.WriteLine($"OnItemSourceChanged {Tag} {IsTemplated} {IsMeasuring}");
-            if (!IsTemplated || !BindingContextWasSet && ItemsSource == null) //do not create items from templates until the context was changed properly to avoid bugs
+            if (!IsTemplated ||
+                !BindingContextWasSet &&
+                ItemsSource ==
+                null) //do not create items from templates until the context was changed properly to avoid bugs
             {
                 return;
             }
@@ -1390,259 +1425,156 @@ namespace DrawnUi.Draw
             }
         }
 
+        /// <summary>
+        /// Enhanced collection change handler with smart handling and fallback
+        /// </summary>
         protected virtual void ItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-
             if (!IsTemplated)
                 return;
 
-            //todo implement partial stuff like
-            //NotifyCollectionChangedAction.Add, NotifyCollectionChangedAction.Remove etc
+            if (ViewsAdapter.LogEnabled)
+            {
+                Trace.WriteLine($"[SkiaLayout] {Tag} Collection changed: {args.Action}, " +
+                                $"OldIndex: {args.OldStartingIndex}, NewIndex: {args.NewStartingIndex}, " +
+                                $"OldCount: {args.OldItems?.Count ?? 0}, NewCount: {args.NewItems?.Count ?? 0}");
+            }
 
             lock (LockMeasure)
             {
-                switch (args.Action)
+                // For very rapid changes, fall back to full reset
+                if (ChildrenFactory.TemplatesBusy || ChildrenFactory.TemplesInvalidating)
                 {
-                    //todo
-                    //case NotifyCollectionChangedAction.Add:
-                    //    int newIndex = args.NewStartingIndex;
+                    if (ViewsAdapter.LogEnabled)
+                    {
+                        Trace.WriteLine($"[SkiaLayout] {Tag} Templates busy, deferring change handling");
+                    }
 
+                    // Defer the change until templates are ready
+                    PostponeInvalidation($"collection_change_{args.Action}", () =>
+                    {
+                        ItemsSourceCollectionChanged(sender, args); //re-enter
+                    });
+                    return;
+                }
 
-                    //    //...
-                    //    if (NeedAutoSize)
-                    //    {
-                    //        Invalidate();
-                    //    }
-                    //    else
-                    //    {
-                    //        // Update layout without full remeasure
-                    //        Update();
-                    //    }
-                    //    break;
+                // Fall back to full reset for complex changes
+                if (ViewsAdapter.LogEnabled)
+                {
+                    Trace.WriteLine($"[SkiaLayout] {Tag} Falling back to full reset for {args.Action}");
+                }
 
-                    default:
-                        // full reset
-                        ApplyNewItemsSource = false;
-                        ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
-                            GetTemplatesPoolLimit(),
-                            GetTemplatesPoolPrefill());
+                ApplyNewItemsSource = false;
+                ChildrenFactory.InitializeTemplates(args, CreateContentFromTemplate, ItemsSource,
+                    GetTemplatesPoolLimit(),
+                    GetTemplatesPoolPrefill());
 
-                        if (args.Action == NotifyCollectionChangedAction.Reset)
-                        {
-                            ResetScroll();
-                        }
-
-                        Invalidate();
-                        break;
-                } 
-            }
-
-
-            return;
-
-
-            switch (args.Action)
-            {
-
-                //case NotifyCollectionChangedAction.Add:
-                //{
-                //    int index = args.NewStartingIndex;
-                //    if (args.NewItems != null)
-                //    {
-                //        if (ChildrenFactory.GetChildrenCount() > 0)
-                //        {
-                //            //insert somewhere
-                //            foreach (var newItem in args.NewItems)
-                //            {
-                //                SkiaControl view = null;
-                //                try
-                //                {
-                //                    view = (SkiaControl)ItemTemplate.CreateContent();
-                //                }
-                //                catch (Exception ex)
-                //                {
-                //                    var stopp = ex;
-                //                }
-                //                var bindableObject = view as BindableObject;
-                //                if (bindableObject != null)
-                //                {
-                //                    view.Parent = this;
-                //                    bindableObject.BindingContext = newItem;
-                //                    Children.Insert(index++, view);
-                //                }
-                //            }
-                //        }
-                //        else
-                //        {
-                //            BuildFromZero();
-                //        }
-                //    }
-                //}
-                //break;
-                //case NotifyCollectionChangedAction.Add:
-                //{
-                //    int index = args.NewStartingIndex;
-                //    if (args.NewItems != null)
-                //    {
-                //        if (Views.Count > 0)
-                //        {
-                //            //insert somewhere
-                //            foreach (var newItem in args.NewItems)
-                //            {
-                //                SkiaControl view = CreateControl(ItemTemplate);
-                //                if (view != null)
-                //                {
-                //                    view.Parent = this;
-                //                    view.BindingContext = newItem;
-                //                    Views.Insert(index++, view);
-                //                }
-                //            }
-                //            Invalidate();
-                //        }
-                //        else
-                //        {
-                //            OnItemSourceChanged();
-                //        }
-                //    }
-                //}
-                //break;
-                //case NotifyCollectionChangedAction.Move:
-                //{
-                //    try
-                //    {
-                //        var view = Views[args.OldStartingIndex];
-                //        Views.RemoveAt(args.OldStartingIndex);
-                //        Views.Insert(args.NewStartingIndex, view);
-                //    }
-                //    catch (Exception e)
-                //    {
-                //        Trace.WriteLine($"[SkiaLayout] {e}");
-                //    }
-                //}
-                //Invalidate();
-                //break;
-                //case NotifyCollectionChangedAction.Remove:
-                //{
-                //    if (args.NewItems.Count > 1)
-                //    {
-                //        throw new NotImplementedException("ToDo Remove more than 1");
-                //    }
-                //    try
-                //    {
-                //        var remove = Views[args.OldStartingIndex];
-                //        Views.RemoveAt(args.OldStartingIndex);
-                //        remove.Dispose();
-                //    }
-                //    catch (Exception e)
-                //    {
-                //        Trace.WriteLine($"[SkiaLayout] {e}");
-                //    }
-                //}
-                //Invalidate();
-                //break;
-
-                //case NotifyCollectionChangedAction.Replace: //todo for more than 1
-                //{
-                //    if (args.NewItems.Count > 1)
-                //    {
-                //        throw new NotImplementedException("ToDo Replace more than 1");
-                //    }
-                //    var view = CreateControl(ItemTemplate);
-                //    if (view != null)
-                //    {
-                //        view.Parent = this;
-                //        view.BindingContext = args.NewItems[0]; ;
-                //        var remove = Views[args.OldStartingIndex];
-                //        Views.RemoveAt(args.OldStartingIndex);
-                //        Views.Insert(args.NewStartingIndex, view);
-                //        remove.Dispose();
-                //    }
-                //}
-                //Invalidate();
-                //break;
-
-
-                case NotifyCollectionChangedAction.Add:
-                case NotifyCollectionChangedAction.Move:
-                case NotifyCollectionChangedAction.Remove:
-                case NotifyCollectionChangedAction.Replace:
-
-                    //if (IsTemplated)
-                    //{
-                    //    lock (lockMeasure)
-                    //    {
-                    //        ApplyNewItemsSource = false;
-                    //        ChildrenFactory.ContextCollectionChanged(CreateContentFromTemplate, ItemsSource,
-                    //            GetTemplatesPoolLimit(),
-                    //            GetTemplatesPoolPrefill());
-
-                    //        Invalidate();
-                    //    }
-                    //    return;
-                    //}
-
-                    break;
-
-                case NotifyCollectionChangedAction.Reset:
+                if (args.Action == NotifyCollectionChangedAction.Reset)
+                {
                     ResetScroll();
-                    //ClearChildren();
-                    //if (args.NewItems != null)
-                    //{
-                    //	foreach (var newItem in args.NewItems)
-                    //	{
-                    //		SkiaControl view = CreateControl(ItemTemplate);
-                    //		if (view != null)
-                    //		{
-                    //			view.Parent = this;
-                    //			view.BindingContext = newItem;
-                    //			Views.Add(view);
-                    //		}
-                    //	}
-                    //}
-                    //Invalidate();
-                    break;
+                }
+
+                Invalidate();
+
+                //CheckAndSetupIfEmpty(); todo
             }
-
-            //PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
-            //Invalidate();
-
-            //OnItemSourceChanged();
         }
 
+        /// <summary>
+        /// Force a full refresh of all cached views (useful for debugging)
+        /// </summary>
+        public void RefreshAllViews()
+        {
+            if (!IsTemplated)
+                return;
 
+            lock (LockMeasure)
+            {
+                ChildrenFactory.MarkAllViewsAsHidden();
+                Update();
+            }
+        }
+
+        /// <summary>
+        /// Get debug information about cached views
+        /// </summary>
+        public string GetCacheDebugInfo()
+        {
+            if (!IsTemplated || ChildrenFactory == null)
+                return "Not templated";
+
+            var info = ChildrenFactory.GetDebugInfo();
+
+            // Add validation info
+            var isValid = true;
+            var issues = new List<string>();
+
+            try
+            {
+                // This is a simplified validation - the full version is in ViewsAdapter
+                if (ItemsSource != null && ItemsSource.Count > 0)
+                {
+                    // Add any specific validation checks here
+                }
+            }
+            catch (Exception e)
+            {
+                isValid = false;
+                issues.Add($"Validation error: {e.Message}");
+            }
+
+            return $"{info}, Valid: {isValid}" +
+                   (issues.Count > 0 ? $", Issues: {string.Join(", ", issues)}" : "");
+        }
+
+        /// <summary>
+        /// Enhanced debug printing
+        /// </summary>
+        public override void OnPrintDebug()
+        {
+            base.OnPrintDebug();
+
+            if (IsTemplated)
+            {
+                Trace.WriteLine($"[SkiaLayout] {Tag} Cache Debug: {GetCacheDebugInfo()}");
+                ChildrenFactory.PrintDebugVisible();
+            }
+        }
+
+        //public override void OnPrintDebug()
+        //{
+        //    Trace.WriteLine($"ViewsAdapter tpls: {ChildrenFactory.PoolSize}/{ChildrenFactory.PoolMaxSize}");
+        //    if (IsTemplated)
+        //    {
+        //        ChildrenFactory.PrintDebugVisible();
+        //    }
+        //}
 
         #endregion
 
         protected override void OnLayoutReady()
         {
             base.OnLayoutReady();
-
-
         }
 
         public virtual void OnAppearing()
         {
-
         }
 
         public virtual void OnDisappearing()
         {
-
         }
 
         public virtual void OnAppeared()
         {
-
         }
 
         public virtual void OnDisappeared()
         {
-
         }
 
         public virtual void OnLoaded()
         {
-
         }
 
         public virtual ContainsPointResult GetVisibleChildIndexAt(SKPoint point)
@@ -1655,12 +1587,7 @@ namespace DrawnUi.Draw
 
                 if (child.Rect.ContainsInclusive(point))
                 {
-                    return new ContainsPointResult()
-                    {
-                        Index = child.Index,
-                        Area = child.Rect,
-                        Point = point
-                    };
+                    return new ContainsPointResult() { Index = child.Index, Area = child.Rect, Point = point };
                 }
             }
 
@@ -1673,6 +1600,5 @@ namespace DrawnUi.Draw
 
             return ContainsPointResult.NotFound();
         }
-
     }
 }

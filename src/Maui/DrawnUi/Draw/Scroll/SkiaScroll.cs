@@ -1567,7 +1567,7 @@ namespace DrawnUi.Draw
 
         protected virtual void ApplyContentSize()
         {
-            if (ContentSize.Pixels != LastContentSizePixels || MeasuredSize.Pixels != LastMeasuredSizePixels)
+            if (!CompareSize(ContentSize.Pixels,  LastContentSizePixels,1f)  || !CompareSize(MeasuredSize.Pixels, LastMeasuredSizePixels, 1f))
             {
                 LastContentSizePixels = ContentSize.Pixels;
                 LastMeasuredSizePixels = MeasuredSize.Pixels;
@@ -1942,7 +1942,7 @@ namespace DrawnUi.Draw
                 var clamped = ClampOffset(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y,
                     ContentOffsetBounds, true);
 
-                if (clamped.X == 0 && clamped.Y == 0)
+                if (clamped.X == 0 && clamped.Y == 0 && OverScrolled)
                 {
                     HideRefreshIndicator();
                     ScrollTo(0, 0, 0);
@@ -2026,6 +2026,11 @@ namespace DrawnUi.Draw
 
         protected void SendScrolled()
         {
+            if (ViewsAdapter.LogEnabled)
+            {
+                Trace.WriteLine($"[SkiaScroll] Scrolled offset {InternalViewportOffset.Pixels}");
+            }
+
             Scrolled?.Invoke(this, InternalViewportOffset);
             OnScrolled();
         }
