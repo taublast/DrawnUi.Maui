@@ -140,6 +140,8 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
+        Debug.WriteLine($"[Canvas] Measure for {widthConstraint} {heightConstraint}");
+
         //we need this for NET 9, where we might have `heightConstraint` Infinity
         //while `HeightRequest` was defined to exact value
         if (!double.IsFinite(heightConstraint) && double.IsFinite(HeightRequest))
@@ -513,7 +515,7 @@ public class Canvas : DrawnView, IGestureListener
                             if (wasConsumed == null)
                                 wasConsumed = consumed;
 
-                            if (args.Type != TouchActionResult.Up)
+                            //if (args.Type != TouchActionResult.Up)
                             {
                                 secondPass = false;
                                 HadInput.TryAdd(consumed.Uid, consumed);
@@ -601,7 +603,10 @@ public class Canvas : DrawnView, IGestureListener
                 {
                     HadInput.Clear();
                 }
+            }
 
+            if (args.Type == TouchActionResult.Up || FocusedChild != null)
+            {
                 if (manageChildFocus || FocusedChild != null
                     && consumed != FocusedChild && !FocusedChild.LockFocus)
                 {
@@ -610,6 +615,7 @@ public class Canvas : DrawnView, IGestureListener
                     FocusedChild = consumed;
                 }
             }
+
 
             if (ReceivedInput.Count > 0)
             {
