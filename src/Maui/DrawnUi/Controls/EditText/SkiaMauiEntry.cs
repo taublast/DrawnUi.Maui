@@ -17,7 +17,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        Debug.WriteLine($"[SkiaMauiEntry] consuming {args.Type}'");
+        //Debug.WriteLine($"[SkiaMauiEntry] consuming '{args.Type}'");
 
         return this;
     }

@@ -5769,7 +5769,8 @@ namespace DrawnUi.Draw
                 return Superview.GetOnScreenVisibleArea(context, inflateByPixels);
             }
 
-            var inflated2 = Destination;
+            //var inflated2 = Destination;
+            var inflated2 = context.Destination;
             inflated2.Inflate(inflateByPixels.X, inflateByPixels.Y);
             return ScaledRect.FromPixels(inflated2, RenderingScale);
         }
