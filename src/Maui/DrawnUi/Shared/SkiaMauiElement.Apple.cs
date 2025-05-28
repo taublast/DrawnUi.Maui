@@ -63,8 +63,8 @@ public partial class SkiaMauiElement
                 // Apply the combined transform
                 nativeView.Transform = transform;
 
-                var locationX = VisualTransformNative.Translation.X + VisualTransformNative.Rect.Left + this.Padding.Left;
-                var locationY = VisualTransformNative.Translation.Y + VisualTransformNative.Rect.Top + this.Padding.Top;
+                var locationX = VisualTransformNative.Translation.X / RenderingScale  + VisualTransformNative.Rect.Left + this.Padding.Left;
+                var locationY = VisualTransformNative.Translation.Y / RenderingScale + VisualTransformNative.Rect.Top + this.Padding.Top;
 
                 // Set other properties
                 nativeView.Alpha = VisualTransformNative.Opacity;
