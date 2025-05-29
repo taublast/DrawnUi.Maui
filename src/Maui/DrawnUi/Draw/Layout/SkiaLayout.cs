@@ -709,6 +709,10 @@ namespace DrawnUi.Draw
             {
                 Invalidate();
             }
+            else
+            {
+                Update();
+            }
         }
 
         public override void Invalidate()

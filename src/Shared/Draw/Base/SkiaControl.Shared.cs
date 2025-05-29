@@ -6586,7 +6586,13 @@ namespace DrawnUi.Draw
         public virtual void OnChildrenChanged()
         {
             if (NeedAutoSize)
+            {
                 Invalidate();
+            }
+            else
+            {
+                Update();
+            }
         }
 
         public virtual void OnViewAttached()
