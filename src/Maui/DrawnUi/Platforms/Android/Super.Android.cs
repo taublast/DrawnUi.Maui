@@ -145,11 +145,7 @@ public partial class Super
 
                 Super.StatusBarHeight = Super.Screen.TopInset;
 
-                //if (invalidate)
-                {
-                    //App.Instance.Shell.InvalidateNavBar();
-                    InsetsChanged?.Invoke(this, null);
-                }
+                InsetsChanged?.Invoke(this, null);
 
                 _returnInsets = insets.ReplaceSystemWindowInsets(
                     insets.SystemWindowInsetLeft,

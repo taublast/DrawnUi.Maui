@@ -247,11 +247,7 @@ namespace DrawnUi.Draw
             // Local method to handle subscription and initial call
             void SubscribeToViewModel(TSource tvm)
             {
-                // Subscribe directly
                 Observe(control, tvm, (me, prop) => { InvokeCallback(me, tvm, prop); });
-
-                // Initial call with empty property name
-                InvokeCallback(control, tvm, nameof(SkiaControl.BindingContext));
             }
 
             // Local method to safely invoke the callback
@@ -286,10 +282,6 @@ namespace DrawnUi.Draw
             {
                 if (control.BindingContext is TSource tvm)
                 {
-                    // Clean up the temporary event handler
-                    control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
-                    control.ExecuteUponDisposal.Remove(subscriptionKey);
-
                     // Set up the actual subscription
                     SubscribeToViewModel(tvm);
                 }
@@ -836,8 +828,10 @@ namespace DrawnUi.Draw
             return control;
         }
 
-        //NEW STUFF
 
+        /// <summary>
+        /// Observes a nested property on the control's BindingContext using expression trees to extract property names.
+        /// </summary>
         /// <summary>
         /// Observes a nested property on the control's BindingContext using expression trees to extract property names.
         /// </summary>
@@ -860,15 +854,46 @@ namespace DrawnUi.Draw
             Func<TSource, TIntermediate> intermediateFunc = intermediateSelector.Compile();
             Func<TIntermediate, TProperty> propertyFunc = propertySelector.Compile();
 
+            // Track current subscriptions for cleanup
+            string mainKey = $"ObserveTargetProperty_{Guid.CreateVersion7()}";
+            TSource currentViewModel = default(TSource);
+            TIntermediate currentIntermediate = null;
+
+            // Helper method to clean up current subscriptions
+            void CleanupCurrentSubscriptions()
+            {
+                // Clean up root subscription
+                if (currentViewModel != null && control.ExecuteUponDisposal.TryGetValue($"{mainKey}_Root", out var rootCleanup))
+                {
+                    rootCleanup();
+                    control.ExecuteUponDisposal.Remove($"{mainKey}_Root");
+                }
+
+                // Clean up intermediate subscription
+                if (currentIntermediate != null && control.ExecuteUponDisposal.TryGetValue($"{mainKey}_Intermediate", out var intermediateCleanup))
+                {
+                    intermediateCleanup();
+                    control.ExecuteUponDisposal.Remove($"{mainKey}_Intermediate");
+                }
+
+                currentViewModel = default(TSource);
+                currentIntermediate = null;
+            }
+
             // Local method to handle subscription and initial call
             void SubscribeToViewModel(TSource tvm)
             {
+                // First, clean up any existing subscriptions
+                CleanupCurrentSubscriptions();
+
+                currentViewModel = tvm;
                 var intermediate = intermediateFunc(tvm);
+
                 if (intermediate != null)
                 {
                     ObserveIntermediateProperty(control, intermediate);
 
-                    // Also set up subscription to intermediate property changes on the ViewModel
+                    // Set up subscription to intermediate property changes on the ViewModel
                     PropertyChangedEventHandler rootHandler = (sender, args) =>
                     {
                         if (string.IsNullOrEmpty(args.PropertyName) || args.PropertyName == intermediatePropertyName)
@@ -879,8 +904,7 @@ namespace DrawnUi.Draw
                     };
 
                     tvm.PropertyChanged += rootHandler;
-                    string rootKey = $"Root_{Guid.CreateVersion7()}";
-                    control.ExecuteUponDisposal[rootKey] = () => { tvm.PropertyChanged -= rootHandler; };
+                    control.ExecuteUponDisposal[$"{mainKey}_Root"] = () => { tvm.PropertyChanged -= rootHandler; };
                 }
                 else
                 {
@@ -892,6 +916,15 @@ namespace DrawnUi.Draw
             // Helper to observe intermediate property changes
             void ObserveIntermediateProperty(T ctrl, TIntermediate intermediate)
             {
+                // Clean up previous intermediate subscription if exists
+                if (currentIntermediate != null && control.ExecuteUponDisposal.TryGetValue($"{mainKey}_Intermediate", out var oldCleanup))
+                {
+                    oldCleanup();
+                    control.ExecuteUponDisposal.Remove($"{mainKey}_Intermediate");
+                }
+
+                currentIntermediate = intermediate;
+
                 if (intermediate == null)
                 {
                     InvokeCallback(ctrl, defaultValue);
@@ -910,14 +943,13 @@ namespace DrawnUi.Draw
                         }
                         catch (Exception ex)
                         {
-                            Trace.WriteLine($"ObserveNestedProperty: Error accessing property: {ex.Message}");
+                            Trace.WriteLine($"ObserveTargetProperty: Error accessing property: {ex.Message}");
                         }
                     }
                 };
 
                 intermediate.PropertyChanged += handler;
-                string key = $"Intermediate_{intermediate.GetHashCode()}_{Guid.CreateVersion7()}";
-                control.ExecuteUponDisposal[key] = () => { intermediate.PropertyChanged -= handler; };
+                control.ExecuteUponDisposal[$"{mainKey}_Intermediate"] = () => { intermediate.PropertyChanged -= handler; };
 
                 // Initial callback
                 try
@@ -927,7 +959,7 @@ namespace DrawnUi.Draw
                 }
                 catch (Exception ex)
                 {
-                    Trace.WriteLine($"ObserveNestedProperty: Error in initial callback: {ex.Message}");
+                    Trace.WriteLine($"ObserveTargetProperty: Error in initial callback: {ex.Message}");
                 }
             }
 
@@ -940,11 +972,11 @@ namespace DrawnUi.Draw
                 }
                 catch (Exception ex)
                 {
-                    Trace.WriteLine($"ObserveNestedProperty: Error in callback: {ex.Message}");
+                    Trace.WriteLine($"ObserveTargetProperty: Error in callback: {ex.Message}");
                 }
             }
 
-            // Set up observation based on ObserveTargetBindingContext pattern
+            // Set up observation based on current BindingContext
             if (control.BindingContext is TSource tvm)
             {
                 SubscribeToViewModel(tvm);
@@ -952,35 +984,41 @@ namespace DrawnUi.Draw
             else if (control.BindingContext != null && debugTypeMismatch)
             {
                 Trace.WriteLine(
-                    $"[WARNING] ObserveNestedProperty: Expected BindingContext type {typeof(TSource).Name} but got {control.BindingContext.GetType().Name} for control {control.GetType().Name}");
+                    $"[WARNING] ObserveTargetProperty: Expected BindingContext type {typeof(TSource).Name} but got {control.BindingContext.GetType().Name} for control {control.GetType().Name}");
+            }
+            else if (control.BindingContext == null)
+            {
+                // BindingContext is null when attaching - call with default value but don't use "BindingContext" as property name
+                InvokeCallback(control, defaultValue);
             }
 
             // Set up subscription for when BindingContext changes
-            string subscriptionKey = $"watch_{Guid.CreateVersion7()}";
-
             void ControlOnApplyingBindingContext(object sender, EventArgs e)
             {
                 if (control.BindingContext is TSource newTvm)
                 {
-                    // Clean up the temporary event handler
-                    control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
-                    control.ExecuteUponDisposal.Remove(subscriptionKey);
-
-                    // Set up the actual subscription
+                    // Set up the new subscription (this will clean up the old ones)
                     SubscribeToViewModel(newTvm);
                 }
                 else if (control.BindingContext != null && debugTypeMismatch)
                 {
                     Trace.WriteLine(
-                        $"[WARNING] ObserveNestedProperty: Expected BindingContext type {typeof(TSource).Name} but got {control.BindingContext.GetType().Name} for control {control.GetType().Name}");
+                        $"[WARNING] ObserveTargetProperty: Expected BindingContext type {typeof(TSource).Name} but got {control.BindingContext.GetType().Name} for control {control.GetType().Name}");
+                }
+                else
+                {
+                    // BindingContext was set to null, clean up subscriptions
+                    CleanupCurrentSubscriptions();
+                    InvokeCallback(control, defaultValue);
                 }
             }
 
-            // Register the temporary event handler and its cleanup
+            // Register the event handler and its cleanup
             control.ApplyingBindingContext += ControlOnApplyingBindingContext;
-            control.ExecuteUponDisposal[subscriptionKey] = () =>
+            control.ExecuteUponDisposal[$"{mainKey}_Main"] = () =>
             {
                 control.ApplyingBindingContext -= ControlOnApplyingBindingContext;
+                CleanupCurrentSubscriptions();
             };
 
             return control;
@@ -1177,6 +1215,25 @@ namespace DrawnUi.Draw
             view.HorizontalOptions = LayoutOptions.End;
             return view;
         }
+
+        public static T EndY<T>(this T view) where T : SkiaControl
+        {
+            view.VerticalOptions = LayoutOptions.End;
+            return view;
+        }
+
+        public static T StartX<T>(this T view) where T : SkiaControl
+        {
+            view.HorizontalOptions = LayoutOptions.Start;
+            return view;
+        }
+
+        public static T StartY<T>(this T view) where T : SkiaControl
+        {
+            view.VerticalOptions = LayoutOptions.Start;
+            return view;
+        }
+
 
         /// <summary>
         /// Fills vertically

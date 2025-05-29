@@ -292,29 +292,26 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
             if (OnMapPointerMoved(_positions.Values.ToArray(), false))
                 return consumed;
 
-            if (args.Event.NumberOfTouches > 1)
-            {
-                //maybe zooming, so apply limits
-                var currentZoomLevel = GetCurrentZoomLevel();
-                Debug.WriteLine($"ZOOM {currentZoomLevel}");
+            
+            //maybe zooming, so apply limits
+            var currentZoomLevel = GetCurrentZoomLevel();
+            Debug.WriteLine($"ZOOM {currentZoomLevel}");
 
-                // Check if the zoom change would exceed limits
-                if ((args.Event.Manipulation.Scale>0 && currentZoomLevel >= MaxZoomLevel) ||
-                    (args.Event.Manipulation.Scale < 0 && currentZoomLevel <= MinZoomLevel))
-                {
-                    // Don't allow zoom if it would exceed limits
-                }
-                else
-                {
-                    _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
-                    RefreshGraphics();
-                }
+            // Check if the zoom change would exceed limits
+            if ((args.Event.Manipulation.Scale>0 && currentZoomLevel >= MaxZoomLevel) ||
+                (args.Event.Manipulation.Scale < 0 && currentZoomLevel <= MinZoomLevel))
+            {
+                // Don't allow zoom if it would exceed limits
+                Map.Navigator.PanLock = true;
             }
             else
             {
-                _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
-                RefreshGraphics();
+                Map.Navigator.PanLock = false;
             }
+
+            _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
+            RefreshGraphics();
+
         }
         else if (args.Type == TouchActionResult.Up)
         {
