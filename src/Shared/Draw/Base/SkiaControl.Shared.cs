@@ -4280,11 +4280,6 @@ namespace DrawnUi.Draw
 
         public SKRect GetDrawingRectForChildren(SKRect destination, double scale)
         {
-            //var constraintLeft = (Padding.Left + Margins.Left) * scale;
-            //var constraintRight = (Padding.Right + Margins.Right) * scale;
-            //var constraintTop = (Padding.Top + Margins.Top) * scale;
-            //var constraintBottom = (Padding.Bottom + Margins.Bottom) * scale;
-
             var constraintLeft = (Padding.Left + Margins.Left) * scale;
             var constraintRight = (Padding.Right + Margins.Right) * scale;
             var constraintTop = (Padding.Top + Margins.Top) * scale;
@@ -5096,7 +5091,7 @@ namespace DrawnUi.Draw
         {
             if (IsDisposing || NeedUpdate ||
                 Superview == null
-                || IsParentIndependent
+                //|| IsParentIndependent
                 || IsDisposed || Parent == null)
                 return;
 
@@ -6590,7 +6585,8 @@ namespace DrawnUi.Draw
         /// </summary>
         public virtual void OnChildrenChanged()
         {
-            Invalidate();
+            if (NeedAutoSize)
+                Invalidate();
         }
 
         public virtual void OnViewAttached()
