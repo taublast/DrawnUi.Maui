@@ -56,24 +56,27 @@ public abstract class StackLayoutStructure
                 if (child == null)
                     continue;
 
-                cellsToRelease.Add(child);
+                if (!useOneTemplate && _layout.IsTemplated)
+                {
+                    cellsToRelease.Add(child);
+                }
                 yield return child;
             }
         }
         finally
         {
-            foreach (var view in cellsToRelease)
-            {
-                _layout.ChildrenFactory.MarkViewAsAvailable(view);
-            }
 
             if (useOneTemplate)
             {
                 _layout.ChildrenFactory.ReleaseTemplateInstance(template);
             }
-            else if (_layout.IsTemplated)
+            else
+            if (_layout.IsTemplated)
             {
-                _layout.ChildrenFactory.ReleaseView(template);
+                foreach (var view in cellsToRelease)
+                {
+                    _layout.ChildrenFactory.ReleaseViewInUse(view.ContextIndex, view);
+                }
             }
         }
 

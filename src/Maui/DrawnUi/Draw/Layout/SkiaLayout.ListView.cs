@@ -184,7 +184,7 @@ public partial class SkiaLayout
             {
                 foreach (var cell in cellsToRelease)
                 {
-                    ChildrenFactory.MarkViewAsAvailable(cell);
+                    ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
                 }
             }
 
@@ -488,7 +488,7 @@ public partial class SkiaLayout
             {
                 foreach (var cell in cellsToRelease)
                 {
-                    ChildrenFactory.MarkViewAsAvailable(cell);
+                    ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
                 }
             }
         }
@@ -757,9 +757,6 @@ public partial class SkiaLayout
                 if (rowWidth > stackWidth)
                     stackWidth = rowWidth;
 
-                if (template == null)
-                    ChildrenFactory.ReleaseView(child);
-
                 currentIndex++;
             }
 
@@ -828,7 +825,7 @@ public partial class SkiaLayout
             {
                 foreach (var cell in cellsToRelease)
                 {
-                    ChildrenFactory.MarkViewAsAvailable(cell);
+                    ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
                 }
             }
         }

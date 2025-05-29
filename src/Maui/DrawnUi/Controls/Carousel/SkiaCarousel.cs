@@ -6,7 +6,6 @@ namespace DrawnUi.Controls;
 
 public class SkiaCarousel : SnappingLayout
 {
-
     public SkiaCarousel()
     {
         //some defaults
@@ -46,6 +45,7 @@ public class SkiaCarousel : SnappingLayout
         {
             velocity.X = 0;
         }
+
         if (Math.Abs(velocity.Y) < theshold)
         {
             velocity.Y = 0;
@@ -73,7 +73,6 @@ public class SkiaCarousel : SnappingLayout
     public event EventHandler<int> ItemDisappearing;
 
 
-
     public event EventHandler<Vector2> Stopped;
 
     protected ConcurrentDictionary<int, bool> ItemsVisibility { get; } = new();
@@ -98,7 +97,6 @@ public class SkiaCarousel : SnappingLayout
     }
 
 
-
     void InitializeItemsVisibility(int count, bool force)
     {
         if (force || ItemsVisibility.Count != count)
@@ -110,11 +108,9 @@ public class SkiaCarousel : SnappingLayout
         }
     }
 
-
     #endregion
 
     #region METHODS
-
 
     /// <summary>
     /// Will translate child and raise appearing/disappearing events
@@ -190,7 +186,6 @@ public class SkiaCarousel : SnappingLayout
 
     protected virtual void OnScrollProgressChanged()
     {
-
     }
 
     protected override int RenderViewsList(DrawingContext context, IEnumerable<SkiaControl> skiaControls)
@@ -218,8 +213,8 @@ public class SkiaCarousel : SnappingLayout
             {
                 LastScrollProgress = ScrollProgress;
 
-                TransitionDirection = ScrollProgress > LastScrollProgress ?
-                    LinearDirectionType.Forward
+                TransitionDirection = ScrollProgress > LastScrollProgress
+                    ? LinearDirectionType.Forward
                     : LinearDirectionType.Backward;
                 OnScrollProgressChanged();
             }
@@ -238,9 +233,7 @@ public class SkiaCarousel : SnappingLayout
                 {
                     var cell = new ControlInStack()
                     {
-                        ControlIndex = index,
-                        IsVisible = position.OnScreen,
-                        Offset = position.Offset,
+                        ControlIndex = index, IsVisible = position.OnScreen, Offset = position.Offset,
                     };
                     visibleElements.Add(cell);
                     wasUsed = true;
@@ -261,7 +254,8 @@ public class SkiaCarousel : SnappingLayout
                 foreach (var cell in visibleElements)
                 {
                     var view = ChildrenFactory.GetViewForIndex(cell.ControlIndex);
-                    cellsToRelease.Add(view);
+                    if (IsTemplated)
+                        cellsToRelease.Add(view);
 
                     //Debug.Write($"[Carousel] {Tag} obtained cell for index {cell.ControlIndex}, visible {cell.IsVisible}");
 
@@ -287,24 +281,25 @@ public class SkiaCarousel : SnappingLayout
                         drawn++;
 
                         //used by gestures etc..
-                        cell.Drawn.Set(view.DrawingRect.Left, view.DrawingRect.Top, view.DrawingRect.Right, view.DrawingRect.Bottom);
+                        cell.Drawn.Set(view.DrawingRect.Left, view.DrawingRect.Top, view.DrawingRect.Right,
+                            view.DrawingRect.Bottom);
 
-                        var destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right, cell.Drawn.Bottom);
+                        var destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right,
+                            cell.Drawn.Bottom);
                         tree.Add(new SkiaControlWithRect(view,
                             destinationRect,
                             view.LastDrawnAt,
                             cell.ControlIndex));
                     }
-
                 }
-
             }
-            finally  
+            finally
             {
-                foreach (var cell in cellsToRelease)
-                {
-                    ChildrenFactory.MarkViewAsAvailable(cell);
-                }
+                if (IsTemplated)
+                    foreach (var cell in cellsToRelease)
+                    {
+                        ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
+                    }
             }
 
 
@@ -319,15 +314,13 @@ public class SkiaCarousel : SnappingLayout
     }
 
     private double _ScrollAmount;
+
     /// <summary>
     /// Scroll amount from 0 to 1 of the current (SelectedIndex) slide. Another similar but different property would be ScrollProgress. This is not linear as SelectedIndex changes earlier than 0 or 1 are attained.
     /// </summary>
     public double ScrollAmount
     {
-        get
-        {
-            return _ScrollAmount;
-        }
+        get { return _ScrollAmount; }
         set
         {
             if (_ScrollAmount != value)
@@ -340,6 +333,7 @@ public class SkiaCarousel : SnappingLayout
     }
 
     private double _ScrollProgress;
+
     /// <summary>
     /// Scroll progress from 0 to (numberOfSlides-1).
     /// This is not dependent of the SelectedIndex, just reflects visible progress. Useful to create custom controls attached to carousel.
@@ -347,10 +341,7 @@ public class SkiaCarousel : SnappingLayout
     /// </summary>
     public double ScrollProgress
     {
-        get
-        {
-            return _ScrollProgress;
-        }
+        get { return _ScrollProgress; }
         set
         {
             if (_ScrollProgress != value)
@@ -384,11 +375,8 @@ public class SkiaCarousel : SnappingLayout
             //Debug.WriteLine($"TransitionAmount {value:0.00} scroll {ScrollProgress:0.00}");
 
             return value;
-
-
         }
     }
-
 
 
     protected void AdaptTemplate(SkiaControl skiaControl)
@@ -481,14 +469,14 @@ public class SkiaCarousel : SnappingLayout
         {
             ApplyOptions();
         }
-
     }
 
     #endregion
 
     #region ENGINE
 
-    protected virtual (Vector2 Offset, bool OnScreen, bool NextToScreen) CalculateChildPosition(Vector2 currentPosition, int index, int childrenCount)
+    protected virtual (Vector2 Offset, bool OnScreen, bool NextToScreen) CalculateChildPosition(Vector2 currentPosition,
+        int index, int childrenCount)
     {
         var childPos = SnapPoints[index];
 
@@ -516,7 +504,6 @@ public class SkiaCarousel : SnappingLayout
     }
 
 
-
     protected override bool ScrollToOffset(Vector2 targetOffset, Vector2 velocity, bool animate)
     {
         if (ScrollLocked || targetOffset == CurrentSnap)
@@ -527,7 +514,6 @@ public class SkiaCarousel : SnappingLayout
 
         if (animate && Height > 0)
         {
-
             //_animatorSpring?.Stop();
 
             var start = CurrentSnap;
@@ -567,8 +553,7 @@ public class SkiaCarousel : SnappingLayout
                         speed = Math.Abs(seconds.Y);
                         speed *= (Math.Abs(end.Y - start.Y) / Height);
                     }
-                    else
-                    if (direction == DirectionType.Horizontal)
+                    else if (direction == DirectionType.Horizontal)
                     {
                         speed = Math.Abs(seconds.X);
                         speed *= (Math.Abs(end.X - start.X) / Height);
@@ -610,10 +595,8 @@ public class SkiaCarousel : SnappingLayout
 
             //    _animatorSpring.Start();
             //}
-
         }
-        else
-        if (CanDraw)
+        else if (CanDraw)
         {
             CurrentSnap = targetOffset;
             ApplyPosition(targetOffset);
@@ -652,57 +635,30 @@ public class SkiaCarousel : SnappingLayout
     }
 
 
-
     void Init()
     {
         //CheckConstraints();
 
         if (Parent != null)
         {
-
-
             if (VectorAnimatorSpring == null)
             {
                 VectorAnimatorSpring = new(this)
                 {
-                    OnStart = () =>
-                    {
-
-                    },
-                    OnStop = () =>
-                    {
-                        Stopped?.Invoke(this, CurrentPosition);
-                    },
-                    OnVectorUpdated = (value) =>
-                    {
-                        ApplyPosition(value);
-                    },
-                    Finished = () =>
-                    {
-                        _isSnapping = null;
-                    },
-
+                    OnStart = () => { },
+                    OnStop = () => { Stopped?.Invoke(this, CurrentPosition); },
+                    OnVectorUpdated = (value) => { ApplyPosition(value); },
+                    Finished = () => { _isSnapping = null; },
                 };
                 AnimatorRange = new(this)
                 {
-                    OnVectorUpdated = (value) =>
-                    {
-                        ApplyPosition(value);
-                    },
-                    OnStop = () =>
-                    {
-                        Stopped?.Invoke(this, CurrentPosition);
-                    },
-                    Finished = () =>
-                    {
-                        _isSnapping = null;
-                    },
-
+                    OnVectorUpdated = (value) => { ApplyPosition(value); },
+                    OnStop = () => { Stopped?.Invoke(this, CurrentPosition); },
+                    Finished = () => { _isSnapping = null; },
                 };
             }
 
             ApplyOptions();
-
         }
     }
 
@@ -759,9 +715,6 @@ public class SkiaCarousel : SnappingLayout
                     );
                 }
             }
-
-
-
         }
 
         return SKRect.Empty;
@@ -799,9 +752,9 @@ public class SkiaCarousel : SnappingLayout
     {
         if (Parent != null)
         {
-            Viewport = DrawingRect;// Parent.DrawingRect;
+            Viewport = DrawingRect; // Parent.DrawingRect;
 
-            if (!viewportSet)// !CompareRects(Viewport, _lastViewport, 0.5f))
+            if (!viewportSet) // !CompareRects(Viewport, _lastViewport, 0.5f))
             {
                 viewportSet = true;
                 _lastViewport = Viewport;
@@ -814,6 +767,7 @@ public class SkiaCarousel : SnappingLayout
                 {
                     InitializeChildren();
                 }
+
                 ApplyDynamicSize(SelectedIndex);
             }
             else
@@ -827,12 +781,10 @@ public class SkiaCarousel : SnappingLayout
     protected bool ChildrenInitialized;
 
     private int _MaxIndex;
+
     public int MaxIndex
     {
-        get
-        {
-            return _MaxIndex;
-        }
+        get { return _MaxIndex; }
         set
         {
             if (_MaxIndex != value)
@@ -881,7 +833,7 @@ public class SkiaCarousel : SnappingLayout
                 if (!IsTemplated || RecyclingTemplate == RecyclingTemplate.Disabled)
                 {
                     var view = ChildrenFactory.GetViewForIndex(index);
-                    cellsToRelease.Add(view);
+                    if (IsTemplated) cellsToRelease.Add(view);
                     view.InvalidateWithChildren();
                 }
 
@@ -895,17 +847,17 @@ public class SkiaCarousel : SnappingLayout
 
                 currentPosition += (IsVertical ? cellSize.Height : cellSize.Width);
             }
-
         }
         finally
         {
-            foreach (var cell in cellsToRelease)
-            {
-                ChildrenFactory.MarkViewAsAvailable(cell);
-            }
+            if (IsTemplated)
+                foreach (var cell in cellsToRelease)
+                {
+                    ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
+                }
         }
 
-     
+
         CellSize = ScaledSize.FromUnits(cellSize.Width, cellSize.Height, RenderingScale);
 
         SnapPoints = snapPoints;
@@ -914,7 +866,8 @@ public class SkiaCarousel : SnappingLayout
 
         CurrentSnap = new(-1, -1);
 
-        if (SnapPoints.Any() && (_itemsSourceChangedNeedResetIndex || SelectedIndex < 0 || SelectedIndex > snapPoints.Count - 1))
+        if (SnapPoints.Any() && (_itemsSourceChangedNeedResetIndex || SelectedIndex < 0 ||
+                                 SelectedIndex > snapPoints.Count - 1))
         {
             SelectedIndex = 0;
         }
@@ -942,7 +895,6 @@ public class SkiaCarousel : SnappingLayout
     {
         if (!IsTemplated)
         {
-
             var index = 0;
 
             ChildrenFactory.UpdateViews();
@@ -960,16 +912,13 @@ public class SkiaCarousel : SnappingLayout
 
             ChildrenCount = ChildrenFactory.GetChildrenCount();
         }
-
     }
 
     private int _ChildrenCount;
+
     public int ChildrenCount
     {
-        get
-        {
-            return _ChildrenCount;
-        }
+        get { return _ChildrenCount; }
         set
         {
             if (_ChildrenCount != value)
@@ -1004,13 +953,16 @@ public class SkiaCarousel : SnappingLayout
         if (IsVertical)
         {
             var totalheight = this.Height * childrenCount + Spacing * childrenCount - 1;
-            rect = new SKRect(DrawingRect.Left, DrawingRect.Top, DrawingRect.Right, (float)(DrawingRect.Top + totalheight * RenderingScale));
+            rect = new SKRect(DrawingRect.Left, DrawingRect.Top, DrawingRect.Right,
+                (float)(DrawingRect.Top + totalheight * RenderingScale));
         }
         else
         {
             var totalWidth = this.Width * childrenCount + Spacing * childrenCount - 1;
-            rect = new SKRect(DrawingRect.Left, DrawingRect.Top, (float)(DrawingRect.Left + totalWidth * RenderingScale), DrawingRect.Bottom);
+            rect = new SKRect(DrawingRect.Left, DrawingRect.Top,
+                (float)(DrawingRect.Left + totalWidth * RenderingScale), DrawingRect.Bottom);
         }
+
         Viewport = rect;
     }
 
@@ -1028,8 +980,6 @@ public class SkiaCarousel : SnappingLayout
     #endregion
 
     #region PROPERTIES
-
-    
 
     public static readonly BindableProperty PreloadNeighboorsProperty = BindableProperty.Create(
         nameof(PreloadNeighboors),
@@ -1096,18 +1046,17 @@ public class SkiaCarousel : SnappingLayout
     }
 
 
-
     protected virtual void ApplyDynamicSize(int index)
     {
         if (ChildrenFactory.TemplatesAvailable)
         {
-           var child = ChildrenFactory.GetViewForIndex(index);
-            if (child != null && !child.NeedMeasure)
+            var cell = ChildrenFactory.GetViewForIndex(index);
+            if (cell != null && !cell.NeedMeasure)
             {
                 if (this.NeedAutoHeight)
                 {
                     {
-                        var height = child.MeasuredSize.Units.Height;
+                        var height = cell.MeasuredSize.Units.Height;
                         if (height >= 0)
                         {
                             //Trace.WriteLine($"[DH] {height:0.0}");
@@ -1115,10 +1064,11 @@ public class SkiaCarousel : SnappingLayout
                         }
                     }
                 }
+
                 if (this.NeedAutoWidth)
                 {
                     {
-                        var width = child.MeasuredSize.Units.Width;
+                        var width = cell.MeasuredSize.Units.Width;
                         if (width >= 0)
                         {
                             //this.ViewportWidthLimit = width;
@@ -1127,7 +1077,8 @@ public class SkiaCarousel : SnappingLayout
                 }
             }
 
-            ChildrenFactory.MarkViewAsAvailable(child);
+            if (IsTemplated)
+                ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
         }
     }
 
@@ -1137,10 +1088,7 @@ public class SkiaCarousel : SnappingLayout
     /// </summary>
     public int SafeIndex
     {
-        get
-        {
-            return SelectedIndex;
-        }
+        get { return SelectedIndex; }
     }
 
     public void GoNext()
@@ -1165,18 +1113,12 @@ public class SkiaCarousel : SnappingLayout
 
     public virtual bool IsAtStart
     {
-        get
-        {
-            return SelectedIndex == 0;
-        }
+        get { return SelectedIndex == 0; }
     }
 
     public virtual bool IsAtEnd
     {
-        get
-        {
-            return SelectedIndex == MaxIndex;
-        }
+        get { return SelectedIndex == MaxIndex; }
     }
 
     protected virtual void OnSelectedIndexChanged(int index)
@@ -1212,7 +1154,6 @@ public class SkiaCarousel : SnappingLayout
         {
             ApplyDynamicSize(SelectedIndex);
         }
-
     }
 
 
@@ -1234,12 +1175,10 @@ public class SkiaCarousel : SnappingLayout
     }
 
     private int _LastIndex;
+
     public int LastIndex
     {
-        get
-        {
-            return _LastIndex;
-        }
+        get { return _LastIndex; }
         set
         {
             if (_LastIndex != value)
@@ -1330,7 +1269,6 @@ public class SkiaCarousel : SnappingLayout
         }
     }
 
-
     #endregion
 
     #region GESTURES
@@ -1409,7 +1347,9 @@ public class SkiaCarousel : SnappingLayout
                 if (!IsUserPanning)
                 {
                     //first pan
-                    if (args.Event.Distance.Total.X == 0 || Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) || Math.Abs(args.Event.Distance.Total.X) < 2)
+                    if (args.Event.Distance.Total.X == 0 ||
+                        Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) ||
+                        Math.Abs(args.Event.Distance.Total.X) < 2)
                     {
                         return null;
                     }
@@ -1462,7 +1402,6 @@ public class SkiaCarousel : SnappingLayout
 
                 if (IsUserFocused)
                 {
-
                     if (IsUserPanning || InTransition)
                     {
                         consumed = this;
@@ -1477,7 +1416,6 @@ public class SkiaCarousel : SnappingLayout
 
                     IsUserPanning = false;
                     IsUserFocused = false;
-
                 }
 
                 break;

@@ -701,6 +701,15 @@ namespace DrawnUi.Draw
             return ItemsSource.Count + mult * 2;
         }
 
+        public override void OnChildrenChanged()
+        {
+            base.OnChildrenChanged();
+
+            if (!NeedMeasure && Type != LayoutType.Absolute)
+            {
+                Invalidate();
+            }
+        }
 
         public override void Invalidate()
         {
@@ -708,7 +717,6 @@ namespace DrawnUi.Draw
 
             Update();
         }
-
 
 
         SemaphoreSlim semaphoreItemTemplates = new(1);
@@ -770,10 +778,7 @@ namespace DrawnUi.Draw
                                 maxHeight = measured.Pixels.Height;
                         }
 
-                        if (standalone)
-                            ChildrenFactory.ReleaseTemplateInstance(template);
-                        else
-                            ChildrenFactory.ReleaseView(template);
+                        ChildrenFactory.ReleaseTemplateInstance(template);
                     }
                     else if (this.MeasureItemsStrategy == MeasuringStrategy.MeasureAll
                              || RecyclingTemplate == RecyclingTemplate.Disabled)
@@ -784,7 +789,7 @@ namespace DrawnUi.Draw
                             for (int index = 0; index < childrenCount; index++)
                             {
                                 var child = ChildrenFactory.GetViewForIndex(index, null, 0, true);
-                                cellsToRelease.Add(child);
+                                if (IsTemplated) cellsToRelease.Add(child);
 
                                 if (child == null)
                                 {
@@ -806,10 +811,11 @@ namespace DrawnUi.Draw
                         }
                         finally
                         {
-                            foreach (var cell in cellsToRelease)
-                            {
-                                ChildrenFactory.MarkViewAsAvailable(cell);
-                            }
+                            if (IsTemplated)
+                                foreach (var cell in cellsToRelease)
+                                {
+                                    ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
+                                }
                         }
                     }
 
@@ -951,7 +957,9 @@ namespace DrawnUi.Draw
                             {
                                 ChildrenFactory.TemplesInvalidating = true;
                                 ApplyNewItemsSource = false;
-                                ChildrenFactory.InitializeTemplates(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset), CreateContentFromTemplate, ItemsSource,
+                                ChildrenFactory.InitializeTemplates(
+                                    new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset),
+                                    CreateContentFromTemplate, ItemsSource,
                                     GetTemplatesPoolLimit(),
                                     GetTemplatesPoolPrefill());
                             }

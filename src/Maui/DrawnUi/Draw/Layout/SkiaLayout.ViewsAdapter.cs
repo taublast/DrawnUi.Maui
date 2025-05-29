@@ -12,10 +12,6 @@ public class ViewsAdapter : IDisposable
 {
     public static bool LogEnabled = false;
 
-    public void MarkViewAsAvailable(SkiaControl cell)
-    {
-    }
-
     #region INITIALIZE
 
     /// <summary>
@@ -251,7 +247,7 @@ public class ViewsAdapter : IDisposable
                     {
                         // Remove views that would have negative indexes
                         _cellsInUseViews.Remove(currentIndex);
-                        ReleaseView(view);
+                        ReleaseViewToPool(view);
                     }
                 }
             }
@@ -424,7 +420,7 @@ public class ViewsAdapter : IDisposable
                 if (_cellsInUseViews.TryGetValue(i, out SkiaControl view))
                 {
                     _cellsInUseViews.Remove(i);
-                    ReleaseView(view, true); // Reset the view
+                    ReleaseViewToPool(view, true); // Reset the view
                 }
             }
         }
@@ -599,7 +595,7 @@ public class ViewsAdapter : IDisposable
                 if (_cellsInUseViews.TryGetValue(index, out SkiaControl view))
                 {
                     _cellsInUseViews.Remove(index);
-                    ReleaseView(view, true);
+                    ReleaseViewToPool(view, true);
                 }
             }
 
@@ -611,6 +607,17 @@ public class ViewsAdapter : IDisposable
     }
 
     #endregion
+
+    public void ReleaseViewInUse(int index, SkiaControl view)
+    {
+        if (view == null)
+            return;
+
+        lock (lockVisible)
+        {
+            _cellsInUseViews[index]=view;
+        }
+    }
 
     /// <summary>
     /// Creates view from template and returns already existing view for a specific index.
@@ -655,7 +662,7 @@ public class ViewsAdapter : IDisposable
 
                                 //lol unexpected happened
                                 _cellsInUseViews.Remove(index);
-                                ReleaseView(ready);
+                                ReleaseViewToPool(ready);
                             }
 
                             var view = GetOrCreateViewForIndexInternal(index, height, template);
@@ -736,7 +743,12 @@ public class ViewsAdapter : IDisposable
         return template;
     }
 
-    public void ReleaseView(SkiaControl view, bool reset = false)
+    /// <summary>
+    /// Retuns view to the POOL and set parent to null. Doesn't set BindingContext to null !
+    /// </summary>
+    /// <param name="view"></param>
+    /// <param name="reset"></param>
+    public void ReleaseViewToPool(SkiaControl view, bool reset = false)
     {
         if (view == null)
             return;
@@ -946,7 +958,7 @@ public class ViewsAdapter : IDisposable
         {
             // Add all visible views back to the recycling pool (e.g., _viewModelPool.Return(hiddenView))
             foreach (var hiddenView in _cellsInUseViews.Values)
-                ReleaseView(hiddenView);
+                ReleaseViewToPool(hiddenView);
 
             _cellsInUseViews.Clear();
         }
@@ -971,7 +983,7 @@ public class ViewsAdapter : IDisposable
                         //}
 
                         _cellsInUseViews.Remove(index);
-                        ReleaseView(hiddenView);
+                        ReleaseViewToPool(hiddenView);
                     }
 
                     //Debug.WriteLine($"[InUse] {_dicoCellsInUse.Keys.Select(k => k.ToString()).Aggregate((current, next) => $"{current},{next}")}");
@@ -1220,6 +1232,11 @@ public class ViewsAdapter : IDisposable
         }
     }
 
+    /// <summary>
+    /// Returns standalone view, used for measuring to its own separate pool.
+    /// </summary>
+    /// <param name="viewModel"></param>
+    /// <param name="reset"></param>
     public void ReleaseTemplateInstance(SkiaControl viewModel, bool reset = false)
     {
         if (viewModel == null)

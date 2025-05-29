@@ -367,7 +367,6 @@ namespace DrawnUi.Draw
                             break;
                         }
 
-                        index++;
                         var maxHeight = 0.0f;
                         var maxWidth = 0.0f;
 
@@ -411,12 +410,16 @@ namespace DrawnUi.Draw
                                 if (layoutStructure.GetColumnCountForRow(row) < column + 1)
                                     continue; //case when we last row with less items to fill all columns
 
+                                index++;
+
                                 var cell = layoutStructure.Get(column, row);
 
                                 SkiaControl child = null;
                                 if (IsTemplated)
                                 {
-                                    child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, template, 0, true);
+                                    child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, template, 0,
+                                        RecyclingTemplate != RecyclingTemplate.Disabled);
+                                    //Trace.WriteLine($"[CELL] MEASURE {index} {child.Uid}");
                                     if (template == null)
                                     {
                                         cellsToRelease.Add(child);
@@ -429,7 +432,7 @@ namespace DrawnUi.Draw
 
                                 if (child == null)
                                 {
-                                    Trace.WriteLine($"[MeasureStack] FAILED to get child at index {cell.ControlIndex}");
+                                    Super.Log($"[MeasureStack] FAILED to get child at index {cell.ControlIndex}");
                                     return ScaledSize.Default;
                                 }
 
@@ -525,10 +528,10 @@ namespace DrawnUi.Draw
                                 //    }
                                 //}
 
-                                if (!useOneTemplate && IsTemplated)
-                                {
-                                    ChildrenFactory.ReleaseView(child);
-                                }
+                                //if (!useOneTemplate && IsTemplated)
+                                //{
+                                //    ChildrenFactory.ReleaseView(child);
+                                //}
                             }
                             catch (Exception e)
                             {
@@ -620,16 +623,17 @@ namespace DrawnUi.Draw
                 }
                 finally
                 {
-                    foreach (var cell in cellsToRelease)
+                    if (useOneTemplate)
                     {
-                        ChildrenFactory.MarkViewAsAvailable(cell);
+                        ChildrenFactory.ReleaseTemplateInstance(template);
                     }
+                    else if (IsTemplated)
+                        foreach (var cell in cellsToRelease)
+                        {
+                            ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
+                        }
                 }
 
-                if (useOneTemplate)
-                {
-                    ChildrenFactory.ReleaseTemplateInstance(template);
-                }
 
                 if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
                 {
@@ -775,9 +779,7 @@ namespace DrawnUi.Draw
             // Cache the result
             _visibleAreaCache = new VisibleAreaCache
             {
-                Destination = ctx.Destination,
-                VisibleArea = visibleArea,
-                CalculatedAt = now
+                Destination = ctx.Destination, VisibleArea = visibleArea, CalculatedAt = now
             };
 
             return visibleArea;
@@ -820,7 +822,7 @@ namespace DrawnUi.Draw
 
                     currentIndex++;
 
-                    if (cell.Destination == SKRect.Empty || cell.Measured.Pixels.IsEmpty)
+                    if (cell.Destination == SKRect.Empty || cell.Measured.Pixels.Width<1 || cell.Measured.Pixels.Height < 1)
                     {
                         cell.IsVisible = false;
                     }
@@ -882,7 +884,8 @@ namespace DrawnUi.Draw
 
                 if (OutputDebug)
                 {
-                    Super.Log($"[SkiaLayout] visibility area {visibilityArea}, recycling area {recyclingAreaPixels}, visible items: {visibleElements.Count}");
+                    Super.Log(
+                        $"[SkiaLayout] visibility area {visibilityArea}, recycling area {recyclingAreaPixels}, visible items: {visibleElements.Count}");
                 }
 
                 if (IsTemplated)
@@ -915,11 +918,16 @@ namespace DrawnUi.Draw
                             {
                                 break;
                             }
-                            child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, null, GetSizeKey(cell.Measured.Pixels));
+
+                            child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, null,
+                                GetSizeKey(cell.Measured.Pixels));
                             if (child == null)
                             {
                                 return countRendered;
                             }
+
+                            //Trace.WriteLine($"[CELL] DRAW {index} {child.Uid}");
+
                             cellsToRelease.Add(child);
                         }
                         else
@@ -929,18 +937,18 @@ namespace DrawnUi.Draw
 
                         if (child is SkiaControl control && child.IsVisible)
                         {
-
                             SKRect destinationRect;
                             var x = offsetOthers.X + cell.Drawn.Left;
                             var y = offsetOthers.Y + cell.Drawn.Top;
 
                             if (child.NeedMeasure)
                             {
-                                if (!child.WasMeasured || InvalidatedChildrenInternal.Contains(child) || GetSizeKey(child.MeasuredSize.Pixels) != GetSizeKey(cell.Measured.Pixels))
+                                if (!child.WasMeasured || InvalidatedChildrenInternal.Contains(child) ||
+                                    GetSizeKey(child.MeasuredSize.Pixels) != GetSizeKey(cell.Measured.Pixels))
                                 {
                                     var oldSize = child.MeasuredSize.Pixels;
                                     child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
-                                    if (oldSize != SKSize.Empty && !CompareSize(oldSize ,MeasuredSize.Pixels,1f))
+                                    if (oldSize != SKSize.Empty && !CompareSize(oldSize, MeasuredSize.Pixels, 1f))
                                     {
                                         //Trace.WriteLine($"[CELL] remeasured {child.Uid}");
                                         var diff = child.MeasuredSize.Pixels - oldSize;
@@ -949,57 +957,68 @@ namespace DrawnUi.Draw
                                 }
                             }
 
-                            if (IsTemplated)
+                            if (child.MeasuredSize.Pixels.Width >= 1 && child.MeasuredSize.Pixels.Height >= 1)
                             {
-                                destinationRect = new SKRect(x, y,
-                                    x + cell.Area.Width, y + cell.Area.Bottom);
-                            }
-                            else
-                            {
-                                destinationRect = new SKRect(x, y, x + cell.Drawn.Width,
-                                    y + cell.Drawn.Height);
-                            }
-
-                            if (IsRenderingWithComposition)
-                            {
-                                if (child.PostAnimators.Count > 0)
+                                if (IsTemplated)
                                 {
-                                    updateInternal = true;
+                                    destinationRect = new SKRect(x, y,
+                                        x + cell.Area.Width, y + cell.Area.Bottom);
+                                }
+                                else
+                                {
+                                    destinationRect = new SKRect(x, y, x + cell.Drawn.Width,
+                                        y + cell.Drawn.Height);
                                 }
 
-                                if (DirtyChildrenInternal.Contains(child) || child.PostAnimators.Count > 0)
+                                if (IsRenderingWithComposition)
+                                {
+                                    if (child.PostAnimators.Count > 0)
+                                    {
+                                        updateInternal = true;
+                                    }
+
+                                    if (DirtyChildrenInternal.Contains(child) || child.PostAnimators.Count > 0)
+                                    {
+                                        DrawChild(ctx.WithDestination(destinationRect), child);
+                                        countRendered++;
+                                    }
+                                    else
+                                    {
+                                        child.Arrange(destinationRect, child.SizeRequest.Width,
+                                            child.SizeRequest.Height,
+                                            ctx.Scale);
+                                    }
+                                }
+                                else
                                 {
                                     DrawChild(ctx.WithDestination(destinationRect), child);
                                     countRendered++;
                                 }
-                                else
-                                {
-                                    child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height, ctx.Scale);
-                                }
+
+                                cell.WasLastDrawn = true;
+
+                                drawn++;
+
+                                tree.Add(new SkiaControlWithRect(control,
+                                    destinationRect,
+                                    control.LastDrawnAt,
+                                    index));
                             }
                             else
                             {
-                                DrawChild(ctx.WithDestination(destinationRect), child);
-                                countRendered++;
+                                //todo offset stuff
+                                var stop = 1;
                             }
-
-                            cell.WasLastDrawn = true;
-
-                            drawn++;
-
-                            tree.Add(new SkiaControlWithRect(control,
-                                destinationRect,
-                                control.LastDrawnAt,
-                                index));
                         }
                     }
                 }
                 finally
                 {
-                    foreach (var cell in cellsToRelease)
-                    {
-                        ChildrenFactory.MarkViewAsAvailable(cell);
-                    }
+                    if (IsTemplated)
+                        foreach (var cell in cellsToRelease)
+                        {
+                            ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
+                        }
                 }
             }
 
@@ -1029,4 +1048,3 @@ namespace DrawnUi.Draw
 
     #endregion
 }
-
