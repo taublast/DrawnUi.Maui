@@ -2,6 +2,9 @@
 
     <!--using Directory.Build.props-->
 
+    <!--This project is going to "backlog state", will not be updated until then,
+    and will be removed from main solution-->
+
     <!--WINDOWS-->
     <ItemGroup Condition="$(TargetFramework.Contains('windows')) == true">
         <PackageReference Include="AppoMobi.Maui.Rive" Version="1.0.1.2-pre" />
