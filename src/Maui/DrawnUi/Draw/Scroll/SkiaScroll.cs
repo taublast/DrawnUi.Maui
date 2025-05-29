@@ -1916,7 +1916,7 @@ namespace DrawnUi.Draw
             ContentAvailableSpace = GetContentAvailableRect(destination);
 
             //we scroll at subpixels but stop only at pixel-snapped
-            if (IsScrolling && !IsUserPanning || onceAfterInitializeViewport)
+            if (!IsUserPanning && !IsScrolling || onceAfterInitializeViewport)
             {
                 var roundY = (float)Math.Round(offsetPixels.Y) - offsetPixels.Y;
                 var roundX = (float)Math.Round(offsetPixels.X) - offsetPixels.X;
@@ -1924,9 +1924,7 @@ namespace DrawnUi.Draw
             }
 
             InternalViewportOffset =
-                ScaledPoint.FromPixels(offsetPixels.X, offsetPixels.Y, scale); //removed pixel rounding
-
-            //Debug.WriteLine($"scroll set to {InternalViewportOffset.Units.Y}");
+                ScaledPoint.FromPixels(offsetPixels.X, offsetPixels.Y, scale); 
 
             var childRect = ContentAvailableSpace;
             childRect.Offset(InternalViewportOffset.Pixels.X, InternalViewportOffset.Pixels.Y);
@@ -1963,8 +1961,6 @@ namespace DrawnUi.Draw
             if (Content is IInsideViewport viewport)
             {
                 SKRect absoluteViewPort = DrawingRect;
-                //var absoluteViewPort = Viewport.Pixels;
-                //absoluteViewPort.Offset(this.DrawingRect.Left, DrawingRect.Top);
 
                 if (Header != null)
                 {
