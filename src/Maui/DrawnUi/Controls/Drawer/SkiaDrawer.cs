@@ -581,6 +581,8 @@ namespace DrawnUi.Controls
             if (!RespondsToGestures)
                 return consumed;
 
+
+
             // todo
             // if the gesture is not in the header we first will pass it to children, 
             // and process only if children didn't consume it
@@ -604,9 +606,14 @@ namespace DrawnUi.Controls
                 !Content.InputTransparent)
             {
                 var thisOffset = TranslateInputCoords(apply.ChildOffset);
+
+                //todo use renderednode !
+                //var x = args.Event.Location.X + thisOffset.X;
+                //var y = args.Event.Location.Y + thisOffset.Y;
+                //processInput = Content.LastDrawnAt.Contains(x, y);
+
                 var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X,
                     args.Event.Location.Y + thisOffset.Y);
-
                 processInput =
                     Content.LastDrawnAt.ContainsInclusive(touchLocationWIthOffset.X, touchLocationWIthOffset.Y);
             }
@@ -819,15 +826,26 @@ namespace DrawnUi.Controls
 
                 if (consumed != null || IsUserPanning) // || args.Event.NumberOfTouches > 1)
                 {
-                    return consumed ?? this;
+                    if (consumed==null &&  args.Type != TouchActionResult.Up)
+                    {
+                        return this;
+                    }
+                    return consumed;
                 }
 
                 if (!passedToChildren)
                     return PassToChildren();
             }
 
+            if (AutoClose && IsOpen && !InTransition)
+            {
+                IsOpen = false;
+            }
+
             return null;
         }
+
+        public bool AutoClose { get; set; }
 
         /// <summary>
         /// Called for manual finger panning

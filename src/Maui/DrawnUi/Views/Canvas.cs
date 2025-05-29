@@ -515,7 +515,7 @@ public class Canvas : DrawnView, IGestureListener
                             if (wasConsumed == null)
                                 wasConsumed = consumed;
 
-                            //if (args.Type != TouchActionResult.Up)
+                            if (args.Type != TouchActionResult.Up)
                             {
                                 secondPass = false;
                                 HadInput.TryAdd(consumed.Uid, consumed);
@@ -660,7 +660,7 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name=""></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
-        //Trace.WriteLine($"[Canvas] {touchAction}");
+        //Debug.WriteLine($"[Canvas] {touchAction} {type}");
 
 #if ANDROID
         if (touchAction == TouchActionResult.Panning)

@@ -1423,7 +1423,11 @@ public class SkiaCarousel : SnappingLayout
 
         if (consumed != null || IsUserPanning)
         {
-            return consumed ?? this;
+            if (consumed == null && args.Type != TouchActionResult.Up)
+            {
+                return this;
+            }
+            return consumed;
         }
 
         if (!passedToChildren)
