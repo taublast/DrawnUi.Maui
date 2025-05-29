@@ -292,26 +292,29 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
             if (OnMapPointerMoved(_positions.Values.ToArray(), false))
                 return consumed;
 
-            
-            //maybe zooming, so apply limits
-            var currentZoomLevel = GetCurrentZoomLevel();
-            Debug.WriteLine($"ZOOM {currentZoomLevel}");
+            //if (args.Event.NumberOfTouches > 1)
+            //{
+            //    //maybe zooming, so apply limits
+            //    var currentZoomLevel = GetCurrentZoomLevel();
+            //    Debug.WriteLine($"ZOOM {currentZoomLevel}");
 
-            // Check if the zoom change would exceed limits
-            if ((args.Event.Manipulation.Scale>0 && currentZoomLevel >= MaxZoomLevel) ||
-                (args.Event.Manipulation.Scale < 0 && currentZoomLevel <= MinZoomLevel))
+            //    // Check if the zoom change would exceed limits
+            //    if ((args.Event.Manipulation.Scale>0 && currentZoomLevel >= MaxZoomLevel) ||
+            //        (args.Event.Manipulation.Scale < 0 && currentZoomLevel <= MinZoomLevel))
+            //    {
+            //        // Don't allow zoom if it would exceed limits
+            //    }
+            //    else
+            //    {
+            //        _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
+            //        RefreshGraphics();
+            //    }
+            //}
+            //else
             {
-                // Don't allow zoom if it would exceed limits
-                Map.Navigator.PanLock = true;
+                _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
+                RefreshGraphics();
             }
-            else
-            {
-                Map.Navigator.PanLock = false;
-            }
-
-            _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
-            RefreshGraphics();
-
         }
         else if (args.Type == TouchActionResult.Up)
         {

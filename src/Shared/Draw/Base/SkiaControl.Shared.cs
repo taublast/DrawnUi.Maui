@@ -394,7 +394,6 @@ namespace DrawnUi.Draw
         /// <param name="transform"></param>
         public virtual void SetVisualTransform(VisualTransform transform)
         {
-
         }
 
         /// <summary>
@@ -1208,7 +1207,7 @@ namespace DrawnUi.Draw
                 !child.Control.InputTransparent && child.Control.CanDraw)
             {
                 var transformed = child.Control.ApplyTransforms(child.HitRect);
-                inside = transformed.ContainsInclusive(point.X, point.Y);// || child.Control == Superview.FocusedChild;
+                inside = transformed.ContainsInclusive(point.X, point.Y); // || child.Control == Superview.FocusedChild;
             }
 
             return inside;
@@ -3005,6 +3004,7 @@ namespace DrawnUi.Draw
                     {
                         left += (float)half;
                     }
+
                     right = left + useMaxWidth;
 
                     if (left < destination.Left)
@@ -3059,6 +3059,7 @@ namespace DrawnUi.Draw
                     {
                         top += (float)half;
                     }
+
                     bottom = top + useMaxHeight;
 
                     if (top < destination.Top)
@@ -3264,11 +3265,6 @@ namespace DrawnUi.Draw
                 rect.Top + (float)((Top + UseTranslationY) * RenderingScale),
                 rect.Right + (float)((Left + UseTranslationX) * RenderingScale),
                 rect.Bottom + (float)((Top + UseTranslationY) * RenderingScale));
-
-            return new SKRect(rect.Left + (float)((Left) * RenderingScale),
-                rect.Top + (float)((Top) * RenderingScale),
-                rect.Right + (float)((Left) * RenderingScale),
-                rect.Bottom + (float)((Top) * RenderingScale));
         }
 
         /// <summary>
@@ -3475,38 +3471,20 @@ namespace DrawnUi.Draw
         /// <returns></returns>
         public virtual SKPoint TranslateInputCoords(SKPoint childOffset, bool accountForCache = true)
         {
-            //removed translation because we use matrices now
-            var thisOffset =
-                SKPoint.Empty; //new SKPoint(-(float)(UseTranslationX * RenderingScale), -(float)(UseTranslationY * RenderingScale));
+            //removed translation because we use matrices now todo cleanup more
+            var thisOffset = SKPoint.Empty;
 
             //inside a cached object coordinates are frozen at the moment the snapshot was taken
             //so we must offset the coordinates to match the current drawing rect
             if (accountForCache)
             {
-                /*
-                if (UsingCacheType == SkiaCacheType.ImageComposite)
+                if (RenderObject != null)
                 {
-                    if (RenderObjectPrevious != null)
-                    {
-                        thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
-                    }
-                    else
-                    if (RenderObject != null)
-                    {
-                        thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
-                    }
+                    thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
                 }
-                else
-                */
+                else if (RenderObjectPrevious != null)
                 {
-                    if (RenderObject != null)
-                    {
-                        thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
-                    }
-                    else if (RenderObjectPrevious != null)
-                    {
-                        thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
-                    }
+                    thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
                 }
             }
 
@@ -3542,10 +3520,7 @@ namespace DrawnUi.Draw
                 {
                     thisOffset.Offset(RenderObjectPrevious.CalculatePositionOffset(LastDrawnAt.Location));
                 }
-                //Debug.WriteLine($"[CalculatePositionOffset] was cached!");
             }
-
-            //Debug.WriteLine($"[CalculatePositionOffset] {this} {cacheOnly} returned {thisOffset}");
 
             return thisOffset;
         }
@@ -4791,6 +4766,7 @@ namespace DrawnUi.Draw
                 if (found != null)
                     return found;
             }
+
             return null;
         }
 
@@ -6597,12 +6573,10 @@ namespace DrawnUi.Draw
 
         public virtual void OnViewAttached()
         {
-
         }
 
         public virtual void OnViewDetached()
         {
-
         }
 
         public DateTime? GestureListenerRegistrationTime { get; set; }
