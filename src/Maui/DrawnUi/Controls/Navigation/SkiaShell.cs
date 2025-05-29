@@ -1638,6 +1638,8 @@ namespace DrawnUi.Controls
         {
             Task.Run(async () =>
             {
+                await CloseAllToasts();
+
                 await AwaitNavigationLock();
 
                 try
