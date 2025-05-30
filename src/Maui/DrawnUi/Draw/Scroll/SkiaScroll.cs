@@ -17,7 +17,7 @@ namespace DrawnUi.Draw
         /// <summary>
         /// To filter micro-gestures while manually panning
         /// </summary>
-        public static float ScrollVelocityThreshold = 20;
+        public static float ScrollVelocityThreshold = 5;
 
         /// <summary>
         /// Time for the snapping animations as well as the scroll to top etc animations..
@@ -38,6 +38,7 @@ namespace DrawnUi.Draw
         }
 
         private ScrollInteractionState _intercationState;
+
         public ScrollInteractionState InteractionState
         {
             get { return _intercationState; }
@@ -443,7 +444,6 @@ namespace DrawnUi.Draw
             bool clamped = false;
             if (RefreshEnabled)
             {
-                
                 if (Orientation == ScrollOrientation.Vertical && y > 0) //pulling down
                 {
                     clamped = true;
@@ -617,10 +617,11 @@ namespace DrawnUi.Draw
 
         public void StopScrolling()
         {
-            if (_scrollerX!=null && _scrollerX.IsRunning)
+            if (_scrollerX != null && _scrollerX.IsRunning)
             {
                 _scrollerX.Stop();
             }
+
             if (_scrollerY != null && _scrollerY.IsRunning)
             {
                 _scrollerY.Stop();
@@ -630,6 +631,7 @@ namespace DrawnUi.Draw
             {
                 _animatorFlingX.Stop();
             }
+
             if (_animatorFlingY != null && _animatorFlingY.IsRunning)
             {
                 _animatorFlingY.Stop();
@@ -639,6 +641,7 @@ namespace DrawnUi.Draw
             {
                 _vectorAnimatorBounceX.Stop();
             }
+
             if (_vectorAnimatorBounceY != null && _vectorAnimatorBounceY.IsRunning)
             {
                 _vectorAnimatorBounceY.Stop();
@@ -1567,7 +1570,8 @@ namespace DrawnUi.Draw
 
         protected virtual void ApplyContentSize()
         {
-            if (!CompareSize(ContentSize.Pixels,  LastContentSizePixels,1f)  || !CompareSize(MeasuredSize.Pixels, LastMeasuredSizePixels, 1f))
+            if (!CompareSize(ContentSize.Pixels, LastContentSizePixels, 1f) ||
+                !CompareSize(MeasuredSize.Pixels, LastMeasuredSizePixels, 1f))
             {
                 LastContentSizePixels = ContentSize.Pixels;
                 LastMeasuredSizePixels = MeasuredSize.Pixels;
@@ -1883,12 +1887,12 @@ namespace DrawnUi.Draw
                 if (this.Orientation == ScrollOrientation.Vertical)
                 {
                     var m = InternalViewportOffset.Units.Y * (1 - this.HeaderParallaxRatio);
-                    ParallaxComputedValue = - m;
+                    ParallaxComputedValue = -m;
                 }
                 else if (this.Orientation == ScrollOrientation.Horizontal)
                 {
                     var m = InternalViewportOffset.Units.X * (1 - this.HeaderParallaxRatio);
-                    ParallaxComputedValue = - m;
+                    ParallaxComputedValue = -m;
                 }
             }
         }
@@ -1924,7 +1928,7 @@ namespace DrawnUi.Draw
             }
 
             InternalViewportOffset =
-                ScaledPoint.FromPixels(offsetPixels.X, offsetPixels.Y, scale); 
+                ScaledPoint.FromPixels(offsetPixels.X, offsetPixels.Y, scale);
 
             var childRect = ContentAvailableSpace;
             childRect.Offset(InternalViewportOffset.Pixels.X, InternalViewportOffset.Pixels.Y);
@@ -2054,10 +2058,7 @@ namespace DrawnUi.Draw
 
         public bool IsScrolling
         {
-            get
-            {
-                return _IsScrolling;
-            }
+            get { return _IsScrolling; }
             set
             {
                 if (_IsScrolling != value)
@@ -2066,6 +2067,7 @@ namespace DrawnUi.Draw
                     {
                         InteractionState = ScrollInteractionState.Scrolling;
                     }
+
                     bool fireStop = _IsScrolling && !value;
                     _IsScrolling = value;
                     OnPropertyChanged();
@@ -2082,7 +2084,7 @@ namespace DrawnUi.Draw
 
         protected virtual void HideRefreshIndicator()
         {
-            RefreshIndicator?.SetDragRatio(0,0, RefreshShowDistance);
+            RefreshIndicator?.SetDragRatio(0, 0, RefreshShowDistance);
             ScrollLocked = false;
             wasRefreshing = false;
         }
@@ -2118,6 +2120,7 @@ namespace DrawnUi.Draw
                 {
                     refreshAt = RefreshShowDistance;
                 }
+
                 return refreshAt;
             }
         }
@@ -2130,14 +2133,17 @@ namespace DrawnUi.Draw
                 var overscroll = RefreshShowDistance * RenderingScale;
                 if (Orientation == ScrollOrientation.Vertical)
                 {
-                    SetScrollOffset(DrawingRect, _updatedViewportForPixX, overscroll, _zoomedScale, RenderingScale, true);
+                    SetScrollOffset(DrawingRect, _updatedViewportForPixX, overscroll, _zoomedScale, RenderingScale,
+                        true);
                     RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.Y, RefreshShowDistance);
                 }
                 else if (Orientation == ScrollOrientation.Horizontal)
                 {
-                    SetScrollOffset(DrawingRect, overscroll, _updatedViewportForPixY, _zoomedScale, RenderingScale, true);
+                    SetScrollOffset(DrawingRect, overscroll, _updatedViewportForPixY, _zoomedScale, RenderingScale,
+                        true);
                     RefreshIndicator.SetDragRatio(ratio, InternalViewportOffset.Units.X, RefreshShowDistance);
                 }
+
                 Update();
             }
         }
@@ -2169,7 +2175,7 @@ namespace DrawnUi.Draw
             if (IsUserPanning)
             {
                 if (canRefresh && !IsRefreshing && RefreshCommand != null
-                                            && !wasRefreshing && !ScrollLocked)
+                    && !wasRefreshing && !ScrollLocked)
                 {
                     StopVelocityPanning();
                     IsRefreshing = true;
@@ -2186,6 +2192,7 @@ namespace DrawnUi.Draw
                     RefreshIndicator.IsVisible = true;
                     ShowRefreshIndicatorForced();
                 }
+
                 return;
             }
 
@@ -2326,7 +2333,8 @@ namespace DrawnUi.Draw
         }
 
 
-        protected virtual void SetScrollOffset(SKRect destination, float posX, float posY, float zoomedScale, float scale, bool forceSyncOffsets)
+        protected virtual void SetScrollOffset(SKRect destination, float posX, float posY, float zoomedScale,
+            float scale, bool forceSyncOffsets)
         {
             if (Orientation == ScrollOrientation.Vertical)
             {
@@ -2427,7 +2435,7 @@ namespace DrawnUi.Draw
                         }
 
                         // Adjust the header hitbox for parallax
-                        var headerTop = context.Destination.Top - Header.UseTranslationY;
+                        var headerTop = context.Destination.Top;
                         var headerBottom = headerTop + Header.MeasuredSize.Pixels.Height;
 
                         var hitboxHeader = new SKRect(
@@ -2493,7 +2501,7 @@ namespace DrawnUi.Draw
                         }
 
                         // Adjust the header hitbox for parallax in horizontal orientation
-                        var headerLeft = ctx.Destination.Left + Header.UseTranslationX;
+                        var headerLeft = ctx.Destination.Left;
                         var headerRight = headerLeft + Header.MeasuredSize.Pixels.Width;
                         var hitboxHeader = new SKRect((float)headerLeft, ctx.Destination.Top, (float)headerRight,
                             ctx.Destination.Bottom);
@@ -2925,7 +2933,8 @@ namespace DrawnUi.Draw
                     return;
 
                 var myPos = AdaptToKeyboardFor.LastVisualNode.HitBoxWithTransforms.Units.Location;
-                var scrollPos = LastVisualNode.HitBoxWithTransforms.Units.Location;//this.GetPositionOnCanvasInPoints();
+                var scrollPos =
+                    LastVisualNode.HitBoxWithTransforms.Units.Location; //this.GetPositionOnCanvasInPoints();
 
                 var scrollRect = new SKRect(0, scrollPos.Y, 10, (float)this.Height + scrollPos.Y);
                 var parentHeight = Superview.Height;

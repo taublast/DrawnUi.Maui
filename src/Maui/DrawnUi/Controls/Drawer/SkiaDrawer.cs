@@ -637,7 +637,7 @@ namespace DrawnUi.Controls
                             ResetPan();
                         }
 
-                        consumed = this;
+                        //consumed = this;
 
                         break;
 

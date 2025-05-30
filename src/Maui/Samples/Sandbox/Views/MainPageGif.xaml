@@ -45,7 +45,7 @@
                         TextColor="White"
                         UseCache="Operations" />
 
-                    <draw:SkiaImage Source="Images/8.jpg" HeightRequest="100" WidthRequest="100" 
+                    <!--<draw:SkiaImage Source="Images/8.jpg" HeightRequest="100" WidthRequest="100" 
                                     Aspect="AspectFitFill"
                                     RescalingQuality="High" 
                                     UseCache="Image"
@@ -55,9 +55,10 @@
                                     Aspect="AspectFitFill" 
                                     RescalingQuality="High" 
                                     UseCache="Image"
-                                    HorizontalOptions="Center" />
+                                    HorizontalOptions="Center" />-->
 
                     <draw:SkiaButton
+                        ControlStyle="Cupertino"
                         HeightRequest="38"
                         HorizontalOptions="Center"
                         Tapped="SkiaButton_OnTapped"

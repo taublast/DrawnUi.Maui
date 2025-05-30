@@ -2,8 +2,6 @@
 
 namespace DrawnUi.Draw;
 
-
-
 public partial class SkiaScroll
 {
     public bool ReverseGestures { get; set; }
@@ -24,6 +22,7 @@ public partial class SkiaScroll
                 lockHeader = true;
             }
         }
+
         return forChild;
     }
 
@@ -43,6 +42,7 @@ public partial class SkiaScroll
                 lockHeader = true;
             }
         }
+
         return forChild;
     }
 
@@ -114,7 +114,8 @@ public partial class SkiaScroll
 
         _panningLastDelta = Vector2.Zero;
         _panningStartOffsetPts = new(ViewportOffsetX, ViewportOffsetY);
-        _panningCurrentOffsetPts = _panningStartOffsetPts;//new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
+        _panningCurrentOffsetPts =
+            _panningStartOffsetPts; //new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
     }
 
     protected void StopVelocityPanning()
@@ -141,8 +142,7 @@ public partial class SkiaScroll
             inContact = true;
             HadDown = true;
         }
-        else
-        if (args.Type == TouchActionResult.Up)
+        else if (args.Type == TouchActionResult.Up)
         {
             lockHeader = false;
             HadDown = false;
@@ -171,6 +171,7 @@ public partial class SkiaScroll
         }
 
         bool passedToChildren = false;
+
         ISkiaGestureListener PassToChildren()
         {
             passedToChildren = true;
@@ -198,10 +199,12 @@ public partial class SkiaScroll
                 {
                     panDirection = DirectionType.Horizontal;
                 }
+
                 if (Orientation == ScrollOrientation.Vertical && panDirection != DirectionType.Vertical)
                 {
                     wrongDirection = true;
                 }
+
                 if (Orientation == ScrollOrientation.Horizontal && panDirection != DirectionType.Horizontal)
                 {
                     wrongDirection = true;
@@ -211,7 +214,7 @@ public partial class SkiaScroll
 
         if (args.Type == TouchActionResult.Up ||
             !IsUserPanning && (wrongDirection
-            || args.Type == TouchActionResult.Tapped || !RespondsToGestures))
+                               || args.Type == TouchActionResult.Tapped || !RespondsToGestures))
         {
             var childConsumed = PassToChildren();
             if (childConsumed != null)
@@ -220,11 +223,11 @@ public partial class SkiaScroll
                 {
                     ChildWasPanning = true;
                 }
-                else
-                if (args.Type == TouchActionResult.Tapped && HadDown)
+                else if (args.Type == TouchActionResult.Tapped && HadDown)
                 {
                     ChildWasTapped = true;
                 }
+
                 if (args.Type != TouchActionResult.Up)
                     return childConsumed;
             }
@@ -240,6 +243,7 @@ public partial class SkiaScroll
         {
             VelocityY = (float)(args.Event.Distance.Velocity.Y / RenderingScale * velocityDirection);
         }
+
         if (Orientation == ScrollOrientation.Horizontal || Orientation == ScrollOrientation.Both)
         {
             VelocityX = (float)(args.Event.Distance.Velocity.X / RenderingScale * velocityDirection);
@@ -255,19 +259,19 @@ public partial class SkiaScroll
             var zoomed = SetZoom(args.Event.Wheel.Scale);
             consumed = this;
         }
-        else
-        if (args.Event.NumberOfTouches < 2 && hadNumberOfTouches < 2)
+        else if (args.Event.NumberOfTouches < 2 && hadNumberOfTouches < 2)
         {
             switch (args.Type)
             {
                 case TouchActionResult.Tapped:
-                //case TouchActionResult.LongPressing:
+                    //case TouchActionResult.LongPressing:
                     if (!passedToChildren && !IsUserPanning)
                     {
                         ResetPan();
                         //_panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
                         consumed = PassToChildren();
                     }
+
                     break;
 
                 case TouchActionResult.Panning when RespondsToGestures:
@@ -289,7 +293,8 @@ public partial class SkiaScroll
                         }
                         else if (Orientation == ScrollOrientation.Both)
                         {
-                            canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold || Math.Abs(VelocityY) > ScrollVelocityThreshold;
+                            canPan &= Math.Abs(VelocityX) > ScrollVelocityThreshold ||
+                                      Math.Abs(VelocityY) > ScrollVelocityThreshold;
                         }
                     }
 
@@ -326,8 +331,10 @@ public partial class SkiaScroll
 
                         SwipeVelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY));
 
-                        var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDistancePanned *velocityDirection;
-                        var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDistancePanned * velocityDirection;
+                        var movedPtsX = (args.Event.Distance.Delta.X / RenderingScale) * ChangeDistancePanned *
+                                        velocityDirection;
+                        var movedPtsY = (args.Event.Distance.Delta.Y / RenderingScale) * ChangeDistancePanned *
+                                        velocityDirection;
 
                         var interpolatedMoveToX = _panningLastDelta.X + (movedPtsX - _panningLastDelta.X) * 0.85f;
                         var interpolatedMoveToY = _panningLastDelta.Y + (movedPtsY - _panningLastDelta.Y) * 0.85f;
@@ -344,7 +351,7 @@ public partial class SkiaScroll
 
                         if (!Bounces && checkOverscroll)
                         {
-                            if (!AreEqual(clamped.X, moveTo.X, 1) && !AreEqual(clamped.Y, moveTo.Y, 1))
+                            if (!AreEqual(clamped.X, moveTo.X, 0.5) && !AreEqual(clamped.Y, moveTo.Y, 0.5))
                             {
                                 return null;
                             }
@@ -359,12 +366,12 @@ public partial class SkiaScroll
 
                         Repaint();
                     }
+
                     break;
 
                 case TouchActionResult.Up when RespondsToGestures:
                     if ((!ChildWasTapped || OverScrolled) && (!ChildWasPanning || IsUserPanning))
                     {
-
                         StopVelocityPanning();
 
                         if (apply.AlreadyConsumed != null)
@@ -389,17 +396,21 @@ public partial class SkiaScroll
 
                             if (!OverScrolled || Orientation == ScrollOrientation.Both)
                             {
-                                var mainDirection = GetDirectionType(new Vector2(finalVelocity.X, finalVelocity.Y), DirectionType.None, 0.9f);
+                                var mainDirection = GetDirectionType(new Vector2(finalVelocity.X, finalVelocity.Y),
+                                    DirectionType.None, 0.9f);
 
                                 if (Orientation != ScrollOrientation.Both && !IsUserPanning)
                                 {
                                     if (IgnoreWrongDirection)
                                     {
-                                        if (Orientation == ScrollOrientation.Vertical && mainDirection != DirectionType.Vertical)
+                                        if (Orientation == ScrollOrientation.Vertical &&
+                                            mainDirection != DirectionType.Vertical)
                                         {
                                             return null;
                                         }
-                                        if (Orientation == ScrollOrientation.Horizontal && mainDirection != DirectionType.Horizontal)
+
+                                        if (Orientation == ScrollOrientation.Horizontal &&
+                                            mainDirection != DirectionType.Horizontal)
                                         {
                                             return null;
                                         }
@@ -408,9 +419,12 @@ public partial class SkiaScroll
 
                                 var swipeThreshold = ThesholdSwipeOnUp * RenderingScale;
                                 if ((Orientation == ScrollOrientation.Both
-                                    || (Orientation == ScrollOrientation.Vertical && mainDirection == DirectionType.Vertical)
-                                    || (Orientation == ScrollOrientation.Horizontal && mainDirection == DirectionType.Horizontal))
-                                    && (Math.Abs(finalVelocity.X) > swipeThreshold || Math.Abs(finalVelocity.Y) > swipeThreshold))
+                                     || (Orientation == ScrollOrientation.Vertical &&
+                                         mainDirection == DirectionType.Vertical)
+                                     || (Orientation == ScrollOrientation.Horizontal &&
+                                         mainDirection == DirectionType.Horizontal))
+                                    && (Math.Abs(finalVelocity.X) > swipeThreshold ||
+                                        Math.Abs(finalVelocity.Y) > swipeThreshold))
                                 {
                                     swipe = true;
                                 }
@@ -418,13 +432,15 @@ public partial class SkiaScroll
 
                             if (OverScrolled || swipe)
                             {
-                               IsUserPanning = false;
+                                IsUserPanning = false;
 
                                 bool bounceX = false, bounceY = false;
                                 if (OverScrolled)
                                 {
                                     var contentRect = new SKRect(0, 0, ptsContentWidth, ptsContentHeight);
-                                    var closestPoint = GetClosestSidePoint(new SKPoint((float)InternalViewportOffset.Units.X, (float)InternalViewportOffset.Units.Y), contentRect, Viewport.Units.Size);
+                                    var closestPoint = GetClosestSidePoint(
+                                        new SKPoint((float)InternalViewportOffset.Units.X,
+                                            (float)InternalViewportOffset.Units.Y), contentRect, Viewport.Units.Size);
 
                                     var axis = new Vector2(closestPoint.X, closestPoint.Y);
 
@@ -464,14 +480,19 @@ public partial class SkiaScroll
                                     {
                                         if (Orientation == ScrollOrientation.Vertical && !bounceY)
                                         {
-                                            if ((AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Bottom, 1) && finalVelocity.Y > 0) ||
-                                            (AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Top, 1) && finalVelocity.Y < 0))
+                                            if ((AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Bottom,
+                                                    1) && finalVelocity.Y > 0) ||
+                                                (AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Top,
+                                                    1) && finalVelocity.Y < 0))
                                                 return null;
                                         }
+
                                         if (Orientation == ScrollOrientation.Horizontal && !bounceX)
                                         {
-                                            if ((AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Right, 1) && finalVelocity.X > 0) ||
-                                             (AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Left, 1) && finalVelocity.X < 0))
+                                            if ((AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Right,
+                                                    1) && finalVelocity.X > 0) ||
+                                                (AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Left,
+                                                    1) && finalVelocity.X < 0))
                                                 return null;
                                         }
                                     }
@@ -515,8 +536,10 @@ public partial class SkiaScroll
                                 //}
                             }
                         }
+
                         break;
                     }
+
                     break;
             }
         }
@@ -527,6 +550,7 @@ public partial class SkiaScroll
             {
                 return this;
             }
+
             return consumed;
         }
 
@@ -548,6 +572,7 @@ public partial class SkiaScroll
     private bool isUserFocused;
     private bool isUserPanning;
 
+
     /// <summary>
     /// Applies panning on draw every frame, to be able to smoothly animate frames between panning changes.
     /// </summary>
@@ -558,42 +583,34 @@ public partial class SkiaScroll
             && (_pannedOffset != Vector2.Zero
                 || !CompareVectors(_pannedVelocityRemaining, Vector2.Zero, 0.00001f)))
         {
-
             if (_pannedOffset != Vector2.Zero)
             {
                 ViewportOffsetX = _pannedOffset.X;
                 ViewportOffsetY = _pannedOffset.Y;
 
+
                 _pannedVelocityRemaining = _pannedVelocity;
                 _pannedOffset = Vector2.Zero;
                 _pannedVelocity = Vector2.Zero;
             }
-            else
-            {
-                var deltaSeconds = (ctx.FrameTimeNanos - _lastVelocitySetTime) / 1000000000.0f;
-                _pannedVelocityRemaining *= _dragFriction;
-
-                var movedPtsX = (_pannedVelocityRemaining.X * deltaSeconds) * ChangeDistancePanned;
-                var movedPtsY = (_pannedVelocityRemaining.Y * deltaSeconds) * ChangeDistancePanned;
-
-                if (movedPtsY != 0 || movedPtsX != 0)
-                {
-                    _panningCurrentOffsetPts = new(
-                        _panningCurrentOffsetPts.X + movedPtsX,
-                        _panningCurrentOffsetPts.Y + movedPtsY);
-
-                    var clamped = ClampOffset(_panningCurrentOffsetPts.X, _panningCurrentOffsetPts.Y, ContentOffsetBounds);
-                    ViewportOffsetX = clamped.X;
-                    ViewportOffsetY = clamped.Y;
-                }
-            }
+            //else
+            //{
+            //    var deltaSeconds = (ctx.FrameTimeNanos - _lastVelocitySetTime) / 1000000000.0f;
+            //    _pannedVelocityRemaining *= _dragFriction;
+            //    var movedPtsX = (_pannedVelocityRemaining.X * deltaSeconds) * ChangeDistancePanned;
+            //    var movedPtsY = (_pannedVelocityRemaining.Y * deltaSeconds) * ChangeDistancePanned;
+            //    if (movedPtsY != 0 || movedPtsX != 0)
+            //    {
+            //        _panningCurrentOffsetPts = new(
+            //            _panningCurrentOffsetPts.X + movedPtsX,
+            //            _panningCurrentOffsetPts.Y + movedPtsY);
+            //        var clamped = ClampOffset(_panningCurrentOffsetPts.X, _panningCurrentOffsetPts.Y, ContentOffsetBounds);
+            //        ViewportOffsetX = clamped.X;
+            //        ViewportOffsetY = clamped.Y;
+            //    }
+            //}
 
             _lastVelocitySetTime = ctx.FrameTimeNanos;
         }
-
     }
-
-
-
 }
-
