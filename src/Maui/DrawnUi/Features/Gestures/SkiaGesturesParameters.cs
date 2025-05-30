@@ -26,23 +26,42 @@ public class SkiaGesturesParameters
 
 public struct GestureEventProcessingInfo
 {
-    public SKPoint childOffset { get; set; }
+    /// <summary>
+    /// Location of the gesture accounting for transforms. Might include all transforms from parents upper th rendering tree.
+    /// </summary>
+    public SKPoint MappedLocation { get; set; }
 
-    public SKPoint childOffsetDirect { get; set; }
+    /// <summary>
+    /// Coordinate offset used to transform touch coordinates from parent's 
+    /// coordinate space to this control's local space.
+    /// </summary>
+    public SKPoint ChildOffset { get; set; }
 
-    public ISkiaGestureListener alreadyConsumed { get; set; }
+    /// <summary>
+    /// Direct coordinate offset used for gesture processing without considering 
+    /// cached transformations; useful for direct position calculations.
+    /// </summary>
+    public SKPoint ChildOffsetDirect { get; set; }
 
-    public GestureEventProcessingInfo(SKPoint childOffset1, SKPoint childOffsetDirect1, ISkiaGestureListener wasConsumed1)
+    /// <summary>
+    /// Reference to a gesture listener that has already consumed this gesture.
+    /// Used to track gesture ownership through the control hierarchy.
+    /// </summary>
+    public ISkiaGestureListener AlreadyConsumed { get; set; }
+
+    
+    public GestureEventProcessingInfo(SKPoint mappedLocation, SKPoint childOffset1, SKPoint childOffsetDirect, ISkiaGestureListener wasConsumed)
     {
-        childOffset = childOffset1;
-        childOffsetDirect = childOffsetDirect1;
-        alreadyConsumed = wasConsumed1;
+        MappedLocation = mappedLocation;
+        ChildOffset = childOffset1;
+        ChildOffsetDirect = childOffsetDirect;
+        AlreadyConsumed = wasConsumed;
     }
 
-    public GestureEventProcessingInfo()
-    {
+    //public GestureEventProcessingInfo()
+    //{
 
-    }
+    //}
 
     public static GestureEventProcessingInfo Empty
     {

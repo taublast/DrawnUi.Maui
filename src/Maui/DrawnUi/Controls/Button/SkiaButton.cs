@@ -556,7 +556,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
             if (ApplyEffect == SkiaTouchAnimation.Ripple)
             {
-                var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+                var ptsInsideControl = GetOffsetInsideControlInPoints(args.Event.Location, apply.ChildOffset);
                 control.PlayRippleAnimation(TouchEffectColor, ptsInsideControl.X, ptsInsideControl.Y);
             }
             else if (ApplyEffect == SkiaTouchAnimation.Shimmer)
@@ -612,7 +612,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
         //Debug.WriteLine($"SkiaButton {Text}. {args.Type} {args.Event.Distance.Delta}");
 
-        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
 
         var ret = false;
 
@@ -673,7 +673,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         else if (args.Type == TouchActionResult.Tapped)
         {
             TotalTapped++;
-            return OnTapped(args, apply.childOffset) ? this : null;
+            return OnTapped(args, apply.ChildOffset) ? this : null;
         }
 
         return hadDown ? this : null;

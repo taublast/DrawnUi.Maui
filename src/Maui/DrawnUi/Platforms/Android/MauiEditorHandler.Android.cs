@@ -142,7 +142,7 @@ public partial class MauiEditorHandler : EditorHandler
                 custom.SetReturnType(Control.ReturnType);
             }
             _control.SetPadding(0, 0, 0, 0);
-            _control.VerticalScrollBarEnabled = true;
+            _control.VerticalScrollBarEnabled = Control.MaxLines != 1;
             _control.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
         }
     }

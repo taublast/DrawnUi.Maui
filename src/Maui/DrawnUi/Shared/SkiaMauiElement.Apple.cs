@@ -11,11 +11,30 @@ public partial class SkiaMauiElement
 
     public bool ShowSnapshot => false;
 
+    public void NativeInvalidate()
+    {
+        NativeInvalidated = true;
+        if (Element != null)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LayoutNativeView(Element);
+            });
+        }
+    }
+
+    private bool NativeInvalidated;
+    public SKPoint ArrangedAt { get; set; }
+
     protected virtual void LayoutNativeView(VisualElement element)
     {
         if (element.Handler?.PlatformView is UIView nativeView)
         {
-            var visibility = IsVisibleInViewTree() && VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Hidden;
+            var visibility = //IsVisibleInViewTree() &&
+                                    VisualTransformNative.IsVisible && IsNativeVisible ? Visibility.Visible : Visibility.Hidden;
+
+            Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView maybe at {VisualTransformNative.Rect.Location} visibility {visibility} size {VisualTransformNative.Rect.Size}");
+
             if (nativeView.IsFirstResponder && visibility == Visibility.Hidden)
             {
                 nativeView.ResignFirstResponder();
@@ -23,27 +42,41 @@ public partial class SkiaMauiElement
 
             nativeView.UpdateVisibility(visibility);
 
-            System.Diagnostics.Debug.WriteLine($"[SkiaMauiElement] {visibility}");
+            bool needLayout = false;
 
             if (visibility == Visibility.Visible)
             {
                 nativeView.ClipsToBounds = true;
 
-                nativeView.Transform = CGAffineTransform.MakeIdentity();
+                // Start with identity transform
+                var transform = CGAffineTransform.MakeIdentity();
+
+                transform = CGAffineTransform.Rotate(
+                    transform,
+                    VisualTransformNative.Rotation);
+
+                transform = CGAffineTransform.Scale(
+                    transform,
+                    VisualTransformNative.Scale.X,
+                    VisualTransformNative.Scale.Y);
+
+                // Apply the combined transform
+                nativeView.Transform = transform;
+
+                var locationX = VisualTransformNative.Translation.X / RenderingScale  + VisualTransformNative.Rect.Left + this.Padding.Left;
+                var locationY = VisualTransformNative.Translation.Y / RenderingScale + VisualTransformNative.Rect.Top + this.Padding.Top;
+
+                // Set other properties
+                nativeView.Alpha = VisualTransformNative.Opacity;
                 nativeView.Frame = new CGRect(
-                    VisualTransformNative.Rect.Left + this.Padding.Left,
-                    VisualTransformNative.Rect.Top + this.Padding.Top,
+                    locationX,
+                    locationY,
                     VisualTransformNative.Rect.Width - (this.Padding.Left + this.Padding.Right),
-                    VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
+                   VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
                 );
 
-                nativeView.Transform = CGAffineTransform.MakeTranslation(VisualTransformNative.Translation.X, VisualTransformNative.Translation.Y);
-                nativeView.Transform = CGAffineTransform.Rotate(nativeView.Transform, VisualTransformNative.Rotation); // Assuming rotation in radians
-                nativeView.Transform = CGAffineTransform.Scale(nativeView.Transform, VisualTransformNative.Scale.X, VisualTransformNative.Scale.Y);
-                nativeView.Alpha = VisualTransformNative.Opacity;
+                Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView ARRANGED at {locationX},{locationY}, size {nativeView.Frame.Size}, translation: {VisualTransformNative.Translation}");
             }
-
-
 
             //Debug.WriteLine($"Layout Maui : {VisualTransformNative.Opacity} {VisualTransformNative.Translation} {VisualTransformNative.IsVisible}");
         }

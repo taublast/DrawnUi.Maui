@@ -378,6 +378,8 @@ public partial class Super
         }
     }
 
+    public static bool CacheEnabled { get; set; } = true;
+
     public static bool GpuCacheEnabled { get; set; } = true;
 
     public static string UserAgent { get; set; } = "Mozilla/5.0 AppleWebKit Chrome Mobile Safari";

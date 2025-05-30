@@ -25,7 +25,27 @@ using Map = Mapsui.Map;
 
 namespace DrawnUi.MapsUi;
 
-public class MapPin : BindableObject
+
+public interface IMapPin 
+{
+    public string Id { get; set; }
+    public string Label { get; set; }
+    public string Address { get; set; }
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public int ZIndex { get; set; }
+    public bool IsVisible { get; set; } 
+    public SkiaControl Icon { get; set; }
+    public event EventHandler<MapPin> Tapped;
+    public event EventHandler<MapPin> InfoWindowTapped;
+}
+
+public interface IMapPinIcon
+{
+    void PinChanged (IMapPin pin);
+}
+
+public class MapPin : BindableObject, IMapPin
 {
     public string Id { get; set; }
     public string Label { get; set; }
@@ -34,8 +54,7 @@ public class MapPin : BindableObject
     public double Longitude { get; set; }
     public int ZIndex { get; set; }
     public bool IsVisible { get; set; } = true;
-    public SkiaControl Icon { get; set; } // Can be an SVG or custom drawn icon
-
+    public SkiaControl Icon { get; set; } 
     public event EventHandler<MapPin> Tapped;
     public event EventHandler<MapPin> InfoWindowTapped;
 }
@@ -62,7 +81,8 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
     #region PINS
 
-    public void CenterTo(double lat, double lon, double zoom, long duration = -1, Mapsui.Animations.Easing? easing = null)
+    public void CenterTo(double lat, double lon, double zoom, long duration = -1,
+        Mapsui.Animations.Easing? easing = null)
     {
         var point = new MPoint(lat, lon);
         var sphericalMercatorCoordinate = SphericalMercator.FromLonLat(point.Y, point.X).ToMPoint();
@@ -107,7 +127,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
         var pinSize = pin.Icon.MeasuredSize.Pixels;
 
-        if (!pin.Icon.IsRenderObjectValid(pinSize))
+        if (pin.Icon.NeedMeasure || !pin.Icon.IsRenderObjectValid(pinSize))
         {
             RasterizeIcon(ctx, pin.Icon);
             pinSize = pin.Icon.MeasuredSize.Pixels;
@@ -121,7 +141,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
     protected void RasterizeIcon(DrawingContext ctx, SkiaControl icon)
     {
-        if (icon==null)
+        if (icon == null)
         {
             return;
         }
@@ -241,7 +261,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         _positions.Clear();
     }
 
-    public bool OnFocusChanged(bool focus)
+    public new bool OnFocusChanged(bool focus)
     {
         return false;
     }
@@ -250,22 +270,18 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
     {
         var consumed = this; //   e.Handled = true;
 
-        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+        var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
 
         var position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale,
             (point.Y - DrawingRect.Top) / RenderingScale);
 
         if (args.Type == TouchActionResult.Down)
         {
-            //Super.Log($"[DOWN] id {args.Event.Id}");
-
             _positions[args.Event.Id] = position;
             if (_positions.Count == 1) // Not sure if this check is necessary.
                 _manipulationTracker.Restart(_positions.Values.ToArray());
 
             OnMapPointerPressed(_positions.Values.ToArray());
-            //if (OnMapPointerPressed(_positions.Values.ToArray()))
-            //    return consumed;
 
             return base.ProcessGestures(args, apply);
         }
@@ -276,9 +292,29 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
             if (OnMapPointerMoved(_positions.Values.ToArray(), false))
                 return consumed;
 
-            _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
+            //if (args.Event.NumberOfTouches > 1)
+            //{
+            //    //maybe zooming, so apply limits
+            //    var currentZoomLevel = GetCurrentZoomLevel();
+            //    Debug.WriteLine($"ZOOM {currentZoomLevel}");
 
-            RefreshGraphics();
+            //    // Check if the zoom change would exceed limits
+            //    if ((args.Event.Manipulation.Scale>0 && currentZoomLevel >= MaxZoomLevel) ||
+            //        (args.Event.Manipulation.Scale < 0 && currentZoomLevel <= MinZoomLevel))
+            //    {
+            //        // Don't allow zoom if it would exceed limits
+            //    }
+            //    else
+            //    {
+            //        _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
+            //        RefreshGraphics();
+            //    }
+            //}
+            //else
+            {
+                _manipulationTracker.Manipulate(_positions.Values.ToArray(), Map.Navigator.Manipulate);
+                RefreshGraphics();
+            }
         }
         else if (args.Type == TouchActionResult.Up)
         {
@@ -288,7 +324,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
             Refresh();
         }
-        //todo
+        //todo add event
         //else if (e.ActionType == SKTouchAction.WheelChanged)
         //{
         //    OnZoomInOrOut(e.WheelDelta, position);
@@ -297,80 +333,67 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         {
             _wasPinching = true;
 
-            //if (!ZoomLocked)
+            if (_lastPinch != 0 || args.Event.Wheel.Delta != 0)
             {
-                if (_lastPinch != 0 || args.Event.Wheel.Delta != 0)
+                double delta = 0;
+                if (args.Event.Wheel.Delta != 0)
                 {
-                    double delta = 0;
-                    if (args.Event.Wheel.Delta != 0)
-                    {
-                        delta = args.Event.Wheel.Delta * PinchMultiplier * ZoomSpeed;
-                    }
-                    else
-                    {
-                        delta = (args.Event.Wheel.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
+                    delta = args.Event.Wheel.Delta * PinchMultiplier * ZoomSpeed;
+                }
+                else
+                {
+                    delta = (args.Event.Wheel.Scale - _lastPinch) * PinchMultiplier * ZoomSpeed;
 
-                        if (Math.Abs(delta) < 10)
+                    if (Math.Abs(delta) < 10)
+                    {
+                        _pinchAccumulated += delta;
+                        if (Math.Abs(_pinchAccumulated) < 10)
                         {
-                            _pinchAccumulated += delta;
-                            if (Math.Abs(_pinchAccumulated) < 10)
-                            {
-                                delta = 0;
-                            }
-                            else
-                            {
-                                delta = _pinchAccumulated;
-                                _pinchAccumulated = 0;
-                            }
+                            delta = 0;
                         }
                         else
                         {
+                            delta = _pinchAccumulated;
                             _pinchAccumulated = 0;
                         }
                     }
-
-                    _lastPinch = args.Event.Wheel.Scale;
-
-                    if (delta != 0)
+                    else
                     {
-                        point = TranslateInputOffsetToPixels(args.Event.Wheel.Center, apply.childOffset);
+                        _pinchAccumulated = 0;
+                    }
+                }
 
-                        position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale,
-                            (point.Y - DrawingRect.Top) / RenderingScale);
+                _lastPinch = args.Event.Wheel.Scale;
 
-                        var intZoom = (int)Math.Round(delta);
+                if (delta != 0)
+                {
+                    point = TranslateInputOffsetToPixels(args.Event.Wheel.Center, apply.ChildOffset);
 
-                        //Super.Log($"[G] {delta} => {intZoom}");
+                    position = new ScreenPosition((point.X - DrawingRect.Left) / RenderingScale,
+                        (point.Y - DrawingRect.Top) / RenderingScale);
 
+                    var intZoom = (int)Math.Round(delta);
+
+                    // Add zoom limit check
+                    var currentZoom = GetCurrentZoomLevel();
+                    if ((intZoom > 0 && currentZoom < MaxZoomLevel) ||
+                        (intZoom < 0 && currentZoom > MinZoomLevel))
+                    {
                         if (Math.Abs(intZoom) >= 0.1)
                             OnZoomInOrOut(intZoom, position);
                     }
                 }
-                else
-                {
-                    //attach
-                    _lastPinch = args.Event.Wheel.Scale;
-                }
-
-                return this;
+            }
+            else
+            {
+                //attach
+                _lastPinch = args.Event.Wheel.Scale;
             }
         }
 
-        //if (!_wasPinching)
-        //{
-        //    return base.ProcessGestures(type, args, args.Action, childOffset, childOffsetDirect, alreadyConsumed);
-        //}
-
-        if (_wasPinching && args.Type == TouchActionResult.Up && args.Event.NumberOfTouches < 2)
-        {
-            _lastPinch = 0;
-            _wasPinching = false;
-        }
-
-        return consumed;
-
-        //return base.ProcessGestures(type, args, args.Action, childOffset, childOffsetDirect, alreadyConsumed);
+        return this;
     }
+
 
     double _lastPinch = 0;
     bool _wasPinching = false;
@@ -399,16 +422,49 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
         new ScreenPosition(point.X / PixelDensity, point.Y / PixelDensity);
 
     private void OnZoomInOrOut(int mouseWheelDelta, ScreenPosition centerOfZoom)
-        => Map.Navigator.MouseWheelZoom(mouseWheelDelta, centerOfZoom);
-    //{
-    //    var resolution = Map.Navigator.MouseWheelAnimation.GetResolution(
-    //        mouseWheelDelta, Map.Navigator.Viewport.Resolution, Map.Navigator.ZoomBounds, Map.Navigator.Resolutions);
+    {
+        var currentResolution = Map.Navigator.Viewport.Resolution;
+        var currentZoomLevel = GetCurrentZoomLevel();
 
-    //    if (resolution == Map.Navigator.Viewport.Resolution)
-    //        return;
+        // Check if the zoom change would exceed limits
+        if ((mouseWheelDelta > 0 && currentZoomLevel >= MaxZoomLevel) ||
+            (mouseWheelDelta < 0 && currentZoomLevel <= MinZoomLevel))
+        {
+            return; // Don't allow zoom if it would exceed limits
+        }
 
-    //    Map.Navigator.ZoomTo(resolution, centerOfZoom, Map.Navigator.MouseWheelAnimation.Duration, Map.Navigator.MouseWheelAnimation.Easing);
-    //}
+        Map.Navigator.MouseWheelZoom(mouseWheelDelta, centerOfZoom);
+    }
+
+    public static readonly BindableProperty MinZoomLevelProperty = BindableProperty.Create(
+        nameof(MinZoomLevel),
+        typeof(double),
+        typeof(SkiaMapsUi),
+        1.0);
+
+    public static readonly BindableProperty MaxZoomLevelProperty = BindableProperty.Create(
+        nameof(MaxZoomLevel),
+        typeof(double),
+        typeof(SkiaMapsUi),
+        19.0);
+
+    /// <summary>
+    /// Gets or sets the minimum allowed zoom level (1-19)
+    /// </summary>
+    public double MinZoomLevel
+    {
+        get => (double)GetValue(MinZoomLevelProperty);
+        set => SetValue(MinZoomLevelProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum allowed zoom level (1-19)
+    /// </summary>
+    public double MaxZoomLevel
+    {
+        get => (double)GetValue(MaxZoomLevelProperty);
+        set => SetValue(MaxZoomLevelProperty, value);
+    }
 
     /// <summary>
     /// Public functions

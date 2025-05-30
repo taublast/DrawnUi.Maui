@@ -86,6 +86,7 @@ public partial class SkiaShell
             }
 
             await _shell.Popups.Close(this, _animated);
+            _shell.OnPopupsStackChanged(_shell.Popups.NavigationStack.Count);
         }
 
         protected override void OnLayoutReady()
@@ -124,7 +125,7 @@ public partial class SkiaShell
                 && Content != null
                 && args.Type == TouchActionResult.Tapped)
             {
-                var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+                var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
                 if (!Content.HitIsInside(point.X, point.Y))
                 {
                     _shell.ClosePopupAsync(this, _animated).ConfigureAwait(false);

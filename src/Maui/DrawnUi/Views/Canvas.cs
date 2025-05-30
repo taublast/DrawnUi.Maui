@@ -5,6 +5,8 @@ using Size = Microsoft.Maui.Graphics.Size;
 
 namespace DrawnUi.Views;
 
+
+
 /// <summary>
 /// Optimized DrawnView having only one child inside Content property. Can autosize to to children size.
 /// For all drawn app put this directly inside the ContentPage as root view.
@@ -13,10 +15,29 @@ namespace DrawnUi.Views;
 [ContentProperty("Content")]
 public class Canvas : DrawnView, IGestureListener
 {
+    protected override void OnFinalizeRendering()
+    {
+        base.OnFinalizeRendering();
+
+        //DumpDebug();
+    }
+
     public override void SetChildren(IEnumerable<SkiaControl> views)
     {
         //do not use subviews as we are using Content property for this control
         // so we just override not calling base
+    }
+
+    public void DumpDebug()
+    {
+        if (IsRendering)
+        {
+            DumpTree(this.Content.LastVisualNode);
+        }
+        else
+        {
+            DumpTree(this.Content.VisualNode);
+        }
     }
 
     protected override void OnChildAdded(SkiaControl child)
@@ -119,10 +140,7 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
-        if (Tag == "Wheels")
-        {
-            var stop = heightConstraint;
-        }
+        Debug.WriteLine($"[Canvas] Measure for {widthConstraint} {heightConstraint}");
 
         //we need this for NET 9, where we might have `heightConstraint` Infinity
         //while `HeightRequest` was defined to exact value
@@ -473,6 +491,8 @@ public class Canvas : DrawnView, IGestureListener
             IsHiddenInViewTree = false; //if we get a gesture, we are visible by design
             bool manageChildFocus = false;
 
+            var adjust = new GestureEventProcessingInfo(args.Event.Location.ToSKPoint(), SKPoint.Empty, SKPoint.Empty,
+                wasConsumed);
 
             //first process those who already had input
             bool secondPass = true;
@@ -488,8 +508,6 @@ public class Canvas : DrawnView, IGestureListener
                             continue;
                         }
 
-                        var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
-
                         consumed = hadInput.OnSkiaGestureEvent(args, adjust);
 
                         if (consumed != null)
@@ -501,7 +519,7 @@ public class Canvas : DrawnView, IGestureListener
                             {
                                 secondPass = false;
                                 HadInput.TryAdd(consumed.Uid, consumed);
-                                Debug.WriteLine($"[Canvas] +HadInput: {consumed} for {args.Type}");
+                                //Debug.WriteLine($"[Canvas] +HadInput: {consumed} for {args.Type}");
                                 break;
                             }
                         }
@@ -545,8 +563,6 @@ public class Canvas : DrawnView, IGestureListener
                             manageChildFocus = false;
                         }
 
-                        var adjust = new GestureEventProcessingInfo() { alreadyConsumed = wasConsumed };
-
                         var maybeconsumed = listener.OnSkiaGestureEvent(args, adjust);
                         if (maybeconsumed != null)
                         {
@@ -558,7 +574,7 @@ public class Canvas : DrawnView, IGestureListener
                             if (args.Type != TouchActionResult.Up)
                             {
                                 HadInput.TryAdd(listener.Uid, consumed);
-                                Debug.WriteLine($"[Canvas] +HadInput: {listener} for {args.Type}");
+                                //Debug.WriteLine($"[Canvas] +HadInput: {listener} for {args.Type}");
                             }
 
                             break;
@@ -587,15 +603,19 @@ public class Canvas : DrawnView, IGestureListener
                 {
                     HadInput.Clear();
                 }
+            }
 
+            if (args.Type == TouchActionResult.Up || FocusedChild != null)
+            {
                 if (manageChildFocus || FocusedChild != null
-                    && consumed != FocusedChild)
+                    && consumed != FocusedChild && !FocusedChild.LockFocus)
                 {
                     System.Diagnostics.Debug.WriteLine(
                         $"[Canvas] set FocusedChild to '{consumed}' we had '{FocusedChild}' and consumed was '{consumed}'");
                     FocusedChild = consumed;
                 }
             }
+
 
             if (ReceivedInput.Count > 0)
             {
@@ -640,7 +660,7 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name=""></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
-        //Debug.WriteLine($"[Canvas] {touchAction}");
+        //Debug.WriteLine($"[Canvas] {touchAction} {type}");
 
 #if ANDROID
         if (touchAction == TouchActionResult.Panning)
@@ -724,7 +744,8 @@ public class Canvas : DrawnView, IGestureListener
         }
 
         //this is intended to not lose gestures when fps drops and avoid crashes in double-buffering
-        PostponeExecutionBeforeDraw(() =>
+        PostponeExecutionBeforeDraw(
+        () =>
         {
             try
             {
@@ -931,7 +952,6 @@ public class Canvas : DrawnView, IGestureListener
                     Debug.WriteLine("RETAINED");
                 }
 
-
                 base.Draw(context.WithDestination(Destination));
 
                 if (GesturesDebugColor.Alpha > 0 && _PressedPosition != SKPoint.Empty)
@@ -995,7 +1015,7 @@ public class Canvas : DrawnView, IGestureListener
                     DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX,
                         _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
                 }
-            }
+           }
         }
     }
 

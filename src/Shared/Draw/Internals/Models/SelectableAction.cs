@@ -4,11 +4,11 @@ public class SelectableAction : TitleWithStringId
 {
     public SelectableAction()
     {
-        Id = Guid.NewGuid().ToString();
+        Id = Guid.CreateVersion7().ToString();
     }
     public SelectableAction(string title, Action action)
     {
-        Id = Guid.NewGuid().ToString();
+        Id = Guid.CreateVersion7().ToString();
         Title = title;
         Action = action;
     }

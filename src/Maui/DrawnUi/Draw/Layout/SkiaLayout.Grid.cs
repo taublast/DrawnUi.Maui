@@ -43,7 +43,6 @@ public partial class SkiaLayout
         if (contentHeight > maxHeight)
             maxHeight = contentHeight;
 
-
         return ScaledSize.FromPixels(maxWidth, maxHeight, scale);
     }
 
@@ -85,7 +84,6 @@ public partial class SkiaLayout
                 SKRect cellRect = new((float)(cell.Left * scale), (float)(cell.Top * scale),
                     (float)(cell.Right * scale), (float)(cell.Bottom * scale));
 
-
                 if (IsRenderingWithComposition)
                 {
                     if (DirtyChildrenInternal.Contains(child))
@@ -107,8 +105,7 @@ public partial class SkiaLayout
                 drawn++;
             }
 
-            RenderTree = tree;
-            _builtRenderTreeStamp = _measuredStamp;
+            SetRenderingTree(tree);
 
         }
         return drawn;

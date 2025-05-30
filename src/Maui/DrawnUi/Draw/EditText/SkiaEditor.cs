@@ -218,7 +218,7 @@ namespace DrawnUi.Draw
 
             case TouchActionResult.Down:
 
-            var thisOffset = TranslateInputCoords(apply.childOffset);
+            var thisOffset = TranslateInputCoords(apply.ChildOffset);
 
             var x = args.Event.StartingLocation.X + thisOffset.X;
             var y = args.Event.StartingLocation.Y + thisOffset.Y;
@@ -457,28 +457,6 @@ namespace DrawnUi.Draw
         #endregion
 
         #region PROPERTIES
-
-        public static readonly BindableProperty AlignContentVerticalProperty = BindableProperty.Create(nameof(AlignContentVertical),
-            typeof(LayoutOptions),
-            typeof(SkiaControl),
-            LayoutOptions.Start,
-            propertyChanged: OnControlTextChanged);
-        public LayoutOptions AlignContentVertical
-        {
-            get { return (LayoutOptions)GetValue(AlignContentVerticalProperty); }
-            set { SetValue(AlignContentVerticalProperty, value); }
-        }
-
-        public static readonly BindableProperty AlignContentHorizontalProperty = BindableProperty.Create(nameof(AlignContentHorizontal),
-            typeof(LayoutOptions),
-            typeof(SkiaControl),
-            LayoutOptions.Start,
-            propertyChanged: OnControlTextChanged);
-        public LayoutOptions AlignContentHorizontal
-        {
-            get { return (LayoutOptions)GetValue(AlignContentHorizontalProperty); }
-            set { SetValue(AlignContentHorizontalProperty, value); }
-        }
 
         public static readonly BindableProperty ReturnTypeProperty = BindableProperty.Create(
             nameof(ReturnType),

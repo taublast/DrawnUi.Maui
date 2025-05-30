@@ -9,6 +9,7 @@ public partial class SkiaLayout
     private SKRect _measuredFor;
 
     private int _listAdditionalMeasurements;
+
     /// <summary>
     /// Measuring column/row list with todo MeasureVisible
     /// </summary>
@@ -17,13 +18,12 @@ public partial class SkiaLayout
     /// <returns></returns>
     public virtual ScaledSize MeasureList(SKRect rectForChildrenPixels, float scale)
     {
-
         if (IsTemplated && ItemsSource.Count > 0)
         {
             int measuredCount = 0;
             var itemsCount = ItemsSource.Count;
             ScaledSize measured = ScaledSize.Default;
-            SKRect rectForChild = rectForChildrenPixels;//.Clone();
+            SKRect rectForChild = rectForChildrenPixels; //.Clone();
 
             SkiaControl[] nonTemplated = null;
             bool smartMeasuring = false;
@@ -45,7 +45,8 @@ public partial class SkiaLayout
             bool stopMeasuring = false;
 
             var inflate = (float)this.VirtualisationInflated * scale;
-            var visibleArea = base.GetOnScreenVisibleArea(new (null, rectForChildrenPixels,scale), new (inflate,inflate));
+            var visibleArea =
+                base.GetOnScreenVisibleArea(new(null, rectForChildrenPixels, scale), new(inflate, inflate));
 
             if (visibleArea.Pixels.Height < 1 || visibleArea.Pixels.Width < 1)
             {
@@ -67,119 +68,131 @@ public partial class SkiaLayout
 
             //left to right, top to bottom
             var index = -1;
-            for (var row = 0; row < rowsCount; row++)
+            var cellsToRelease = new List<SkiaControl>();
+            try
             {
-                if (stopMeasuring || index + 2 > itemsCount)
+                for (var row = 0; row < rowsCount; row++)
                 {
-                    break;
-                }
-
-                var rowMaxHeight = 0.0f;
-                var maxWidth = 0.0f;
-
-                // Calculate the width for each column
-                float widthPerColumn;
-                if (Type == LayoutType.Column)
-                {
-                    widthPerColumn = (float)Math.Round(columnsCount > 1 ?
-                        (rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount :
-                        rectForChildrenPixels.Width);
-                }
-                else
-                {
-                    widthPerColumn = rectForChildrenPixels.Width;
-                }
-
-                int column;
-                for (column = 0; column < columnsCount; column++)
-                {
-                    try
+                    if (stopMeasuring || index + 2 > itemsCount)
                     {
-                        if (index + 2 > itemsCount)
+                        break;
+                    }
+
+                    var rowMaxHeight = 0.0f;
+                    var maxWidth = 0.0f;
+
+                    // Calculate the width for each column
+                    float widthPerColumn;
+                    if (Type == LayoutType.Column)
+                    {
+                        widthPerColumn = (float)Math.Round(columnsCount > 1
+                            ? (rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount
+                            : rectForChildrenPixels.Width);
+                    }
+                    else
+                    {
+                        widthPerColumn = rectForChildrenPixels.Width;
+                    }
+
+                    int column;
+                    for (column = 0; column < columnsCount; column++)
+                    {
+                        try
                         {
-                            stopMeasuring = true;
-                            break;
-                        }
-
-                        index++;
-                        var cell = new ControlInStack()
-                        {
-                            Column = column,
-                            Row = row,
-                            ControlIndex = index
-                        };
-
-                        SkiaControl child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, template, 0, true);
-
-                        if (child == null)
-                        {
-                            Super.Log($"[MeasureStack] FAILED to get child at index {cell.ControlIndex}");
-                            return ScaledSize.Default;
-                        }
-
-                        if (column == 0)
-                            rectForChild.Top += GetSpacingForIndex(row, scale);
-                        rectForChild.Left += GetSpacingForIndex(column, scale);
-
-                        if (!child.CanDraw)
-                        {
-                            cell.Measured = ScaledSize.Default;
-                        }
-                        else
-                        {
-                            var rectFitChild = new SKRect(rectForChild.Left, rectForChild.Top, rectForChild.Left + widthPerColumn, rectForChild.Bottom);
-                            measured = MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels, scale);
-
-                            if (!visibleArea.Pixels.IntersectsWithInclusive(cell.Destination))
+                            if (index + 2 > itemsCount)
                             {
                                 stopMeasuring = true;
                                 break;
                             }
 
-                            cell.Measured = measured;
-                            cell.WasMeasured = true;
+                            index++;
+                            var cell = new ControlInStack() { Column = column, Row = row, ControlIndex = index };
 
-                            measuredCount++;
+                            SkiaControl child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, template, 0, true);
 
-                            if (!measured.IsEmpty)
+                            if (template == null)
                             {
-                                maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
-
-                                if (measured.Pixels.Height > rowMaxHeight)
-                                    rowMaxHeight = measured.Pixels.Height;
-
-                                //offset -->
-                                rectForChild.Left += (float)(measured.Pixels.Width);
+                                cellsToRelease.Add(child);
                             }
+
+                            if (child == null)
+                            {
+                                Super.Log($"[MeasureStack] FAILED to get child at index {cell.ControlIndex}");
+                                return ScaledSize.Default;
+                            }
+
+                            if (column == 0)
+                                rectForChild.Top += GetSpacingForIndex(row, scale);
+                            rectForChild.Left += GetSpacingForIndex(column, scale);
+
+                            if (!child.CanDraw)
+                            {
+                                cell.Measured = ScaledSize.Default;
+                            }
+                            else
+                            {
+                                var rectFitChild = new SKRect(rectForChild.Left, rectForChild.Top,
+                                    rectForChild.Left + widthPerColumn, rectForChild.Bottom);
+                                measured = MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels,
+                                    scale);
+
+                                if (!visibleArea.Pixels.IntersectsWithInclusive(cell.Destination))
+                                {
+                                    stopMeasuring = true;
+                                    break;
+                                }
+
+                                cell.Measured = measured;
+                                cell.WasMeasured = true;
+
+                                measuredCount++;
+
+                                if (!measured.IsEmpty)
+                                {
+                                    maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
+
+                                    if (measured.Pixels.Height > rowMaxHeight)
+                                        rowMaxHeight = measured.Pixels.Height;
+
+                                    //offset -->
+                                    rectForChild.Left += (float)(measured.Pixels.Width);
+                                }
+                            }
+
+                            columns.Add(cell);
                         }
+                        catch (Exception e)
+                        {
+                            Super.Log(e);
+                            break;
+                        }
+                    } //end of iterate columns
 
-                        columns.Add(cell);
-                    }
-                    catch (Exception e)
-                    {
-                        Super.Log(e);
-                        break;
-                    }
+                    rows.Add(columns);
+                    columns = new();
 
-                }//end of iterate columns
+                    if (maxWidth > stackWidth)
+                        stackWidth = maxWidth;
 
-                rows.Add(columns);
-                columns = new();
+                    stackHeight += rowMaxHeight + GetSpacingForIndex(row, scale);
+                    rectForChild.Top += (float)(rowMaxHeight);
 
-                if (maxWidth > stackWidth)
-                    stackWidth = maxWidth;
-
-                stackHeight += rowMaxHeight + GetSpacingForIndex(row, scale);
-                rectForChild.Top += (float)(rowMaxHeight);
-
-                rectForChild.Left = 0; //reset to start
-
-            }//end of iterate rows
+                    rectForChild.Left = 0; //reset to start
+                } //end of iterate rows
+            }
+            finally
+            {
+                foreach (var cell in cellsToRelease)
+                {
+                    ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
+                }
+            }
 
             if (HorizontalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Width >= 0)
             {
                 stackWidth = rectForChildrenPixels.Width;
             }
+
             if (VerticalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Height >= 0)
             {
                 stackHeight = rectForChildrenPixels.Height;
@@ -191,11 +204,13 @@ public partial class SkiaLayout
             {
                 autoRight = rectForChildrenPixels.Left + stackWidth;
             }
+
             var autoBottom = rectForChildrenPixels.Bottom;
             if (this.VerticalOptions != LayoutOptions.Fill)
             {
                 autoBottom = rectForChildrenPixels.Top + stackHeight;
             }
+
             var autoRect = new SKRect(
                 rectForChildrenPixels.Left, rectForChildrenPixels.Top,
                 autoRight,
@@ -205,12 +220,13 @@ public partial class SkiaLayout
             {
                 if (float.IsInfinity(secondPass.Cell.Area.Bottom))
                 {
-                    secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top, secondPass.Cell.Area.Right, secondPass.Cell.Area.Top + stackHeight);
+                    secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
+                        secondPass.Cell.Area.Right, secondPass.Cell.Area.Top + stackHeight);
                 }
-                else
-                if (float.IsInfinity(secondPass.Cell.Area.Top))
+                else if (float.IsInfinity(secondPass.Cell.Area.Top))
                 {
-                    secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Bottom - stackHeight, secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
+                    secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Bottom - stackHeight,
+                        secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
                 }
 
                 if (secondPass.Cell.Area.Height > stackHeight)
@@ -221,17 +237,19 @@ public partial class SkiaLayout
 
                 if (float.IsInfinity(secondPass.Cell.Area.Right))
                 {
-                    secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top, secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
+                    secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
+                        secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
                 }
-                else
-                if (float.IsInfinity(secondPass.Cell.Area.Left))
+                else if (float.IsInfinity(secondPass.Cell.Area.Left))
                 {
-                    secondPass.Cell.Area = new(secondPass.Cell.Area.Right - stackWidth, secondPass.Cell.Area.Top, secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
+                    secondPass.Cell.Area = new(secondPass.Cell.Area.Right - stackWidth, secondPass.Cell.Area.Top,
+                        secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
                 }
 
                 if (secondPass.Cell.Area.Width > stackWidth)
                 {
-                    secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top, secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
+                    secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
+                        secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
                 }
 
                 LayoutCell(secondPass.Child.MeasuredSize, secondPass.Cell, secondPass.Child,
@@ -243,6 +261,7 @@ public partial class SkiaLayout
             {
                 stackWidth = rectForChildrenPixels.Width;
             }
+
             if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
             {
                 stackHeight = rectForChildrenPixels.Height;
@@ -271,8 +290,7 @@ public partial class SkiaLayout
                     var medium = stackHeight / measuredCount;
                     stackHeight = medium * itemsCount;
                 }
-                else
-                if (this.Type == LayoutType.Row)
+                else if (this.Type == LayoutType.Row)
                 {
                     var medium = stackWidth / measuredCount;
                     stackWidth = medium * itemsCount;
@@ -329,130 +347,148 @@ public partial class SkiaLayout
 
         if (structure != null)
         {
-            //draw children manually
-            var inflate = (float)this.VirtualisationInflated * ctx.Scale;
-            var visibleArea = GetOnScreenVisibleArea(ctx, new(inflate, inflate));
+            var cellsToRelease = new List<SkiaControl>();
 
-            var currentIndex = -1;
-            foreach (var cell in structure.GetChildrenAsSpans())
+            try
             {
-                currentIndex++;
+                //draw children manually
+                var inflate = (float)this.VirtualisationInflated * ctx.Scale;
+                var visibleArea = GetOnScreenVisibleArea(ctx, new(inflate, inflate));
 
-                if (!cell.WasMeasured)
+                var currentIndex = -1;
+                foreach (var cell in structure.GetChildrenAsSpans())
                 {
-                    continue;
-                }
+                    currentIndex++;
 
-                if (cell.Destination == SKRect.Empty || cell.Measured.Pixels.IsEmpty)
-                {
-                    cell.IsVisible = false;
-                }
-                else
-                {
-                    //cell.Destination is what was measured, and we got x,y offsets from a parent, like scroll
-
-                    var x = ctx.Destination.Left + cell.Destination.Left;
-                    var y = ctx.Destination.Top + cell.Destination.Top;
-
-                    cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
-
-                    if (Virtualisation != VirtualisationType.Disabled)
+                    if (!cell.WasMeasured)
                     {
-                        if (needrebuild && UsingCacheType == SkiaCacheType.None &&
-                            Virtualisation == VirtualisationType.Smart
-                            && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
-                        {
-                            cell.IsVisible = true;
-                        }
-                        else
-                        {
-                            cell.IsVisible = cell.Drawn.IntersectsWith(visibleArea.Pixels);
-                        }
+                        continue;
+                    }
+
+                    if (cell.Destination == SKRect.Empty || cell.Measured.Pixels.IsEmpty)
+                    {
+                        cell.IsVisible = false;
                     }
                     else
                     {
-                        cell.IsVisible = true;
-                    }
-                }
+                        //cell.Destination is what was measured, and we got x,y offsets from a parent, like scroll
 
-                if (!ChildrenFactory.TemplatesAvailable && InitializeTemplatesInBackgroundDelay > 0)
-                {
-                    break; //itemssource was changed by other thread
-                }
+                        var x = ctx.Destination.Left + cell.Destination.Left;
+                        var y = ctx.Destination.Top + cell.Destination.Top;
 
-                if (cell.IsVisible)
-                {
-                    if (visibleIndex < 0 && currentIndex > visibleIndex)
-                    {
-                        visibleIndex = currentIndex;
-                    }
+                        cell.Drawn.Set(x, y, x + cell.Destination.Width, y + cell.Destination.Height);
 
-                    var child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, null, GetSizeKey(cell.Measured.Pixels));
-                    if (child == null) //ChildrenFactory.GetChildAt was unable to return child?..
-                    {
-                        return countRendered;
-                    }
-
-                    if (child is SkiaControl control && child.IsVisible)
-                    {
-                        if (child.NeedMeasure)
+                        if (Virtualisation != VirtualisationType.Disabled)
                         {
-                            if (!child.WasMeasured || GetSizeKey(child.MeasuredSize.Pixels) != GetSizeKey(cell.Measured.Pixels))
+                            if (needrebuild && UsingCacheType == SkiaCacheType.None &&
+                                Virtualisation == VirtualisationType.Smart
+                                && !(IsTemplated && RecyclingTemplate == RecyclingTemplate.Enabled))
                             {
-                                child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
+                                cell.IsVisible = true;
                             }
-                        }
-
-                        SKRect destinationRect;
-                        if (IsTemplated && RecyclingTemplate != RecyclingTemplate.Disabled)
-                        {
-                            //when context changes we need all available space for remeasuring cell
-                            destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top,
-                                cell.Drawn.Left + cell.Area.Width, cell.Drawn.Top + cell.Area.Bottom);
+                            else
+                            {
+                                cell.IsVisible = cell.Drawn.IntersectsWith(visibleArea.Pixels);
+                            }
                         }
                         else
                         {
-                            destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right,
-                                cell.Drawn.Bottom);
+                            cell.IsVisible = true;
+                        }
+                    }
+
+                    if (!ChildrenFactory.TemplatesAvailable && InitializeTemplatesInBackgroundDelay > 0)
+                    {
+                        break; //itemssource was changed by other thread
+                    }
+
+                    if (cell.IsVisible)
+                    {
+                        if (visibleIndex < 0 && currentIndex > visibleIndex)
+                        {
+                            visibleIndex = currentIndex;
                         }
 
+                        var child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, null,
+                            GetSizeKey(cell.Measured.Pixels));
 
-                        if (IsRenderingWithComposition)
+                        cellsToRelease.Add(child);
+
+                        if (child == null) //ChildrenFactory.GetChildAt was unable to return child?..
                         {
-                            if (DirtyChildrenInternal.Contains(child))
+                            return countRendered;
+                        }
+
+                        if (child is SkiaControl control && child.IsVisible)
+                        {
+                            if (child.NeedMeasure)
+                            {
+                                if (!child.WasMeasured || GetSizeKey(child.MeasuredSize.Pixels) !=
+                                    GetSizeKey(cell.Measured.Pixels))
+                                {
+                                    child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
+                                }
+                            }
+
+                            SKRect destinationRect;
+                            if (IsTemplated && RecyclingTemplate != RecyclingTemplate.Disabled)
+                            {
+                                //when context changes we need all available space for remeasuring cell
+                                destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top,
+                                    cell.Drawn.Left + cell.Area.Width, cell.Drawn.Top + cell.Area.Bottom);
+                            }
+                            else
+                            {
+                                destinationRect = new SKRect(cell.Drawn.Left, cell.Drawn.Top, cell.Drawn.Right,
+                                    cell.Drawn.Bottom);
+                            }
+
+
+                            if (IsRenderingWithComposition)
+                            {
+                                if (DirtyChildrenInternal.Contains(child))
+                                {
+                                    DrawChild(ctx.WithDestination(destinationRect), child);
+                                    countRendered++;
+                                }
+                                else
+                                {
+                                    //skip drawing but need arrange :(
+                                    //todo set virtual offset between drawnrect and the new
+                                    child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height,
+                                        ctx.Scale);
+                                }
+                            }
+                            else
                             {
                                 DrawChild(ctx.WithDestination(destinationRect), child);
                                 countRendered++;
                             }
-                            else
-                            {
-                                //skip drawing but need arrange :(
-                                //todo set virtual offset between drawnrect and the new
-                                child.Arrange(destinationRect, child.SizeRequest.Width, child.SizeRequest.Height, ctx.Scale);
-                            }
+
+                            //gonna use that for gestures and for item inside viewport detection and for hotreload children tree
+                            tree.Add(new SkiaControlWithRect(control,
+                                destinationRect,
+                                control.LastDrawnAt,
+                                currentIndex));
                         }
-                        else
+                    }
+
+                    if (!cell.IsVisible)
+                    {
+                        if (visibleIndexEnd < 0 && currentIndex > visibleIndexEnd)
                         {
-                            DrawChild(ctx.WithDestination(destinationRect), child);
-                            countRendered++;
+                            visibleIndexEnd = currentIndex - 1;
                         }
 
-                        //gonna use that for gestures and for item inside viewport detection and for hotreload children tree
-                        tree.Add(new SkiaControlWithRect(control,
-                            destinationRect,
-                            control.LastDrawnAt,
-                            currentIndex));
+                        ChildrenFactory.MarkViewAsHidden(cell.ControlIndex);
                     }
                 }
-
-                if (!cell.IsVisible)
+            }
+            finally
+            {
+                foreach (var cell in cellsToRelease)
                 {
-                    if (visibleIndexEnd < 0 && currentIndex > visibleIndexEnd)
-                    {
-                        visibleIndexEnd = currentIndex - 1;
-                    }
-
-                    ChildrenFactory.MarkViewAsHidden(cell.ControlIndex);
+                    ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
                 }
             }
         }
@@ -465,8 +501,7 @@ public partial class SkiaLayout
             templatesInvalidated = false;
         }
 
-        RenderTree = tree;
-        _builtRenderTreeStamp = _measuredStamp;
+        SetRenderingTree(tree);
 
         if (Parent is IDefinesViewport viewport &&
             viewport.TrackIndexPosition != RelativePositionType.None)
@@ -557,16 +592,15 @@ public partial class SkiaLayout
     {
         if (this.Type == LayoutType.Column)
         {
-            return (float)Math.Round(columnsCount > 1 ?
-                (MeasuredSize.Pixels.Width - (columnsCount - 1) * Spacing * RenderingScale) / columnsCount :
-                MeasuredSize.Pixels.Width);
+            return (float)Math.Round(columnsCount > 1
+                ? (MeasuredSize.Pixels.Width - (columnsCount - 1) * Spacing * RenderingScale) / columnsCount
+                : MeasuredSize.Pixels.Width);
         }
         else
         {
             return MeasuredSize.Pixels.Width;
         }
     }
-
 
 
     private float ComputeRightOfColumn(LayoutStructure structure, int row)
@@ -586,6 +620,7 @@ public partial class SkiaLayout
             if (bottom > maxBottom)
                 maxBottom = bottom;
         }
+
         return maxBottom;
     }
 
@@ -610,7 +645,6 @@ public partial class SkiaLayout
 
         int startIndex = LastMeasuredIndex + 1;
         int endIndex = Math.Min(startIndex + batchSize + aheadCount, ItemsSource.Count);
-
 
 
         if (startIndex >= endIndex)
@@ -657,15 +691,20 @@ public partial class SkiaLayout
         }
 
         // Measure!
+        var cellsToRelease = new List<SkiaControl>();
 
         try
         {
-
             while (currentIndex < endIndex)
             {
                 stackHeight += GetSpacingForIndex(row, scale);
 
                 var child = ChildrenFactory.GetViewForIndex(currentIndex, template, 0, true);
+                if (template == null)
+                {
+                    cellsToRelease.Add(child);
+                }
+
                 if (child == null)
                 {
                     return 0;
@@ -678,11 +717,7 @@ public partial class SkiaLayout
                     currentY + availableHeight
                 );
 
-                var cell = new ControlInStack
-                {
-                    ControlIndex = currentIndex,
-                    Destination = rectForChild,
-                };
+                var cell = new ControlInStack { ControlIndex = currentIndex, Destination = rectForChild, };
 
                 var measured = MeasureAndArrangeCell(rectForChild, cell, child, rectForChild, scale);
                 cols.Add(cell);
@@ -704,8 +739,8 @@ public partial class SkiaLayout
                     stackHeight += rowHeight;
                     stackWidth +=
 
-                    // start next row
-                    row++;
+                        // start next row
+                        row++;
                     col = 0;
                     currentX = 0f;
                     currentY += rowHeight + (float)(Spacing * RenderingScale);
@@ -722,9 +757,6 @@ public partial class SkiaLayout
                 if (rowWidth > stackWidth)
                     stackWidth = rowWidth;
 
-                if (template == null)
-                    ChildrenFactory.ReleaseView(child);
-
                 currentIndex++;
             }
 
@@ -737,6 +769,7 @@ public partial class SkiaLayout
             {
                 StackStructureMeasured = structure;
             }
+
             LastMeasuredIndex = startIndex + countToMeasure - 1;
 
             SKSize newSizePixels;
@@ -751,7 +784,8 @@ public partial class SkiaLayout
                 if (_listAdditionalMeasurements == 0)
                 {
                     //do not use approx size we have
-                    stackHeight = structure.GetChildren().Sum(x => x.Measured.Pixels.Height) + spacingPixels * structure.MaxRows - 1;
+                    stackHeight = structure.GetChildren().Sum(x => x.Measured.Pixels.Height) +
+                        spacingPixels * structure.MaxRows - 1;
                 }
                 else
                 {
@@ -760,6 +794,7 @@ public partial class SkiaLayout
                         //add some more space to be able to scroll
                         stackHeight += 1500 * scale;
                     }
+
                     if (endIndex == ItemsSource.Count)
                     {
                         stackHeight -= 1500 * scale;
@@ -786,11 +821,15 @@ public partial class SkiaLayout
             {
                 ChildrenFactory.ReleaseTemplateInstance(template);
             }
+            else
+            {
+                foreach (var cell in cellsToRelease)
+                {
+                    ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
+                }
+            }
         }
-
     }
-
-
 }
 
 public record MeasuredListCell(ControlInStack Cell, int Index);
@@ -799,7 +838,5 @@ public class MeasuredListCells : ReadOnlyCollection<MeasuredListCell>
 {
     public MeasuredListCells(IList<MeasuredListCell> list) : base(list)
     {
-
     }
 }
-

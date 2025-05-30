@@ -1,21 +1,18 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Text;
 using DrawnUi.Infrastructure.Enums;
 
 namespace DrawnUi.Views
 {
     public partial class DrawnView : IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
-
-        public RenderedNode RenderedNode { get; set; }
-
-        public void DumpTree(RenderedNode node, string prefix = "", bool isLast = true, int level = 0)
+        public void DumpTree(VisualNode node, string prefix = "", bool isLast = true, int level = 0)
         {
+            if (node == null)
+            {
+                Debug.WriteLine("[DumpTree] root node is NULL");
+                return;
+            }
             string indent = new string(' ', level * 4);
 
             // Box drawing characters for tree structure
@@ -23,7 +20,25 @@ namespace DrawnUi.Views
             string childPrefix = isLast ? "   " : "│  ";
 
             // Print the current node with appropriate prefix
-            Console.WriteLine($"{indent}{prefix}{connector}{node.Control.GetType().Name} ({node.Children.Count} children)");
+            var line =
+                $"{indent}{prefix}{connector}{node.Control.GetType().Name} at {node.HitBoxWithTransforms.Pixels.Location} ({node.Children.Count})";
+
+            if (node.Cached != SkiaCacheType.None)
+            {
+                line += $" [{node.Cached}]";
+            }
+
+            if (!string.IsNullOrEmpty(node.Control.Tag))
+            {
+                line += $" - {node.Control.Tag}";
+            }
+
+            if (!string.IsNullOrEmpty(node.Tag))
+            {
+                line += $" by {node.Tag}";
+            }
+
+            Trace.WriteLine(line);
 
             // Process children
             for (int i = 0; i < node.Children.Count; i++)
@@ -141,7 +156,6 @@ namespace DrawnUi.Views
                 CreateSkiaView();
 
 #if ONPLATFORM
-
                 SetupRenderingLoop();
 
 #endif
@@ -187,76 +201,25 @@ namespace DrawnUi.Views
         public Queue<Action> ExecuteBeforeDraw { get; } = new(1024);
         public Queue<Action> ExecuteAfterDraw { get; } = new(1024);
         protected Action<SKImage> CallbackScreenshot;
-        protected Dictionary<SkiaControl, VisualTreeChain> RenderingTrees = new(128);
+        //protected Dictionary<SkiaControl, VisualTreeChain> RenderingTrees = new(128);
 
-        public void RegisterRenderingChain(VisualTreeChain chain)
+        /// <summary>
+        /// For native controls over Canvas to be notified after every of their position
+        /// </summary>
+        public Dictionary<SkiaControl, bool> RenderingSubscribers = new(128);
+
+        /// <summary>
+        /// SetVisualTransform will be called after every frame
+        /// </summary>
+        /// <param name="control"></param>
+        public void SubscribeToRenderingFinished(SkiaControl control)
         {
-            // Generate NodeIndices dictionary
-            RenderingTrees.TryAdd(chain.Child, chain);
-
-            //initial state
-            for (int i = 0; i < chain.Nodes.Count; i++)
-            {
-                UpdateRenderingChains(chain.Nodes[i]);
-            }
+            RenderingSubscribers.TryAdd(control, true);
         }
 
-        public void UnregisterRenderingChain(SkiaControl child)
+        public void UsubscribeFromRenderingFinished(SkiaControl control)
         {
-            RenderingTrees.Remove(child, out VisualTreeChain whatever);
-        }
-
-        public VisualTreeChain GetRenderingChain(SkiaControl child)
-        {
-            RenderingTrees.TryGetValue(child, out VisualTreeChain chain);
-            return chain;
-        }
-
-        private static bool debugV;
-
-        static void DebugV(bool value)
-        {
-            if (debugV != value)
-            {
-                Debug.WriteLine($"V Changed {value}");
-                debugV = value;
-            }
-        }
-
-        public void UpdateRenderingChains(SkiaControl node)
-        {
-            if (RenderingTrees.Count == 0)
-                return;
-
-            // Check each chain
-            foreach (VisualTreeChain chain in RenderingTrees.Values)
-            {
-                // If the chain includes the node, update the chain's transform
-                if (chain.NodeIndices.TryGetValue(node, out int index))
-                {
-                    // If the node is the root of the chain, reset the chain's transform
-                    if (index == 0)
-                    {
-                        chain.Transform = new VisualTransform();
-                    }
-
-                    chain.Transform.IsVisible = chain.Nodes.All(x => x.IsVisible) && node.CanDraw;
-
-                    //Debug.WriteLine($"U {node.GetType().Name} {node.IsVisible} => {chain.Transform.IsVisible}");
-
-                    var translation = new SKPoint((float)node.UseTranslationX, (float)node.UseTranslationY);
-                    chain.Transform.Translation += translation;
-                    chain.Transform.Opacity *= (float)node.Opacity;
-                    chain.Transform.Rotation += (float)node.Rotation;
-                    chain.Transform.Scale = new SKPoint((float)(chain.Transform.Scale.X * node.ScaleX),
-                        (float)(chain.Transform.Scale.Y * node.ScaleY));
-
-                    //var log = $"{node.GetType().Name} {translation} | ";
-                    //Debug.WriteLine(log);
-                    //chain.Transform.Logs += log;
-                    chain.Transform.RenderedNodes++;
-                }
-            }
+            RenderingSubscribers.Remove(control, out _);
         }
 
         IReadOnlyList<IVisualTreeElement> IVisualTreeElement.GetVisualChildren()
@@ -389,6 +352,12 @@ namespace DrawnUi.Views
             }
         }
 
+        /// <summary>
+        /// TODO maybe use renderedNode tree
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="state"></param>
+        /// <returns></returns>
         public virtual IEnumerable<ISkiaAnimator> SetViewTreeVisibilityByParent(SkiaControl parent, bool state)
         {
             lock (LockAnimatingControls)
@@ -976,7 +945,7 @@ namespace DrawnUi.Views
             }
         }
 
-        public Guid Uid { get; } = Guid.NewGuid();
+        public Guid Uid { get; } = Guid.CreateVersion7();
 
         public static (double X1, double Y1, double X2, double Y2) LinearGradientAngleToPoints(double direction)
         {
@@ -1359,7 +1328,7 @@ namespace DrawnUi.Views
                 if (CanvasView == null)
                     return false;
 
-                if (LastDrawnRect.Size != rect.Size)
+                if (!SkiaControl.CompareSize(LastDrawnRect.Size, rect.Size, 1))
                 {
                     LastDrawnRect = rect;
                     NeedMeasure = true;
@@ -1544,7 +1513,9 @@ namespace DrawnUi.Views
             if (this.IsDisposed)
                 return;
 
-            DisposeManager.EnqueueDisposable(resource);
+            resource?.Dispose();
+
+            //DisposeManager.EnqueueDisposable(resource);
         }
 
         protected DisposableManager DisposeManager { get; } = new(3.5);
@@ -1899,20 +1870,18 @@ namespace DrawnUi.Views
 
         #endregion
 
+        private VisualTreeHandler VisualTree;// = new();
+
         protected virtual void Draw(DrawingContext context)
         {
             ++renderedFrames;
 
             //Debug.WriteLine($"[DRAW] {Tag}");
 
-            RenderedNode = new(this);
-
             if (IsDisposing || IsDisposed || UpdateLocks > 0)
             {
                 return;
             }
-
-
 
             var destination = context.Destination;
             var scale = context.Scale;
@@ -1952,65 +1921,122 @@ namespace DrawnUi.Views
 
                 if (this.Width > 0 && this.Height > 0)
                 {
-                    // ABSOLUTE like inside grid
+                    // ABSOLUTE like inside maui grid
                     var children = GetOrderedSubviews();
-
                     var rectForChild = new SKRect(
                         destination.Left + (float)Math.Round((Padding.Left) * scale),
                         destination.Top + (float)Math.Round((Padding.Top) * scale),
                         destination.Right - (float)Math.Round((Padding.Right) * scale),
                         destination.Bottom - (float)Math.Round((Padding.Bottom) * scale));
 
-                    foreach (var child in children)
+                    if (VisualTree != null)
                     {
-                        child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
-                        if (child.CanDraw) //still visible
+                        //todo working on new rendering pipeline
+
+                        //using only 1 root, so move to Canvas after code ready
+                        var child = children.FirstOrDefault();
+                        if (child != null)
                         {
-                            if (NeedMeasureDrawn)
+                            //pass 1
+                            //if (!VisualTree.WasRendered)
                             {
-                                child.NeedMeasure = true;
+                                child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
+                                if (child.CanDraw) //still visible
+                                {
+                                    if (NeedMeasureDrawn)
+                                    {
+                                        child.NeedMeasure = true;
+                                    }
+
+                                    VisualTree.PrepareRenderingTree(context.WithDestination(rectForChild),
+                                        (float)(Width - Padding.HorizontalThickness),
+                                        (float)(Height - Padding.VerticalThickness),
+                                        child);
+
+                                    VisualTree.DumpPreparedTree();
+                                }
                             }
 
-                            child.Render(context.WithDestination(rectForChild));
+                            VisualTree.Render(context.WithDestination(rectForChild));
                         }
                     }
-
-                    dirtyChilrenProcessing = true;
-                    foreach (var child in DirtyChildrenTracker.Values)
+                    else //usual one, still working fine
                     {
-                        if (child != null && !child.IsDisposing)
+                        
+                        foreach (var child in children)
                         {
-                            child.InvalidatedParent = false;
-                            child?.InvalidateParent();
+                            child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
+                            if (child.CanDraw) //still visible
+                            {
+                                if (NeedMeasureDrawn)
+                                {
+                                    child.NeedMeasure = true;
+                                }
+
+                                child.Render(context.WithDestination(rectForChild));
+                            }
                         }
-                    }
 
-                    DirtyChildrenTracker.Clear();
-                    dirtyChilrenProcessing = false;
+                        dirtyChilrenProcessing = true;
 
-                    //notify registered tree final nodes of rendering tree state
-                    foreach (var tree in RenderingTrees)
-                    {
-                        //DebugV(tree.Value.Transform.IsVisible);
-                        //todo what was this case? disabled as bugging
-                        //if (tree.Value.Nodes.Count != tree.Value.Transform.RenderedNodes)
-                        //{
-                        //tree.Value.Transform.IsVisible = false;
-                        //}
-                        tree.Key.SetVisualTransform(tree.Value.Transform);
-                    }
+                        //todo for retained mode!!!
+                        foreach (var child in DirtyChildrenTracker.Values)
+                        {
+                            if (child != null && !child.IsDisposed && !child.IsDisposing)
+                            {
+                                child.InvalidatedParent = false;
+                                child?.InvalidateParent();
+                            }
+                        }
 
-                    var postExecuted = ExecutePostAnimators(context);
+                        DirtyChildrenTracker.Clear();
+                        dirtyChilrenProcessing = false;
 
-                    //Kick to redraw if need animate
-                    if (executed + postExecuted > 0)
-                    {
-                        IsDirty = true;
-                    }
+                        //notify registered tree final nodes of rendering tree state
+                        foreach (var skiaControl in this.Views)
+                        {
+                            foreach (SkiaControl subscriber in RenderingSubscribers.Keys)
+                            {
+                                var transform = new VisualTransform();
 
-                    if (CallbackScreenshot != null)
-                    {
-                        TakeScreenShotInternal(context.Context.Superview.CanvasView.Surface);
+                                //var position = subscriber.LastVisualNode.HitBoxWithTransforms.Units.Location;
+
+                                var node = skiaControl.FindRenderedNode(subscriber);
+
+                                transform.IsVisible = node != null;
+
+                                if (transform.IsVisible)
+                                {
+                                    transform.Translation = node.TranslationTotal;
+                                    transform.Opacity = (float)node.OpacityTotal;
+                                    transform.Rotation = (float)node.RotationTotal;
+                                    transform.Scale = node.ScaleTotal;
+
+                                    transform.Frame = subscriber.VisualNode.HitBoxWithTransforms;
+                                }
+                                else
+                                {
+                                    transform.Frame = ScaledRect.FromPixels(SKRect.Empty, 1f);
+
+                                    //DumpTree(skiaControl.VisualNode);
+                                }
+
+                                subscriber.SetVisualTransform(transform);
+                            }
+                        }
+
+                        var postExecuted = ExecutePostAnimators(context);
+
+                        //Kick to redraw if need animate
+                        if (executed + postExecuted > 0)
+                        {
+                            IsDirty = true;
+                        }
+
+                        if (CallbackScreenshot != null)
+                        {
+                            TakeScreenShotInternal(context.Context.Superview.CanvasView.Surface);
+                        }
                     }
                 }
 
@@ -2516,7 +2542,6 @@ namespace DrawnUi.Views
         /// <param name="listener"></param>
         public void ReportFocus(ISkiaGestureListener value, ISkiaGestureListener setter = null)
         {
-
             if (value == _focusedChild)
                 return;
 

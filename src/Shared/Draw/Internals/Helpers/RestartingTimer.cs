@@ -84,21 +84,14 @@ public class RestartingTimer : IDisposable
     /// </summary>
     public bool IsRunning { get; protected set; }
 
-    /// <summary>
-    /// Was activated by Start call. If IsActive is false will not react to Kick calls.
-    /// </summary>
-    public bool IsActive { get; protected set; }
-
-
+ 
     /// <summary>
     /// Starts the timer if not running or restarts it if already running,
     /// but only if the timer is active
     /// </summary>
     public void Kick()
     {
-        if (!IsActive)
-            return;
-
+  
         if (IsRunning)
         {
             Restart();
@@ -149,10 +142,9 @@ public class RestartingTimer : IDisposable
     /// <summary>
     /// Starts the timer
     /// </summary>
-    public void Start()
+    protected void Start()
     {
         IsRunning = true;
-        IsActive = true;
         CancellationTokenSource cts = this.cancellation; // safe copy
         Tasks.StartDelayed(this.timespan, cts.Token, async () =>
         {
@@ -174,7 +166,6 @@ public class RestartingTimer : IDisposable
             oldCts.Dispose();
         }
         IsRunning = false;
-        IsActive = false;
     }
 
     protected bool disposed;

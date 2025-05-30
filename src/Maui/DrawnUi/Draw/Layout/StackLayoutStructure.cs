@@ -13,6 +13,8 @@ public abstract class StackLayoutStructure
         _layout = layout;
     }
 
+   
+
     public virtual IEnumerable<SkiaControl> EnumerateViewsForMeasurement()
     {
         SkiaControl template = null;
@@ -35,32 +37,49 @@ public abstract class StackLayoutStructure
             ChildrenCount = views.Count;
         }
 
-        for (int index = 0; index < ChildrenCount; index++)
+        var cellsToRelease = new List<SkiaControl>();
+
+        try
         {
-            SkiaControl child = null;
-            if (_layout.IsTemplated)
+            for (int index = 0; index < ChildrenCount; index++)
             {
-                child = _layout.ChildrenFactory.GetViewForIndex(index, template, 0, true);
+                SkiaControl child = null;
+                if (_layout.IsTemplated)
+                {
+                    child = _layout.ChildrenFactory.GetViewForIndex(index, template, 0, true);
+                }
+                else
+                {
+                    child = views[index];
+                }
+
+                if (child == null)
+                    continue;
+
+                if (!useOneTemplate && _layout.IsTemplated)
+                {
+                    cellsToRelease.Add(child);
+                }
+                yield return child;
+            }
+        }
+        finally
+        {
+
+            if (useOneTemplate)
+            {
+                _layout.ChildrenFactory.ReleaseTemplateInstance(template);
             }
             else
+            if (_layout.IsTemplated)
             {
-                child = views[index];
+                foreach (var view in cellsToRelease)
+                {
+                    _layout.ChildrenFactory.ReleaseViewInUse(view.ContextIndex, view);
+                }
             }
-
-            if (child == null)
-                continue;
-
-            yield return child;
         }
 
-        if (useOneTemplate)
-        {
-            _layout.ChildrenFactory.ReleaseTemplateInstance(template);
-        }
-        else if (_layout.IsTemplated)
-        {
-            _layout.ChildrenFactory.ReleaseView(template);
-        }
     }
 
     /// <summary>

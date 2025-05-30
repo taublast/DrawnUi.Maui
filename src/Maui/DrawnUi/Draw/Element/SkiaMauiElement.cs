@@ -31,14 +31,27 @@
                 Element.BindingContext = this.BindingContext;
         }
 
+        public override bool NeedMeasure
+        {
+            get
+            {
+                return base.NeedMeasure;
+            }
+            set
+            {
+                Debug.WriteLine($"[SkiaMauiElement] NeedMeasure {value}");
+                base.NeedMeasure = value;
+            }
+        }
+
         public override ScaledSize MeasureAbsolute(SKRect rectForChildrenPixels, float scale)
         {
             try
             {
-                if (Element is IView view && Element.Handler != null && rectForChildrenPixels.Width > 0
-                    && rectForChildrenPixels.Height > 0 && LayoutReady)
+                if (Element is IView mauiNativeView && Element.Handler != null && rectForChildrenPixels.Width > 0
+                    && rectForChildrenPixels.Height > 0 && LayoutReady) //without layoutready we will get 0 as size from maui ty
                 {
-                    var measured = view.Measure(rectForChildrenPixels.Width / scale,
+                    var measured = mauiNativeView.Measure(rectForChildrenPixels.Width / scale,
                         rectForChildrenPixels.Height / scale);
 
                     Debug.WriteLine($"[SkiaMauiElement] Calling native measure for pixels {rectForChildrenPixels}");
@@ -269,7 +282,7 @@
         /// <summary>
         /// Prevent usage of subviews as we are using Content property for this control
         /// </summary>
-        protected override void OnChildAdded(SkiaControl child)
+        public override void OnChildAdded(SkiaControl child)
         {
             if (this.Views.Count > 0)
             {
@@ -396,11 +409,9 @@
         void UpdateElementSize()
         {
             ElementSize = new(DrawingRect.Width, DrawingRect.Height);
-        }
 
-        SKRect _destination;
-        bool _rendered;
-        VisualTreeChain _chain;
+            Refresh(); // newly introduced
+        }
 
         protected void SubscribeToRenderingChain(bool subscribe)
         {
@@ -408,16 +419,11 @@
             {
                 if (subscribe)
                 {
-                    if (_chain == null)
-                    {
-                        _chain = GenerateParentChain();
-                        _chain.AddNode(this); //this control might have its own transforms too
-                        Superview.RegisterRenderingChain(_chain);
-                    }
+                    Superview.SubscribeToRenderingFinished(this);
                 }
                 else
                 {
-                    Superview.UnregisterRenderingChain(this);
+                    Superview.UsubscribeFromRenderingFinished(this);
                 }
             }
         }
@@ -425,7 +431,6 @@
         public override void Render(DrawingContext context)
         {
             Superview = context.Context.Superview;
-            _destination = context.Destination;
 
             if (Content != null)
             {
@@ -510,6 +515,7 @@
                 }
                 else
                 {
+ /*
                     if (manageMainThread)
                     {
                         Tasks.StartDelayed(TimeSpan.FromMilliseconds(10),
@@ -527,6 +533,7 @@
                         Element.InvalidateMeasureNonVirtual(Microsoft.Maui.Controls.Internals.InvalidationTrigger
                             .HorizontalOptionsChanged);
                     }
+ */
                 }
 
                 return;
@@ -655,6 +662,12 @@
         #endregion
 
 #if !ONPLATFORM
+
+        public void NativeInvalidate()
+        {
+            throw new NotImplementedException();
+        }
+
         protected virtual void LayoutNativeView(VisualElement element)
         {
             throw new NotImplementedException();

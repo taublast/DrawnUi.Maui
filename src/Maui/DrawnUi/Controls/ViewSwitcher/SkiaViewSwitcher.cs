@@ -128,7 +128,7 @@ namespace DrawnUi.Controls
 
         #region Tabs
 
-        protected override void OnChildAdded(SkiaControl view)
+        public override void OnChildAdded(SkiaControl view)
         {
             if (view is IInsideViewport viewport)
             {
@@ -696,14 +696,6 @@ namespace DrawnUi.Controls
             if (!_processing)
             {
                 _processing = true;
-                // Tasks.StartDelayedAsync(TimeSpan.FromMicroseconds(1), async () =>
-                // {
-                //     await ProcessIndexBufferAsync().ConfigureAwait(false);
-                // });
-                // MainThread.BeginInvokeOnMainThread(async  () =>
-                // {
-                //     await ProcessIndexBufferAsync();
-                // });
                 ProcessIndexBufferAsync().ConfigureAwait(false);
             }
         }
@@ -994,6 +986,8 @@ namespace DrawnUi.Controls
                     return;
                 }
 
+                //TouchEffect.CloseKeyboard(); todo maybe add ???
+
                 Superview.FocusedChild = null;
 
                 lastSelectedIndex = selectedIndex;
@@ -1029,7 +1023,6 @@ namespace DrawnUi.Controls
 
                         if (previousVisibleView != null)
                         {
-                            //ChangeViewVisibility(previousVisibleView.View, true);
                             ChangeViewVisibility(previousVisibleView.View, false);
                             SendOnDisappeared(previousVisibleView.View);
                         }
@@ -1116,11 +1109,7 @@ namespace DrawnUi.Controls
                             }
                             finally
                             {
-                                //
-                                newVisibleView.View.TranslationX = 0;
-                                newVisibleView.View.TranslationY = 0;
-                                newVisibleView.View.Opacity = 1.0;
-                                ChangeViewVisibility(newVisibleView.View, true);
+                                RevealNavigationView(newVisibleView);
 
                                 if (previousVisibleView != null)
                                 {
@@ -1171,7 +1160,6 @@ namespace DrawnUi.Controls
 
                 NavigationBusy = false; //can be still animating!
 
-                //PrintDebug();
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace DrawnUi.Controls;
 
@@ -7,9 +8,21 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
+
+        //if (!LockFocus)
+        //{
+        //    var thisOffset = TranslateInputCoords(apply.ChildOffset);
+        //    var touchLocationWIthOffset = new SKPoint(apply.MappedLocation.X + thisOffset.X,
+        //        apply.MappedLocation.Y + thisOffset.Y);
+        //    var transformed = ApplyTransforms(DrawingRect);
+        //    var inside = transformed.ContainsInclusive(touchLocationWIthOffset.X, touchLocationWIthOffset.Y);
+        //    if (!inside)
+        //        return null;
+        //}
+
         if (args.Type == TouchActionResult.Up)
         {
-            // var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+            // var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
             // if (!DrawingRect.Contains(point))
             // {
             //     //we got this gesture because we were focused, but it's now outside our bounds, can unfocus
@@ -80,6 +93,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             control.Text = Text;
         //todo customize
         control.Placeholder = this.Placeholder;
+        control.PlaceholderColor = this.PlaceholderColor;
     }
 
     protected virtual Editor GetOrCreateControl()
@@ -345,13 +359,12 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
             control.TextChanged?.Invoke(control, (string)newvalue);
             control.CommandOnTextChanged?.Execute((string)newvalue);
             control.UpdateControl();
+            if (control.NeedAutoSize)
+            {
+                control.NativeInvalidate();
+            }
         }
     }
-
-    /// <summary>
-    /// TODO
-    /// </summary>
-    bool LockFocus { get; set; }
 
 
     #region   PROPERTIES
@@ -380,12 +393,22 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
 
     public static readonly BindableProperty TextColorProperty = BindableProperty.Create(
         nameof(TextColor), typeof(Color), typeof(SkiaMauiEditor),
-        Colors.GreenYellow,
+        Colors.DarkSlateGray,
         propertyChanged: NeedUpdateControl);
     public Color TextColor
     {
         get { return (Color)GetValue(TextColorProperty); }
         set { SetValue(TextColorProperty, value); }
+    }
+
+    public static readonly BindableProperty PlaceholderColorProperty = BindableProperty.Create(
+        nameof(PlaceholderColor), typeof(Color), typeof(SkiaMauiEditor),
+        Colors.DarkGray,
+        propertyChanged: NeedUpdateControl);
+    public Color PlaceholderColor
+    {
+        get { return (Color)GetValue(PlaceholderColorProperty); }
+        set { SetValue(PlaceholderColorProperty, value); }
     }
 
     public static readonly BindableProperty FontWeightProperty = BindableProperty.Create(

@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Android.Hardware.Camera2;
 
 
 namespace DrawnUi.Camera;
@@ -59,9 +60,14 @@ public partial class SkiaCamera
     {
         return new Metadata()
         {
-            Software = "SkiaCamera Android",
+            Software = "SkiaCamera Android", //todo let customize
             Vendor = $"{Android.OS.Build.Manufacturer}",
-            Model = $"{Android.OS.Build.Model}"
+            Model = $"{Android.OS.Build.Model}",
+
+            //this will be created inside session
+            //Orientation = (int)result.Get(CaptureResult.JpegOrientation),
+            //ISO = (int)result.Get(CaptureResult.SensorSensitivity),
+            //FocalLength = (float)result.Get(CaptureResult.LensFocalLength)
         };
     }
 

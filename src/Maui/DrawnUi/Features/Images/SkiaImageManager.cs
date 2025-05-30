@@ -165,9 +165,14 @@ public partial class SkiaImageManager : IDisposable
             localCancel?.Dispose();
         }
     }
- 
+
 
     #endregion
+
+    /// <summary>
+    /// Normally we load local images in a synchronous manner, and remote in async one. Set this to true if you want to load load images async too.
+    /// </summary>
+    public static bool LoadLocalAsync = false;
 
     /// <summary>
     /// If set to true will not return clones for same sources, but will just return the existing cached SKBitmap reference. Useful if you have a lot on images reusing same sources, but you have to be carefull not to dispose the shared image. SkiaImage is aware of this setting and will keep a cached SKBitmap from being disposed.
@@ -763,7 +768,7 @@ public partial class SkiaImageManager : IDisposable
         }
         if (source is StreamImageSource)
         {
-            return Guid.NewGuid().ToString();
+            return Guid.CreateVersion7().ToString();
         }
         return null;
     }

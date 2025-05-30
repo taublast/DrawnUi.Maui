@@ -10,11 +10,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\ObservableAttachedItemsCollection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\RenderedNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\VisualNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\SkiaControl.Cache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\SkiaControl.Effects.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\SkiaControl.Invalidation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\SkiaControl.Shared.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Draw\Base\VisualTreeHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Cache\SkiaCacheType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Cache\SkiaRenderObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\AutoSizeType.cs" />

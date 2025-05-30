@@ -151,7 +151,7 @@ public partial class SkiaColorPicker : SkiaLayout
 
         if (args.Type == TouchActionResult.Down || args.Type == TouchActionResult.Panning)
         {
-            var point = TranslateInputOffsetToPixels(args.Event.Location, apply.childOffset);
+            var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
 
             //e.Location.X / canvasSize.Width;
             PointerRingPositionXOffsetRatio = (point.X - DrawingRect.Left) / DrawingRect.Width;

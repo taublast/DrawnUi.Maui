@@ -6,6 +6,7 @@
 /// </summary>
 public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
 {
+
     #region DEFAULT CONTENT
 
     protected override void CreateDefaultContent()

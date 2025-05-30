@@ -520,7 +520,7 @@ public class SkiaSlider : SkiaLayout
                     ResetPan();
                 }
 
-                var thisOffset = TranslateInputCoords(apply.childOffset);
+                var thisOffset = TranslateInputCoords(apply.ChildOffset);
 
                 var x = args.Event.Location.X + thisOffset.X;
                 var y = args.Event.Location.Y + thisOffset.Y;
@@ -661,7 +661,11 @@ public class SkiaSlider : SkiaLayout
 
         if (consumed != null || IsUserPanning) // || args.Event.NumberOfTouches > 1)
         {
-            return consumed ?? this;
+            if (consumed == null && args.Type != TouchActionResult.Up)
+            {
+                return this;
+            }
+            return consumed;
         }
 
         if (!passedToChildren)

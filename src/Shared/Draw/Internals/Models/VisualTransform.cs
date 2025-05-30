@@ -12,6 +12,8 @@ public class VisualTransform
         Scale = new(1, 1);
     }
 
+    public ScaledRect Frame { get; set; }
+
     public bool IsVisible { get; set; }
 
     public float Opacity { get; set; }

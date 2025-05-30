@@ -49,12 +49,8 @@
 
 
                 <!--
-                    for supersmooth like in scrollview scrolling we need to create a "paged" scrollview behaviour
-                    idea is to have a maximum number of non recycled cells, like 100.
-                    so the cells pool size is 100. when we reach some border, before loadMore or start of page
-                    be return 50 cells from the other direction to pool and reuse them all 50 for the up coming page
-                    this way we have a lag spike on borders only but smooth scrolling through the existing content
-                    todo at free time
+                    for supersmooth like in scrollview scrolling we need to create a "paged" scrollview 
+                    actually working on it
                     
                     Meanwhile:
                     

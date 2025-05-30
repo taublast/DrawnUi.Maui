@@ -1,4 +1,4 @@
-﻿//#define DEBUG_RELEASE
+﻿
 using Android.Graphics;
 using Android.Renderscripts;
 using AppoMobi.Maui.Native.Droid.Graphics;

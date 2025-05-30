@@ -103,7 +103,10 @@ namespace DrawnUi.Controls
             base.OnTransitionChanged();
 
             if (!InTransition)
+            {
+                SetIsOpen();
                 SendStateTransitionComplete();
+            }
         }
 
         public override void OnWillDisposeWithChildren()
@@ -440,16 +443,6 @@ namespace DrawnUi.Controls
             base.Paint(ctx);
         }
 
-        protected override bool ScrollToOffset(Vector2 targetOffset, Vector2 velocity, bool animate)
-        {
-            var scrolled = base.ScrollToOffset(targetOffset, velocity, animate);
-            //if (scrolled)
-            //{
-            //    UpdateReportedPosition();
-            //}
-
-            return scrolled;
-        }
 
         //public override bool CheckTransitionEnded()
         //{
@@ -468,7 +461,8 @@ namespace DrawnUi.Controls
             return !ok;
         }
 
-        public override void UpdateReportedPosition()
+
+        public void SetIsOpen()
         {
             var isOpen = true;
             if (SnapPoints.Any())
@@ -476,13 +470,17 @@ namespace DrawnUi.Controls
                 if (SnapPoints[1] == CurrentSnap)
                     isOpen = false;
             }
+            Debug.WriteLine($"[SkiaDrawer] SetIsOpen: open {isOpen} moving {InTransition}");
+            IsOpen = isOpen;
+        }
 
-            Debug.WriteLine($"UpdateReportedPosition: {isOpen} moving {InTransition}");
-
+        public override void UpdateReportedPosition()
+        {
             if (!InTransition)
             {
-                IsOpen = isOpen;
+                SetIsOpen();
             }
+            Debug.WriteLine($"[SkiaDrawer] UpdateReportedPosition: open {IsOpen} moving {InTransition}");
         }
 
         /// <summary>
@@ -583,6 +581,8 @@ namespace DrawnUi.Controls
             if (!RespondsToGestures)
                 return consumed;
 
+
+
             // todo
             // if the gesture is not in the header we first will pass it to children, 
             // and process only if children didn't consume it
@@ -605,10 +605,15 @@ namespace DrawnUi.Controls
             if (!_inContact && processInput && !InputTransparent && CanDraw && Content != null && Content.CanDraw &&
                 !Content.InputTransparent)
             {
-                var thisOffset = TranslateInputCoords(apply.childOffset);
+                var thisOffset = TranslateInputCoords(apply.ChildOffset);
+
+                //todo use renderednode !
+                //var x = args.Event.Location.X + thisOffset.X;
+                //var y = args.Event.Location.Y + thisOffset.Y;
+                //processInput = Content.LastDrawnAt.Contains(x, y);
+
                 var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X,
                     args.Event.Location.Y + thisOffset.Y);
-
                 processInput =
                     Content.LastDrawnAt.ContainsInclusive(touchLocationWIthOffset.X, touchLocationWIthOffset.Y);
             }
@@ -632,7 +637,7 @@ namespace DrawnUi.Controls
                             ResetPan();
                         }
 
-                        consumed = this;
+                        //consumed = this;
 
                         break;
 
@@ -821,15 +826,26 @@ namespace DrawnUi.Controls
 
                 if (consumed != null || IsUserPanning) // || args.Event.NumberOfTouches > 1)
                 {
-                    return consumed ?? this;
+                    if (consumed==null &&  args.Type != TouchActionResult.Up)
+                    {
+                        return this;
+                    }
+                    return consumed;
                 }
 
                 if (!passedToChildren)
                     return PassToChildren();
             }
 
+            if (AutoClose && IsOpen && !InTransition)
+            {
+                IsOpen = false;
+            }
+
             return null;
         }
+
+        public bool AutoClose { get; set; }
 
         /// <summary>
         /// Called for manual finger panning

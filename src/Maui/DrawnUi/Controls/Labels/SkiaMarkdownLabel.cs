@@ -1,24 +1,16 @@
-﻿using System.Windows.Input;
-using Markdig;
-using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
-
+﻿
 namespace DrawnUi.Draw;
 
 /// <summary>
 /// Will internally create spans from markdown.
 /// Spans property must not be set directly.
 /// </summary>
-public class SkiaMarkdownLabel : SkiaLabel
+public partial class SkiaMarkdownLabel : SkiaLabel
 {
     public SkiaMarkdownLabel()
     {
-        _pipeline = new MarkdownPipelineBuilder()
-            .UseEmphasisExtras()
-            .Build();
     }
 
-    //properties defaults
     #region PROPERTIES DEFAULTS
 
     public static Color ColorLink = Colors.CornflowerBlue;
@@ -26,35 +18,21 @@ public class SkiaMarkdownLabel : SkiaLabel
     public static Color ColorCodeBlock = Color.Parse("#222222");
     public static Color ColorCode = Colors.White;
     public static Color ColorStrikeout = Colors.Red;
-
-    //customizable
     public static string MaskPrefixBullet = "• ";
     public static string MaskPrefixNumbered = "{0}. ";
 
     #endregion
 
-    public override void InvalidateText()
+    protected override void OnFontUpdated()
     {
-        base.InvalidateText();
+        base.OnFontUpdated();
 
-        var markdownDocument = Markdig.Markdown.Parse(TextInternal, _pipeline);
-
-        Spans.Clear();
-
-        isBold = false;
-        isItalic = false;
-        isHeading1 = false;
-        isHeading2 = false;
-        isCodeBlock = false;
-        hadParagraph = false;
-        isStrikethrough = false;
-
-        foreach (var block in markdownDocument)
-        {
-            RenderBlock(block);
-        }
-
+        OnTextChanged();
     }
+
+    private object LockParsing = new();
+
+    #region SPANS
 
     /// <summary>
     /// Creates a text span with passed data.
@@ -89,312 +67,6 @@ public class SkiaMarkdownLabel : SkiaLabel
         return span;
     }
 
-
-    #region PARSER
-
-    protected bool hadParagraph;
-    protected bool isBold;
-    protected bool isItalic;
-    protected bool isCodeBlock;
-    protected bool isHeading1;
-    protected bool isHeading2;
-    protected bool isStrikethrough;
-    protected readonly MarkdownPipeline _pipeline;
-
-    protected void RenderBlock(Block block, Inline prefix = null)
-    {
-        var wasHeading1 = isHeading1;
-        var wasHeading2 = isHeading2;
-        var wasCode = isCodeBlock;
-
-        if (block is HeadingBlock heading)
-        {
-            var level = heading.Level;
-            isHeading1 = level == 1;
-            if (!isHeading1)
-            {
-                isHeading2 = true;
-            }
-
-            if (heading.Inline != null)
-            {
-                if (hadParagraph)
-                {
-                    //start new line
-                    RenderInline(new LineBreakInline());
-                }
-
-                hadParagraph = true;
-
-                var inline = heading.Inline.FirstChild;
-                while (inline != null)
-                {
-                    RenderInline(inline);
-                    inline = inline.NextSibling;
-                }
-
-            }
-        }
-        else
-        if (block is ParagraphBlock paragraphBlock)
-        {
-            if (hadParagraph)
-            {
-                //start new line
-                RenderInline(new LineBreakInline());
-            }
-
-            if (prefix != null)
-            {
-                RenderInline(prefix);
-            }
-
-            hadParagraph = true;
-
-            var inline = paragraphBlock.Inline.FirstChild;
-            while (inline != null)
-            {
-                RenderInline(inline);
-                inline = inline.NextSibling;
-            }
-
-        }
-        else if (block is FencedCodeBlock codeBlock)
-        {
-            if (hadParagraph)
-            {
-                //start new line
-                RenderInline(new LineBreakInline());
-            }
-
-            if (prefix != null)
-            {
-                RenderInline(prefix);
-            }
-
-            hadParagraph = true;
-
-            isCodeBlock = true;
-
-            var codeType = codeBlock.Info; //todo can display header like "csharp" etc
-            var lineNb = 0;
-            foreach (var line in codeBlock.Lines)
-            {
-                if (lineNb > 0)
-                {
-                    RenderInline(new LineBreakInline());
-                }
-                AddTextSpan(line.ToStringSafe(), (span) =>
-                {
-                    span.TextColor = CodeTextColor;
-                    span.ParagraphColor = ColorCodeBlock;
-                });
-                lineNb++;
-            }
-        }
-        else
-        if (block is ListBlock listBlock)
-        {
-            foreach (var child in listBlock)
-            {
-                if (child is ListItemBlock listItem)
-                {
-                    if (listBlock.IsOrdered)
-                    {
-                        RenderOrderedListItem(listItem, listItem.Order);
-                    }
-                    else
-                    {
-                        RenderBulletListItem(listItem);
-                    }
-                }
-                else
-                {
-                    //todo what can it be?..
-                }
-            }
-        }
-        else
-        if (block is ListItemBlock listItem)
-        {
-            foreach (var line in listItem)
-            {
-                RenderBlock(line);
-            }
-        }
-
-        isCodeBlock = wasCode;
-        isHeading1 = wasHeading1;
-        isHeading2 = wasHeading2;
-    }
-
-    protected void RenderOrderedListItem(ListItemBlock listItem, int startNumber)
-    {
-        LiteralInline prefix;
-        var firstLine = true;
-        foreach (var line in listItem)
-        {
-            if (firstLine)
-            {
-                // Add the number before rendering the list item content
-                prefix = new LiteralInline(string.Format(PrefixNumbered, startNumber));
-                firstLine = false;
-            }
-            else
-            {
-                prefix = null;
-            }
-            RenderBlock(line, prefix);
-        }
-    }
-
-    protected void RenderBulletListItem(ListItemBlock listItem)
-    {
-        LiteralInline prefix;
-        var firstLine = true;
-        foreach (var line in listItem)
-        {
-            if (firstLine)
-            {
-                // Add the number before rendering the list item content
-                prefix = new LiteralInline(PrefixBullet);
-                firstLine = false;
-            }
-            else
-            {
-                prefix = null;
-            }
-            RenderBlock(line, prefix);
-        }
-    }
-
-    protected void RenderInline(Inline inline)
-    {
-        bool wasBold = isBold;
-        bool wasItalic = isItalic;
-        bool wasStrikethrough = isStrikethrough;
-
-
-        switch (inline)
-        {
-
-            case LineBreakInline lineBreak:
-                //just add new line to previous span
-                var last = Spans.LastOrDefault();
-                if (last == null)
-                {
-                    Spans.Add(new()
-                    {
-                        Text = "\n"
-                    }); ;
-                }
-                else
-                {
-                    last.Text += "\n";
-                }
-                break;
-
-            case LiteralInline literal:
-                //todo detect available font
-                AddTextSpan(literal.Content.ToStringSafe());
-                break;
-
-            case CodeInline code:
-                AddCodeSpan(code);
-                break;
-
-            case LinkInline link:
-                AddLinkSpan(link);
-                break;
-
-            case EmphasisInline emphasis:
-                if (emphasis.DelimiterCount == 3)
-                {
-                    if (emphasis.DelimiterChar is '_' or '*')
-                    {
-                        isBold = true;
-                        isItalic = true;
-                    }
-                }
-                else
-                if (emphasis.DelimiterCount == 2)
-                {
-                    if (emphasis.DelimiterChar == '~')
-                    {
-                        isStrikethrough = true;
-                    }
-                    else
-                    if (emphasis.DelimiterChar is '_' or '*')
-                    {
-                        isBold = true;
-                    }
-                }
-                else
-                if (emphasis.DelimiterCount == 1)
-                {
-                    if (emphasis.DelimiterChar is '_' or '*')
-                    {
-                        isItalic = true;
-                    }
-                }
-
-                var child = emphasis.FirstChild;
-                while (child != null)
-                {
-                    RenderInline(child);
-                    child = child.NextSibling;
-                }
-
-                break;
-
-        }
-
-        // Restore the previous state
-        isBold = wasBold;
-        isItalic = wasItalic;
-        isStrikethrough = wasStrikethrough;
-    }
-
-
-
-    #endregion
-
-    protected override void OnFontUpdated()
-    {
-        base.OnFontUpdated();
-
-        OnTextChanged(this.TextInternal);
-    }
-
-    public virtual (SKTypeface, int) FindBestTypefaceForString(string text)
-    {
-        var typefaceCoverage = new Dictionary<SKTypeface, HashSet<int>>();
-        int symbol = 0;
-
-        foreach (char c in text)
-        {
-            int codePoint = char.ConvertToUtf32(text, char.IsHighSurrogate(c) ? text.IndexOf(c) : 0);
-            var typeface = SkiaFontManager.Manager.MatchCharacter(codePoint);
-
-            if (typeface != null)
-            {
-                symbol = codePoint;
-
-                if (!typefaceCoverage.ContainsKey(typeface))
-                {
-                    typefaceCoverage[typeface] = new HashSet<int>();
-                }
-
-                typefaceCoverage[typeface].Add(codePoint);
-            }
-        }
-
-        // Now find the typeface with the most coverage
-        var bestTypeface = typefaceCoverage.OrderByDescending(kvp => kvp.Value.Count).FirstOrDefault().Key;
-
-        return (bestTypeface, symbol);
-    }
-
     protected virtual void AddTextSpan(string text, Action<TextSpan> modifySpan = null)
     {
         if (TypeFace == null) //might happen early in cycle when set via Styles
@@ -423,13 +95,13 @@ public class SkiaMarkdownLabel : SkiaLabel
 
             void BreakSpanAndSwitchTypeface(SKTypeface newTypeface)
             {
-
                 // When we switch typefaces, we add the span up to this point and then change the typeface
                 var add = text.Substring(spanStart, currentIndex - spanStart);
                 if (!needShape)
                 {
                     needShape = SkiaLabel.UnicodeNeedsShaping(codePoint);
                 }
+
                 spanData.Add((add, currentTypeFace, codePoint, needShape));
                 currentTypeFace = newTypeface;
                 spanStart = currentIndex;
@@ -448,8 +120,7 @@ public class SkiaMarkdownLabel : SkiaLabel
                 }
             }
             //maybe switch back to original font if possible
-            else
-            if (!isStandardSymbol && currentTypeFace != originalTypeFace)
+            else if (!isStandardSymbol && currentTypeFace != originalTypeFace)
             {
                 var glyphInOriginal = SkiaLabel.GetGlyphs(glyphText, originalTypeFace).First();
                 if (glyphInOriginal.IsAvailable)
@@ -499,13 +170,7 @@ public class SkiaMarkdownLabel : SkiaLabel
         // Create TextSpans from optimized spans data
         foreach (var (Text, Typeface, Symbol, Shape) in spanData)
         {
-            var span = new TextSpan
-            {
-                Text = Text,
-                TypeFace = Typeface,
-                FontDetectedWith = Symbol,
-                NeedShape = Shape
-            };
+            var span = new TextSpan { Text = Text, TypeFace = Typeface, FontDetectedWith = Symbol, NeedShape = Shape };
             modifySpan?.Invoke(span);
             Spans.Add(SpanWithAttributes(span, this.FontAttributes));
         }
@@ -518,7 +183,8 @@ public class SkiaMarkdownLabel : SkiaLabel
     /// </summary>
     /// <param name="spanData"></param>
     /// <param name="originalTypeFace"></param>
-    protected virtual void ProcessSpanData(ref List<(string Text, SKTypeface Typeface, int Symbol, bool Shape)> spanData, SKTypeface originalTypeFace)
+    protected virtual void ProcessSpanData(
+        ref List<(string Text, SKTypeface Typeface, int Symbol, bool Shape)> spanData, SKTypeface originalTypeFace)
     {
         for (int i = 0; i < spanData.Count - 1; i++)
         {
@@ -532,11 +198,13 @@ public class SkiaMarkdownLabel : SkiaLabel
                 {
                     standardSymbolIndex--;
                 }
+
                 standardSymbolIndex++; // Adjust to point to the first standard symbol
 
                 if (standardSymbolIndex > 0)
                 {
-                    spanData[i] = (currentSpan.Text.Substring(0, standardSymbolIndex), currentSpan.Typeface, currentSpan.Symbol, currentSpan.Shape);
+                    spanData[i] = (currentSpan.Text.Substring(0, standardSymbolIndex), currentSpan.Typeface,
+                        currentSpan.Symbol, currentSpan.Shape);
                 }
                 else
                 {
@@ -547,19 +215,30 @@ public class SkiaMarkdownLabel : SkiaLabel
 
                 if (nextSpan.Typeface == originalTypeFace)
                 {
-                    spanData[i + 1] = (currentSpan.Text.Substring(standardSymbolIndex) + nextSpan.Text, nextSpan.Typeface, nextSpan.Symbol, nextSpan.Shape);
+                    spanData[i + 1] = (currentSpan.Text.Substring(standardSymbolIndex) + nextSpan.Text,
+                        nextSpan.Typeface, nextSpan.Symbol, nextSpan.Shape);
                 }
                 else
                 {
                     // If the next span is not using the original typeface, insert a new span with the original typeface
-                    spanData.Insert(i + 1, (currentSpan.Text.Substring(standardSymbolIndex), originalTypeFace, 0, false));
+                    spanData.Insert(i + 1,
+                        (currentSpan.Text.Substring(standardSymbolIndex), originalTypeFace, 0, false));
                 }
             }
         }
-
     }
 
-    #region GESTURES
+    #endregion
+
+    protected bool hadParagraph;
+    protected bool isBold;
+    protected bool isItalic;
+    protected bool isCodeBlock;
+    protected bool isHeading1;
+    protected bool isHeading2;
+    protected bool isStrikethrough;
+
+    #region LINKS
 
     /// <summary>
     /// Url will be inside Tag
@@ -572,48 +251,13 @@ public class SkiaMarkdownLabel : SkiaLabel
         return base.OnSpanTapped(span);
     }
 
-    #endregion
-
-    #region CODE
 
 
-    protected virtual void AddCodeSpan(CodeInline code)
-    {
-        string text = code.Content;
-
-        AddTextSpan(text, (span) =>
-        {
-            span.TextColor = this.CodeTextColor;
-            span.BackgroundColor = CodeBackgroundColor;
-        });
-
-    }
-
-    #endregion
-
-    #region LINKS
-
-
-    protected virtual void AddLinkSpan(LinkInline link)
-    {
-        string text = GetLinkLabelText(link);
-        if (string.IsNullOrEmpty(text))
-            text = link.Url;
-
-        AddTextSpan(text, (span) =>
-        {
-            span.Tag = link.Url;
-            span.TextColor = this.LinkColor;
-            span.Underline = this.UnderlineLink;
-            span.UnderlineWidth = this.UnderlineWidth;
-            span.ForceCaptureInput = true;
-        });
-
-    }
-
-    public static readonly BindableProperty CommandLinkTappedProperty = BindableProperty.Create(nameof(CommandLinkTapped), typeof(ICommand),
+    public static readonly BindableProperty CommandLinkTappedProperty = BindableProperty.Create(
+        nameof(CommandLinkTapped), typeof(ICommand),
         typeof(SkiaMarkdownLabel),
         null);
+
     public ICommand CommandLinkTapped
     {
         get { return (ICommand)GetValue(CommandLinkTappedProperty); }
@@ -635,25 +279,9 @@ public class SkiaMarkdownLabel : SkiaLabel
         CommandLinkTapped?.Execute(url);
     }
 
-    protected virtual string GetLinkLabelText(LinkInline link)
-    {
-        var child = link.FirstChild;
-        string labelText = "";
-        while (child != null)
-        {
-            if (child is LiteralInline literal)
-            {
-                labelText += literal.Content;
-            }
-            child = child.NextSibling;
-        }
-        return labelText;
-    }
-
-
-
-
     #endregion
+
+    #region PROPERTIES
 
     public static readonly BindableProperty StrikeoutColorProperty = BindableProperty.Create(
         nameof(StrikeoutColor),
@@ -775,4 +403,5 @@ public class SkiaMarkdownLabel : SkiaLabel
         set { SetValue(UnderlineWidthProperty, value); }
     }
 
+    #endregion
 }

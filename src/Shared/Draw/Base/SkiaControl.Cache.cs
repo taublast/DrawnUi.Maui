@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using HarfBuzzSharp;
 
 namespace DrawnUi.Draw;
 
@@ -31,7 +32,7 @@ public partial class SkiaControl
         propertyChanged: NeedDraw);
 
     /// <summary>
-    /// Might want to set this to False for certain cases..
+    /// Might want to set this to False for certain cases.
     /// </summary>
     public bool AllowCaching
     {
@@ -175,7 +176,7 @@ public partial class SkiaControl
     {
         cache ??= RenderObject;
 
-        if (cache == null || cache.Bounds.Size != size)
+        if (cache == null || !CompareSize(cache.Bounds.Size, size, 1))
             return false;
 
         return true;
@@ -205,8 +206,11 @@ public partial class SkiaControl
     {
         if (cache != null)
         {
-            if (cache.RecordingArea.Size != recordingArea.Size)
+            if (!CompareSize(cache.RecordingArea.Size, recordingArea.Size, 1))
+            {
+                CacheValidity = CacheValidityType.SizeMismatch;
                 return false;
+            }
 
             //check hardware context maybe changed
             if (UsingCacheType == SkiaCacheType.GPU && cache.Surface != null &&
@@ -217,12 +221,15 @@ public partial class SkiaControl
                 if (hardware.GRContext == null || cache.Surface.Context == null
                                                || (int)hardware.GRContext.Handle != (int)cache.Surface.Context.Handle)
                 {
+                    CacheValidity = CacheValidityType.GraphicContextMismatch;
                     return false;
                 }
             }
-
+            CacheValidity = CacheValidityType.Valid;
             return true;
         }
+
+        CacheValidity = CacheValidityType.Missing;
         return false;
     }
 
@@ -230,7 +237,7 @@ public partial class SkiaControl
     {
         get
         {
-            if (!AllowCaching)
+            if (!AllowCaching || !Super.CacheEnabled)
             {
                 return SkiaCacheType.None;
             }
@@ -282,7 +289,6 @@ public partial class SkiaControl
         {
             var recordArea = GetCacheArea(recordingArea);
 
-            //todo
             //if (UsingCacheType == SkiaCacheType.OperationsFull)
             //{
             //    recordArea = destination;
@@ -401,13 +407,14 @@ public partial class SkiaControl
     public Action<DrawingContext, CachedObject> DelegateDrawCache { get; set; }
 
 
-    protected virtual void DrawRenderObjectInternal(
+    public virtual void DrawRenderObjectInternal(
         DrawingContext ctx,
         CachedObject cache)
     {
-        //new absolute offsets
         var destination = ctx.Destination;
+        // New absolute offsets
         destination.Offset((float)(Left * ctx.Scale), (float)(Top * ctx.Scale));
+
         if (DelegateDrawCache != null)
         {
             DelegateDrawCache(ctx.WithDestination(destination), cache);
@@ -417,16 +424,10 @@ public partial class SkiaControl
             DrawRenderObject(ctx.WithDestination(destination), cache);
         }
 
-        //if (DelegateDrawCache != null)
-        //{
-        //    DelegateDrawCache(ctx, cache);
-        //}
-        //else
-        //{
-        //    DrawRenderObject(ctx, cache);
-        //}
+        //CreateRenderedNode(DrawingRect, ctx.Scale, "DrawRenderObjectInternal");
     }
 
+ 
     public bool IsCacheImage
     {
         get
@@ -452,8 +453,7 @@ public partial class SkiaControl
 
     protected virtual bool UseRenderingObject(DrawingContext context, SKRect recordArea)
     {
-
-        //lock (LockDraw)
+        lock (LockDraw) //prevent conflicts with erasing cache after we decided to use it
         {
             var cache = RenderObject;
             var cacheOffscreen = RenderObjectPrevious;
@@ -472,6 +472,7 @@ public partial class SkiaControl
 
             if (cache != null)
             {
+                //CacheValidity will be set by CheckCachedObjectValid
                 if (!UsesCacheDoubleBuffering && !CheckCachedObjectValid(cache, recordArea, context.Context))
                 {
                     return false;
@@ -485,7 +486,13 @@ public partial class SkiaControl
                 }
 
                 if (!UsesCacheDoubleBuffering || !NeedUpdateFrontCache)
+                {
                     return true;
+                }
+            }
+            else
+            {
+                CacheValidity = CacheValidityType.Missing;
             }
 
             if (UsesCacheDoubleBuffering)
@@ -525,6 +532,16 @@ public partial class SkiaControl
             return false;
         }
 
+    }
+
+    public CacheValidityType CacheValidity { get; protected set; }
+
+    public enum CacheValidityType
+    {
+        Valid,
+        Missing,
+        SizeMismatch,
+        GraphicContextMismatch
     }
 
     public Action GetOffscreenRenderingAction()
@@ -733,6 +750,9 @@ public partial class SkiaControl
     public virtual bool DrawUsingRenderObject(DrawingContext context,
         float widthRequest, float heightRequest)
     {
+        if (IsDisposed || IsDisposing || !IsVisible)
+            return false;
+
         Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
 
         bool willDraw = !CheckIsGhost();
@@ -741,11 +761,9 @@ public partial class SkiaControl
             if (UsingCacheType != SkiaCacheType.None)
             {
                 var destination = DrawingRect;
-
                 var recordArea = destination;
                 if (UsingCacheType == SkiaCacheType.OperationsFull)
                 {
-                    //recordArea = destination;
                     recordArea = context.Context.Canvas.LocalClipBounds;
                 }
 
@@ -775,32 +793,100 @@ public partial class SkiaControl
                         });
                     }
                     else
+                    {
                         CreateRenderingObjectAndPaint(clone, recordArea, (ctx) =>
                         {
                             PaintWithEffects(ctx.WithDestination(DrawingRect));
                         });
+                    }
                 }
             }
             else
             {
-                var destination = context.Destination;
- 
-                var clone = AddPaintArguments(context).WithDestination(DrawingRect);
-                DrawWithClipAndTransforms(clone, DrawingRect, true, true, (ctx) =>
-                {
-                    PaintWithEffects(ctx);
-
-                    if (EffectPostRenderer != null)
-                    {
-                        EffectPostRenderer.Render(ctx.WithDestination(destination));
-                    }
-                });
+                // NO CACHE, DIRECT PAINT
+                DrawDirectInternal(context, DrawingRect);
             }
         }
 
         FinalizeDrawingWithRenderObject(context); //NeedUpdate will go false
 
         return willDraw;
+    }
+
+    public virtual VisualNode? PrepareNode(DrawingContext context, float widthRequest, float heightRequest)
+    {
+        //this will measure too if needed including deeper
+        Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
+
+        bool willDraw = !CheckIsGhost();
+        if (willDraw)
+        {
+            CreateTransformationMatrix(context.Context, DrawingRect);
+            var node = CreateRenderedNode(DrawingRect, context.Scale, "pn");
+
+            //note UsesCacheDoubleBuffering is going deprecated with 2 passes rendering tree
+            //and new logic for ImageCacheComposite needs to be implemented for nodes
+            if (UsingCacheType != SkiaCacheType.None)
+            {
+                var destination = DrawingRect;
+                var recordArea = destination;
+                if (UsingCacheType == SkiaCacheType.OperationsFull)
+                {
+                    recordArea = context.Context.Canvas.LocalClipBounds;
+                }
+
+                var clone = AddPaintArguments(context).WithDestination(destination);
+                CachedObject cache = null;
+                if (RenderObject == null || !CheckCachedObjectValid(RenderObject, recordArea, clone.Context))
+                {
+                    cache = CreateRenderingObject(clone, recordArea, RenderObjectPrevious, UsingCacheType,
+                        (ctx) => { PaintWithEffects(ctx); });
+                }
+
+                node.Cache = cache;
+            }
+
+            // todo doubling children nodes for some reason
+            foreach (var child in Views)
+            {
+                if (child.CanDraw)
+                {
+                    var childNode = child.PrepareNode(context, SizeRequest.Width, SizeRequest.Height);
+                    if (childNode != null)
+                    {
+                        node.Children.Add(childNode);
+                    }
+                }
+            }
+
+            return node;
+        }
+
+        return null;
+    }
+
+
+
+    /// <summary>
+    ///  Not using cache
+    /// </summary>
+    /// <param name="context">context.Destination can be bigger than drawingRect</param>
+    /// <param name="drawingRect">normally equal to DrawingRect</param>
+    public virtual void DrawDirectInternal(DrawingContext context, SKRect drawingRect)
+    {
+        // NO CACHE, DIRECT PAINT
+        var destination = context.Destination;
+
+        var clone = AddPaintArguments(context).WithDestination(drawingRect);
+        DrawWithClipAndTransforms(clone, drawingRect, true, true, (ctx) =>
+        {
+            PaintWithEffects(ctx);
+
+            if (EffectPostRenderer != null)
+            {
+                EffectPostRenderer.Render(ctx.WithDestination(destination));
+            }
+        });
     }
 
     /// <summary>
@@ -841,6 +927,11 @@ public partial class SkiaControl
         || usingCacheType == SkiaCacheType.ImageComposite)
         {
             oldObject = RenderObjectPrevious;
+        }
+        else
+        if (usingCacheType == SkiaCacheType.OperationsFull)
+        {
+            var debug = 1;
         }
 
         var created = CreateRenderingObject(context, recordingArea, oldObject, UsingCacheType, action);

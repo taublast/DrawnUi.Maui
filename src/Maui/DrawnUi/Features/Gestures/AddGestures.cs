@@ -76,6 +76,14 @@ public static partial class AddGestures
             if (_parent == null || !_parent.CanDraw)
                 return null;
 
+            if (_parent is ISkiaGestureListener listener)
+            {
+                var consumed = listener.OnSkiaGestureEvent(args, apply);
+                if (consumed != null)
+                {
+                    return consumed;
+                }
+            }
 
             if (args.Type == TouchActionResult.LongPressing)
             {
@@ -131,10 +139,6 @@ public static partial class AddGestures
                 }
             }
 
-            if (_parent is ISkiaGestureListener listener)
-            {
-                return listener.OnSkiaGestureEvent(args, apply);
-            }
 
             return base.ProcessGestures(args, apply);
         }
@@ -156,7 +160,7 @@ public static partial class AddGestures
 
                 if (view is IHasAfterEffects hasEffects)
                 {
-                    var thisOffset = TranslateInputCoords(apply.childOffset, false);
+                    var thisOffset = TranslateInputCoords(apply.ChildOffset, false);
                     var pixX = args.Event.Location.X + thisOffset.X;
                     var pixY = args.Event.Location.Y + thisOffset.Y;
                     var x = pixX / RenderingScale;
@@ -165,7 +169,7 @@ public static partial class AddGestures
                     var color = GetTouchEffectColor(_parent);
                     if (anim == SkiaTouchAnimation.Ripple)
                     {
-                        var ptsInsideControl = hasEffects.GetOffsetInsideControlInPoints(args.Event.Location, apply.childOffset);
+                        var ptsInsideControl = hasEffects.GetOffsetInsideControlInPoints(args.Event.Location, apply.ChildOffset);
                         hasEffects.PlayRippleAnimation(color, ptsInsideControl.X, ptsInsideControl.Y);
                     }
                     else

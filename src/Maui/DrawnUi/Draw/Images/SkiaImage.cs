@@ -483,27 +483,30 @@ public class SkiaImage : SkiaControl
                 CancelLoading = cancel;
                 IsLoading = true;
 
-                //maybe its local image?
-                if (source is StreamImageSource || source is FileImageSource)
+                if (!SkiaImageManager.LoadLocalAsync)
                 {
-                    //load in sync mode
-                    var bitmap = SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel).GetAwaiter()
-                        .GetResult();
-                    if (bitmap != null)
+                    //maybe its local image?
+                    if (source is StreamImageSource || source is FileImageSource)
                     {
-                        //ImageBitmap = new LoadedImageSource(bitmap)
-                        //{
-                        //    ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
-                        //};
-                        SetImageInternal(SKImage.FromBitmap(bitmap), SkiaImageManager.ReuseBitmaps);
-                        OnSourceSuccess(uri);
-                    }
-                    else
-                    {
-                        OnSourceError(url);
+                        //load in sync mode
+                        var bitmap = SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel).GetAwaiter()
+                            .GetResult();
+                        if (bitmap != null)
+                        {
+                            //ImageBitmap = new LoadedImageSource(bitmap)
+                            //{
+                            //    ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
+                            //};
+                            SetImageInternal(SKImage.FromBitmap(bitmap), SkiaImageManager.ReuseBitmaps);
+                            OnSourceSuccess(uri);
+                        }
+                        else
+                        {
+                            OnSourceError(url);
+                        }
+                        return;
                     }
 
-                    return;
                 }
 
                 //okay will load async then

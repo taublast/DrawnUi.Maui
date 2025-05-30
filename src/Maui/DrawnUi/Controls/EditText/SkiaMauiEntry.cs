@@ -17,12 +17,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        Debug.WriteLine($"[SkiaMauiEntry] consuming {args.Type}'");
-
-        if (args.Type == TouchActionResult.Up)
-        {
-            var top = 2;
-        }
+        //Debug.WriteLine($"[SkiaMauiEntry] consuming '{args.Type}'");
 
         return this;
     }
@@ -70,8 +65,8 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
             Control = new MauiEntry()
             {
                 IsSpellCheckEnabled = this.IsSpellCheckEnabled,
-                BackgroundColor = Colors.Transparent,
-                Background = Colors.Transparent
+                BackgroundColor = this.BackgroundColor,
+                Background = null//Colors.Transparent,
             };
 
             MapProps(Control);
@@ -142,9 +137,10 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         control.MaxLines = MaxLines;
         control.FontSize = FontSize;
         control.TextColor = this.TextColor;
+        control.PlaceholderColor = this.PlaceholderColor;
         control.ReturnType = this.ReturnType;
         control.Keyboard = this.KeyboardType;
-        ;
+        control.BackgroundColor = this.BackgroundColor;
 
         if (Text != control.Text)
             control.Text = Text;
@@ -310,10 +306,17 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
         return base.Measure(widthConstraint, heightConstraint, scale);
     }
 
+    protected virtual void WhenFocusChanged(bool state)
+    {
+        FocusChanged?.Invoke(this, state);
+    }
+
     protected void SetFocusInternal(bool value)
     {
         lock (lockFocus)
         {
+            WhenFocusChanged(value);
+
             if (internalFocus)
             {
                 internalFocus = false;
@@ -335,11 +338,6 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
             }
         }
     }
-
-    /// <summary>
-    /// TODO
-    /// </summary>
-    bool LockFocus { get; set; }
 
     #region PROPERTIES
 
@@ -394,6 +392,16 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     {
         get { return (Color)GetValue(TextColorProperty); }
         set { SetValue(TextColorProperty, value); }
+    }
+
+    public static readonly BindableProperty PlaceholderColorProperty = BindableProperty.Create(
+        nameof(PlaceholderColor), typeof(Color), typeof(SkiaMauiEntry),
+        Colors.DarkGray,
+        propertyChanged: NeedUpdateControl);
+    public Color PlaceholderColor
+    {
+        get { return (Color)GetValue(PlaceholderColorProperty); }
+        set { SetValue(PlaceholderColorProperty, value); }
     }
 
     public static readonly BindableProperty FontWeightProperty = BindableProperty.Create(

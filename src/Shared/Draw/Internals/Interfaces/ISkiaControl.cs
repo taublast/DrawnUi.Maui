@@ -2,6 +2,9 @@
 
 public interface ISkiaControl : IDrawnBase
 {
+    VisualNode VisualNode { get; set; }
+    VisualNode LastVisualNode { get; set; }
+
     IDrawnBase Parent { get; set; }
 
     Thickness Margin { get; }

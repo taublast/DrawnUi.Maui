@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <views:BasePageCodeBehind
     x:Class="Sandbox.Views.MainPageGif"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -16,7 +17,7 @@
         Margin="0,32,0,0"
         BackgroundColor="Black"
         Gestures="Enabled"
-        RenderingMode = "Accelerated"
+        RenderingMode="Accelerated"
         HorizontalOptions="Fill"
         Tag="MainPage"
         VerticalOptions="Fill">
@@ -44,7 +45,20 @@
                         TextColor="White"
                         UseCache="Operations" />
 
+                    <!--<draw:SkiaImage Source="Images/8.jpg" HeightRequest="100" WidthRequest="100" 
+                                    Aspect="AspectFitFill"
+                                    RescalingQuality="High" 
+                                    UseCache="Image"
+                                    HorizontalOptions="Center" IsVisible="{Binding Visibility}" />
+
+                    <draw:SkiaImage Source="Images/maui1.png" HeightRequest="100" WidthRequest="100"
+                                    Aspect="AspectFitFill" 
+                                    RescalingQuality="High" 
+                                    UseCache="Image"
+                                    HorizontalOptions="Center" />-->
+
                     <draw:SkiaButton
+                        ControlStyle="Cupertino"
                         HeightRequest="38"
                         HorizontalOptions="Center"
                         Tapped="SkiaButton_OnTapped"
@@ -52,14 +66,13 @@
                         WidthRequest="200" />
 
                     <draw:SkiaMediaImage
+                        IsVisible="{Binding Visibility}" 
                         HorizontalOptions="Fill"
-                        IsVisible="{Binding Visibility}"
                         Source="Anims/look.webp" />
 
                     <draw:SkiaGif
                         BackgroundColor="Gainsboro"
                         HorizontalOptions="Fill"
-                        IsVisible="{Binding Visibility}"
                         Repeat="-1"
                         Source="Anims/hair.webp" />
 

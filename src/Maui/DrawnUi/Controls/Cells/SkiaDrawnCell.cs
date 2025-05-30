@@ -8,7 +8,7 @@ namespace DrawnUi.Controls;
 /// </summary>
 public class SkiaDrawnCell : SkiaLayout, ISkiaCell
 {
-    protected virtual void SetContent()
+    protected virtual void SetContent(object ctx)
     {
 
     }
@@ -25,7 +25,7 @@ public class SkiaDrawnCell : SkiaLayout, ISkiaCell
 
     private bool _isAttaching;
 
-    protected INotifyPropertyChanged _lastContext;
+    public INotifyPropertyChanged Context { get; protected set; }
 
     public override void OnDisposing()
     {
@@ -36,33 +36,41 @@ public class SkiaDrawnCell : SkiaLayout, ISkiaCell
 
     protected virtual void FreeContext()
     {
-        _lastContext = null;
+        Context = null;
     }
 
-    protected virtual void AttachContext()
+    protected virtual void AttachContext(object ctx)
     {
-        if (BindingContext != null)
+        if (ctx != null)
         {
-            _lastContext = BindingContext as INotifyPropertyChanged;
+            Context = ctx as INotifyPropertyChanged;
         }
     }
 
+    private object LockContext = new();
+
+
     public override void ApplyBindingContext()
     {
-        base.ApplyBindingContext();
-
-        if (BindingContext != _lastContext && !_isAttaching)
+        lock (LockContext)
         {
-            _isAttaching = true;
+            base.ApplyBindingContext();
 
-            FreeContext();
+            var ctx = BindingContext;
 
-            if (_lastContext == null)
+            if (ctx != Context && !_isAttaching)
             {
-                SetContent();
-                AttachContext();
+                _isAttaching = true;
+
+                FreeContext();
+
+                if (Context == null)
+                {
+                    SetContent(ctx);
+                    AttachContext(ctx);
+                }
+                _isAttaching = false;
             }
-            _isAttaching = false;
         }
     }
 

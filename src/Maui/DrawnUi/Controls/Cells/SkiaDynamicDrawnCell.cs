@@ -20,19 +20,19 @@ public class SkiaDynamicDrawnCell : SkiaDrawnCell
 
     protected override void FreeContext()
     {
-        if (_lastContext != null)
+        if (Context != null)
         {
-            _lastContext.PropertyChanged -= ContextPropertyChanged;
+            Context.PropertyChanged -= ContextPropertyChanged;
         }
         base.FreeContext();
     }
 
-    protected override void AttachContext()
+    protected override void AttachContext(object ctx)
     {
-        base.AttachContext();
+        base.AttachContext(ctx);
 
-        if (_lastContext != null)
-            _lastContext.PropertyChanged += ContextPropertyChanged;
+        if (Context != null)
+            Context.PropertyChanged += ContextPropertyChanged;
     }
 
     protected virtual void ContextPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
