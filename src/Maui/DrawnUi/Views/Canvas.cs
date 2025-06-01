@@ -15,12 +15,12 @@ namespace DrawnUi.Views;
 [ContentProperty("Content")]
 public class Canvas : DrawnView, IGestureListener
 {
-    protected override void OnFinalizeRendering()
-    {
-        base.OnFinalizeRendering();
+    //protected override void OnFinalizeRendering()
+    //{
+    //    base.OnFinalizeRendering();
 
-        //DumpDebug();
-    }
+    //    DumpDebug();
+    //}
 
     public override void SetChildren(IEnumerable<SkiaControl> views)
     {
@@ -30,14 +30,8 @@ public class Canvas : DrawnView, IGestureListener
 
     public void DumpDebug()
     {
-        if (IsRendering)
-        {
-            DumpTree(this.Content.LastVisualNode);
-        }
-        else
-        {
-            DumpTree(this.Content.VisualNode);
-        }
+        Super.Log("-------------------------------------------------");
+        DumpLayersTree(this.Content?.VisualLayer);
     }
 
     protected override void OnChildAdded(SkiaControl child)

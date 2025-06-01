@@ -6,13 +6,14 @@ namespace DrawnUi.Views
 {
     public partial class DrawnView : IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
-        public void DumpTree(VisualNode node, string prefix = "", bool isLast = true, int level = 0)
+        public void DumpLayersTree(VisualLayerDraft node, string prefix = "", bool isLast = true, int level = 0)
         {
             if (node == null)
             {
-                Debug.WriteLine("[DumpTree] root node is NULL");
+                Super.Log("[DumpTree] root node is NULL");
                 return;
             }
+
             string indent = new string(' ', level * 4);
 
             // Box drawing characters for tree structure
@@ -28,25 +29,65 @@ namespace DrawnUi.Views
                 line += $" [{node.Cached}]";
             }
 
-            if (!string.IsNullOrEmpty(node.Control.Tag))
-            {
-                line += $" - {node.Control.Tag}";
-            }
-
             if (!string.IsNullOrEmpty(node.Tag))
             {
                 line += $" by {node.Tag}";
             }
 
-            Trace.WriteLine(line);
+            Super.Log(line);
 
             // Process children
             for (int i = 0; i < node.Children.Count; i++)
             {
                 bool childIsLast = (i == node.Children.Count - 1);
-                DumpTree(node.Children[i], prefix + childPrefix, childIsLast, level);
+                DumpLayersTree(node.Children[i], prefix + childPrefix, childIsLast, level);
             }
         }
+
+        public void DumpLayersTree(VisualLayer node, string prefix = "", bool isLast = true, int level = 0)
+        {
+            if (node == null)
+            {
+                Super.Log("[DumpTree] root node is NULL");
+                return;
+            }
+
+            string indent = new string(' ', level * 4);
+
+            // Box drawing characters for tree structure
+            string connector = isLast ? "└─ " : "├─ ";
+            string childPrefix = isLast ? "   " : "│  ";
+
+            // Print the current node with appropriate prefix
+            var line =
+                $"{indent}{prefix}{connector}{node.ControlType} at {node.HitBoxWithTransforms.Pixels.Location} ({node.Children.Length})";
+
+            if (!string.IsNullOrEmpty(node.Tag))
+            {
+                line += $" \"{node.Tag}\"";
+            }
+
+            if (node.Cached != SkiaCacheType.None)
+            {
+                line += $" [{node.Cached}]";
+            }
+
+            if (node.IsFrozen)
+            {
+                line += $" [Inside cache]";
+            }
+
+
+            Super.Log(line);
+
+            // Process children
+            for (int i = 0; i < node.Children.Length; i++)
+            {
+                bool childIsLast = (i == node.Children.Length - 1);
+                DumpLayersTree(node.Children[i], prefix + childPrefix, childIsLast, level);
+            }
+        }
+
 
         public class DiagnosticData
         {
@@ -1929,40 +1970,35 @@ namespace DrawnUi.Views
                         destination.Right - (float)Math.Round((Padding.Right) * scale),
                         destination.Bottom - (float)Math.Round((Padding.Bottom) * scale));
 
-                    if (VisualTree != null)
+                    /*
+                    if (VisualTree != null) //not used at all just playing around
                     {
-                        //todo working on new rendering pipeline
-
-                        //using only 1 root, so move to Canvas after code ready
                         var child = children.FirstOrDefault();
                         if (child != null)
                         {
-                            //pass 1
-                            //if (!VisualTree.WasRendered)
+                            // Pass 1: Prepare logical tree
+                            child.OptionalOnBeforeDrawing();
+                            if (child.CanDraw)
                             {
-                                child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
-                                if (child.CanDraw) //still visible
+                                if (NeedMeasureDrawn)
                                 {
-                                    if (NeedMeasureDrawn)
-                                    {
-                                        child.NeedMeasure = true;
-                                    }
-
-                                    VisualTree.PrepareRenderingTree(context.WithDestination(rectForChild),
-                                        (float)(Width - Padding.HorizontalThickness),
-                                        (float)(Height - Padding.VerticalThickness),
-                                        child);
-
-                                    VisualTree.DumpPreparedTree();
+                                    child.NeedMeasure = true;
                                 }
+
+                                // Build the logical VisualNode tree (similar to existing pattern)
+                                VisualTree.PrepareLogicalTree(context.WithDestination(rectForChild),
+                                    (float)(Width - Padding.HorizontalThickness),
+                                    (float)(Height - Padding.VerticalThickness),
+                                    child);
                             }
 
-                            VisualTree.Render(context.WithDestination(rectForChild));
+                            // Pass 2: Render using logical tree
+                            VisualTree.RenderLogical(context.WithDestination(rectForChild));
                         }
                     }
                     else //usual one, still working fine
+                    */
                     {
-                        
                         foreach (var child in children)
                         {
                             child.OptionalOnBeforeDrawing(); //could set IsVisible or whatever inside
@@ -2011,8 +2047,7 @@ namespace DrawnUi.Views
                                     transform.Opacity = (float)node.OpacityTotal;
                                     transform.Rotation = (float)node.RotationTotal;
                                     transform.Scale = node.ScaleTotal;
-
-                                    transform.Frame = subscriber.VisualNode.HitBoxWithTransforms;
+                                    transform.Frame = subscriber.VisualLayerPreparing.HitBoxWithTransforms;
                                 }
                                 else
                                 {

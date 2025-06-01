@@ -1285,6 +1285,7 @@ public class SkiaCarousel : SnappingLayout
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         bool passedToChildren = false;
+        var consumedDefault = BlockGesturesBelow ? this : null;
 
         ISkiaGestureListener PassToChildren()
         {
@@ -1312,7 +1313,7 @@ public class SkiaCarousel : SnappingLayout
         }
 
         if (!RespondsToGestures)
-            return null;
+            return consumedDefault;
 
         void ResetPan()
         {
@@ -1351,7 +1352,7 @@ public class SkiaCarousel : SnappingLayout
                         Math.Abs(args.Event.Distance.Total.Y) > Math.Abs(args.Event.Distance.Total.X) ||
                         Math.Abs(args.Event.Distance.Total.X) < 2)
                     {
-                        return null;
+                        return consumedDefault;
                     }
                 }
 
@@ -1431,9 +1432,14 @@ public class SkiaCarousel : SnappingLayout
         }
 
         if (!passedToChildren)
-            return PassToChildren();
+        {
+            consumed = PassToChildren();
+            if (consumed == null)
+                return consumedDefault;
+            return consumed;
+        }
 
-        return null;
+        return consumedDefault;
     }
 
     #endregion

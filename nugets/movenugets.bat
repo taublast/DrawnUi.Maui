@@ -17,7 +17,7 @@ set "source_dir3=%batch_dir%\..\src\Maui\Addons\DrawnUi.Maui.Game\bin\Release"
 set "source_dir4=%batch_dir%\..\src\Maui\Addons\DrawnUi.Maui.MapsUi\src\bin\Release"
 set "source_dir5=%batch_dir%\..\src\Maui\Addons\DrawnUi.Maui.Rive\bin\Release"
 set "source_dir6=%batch_dir%\..\src\Maui\Addons\DrawnUi.MauiGraphics\bin\Release"
-set "destination_dir=E:\Nugets"
+set "destination_dir=C:\Nugets"
 
 REM Define file masks
 set "file_mask1=*.nupkg"

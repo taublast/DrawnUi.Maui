@@ -6,6 +6,27 @@ public partial class SkiaScroll
 {
     public bool ReverseGestures { get; set; }
 
+
+    public override bool IsGestureForChild(SkiaControl child, SkiaGesturesParameters args)
+    {
+        if (lockHeader && child != Header)
+        {
+            return false;
+        }
+
+        var forChild = base.IsGestureForChild(child, args);
+        if (!HeaderBehind && Header != null)
+        {
+            //block gestures for other children if from header got them
+            if (child == this.Header && forChild)
+            {
+                lockHeader = true;
+            }
+        }
+
+        return forChild;
+    }
+
     public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
     {
         if (lockHeader && child.Control != Header)
@@ -127,10 +148,12 @@ public partial class SkiaScroll
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
+        var consumedDefault = BlockGesturesBelow ? this : null;
+
         if (LockGesturesUntilDown)
         {
             if (args.Type != TouchActionResult.Down)
-                return null;
+                return consumedDefault;
 
             LockGesturesUntilDown = false;
         }
@@ -318,7 +341,7 @@ public partial class SkiaScroll
                             if (IgnoreWrongDirection && wrongDirection)
                             {
                                 IsUserFocused = false;
-                                return null;
+                                return consumedDefault;
                             }
                         }
 
@@ -326,7 +349,7 @@ public partial class SkiaScroll
 
                         if (IgnoreWrongDirection && wrongDirection)
                         {
-                            return null;
+                            return consumedDefault;
                         }
 
                         SwipeVelocityAccumulator.CaptureVelocity(new(VelocityX, VelocityY));
@@ -353,7 +376,7 @@ public partial class SkiaScroll
                         {
                             if (!AreEqual(clamped.X, moveTo.X, 0.5) && !AreEqual(clamped.Y, moveTo.Y, 0.5))
                             {
-                                return null;
+                                return consumedDefault;
                             }
                         }
 
@@ -378,7 +401,7 @@ public partial class SkiaScroll
                         {
                             //if (CheckNeedToSnap())
                             //    Snap(SystemAnimationTimeSecs);
-                            return null;
+                            return consumedDefault;
                         }
 
                         bool canSwipe = true;
@@ -406,13 +429,13 @@ public partial class SkiaScroll
                                         if (Orientation == ScrollOrientation.Vertical &&
                                             mainDirection != DirectionType.Vertical)
                                         {
-                                            return null;
+                                            return consumedDefault;
                                         }
 
                                         if (Orientation == ScrollOrientation.Horizontal &&
                                             mainDirection != DirectionType.Horizontal)
                                         {
-                                            return null;
+                                            return consumedDefault;
                                         }
                                     }
                                 }
@@ -484,7 +507,7 @@ public partial class SkiaScroll
                                                     1) && finalVelocity.Y > 0) ||
                                                 (AreEqual(InternalViewportOffset.Pixels.Y, ContentOffsetBounds.Top,
                                                     1) && finalVelocity.Y < 0))
-                                                return null;
+                                                return consumedDefault;
                                         }
 
                                         if (Orientation == ScrollOrientation.Horizontal && !bounceX)
@@ -493,7 +516,7 @@ public partial class SkiaScroll
                                                     1) && finalVelocity.X > 0) ||
                                                 (AreEqual(InternalViewportOffset.Pixels.X, ContentOffsetBounds.Left,
                                                     1) && finalVelocity.X < 0))
-                                                return null;
+                                                return consumedDefault;
                                         }
                                     }
 
@@ -555,9 +578,14 @@ public partial class SkiaScroll
         }
 
         if (!passedToChildren) //will not pass when panning
-            return PassToChildren();
+        {
+            consumed = PassToChildren();
+            if (consumed == null)
+                return consumedDefault;
+            return consumed;
+        }
 
-        return null;
+        return consumedDefault;
     }
 
     public virtual bool OnFocusChanged(bool focus)

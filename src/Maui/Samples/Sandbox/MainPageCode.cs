@@ -55,6 +55,7 @@ namespace Sandbox
                 BackgroundColor = Colors.White,
                 Content = new SkiaLayout()
                 {
+                    Tag = "WrapperStack",
                     Type = LayoutType.Column,
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill,
@@ -63,17 +64,23 @@ namespace Sandbox
 
                         new SkiaButton()
                         {
+                            Tag = "Button",
+                            BackgroundColor = Colors.GreenYellow,
+                            TextColor = Colors.Black,
+                            UseCache = SkiaCacheType.Image,
                             Text = "Add Item",
                             HeightRequest = 40,
                             HorizontalOptions = LayoutOptions.Center,
                             WidthRequest = 200,
                         }.OnTapped((me) =>
                         {
+                            me.TranslationX += RndExtensions.CreateRandom(1, 20);
                             Source.Add("new item");
                         }),
 
                         new SkiaScroll()
                         {
+           
                             BackgroundColor = Colors.Red,
                             Tag = "MainScroll",
                             HorizontalOptions = LayoutOptions.Start,
@@ -83,12 +90,14 @@ namespace Sandbox
                                 Type = LayoutType.Column,
                                 Spacing = 8,
                                 ItemsSource = Source,
+                                Tag = "ScrollContentStack",
                                 MeasureItemsStrategy = MeasuringStrategy.MeasureAll,
                                 RecyclingTemplate = RecyclingTemplate.Disabled,
                                 ItemTemplate = new DataTemplate(() =>
                                 {
                                     var cell = new TrackCell()
                                     {
+                                        Tag = "ScrollCell",
                                         BackgroundColor = Colors.Bisque,
                                         UseCache = SkiaCacheType.Image,
                                         HorizontalOptions = LayoutOptions.Fill,
@@ -119,7 +128,6 @@ namespace Sandbox
                                 })
                             }
                         }
-
 
                     }
                 }

@@ -26,8 +26,8 @@ namespace DrawnUi.Draw
             Init();
         }
 
-        public VisualNode VisualNode { get; set; }
-        public VisualNode LastVisualNode { get; set; }
+        public VisualLayerDraft? VisualLayerPreparing { get; set; }
+        public VisualLayer? VisualLayer { get; set; }
 
         private void Init()
         {
@@ -1213,6 +1213,20 @@ namespace DrawnUi.Draw
             return inside;
         }
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual bool IsGestureForChild(SkiaControl child, SkiaGesturesParameters args)
+        {
+            bool inside = false;
+            if (child != null && !child.IsDisposing && !child.IsDisposed &&
+                !child.InputTransparent && child.VisualLayer != null && child.CanDraw)
+            {
+                var hitbox = child.VisualLayer.HitBoxWithTransforms.Pixels;
+                inside = hitbox.ContainsInclusive(args.Event.Location.X, args.Event.Location.Y);
+            }
+            return inside;
+        }
+
         //          
         // SKPoint childOffset, SKPoint childOffsetDirect, ISkiaGestureListener alreadyConsumed
         public static readonly BindableProperty CommandChildTappedProperty = BindableProperty.Create(
@@ -1384,6 +1398,8 @@ namespace DrawnUi.Draw
                 Super.Log($"[BASE] {this.Tag} Got {args.Type}.. {Uid}");
             }
 
+            var consumedDefault = BlockGesturesBelow ? this as ISkiaGestureListener : null;
+
             if (HasTransform)
             {
                 // Transform the mapped location using the inverse transformation matrix
@@ -1440,6 +1456,14 @@ namespace DrawnUi.Draw
                         if (listener != null)
                         {
                             var forChild = IsGestureForChild(child, touchLocationWIthOffset);
+                            //var forChildNew = IsGestureForChild(child.Control, args);
+                            //if (forChildOld != forChild)
+                            //{
+                            //    var stop = 1;
+                            //    forChildOld = IsGestureForChild(child, touchLocationWIthOffset);
+                            //    forChild = IsGestureForChild(child.Control, args);
+                            //}
+
                             if (forChild)
                             {
                                 if (args.Type == TouchActionResult.Tapped)
@@ -1525,7 +1549,7 @@ namespace DrawnUi.Draw
                     try
                     {
                         if (CheckChildrenGesturesLocked(args.Type))
-                            return null;
+                            return consumedDefault;
 
                         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
 
@@ -1623,6 +1647,18 @@ namespace DrawnUi.Draw
             }
 
             return consumed;
+        }
+
+        public static readonly BindableProperty BlockGesturesBelowProperty = BindableProperty.Create(nameof(BlockGesturesBelow),
+            typeof(bool), typeof(SkiaControl), false);
+
+        /// <summary>
+        ///  If set to true will not allow gestures to go below
+        /// </summary>
+        public bool BlockGesturesBelow
+        {
+            get { return (bool)GetValue(BlockGesturesBelowProperty); }
+            set { SetValue(BlockGesturesBelowProperty, value); }
         }
 
         public int UpdateLocks { get; private set; }
@@ -1850,6 +1886,7 @@ namespace DrawnUi.Draw
         /// </summary>
         public virtual void OnDisposing()
         {
+            ExecuteOnPaint.Clear();
             ExecuteAfterCreated.Clear();
             Rendered = null;
             ClipWith = null;
@@ -4021,9 +4058,12 @@ namespace DrawnUi.Draw
             {
                 DefaultContentCreated = true;
 
-                foreach (var action in ExecuteAfterCreated.Values)
+                if (ExecuteAfterCreated.Count > 0)
                 {
-                    action?.Invoke(this);
+                    foreach (var action in ExecuteAfterCreated.Values)
+                    {
+                        action?.Invoke(this);
+                    }
                 }
 
                 CreateDefaultContent();
@@ -4519,6 +4559,8 @@ namespace DrawnUi.Draw
         /// </summary>
         public Dictionary<string, Action<SkiaControl>> ExecuteAfterCreated { get; } = new();
 
+        public Dictionary<string, Action<SkiaControl, DrawingContext>> ExecuteOnPaint { get; } = new();
+
         /// <summary>
         /// Releases unmanaged resources before the object is reclaimed by garbage collection.
         /// </summary>
@@ -4752,12 +4794,12 @@ namespace DrawnUi.Draw
         protected bool IsRendering { get; set; }
         protected bool NodeAttached { get; set; }
 
-        public VisualNode? FindRenderedNode(SkiaControl control)
+        public VisualLayerDraft? FindRenderedNode(SkiaControl control)
         {
-            if (VisualNode == null)
+            if (VisualLayerPreparing == null)
                 return null;
 
-            foreach (var node in this.VisualNode.Children)
+            foreach (var node in this.VisualLayerPreparing.Children)
             {
                 if (node.Control == control)
                     return node;
@@ -4770,18 +4812,18 @@ namespace DrawnUi.Draw
             return null;
         }
 
-        public virtual VisualNode CreateRenderedNode(SKRect destination, float scale, string tag)
+        public virtual VisualLayerDraft CreateRenderedNode(SKRect destination, float scale)
         {
-            VisualNode parentVisualNode = (Parent as SkiaControl)?.VisualNode;
+            VisualLayerDraft parentVisualNode = (Parent as SkiaControl)?.VisualLayerPreparing;
 
-            VisualNode = new VisualNode(this, parentVisualNode, destination, scale, tag);
+            VisualLayerPreparing = new VisualLayerDraft(this, parentVisualNode, destination, scale, Tag);
 
             if (parentVisualNode != null)
-                ((SkiaControl)Parent).VisualNode.Children.Add(VisualNode);
+                ((SkiaControl)Parent).VisualLayerPreparing.Children.Add(VisualLayerPreparing);
 
             NodeAttached = true;
 
-            return VisualNode;
+            return VisualLayerPreparing;
         }
 
         public virtual void Render(DrawingContext context)
@@ -4796,8 +4838,7 @@ namespace DrawnUi.Draw
             RenderingScale = context.Scale;
             NeedUpdate = false;
 
-            LastVisualNode = VisualNode;
-            VisualNode = null;
+            VisualLayerPreparing = null;
 
             OnBeforeDrawing(context);
 
@@ -4879,6 +4920,8 @@ namespace DrawnUi.Draw
 
             X = LastDrawnAt.Location.X / context.Scale;
             Y = LastDrawnAt.Location.Y / context.Scale;
+
+            VisualLayer = VisualLayerPreparing != null ? VisualLayer.FromRenderer(this.VisualLayerPreparing) : null;
 
             ExecutePostAnimators(context);
 
@@ -5152,7 +5195,9 @@ namespace DrawnUi.Draw
                     RenderTransformMatrix = SKMatrix.Identity;
                 }
 
-                CreateRenderedNode(transformsArea, ctx.Scale, "dwct1");
+                //creating node BEFORE drawing children so they can attach
+                //but AFTER we have matrix and destination ready
+                CreateRenderedNode(transformsArea, ctx.Scale);
 
                 if (isClipping)
                 {
@@ -5166,8 +5211,10 @@ namespace DrawnUi.Draw
             }
             else
             {
+                //draw without transforms
                 RenderTransformMatrix = SKMatrix.Identity;
-                CreateRenderedNode(transformsArea, ctx.Scale, "dwct2");
+
+                CreateRenderedNode(transformsArea, ctx.Scale);
 
                 draw(ctx);
             }
@@ -5306,7 +5353,8 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// This is not a static bindable property. Can be set manually or by control, for example SkiaShape sets this to true for non-rectangular shapes, or rounded corners..
+        /// This is not a static bindable property.
+        /// Can be set manually or by control, for example SkiaShape sets this to true for non-rectangular shapes, or rounded corners..
         /// </summary>
         public bool ShouldClipAntialiased { get; set; }
 
@@ -5454,6 +5502,14 @@ namespace DrawnUi.Draw
                 return;
 
             PaintTintBackground(ctx.Context.Canvas, ctx.Destination);
+
+            if (ExecuteOnPaint.Count > 0)
+            {
+                foreach (var action in ExecuteOnPaint.Values)
+                {
+                    action?.Invoke(this, ctx);
+                }
+            }
 
             WasDrawn = true;
         }

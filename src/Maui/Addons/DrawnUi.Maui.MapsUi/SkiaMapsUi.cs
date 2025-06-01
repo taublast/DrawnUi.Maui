@@ -25,40 +25,6 @@ using Map = Mapsui.Map;
 
 namespace DrawnUi.MapsUi;
 
-
-public interface IMapPin 
-{
-    public string Id { get; set; }
-    public string Label { get; set; }
-    public string Address { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-    public int ZIndex { get; set; }
-    public bool IsVisible { get; set; } 
-    public SkiaControl Icon { get; set; }
-    public event EventHandler<MapPin> Tapped;
-    public event EventHandler<MapPin> InfoWindowTapped;
-}
-
-public interface IMapPinIcon
-{
-    void PinChanged (IMapPin pin);
-}
-
-public class MapPin : BindableObject, IMapPin
-{
-    public string Id { get; set; }
-    public string Label { get; set; }
-    public string Address { get; set; }
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
-    public int ZIndex { get; set; }
-    public bool IsVisible { get; set; } = true;
-    public SkiaControl Icon { get; set; } 
-    public event EventHandler<MapPin> Tapped;
-    public event EventHandler<MapPin> InfoWindowTapped;
-}
-
 /// <summary>
 /// MapControl for MAUI DrawnUi.
 /// Beware whole world mainly uses LAT LON, MapsUi uses mainly LON LAT
@@ -268,7 +234,9 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
-        var consumed = this; //   e.Handled = true;
+        var consumedDefault = BlockGesturesBelow ? this : null;
+
+        var consumed = consumedDefault;
 
         var point = TranslateInputOffsetToPixels(args.Event.Location, apply.ChildOffset);
 
@@ -391,7 +359,7 @@ public partial class SkiaMapsUi : SkiaLayout, IMapControl, ISkiaGestureListener
             }
         }
 
-        return this;
+        return consumed;
     }
 
 

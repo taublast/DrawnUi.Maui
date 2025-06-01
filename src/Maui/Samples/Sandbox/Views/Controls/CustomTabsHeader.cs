@@ -179,6 +179,7 @@ public class DrawnTabsHeader : SkiaLayout
                     if (child.Tag == "Active" && _clip != null)
                     {
                         var clip = _clip.CreateClip(null, true);
+                        child.ShouldClipAntialiased = true;
                         child.Clipping = (path, dest) =>
                         {
                             path.Reset();

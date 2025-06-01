@@ -159,4 +159,6 @@ public class CachedObject : IDisposable
     }
 
     public SKSurface Surface { get; set; }
+
+    public List<VisualLayerDraft> Children { get; set; }
 }

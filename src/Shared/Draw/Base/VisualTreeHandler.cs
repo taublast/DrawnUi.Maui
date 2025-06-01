@@ -1,4 +1,6 @@
-﻿namespace DrawnUi.Draw
+﻿using System.Xml.Linq;
+
+namespace DrawnUi.Draw
 {
     public class VisualTreeHandler
     {
@@ -16,7 +18,7 @@
                 DumpTree(ActiveTree);
         }
 
-        public void DumpTree(VisualNode node, string prefix = "", bool isLast = true, int level = 0)
+        public void DumpTree(VisualLayerDraft node, string prefix = "", bool isLast = true, int level = 0)
         {
             string indent = new string(' ', level * 4);
 
@@ -81,12 +83,12 @@
         /// <summary>
         /// This is used for rendering
         /// </summary>
-        protected VisualNode ActiveTree;
+        protected VisualLayerDraft ActiveTree;
 
         /// <summary>
         /// This is prepared and can be used to replace ActiveTree
         /// </summary>
-        protected VisualNode PreparedTree;
+        protected VisualLayerDraft PreparedTree;
 
         /// <summary>
         /// STEP 1 (or Background thread) prepare rendering tree that will be used for rendering later.
@@ -123,7 +125,7 @@
         /// </summary>
         /// <param name="context"></param>
         /// <param name="node"></param>
-        protected void RenderTreeInternal(DrawingContext context, VisualNode node)
+        protected void RenderTreeInternal(DrawingContext context, VisualLayerDraft node)
         {
             if (node != null)
             {
@@ -145,4 +147,108 @@
        
 
     }
+
+
+    /*
+    public class VisualTreeHandler2
+    {
+        public VisualNodePreparing PreparedLogicalTree { get; private set; }
+        public VisualNode FrozenLogicalTree { get; private set; }
+
+        /// <summary>
+        /// STEP 1: Prepare logical rendering tree that maintains complete hierarchy
+        /// </summary>
+        public void PrepareLogicalTree(DrawingContext context, float widthRequest, float heightRequest, SkiaControl root)
+        {
+            // Build complete logical tree with transforms and caches
+            var node = root.PrepareLogicalNode(context, widthRequest, heightRequest);
+
+            // Update parent-child relationships and transforms
+            if (node != null)
+            {
+                UpdateParentChildRelationships(node);
+            }
+
+            PreparedLogicalTree = node;
+
+            // Create immutable snapshot for thread-safe operations
+            if (node != null)
+            {
+                FrozenLogicalTree = VisualNode.FromPreparing(node);
+            }
+        }
+
+        /// <summary>
+        /// Updates parent-child transform relationships after tree is built
+        /// </summary>
+        private void UpdateParentChildRelationships(VisualNodePreparing node, VisualNodePreparing parent = null)
+        {
+            if (parent != null)
+            {
+                node.TransformsTotal = parent.TransformsTotal.PostConcat(node.Transforms);
+                node.OpacityTotal = parent.OpacityTotal * (node.Control?.Opacity ?? 1.0);
+                node.HitBoxWithTransforms = ScaledRect.FromPixels(
+                    VisualLayerDraft.TransformRect(node.HitBox.Pixels, node.TransformsTotal),
+                    node.HitBox.Scale);
+            }
+
+            foreach (var child in node.Children)
+            {
+                UpdateParentChildRelationships(child, node);
+            }
+        }
+
+        public void RenderLogical(DrawingContext context)
+        {
+            Super.Log("--------------------------------------------------------------------------");
+            FrozenLogicalTree?.Render(context);
+            Super.Log("--------------------------------------------------------------------------");
+            DumpPreparedLogicalTree(FrozenLogicalTree);
+            Super.Log("--------------------------------------------------------------------------");
+        }
+
+        public void DumpPreparedLogicalTree(VisualNode node, string prefix = "", bool isLast = true, int level = 0)
+        {
+            if (node == null)
+            {
+                Super.Log("[DumpPreparedLogicalTree] root node is NULL");
+                return;
+            }
+
+            string indent = new string(' ', level * 4);
+            string connector = isLast ? "└─ " : "├─ ";
+            string childPrefix = isLast ? "   " : "│  ";
+
+            var line =
+                $"{indent}{prefix}{connector}{node.Control.GetType()} at {node.HitBoxWithTransforms.Pixels.Location} ({node.Children.Length})";
+
+            if (node.Cache!=null)
+            {
+                line += $" [{node.Cache.Type}]";
+            }
+
+            if (!string.IsNullOrEmpty(node.Tag))
+            {
+                line += $" \"{node.Tag}\"";
+            }
+
+            Super.Log(line);
+
+            for (int i = 0; i < node.Children.Length; i++)
+            {
+                bool childIsLast = (i == node.Children.Length - 1);
+                DumpPreparedLogicalTree(node.Children[i], prefix + childPrefix, childIsLast, level);
+            }
+        }
+
+        /// <summary>
+        /// Hit testing using the logical tree
+        /// </summary>
+        public SkiaControl HitTest(SKPoint point)
+        {
+            var hit = FrozenLogicalTree?.HitTest(point);
+            return hit?.Control;
+        }
+    }
+    */
 }
