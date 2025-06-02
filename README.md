@@ -34,6 +34,21 @@ _The current development state is __ALPHA__, features remain to be implemented, 
 
 ___Please star ⭐ if you like it!___
 
+## What's new
+
+* More fluent extensions for C# UI creation.
+* Recycling views optimisations.
+* Apple Metal renderer made more fluid, noticeable in games scenarios.
+* SkiaScroll gestures and smooth scrolling noticeable fixes.
+* SkiaDrawer fixes for open/close and snapping.
+* Fixes for SkiaMauiEditor, SkiaMauiEntry, SkiaMauiElement: positionning, lock focus and other.
+* SkiaMarkdownLabel now uses CommonMark.NET, Markdig temporarily removed.
+* Invalidation optimizations, now correctly updating views while avoiding unnesessary measurements.
+* DrawnUiBasePage now "keyboard-aware" on iOS.
+* New BlockGesturesBelow base property to stop gestures propagation below if needed.
+* New VisualLayer base property to track rendered layers.
+* Rive went to "backlog".
+* Other fixes and features.
  
 ## Shipped With
 

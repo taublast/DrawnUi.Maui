@@ -75,7 +75,7 @@ public partial class SkiaMauiElement
                    VisualTransformNative.Rect.Height - (this.Padding.Top + this.Padding.Bottom)
                 );
 
-                Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView ARRANGED at {locationX},{locationY}, size {nativeView.Frame.Size}, translation: {VisualTransformNative.Translation}");
+                //Debug.WriteLine($"[SkiaMauiElement] LayoutNativeView ARRANGED at {locationX},{locationY}, size {nativeView.Frame.Size}, translation: {VisualTransformNative.Translation}");
             }
 
             //Debug.WriteLine($"Layout Maui : {VisualTransformNative.Opacity} {VisualTransformNative.Translation} {VisualTransformNative.IsVisible}");

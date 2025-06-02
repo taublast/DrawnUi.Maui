@@ -26,7 +26,6 @@ namespace DrawnUi.Draw
             Init();
         }
 
-        public VisualLayerDraft? VisualLayerPreparing { get; set; }
         public VisualLayer? VisualLayer { get; set; }
 
         private void Init()
@@ -1429,11 +1428,9 @@ namespace DrawnUi.Draw
 
             if (UsesRenderingTree && RenderTree != null)
             {
-                var thisOffset = TranslateInputCoords(apply.ChildOffset);
-                var touchLocationWIthOffset = new SKPoint(apply.MappedLocation.X + thisOffset.X,
-                    apply.MappedLocation.Y + thisOffset.Y);
-
+                
                 var hadInputConsumed = consumed;
+                var thisOffset = TranslateInputCoords(apply.ChildOffset);
 
                 //if previously having input didn't keep it
                 if (consumed == null || args.Type == TouchActionResult.Up)
@@ -1455,8 +1452,17 @@ namespace DrawnUi.Draw
                         ISkiaGestureListener breakForChild = null;
                         if (listener != null)
                         {
-                            var forChild = IsGestureForChild(child, touchLocationWIthOffset);
-                            //var forChildNew = IsGestureForChild(child.Control, args);
+                            bool forChild;
+                            if (Super.UseFrozenVisualLayers && Super.UseFrozenVisualLayers)
+                            {
+                                forChild = IsGestureForChild(child.Control, args);
+                            }
+                            else
+                            {
+                                var touchLocationWIthOffset = new SKPoint(apply.MappedLocation.X + thisOffset.X,
+                                    apply.MappedLocation.Y + thisOffset.Y);
+                                forChild = IsGestureForChild(child, touchLocationWIthOffset);
+                            }
                             //if (forChildOld != forChild)
                             //{
                             //    var stop = 1;
@@ -4794,12 +4800,12 @@ namespace DrawnUi.Draw
         protected bool IsRendering { get; set; }
         protected bool NodeAttached { get; set; }
 
-        public VisualLayerDraft? FindRenderedNode(SkiaControl control)
+        public VisualLayer? FindRenderedNode(SkiaControl control)
         {
-            if (VisualLayerPreparing == null)
+            if (VisualLayer == null)
                 return null;
 
-            foreach (var node in this.VisualLayerPreparing.Children)
+            foreach (var node in this.VisualLayer.Children)
             {
                 if (node.Control == control)
                     return node;
@@ -4812,18 +4818,18 @@ namespace DrawnUi.Draw
             return null;
         }
 
-        public virtual VisualLayerDraft CreateRenderedNode(SKRect destination, float scale)
+        public virtual VisualLayer CreateRenderedNode(SKRect destination, float scale)
         {
-            VisualLayerDraft parentVisualNode = (Parent as SkiaControl)?.VisualLayerPreparing;
+            VisualLayer parentVisualNode = (Parent as SkiaControl)?.VisualLayer;
 
-            VisualLayerPreparing = new VisualLayerDraft(this, parentVisualNode, destination, scale, Tag);
+            VisualLayer = new VisualLayer(this, parentVisualNode, destination, scale);
 
             if (parentVisualNode != null)
-                ((SkiaControl)Parent).VisualLayerPreparing.Children.Add(VisualLayerPreparing);
+                ((SkiaControl)Parent).VisualLayer.Children.Add(VisualLayer);
 
             NodeAttached = true;
 
-            return VisualLayerPreparing;
+            return VisualLayer;
         }
 
         public virtual void Render(DrawingContext context)
@@ -4838,7 +4844,7 @@ namespace DrawnUi.Draw
             RenderingScale = context.Scale;
             NeedUpdate = false;
 
-            VisualLayerPreparing = null;
+            VisualLayer = null;
 
             OnBeforeDrawing(context);
 
@@ -4920,8 +4926,6 @@ namespace DrawnUi.Draw
 
             X = LastDrawnAt.Location.X / context.Scale;
             Y = LastDrawnAt.Location.Y / context.Scale;
-
-            VisualLayer = VisualLayerPreparing != null ? VisualLayer.FromRenderer(this.VisualLayerPreparing) : null;
 
             ExecutePostAnimators(context);
 

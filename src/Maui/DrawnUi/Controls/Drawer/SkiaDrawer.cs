@@ -551,17 +551,21 @@ namespace DrawnUi.Controls
         {
             var consumedDefault = BlockGesturesBelow ? this : null;
 
-            var hitbox = Content.VisualLayer.HitBoxWithTransforms.Pixels;
-
-            var legacy = this.Content.GetPositionOnCanvas();
-            var trueHitbox = new SKRect(legacy.X, legacy.Y, legacy.X + hitbox.Width, legacy.Y + hitbox.Height);
+            SKRect hitbox;
+            if (Super.UseFrozenVisualLayers)
+            {
+                hitbox = Content.VisualLayer.HitBoxWithTransforms.Pixels;
+            }
+            else
+            {
+                var legacy = this.Content.GetPositionOnCanvas();
+                hitbox = new SKRect(legacy.X, legacy.Y, legacy.X + DrawingRect.Width, legacy.Y + DrawingRect.Height);
+            }
 
             //check we are inside the content
             if (!_inContact && args.Type != TouchActionResult.Up)
             {
-                //check we are within the visible content bounds
-                //if (!hitbox.ContainsInclusive(touchLocationWIthOffset.X, touchLocationWIthOffset.Y))
-                if (!trueHitbox.ContainsInclusive(args.Event.Location.X, args.Event.Location.Y))
+                if (!hitbox.ContainsInclusive(args.Event.Location.X, args.Event.Location.Y))
                 {
                     if (AutoClose && IsOpen && !InTransition)
                     {

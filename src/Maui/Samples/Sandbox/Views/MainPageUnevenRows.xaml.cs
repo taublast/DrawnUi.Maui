@@ -3,7 +3,7 @@
 
 
 
-    public partial class MainPageDynamicHeightCells
+    public partial class MainPageUnevenRows
     {
         private double _Position;
         private readonly MockChatViewModel _vm;
@@ -33,7 +33,7 @@
             }
         }
 
-        public MainPageDynamicHeightCells()
+        public MainPageUnevenRows()
         {
             try
             {

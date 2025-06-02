@@ -2,8 +2,6 @@
 
 public interface ISkiaControl : IDrawnBase
 {
-    VisualLayerDraft? VisualLayerPreparing { get; set; }
-
     VisualLayer? VisualLayer { get; set; }
 
     IDrawnBase Parent { get; set; }

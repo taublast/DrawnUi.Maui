@@ -17,6 +17,8 @@ public interface ISkiaGestureListener
 
     public bool LockFocus { get; }
 
+    public bool BlockGesturesBelow { get; }
+
     bool CanDraw { get; }
 
     string Tag { get; }

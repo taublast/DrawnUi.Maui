@@ -439,6 +439,7 @@ namespace DrawnUi.Controls
         {
             if (newVisibleView != null)
             {
+                newVisibleView.View.BlockGesturesBelow = true;
                 newVisibleView.View.TranslationX = 0;
                 newVisibleView.View.TranslationY = 0;
                 newVisibleView.View.Opacity = 1.0;

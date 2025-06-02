@@ -18,7 +18,7 @@ namespace DrawnUi.Draw
                 DumpTree(ActiveTree);
         }
 
-        public void DumpTree(VisualLayerDraft node, string prefix = "", bool isLast = true, int level = 0)
+        public void DumpTree(VisualLayer node, string prefix = "", bool isLast = true, int level = 0)
         {
             string indent = new string(' ', level * 4);
 
@@ -47,9 +47,9 @@ namespace DrawnUi.Draw
                 line += $" - '{node.Control.Tag}'";
             }
 
-            if (!string.IsNullOrEmpty(node.Tag))
+            if (!string.IsNullOrEmpty(node.Control.Tag))
             {
-                line += $" by {node.Tag}";
+                line += $" by {node.Control.Tag}";
             }
 
             Trace.WriteLine(line);
@@ -83,12 +83,12 @@ namespace DrawnUi.Draw
         /// <summary>
         /// This is used for rendering
         /// </summary>
-        protected VisualLayerDraft ActiveTree;
+        protected VisualLayer ActiveTree;
 
         /// <summary>
         /// This is prepared and can be used to replace ActiveTree
         /// </summary>
-        protected VisualLayerDraft PreparedTree;
+        protected VisualLayer PreparedTree;
 
         /// <summary>
         /// STEP 1 (or Background thread) prepare rendering tree that will be used for rendering later.
@@ -125,7 +125,7 @@ namespace DrawnUi.Draw
         /// </summary>
         /// <param name="context"></param>
         /// <param name="node"></param>
-        protected void RenderTreeInternal(DrawingContext context, VisualLayerDraft node)
+        protected void RenderTreeInternal(DrawingContext context, VisualLayer node)
         {
             if (node != null)
             {

@@ -1,14 +1,23 @@
-﻿using System.Collections.Immutable;
-using HarfBuzzSharp;
-
-namespace DrawnUi.Draw
+﻿namespace DrawnUi.Draw
 {
-    public class VisualLayerDraft
+    public class VisualLayer
     {
-        /// <summary>
-        /// Identifier for debugging and lookup operations
-        /// </summary>
-        public string Tag { get; set; }
+        private bool _isValid;
+        private SKPoint scaleTotal;
+        private SKPoint translationTotal;
+        private double rotationTotal;
+
+        void Recalculate()
+        {
+            if (!_isValid)
+            {
+                DecomposeMatrix(TransformsTotal, out var combinedScale, out var rotation, out var translation);
+                ScaleTotal = combinedScale;
+                RotationTotal = rotation;
+                TranslationTotal = translation;
+                _isValid = true;
+            }
+        }
 
         /// <summary>
         /// Child of a cached object
@@ -23,7 +32,7 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Child layers contained within this layer
         /// </summary>
-        public List<VisualLayerDraft> Children { get; set; }
+        public List<VisualLayer> Children { get; set; }
 
         /// <summary>
         /// Cached rendering object, null means render control directly
@@ -63,17 +72,41 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Total rotation in degrees extracted from transform matrix
         /// </summary>
-        public double RotationTotal { get; set; }
+        public double RotationTotal
+        {
+            get
+            {
+                Recalculate();
+                return rotationTotal;
+            }
+            set => rotationTotal = value;
+        }
 
         /// <summary>
         /// Total scale factors extracted from transform matrix
         /// </summary>
-        public SKPoint ScaleTotal { get; set; }
+        public SKPoint ScaleTotal   
+        {
+            get
+            {
+                Recalculate();
+                return scaleTotal;
+            }
+            set => scaleTotal = value;
+        }
 
         /// <summary>
         /// Total translation extracted from transform matrix
         /// </summary>
-        public SKPoint TranslationTotal { get; set; }
+        public SKPoint TranslationTotal
+        {
+            get
+            {
+                Recalculate();
+                return translationTotal;
+            }
+            set => translationTotal = value;
+        }
 
         /// <summary>
         /// A hitbox rather for internal use, because it is same as LastDrawnAt. For exact position on canvas use HitBoxWithTransforms.
@@ -126,7 +159,7 @@ namespace DrawnUi.Draw
         /// <param name="cache">Cached object containing children to attach</param>
         public void AttachFromCache(CachedObject cache)
         {
-            if (cache.Children == null || cache.Children.Count == 0)
+            if (Control==null || cache.Children == null || cache.Children.Count == 0)
                 return;
 
             Children = cache.Children;
@@ -136,8 +169,15 @@ namespace DrawnUi.Draw
             var deltaX = this.Destination.Left - cache.Bounds.Left;
             var deltaY = this.Destination.Top - cache.Bounds.Top;
 
-            // Single recursive pass: relocate positions AND update transforms
-            UpdateParentChildRelationshipsWithRelocation(this, null, true, deltaX, deltaY); // MISSING METHOD
+            VisualLayer actualParent = null;
+            if (this.Control.Parent is SkiaControl parentControl)
+            {
+                actualParent = parentControl.VisualLayer;
+            }
+
+            // Pass the actual parent, not null
+            ApplyTransformsToChildren(actualParent, true, deltaX, deltaY);
+
         }
 
         /// <summary>
@@ -148,40 +188,47 @@ namespace DrawnUi.Draw
         /// <param name="frozen">Whether children should be marked as frozen</param>
         /// <param name="deltaX">X offset to apply for relocation</param>
         /// <param name="deltaY">Y offset to apply for relocation</param>
-        private void UpdateParentChildRelationshipsWithRelocation(VisualLayerDraft node, VisualLayerDraft parent, bool frozen, float deltaX, float deltaY)
+        private void ApplyTransformsToChildren(VisualLayer parent, bool frozen, float deltaX, float deltaY)
         {
-      
-            // Step 1: Update destination from Origin + delta (like CloneAndUpdateTree logic)
-            var newDestination = node.Origin;
+            // Step 1: Update destination from Origin + delta
+            var newDestination = this.Origin;
             newDestination.Offset(deltaX, deltaY);
-            node.Destination = newDestination;
+            this.Destination = newDestination;
 
-            // Step 2: Update hit box from Origin + delta (same pattern as CloneAndUpdateTree)
-            node.HitBox = ScaledRect.FromPixels(newDestination, node.HitBox.Scale);
+            // Step 2: Update hit box from Origin + delta
+            this.HitBox = ScaledRect.FromPixels(newDestination, this.HitBox.Scale);
 
             // Step 3: Update transforms (same as your existing logic)
             if (parent != null)
             {
-                node.TransformsTotal = parent.TransformsTotal.PostConcat(node.Transforms);
-                node.HitBoxWithTransforms = ScaledRect.FromPixels(
-                    TransformRect(node.HitBox.Pixels, node.TransformsTotal),
-                    node.HitBox.Scale);
-                node.OpacityTotal = parent.OpacityTotal * (node.Control?.Opacity ?? 1.0);
+                // Create a translation matrix for the delta
+                var deltaTransform = SKMatrix.CreateTranslation(deltaX, deltaY);
+
+                // Apply: parent transforms → delta → local transforms
+                this.TransformsTotal = parent.TransformsTotal
+                    .PostConcat(deltaTransform)
+                    .PostConcat(this.Transforms);
+
+                this.HitBoxWithTransforms = ScaledRect.FromPixels(
+                    TransformRect(this.HitBox.Pixels, this.TransformsTotal),
+                    this.HitBox.Scale);
+                this.OpacityTotal = parent.OpacityTotal * (this.Control?.Opacity ?? 1.0);
             }
             else
             {
-                node.TransformsTotal = node.Transforms;
-                node.HitBoxWithTransforms = ScaledRect.FromPixels(
-                    TransformRect(node.HitBox.Pixels, node.Transforms),
-                    node.HitBox.Scale);
-                node.OpacityTotal = node.Control?.Opacity ?? 1.0;
+                var deltaTransform = SKMatrix.CreateTranslation(deltaX, deltaY);
+                this.TransformsTotal = deltaTransform.PostConcat(this.Transforms);
+                this.HitBoxWithTransforms = ScaledRect.FromPixels(
+                    TransformRect(this.HitBox.Pixels, this.TransformsTotal),
+                    this.HitBox.Scale);
             }
 
-            // Step 4: Recursively process children (same delta, like CloneAndUpdateTree)
-            foreach (var child in node.Children)
+            _isValid = false;
+
+            foreach (var child in this.Children)
             {
                 child.IsFrozen = frozen;
-                UpdateParentChildRelationshipsWithRelocation(child, node, frozen, deltaX, deltaY);
+                child.ApplyTransformsToChildren(this, frozen, deltaX, deltaY);
             }
         }
 
@@ -195,12 +242,12 @@ namespace DrawnUi.Draw
         /// <param name="destination"></param>
         /// <param name="scale"></param>
         /// <param name="tag"></param>
-        public VisualLayerDraft(SkiaControl control, VisualLayerDraft parent, SKRect destination, float scale, string tag)
+        public VisualLayer(SkiaControl control, VisualLayer parent, SKRect destination, float scale)
         {
-            Tag = tag;
             Control = control;
             Children = new();
             Transforms = control.RenderTransformMatrix;
+
             TransformsTotal = Transforms;
             Destination = destination;
             Origin = destination;
@@ -227,20 +274,21 @@ namespace DrawnUi.Draw
                 }
 
                 DecomposeMatrix(TransformsTotal, out var combinedScale, out var rotation, out var translation);
+
                 ScaleTotal = combinedScale;
                 RotationTotal = rotation;
                 TranslationTotal = translation;
             }
         }
 
-        protected VisualLayerDraft()
+        protected VisualLayer()
         {
             Children = new();
         }
 
-        public static VisualLayerDraft CreateEmpty()
+        public static VisualLayer CreateEmpty()
         {
-            return new VisualLayerDraft();
+            return new VisualLayer();
         }
 
         /*
@@ -350,174 +398,6 @@ namespace DrawnUi.Draw
         }
     }
 
-
-    /// <summary>
-    /// Immutable snapshot of visual data.
-    /// This What was just drawn on the canvas, not what is present on the canvas,
-    /// because a cached layer will contain children inside its cache and represent only one drawn layer.
-    /// </summary>
-    /// <param name="Tag">Identifier for debugging and lookup operations</param>
-    /// <param name="ControlType">Type name of the control this layer represents</param>
-    /// <param name="Cached">Type of caching applied to this layer</param>
-    /// <param name="Destination">Layout bounds in local coordinates</param>
-    /// <param name="Transforms">Local transformation matrix applied to this layer</param>
-    /// <param name="TransformsTotal">Combined transformation matrix including all parent transforms</param>
-    /// <param name="OpacityTotal">Combined opacity including all parent opacities</param>
-    /// <param name="RotationTotal">Total rotation in degrees extracted from transform matrix</param>
-    /// <param name="ScaleTotal">Total scale factors extracted from transform matrix</param>
-    /// <param name="TranslationTotal">Total translation extracted from transform matrix</param>
-    /// <param name="HitBox">Local hitbox bounds for internal use</param>
-    /// <param name="HitBoxWithTransforms">Exact position on canvas with all transforms applied</param>
-    /// <param name="IsFrozen">Whether this layer is a child of a cached object</param>
-    /// <param name="Children">Immutable collection of child layers</param>
-    public sealed record VisualLayer(
-        string Tag,
-        string ControlType,
-        SkiaCacheType Cached,
-        SKRect Destination,
-        SKMatrix Transforms,
-        SKMatrix TransformsTotal,
-        double OpacityTotal,
-        double RotationTotal,
-        SKPoint ScaleTotal,
-        SKPoint TranslationTotal,
-        ScaledRect HitBox,
-        ScaledRect HitBoxWithTransforms,
-        bool IsFrozen,
-        ImmutableArray<VisualLayer> Children)
-    {
-        /// <summary>
-        /// Empty snapshot for default/null cases
-        /// </summary>
-        public static VisualLayer Empty { get; } = new(
-            Tag: string.Empty,
-            ControlType: "Empty",
-            Cached: SkiaCacheType.None,
-            Destination: SKRect.Empty,
-            Transforms: SKMatrix.Identity,
-            TransformsTotal: SKMatrix.Identity,
-            OpacityTotal: 1.0,
-            RotationTotal: 0.0,
-            ScaleTotal: new SKPoint(1, 1),
-            TranslationTotal: SKPoint.Empty,
-            HitBox: default,
-            HitBoxWithTransforms: default,
-            IsFrozen: false,
-            Children: ImmutableArray<VisualLayer>.Empty
-        );
-
-        /// <summary>
-        /// Creates a snapshot from a VisualNodeRenderer
-        /// </summary>
-        public static VisualLayer FromRenderer(VisualLayerDraft renderer)
-        {
-            var childSnapshots = renderer.Children?.Select(FromRenderer).ToImmutableArray()
-                ?? ImmutableArray<VisualLayer>.Empty;
-
-            return new VisualLayer(
-                Tag: renderer.Tag,
-                ControlType: renderer.Control?.GetType().Name ?? "Unknown",
-                Cached: renderer.Cached,
-                Destination: renderer.Destination,
-                Transforms: renderer.Transforms,
-                TransformsTotal: renderer.TransformsTotal,
-                OpacityTotal: renderer.OpacityTotal,
-                RotationTotal: renderer.RotationTotal,
-                ScaleTotal: renderer.ScaleTotal,
-                TranslationTotal: renderer.TranslationTotal,
-                HitBox: renderer.HitBox,
-                HitBoxWithTransforms: renderer.HitBoxWithTransforms,
-                IsFrozen: renderer.IsFrozen,
-                Children: childSnapshots
-            );
-        }
-
-        /// <summary>
-        /// Creates snapshots for multiple VisualNodeRenderers
-        /// </summary>
-        public static ImmutableArray<VisualLayer> FromRenderers(IEnumerable<VisualLayerDraft> renderers)
-        {
-            return renderers.Select(FromRenderer).ToImmutableArray();
-        }
-
-        /// <summary>
-        /// Finds a snapshot by tag in the tree
-        /// </summary>
-        public static VisualLayer? FindByTag(VisualLayer snapshot, string tag)
-        {
-            if (snapshot.Tag == tag)
-                return snapshot;
-
-            foreach (var child in snapshot.Children)
-            {
-                var found = FindByTag(child, tag);
-                if (found != null)
-                    return found;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets all snapshots at a specific depth level
-        /// </summary>
-        public static IEnumerable<VisualLayer> GetAtDepth(VisualLayer snapshot, int depth)
-        {
-            if (depth == 0)
-            {
-                yield return snapshot;
-            }
-            else if (depth > 0)
-            {
-                foreach (var child in snapshot.Children)
-                {
-                    foreach (var descendant in GetAtDepth(child, depth - 1))
-                    {
-                        yield return descendant;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Finds a snapshot by tag using instance method
-        /// </summary>
-        public VisualLayer? FindByTag(string tag)
-        {
-            return FindByTag(this, tag);
-        }
-
-        /// <summary>
-        /// Gets all snapshots at a specific depth level using instance method
-        /// </summary>
-        public IEnumerable<VisualLayer> GetAtDepth(int depth)
-        {
-            return GetAtDepth(this, depth);
-        }
-
-        /// <summary>
-        /// Gets all child snapshots recursively
-        /// </summary>
-        public IEnumerable<VisualLayer> GetAllChildren()
-        {
-            foreach (var child in Children)
-            {
-                yield return child;
-                foreach (var grandChild in child.GetAllChildren())
-                {
-                    yield return grandChild;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Counts total nodes in the tree
-        /// </summary>
-        public int CountNodes()
-        {
-            return 1 + Children.Sum(child => child.CountNodes());
-        }
-    }
-
+ 
 
 }

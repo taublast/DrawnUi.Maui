@@ -6,43 +6,6 @@ namespace DrawnUi.Views
 {
     public partial class DrawnView : IDrawnBase, IAnimatorsManager, IVisualTreeElement
     {
-        public void DumpLayersTree(VisualLayerDraft node, string prefix = "", bool isLast = true, int level = 0)
-        {
-            if (node == null)
-            {
-                Super.Log("[DumpTree] root node is NULL");
-                return;
-            }
-
-            string indent = new string(' ', level * 4);
-
-            // Box drawing characters for tree structure
-            string connector = isLast ? "└─ " : "├─ ";
-            string childPrefix = isLast ? "   " : "│  ";
-
-            // Print the current node with appropriate prefix
-            var line =
-                $"{indent}{prefix}{connector}{node.Control.GetType().Name} at {node.HitBoxWithTransforms.Pixels.Location} ({node.Children.Count})";
-
-            if (node.Cached != SkiaCacheType.None)
-            {
-                line += $" [{node.Cached}]";
-            }
-
-            if (!string.IsNullOrEmpty(node.Tag))
-            {
-                line += $" by {node.Tag}";
-            }
-
-            Super.Log(line);
-
-            // Process children
-            for (int i = 0; i < node.Children.Count; i++)
-            {
-                bool childIsLast = (i == node.Children.Count - 1);
-                DumpLayersTree(node.Children[i], prefix + childPrefix, childIsLast, level);
-            }
-        }
 
         public void DumpLayersTree(VisualLayer node, string prefix = "", bool isLast = true, int level = 0)
         {
@@ -60,11 +23,11 @@ namespace DrawnUi.Views
 
             // Print the current node with appropriate prefix
             var line =
-                $"{indent}{prefix}{connector}{node.ControlType} at {node.HitBoxWithTransforms.Pixels.Location} ({node.Children.Length})";
+                $"{indent}{prefix}{connector}{node.Control.GetType()} at {node.HitBoxWithTransforms.Pixels.Location} ({node.Children.Count})";
 
-            if (!string.IsNullOrEmpty(node.Tag))
+            if (!string.IsNullOrEmpty(node.Control.Tag))
             {
-                line += $" \"{node.Tag}\"";
+                line += $" \"{node.Control.Tag}\"";
             }
 
             if (node.Cached != SkiaCacheType.None)
@@ -81,9 +44,9 @@ namespace DrawnUi.Views
             Super.Log(line);
 
             // Process children
-            for (int i = 0; i < node.Children.Length; i++)
+            for (int i = 0; i < node.Children.Count; i++)
             {
-                bool childIsLast = (i == node.Children.Length - 1);
+                bool childIsLast = (i == node.Children.Count - 1);
                 DumpLayersTree(node.Children[i], prefix + childPrefix, childIsLast, level);
             }
         }
@@ -2047,7 +2010,7 @@ namespace DrawnUi.Views
                                     transform.Opacity = (float)node.OpacityTotal;
                                     transform.Rotation = (float)node.RotationTotal;
                                     transform.Scale = node.ScaleTotal;
-                                    transform.Frame = subscriber.VisualLayerPreparing.HitBoxWithTransforms;
+                                    transform.Frame = subscriber.VisualLayer.HitBoxWithTransforms;
                                 }
                                 else
                                 {

@@ -564,11 +564,11 @@ namespace DrawnUi.Draw
 
                 case ShapeType.Ellipse:
                     ShouldClipAntialiased = true;
-
                     path.AddOval(strokeAwareChildrenSize);
                     break;
 
                 case ShapeType.Polygon:
+                    ShouldClipAntialiased = true;
                     if (Points != null && Points.Count > 0)
                     {
                         path.Reset();

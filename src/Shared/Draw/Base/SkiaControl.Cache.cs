@@ -395,7 +395,10 @@ public partial class SkiaControl
                 recordingContext.Context.Canvas.Translate(-recordArea.Left, -recordArea.Top);
 
                 //create empty NODE just for children to attach to
-                VisualLayerPreparing = VisualLayerDraft.CreateEmpty();
+                if (Super.UseFrozenVisualLayers)
+                {
+                    VisualLayer = VisualLayer.CreateEmpty();
+                }
 
                 // Perform the drawing action
                 action(recordingContext);
@@ -410,9 +413,9 @@ public partial class SkiaControl
                     SurfaceIsRecycled = recordingContext.Context.IsRecycled
                 };
 
-                if (VisualLayerPreparing != null)
+                if (Super.UseFrozenVisualLayers && VisualLayer != null)
                 {
-                    var childrenNodes = this.VisualLayerPreparing.Children;
+                    var childrenNodes = this.VisualLayer.Children;
                     renderObject.Children = childrenNodes;
                 }
             }
@@ -448,12 +451,10 @@ public partial class SkiaControl
             DrawRenderObject(ctx.WithDestination(destination), cache);
         }
 
-        if (VisualLayerPreparing!=null && cache.Children != null)
+        if (Super.UseFrozenVisualLayers && VisualLayer!=null && cache.Children != null)
         {
-            this.VisualLayerPreparing.AttachFromCache(cache);
+            this.VisualLayer.AttachFromCache(cache);
         }
-
-        //CreateRenderedNode(DrawingRect, ctx.Scale, "DrawRenderObjectInternal");
     }
 
 
@@ -822,7 +823,7 @@ public partial class SkiaControl
         return willDraw;
     }
 
-    public virtual VisualLayerDraft? PrepareNode(DrawingContext context, float widthRequest, float heightRequest)
+    public virtual VisualLayer? PrepareNode(DrawingContext context, float widthRequest, float heightRequest)
     {
         //this will measure too if needed including deeper
         Arrange(context.Destination, widthRequest, heightRequest, context.Scale);

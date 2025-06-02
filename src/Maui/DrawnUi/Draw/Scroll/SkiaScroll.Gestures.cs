@@ -14,7 +14,8 @@ public partial class SkiaScroll
             return false;
         }
 
-        var forChild = base.IsGestureForChild(child, args);
+        var forChild = base.
+            IsGestureForChild(child, args);
         if (!HeaderBehind && Header != null)
         {
             //block gestures for other children if from header got them
