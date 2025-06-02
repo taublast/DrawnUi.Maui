@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <views:BasePageCodeBehind
-    x:Class="Sandbox.Views.MainPageIOS17_Tabs"
+    x:Class="Sandbox.Views.MainPageCarouselTabs"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:Sandbox.Views.Controls"
@@ -367,6 +367,8 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                 <DataTemplate>
 
                                     <draw:SkiaShape
+                                        AnimationTapped="Ripple"
+                                        Tapped="SkiaControl_OnTapped"
                                         BackgroundColor="#8D5BBC"
                                         CornerRadius="16"
                                         HeightRequest="140"
@@ -460,6 +462,8 @@ c80.3-68,187.2-166.1,197.3-168.4c31.4-10.6,62.5,39.2,131.1,93.5C501.2,193.2,568.
                                         CornerRadius="16"
                                         HeightRequest="140"
                                         HorizontalOptions="Fill"
+                                        AnimationTapped="Ripple"
+                                        Tapped="SkiaControl_OnTapped"
                                         UseCache="ImageDoubleBuffered">
 
                                         <draw:SkiaLayout

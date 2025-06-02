@@ -58,10 +58,7 @@ public partial class SkiaMauiElement
         NativeInvalidated = true;
         if (Element != null)
         {
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                LayoutNativeView(Element);
-            });
+            MainThread.BeginInvokeOnMainThread(() => { LayoutNativeView(Element); });
         }
     }
 
@@ -78,30 +75,32 @@ public partial class SkiaMauiElement
 
             if (nativeView.Visibility == ViewStates.Visible)
             {
-                nativeView.TranslationX = VisualTransformNative.Translation.X;
-                nativeView.TranslationY = VisualTransformNative.Translation.Y;
+                //nativeView.TranslationX = VisualTransformNative.Translation.X / RenderingScale;
+                //nativeView.TranslationY = VisualTransformNative.Translation.Y / RenderingScale;
                 nativeView.Rotation = VisualTransformNative.Rotation;
                 nativeView.ScaleX = VisualTransformNative.Scale.X;
                 nativeView.ScaleY = VisualTransformNative.Scale.Y;
                 nativeView.Alpha = VisualTransformNative.Opacity;
 
+                var locationX = (int)(VisualTransformNative.Translation.X / RenderingScale +
+                                      VisualTransformNative.Rect.Left + this.Padding.Left * RenderingScale);
+                var locationY = (int)(VisualTransformNative.Translation.Y / RenderingScale +
+                                      VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale);
+
                 nativeView.Layout(
-                    (int)(VisualTransformNative.Rect.Left + this.Padding.Left * RenderingScale),
-                    (int)(VisualTransformNative.Rect.Top + this.Padding.Top * RenderingScale),
-                    (int)(VisualTransformNative.Rect.Right + this.Padding.Right * RenderingScale),
-                    (int)(VisualTransformNative.Rect.Bottom + this.Padding.Bottom * RenderingScale));
+                    locationX,
+                    locationY,
+                    (int)(locationX + VisualTransformNative.Rect.Width - this.Padding.Right * RenderingScale),
+                    (int)(locationY + VisualTransformNative.Rect.Height - this.Padding.Bottom * RenderingScale));
 
                 ArrangedAt = VisualTransformNative.Rect.Location;
             }
 
-            //nativeView.Invalidate();
-
-            //nativeView.Layout((int)VisualTransformNative.Rect.Left, (int)VisualTransformNative.Rect.Top, (int)VisualTransformNative.Rect.Right, (int)VisualTransformNative.Rect.Bottom);
-
             if (!WasRendered)
                 WasRendered = nativeView.Width > 0;
 
-            Debug.WriteLine($"[LayoutNativeView] {nativeView.Visibility} at {VisualTransformNative.Rect.Left}, {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} size {nativeView.Width}x{nativeView.Height}");
+            Debug.WriteLine(
+                $"[LayoutNativeView] {nativeView.Visibility} at {VisualTransformNative.Rect.Left}, {VisualTransformNative.Rect.Top}, vis {nativeView.Visibility}, opa {VisualTransformNative.Opacity} size {nativeView.Width}x{nativeView.Height}");
         }
     }
 

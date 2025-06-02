@@ -209,35 +209,7 @@
 
                 </draw:SkiaScroll>
 
-                <!--<draw:SkiaShape
-                    Margin="0"
-                    Padding="10"
-                    BackgroundColor="Red"
-                    Tag="New">
-
-                    <draw:SkiaShape
-                        BackgroundColor="Black"
-                        HeightRequest="40"
-                        HorizontalOptions="Fill"
-                        Tag="NewChild"
-                        VerticalOptions="Fill"
-                        WidthRequest="40" />
-
-                </draw:SkiaShape>-->
-
-                <!--<draw:SkiaLayout
-                    Margin="0"
-                    BackgroundColor="Black"
-                    Spacing="0"
-                    Type="Column"
-                    UseCache="Image">
-                    <draw:SkiaLabel
-                        BackgroundColor="Red"
-                        Text="Tests"
-                        WidthRequest="100" />
-                </draw:SkiaLayout>-->
-
-
+            
                 <draw:SkiaLabelFps
                     Margin="0,0,4,24"
                     BackgroundColor="DarkRed"
@@ -246,15 +218,7 @@
                     TextColor="White"
                     VerticalOptions="End"
                     ZIndex="100">
-                    <!--<draw:SkiaControl.VisualEffects>
 
-                        <draw:DropShadowEffect
-                            Blur="2"
-                            X="2"
-                            Y="2"
-                            Color="#ccFFFFFF" />
-
-                    </draw:SkiaControl.VisualEffects>-->
                 </draw:SkiaLabelFps>
 
             </draw:SkiaLayout>

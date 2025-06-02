@@ -30,6 +30,7 @@ public partial class SkiaShell
         {
             var drawer = new SkiaDrawer()
             {
+                BlockGesturesBelow = true,
                 RespondsToGestures = _useGestures,
                 Animated = _animated,
                 Tag = $"ModalDrawer_{content.GetType().Name}",

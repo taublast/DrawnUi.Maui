@@ -1650,6 +1650,7 @@ namespace DrawnUi.Controls
                     var control = new SkiaLayout()
                     {
                         Tag = "Toast",
+                        BlockGesturesBelow = true,
                         UseCache = SkiaCacheType.Operations,
                         ZIndex = ZIndexToasts + Toasts.NavigationStack.Count,
                         Opacity = 0,

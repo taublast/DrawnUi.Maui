@@ -1,10 +1,10 @@
 ﻿namespace Sandbox.Views
 {
-    public partial class MainPageIOS17_Tabs
+    public partial class MainPageCarouselTabs
     {
 
 
-        public MainPageIOS17_Tabs()
+        public MainPageCarouselTabs()
         {
             try
             {
@@ -24,6 +24,9 @@
         }
 
 
-
+        private void SkiaControl_OnTapped(object sender, SkiaControl.ControlTappedEventArgs e)
+        {
+     
+        }
     }
 }

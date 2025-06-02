@@ -74,6 +74,12 @@ namespace DrawnUi.Draw
             return view;
         }
 
+        public static T OnPaint<T>(this T view, Action<T, DrawingContext> action) where T : SkiaControl
+        {
+            view.ExecuteOnPaint[Guid.CreateVersion7().ToString()] = (control, ctx) => { action.Invoke((T)control, ctx); };
+            return view;
+        }
+
         public static T OnBindingContextSet<T>(
             this T control,
             Action<T, object> callback,

@@ -7,7 +7,6 @@ namespace DrawnUi.Draw;
 
 public partial class SkiaControl
 {
-
     private readonly LimitedQueue<Action> _offscreenCacheRenderingQueue = new(1);
 
     public static readonly BindableProperty UseCacheProperty = BindableProperty.Create(nameof(UseCache),
@@ -46,10 +45,7 @@ public partial class SkiaControl
     [EditorBrowsable(EditorBrowsableState.Never)]
     public CachedObject RenderObjectPrevious
     {
-        get
-        {
-            return _renderObjectPrevious;
-        }
+        get { return _renderObjectPrevious; }
         set
         {
             RenderObjectNeedsUpdate = false;
@@ -67,6 +63,7 @@ public partial class SkiaControl
             }
         }
     }
+
     CachedObject _renderObjectPrevious;
 
 
@@ -76,10 +73,7 @@ public partial class SkiaControl
     //[EditorBrowsable(EditorBrowsableState.Never)]
     public CachedObject RenderObject
     {
-        get
-        {
-            return _renderObject;
-        }
+        get { return _renderObject; }
         set
         {
             RenderObjectNeedsUpdate = false;
@@ -101,6 +95,7 @@ public partial class SkiaControl
                             DisposeObject(_renderObject);
                         }
                     }
+
                     _renderObject = value;
                     OnPropertyChanged();
 
@@ -111,10 +106,10 @@ public partial class SkiaControl
 
                     Monitor.PulseAll(LockDraw);
                 }
-
             }
         }
     }
+
     CachedObject _renderObject;
 
     protected virtual void OnCacheCreated()
@@ -124,7 +119,6 @@ public partial class SkiaControl
 
     protected virtual void OnCacheDestroyed()
     {
-        
     }
 
     /// <summary>
@@ -194,12 +188,29 @@ public partial class SkiaControl
     {
         var usingCacheType = asOperations ? SkiaCacheType.Operations : SkiaCacheType.Image;
 
-        var renderObject = CreateRenderingObject(ctx, area, null, usingCacheType, (context) =>
-        {
-            PaintWithEffects(context.WithDestination(area));
-        });
+        var renderObject = CreateRenderingObject(ctx, area, null, usingCacheType,
+            (context) =>
+            {
+                PaintWithEffects(context.WithDestination(area));
+            });
 
         return renderObject;
+    }
+
+    public void RasterizeToCache(DrawingContext ctx)
+    {
+        SkiaControl control = this;
+
+        var destination = new SKRect(0, 0, float.PositiveInfinity, float.PositiveInfinity);
+
+        var measuredSize = control.Measure(destination.Width, destination.Height, ctx.Scale);
+        var size = measuredSize.Pixels;
+
+        control.Arrange(
+            new SKRect(0, 0, size.Width, size.Height),
+            size.Width, size.Height, ctx.Scale);
+
+        control.RenderObject = control.CreateRenderedObject(ctx, control.DrawingRect, false);
     }
 
     protected virtual bool CheckCachedObjectValid(CachedObject cache, SKRect recordingArea, SkiaDrawingContext context)
@@ -225,6 +236,7 @@ public partial class SkiaControl
                     return false;
                 }
             }
+
             CacheValidity = CacheValidityType.Valid;
             return true;
         }
@@ -264,7 +276,8 @@ public partial class SkiaControl
             //    && (UseCache == SkiaCacheType.None || UseCache == SkiaCacheType.Operations))
             //    return SkiaCacheType.Image;
 
-            if (UseCache == SkiaCacheType.None && CanUseCacheDoubleBuffering && Super.Multithreaded && Parent is SkiaControl)
+            if (UseCache == SkiaCacheType.None && CanUseCacheDoubleBuffering && Super.Multithreaded &&
+                Parent is SkiaControl)
                 return SkiaCacheType.Operations;
 
             return UseCache;
@@ -273,10 +286,10 @@ public partial class SkiaControl
 
     public virtual CachedObject CreateRenderingObject(
         DrawingContext context,
-    SKRect recordingArea,
-    CachedObject reuseSurfaceFrom,
-    SkiaCacheType usingCacheType,
-    Action<DrawingContext> action)
+        SKRect recordingArea,
+        CachedObject reuseSurfaceFrom,
+        SkiaCacheType usingCacheType,
+        Action<DrawingContext> action)
     {
         if (recordingArea.Height == 0 || recordingArea.Width == 0 || IsDisposed || IsDisposing)
         {
@@ -294,7 +307,8 @@ public partial class SkiaControl
             //    recordArea = destination;
             //}
 
-            NeedUpdate = false; //if some child changes this while rendering to cache we will erase resulting RenderObject
+            NeedUpdate =
+                false; //if some child changes this while rendering to cache we will erase resulting RenderObject
 
             GRContext grContext = null;
 
@@ -312,13 +326,13 @@ public partial class SkiaControl
                     renderObject = new(UsingCacheType, skPicture, context.Destination, cacheRecordingArea);
                 }
             }
-            else
-            if (usingCacheType != SkiaCacheType.None)
+            else if (usingCacheType != SkiaCacheType.None)
             {
                 var width = (int)recordArea.Width;
                 var height = (int)recordArea.Height;
 
-                bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, recordingArea, context.Context) || usingCacheType == SkiaCacheType.GPU; //never reuse GPU surfaces
+                bool needCreateSurface = !CheckCachedObjectValid(reuseSurfaceFrom, recordingArea, context.Context) ||
+                                         usingCacheType == SkiaCacheType.GPU; //never reuse GPU surfaces
 
                 SKSurface surface = null;
 
@@ -330,20 +344,21 @@ public partial class SkiaControl
                     {
                         return null; //would be unexpected
                     }
+
                     if (usingCacheType != SkiaCacheType.ImageComposite)
                         surface.Canvas.Clear();
                 }
                 else
                 {
-
                     var kill = surface;
 
                     var cacheSurfaceInfo = new SKImageInfo(width, height);
 
                     if (usingCacheType == SkiaCacheType.GPU)
                     {
-                        if (context.Context.Superview != null && context.Context.Superview?.CanvasView is SkiaViewAccelerated accelerated
-                            && accelerated.GRContext != null)
+                        if (context.Context.Superview != null && context.Context.Superview?.CanvasView is
+                                                                  SkiaViewAccelerated accelerated
+                                                              && accelerated.GRContext != null)
                         {
                             grContext = accelerated.GRContext;
                             //hardware accelerated
@@ -352,6 +367,7 @@ public partial class SkiaControl
                                 cacheSurfaceInfo);
                         }
                     }
+
                     if (surface == null) //fallback if gpu failed
                     {
                         //non-gpu
@@ -378,6 +394,12 @@ public partial class SkiaControl
 
                 recordingContext.Context.Canvas.Translate(-recordArea.Left, -recordArea.Top);
 
+                //create empty NODE just for children to attach to
+                if (Super.UseFrozenVisualLayers)
+                {
+                    VisualLayer = VisualLayer.CreateEmpty();
+                }
+
                 // Perform the drawing action
                 action(recordingContext);
 
@@ -390,9 +412,14 @@ public partial class SkiaControl
                 {
                     SurfaceIsRecycled = recordingContext.Context.IsRecycled
                 };
+
+                if (Super.UseFrozenVisualLayers && VisualLayer != null)
+                {
+                    var childrenNodes = this.VisualLayer.Children;
+                    renderObject.Children = childrenNodes;
+                }
             }
-         
- 
+
 
             //else we landed here with no cache type at all..
         }
@@ -424,10 +451,13 @@ public partial class SkiaControl
             DrawRenderObject(ctx.WithDestination(destination), cache);
         }
 
-        //CreateRenderedNode(DrawingRect, ctx.Scale, "DrawRenderObjectInternal");
+        if (Super.UseFrozenVisualLayers && VisualLayer!=null && cache.Children != null)
+        {
+            this.VisualLayer.AttachFromCache(cache);
+        }
     }
 
- 
+
     public bool IsCacheImage
     {
         get
@@ -481,7 +511,7 @@ public partial class SkiaControl
                 //draw existing front cache
                 lock (LockDraw)
                 {
-                    DrawRenderObjectInternal( context, cache);
+                    DrawRenderObjectInternal(context, cache);
                     Monitor.PulseAll(LockDraw);
                 }
 
@@ -503,6 +533,7 @@ public partial class SkiaControl
                     {
                         DrawRenderObjectInternal(context, cacheOffscreen);
                     }
+
                     Monitor.PulseAll(LockDraw);
                 }
 
@@ -513,10 +544,8 @@ public partial class SkiaControl
                 {
                     //will be executed on background thread in parallel
                     var oldObject = RenderObjectPreparing;
-                    RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, UsingCacheType, (ctx) =>
-                    {
-                        PaintWithEffects(ctx);
-                    });
+                    RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, UsingCacheType,
+                        (ctx) => { PaintWithEffects(ctx); });
                     RenderObject = RenderObjectPreparing;
                     _renderObjectPreparing = null;
 
@@ -531,7 +560,6 @@ public partial class SkiaControl
 
             return false;
         }
-
     }
 
     public CacheValidityType CacheValidity { get; protected set; }
@@ -563,14 +591,10 @@ public partial class SkiaControl
             if (!_processingOffscrenRendering)
             {
                 _processingOffscrenRendering = true;
-                Task.Run(async () =>
-                {
-                    await ProcessOffscreenCacheRenderingAsync();
-                }, cancel).ConfigureAwait(false);
+                Task.Run(async () => { await ProcessOffscreenCacheRenderingAsync(); }, cancel).ConfigureAwait(false);
             }
         }
     }
-
 
 
     private bool _processingOffscrenRendering = false;
@@ -578,7 +602,6 @@ public partial class SkiaControl
 
     public async Task ProcessOffscreenCacheRenderingAsync()
     {
-
         await semaphoreOffsecreenProcess.WaitAsync();
 
         if (_offscreenCacheRenderingQueue.Count == 0)
@@ -610,16 +633,13 @@ public partial class SkiaControl
             //{
             //    Update(); //kick
             //}
-
         }
         finally
         {
             _processingOffscrenRendering = false;
             semaphoreOffsecreenProcess.Release();
         }
-
     }
-
 
 
     /// <summary>
@@ -628,10 +648,7 @@ public partial class SkiaControl
     [EditorBrowsable(EditorBrowsableState.Never)]
     public CachedObject RenderObjectPreparing
     {
-        get
-        {
-            return _renderObjectPreparing;
-        }
+        get { return _renderObjectPreparing; }
         set
         {
             RenderObjectNeedsUpdate = false;
@@ -641,6 +658,7 @@ public partial class SkiaControl
             }
         }
     }
+
     CachedObject _renderObjectPreparing;
 
 
@@ -654,15 +672,12 @@ public partial class SkiaControl
     }
 
 
-
     private bool _RenderObjectPreviousNeedsUpdate;
+
     [EditorBrowsable(EditorBrowsableState.Never)]
     public bool RenderObjectPreviousNeedsUpdate
     {
-        get
-        {
-            return _RenderObjectPreviousNeedsUpdate;
-        }
+        get { return _RenderObjectPreviousNeedsUpdate; }
         set
         {
             if (_RenderObjectPreviousNeedsUpdate != value)
@@ -679,10 +694,7 @@ public partial class SkiaControl
     [EditorBrowsable(EditorBrowsableState.Never)]
     public bool RenderObjectNeedsUpdate
     {
-        get
-        {
-            return _renderObjectNeedsUpdate;
-        }
+        get { return _renderObjectNeedsUpdate; }
 
         set
         {
@@ -692,6 +704,7 @@ public partial class SkiaControl
             }
         }
     }
+
     bool _renderObjectNeedsUpdate = true;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -735,6 +748,7 @@ public partial class SkiaControl
                 value.Bottom + (float)Math.Round(ExpandDirtyRegion.Bottom * RenderingScale)
             );
         }
+
         return dirty;
     }
 
@@ -779,10 +793,8 @@ public partial class SkiaControl
                         {
                             //will be executed on background thread in parallel
                             var oldObject = RenderObjectPreparing;
-                            RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, UsingCacheType, (ctx) =>
-                            {
-                                PaintWithEffects(ctx);
-                            });
+                            RenderObjectPreparing = CreateRenderingObject(clone, recordArea, oldObject, UsingCacheType,
+                                (ctx) => { PaintWithEffects(ctx); });
                             RenderObject = RenderObjectPreparing;
                             _renderObjectPreparing = null;
 
@@ -794,10 +806,8 @@ public partial class SkiaControl
                     }
                     else
                     {
-                        CreateRenderingObjectAndPaint(clone, recordArea, (ctx) =>
-                        {
-                            PaintWithEffects(ctx.WithDestination(DrawingRect));
-                        });
+                        CreateRenderingObjectAndPaint(clone, recordArea,
+                            (ctx) => { PaintWithEffects(ctx.WithDestination(DrawingRect)); });
                     }
                 }
             }
@@ -813,7 +823,7 @@ public partial class SkiaControl
         return willDraw;
     }
 
-    public virtual VisualNode? PrepareNode(DrawingContext context, float widthRequest, float heightRequest)
+    public virtual VisualLayer? PrepareNode(DrawingContext context, float widthRequest, float heightRequest)
     {
         //this will measure too if needed including deeper
         Arrange(context.Destination, widthRequest, heightRequest, context.Scale);
@@ -822,7 +832,7 @@ public partial class SkiaControl
         if (willDraw)
         {
             CreateTransformationMatrix(context.Context, DrawingRect);
-            var node = CreateRenderedNode(DrawingRect, context.Scale, "pn");
+            var node = CreateRenderedNode(DrawingRect, context.Scale);
 
             //note UsesCacheDoubleBuffering is going deprecated with 2 passes rendering tree
             //and new logic for ImageCacheComposite needs to be implemented for nodes
@@ -865,8 +875,6 @@ public partial class SkiaControl
         return null;
     }
 
-
-
     /// <summary>
     ///  Not using cache
     /// </summary>
@@ -901,8 +909,8 @@ public partial class SkiaControl
         SKRect recordingArea,
         Action<DrawingContext> action)
     {
-
-        if (recordingArea.Width <= 0 || recordingArea.Height <= 0 || float.IsInfinity(recordingArea.Height) || float.IsInfinity(recordingArea.Width) || IsDisposed || IsDisposing)
+        if (recordingArea.Width <= 0 || recordingArea.Height <= 0 || float.IsInfinity(recordingArea.Height) ||
+            float.IsInfinity(recordingArea.Width) || IsDisposed || IsDisposing)
         {
             return;
         }
@@ -922,14 +930,12 @@ public partial class SkiaControl
         {
             oldObject = RenderObject;
         }
-        else
-        if (usingCacheType == SkiaCacheType.Image
-        || usingCacheType == SkiaCacheType.ImageComposite)
+        else if (usingCacheType == SkiaCacheType.Image
+                 || usingCacheType == SkiaCacheType.ImageComposite)
         {
             oldObject = RenderObjectPrevious;
         }
-        else
-        if (usingCacheType == SkiaCacheType.OperationsFull)
+        else if (usingCacheType == SkiaCacheType.OperationsFull)
         {
             var debug = 1;
         }
@@ -947,6 +953,7 @@ public partial class SkiaControl
             {
                 oldObject.Surface = null;
             }
+
             if (!UsesCacheDoubleBuffering && usingCacheType != SkiaCacheType.ImageComposite)
             {
                 DisposeObject(oldObject);
@@ -973,9 +980,4 @@ public partial class SkiaControl
             //Update();
         }
     }
-
-
 }
-
-
-

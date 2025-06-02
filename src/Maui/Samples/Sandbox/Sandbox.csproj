@@ -279,6 +279,17 @@
   </ItemGroup>
 
  
+
+  <ItemGroup>
+    <Compile Update="Views\MainPageCarouselTabs.xaml.cs">
+      <DependentUpon>MainPageCarouselTabs.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainPageUnevenRows.xaml.cs">
+      <DependentUpon>MainPageUnevenRows.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+ 
  
 
  

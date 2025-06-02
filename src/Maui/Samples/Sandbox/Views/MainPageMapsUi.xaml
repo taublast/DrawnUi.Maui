@@ -93,6 +93,7 @@
 
             <!--  DRAWER  -->
             <draw:SkiaDrawer
+                BlockGesturesBelow="True"
                 x:Name="Drawer"
                 Direction="FromBottom"
                 HeaderSize="{Binding DrawerHeaderSize}"

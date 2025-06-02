@@ -480,7 +480,7 @@ namespace DrawnUi.Controls
             {
                 SetIsOpen();
             }
-            Debug.WriteLine($"[SkiaDrawer] UpdateReportedPosition: open {IsOpen} moving {InTransition}");
+            //Debug.WriteLine($"[SkiaDrawer] UpdateReportedPosition: open {IsOpen} moving {InTransition}");
         }
 
         /// <summary>
@@ -544,10 +544,42 @@ namespace DrawnUi.Controls
         private bool _inContact;
         protected bool ChildWasTapped;
 
+        private bool GesturesPassThrough = false;
+
         public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args,
             GestureEventProcessingInfo apply)
         {
-            bool passedToChildren = false;
+            var consumedDefault = BlockGesturesBelow ? this : null;
+
+            SKRect hitbox;
+            if (Super.UseFrozenVisualLayers)
+            {
+                hitbox = Content.VisualLayer.HitBoxWithTransforms.Pixels;
+            }
+            else
+            {
+                var legacy = this.Content.GetPositionOnCanvas();
+                hitbox = new SKRect(legacy.X, legacy.Y, legacy.X + DrawingRect.Width, legacy.Y + DrawingRect.Height);
+            }
+
+            //check we are inside the content
+            if (!_inContact && args.Type != TouchActionResult.Up)
+            {
+                if (!hitbox.ContainsInclusive(args.Event.Location.X, args.Event.Location.Y))
+                {
+                    if (AutoClose && IsOpen && !InTransition)
+                    {
+                        IsOpen = false;
+                    }
+                    return null;
+                }
+            }
+            else
+            {
+                var passed = true;
+            }
+
+                bool passedToChildren = false;
 
             ISkiaGestureListener PassToChildren()
             {
@@ -600,25 +632,7 @@ namespace DrawnUi.Controls
                 _panningOffset = new((float)TranslationX, (float)TranslationY);
             }
 
-            //check we are within the visible content bounds
-            var processInput = this.RespondsToGestures;
-            if (!_inContact && processInput && !InputTransparent && CanDraw && Content != null && Content.CanDraw &&
-                !Content.InputTransparent)
-            {
-                var thisOffset = TranslateInputCoords(apply.ChildOffset);
-
-                //todo use renderednode !
-                //var x = args.Event.Location.X + thisOffset.X;
-                //var y = args.Event.Location.Y + thisOffset.Y;
-                //processInput = Content.LastDrawnAt.Contains(x, y);
-
-                var touchLocationWIthOffset = new SKPoint(args.Event.Location.X + thisOffset.X,
-                    args.Event.Location.Y + thisOffset.Y);
-                processInput =
-                    Content.LastDrawnAt.ContainsInclusive(touchLocationWIthOffset.X, touchLocationWIthOffset.Y);
-            }
-
-            if (processInput)
+            if (true)
             {
                 _inContact = true;
 
@@ -631,7 +645,6 @@ namespace DrawnUi.Controls
                         break;
 
                     case TouchActionResult.Down:
-                        //---------------------------------------------------------------------------------------------------------
                         if (args.Event.NumberOfTouches == 1) //first finger down
                         {
                             ResetPan();
@@ -642,7 +655,6 @@ namespace DrawnUi.Controls
                         break;
 
                     case TouchActionResult.Panning when args.Event.NumberOfTouches == 1:
-                        //---------------------------------------------------------------------------------------------------------
 
                         var direction = DirectionType.None;
                         bool lockBounce = false;
@@ -758,7 +770,7 @@ namespace DrawnUi.Controls
                         }
                         else
                         {
-                            return null;
+                            return consumedDefault;
                         }
 
                         break;
@@ -830,19 +842,20 @@ namespace DrawnUi.Controls
                     {
                         return this;
                     }
-                    return consumed;
+
+                    return consumed ?? consumedDefault;
                 }
 
                 if (!passedToChildren)
-                    return PassToChildren();
+                {
+                    consumed = PassToChildren();
+                    if (consumed == null)
+                        return consumedDefault;
+                    return consumed;
+                }
             }
 
-            if (AutoClose && IsOpen && !InTransition)
-            {
-                IsOpen = false;
-            }
-
-            return null;
+            return consumedDefault;
         }
 
         public bool AutoClose { get; set; }
