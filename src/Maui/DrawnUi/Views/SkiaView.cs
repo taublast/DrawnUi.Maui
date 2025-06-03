@@ -2,7 +2,7 @@
 
 public partial class SkiaView : SKCanvasView, ISkiaDrawable
 {
-    public Guid Uid { get; } = Guid.CreateVersion7();
+    public Guid Uid { get; } = Guid.NewGuid();
 
     public bool IsHardwareAccelerated => false;
 

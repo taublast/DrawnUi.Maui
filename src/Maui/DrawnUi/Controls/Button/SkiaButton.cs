@@ -14,6 +14,11 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
     }
 
+    public SkiaButton(string caption)
+    {
+        Text = caption;
+    }
+
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
         if (IsDisposed || IsDisposing)

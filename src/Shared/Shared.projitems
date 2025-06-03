@@ -163,6 +163,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\SpringWithVelocityAnimator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\SpringWithVelocityVectorAnimator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\VelocitySkiaAnimator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\SkiaLayer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\HStack.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\SkiaGrid.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\VStack.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\SkiaStack.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\Sk3dView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\SkCamera3D.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Internals\Helpers\3D\SkPatch3D.cs" />

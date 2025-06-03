@@ -36,26 +36,6 @@ namespace DrawnUi.Draw
             return true;
         }
 
-        public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args,
-            GestureEventProcessingInfo apply)
-        {
-            if (OnGestures != null)
-            {
-                var consumed = OnGestures(args, apply);
-                if (consumed != null)
-                {
-                    return consumed;
-                }
-            }
-
-            return base.ProcessGestures(args, apply);
-        }
-
-        /// <summary>
-        /// Delegate for use instead of calling base.OnSkiaGestureEvent
-        /// </summary>
-        public Func<SkiaGesturesParameters, GestureEventProcessingInfo, ISkiaGestureListener> OnGestures;
-
 
         public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
         {

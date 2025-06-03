@@ -4,7 +4,7 @@
 
 public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 {
-    public Guid Uid { get; }  = Guid.CreateVersion7();
+    public Guid Uid { get; }  = Guid.NewGuid();
 
     public SKSurface CreateStandaloneSurface(int width, int height)
     {

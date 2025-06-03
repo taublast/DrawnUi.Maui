@@ -29,7 +29,7 @@ namespace DrawnUi.Views
 
     public class SKSwapChainPanelRetained : AngleSwapChainPanel
     {
-        public Guid Uid = Guid.CreateVersion7();
+        public Guid Uid = Guid.NewGuid();
 
         private const SKColorType ColorType = SKColorType.Rgba8888;
         private const GRSurfaceOrigin SurfaceOrigin = GRSurfaceOrigin.BottomLeft;

@@ -949,7 +949,7 @@ namespace DrawnUi.Views
             }
         }
 
-        public Guid Uid { get; } = Guid.CreateVersion7();
+        public Guid Uid { get; } = Guid.NewGuid();
 
         public static (double X1, double Y1, double X2, double Y2) LinearGradientAngleToPoints(double direction)
         {

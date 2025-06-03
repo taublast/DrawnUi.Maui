@@ -112,7 +112,7 @@ public class CachedObject : IDisposable
         Image = surface.Snapshot();
     }
 
-    public Guid Id = Guid.CreateVersion7();
+    public Guid Id = Guid.NewGuid();
 
     /// <summary>
     /// An existing surface was reused for creating this object
