@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Maui\Directory.Build.props = Maui\Directory.Build.props
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		..\nugets\github_uploadnugets.bat = ..\nugets\github_uploadnugets.bat
+		..\nugets\nuget_uploadnugets.bat = ..\nugets\nuget_uploadnugets.bat
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
