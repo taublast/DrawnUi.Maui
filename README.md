@@ -13,6 +13,7 @@ Create and render your custom controls on a hardware-accelerated Skia canvas wit
 * To use inside a usual MAUI app, consume drawn controls here and there inside `Canvas` views.
 * Create a totally drawn app with just one `Canvas` as root view, `SkiaShell` is provided for navigation.
 * Drawn controls are totally virtual, these are commands for the engine on what and how to draw on a skia canvas.
+* Design in XAML or with [Fluent C#](Fluent.md)
 * Free to use and modify under the MIT license, a nuget package is available.
 
 _The current development state is __ALPHA__, features remain to be implemented, documentation is being worked on._
