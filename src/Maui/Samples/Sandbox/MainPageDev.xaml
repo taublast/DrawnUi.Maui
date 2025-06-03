@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <views:BasePageCodeBehind
     x:Class="MauiNet8.MainPageDev"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -11,86 +12,56 @@
     x:DataType="mauiNet8:MainPageDev">
 
     <VerticalStackLayout>
-        <Border>
-            <Grid ColumnDefinitions="1*,*">
-                <Label
-                    x:Name="label"
-                    Grid.Column="0"
-                    Text="0"
-                    TextColor="Gray" />
-                <Entry
-                    Grid.Column="1"
-                    Placeholder="Placeholder"
-                    Text="Test"
-                    TextColor="White" />
-            </Grid>
-        </Border>
-        <Border>
-            <Grid ColumnDefinitions="1*,*">
-                <Label
-                    Grid.Column="0"
-                    Text="0"
-                    TextColor="Gray" />
-                <Entry
-                    Grid.Column="1"
-                    Placeholder="Placeholder"
-                    Text="Test"
-                    TextColor="White" />
-            </Grid>
-        </Border>
+        <draw:Canvas Gestures="Enabled">
+            <draw:SkiaLayer VerticalOptions="Fill">
 
-        <draw:Canvas>
+                <draw:SkiaGrid HorizontalOptions="Fill">
 
-            <draw:SkiaLayout HorizontalOptions="Fill">
+                    <!--#region  Grid over Shape-->
+                    <draw:SkiaShape BackgroundColor="LightBlue" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="0" Grid.Column="1"
+                                    HeightRequest="150" WidthRequest="150">
 
-                <draw:SkiaShape
-                    Padding="5"
-                    BackgroundColor="Red"
-                    CornerRadius="5"
-                    HorizontalFillRatio="0.5"
-                    HorizontalOptions="Fill"
-                    StrokeColor="Gray"
-                    StrokeWidth="1">
+                        <draw:SkiaButton Tapped="SkiaButton_Tapped" 
+                                         BackgroundColor="Black"
+                                         HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" VerticalOptions="Center">
+                        </draw:SkiaButton>
 
-                    <draw:SkiaLayout
-                        ColumnDefinitions="*,*"
-                        HorizontalOptions="Fill"
-                        Type="Absolute">
-                        <draw:SkiaLabel
-                            Grid.Column="0"
-                            FontSize="14"
-                            HorizontalOptions="Fill"
-                            Text="0"
-                            TextColor="Gray" />
+                    </draw:SkiaShape>
+
+                    <draw:SkiaLayout x:Name="TopLayer1" Type="Grid" Grid.Row="0" Grid.Column="1"  
+                                     HorizontalOptions="Center" VerticalOptions="Center"  
+                                     HeightRequest="150" LockRatio="1"
+                                     BlockGesturesBelow="True">
+                        <draw:SkiaShape BackgroundColor="#6600FF00" HeightRequest="150" WidthRequest="150" >
+                            <draw:SkiaLabel Text="Press Here! I'm in a Grid" Margin="10" TextColor="Black" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </draw:SkiaShape>
                     </draw:SkiaLayout>
 
-                </draw:SkiaShape>
+                    <!--#endregion-->
 
-                <draw:SkiaShape
-                    Padding="5"
-                    BackgroundColor="Yellow"
-                    CornerRadius="5"
-                    HorizontalFillRatio="0.5"
-                    HorizontalOptions="Fill"
-                    HorizontalPositionOffsetRatio="1.0"
-                    StrokeColor="Gray"
-                    StrokeWidth="1">
+                    <!--#region Shape over Shape-->
+                    <draw:SkiaShape BackgroundColor="LightBlue" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="1" Grid.Column="1" HeightRequest="150" WidthRequest="150">
+                        <draw:SkiaButton Tapped="SkiaButton_Tapped" 
+                    BackgroundColor="Red" HeightRequest="50" WidthRequest="50" HorizontalOptions="Center" VerticalOptions="Center">
+                        </draw:SkiaButton>
+                    </draw:SkiaShape>
 
-                    <draw:SkiaLayout
-                        ColumnDefinitions="*,*"
-                        HorizontalOptions="Fill"
-                        Type="Absolute">
-                        <draw:SkiaLabel
-                            Grid.Column="0"
-                            FontSize="14"
-                            HorizontalOptions="Fill"
-                            Text="0"
-                            TextColor="Gray" />
-                    </draw:SkiaLayout>
 
-                </draw:SkiaShape>
+                    <draw:SkiaShape
+                        x:Name="TopLayer2" BackgroundColor="#6600FF00" 
+                        HeightRequest="150" LockRatio="1"
+                        Grid.Row="1" Grid.Column="1" 
+                        BlockGesturesBelow="True"  
+                        HorizontalOptions="Center" VerticalOptions="Center">
 
-            </draw:SkiaLayout>
+                        <draw:SkiaLabel Text="Press Here! I'm in a shape" Margin="10" TextColor="Black" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </draw:SkiaShape>
+                    <!--#endregion-->
+
+
+                </draw:SkiaGrid>
+
+            </draw:SkiaLayer>
         </draw:Canvas>
     </VerticalStackLayout>
 

@@ -202,4 +202,14 @@ public partial class MainPageDev : BasePageCodeBehind
         }
     }
 
+    private void SkiaButton_Tapped(object sender, SkiaControl.ControlTappedEventArgs e)
+    {
+        Trace.WriteLine("TAPPED");
+    }
+
+
+    private void Blocked(object sender, SkiaControl.ControlTappedEventArgs e)
+    {
+        Trace.WriteLine("BLOCKED");
+    }
 }
