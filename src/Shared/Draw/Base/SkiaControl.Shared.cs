@@ -1555,7 +1555,6 @@ namespace DrawnUi.Draw
                     }
                 } //end
 
-
                 if (manageChildFocus)
                 {
                     Superview.FocusedChild = null;
@@ -1666,6 +1665,11 @@ namespace DrawnUi.Draw
                 {
                     return meAsListener;
                 }
+            }
+
+            if (BlockGesturesBelow && consumed == null && args.Type != TouchActionResult.Up)
+            {
+                return this as ISkiaGestureListener;
             }
 
             return consumed;
