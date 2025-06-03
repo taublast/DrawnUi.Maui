@@ -360,6 +360,27 @@ new SkiaLabel()
 }),
 
 ```
+
+### Two-Way bindings
+
+```csharp
+new WheelPicker()
+.ObserveSelf((me, prop) =>
+{
+    if (prop.IsEither(nameof(BindingContext), nameof(WheelPicker.SelectedIndex)))
+    {
+        IndexIso = me.SelectedIndex; //update local property from control
+    }
+})
+.Observe(this, (me, prop) =>
+{
+    if (prop.IsEither(nameof(BindingContext), nameof(IndexIso)))
+    {
+        me.SelectedIndex = IndexIso; //update control property from local
+    }
+}),
+```
+
 ### Reactive Button States
 
 ```csharp
