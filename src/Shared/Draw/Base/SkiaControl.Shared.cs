@@ -1378,6 +1378,13 @@ namespace DrawnUi.Draw
             return inside;
         }
 
+ 
+        /// <summary>
+        /// Delegate for use instead of calling base.OnSkiaGestureEvent
+        /// </summary>
+        public Func<SkiaGesturesParameters, GestureEventProcessingInfo, ISkiaGestureListener> OnGestures;
+
+
         public virtual ISkiaGestureListener ProcessGestures(
             SkiaGesturesParameters args,
             GestureEventProcessingInfo apply)
@@ -1425,6 +1432,15 @@ namespace DrawnUi.Draw
             ISkiaGestureListener consumed = null;
             ISkiaGestureListener wasConsumed = apply.AlreadyConsumed;
             bool manageChildFocus = false;
+
+            if (OnGestures != null)
+            {
+                consumed = OnGestures(args, apply);
+                if (consumed != null)
+                {
+                    return consumed;
+                }
+            }
 
             if (UsesRenderingTree && RenderTree != null)
             {
@@ -2768,7 +2784,7 @@ namespace DrawnUi.Draw
             this.SetValue(property, value);
         }
 
-        public Guid Uid { get; set; } = Guid.CreateVersion7();
+        public Guid Uid { get; set; } = Guid.NewGuid();
 
         //todo check adapt for MAUI
 

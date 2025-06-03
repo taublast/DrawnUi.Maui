@@ -25,6 +25,13 @@ namespace DrawnUi.Draw
             return control;
         }
 
+        /// <summary>
+        /// Assigns the control to a parent and returns the control for fluent chaining.
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="control">The control to assign</param>
+        /// <param name="parent">The parent control to add to</param>
+        /// <returns>The control for chaining</returns>
         public static T AssignParent<T>(this T control, SkiaControl parent) where T : SkiaControl
         {
             parent.AddSubView(control);
@@ -52,6 +59,15 @@ namespace DrawnUi.Draw
             return view;
         }
 
+        /// <summary>
+        /// Attaches a gesture handler to a SkiaLayout, allowing custom gesture processing.
+        /// You must return this control if you consumed a gesture, return null if not.
+        /// The UP gesture should be marked as consumed ONLY for specific scenarios, return null for it if unsure.
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaLayout</typeparam>
+        /// <param name="view">The layout to attach gestures to</param>
+        /// <param name="func">A function that returns a gesture listener for the layout</param>
+        /// <returns>The layout for chaining</returns>
         public static T WithGestures<T>(this T view, Func<T, SkiaGesturesParameters, GestureEventProcessingInfo, ISkiaGestureListener> func) where T : SkiaLayout
         {
             view.OnGestures = (a, b) =>
@@ -62,24 +78,43 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// This will be executed ones along and just before the CreateDefaultContent. This lets you execute initialization code after the control is already in the view tree and all variables you might want to use are already filled.
+        /// Registers a callback to be executed after the control is added to the view tree and initialized.
+        /// Use for setup that requires the control to be part of the visual tree.
+        /// This is called after the control default content was created and all variables have been assigned inside the fluent chain.
         /// </summary>
-        /// <typeparam name="T">Represents a type that extends SkiaControl, allowing for specific control initialization.</typeparam>
-        /// <param name="view">The control instance that will be initialized with the provided action.</param>
-        /// <param name="action">An operation to perform on the control instance during initialization.</param>
-        /// <returns>The initialized control instance after the action has been applied.</returns>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to initialize</param>
+        /// <param name="action">Initialization logic to run</param>
+        /// <returns>The control for chaining</returns>
         public static T Initialize<T>(this T view, Action<T> action) where T : SkiaControl
         {
-            view.ExecuteAfterCreated[Guid.CreateVersion7().ToString()] = control => { action.Invoke((T)control); };
+            view.ExecuteAfterCreated[Guid.NewGuid().ToString()] = control => { action.Invoke((T)control); };
             return view;
         }
 
+        /// <summary>
+        /// Registers a callback to be executed during the paint phase of the control's rendering.
+        /// Called inside the base.Paint(..).
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to attach paint logic to</param>
+        /// <param name="action">Paint logic to run</param>
+        /// <returns>The control for chaining</returns>
         public static T OnPaint<T>(this T view, Action<T, DrawingContext> action) where T : SkiaControl
         {
-            view.ExecuteOnPaint[Guid.CreateVersion7().ToString()] = (control, ctx) => { action.Invoke((T)control, ctx); };
+            view.ExecuteOnPaint[Guid.NewGuid().ToString()] = (control, ctx) => { action.Invoke((T)control, ctx); };
             return view;
         }
 
+        /// <summary>
+        /// Registers a callback to be executed when the control's BindingContext was set/changed.
+        /// Called inside base.ApplyBindingContext().
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="control">The control to observe</param>
+        /// <param name="callback">Callback to execute when BindingContext is set</param>
+        /// <param name="propertyFilter">Optional property filter</param>
+        /// <returns>The control for chaining</returns>
         public static T OnBindingContextSet<T>(
             this T control,
             Action<T, object> callback,
@@ -131,7 +166,7 @@ namespace DrawnUi.Draw
             where TSource : INotifyPropertyChanged
         {
             // Create a unique key for this subscription
-            string subscriptionKey = $"Subscribe_{target.GetHashCode()}_{Guid.CreateVersion7()}";
+            string subscriptionKey = $"Subscribe_{target.GetHashCode()}_{Guid.NewGuid()}";
 
             // Create the handler
             PropertyChangedEventHandler handler = (sender, args) =>
@@ -193,7 +228,7 @@ namespace DrawnUi.Draw
                 }
 
                 // Create a unique key for this subscription
-                string subscriptionKey = $"SubscribeLater_{source.GetHashCode()}_{Guid.CreateVersion7()}";
+                string subscriptionKey = $"SubscribeLater_{source.GetHashCode()}_{Guid.NewGuid()}";
 
                 // Create the handler
                 PropertyChangedEventHandler handler = (sender, args) =>
@@ -282,7 +317,7 @@ namespace DrawnUi.Draw
             }
 
             // Set up subscription for when BindingContext changes
-            string subscriptionKey = $"watch_{Guid.CreateVersion7()}";
+            string subscriptionKey = $"watch_{Guid.NewGuid()}";
 
             void ControlOnApplyingBindingContext(object sender, EventArgs e)
             {
@@ -347,7 +382,7 @@ namespace DrawnUi.Draw
             // Dictionary to track all subscriptions for cleanup
             Dictionary<string, PropertyChangedEventHandler> subscriptions =
                 new Dictionary<string, PropertyChangedEventHandler>();
-            string mainKey = $"ObserveDeepNested_{Guid.CreateVersion7()}";
+            string mainKey = $"ObserveDeepNested_{Guid.NewGuid()}";
 
             // Helper method to safely invoke callback
             void InvokeCallback(T ctrl, TProperty value)
@@ -608,7 +643,7 @@ namespace DrawnUi.Draw
             }
 
             // Set up subscription for when the target's BindingContext changes
-            string subscriptionKey = $"watch_other_{Guid.CreateVersion7()}";
+            string subscriptionKey = $"watch_other_{Guid.NewGuid()}";
 
             void TargetOnApplyingBindingContext(object sender, EventArgs e)
             {
@@ -655,7 +690,7 @@ namespace DrawnUi.Draw
         /// <param name="defaultValue">Default value to use when intermediate is null</param>
         /// <param name="debugTypeMismatch">Whether to log warnings for type mismatches</param>
         /// <returns>The control for chaining</returns>
-        public static T ObserveNestedProperty<T, TSource, TIntermediate, TProperty>(
+        public static T ObserveDeep<T, TSource, TIntermediate, TProperty>(
             this T control,
             Func<TSource, TIntermediate> intermediateSelector,
             string intermediatePropertyName,
@@ -671,7 +706,7 @@ namespace DrawnUi.Draw
             // Dictionary to track all subscriptions for cleanup
             Dictionary<string, PropertyChangedEventHandler> subscriptions =
                 new Dictionary<string, PropertyChangedEventHandler>();
-            string mainKey = $"ObserveNested_{intermediatePropertyName}_{propertyName}_{Guid.CreateVersion7()}";
+            string mainKey = $"ObserveNested_{intermediatePropertyName}_{propertyName}_{Guid.NewGuid()}";
 
             // Helper method to safely invoke callback
             void InvokeCallback(T ctrl, TProperty value)
@@ -861,7 +896,7 @@ namespace DrawnUi.Draw
             Func<TIntermediate, TProperty> propertyFunc = propertySelector.Compile();
 
             // Track current subscriptions for cleanup
-            string mainKey = $"ObserveTargetProperty_{Guid.CreateVersion7()}";
+            string mainKey = $"ObserveTargetProperty_{Guid.NewGuid()}";
             TSource currentViewModel = default(TSource);
             TIntermediate currentIntermediate = null;
 
@@ -1047,6 +1082,13 @@ namespace DrawnUi.Draw
 
         #region GESTURES
 
+        /// <summary>
+        /// Uses an `AddGestures.SetCommandTapped` with this control, will invoke code in passed callback when tapped.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="view"></param>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public static T OnTapped<T>(this T view, Action<T> action) where T : SkiaControl
         {
             try
@@ -1373,6 +1415,12 @@ namespace DrawnUi.Draw
 
         #region ENTRY
 
+        /// <summary>
+        /// Registers a callback to be executed when the text of a SkiaMauiEntry changes.
+        /// </summary>
+        /// <param name="control">The entry control to observe</param>
+        /// <param name="action">Callback receiving the entry and new text</param>
+        /// <returns>The entry control for chaining</returns>
         public static SkiaMauiEntry OnTextChanged(this SkiaMauiEntry control, Action<SkiaMauiEntry, string> action)
         {
             control.TextChanged += (sender, text) => { action?.Invoke(control, text); };
@@ -1380,6 +1428,12 @@ namespace DrawnUi.Draw
             return control;
         }
 
+        /// <summary>
+        /// Registers a callback to be executed when the text of a SkiaMauiEditor changes.
+        /// </summary>
+        /// <param name="control">The editor control to observe</param>
+        /// <param name="action">Callback receiving the editor and new text</param>
+        /// <returns>The editor control for chaining</returns>
         public static SkiaMauiEditor OnTextChanged(this SkiaMauiEditor control, Action<SkiaMauiEditor, string> action)
         {
             control.TextChanged += (sender, text) => { action?.Invoke(control, text); };
@@ -1389,6 +1443,12 @@ namespace DrawnUi.Draw
 
         #endregion
 
+        /// <summary>
+        /// Registers a callback to be executed when the text of a SkiaLabel changes.
+        /// </summary>
+        /// <param name="control">The label control to observe</param>
+        /// <param name="action">Callback receiving the label and new text</param>
+        /// <returns>The label control for chaining</returns>
         public static SkiaLabel OnTextChanged(this SkiaLabel control, Action<SkiaLabel, string> action)
         {
             control.PropertyChanged += (sender, e) =>

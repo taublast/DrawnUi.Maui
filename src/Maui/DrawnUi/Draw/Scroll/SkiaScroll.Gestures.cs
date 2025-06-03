@@ -116,6 +116,18 @@ public partial class SkiaScroll
 
     public bool HadDown { get; protected set; }
 
+    protected void ResetOverscroll()
+    {
+        if (OverscrollDistance.X != 0)
+        {
+            ViewportOffsetX = 0;
+        }
+        if (OverscrollDistance.Y != 0)
+        {
+            ViewportOffsetY = 0;
+        }
+    }
+
     protected virtual void ResetPan()
     {
         //Trace.WriteLine("[SCROLL] Pan reset!");
@@ -137,7 +149,7 @@ public partial class SkiaScroll
         _panningLastDelta = Vector2.Zero;
         _panningStartOffsetPts = new(ViewportOffsetX, ViewportOffsetY);
         _panningCurrentOffsetPts =
-            _panningStartOffsetPts; //new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
+        _panningStartOffsetPts; //new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
     }
 
     protected void StopVelocityPanning()
@@ -430,12 +442,14 @@ public partial class SkiaScroll
                                         if (Orientation == ScrollOrientation.Vertical &&
                                             mainDirection != DirectionType.Vertical)
                                         {
+                                            Repaint();
                                             return consumedDefault;
                                         }
 
                                         if (Orientation == ScrollOrientation.Horizontal &&
                                             mainDirection != DirectionType.Horizontal)
                                         {
+                                            Repaint();
                                             return consumedDefault;
                                         }
                                     }
@@ -549,15 +563,11 @@ public partial class SkiaScroll
 
                             IsUserFocused = false;
                             IsUserPanning = false;
+                            Repaint(); //need to repaint again for snapping to work on next frame
 
                             if (!fling)
                             {
-                                //if (CheckNeedToSnap())
-                                //    Snap(SystemAnimationTimeSecs);
-                                //else
-                                //{
-                                //    _destination = SKRect.Empty;
-                                //}
+                                ResetOverscroll();
                             }
                         }
 

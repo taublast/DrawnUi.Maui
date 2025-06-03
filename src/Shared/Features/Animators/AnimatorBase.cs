@@ -192,7 +192,7 @@ public class AnimatorBase : ISkiaAnimator
         set;
     }
 
-    public Guid Uid { get; set; } = Guid.CreateVersion7();
+    public Guid Uid { get; set; } = Guid.NewGuid();
 
     public virtual void Dispose()
     {
