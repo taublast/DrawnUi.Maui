@@ -1199,6 +1199,10 @@ public partial class SkiaCamera : SkiaControl
                 control.Stop();
                 control.Start();
             }
+            else
+            {
+                control.Start();
+            }
         }
     }
 
@@ -1371,18 +1375,18 @@ public partial class SkiaCamera : SkiaControl
     }
 
 
-    //public static readonly BindableProperty CustomAlbumProperty = BindableProperty.Create(nameof(CustomAlbum),
-    //	typeof(string),
-    //	typeof(SkiaCamera),
-    //	string.Empty);
-    ///// <summary>
-    ///// If not null will use this instead of Camera Roll folder for photos output
-    ///// </summary>
-    //public string CustomAlbum
-    //{
-    //	get { return (string)GetValue(CustomAlbumProperty); }
-    //	set { SetValue(CustomAlbumProperty, value); }
-    //}
+    public static readonly BindableProperty CustomAlbumProperty = BindableProperty.Create(nameof(CustomAlbum),
+        typeof(string),
+        typeof(SkiaCamera),
+        string.Empty);
+    /// <summary>
+    /// If not null will use this instead of Camera Roll folder for photos output
+    /// </summary>
+    public string CustomAlbum
+    {
+        get { return (string)GetValue(CustomAlbumProperty); }
+        set { SetValue(CustomAlbumProperty, value); }
+    }
 
 
     public static readonly BindableProperty GeotagProperty = BindableProperty.Create(nameof(Geotag),

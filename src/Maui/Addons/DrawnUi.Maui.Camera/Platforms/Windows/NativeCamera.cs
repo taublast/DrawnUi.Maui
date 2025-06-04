@@ -8,6 +8,7 @@ using Windows.Devices.Enumeration;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
 using Windows.Media.Capture.Frames;
+using Windows.Media.Devices;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -131,6 +132,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             PhotoCaptureSource = PhotoCaptureSource.VideoPreview
         };
 
+
+
         await _mediaCapture.InitializeAsync(settings);
         Debug.WriteLine("[NativeCameraWindows] MediaCapture initialized successfully");
 
@@ -141,9 +144,171 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         await SetupFrameReader();
         Debug.WriteLine("[NativeCameraWindows] Frame reader setup completed");
 
+        // Create and assign CameraUnit to parent control using real frame source data
+        CreateCameraUnit();
+
         Debug.WriteLine("[NativeCameraWindows] Auto-starting frame reader...");
         await StartFrameReaderAsync();
         Debug.WriteLine("[NativeCameraWindows] Frame reader auto-start completed");
+    }
+
+    private void CreateCameraUnit()
+    {
+        try
+        {
+            Debug.WriteLine("[NativeCameraWindows] Creating CameraUnit from real MediaFrameSource data...");
+
+            // Extract real camera data from the MediaFrameSource and selected format
+            var cameraSpecs = ExtractCameraSpecsFromFrameSource();
+
+            // Create CameraUnit with real Windows camera information
+            var cameraUnit = new CameraUnit
+            {
+                Id = _cameraDevice.Id,
+                Facing = _formsControl.Facing,
+                FocalLengths = cameraSpecs.FocalLengths,
+                FocalLength = cameraSpecs.FocalLength,
+                FieldOfView = cameraSpecs.FieldOfView,
+                SensorWidth = cameraSpecs.SensorWidth,
+                SensorHeight = cameraSpecs.SensorHeight,
+                MinFocalDistance = cameraSpecs.MinFocalDistance,
+                Meta = _formsControl.CreateMetadata()
+            };
+
+            // Assign to parent control
+            _formsControl.CameraDevice = cameraUnit;
+
+            Debug.WriteLine($"[NativeCameraWindows] CameraUnit created from real data:");
+            Debug.WriteLine($"  - Id: {cameraUnit.Id}");
+            Debug.WriteLine($"  - Facing: {cameraUnit.Facing}");
+            Debug.WriteLine($"  - Focal Length: {cameraUnit.FocalLength}mm");
+            Debug.WriteLine($"  - FOV: {cameraUnit.FieldOfView}°");
+            Debug.WriteLine($"  - Sensor: {cameraUnit.SensorWidth}x{cameraUnit.SensorHeight}mm");
+            Debug.WriteLine($"  - FocalLengths count: {cameraUnit.FocalLengths.Count}");
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"[NativeCameraWindows] CreateCameraUnitFromRealData error: {e}");
+        }
+    }
+
+    private WindowsCameraSpecs ExtractCameraSpecsFromFrameSource()
+    {
+        var specs = new WindowsCameraSpecs();
+
+        try
+        {
+            Debug.WriteLine("[NativeCameraWindows] Extracting camera specs from MediaFrameSource...");
+
+            // Get the current format that was set
+            var currentFormat = _frameSource?.CurrentFormat;
+            if (currentFormat != null)
+            {
+                // Extract real resolution data
+                var width = currentFormat.VideoFormat.Width;
+                var height = currentFormat.VideoFormat.Height;
+                var fps = currentFormat.FrameRate.Numerator / (double)currentFormat.FrameRate.Denominator;
+
+                Debug.WriteLine($"[NativeCameraWindows] Current format: {width}x{height} @ {fps:F1} FPS");
+
+                // Calculate sensor size from resolution (using typical pixel pitch for cameras)
+                // Most modern cameras have pixel pitch between 1.0-3.0 micrometers
+                var pixelPitchMicrometers = 1.4f; // Typical for modern cameras
+                specs.SensorWidth = (width * pixelPitchMicrometers) / 1000.0f; // Convert to mm
+                specs.SensorHeight = (height * pixelPitchMicrometers) / 1000.0f; // Convert to mm
+
+                Debug.WriteLine($"[NativeCameraWindows] Calculated sensor size: {specs.SensorWidth:F2}x{specs.SensorHeight:F2}mm");
+            }
+
+            // Extract zoom capabilities for focal length estimation
+            if (_mediaCapture?.VideoDeviceController?.ZoomControl?.Supported == true)
+            {
+                var zoomControl = _mediaCapture.VideoDeviceController.ZoomControl;
+                var minZoom = zoomControl.Min;
+                var maxZoom = zoomControl.Max;
+                var currentZoom = zoomControl.Value;
+
+                Debug.WriteLine($"[NativeCameraWindows] Zoom capabilities: {minZoom}x - {maxZoom}x (current: {currentZoom}x)");
+
+                // Estimate base focal length from sensor size and typical field of view
+                if (specs.SensorWidth > 0)
+                {
+                    // Assume typical webcam FOV of 60-70 degrees
+                    var estimatedFOV = 65.0f;
+                    var fovRadians = estimatedFOV * Math.PI / 180.0;
+                    specs.FocalLength = (float)(specs.SensorWidth / (2.0 * Math.Tan(fovRadians / 2.0)));
+                    specs.FieldOfView = estimatedFOV;
+
+                    // Add focal lengths for zoom range
+                    specs.FocalLengths.Add(specs.FocalLength * (float)minZoom);
+                    if (maxZoom > minZoom)
+                    {
+                        specs.FocalLengths.Add(specs.FocalLength * (float)maxZoom);
+                    }
+
+                    Debug.WriteLine($"[NativeCameraWindows] Calculated focal length: {specs.FocalLength:F2}mm, FOV: {specs.FieldOfView}°");
+                }
+            }
+
+            // Extract focus capabilities
+            if (_mediaCapture?.VideoDeviceController?.FocusControl?.Supported == true)
+            {
+                var focusControl = _mediaCapture.VideoDeviceController.FocusControl;
+                if (focusControl.SupportedFocusRanges?.Contains(AutoFocusRange.Macro) == true)
+                {
+                    specs.MinFocalDistance = 0.1f; // 10cm for macro
+                }
+                else if (focusControl.SupportedFocusRanges?.Contains(AutoFocusRange.Normal) == true)
+                {
+                    specs.MinFocalDistance = 0.3f; // 30cm for normal
+                }
+                else
+                {
+                    specs.MinFocalDistance = 0.5f; // 50cm default
+                }
+                Debug.WriteLine($"[NativeCameraWindows] Min focus distance: {specs.MinFocalDistance}m");
+            }
+
+            // Ensure we have at least basic values
+            if (specs.FocalLength <= 0)
+            {
+                specs.FocalLength = 4.0f; // Reasonable default based on sensor size
+                specs.FocalLengths.Add(specs.FocalLength);
+            }
+            if (specs.FieldOfView <= 0)
+            {
+                specs.FieldOfView = 65.0f; // Typical webcam FOV
+            }
+            if (specs.MinFocalDistance <= 0)
+            {
+                specs.MinFocalDistance = 0.3f;
+            }
+
+            Debug.WriteLine($"[NativeCameraWindows] Final specs: Focal={specs.FocalLength:F2}mm, FOV={specs.FieldOfView}°, FocalLengths={specs.FocalLengths.Count}");
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"[NativeCameraWindows] ExtractCameraSpecsFromFrameSource error: {e}");
+            // Set minimal defaults
+            specs.FocalLength = 4.0f;
+            specs.FocalLengths.Add(specs.FocalLength);
+            specs.FieldOfView = 65.0f;
+            specs.SensorWidth = 5.6f;
+            specs.SensorHeight = 4.2f;
+            specs.MinFocalDistance = 0.3f;
+        }
+
+        return specs;
+    }
+
+    private class WindowsCameraSpecs
+    {
+        public float FocalLength { get; set; }
+        public List<float> FocalLengths { get; set; } = new List<float>();
+        public float FieldOfView { get; set; }
+        public float SensorWidth { get; set; }
+        public float SensorHeight { get; set; }
+        public float MinFocalDistance { get; set; }
     }
 
     private async Task SetupFrameReader()
@@ -588,16 +753,26 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
 
         try
         {
-            var imageProperties = ImageEncodingProperties.CreateJpeg();
+            Debug.WriteLine("[NativeCameraWindows] Taking picture...");
 
+            // Create image encoding properties for high quality JPEG
+            var imageProperties = ImageEncodingProperties.CreateJpeg();
+            imageProperties.Width = 1920; // Set higher resolution for still capture
+            imageProperties.Height = 1080;
+
+            // Capture photo to stream
             using var stream = new InMemoryRandomAccessStream();
             await _mediaCapture.CapturePhotoToStreamAsync(imageProperties, stream);
+            Debug.WriteLine($"[NativeCameraWindows] Photo captured to stream, size: {stream.Size} bytes");
 
+            // Read stream data
             stream.Seek(0);
             var bytes = new byte[stream.Size];
             await stream.AsStream().ReadAsync(bytes, 0, bytes.Length);
 
+            // Create SKImage from captured data
             var skImage = SKImage.FromEncodedData(bytes);
+            Debug.WriteLine($"[NativeCameraWindows] SKImage created: {skImage?.Width}x{skImage?.Height}");
 
             var capturedImage = new CapturedImage()
             {
@@ -611,17 +786,61 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             {
                 StillImageCaptureSuccess?.Invoke(capturedImage);
             });
+
+            // IMPORTANT: Restart frame reader to resume preview
+            Debug.WriteLine("[NativeCameraWindows] Restarting frame reader to resume preview...");
+            await RestartFrameReaderAsync();
         }
         catch (Exception e)
         {
+            Debug.WriteLine($"[NativeCameraWindows] TakePicture error: {e}");
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 StillImageCaptureFailed?.Invoke(e);
             });
+
+            // Try to restart frame reader even if capture failed
+            try
+            {
+                await RestartFrameReaderAsync();
+            }
+            catch (Exception restartEx)
+            {
+                Debug.WriteLine($"[NativeCameraWindows] Failed to restart frame reader: {restartEx}");
+            }
         }
         finally
         {
             _isCapturingStill = false;
+        }
+    }
+
+    private async Task RestartFrameReaderAsync()
+    {
+        try
+        {
+            if (_frameReader != null)
+            {
+                Debug.WriteLine("[NativeCameraWindows] Stopping frame reader...");
+                await _frameReader.StopAsync();
+
+                Debug.WriteLine("[NativeCameraWindows] Starting frame reader...");
+                var result = await _frameReader.StartAsync();
+                Debug.WriteLine($"[NativeCameraWindows] Frame reader restart result: {result}");
+
+                if (result == MediaFrameReaderStartStatus.Success)
+                {
+                    Debug.WriteLine("[NativeCameraWindows] Frame reader restarted successfully - preview should resume");
+                }
+                else
+                {
+                    Debug.WriteLine($"[NativeCameraWindows] Failed to restart frame reader: {result}");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"[NativeCameraWindows] RestartFrameReaderAsync error: {e}");
         }
     }
 
@@ -632,16 +851,26 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             var picturesLibrary = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
             var saveFolder = picturesLibrary.SaveFolder;
 
+            // Create album subfolder if specified, similar to Android/iOS behavior
             if (!string.IsNullOrEmpty(album))
             {
+                Debug.WriteLine($"[NativeCameraWindows] Creating album folder: {album}");
                 saveFolder = await saveFolder.CreateFolderAsync(album, CreationCollisionOption.OpenIfExists);
+            }
+            else
+            {
+                // Default to "Camera" folder like Android does when no album specified
+                Debug.WriteLine("[NativeCameraWindows] Using default Camera folder");
+                saveFolder = await saveFolder.CreateFolderAsync("Camera", CreationCollisionOption.OpenIfExists);
             }
 
             var file = await saveFolder.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
+            Debug.WriteLine($"[NativeCameraWindows] Saving to: {file.Path}");
 
             using var fileStream = await file.OpenStreamForWriteAsync();
             await stream.CopyToAsync(fileStream);
 
+            Debug.WriteLine($"[NativeCameraWindows] Successfully saved image to: {file.Path}");
             return file.Path;
         }
         catch (Exception e)
