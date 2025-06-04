@@ -12,8 +12,93 @@ using Windows.Media.Devices;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using System.Runtime.InteropServices.WindowsRuntime;
+using SkiaSharp;
+using DrawnUi.Views;
 
 namespace DrawnUi.Camera;
+
+#region Direct3D Interop Interfaces
+
+[ComImport]
+[Guid("035f3ab4-482e-4e50-b960-13b05d3696c9")]
+[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IDirect3DDxgiInterfaceAccess
+{
+    IntPtr GetInterface([In] ref Guid iid);
+}
+
+[ComImport]
+[Guid("4AE63092-6327-4c1b-80AE-BFE12EA32B86")]
+[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IDXGISurface : IDXGIDeviceSubObject
+{
+    // IDXGIObject methods
+    void SetPrivateData([In] ref Guid Name, uint DataSize, IntPtr pData);
+    void SetPrivateDataInterface([In] ref Guid Name, [In, MarshalAs(UnmanagedType.IUnknown)] object pUnknown);
+    void GetPrivateData([In] ref Guid Name, ref uint pDataSize, IntPtr pData);
+    void GetParent([In] ref Guid riid, out IntPtr ppParent);
+    
+    // IDXGIDeviceSubObject methods
+    void GetDevice([In] ref Guid riid, out IntPtr ppDevice);
+    
+    // IDXGISurface methods
+    void GetDesc(out DXGI_SURFACE_DESC pDesc);
+    void Map(out DXGI_MAPPED_RECT pLockedRect, uint MapFlags);
+    void Unmap();
+}
+
+[ComImport]
+[Guid("3D3E0379-F9DE-4D58-BB6C-18D62992F1A6")]
+[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IDXGIDeviceSubObject : IDXGIObject
+{
+    void GetDevice([In] ref Guid riid, out IntPtr ppDevice);
+}
+
+[ComImport]
+[Guid("aec22fb8-76f3-4639-9be0-28eb43a67a2e")]
+[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+interface IDXGIObject
+{
+    void SetPrivateData([In] ref Guid Name, uint DataSize, IntPtr pData);
+    void SetPrivateDataInterface([In] ref Guid Name, [In, MarshalAs(UnmanagedType.IUnknown)] object pUnknown);
+    void GetPrivateData([In] ref Guid Name, ref uint pDataSize, IntPtr pData);
+    void GetParent([In] ref Guid riid, out IntPtr ppParent);
+}
+
+[StructLayout(LayoutKind.Sequential)]
+struct DXGI_SURFACE_DESC
+{
+    public uint Width;
+    public uint Height;
+    public uint Format;
+    public DXGI_SAMPLE_DESC SampleDesc;
+}
+
+[StructLayout(LayoutKind.Sequential)]
+struct DXGI_SAMPLE_DESC
+{
+    public uint Count;
+    public uint Quality;
+}
+
+[StructLayout(LayoutKind.Sequential)]
+struct DXGI_MAPPED_RECT
+{
+    public int Pitch;
+    public IntPtr pBits;
+}
+
+[ComImport]
+[Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
+[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+unsafe interface IMemoryBufferByteAccess
+{
+    void GetBuffer(out byte* buffer, out uint capacity);
+}
+
+#endregion
 
 public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyChanged
 {
@@ -380,10 +465,138 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             Debug.WriteLine("[NativeCameraWindows] No suitable format found, using default");
         }
 
-        //Debug.WriteLine("[NativeCameraWindows] Creating frame reader...");
         _frameReader = await _mediaCapture.CreateFrameReaderAsync(_frameSource, MediaEncodingSubtypes.Bgra8);
         _frameReader.FrameArrived += OnFrameArrived;
-        //Debug.WriteLine("[NativeCameraWindows] Frame reader created and event handler attached");
+        Debug.WriteLine("[NativeCameraWindows] Frame reader created and event handler attached");
+    }
+
+    #endregion
+
+    #region Optimized Direct3D Processing
+
+    /// <summary>
+    /// Get the GRContext from the accelerated SkiaSharp canvas
+    /// </summary>
+    private GRContext GetExistingGRContext()
+    {
+        try
+        {
+            if (_formsControl.Superview?.CanvasView is SkiaViewAccelerated accelerated)
+            {
+                return accelerated.GRContext;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"[NativeCameraWindows] GetExistingGRContext error: {e}");
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Extract DXGI surface from Direct3D surface
+    /// </summary>
+    private IDXGISurface GetDXGISurfaceFromD3DSurface(Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface d3dSurface)
+    {
+        try
+        {
+            // Try to get the DXGI interface access
+            if (d3dSurface is IDirect3DDxgiInterfaceAccess access)
+            {
+                var dxgiSurfaceGuid = typeof(IDXGISurface).GUID;
+                var surfacePtr = access.GetInterface(ref dxgiSurfaceGuid);
+                if (surfacePtr != IntPtr.Zero)
+                {
+                    return Marshal.GetObjectForIUnknown(surfacePtr) as IDXGISurface;
+                }
+            }
+            
+            Debug.WriteLine("[NativeCameraWindows] Direct3D surface does not support DXGI interface access");
+            return null;
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"[NativeCameraWindows] GetDXGISurfaceFromD3DSurface error: {e}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Create optimized SKImage directly from Direct3D surface
+    /// </summary>
+    private SKImage ConvertDirect3DToOptimizedSKImage(Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface d3dSurface)
+    {
+        try
+        {
+            var grContext = GetExistingGRContext();
+            if (grContext == null) 
+            {
+                Debug.WriteLine("[NativeCameraWindows] No GRContext available, falling back to software processing");
+                return null;
+            }
+
+            var dxgiSurface = GetDXGISurfaceFromD3DSurface(d3dSurface);
+            if (dxgiSurface == null)
+            {
+                Debug.WriteLine("[NativeCameraWindows] Failed to extract DXGI surface");
+                return null;
+            }
+
+            dxgiSurface.GetDesc(out DXGI_SURFACE_DESC desc);
+            Debug.WriteLine($"[NativeCameraWindows] Creating GPU SKImage: {desc.Width}x{desc.Height}, Format: {desc.Format}");
+
+            var imageInfo = new SKImageInfo((int)desc.Width, (int)desc.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
+            
+            dxgiSurface.Map(out DXGI_MAPPED_RECT mappedRect, 0);
+            
+            try
+            {
+                var skImage = SKImage.FromPixels(imageInfo, mappedRect.pBits, mappedRect.Pitch);
+                Debug.WriteLine($"[NativeCameraWindows] Successfully created SKImage from D3D surface: {skImage?.Width}x{skImage?.Height}");
+                return skImage;
+            }
+            finally
+            {
+                dxgiSurface.Unmap();
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"[NativeCameraWindows] ConvertDirect3DToGPUSKImage error: {e}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Process Direct3D frame and create CapturedImage
+    /// </summary>
+    private void ProcessOptimizedFrame(SKImage optimizedSkImage)
+    {
+        try
+        {
+            var capturedImage = new CapturedImage()
+            {
+                Facing = _formsControl.Facing,
+                Time = DateTime.UtcNow,
+                Image = optimizedSkImage,
+                Orientation = _formsControl.DeviceRotation
+            };
+
+            lock (_lockPreview)
+            {
+                _preview?.Dispose();
+                _preview = capturedImage;
+            }
+
+            PreviewCaptureSuccess?.Invoke(capturedImage);
+            _formsControl.UpdatePreview();
+
+            Debug.WriteLine($"[NativeCameraWindows] Optimized frame processed successfully: {optimizedSkImage.Width}x{optimizedSkImage.Height}");
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"[NativeCameraWindows] ProcessOptimizedFrame error: {e}");
+        }
     }
 
     #endregion
@@ -391,7 +604,70 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     #region Improved Frame Processing
 
     /// <summary>
-    /// Improved frame arrival handler with better synchronization
+    /// Process Direct3D frame using GPU-assisted conversion to SoftwareBitmap
+    /// This leverages GPU-resident data for better performance than pure software processing
+    /// </summary>
+    private async void ProcessDirect3DFrameAsync(Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface d3dSurface)
+    {
+        if (!await _frameSemaphore.WaitAsync(1)) // Don't wait, just skip if busy
+            return;
+
+        _isProcessingFrame = true;
+
+        try
+        {
+            // Use GPU-assisted conversion from Direct3D surface to SoftwareBitmap
+            // This is more efficient than pure software processing since it leverages GPU-resident data
+            var softwareBitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(d3dSurface);
+            if (softwareBitmap != null)
+            {
+                var skImage = await ConvertToSKImageDirectAsync(softwareBitmap);
+                if (skImage != null)
+                {
+                    var capturedImage = new CapturedImage()
+                    {
+                        Facing = _formsControl.Facing,
+                        Time = DateTime.UtcNow,
+                        Image = skImage,
+                        Orientation = _formsControl.DeviceRotation
+                    };
+
+                    // Update preview safely
+                    lock (_lockPreview)
+                    {
+                        _preview?.Dispose();
+                        _preview = capturedImage;
+                    }
+
+                    //PREVIEW FRAME READY
+                    PreviewCaptureSuccess?.Invoke(capturedImage);
+                    _formsControl.UpdatePreview();
+
+                    //Debug.WriteLine("[NativeCameraWindows] Direct3D frame processed successfully via GPU-assisted conversion");
+                }
+                else
+                {
+                    Debug.WriteLine("[NativeCameraWindows] Failed to convert SoftwareBitmap to SKImage");
+                }
+            }
+            else
+            {
+                Debug.WriteLine("[NativeCameraWindows] Failed to convert Direct3D surface to SoftwareBitmap");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine($"[NativeCameraWindows] ProcessDirect3DFrameAsync error: {e}");
+        }
+        finally
+        {
+            _isProcessingFrame = false;
+            _frameSemaphore.Release();
+        }
+    }
+
+    /// <summary>
+    /// Improved frame arrival handler with GPU acceleration priority
     /// </summary>
     private void OnFrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
     {
@@ -406,15 +682,19 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             {
                 var videoFrame = frame.VideoMediaFrame;
 
+                // PRIORITY 1: Use GPU-assisted Direct3D processing
+                if (videoFrame.Direct3DSurface != null)
+                {
+                    //Debug.WriteLine("[NativeCameraWindows] Frame arrived with Direct3D surface, using GPU-assisted processing...");
+                    ProcessDirect3DFrameAsync(videoFrame.Direct3DSurface);
+                    return;
+                }
+                
+                // PRIORITY 2: Fallback to software bitmap processing
                 if (videoFrame.SoftwareBitmap != null)
                 {
                     //Debug.WriteLine("[NativeCameraWindows] Frame arrived with software bitmap, processing...");
                     ProcessFrameAsync(videoFrame.SoftwareBitmap);
-                }
-                else if (videoFrame.Direct3DSurface != null)
-                {
-                    //Debug.WriteLine("[NativeCameraWindows] Frame arrived with Direct3D surface, converting...");
-                    ConvertDirect3DToSoftwareBitmapAsync(videoFrame);
                 }
                 else
                 {
@@ -429,7 +709,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     }
 
     /// <summary>
-    /// Improved frame processing with direct pixel access (like iOS)
+    /// Process frame with direct pixel access
     /// </summary>
     private async void ProcessFrameAsync(SoftwareBitmap softwareBitmap)
     {
@@ -484,7 +764,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     }
 
     /// <summary>
-    /// Direct pixel access conversion using proper Windows Runtime APIs
+    /// Convert SoftwareBitmap to SKImage using direct memory access
     /// </summary>
     private async Task<SKImage> ConvertToSKImageDirectAsync(SoftwareBitmap softwareBitmap)
     {
@@ -503,27 +783,21 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             var width = softwareBitmap.PixelWidth;
             var height = softwareBitmap.PixelHeight;
 
-            // Try direct memory access first
             try
             {
                 using var buffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Read);
                 using var reference = buffer.CreateReference();
 
-                // Try to get IMemoryBufferByteAccess interface
                 if (reference is IMemoryBufferByteAccess memoryAccess)
                 {
                     unsafe
                     {
                         memoryAccess.GetBuffer(out byte* dataInBytes, out uint capacity);
-
-                        // Get proper stride from buffer plane description
                         var planeDescription = buffer.GetPlaneDescription(0);
                         var stride = planeDescription.Stride;
 
                         var info = new SKImageInfo(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
                         var skImage = SKImage.FromPixels(info, new IntPtr(dataInBytes), stride);
-
-                        //Debug.WriteLine($"[NativeCameraWindows] Created SKImage directly: {skImage?.Width}x{skImage?.Height}");
                         return skImage;
                     }
                 }
@@ -533,8 +807,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 Debug.WriteLine($"[NativeCameraWindows] Direct access failed, falling back: {ex.Message}");
             }
 
-            // Fallback: Use more efficient stream approach
-            return await ConvertToSKImageStreamAsync(softwareBitmap);
+            return await ConvertToSKImageManagedCopy(softwareBitmap);
         }
         catch (Exception e)
         {
@@ -544,39 +817,67 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     }
 
     /// <summary>
-    /// Fallback method using optimized stream conversion
+    /// Fallback conversion using BMP encoding
     /// </summary>
-    private async Task<SKImage> ConvertToSKImageStreamAsync(SoftwareBitmap softwareBitmap)
+    private async Task<SKImage> ConvertToSKImageManagedCopy(SoftwareBitmap softwareBitmap)
     {
         try
         {
-            //Debug.WriteLine($"[NativeCameraWindows] Using stream-based conversion...");
+            if (softwareBitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 ||
+                softwareBitmap.BitmapAlphaMode != BitmapAlphaMode.Premultiplied)
+            {
+                softwareBitmap = SoftwareBitmap.Convert(softwareBitmap,
+                    BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+            }
 
-            // Use PNG instead of BMP for better performance and smaller size
+            var width = softwareBitmap.PixelWidth;
+            var height = softwareBitmap.PixelHeight;
+
+            try
+            {
+                using var bitmapBuffer = softwareBitmap.LockBuffer(BitmapBufferAccessMode.Read);
+                using var reference = bitmapBuffer.CreateReference();
+
+                if (reference is IMemoryBufferByteAccess memoryAccess)
+                {
+                    unsafe
+                    {
+                        memoryAccess.GetBuffer(out byte* dataInBytes, out uint capacity);
+                        var planeDescription = bitmapBuffer.GetPlaneDescription(0);
+                        var stride = planeDescription.Stride;
+
+                        var info = new SKImageInfo(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+                        var skImage = SKImage.FromPixels(info, new IntPtr(dataInBytes), stride);
+                        return skImage;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[NativeCameraWindows] Direct access failed, using stream approach: {ex.Message}");
+            }
+
             using var stream = new InMemoryRandomAccessStream();
-            var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+            var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.BmpEncoderId, stream);
             encoder.SetSoftwareBitmap(softwareBitmap);
 
-            // Optimize encoder settings for speed
             encoder.BitmapTransform.ScaledWidth = (uint)softwareBitmap.PixelWidth;
             encoder.BitmapTransform.ScaledHeight = (uint)softwareBitmap.PixelHeight;
             encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.NearestNeighbor;
 
             await encoder.FlushAsync();
 
-            // Convert to byte array more efficiently
             var size = (int)stream.Size;
             var bytes = new byte[size];
             stream.Seek(0);
-            var buffer = await stream.ReadAsync(bytes.AsBuffer(), (uint)size, InputStreamOptions.None);
+            var streamBuffer = await stream.ReadAsync(bytes.AsBuffer(), (uint)size, InputStreamOptions.None);
 
-            var skImage = SKImage.FromEncodedData(bytes);
-            //Debug.WriteLine($"[NativeCameraWindows] Created SKImage from stream: {skImage?.Width}x{skImage?.Height}");
-            return skImage;
+            var skImageFromStream = SKImage.FromEncodedData(bytes);
+            return skImageFromStream;
         }
         catch (Exception e)
         {
-            Debug.WriteLine($"[NativeCameraWindows] ConvertToSKImageStreamAsync error: {e}");
+            Debug.WriteLine($"[NativeCameraWindows] ConvertToSKImageManagedCopy error: {e}");
             return null;
         }
     }
