@@ -16,7 +16,7 @@ cd MyDrawnUiApp
 ## 2. Add DrawnUi to Your Project
 
 ```bash
-dotnet add package DrawnUi
+dotnet add package AppoMobi.Maui.DrawnUi
 ```
 
 ## 3. Add a DrawnUi Canvas to MainPage
@@ -26,30 +26,53 @@ Open `MainPage.xaml` and replace the content with:
 ```xml
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:draw="clr-namespace:DrawnUi.Maui;assembly=DrawnUi.Maui"
+             xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
              x:Class="MyDrawnUiApp.MainPage">
     <draw:Canvas HorizontalOptions="Fill" VerticalOptions="Fill">
-        <draw:SkiaLayout LayoutType="Column" Padding="32" Spacing="24">
+        <draw:SkiaLayout Type="Column" Padding="32" Spacing="24">
             <draw:SkiaLabel Text="Hello, DrawnUi!" FontSize="32" TextColor="Blue" />
-            <draw:SkiaButton Text="Click Me" Tapped="OnButtonTapped" />
+            <draw:SkiaButton Text="Click Me" Clicked="OnButtonClicked" />
         </draw:SkiaLayout>
     </draw:Canvas>
 </ContentPage>
 ```
 
-## 4. Handle Button Tap in Code
+## 4. Initialize DrawnUi in MauiProgram.cs
+
+Add the DrawnUi initialization to your `MauiProgram.cs`:
+
+```csharp
+public static class MauiProgram
+{
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp<App>()
+            .UseDrawnUi() // Add this line
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+            });
+
+        return builder.Build();
+    }
+}
+```
+
+## 5. Handle Button Click in Code
 
 In `MainPage.xaml.cs`:
 
 ```csharp
-private void OnButtonTapped(object sender, EventArgs e)
+private void OnButtonClicked(SkiaButton sender, SkiaGesturesParameters e)
 {
     // Show a message or update UI
-    DisplayAlert("DrawnUi", "Button tapped!", "OK");
+    DisplayAlert("DrawnUi", "Button clicked!", "OK");
 }
 ```
 
-## 5. Run Your App
+## 6. Run Your App
 
 Build and run your app on Windows, Android, iOS, or Mac.
 

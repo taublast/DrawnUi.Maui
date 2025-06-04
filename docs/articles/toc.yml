@@ -6,8 +6,6 @@
       href: getting-started.md
     - name: Your First DrawnUi App
       href: first-app.md
-    - name: Understanding the Drawing Pipeline
-      href: drawing-pipeline.md
 - name: Controls
   href: controls/index.md
 - name: Advanced

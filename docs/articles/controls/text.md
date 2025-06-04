@@ -9,11 +9,11 @@ SkiaLabel is the primary text rendering control in DrawnUi.Maui, rendering text 
 ### Basic Usage
 
 ```xml
-<DrawUi:SkiaLabel 
-    Text="Hello World" 
-    TextColor="Black" 
-    FontSize="18" 
-    HorizontalTextAlignment="Center" 
+<draw:SkiaLabel
+    Text="Hello World"
+    TextColor="Black"
+    FontSize="18"
+    HorizontalTextAlignment="Center"
     VerticalTextAlignment="Center" />
 ```
 
@@ -49,13 +49,13 @@ SkiaLabel is the primary text rendering control in DrawnUi.Maui, rendering text 
 SkiaLabel supports rich text formatting through its `Spans` collection:
 
 ```xml
-<DrawUi:SkiaLabel>
-    <DrawUi:SkiaLabel.Spans>
-        <DrawUi:TextSpan Text="Hello " TextColor="Black" FontSize="18" />
-        <DrawUi:TextSpan Text="Beautiful " TextColor="Red" FontSize="20" FontWeight="700" />
-        <DrawUi:TextSpan Text="World!" TextColor="Blue" FontSize="18" FontAttributes="Italic" />
-    </DrawUi:SkiaLabel.Spans>
-</DrawUi:SkiaLabel>
+<draw:SkiaLabel>
+    <draw:SkiaLabel.Spans>
+        <draw:TextSpan Text="Hello " TextColor="Black" FontSize="18" />
+        <draw:TextSpan Text="Beautiful " TextColor="Red" FontSize="20" FontWeight="700" />
+        <draw:TextSpan Text="World!" TextColor="Blue" FontSize="18" FontAttributes="Italic" />
+    </draw:SkiaLabel.Spans>
+</draw:SkiaLabel>
 ```
 
 #### Interactive Spans
@@ -63,16 +63,16 @@ SkiaLabel supports rich text formatting through its `Spans` collection:
 You can make any text span interactive by adding the `Tapped` event handler:
 
 ```xml
-<DrawUi:SkiaLabel FontSize="15" LineSpacing="1.5" TextColor="Black">
-    <DrawUi:TextSpan Text="Regular text " />
-    <DrawUi:TextSpan 
-        Text="tappable link" 
-        TextColor="Purple" 
+<draw:SkiaLabel FontSize="15" LineSpacing="1.5" TextColor="Black">
+    <draw:TextSpan Text="Regular text " />
+    <draw:TextSpan
+        Text="tappable link"
+        TextColor="Purple"
         Tapped="OnSpanTapped"
-        Tag="link-id" 
+        Tag="link-id"
         Underline="True" />
-    <DrawUi:TextSpan Text=" more text..." />
-</DrawUi:SkiaLabel>
+    <draw:TextSpan Text=" more text..." />
+</draw:SkiaLabel>
 ```
 
 In your code-behind:
@@ -91,11 +91,11 @@ private void OnSpanTapped(object sender, EventArgs e)
 TextSpan supports various styling options:
 
 ```xml
-<DrawUi:TextSpan Text="Bold text" FontAttributes="Bold" />
-<DrawUi:TextSpan Text="Italic text" FontAttributes="Italic" />
-<DrawUi:TextSpan Text="Underlined text" Underline="True" />
-<DrawUi:TextSpan Text="Strikethrough text" Strikeout="True" />
-<DrawUi:TextSpan Text="Highlighted text" BackgroundColor="Yellow" />
+<draw:TextSpan Text="Bold text" FontAttributes="Bold" />
+<draw:TextSpan Text="Italic text" FontAttributes="Italic" />
+<draw:TextSpan Text="Underlined text" Underline="True" />
+<draw:TextSpan Text="Strikethrough text" Strikeout="True" />
+<draw:TextSpan Text="Highlighted text" BackgroundColor="Yellow" />
 ```
 
 #### Emoji Support
@@ -103,9 +103,9 @@ TextSpan supports various styling options:
 For emoji rendering, use the `AutoFont` property:
 
 ```xml
-<DrawUi:TextSpan Text="Regular text " />
-<DrawUi:TextSpan AutoFont="True" Text="🌐🚒🙎🏽👻🤖" />
-<DrawUi:TextSpan Text=" more text..." />
+<draw:TextSpan Text="Regular text " />
+<draw:TextSpan AutoFont="True" Text="🌐🚒🙎🏽👻🤖" />
+<draw:TextSpan Text=" more text..." />
 ```
 
 This ensures proper emoji rendering by finding and using appropriate fonts.
@@ -122,9 +122,9 @@ Use the following properties for shadow effects:
 - `DropShadowOffsetX`, `DropShadowOffsetY`: Shadow offset
 
 ```xml
-<DrawUi:SkiaLabel 
-    Text="Shadowed Text" 
-    FontSize="24" 
+<draw:SkiaLabel
+    Text="Shadowed Text"
+    FontSize="24"
     TextColor="White"
     DropShadowColor="#80000000"
     DropShadowSize="3"
@@ -135,19 +135,19 @@ Use the following properties for shadow effects:
 #### Outlined Text
 
 ```xml
-<DrawUi:SkiaLabel 
-    Text="Outlined Text" 
-    FontSize="24" 
-    TextColor="White" 
-    StrokeColor="Black" 
+<draw:SkiaLabel
+    Text="Outlined Text"
+    FontSize="24"
+    TextColor="White"
+    StrokeColor="Black"
     StrokeWidth="1" />
 ```
 
 #### Gradient Text
 
 ```xml
-<DrawUi:SkiaLabel 
-    Text="Gradient Text" 
+<draw:SkiaLabel
+    Text="Gradient Text"
     FontSize="24"
     FillGradient="{StaticResource MyGradient}" />
 ```
@@ -157,10 +157,10 @@ Use the following properties for shadow effects:
 SkiaLabel features powerful automatic font sizing capabilities that can dynamically adjust text to fit your container:
 
 ```xml
-<DrawUi:SkiaLabel 
-    Text="This text will resize to fit the available space" 
-    AutoSize="TextToView" 
-    FontSize="24" 
+<draw:SkiaLabel
+    Text="This text will resize to fit the available space"
+    AutoSize="TextToView"
+    FontSize="24"
     MaxLines="1" />
 ```
 
@@ -172,9 +172,9 @@ SkiaLabel features powerful automatic font sizing capabilities that can dynamica
 SkiaLabel provides the ability to render text in a monospaced style, regardless of the font used:
 
 ```xml
-<DrawUi:SkiaLabel 
-    Text="This text will be monospaced" 
-    FontSize="18" 
+<draw:SkiaLabel
+    Text="This text will be monospaced"
+    FontSize="18"
     MonoForDigits="8" />
 ```
 
@@ -196,7 +196,7 @@ SkiaMarkdownLabel extends SkiaLabel to provide Markdown formatting capabilities.
 ### Basic Usage
 
 ```xml
-<DrawUi:SkiaMarkdownLabel>
+<draw:SkiaMarkdownLabel>
 # Markdown Title
 
 This is a paragraph with **bold** and *italic* text.
@@ -212,7 +212,7 @@ This is a paragraph with **bold** and *italic* text.
 // Code block
 var label = new SkiaMarkdownLabel();
 ```
-</DrawUi:SkiaMarkdownLabel>
+</draw:SkiaMarkdownLabel>
 ```
 
 ### Supported Markdown Features
@@ -227,19 +227,19 @@ var label = new SkiaMarkdownLabel();
 ### Customizing Markdown Style
 
 ```xml
-<DrawUi:SkiaMarkdownLabel 
-    LinkColor="Blue" 
-    CodeTextColor="DarkGreen" 
-    CodeBackgroundColor="#EEEEEE" 
-    CodeBlockBackgroundColor="#F5F5F5" 
-    StrikeoutColor="Red" 
-    PrefixBullet="• " 
-    PrefixNumbered="{0}. " 
-    UnderlineLink="True" 
+<draw:SkiaMarkdownLabel
+    LinkColor="Blue"
+    CodeTextColor="DarkGreen"
+    CodeBackgroundColor="#EEEEEE"
+    CodeBlockBackgroundColor="#F5F5F5"
+    StrikeoutColor="Red"
+    PrefixBullet="• "
+    PrefixNumbered="{0}. "
+    UnderlineLink="True"
     UnderlineWidth="1">
 # Custom Styled Markdown
 This has **custom** styling for [links](https://example.com) and `code blocks`.
-</DrawUi:SkiaMarkdownLabel>
+</draw:SkiaMarkdownLabel>
 ```
 
 ### Link Handling
@@ -247,11 +247,11 @@ This has **custom** styling for [links](https://example.com) and `code blocks`.
 SkiaMarkdownLabel provides built-in support for handling link taps:
 
 ```xml
-<DrawUi:SkiaMarkdownLabel 
-    LinkTapped="OnLinkTapped" 
+<draw:SkiaMarkdownLabel
+    LinkTapped="OnLinkTapped"
     CommandLinkTapped="{Binding OpenLinkCommand}">
 Check out [this link](https://example.com)!
-</DrawUi:SkiaMarkdownLabel>
+</draw:SkiaMarkdownLabel>
 ```
 
 In your code-behind:
@@ -277,7 +277,7 @@ private void OnLinkTapped(object sender, LinkTappedEventArgs e)
 A specialized label for displaying frames-per-second (FPS) metrics, useful for performance monitoring during development:
 
 ```xml
-<DrawUi:SkiaLabelFps
+<draw:SkiaLabelFps
     TextColor="Green"
     FontSize="12"
     HorizontalOptions="End"
@@ -288,44 +288,44 @@ A specialized label for displaying frames-per-second (FPS) metrics, useful for p
 ## Example: Text Card
 
 ```xml
-<DrawUi:SkiaShape
+<draw:SkiaShape
     Type="Rectangle"
     BackgroundColor="White"
     CornerRadius="8"
     Padding="16"
     WidthRequest="300">
-    
-    <DrawUi:SkiaShape.Shadows>
-        <DrawUi:SkiaShadow
+
+    <draw:SkiaShape.Shadows>
+        <draw:SkiaShadow
             Color="#22000000"
             BlurRadius="10"
             Offset="0,2" />
-    </DrawUi:SkiaShape.Shadows>
-    
-    <DrawUi:SkiaLayout LayoutType="Column" Spacing="8">
-        <DrawUi:SkiaLabel
+    </draw:SkiaShape.Shadows>
+
+    <draw:SkiaLayout Type="Column" Spacing="8">
+        <draw:SkiaLabel
             Text="Article Title"
             FontSize="20"
             FontWeight="700"
             TextColor="#333333" />
-            
-        <DrawUi:SkiaLabel
+
+        <draw:SkiaLabel
             Text="Published on April 3, 2025"
             FontSize="12"
             TextColor="#666666" />
-            
-        <DrawUi:SkiaLabel
+
+        <draw:SkiaLabel
             Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor."
             FontSize="14"
             TextColor="#444444"
             LineHeight="1.5" />
-            
-        <DrawUi:SkiaLabel>
-            <DrawUi:SkiaLabel.Spans>
-                <DrawUi:TextSpan Text="Read more " TextColor="#444444" FontSize="14" />
-                <DrawUi:TextSpan Text="here" TextColor="Blue" FontSize="14" IsUnderline="True" />
-            </DrawUi:SkiaLabel.Spans>
-        </DrawUi:SkiaLabel>
-    </DrawUi:SkiaLayout>
-</DrawUi:SkiaShape>
+
+        <draw:SkiaLabel>
+            <draw:SkiaLabel.Spans>
+                <draw:TextSpan Text="Read more " TextColor="#444444" FontSize="14" />
+                <draw:TextSpan Text="here" TextColor="Blue" FontSize="14" IsUnderline="True" />
+            </draw:SkiaLabel.Spans>
+        </draw:SkiaLabel>
+    </draw:SkiaLayout>
+</draw:SkiaShape>
 ```

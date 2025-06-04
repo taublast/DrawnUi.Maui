@@ -9,7 +9,7 @@ SkiaImage is the core image control in DrawnUi.Maui, providing efficient image l
 ### Basic Usage
 
 ```xml
-<DrawUi:SkiaImage
+<draw:SkiaImage
     Source="image.png"
     Aspect="AspectFit"
     HorizontalOptions="Center"
@@ -46,7 +46,7 @@ SkiaImage is the core image control in DrawnUi.Maui, providing efficient image l
 
 > **Note:** The `UseCache` property is not directly on SkiaImage, but caching is handled by the SkiaControl base class or internally. You can set `Cache` on SkiaImage for caching strategies (e.g., `Cache="Image"`).
 
-> **Note:** The `VisualEffects` property is inherited from SkiaControl. You can use `<DrawUi:SkiaControl.VisualEffects>` in XAML to apply effects like drop shadow or color presets.
+> **Note:** The `VisualEffects` property is inherited from SkiaControl. You can use `<draw:SkiaControl.VisualEffects>` in XAML to apply effects like drop shadow or color presets.
 
 ### Aspect Modes
 
@@ -77,25 +77,25 @@ The `Aspect` property controls how the image is sized and positioned within its 
 
 ```xml
 <!-- Maintain aspect ratio, fit within bounds -->
-<DrawUi:SkiaImage Source="image.png" Aspect="AspectFit" />
+<draw:SkiaImage Source="image.png" Aspect="AspectFit" />
 ```
 This ensures the entire image is visible, possibly with letterboxing (empty space) on the sides or top/bottom.
 
 ```xml
 <!-- Maintain aspect ratio, fill bounds (may crop) -->
-<DrawUi:SkiaImage Source="image.png" Aspect="AspectFill" />
+<draw:SkiaImage Source="image.png" Aspect="AspectFill" />
 ```
 This fills the entire control with the image, possibly cropping parts that don't fit. Great for background images or thumbnails.
 
 ```xml
 <!-- Stretch to fill bounds (may distort) -->
-<DrawUi:SkiaImage Source="image.png" Aspect="Fill" />
+<draw:SkiaImage Source="image.png" Aspect="Fill" />
 ```
 This stretches the image to fill the control exactly, potentially distorting the image proportions.
 
 ```xml
 <!-- Center the image without scaling -->
-<DrawUi:SkiaImage Source="image.png" Aspect="Center" />
+<draw:SkiaImage Source="image.png" Aspect="Center" />
 ```
 This displays the image at its original size, centered in the control. Parts may be clipped if the image is larger than the control.
 
@@ -105,8 +105,8 @@ You can combine `Aspect` with `HorizontalAlignment` and `VerticalAlignment` for 
 
 ```xml
 <!-- AspectFit with custom alignment -->
-<DrawUi:SkiaImage 
-    Source="image.png" 
+<draw:SkiaImage
+    Source="image.png"
     Aspect="AspectFit"
     HorizontalAlignment="Start"
     VerticalAlignment="End" />
@@ -126,7 +126,7 @@ This would fit the image within bounds while aligning it to the bottom-left corn
 Control the alignment of the image within its container:
 
 ```xml
-<DrawUi:SkiaImage
+<draw:SkiaImage
     Source="image.png"
     Aspect="AspectFit"
     HorizontalAlignment="End"
@@ -141,18 +141,18 @@ SkiaImage supports various built-in effects through the `AddEffect` property:
 
 ```xml
 <!-- Apply a sepia effect -->
-<DrawUi:SkiaImage
+<draw:SkiaImage
     Source="image.png"
     AddEffect="Sepia" />
 
 <!-- Apply a tint effect -->
-<DrawUi:SkiaImage
+<draw:SkiaImage
     Source="image.png"
     AddEffect="Tint"
     ColorTint="Red" />
 
 <!-- Apply grayscale effect -->
-<DrawUi:SkiaImage
+<draw:SkiaImage
     Source="image.png"
     AddEffect="BlackAndWhite" />
 ```
@@ -162,7 +162,7 @@ SkiaImage supports various built-in effects through the `AddEffect` property:
 Fine-tune image appearance with various adjustment properties:
 
 ```xml
-<DrawUi:SkiaImage
+<draw:SkiaImage
     Source="image.png"
     Brightness="1.2"
     Contrast="1.1"
@@ -175,16 +175,16 @@ Fine-tune image appearance with various adjustment properties:
 For more complex effects, use the VisualEffects collection:
 
 ```xml
-<DrawUi:SkiaImage Source="image.png">
-    <DrawUi:SkiaControl.VisualEffects>
-        <DrawUi:DropShadowEffect 
+<draw:SkiaImage Source="image.png">
+    <draw:SkiaControl.VisualEffects>
+        <draw:DropShadowEffect
             Blur="8"
             X="2"
             Y="2"
             Color="#80000000" />
-        <DrawUi:ChainColorPresetEffect Preset="Sepia" />
-    </DrawUi:SkiaControl.VisualEffects>
-</DrawUi:SkiaImage>
+        <draw:ChainColorPresetEffect Preset="Sepia" />
+    </draw:SkiaControl.VisualEffects>
+</draw:SkiaImage>
 ```
 
 ### Sprite Sheets
