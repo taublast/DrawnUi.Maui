@@ -54,7 +54,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     }
 
     /// <summary>
-    /// Measures actual scene brightness using iOS camera's auto exposure system
+    /// Measures scene brightness using camera auto exposure system
     /// </summary>
     public async Task<BrightnessResult> MeasureSceneBrightness(MeteringMode meteringMode)
     {
@@ -63,16 +63,13 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             if (CaptureDevice == null)
                 return new BrightnessResult { Success = false, ErrorMessage = "Camera not initialized" };
 
-            // Lock for configuration
             NSError error;
             if (!CaptureDevice.LockForConfiguration(out error))
                 return new BrightnessResult { Success = false, ErrorMessage = error?.LocalizedDescription };
 
-            // Set metering mode first
             switch (meteringMode)
             {
                 case MeteringMode.Spot:
-                    // Set focus/exposure point to center for spot metering
                     var centerPoint = new CGPoint(0.5, 0.5);
                     if (CaptureDevice.ExposurePointOfInterestSupported)
                     {
@@ -81,7 +78,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                     break;
 
                 case MeteringMode.CenterWeighted:
-                    // Reset to default (center-weighted is usually the default)
                     if (CaptureDevice.ExposurePointOfInterestSupported)
                     {
                         CaptureDevice.ExposurePointOfInterest = new CGPoint(0.5, 0.5);
@@ -89,7 +85,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                     break;
             }
 
-            // Set to AUTO exposure mode to let camera measure the scene
             if (CaptureDevice.IsExposureModeSupported(AVCaptureExposureMode.AutoExpose))
             {
                 CaptureDevice.ExposureMode = AVCaptureExposureMode.AutoExpose;
@@ -106,15 +101,12 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
             CaptureDevice.UnlockForConfiguration();
 
-            // Wait for camera to measure and adjust (important!)
             await Task.Delay(1000);
 
-            // Now read what the camera decided
             var measuredDuration = CaptureDevice.ExposureDuration.Seconds;
             var measuredISO = CaptureDevice.ISO;
             var measuredAperture = CaptureDevice.LensAperture;
 
-            // Calculate the EV that the camera chose for "proper" exposure
             var chosenEV = Math.Log2((measuredAperture * measuredAperture) / measuredDuration) + Math.Log2(measuredISO / 100.0);
 
             // Convert EV to scene brightness (lux)
@@ -212,7 +204,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             ? AVCaptureDevicePosition.Front 
             : AVCaptureDevicePosition.Back;
 
-        // Get video device
         AVCaptureDevice videoDevice = null;
         
         if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0) && _formsControl.Type == CameraType.Max)
@@ -241,7 +232,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             }
         }
 
-        // Get best format
         var allFormats = videoDevice.Formats.ToList();
         AVCaptureDeviceFormat format = null;
         
@@ -258,7 +248,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 .FirstOrDefault();
         }
 
-        // Configure device
         NSError error;
         if (videoDevice.LockForConfiguration(out error))
         {
@@ -269,13 +258,11 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             videoDevice.UnlockForConfiguration();
         }
 
-        // Clear existing inputs
         while (_session.Inputs.Any())
         {
             _session.RemoveInput(_session.Inputs[0]);
         }
 
-        // Add video input
         _deviceInput = new AVCaptureDeviceInput(videoDevice, out error);
         if (error != null)
         {
@@ -287,7 +274,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
         _session.AddInput(_deviceInput);
 
-        // Setup still image output
         var dictionary = new NSMutableDictionary();
         dictionary[AVVideo.CodecKey] = new NSNumber((int)AVVideoCodec.JPEG);
         _stillImageOutput = new AVCaptureStillImageOutput()
@@ -297,7 +283,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         _stillImageOutput.HighResolutionStillImageOutputEnabled = true;
         _session.AddOutput(_stillImageOutput);
 
-        // Setup video data output for preview
         if (_session.CanAddOutput(_videoDataOutput))
         {
             _session.AddOutput(_videoDataOutput);
@@ -314,15 +299,10 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             return;
         }
 
-        // Check flash support
         _flashSupported = videoDevice.FlashAvailable;
 
-        // Get camera info
         var focalLengths = new List<float>();
-        
-        // Default focal length for iOS devices - this should ideally be read from device characteristics
-        var physicalFocalLength = 4.15f; // Typical iPhone focal length
-        
+        var physicalFocalLength = 4.15f;
         focalLengths.Add(physicalFocalLength);
 
         var cameraUnit = new CameraUnit
@@ -332,8 +312,8 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             FocalLengths = focalLengths,
             FocalLength = physicalFocalLength,
             FieldOfView = videoDevice.ActiveFormat.VideoFieldOfView,
-            SensorWidth = 4.8f, // Default iPhone sensor width in mm
-            SensorHeight = 3.6f, // Default iPhone sensor height in mm
+            SensorWidth = 4.8f,
+            SensorHeight = 3.6f,
             Meta = _formsControl.CreateMetadata()
         };
 
@@ -472,8 +452,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
     public void ApplyDeviceOrientation(int orientation)
     {
-        // iOS handles this automatically through AVCaptureConnection
-        // The orientation is applied when creating the final image
+        // iOS handles orientation automatically
     }
 
     public void TakePicture()
@@ -487,7 +466,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             {
                 _isCapturingStill = true;
 
-                // Check photo library permissions
                 var status = PHPhotoLibrary.AuthorizationStatus;
                 if (status != PHAuthorizationStatus.Authorized)
                 {
@@ -503,7 +481,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 var sampleBuffer = await _stillImageOutput.CaptureStillImageTaskAsync(videoConnection);
                 var jpegData = AVCaptureStillImageOutput.JpegStillToNSData(sampleBuffer);
 
-                // Convert to UIImage then to SKImage
                 using var uiImage = UIImage.LoadFromData(jpegData);
                 var skImage = uiImage.ToSKImage();
 
@@ -576,7 +553,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 complete = true;
             });
 
-            // Wait for completion
             while (!complete)
             {
                 await Task.Delay(10);
@@ -618,7 +594,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
                 var info = new SKImageInfo(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
 
-                // Create SKImage from pixel buffer data
                 var dataSize = height * bytesPerRow;
                 using var data = SKData.Create(baseAddress, dataSize);
                 var image = SKImage.FromPixels(info, data, bytesPerRow);
