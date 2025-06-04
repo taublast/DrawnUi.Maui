@@ -1,6 +1,6 @@
 ﻿# DrawnUI Fluent C# Extensions - Developer Guide
 
-version 1a
+version 1.1a
 
 This guide covers the essential patterns of DrawnUI fluent extensions for drawn controls.
 Not all methods are listed here, as extensions are evolving.
@@ -163,10 +163,19 @@ var child = new SkiaLabel("I'm a child")
     .CenterX();
 ```
 
+or
+
+```csharp
+var child = new SkiaLabel("I'm a child");
+parentLayout.AddSubview(child);
+```
+
 To properly remove children by code:
 
 ```csharp
 layout.Children.RemoveAt(0); //remove the first one
+
+layout.RemoveSubview(child); //remove child
 
 layout.ClearChildren(); //clear them all
 ```
@@ -216,7 +225,6 @@ wheelPicker
 Type-safe observation of the control's BindingContext:
 
 ```csharp
-//BindingMode.OneWayToSource alternative
 new SkiaLabel()
 .ObserveBindingContext<SkiaLabel, ChatViewModel>((me, vm, prop) => {
     if (prop.IsEither(nameof(BindingContext), nameof(vm.MessageCount)))
@@ -288,7 +296,7 @@ When you inject your ViewModel in the page/screen constructor you can observe a 
 
 ```csharp
 
-public class MyScreen : AppScreen
+public class MyScreen : AppScreen //subclassed custom SkiaLayout
 {
     public readonly InjectedViewModel Model;
 
@@ -303,32 +311,32 @@ public class MyScreen : AppScreen
 
 }
 
-  protected void CreateContent()
+protected void CreateContent()
+{
+    HorizontalOptions = LayoutOptions.Fill;
+    VerticalOptions = LayoutOptions.Fill;
+    Type = LayoutType.Column;
+    Spacing = 0;
+    Padding = 16;
+    Children = new List<SkiaControl>()
     {
-        HorizontalOptions = LayoutOptions.Fill;
-        VerticalOptions = LayoutOptions.Fill;
-        Type = LayoutType.Column;
-        Spacing = 0;
-        Padding = 16;
-        Children = new List<SkiaControl>()
+        new SkiaLabel()
+        .Observe(Model, (me, prop) => //observe Model reference directly
         {
-            new SkiaLabel()
-            .Observe(Model, (me, prop) => //observe Model reference directly
+            bool attached = prop == nameof(BindingContext);
+            if (attached || prop == nameof(Model.Title))
             {
-                bool attached = prop == nameof(BindingContext);
-                if (attached || prop == nameof(Model.Title))
-                {
-                    me.Text = Model.Title;
-                }
-                if (attached || prop == nameof(Model.Error))
-                {
-                    me.TextColor = Model.Error ? Colors.Red : Colors.Black;
-                }
-            }),
-            ...
-        };
+                me.Text = Model.Title;
+            }
+            if (attached || prop == nameof(Model.Error))
+            {
+                me.TextColor = Model.Error ? Colors.Red : Colors.Black;
+            }
+        }),
+        ...
+    };
         
-     }
+    }
 
 ```
 
