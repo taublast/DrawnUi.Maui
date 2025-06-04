@@ -272,6 +272,7 @@
  
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Addons\DrawnUi.Maui.Camera\DrawnUi.Maui.Camera.csproj" />
     <ProjectReference Include="..\..\Addons\DrawnUi.Maui.Game\DrawnUi.Maui.Game.csproj" />
     <ProjectReference Include="..\..\Addons\DrawnUi.Maui.MapsUi\DrawnUi.Maui.MapsUi.csproj" />
     <ProjectReference Include="..\..\Addons\DrawnUi.MauiGraphics\DrawnUi.MauiGraphics.csproj" />

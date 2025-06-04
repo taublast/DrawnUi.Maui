@@ -153,7 +153,7 @@ public partial class SkiaCamera : SkiaControl
 
         if (NativeControl == null)
         {
-#if ANDROID
+#if ANDROID || IOS || WINDOWS
             CreateNative();
 #endif
         }

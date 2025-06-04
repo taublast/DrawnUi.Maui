@@ -4,8 +4,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-    xmlns:camera="http://schemas.appomobi.com/drawnUi/2023/camera"
-    xmlns:views="clr-namespace:Sandbox.Views"
+    xmlns:views="clr-namespace:Sandbox.Views" 
+    xmlns:camera="clr-namespace:DrawnUi.Camera;assembly=DrawnUi.Maui.Camera"
     BackgroundColor="Black">
 
     <draw:Canvas
@@ -44,7 +44,7 @@
                     CornerRadius="8"
                     WidthRequest="100"
                     HeightRequest="50"
-                    Clicked="OnFlashClicked" />
+                    Tapped="OnFlashClicked" />
 
                 <draw:SkiaButton
                     x:Name="CaptureButton"
@@ -54,7 +54,7 @@
                     CornerRadius="25"
                     WidthRequest="80"
                     HeightRequest="80"
-                    Clicked="OnCaptureClicked" />
+                    Tapped="OnCaptureClicked" />
 
                 <draw:SkiaButton
                     x:Name="SwitchCameraButton"
@@ -64,7 +64,7 @@
                     CornerRadius="8"
                     WidthRequest="100"
                     HeightRequest="50"
-                    Clicked="OnSwitchCameraClicked" />
+                    Tapped="OnSwitchCameraClicked" />
 
             </draw:SkiaLayout>
 

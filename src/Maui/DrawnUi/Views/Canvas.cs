@@ -134,7 +134,7 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
-        Debug.WriteLine($"[Canvas] Measure for {widthConstraint} {heightConstraint}");
+        //Debug.WriteLine($"[Canvas] Measure for {widthConstraint} {heightConstraint}");
 
         //we need this for NET 9, where we might have `heightConstraint` Infinity
         //while `HeightRequest` was defined to exact value

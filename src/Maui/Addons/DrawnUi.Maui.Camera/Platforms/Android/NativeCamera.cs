@@ -821,6 +821,80 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
+
+    /// <summary>
+    /// Measures actual scene brightness using Android camera's auto exposure system
+    /// </summary>
+    public async Task<BrightnessResult> MeasureSceneBrightness(MeteringMode meteringMode)
+    {
+        try
+        {
+            if (mCameraDevice == null || CaptureSession == null)
+                return new BrightnessResult { Success = false, ErrorMessage = "Camera not initialized" };
+
+            // Create a task completion source to wait for the result
+            var tcs = new TaskCompletionSource<BrightnessResult>();
+
+            // Set the brightness measurement handler in the capture listener
+            mCaptureCallback.SetBrightnessMeasurementHandler(tcs);
+
+            // Create a new request builder with AUTO settings
+            var brightnessRequestBuilder = mCameraDevice.CreateCaptureRequest(CameraTemplate.Preview);
+            brightnessRequestBuilder.AddTarget(mImageReaderPreview.Surface);
+
+            // Set AUTO exposure mode to let camera measure the scene
+            brightnessRequestBuilder.Set(CaptureRequest.ControlMode, (int)ControlMode.Auto);
+            brightnessRequestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.On);
+
+            // Set metering mode
+            var manager = (CameraManager)Platform.CurrentActivity.GetSystemService(Context.CameraService);
+            var characteristics = manager.GetCameraCharacteristics(CameraId);
+            var activeArraySize = (Android.Graphics.Rect)characteristics.Get(CameraCharacteristics.SensorInfoActiveArraySize);
+
+            switch (meteringMode)
+            {
+                case MeteringMode.Spot:
+                    if (activeArraySize != null)
+                    {
+                        var meteringRectangles = new MeteringRectangle[]
+                        {
+                        new MeteringRectangle(
+                            (int)(activeArraySize.Width() * 0.45),
+                            (int)(activeArraySize.Height() * 0.45),
+                            (int)(activeArraySize.Width() * 0.1),
+                            (int)(activeArraySize.Height() * 0.1),
+                            MeteringRectangle.MeteringWeightMax)
+                        };
+                        brightnessRequestBuilder.Set(CaptureRequest.ControlAeRegions, meteringRectangles);
+                    }
+                    break;
+
+                case MeteringMode.CenterWeighted:
+                    // Center-weighted is usually the default, no special regions needed
+                    break;
+            }
+
+            // Update the repeating request with auto settings
+            CaptureSession.SetRepeatingRequest(brightnessRequestBuilder.Build(), mCaptureCallback, mBackgroundHandler);
+
+            // Wait for the camera to measure and stabilize (important!)
+            await Task.Delay(1000);
+
+            // Wait for the result
+            var result = await tcs.Task;
+
+            // Restore the original preview settings
+            CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ANDROID CAMERA ERROR] {e.Message}");
+            return new BrightnessResult { Success = false, ErrorMessage = e.Message };
+        }
+    }
+
     /// <summary>
     /// Pass preview size as params
     /// </summary>
@@ -1131,13 +1205,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
-
-    public enum CameraProcessorState
-    {
-        None,
-        Enabled,
-        Error
-    }
 
     private CameraProcessorState _state;
     public CameraProcessorState State
