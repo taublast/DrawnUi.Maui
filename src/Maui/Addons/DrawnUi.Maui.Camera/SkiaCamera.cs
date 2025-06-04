@@ -1,10 +1,11 @@
 ﻿global using DrawnUi.Draw;
 global using SkiaSharp;
-using AppoMobi.Specials;
-using DrawnUi.Views;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using AppoMobi.Specials;
+using DrawnUi.Views;
+using Microsoft.Maui.Controls;
 using Color = Microsoft.Maui.Graphics.Color;
 
 namespace DrawnUi.Camera;
@@ -158,8 +159,8 @@ public partial class SkiaCamera : SkiaControl
 #endif
         }
 
-        var rotation = ((Superview.DeviceRotation + 45) / 90) % 4;
-        NativeControl?.ApplyDeviceOrientation(rotation);
+        //var rotation = ((Superview.DeviceRotation + 45) / 90) % 4;
+        //NativeControl?.ApplyDeviceOrientation(rotation);
 
         if (Display != null)
         {
@@ -458,10 +459,9 @@ public partial class SkiaCamera : SkiaControl
     public INativeCamera NativeControl;
 
 
-
-    protected override void OnLayoutChanged()
+    protected override void OnLayoutReady()
     {
-        base.OnLayoutChanged();
+        base.OnLayoutReady();
 
         if (State == CameraState.Error)
             Start();
@@ -1509,17 +1509,7 @@ public partial class SkiaCamera : SkiaControl
         set { SetValue(ZoomLimitMaxProperty, value); }
     }
 
-    //public static readonly BindableProperty BlackColorProperty = BindableProperty.Create(
-    //    nameof(BlackColor),
-    //    typeof(Color),
-    //    typeof(SkiaCamera),
-    //    Colors.Black);
-
-    //public Color BlackColor
-    //{
-    //    get { return (Color)GetValue(BlackColorProperty); }
-    //    set { SetValue(BlackColorProperty, value); }
-    //}
+ 
 
     private static void NeedSetZoom(BindableObject bindable, object oldvalue, object newvalue)
     {
@@ -1539,78 +1529,41 @@ public partial class SkiaCamera : SkiaControl
         }
     }
 
-    //public static readonly BindableProperty WhiteColorProperty = BindableProperty.Create(
-    //    nameof(WhiteColor),
-    //    typeof(Color),
+    protected override void OnLayoutChanged()
+    {
+        base.OnLayoutChanged();
+
+        Display.Aspect = this.Aspect;
+    }
+
+    //public static readonly BindableProperty DisplayModeProperty = BindableProperty.Create(
+    //    nameof(DisplayMode),
+    //    typeof(StretchModes),
     //    typeof(SkiaCamera),
-    //    Colors.White);
+    //    StretchModes.Fill);
 
-    //public Color WhiteColor
+    //public StretchModes DisplayMode
     //{
-    //    get { return (Color)GetValue(WhiteColorProperty); }
-    //    set { SetValue(WhiteColorProperty, value); }
+    //    get { return (StretchModes)GetValue(DisplayModeProperty); }
+    //    set { SetValue(DisplayModeProperty, value); }
     //}
 
-    public static readonly BindableProperty DisplayModeProperty = BindableProperty.Create(
-        nameof(DisplayMode),
-        typeof(StretchModes),
-        typeof(SkiaCamera),
-        StretchModes.Fill);
+    public static readonly BindableProperty AspectProperty = BindableProperty.Create(
+        nameof(Aspect),
+        typeof(TransformAspect),
+        typeof(SkiaImage),
+        TransformAspect.AspectCover,
+        propertyChanged: NeedInvalidateMeasure);
 
-    public StretchModes DisplayMode
+    /// <summary>
+    /// Apspect to render image with, default is AspectCover. 
+    /// </summary>
+    public TransformAspect Aspect
     {
-        get { return (StretchModes)GetValue(DisplayModeProperty); }
-        set { SetValue(DisplayModeProperty, value); }
+        get { return (TransformAspect)GetValue(AspectProperty); }
+        set { SetValue(AspectProperty, value); }
     }
 
-    public static readonly BindableProperty NeedCalibrationProperty = BindableProperty.Create(
-        nameof(NeedCalibration),
-        typeof(bool),
-        typeof(SkiaCamera),
-        false);
-
-    public bool NeedCalibration
-    {
-        get { return (bool)GetValue(NeedCalibrationProperty); }
-        set { SetValue(NeedCalibrationProperty, value); }
-    }
-
-    public static readonly BindableProperty ColorPresetProperty = BindableProperty.Create(
-        nameof(ColorPreset),
-        typeof(int),
-        typeof(SkiaCamera),
-        0);
-
-    public int ColorPreset
-    {
-        get { return (int)GetValue(ColorPresetProperty); }
-        set { SetValue(ColorPresetProperty, value); }
-    }
-
-    public static readonly BindableProperty GammaProperty = BindableProperty.Create(
-        nameof(Gamma),
-        typeof(double),
-        typeof(SkiaCamera),
-        1.0);
-
-    public double Gamma
-    {
-        get { return (double)GetValue(GammaProperty); }
-        set { SetValue(GammaProperty, value); }
-    }
-
-    //public static readonly BindableProperty OrientationProperty = BindableProperty.Create(
-    //	nameof(Orientation),
-    //	typeof(DeviceOrientation),
-    //	typeof(SkiaCamera),
-    //	DeviceOrientation.Unknown,
-    //	BindingMode.OneWayToSource);
-
-    //public DeviceOrientation Orientation
-    //{
-    //	get { return (DeviceOrientation)GetValue(OrientationProperty); }
-    //	set { SetValue(OrientationProperty, value); }
-    //}
 
     public static readonly BindableProperty StateProperty = BindableProperty.Create(
         nameof(State),

@@ -7,8 +7,17 @@ Supports Android, iOS, MacCatalyst, Windows.
 * Provides preview frames and still capture results for further processing.  
 Easily pass images images to AI/ML!
 
-* Renders live preview on a SkiaShap canvas with hardware acceleration.  
-Apply shaders, adjustments and transforms to camera preview in realtime and draw anything over!  
+* Renders live preview on a SkiaShap canvas with hardware acceleration.
+Apply shaders, adjustments and transforms to camera preview in realtime and draw anything over!
+
+## Platform Support
+
+| Platform | Status | Implementation |
+|----------|--------|----------------|
+| Android | ✅ Complete | Camera2 API with CameraX |
+| iOS | ✅ Complete | AVFoundation (shared with macCatalyst) |
+| macCatalyst | ✅ Complete | AVFoundation (shared with iOS) |
+| Windows | ✅ Complete | MediaCapture with WinRT APIs |
 
 ## Installation
 

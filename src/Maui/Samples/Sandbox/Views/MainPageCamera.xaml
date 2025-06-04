@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <views:BasePageCodeBehind
-    x:Class="Sandbox.CameraTestPage"
+    x:Class="Sandbox.MainPageCamera"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
@@ -11,16 +11,18 @@
     <draw:Canvas
         BackgroundColor="Black"
         Gestures="Enabled"
+        RenderingMode = "Accelerated"
         HorizontalOptions="Fill"
         VerticalOptions="Fill">
 
-        <draw:SkiaLayout Type="Column" HorizontalOptions="Fill" VerticalOptions="Fill">
+        <draw:SkiaLayout Type="Absolute" HorizontalOptions="Fill" VerticalOptions="Fill">
             
             <!-- Camera Preview -->
             <camera:SkiaCamera
                 x:Name="CameraControl"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
+                Aspect="AspectFitFill"
                 Facing="Default"
                 IsOn="True"
                 CaptureSuccess="OnCaptureSuccess"
@@ -30,13 +32,15 @@
             <!-- Controls -->
             <draw:SkiaLayout 
                 Type="Row" 
-                HorizontalOptions="Fill" 
-                HeightRequest="100"
+                UseCache="ImageComposite"
+                HorizontalOptions="Center" 
+                VerticalOptions="End"
+                Margin="16,0,16,100"
                 BackgroundColor="#80000000"
-                Spacing="16"
-                Padding="16">
+                Spacing="16">
 
                 <draw:SkiaButton
+                    UseCache="Image"
                     x:Name="FlashButton"
                     Text="Flash Off"
                     BackgroundColor="DarkGray"
@@ -47,6 +51,7 @@
                     Tapped="OnFlashClicked" />
 
                 <draw:SkiaButton
+                    UseCache="Image"
                     x:Name="CaptureButton"
                     Text="Capture"
                     BackgroundColor="Red"
@@ -57,6 +62,7 @@
                     Tapped="OnCaptureClicked" />
 
                 <draw:SkiaButton
+                    UseCache="Image"
                     x:Name="SwitchCameraButton"
                     Text="Switch"
                     BackgroundColor="DarkGray"
@@ -76,6 +82,16 @@
                 FontSize="14"
                 HorizontalOptions="Center"
                 Padding="8" />
+
+            <draw:SkiaLabelFps
+                Margin="0,0,4,24"
+                BackgroundColor="DarkRed"
+                ForceRefresh="False"
+                HorizontalOptions="End"
+                Rotation="-45"
+                TextColor="White"
+                VerticalOptions="End"
+                ZIndex="100" />
 
         </draw:SkiaLayout>
 

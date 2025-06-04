@@ -1,4 +1,5 @@
-﻿using AVFoundation;
+﻿#if IOS || MACCATALYST
+using AVFoundation;
 using CoreFoundation;
 using CoreGraphics;
 using CoreImage;
@@ -692,5 +693,4 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
     #endregion
 }
-
- 
+#endif

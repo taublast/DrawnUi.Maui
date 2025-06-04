@@ -21,5 +21,26 @@
       <ProjectReference Include="..\..\DrawnUi\DrawnUi.Maui.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Compile Remove="Shared/**/*.*pple.cs" />
+        <None Include="Shared/**/*.*pple.cs" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.Contains('catalyst'))">
+        <Compile Include="Shared/**/*.*pple.cs">
+            <Link>Platforms/MacCatalyst/%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup Condition="$(TargetFramework.Contains('ios'))">
+        <Compile Include="Shared/**/*.*pple.cs">
+            <Link>Platforms/iOS/%(RecursiveDir)%(Filename)%(Extension)</Link>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Platforms\iOS\" />
+    </ItemGroup>
+
 
 </Project>

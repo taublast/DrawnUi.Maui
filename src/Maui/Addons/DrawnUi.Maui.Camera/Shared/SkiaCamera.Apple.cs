@@ -1,3 +1,4 @@
+#if IOS || MACCATALYST
 using Foundation;
 using UIKit;
 
@@ -37,7 +38,11 @@ public partial class SkiaCamera
     {
         return new Metadata()
         {
-            Software = "SkiaCamera iOS", 
+#if IOS
+            Software = "SkiaCamera iOS",
+#elif MACCATALYST
+            Software = "SkiaCamera MacCatalyst",
+#endif
             Vendor = UIDevice.CurrentDevice.Model,
             Model = UIDevice.CurrentDevice.Name,
         };
@@ -77,3 +82,4 @@ public partial class SkiaCamera
         return null;
     }
 }
+#endif

@@ -4,11 +4,11 @@ using System.Diagnostics;
 
 namespace Sandbox;
 
-public partial class CameraTestPage : BasePageCodeBehind
+public partial class MainPageCamera : BasePageCodeBehind
 {
     private bool _flashOn = false;
 
-    public CameraTestPage()
+    public MainPageCamera()
     {
         try
         {
