@@ -18,6 +18,26 @@ using UIKit;
 
 namespace DrawnUi.Camera;
 
+// Lightweight container for raw frame data - no SKImage creation
+internal class RawFrameData : IDisposable
+{
+    public IntPtr BaseAddress { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int BytesPerRow { get; set; }
+    public DateTime Time { get; set; }
+    public Rotation CurrentRotation { get; set; }
+    public CameraPosition Facing { get; set; }
+    public int Orientation { get; set; }
+    public SKData Data { get; set; }
+
+    public void Dispose()
+    {
+        Data?.Dispose();
+        Data = null;
+    }
+}
+
 public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotifyPropertyChanged, IAVCaptureVideoDataOutputSampleBufferDelegate
 {
     private readonly SkiaCamera _formsControl;
@@ -33,6 +53,16 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     private readonly object _lockPreview = new();
     private CapturedImage _preview;
     bool _cameraUnitInitialized;
+
+    // Frame processing throttling - only prevent concurrent processing
+    private volatile bool _isProcessingFrame = false;
+    private int _skippedFrameCount = 0;
+    private int _processedFrameCount = 0;
+
+    // Raw frame data for lazy SKImage creation
+    private readonly object _lockRawFrame = new();
+    private RawFrameData _latestRawFrame;
+    private RawFrameData _oldRawFrame;
     
     // Orientation tracking properties
     private UIInterfaceOrientation _uiOrientation;
@@ -459,6 +489,15 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     {
         SetCapture(null);
 
+        // Clear raw frame data
+        lock (_lockRawFrame)
+        {
+            _latestRawFrame?.Dispose();
+            _oldRawFrame?.Dispose();
+            _latestRawFrame = null;
+            _oldRawFrame = null;
+        }
+
         if (State == CameraProcessorState.None && !force)
             return;
 
@@ -621,11 +660,69 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
     public CapturedImage GetPreviewImage()
     {
+        // First check if we have a ready preview
         lock (_lockPreview)
         {
-            var get = _preview;
-            _preview = null;
-            return get;
+            if (_preview != null)
+            {
+                var get = _preview;
+                _preview = null;
+
+                // If we're returning an image, make sure we don't have it queued for disposal
+                if (_kill == get)
+                {
+                    _kill = null;
+                }
+
+                return get;
+            }
+        }
+
+        // No ready preview, create one from raw frame data if available
+        lock (_lockRawFrame)
+        {
+            if (_latestRawFrame == null)
+                return null;
+
+            try
+            {
+                // Create SKImage on demand from raw data
+                var info = new SKImageInfo(_latestRawFrame.Width, _latestRawFrame.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
+                using var rawImage = SKImage.FromPixels(info, _latestRawFrame.Data, _latestRawFrame.BytesPerRow);
+
+                // Apply rotation if needed
+                SKImage rotatedImage;
+                if (_latestRawFrame.CurrentRotation != Rotation.rotate0Degrees)
+                {
+                    using var bitmap = SKBitmap.FromImage(rawImage);
+                    using var rotatedBitmap = HandleOrientation(bitmap, (double)_latestRawFrame.CurrentRotation);
+                    rotatedImage = SKImage.FromBitmap(rotatedBitmap);
+                }
+                else
+                {
+                    rotatedImage = rawImage.Subset(SKRectI.Create(0, 0, _latestRawFrame.Width, _latestRawFrame.Height));
+                }
+
+                var capturedImage = new CapturedImage()
+                {
+                    Facing = _latestRawFrame.Facing,
+                    Time = _latestRawFrame.Time,
+                    Image = rotatedImage,
+                    Orientation = _latestRawFrame.Orientation
+                };
+
+                // Clear the raw frame since we've used it
+                _oldRawFrame?.Dispose();
+                _oldRawFrame = _latestRawFrame;
+                _latestRawFrame = null;
+
+                return capturedImage;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[NativeCameraiOS] GetPreviewImage error: {e}");
+                return null;
+            }
         }
     }
 
@@ -685,6 +782,22 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         if (_formsControl == null || _isCapturingStill || State != CameraProcessorState.Enabled)
             return;
 
+        // THROTTLING: Only skip if previous frame is still being processed (prevents thread overwhelm)
+        if (_isProcessingFrame)
+        {
+            _skippedFrameCount++;
+            return;
+        }
+
+        _isProcessingFrame = true;
+        _processedFrameCount++;
+
+        // Log stats every 300 frames (~10 seconds at 30fps)
+        if (_processedFrameCount % 300 == 0)
+        {
+            Console.WriteLine($"[NativeCameraiOS] Frame stats - Processed: {_processedFrameCount}, Skipped: {_skippedFrameCount}");
+        }
+
         try
         {
             using var pixelBuffer = sampleBuffer.GetImageBuffer() as CVPixelBuffer;
@@ -741,36 +854,24 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 var bytesPerRow = (int)pixelBuffer.BytesPerRow;
                 var baseAddress = pixelBuffer.BaseAddress;
 
-                var info = new SKImageInfo(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
-
                 var dataSize = height * bytesPerRow;
-                using var data = SKData.Create(baseAddress, dataSize);
-                var rawImage = SKImage.FromPixels(info, data, bytesPerRow);
-                
-                // Apply rotation to the preview image
-                SKImage rotatedImage;
-                if (CurrentRotation != Rotation.rotate0Degrees)
+                var data = SKData.Create(baseAddress, dataSize);
+
+                // Store raw frame data instead of creating SKImage immediately
+                var rawFrame = new RawFrameData
                 {
-                    using var bitmap = SKBitmap.FromImage(rawImage);
-                    using var rotatedBitmap = HandleOrientation(bitmap, (double)CurrentRotation);
-                    rotatedImage = SKImage.FromBitmap(rotatedBitmap);
-                }
-                else
-                {
-                    rotatedImage = rawImage;
-                }
-                
-                var capturedImage = new CapturedImage()
-                {
-                    Facing = _formsControl.Facing,
+                    BaseAddress = baseAddress,
+                    Width = width,
+                    Height = height,
+                    BytesPerRow = bytesPerRow,
                     Time = DateTime.UtcNow,
-                    Image = rotatedImage,
-                    Orientation = (int)CurrentRotation
+                    CurrentRotation = CurrentRotation,
+                    Facing = _formsControl.Facing,
+                    Orientation = (int)CurrentRotation,
+                    Data = data
                 };
 
-                SetCapture(capturedImage);
-
-                PreviewCaptureSuccess?.Invoke(capturedImage);
+                SetRawFrame(rawFrame);
                 _formsControl.UpdatePreview();
             }
             finally
@@ -782,14 +883,39 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         {
             Console.WriteLine($"[NativeCameraiOS] Frame processing error: {e}");
         }
+        finally
+        {
+            // IMPORTANT: Always reset processing flag
+            _isProcessingFrame = false;
+        }
     }
 
     CapturedImage _kill;
+
+    void SetRawFrame(RawFrameData rawFrame)
+    {
+        lock (_lockRawFrame)
+        {
+            // Dispose old raw frame data
+            _oldRawFrame?.Dispose();
+            _oldRawFrame = _latestRawFrame;
+            _latestRawFrame = rawFrame;
+        }
+    }
 
     void SetCapture(CapturedImage capturedImage)
     {
         lock (_lockPreview)
         {
+            // Apple's recommended pattern: Keep only the latest frame
+            // Dispose the old preview immediately if we have a new one
+            if (_preview != null && capturedImage != null)
+            {
+                _preview.Dispose();
+                _preview = null;
+            }
+
+            // Dispose any queued frame
             _kill?.Dispose();
             _kill = _preview;
             _preview = capturedImage;
@@ -797,6 +923,8 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     }
 
     #endregion
+
+
 
     #region INotifyPropertyChanged
 
@@ -1062,7 +1190,16 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
             SetCapture(null);
             _kill?.Dispose();
-            
+
+            // Clean up raw frame data
+            lock (_lockRawFrame)
+            {
+                _latestRawFrame?.Dispose();
+                _oldRawFrame?.Dispose();
+                _latestRawFrame = null;
+                _oldRawFrame = null;
+            }
+
             // Clean up orientation observer
             if (_orientationObserver != null)
             {
