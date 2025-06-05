@@ -100,6 +100,8 @@ unsafe interface IMemoryBufferByteAccess
 
 #endregion
 
+
+
 public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyChanged
 {
     private readonly SkiaCamera _formsControl;
@@ -567,37 +569,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         }
     }
 
-    /// <summary>
-    /// Process Direct3D frame and create CapturedImage
-    /// </summary>
-    private void ProcessOptimizedFrame(SKImage optimizedSkImage)
-    {
-        try
-        {
-            var capturedImage = new CapturedImage()
-            {
-                Facing = _formsControl.Facing,
-                Time = DateTime.UtcNow,
-                Image = optimizedSkImage,
-                Orientation = _formsControl.DeviceRotation
-            };
 
-            lock (_lockPreview)
-            {
-                _preview?.Dispose();
-                _preview = capturedImage;
-            }
-
-            PreviewCaptureSuccess?.Invoke(capturedImage);
-            _formsControl.UpdatePreview();
-
-            Debug.WriteLine($"[NativeCameraWindows] Optimized frame processed successfully: {optimizedSkImage.Width}x{optimizedSkImage.Height}");
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine($"[NativeCameraWindows] ProcessOptimizedFrame error: {e}");
-        }
-    }
 
     #endregion
 
@@ -617,7 +589,6 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         try
         {
             // Use GPU-assisted conversion from Direct3D surface to SoftwareBitmap
-            // This is more efficient than pure software processing since it leverages GPU-resident data
             var softwareBitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(d3dSurface);
             if (softwareBitmap != null)
             {
@@ -628,31 +599,21 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     {
                         Facing = _formsControl.Facing,
                         Time = DateTime.UtcNow,
-                        Image = skImage,
+                        Image = skImage, // Transfer ownership to CapturedImage - renderer will dispose
                         Orientation = _formsControl.DeviceRotation
                     };
 
                     // Update preview safely
                     lock (_lockPreview)
                     {
-                        _preview?.Dispose();
+                        _preview?.Dispose(); // Only dispose old preview, not the new SKImage
                         _preview = capturedImage;
                     }
 
                     //PREVIEW FRAME READY
-                    PreviewCaptureSuccess?.Invoke(capturedImage);
                     _formsControl.UpdatePreview();
-
-                    //Debug.WriteLine("[NativeCameraWindows] Direct3D frame processed successfully via GPU-assisted conversion");
                 }
-                else
-                {
-                    Debug.WriteLine("[NativeCameraWindows] Failed to convert SoftwareBitmap to SKImage");
-                }
-            }
-            else
-            {
-                Debug.WriteLine("[NativeCameraWindows] Failed to convert Direct3D surface to SoftwareBitmap");
+                softwareBitmap.Dispose();
             }
         }
         catch (Exception e)
@@ -720,36 +681,26 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
 
         try
         {
-            //Debug.WriteLine($"[NativeCameraWindows] Processing frame: {softwareBitmap.PixelWidth}x{softwareBitmap.PixelHeight}, Format: {softwareBitmap.BitmapPixelFormat}");
-
             var skImage = await ConvertToSKImageDirectAsync(softwareBitmap);
             if (skImage != null)
             {
-                //Debug.WriteLine($"[NativeCameraWindows] SKImage created successfully: {skImage.Width}x{skImage.Height}");
-
                 var capturedImage = new CapturedImage()
                 {
                     Facing = _formsControl.Facing,
                     Time = DateTime.UtcNow,
-                    Image = skImage,
+                    Image = skImage, // Transfer ownership to CapturedImage - renderer will dispose
                     Orientation = _formsControl.DeviceRotation
                 };
 
                 // Update preview safely
                 lock (_lockPreview)
                 {
-                    _preview?.Dispose();
+                    _preview?.Dispose(); // Only dispose old preview, not the new SKImage
                     _preview = capturedImage;
                 }
 
                 //PREVIEW FRAME READY
-                PreviewCaptureSuccess?.Invoke(capturedImage);
                 _formsControl.UpdatePreview();
-
-            }
-            else
-            {
-                //Debug.WriteLine("[NativeCameraWindows] Failed to convert SoftwareBitmap to SKImage");
             }
         }
         catch (Exception e)
@@ -762,6 +713,10 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             _frameSemaphore.Release();
         }
     }
+
+
+
+
 
     /// <summary>
     /// Convert SoftwareBitmap to SKImage using direct memory access
@@ -973,6 +928,10 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 //Debug.WriteLine("[NativeCameraWindows] Frame reader stopped");
             }
 
+
+
+
+
             State = CameraProcessorState.None;
 
             MainThread.BeginInvokeOnMainThread(() =>
@@ -1022,7 +981,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         lock (_lockPreview)
         {
             var preview = _preview;
-            _preview = null; // Transfer ownership like Android does
+            _preview = null; // Transfer ownership - renderer will dispose the SKImage
             return preview;
         }
     }
@@ -1217,6 +1176,10 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 _preview?.Dispose();
                 _preview = null;
             }
+
+
+
+
         }
         catch (Exception e)
         {
