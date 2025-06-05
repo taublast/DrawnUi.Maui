@@ -1,14 +1,4 @@
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Controls.Compatibility;
-using SkiaSharp;
-using Windows.ApplicationModel;
-using Windows.Devices.Enumeration;
-using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
 using Windows.Media.Capture.Frames;
 using Windows.Media.Devices;
@@ -20,7 +10,6 @@ namespace DrawnUi.Camera;
 
 public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyChanged
 {
-
     /// <summary>
     /// Measures actual scene brightness using Windows MediaCapture auto exposure system
     /// </summary>
@@ -40,11 +29,13 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 return new BrightnessResult
                 {
                     Success = false,
-                    ErrorMessage = "Cannot retrieve camera aperture characteristics - hardware-independent measurement impossible"
+                    ErrorMessage =
+                        "Cannot retrieve camera aperture characteristics - hardware-independent measurement impossible"
                 };
             }
 
-            System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] Camera aperture: f/{cameraCharacteristics.Aperture:F1}");
+            System.Diagnostics.Debug.WriteLine(
+                $"[WINDOWS CAMERA] Camera aperture: f/{cameraCharacteristics.Aperture:F1}");
 
             try
             {
@@ -70,25 +61,25 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 }
 
                 // Calculate the EV that the camera chose for "proper" exposure
-                var chosenEV = Math.Log2((cameraCharacteristics.Aperture * cameraCharacteristics.Aperture) / exposureData.ExposureTime)
-                             + Math.Log2(exposureData.ISO / 100.0);
+                var chosenEV = Math.Log2((cameraCharacteristics.Aperture * cameraCharacteristics.Aperture) /
+                                         exposureData.ExposureTime)
+                               + Math.Log2(exposureData.ISO / 100.0);
 
                 // Convert EV to scene brightness (lux)
                 const double K = 12.5;
                 var sceneBrightness = K * Math.Pow(2, chosenEV) / (exposureData.ISO / 100.0);
 
-                System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] Measured: f/{cameraCharacteristics.Aperture:F1}, 1/{(1 / exposureData.ExposureTime):F0}, ISO{exposureData.ISO:F0}");
-                System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] Calculated EV: {chosenEV:F1}, Scene brightness: {sceneBrightness:F0} lux");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[WINDOWS CAMERA] Measured: f/{cameraCharacteristics.Aperture:F1}, 1/{(1 / exposureData.ExposureTime):F0}, ISO{exposureData.ISO:F0}");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[WINDOWS CAMERA] Calculated EV: {chosenEV:F1}, Scene brightness: {sceneBrightness:F0} lux");
 
-                return new BrightnessResult
-                {
-                    Success = true,
-                    Brightness = sceneBrightness
-                };
+                return new BrightnessResult { Success = true, Brightness = sceneBrightness };
             }
             catch (System.Runtime.InteropServices.COMException comEx)
             {
-                System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA ERROR] COMException: {comEx.Message}\n{comEx.StackTrace}");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[WINDOWS CAMERA ERROR] COMException: {comEx.Message}\n{comEx.StackTrace}");
                 return new BrightnessResult { Success = false, ErrorMessage = $"COMException: {comEx.Message}" };
             }
             catch (Exception ex)
@@ -119,7 +110,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         {
             if (controller.ExposureControl.Supported)
             {
-                System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] Exposure auto mode is read-only and cannot be set programmatically.");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[WINDOWS CAMERA] Exposure auto mode is read-only and cannot be set programmatically.");
             }
         }
         catch (Exception e)
@@ -137,7 +129,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         {
             if (controller.IsoSpeedControl.Supported)
             {
-                System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] ISO auto mode is read-only and cannot be set programmatically.");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[WINDOWS CAMERA] ISO auto mode is read-only and cannot be set programmatically.");
             }
         }
         catch (Exception e)
@@ -167,8 +160,16 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] ExposureControl is not supported. Using default exposure time.");
+#if DEBUG
+                    System.Diagnostics.Debug.WriteLine(
+                        "[WINDOWS CAMERA] ExposureControl is not supported. Using default exposure time.");
                     exposureTime = 1.0 / 60; // Default to 1/60s
+#else
+                    return new ExposureData
+                    {
+                        Success = false,
+                        ErrorMessage = "ExposureControl not supported"
+#endif
                 }
             }
             catch (Exception ex)
@@ -187,7 +188,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] IsoSpeedControl is not supported. Using default ISO.");
+                    System.Diagnostics.Debug.WriteLine(
+                        "[WINDOWS CAMERA] IsoSpeedControl is not supported. Using default ISO.");
                     iso = 100; // Default ISO value
                 }
             }
@@ -202,21 +204,13 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 return new ExposureData { Success = false, ErrorMessage = "Invalid exposure time" };
             }
 
-            return new ExposureData
-            {
-                Success = true,
-                ExposureTime = exposureTime,
-                ISO = iso
-            };
+            return new ExposureData { Success = true, ExposureTime = exposureTime, ISO = iso };
         }
         catch (Exception e)
         {
-            System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA ERROR] GetCurrentExposureSettingsExtended error: {e.Message}\n{e.StackTrace}");
-            return new ExposureData
-            {
-                Success = false,
-                ErrorMessage = e.Message
-            };
+            System.Diagnostics.Debug.WriteLine(
+                $"[WINDOWS CAMERA ERROR] GetCurrentExposureSettingsExtended error: {e.Message}\n{e.StackTrace}");
+            return new ExposureData { Success = false, ErrorMessage = e.Message };
         }
     }
 
@@ -268,7 +262,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             }
 
             // Fallback: Log and return a default aperture value
-            System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] Unable to retrieve aperture characteristics. Using default value.");
+            System.Diagnostics.Debug.WriteLine(
+                "[WINDOWS CAMERA] Unable to retrieve aperture characteristics. Using default value.");
             return new CameraCharacteristics { Aperture = 2.8 }; // Default aperture value
         }
         catch (Exception e)
@@ -283,9 +278,11 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         try
         {
             // Try common extended property GUIDs for aperture
-            var aperturePropertyId = new Guid("{0x9378b8e1, 0x5511, 0x4b5b, {0x9e, 0x5e, 0x5c, 0x80, 0x6b, 0xa9, 0x3e, 0x56}}");
+            var aperturePropertyId =
+                new Guid("{0x9378b8e1, 0x5511, 0x4b5b, {0x9e, 0x5e, 0x5c, 0x80, 0x6b, 0xa9, 0x3e, 0x56}}");
 
-            if (_mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.VideoPreview).Count > 0)
+            if (_mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.VideoPreview)
+                    .Count > 0)
             {
                 // This is a placeholder - the actual implementation would depend on specific camera drivers
                 // Different manufacturers use different property GUIDs
@@ -322,6 +319,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     }
                 }
             }
+
             return null;
         }
         catch
@@ -339,9 +337,11 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 // Check frame source properties
                 foreach (var prop in _frameSource.Info.Properties)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] Frame source property: {prop.Key} = {prop.Value}");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"[WINDOWS CAMERA] Frame source property: {prop.Key} = {prop.Value}");
                 }
             }
+
             return null;
         }
         catch
@@ -380,7 +380,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 return new ExposureData
                 {
                     Success = false,
-                    ErrorMessage = "Cannot read exposure time - camera doesn't support manual exposure or is in auto mode"
+                    ErrorMessage =
+                        "Cannot read exposure time - camera doesn't support manual exposure or is in auto mode"
                 };
             }
 
@@ -398,35 +399,30 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 };
             }
 
-            return new ExposureData
-            {
-                Success = true,
-                ExposureTime = exposureTime,
-                ISO = iso
-            };
+            return new ExposureData { Success = true, ExposureTime = exposureTime, ISO = iso };
         }
         catch (Exception e)
         {
-            return new ExposureData
-            {
-                Success = false,
-                ErrorMessage = e.Message
-            };
+            return new ExposureData { Success = false, ErrorMessage = e.Message };
         }
     }
 
- 
-    private async Task RestoreOriginalSettings(VideoDeviceController controller, bool originalExposureAuto, bool originalIsoAuto)
+
+    private async Task RestoreOriginalSettings(VideoDeviceController controller, bool originalExposureAuto,
+        bool originalIsoAuto)
     {
         try
         {
             if (controller.ExposureControl.Supported)
             {
-                System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] Exposure auto mode is read-only and cannot be restored programmatically.");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[WINDOWS CAMERA] Exposure auto mode is read-only and cannot be restored programmatically.");
             }
+
             if (controller.IsoSpeedControl.Supported)
             {
-                System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] ISO auto mode is read-only and cannot be restored programmatically.");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[WINDOWS CAMERA] ISO auto mode is read-only and cannot be restored programmatically.");
             }
         }
         catch (Exception e)
@@ -447,7 +443,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         {
             if (_mediaCapture == null || _mediaCapture.VideoDeviceController == null)
             {
-                System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] MediaCapture or VideoDeviceController is not initialized.");
+                System.Diagnostics.Debug.WriteLine(
+                    "[WINDOWS CAMERA] MediaCapture or VideoDeviceController is not initialized.");
                 return supportedModes;
             }
 
@@ -468,7 +465,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] RegionsOfInterestControl supports AutoFocus but MaxRegions is 0.");
+                        System.Diagnostics.Debug.WriteLine(
+                            "[WINDOWS CAMERA] RegionsOfInterestControl supports AutoFocus but MaxRegions is 0.");
                     }
 
                     // Center-weighted is typically supported if we can clear regions
@@ -477,19 +475,23 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] RegionsOfInterestControl is available but AutoFocus is not supported.");
+                    System.Diagnostics.Debug.WriteLine(
+                        "[WINDOWS CAMERA] RegionsOfInterestControl is available but AutoFocus is not supported.");
                 }
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] RegionsOfInterestControl is not supported. No advanced metering modes available.");
+                System.Diagnostics.Debug.WriteLine(
+                    "[WINDOWS CAMERA] RegionsOfInterestControl is not supported. No advanced metering modes available.");
             }
 
-            System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA] Total supported metering modes: {supportedModes.Count}");
+            System.Diagnostics.Debug.WriteLine(
+                $"[WINDOWS CAMERA] Total supported metering modes: {supportedModes.Count}");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA ERROR] Failed to detect supported metering modes: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine(
+                $"[WINDOWS CAMERA ERROR] Failed to detect supported metering modes: {ex.Message}");
             System.Diagnostics.Debug.WriteLine($"[WINDOWS CAMERA ERROR] StackTrace: {ex.StackTrace}");
         }
 
@@ -599,19 +601,22 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         {
             if (controller.RegionsOfInterestControl == null)
             {
-                System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] RegionsOfInterestControl is not supported on this device.");
+                System.Diagnostics.Debug.WriteLine(
+                    "[WINDOWS CAMERA] RegionsOfInterestControl is not supported on this device.");
                 return;
             }
 
             if (!controller.RegionsOfInterestControl.AutoFocusSupported)
             {
-                System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] AutoFocus is not supported by RegionsOfInterestControl.");
+                System.Diagnostics.Debug.WriteLine(
+                    "[WINDOWS CAMERA] AutoFocus is not supported by RegionsOfInterestControl.");
                 return;
             }
 
             if (controller.RegionsOfInterestControl.MaxRegions == 0)
             {
-                System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] No regions of interest are supported by this device.");
+                System.Diagnostics.Debug.WriteLine(
+                    "[WINDOWS CAMERA] No regions of interest are supported by this device.");
                 return;
             }
 
@@ -641,7 +646,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
 
                     // Remember what we set  
                     _lastSetMeteringMode = MeteringMode.CenterWeighted;
-                    System.Diagnostics.Debug.WriteLine("[WINDOWS CAMERA] Center-weighted metering mode set successfully.");
+                    System.Diagnostics.Debug.WriteLine(
+                        "[WINDOWS CAMERA] Center-weighted metering mode set successfully.");
                     break;
             }
         }
@@ -652,6 +658,4 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     }
 
     MeteringMode _lastSetMeteringMode = MeteringMode.CenterWeighted;
-
 }
-

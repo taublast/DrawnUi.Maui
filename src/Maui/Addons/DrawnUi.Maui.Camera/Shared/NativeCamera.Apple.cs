@@ -33,6 +33,15 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     private readonly object _lockPreview = new();
     private CapturedImage _preview;
     bool _cameraUnitInitialized;
+    
+    // Orientation tracking properties
+    private UIInterfaceOrientation _uiOrientation;
+    private UIDeviceOrientation _deviceOrientation;
+    private AVCaptureVideoOrientation _videoOrientation;
+    private UIImageOrientation _imageOrientation;
+    private NSObject _orientationObserver;
+    
+    public Rotation CurrentRotation { get; private set; } = Rotation.rotate0Degrees;
 
     public AVCaptureDevice CaptureDevice
     {
@@ -51,9 +60,13 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         _session = new AVCaptureSession();
         _videoDataOutput = new AVCaptureVideoDataOutput();
         _videoDataOutputQueue = new DispatchQueue("VideoDataOutput", false);
-        
+
+        SetupOrientationObserver();
+
         Setup();
     }
+
+   
 
     /// <summary>
     /// Measures scene brightness using camera auto exposure system
@@ -131,6 +144,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             System.Diagnostics.Debug.WriteLine($"[iOS CAMERA ERROR] {ex.Message}");
             return new BrightnessResult { Success = false, ErrorMessage = ex.Message };
         }
+
     }
 
 
@@ -185,6 +199,51 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             Console.WriteLine($"[NativeCameraiOS] Setup error: {e}");
             State = CameraProcessorState.Error;
         }
+    }
+
+    private void SetupOrientationObserver()
+    {
+        // Initialize orientation values
+        _uiOrientation = UIApplication.SharedApplication.StatusBarOrientation;
+        _deviceOrientation = UIDevice.CurrentDevice.Orientation;
+        _videoOrientation = AVCaptureVideoOrientation.Portrait;
+        
+        System.Diagnostics.Debug.WriteLine($"[CAMERA SETUP] Initial orientations - UI: {_uiOrientation}, Device: {_deviceOrientation}, Video: {_videoOrientation}");
+        
+        // Set up orientation change observer
+        _orientationObserver = NSNotificationCenter.DefaultCenter.AddObserver(
+            UIDevice.OrientationDidChangeNotification, 
+            (notification) =>
+            {
+                System.Diagnostics.Debug.WriteLine($"[CAMERA ORIENTATION] Device orientation changed notification received");
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    UpdateOrientationFromMainThread();
+                    // Also update the SkiaCamera's DeviceRotation to ensure both systems are in sync
+                    var deviceOrientation = UIDevice.CurrentDevice.Orientation;
+                    var rotation = 0;
+                    switch (deviceOrientation)
+                    {
+                        case UIDeviceOrientation.Portrait:
+                            rotation = 0;
+                            break;
+                        case UIDeviceOrientation.LandscapeLeft:
+                            rotation = 90;
+                            break;
+                        case UIDeviceOrientation.PortraitUpsideDown:
+                            rotation = 180;
+                            break;
+                        case UIDeviceOrientation.LandscapeRight:
+                            rotation = 270;
+                            break;
+                        default:
+                            rotation = 0;
+                            break;
+                    }
+                    System.Diagnostics.Debug.WriteLine($"[CAMERA ORIENTATION] Setting SkiaCamera DeviceRotation to {rotation} degrees");
+                    _formsControl.DeviceRotation = rotation;
+                });
+            });
     }
 
     private void SetupHardware()
@@ -293,6 +352,14 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             _videoDataOutput.WeakVideoSettings = new NSDictionary(CVPixelBuffer.PixelFormatTypeKey, 
                 CVPixelFormatType.CV32BGRA);
             _videoDataOutput.SetSampleBufferDelegate(this, _videoDataOutputQueue);
+            
+            // Set initial video orientation from the connection
+            var videoConnection = _videoDataOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
+            if (videoConnection != null && videoConnection.SupportsVideoOrientation)
+            {
+                _videoOrientation = videoConnection.VideoOrientation;
+                System.Diagnostics.Debug.WriteLine($"[CAMERA SETUP] Initial video orientation: {_videoOrientation}");
+            }
         }
         else
         {
@@ -330,6 +397,8 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         }
 
         _session.CommitConfiguration();
+
+        UpdateDetectOrientation();
     }
 
     public void ApplyCameraUnit(CameraUnit cameraUnit)
@@ -491,7 +560,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
     public void ApplyDeviceOrientation(int orientation)
     {
-        // iOS handles orientation automatically
+        UpdateOrientationFromMainThread();
     }
 
     public void TakePicture()
@@ -676,23 +745,33 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
                 var dataSize = height * bytesPerRow;
                 using var data = SKData.Create(baseAddress, dataSize);
-                var image = SKImage.FromPixels(info, data, bytesPerRow);
+                var rawImage = SKImage.FromPixels(info, data, bytesPerRow);
+                
+                // Apply rotation to the preview image
+                SKImage rotatedImage;
+                if (CurrentRotation != Rotation.rotate0Degrees)
+                {
+                    using var bitmap = SKBitmap.FromImage(rawImage);
+                    using var rotatedBitmap = HandleOrientation(bitmap, (double)CurrentRotation);
+                    rotatedImage = SKImage.FromBitmap(rotatedBitmap);
+                }
+                else
+                {
+                    rotatedImage = rawImage;
+                }
                 
                 var capturedImage = new CapturedImage()
                 {
                     Facing = _formsControl.Facing,
                     Time = DateTime.UtcNow,
-                    Image = image,
-                    Orientation = _formsControl.DeviceRotation
+                    Image = rotatedImage,
+                    Orientation = (int)CurrentRotation
                 };
 
                 SetCapture(capturedImage);
 
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    PreviewCaptureSuccess?.Invoke(capturedImage);
-                    _formsControl.UpdatePreview();
-                });
+                PreviewCaptureSuccess?.Invoke(capturedImage);
+                _formsControl.UpdatePreview();
             }
             finally
             {
@@ -730,6 +809,243 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
     #endregion
 
+    #region Orientation Handling
+
+    public SKBitmap HandleOrientation(SKBitmap bitmap, double sensor)
+    {
+        SKBitmap rotated;
+        switch (sensor)
+        {
+            case 180:
+                using (var surface = new SKCanvas(bitmap))
+                {
+                    surface.RotateDegrees(180, bitmap.Width / 2.0f, bitmap.Height / 2.0f);
+                    surface.DrawBitmap(bitmap.Copy(), 0, 0);
+                }
+                return bitmap;
+
+            case 270: //iphone on the right side
+                rotated = new SKBitmap(bitmap.Height, bitmap.Width);
+                using (var surface = new SKCanvas(rotated))
+                {
+                    surface.Translate(0, rotated.Height);
+                    surface.RotateDegrees(270);
+                    surface.DrawBitmap(bitmap, 0, 0);
+                }
+                return rotated;
+
+            case 90: // iphone on the left side
+                rotated = new SKBitmap(bitmap.Height, bitmap.Width);
+                using (var surface = new SKCanvas(rotated))
+                {
+                    surface.Translate(rotated.Width, 0);
+                    surface.RotateDegrees(90);
+                    surface.DrawBitmap(bitmap, 0, 0);
+                }
+                return rotated;
+
+            default:
+                return bitmap;
+        }
+    }
+
+    public void UpdateOrientationFromMainThread()
+    {
+        _uiOrientation = UIApplication.SharedApplication.StatusBarOrientation;
+        _deviceOrientation = UIDevice.CurrentDevice.Orientation;
+        UpdateDetectOrientation();
+    }
+
+    public void UpdateDetectOrientation()
+    {
+        if (_videoDataOutput?.Connections?.Any() == true)
+        {
+            // Get current video orientation from connection
+            var videoConnection = _videoDataOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
+            if (videoConnection != null && videoConnection.SupportsVideoOrientation)
+            {
+                _videoOrientation = videoConnection.VideoOrientation;
+            }
+            
+            CurrentRotation = GetRotation(
+                _uiOrientation,
+                _videoOrientation,
+                _deviceInput?.Device?.Position ?? AVCaptureDevicePosition.Back);
+
+            switch (_uiOrientation)
+            {
+                case UIInterfaceOrientation.Portrait:
+                    _imageOrientation = UIImageOrientation.Right;
+                    break;
+                case UIInterfaceOrientation.PortraitUpsideDown:
+                    _imageOrientation = UIImageOrientation.Left;
+                    break;
+                case UIInterfaceOrientation.LandscapeLeft:
+                    _imageOrientation = UIImageOrientation.Up;
+                    break;
+                case UIInterfaceOrientation.LandscapeRight:
+                    _imageOrientation = UIImageOrientation.Down;
+                    break;
+                default:
+                    _imageOrientation = UIImageOrientation.Up;
+                    break;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"[UpdateDetectOrientation]: rotation: {CurrentRotation}, orientation: {_imageOrientation}, device: {_deviceInput?.Device?.Position}, video: {_videoOrientation}, ui:{_uiOrientation}");
+        }
+    }
+
+    public Rotation GetRotation(
+        UIInterfaceOrientation interfaceOrientation,
+        AVCaptureVideoOrientation videoOrientation,
+        AVCaptureDevicePosition cameraPosition)
+    {
+        /*
+         Calculate the rotation between the videoOrientation and the interfaceOrientation.
+         The direction of the rotation depends upon the camera position.
+         */
+
+        switch (videoOrientation)
+        {
+            case AVCaptureVideoOrientation.Portrait:
+                switch (interfaceOrientation)
+                {
+                    case UIInterfaceOrientation.LandscapeRight:
+                        if (cameraPosition == AVCaptureDevicePosition.Front)
+                        {
+                            return Rotation.rotate90Degrees;
+                        }
+                        else
+                        {
+                            return Rotation.rotate270Degrees;
+                        }
+
+                    case UIInterfaceOrientation.LandscapeLeft:
+                        if (cameraPosition == AVCaptureDevicePosition.Front)
+                        {
+                            return Rotation.rotate270Degrees;
+                        }
+                        else
+                        {
+                            return Rotation.rotate90Degrees;
+                        }
+
+                    case UIInterfaceOrientation.Portrait:
+                        return Rotation.rotate0Degrees;
+
+                    case UIInterfaceOrientation.PortraitUpsideDown:
+                        return Rotation.rotate180Degrees;
+
+                    default:
+                        return Rotation.rotate0Degrees;
+                }
+
+            case AVCaptureVideoOrientation.PortraitUpsideDown:
+                switch (interfaceOrientation)
+                {
+                    case UIInterfaceOrientation.LandscapeRight:
+                        if (cameraPosition == AVCaptureDevicePosition.Front)
+                        {
+                            return Rotation.rotate270Degrees;
+                        }
+                        else
+                        {
+                            return Rotation.rotate90Degrees;
+                        }
+
+                    case UIInterfaceOrientation.LandscapeLeft:
+                        if (cameraPosition == AVCaptureDevicePosition.Front)
+                        {
+                            return Rotation.rotate90Degrees;
+                        }
+                        else
+                        {
+                            return Rotation.rotate270Degrees;
+                        }
+
+                    case UIInterfaceOrientation.Portrait:
+                        return Rotation.rotate180Degrees;
+
+                    case UIInterfaceOrientation.PortraitUpsideDown:
+                        return Rotation.rotate0Degrees;
+
+                    default:
+                        return Rotation.rotate180Degrees;
+                }
+
+            case AVCaptureVideoOrientation.LandscapeRight:
+                switch (interfaceOrientation)
+                {
+                    case UIInterfaceOrientation.LandscapeRight:
+                        return Rotation.rotate0Degrees;
+
+                    case UIInterfaceOrientation.LandscapeLeft:
+                        return Rotation.rotate180Degrees;
+
+                    case UIInterfaceOrientation.Portrait:
+                        if (cameraPosition == AVCaptureDevicePosition.Front)
+                        {
+                            return Rotation.rotate270Degrees;
+                        }
+                        else
+                        {
+                            return Rotation.rotate90Degrees;
+                        }
+
+                    case UIInterfaceOrientation.PortraitUpsideDown:
+                        if (cameraPosition == AVCaptureDevicePosition.Front)
+                        {
+                            return Rotation.rotate90Degrees;
+                        }
+                        else
+                        {
+                            return Rotation.rotate270Degrees;
+                        }
+
+                    default:
+                        return Rotation.rotate0Degrees;
+                }
+
+            case AVCaptureVideoOrientation.LandscapeLeft:
+                switch (interfaceOrientation)
+                {
+                    case UIInterfaceOrientation.LandscapeLeft:
+                        return Rotation.rotate0Degrees;
+
+                    case UIInterfaceOrientation.LandscapeRight:
+                        return Rotation.rotate180Degrees;
+
+                    case UIInterfaceOrientation.Portrait:
+                        if (cameraPosition == AVCaptureDevicePosition.Front)
+                        {
+                            return Rotation.rotate90Degrees;
+                        }
+                        else
+                        {
+                            return Rotation.rotate270Degrees;
+                        }
+
+                    case UIInterfaceOrientation.PortraitUpsideDown:
+                        if (cameraPosition == AVCaptureDevicePosition.Front)
+                        {
+                            return Rotation.rotate270Degrees;
+                        }
+                        else
+                        {
+                            return Rotation.rotate90Degrees;
+                        }
+
+                    default:
+                        return Rotation.rotate0Degrees;
+                }
+
+            default:
+                return Rotation.rotate0Degrees;
+        }
+    }
+
+    #endregion
+
     #region IDisposable
 
     protected override void Dispose(bool disposing)
@@ -746,6 +1062,14 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
             SetCapture(null);
             _kill?.Dispose();
+            
+            // Clean up orientation observer
+            if (_orientationObserver != null)
+            {
+                NSNotificationCenter.DefaultCenter.RemoveObserver(_orientationObserver);
+                _orientationObserver?.Dispose();
+                _orientationObserver = null;
+            }
         }
 
         base.Dispose(disposing);
