@@ -2,7 +2,7 @@
 
 public interface INativeCamera : IDisposable
 {
-    void Stop();
+    void Stop(bool force = false);
     void Start();
 
     void TurnOnFlash();

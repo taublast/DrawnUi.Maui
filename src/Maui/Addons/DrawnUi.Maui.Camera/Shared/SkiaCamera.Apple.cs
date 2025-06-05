@@ -66,11 +66,6 @@ public partial class SkiaCamera
         return status == PermissionStatus.Granted;
     }
 
-    public void CommandToRenderer(string command)
-    {
-        // Implementation for renderer commands if needed
-        // This can be expanded based on requirements
-    }
 
     public SKBitmap GetPreviewBitmap()
     {

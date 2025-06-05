@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.Hardware.Camera2;
+using Android.Telecom;
 
 
 namespace DrawnUi.Camera;
@@ -78,13 +79,33 @@ public partial class SkiaCamera
         if (!IsOn || NativeControl != null)
             return;
 
-        //DisableOtherCameras();
+        DisableOtherCameras();
 
         NativeControl = new NativeCamera(this);
 
         //OnUpdateOrientation(null, null);
 
         //SubscribeToNativeControl();
+    }
+
+
+    public void DisableOtherCameras(bool all = false)
+    {
+        foreach (var renderer in Instances)
+        {
+            System.Diagnostics.Debug.WriteLine($"[CAMERA] DisableOtherCameras..");
+            bool disable = false;
+            if (all || renderer != this)
+            {
+                disable = true;
+            }
+
+            if (disable)
+            {
+                renderer.Stop(true);
+                System.Diagnostics.Debug.WriteLine($"[CAMERA] Stopped {renderer.Uid} {renderer.Tag}");
+            }
+        }
     }
 
 

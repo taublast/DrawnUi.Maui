@@ -1,4 +1,7 @@
 ﻿#if IOS || MACCATALYST
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using AppoMobi.Specials;
 using AVFoundation;
 using CoreFoundation;
 using CoreGraphics;
@@ -11,8 +14,6 @@ using ImageIO;
 using Photos;
 using SkiaSharp;
 using SkiaSharp.Views.iOS;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using UIKit;
 
 namespace DrawnUi.Camera;
@@ -31,6 +32,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     private double _zoomScale = 1.0;
     private readonly object _lockPreview = new();
     private CapturedImage _preview;
+    bool _cameraUnitInitialized;
 
     public AVCaptureDevice CaptureDevice
     {
@@ -188,6 +190,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     private void SetupHardware()
     {
         _session.BeginConfiguration();
+        _cameraUnitInitialized = false;
 
         // Set session preset
         if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
@@ -302,18 +305,18 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         _flashSupported = videoDevice.FlashAvailable;
 
         var focalLengths = new List<float>();
-        var physicalFocalLength = 4.15f;
-        focalLengths.Add(physicalFocalLength);
+        //var physicalFocalLength = 4.15f;
+        //focalLengths.Add(physicalFocalLength);
 
         var cameraUnit = new CameraUnit
         {
             Id = videoDevice.UniqueID,
             Facing = _formsControl.Facing,
             FocalLengths = focalLengths,
-            FocalLength = physicalFocalLength,
+            //FocalLength = physicalFocalLength,
             FieldOfView = videoDevice.ActiveFormat.VideoFieldOfView,
-            SensorWidth = 4.8f,
-            SensorHeight = 3.6f,
+            //SensorWidth = 4.8f,
+            //SensorHeight = 3.6f,
             Meta = _formsControl.CreateMetadata()
         };
 
@@ -327,6 +330,34 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         }
 
         _session.CommitConfiguration();
+    }
+
+    public void ApplyCameraUnit(CameraUnit cameraUnit)
+    {
+
+        if (cameraUnit == null && _formsControl.CameraDevice != null)
+        {
+            var info = _deviceInput.Device.ActiveFormat;
+            var focal = cameraUnit.FocalLength;
+
+            var pixelsZoom = info.VideoZoomFactorUpscaleThreshold;
+            float aspectH = cameraUnit.PixelXDimension / cameraUnit.PixelYDimension;
+            float aspectV = 1.0f;
+            float fovH = info.VideoFieldOfView;
+            float fovV = fovH / aspectH;
+
+            var sensorWidth = (float)(2 * cameraUnit.FocalLength * Math.Tan(fovH * Math.PI / 2.0f * 180));
+            var sensorHeight = (float)(2 * cameraUnit.FocalLength * Math.Tan(fovV * Math.PI / 2.0f * 180));
+
+            cameraUnit.SensorHeight = sensorHeight;
+            cameraUnit.SensorWidth = sensorWidth;
+            cameraUnit.FieldOfView = fovH;
+            cameraUnit.Meta = _formsControl.CreateMetadata();
+            cameraUnit.Facing = _formsControl.Facing;
+
+            _formsControl.CameraDevice = cameraUnit;
+        }
+
     }
 
     #endregion
@@ -355,8 +386,16 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         }
     }
 
-    public void Stop()
+    public void Stop(bool force = false)
     {
+        SetCapture(null);
+
+        if (State == CameraProcessorState.None && !force)
+            return;
+
+        if (State != CameraProcessorState.Enabled && !force)
+            return; //avoid spam
+
         try
         {
             _session.StopRunning();
@@ -574,7 +613,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     [Export("captureOutput:didOutputSampleBuffer:fromConnection:")]
     public void DidOutputSampleBuffer(AVCaptureOutput captureOutput, CMSampleBuffer sampleBuffer, AVCaptureConnection connection)
     {
-        if (_formsControl == null || _isCapturingStill)
+        if (_formsControl == null || _isCapturingStill || State != CameraProcessorState.Enabled)
             return;
 
         try
@@ -587,6 +626,47 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
             try
             {
+                if (!_cameraUnitInitialized)
+                {
+                    _cameraUnitInitialized = true;
+
+                    var attachments = sampleBuffer.GetAttachments(CMAttachmentMode.ShouldPropagate);
+                    var focals = new List<float>();
+                    var exif = attachments["{Exif}"] as NSDictionary;
+
+                    var focal35mm = exif["FocalLenIn35mmFilm"].ToString().ToFloat();
+                    var focal = exif["FocalLength"].ToString().ToFloat();
+                    var name = exif["LensModel"].ToString();
+                    var lenses = exif["LensSpecification "] as NSDictionary;
+
+                    if (lenses != null)
+                    {
+                        foreach (var lens in lenses)
+                        {
+                            var add = lens.ToString().ToDouble();
+                            focals.Add((float)add);
+                        }
+                    }
+                    else
+                    {
+                        focals.Add((float)focal);
+                    }
+
+                    //FOV = 2 arctan (x / (2 f)), where x is the diagonal of the film.
+                    var unit = new CameraUnit
+                    {
+                        Id = name,
+                        SensorCropFactor = focal35mm / focal,
+                        FocalLengths = focals,
+                        PixelXDimension = exif["PixelXDimension"].ToString().ToFloat(),
+                        PixelYDimension = exif["PixelYDimension"].ToString().ToFloat(),
+                        FocalLength = focal
+                    };
+
+                    ApplyCameraUnit(unit);
+                }
+
+
                 var width = (int)pixelBuffer.Width;
                 var height = (int)pixelBuffer.Height;
                 var bytesPerRow = (int)pixelBuffer.BytesPerRow;
@@ -606,11 +686,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                     Orientation = _formsControl.DeviceRotation
                 };
 
-                lock (_lockPreview)
-                {
-                    _preview?.Dispose();
-                    _preview = capturedImage;
-                }
+                SetCapture(capturedImage);
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -626,6 +702,18 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         catch (Exception e)
         {
             Console.WriteLine($"[NativeCameraiOS] Frame processing error: {e}");
+        }
+    }
+
+    CapturedImage _kill;
+
+    void SetCapture(CapturedImage capturedImage)
+    {
+        lock (_lockPreview)
+        {
+            _kill?.Dispose();
+            _kill = _preview;
+            _preview = capturedImage;
         }
     }
 
@@ -655,12 +743,9 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             _stillImageOutput?.Dispose();
             _deviceInput?.Dispose();
             _videoDataOutputQueue?.Dispose();
-            
-            lock (_lockPreview)
-            {
-                _preview?.Dispose();
-                _preview = null;
-            }
+
+            SetCapture(null);
+            _kill?.Dispose();
         }
 
         base.Dispose(disposing);

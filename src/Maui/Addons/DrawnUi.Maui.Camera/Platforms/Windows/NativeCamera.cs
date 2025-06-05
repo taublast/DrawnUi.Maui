@@ -956,8 +956,14 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         await StartFrameReaderAsync();
     }
 
-    public async void Stop()
+    public async void Stop(bool force = false)
     {
+        if (State == CameraProcessorState.None && !force)
+            return;
+
+        if (State != CameraProcessorState.Enabled && !force)
+            return; //avoid spam
+
         try
         {
             //Debug.WriteLine("[NativeCameraWindows] Stopping frame reader...");

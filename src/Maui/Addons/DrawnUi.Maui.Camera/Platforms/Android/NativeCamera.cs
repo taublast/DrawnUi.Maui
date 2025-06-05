@@ -314,39 +314,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             _preview = null;
             return get;
         }
-
-        //if (Output == null)
-        //    return null;
-
-        //if (FormsControl.ProcessInBackground)
-        //{
-        //    return GetPreviewImage(Output.Allocation, Output.Bitmap.Width, Output.Bitmap.Height);
-        //}
-        //else
-        //if (FramesReader != null && Output != null)
-        //{
-        //    var image = FramesReader.AcquireLatestImage();
-        //    if (image != null)
-        //    {
-        //        //use rs
-        //        ProcessImage(image, Output.Allocation);
-        //        image.Close();
-        //        return GetPreviewImage(Output.Allocation, Output.Bitmap.Width, Output.Bitmap.Height);
-        //    }
-        //}
-        //return null;
-    }
-
-
-    private void Super_OnNativeAppPaused(object sender, EventArgs e)
-    {
-        Stop();
-    }
-
-    private void Super_OnNativeAppResumed(object sender, EventArgs e)
-    {
-        if (FormsControl.IsOn)
-            Start();
     }
 
     public void Start()
@@ -390,11 +357,11 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     /// <summary>
     /// Call when inactive to free resources
     /// </summary>
-    public void Stop()
+    public void Stop(bool force=false)
     {
         try
         {
-            CloseCamera();
+            CloseCamera(force);
         }
         catch (Exception e)
         {
@@ -412,9 +379,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     public NativeCamera(SkiaCamera parent)
     {
         FormsControl = parent;
-
-        Super.OnNativeAppPaused += Super_OnNativeAppPaused;
-        Super.OnNativeAppResumed += Super_OnNativeAppResumed;
 
         rs = RenderScript.Create(Platform.AppContext);
         Splines.Initialize(rs);
@@ -1756,21 +1720,13 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     {
         if (disposing)
         {
-            Stop();
-
-            CloseCamera();
-
+            Stop(true);
 
             //mTextureView.Dispose();
-            Super.OnNativeAppPaused -= Super_OnNativeAppPaused;
-            Super.OnNativeAppResumed -= Super_OnNativeAppResumed;
         }
 
         base.Dispose(disposing);
     }
-
-
-
 
     protected int countFrames = 0;
 

@@ -6,6 +6,7 @@ using System.Windows.Input;
 using AppoMobi.Specials;
 using DrawnUi.Views;
 using Microsoft.Maui.Controls;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 using Color = Microsoft.Maui.Graphics.Color;
 
 namespace DrawnUi.Camera;
@@ -129,22 +130,22 @@ public partial class SkiaCamera : SkiaControl
 
     #region METHODS
 
-
-
     /// <summary>
     /// Stops the camera
     /// </summary>
-    public void Stop()
+    public void Stop(bool force=false)
     {
         if (IsDisposing || IsDisposed)
             return;
 
-        NativeControl?.Stop();
+        System.Diagnostics.Debug.WriteLine($"[CAMERA] Stopped {Uid} {Tag}");
+
+        NativeControl?.Stop(force);
         State = CameraState.Off;
         //DisplayImage.IsVisible = false;
     }
 
-    /// <summary>
+   /// <summary>
     /// Starts the camera
     /// </summary>
     public void Start()
@@ -167,6 +168,8 @@ public partial class SkiaCamera : SkiaControl
             //DestroyRenderingObject();
             Display.IsVisible = true;
         }
+
+        //IsOn = true;
 
         NativeControl?.Start();
     }
@@ -414,9 +417,10 @@ public partial class SkiaCamera : SkiaControl
 
     public SkiaCamera()
     {
-
+        Instances.Add(this);
+        Super.OnNativeAppResumed += Super_OnNativeAppResumed;
+        Super.OnNativeAppPaused += Super_OnNativeAppPaused;
     }
-
 
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
@@ -435,27 +439,7 @@ public partial class SkiaCamera : SkiaControl
 
     public SkiaImage Display { get; protected set; }
 
-    public override void OnDisposing()
-    {
-
-        if (Superview != null)
-        {
-            Superview.DeviceRotationChanged -= DeviceRotationChanged;
-        }
-
-        if (NativeControl != null)
-        {
-            Stop();
-
-            NativeControl?.Dispose();
-        }
-
-        NativeControl = null;
-
-        base.OnDisposing();
-    }
-
-
+ 
     public INativeCamera NativeControl;
 
 
@@ -553,27 +537,19 @@ public partial class SkiaCamera : SkiaControl
     {
         base.Paint(ctx);
 
-        if (NativeControl != null)
+        if (NativeControl != null && State == CameraState.On && !FrameAquired)
         {
-            if (!FrameAquired)
+            //aquire latest image from camera
+            var image = NativeControl.GetPreviewImage();
+            if (image != null)
             {
-                //aquire latest image from camera
-                {
-                    var image = NativeControl.GetPreviewImage();
-                    if (image != null)
-                    {
-                        FrameAquired = true;
-                        OnNewFrameSet(Display.SetImageInternal(image.Image));
-                    }
-                }
-
+                FrameAquired = true;
+                OnNewFrameSet(Display.SetImageInternal(image.Image));
             }
-
-            //draw DisplayImage
-            DrawViews(ctx);
         }
 
-
+        //draw DisplayImage
+        DrawViews(ctx);
     }
 
 
@@ -583,12 +559,6 @@ public partial class SkiaCamera : SkiaControl
 
 
     public SKBitmap GetPreviewBitmap()
-    {
-        throw new NotImplementedException();
-    }
-
-
-    public void CommandToRenderer(string command)
     {
         throw new NotImplementedException();
     }
@@ -1258,24 +1228,24 @@ public partial class SkiaCamera : SkiaControl
         {
             if (_virtualCameraUnit != value)
             {
-                _virtualCameraUnit = value;
-                OnPropertyChanged("CameraDevice");
-                if (value != null)
+                if (_virtualCameraUnit != value)
                 {
-                    Device.StartTimer(TimeSpan.FromSeconds(2), () =>
-                    {
-                        Task.Run(async () =>
-                        {
-                            //await App.Current.SaveCameraDevice(value);
-                        }).ConfigureAwait(false);
-
-                        return false;
-                    });
+                    _virtualCameraUnit = value;
+                    AssignFocalLengthInternal(value);
                 }
             }
         }
     }
     private CameraUnit _virtualCameraUnit;
+
+    public void AssignFocalLengthInternal(CameraUnit value)
+    {
+        if (value != null)
+        {
+            FocalLength = (float)(value.FocalLength * value.SensorCropFactor);
+        }
+        OnPropertyChanged(nameof(CameraDevice));
+    }
 
     private int _PreviewWidth;
     public int PreviewWidth
@@ -1758,5 +1728,58 @@ public partial class SkiaCamera : SkiaControl
     }
 
     #endregion
+
+    private void Super_OnNativeAppPaused(object sender, EventArgs e)
+    {
+        StopAll();
+    }
+
+    private void Super_OnNativeAppResumed(object sender, EventArgs e)
+    {
+        ResumeIfNeeded();
+    }
+
+    public void ResumeIfNeeded()
+    {
+        if (IsOn)
+            Start();
+    }
+
+    public override void OnDisposing()
+    {
+        Super.OnNativeAppResumed -= Super_OnNativeAppResumed;
+        Super.OnNativeAppPaused -= Super_OnNativeAppPaused;
+
+        if (Superview != null)
+        {
+            Superview.DeviceRotationChanged -= DeviceRotationChanged;
+        }
+
+        if (NativeControl != null)
+        {
+            Stop(true);
+
+            NativeControl?.Dispose();
+        }
+
+        NativeControl = null;
+
+        Instances.Remove(this);
+
+        base.OnDisposing();
+    }
+
+    public static List<SkiaCamera> Instances = new();
+
+    /// <summary>
+    /// Stops all instances
+    /// </summary>
+    public static void StopAll()
+    {
+        foreach (var renderer in Instances)
+        {
+            renderer.Stop(true);
+        }
+    }
 
 }

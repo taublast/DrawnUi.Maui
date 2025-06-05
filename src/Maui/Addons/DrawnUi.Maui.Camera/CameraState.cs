@@ -2,7 +2,15 @@
 
 public enum CameraState
 {
-	Off,
-	On,
+    /// <summary>
+    /// Stopped
+    /// </summary>
+    Off,
+
+    /// <summary>
+    /// Running
+    /// </summary>
+    On,
+
 	Error
 }
