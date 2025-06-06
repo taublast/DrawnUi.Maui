@@ -5,6 +5,8 @@ public class Metadata
     public int Orientation { get; set; }
     public int ISO { get; set; }
     public double FocalLength { get; set; }
+    public double Aperture { get; set; }
+    public double Shutter { get; set; }
 
     public string Software { get; set; }
     public string Vendor { get; set; }

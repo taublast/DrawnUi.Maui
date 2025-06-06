@@ -558,7 +558,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     public int SensorOrientation { get; set; }
 
     // A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
-    public CameraCaptureListener mCaptureCallback;
+    public PreviewCaptureCallback mCaptureCallback;
 
     // Shows a {@link Toast} on the UI thread.
     public void ShowToast(string text)
@@ -633,231 +633,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
 
-
-
-
-
-
-
-    //public override void OnResume()
-    //{
-    //    base.OnResume();
-
-
-    //}
-
-
-
-
-
-
-    //private void RequestCameraPermission()
-    //{
-    //    if (FragmentCompat.ShouldShowRequestPermissionRationale(this, Manifest.Permission.Camera))
-    //    {
-    //        new ConfirmationDialog().Show(ChildFragmentManager, FRAGMENT_DIALOG);
-    //    }
-    //    else
-    //    {
-    //        FragmentCompat.RequestPermissions(this, new string[] { Manifest.Permission.Camera },
-    //                REQUEST_CAMERA_PERMISSION);
-    //    }
-    //}
-
-    //public void OnRequestPermissionsResult(int requestCode, string[] permissions, int[] grantResults)
-    //{
-    //    if (requestCode != REQUEST_CAMERA_PERMISSION)
-    //        return;
-
-    //    if (grantResults.Length != 1 || grantResults[0] != (int)Permission.Granted)
-    //    {
-    //        ErrorDialog.NewInstance(GetString(Resource.String.request_permission))
-    //                .Show(ChildFragmentManager, FRAGMENT_DIALOG);
-    //    }
-    //}
-
-
-
-
-    /*
-	 EMULATOR
-
-	{
-	"Id": "0",
-	"Focal": [
-	  {
-		"FocalLength": 5.0,
-		"FocalLengthEq": 54.0875
-	  }SINGLE X
-		],
-		"MinDistance": 0.0,
-		"SensorWidth": 3.2,
-		"SensorHeight": 2.4
-	  }
-
-	BLACKVIEW
-
-	 {
-	"Id": "0",
-	"Focal": [
-	  {
-		"FocalLength": 3.5,
-		"FocalLengthEq": 25.8346043
-	  }
-		],
-		"MinDistance": 20.0,
-		"SensorWidth": 4.71,
-		"SensorHeight": 3.49
-	  }
-
-	 */
-
-
-    public async Task<ExposureResult> MeasureExposure(
-   double shutterSpeed,
-   double iso,
-   double aperture,
-   double exposureCompensation,
-   MeteringMode meteringMode)
-    {
-        try
-        {
-            if (mCameraDevice == null || CaptureSession == null)
-                return new ExposureResult { Success = false, ErrorMessage = "Camera not initialized" };
-
-            // Create a task completion source to wait for the result
-            var tcs = new TaskCompletionSource<ExposureResult>();
-
-            // Set a flag in your CameraCaptureListener to capture the next result
-            mCaptureCallback.SetMeteringResultHandler(tcs, aperture);
-
-            // Create a new request builder with manual settings
-            var meteringRequestBuilder = mCameraDevice.CreateCaptureRequest(CameraTemplate.Preview);
-            meteringRequestBuilder.AddTarget(mImageReaderPreview.Surface);
-
-            // Set manual exposure mode
-            meteringRequestBuilder.Set(CaptureRequest.ControlMode, (int)ControlMode.Off);
-            meteringRequestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.Off);
-
-            // Set exposure parameters
-            long exposureNanos = (long)(shutterSpeed * 1_000_000_000);
-            meteringRequestBuilder.Set(CaptureRequest.SensorExposureTime, exposureNanos);
-            meteringRequestBuilder.Set(CaptureRequest.SensorSensitivity, (int)iso);
-
-            // Set metering mode
-            var manager = (CameraManager)Platform.CurrentActivity.GetSystemService(Context.CameraService);
-            var characteristics = manager.GetCameraCharacteristics(CameraId);
-            var activeArraySize = (Android.Graphics.Rect)characteristics.Get(CameraCharacteristics.SensorInfoActiveArraySize);
-
-            switch (meteringMode)
-            {
-                case MeteringMode.Spot:
-                    if (activeArraySize != null)
-                    {
-                        var meteringRectangles = new MeteringRectangle[]
-                        {
-                        new MeteringRectangle(
-                            (int)(activeArraySize.Width() * 0.45),
-                            (int)(activeArraySize.Height() * 0.45),
-                            (int)(activeArraySize.Width() * 0.1),
-                            (int)(activeArraySize.Height() * 0.1),
-                            MeteringRectangle.MeteringWeightMax)
-                        };
-                        meteringRequestBuilder.Set(CaptureRequest.ControlAeRegions, meteringRectangles);
-                    }
-                    break;
-            }
-
-            // Update the repeating request with manual settings
-            CaptureSession.SetRepeatingRequest(meteringRequestBuilder.Build(), mCaptureCallback, mBackgroundHandler);
-
-            // Wait for the result
-            var result = await tcs.Task;
-
-            // Restore the original preview settings
-            CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            return new ExposureResult { Success = false, ErrorMessage = e.Message };
-        }
-    }
-
-
-    /// <summary>
-    /// Measures actual scene brightness using Android camera's auto exposure system
-    /// </summary>
-    public async Task<BrightnessResult> MeasureSceneBrightness(MeteringMode meteringMode)
-    {
-        try
-        {
-            if (mCameraDevice == null || CaptureSession == null)
-                return new BrightnessResult { Success = false, ErrorMessage = "Camera not initialized" };
-
-            // Create a task completion source to wait for the result
-            var tcs = new TaskCompletionSource<BrightnessResult>();
-
-            // Set the brightness measurement handler in the capture listener
-            mCaptureCallback.SetBrightnessMeasurementHandler(tcs);
-
-            // Create a new request builder with AUTO settings
-            var brightnessRequestBuilder = mCameraDevice.CreateCaptureRequest(CameraTemplate.Preview);
-            brightnessRequestBuilder.AddTarget(mImageReaderPreview.Surface);
-
-            // Set AUTO exposure mode to let camera measure the scene
-            brightnessRequestBuilder.Set(CaptureRequest.ControlMode, (int)ControlMode.Auto);
-            brightnessRequestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.On);
-
-            // Set metering mode
-            var manager = (CameraManager)Platform.CurrentActivity.GetSystemService(Context.CameraService);
-            var characteristics = manager.GetCameraCharacteristics(CameraId);
-            var activeArraySize = (Android.Graphics.Rect)characteristics.Get(CameraCharacteristics.SensorInfoActiveArraySize);
-
-            switch (meteringMode)
-            {
-                case MeteringMode.Spot:
-                    if (activeArraySize != null)
-                    {
-                        var meteringRectangles = new MeteringRectangle[]
-                        {
-                        new MeteringRectangle(
-                            (int)(activeArraySize.Width() * 0.45),
-                            (int)(activeArraySize.Height() * 0.45),
-                            (int)(activeArraySize.Width() * 0.1),
-                            (int)(activeArraySize.Height() * 0.1),
-                            MeteringRectangle.MeteringWeightMax)
-                        };
-                        brightnessRequestBuilder.Set(CaptureRequest.ControlAeRegions, meteringRectangles);
-                    }
-                    break;
-
-                case MeteringMode.CenterWeighted:
-                    // Center-weighted is usually the default, no special regions needed
-                    break;
-            }
-
-            // Update the repeating request with auto settings
-            CaptureSession.SetRepeatingRequest(brightnessRequestBuilder.Build(), mCaptureCallback, mBackgroundHandler);
-
-            // Wait for the camera to measure and stabilize (important!)
-            await Task.Delay(1000);
-
-            // Wait for the result
-            var result = await tcs.Task;
-
-            // Restore the original preview settings
-            CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            System.Diagnostics.Debug.WriteLine($"[ANDROID CAMERA ERROR] {e.Message}");
-            return new BrightnessResult { Success = false, ErrorMessage = e.Message };
-        }
-    }
 
     /// <summary>
     /// Pass preview size as params
@@ -1238,7 +1013,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 }
 
                 if (mCaptureCallback == null)
-                    mCaptureCallback = new CameraCaptureListener(this);
+                    mCaptureCallback = new PreviewCaptureCallback(this);
 
                 SetupHardware(width, height);
 
@@ -1477,7 +1252,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             CaptureSession.StopRepeating();
 
             CaptureSession
-                .Capture(stillCaptureBuilder.Build(), new CameraCaptureStillPictureSessionCallback(this),
+                .Capture(stillCaptureBuilder.Build(), new StillPhotoCaptureCallback(this),
                     mBackgroundHandler);
 
         }
@@ -1852,19 +1627,15 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             {
                 case 90:
                     FormsControl.CameraDevice.Meta.Orientation = 8;
-                    //newexif.SetAttribute(ExifInterface.TagOrientation, "6");
                     break;
                 case 270:
                     FormsControl.CameraDevice.Meta.Orientation = 6;
-                    //newexif.SetAttribute(ExifInterface.TagOrientation, "8");
                     break;
                 case 180:
                     FormsControl.CameraDevice.Meta.Orientation = 3;
-                    //newexif.SetAttribute(ExifInterface.TagOrientation, "3");
                     break;
                 default:
                     FormsControl.CameraDevice.Meta.Orientation = 1;
-                    //newexif.SetAttribute(ExifInterface.TagOrientation, "1");
                     break;
             }
 

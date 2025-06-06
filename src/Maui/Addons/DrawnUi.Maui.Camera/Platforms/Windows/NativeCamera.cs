@@ -104,7 +104,7 @@ unsafe interface IMemoryBufferByteAccess
 
 public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyChanged
 {
-    private readonly SkiaCamera _formsControl;
+    protected readonly SkiaCamera FormsControl;
     private MediaCapture _mediaCapture;
     private MediaFrameReader _frameReader;
     private CameraProcessorState _state = CameraProcessorState.None;
@@ -122,7 +122,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
 
     public NativeCamera(SkiaCamera formsControl)
     {
-        _formsControl = formsControl;
+        FormsControl = formsControl;
         Setup();
     }
 
@@ -143,13 +143,13 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     switch (value)
                     {
                         case CameraProcessorState.Enabled:
-                            _formsControl.State = CameraState.On;
+                            FormsControl.State = CameraState.On;
                             break;
                         case CameraProcessorState.Error:
-                            _formsControl.State = CameraState.Error;
+                            FormsControl.State = CameraState.Error;
                             break;
                         default:
-                            _formsControl.State = CameraState.Off;
+                            FormsControl.State = CameraState.Off;
                             break;
                     }
                 });
@@ -185,7 +185,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     {
         //Debug.WriteLine("[NativeCameraWindows] Finding camera devices...");
 
-        var cameraPosition = _formsControl.Facing == CameraPosition.Selfie
+        var cameraPosition = FormsControl.Facing == CameraPosition.Selfie
             ? Panel.Front
             : Panel.Back;
 
@@ -252,18 +252,18 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             var cameraUnit = new CameraUnit
             {
                 Id = _cameraDevice.Id,
-                Facing = _formsControl.Facing,
+                Facing = FormsControl.Facing,
                 FocalLengths = cameraSpecs.FocalLengths,
                 FocalLength = cameraSpecs.FocalLength,
                 FieldOfView = cameraSpecs.FieldOfView,
                 SensorWidth = cameraSpecs.SensorWidth,
                 SensorHeight = cameraSpecs.SensorHeight,
                 MinFocalDistance = cameraSpecs.MinFocalDistance,
-                Meta = _formsControl.CreateMetadata()
+                Meta = FormsControl.CreateMetadata()
             };
 
             // Assign to parent control
-            _formsControl.CameraDevice = cameraUnit;
+            FormsControl.CameraDevice = cameraUnit;
 
             Debug.WriteLine($"[NativeCameraWindows] CameraUnit created from real data:");
             Debug.WriteLine($"  - Id: {cameraUnit.Id}");
@@ -483,7 +483,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     {
         try
         {
-            if (_formsControl.Superview?.CanvasView is SkiaViewAccelerated accelerated)
+            if (FormsControl.Superview?.CanvasView is SkiaViewAccelerated accelerated)
             {
                 return accelerated.GRContext;
             }
@@ -597,10 +597,10 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 {
                     var capturedImage = new CapturedImage()
                     {
-                        Facing = _formsControl.Facing,
+                        Facing = FormsControl.Facing,
                         Time = DateTime.UtcNow,
                         Image = skImage, // Transfer ownership to CapturedImage - renderer will dispose
-                        Orientation = _formsControl.DeviceRotation
+                        Orientation = FormsControl.DeviceRotation
                     };
 
                     // Update preview safely
@@ -611,7 +611,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     }
 
                     //PREVIEW FRAME READY
-                    _formsControl.UpdatePreview();
+                    FormsControl.UpdatePreview();
                 }
                 softwareBitmap.Dispose();
             }
@@ -686,10 +686,10 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             {
                 var capturedImage = new CapturedImage()
                 {
-                    Facing = _formsControl.Facing,
+                    Facing = FormsControl.Facing,
                     Time = DateTime.UtcNow,
                     Image = skImage, // Transfer ownership to CapturedImage - renderer will dispose
-                    Orientation = _formsControl.DeviceRotation
+                    Orientation = FormsControl.DeviceRotation
                 };
 
                 // Update preview safely
@@ -700,7 +700,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 }
 
                 //PREVIEW FRAME READY
-                _formsControl.UpdatePreview();
+                FormsControl.UpdatePreview();
             }
         }
         catch (Exception e)
@@ -1042,10 +1042,10 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
 
             var capturedImage = new CapturedImage()
             {
-                Facing = _formsControl.Facing,
+                Facing = FormsControl.Facing,
                 Time = DateTime.UtcNow,
                 Image = skImage,
-                Orientation = _formsControl.DeviceRotation
+                Orientation = FormsControl.DeviceRotation
             };
 
             MainThread.BeginInvokeOnMainThread(() =>
@@ -1145,6 +1145,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             return null;
         }
     }
+
 
     #endregion
 

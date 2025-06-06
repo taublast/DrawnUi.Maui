@@ -29,6 +29,263 @@ public partial class SkiaCamera : SkiaControl
     #region HELPERS
 
     /// <summary>
+    /// Analyzes pixel luminance in a specific area of the frame (shared across all platforms)
+    /// </summary>
+    /// <param name="frame">The camera frame to analyze</param>
+    /// <param name="meteringMode">Spot (10x10 points) or CenterWeighted (50x50 points)</param>
+    /// <param name="renderingScale">Rendering scale to convert points to pixels</param>
+    /// <returns>Average luminance value (0-255 scale)</returns>
+    public double AnalyzeFrameLuminance(SKImage frame, MeteringMode meteringMode)
+    {
+        if (frame == null)
+            throw new ArgumentNullException(nameof(frame));
+
+        float renderingScale = this.RenderingScale;
+        var width = frame.Width;
+        var height = frame.Height;
+
+        // Define sampling area based on metering mode - in points, then convert to pixels
+        int sampleSizePoints = meteringMode == MeteringMode.Spot ? 10 : 50;
+        int sampleSizePixels = (int)(sampleSizePoints * renderingScale);
+        
+        int centerX = width / 2;
+        int centerY = height / 2;
+        
+        int startX = Math.Max(0, centerX - sampleSizePixels / 2);
+        int startY = Math.Max(0, centerY - sampleSizePixels / 2);
+        int endX = Math.Min(width, centerX + sampleSizePixels / 2);
+        int endY = Math.Min(height, centerY + sampleSizePixels / 2);
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Analyzing frame: {width}x{height}");
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Sampling: {sampleSizePoints}x{sampleSizePoints} pts * {renderingScale:F1} = {sampleSizePixels}x{sampleSizePixels} px");
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Sampling area: ({startX},{startY}) to ({endX},{endY})");
+
+        // Sample pixels from the target area
+        using var bitmap = SKBitmap.FromImage(frame);
+        
+        double totalLuminance = 0;
+        int pixelCount = 0;
+        
+        for (int y = startY; y < endY; y++)
+        {
+            for (int x = startX; x < endX; x++)
+            {
+                var pixel = bitmap.GetPixel(x, y);
+                
+                // Calculate luminance using standard formula: 0.299*R + 0.587*G + 0.114*B
+                var luminance = (0.299 * pixel.Red + 0.587 * pixel.Green + 0.114 * pixel.Blue);
+                totalLuminance += luminance;
+                pixelCount++;
+            }
+        }
+
+        if (pixelCount == 0)
+            throw new InvalidOperationException("No pixels to analyze in the specified area");
+
+        var averageLuminance = totalLuminance / pixelCount;
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Average luminance: {averageLuminance:F1} (0-255 scale), pixels: {pixelCount}");
+        
+        return averageLuminance;
+    }
+
+    /// <summary>
+    /// Converts normalized luminance to estimated lux value (shared across all platforms)
+    /// </summary>
+    /// <param name="pixelLuminance">Raw pixel luminance (0-255)</param>
+    /// <param name="exposureDuration">Camera exposure duration in seconds</param>
+    /// <param name="iso">Camera ISO value</param>
+    /// <param name="aperture">Camera aperture (f-number)</param>
+    /// <returns>Estimated brightness in lux</returns>
+    public static double CalculateBrightnessFromExposure(double pixelLuminance, double exposureDuration, float iso, float aperture)
+    {
+        // Normalize pixel luminance to account for camera exposure settings
+        // Formula: Actual_Luminance = Pixel_Luminance * (ISO/100) * (1/exposure_duration) / (aperture^2)
+        var normalizedLuminance = pixelLuminance * (iso / 100.0) * (1.0 / exposureDuration) / (aperture * aperture);
+        
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Exposure compensation: Duration={exposureDuration:F6}s, ISO={iso:F0}, Aperture=f/{aperture:F1}");
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Raw luminance: {pixelLuminance:F1} → Normalized: {normalizedLuminance:F1}");
+        
+        // Convert normalized luminance to lux using calibrated scale
+        double estimatedLux;
+        
+        if (normalizedLuminance < 1)
+        {
+            // Very dark: 0.1 - 1 lux (moonlight, deep shadow)
+            estimatedLux = 0.1 + normalizedLuminance * 0.9;
+        }
+        else if (normalizedLuminance < 10)
+        {
+            // Dark: 1 - 10 lux (candlelight, dim room)
+            estimatedLux = 1 + (normalizedLuminance - 1) * 1.0;
+        }
+        else if (normalizedLuminance < 100)
+        {
+            // Medium: 10 - 100 lux (living room, restaurant)
+            estimatedLux = 10 + (normalizedLuminance - 10) * 1.0;
+        }
+        else if (normalizedLuminance < 1000)
+        {
+            // Bright: 100 - 1000 lux (office, bright room)
+            estimatedLux = 100 + (normalizedLuminance - 100) * 1.0;
+        }
+        else if (normalizedLuminance < 10000)
+        {
+            // Very bright: 1000 - 10000 lux (daylight, bright office)
+            estimatedLux = 1000 + (normalizedLuminance - 1000) * 1.0;
+        }
+        else
+        {
+            // Extremely bright: 10000+ lux (direct sunlight)
+            estimatedLux = 10000 + (normalizedLuminance - 10000) * 10.0;
+        }
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Final estimated brightness: {estimatedLux:F0} lux");
+        return estimatedLux;
+    }
+
+    /// <summary>
+    /// Direct pixel-to-lux mapping for platforms where camera exposure settings are unreliable
+    /// </summary>
+    /// <param name="pixelLuminance">Raw pixel luminance (0-255)</param>
+    /// <returns>Estimated brightness in lux</returns>
+    public static double CalculateBrightnessFromPixelsOnly(double pixelLuminance)
+    {
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel mapping: {pixelLuminance:F1} (0-255 scale)");
+        
+        // Direct pixel luminance to lux mapping with wide dynamic range
+        double estimatedLux;
+        
+        if (pixelLuminance < 5)
+        {
+            // Very dark: 0.1 - 5 lux (deep shadow, moonlight)
+            estimatedLux = 0.1 + (pixelLuminance / 5.0) * 4.9;
+        }
+        else if (pixelLuminance < 25)
+        {
+            // Dark: 5 - 50 lux (dim room, candlelight)
+            estimatedLux = 5 + ((pixelLuminance - 5) / 20.0) * 45;
+        }
+        else if (pixelLuminance < 75)
+        {
+            // Medium: 50 - 500 lux (living room, restaurant)
+            estimatedLux = 50 + ((pixelLuminance - 25) / 50.0) * 450;
+        }
+        else if (pixelLuminance < 150)
+        {
+            // Bright: 500 - 2000 lux (office, bright room)
+            estimatedLux = 500 + ((pixelLuminance - 75) / 75.0) * 1500;
+        }
+        else if (pixelLuminance < 200)
+        {
+            // Very bright: 2000 - 10000 lux (daylight indoors)
+            estimatedLux = 2000 + ((pixelLuminance - 150) / 50.0) * 8000;
+        }
+        else
+        {
+            // Extremely bright: 10000+ lux (direct sunlight)
+            estimatedLux = 10000 + ((pixelLuminance - 200) / 55.0) * 90000;
+        }
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel brightness: {estimatedLux:F0} lux");
+        return estimatedLux;
+    }
+
+    /// <summary>
+    /// Measures scene brightness using pixel luminance analysis (moved from native implementations to eliminate redundancy)
+    /// </summary>
+    /// <param name="meteringMode">Spot (10x10 points) or CenterWeighted (50x50 points)</param>
+    /// <returns>Brightness measurement result</returns>
+    public async Task<BrightnessResult> MeasureSceneBrightness(MeteringMode meteringMode)
+    {
+        try
+        {
+            if (NativeControl == null)
+                return new BrightnessResult { Success = false, ErrorMessage = "Camera not initialized" };
+
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting brightness measurement with {meteringMode} mode");
+
+            // Get current frame data
+            CapturedImage currentFrame = null;
+            for (int attempts = 0; attempts < 10; attempts++)
+            {
+                currentFrame = NativeControl.GetPreviewImage();
+                if (currentFrame?.Image != null)
+                    break;
+                await Task.Delay(100);
+            }
+
+            if (currentFrame?.Image == null)
+                return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
+
+            using (currentFrame)
+            {
+                // Use shared pixel analysis code
+                var pixelLuminance = AnalyzeFrameLuminance(currentFrame.Image, meteringMode);
+
+                // Use direct pixel-to-lux mapping (all platforms now use this approach)
+                //var brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
+
+                // iPhone chose these settings for this scene
+                var brightness = CalculateSceneBrightnessFromPixels(pixelLuminance, CameraDevice.Meta.ISO, CameraDevice.Meta.Aperture, CameraDevice.Meta.Shutter);
+
+                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Brightness measurement complete: {brightness:F0} lux");
+
+                return new BrightnessResult
+                {
+                    Success = true,
+                    Brightness = brightness
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA ERROR] MeasureSceneBrightness failed: {ex.Message}");
+            return new BrightnessResult { Success = false, ErrorMessage = ex.Message };
+        }
+    }
+
+    /// <summary>
+    /// Calculates actual scene brightness using the camera's current settings and pixel analysis
+    /// </summary>
+    /// <param name="pixelLuminance">Average pixel luminance from AnalyzeFrameLuminance (0-255 scale)</param>
+    /// <param name="phoneISO">Current camera ISO</param>
+    /// <param name="phoneAperture">Current camera aperture (f-stop)</param>
+    /// <param name="phoneShutter">Current camera shutter speed (seconds)</param>
+    /// <returns>Estimated scene brightness in lux</returns>
+    public static double CalculateSceneBrightnessFromPixels(
+        double pixelLuminance,
+        double phoneISO,
+        double phoneAperture,
+        double phoneShutter)
+    {
+        // The iPhone camera chose these settings to properly expose this scene
+        // We can reverse-engineer the scene brightness from these decisions
+
+        // Calculate the EV that the iPhone camera is using
+        double phoneEV = Math.Log2((phoneAperture * phoneAperture) / phoneShutter) + Math.Log2(phoneISO / 100.0);
+
+        // Convert iPhone's EV back to scene luminance using standard photometric formula
+        // EV = log2(Luminance * ISO / K), so Luminance = K * 2^EV / ISO
+        const double K = 12.5; // Standard photometric constant
+        double baseSceneLuminance = K * Math.Pow(2, phoneEV) / phoneISO;
+
+        // Apply pixel-based correction factor
+        // Middle gray should be around 128 on 0-255 scale (18% gray = 50% on pixel scale)
+        // If pixels are brighter/darker than middle gray, adjust scene brightness accordingly
+        double pixelCorrectionFactor = pixelLuminance / 128.0;
+
+        // For extreme pixel values, use logarithmic scaling to prevent huge corrections
+        if (pixelCorrectionFactor > 2.0)
+            pixelCorrectionFactor = 1.0 + Math.Log2(pixelCorrectionFactor);
+        else if (pixelCorrectionFactor < 0.5)
+            pixelCorrectionFactor = Math.Pow(pixelCorrectionFactor, 0.5);
+
+        double finalSceneBrightness = baseSceneLuminance * pixelCorrectionFactor;
+
+        return finalSceneBrightness;
+    }
+
+    /// <summary>
     /// Going to overlay any SkiaLayout over the captured photo and return a new bitmap.
     /// So do not forget to dispose the old one if not needed anymore.
     /// </summary>

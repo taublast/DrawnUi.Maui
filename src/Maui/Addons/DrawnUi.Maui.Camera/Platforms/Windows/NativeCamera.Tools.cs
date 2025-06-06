@@ -13,7 +13,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     /// <summary>
     /// Measures actual scene brightness using Windows MediaCapture auto exposure system
     /// </summary>
-    public async Task<BrightnessResult> MeasureSceneBrightness(MeteringMode meteringMode)
+    public async Task<BrightnessResult> MeasureSceneBrightnessBak(MeteringMode meteringMode)
     {
         try
         {

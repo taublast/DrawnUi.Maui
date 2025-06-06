@@ -7,35 +7,50 @@ namespace DrawnUi.Camera;
 public partial class NativeCamera
 {
 
-    public class CameraCaptureStillPictureSessionCallback : CameraCaptureSession.CaptureCallback
+    public static void FillMetadata(Metadata meta, CaptureResult result)
     {
-        private static readonly string TAG = "CameraCaptureStillPictureSessionCallback";
+        // Get the camera's chosen exposure settings for "proper" exposure
+        var measuredExposureTime = (long)result.Get(CaptureResult.SensorExposureTime);
+        var measuredSensitivity = (int)result.Get(CaptureResult.SensorSensitivity);
+        var measuredAperture = (float)result.Get(CaptureResult.LensAperture);
+        var usedLens = (float)result.Get(CaptureResult.LensFocalLength);
 
-        private readonly NativeCamera owner;
+        // Convert to standard units
+        double shutterSpeed = measuredExposureTime / 1_000_000_000.0; // nanoseconds to seconds
+        double iso = measuredSensitivity;
+        double aperture = measuredAperture;
 
-        public CameraCaptureStillPictureSessionCallback(NativeCamera owner)
+        meta.FocalLength = usedLens;
+        meta.ISO = (int)iso;
+        meta.Aperture = aperture;
+        meta.Shutter = shutterSpeed;
+
+        meta.Orientation = (int)result.Get(CaptureResult.JpegOrientation);
+    }
+
+    public class StillPhotoCaptureCallback : CameraCaptureSession.CaptureCallback
+    {
+        private readonly NativeCamera _camera;
+
+        public StillPhotoCaptureCallback(NativeCamera camera)
         {
-            if (owner == null)
-                throw new System.ArgumentNullException("owner");
+            if (camera == null)
+                throw new System.ArgumentNullException("camera");
 
-            this.owner = owner;
+            this._camera = camera;
         }
 
         public override void OnCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
         {
+            //var ControlAfMode = result.Get(CaptureResult.ControlAfMode);
 
-            var SensorExposureTime = result.Get(CaptureResult.SensorExposureTime);
-            var ControlAfMode = result.Get(CaptureResult.ControlAfMode);
-
-            var meta = owner.FormsControl.CreateMetadata();
-
+            var meta = _camera.FormsControl.CreateMetadata();
             meta.Vendor = $"{Android.OS.Build.Manufacturer}";
             meta.Model = $"{Android.OS.Build.Model}";
-            meta.Orientation = (int)result.Get(CaptureResult.JpegOrientation);
-            meta.ISO = (int)result.Get(CaptureResult.SensorSensitivity);
-            meta.FocalLength = (float)result.Get(CaptureResult.LensFocalLength);
 
-            owner.FormsControl.CameraDevice.Meta = meta;
+            NativeCamera.FillMetadata(meta, result);
+
+            _camera.FormsControl.CameraDevice.Meta = meta;
         }
     }
 
