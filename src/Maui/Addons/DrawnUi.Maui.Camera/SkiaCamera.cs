@@ -243,7 +243,29 @@ public partial class SkiaCamera : SkiaControl
 
             System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting brightness measurement with {meteringMode} mode");
 
-            // A - Get possible exposure ranges
+            // A - Get preview to check what camera has chosen (auto exposure)
+            CapturedImage autoFrame = null;
+            for (int attempts = 0; attempts < 10; attempts++)
+            {
+                autoFrame = NativeControl.GetPreviewImage();
+                if (autoFrame?.Image != null)
+                    break;
+                await Task.Delay(100);
+            }
+
+            if (autoFrame?.Image == null)
+                return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
+
+            // Check auto exposure metadata to understand lighting conditions
+            var autoISO = CameraDevice.Meta.ISO;
+            var autoShutter = CameraDevice.Meta.Shutter;
+            var autoAperture = CameraDevice.Meta.Aperture;
+
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Auto exposure detected: ISO {autoISO}, Shutter {autoShutter}s, Aperture f/{autoAperture}");
+
+            autoFrame.Dispose(); // We only needed this for metadata
+
+            // Get possible exposure ranges
             var exposureRange = NativeControl.GetExposureRange();
             double brightness = 0.0;
             double pixelLuminance;
@@ -253,13 +275,36 @@ public partial class SkiaCamera : SkiaControl
 
             if (exposureRange.IsManualExposureSupported)
             {
-                System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure supported - using fixed baseline approach");
+                System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure supported - using scene-adaptive approach");
 
-                // B - Set manual exposure for measuring light
-                var baseline = exposureRange.RecommendedBaselines[0]; // Use "Indoor" baseline
-                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Setting manual exposure: ISO {baseline.ISO}, Shutter {baseline.ShutterSpeed}s");
+                // B - Set manual values according to probable light conditions we just read
+                float manualISO, manualShutter;
 
-                bool manualExposureSet = NativeControl.SetManualExposure(baseline.ISO, baseline.ShutterSpeed);
+                if (autoISO < 200 && autoShutter > 1/100f)
+                {
+                    // Bright conditions - use bright baseline
+                    manualISO = 50f;
+                    manualShutter = 1/250f;
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected bright conditions - using bright baseline");
+                }
+                else if (autoISO > 800 || autoShutter < 1/100f)
+                {
+                    // Dark conditions - use dark baseline
+                    manualISO = 400f;
+                    manualShutter = 1/30f;
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected dark conditions - using dark baseline");
+                }
+                else
+                {
+                    // Mid/indoor conditions - use indoor baseline
+                    manualISO = 100f;
+                    manualShutter = 1/60f;
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected mid/indoor conditions - using indoor baseline");
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Setting manual exposure: ISO {manualISO}, Shutter {manualShutter}s");
+
+                bool manualExposureSet = NativeControl.SetManualExposure(manualISO, manualShutter);
                 if (manualExposureSet)
                 {
                     manualExposureWasSet = true;
