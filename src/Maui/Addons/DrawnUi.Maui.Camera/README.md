@@ -62,5 +62,7 @@ A test page is provided in the Sandbox project:
 - [ ] Advanced camera controls (focus, exposure, ISO)
 - [ ] Custom resolution selection
 
+## References:
 
+iOS: https://github.com/MicrosoftDocs/xamarin-docs/blob/0506e3bf14b520776fc7d33781f89069bbc57138/docs/ios/user-interface/controls/intro-to-manual-camera-controls.md
 

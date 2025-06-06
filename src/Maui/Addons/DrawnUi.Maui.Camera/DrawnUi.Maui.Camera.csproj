@@ -13,6 +13,10 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
+    <PropertyGroup Condition="$(TargetFramework.Contains('windows')) == true Or $(TargetFramework.Contains('droid')) == true Or $(TargetFramework.Contains('ios')) == true Or $(TargetFramework.Contains('catalyst')) == true">
+        <DefineConstants>$(DefineConstants);ONPLATFORM</DefineConstants>
+    </PropertyGroup>
+
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
         <WarningsAsErrors>$(WarningsAsErrors);CS0108</WarningsAsErrors>
     </PropertyGroup>

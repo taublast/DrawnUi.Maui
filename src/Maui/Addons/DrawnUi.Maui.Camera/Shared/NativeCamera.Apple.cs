@@ -499,13 +499,123 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             {
                 var clampedZoom = (nfloat)Math.Max(_deviceInput.Device.MinAvailableVideoZoomFactor,
                     Math.Min(zoom, _deviceInput.Device.MaxAvailableVideoZoomFactor));
-                    
+
                 _deviceInput.Device.VideoZoomFactor = clampedZoom;
             }
             finally
             {
                 _deviceInput.Device.UnlockForConfiguration();
             }
+        }
+    }
+
+    /// <summary>
+    /// Sets manual exposure settings for the camera
+    /// </summary>
+    /// <param name="iso">ISO sensitivity value</param>
+    /// <param name="shutterSpeed">Shutter speed in seconds</param>
+    public bool SetManualExposure(float iso, float shutterSpeed)
+    {
+        if (_deviceInput?.Device == null)
+            return false;
+
+        NSError error;
+        if (_deviceInput.Device.LockForConfiguration(out error))
+        {
+            try
+            {
+                if (_deviceInput.Device.IsExposureModeSupported(AVCaptureExposureMode.Custom))
+                {
+                    var duration = CMTime.FromSeconds(shutterSpeed, 1000000000);
+                    _deviceInput.Device.LockExposure(duration, iso, null);
+
+                    System.Diagnostics.Debug.WriteLine($"[iOS MANUAL] Set ISO: {iso}, Shutter: {shutterSpeed}s");
+                    return true;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("[iOS MANUAL] Custom exposure mode not supported");
+                }
+            }
+            finally
+            {
+                _deviceInput.Device.UnlockForConfiguration();
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Sets the camera to automatic exposure mode
+    /// </summary>
+    public void SetAutoExposure()
+    {
+        if (_deviceInput?.Device == null)
+            return;
+
+        NSError error;
+        if (_deviceInput.Device.LockForConfiguration(out error))
+        {
+            try
+            {
+                if (_deviceInput.Device.IsExposureModeSupported(AVCaptureExposureMode.ContinuousAutoExposure))
+                {
+                    _deviceInput.Device.ExposureMode = AVCaptureExposureMode.ContinuousAutoExposure;
+                    System.Diagnostics.Debug.WriteLine("[iOS AUTO] Set to ContinuousAutoExposure mode");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("[iOS AUTO] ContinuousAutoExposure mode not supported");
+                }
+            }
+            finally
+            {
+                _deviceInput.Device.UnlockForConfiguration();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the manual exposure capabilities and recommended settings for the camera
+    /// </summary>
+    /// <returns>Camera manual exposure range information</returns>
+    public CameraManualExposureRange GetExposureRange()
+    {
+        if (_deviceInput?.Device == null)
+        {
+            return new CameraManualExposureRange(0, 0, 0, 0, false, null);
+        }
+
+        try
+        {
+            bool isSupported = _deviceInput.Device.IsExposureModeSupported(AVCaptureExposureMode.Custom);
+
+            if (!isSupported)
+            {
+                return new CameraManualExposureRange(0, 0, 0, 0, false, null);
+            }
+
+            float minISO = _deviceInput.Device.ActiveFormat.MinISO;
+            float maxISO = _deviceInput.Device.ActiveFormat.MaxISO;
+            float minShutter = (float)_deviceInput.Device.ActiveFormat.MinExposureDuration.Seconds;
+            float maxShutter = (float)_deviceInput.Device.ActiveFormat.MaxExposureDuration.Seconds;
+
+            var baselines = new CameraExposureBaseline[]
+            {
+                new CameraExposureBaseline(100, 1.0f/60.0f, "Indoor", "Office/bright indoor lighting"),
+                new CameraExposureBaseline(400, 1.0f/30.0f, "Mixed", "Dim indoor/overcast outdoor"),
+                new CameraExposureBaseline(800, 1.0f/15.0f, "Low Light", "Evening/dark indoor")
+            };
+
+            System.Diagnostics.Debug.WriteLine($"[iOS RANGE] ISO: {minISO}-{maxISO}, Shutter: {minShutter}-{maxShutter}s");
+
+            return new CameraManualExposureRange(minISO, maxISO, minShutter, maxShutter, true, baselines);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[iOS RANGE] Error: {ex.Message}");
+            return new CameraManualExposureRange(0, 0, 0, 0, false, null);
         }
     }
 
@@ -686,6 +796,32 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
     #endregion
 
+    /// <summary>
+    /// Gets current live exposure settings from AVCaptureDevice in auto exposure mode
+    /// These properties update dynamically as the camera adjusts exposure automatically
+    /// </summary>
+    private (float iso, float aperture, float shutterSpeed) GetLiveExposureSettings()
+    {
+        if (CaptureDevice == null)
+            return (100f, 1.8f, 1f / 60f);
+
+        try
+        {
+            // These properties are observable and change dynamically in auto exposure mode
+            var currentISO = CaptureDevice.ISO;                          // Real-time ISO
+            var currentAperture = CaptureDevice.LensAperture;            // Fixed on iPhone (f/1.8, f/2.8, etc)
+            var exposureDuration = CaptureDevice.ExposureDuration;       // Real-time shutter speed
+            var currentShutter = (float)exposureDuration.Seconds;
+
+            return (currentISO, currentAperture, currentShutter);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[iOS Exposure Error] {ex.Message}");
+            return (100f, 1.8f, 1f / 60f);
+        }
+    }
+
     #region AVCaptureVideoDataOutputSampleBufferDelegate
 
     [Export("captureOutput:didOutputSampleBuffer:fromConnection:")]
@@ -720,12 +856,13 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
             try
             {
+
+                var (iso, aperture, shutterSpeed) = GetLiveExposureSettings();
+
                 var attachments = sampleBuffer.GetAttachments(CMAttachmentMode.ShouldPropagate);
                 var exif = attachments["{Exif}"] as NSDictionary;
                 var focal = exif["FocalLength"].ToString().ToFloat();
-                var iso = exif["ISOSpeedRatings"]?.ToString().ToFloat() ?? 100f;
-                var aperture = exif["FNumber"]?.ToString().ToFloat() ?? 1.8f;
-                var shutterSpeed = exif["ExposureTime"]?.ToString().ToFloat() ?? (1f / 60f);
+
 
                 if (!_cameraUnitInitialized)
                 {

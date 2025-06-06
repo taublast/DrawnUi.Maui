@@ -11,6 +11,43 @@ using Color = Microsoft.Maui.Graphics.Color;
 
 namespace DrawnUi.Camera;
 
+
+public struct CameraExposureBaseline
+{
+    public float ISO { get; set; }
+    public float ShutterSpeed { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+
+    public CameraExposureBaseline(float iso, float shutterSpeed, string name, string description)
+    {
+        ISO = iso;
+        ShutterSpeed = shutterSpeed;
+        Name = name;
+        Description = description;
+    }
+}
+
+public struct CameraManualExposureRange
+{
+    public float MinISO { get; set; }
+    public float MaxISO { get; set; }
+    public float MinShutterSpeed { get; set; }
+    public float MaxShutterSpeed { get; set; }
+    public bool IsManualExposureSupported { get; set; }
+    public CameraExposureBaseline[] RecommendedBaselines { get; set; }
+
+    public CameraManualExposureRange(float minISO, float maxISO, float minShutter, float maxShutter, bool isSupported, CameraExposureBaseline[] baselines)
+    {
+        MinISO = minISO;
+        MaxISO = maxISO;
+        MinShutterSpeed = minShutter;
+        MaxShutterSpeed = maxShutter;
+        IsManualExposureSupported = isSupported;
+        RecommendedBaselines = baselines ?? new CameraExposureBaseline[0];
+    }
+}
+
 public partial class SkiaCamera : SkiaControl
 {
 
@@ -190,6 +227,8 @@ public partial class SkiaCamera : SkiaControl
         return estimatedLux;
     }
 
+#if ONPLATFORM
+
     /// <summary>
     /// Measures scene brightness using pixel luminance analysis (moved from native implementations to eliminate redundancy)
     /// </summary>
@@ -204,37 +243,113 @@ public partial class SkiaCamera : SkiaControl
 
             System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting brightness measurement with {meteringMode} mode");
 
-            // Get current frame data
-            CapturedImage currentFrame = null;
+            // A - Get possible exposure ranges
+            var exposureRange = NativeControl.GetExposureRange();
+            double brightness = 0.0;
+            double pixelLuminance;
+
+            CapturedImage frame = null;
+            bool manualExposureWasSet = false;
+
+            if (exposureRange.IsManualExposureSupported)
+            {
+                System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure supported - using fixed baseline approach");
+
+                // B - Set manual exposure for measuring light
+                var baseline = exposureRange.RecommendedBaselines[0]; // Use "Indoor" baseline
+                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Setting manual exposure: ISO {baseline.ISO}, Shutter {baseline.ShutterSpeed}s");
+
+                bool manualExposureSet = NativeControl.SetManualExposure(baseline.ISO, baseline.ShutterSpeed);
+                if (manualExposureSet)
+                {
+                    manualExposureWasSet = true;
+                    // Wait for camera to apply settings
+                    await Task.Delay(1000);
+                }
+            }
+
+            // C - Get frame for analysis (either with manual settings applied or auto)
             for (int attempts = 0; attempts < 10; attempts++)
             {
-                currentFrame = NativeControl.GetPreviewImage();
-                if (currentFrame?.Image != null)
+                frame = NativeControl.GetPreviewImage();
+                if (frame?.Image != null)
                     break;
                 await Task.Delay(100);
             }
 
-            if (currentFrame?.Image == null)
+            // Restore auto exposure AFTER getting the frame
+            if (manualExposureWasSet)
+            {
+                NativeControl.SetAutoExposure();
+            }
+
+            if (frame?.Image == null)
                 return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
 
-            using (currentFrame)
+            using (frame)
             {
-                // Use shared pixel analysis code
-                var pixelLuminance = AnalyzeFrameLuminance(currentFrame.Image, meteringMode);
+                pixelLuminance = AnalyzeFrameLuminance(frame.Image, meteringMode);
 
-                // Use direct pixel-to-lux mapping (all platforms now use this approach)
-                //var brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
+                if (exposureRange.IsManualExposureSupported && manualExposureWasSet)
+                {
+                    // Check if manual settings were actually applied
+                    var actualISO = CameraDevice.Meta.ISO;
+                    var actualShutter = CameraDevice.Meta.Shutter;
+                    var baseline = exposureRange.RecommendedBaselines[0];
 
-                // iPhone chose these settings for this scene
-                var brightness = CalculateSceneBrightnessFromPixels(pixelLuminance, CameraDevice.Meta.ISO, CameraDevice.Meta.Aperture, CameraDevice.Meta.Shutter);
+                    bool isoMatches = Math.Abs(actualISO - baseline.ISO) < 10;
+                    bool shutterMatches = Math.Abs(actualShutter - baseline.ShutterSpeed) < 0.005;
+
+                    if (isoMatches && shutterMatches)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual settings verified: ISO {actualISO}, Shutter {actualShutter}s");
+
+                        // D - Use manual exposure calculation with verified settings
+                        brightness = CalculateSceneBrightnessFromPixels(
+                            pixelLuminance,
+                            actualISO,
+                            CameraDevice.Meta.Aperture,
+                            actualShutter
+                        );
+
+                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual exposure brightness: {brightness:F0} lux");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual settings not applied - Expected ISO {baseline.ISO}, got {actualISO}; Expected shutter {baseline.ShutterSpeed}, got {actualShutter}");
+                        brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
+
+                    // Use direct pixel-to-lux mapping (all platforms now use this approach)
+                    // This approach directly correlates pixel brightness to real-world lux values
+                    brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
+
+                    // Alternative: Camera exposure-based calculation (less reliable for actual scene brightness)
+                    //var brightness = CalculateSceneBrightnessFromPixels(pixelLuminance, CameraDevice.Meta.ISO, CameraDevice.Meta.Aperture, CameraDevice.Meta.Shutter);
+                }
 
                 System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Brightness measurement complete: {brightness:F0} lux");
 
-                return new BrightnessResult
+                if (brightness > 0)
                 {
-                    Success = true,
-                    Brightness = brightness
-                };
+                    return new BrightnessResult
+                    {
+                        Success = true,
+                        Brightness = brightness
+                    };
+                }
+                else
+                {
+                    return new BrightnessResult
+                    {
+                        Success = false,
+                    };
+                }
+
             }
         }
         catch (Exception ex)
@@ -244,43 +359,52 @@ public partial class SkiaCamera : SkiaControl
         }
     }
 
+#endif
+
     /// <summary>
     /// Calculates actual scene brightness using the camera's current settings and pixel analysis
     /// </summary>
     /// <param name="pixelLuminance">Average pixel luminance from AnalyzeFrameLuminance (0-255 scale)</param>
-    /// <param name="phoneISO">Current camera ISO</param>
-    /// <param name="phoneAperture">Current camera aperture (f-stop)</param>
-    /// <param name="phoneShutter">Current camera shutter speed (seconds)</param>
+    /// <param name="iso">Current camera ISO</param>
+    /// <param name="aperture">Current camera aperture (f-stop)</param>
+    /// <param name="shutter">Current camera shutter speed (seconds)</param>
     /// <returns>Estimated scene brightness in lux</returns>
     public static double CalculateSceneBrightnessFromPixels(
         double pixelLuminance,
-        double phoneISO,
-        double phoneAperture,
-        double phoneShutter)
+        double iso,
+        double aperture,
+        double shutter)
     {
-        // The iPhone camera chose these settings to properly expose this scene
-        // We can reverse-engineer the scene brightness from these decisions
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] CalculateSceneBrightnessFromPixels: pixels {pixelLuminance:F0}, iso {iso:0}, aperture {aperture:0.00}, shutter {shutter:0.0000}");
 
-        // Calculate the EV that the iPhone camera is using
-        double phoneEV = Math.Log2((phoneAperture * phoneAperture) / phoneShutter) + Math.Log2(phoneISO / 100.0);
+        // Camera exposure settings tell us what the camera thinks is "proper exposure"
+        // This represents the brightness level the camera is targeting (middle gray = 18% reflectance)
 
-        // Convert iPhone's EV back to scene luminance using standard photometric formula
-        // EV = log2(Luminance * ISO / K), so Luminance = K * 2^EV / ISO
+        // Calculate the EV that the camera is using for "proper exposure"
+        double cameraEV = Math.Log2((aperture * aperture) / shutter) + Math.Log2(iso / 100.0);
+
+        // Convert camera EV to the luminance it's targeting (what it thinks middle gray should be)
         const double K = 12.5; // Standard photometric constant
-        double baseSceneLuminance = K * Math.Pow(2, phoneEV) / phoneISO;
+        double cameraTargetLuminance = K * Math.Pow(2, cameraEV);
 
-        // Apply pixel-based correction factor
-        // Middle gray should be around 128 on 0-255 scale (18% gray = 50% on pixel scale)
-        // If pixels are brighter/darker than middle gray, adjust scene brightness accordingly
-        double pixelCorrectionFactor = pixelLuminance / 128.0;
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Camera EV: {cameraEV:F1}, Target luminance: {cameraTargetLuminance:F0}");
 
-        // For extreme pixel values, use logarithmic scaling to prevent huge corrections
-        if (pixelCorrectionFactor > 2.0)
-            pixelCorrectionFactor = 1.0 + Math.Log2(pixelCorrectionFactor);
-        else if (pixelCorrectionFactor < 0.5)
-            pixelCorrectionFactor = Math.Pow(pixelCorrectionFactor, 0.5);
+        // Now use actual pixel values to determine how bright the scene really is
+        // Middle gray (18% reflectance) should appear as ~128 on 0-255 scale
+        // If pixels are darker/brighter than 128, the scene is darker/brighter than camera's target
+        double actualBrightnessRatio = pixelLuminance / 128.0;
 
-        double finalSceneBrightness = baseSceneLuminance * pixelCorrectionFactor;
+        // Apply gamma correction - camera sensors apply ~2.2 gamma curve
+        // This converts from camera's gamma-corrected values back to linear light
+        actualBrightnessRatio = Math.Pow(Math.Max(0.001, actualBrightnessRatio), 2.2);
+
+        // Calculate final scene brightness
+        // If ratio = 1.0: scene matches camera's expectation
+        // If ratio < 1.0: scene is darker than camera expected
+        // If ratio > 1.0: scene is brighter than camera expected
+        double finalSceneBrightness = cameraTargetLuminance * actualBrightnessRatio;
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Brightness ratio: {actualBrightnessRatio:F3}, Final: {finalSceneBrightness:F0} lux");
 
         return finalSceneBrightness;
     }
@@ -364,7 +488,7 @@ public partial class SkiaCamera : SkiaControl
         }
 
     }
-    #endregion
+#endregion
 
     #region EVENTS
 

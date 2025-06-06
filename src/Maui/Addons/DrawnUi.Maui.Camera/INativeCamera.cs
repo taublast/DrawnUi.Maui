@@ -39,4 +39,22 @@ public interface INativeCamera : IDisposable
     Task<string> SaveJpgStreamToGallery(Stream stream, string filename, double cameraSavedRotation, string album);
 
     void SetZoom(float value);
+
+    /// <summary>
+    /// Gets the manual exposure capabilities and recommended settings for the camera
+    /// </summary>
+    /// <returns>Camera manual exposure range information</returns>
+    CameraManualExposureRange GetExposureRange();
+
+    /// <summary>
+    /// Sets manual exposure settings for the camera
+    /// </summary>
+    /// <param name="iso">ISO sensitivity value</param>
+    /// <param name="shutterSpeed">Shutter speed in seconds</param>
+    bool SetManualExposure(float iso, float shutterSpeed);
+
+    /// <summary>
+    /// Sets the camera to automatic exposure mode
+    /// </summary>
+    void SetAutoExposure();
 }

@@ -1010,6 +1010,42 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         }
     }
 
+    /// <summary>
+    /// Sets manual exposure settings for the camera (not supported on Windows)
+    /// </summary>
+    /// <param name="iso">ISO sensitivity value</param>
+    /// <param name="shutterSpeed">Shutter speed in seconds</param>
+    public bool SetManualExposure(float iso, float shutterSpeed)
+    {
+        System.Diagnostics.Debug.WriteLine("[Windows MANUAL] Manual exposure not fully supported - Windows camera controls are limited");
+        // Windows UWP camera API doesn't support full manual exposure control like iOS/Android
+        // ExposureControl.Value and IsoSpeedControl.Value are read-only properties
+        // Manual exposure would require using MediaFrameReader with custom processing
+        return false;
+    }
+
+    /// <summary>
+    /// Sets the camera to automatic exposure mode (Windows is already in auto mode by default)
+    /// </summary>
+    public void SetAutoExposure()
+    {
+        System.Diagnostics.Debug.WriteLine("[Windows AUTO] Camera is already in auto exposure mode by default");
+        // Windows camera is in auto mode by default and doesn't need explicit setting
+    }
+
+    /// <summary>
+    /// Gets the manual exposure capabilities and recommended settings for the camera (not supported on Windows)
+    /// </summary>
+    /// <returns>Camera manual exposure range information indicating no support</returns>
+    public CameraManualExposureRange GetExposureRange()
+    {
+        // Windows UWP camera API doesn't support full manual exposure control
+        // ExposureControl.Value and IsoSpeedControl.Value are read-only properties
+        System.Diagnostics.Debug.WriteLine("[Windows RANGE] Manual exposure not supported");
+
+        return new CameraManualExposureRange(0, 0, 0, 0, false, null);
+    }
+
     public async void TakePicture()
     {
         if (_isCapturingStill || _mediaCapture == null)
