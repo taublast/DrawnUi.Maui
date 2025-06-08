@@ -9,6 +9,11 @@ public class SkiaImage : SkiaControl
     {
     }
 
+    public SkiaImage(string source)
+    {
+        this.Source = source;
+    }
+
     void CancelNextSource()
     {
         CancelLoading?.Cancel();
@@ -262,7 +267,7 @@ public class SkiaImage : SkiaControl
         typeof(SKFilterQuality),
         typeof(SkiaImage),
         SKFilterQuality.None,
-        propertyChanged: NeedInvalidateMeasure);
+        propertyChanged: NeedDraw);
 
     /// <summary>
     /// Default value is None.
@@ -272,6 +277,22 @@ public class SkiaImage : SkiaControl
     {
         get { return (SKFilterQuality)GetValue(RescalingQualityProperty); }
         set { SetValue(RescalingQualityProperty, value); }
+    }
+
+    public static readonly BindableProperty RescalingTypeProperty = BindableProperty.Create(
+        nameof(RescalingType),
+        typeof(RescalingType),
+        typeof(SkiaImage),
+        RescalingType.Default,
+        propertyChanged: NeedDraw);
+
+    /// <summary>
+    /// Use SkiaSharp default or other custom..
+    /// </summary>
+    public RescalingType RescalingType
+    {
+        get { return (RescalingType)GetValue(RescalingTypeProperty); }
+        set { SetValue(RescalingTypeProperty, value); }
     }
 
     private static void OnLoadSourceChanged(BindableObject bindable, object oldvalue, object newvalue)
@@ -504,9 +525,9 @@ public class SkiaImage : SkiaControl
                         {
                             OnSourceError(url);
                         }
+
                         return;
                     }
-
                 }
 
                 //okay will load async then
@@ -1305,6 +1326,256 @@ public class SkiaImage : SkiaControl
         }
     }
 
+
+
+    /// <summary>
+    /// Gamma-corrected image resizing that matches Photoshop quality
+    /// </summary>
+    private SKBitmap CreateGammaCorrectedResize(SKBitmap source, SKSizeI targetSize, SKFilterQuality quality = SKFilterQuality.High)
+    {
+        // Step 1: Convert to linear color space for proper scaling
+        var linearBitmap = ConvertToLinearSpace(source);
+
+        // Step 2: Resize in linear space
+        var resizedLinear = linearBitmap.Resize(targetSize, quality);
+        linearBitmap.Dispose();
+
+        // Step 3: Convert back to sRGB
+        var result = ConvertToSRGB(resizedLinear);
+        resizedLinear.Dispose();
+
+        return result;
+    }
+
+    /// <summary>
+    /// Multi-pass rescaling for best quality on large size changes with customizable steps
+    /// </summary>
+    private SKBitmap CreateMultiPassResize(SKBitmap source, SKSizeI targetSize, SKFilterQuality quality,
+        float stepFactor = 0.5f, float thresholdMultiplier = 2.0f, int maxSteps = 10)
+    {
+        var currentBitmap = source;
+        var currentWidth = source.Width;
+        var currentHeight = source.Height;
+        var targetWidth = targetSize.Width;
+        var targetHeight = targetSize.Height;
+
+        var intermediates = new List<SKBitmap>();
+        var stepCount = 0;
+
+        try
+        {
+            while ((currentWidth > targetWidth * thresholdMultiplier || currentHeight > targetHeight * thresholdMultiplier)
+                   && stepCount < maxSteps)
+            {
+                currentWidth = (int)Math.Max(currentWidth * stepFactor, targetWidth);
+                currentHeight = (int)Math.Max(currentHeight * stepFactor, targetHeight);
+
+                var intermediate = currentBitmap.Resize(new SKSizeI(currentWidth, currentHeight), quality);
+                intermediates.Add(intermediate);
+                currentBitmap = intermediate;
+                stepCount++;
+            }
+
+            var result = currentBitmap.Resize(targetSize, quality);
+
+            foreach (var intermediate in intermediates)
+            {
+                if (intermediate != source)
+                    intermediate.Dispose();
+            }
+
+            return result;
+        }
+        catch
+        {
+            foreach (var intermediate in intermediates)
+            {
+                if (intermediate != source)
+                    intermediate.Dispose();
+            }
+            throw;
+        }
+    }
+    /// <summary>
+    /// Convert sRGB bitmap to linear color space
+    /// </summary>
+    private SKBitmap ConvertToLinearSpace(SKBitmap source)
+    {
+        var linear = new SKBitmap(source.Width, source.Height, SKColorType.RgbaF16, source.AlphaType);
+
+        var sourcePixels = source.GetPixelSpan();
+        var linearPixels = linear.GetPixelSpan();
+
+        for (int i = 0; i < sourcePixels.Length; i += 4)
+        {
+            // Get original RGBA values (0-255)
+            float r = sourcePixels[i] / 255.0f;
+            float g = sourcePixels[i + 1] / 255.0f;
+            float b = sourcePixels[i + 2] / 255.0f;
+            float a = sourcePixels[i + 3] / 255.0f;
+
+            // Handle premultiplied alpha properly
+            if (source.AlphaType == SKAlphaType.Premul && a > 0)
+            {
+                r /= a;
+                g /= a;
+                b /= a;
+            }
+
+            // Convert sRGB to linear
+            r = SRGBToLinear(r);
+            g = SRGBToLinear(g);
+            b = SRGBToLinear(b);
+
+            // Re-apply premultiplied alpha if needed
+            if (source.AlphaType == SKAlphaType.Premul)
+            {
+                r *= a;
+                g *= a;
+                b *= a;
+            }
+
+            // Store as 16-bit float values
+            var linearSpan = MemoryMarshal.Cast<byte, Half>(linearPixels.Slice(i * 2, 8));
+            linearSpan[0] = (Half)r;
+            linearSpan[1] = (Half)g;
+            linearSpan[2] = (Half)b;
+            linearSpan[3] = (Half)a;
+        }
+
+        return linear;
+    }
+
+    /// <summary>
+    /// Convert linear space bitmap back to sRGB
+    /// </summary>
+    private SKBitmap ConvertToSRGB(SKBitmap linear)
+    {
+        var srgb = new SKBitmap(linear.Width, linear.Height, SKColorType.Rgba8888, linear.AlphaType);
+
+        var linearPixels = linear.GetPixelSpan();
+        var srgbPixels = srgb.GetPixelSpan();
+
+        for (int i = 0; i < srgbPixels.Length; i += 4)
+        {
+            // Read 16-bit float values
+            var linearSpan = MemoryMarshal.Cast<byte, Half>(linearPixels.Slice(i * 2, 8));
+            float r = (float)linearSpan[0];
+            float g = (float)linearSpan[1];
+            float b = (float)linearSpan[2];
+            float a = (float)linearSpan[3];
+
+            // Handle premultiplied alpha
+            if (linear.AlphaType == SKAlphaType.Premul && a > 0)
+            {
+                r /= a;
+                g /= a;
+                b /= a;
+            }
+
+            // Convert linear to sRGB
+            r = LinearToSRGB(r);
+            g = LinearToSRGB(g);
+            b = LinearToSRGB(b);
+
+            // Re-apply premultiplied alpha
+            if (linear.AlphaType == SKAlphaType.Premul)
+            {
+                r *= a;
+                g *= a;
+                b *= a;
+            }
+
+            // Clamp and convert to bytes
+            srgbPixels[i] = (byte)Math.Clamp(r * 255, 0, 255);
+            srgbPixels[i + 1] = (byte)Math.Clamp(g * 255, 0, 255);
+            srgbPixels[i + 2] = (byte)Math.Clamp(b * 255, 0, 255);
+            srgbPixels[i + 3] = (byte)Math.Clamp(a * 255, 0, 255);
+        }
+
+        return srgb;
+    }
+
+    /// <summary>
+    /// Convert sRGB to linear color space (gamma removal)
+    /// </summary>
+    private float SRGBToLinear(float srgb)
+    {
+        if (srgb <= 0.04045f)
+            return srgb / 12.92f;
+        else
+            return MathF.Pow((srgb + 0.055f) / 1.055f, 2.4f);
+    }
+
+    /// <summary>
+    /// Convert linear to sRGB color space (gamma application)
+    /// </summary>
+    private float LinearToSRGB(float linear)
+    {
+        if (linear <= 0.0031308f)
+            return linear * 12.92f;
+        else
+            return 1.055f * MathF.Pow(linear, 1.0f / 2.4f) - 0.055f;
+    }
+
+    /// <summary>
+    /// Alternative approach: Edge-preserving resize for icons with transparency
+    /// </summary>
+    private SKBitmap CreateEdgePreservingResize(SKBitmap source, SKSizeI targetSize)
+    {
+        // Create result bitmap
+        var result = new SKBitmap(targetSize.Width, targetSize.Height, source.ColorType, source.AlphaType);
+
+        using var canvas = new SKCanvas(result);
+        using var paint = new SKPaint
+        {
+            IsAntialias = false, // Critical for sharp edges!
+            FilterQuality = SKFilterQuality.None,
+            IsDither = false,
+            BlendMode = SKBlendMode.Src // Preserve exact alpha values
+        };
+
+        // Clear with transparent
+        canvas.Clear(SKColors.Transparent);
+
+        // For very small target sizes, use nearest neighbor
+        if (targetSize.Width <= 64 || targetSize.Height <= 64)
+        {
+            var destRect = new SKRect(0, 0, targetSize.Width, targetSize.Height);
+            canvas.DrawBitmap(source, destRect, paint);
+            return result;
+        }
+
+        // For larger sizes, use multiple passes for better quality
+        var intermediateSize = new SKSizeI(
+            Math.Max(targetSize.Width, source.Width / 2),
+            Math.Max(targetSize.Height, source.Height / 2)
+        );
+
+        if (intermediateSize.Width != targetSize.Width || intermediateSize.Height != targetSize.Height)
+        {
+            // First pass: resize to intermediate size
+            using var intermediate = source.Resize(intermediateSize, SKFilterQuality.Medium);
+
+            // Second pass: resize to target
+            paint.FilterQuality = SKFilterQuality.Medium;
+            var destRect = new SKRect(0, 0, targetSize.Width, targetSize.Height);
+            canvas.DrawBitmap(intermediate, destRect, paint);
+        }
+        else
+        {
+            // Single pass
+            paint.FilterQuality = SKFilterQuality.Medium;
+            var destRect = new SKRect(0, 0, targetSize.Width, targetSize.Height);
+            canvas.DrawBitmap(source, destRect, paint);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Updated DrawSource with professional-quality resizing
+    /// </summary>
     protected virtual void DrawSource(
         DrawingContext ctx,
         LoadedImageSource source,
@@ -1330,49 +1601,97 @@ public class SkiaImage : SkiaControl
                 aspectScaleX * source.Width, aspectScaleY * source.Height,
                 horizontal, vertical);
 
-            //if (this.BlurAmount > 0)
             display.Inflate(new SKSize((float)InflateAmount, (float)InflateAmount));
-
             display.Offset((float)Math.Round(scale * HorizontalOffset), (float)Math.Round(scale * VerticalOffset));
 
             TextureScale = new(dest.Width / display.Width, dest.Height / display.Height);
 
-            if (source.Bitmap != null)
+            if (this.RescalingQuality != SKFilterQuality.None)
             {
-                if (this.RescalingQuality != SKFilterQuality.None)
+                var targetWidth = (int)Math.Round(display.Width);
+                var targetHeight = (int)Math.Round(display.Height);
+
+                // Avoid rescaling if target size is very close to source size
+                var sizeRatio = Math.Abs(targetWidth - source.Width) / (float)source.Width;
+                if (sizeRatio < 0.05f) // Less than 5% difference
                 {
-                    if (ScaledSource == null
-                        || ScaledSource.Source != source.Id
-                        || ScaledSource.Quality != this.RescalingQuality
-                        || ScaledSource.Bitmap.Width != (int)display.Width
-                        || ScaledSource.Bitmap.Height != (int)display.Height)
+                    // Skip rescaling for minimal size changes
+                    if (source.Bitmap != null)
                     {
-                        var bmp = source.Bitmap.Resize(new SKSizeI((int)display.Width, (int)display.Height),
-                            RescalingQuality);
-                        var kill = ScaledSource;
-                        ScaledSource = new() { Source = source.Id, Bitmap = bmp, Quality = RescalingQuality };
-                        kill?.Dispose(); //todo with delay?
+                        ctx.Context.Canvas.DrawBitmap(source.Bitmap, display, paint);
+                    }
+                    else if (source.Image != null)
+                    {
+                        ctx.Context.Canvas.DrawImage(source.Image, display, paint);
+                    }
+                    return;
+                }
+
+                if (ScaledSource == null
+                    || ScaledSource.Source != source.Id
+                    || ScaledSource.Quality != this.RescalingQuality
+                    || ScaledSource.Bitmap.Width != targetWidth
+                    || ScaledSource.Bitmap.Height != targetHeight)
+                {
+                    SKBitmap bitmapToResize = null;
+                    bool needsDispose = false;
+
+                    if (source.Bitmap != null)
+                    {
+                        bitmapToResize = source.Bitmap;
+                    }
+                    else if (source.Image != null)
+                    {
+                        bitmapToResize = SKBitmap.FromImage(source.Image);
+                        needsDispose = true;
                     }
 
-                    if (ScaledSource != null)
+                    if (bitmapToResize != null)
                     {
-                        ctx.Context.Canvas.DrawBitmap(ScaledSource.Bitmap, display, paint);
+                        var targetSize = new SKSizeI(targetWidth, targetHeight);
+
+                        SKBitmap resizedBmp = this.RescalingType switch
+                        {
+                            RescalingType.GammaCorrection => CreateGammaCorrectedResize(bitmapToResize, targetSize, RescalingQuality),
+
+                            RescalingType.EdgePreserving => CreateEdgePreservingResize(bitmapToResize, targetSize),
+
+                            RescalingType.MultiPass => CreateMultiPassResize(bitmapToResize, targetSize, RescalingQuality),
+
+                            RescalingType.Default or _ => bitmapToResize.Resize(targetSize, RescalingQuality)
+                        };
+
+                        var kill = ScaledSource;
+                        ScaledSource = new() { Source = source.Id, Bitmap = resizedBmp, Quality = RescalingQuality };
+                        kill?.Dispose();
+
+                        if (needsDispose)
+                        {
+                            bitmapToResize.Dispose();
+                        }
                     }
                 }
-                else
+
+                if (ScaledSource != null)
+                {
+                    ctx.Context.Canvas.DrawBitmap(ScaledSource.Bitmap, display, paint);
+                }
+            }
+            else
+            {
+                if (source.Bitmap != null)
                 {
                     ctx.Context.Canvas.DrawBitmap(source.Bitmap, display, paint);
                 }
+                else if (source.Image != null)
+                {
+                    ctx.Context.Canvas.DrawImage(source.Image, display, paint);
+                }
             }
-            else if (source.Image != null)
-                ctx.Context.Canvas.DrawImage(source.Image, display, paint);
         }
         catch (Exception e)
         {
             Trace.WriteLine(e);
-        }
-        finally
-        {
         }
     }
 
