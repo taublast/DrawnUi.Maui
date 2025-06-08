@@ -1656,7 +1656,26 @@ public class SkiaImage : SkiaControl
 
                             RescalingType.EdgePreserving => CreateEdgePreservingResize(bitmapToResize, targetSize),
 
-                            RescalingType.MultiPass => CreateMultiPassResize(bitmapToResize, targetSize, RescalingQuality),
+                            RescalingType.MultiPass => RescalingQuality switch
+                            {
+                                // Fast and aggressive - fewer steps for performance
+                                SKFilterQuality.None => CreateMultiPassResize(bitmapToResize, targetSize, RescalingQuality,
+                                    stepFactor: 0.3f, thresholdMultiplier: 1.5f, maxSteps: 5),
+
+                                // Basic quality - moderate steps
+                                SKFilterQuality.Low => CreateMultiPassResize(bitmapToResize, targetSize, RescalingQuality,
+                                    stepFactor: 0.4f, thresholdMultiplier: 2.0f, maxSteps: 7),
+
+                                // Balanced quality vs performance - default behavior
+                                SKFilterQuality.Medium => CreateMultiPassResize(bitmapToResize, targetSize, RescalingQuality),
+
+                                // Maximum quality - more gradual steps for best results
+                                SKFilterQuality.High => CreateMultiPassResize(bitmapToResize, targetSize, RescalingQuality, 0.7f),
+
+                                _ => CreateMultiPassResize(bitmapToResize, targetSize, RescalingQuality)
+                            },
+
+                           
 
                             RescalingType.Default or _ => bitmapToResize.Resize(targetSize, RescalingQuality)
                         };
