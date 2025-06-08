@@ -309,7 +309,7 @@ public partial class SkiaCamera : SkiaControl
                 {
                     manualExposureWasSet = true;
                     // Wait for camera to apply settings
-                    await Task.Delay(1000);
+                    await Task.Delay(1500);
                 }
             }
 
