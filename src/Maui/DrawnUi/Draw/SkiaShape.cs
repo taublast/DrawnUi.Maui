@@ -38,6 +38,21 @@ namespace DrawnUi.Draw
             base.ApplyBindingContext();
         }
 
+        /// <summary>
+        /// Available size for children content, accounting for padding and stroke
+        /// </summary>
+        public SKRect MeasuredStrokeAwareChildrenSize { get; protected set; }
+
+        /// <summary>
+        /// Area to use for clipping inside stroke
+        /// </summary>
+        public SKRect MeasuredStrokeAwareClipSize { get; protected set; } //todo!!!
+
+        /// <summary>
+        /// Size we must use to draw stroke to fit inside available destination
+        /// </summary>
+        public SKRect MeasuredStrokeAwareSize { get; protected set; }
+
         #region PROPERTIES
 
         public static readonly BindableProperty PathDataProperty = BindableProperty.Create(nameof(PathData),
@@ -364,7 +379,10 @@ namespace DrawnUi.Draw
 
         public virtual bool WillStroke
         {
-            get { return StrokeColor != TransparentColor && StrokeWidth != 0; }
+            get
+            {
+                return StrokeColor != TransparentColor && StrokeWidth != 0;
+            }
         }
 
         protected float GetHalfStroke(float scale)
@@ -383,12 +401,32 @@ namespace DrawnUi.Draw
 
         protected SKRect CalculateContentSizeForStroke(SKRect destination, float scale)
         {
-            var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
+            if (WillStroke)
+            {
+                var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
 
-            var strokeAwareChildrenSize
-                = ContractPixelsRect(strokeAwareSize, scale, Padding);
+                var strokeAwareChildrenSize
+                    = ContractPixelsRect(strokeAwareSize, scale, Padding);
 
-            return strokeAwareChildrenSize;
+                return strokeAwareChildrenSize;
+            }
+
+            return destination;
+        }
+
+        protected SKRect CalculateClipSizeForStroke(SKRect destination, float scale)
+        {
+            if (WillStroke)
+            {
+                var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
+
+                var strokeAwareChildrenSize
+                    = ContractPixelsRect(strokeAwareSize, scale, new Thickness());
+
+                return strokeAwareChildrenSize;
+            }
+
+            return destination;
         }
 
         protected SKRect CalculateShapeSizeForStroke(SKRect destination, float scale)
@@ -426,6 +464,7 @@ namespace DrawnUi.Draw
         protected void CalculateSizeForStroke(SKRect destination, float scale)
         {
             MeasuredStrokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
+            MeasuredStrokeAwareClipSize = CalculateClipSizeForStroke(destination, scale);
             MeasuredStrokeAwareChildrenSize = CalculateContentSizeForStroke(MeasuredStrokeAwareSize, scale);
 
             //rescale the path to match container
@@ -517,8 +556,7 @@ namespace DrawnUi.Draw
 
         public SKPath DrawPathResized { get; } = new();
         public SKPath DrawPathAligned { get; } = new();
-        public SKRect MeasuredStrokeAwareChildrenSize { get; protected set; }
-        public SKRect MeasuredStrokeAwareSize { get; protected set; }
+
 
         public double BorderWithPixels
         {
@@ -581,7 +619,7 @@ namespace DrawnUi.Draw
             path ??= new SKPath();
 
             var strokeAwareSize = MeasuredStrokeAwareSize;
-            var strokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize;
+            var strokeAwareChildrenSize = MeasuredStrokeAwareClipSize;
 
             if (arguments is ShapePaintArguments args)
             {
