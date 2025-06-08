@@ -924,18 +924,21 @@ namespace DrawnUi.Draw
             };
 
 
+            /// <summary>
+            /// Paints the stroke with both pixel alignment and width compensation for optimal visual consistency
+            /// </summary>
+            /// <param name="paint">The paint object to use for stroke rendering</param>
             void PaintStroke(SKPaint paint)
             {
                 paint.BlendMode = this.StrokeBlendMode;
 
                 SetupGradient(paint, StrokeGradient, outRect);
 
-                //todo add shadow = GLOW to stroke!
-                paint.ImageFilter = null; // kill background shadow
+                paint.ImageFilter = null;
 
                 if (StrokeGradient?.Opacity != 1)
                 {
-                    paint.Shader = null; //kill background gradient
+                    paint.Shader = null;
                 }
 
                 paint.Style = SKPaintStyle.Stroke;
@@ -952,7 +955,7 @@ namespace DrawnUi.Draw
                     paint.PathEffect = null;
                 }
 
-                paint.StrokeWidth = pixelsStrokeWidth;
+                float adjustedStrokeWidth = pixelsStrokeWidth;
                 paint.Color = StrokeColor.ToSKColor();
                 paint.IsAntialias = true;
 
@@ -961,21 +964,48 @@ namespace DrawnUi.Draw
                     case ShapeType.Rectangle:
                         if (CornerRadius != default)
                         {
-                            if (DrawRoundedRect == null)
-                                DrawRoundedRect = new();
-                            DrawRoundedRect.SetRectRadii(outRect, radii);
-                            ctx.Context.Canvas.DrawRoundRect(DrawRoundedRect, paint);
+                            // Apply width compensation for curves
+                            adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                            paint.StrokeWidth = adjustedStrokeWidth;
+
+                            // Apply pixel alignment for thin strokes
+                            if (pixelsStrokeWidth <= 2.0f * scale)
+                            {
+                                var pixelAlignedRect = new SKRect(
+                                    (float)Math.Round(outRect.Left) + 0.5f,
+                                    (float)Math.Round(outRect.Top) + 0.5f,
+                                    (float)Math.Round(outRect.Right) - 0.5f,
+                                    (float)Math.Round(outRect.Bottom) - 0.5f
+                                );
+
+                                if (DrawRoundedRect == null)
+                                    DrawRoundedRect = new();
+                                DrawRoundedRect.SetRectRadii(pixelAlignedRect, radii);
+                                ctx.Context.Canvas.DrawRoundRect(DrawRoundedRect, paint);
+                            }
+                            else
+                            {
+                                if (DrawRoundedRect == null)
+                                    DrawRoundedRect = new();
+                                DrawRoundedRect.SetRectRadii(outRect, radii);
+                                ctx.Context.Canvas.DrawRoundRect(DrawRoundedRect, paint);
+                            }
                         }
                         else
+                        {
+                            paint.StrokeWidth = pixelsStrokeWidth;
                             ctx.Context.Canvas.DrawRect(outRect, paint);
-
+                        }
                         break;
 
                     case ShapeType.Circle:
+                        adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                        paint.StrokeWidth = adjustedStrokeWidth;
                         ctx.Context.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, paint);
                         break;
 
                     case ShapeType.Line:
+                        paint.StrokeWidth = pixelsStrokeWidth;
                         if (Points != null && Points.Count > 1)
                         {
                             DrawPathShape.Reset();
@@ -990,18 +1020,20 @@ namespace DrawnUi.Draw
 
                             ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
                         }
-
                         break;
 
                     case ShapeType.Ellipse:
+                        adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                        paint.StrokeWidth = adjustedStrokeWidth;
                         DrawPathShape.Reset();
                         DrawPathShape.AddOval(outRect);
                         ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
                         break;
 
                     case ShapeType.Arc:
+                        adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                        paint.StrokeWidth = adjustedStrokeWidth;
                         DrawPathShape.Reset();
-                        // Start & End Angle for Radial Gauge
                         var startAngle = (float)Value1;
                         var sweepAngle = (float)Value2;
                         DrawPathShape.AddArc(outRect, startAngle, sweepAngle);
@@ -1009,13 +1041,15 @@ namespace DrawnUi.Draw
                         break;
 
                     case ShapeType.Path:
+                        adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                        paint.StrokeWidth = adjustedStrokeWidth;
                         DrawPathShape.Reset();
                         DrawPathShape.AddPath(DrawPathAligned);
                         ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
-
                         break;
 
                     case ShapeType.Polygon:
+                        paint.StrokeWidth = pixelsStrokeWidth;
                         if (Points != null && Points.Count > 1)
                         {
                             DrawPathShape.Reset();
@@ -1024,6 +1058,8 @@ namespace DrawnUi.Draw
 
                             if (SmoothPoints > 0)
                             {
+                                adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                                paint.StrokeWidth = adjustedStrokeWidth;
                                 AddSmoothPath(path, Points, strokeAwareSize, SmoothPoints, true);
                             }
                             else
@@ -1033,7 +1069,6 @@ namespace DrawnUi.Draw
 
                             ctx.Context.Canvas.DrawPath(path, RenderingPaint);
                         }
-
                         break;
                 }
             }
@@ -1594,5 +1629,39 @@ namespace DrawnUi.Draw
 
             return points;
         }
+
+        /// <summary>
+        /// Calculates compensated stroke width for curved shapes to maintain visual consistency with straight edges
+        /// </summary>
+        /// <param name="originalStrokeWidth">The original stroke width in pixels</param>
+        /// <param name="scale">The current rendering scale</param>
+        /// <returns>Adjusted stroke width that compensates for antialiasing differences</returns>
+        protected float GetCompensatedStrokeWidth(float originalStrokeWidth, float scale)
+        {
+            if (originalStrokeWidth <= 0)
+                return originalStrokeWidth;
+
+            float compensationFactor = 1.0f;
+
+            if (originalStrokeWidth <= 2.0f * scale)
+            {
+                compensationFactor = 1.15f;
+            }
+            else if (originalStrokeWidth <= 4.0f * scale)
+            {
+                compensationFactor = 1.10f;
+            }
+            else if (originalStrokeWidth <= 6.0f * scale)
+            {
+                compensationFactor = 1.08f;
+            }
+            else
+            {
+                compensationFactor = 1.05f;
+            }
+
+            return originalStrokeWidth * compensationFactor;
+        }
+
     }
 }
