@@ -11,6 +11,10 @@ public partial class SkiaMarkdownLabel : SkiaLabel
     {
     }
 
+    public SkiaMarkdownLabel(string text) : base(text)
+    {
+    }
+
     #region PROPERTIES DEFAULTS
 
     public static Color ColorLink = Colors.CornflowerBlue;
