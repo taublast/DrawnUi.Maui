@@ -380,7 +380,12 @@ public static partial class AddGestures
 
     public static SkiaTouchAnimation GetAnimationTapped(BindableObject view)
     {
-        return (SkiaTouchAnimation)view.GetValue(AnimationTappedProperty);
+        var anim = (SkiaTouchAnimation)view.GetValue(AnimationTappedProperty);
+        if (anim == SkiaTouchAnimation.None && view is SkiaControl skia)
+        {
+            anim = skia.AnimationTapped;
+        }
+        return anim;
     }
 
     public static void SetAnimationTapped(BindableObject view, SkiaTouchAnimation value)
@@ -435,7 +440,13 @@ public static partial class AddGestures
 
     public static Color GetTouchEffectColor(BindableObject view)
     {
-        return (Color)view.GetValue(TouchEffectColorProperty);
+        var color = (Color)view.GetValue(TouchEffectColorProperty);
+        
+        if (color == Colors.Transparent && view is SkiaControl skia)
+        {
+            color = skia.TouchEffectColor;
+        }
+        return color;
     }
 
     public static void SetTouchEffectColor(BindableObject view, Color value)
