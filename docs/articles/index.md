@@ -21,7 +21,9 @@ This section contains documentation articles and guides for using DrawnUi.
 
 ## Advanced Topics
 
-- [Performance Optimization](advanced/performance.md)
-- [Custom Controls](advanced/custom-controls.md)
-- [Animation](advanced/animation.md)
 - [Platform-Specific Styling](advanced/platform-styling.md)
+- [Layout System Architecture](advanced/layout-system.md)
+- [Gradients](advanced/gradients.md)
+- [Game UI & Interactive Games](advanced/game-ui.md)
+- [SkiaScroll & Virtualization](advanced/skiascroll.md)
+- [Gestures & Touch Input](advanced/gestures.md)

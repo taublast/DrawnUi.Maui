@@ -12,6 +12,8 @@ Install the DrawnUi NuGet package in your .NET MAUI project:
 dotnet add package AppoMobi.Maui.DrawnUi
 ```
 
+> **Note**: The main package name is `AppoMobi.Maui.DrawnUi`. Additional addon packages are available for specific features like Camera, Maps, and Games.
+
 You might also need at least the following MAUI setup inside your csproj:
 
 ```
@@ -71,31 +73,69 @@ Add the DrawnUi namespace to your XAML files:
 </ContentPage>
 ```
 
-### using DrawnUi Controls
+### Using DrawnUi Controls
 
-Now you can add DrawnUi controls to your page:
+Now you can add DrawnUi controls to your page. You have two main options:
+
+#### Option 1: Use Canvas inside a regular ContentPage
 
 ```xml
-<draw:DrawnUiBasePage>
-    <draw:SkiaLayout>
-        <draw:SkiaLabel 
-            Text="Hello DrawnUi!" 
-            FontSize="24"
-            HorizontalOptions="Center"
-            VerticalOptions="Center" />
-            
-        <draw:SkiaButton
-            Text="Click Me"
-            WidthRequest="120"
-            HeightRequest="40"
-            CornerRadius="8"
-            BackgroundColor="Blue"
-            TextColor="White"
-            VerticalOptions="Center"
-            HorizontalOptions="Center"
-            Margin="0,50,0,0"
-            Clicked="OnButtonClicked" />
-    </draw:SkiaLayout>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+             x:Class="YourNamespace.YourPage">
+
+    <draw:Canvas HorizontalOptions="Fill" VerticalOptions="Fill">
+        <draw:SkiaLayout Type="Column" Spacing="16" Padding="32">
+            <draw:SkiaLabel
+                Text="Hello DrawnUi!"
+                FontSize="24"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+
+            <draw:SkiaButton
+                Text="Click Me"
+                WidthRequest="120"
+                HeightRequest="40"
+                CornerRadius="8"
+                BackgroundColor="Blue"
+                TextColor="White"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Clicked="OnButtonClicked" />
+        </draw:SkiaLayout>
+    </draw:Canvas>
+</ContentPage>
+```
+
+#### Option 2: Use DrawnUiBasePage (for keyboard support)
+
+```xml
+<draw:DrawnUiBasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
+                      x:Class="YourNamespace.YourPage">
+
+    <draw:Canvas HorizontalOptions="Fill" VerticalOptions="Fill">
+        <draw:SkiaLayout Type="Column" Spacing="16" Padding="32">
+            <draw:SkiaLabel
+                Text="Hello DrawnUi!"
+                FontSize="24"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+
+            <draw:SkiaButton
+                Text="Click Me"
+                WidthRequest="120"
+                HeightRequest="40"
+                CornerRadius="8"
+                BackgroundColor="Blue"
+                TextColor="White"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Clicked="OnButtonClicked" />
+        </draw:SkiaLayout>
+    </draw:Canvas>
 </draw:DrawnUiBasePage>
 ```
 
@@ -104,11 +144,14 @@ Now you can add DrawnUi controls to your page:
 Handle control events in your code-behind:
 
 ```csharp
-private void OnButtonClicked(object sender, SkiaGesturesParameters e)
+private void OnButtonClicked(SkiaButton sender, SkiaGesturesParameters e)
 {
     // Handle button click
+    DisplayAlert("DrawnUi", "Button clicked!", "OK");
 }
 ```
+
+> **Important**: DrawnUi button events use `Action<SkiaButton, SkiaGesturesParameters>` instead of the standard EventHandler pattern. The first parameter is the specific control type (SkiaButton), and the second contains gesture information.
 
 ## Using Platform-Specific Styles
 

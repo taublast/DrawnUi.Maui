@@ -38,17 +38,22 @@ public partial class SkiaView : SKCanvasView, ISkiaDrawable
         PaintSurface -= OnPaintingSurface;
     }
 
+    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
+    {
+        if (args.NewHandler == null)
+        {
+            PaintSurface -= OnPaintingSurface;
+            Superview?.DisconnectedHandler();
+        }
+
+        base.OnHandlerChanging(args);
+    }
+
     protected override void OnHandlerChanged()
     {
         base.OnHandlerChanged();
 
-        if (Handler == null)
-        {
-            PaintSurface -= OnPaintingSurface;
-
-            Superview?.DisconnectedHandler();
-        }
-        else
+        if (Handler != null)
         {
             PaintSurface -= OnPaintingSurface;
             PaintSurface += OnPaintingSurface;

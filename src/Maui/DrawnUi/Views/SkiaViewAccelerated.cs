@@ -52,11 +52,9 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
 #endif
 
-    protected override void OnHandlerChanged()
+    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        base.OnHandlerChanged();
-
-        if (Handler == null)
+        if (args.NewHandler == null)
         {
             PaintSurface -= OnPaintingSurface;
 
@@ -72,7 +70,15 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 #endif
             Superview?.DisconnectedHandler();
         }
-        else
+
+        base.OnHandlerChanging(args);
+    }
+
+    protected override void OnHandlerChanged()
+    {
+        base.OnHandlerChanged();
+
+        if (Handler != null)
         {
             PaintSurface -= OnPaintingSurface;
             PaintSurface += OnPaintingSurface;
@@ -111,7 +117,6 @@ public partial class SkiaViewAccelerated : SKGLView, ISkiaDrawable
 
             Superview?.ConnectedHandler();
         }
-
     }
 
     public DrawnView Superview { get; protected set; }

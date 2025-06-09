@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿#if IOS || MACCATALYST
+using System.Runtime.InteropServices;
 using DrawnUi.Draw;
 using SkiaSharp;
 
@@ -63,3 +64,4 @@ struct SplineTest //float 4bytes both metal and c#
 
     public byte Tag;
 };
+#endif

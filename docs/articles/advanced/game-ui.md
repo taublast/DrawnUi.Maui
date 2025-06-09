@@ -107,27 +107,27 @@ For drag or swipe, use gesture listeners or override touch methods in your contr
 You can mix game elements with standard DrawnUi controls:
 
 ```xml
-<DrawUi:SkiaLayout LayoutType="Column">
-    <DrawUi:SkiaLabel Text="Score: 123" FontSize="24" />
-    <DrawUi:SkiaSprite ... />
-    <DrawUi:SkiaButton Text="Pause" Tapped="OnPause" />
-</DrawUi:SkiaLayout>
+<draw:SkiaLayout Type="Column">
+    <draw:SkiaLabel Text="Score: 123" FontSize="24" />
+    <draw:SkiaSprite ... />
+    <draw:SkiaButton Text="Pause" Clicked="OnPause" />
+</draw:SkiaLayout>
 ```
 
 ## Example: Simple Tap Game
 
 ```xml
-<DrawUi:SkiaLayout>
-    <DrawUi:SkiaHotspot Tapped="OnTap">
-        <DrawUi:SkiaShape Type="Circle" WidthRequest="100" HeightRequest="100" BackgroundColor="Red" />
-    </DrawUi:SkiaHotspot>
-    <DrawUi:SkiaLabel x:Name="ScoreLabel" Text="Score: 0" FontSize="24" />
-</DrawUi:SkiaLayout>
+<draw:SkiaLayout>
+    <draw:SkiaHotspot Tapped="OnTap">
+        <draw:SkiaShape Type="Circle" WidthRequest="100" HeightRequest="100" BackgroundColor="Red" />
+    </draw:SkiaHotspot>
+    <draw:SkiaLabel x:Name="ScoreLabel" Text="Score: 0" FontSize="24" />
+</draw:SkiaLayout>
 ```
 
 ```csharp
 private int _score = 0;
-private void OnTap(object sender, EventArgs e)
+private void OnTap(object sender, SkiaGesturesParameters e)
 {
     _score++;
     ScoreLabel.Text = $"Score: {_score}";

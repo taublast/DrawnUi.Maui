@@ -38,6 +38,143 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         ZoomScale = zoom;
     }
 
+    /// <summary>
+    /// Sets manual exposure settings for the camera
+    /// </summary>
+    /// <param name="iso">ISO sensitivity value</param>
+    /// <param name="shutterSpeed">Shutter speed in seconds</param>
+    /// <returns>True if successful, false otherwise</returns>
+    public bool SetManualExposure(float iso, float shutterSpeed)
+    {
+        if (mCameraDevice == null || CaptureSession == null || mPreviewRequestBuilder == null)
+        {
+            System.Diagnostics.Debug.WriteLine("[Android MANUAL] Camera not initialized");
+            return false;
+        }
+
+        try
+        {
+            // Set manual exposure mode
+            mPreviewRequestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.Off);
+
+            // Set ISO (sensitivity)
+            var isoValue = (int)Math.Max(100, Math.Min(3200, iso)); // Clamp to reasonable range
+            mPreviewRequestBuilder.Set(CaptureRequest.SensorSensitivity, isoValue);
+
+            // Set shutter speed (exposure time in nanoseconds)
+            var exposureTimeNs = (long)(shutterSpeed * 1_000_000_000);
+            mPreviewRequestBuilder.Set(CaptureRequest.SensorExposureTime, exposureTimeNs);
+
+            mPreviewRequest = mPreviewRequestBuilder.Build();
+            CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+
+            System.Diagnostics.Debug.WriteLine($"[Android MANUAL] Set ISO: {isoValue}, Shutter: {shutterSpeed}s");
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Android MANUAL] Error: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Sets the camera to automatic exposure mode
+    /// </summary>
+    public void SetAutoExposure()
+    {
+        if (mCameraDevice == null || CaptureSession == null || mPreviewRequestBuilder == null)
+        {
+            System.Diagnostics.Debug.WriteLine("[Android AUTO] Camera not initialized");
+            return;
+        }
+
+        try
+        {
+            // Set auto exposure mode
+            mPreviewRequestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.On);
+
+            mPreviewRequest = mPreviewRequestBuilder.Build();
+            CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+
+            System.Diagnostics.Debug.WriteLine("[Android AUTO] Set to auto exposure mode");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Android AUTO] Error: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Gets the manual exposure capabilities and recommended settings for the camera
+    /// </summary>
+    /// <returns>Camera manual exposure range information</returns>
+    public CameraManualExposureRange GetExposureRange()
+    {
+        if (CameraId == null)
+        {
+            return new CameraManualExposureRange(0, 0, 0, 0, false, null);
+        }
+
+        try
+        {
+            var activity = Platform.CurrentActivity;
+            var manager = (CameraManager)activity.GetSystemService(Context.CameraService);
+            var characteristics = manager.GetCameraCharacteristics(CameraId);
+
+            // Check if manual exposure is supported
+            bool isSupported = false;
+
+            try
+            {
+                // Use ToArray<T>() extension method to convert Java array to C# array
+                var availableModes = characteristics.Get(CameraCharacteristics.ControlAeAvailableModes).ToArray<int>();
+                isSupported = availableModes?.Contains((int)ControlAEMode.Off) == true;
+            }
+            catch (Exception)
+            {
+                // Fallback: assume manual exposure is not supported
+                isSupported = false;
+            }
+
+            if (!isSupported)
+            {
+                return new CameraManualExposureRange(0, 0, 0, 0, false, null);
+            }
+
+            // Get ISO range
+            var isoRangeObj = characteristics.Get(CameraCharacteristics.SensorInfoSensitivityRange);
+            var isoRange = isoRangeObj as Android.Util.Range;
+            float minISO = isoRange?.Lower != null ? (float)(int)isoRange.Lower : 100f;
+            float maxISO = isoRange?.Upper != null ? (float)(int)isoRange.Upper : 3200f;
+
+            // Get exposure time range (in nanoseconds, convert to seconds)
+            var exposureRangeObj = characteristics.Get(CameraCharacteristics.SensorInfoExposureTimeRange);
+            var exposureRange = exposureRangeObj as Android.Util.Range;
+            long minExposureNs = exposureRange?.Lower != null ? (long)exposureRange.Lower : 1000000L;
+            long maxExposureNs = exposureRange?.Upper != null ? (long)exposureRange.Upper : 1_000_000_000L;
+            float minShutter = minExposureNs / 1_000_000_000.0f; // Convert ns to seconds
+            float maxShutter = maxExposureNs / 1_000_000_000.0f; // Convert ns to seconds
+
+            var baselines = new CameraExposureBaseline[]
+            {
+                new CameraExposureBaseline(100, 1.0f/60.0f, "Indoor", "Office/bright indoor lighting"),
+                new CameraExposureBaseline(400, 1.0f/30.0f, "Mixed", "Dim indoor/overcast outdoor"),
+                new CameraExposureBaseline(800, 1.0f/15.0f, "Low Light", "Evening/dark indoor")
+            };
+
+            System.Diagnostics.Debug.WriteLine($"[Android RANGE] ISO: {minISO}-{maxISO}, Shutter: {minShutter}-{maxShutter}s");
+
+            return new CameraManualExposureRange(minISO, maxISO, minShutter, maxShutter, true, baselines);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Android RANGE] Error: {ex.Message}");
+            return new CameraManualExposureRange(0, 0, 0, 0, false, null);
+        }
+    }
+
     public void PublishFile(string filename)
     {
         var meta = FormsControl.CameraDevice.Meta;
@@ -314,39 +451,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             _preview = null;
             return get;
         }
-
-        //if (Output == null)
-        //    return null;
-
-        //if (FormsControl.ProcessInBackground)
-        //{
-        //    return GetPreviewImage(Output.Allocation, Output.Bitmap.Width, Output.Bitmap.Height);
-        //}
-        //else
-        //if (FramesReader != null && Output != null)
-        //{
-        //    var image = FramesReader.AcquireLatestImage();
-        //    if (image != null)
-        //    {
-        //        //use rs
-        //        ProcessImage(image, Output.Allocation);
-        //        image.Close();
-        //        return GetPreviewImage(Output.Allocation, Output.Bitmap.Width, Output.Bitmap.Height);
-        //    }
-        //}
-        //return null;
-    }
-
-
-    private void Super_OnNativeAppPaused(object sender, EventArgs e)
-    {
-        Stop();
-    }
-
-    private void Super_OnNativeAppResumed(object sender, EventArgs e)
-    {
-        if (FormsControl.IsOn)
-            Start();
     }
 
     public void Start()
@@ -390,11 +494,11 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     /// <summary>
     /// Call when inactive to free resources
     /// </summary>
-    public void Stop()
+    public void Stop(bool force=false)
     {
         try
         {
-            CloseCamera();
+            CloseCamera(force);
         }
         catch (Exception e)
         {
@@ -412,9 +516,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     public NativeCamera(SkiaCamera parent)
     {
         FormsControl = parent;
-
-        Super.OnNativeAppPaused += Super_OnNativeAppPaused;
-        Super.OnNativeAppResumed += Super_OnNativeAppResumed;
 
         rs = RenderScript.Create(Platform.AppContext);
         Splines.Initialize(rs);
@@ -594,7 +695,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     public int SensorOrientation { get; set; }
 
     // A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
-    public CameraCaptureListener mCaptureCallback;
+    public PreviewCaptureCallback mCaptureCallback;
 
     // Shows a {@link Toast} on the UI thread.
     public void ShowToast(string text)
@@ -669,157 +770,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
 
-
-
-
-
-
-
-    //public override void OnResume()
-    //{
-    //    base.OnResume();
-
-
-    //}
-
-
-
-
-
-
-    //private void RequestCameraPermission()
-    //{
-    //    if (FragmentCompat.ShouldShowRequestPermissionRationale(this, Manifest.Permission.Camera))
-    //    {
-    //        new ConfirmationDialog().Show(ChildFragmentManager, FRAGMENT_DIALOG);
-    //    }
-    //    else
-    //    {
-    //        FragmentCompat.RequestPermissions(this, new string[] { Manifest.Permission.Camera },
-    //                REQUEST_CAMERA_PERMISSION);
-    //    }
-    //}
-
-    //public void OnRequestPermissionsResult(int requestCode, string[] permissions, int[] grantResults)
-    //{
-    //    if (requestCode != REQUEST_CAMERA_PERMISSION)
-    //        return;
-
-    //    if (grantResults.Length != 1 || grantResults[0] != (int)Permission.Granted)
-    //    {
-    //        ErrorDialog.NewInstance(GetString(Resource.String.request_permission))
-    //                .Show(ChildFragmentManager, FRAGMENT_DIALOG);
-    //    }
-    //}
-
-
-
-
-    /*
-	 EMULATOR
-
-	{
-	"Id": "0",
-	"Focal": [
-	  {
-		"FocalLength": 5.0,
-		"FocalLengthEq": 54.0875
-	  }SINGLE X
-		],
-		"MinDistance": 0.0,
-		"SensorWidth": 3.2,
-		"SensorHeight": 2.4
-	  }
-
-	BLACKVIEW
-
-	 {
-	"Id": "0",
-	"Focal": [
-	  {
-		"FocalLength": 3.5,
-		"FocalLengthEq": 25.8346043
-	  }
-		],
-		"MinDistance": 20.0,
-		"SensorWidth": 4.71,
-		"SensorHeight": 3.49
-	  }
-
-	 */
-
-
-    public async Task<ExposureResult> MeasureExposure(
-   double shutterSpeed,
-   double iso,
-   double aperture,
-   double exposureCompensation,
-   MeteringMode meteringMode)
-    {
-        try
-        {
-            if (mCameraDevice == null || CaptureSession == null)
-                return new ExposureResult { Success = false, ErrorMessage = "Camera not initialized" };
-
-            // Create a task completion source to wait for the result
-            var tcs = new TaskCompletionSource<ExposureResult>();
-
-            // Set a flag in your CameraCaptureListener to capture the next result
-            mCaptureCallback.SetMeteringResultHandler(tcs, aperture);
-
-            // Create a new request builder with manual settings
-            var meteringRequestBuilder = mCameraDevice.CreateCaptureRequest(CameraTemplate.Preview);
-            meteringRequestBuilder.AddTarget(mImageReaderPreview.Surface);
-
-            // Set manual exposure mode
-            meteringRequestBuilder.Set(CaptureRequest.ControlMode, (int)ControlMode.Off);
-            meteringRequestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.Off);
-
-            // Set exposure parameters
-            long exposureNanos = (long)(shutterSpeed * 1_000_000_000);
-            meteringRequestBuilder.Set(CaptureRequest.SensorExposureTime, exposureNanos);
-            meteringRequestBuilder.Set(CaptureRequest.SensorSensitivity, (int)iso);
-
-            // Set metering mode
-            var manager = (CameraManager)Platform.CurrentActivity.GetSystemService(Context.CameraService);
-            var characteristics = manager.GetCameraCharacteristics(CameraId);
-            var activeArraySize = (Android.Graphics.Rect)characteristics.Get(CameraCharacteristics.SensorInfoActiveArraySize);
-
-            switch (meteringMode)
-            {
-                case MeteringMode.Spot:
-                    if (activeArraySize != null)
-                    {
-                        var meteringRectangles = new MeteringRectangle[]
-                        {
-                        new MeteringRectangle(
-                            (int)(activeArraySize.Width() * 0.45),
-                            (int)(activeArraySize.Height() * 0.45),
-                            (int)(activeArraySize.Width() * 0.1),
-                            (int)(activeArraySize.Height() * 0.1),
-                            MeteringRectangle.MeteringWeightMax)
-                        };
-                        meteringRequestBuilder.Set(CaptureRequest.ControlAeRegions, meteringRectangles);
-                    }
-                    break;
-            }
-
-            // Update the repeating request with manual settings
-            CaptureSession.SetRepeatingRequest(meteringRequestBuilder.Build(), mCaptureCallback, mBackgroundHandler);
-
-            // Wait for the result
-            var result = await tcs.Task;
-
-            // Restore the original preview settings
-            CaptureSession.SetRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
-
-            return result;
-        }
-        catch (Exception e)
-        {
-            return new ExposureResult { Success = false, ErrorMessage = e.Message };
-        }
-    }
 
     /// <summary>
     /// Pass preview size as params
@@ -1132,13 +1082,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
 
-    public enum CameraProcessorState
-    {
-        None,
-        Enabled,
-        Error
-    }
-
     private CameraProcessorState _state;
     public CameraProcessorState State
     {
@@ -1207,7 +1150,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 }
 
                 if (mCaptureCallback == null)
-                    mCaptureCallback = new CameraCaptureListener(this);
+                    mCaptureCallback = new PreviewCaptureCallback(this);
 
                 SetupHardware(width, height);
 
@@ -1446,7 +1389,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             CaptureSession.StopRepeating();
 
             CaptureSession
-                .Capture(stillCaptureBuilder.Build(), new CameraCaptureStillPictureSessionCallback(this),
+                .Capture(stillCaptureBuilder.Build(), new StillPhotoCaptureCallback(this),
                     mBackgroundHandler);
 
         }
@@ -1689,21 +1632,13 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     {
         if (disposing)
         {
-            Stop();
-
-            CloseCamera();
-
+            Stop(true);
 
             //mTextureView.Dispose();
-            Super.OnNativeAppPaused -= Super_OnNativeAppPaused;
-            Super.OnNativeAppResumed -= Super_OnNativeAppResumed;
         }
 
         base.Dispose(disposing);
     }
-
-
-
 
     protected int countFrames = 0;
 
@@ -1829,19 +1764,15 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             {
                 case 90:
                     FormsControl.CameraDevice.Meta.Orientation = 8;
-                    //newexif.SetAttribute(ExifInterface.TagOrientation, "6");
                     break;
                 case 270:
                     FormsControl.CameraDevice.Meta.Orientation = 6;
-                    //newexif.SetAttribute(ExifInterface.TagOrientation, "8");
                     break;
                 case 180:
                     FormsControl.CameraDevice.Meta.Orientation = 3;
-                    //newexif.SetAttribute(ExifInterface.TagOrientation, "3");
                     break;
                 default:
                     FormsControl.CameraDevice.Meta.Orientation = 1;
-                    //newexif.SetAttribute(ExifInterface.TagOrientation, "1");
                     break;
             }
 

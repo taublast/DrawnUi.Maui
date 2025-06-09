@@ -275,15 +275,17 @@ public static partial class DrawnExtensions
             AppLifecycle.AddiOS((apple) =>
             {
 
-                apple.DidEnterBackground((app) =>
-                {
-                    Super.OnWentBackground();
-                });
+                Foundation.NSNotificationCenter.DefaultCenter.AddObserver(
+                    UIKit.UIApplication.DidBecomeActiveNotification, (obj) =>
+                    {
+                        Super.OnWentForeground();
+                    });
 
-                apple.WillEnterForeground((app) =>
-                {
-                    Super.OnWentForeground();
-                });
+                Foundation.NSNotificationCenter.DefaultCenter.AddObserver(
+                    UIKit.UIApplication.WillResignActiveNotification, (obj) =>
+                    {
+                        Super.OnWentBackground();
+                    });
 
                 bool onceApple = false;
                 apple.OnActivated((del) =>
@@ -303,6 +305,7 @@ public static partial class DrawnExtensions
                     //var check = UIKit.UIApplication.SharedApplication.KeyWindow;
 
                     Super.Init();
+
 
 #if MACCATALYST
 

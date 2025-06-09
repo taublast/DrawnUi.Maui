@@ -34,13 +34,15 @@ public partial class MauiEntry : Entry, IEditor
         OnCompleted?.Invoke(this, null);
     }
 
-    protected override void OnHandlerChanged()
+    protected override void OnHandlerChanging(HandlerChangingEventArgs args)
     {
-        base.OnHandlerChanged();
 
-        if (Handler == null)
+        if (args.NewHandler == null)
         {
             OnCompleted = null;
         }
+
+        base.OnHandlerChanging(args);
     }
+
 }

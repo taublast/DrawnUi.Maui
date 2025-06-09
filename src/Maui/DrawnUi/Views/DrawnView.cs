@@ -61,8 +61,10 @@ namespace DrawnUi.Views
 
         public virtual void Update()
         {
-            if (!Super.EnableRendering)
+            if (!Super.EnableRendering || IsDisposing || IsDisposed || UpdateLocks > 0)
+            {
                 return;
+            }
 
 #if ONPLATFORM
             UpdatePlatform();
@@ -139,6 +141,21 @@ namespace DrawnUi.Views
             return ScaledRect.FromPixels(bounds, (float)RenderingScale);
         }
 
+        protected override void OnHandlerChanging(HandlerChangingEventArgs args)
+        {
+
+            if (args.NewHandler == null)
+            {
+                DestroySkiaView();
+
+#if ONPLATFORM
+                DisposePlatform();
+#endif
+            }
+
+            base.OnHandlerChanging(args);
+        }
+
         protected override void OnHandlerChanged()
         {
             base.OnHandlerChanged();
@@ -147,21 +164,12 @@ namespace DrawnUi.Views
             OnHandlerChangedInternal();
 #endif
 
-            if (Handler == null)
-            {
-                DestroySkiaView();
-
-#if ONPLATFORM
-                DisposePlatform();
-#endif
-            }
-            else
+            if (Handler != null)
             {
                 CreateSkiaView();
 
 #if ONPLATFORM
                 SetupRenderingLoop();
-
 #endif
             }
 
@@ -783,31 +791,79 @@ namespace DrawnUi.Views
 
                 var kill = CanvasView;
                 if (kill != null)
-                    CanvasView = null;
-                if (kill != null)
                 {
+                    CanvasView = null;
                     kill.OnDraw = null;
-                    Tasks.StartDelayed(TimeSpan.FromMilliseconds(2500), () => { kill.Dispose(); });
+                    if (kill is View view)
+                    {
+                        MainThread.BeginInvokeOnMainThread(() =>
+                        {
+                            try
+                            {
+                                view.DisconnectHandlers();
+                            }
+                            catch (Exception e)
+                            {
+                                Super.Log(e);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        kill.Dispose();
+                    }
                 }
             }
         }
 
         public bool IsDisposing { get; set; }
 
+        ~DrawnView()
+        {
+            if (IsDisposed)
+                return;
+            Dispose(false);
+        }
+
         public void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                Dispose(true);
+            }
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (IsDisposed)
+                return;
+
+            if (!disposing)
+            {
+                IsDisposed = true;
+                return;
+            }
+
+            WillDispose();
+            OnDispose();
+        }
+
+        protected virtual void WillDispose()
+        {
+            IsDisposing = true;
+            Parent = null;
+            this.SizeChanged -= OnFormsSizeChanged;
+        }
+
+        public virtual void OnDispose()
         {
             lock (LockDraw)
             {
-                IsDisposing = true;
-
                 if (IsDisposed)
                     return;
 
-
                 try
                 {
-                    this.SizeChanged -= OnFormsSizeChanged;
-
                     IsDisposing = true;
 
                     OnDisposing();
@@ -815,8 +871,6 @@ namespace DrawnUi.Views
                     IsDisposed = true;
 
                     DisposeManager.Dispose();
-
-                    Parent = null;
 
                     PaintSystem?.Dispose();
 
@@ -826,13 +880,13 @@ namespace DrawnUi.Views
 
                     ClearChildren();
 
+                    Content = null;
+
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
                         try
                         {
                             this.Handler?.DisconnectHandler();
-
-                            Content = null;
                         }
                         catch (Exception e)
                         {

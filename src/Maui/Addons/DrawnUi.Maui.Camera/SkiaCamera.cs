@@ -1,13 +1,52 @@
 ﻿global using DrawnUi.Draw;
 global using SkiaSharp;
-using AppoMobi.Specials;
-using DrawnUi.Views;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using AppoMobi.Specials;
+using DrawnUi.Views;
+using Microsoft.Maui.Controls;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 using Color = Microsoft.Maui.Graphics.Color;
 
 namespace DrawnUi.Camera;
+
+
+public struct CameraExposureBaseline
+{
+    public float ISO { get; set; }
+    public float ShutterSpeed { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+
+    public CameraExposureBaseline(float iso, float shutterSpeed, string name, string description)
+    {
+        ISO = iso;
+        ShutterSpeed = shutterSpeed;
+        Name = name;
+        Description = description;
+    }
+}
+
+public struct CameraManualExposureRange
+{
+    public float MinISO { get; set; }
+    public float MaxISO { get; set; }
+    public float MinShutterSpeed { get; set; }
+    public float MaxShutterSpeed { get; set; }
+    public bool IsManualExposureSupported { get; set; }
+    public CameraExposureBaseline[] RecommendedBaselines { get; set; }
+
+    public CameraManualExposureRange(float minISO, float maxISO, float minShutter, float maxShutter, bool isSupported, CameraExposureBaseline[] baselines)
+    {
+        MinISO = minISO;
+        MaxISO = maxISO;
+        MinShutterSpeed = minShutter;
+        MaxShutterSpeed = maxShutter;
+        IsManualExposureSupported = isSupported;
+        RecommendedBaselines = baselines ?? new CameraExposureBaseline[0];
+    }
+}
 
 public partial class SkiaCamera : SkiaControl
 {
@@ -25,6 +64,395 @@ public partial class SkiaCamera : SkiaControl
 
 
     #region HELPERS
+
+    /// <summary>
+    /// Analyzes pixel luminance in a specific area of the frame (shared across all platforms)
+    /// </summary>
+    /// <param name="frame">The camera frame to analyze</param>
+    /// <param name="meteringMode">Spot (10x10 points) or CenterWeighted (50x50 points)</param>
+    /// <param name="renderingScale">Rendering scale to convert points to pixels</param>
+    /// <returns>Average luminance value (0-255 scale)</returns>
+    public double AnalyzeFrameLuminance(SKImage frame, MeteringMode meteringMode)
+    {
+        if (frame == null)
+            throw new ArgumentNullException(nameof(frame));
+
+        float renderingScale = this.RenderingScale;
+        var width = frame.Width;
+        var height = frame.Height;
+
+        // Define sampling area based on metering mode - in points, then convert to pixels
+        int sampleSizePoints = meteringMode == MeteringMode.Spot ? 10 : 50;
+        int sampleSizePixels = (int)(sampleSizePoints * renderingScale);
+        
+        int centerX = width / 2;
+        int centerY = height / 2;
+        
+        int startX = Math.Max(0, centerX - sampleSizePixels / 2);
+        int startY = Math.Max(0, centerY - sampleSizePixels / 2);
+        int endX = Math.Min(width, centerX + sampleSizePixels / 2);
+        int endY = Math.Min(height, centerY + sampleSizePixels / 2);
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Analyzing frame: {width}x{height}");
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Sampling: {sampleSizePoints}x{sampleSizePoints} pts * {renderingScale:F1} = {sampleSizePixels}x{sampleSizePixels} px");
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Sampling area: ({startX},{startY}) to ({endX},{endY})");
+
+        // Sample pixels from the target area
+        using var bitmap = SKBitmap.FromImage(frame);
+        
+        double totalLuminance = 0;
+        int pixelCount = 0;
+        
+        for (int y = startY; y < endY; y++)
+        {
+            for (int x = startX; x < endX; x++)
+            {
+                var pixel = bitmap.GetPixel(x, y);
+                
+                // Calculate luminance using standard formula: 0.299*R + 0.587*G + 0.114*B
+                var luminance = (0.299 * pixel.Red + 0.587 * pixel.Green + 0.114 * pixel.Blue);
+                totalLuminance += luminance;
+                pixelCount++;
+            }
+        }
+
+        if (pixelCount == 0)
+            throw new InvalidOperationException("No pixels to analyze in the specified area");
+
+        var averageLuminance = totalLuminance / pixelCount;
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Average luminance: {averageLuminance:F1} (0-255 scale), pixels: {pixelCount}");
+        
+        return averageLuminance;
+    }
+
+    /// <summary>
+    /// Converts normalized luminance to estimated lux value (shared across all platforms)
+    /// </summary>
+    /// <param name="pixelLuminance">Raw pixel luminance (0-255)</param>
+    /// <param name="exposureDuration">Camera exposure duration in seconds</param>
+    /// <param name="iso">Camera ISO value</param>
+    /// <param name="aperture">Camera aperture (f-number)</param>
+    /// <returns>Estimated brightness in lux</returns>
+    public static double CalculateBrightnessFromExposure(double pixelLuminance, double exposureDuration, float iso, float aperture)
+    {
+        // Normalize pixel luminance to account for camera exposure settings
+        // Formula: Actual_Luminance = Pixel_Luminance * (ISO/100) * (1/exposure_duration) / (aperture^2)
+        var normalizedLuminance = pixelLuminance * (iso / 100.0) * (1.0 / exposureDuration) / (aperture * aperture);
+        
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Exposure compensation: Duration={exposureDuration:F6}s, ISO={iso:F0}, Aperture=f/{aperture:F1}");
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Raw luminance: {pixelLuminance:F1} → Normalized: {normalizedLuminance:F1}");
+        
+        // Convert normalized luminance to lux using calibrated scale
+        double estimatedLux;
+        
+        if (normalizedLuminance < 1)
+        {
+            // Very dark: 0.1 - 1 lux (moonlight, deep shadow)
+            estimatedLux = 0.1 + normalizedLuminance * 0.9;
+        }
+        else if (normalizedLuminance < 10)
+        {
+            // Dark: 1 - 10 lux (candlelight, dim room)
+            estimatedLux = 1 + (normalizedLuminance - 1) * 1.0;
+        }
+        else if (normalizedLuminance < 100)
+        {
+            // Medium: 10 - 100 lux (living room, restaurant)
+            estimatedLux = 10 + (normalizedLuminance - 10) * 1.0;
+        }
+        else if (normalizedLuminance < 1000)
+        {
+            // Bright: 100 - 1000 lux (office, bright room)
+            estimatedLux = 100 + (normalizedLuminance - 100) * 1.0;
+        }
+        else if (normalizedLuminance < 10000)
+        {
+            // Very bright: 1000 - 10000 lux (daylight, bright office)
+            estimatedLux = 1000 + (normalizedLuminance - 1000) * 1.0;
+        }
+        else
+        {
+            // Extremely bright: 10000+ lux (direct sunlight)
+            estimatedLux = 10000 + (normalizedLuminance - 10000) * 10.0;
+        }
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Final estimated brightness: {estimatedLux:F0} lux");
+        return estimatedLux;
+    }
+
+    /// <summary>
+    /// Direct pixel-to-lux mapping for platforms where camera exposure settings are unreliable
+    /// </summary>
+    /// <param name="pixelLuminance">Raw pixel luminance (0-255)</param>
+    /// <returns>Estimated brightness in lux</returns>
+    public static double CalculateBrightnessFromPixelsOnly(double pixelLuminance)
+    {
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel mapping: {pixelLuminance:F1} (0-255 scale)");
+        
+        // Direct pixel luminance to lux mapping with wide dynamic range
+        double estimatedLux;
+        
+        if (pixelLuminance < 5)
+        {
+            // Very dark: 0.1 - 5 lux (deep shadow, moonlight)
+            estimatedLux = 0.1 + (pixelLuminance / 5.0) * 4.9;
+        }
+        else if (pixelLuminance < 25)
+        {
+            // Dark: 5 - 50 lux (dim room, candlelight)
+            estimatedLux = 5 + ((pixelLuminance - 5) / 20.0) * 45;
+        }
+        else if (pixelLuminance < 75)
+        {
+            // Medium: 50 - 500 lux (living room, restaurant)
+            estimatedLux = 50 + ((pixelLuminance - 25) / 50.0) * 450;
+        }
+        else if (pixelLuminance < 150)
+        {
+            // Bright: 500 - 2000 lux (office, bright room)
+            estimatedLux = 500 + ((pixelLuminance - 75) / 75.0) * 1500;
+        }
+        else if (pixelLuminance < 200)
+        {
+            // Very bright: 2000 - 10000 lux (daylight indoors)
+            estimatedLux = 2000 + ((pixelLuminance - 150) / 50.0) * 8000;
+        }
+        else
+        {
+            // Extremely bright: 10000+ lux (direct sunlight)
+            estimatedLux = 10000 + ((pixelLuminance - 200) / 55.0) * 90000;
+        }
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel brightness: {estimatedLux:F0} lux");
+        return estimatedLux;
+    }
+
+#if ONPLATFORM
+
+    /// <summary>
+    /// Measures scene brightness using pixel luminance analysis (moved from native implementations to eliminate redundancy)
+    /// </summary>
+    /// <param name="meteringMode">Spot (10x10 points) or CenterWeighted (50x50 points)</param>
+    /// <returns>Brightness measurement result</returns>
+    public async Task<BrightnessResult> MeasureSceneBrightness(MeteringMode meteringMode)
+    {
+        try
+        {
+            if (NativeControl == null)
+                return new BrightnessResult { Success = false, ErrorMessage = "Camera not initialized" };
+
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting brightness measurement with {meteringMode} mode");
+
+            // A - Get preview to check what camera has chosen (auto exposure)
+            CapturedImage autoFrame = null;
+            for (int attempts = 0; attempts < 10; attempts++)
+            {
+                autoFrame = NativeControl.GetPreviewImage();
+                if (autoFrame?.Image != null)
+                    break;
+                await Task.Delay(100);
+            }
+
+            if (autoFrame?.Image == null)
+                return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
+
+            // Check auto exposure metadata to understand lighting conditions
+            var autoISO = CameraDevice.Meta.ISO;
+            var autoShutter = CameraDevice.Meta.Shutter;
+            var autoAperture = CameraDevice.Meta.Aperture;
+
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Auto exposure detected: ISO {autoISO}, Shutter {autoShutter}s, Aperture f/{autoAperture}");
+
+            autoFrame.Dispose(); // We only needed this for metadata
+
+            // Get possible exposure ranges
+            var exposureRange = NativeControl.GetExposureRange();
+            double brightness = 0.0;
+            double pixelLuminance;
+
+            CapturedImage frame = null;
+            bool manualExposureWasSet = false;
+
+            if (exposureRange.IsManualExposureSupported)
+            {
+                System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure supported - using scene-adaptive approach");
+
+                // B - Set manual values according to probable light conditions we just read
+                float manualISO, manualShutter;
+
+                if (autoISO < 200 && autoShutter > 1/100f)
+                {
+                    // Bright conditions - use bright baseline
+                    manualISO = 50f;
+                    manualShutter = 1/250f;
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected bright conditions - using bright baseline");
+                }
+                else if (autoISO > 800 || autoShutter < 1/100f)
+                {
+                    // Dark conditions - use dark baseline
+                    manualISO = 400f;
+                    manualShutter = 1/30f;
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected dark conditions - using dark baseline");
+                }
+                else
+                {
+                    // Mid/indoor conditions - use indoor baseline
+                    manualISO = 100f;
+                    manualShutter = 1/60f;
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected mid/indoor conditions - using indoor baseline");
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Setting manual exposure: ISO {manualISO}, Shutter {manualShutter}s");
+
+                bool manualExposureSet = NativeControl.SetManualExposure(manualISO, manualShutter);
+                if (manualExposureSet)
+                {
+                    manualExposureWasSet = true;
+                    // Wait for camera to apply settings
+                    await Task.Delay(1500);
+                }
+            }
+
+            // C - Get frame for analysis (either with manual settings applied or auto)
+            for (int attempts = 0; attempts < 10; attempts++)
+            {
+                frame = NativeControl.GetPreviewImage();
+                if (frame?.Image != null)
+                    break;
+                await Task.Delay(100);
+            }
+
+            // Restore auto exposure AFTER getting the frame
+            if (manualExposureWasSet)
+            {
+                NativeControl.SetAutoExposure();
+            }
+
+            if (frame?.Image == null)
+                return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
+
+            using (frame)
+            {
+                pixelLuminance = AnalyzeFrameLuminance(frame.Image, meteringMode);
+
+                if (exposureRange.IsManualExposureSupported && manualExposureWasSet)
+                {
+                    // Check if manual settings were actually applied
+                    var actualISO = CameraDevice.Meta.ISO;
+                    var actualShutter = CameraDevice.Meta.Shutter;
+                    var baseline = exposureRange.RecommendedBaselines[0];
+
+                    bool isoMatches = Math.Abs(actualISO - baseline.ISO) < 10;
+                    bool shutterMatches = Math.Abs(actualShutter - baseline.ShutterSpeed) < 0.005;
+
+                    if (isoMatches && shutterMatches)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual settings verified: ISO {actualISO}, Shutter {actualShutter}s");
+
+                        // D - Use manual exposure calculation with verified settings
+                        brightness = CalculateSceneBrightnessFromPixels(
+                            pixelLuminance,
+                            actualISO,
+                            CameraDevice.Meta.Aperture,
+                            actualShutter
+                        );
+
+                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual exposure brightness: {brightness:F0} lux");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual settings not applied - Expected ISO {baseline.ISO}, got {actualISO}; Expected shutter {baseline.ShutterSpeed}, got {actualShutter}");
+                        brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
+
+                    // Use direct pixel-to-lux mapping (all platforms now use this approach)
+                    // This approach directly correlates pixel brightness to real-world lux values
+                    brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
+
+                    // Alternative: Camera exposure-based calculation (less reliable for actual scene brightness)
+                    //var brightness = CalculateSceneBrightnessFromPixels(pixelLuminance, CameraDevice.Meta.ISO, CameraDevice.Meta.Aperture, CameraDevice.Meta.Shutter);
+                }
+
+                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Brightness measurement complete: {brightness:F0} lux");
+
+                if (brightness > 0)
+                {
+                    return new BrightnessResult
+                    {
+                        Success = true,
+                        Brightness = brightness
+                    };
+                }
+                else
+                {
+                    return new BrightnessResult
+                    {
+                        Success = false,
+                    };
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA ERROR] MeasureSceneBrightness failed: {ex.Message}");
+            return new BrightnessResult { Success = false, ErrorMessage = ex.Message };
+        }
+    }
+
+#endif
+
+    /// <summary>
+    /// Calculates actual scene brightness using the camera's current settings and pixel analysis
+    /// </summary>
+    /// <param name="pixelLuminance">Average pixel luminance from AnalyzeFrameLuminance (0-255 scale)</param>
+    /// <param name="iso">Current camera ISO</param>
+    /// <param name="aperture">Current camera aperture (f-stop)</param>
+    /// <param name="shutter">Current camera shutter speed (seconds)</param>
+    /// <returns>Estimated scene brightness in lux</returns>
+    public static double CalculateSceneBrightnessFromPixels(
+        double pixelLuminance,
+        double iso,
+        double aperture,
+        double shutter)
+    {
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] CalculateSceneBrightnessFromPixels: pixels {pixelLuminance:F0}, iso {iso:0}, aperture {aperture:0.00}, shutter {shutter:0.0000}");
+
+        // Camera exposure settings tell us what the camera thinks is "proper exposure"
+        // This represents the brightness level the camera is targeting (middle gray = 18% reflectance)
+
+        // Calculate the EV that the camera is using for "proper exposure"
+        double cameraEV = Math.Log2((aperture * aperture) / shutter) + Math.Log2(iso / 100.0);
+
+        // Convert camera EV to the luminance it's targeting (what it thinks middle gray should be)
+        const double K = 12.5; // Standard photometric constant
+        double cameraTargetLuminance = K * Math.Pow(2, cameraEV);
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Camera EV: {cameraEV:F1}, Target luminance: {cameraTargetLuminance:F0}");
+
+        // Now use actual pixel values to determine how bright the scene really is
+        // Middle gray (18% reflectance) should appear as ~128 on 0-255 scale
+        // If pixels are darker/brighter than 128, the scene is darker/brighter than camera's target
+        double actualBrightnessRatio = pixelLuminance / 128.0;
+
+        // Apply gamma correction - camera sensors apply ~2.2 gamma curve
+        // This converts from camera's gamma-corrected values back to linear light
+        actualBrightnessRatio = Math.Pow(Math.Max(0.001, actualBrightnessRatio), 2.2);
+
+        // Calculate final scene brightness
+        // If ratio = 1.0: scene matches camera's expectation
+        // If ratio < 1.0: scene is darker than camera expected
+        // If ratio > 1.0: scene is brighter than camera expected
+        double finalSceneBrightness = cameraTargetLuminance * actualBrightnessRatio;
+
+        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Brightness ratio: {actualBrightnessRatio:F3}, Final: {finalSceneBrightness:F0} lux");
+
+        return finalSceneBrightness;
+    }
 
     /// <summary>
     /// Going to overlay any SkiaLayout over the captured photo and return a new bitmap.
@@ -105,7 +533,7 @@ public partial class SkiaCamera : SkiaControl
         }
 
     }
-    #endregion
+#endregion
 
     #region EVENTS
 
@@ -128,22 +556,22 @@ public partial class SkiaCamera : SkiaControl
 
     #region METHODS
 
-
-
     /// <summary>
     /// Stops the camera
     /// </summary>
-    public void Stop()
+    public void Stop(bool force=false)
     {
         if (IsDisposing || IsDisposed)
             return;
 
-        NativeControl?.Stop();
+        System.Diagnostics.Debug.WriteLine($"[CAMERA] Stopped {Uid} {Tag}");
+
+        NativeControl?.Stop(force);
         State = CameraState.Off;
         //DisplayImage.IsVisible = false;
     }
 
-    /// <summary>
+   /// <summary>
     /// Starts the camera
     /// </summary>
     public void Start()
@@ -153,19 +581,21 @@ public partial class SkiaCamera : SkiaControl
 
         if (NativeControl == null)
         {
-#if ANDROID
+#if ANDROID || IOS || WINDOWS
             CreateNative();
 #endif
         }
 
-        var rotation = ((Superview.DeviceRotation + 45) / 90) % 4;
-        NativeControl?.ApplyDeviceOrientation(rotation);
+        //var rotation = ((Superview.DeviceRotation + 45) / 90) % 4;
+        //NativeControl?.ApplyDeviceOrientation(rotation);
 
         if (Display != null)
         {
             //DestroyRenderingObject();
             Display.IsVisible = true;
         }
+
+        //IsOn = true;
 
         NativeControl?.Start();
     }
@@ -413,9 +843,10 @@ public partial class SkiaCamera : SkiaControl
 
     public SkiaCamera()
     {
-
+        Instances.Add(this);
+        Super.OnNativeAppResumed += Super_OnNativeAppResumed;
+        Super.OnNativeAppPaused += Super_OnNativeAppPaused;
     }
-
 
     public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
     {
@@ -434,34 +865,13 @@ public partial class SkiaCamera : SkiaControl
 
     public SkiaImage Display { get; protected set; }
 
-    public override void OnDisposing()
-    {
-
-        if (Superview != null)
-        {
-            Superview.DeviceRotationChanged -= DeviceRotationChanged;
-        }
-
-        if (NativeControl != null)
-        {
-            Stop();
-
-            NativeControl?.Dispose();
-        }
-
-        NativeControl = null;
-
-        base.OnDisposing();
-    }
-
-
+ 
     public INativeCamera NativeControl;
 
 
-
-    protected override void OnLayoutChanged()
+    protected override void OnLayoutReady()
     {
-        base.OnLayoutChanged();
+        base.OnLayoutReady();
 
         if (State == CameraState.Error)
             Start();
@@ -553,27 +963,19 @@ public partial class SkiaCamera : SkiaControl
     {
         base.Paint(ctx);
 
-        if (NativeControl != null)
+        if (NativeControl != null && State == CameraState.On && !FrameAquired)
         {
-            if (!FrameAquired)
+            //aquire latest image from camera
+            var image = NativeControl.GetPreviewImage();
+            if (image != null)
             {
-                //aquire latest image from camera
-                {
-                    var image = NativeControl.GetPreviewImage();
-                    if (image != null)
-                    {
-                        FrameAquired = true;
-                        OnNewFrameSet(Display.SetImageInternal(image.Image));
-                    }
-                }
-
+                FrameAquired = true;
+                OnNewFrameSet(Display.SetImageInternal(image.Image));
             }
-
-            //draw DisplayImage
-            DrawViews(ctx);
         }
 
-
+        //draw DisplayImage
+        DrawViews(ctx);
     }
 
 
@@ -583,12 +985,6 @@ public partial class SkiaCamera : SkiaControl
 
 
     public SKBitmap GetPreviewBitmap()
-    {
-        throw new NotImplementedException();
-    }
-
-
-    public void CommandToRenderer(string command)
     {
         throw new NotImplementedException();
     }
@@ -1199,6 +1595,10 @@ public partial class SkiaCamera : SkiaControl
                 control.Stop();
                 control.Start();
             }
+            else
+            {
+                control.Start();
+            }
         }
     }
 
@@ -1254,24 +1654,24 @@ public partial class SkiaCamera : SkiaControl
         {
             if (_virtualCameraUnit != value)
             {
-                _virtualCameraUnit = value;
-                OnPropertyChanged("CameraDevice");
-                if (value != null)
+                if (_virtualCameraUnit != value)
                 {
-                    Device.StartTimer(TimeSpan.FromSeconds(2), () =>
-                    {
-                        Task.Run(async () =>
-                        {
-                            //await App.Current.SaveCameraDevice(value);
-                        }).ConfigureAwait(false);
-
-                        return false;
-                    });
+                    _virtualCameraUnit = value;
+                    AssignFocalLengthInternal(value);
                 }
             }
         }
     }
     private CameraUnit _virtualCameraUnit;
+
+    public void AssignFocalLengthInternal(CameraUnit value)
+    {
+        if (value != null)
+        {
+            FocalLength = (float)(value.FocalLength * value.SensorCropFactor);
+        }
+        OnPropertyChanged(nameof(CameraDevice));
+    }
 
     private int _PreviewWidth;
     public int PreviewWidth
@@ -1371,18 +1771,18 @@ public partial class SkiaCamera : SkiaControl
     }
 
 
-    //public static readonly BindableProperty CustomAlbumProperty = BindableProperty.Create(nameof(CustomAlbum),
-    //	typeof(string),
-    //	typeof(SkiaCamera),
-    //	string.Empty);
-    ///// <summary>
-    ///// If not null will use this instead of Camera Roll folder for photos output
-    ///// </summary>
-    //public string CustomAlbum
-    //{
-    //	get { return (string)GetValue(CustomAlbumProperty); }
-    //	set { SetValue(CustomAlbumProperty, value); }
-    //}
+    public static readonly BindableProperty CustomAlbumProperty = BindableProperty.Create(nameof(CustomAlbum),
+        typeof(string),
+        typeof(SkiaCamera),
+        string.Empty);
+    /// <summary>
+    /// If not null will use this instead of Camera Roll folder for photos output
+    /// </summary>
+    public string CustomAlbum
+    {
+        get { return (string)GetValue(CustomAlbumProperty); }
+        set { SetValue(CustomAlbumProperty, value); }
+    }
 
 
     public static readonly BindableProperty GeotagProperty = BindableProperty.Create(nameof(Geotag),
@@ -1509,17 +1909,7 @@ public partial class SkiaCamera : SkiaControl
         set { SetValue(ZoomLimitMaxProperty, value); }
     }
 
-    //public static readonly BindableProperty BlackColorProperty = BindableProperty.Create(
-    //    nameof(BlackColor),
-    //    typeof(Color),
-    //    typeof(SkiaCamera),
-    //    Colors.Black);
-
-    //public Color BlackColor
-    //{
-    //    get { return (Color)GetValue(BlackColorProperty); }
-    //    set { SetValue(BlackColorProperty, value); }
-    //}
+ 
 
     private static void NeedSetZoom(BindableObject bindable, object oldvalue, object newvalue)
     {
@@ -1539,78 +1929,41 @@ public partial class SkiaCamera : SkiaControl
         }
     }
 
-    //public static readonly BindableProperty WhiteColorProperty = BindableProperty.Create(
-    //    nameof(WhiteColor),
-    //    typeof(Color),
+    protected override void OnLayoutChanged()
+    {
+        base.OnLayoutChanged();
+
+        Display.Aspect = this.Aspect;
+    }
+
+    //public static readonly BindableProperty DisplayModeProperty = BindableProperty.Create(
+    //    nameof(DisplayMode),
+    //    typeof(StretchModes),
     //    typeof(SkiaCamera),
-    //    Colors.White);
+    //    StretchModes.Fill);
 
-    //public Color WhiteColor
+    //public StretchModes DisplayMode
     //{
-    //    get { return (Color)GetValue(WhiteColorProperty); }
-    //    set { SetValue(WhiteColorProperty, value); }
+    //    get { return (StretchModes)GetValue(DisplayModeProperty); }
+    //    set { SetValue(DisplayModeProperty, value); }
     //}
 
-    public static readonly BindableProperty DisplayModeProperty = BindableProperty.Create(
-        nameof(DisplayMode),
-        typeof(StretchModes),
-        typeof(SkiaCamera),
-        StretchModes.Fill);
+    public static readonly BindableProperty AspectProperty = BindableProperty.Create(
+        nameof(Aspect),
+        typeof(TransformAspect),
+        typeof(SkiaImage),
+        TransformAspect.AspectCover,
+        propertyChanged: NeedInvalidateMeasure);
 
-    public StretchModes DisplayMode
+    /// <summary>
+    /// Apspect to render image with, default is AspectCover. 
+    /// </summary>
+    public TransformAspect Aspect
     {
-        get { return (StretchModes)GetValue(DisplayModeProperty); }
-        set { SetValue(DisplayModeProperty, value); }
+        get { return (TransformAspect)GetValue(AspectProperty); }
+        set { SetValue(AspectProperty, value); }
     }
 
-    public static readonly BindableProperty NeedCalibrationProperty = BindableProperty.Create(
-        nameof(NeedCalibration),
-        typeof(bool),
-        typeof(SkiaCamera),
-        false);
-
-    public bool NeedCalibration
-    {
-        get { return (bool)GetValue(NeedCalibrationProperty); }
-        set { SetValue(NeedCalibrationProperty, value); }
-    }
-
-    public static readonly BindableProperty ColorPresetProperty = BindableProperty.Create(
-        nameof(ColorPreset),
-        typeof(int),
-        typeof(SkiaCamera),
-        0);
-
-    public int ColorPreset
-    {
-        get { return (int)GetValue(ColorPresetProperty); }
-        set { SetValue(ColorPresetProperty, value); }
-    }
-
-    public static readonly BindableProperty GammaProperty = BindableProperty.Create(
-        nameof(Gamma),
-        typeof(double),
-        typeof(SkiaCamera),
-        1.0);
-
-    public double Gamma
-    {
-        get { return (double)GetValue(GammaProperty); }
-        set { SetValue(GammaProperty, value); }
-    }
-
-    //public static readonly BindableProperty OrientationProperty = BindableProperty.Create(
-    //	nameof(Orientation),
-    //	typeof(DeviceOrientation),
-    //	typeof(SkiaCamera),
-    //	DeviceOrientation.Unknown,
-    //	BindingMode.OneWayToSource);
-
-    //public DeviceOrientation Orientation
-    //{
-    //	get { return (DeviceOrientation)GetValue(OrientationProperty); }
-    //	set { SetValue(OrientationProperty, value); }
-    //}
 
     public static readonly BindableProperty StateProperty = BindableProperty.Create(
         nameof(State),
@@ -1801,5 +2154,58 @@ public partial class SkiaCamera : SkiaControl
     }
 
     #endregion
+
+    private void Super_OnNativeAppPaused(object sender, EventArgs e)
+    {
+        StopAll();
+    }
+
+    private void Super_OnNativeAppResumed(object sender, EventArgs e)
+    {
+        ResumeIfNeeded();
+    }
+
+    public void ResumeIfNeeded()
+    {
+        if (IsOn)
+            Start();
+    }
+
+    public override void OnWillDisposeWithChildren()
+    {
+        base.OnWillDisposeWithChildren();
+
+        Super.OnNativeAppResumed -= Super_OnNativeAppResumed;
+        Super.OnNativeAppPaused -= Super_OnNativeAppPaused;
+
+        if (Superview != null)
+        {
+            Superview.DeviceRotationChanged -= DeviceRotationChanged;
+        }
+
+        if (NativeControl != null)
+        {
+            Stop(true);
+
+            NativeControl?.Dispose();
+        }
+
+        NativeControl = null;
+
+        Instances.Remove(this);
+    }
+
+    public static List<SkiaCamera> Instances = new();
+
+    /// <summary>
+    /// Stops all instances
+    /// </summary>
+    public static void StopAll()
+    {
+        foreach (var renderer in Instances)
+        {
+            renderer.Stop(true);
+        }
+    }
 
 }

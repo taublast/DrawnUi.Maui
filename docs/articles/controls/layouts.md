@@ -8,14 +8,14 @@ DrawnUi.Maui offers several core layout types:
 
 ### SkiaLayout
 
-The base layout control for measurement, arrangement, and rendering of child elements. It supports different layout strategies via the `LayoutType` property:
+The base layout control for measurement, arrangement, and rendering of child elements. It supports different layout strategies via the `Type` property:
 
 - Managing child controls
 - Performance optimizations (see below)
 
 ```xml
 <draw:SkiaLayout
-    LayoutType="Absolute"
+    Type="Absolute"
     WidthRequest="400"
     HeightRequest="300">
     <!-- Child controls here -->
@@ -24,7 +24,7 @@ The base layout control for measurement, arrangement, and rendering of child ele
 
 ## Layout Types
 
-The `LayoutType` property on `SkiaLayout` supports:
+The `Type` property on `SkiaLayout` supports:
 
 - **Absolute**: Free positioning, default. Think of it like a MAUI Grid with a single column and a single row.
 - **Grid**: Row and column-based layout, classic MAUI Grid.
@@ -33,12 +33,14 @@ The `LayoutType` property on `SkiaLayout` supports:
 - **Wrap**: Items wrap to new lines when space runs out (similar to WPF Stackpanel)
 
 ```xml
-<draw:SkiaLayout LayoutType="Wrap" Spacing="5,5">
+<draw:SkiaLayout Type="Wrap" Spacing="5">
     <draw:SkiaLabel Text="Item 1" />
     <draw:SkiaLabel Text="Item 2" />
     <!-- More items -->
 </draw:SkiaLayout>
 ```
+
+> **Note**: The `Spacing` property takes a single double value that applies to both horizontal and vertical spacing between items.
 
 ## Specialized Layout Controls
 
@@ -53,8 +55,8 @@ Supports snap points for controlled scrolling, ideal for carousels or paginated 
 ## Example: Creating a Grid Layout
 
 ```xml
-<draw:SkiaLayout LayoutType="Grid" 
-    ColumnDefinitions="Auto,*,100" 
+<draw:SkiaLayout Type="Grid"
+    ColumnDefinitions="Auto,*,100"
     RowDefinitions="Auto,*,50">
     <!-- Header spanning all columns -->
     <draw:SkiaLabel 
@@ -64,10 +66,10 @@ Supports snap points for controlled scrolling, ideal for carousels or paginated 
         Row="0" 
         HorizontalOptions="Center" />
     <!-- Sidebar -->
-    <draw:SkiaLayout 
-        LayoutType="Column" 
-        Column="0" 
-        Row="1" 
+    <draw:SkiaLayout
+        Type="Column"
+        Column="0"
+        Row="1"
         RowSpan="2"
         BackgroundColor="LightGray"
         Padding="10">
@@ -85,9 +87,9 @@ Supports snap points for controlled scrolling, ideal for carousels or paginated 
             VerticalOptions="Center" />
     </draw:ContentLayout>
     <!-- Right panel -->
-    <draw:SkiaLayout 
-        LayoutType="Column" 
-        Column="2" 
+    <draw:SkiaLayout
+        Type="Column"
+        Column="2"
         Row="1"
         BackgroundColor="LightBlue"
         Padding="5">
@@ -104,7 +106,7 @@ Supports snap points for controlled scrolling, ideal for carousels or paginated 
 </draw:SkiaLayout>
 ```
 
-All grid functionality is handled by SkiaLayout with `LayoutType="Grid"`.
+All grid functionality is handled by SkiaLayout with `Type="Grid"`.
 
 ## Under the Hood
 

@@ -1223,6 +1223,7 @@ namespace DrawnUi.Draw
                 var hitbox = child.VisualLayer.HitBoxWithTransforms.Pixels;
                 inside = hitbox.ContainsInclusive(args.Event.Location.X, args.Event.Location.Y);
             }
+
             return inside;
         }
 
@@ -1378,7 +1379,7 @@ namespace DrawnUi.Draw
             return inside;
         }
 
- 
+
         /// <summary>
         /// Delegate for use instead of calling base.OnSkiaGestureEvent
         /// </summary>
@@ -1444,7 +1445,6 @@ namespace DrawnUi.Draw
 
             if (UsesRenderingTree && RenderTree != null)
             {
-                
                 var hadInputConsumed = consumed;
                 var thisOffset = TranslateInputCoords(apply.ChildOffset);
 
@@ -1675,7 +1675,8 @@ namespace DrawnUi.Draw
             return consumed;
         }
 
-        public static readonly BindableProperty BlockGesturesBelowProperty = BindableProperty.Create(nameof(BlockGesturesBelow),
+        public static readonly BindableProperty BlockGesturesBelowProperty = BindableProperty.Create(
+            nameof(BlockGesturesBelow),
             typeof(bool), typeof(SkiaControl), false);
 
         /// <summary>
@@ -3819,6 +3820,9 @@ namespace DrawnUi.Draw
             var maxHeight = -1.0f;
             var maxWidth = -1.0f;
 
+            var maxChildHeight = -1.0f;
+            var maxChildWidth = -1.0f;
+
             List<SkiaControl> fill = new();
             var autosize = this.NeedAutoSize;
             var hadFixedSize = false;
@@ -3894,13 +3898,24 @@ namespace DrawnUi.Draw
 
                 hadFixedSize = true;
                 var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
+
+                if (measured.Pixels.Width > maxChildWidth)
+                {
+                    maxChildWidth = measured.Pixels.Width;
+                }
+
+                if (measured.Pixels.Height > maxChildHeight)
+                {
+                    maxChildHeight = measured.Pixels.Height;
+                }
+
                 PostProcessMeasuredChild(measured, child, true);
 
                 widthCut |= measured.WidthCut;
                 heightCut |= measured.HeightCut;
             }
 
-            //PASS 2 for thoses with Fill 
+            //PASS 2 for those with Fill 
             foreach (var child in fill)
             {
                 ScaledSize measured;
@@ -3945,6 +3960,16 @@ namespace DrawnUi.Draw
                 float.IsFinite(rectForChildrenPixels.Height))
             {
                 maxHeight = rectForChildrenPixels.Height;
+            }
+
+            if (maxWidth < 0)
+            {
+                maxWidth = maxChildWidth;
+            }
+
+            if (maxHeight < 0)
+            {
+                maxHeight = maxChildHeight;
             }
 
             return ScaledSize.FromPixels(maxWidth, maxHeight, widthCut, heightCut, scale);
@@ -4588,14 +4613,6 @@ namespace DrawnUi.Draw
         public Dictionary<string, Action<SkiaControl, DrawingContext>> ExecuteOnPaint { get; } = new();
 
         /// <summary>
-        /// Releases unmanaged resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~SkiaControl()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
         /// Throws an <see cref="ObjectDisposedException"/> if this object has been disposed.
         /// </summary>
         protected void ThrowIfDisposed()
@@ -4691,6 +4708,16 @@ namespace DrawnUi.Draw
                 EffectsGestureProcessors = null;
                 EffectPostRenderer = null;
             });
+        }
+
+        /// <summary>
+        /// Releases unmanaged resources before the object is reclaimed by garbage collection.
+        /// </summary>
+        ~SkiaControl()
+        {
+            if (_isDisposed)
+                return;
+            Dispose(false);
         }
 
         /// <summary>

@@ -124,7 +124,7 @@ namespace DrawnUi.Views
                     needNewSurfaces = true;
                 }
 
-                if (needNewSurfaces)
+                if (needNewSurfaces && newSize.Height>0 && newSize.Width>0)
                 {
                     if (_retainedSurface != null)
                     {
@@ -177,7 +177,7 @@ namespace DrawnUi.Views
             }
 
             //without this we'll fall into gpu backbuffer still using this context
-            Tasks.StartDelayed(TimeSpan.FromMilliseconds(2500), () =>
+            Tasks.StartDelayed(TimeSpan.FromMilliseconds(100), () =>
             {
                 renderTarget?.Dispose();
 
@@ -195,7 +195,6 @@ namespace DrawnUi.Views
 
                 _lastSize = default;
                 _needsFullRedraw = true;
-
             });
         }
     }

@@ -13,23 +13,23 @@ DrawnUi.Maui’s SkiaScroll control provides high-performance, flexible scrollin
 ## Basic Usage
 
 ```xml
-<DrawUi:SkiaScroll Orientation="Vertical" WidthRequest="400" HeightRequest="600">
-    <DrawUi:SkiaLayout LayoutType="Column" Spacing="10">
-        <DrawUi:SkiaLabel Text="Item 1" />
-        <DrawUi:SkiaLabel Text="Item 2" />
+<draw:SkiaScroll Orientation="Vertical" WidthRequest="400" HeightRequest="600">
+    <draw:SkiaLayout Type="Column" Spacing="10">
+        <draw:SkiaLabel Text="Item 1" />
+        <draw:SkiaLabel Text="Item 2" />
         <!-- More items -->
-    </DrawUi:SkiaLayout>
-</DrawUi:SkiaScroll>
+    </draw:SkiaLayout>
+</draw:SkiaScroll>
 ```
 
 ## Multi-Directional and Zoomable Scrolling
 
 ```xml
-<DrawUi:SkiaScroll Orientation="Both" ZoomLocked="False" ZoomMin="1" ZoomMax="3">
-    <DrawUi:SkiaLayout>
-        <DrawUi:SkiaImage Source="large_map.jpg" />
-    </DrawUi:SkiaLayout>
-</DrawUi:SkiaScroll>
+<draw:SkiaScroll Orientation="Both" ZoomLocked="False" ZoomMin="1" ZoomMax="3">
+    <draw:SkiaLayout>
+        <draw:SkiaImage Source="large_map.jpg" />
+    </draw:SkiaLayout>
+</draw:SkiaScroll>
 ```
 
 ## Virtualization for Large Data Sets
@@ -37,55 +37,56 @@ DrawnUi.Maui’s SkiaScroll control provides high-performance, flexible scrollin
 Enable virtualization for smooth performance with thousands of items:
 
 ```xml
-<DrawUi:SkiaScroll UseVirtual="True" Orientation="Vertical">
-    <DrawUi:SkiaLayout 
-        LayoutType="Column" 
+<draw:SkiaScroll Virtualisation="Enabled" Orientation="Vertical">
+    <draw:SkiaLayout
+        Type="Column"
         ItemsSource="{Binding LargeItemCollection}"
-        VirtualizationMode="Enabled">
-        <DrawUi:SkiaLayout.ItemTemplate>
+        Virtualisation="Enabled">
+        <draw:SkiaLayout.ItemTemplate>
             <DataTemplate>
-                <DrawUi:SkiaLabel Text="{Binding Title}" />
+                <draw:SkiaLabel Text="{Binding Title}" />
             </DataTemplate>
-        </DrawUi:SkiaLayout.ItemTemplate>
-    </DrawUi:SkiaLayout>
-</DrawUi:SkiaScroll>
+        </draw:SkiaLayout.ItemTemplate>
+    </draw:SkiaLayout>
+</draw:SkiaScroll>
 ```
 
-- `UseVirtual` on SkiaScroll enables virtualization.
-- `VirtualizationMode` on SkiaLayout controls the strategy (Enabled, Smart, Managed).
+- `Virtualisation` on SkiaScroll controls viewport-based rendering.
+- `Virtualisation` on SkiaLayout controls the strategy (Enabled, Disabled).
 - Combine with `RecyclingTemplate` for template reuse.
+- Use `VirtualisationInflated` to control how much content outside the viewport is still rendered.
 
 ## Custom Headers, Footers, and Overlays
 
 ```xml
-<DrawUi:SkiaScroll HeaderSticky="True" HeaderBehind="False">
-    <DrawUi:SkiaScroll.Header>
-        <DrawUi:SkiaShape Type="Rectangle" BackgroundColor="#3498DB" HeightRequest="80">
-            <DrawUi:SkiaLabel Text="Sticky Header" TextColor="White" FontSize="18" />
-        </DrawUi:SkiaShape>
-    </DrawUi:SkiaScroll.Header>
-    <DrawUi:SkiaLayout LayoutType="Column">
+<draw:SkiaScroll HeaderSticky="True" HeaderBehind="False">
+    <draw:SkiaScroll.Header>
+        <draw:SkiaShape Type="Rectangle" BackgroundColor="#3498DB" HeightRequest="80">
+            <draw:SkiaLabel Text="Sticky Header" TextColor="White" FontSize="18" />
+        </draw:SkiaShape>
+    </draw:SkiaScroll.Header>
+    <draw:SkiaLayout Type="Column">
         <!-- Content -->
-    </DrawUi:SkiaLayout>
-    <DrawUi:SkiaScroll.Footer>
-        <DrawUi:SkiaShape Type="Rectangle" BackgroundColor="#2C3E50" HeightRequest="60">
-            <DrawUi:SkiaLabel Text="Footer" TextColor="White" />
-        </DrawUi:SkiaShape>
-    </DrawUi:SkiaScroll.Footer>
-</DrawUi:SkiaScroll>
+    </draw:SkiaLayout>
+    <draw:SkiaScroll.Footer>
+        <draw:SkiaShape Type="Rectangle" BackgroundColor="#2C3E50" HeightRequest="60">
+            <draw:SkiaLabel Text="Footer" TextColor="White" />
+        </draw:SkiaShape>
+    </draw:SkiaScroll.Footer>
+</draw:SkiaScroll>
 ```
 
 ## Pull-to-Refresh
 
 ```xml
-<DrawUi:SkiaScroll x:Name="MyScrollView" Refreshing="OnRefreshing">
-    <DrawUi:SkiaScroll.RefreshIndicator>
-        <DrawUi:RefreshIndicator />
-    </DrawUi:SkiaScroll.RefreshIndicator>
-    <DrawUi:SkiaLayout LayoutType="Column">
+<draw:SkiaScroll x:Name="MyScrollView" Refreshing="OnRefreshing">
+    <draw:SkiaScroll.RefreshIndicator>
+        <draw:RefreshIndicator />
+    </draw:SkiaScroll.RefreshIndicator>
+    <draw:SkiaLayout Type="Column">
         <!-- Content items -->
-    </DrawUi:SkiaLayout>
-</DrawUi:SkiaScroll>
+    </draw:SkiaLayout>
+</draw:SkiaScroll>
 ```
 
 In code-behind:
@@ -103,13 +104,13 @@ private async void OnRefreshing(object sender, EventArgs e)
 Use SkiaScrollLooped for banners, carousels, or infinite galleries:
 
 ```xml
-<DrawUi:SkiaScrollLooped Orientation="Horizontal" IsBanner="True" CycleSpace="100">
-    <DrawUi:SkiaLayout LayoutType="Row">
-        <DrawUi:SkiaImage Source="image1.jpg" />
-        <DrawUi:SkiaImage Source="image2.jpg" />
+<draw:SkiaScrollLooped Orientation="Horizontal" IsBanner="True" CycleSpace="100">
+    <draw:SkiaLayout Type="Row">
+        <draw:SkiaImage Source="image1.jpg" />
+        <draw:SkiaImage Source="image2.jpg" />
         <!-- More images -->
-    </DrawUi:SkiaLayout>
-</DrawUi:SkiaScrollLooped>
+    </draw:SkiaLayout>
+</draw:SkiaScrollLooped>
 ```
 
 ## Programmatic Scrolling and Position Tracking

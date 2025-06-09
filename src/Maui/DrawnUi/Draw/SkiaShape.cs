@@ -38,6 +38,21 @@ namespace DrawnUi.Draw
             base.ApplyBindingContext();
         }
 
+        /// <summary>
+        /// Available size for children content, accounting for padding and stroke
+        /// </summary>
+        public SKRect MeasuredStrokeAwareChildrenSize { get; protected set; }
+
+        /// <summary>
+        /// Area to use for clipping inside stroke
+        /// </summary>
+        public SKRect MeasuredStrokeAwareClipSize { get; protected set; } //todo!!!
+
+        /// <summary>
+        /// Size we must use to draw stroke to fit inside available destination
+        /// </summary>
+        public SKRect MeasuredStrokeAwareSize { get; protected set; }
+
         #region PROPERTIES
 
         public static readonly BindableProperty PathDataProperty = BindableProperty.Create(nameof(PathData),
@@ -361,29 +376,13 @@ namespace DrawnUi.Draw
             Update();
         }
 
-        public override void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale)
-        {
-            base.Arrange(destination, widthRequest, heightRequest, scale);
-
-            // need to do it everytime we arrange
-            CalculateSizeForStroke(DrawingRect, scale);
-        }
-
-        protected override SKSize GetContentSizeForAutosizeInPixels()
-        {
-            if (WillStroke)
-            {
-                var halfStroke = GetHalfStroke(RenderingScale);
-                var inflate = GetInflationForStroke(halfStroke);
-                return new(ContentSize.Pixels.Width - inflate * 2, ContentSize.Pixels.Height - inflate * 2);
-            }
-
-            return base.GetContentSizeForAutosizeInPixels();
-        }
 
         public virtual bool WillStroke
         {
-            get { return StrokeColor != TransparentColor && StrokeWidth != 0; }
+            get
+            {
+                return StrokeColor != TransparentColor && StrokeWidth != 0;
+            }
         }
 
         protected float GetHalfStroke(float scale)
@@ -400,23 +399,50 @@ namespace DrawnUi.Draw
             return -(float)Math.Ceiling(halfStroke);
         }
 
-        protected void CalculateSizeForStroke(SKRect destination, float scale)
+        protected SKRect CalculateContentSizeForStroke(SKRect destination, float scale)
         {
-            var x = destination.Left;
-            var y = destination.Top;
-
-            var strokeAwareSize = new SKRect(x, y,
-                (float)(x + (destination.Width)),
-                (float)(y + (destination.Height)));
-
-            var willStroke = WillStroke;
-            //float pixelsStrokeWidth = 0;
-
-            float halfStroke = 0;
-            float inflate;
-
-            if (willStroke)
+            if (WillStroke)
             {
+                var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
+
+                var strokeAwareChildrenSize
+                    = ContractPixelsRect(strokeAwareSize, scale, Padding);
+
+                return strokeAwareChildrenSize;
+            }
+
+            return destination;
+        }
+
+        protected SKRect CalculateClipSizeForStroke(SKRect destination, float scale)
+        {
+            if (WillStroke)
+            {
+                var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
+
+                var strokeAwareChildrenSize
+                    = ContractPixelsRect(strokeAwareSize, scale, new Thickness());
+
+                return strokeAwareChildrenSize;
+            }
+
+            return destination;
+        }
+
+        protected SKRect CalculateShapeSizeForStroke(SKRect destination, float scale)
+        {
+            if (WillStroke)
+            {
+                float halfStroke = 0;
+                float inflate;
+                var x = destination.Left;
+                var y = destination.Top;
+
+                var strokeAwareSize = new SKRect(x, y,
+                    (float)(x + (destination.Width)),
+                    (float)(y + (destination.Height)));
+
+
                 halfStroke = GetHalfStroke(scale);
                 inflate = GetInflationForStroke(halfStroke);
 
@@ -428,12 +454,18 @@ namespace DrawnUi.Draw
                     (float)Math.Ceiling(strokeAwareSize.Top),
                     (float)Math.Floor(strokeAwareSize.Right),
                     (float)Math.Floor(strokeAwareSize.Bottom));
+
+                return strokeAwareSize;
             }
 
-            var strokeAwareChildrenSize = ContractPixelsRect(strokeAwareSize, scale, Padding);
+            return destination;
+        }
 
-            MeasuredStrokeAwareSize = strokeAwareSize;
-            MeasuredStrokeAwareChildrenSize = strokeAwareChildrenSize;
+        protected void CalculateSizeForStroke(SKRect destination, float scale)
+        {
+            MeasuredStrokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
+            MeasuredStrokeAwareClipSize = CalculateClipSizeForStroke(destination, scale);
+            MeasuredStrokeAwareChildrenSize = CalculateContentSizeForStroke(MeasuredStrokeAwareSize, scale);
 
             //rescale the path to match container
             if (Type == ShapeType.Path)
@@ -444,12 +476,13 @@ namespace DrawnUi.Draw
                     using SKPath stretched = new();
                     stretched.AddPath(DrawPath);
 
-                    float scaleX = strokeAwareSize.Width / (bounds.Width + halfStroke);
-                    float scaleY = strokeAwareSize.Height / (bounds.Height + halfStroke);
+                    float halfStroke = GetHalfStroke(scale);
+                    float scaleX = MeasuredStrokeAwareSize.Width / (bounds.Width + halfStroke);
+                    float scaleY = MeasuredStrokeAwareSize.Height / (bounds.Height + halfStroke);
 
-                    float translateX = (strokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 -
+                    float translateX = (MeasuredStrokeAwareSize.Width - (bounds.Width + halfStroke) * scaleX) / 2 -
                                        bounds.Left * scaleX;
-                    float translateY = (strokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 -
+                    float translateY = (MeasuredStrokeAwareSize.Height - (bounds.Height + halfStroke) * scaleY) / 2 -
                                        bounds.Top * scaleY;
 
                     SKMatrix matrix = SKMatrix.CreateScale(scaleX, scaleY);
@@ -464,10 +497,66 @@ namespace DrawnUi.Draw
             }
         }
 
+        protected SKRect CalculateSizeForStrokeFromContent(SKRect destination, float scale)
+        {
+            if (WillStroke)
+            {
+                float halfStroke = GetHalfStroke(scale);
+                float inflate = -GetInflationForStroke(halfStroke);
+
+                var strokeAwareSize = new SKRect(
+                    destination.Left - inflate,
+                    destination.Top - inflate,
+                    destination.Right + inflate,
+                    destination.Bottom + inflate
+                );
+
+                strokeAwareSize = new SKRect(
+                    (float)Math.Floor(strokeAwareSize.Left),
+                    (float)Math.Floor(strokeAwareSize.Top),
+                    (float)Math.Ceiling(strokeAwareSize.Right),
+                    (float)Math.Ceiling(strokeAwareSize.Bottom)
+                );
+
+                return strokeAwareSize;
+            }
+
+            return destination;
+        }
+
+        public override void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale)
+        {
+            base.Arrange(destination, widthRequest, heightRequest, scale);
+
+            // need to do it everytime we arrange
+            CalculateSizeForStroke(DrawingRect, scale);
+        }
+
+        protected override SKSize GetContentSizeForAutosizeInPixels()
+        {
+            if (WillStroke)
+            {
+                var rect= CalculateSizeForStrokeFromContent(new (0,0, ContentSize.Pixels.Width, ContentSize.Pixels.Height), ContentSize.Scale);
+                return rect.Size;
+
+                var halfStroke = GetHalfStroke(RenderingScale);
+                var inflate = GetInflationForStroke(halfStroke);
+                return new(ContentSize.Pixels.Width - inflate * 2, ContentSize.Pixels.Height - inflate * 2);
+            }
+
+            return base.GetContentSizeForAutosizeInPixels();
+        }
+
+        protected override ScaledSize MeasureContent(IEnumerable<SkiaControl> children, SKRect rectForChildrenPixels, float scale)
+        {
+            var adjust = CalculateContentSizeForStroke(rectForChildrenPixels, scale);
+
+            return base.MeasureContent(children, adjust, scale);
+        }
+
         public SKPath DrawPathResized { get; } = new();
         public SKPath DrawPathAligned { get; } = new();
-        public SKRect MeasuredStrokeAwareChildrenSize { get; protected set; }
-        public SKRect MeasuredStrokeAwareSize { get; protected set; }
+
 
         public double BorderWithPixels
         {
@@ -530,7 +619,7 @@ namespace DrawnUi.Draw
             path ??= new SKPath();
 
             var strokeAwareSize = MeasuredStrokeAwareSize;
-            var strokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize;
+            var strokeAwareChildrenSize = MeasuredStrokeAwareClipSize;
 
             if (arguments is ShapePaintArguments args)
             {
@@ -835,18 +924,21 @@ namespace DrawnUi.Draw
             };
 
 
+            /// <summary>
+            /// Paints the stroke with both pixel alignment and width compensation for optimal visual consistency
+            /// </summary>
+            /// <param name="paint">The paint object to use for stroke rendering</param>
             void PaintStroke(SKPaint paint)
             {
                 paint.BlendMode = this.StrokeBlendMode;
 
                 SetupGradient(paint, StrokeGradient, outRect);
 
-                //todo add shadow = GLOW to stroke!
-                paint.ImageFilter = null; // kill background shadow
+                paint.ImageFilter = null;
 
                 if (StrokeGradient?.Opacity != 1)
                 {
-                    paint.Shader = null; //kill background gradient
+                    paint.Shader = null;
                 }
 
                 paint.Style = SKPaintStyle.Stroke;
@@ -863,7 +955,7 @@ namespace DrawnUi.Draw
                     paint.PathEffect = null;
                 }
 
-                paint.StrokeWidth = pixelsStrokeWidth;
+                float adjustedStrokeWidth = pixelsStrokeWidth;
                 paint.Color = StrokeColor.ToSKColor();
                 paint.IsAntialias = true;
 
@@ -872,21 +964,48 @@ namespace DrawnUi.Draw
                     case ShapeType.Rectangle:
                         if (CornerRadius != default)
                         {
-                            if (DrawRoundedRect == null)
-                                DrawRoundedRect = new();
-                            DrawRoundedRect.SetRectRadii(outRect, radii);
-                            ctx.Context.Canvas.DrawRoundRect(DrawRoundedRect, paint);
+                            // Apply width compensation for curves
+                            adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                            paint.StrokeWidth = adjustedStrokeWidth;
+
+                            // Apply pixel alignment for thin strokes
+                            if (pixelsStrokeWidth <= 2.0f * scale)
+                            {
+                                var pixelAlignedRect = new SKRect(
+                                    (float)Math.Round(outRect.Left) + 0.5f,
+                                    (float)Math.Round(outRect.Top) + 0.5f,
+                                    (float)Math.Round(outRect.Right) - 0.5f,
+                                    (float)Math.Round(outRect.Bottom) - 0.5f
+                                );
+
+                                if (DrawRoundedRect == null)
+                                    DrawRoundedRect = new();
+                                DrawRoundedRect.SetRectRadii(pixelAlignedRect, radii);
+                                ctx.Context.Canvas.DrawRoundRect(DrawRoundedRect, paint);
+                            }
+                            else
+                            {
+                                if (DrawRoundedRect == null)
+                                    DrawRoundedRect = new();
+                                DrawRoundedRect.SetRectRadii(outRect, radii);
+                                ctx.Context.Canvas.DrawRoundRect(DrawRoundedRect, paint);
+                            }
                         }
                         else
+                        {
+                            paint.StrokeWidth = pixelsStrokeWidth;
                             ctx.Context.Canvas.DrawRect(outRect, paint);
-
+                        }
                         break;
 
                     case ShapeType.Circle:
+                        adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                        paint.StrokeWidth = adjustedStrokeWidth;
                         ctx.Context.Canvas.DrawCircle(outRect.MidX, outRect.MidY, minSize / 2.0f, paint);
                         break;
 
                     case ShapeType.Line:
+                        paint.StrokeWidth = pixelsStrokeWidth;
                         if (Points != null && Points.Count > 1)
                         {
                             DrawPathShape.Reset();
@@ -901,18 +1020,20 @@ namespace DrawnUi.Draw
 
                             ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
                         }
-
                         break;
 
                     case ShapeType.Ellipse:
+                        adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                        paint.StrokeWidth = adjustedStrokeWidth;
                         DrawPathShape.Reset();
                         DrawPathShape.AddOval(outRect);
                         ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
                         break;
 
                     case ShapeType.Arc:
+                        adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                        paint.StrokeWidth = adjustedStrokeWidth;
                         DrawPathShape.Reset();
-                        // Start & End Angle for Radial Gauge
                         var startAngle = (float)Value1;
                         var sweepAngle = (float)Value2;
                         DrawPathShape.AddArc(outRect, startAngle, sweepAngle);
@@ -920,13 +1041,15 @@ namespace DrawnUi.Draw
                         break;
 
                     case ShapeType.Path:
+                        adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                        paint.StrokeWidth = adjustedStrokeWidth;
                         DrawPathShape.Reset();
                         DrawPathShape.AddPath(DrawPathAligned);
                         ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
-
                         break;
 
                     case ShapeType.Polygon:
+                        paint.StrokeWidth = pixelsStrokeWidth;
                         if (Points != null && Points.Count > 1)
                         {
                             DrawPathShape.Reset();
@@ -935,6 +1058,8 @@ namespace DrawnUi.Draw
 
                             if (SmoothPoints > 0)
                             {
+                                adjustedStrokeWidth = GetCompensatedStrokeWidth(pixelsStrokeWidth, scale);
+                                paint.StrokeWidth = adjustedStrokeWidth;
                                 AddSmoothPath(path, Points, strokeAwareSize, SmoothPoints, true);
                             }
                             else
@@ -944,7 +1069,6 @@ namespace DrawnUi.Draw
 
                             ctx.Context.Canvas.DrawPath(path, RenderingPaint);
                         }
-
                         break;
                 }
             }
@@ -1505,5 +1629,39 @@ namespace DrawnUi.Draw
 
             return points;
         }
+
+        /// <summary>
+        /// Calculates compensated stroke width for curved shapes to maintain visual consistency with straight edges
+        /// </summary>
+        /// <param name="originalStrokeWidth">The original stroke width in pixels</param>
+        /// <param name="scale">The current rendering scale</param>
+        /// <returns>Adjusted stroke width that compensates for antialiasing differences</returns>
+        protected float GetCompensatedStrokeWidth(float originalStrokeWidth, float scale)
+        {
+            if (originalStrokeWidth <= 0)
+                return originalStrokeWidth;
+
+            float compensationFactor = 1.0f;
+
+            if (originalStrokeWidth <= 2.0f * scale)
+            {
+                compensationFactor = 1.15f;
+            }
+            else if (originalStrokeWidth <= 4.0f * scale)
+            {
+                compensationFactor = 1.10f;
+            }
+            else if (originalStrokeWidth <= 6.0f * scale)
+            {
+                compensationFactor = 1.08f;
+            }
+            else
+            {
+                compensationFactor = 1.05f;
+            }
+
+            return originalStrokeWidth * compensationFactor;
+        }
+
     }
 }
