@@ -1,14 +1,12 @@
-﻿using System.ComponentModel;
-using CoreGraphics;
+﻿using CoreGraphics;
 using Foundation;
 using Metal;
 using MetalKit;
-using ObjCRuntime;
 using SkiaSharp.Views.iOS;
+using UIKit;
 
 namespace DrawnUi.Views
 {
-
     /// <summary>
     /// A Metal-backed SkiaSharp view that implements retained rendering  
     /// </summary>
@@ -40,6 +38,7 @@ namespace DrawnUi.Views
         private volatile bool _swapPending; // Flag to signal swap
         private bool _firstFrame = true; // Track first frame for initial setup
         private bool _needsFullRedraw = true; // For initial frame or size change
+        private GCHandle _queuePin;
 
         /// <summary>
         /// Gets a value indicating whether the view is using manual refresh mode.
@@ -131,21 +130,20 @@ namespace DrawnUi.Views
 
             // Hook up the drawing
             Delegate = this;
+
+            //fix GC crash
+            _queuePin = GCHandle.Alloc(_backendContext.Queue, GCHandleType.Pinned);
         }
 
         void IMTKViewDelegate.DrawableSizeWillChange(MTKView view, CGSize size)
         {
             var newSize = size.ToSKSize();
 
-            // Only update if the size actually changed
-            if (newSize.Width != _canvasSize.Width || newSize.Height != _canvasSize.Height)
-            {
-                _canvasSize = newSize;
-                PrepareNewTexture(); // Schedule texture update
-            }
+            _canvasSize = newSize;
+            PrepareNewTexture();
 
             if (ManualRefresh)
-                SetNeedsDisplay();
+                SetNeedsDisplay(); // only if size *really* changed
         }
 
         void IMTKViewDelegate.Draw(MTKView view)
@@ -181,14 +179,8 @@ namespace DrawnUi.Views
                 textureToUse = _retainedTexture;
                 if (textureToUse == null)
                 {
-                    // Emergency texture creation if somehow we still don't have one
-                    PrepareNewTexture();
-                    PerformTextureSwap();
-                    textureToUse = _retainedTexture;
-
-                    // Still null? Can't continue.
-                    if (textureToUse == null)
-                        return;
+                    //prevent mid-frame jank
+                    return;
                 }
             }
 
@@ -209,8 +201,7 @@ namespace DrawnUi.Views
             var e = new SKPaintMetalSurfaceEventArgs(surface, renderTarget, GRSurfaceOrigin.TopLeft, SKColorType.Bgra8888);
             OnPaintSurface(e);
 
-            // Flush SkiaSharp contents
-            canvas.Flush();
+            //canvas.Flush();
             surface.Flush();
             _context.Flush();
 
@@ -298,6 +289,11 @@ namespace DrawnUi.Views
             {
                 lock (_textureSwapLock)
                 {
+                    if (_queuePin.IsAllocated)
+                    {
+                        _queuePin.Free();
+                    }
+
                     _retainedTexture?.Dispose();
                     _pendingTexture?.Dispose();
                     _retainedTexture = null;

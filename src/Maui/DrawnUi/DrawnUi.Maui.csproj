@@ -121,7 +121,6 @@
 
     <ItemGroup>
         <Folder Include="Internals\Handlers\" />
-        <Folder Include="Shared\Handlers\" />
     </ItemGroup>
 
 
@@ -141,7 +140,6 @@
             <Link>Platforms/iOS/%(RecursiveDir)%(Filename)%(Extension)</Link>
         </Compile>
     </ItemGroup>
-
 
 
     <Import Project="..\..\Shared\Shared.projitems" Label="Shared" />

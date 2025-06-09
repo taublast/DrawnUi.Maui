@@ -4613,14 +4613,6 @@ namespace DrawnUi.Draw
         public Dictionary<string, Action<SkiaControl, DrawingContext>> ExecuteOnPaint { get; } = new();
 
         /// <summary>
-        /// Releases unmanaged resources before the object is reclaimed by garbage collection.
-        /// </summary>
-        ~SkiaControl()
-        {
-            Dispose(false);
-        }
-
-        /// <summary>
         /// Throws an <see cref="ObjectDisposedException"/> if this object has been disposed.
         /// </summary>
         protected void ThrowIfDisposed()
@@ -4716,6 +4708,16 @@ namespace DrawnUi.Draw
                 EffectsGestureProcessors = null;
                 EffectPostRenderer = null;
             });
+        }
+
+        /// <summary>
+        /// Releases unmanaged resources before the object is reclaimed by garbage collection.
+        /// </summary>
+        ~SkiaControl()
+        {
+            if (_isDisposed)
+                return;
+            Dispose(false);
         }
 
         /// <summary>

@@ -2171,8 +2171,10 @@ public partial class SkiaCamera : SkiaControl
             Start();
     }
 
-    public override void OnDisposing()
+    public override void OnWillDisposeWithChildren()
     {
+        base.OnWillDisposeWithChildren();
+
         Super.OnNativeAppResumed -= Super_OnNativeAppResumed;
         Super.OnNativeAppPaused -= Super_OnNativeAppPaused;
 
@@ -2191,8 +2193,6 @@ public partial class SkiaCamera : SkiaControl
         NativeControl = null;
 
         Instances.Remove(this);
-
-        base.OnDisposing();
     }
 
     public static List<SkiaCamera> Instances = new();
