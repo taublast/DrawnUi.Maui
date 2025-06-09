@@ -38,6 +38,7 @@ namespace DrawnUi.Views
         private volatile bool _swapPending; // Flag to signal swap
         private bool _firstFrame = true; // Track first frame for initial setup
         private bool _needsFullRedraw = true; // For initial frame or size change
+        private GCHandle _queuePin;
 
         /// <summary>
         /// Gets a value indicating whether the view is using manual refresh mode.
@@ -129,6 +130,9 @@ namespace DrawnUi.Views
 
             // Hook up the drawing
             Delegate = this;
+
+            //fix GC crash
+            _queuePin = GCHandle.Alloc(_backendContext.Queue, GCHandleType.Pinned);
         }
 
         void IMTKViewDelegate.DrawableSizeWillChange(MTKView view, CGSize size)
@@ -285,6 +289,11 @@ namespace DrawnUi.Views
             {
                 lock (_textureSwapLock)
                 {
+                    if (_queuePin.IsAllocated)
+                    {
+                        _queuePin.Free();
+                    }
+
                     _retainedTexture?.Dispose();
                     _pendingTexture?.Dispose();
                     _retainedTexture = null;
