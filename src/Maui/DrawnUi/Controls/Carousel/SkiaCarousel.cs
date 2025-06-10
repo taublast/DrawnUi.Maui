@@ -1306,6 +1306,11 @@ public class SkiaCarousel : SnappingLayout
         if (!IsUserPanning || !RespondsToGestures || args.Type == TouchActionResult.Tapped)
         {
             consumed = PassToChildren();
+            if (consumed == this)
+            {
+                //BlockGesturesBelow fired
+                consumed = null;
+            }
             if (consumed != null)
             {
                 return consumed;
@@ -1433,10 +1438,7 @@ public class SkiaCarousel : SnappingLayout
 
         if (!passedToChildren)
         {
-            consumed = PassToChildren();
-            if (consumed == null)
-                return consumedDefault;
-            return consumed;
+            return PassToChildren();
         }
 
         return consumedDefault;

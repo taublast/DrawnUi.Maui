@@ -470,7 +470,7 @@ namespace DrawnUi.Controls
                 if (SnapPoints[1] == CurrentSnap)
                     isOpen = false;
             }
-            Debug.WriteLine($"[SkiaDrawer] SetIsOpen: open {isOpen} moving {InTransition}");
+            //Debug.WriteLine($"[SkiaDrawer] SetIsOpen: open {isOpen} moving {InTransition}");
             IsOpen = isOpen;
         }
 
@@ -600,6 +600,11 @@ namespace DrawnUi.Controls
                 || !RespondsToGestures)
             {
                 consumed = PassToChildren();
+                if (consumed == this)
+                {
+                    //BlockGesturesBelow fired
+                    consumed = null;
+                }
                 if (consumed != null && args.Type != TouchActionResult.Up)
                 {
                     if (args.Type == TouchActionResult.Tapped)
@@ -848,10 +853,7 @@ namespace DrawnUi.Controls
 
                 if (!passedToChildren)
                 {
-                    consumed = PassToChildren();
-                    if (consumed == null)
-                        return consumedDefault;
-                    return consumed;
+                    return PassToChildren();
                 }
             }
 

@@ -108,7 +108,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
         this.AddSubView(new ButtonLabel()
         {
-            Text = "Test",
+            Text = "Button",
             TextColor = this.TextColor,
         });
     }

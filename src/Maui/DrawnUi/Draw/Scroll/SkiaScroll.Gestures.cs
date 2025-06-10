@@ -253,6 +253,11 @@ public partial class SkiaScroll
                                || args.Type == TouchActionResult.Tapped || !RespondsToGestures))
         {
             var childConsumed = PassToChildren();
+            if (childConsumed == this)
+            {
+                //BlockGesturesBelow fired
+                childConsumed = null;
+            }
             if (childConsumed != null)
             {
                 if (args.Type == TouchActionResult.Panning)
@@ -306,6 +311,11 @@ public partial class SkiaScroll
                         ResetPan();
                         //_panningStartOffsetPts = new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
                         consumed = PassToChildren();
+                        if (consumed == this)
+                        {
+                            //BlockGesturesBelow fired
+                            consumed = null;
+                        }
                     }
 
                     break;
@@ -590,10 +600,7 @@ public partial class SkiaScroll
 
         if (!passedToChildren) //will not pass when panning
         {
-            consumed = PassToChildren();
-            if (consumed == null)
-                return consumedDefault;
-            return consumed;
+            return PassToChildren();
         }
 
         return consumedDefault;

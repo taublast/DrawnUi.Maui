@@ -493,6 +493,11 @@ public class SkiaSlider : SkiaLayout
                 TouchBusy = false;
 
             consumed = PassToChildren();
+            if (consumed == this)
+            {
+                //BlockGesturesBelow fired
+                consumed = null;
+            }
             if (consumed != null && args.Type != TouchActionResult.Up)
             {
                 return consumed;
@@ -674,10 +679,7 @@ public class SkiaSlider : SkiaLayout
 
         if (!passedToChildren)
         {
-            consumed = PassToChildren();
-            if (consumed == null)
-                return consumedDefault;
-            return consumed;
+            return PassToChildren();
         }
 
         return consumedDefault;
