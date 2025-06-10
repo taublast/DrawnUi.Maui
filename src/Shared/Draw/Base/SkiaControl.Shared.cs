@@ -5159,9 +5159,8 @@ namespace DrawnUi.Draw
         /// </summary>
         public virtual void Repaint()
         {
-            if (IsDisposing || NeedUpdate ||
+            if (IsDisposing ||
                 Superview == null
-                //|| IsParentIndependent
                 || IsDisposed || Parent == null)
                 return;
 
@@ -5911,7 +5910,10 @@ namespace DrawnUi.Draw
         public virtual void Update()
         {
             if (NeedUpdate && Thread.CurrentThread.ManagedThreadId == _updatedFromThread)
+            {
+                Repaint();
                 return;
+            };
 
             if (OutputDebug)
             {
