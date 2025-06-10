@@ -25,7 +25,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             return ScaledSize.Default;
 
         var measured = base.Measure(widthConstraint, heightConstraint, scale);
-        var test = this.WidthRequest;
+
         return measured;
     }
 
