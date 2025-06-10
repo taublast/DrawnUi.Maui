@@ -230,7 +230,9 @@ public partial class SkiaCamera : SkiaControl
 #if ONPLATFORM
 
     /// <summary>
-    /// Measures scene brightness using pixel luminance analysis (moved from native implementations to eliminate redundancy)
+    /// Measures scene brightness using adaptive exposure bracketing to handle extreme lighting conditions.
+    /// For bright outdoor conditions, uses progressively faster shutter speeds and lower ISO until non-clipped data is obtained.
+    /// Falls back to histogram analysis of darkest pixels when complete saturation occurs.
     /// </summary>
     /// <param name="meteringMode">Spot (10x10 points) or CenterWeighted (50x50 points)</param>
     /// <returns>Brightness measurement result</returns>
@@ -241,7 +243,7 @@ public partial class SkiaCamera : SkiaControl
             if (NativeControl == null)
                 return new BrightnessResult { Success = false, ErrorMessage = "Camera not initialized" };
 
-            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting brightness measurement with {meteringMode} mode");
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting adaptive brightness measurement with {meteringMode} mode");
 
             // A - Get preview to check what camera has chosen (auto exposure)
             CapturedImage autoFrame = null;
@@ -267,54 +269,150 @@ public partial class SkiaCamera : SkiaControl
 
             // Get possible exposure ranges
             var exposureRange = NativeControl.GetExposureRange();
-            double brightness = 0.0;
-            double pixelLuminance;
-
-            CapturedImage frame = null;
-            bool manualExposureWasSet = false;
 
             if (exposureRange.IsManualExposureSupported)
             {
-                System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure supported - using scene-adaptive approach");
+                // Use adaptive exposure bracketing for accurate measurement
+                var result = await MeasureWithAdaptiveExposure(meteringMode, autoISO, autoShutter, exposureRange);
+                return result;
+            }
 
-                // B - Set manual values according to probable light conditions we just read
-                float manualISO, manualShutter;
+            else
+            {
+                // Fallback to direct pixel analysis when manual exposure is not supported
+                System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
 
-                if (autoISO < 200 && autoShutter > 1/100f)
+                CapturedImage frame = null;
+                for (int attempts = 0; attempts < 10; attempts++)
                 {
-                    // Bright conditions - use bright baseline
-                    manualISO = 50f;
-                    manualShutter = 1/250f;
-                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected bright conditions - using bright baseline");
+                    frame = NativeControl.GetPreviewImage();
+                    if (frame?.Image != null)
+                        break;
+                    await Task.Delay(100);
                 }
-                else if (autoISO > 800 || autoShutter < 1/100f)
+
+                if (frame?.Image == null)
+                    return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
+
+                using (frame)
                 {
-                    // Dark conditions - use dark baseline
-                    manualISO = 400f;
-                    manualShutter = 1/30f;
-                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected dark conditions - using dark baseline");
+                    var pixelLuminance = AnalyzeFrameLuminance(frame.Image, meteringMode);
+                    var brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
+
+                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel brightness: {brightness:F0} lux");
+
+                    return new BrightnessResult
+                    {
+                        Success = true,
+                        Brightness = brightness
+                    };
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA ERROR] MeasureSceneBrightness failed: {ex.Message}");
+            return new BrightnessResult { Success = false, ErrorMessage = ex.Message };
+        }
+    }
+
+    /// <summary>
+    /// Measures brightness using adaptive exposure bracketing to handle extreme lighting conditions
+    /// </summary>
+    private async Task<BrightnessResult> MeasureWithAdaptiveExposure(MeteringMode meteringMode, double autoISO, double autoShutter, CameraManualExposureRange exposureRange)
+    {
+        System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Starting adaptive exposure measurement (aggressive-to-conservative)");
+
+        // Define exposure bracketing sequence from conservative to aggressive
+        var exposureSequence = new List<(float iso, float shutter, string description)>();
+
+        // SMART STARTING POINT: Very bright outdoor start dark, Indoor/low light start moderate
+        if (autoISO < 100 && autoShutter > 1/200f)
+        {
+            // Very bright outdoor conditions - start darkest to avoid white screen
+            if (exposureRange.MinISO <= 25)
+                exposureSequence.Add((25f, 1/1000f, "darkest"));
+            exposureSequence.Add((50f, 1/1000f, "very dark"));
+            exposureSequence.Add((50f, 1/500f, "dark"));
+            exposureSequence.Add((50f, 1/250f, "moderate"));
+            exposureSequence.Add((100f, 1/125f, "bright"));
+            exposureSequence.Add((100f, 1/60f, "brightest"));
+        }
+        else if (autoISO > 400 || autoShutter < 1/60f)
+        {
+            // Dark conditions - start brighter to get measurable data
+            exposureSequence.Add((400f, 1/30f, "brightest"));
+            exposureSequence.Add((200f, 1/60f, "moderate"));
+            exposureSequence.Add((100f, 1/125f, "darker"));
+        }
+        else
+        {
+            // Indoor/moderate conditions - start moderate, go both ways
+            exposureSequence.Add((100f, 1/125f, "moderate"));
+            exposureSequence.Add((100f, 1/60f, "brighter"));
+            exposureSequence.Add((200f, 1/60f, "brightest"));
+            exposureSequence.Add((50f, 1/250f, "darker"));
+            exposureSequence.Add((50f, 1/500f, "darkest"));
+        }
+
+        // Try each exposure setting until we get good data (not clipped, not too dark)
+        for (int i = 0; i < exposureSequence.Count; i++)
+        {
+            var (iso, shutter, description) = exposureSequence[i];
+
+            // Constrain to hardware limits
+            var constrainedISO = Math.Max(exposureRange.MinISO, Math.Min(exposureRange.MaxISO, iso));
+            var constrainedShutter = Math.Max(exposureRange.MinShutterSpeed, Math.Min(exposureRange.MaxShutterSpeed, shutter));
+
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Attempt {i + 1}: {description} - ISO {constrainedISO}, Shutter {constrainedShutter}s");
+
+            var result = await TryExposureSettings(meteringMode, constrainedISO, constrainedShutter);
+
+            if (result.Success)
+            {
+                if (result.IsClipped)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Attempt {i + 1} overexposed (white screen), trying next DARKER setting");
+                    continue; // This should never happen since we start dark, but just in case
+                }
+                else if (result.IsTooDark)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Attempt {i + 1} too dark, trying next LIGHTER setting");
+                    continue; // Move to next setting which should be lighter
                 }
                 else
                 {
-                    // Mid/indoor conditions - use indoor baseline
-                    manualISO = 100f;
-                    manualShutter = 1/60f;
-                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Detected mid/indoor conditions - using indoor baseline");
-                }
-
-                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Setting manual exposure: ISO {manualISO}, Shutter {manualShutter}s");
-
-                bool manualExposureSet = NativeControl.SetManualExposure(manualISO, manualShutter);
-                if (manualExposureSet)
-                {
-                    manualExposureWasSet = true;
-                    // Wait for camera to apply settings
-                    await Task.Delay(1500);
+                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Successful measurement with {description}: {result.Brightness:F0} lux");
+                    return new BrightnessResult { Success = true, Brightness = result.Brightness };
                 }
             }
+        }
 
-            // C - Get frame for analysis (either with manual settings applied or auto)
-            for (int attempts = 0; attempts < 10; attempts++)
+        // If all attempts failed (clipped or too dark), use histogram analysis on the best available data
+        System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] All exposure attempts failed - using histogram analysis");
+        return await FallbackHistogramAnalysis(meteringMode);
+    }
+
+    /// <summary>
+    /// Tries a specific exposure setting and returns measurement result with clipping and darkness detection
+    /// </summary>
+    private async Task<(bool Success, double Brightness, bool IsClipped, bool IsTooDark)> TryExposureSettings(MeteringMode meteringMode, float iso, float shutter)
+    {
+        try
+        {
+            // Set manual exposure
+            bool exposureSet = NativeControl.SetManualExposure(iso, shutter);
+            if (!exposureSet)
+            {
+                return (false, 0, false, false);
+            }
+
+            // Wait for camera to apply settings
+            await Task.Delay(1000);
+
+            // Capture frame
+            CapturedImage frame = null;
+            for (int attempts = 0; attempts < 5; attempts++)
             {
                 frame = NativeControl.GetPreviewImage();
                 if (frame?.Image != null)
@@ -322,85 +420,179 @@ public partial class SkiaCamera : SkiaControl
                 await Task.Delay(100);
             }
 
-            // Restore auto exposure AFTER getting the frame
-            if (manualExposureWasSet)
-            {
-                NativeControl.SetAutoExposure();
-            }
-
             if (frame?.Image == null)
-                return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
+            {
+                return (false, 0, false, false);
+            }
 
             using (frame)
             {
-                pixelLuminance = AnalyzeFrameLuminance(frame.Image, meteringMode);
+                // Analyze luminance and check for clipping and darkness
+                var pixelLuminance = AnalyzeFrameLuminance(frame.Image, meteringMode);
+                var clippingInfo = AnalyzeClipping(frame.Image, meteringMode);
 
-                if (exposureRange.IsManualExposureSupported && manualExposureWasSet)
+                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Luminance: {pixelLuminance:F1}, Clipped pixels: {clippingInfo.ClippedPercentage:F1}%");
+
+                // Consider it clipped if more than 80% of sampled pixels are near maximum
+                bool isClipped = clippingInfo.ClippedPercentage > 80;
+
+                // Consider it too dark if average luminance is very low (< 10 on 0-255 scale)
+                bool isTooDark = pixelLuminance < 10;
+
+                if (!isClipped && !isTooDark)
                 {
-                    // Check if manual settings were actually applied
+                    // Good exposure - calculate brightness using exposure settings
                     var actualISO = CameraDevice.Meta.ISO;
                     var actualShutter = CameraDevice.Meta.Shutter;
-                    var baseline = exposureRange.RecommendedBaselines[0];
+                    var actualAperture = CameraDevice.Meta.Aperture;
 
-                    bool isoMatches = Math.Abs(actualISO - baseline.ISO) < 10;
-                    bool shutterMatches = Math.Abs(actualShutter - baseline.ShutterSpeed) < 0.005;
-
-                    if (isoMatches && shutterMatches)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual settings verified: ISO {actualISO}, Shutter {actualShutter}s");
-
-                        // D - Use manual exposure calculation with verified settings
-                        brightness = CalculateSceneBrightnessFromPixels(
-                            pixelLuminance,
-                            actualISO,
-                            CameraDevice.Meta.Aperture,
-                            actualShutter
-                        );
-
-                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual exposure brightness: {brightness:F0} lux");
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Manual settings not applied - Expected ISO {baseline.ISO}, got {actualISO}; Expected shutter {baseline.ShutterSpeed}, got {actualShutter}");
-                        brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
-                    }
+                    var brightness = CalculateSceneBrightnessFromPixels(pixelLuminance, actualISO, actualAperture, actualShutter);
+                    return (true, brightness, false, false);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
-
-                    // Use direct pixel-to-lux mapping (all platforms now use this approach)
-                    // This approach directly correlates pixel brightness to real-world lux values
-                    brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
-
-                    // Alternative: Camera exposure-based calculation (less reliable for actual scene brightness)
-                    //var brightness = CalculateSceneBrightnessFromPixels(pixelLuminance, CameraDevice.Meta.ISO, CameraDevice.Meta.Aperture, CameraDevice.Meta.Shutter);
+                    return (true, 0, isClipped, isTooDark);
                 }
-
-                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Brightness measurement complete: {brightness:F0} lux");
-
-                if (brightness > 0)
-                {
-                    return new BrightnessResult
-                    {
-                        Success = true,
-                        Brightness = brightness
-                    };
-                }
-                else
-                {
-                    return new BrightnessResult
-                    {
-                        Success = false,
-                    };
-                }
-
             }
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA ERROR] MeasureSceneBrightness failed: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] TryExposureSettings failed: {ex.Message}");
+            return (false, 0, false, false);
+        }
+        finally
+        {
+            // Always restore auto exposure
+            NativeControl.SetAutoExposure();
+        }
+    }
+
+    /// <summary>
+    /// Analyzes pixel clipping in the metering area
+    /// </summary>
+    private (double ClippedPercentage, double AverageOfNonClipped) AnalyzeClipping(SKImage frame, MeteringMode meteringMode)
+    {
+        var renderingScale = GetRenderingScaleFor(frame.Width, frame.Height);
+        var sampleSizePoints = meteringMode == MeteringMode.Spot ? 10 : 50;
+        var sampleSizePixels = (int)(sampleSizePoints * renderingScale);
+
+        var width = frame.Width;
+        var height = frame.Height;
+        var startX = (width - sampleSizePixels) / 2;
+        var startY = (height - sampleSizePixels) / 2;
+        var endX = startX + sampleSizePixels;
+        var endY = startY + sampleSizePixels;
+
+        using var bitmap = SKBitmap.FromImage(frame);
+
+        int totalPixels = 0;
+        int clippedPixels = 0;
+        double totalNonClippedLuminance = 0;
+        int nonClippedCount = 0;
+
+        for (int y = startY; y < endY; y++)
+        {
+            for (int x = startX; x < endX; x++)
+            {
+                var pixel = bitmap.GetPixel(x, y);
+                var luminance = (0.299 * pixel.Red + 0.587 * pixel.Green + 0.114 * pixel.Blue);
+
+                totalPixels++;
+
+                // Consider pixels clipped if they're very close to maximum (250+)
+                if (luminance >= 250)
+                {
+                    clippedPixels++;
+                }
+                else
+                {
+                    totalNonClippedLuminance += luminance;
+                    nonClippedCount++;
+                }
+            }
+        }
+
+        var clippedPercentage = totalPixels > 0 ? (clippedPixels * 100.0 / totalPixels) : 0;
+        var averageNonClipped = nonClippedCount > 0 ? (totalNonClippedLuminance / nonClippedCount) : 0;
+
+        return (clippedPercentage, averageNonClipped);
+    }
+
+    /// <summary>
+    /// Fallback analysis using histogram of darkest available pixels
+    /// </summary>
+    private async Task<BrightnessResult> FallbackHistogramAnalysis(MeteringMode meteringMode)
+    {
+        try
+        {
+            // Use the most aggressive settings we can for final attempt
+            var exposureRange = NativeControl.GetExposureRange();
+            var minISO = Math.Max(25, exposureRange.MinISO);
+            var fastestShutter = Math.Max(1/1000f, exposureRange.MinShutterSpeed);
+
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Fallback analysis with ISO {minISO}, Shutter {fastestShutter}s");
+
+            bool exposureSet = NativeControl.SetManualExposure(minISO, fastestShutter);
+            if (exposureSet)
+            {
+                await Task.Delay(1000);
+            }
+
+            CapturedImage frame = null;
+            for (int attempts = 0; attempts < 5; attempts++)
+            {
+                frame = NativeControl.GetPreviewImage();
+                if (frame?.Image != null)
+                    break;
+                await Task.Delay(100);
+            }
+
+            if (frame?.Image == null)
+            {
+                return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for fallback analysis" };
+            }
+
+            using (frame)
+            {
+                var clippingInfo = AnalyzeClipping(frame.Image, meteringMode);
+
+                if (clippingInfo.AverageOfNonClipped > 0)
+                {
+                    // Use the darkest pixels we could find to estimate brightness
+                    var actualISO = CameraDevice.Meta.ISO;
+                    var actualShutter = CameraDevice.Meta.Shutter;
+                    var actualAperture = CameraDevice.Meta.Aperture;
+
+                    // Extrapolate from non-clipped pixels - assume they represent shadows in very bright scene
+                    var estimatedSceneLuminance = clippingInfo.AverageOfNonClipped * 3; // Assume shadows are ~1/3 of scene brightness
+                    var brightness = CalculateSceneBrightnessFromPixels(estimatedSceneLuminance, actualISO, actualAperture, actualShutter);
+
+                    // For extremely bright conditions, apply a multiplier since we're measuring shadows
+                    if (clippingInfo.ClippedPercentage > 95)
+                    {
+                        brightness *= 5; // Very bright outdoor conditions
+                    }
+
+                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Fallback estimate: {brightness:F0} lux (from {clippingInfo.ClippedPercentage:F1}% clipped)");
+
+                    return new BrightnessResult { Success = true, Brightness = Math.Min(brightness, 200000) }; // Cap at reasonable maximum
+                }
+                else
+                {
+                    // Everything is clipped - return maximum estimate
+                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Complete saturation detected - returning maximum estimate");
+                    return new BrightnessResult { Success = true, Brightness = 100000 }; // Bright daylight estimate
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Fallback analysis failed: {ex.Message}");
             return new BrightnessResult { Success = false, ErrorMessage = ex.Message };
+        }
+        finally
+        {
+            NativeControl.SetAutoExposure();
         }
     }
 
