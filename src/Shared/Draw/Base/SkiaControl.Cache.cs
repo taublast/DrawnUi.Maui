@@ -963,7 +963,6 @@ public partial class SkiaControl
         var notValid = RenderObjectNeedsUpdate;
         RenderObject = created;
 
-
         if (RenderObject != null)
         {
             DrawRenderObjectInternal(context.WithDestination(RenderObject.RecordingArea), RenderObject);
@@ -972,7 +971,6 @@ public partial class SkiaControl
         {
             notValid = true;
         }
-
 
         if (NeedUpdate || notValid) //someone changed us while rendering inner content
         {

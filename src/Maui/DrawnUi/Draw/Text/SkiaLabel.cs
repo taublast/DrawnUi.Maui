@@ -394,6 +394,7 @@ namespace DrawnUi.Draw
                 paint, paintStroke, paintDropShadow, scale);
         }
 
+
         public void DrawLines(
             DrawingContext ctx,
             SKPaint paintDefault,
@@ -514,7 +515,10 @@ namespace DrawnUi.Draw
                         else
                         {
                             useLineHeight = MeasuredLineHeight;
-                            moveToBaseline = useLineHeight - FontMetrics.Descent;
+
+                            var add = useLineHeight - useLineHeight / LineHeight;
+                            var move = useLineHeight - add / 2.0;
+                            moveToBaseline = (float)(move - FontMetrics.Descent);
                             baselineY = PositionBaseline(moveToBaseline + rectDraw.Top);
                             baseLineCalculated = true;
                         }
@@ -1390,7 +1394,7 @@ namespace DrawnUi.Draw
                 return (finalWidth, arr2);
             }
 
-            var simpleValue = MeasureTextWidthWithAdvance(paint, text);
+            var simpleValue = MeasureTextWidth(paint, text);
             if (paint.TextSkewX != 0)
             {
                 float additionalWidth = Math.Abs(paint.TextSkewX) * paint.TextSize;
@@ -2073,7 +2077,7 @@ namespace DrawnUi.Draw
 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float MeasureTextWidth(SKPaint paint, string text)
+        public float MeasureTextWidth(SKPaint paint, string text)
         {
             var rect = SKRect.Empty;
             MeasureText(paint, text, ref rect);
@@ -2081,19 +2085,25 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// Accounts paint transforms like skew etc
+        /// Returns text taken size in pixels. Accounts paint transforms like skew etc.
         /// </summary>
         /// <param name="paint"></param>
         /// <param name="text"></param>
         /// <param name="bounds"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MeasureText(SKPaint paint, string text, ref SKRect bounds)
+        public void MeasureText(SKPaint paint, string text, ref SKRect bounds)
         {
             paint.MeasureText(text, ref bounds);
 
             if (paint.TextSkewX != 0)
             {
                 float additionalWidth = Math.Abs(paint.TextSkewX) * paint.TextSize;
+                bounds.Right += additionalWidth; //notice passed by ref struct will be modified
+            }
+
+            if (StrokeWidth > 0)
+            {
+                float additionalWidth = (float)(StrokeWidth * 2 * RenderingScale);
                 bounds.Right += additionalWidth; //notice passed by ref struct will be modified
             }
         }
@@ -2454,12 +2464,12 @@ namespace DrawnUi.Draw
         void UpdateFontMetrics(SKPaint paint)
         {
             FontMetrics = paint.FontMetrics;
-            LineHeightPixels = (float)Math.Round(-FontMetrics.Ascent + FontMetrics.Descent); //PaintText.FontSpacing;
+            LineHeightPixels = (float)Math.Round((-FontMetrics.Ascent + FontMetrics.Descent) * LineHeight); //PaintText.FontSpacing;
             fontUnderline = FontMetrics.UnderlinePosition.GetValueOrDefault();
 
             if (!string.IsNullOrEmpty(this.MonoForDigits))
             {
-                charMonoWidthPixels = MeasureTextWidthWithAdvance(paint, this.MonoForDigits);
+                charMonoWidthPixels = MeasureTextWidth(paint, this.MonoForDigits);
             }
             else
             {
@@ -2803,26 +2813,14 @@ namespace DrawnUi.Draw
             propertyChanged: NeedUpdateFont);
 
         /// <summary>
-        /// Gets or sets the line height as a multiple of the font size.
+        /// Gets or sets the line height as a multiple of the font size, multiplier of how much space will be allocated for a line.
+        /// Note that this is different from LineSpacing.
         /// </summary>
-        /// <remarks>
-        /// This property controls the spacing between lines of text:
-        /// - 1.0 (default): Normal line height (equivalent to the font's built-in line height)
-        /// - Less than 1.0: Compressed line height, lines are closer together
-        /// - Greater than 1.0: Expanded line height, lines are further apart
-        /// 
-        /// For example, a value of 1.5 will make each line 50% taller than the default,
-        /// creating more space between lines of text.
-        /// 
-        /// This is different from LineSpacing, which adds a fixed amount of space between lines.
-        /// LineHeight scales proportionally with the font size.
-        /// </remarks>
         public double LineHeight
         {
             get { return (double)GetValue(LineHeightProperty); }
             set { SetValue(LineHeightProperty, value); }
         }
-
 
         public static readonly BindableProperty SensorRotationProperty = BindableProperty.Create(
             nameof(SensorRotation),

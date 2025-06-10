@@ -43,13 +43,6 @@
                             Tag="VStack"
                             Type="Column">
 
-
-                            <!--<draw:SkiaLabel
-                            HorizontalOptions="Center"
-                            Tag="Warning"
-                            Text="SkiaMarkdownLabel"
-                            TextColor="White" />-->
-
                             <draw:SkiaMarkdownLabel
                                 x:Name="LabelMarkdown"
                                 FontSize="13"
