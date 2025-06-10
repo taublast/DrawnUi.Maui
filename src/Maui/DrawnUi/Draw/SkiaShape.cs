@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
 using DrawnUi.Infrastructure.Xaml;
+using Microsoft.Maui.Graphics;
 
 namespace DrawnUi.Draw
 {
@@ -347,6 +348,7 @@ namespace DrawnUi.Draw
         {
             public SKRect StrokeAwareSize { get; set; }
             public SKRect StrokeAwareChildrenSize { get; set; }
+            public SKRect StrokeAwareClipSize { get; set; }
         }
 
         #endregion
@@ -609,11 +611,6 @@ namespace DrawnUi.Draw
             base.OnDisposing();
         }
 
-        public override MeasuringConstraints GetMeasuringConstraints(MeasureRequest request)
-        {
-            return base.GetMeasuringConstraints(request);
-        }
-
         public override SKPath CreateClip(object arguments, bool usePosition, SKPath path = null)
         {
             path ??= new SKPath();
@@ -624,7 +621,7 @@ namespace DrawnUi.Draw
             if (arguments is ShapePaintArguments args)
             {
                 strokeAwareSize = args.StrokeAwareSize;
-                strokeAwareChildrenSize = args.StrokeAwareChildrenSize;
+                strokeAwareChildrenSize = args.StrokeAwareClipSize;
             }
 
             if (!usePosition)
@@ -752,6 +749,7 @@ namespace DrawnUi.Draw
             SKPaint paint)
         {
             paint.BlendMode = this.FillBlendMode;
+            paint.Style = SKPaintStyle.Fill;
 
             switch (Type)
             {
@@ -856,7 +854,8 @@ namespace DrawnUi.Draw
                 new ShapePaintArguments()
                 {
                     StrokeAwareSize = MeasuredStrokeAwareSize,
-                    StrokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize
+                    StrokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize,
+                    StrokeAwareClipSize = MeasuredStrokeAwareClipSize
                 }));
         }
 
@@ -1115,12 +1114,23 @@ namespace DrawnUi.Draw
                 }
             }
 
+            ClipContentPath ??= new();
+            ClipContentPath.Reset();
+
+            CreateClip(arguments, true, ClipContentPath);
+
             //background with shadows pass, no stroke
             PaintWithShadowsInternal(() =>
             {
                 if (SetupBackgroundPaint(RenderingPaint, outRect))
                 {
+                    var saved = ctx.Context.Canvas.Save();
+
+                    ClipSmart(ctx.Context.Canvas, ClipContentPath, SKClipOperation.Intersect);
+
                     PaintBackground(ctx.Context, outRect, radii, minSize, RenderingPaint);
+
+                    ctx.Context.Canvas.RestoreToCount(saved);
                 }
             });
 
@@ -1132,11 +1142,6 @@ namespace DrawnUi.Draw
             }
 
             //draw children views clipped with shape
-            ClipContentPath ??= new();
-            ClipContentPath.Reset();
-
-            CreateClip(arguments, true, ClipContentPath);
-
             var saved = ctx.Context.Canvas.Save();
 
             ClipSmart(ctx.Context.Canvas, ClipContentPath);
