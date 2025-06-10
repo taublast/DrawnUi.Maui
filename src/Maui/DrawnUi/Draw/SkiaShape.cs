@@ -722,8 +722,8 @@ namespace DrawnUi.Draw
                             {
                                 new SKPoint(scaledRadiusLeftTop, scaledRadiusLeftTop),
                                 new SKPoint(scaledRadiusRightTop, scaledRadiusRightTop),
-                                new SKPoint(scaledRadiusRightBottom, scaledRadiusRightBottom),
                                 new SKPoint(scaledRadiusLeftBottom, scaledRadiusLeftBottom),
+                                new SKPoint(scaledRadiusRightBottom, scaledRadiusRightBottom),
                             });
                         path.AddRoundRect(rrect);
 
@@ -1124,13 +1124,7 @@ namespace DrawnUi.Draw
             {
                 if (SetupBackgroundPaint(RenderingPaint, outRect))
                 {
-                    var saved = ctx.Context.Canvas.Save();
-
-                    ClipSmart(ctx.Context.Canvas, ClipContentPath, SKClipOperation.Intersect);
-
                     PaintBackground(ctx.Context, outRect, radii, minSize, RenderingPaint);
-
-                    ctx.Context.Canvas.RestoreToCount(saved);
                 }
             });
 
