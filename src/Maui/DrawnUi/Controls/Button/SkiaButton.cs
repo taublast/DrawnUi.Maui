@@ -65,10 +65,10 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                     CreateDefaultStyleContent();
                     break;
             }
-            
+
             // Subscribe to property changes and handle gesture more efficiently
             this.Observe(this, OnButtonPropertyChanged);
-            
+
             // Set up gesture handling with cleaner pattern
             OnGestures = (parameters, info) =>
             {
@@ -90,7 +90,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             ApplyProperties();
         }
     }
-    
+
     protected virtual void CreateDefaultStyleContent()
     {
         SetDefaultMinimumContentSize(100, 41);
@@ -106,13 +106,9 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             VerticalOptions = LayoutOptions.Fill,
         });
 
-        this.AddSubView(new ButtonLabel()
-        {
-            Text = "Button",
-            TextColor = this.TextColor,
-        });
+        this.AddSubView(new ButtonLabel() { Text = "Button", TextColor = this.TextColor, });
     }
-    
+
     protected virtual void CreateCupertinoStyleContent()
     {
         // iOS buttons have specific dimensions and styling
@@ -142,7 +138,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             }
         };
         this.AddSubView(frame);
-        
+
         // iOS button text is typically semibold
         var label = new ButtonLabel()
         {
@@ -152,12 +148,12 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             FontWeight = FontWeights.SemiBold,
         };
         this.AddSubView(label);
-        
+
         // Store the initial values
         InitialBackgroundColor = frame.BackgroundColor;
         TextColor = Colors.White;
     }
-    
+
     protected virtual void CreateMaterialStyleContent()
     {
         // Material buttons follow specific design guidelines
@@ -187,7 +183,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             }
         };
         this.AddSubView(frame);
-        
+
         // Material Design prefers uppercase text
         var label = new ButtonLabel()
         {
@@ -197,12 +193,12 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             TextTransform = TextTransform.Uppercase, // Material uses uppercase
         };
         this.AddSubView(label);
-        
+
         // Store the initial values
         InitialBackgroundColor = frame.BackgroundColor;
         TextColor = Colors.White;
     }
-    
+
     protected virtual void CreateWindowsStyleContent()
     {
         // Windows buttons are typically more rectangular
@@ -213,7 +209,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         var frame = new SkiaShape
         {
             Tag = "BtnShape",
-            CornerRadius = 4,  
+            CornerRadius = 4,
             HorizontalOptions = LayoutOptions.Fill,
             IsClippedToBounds = true,
             VerticalOptions = LayoutOptions.Fill,
@@ -230,29 +226,26 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             }
         };
         this.AddSubView(frame);
-        
+
         // Windows text is typically regular weight
         var label = new ButtonLabel()
         {
-            Text = "Test",
-            TextColor = Colors.White,
-            FontSize = 15,
-            FontWeight = FontWeights.Medium,
+            Text = "Test", TextColor = Colors.White, FontSize = 15, FontWeight = FontWeights.Medium,
         };
         this.AddSubView(label);
-        
+
         // Store the initial values
         InitialBackgroundColor = frame.BackgroundColor;
         TextColor = Colors.White;
     }
-    
+
     protected virtual bool IsInsideTapRegion(SkiaGesturesParameters parameters)
     {
         // Simple logic to determine if movement was minimal enough to count as a tap
         return Math.Abs(parameters.Event.Distance.Delta.X) < 10 &&
                Math.Abs(parameters.Event.Distance.Delta.Y) < 10;
     }
-    
+
     protected virtual void OnButtonPropertyChanged(SkiaButton control, string propertyName)
     {
         // Handle various property changes
@@ -264,14 +257,14 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                 // Handle elevation effect
                 var effects = MainFrame.VisualEffects?.ToList() ?? new List<SkiaEffect>();
                 var shadowEffect = effects.FirstOrDefault(e => e is DropShadowEffect) as DropShadowEffect;
-                
+
                 if (shadowEffect == null)
                 {
                     // Create shadow if it doesn't exist
                     shadowEffect = new DropShadowEffect();
                     effects.Add(shadowEffect);
                 }
-                
+
                 // Apply platform-specific shadow adjustments
                 switch (UsingControlStyle)
                 {
@@ -293,8 +286,9 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                             shadowEffect.Blur = 3;
                             shadowEffect.Color = Color.FromRgba(0, 0, 0, 0.2);
                         }
+
                         break;
-                        
+
                     case PrebuiltControlStyle.Material:
                         // Material design has more pronounced shadows
                         if (IsPressed)
@@ -313,8 +307,9 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                             shadowEffect.Blur = 4;
                             shadowEffect.Color = Color.FromRgba(0, 0, 0, 0.4);
                         }
+
                         break;
-                        
+
                     case PrebuiltControlStyle.Windows:
                         // Windows has very subtle shadows
                         if (IsPressed)
@@ -333,8 +328,9 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                             shadowEffect.Blur = 2;
                             shadowEffect.Color = Color.FromRgba(0, 0, 0, 0.2);
                         }
+
                         break;
-                        
+
                     default:
                         // Default - standard shadow treatment
                         if (IsPressed)
@@ -353,9 +349,10 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                             shadowEffect.Blur = 4;
                             shadowEffect.Color = Color.FromRgba(0, 0, 0, 0.3);
                         }
+
                         break;
                 }
-                
+
                 // Apply updated effects
                 MainFrame.VisualEffects = effects;
             }
@@ -410,7 +407,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         if (MainLabel != null)
         {
             MainLabel.Text = this.Text;
-            
+
             // Apply text case transformation if specified
             if (TextCase != TextTransform.None)
             {
@@ -424,7 +421,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                         break;
                 }
             }
-            
+
             MainLabel.TextColor = this.TextColor;
             MainLabel.StrokeColor = TextStrokeColor;
             MainLabel.FontFamily = this.FontFamily;
@@ -441,43 +438,48 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                     MainFrame.StrokeColor = Colors.Transparent;
                     MainFrame.StrokeWidth = 0;
                     break;
-                    
+
                 case ButtonStyleType.Outlined:
                     MainFrame.BackgroundColor = Colors.Transparent;
                     MainFrame.StrokeColor = this.BackgroundColor;
                     MainFrame.StrokeWidth = 1;
                     break;
-                    
+
                 case ButtonStyleType.Text:
                     MainFrame.BackgroundColor = Colors.Transparent;
                     MainFrame.StrokeColor = Colors.Transparent;
                     MainFrame.StrokeWidth = 0;
                     break;
             }
-            
+
             MainFrame.Background = this.Background;
-            
-            // Apply platform-specific corner radius adjustments
-            switch (UsingControlStyle)
+            if (CornerRadius != 8)
             {
-                case PrebuiltControlStyle.Cupertino:
-                    // iOS uses more rounded corners
-                    MainFrame.CornerRadius =  8;
-                    break;
-                case PrebuiltControlStyle.Material:
-                    // Material uses less rounded corners
-                    MainFrame.CornerRadius =   4;
-                    break;
-                case PrebuiltControlStyle.Windows:
-                    // Windows uses subtle corners
-                    MainFrame.CornerRadius =  2;
-                    break;
-                default:
-                    // Default - use provided corner radius
-                    MainFrame.CornerRadius = this.CornerRadius;
-                    break;
+                MainFrame.CornerRadius = CornerRadius;
             }
-            
+            else
+            {
+                switch (UsingControlStyle)
+                {
+                    case PrebuiltControlStyle.Cupertino:
+                        // iOS uses more rounded corners
+                        MainFrame.CornerRadius = 8;
+                        break;
+                    case PrebuiltControlStyle.Material:
+                        // Material uses less rounded corners
+                        MainFrame.CornerRadius = 4;
+                        break;
+                    case PrebuiltControlStyle.Windows:
+                        // Windows uses subtle corners
+                        MainFrame.CornerRadius = 2;
+                        break;
+                    default:
+                        // Default - use provided corner radius
+                        MainFrame.CornerRadius = this.CornerRadius;
+                        break;
+                }
+            }
+
             // Handle shadows based on ElevationEnabled property and platform style
             if (!ElevationEnabled)
             {
@@ -486,14 +488,14 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                 {
                     var effects = MainFrame.VisualEffects.ToList();
                     var shadowEffect = effects.FirstOrDefault(e => e is DropShadowEffect);
-                    
+
                     if (shadowEffect != null)
                     {
                         effects.Remove(shadowEffect);
                         MainFrame.VisualEffects = effects.Count > 0 ? effects : null;
                     }
                 }
-                
+
                 // Remove directly applied shadows
                 MainFrame.Shadows = null;
             }
@@ -501,7 +503,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             {
                 // Default - Handle via the property changed callback for DropShadowEffect
                 OnButtonPropertyChanged(this, nameof(IsPressed));
-                
+
                 // Apply platform-specific shadow adjustments if using native shadows
                 if (MainFrame.Shadows != null && MainFrame.Shadows.Count > 0)
                 {
@@ -514,7 +516,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                                 // iOS uses subtle shadows
                                 shadow.X = 0;
                                 shadow.Y = IsPressed ? 1 : 2;
-                                shadow.Blur = IsPressed ? 1 : 3; 
+                                shadow.Blur = IsPressed ? 1 : 3;
                                 shadow.Opacity = IsPressed ? 0.2f : 0.3f;
                                 break;
                             case PrebuiltControlStyle.Material:
@@ -541,7 +543,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
             InitialBackgroundColor = this.BackgroundColor;
             InitialBackground = this.Background;
         }
-        
+
         // Note: IconPosition handling will be implemented when we add icon support
     }
 
@@ -760,18 +762,18 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         /// Standard filled button with background color and text
         /// </summary>
         Contained,
-        
+
         /// <summary>
         /// Button with outline border and transparent background
         /// </summary>
         Outlined,
-        
+
         /// <summary>
         /// Button with no background or border, only text
         /// </summary>
         Text
     }
-    
+
     /// <summary>
     /// Defines the position of an icon relative to the button text
     /// </summary>
@@ -781,13 +783,13 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         /// Icon appears before the text
         /// </summary>
         Left,
-        
+
         /// <summary>
         /// Icon appears after the text
         /// </summary>
         Right
     }
-     
+
     public static readonly BindableProperty ButtonStyleProperty = BindableProperty.Create(
         nameof(ButtonStyle),
         typeof(ButtonStyleType),
@@ -985,7 +987,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(ShimmerEffectSpeedProperty, value); }
     }
 
- 
 
     public static readonly BindableProperty ApplyEffectProperty = BindableProperty.Create(nameof(ApplyEffect),
         typeof(SkiaTouchAnimation),
@@ -997,7 +998,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         set { SetValue(ApplyEffectProperty, value); }
     }
 
- 
 
     public static readonly BindableProperty CommandTappedProperty = BindableProperty.Create(nameof(CommandTapped),
         typeof(ICommand),
