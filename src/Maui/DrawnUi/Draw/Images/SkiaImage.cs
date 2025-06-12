@@ -28,6 +28,18 @@ public class SkiaImage : SkiaControl
         }
     }
 
+    public override SKImage CachedImage
+    {
+        get
+        {
+            if (RenderObject == null && ScaledSource != null)
+            {
+                return ScaledSource.Image;
+            }
+            return base.CachedImage;
+        }
+    }
+
     public override void OnScaleChanged()
     {
         InvalidateImageFilter();
@@ -58,13 +70,13 @@ public class SkiaImage : SkiaControl
             return loaded;
         }
 
-        var kill = ApplyNewSource;
+        var killApplyNewSource = ApplyNewSource;
         ApplyNewSource = loaded;
-        if (kill != null)
+        if (killApplyNewSource != null)
         {
             if (SkiaImageManager.ReuseBitmaps)
-                kill.ProtectBitmapFromDispose = true; //do not dispose shared cached image
-            DisposeObject(kill);
+                killApplyNewSource.ProtectBitmapFromDispose = true; //do not dispose shared cached image
+            DisposeObject(killApplyNewSource);
         }
 
         // see HasUnstableSize help for explanation
@@ -1042,7 +1054,7 @@ public class SkiaImage : SkiaControl
     /// <summary>
     /// Reusing this
     /// </summary>
-    protected SKImageFilter PaintImageFilter;
+    public SKImageFilter PaintImageFilter;
 
     //will reuse
     SKPath _preparedClipBounds = null;
@@ -1317,12 +1329,28 @@ public class SkiaImage : SkiaControl
     public class RescaledBitmap : IDisposable
     {
         public SKBitmap Bitmap { get; set; }
+
+        public SKImage _image;
+
+        public SKImage Image
+        {
+            get
+            {
+                if (_image == null && Bitmap != null)
+                {
+                    _image = SKImage.FromBitmap(Bitmap);
+                }
+                return _image;
+            }
+        }
+
         public SKFilterQuality Quality { get; set; }
         public Guid Source { get; set; }
 
         public void Dispose()
         {
             Bitmap?.Dispose();
+            _image?.Dispose();
         }
     }
 
@@ -1629,7 +1657,7 @@ public class SkiaImage : SkiaControl
 
                 if (ScaledSource == null
                     || ScaledSource.Source != source.Id
-                    || ScaledSource.Quality != this.RescalingQuality
+                    || ScaledSource.Quality != this.RescalingQuality 
                     || ScaledSource.Bitmap.Width != targetWidth
                     || ScaledSource.Bitmap.Height != targetHeight)
                 {

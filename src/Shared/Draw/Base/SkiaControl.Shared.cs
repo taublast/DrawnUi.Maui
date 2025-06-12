@@ -42,6 +42,17 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
+        /// Provides a cached  image if any
+        /// </summary>
+        public virtual SKImage CachedImage
+        {
+            get
+            {
+                return RenderObject?.Image;
+            }
+        }
+
+        /// <summary>
         /// Offset cache (RenderObject) in points.
         /// This works similar to TranslationX but uses no matrix transform, works faster.
         /// For code-behind fast reposition of cached controls, background thread friendly, no bindings involved.
@@ -5668,7 +5679,7 @@ namespace DrawnUi.Draw
             {
                 if (EffectPostRenderer != null)
                 {
-                    EffectPostRenderer.Render(context);
+                    EffectPostRenderer.Render(context); //post renderer will use this render object for rendering itsself
                 }
                 else
                 {

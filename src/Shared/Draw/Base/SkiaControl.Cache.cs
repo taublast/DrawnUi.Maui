@@ -310,7 +310,7 @@ public partial class SkiaControl
             NeedUpdate =
                 false; //if some child changes this while rendering to cache we will erase resulting RenderObject
 
-            GRContext grContext = null;
+            //GRContext grContext = null;
 
             if (usingCacheType == SkiaCacheType.Operations || usingCacheType == SkiaCacheType.OperationsFull)
             {
@@ -360,10 +360,10 @@ public partial class SkiaControl
                                                                   SkiaViewAccelerated accelerated
                                                               && accelerated.GRContext != null)
                         {
-                            grContext = accelerated.GRContext;
+                            //grContext = accelerated.GRContext;
                             //hardware accelerated
                             surface = SKSurface.Create(accelerated.GRContext,
-                                false,
+                                true,
                                 cacheSurfaceInfo);
                         }
                     }
@@ -374,7 +374,7 @@ public partial class SkiaControl
                         surface = SKSurface.Create(cacheSurfaceInfo);
                     }
 
-                    if (kill != surface)
+                    if (kill!=null && kill != surface)
                         DisposeObject(kill);
 
                     // if (usingCacheType == SkiaCacheType.GPU)
