@@ -32,6 +32,33 @@ public partial class SkiaCamera : SkiaControl
         Zoomed?.Invoke(this, value);
     }
 
+    public void OpenFileInGallery(string imageFilePath)
+    {
+        Task.Run(async () =>
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(imageFilePath) || !File.Exists(imageFilePath))
+                {
+                    Debug.WriteLine($"[SkiaCamera Windows] File not found: {imageFilePath}");
+                    return;
+                }
+
+                var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(imageFilePath);
+                var success = await Windows.System.Launcher.LaunchFileAsync(file);
+
+                if (!success)
+                {
+                    Debug.WriteLine($"[SkiaCamera Windows] Failed to launch file: {imageFilePath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[SkiaCamera Windows] Error opening file in gallery: {ex.Message}");
+            }
+        });
+    }
+
     public virtual Metadata CreateMetadata()
     {
         return new Metadata()

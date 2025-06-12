@@ -34,6 +34,37 @@ public partial class SkiaCamera
         Zoomed?.Invoke(this, value);
     }
 
+    public void OpenFileInGallery(string imageFilePath)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(imageFilePath) || !File.Exists(imageFilePath))
+            {
+                System.Diagnostics.Debug.WriteLine($"[SkiaCamera Apple] File not found: {imageFilePath}");
+                return;
+            }
+
+            var fileUrl = NSUrl.FromFilename(imageFilePath);
+            var documentController = UIDocumentInteractionController.FromUrl(fileUrl);
+
+            // Get the current view controller
+            var viewController = Platform.GetCurrentUIViewController();
+            if (viewController != null)
+            {
+                // Present the document interaction controller
+                documentController.PresentPreview(true);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("[SkiaCamera Apple] Could not get current view controller");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SkiaCamera Apple] Error opening file in gallery: {ex.Message}");
+        }
+    }
+
     public virtual Metadata CreateMetadata()
     {
         return new Metadata()

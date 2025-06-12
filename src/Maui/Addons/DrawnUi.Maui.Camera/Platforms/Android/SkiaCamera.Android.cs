@@ -102,7 +102,7 @@ public partial class SkiaCamera
 
             if (disable)
             {
-                renderer.Stop(true);
+                renderer.StopInternal(true);
                 System.Diagnostics.Debug.WriteLine($"[CAMERA] Stopped {renderer.Uid} {renderer.Tag}");
             }
         }
