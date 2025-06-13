@@ -7,16 +7,6 @@ using Sandbox.ViewModels;
 
 namespace AppoMobi.Maui.DrawnUi.Demo.Views;
 
-public class DebugStack : SkiaLayout
-{
-
-
-    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
-    {
-        return base.ProcessGestures(args, apply);
-    }
-}
-
 public partial class MainPageCameraPhoto
 {
 #if DEBUG
