@@ -680,7 +680,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         });
     }
 
-    public CapturedImage GetPreviewImage()
+    public SKImage GetPreviewImage()
     {
         // First check if we have a ready preview
         lock (_lockPreview)
@@ -695,8 +695,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 {
                     _kill = null;
                 }
-
-                return get;
+                return get.Image;
             }
         }
 
@@ -725,20 +724,9 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                     rotatedImage = rawImage.Subset(SKRectI.Create(0, 0, _latestRawFrame.Width, _latestRawFrame.Height));
                 }
 
-                var capturedImage = new CapturedImage()
-                {
-                    Facing = _latestRawFrame.Facing,
-                    Time = _latestRawFrame.Time,
-                    Image = rotatedImage,
-                    Orientation = _latestRawFrame.Orientation
-                };
-
-                // Clear the raw frame since we've used it
-                _oldRawFrame?.Dispose();
-                _oldRawFrame = _latestRawFrame;
-                _latestRawFrame = null;
-
-                return capturedImage;
+                // DON'T clear the raw frame here - keep it until replaced by new frame
+                // This prevents race condition where frame is cleared before UI consumes it
+                return rotatedImage;
             }
             catch (Exception e)
             {
@@ -968,9 +956,12 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     {
         lock (_lockRawFrame)
         {
-            // Dispose old raw frame data
+            // Dispose old raw frame data immediately to prevent memory accumulation
+            // Keep only the latest frame to prevent OOM
             _oldRawFrame?.Dispose();
-            _oldRawFrame = _latestRawFrame;
+            _latestRawFrame?.Dispose();
+
+            _oldRawFrame = null;
             _latestRawFrame = rawFrame;
         }
     }

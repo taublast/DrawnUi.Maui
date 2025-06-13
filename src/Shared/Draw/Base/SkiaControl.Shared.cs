@@ -1706,7 +1706,7 @@ namespace DrawnUi.Draw
             LockUpdate(false);
         }
 
-        public void LockUpdate(bool value)
+        public virtual void LockUpdate(bool value)
         {
             bool fire = UpdateLocks > 0 && !value;
             if (value)

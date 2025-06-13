@@ -24,6 +24,10 @@ public partial class SkiaCamera : SkiaControl
         Super.OnNativeAppPaused += Super_OnNativeAppPaused;
     }
 
+    public override void LockUpdate(bool value)
+    {
+        //not using for constantly-async updated scenario
+    }
 
     public override void OnWillDisposeWithChildren()
     {

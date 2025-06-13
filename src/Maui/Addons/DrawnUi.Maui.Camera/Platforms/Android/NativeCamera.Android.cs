@@ -422,7 +422,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     //    return skImage;
     //}
 
-    object lockPreview = new();
+    object _lockPreview = new();
 
 
     public CapturedImage Preview
@@ -430,7 +430,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         get => _preview;
         protected set
         {
-            lock (lockPreview)
+            lock (_lockPreview)
             {
                 var kill = _preview;
                 _preview = value;
@@ -440,16 +440,21 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
     /// <summary>
-    /// This is a one-timer, to get value from `public CapturedImage Preview` in a way that it would be set to null after that, so if you get the preview you are now responsible to dispose it yourself. 
+    /// WIll be correct from correct thread hopefully
     /// </summary>
     /// <returns></returns>
-    public CapturedImage GetPreviewImage()
+    public SKImage GetPreviewImage()
     {
-        lock (lockPreview)
+        lock (_lockPreview)
         {
-            var get = _preview;
-            _preview = null;
-            return get;
+            SKImage preview = null;
+            if (_preview != null && _preview.Image != null)
+            {
+                preview = _preview.Image;
+                this._preview.Image = null; //protected from GC
+                _preview = null; // Transfer ownership - renderer will dispose the SKImage 
+            }
+            return preview;
         }
     }
 
@@ -577,6 +582,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                                 };
                                 Preview = outImage;
                                 OnPreviewCaptureSuccess(outImage);
+                                FormsControl.UpdatePreview();
                             }
                         }
                     }
@@ -600,7 +606,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
             }
 
-            FormsControl.UpdatePreview();
+            
 
         }
 

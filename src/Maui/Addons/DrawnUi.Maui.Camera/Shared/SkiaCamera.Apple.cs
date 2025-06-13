@@ -98,14 +98,14 @@ public partial class SkiaCamera
     }
 
 
-    public SKBitmap GetPreviewBitmap()
-    {
-        var preview = NativeControl?.GetPreviewImage();
-        if (preview?.Image != null)
-        {
-            return SKBitmap.FromImage(preview.Image);
-        }
-        return null;
-    }
+    //public SKBitmap GetPreviewBitmap()
+    //{
+    //    var preview = NativeControl?.GetPreviewImage();
+    //    if (preview?.Image != null)
+    //    {
+    //        return SKBitmap.FromImage(preview.Image);
+    //    }
+    //    return null;
+    //}
 }
 #endif

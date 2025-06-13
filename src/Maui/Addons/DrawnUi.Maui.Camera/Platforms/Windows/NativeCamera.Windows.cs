@@ -112,7 +112,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     private bool _isCapturingStill;
     private double _zoomScale = 1.0;
     private readonly object _lockPreview = new();
-    private CapturedImage _preview;
+    private volatile CapturedImage _preview;
     private DeviceInformation _cameraDevice;
     private MediaFrameSource _frameSource;
 
@@ -578,6 +578,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     /// <summary>
     /// Process Direct3D frame using GPU-assisted conversion to SoftwareBitmap
     /// This leverages GPU-resident data for better performance than pure software processing
+    /// Will set _preview.
     /// </summary>
     private async void ProcessDirect3DFrameAsync(Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface d3dSurface)
     {
@@ -585,7 +586,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             return;
 
         _isProcessingFrame = true;
-
+        CapturedImage capturedImage = null;
         try
         {
             // Use GPU-assisted conversion from Direct3D surface to SoftwareBitmap
@@ -595,23 +596,13 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 var skImage = await ConvertToSKImageDirectAsync(softwareBitmap);
                 if (skImage != null)
                 {
-                    var capturedImage = new CapturedImage()
+                    capturedImage = new CapturedImage()
                     {
                         Facing = FormsControl.Facing,
                         Time = DateTime.UtcNow,
                         Image = skImage, // Transfer ownership to CapturedImage - renderer will dispose
                         Orientation = FormsControl.DeviceRotation
                     };
-
-                    // Update preview safely
-                    lock (_lockPreview)
-                    {
-                        _preview?.Dispose(); // Only dispose old preview, not the new SKImage
-                        _preview = capturedImage;
-                    }
-
-                    //PREVIEW FRAME READY
-                    FormsControl.UpdatePreview();
                 }
                 softwareBitmap.Dispose();
             }
@@ -623,6 +614,17 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         finally
         {
             _isProcessingFrame = false;
+            // Update preview safely
+            lock (_lockPreview)
+            {
+                _preview?.Dispose(); // Only dispose old preview, not the new SKImage
+                _preview = capturedImage;
+            }
+            if (capturedImage!=null)
+            {
+                //PREVIEW FRAME READY
+                FormsControl.UpdatePreview();
+            }
             _frameSemaphore.Release();
         }
     }
@@ -976,12 +978,21 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         }
     }
 
-    public CapturedImage GetPreviewImage()
+    /// <summary>
+    /// WIll be correct from correct thread hopefully
+    /// </summary>
+    /// <returns></returns>
+    public SKImage GetPreviewImage()
     {
         lock (_lockPreview)
         {
-            var preview = _preview;
-            _preview = null; // Transfer ownership - renderer will dispose the SKImage
+            SKImage preview = null;
+            if (_preview != null && _preview.Image != null)
+            {
+                preview = _preview.Image;
+                this._preview.Image = null; //protected from GC
+                _preview = null; // Transfer ownership - renderer will dispose the SKImage 
+            }
             return preview;
         }
     }
