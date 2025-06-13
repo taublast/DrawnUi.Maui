@@ -23,7 +23,6 @@ namespace DrawnUi.Camera;
 // Lightweight container for raw frame data - no SKImage creation
 internal class RawFrameData : IDisposable
 {
-    public IntPtr BaseAddress { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
     public int BytesPerRow { get; set; }
@@ -31,12 +30,11 @@ internal class RawFrameData : IDisposable
     public Rotation CurrentRotation { get; set; }
     public CameraPosition Facing { get; set; }
     public int Orientation { get; set; }
-    public SKData Data { get; set; }
+    public byte[] PixelData { get; set; } // Copy pixel data to avoid CVPixelBuffer lifetime issues
 
     public void Dispose()
     {
-        Data?.Dispose();
-        Data = null;
+        PixelData = null; // Let GC handle byte array
     }
 }
 
@@ -61,10 +59,9 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     private int _skippedFrameCount = 0;
     private int _processedFrameCount = 0;
 
-    // Raw frame data for lazy SKImage creation
+    // Raw frame data for lazy SKImage creation - fixed memory leak version
     private readonly object _lockRawFrame = new();
     private RawFrameData _latestRawFrame;
-    private RawFrameData _oldRawFrame;
     
     // Orientation tracking properties
     private UIInterfaceOrientation _uiOrientation;
@@ -405,9 +402,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         lock (_lockRawFrame)
         {
             _latestRawFrame?.Dispose();
-            _oldRawFrame?.Dispose();
             _latestRawFrame = null;
-            _oldRawFrame = null;
         }
 
         if (State == CameraProcessorState.None && !force)
@@ -420,7 +415,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         {
             _session.StopRunning();
             State = CameraProcessorState.None;
-            
+
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 DeviceDisplay.Current.KeepScreenOn = false;
@@ -707,26 +702,35 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
             try
             {
-                // Create SKImage on demand from raw data
+                // Create SKImage on main thread from copied pixel data - no memory leak
                 var info = new SKImageInfo(_latestRawFrame.Width, _latestRawFrame.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
-                using var rawImage = SKImage.FromPixels(info, _latestRawFrame.Data, _latestRawFrame.BytesPerRow);
 
-                // Apply rotation if needed
-                SKImage rotatedImage;
-                if (_latestRawFrame.CurrentRotation != Rotation.rotate0Degrees)
+                // Pin the byte array and create SKImage
+                var gcHandle = System.Runtime.InteropServices.GCHandle.Alloc(_latestRawFrame.PixelData, System.Runtime.InteropServices.GCHandleType.Pinned);
+                try
                 {
-                    using var bitmap = SKBitmap.FromImage(rawImage);
-                    using var rotatedBitmap = HandleOrientation(bitmap, (double)_latestRawFrame.CurrentRotation);
-                    rotatedImage = SKImage.FromBitmap(rotatedBitmap);
-                }
-                else
-                {
-                    rotatedImage = rawImage.Subset(SKRectI.Create(0, 0, _latestRawFrame.Width, _latestRawFrame.Height));
-                }
+                    var pinnedPtr = gcHandle.AddrOfPinnedObject();
+                    using var rawImage = SKImage.FromPixels(info, pinnedPtr, _latestRawFrame.BytesPerRow);
 
-                // DON'T clear the raw frame here - keep it until replaced by new frame
-                // This prevents race condition where frame is cleared before UI consumes it
-                return rotatedImage;
+                    // Apply rotation if needed
+                    SKImage rotatedImage;
+                    if (_latestRawFrame.CurrentRotation != Rotation.rotate0Degrees)
+                    {
+                        using var bitmap = SKBitmap.FromImage(rawImage);
+                        using var rotatedBitmap = HandleOrientation(bitmap, (double)_latestRawFrame.CurrentRotation);
+                        rotatedImage = SKImage.FromBitmap(rotatedBitmap);
+                    }
+                    else
+                    {
+                        rotatedImage = rawImage.Subset(SKRectI.Create(0, 0, _latestRawFrame.Width, _latestRawFrame.Height));
+                    }
+
+                    return rotatedImage;
+                }
+                finally
+                {
+                    gcHandle.Free();
+                }
             }
             catch (Exception e)
             {
@@ -884,11 +888,10 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                     unit.PixelYDimension = exif["PixelYDimension"].ToString().ToFloat();
                     unit.FocalLength = focal;
 
-                    var info = _deviceInput.Device.ActiveFormat;
-                    var pixelsZoom = info.VideoZoomFactorUpscaleThreshold;
+                    var formatInfo = _deviceInput.Device.ActiveFormat;
+                    var pixelsZoom = formatInfo.VideoZoomFactorUpscaleThreshold;
                     float aspectH = unit.PixelXDimension / unit.PixelYDimension;
-                    float aspectV = 1.0f;
-                    float fovH = info.VideoFieldOfView;
+                    float fovH = formatInfo.VideoFieldOfView;
                     float fovV = fovH / aspectH;
 
                     var sensorWidth = (float)(2 * unit.FocalLength * Math.Tan(fovH * Math.PI / 2.0f * 180));
@@ -910,13 +913,14 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 var bytesPerRow = (int)pixelBuffer.BytesPerRow;
                 var baseAddress = pixelBuffer.BaseAddress;
 
+                // Copy pixel data to avoid CVPixelBuffer lifetime issues - minimal memory copy
                 var dataSize = height * bytesPerRow;
-                var data = SKData.Create(baseAddress, dataSize);
+                var pixelData = new byte[dataSize];
+                System.Runtime.InteropServices.Marshal.Copy(baseAddress, pixelData, 0, dataSize);
 
-                // Store raw frame data instead of creating SKImage immediately
+                // Store raw frame data for lazy SKImage creation on main thread
                 var rawFrame = new RawFrameData
                 {
-                    BaseAddress = baseAddress,
                     Width = width,
                     Height = height,
                     BytesPerRow = bytesPerRow,
@@ -924,7 +928,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                     CurrentRotation = CurrentRotation,
                     Facing = FormsControl.Facing,
                     Orientation = (int)CurrentRotation,
-                    Data = data
+                    PixelData = pixelData
                 };
 
                 SetRawFrame(rawFrame);
@@ -957,11 +961,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         lock (_lockRawFrame)
         {
             // Dispose old raw frame data immediately to prevent memory accumulation
-            // Keep only the latest frame to prevent OOM
-            _oldRawFrame?.Dispose();
             _latestRawFrame?.Dispose();
-
-            _oldRawFrame = null;
             _latestRawFrame = rawFrame;
         }
     }
@@ -1258,9 +1258,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             lock (_lockRawFrame)
             {
                 _latestRawFrame?.Dispose();
-                _oldRawFrame?.Dispose();
                 _latestRawFrame = null;
-                _oldRawFrame = null;
             }
 
             // Clean up orientation observer
