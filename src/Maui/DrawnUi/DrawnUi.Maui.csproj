@@ -5,6 +5,8 @@
     </Target>
 
     <PropertyGroup>
+
+        <WindowsEnableDebugging>true</WindowsEnableDebugging>
         <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <!--<DocumentationMarkdown>$(MSBuildProjectDirectory)\Generated.md</DocumentationMarkdown>-->
@@ -49,10 +51,6 @@
         <Compile Remove="Platforms\Windows\Controls\**" />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(UseSkiaSharp3)' == 'true'">
-        <Compile Remove="Platforms\Windows\SKCanvasViewRenderer.Windows.cs" />
-        <Compile Remove="Platforms\iOS\SKMetalViewRenderer.cs" />
-    </ItemGroup>
 
     <ItemGroup>
         <None Include="..\..\..\icon128.png">
@@ -63,10 +61,6 @@
             <PackagePath>\</PackagePath>
             <Pack>True</Pack>
         </None>
-        <None Include="Platforms\Windows\ViewChainPanel.Windows.cs" />
-        <None Include="Platforms\Windows\Views\AngleSwapChainPanel.cs" />
-        <None Remove="Controls\Extensions\**" />
-        <None Remove="Platforms\Windows\Controls\**" />
     </ItemGroup>
 
     <!--<ItemGroup>
@@ -77,7 +71,7 @@
         <!--parsing markdown text-->
         <!--<PackageReference Include="Markdig" Version="0.41.1" />-->
         <PackageReference Include="CommonMark.NET" Version="0.15.1" />
-        
+
         <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
         <PackageReference Include="SkiaSharp.Skottie" Version="3.119.0" />
         <PackageReference Include="Svg.Skia" Version="3.0.0" />
@@ -96,9 +90,9 @@
     <!--ANDROID ONLY-->
     <ItemGroup Condition="$(TargetFramework.Contains('android')) == true">
         <!--fix android bad alignement-->
-        <PackageReference Include="HarfBuzzSharp" Version="8.3.1.1" />
-        <!--native interop todo expose source-->
-        <PackageReference Include="AppoMobi.Maui.Native" Version="1.0.1.0-pre" />
+        <!--<PackageReference Include="HarfBuzzSharp" Version="8.3.1.1" />-->
+        <!--native interop todo expose source  todo check no more needed? -->
+       <PackageReference Include="AppoMobi.Maui.Native" Version="1.0.1.0-pre" />
     </ItemGroup>
 
     <ItemGroup>
@@ -140,7 +134,6 @@
             <Link>Platforms/iOS/%(RecursiveDir)%(Filename)%(Extension)</Link>
         </Compile>
     </ItemGroup>
-
 
     <Import Project="..\..\Shared\Shared.projitems" Label="Shared" />
 
