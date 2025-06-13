@@ -173,6 +173,11 @@
 
     <ItemGroup>
  
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+ 
     <EmbeddedResource Update="Resources\Strings\ResStrings.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>ResStrings.Designer.cs</LastGenOutput>
@@ -277,6 +282,15 @@
     <ProjectReference Include="..\..\Addons\DrawnUi.Maui.Game\DrawnUi.Maui.Game.csproj" />
     <ProjectReference Include="..\..\Addons\DrawnUi.Maui.MapsUi\DrawnUi.Maui.MapsUi.csproj" />
     <ProjectReference Include="..\..\Addons\DrawnUi.MauiGraphics\DrawnUi.MauiGraphics.csproj" />
+  </ItemGroup>
+
+    
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
  

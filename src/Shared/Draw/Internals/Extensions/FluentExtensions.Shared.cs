@@ -1190,7 +1190,7 @@ namespace DrawnUi.Draw
         /// <param name="view">The control whose height is being set.</param>
         /// <param name="size">The new height value to be applied to the control.</param>
         /// <returns>The modified control with the updated height.</returns>
-        public static T SetHeight<T>(this T view, double size) where T : SkiaControl
+        public static T Height<T>(this T view, double size) where T : SkiaControl
         {
             view.HeightRequest = size;
             return view;
@@ -1409,6 +1409,191 @@ namespace DrawnUi.Draw
         {
             view.Tag = tag;
             return view;
+        }
+
+        #endregion
+
+        #region IMPROVED FLUENT EXTENSIONS
+
+        /// <summary>
+        /// Sets the cache type for the control
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to set cache for</param>
+        /// <param name="cacheType">The cache type</param>
+        /// <returns>The control for chaining</returns>
+        public static T WithCache<T>(this T view, SkiaCacheType cacheType) where T : SkiaControl
+        {
+            view.UseCache = cacheType;
+            return view;
+        }
+
+        /// <summary>
+        /// Sets the background color for the control
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to set background color for</param>
+        /// <param name="color">The background color</param>
+        /// <returns>The control for chaining</returns>
+        public static T WithBackgroundColor<T>(this T view, Color color) where T : SkiaControl
+        {
+            view.BackgroundColor = color;
+            return view;
+        }
+
+        /// <summary>
+        /// Sets the horizontal options for the control
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to set horizontal options for</param>
+        /// <param name="options">The horizontal layout options</param>
+        /// <returns>The control for chaining</returns>
+        public static T WithHorizontalOptions<T>(this T view, LayoutOptions options) where T : SkiaControl
+        {
+            view.HorizontalOptions = options;
+            return view;
+        }
+
+        /// <summary>
+        /// Sets the vertical options for the control
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to set vertical options for</param>
+        /// <param name="options">The vertical layout options</param>
+        /// <returns>The control for chaining</returns>
+        public static T WithVerticalOptions<T>(this T view, LayoutOptions options) where T : SkiaControl
+        {
+            view.VerticalOptions = options;
+            return view;
+        }
+
+        /// <summary>
+        /// Sets the height request for the control
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to set height for</param>
+        /// <param name="height">The height request</param>
+        /// <returns>The control for chaining</returns>
+        public static T WithHeightRequest<T>(this T view, double height) where T : SkiaControl
+        {
+            view.HeightRequest = height;
+            return view;
+        }
+
+        /// <summary>
+        /// Sets the width request for the control
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to set width for</param>
+        /// <param name="width">The width request</param>
+        /// <returns>The control for chaining</returns>
+        public static T WithWidthRequest<T>(this T view, double width) where T : SkiaControl
+        {
+            view.WidthRequest = width;
+            return view;
+        }
+
+        /// <summary>
+        /// Sets the margin for the control
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaControl</typeparam>
+        /// <param name="view">The control to set margin for</param>
+        /// <param name="margin">The margin thickness</param>
+        /// <returns>The control for chaining</returns>
+        public static T WithMargin<T>(this T view, Thickness margin) where T : SkiaControl
+        {
+            view.Margin = margin;
+            return view;
+        }
+
+        #endregion
+
+        #region SKIASHAPE EXTENSIONS
+
+        /// <summary>
+        /// Sets the shape type for SkiaShape
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaShape</typeparam>
+        /// <param name="shape">The shape to set type for</param>
+        /// <param name="shapeType">The shape type</param>
+        /// <returns>The shape for chaining</returns>
+        public static T WithShapeType<T>(this T shape, ShapeType shapeType) where T : SkiaShape
+        {
+            shape.Type = shapeType;
+            return shape;
+        }
+
+        /// <summary>
+        /// Sets the shape type for SkiaShape (shorter alias)
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaShape</typeparam>
+        /// <param name="shape">The shape to set type for</param>
+        /// <param name="shapeType">The shape type</param>
+        /// <returns>The shape for chaining</returns>
+        public static T Shape<T>(this T shape, ShapeType shapeType) where T : SkiaShape
+        {
+            shape.Type = shapeType;
+            return shape;
+        }
+
+        #endregion
+
+        #region SKIAIMAGE EXTENSIONS
+
+        /// <summary>
+        /// Sets the aspect for SkiaImage
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaImage</typeparam>
+        /// <param name="image">The image to set aspect for</param>
+        /// <param name="aspect">The transform aspect</param>
+        /// <returns>The image for chaining</returns>
+        public static T WithAspect<T>(this T image, TransformAspect aspect) where T : SkiaImage
+        {
+            image.Aspect = aspect;
+            return image;
+        }
+
+        #endregion
+
+        #region SKIALABEL EXTENSIONS
+
+        /// <summary>
+        /// Sets the font size for SkiaLabel
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaLabel</typeparam>
+        /// <param name="label">The label to set font size for</param>
+        /// <param name="fontSize">The font size</param>
+        /// <returns>The label for chaining</returns>
+        public static T WithFontSize<T>(this T label, double fontSize) where T : SkiaLabel
+        {
+            label.FontSize = fontSize;
+            return label;
+        }
+
+        /// <summary>
+        /// Sets the text color for SkiaLabel
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaLabel</typeparam>
+        /// <param name="label">The label to set text color for</param>
+        /// <param name="color">The text color</param>
+        /// <returns>The label for chaining</returns>
+        public static T WithTextColor<T>(this T label, Color color) where T : SkiaLabel
+        {
+            label.TextColor = color;
+            return label;
+        }
+
+        /// <summary>
+        /// Sets the horizontal text alignment for SkiaLabel
+        /// </summary>
+        /// <typeparam name="T">Type of SkiaLabel</typeparam>
+        /// <param name="label">The label to set alignment for</param>
+        /// <param name="alignment">The horizontal text alignment</param>
+        /// <returns>The label for chaining</returns>
+        public static T WithHorizontalTextAlignment<T>(this T label, DrawTextAlignment alignment) where T : SkiaLabel
+        {
+            label.HorizontalTextAlignment = alignment;
+            return label;
         }
 
         #endregion

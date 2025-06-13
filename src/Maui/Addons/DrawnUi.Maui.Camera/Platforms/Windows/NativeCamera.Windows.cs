@@ -38,10 +38,10 @@ interface IDXGISurface : IDXGIDeviceSubObject
     void SetPrivateDataInterface([In] ref Guid Name, [In, MarshalAs(UnmanagedType.IUnknown)] object pUnknown);
     void GetPrivateData([In] ref Guid Name, ref uint pDataSize, IntPtr pData);
     void GetParent([In] ref Guid riid, out IntPtr ppParent);
-    
+
     // IDXGIDeviceSubObject methods
     void GetDevice([In] ref Guid riid, out IntPtr ppDevice);
-    
+
     // IDXGISurface methods
     void GetDesc(out DXGI_SURFACE_DESC pDesc);
     void Map(out DXGI_MAPPED_RECT pLockedRect, uint MapFlags);
@@ -512,7 +512,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     return Marshal.GetObjectForIUnknown(surfacePtr) as IDXGISurface;
                 }
             }
-            
+
             Debug.WriteLine("[NativeCameraWindows] Direct3D surface does not support DXGI interface access");
             return null;
         }
@@ -531,7 +531,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         try
         {
             var grContext = GetExistingGRContext();
-            if (grContext == null) 
+            if (grContext == null)
             {
                 Debug.WriteLine("[NativeCameraWindows] No GRContext available, falling back to software processing");
                 return null;
@@ -548,9 +548,9 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             Debug.WriteLine($"[NativeCameraWindows] Creating GPU SKImage: {desc.Width}x{desc.Height}, Format: {desc.Format}");
 
             var imageInfo = new SKImageInfo((int)desc.Width, (int)desc.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
-            
+
             dxgiSurface.Map(out DXGI_MAPPED_RECT mappedRect, 0);
-            
+
             try
             {
                 var skImage = SKImage.FromPixels(imageInfo, mappedRect.pBits, mappedRect.Pitch);
@@ -620,7 +620,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 _preview?.Dispose(); // Only dispose old preview, not the new SKImage
                 _preview = capturedImage;
             }
-            if (capturedImage!=null)
+            if (capturedImage != null)
             {
                 //PREVIEW FRAME READY
                 FormsControl.UpdatePreview();
@@ -652,7 +652,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     ProcessDirect3DFrameAsync(videoFrame.Direct3DSurface);
                     return;
                 }
-                
+
                 // PRIORITY 2: Fallback to software bitmap processing
                 if (videoFrame.SoftwareBitmap != null)
                 {
@@ -1224,10 +1224,6 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 _preview?.Dispose();
                 _preview = null;
             }
-
-
-
-
         }
         catch (Exception e)
         {
@@ -1237,4 +1233,3 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
 
     #endregion
 }
-
