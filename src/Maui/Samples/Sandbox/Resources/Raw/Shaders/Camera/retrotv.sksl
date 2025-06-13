@@ -1,0 +1,79 @@
+﻿uniform float4 iMouse;           
+uniform float  iTime;            
+uniform float2 iResolution;      
+uniform float2 iImageResolution; 
+uniform shader iImage1;  
+uniform float2 iOffset;  
+uniform float2 iOrigin; 
+
+const float SCANLINE_INTENSITY = 0.3;
+const float VIGNETTE_STRENGTH = 0.4;
+const float NOISE_INTENSITY = 0.08;
+const float CHROMATIC_ABBERATION = 0.002;
+
+/// <summary>
+/// Generates TV static noise
+/// </summary>
+/// <param name="coord">Coordinate for noise generation</param>
+/// <param name="time">Current time for animation</param>
+/// <returns>Noise value</returns>
+float tvNoise(float2 coord, float time) {
+    return fract(sin(dot(coord + time, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+/// <summary>
+/// Creates vignette effect (darkened edges)
+/// </summary>
+/// <param name="uv">UV coordinates (0-1)</param>
+/// <returns>Vignette multiplier</returns>
+float vignette(float2 uv) {
+    float2 centered = uv - 0.5;
+    float distance = length(centered);
+    return 1.0 - smoothstep(0.3, 0.8, distance * VIGNETTE_STRENGTH * 2.0);
+}
+
+/// <summary>
+/// Creates CRT barrel distortion
+/// </summary>
+/// <param name="uv">Original UV coordinates</param>
+/// <returns>Distorted UV coordinates</returns>
+float2 barrelDistortion(float2 uv) {
+    float2 centered = uv - 0.5;
+    float r2 = dot(centered, centered);
+    float distortion = 1.0 + r2 * 0.15;
+    return 0.5 + centered * distortion;
+}
+
+/// <summary>
+/// Main fragment shader for CRT/VHS effect
+/// </summary>
+/// <param name="fragCoord">Current pixel coordinate</param>
+/// <returns>Retro CRT-styled pixel color</returns>
+half4 main(float2 fragCoord) {
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+    float2 uv = inputCoord / iImageResolution.xy;
+    
+    float2 distortedUV = barrelDistortion(uv);
+    float2 distortedCoord = distortedUV * iImageResolution.xy;
+    
+    half4 colorR = iImage1.eval(distortedCoord + float2(CHROMATIC_ABBERATION * iImageResolution.x, 0.0));
+    half4 colorG = iImage1.eval(distortedCoord);
+    half4 colorB = iImage1.eval(distortedCoord - float2(CHROMATIC_ABBERATION * iImageResolution.x, 0.0));
+    
+    half4 color = half4(colorR.r, colorG.g, colorB.b, colorG.a);
+    
+    float scanlines = sin(distortedCoord.y * 3.14159 * 0.5) * SCANLINE_INTENSITY + (1.0 - SCANLINE_INTENSITY);
+    color.rgb *= scanlines;
+    
+    float noise = tvNoise(distortedCoord * 0.5, iTime * 10.0) * NOISE_INTENSITY;
+    color.rgb += noise;
+    
+    float vignetteEffect = vignette(distortedUV);
+    color.rgb *= vignetteEffect;
+    
+    color.rgb = pow(color.rgb, half3(1.2));
+    color.rgb *= 1.1;
+    
+    return color;
+}

@@ -1,0 +1,107 @@
+﻿uniform float4 iMouse;           // Mouse drag pos=.xy Click pos=.zw (pixels)
+uniform float  iTime;            // Shader playback time (s)
+uniform float2 iResolution;      // Viewport resolution (pixels)
+uniform float2 iImageResolution; // iImage1 resolution (pixels)
+uniform shader iImage1;  // Texture
+uniform float2 iOffset;  // Top-left corner of DrawingRect
+uniform float2 iOrigin; // Mouse drag started here
+
+// Sketch effect parameters
+const float EDGE_THRESHOLD = 0.03;     // Much more sensitive edge detection
+const float LINE_INTENSITY = 1.5;      // Much darker sketch lines
+const float PAPER_BRIGHTNESS = 0.9;    // Slightly darker paper
+const float NOISE_SCALE = 100.0;       // Paper texture detail
+const float SHADING_STRENGTH = 0.6;    // How much original shading to preserve
+
+/// <summary>
+/// Generates pseudo-random noise for paper texture
+/// </summary>
+/// <param name="coord">Input coordinate for noise generation</param>
+/// <returns>Noise value between 0 and 1</returns>
+float noise(float2 coord) {
+    return fract(sin(dot(coord, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+/// <summary>
+/// Converts RGB color to luminance (grayscale)
+/// </summary>
+/// <param name="color">RGB color to convert</param>
+/// <returns>Luminance value</returns>
+float luminance(half3 color) {
+    return dot(color, half3(0.299, 0.587, 0.114));
+}
+
+/// <summary>
+/// Detects edges using Sobel operator
+/// </summary>
+/// <param name="coord">Current pixel coordinate</param>
+/// <param name="texelSize">Size of one pixel in texture coordinates</param>
+/// <returns>Edge intensity (0 = no edge, 1 = strong edge)</returns>
+float detectEdges(float2 coord, float2 texelSize) {
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (coord - iOffset) * renderingScale;
+    
+    float tl = luminance(iImage1.eval(inputCoord + float2(-texelSize.x, -texelSize.y)).rgb);
+    float tm = luminance(iImage1.eval(inputCoord + float2(0.0, -texelSize.y)).rgb);
+    float tr = luminance(iImage1.eval(inputCoord + float2(texelSize.x, -texelSize.y)).rgb);
+    float ml = luminance(iImage1.eval(inputCoord + float2(-texelSize.x, 0.0)).rgb);
+    float mr = luminance(iImage1.eval(inputCoord + float2(texelSize.x, 0.0)).rgb);
+    float bl = luminance(iImage1.eval(inputCoord + float2(-texelSize.x, texelSize.y)).rgb);
+    float bm = luminance(iImage1.eval(inputCoord + float2(0.0, texelSize.y)).rgb);
+    float br = luminance(iImage1.eval(inputCoord + float2(texelSize.x, texelSize.y)).rgb);
+    
+    float sobelX = -tl + tr - 2.0*ml + 2.0*mr - bl + br;
+    float sobelY = -tl - 2.0*tm - tr + bl + 2.0*bm + br;
+    
+    return sqrt(sobelX*sobelX + sobelY*sobelY);
+}
+
+/// <summary>
+/// Creates paper texture effect
+/// </summary>
+/// <param name="coord">Current pixel coordinate</param>
+/// <returns>Paper texture value</returns>
+float paperTexture(float2 coord) {
+    float2 noiseCoord = coord * NOISE_SCALE;
+    float n1 = noise(noiseCoord);
+    float n2 = noise(noiseCoord * 2.0) * 0.5;
+    float n3 = noise(noiseCoord * 4.0) * 0.25;
+    return (n1 + n2 + n3) * 0.1 + 0.9;
+}
+
+/// <summary>
+/// Main fragment shader entry point
+/// </summary>
+/// <param name="fragCoord">Current pixel coordinate</param>
+/// <returns>Final sketched pixel color</returns>
+half4 main(float2 fragCoord) {
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+    
+    float2 texelSize = 1.0 / iImageResolution.xy;
+    
+    half4 originalColor = iImage1.eval(inputCoord);
+    float gray = luminance(originalColor.rgb);
+    
+    float edgeStrength = detectEdges(fragCoord, texelSize);
+    
+    float paper = paperTexture(fragCoord / iResolution.xy);
+    
+    float isEdge = smoothstep(EDGE_THRESHOLD * 0.3, EDGE_THRESHOLD, edgeStrength);
+    
+    // Create strong sketch lines
+    float sketchLines = 1.0 - (isEdge * LINE_INTENSITY);
+    sketchLines = clamp(sketchLines, 0.0, 1.0);
+    
+    // Add shading from original image
+    float shading = 1.0 - (1.0 - gray) * SHADING_STRENGTH;
+    
+    // Combine sketch lines with shading
+    float sketchValue = min(sketchLines, shading);
+    
+    // Apply subtle paper texture
+    float finalValue = sketchValue * (0.9 + paper * 0.1) * PAPER_BRIGHTNESS;
+    finalValue = clamp(finalValue, 0.0, 1.0);
+    
+    return half4(finalValue, finalValue, finalValue, originalColor.a);
+}

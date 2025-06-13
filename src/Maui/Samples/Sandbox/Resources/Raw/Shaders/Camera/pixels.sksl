@@ -1,0 +1,49 @@
+﻿uniform float4 iMouse;           // Mouse drag pos=.xy Click pos=.zw (pixels)
+uniform float  iTime;            // Shader playback time (s)
+uniform float2 iResolution;      // Viewport resolution (pixels)
+uniform float2 iImageResolution; // iImage1 resolution (pixels)
+uniform shader iImage1;  // Texture
+uniform float2 iOffset;  // Top-left corner of DrawingRect
+uniform float2 iOrigin; // Mouse drag started here
+
+// Fixed parameters for the "Minecraft" effect:
+// You can adjust these values directly in the shader to fine-tune the look.
+const float PIXEL_SIZE = 16.0;             // Controls the size of the 'pixels' (blockiness).
+                                         // Larger values make bigger blocks.
+const float COLOR_QUANTIZATION_LEVELS = 16.0; // Controls the number of distinct color levels per channel.
+                                            // Lower values create a more limited, retro palette.
+
+// The main function is the entry point for the fragment shader.
+// It's called for each pixel on the output surface.
+// 'fragCoord' is the current pixel's coordinate (e.g., (x, y)) on the output surface.
+
+half4 main(float2 fragCoord) {
+    // 1. Map fragment coordinate to input image coordinate space:
+    // This part comes directly from your template, ensuring the shader correctly samples
+    // the camera feed regardless of where the drawing rectangle is or its scale.
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+
+    // 2. Apply Pixelation:
+    // Quantize the input coordinates to snap them to a grid defined by PIXEL_SIZE.
+    // This makes all pixels within a 'block' receive the same color from the source.
+    float2 pixelatedCoord = floor(inputCoord / PIXEL_SIZE) * PIXEL_SIZE;
+
+    // 3. Sample the original camera image at the pixelated coordinate:
+    // IMPORTANT: For crisp, hard-edged pixels, ensure your Skia setup uses
+    // nearest-neighbor sampling (SkFilterMode::kNearest) for the 'iImage1' shader.
+    // Linear filtering will blur the pixel edges.
+    half4 color = iImage1.eval(pixelatedCoord);
+
+    // 4. Apply Color Quantization:
+    // Reduce the number of distinct colors per channel to give an old-school/8-bit look.
+    // We scale the color, round it to the nearest integer multiple of the quantization level,
+    // and then scale it back to the 0.0-1.0 range.
+    color.rgb = floor(color.rgb * COLOR_QUANTIZATION_LEVELS) / COLOR_QUANTIZATION_LEVELS;
+
+    // 5. Add slight contrast boost for that game-like look
+    color.rgb = pow(color.rgb, half3(0.8));
+
+    // Return the final processed color for the current pixel.
+    return color;
+}

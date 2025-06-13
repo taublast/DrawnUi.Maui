@@ -1,0 +1,72 @@
+﻿uniform float4 iMouse;           // Mouse drag pos=.xy Click pos=.zw (pixels)
+uniform float  iTime;            // Shader playback time (s)
+uniform float2 iResolution;      // Viewport resolution (pixels)
+uniform float2 iImageResolution; // iImage1 resolution (pixels)
+uniform shader iImage1;          // Texture
+uniform float2 iOffset;          // Top-left corner of DrawingRect
+uniform float2 iOrigin;          // Mouse drag started here
+
+/// <summary>
+/// Calculates Bayer dithering threshold for given pixel coordinates
+/// </summary>
+float get_bayer_threshold(int2 pixel_coords) {
+    int x = int(mod(float(pixel_coords.x), 4.0));
+    int y = int(mod(float(pixel_coords.y), 4.0));
+    int index = y * 4 + x;
+    
+    if (index == 0) return 0.0 / 16.0;
+    if (index == 1) return 8.0 / 16.0;
+    if (index == 2) return 2.0 / 16.0;
+    if (index == 3) return 10.0 / 16.0;
+    if (index == 4) return 12.0 / 16.0;
+    if (index == 5) return 4.0 / 16.0;
+    if (index == 6) return 14.0 / 16.0;
+    if (index == 7) return 6.0 / 16.0;
+    if (index == 8) return 3.0 / 16.0;
+    if (index == 9) return 11.0 / 16.0;
+    if (index == 10) return 1.0 / 16.0;
+    if (index == 11) return 9.0 / 16.0;
+    if (index == 12) return 15.0 / 16.0;
+    if (index == 13) return 7.0 / 16.0;
+    if (index == 14) return 13.0 / 16.0;
+    return 5.0 / 16.0;
+}
+
+half4 main(float2 fragCoord) 
+{	
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+    
+    half3 color = iImage1.eval(inputCoord).rgb;
+    
+    // Constants instead of uniforms
+    int palette_size = 64;
+    float dither_strength = 0.5;
+    
+    int2 pixel_coords = int2(fragCoord.x, fragCoord.y);
+    float threshold = get_bayer_threshold(pixel_coords);
+    
+    // Apply dither to original color
+    half3 dither = half3((threshold - 0.5) * 2.0 * dither_strength / float(palette_size));
+    half3 dithered_color = clamp(color + dither, 0.0, 1.0);
+    
+    // Find closest palette color using mathematical approach (4x4x4 RGB cube)
+    float min_dist = 999.0;
+    half3 closest = half3(0.0);
+    
+    for (int i = 0; i < 64; i++) {
+        int r = i / 16;
+        int g = int(mod(float(i), 16.0)) / 4;
+        int b = int(mod(float(i), 4.0));
+        
+        half3 pal_color = half3(float(r) / 3.0, float(g) / 3.0, float(b) / 3.0);
+        float dist = distance(dithered_color, pal_color);
+        
+        if (dist < min_dist) {
+            min_dist = dist;
+            closest = pal_color;
+        }
+    }
+    
+    return half4(closest, 1.0);
+}

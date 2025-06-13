@@ -1,0 +1,111 @@
+﻿uniform float4 iMouse;            
+uniform float  iTime;             
+uniform float2 iResolution;      
+uniform float2 iImageResolution;  
+uniform shader iImage1;  
+uniform shader iImage2;   
+uniform float2 iOffset;  
+uniform float2 iOrigin;  
+uniform float4 iMargins;  
+
+const float PI = 3.1415926536;
+const float PI2 = PI * 2.0; 
+const int mSize = 9;
+const int kSize = (mSize-1)/2;
+const float sigma = 3.0;
+float kernel[mSize];
+
+/// <summary>
+/// Gaussian probability density function
+/// </summary>
+/// <param name="x">Input value</param>
+/// <param name="sigma">Standard deviation</param>
+/// <returns>Gaussian PDF value</returns>
+float normpdf(in float x, in float sigma) {
+    return 0.39894 * exp(-0.5 * x * x / (sigma * sigma)) / sigma;
+}
+
+/// <summary>
+/// Color dodge blend mode
+/// </summary>
+/// <param name="src">Source color</param>
+/// <param name="dst">Destination color</param>
+/// <returns>Blended color</returns>
+half3 colorDodge(in half3 src, in half3 dst) {
+    return step(0.0, dst) * mix(min(half3(1.0), dst / (1.0 - src)), half3(1.0), step(1.0, src)); 
+}
+
+/// <summary>
+/// Converts color to grayscale
+/// </summary>
+/// <param name="col">Input color</param>
+/// <returns>Grayscale value</returns>
+float greyScale(in half3 col) {
+    return dot(col, half3(0.3, 0.59, 0.11));
+}
+
+/// <summary>
+/// Generates pseudo-random 2D vector
+/// </summary>
+/// <param name="p">Input coordinate</param>
+/// <returns>Random 2D vector</returns>
+float2 random(float2 p) {
+    p = fract(p * (float2(314.159, 314.265)));
+    p += dot(p, p.yx + 17.17);
+    return fract((p.xx + p.yx) * p.xy);
+}
+
+/// <summary>
+/// Main fragment shader for sketchy stippling effect
+/// </summary>
+/// <param name="fragCoord">Current pixel coordinate</param>
+/// <returns>Stippled pixel color</returns>
+half4 main(float2 fragCoord) {
+    float2 renderingScale = iImageResolution.xy / iResolution.xy;
+    float2 inputCoord = (fragCoord - iOffset) * renderingScale;
+    float2 q = inputCoord / iImageResolution.xy;
+    
+    half3 col = iImage1.eval(inputCoord).rgb;
+   
+    float2 r = random(q);
+    r.x *= PI2;
+    float2 cr = float2(sin(r.x), cos(r.x)) * sqrt(r.y);
+    
+    float2 blurCoord = inputCoord + cr * float(mSize);
+    half3 blurred = iImage1.eval(blurCoord).rgb;
+    
+    float shouldUseGaussian = step(0.5, iMouse.z);
+    
+    if (shouldUseGaussian > 0.5) {
+        blurred = half3(0.0); 
+        float Z = 0.0;
+        for (int j = 0; j <= kSize; ++j) {
+            kernel[kSize+j] = kernel[kSize-j] = normpdf(float(j), sigma);
+        }
+        for (int j = 0; j < mSize; ++j) {
+            Z += kernel[j];
+        }
+        
+        for (int i = -kSize; i <= kSize; ++i) {
+            for (int j = -kSize; j <= kSize; ++j) {
+                float2 sampleCoord = inputCoord + float2(float(i), float(j));
+                blurred += kernel[kSize+j] * kernel[kSize+i] * iImage1.eval(sampleCoord).rgb;
+            }
+        }
+        blurred = blurred / Z / Z;
+    }
+    
+    half3 inv = half3(1.0) - blurred; 
+    
+    half3 lighten = colorDodge(col, inv);
+    
+    half3 res = half3(greyScale(lighten));
+    
+    res = half3(pow(res.x, 3.0)); 
+    
+    if (shouldUseGaussian > 0.5) {
+        res *= 0.25 + 0.75 * pow(16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y), 0.15);
+    }
+    
+    return half4(res, 1.0); 
+}
