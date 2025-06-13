@@ -10,7 +10,7 @@ namespace DrawnUi.Controls
 
         public override void ApplyBindingContext()
         {
-            if (Content.BindingContext == null)
+            if (Content!=null && Content.BindingContext == null)
                 Content?.SetInheritedBindingContext(this.BindingContext);
 
             base.ApplyBindingContext();

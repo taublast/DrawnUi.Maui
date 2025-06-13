@@ -752,8 +752,11 @@ namespace DrawnUi.Controls
                 try
                 {
                     var content = page as SkiaControl;
-                    modalWrapper.SetInheritedBindingContext(content.BindingContext);
-                    modalWrapper.WrapContent(content);
+                    if (content != null)
+                    {
+                        modalWrapper.SetInheritedBindingContext(content.BindingContext);
+                        modalWrapper.WrapContent(content);
+                    }
 
                     if (modalWrapper.Content is SkiaDrawer drawer)
                     {

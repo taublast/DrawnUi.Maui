@@ -112,5 +112,35 @@ namespace AppoMobi.Maui.DrawnUi.Demo.Views
             Effect = effect;
         }
 
+        public void SetCustomShader(string shaderFilename)
+        {
+            if (Display == null)
+            {
+                return;
+            }
+
+            // Remove existing shader if any
+            if (_shader != null && VisualEffects.Contains(_shader))
+            {
+                VisualEffects.Remove(_shader);
+            }
+
+            // Create new shader with the specified filename
+            _shader = new SkiaShaderEffect()
+            {
+                ShaderSource = shaderFilename,
+                //FilterMode = SKFilterMode.Linear <== it's default
+            };
+
+            // Add the new shader
+            if (_shader != null && !VisualEffects.Contains(_shader))
+            {
+                VisualEffects.Add(_shader);
+            }
+
+            // Set effect to custom to enable shader
+            Effect = SkiaImageEffect.Custom;
+        }
+
     }
 }

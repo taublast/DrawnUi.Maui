@@ -58,8 +58,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "advanced", "advanced", "{FE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawnUi.Maui", "Maui\DrawnUi\DrawnUi.Maui.csproj", "{93E119B1-4378-87DF-2DD2-A818D1E6C2A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMac", "..\..\..\..\..\Users\taubl\source\repos\TestMac\TestMac.csproj", "{993680CC-8D9B-F459-F0F9-9150092659FC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,11 +104,6 @@ Global
 		{93E119B1-4378-87DF-2DD2-A818D1E6C2A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93E119B1-4378-87DF-2DD2-A818D1E6C2A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93E119B1-4378-87DF-2DD2-A818D1E6C2A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{993680CC-8D9B-F459-F0F9-9150092659FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{993680CC-8D9B-F459-F0F9-9150092659FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{993680CC-8D9B-F459-F0F9-9150092659FC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{993680CC-8D9B-F459-F0F9-9150092659FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{993680CC-8D9B-F459-F0F9-9150092659FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,7 +118,6 @@ Global
 		{809FE1DE-DCE9-2383-C3DD-1B21F336EB34} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
 		{B9726DC8-5E20-BF93-5EED-AC166CD612BF} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
 		{FE2FAC39-CCC4-4F0C-9554-73700F12B8ED} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{993680CC-8D9B-F459-F0F9-9150092659FC} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {329E3D0C-A3F7-4A3E-B61C-6B2D1BD7F708}

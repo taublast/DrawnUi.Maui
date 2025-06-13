@@ -7,6 +7,16 @@ using Sandbox.ViewModels;
 
 namespace AppoMobi.Maui.DrawnUi.Demo.Views;
 
+public class DebugStack : SkiaLayout
+{
+
+
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
+    {
+        return base.ProcessGestures(args, apply);
+    }
+}
+
 public partial class MainPageCameraPhoto
 {
 #if DEBUG
@@ -162,6 +172,14 @@ public partial class MainPageCameraPhoto
         CameraControl.Zoom += step;
     }
 
+    private void OnShaderDrawerHandleTapped(object sender, SkiaControl.ControlTappedEventArgs e)
+    {
+        //if (ShaderDrawer != null)
+        //{
+        //    ShaderDrawer.IsOpen = !ShaderDrawer.IsOpen;
+        //}
+    }
+
     private void OnZoomed(object sender, ZoomEventArgs e)
     {
         CameraControl.Zoom = e.Value;
@@ -179,5 +197,10 @@ public partial class MainPageCameraPhoto
         {
             CameraControl.TurnOffFlash();
         }
+    }
+
+    private void SkiaControl_OnChildTapped(object sender, SkiaControl.ControlTappedEventArgs e)
+    {
+        var stop = 1;
     }
 }

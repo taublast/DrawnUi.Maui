@@ -62,16 +62,7 @@
                     ZoomLimitMax="10"
                     ZoomLimitMin="1" />
 
-                <!--  MASK  -->
-                <!--<draw:SkiaHoverMask
-                    Margin="50,50"
-                    BackgroundColor="#33000000"
-                    CornerRadius="24"
-                    HorizontalOptions="Fill"
-                    LockRatio="-1"
-                    Tag="Mask"
-                    Type="Rectangle"
-                    VerticalOptions="Center" />-->
+            
 
                 <!--  CACHED LAYER CONTROLS  -->
                 <draw:SkiaLayer
@@ -173,11 +164,157 @@
 
             </draw:SkiaLayer>
 
+            <!--  SHADER SELECTOR DRAWER  -->
+            <draw:SkiaDrawer
+                Margin="0,0,0,50"
+                x:Name="ShaderDrawer"
+                HeaderSize="40"
+                Direction="FromLeft"
+                WidthRequest="400"
+                VerticalOptions="End"
+                HeightRequest="100"
+                IsOpen="False"
+                IgnoreWrongDirection="True"
+                ZIndex="50">
+
+                <!--  DRAWER CONTENT  -->
+                <draw:SkiaShape
+                    Type="Rectangle"
+                    CornerRadius="0,12,12,0"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+
+                    <draw:SkiaLayout
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+
+                        <!--  SHADER ITEMS SCROLL  -->
+                        <draw:SkiaScroll
+                            BackgroundColor="WhiteSmoke"
+                            Margin="0,0,20,0"
+                            Orientation="Horizontal"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            Padding="8">
+
+                            <draw:SkiaLayout
+                                x:Name="Stack"
+                                Type="Row"
+                                VerticalOptions="Center"
+                                Spacing="8"
+                                RecyclingTemplate="Disabled"
+                                UseCache="Operations"
+                                ItemsSource="{Binding ShaderItems}">
+
+                                <draw:SkiaLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="viewModels1:ShaderItem">
+
+                                        <draw:SkiaShape
+                                            Type="Rectangle"
+                                            WidthRequest="80"
+                                            HeightRequest="80"
+                                            CornerRadius="8"
+                                            BackgroundColor="White"
+                                            UseCache="Image"
+                                            draw:AddGestures.CommandTapped="{Binding Source={x:Reference Stack}, Path=BindingContext.CommandSelectShader}"
+                                            draw:AddGestures.CommandTappedParameter="{Binding .}">
+
+                                            <!--  SHADER CELL CONTENT  -->
+                                            <draw:SkiaLayout
+                                                HorizontalOptions="Fill"
+                                                VerticalOptions="Fill">
+
+                                                <!--  IMAGE WITH SHADER EFFECT  -->
+                                                <draw:SkiaImage
+                                                    Source="{Binding ImageSource}"
+                                                    Aspect="AspectCover"
+                                                    HorizontalOptions="Fill"
+                                                    VerticalOptions="Fill"
+                                                    UseCache="Image">
+
+                                                    <draw:SkiaImage.VisualEffects>
+                                                        <draw:SkiaShaderEffect ShaderSource="{Binding ShaderFilename}" />
+                                                    </draw:SkiaImage.VisualEffects>
+
+                                                </draw:SkiaImage>
+
+                                                <!--  SHADOW BACKGROUND FOR TEXT  -->
+                                                <draw:SkiaShape
+                                                    Type="Rectangle"
+                                                    BackgroundColor="#80000000"
+                                                    HorizontalOptions="Fill"
+                                                    VerticalOptions="End"
+                                                    HeightRequest="20" />
+
+                                                <!--  TITLE LABEL  -->
+                                                <draw:SkiaLabel
+                                                    Text="{Binding Title}"
+                                                    FontSize="12"
+                                                    TextColor="White"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="End"
+                                                    Margin="4"
+                                                    HorizontalTextAlignment="Center"
+                                                    UseCache="Operations" />
+
+                                            </draw:SkiaLayout>
+
+                                            <!--will not use shadows now-->
+                                            <!--<draw:SkiaShape.Shadows>
+                                            <draw:SkiaShadow
+                                                Blur="4"
+                                                Opacity="0.2"
+                                                X="0"
+                                                Y="2"
+                                                Color="Black" />
+                                        </draw:SkiaShape.Shadows>-->
+
+                                        </draw:SkiaShape>
+                                    </DataTemplate>
+                                </draw:SkiaLayout.ItemTemplate>
+
+                            </draw:SkiaLayout>
+
+                        </draw:SkiaScroll>
+
+                        <!--  DRAWER HEADER  -->
+                        <draw:SkiaShape
+                            UseCache="Image"
+                            HorizontalOptions="End"
+                            Type="Rectangle"
+                            BackgroundColor="WhiteSmoke"
+                            CornerRadius="0,16,0,0"
+                            VerticalOptions="Fill"
+                            WidthRequest="41">
+
+                            <draw:SkiaLayout
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Fill">
+
+                                <draw:SkiaShape
+                                    Type="Rectangle"
+                                    WidthRequest="4"
+                                    HeightRequest="40"
+                                    BackgroundColor="#CCCCCC"
+                                    CornerRadius="2"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center" />
+
+                            </draw:SkiaLayout>
+
+                        </draw:SkiaShape>
+
+                    </draw:SkiaLayout>
+
+                </draw:SkiaShape>
+
+            </draw:SkiaDrawer>
+
             <controls:ButtonToRoot />
 
             <draw:SkiaLabelFps
                 Margin="0,0,4,24"
-                BackgroundColor="DarkRed"
+                BackgroundColor="Black"
                 ForceRefresh="False"
                 HorizontalOptions="End"
                 Rotation="-45"

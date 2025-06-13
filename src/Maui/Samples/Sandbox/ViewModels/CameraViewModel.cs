@@ -1,9 +1,18 @@
 ﻿using DrawnUi.Camera;
 using System.Windows.Input;
 using AppoMobi.Maui.Gestures;
+using System.Collections.ObjectModel;
+using AppoMobi.Maui.DrawnUi.Demo.Views;
 
 namespace Sandbox.ViewModels
 {
+    public class ShaderItem : BindableObject
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string ImageSource { get; set; } = "Images/8.jpg";
+        public string ShaderFilename { get; set; }
+    }
 
     public class ProjectViewModel : BindableObject
     {
@@ -68,6 +77,24 @@ namespace Sandbox.ViewModels
     /// </summary>
     public class CameraViewModel : ProjectViewModel, IQueryAttributable
     {
+        public CameraViewModel()
+        {
+            // Initialize shader items
+            ShaderItems = new ObservableCollection<ShaderItem>
+            {
+                new ShaderItem { Title = "Negative", ShaderFilename = "Shaders/Camera/invert.sksl" },
+                new ShaderItem { Title = "TV", ShaderFilename = "Shaders/Camera/retrotv.sksl" },
+                new ShaderItem { Title = "Gazette", ShaderFilename = "Shaders/Camera/newspaper.sksl" },
+                new ShaderItem { Title = "Palette", ShaderFilename = "Shaders/Camera/old-palette.sksl" },
+                new ShaderItem { Title = "Neon", ShaderFilename = "Shaders/Camera/popart.sksl" },
+                new ShaderItem { Title = "Sketch1", ShaderFilename = "Shaders/Camera/sketch.sksl" },
+                new ShaderItem { Title = "Sketch", ShaderFilename = "Shaders/Camera/sketchtoy.sksl" },
+                new ShaderItem { Title = "Pixels", ShaderFilename = "Shaders/Camera/pixels.sksl" }
+            };
+
+            CommandSelectShader = new Command<ShaderItem>(OnShaderSelected);
+        }
+
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             if (query != null)
@@ -80,7 +107,50 @@ namespace Sandbox.ViewModels
             }
         }
 
+        #region PROPERTIES
+
+        private ObservableCollection<ShaderItem> _shaderItems;
+        public ObservableCollection<ShaderItem> ShaderItems
+        {
+            get { return _shaderItems; }
+            set
+            {
+                if (_shaderItems != value)
+                {
+                    _shaderItems = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private ShaderItem _selectedShader;
+        public ShaderItem SelectedShader
+        {
+            get { return _selectedShader; }
+            set
+            {
+                if (_selectedShader != value)
+                {
+                    _selectedShader = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        #endregion
+
         #region COMMANDS
+
+        public ICommand CommandSelectShader { get; private set; }
+
+        private void OnShaderSelected(ShaderItem shader)
+        {
+            if (shader != null && Camera is CameraWithEffects cameraWithEffects)
+            {
+                SelectedShader = shader;
+                cameraWithEffects.SetCustomShader(shader.ShaderFilename);
+            }
+        }
 
         public ICommand CommandCaptureStillPhoto
         {
@@ -255,7 +325,6 @@ namespace Sandbox.ViewModels
             overlay.AddSubView(new SkiaLabel()
             {
                 Text = $"DrawnUi Camera Demo",
-                FontFamily = "FontTextBold",
                 FontSize = 24,
                 TextColor = Colors.White,
                 HorizontalOptions = LayoutOptions.Center,

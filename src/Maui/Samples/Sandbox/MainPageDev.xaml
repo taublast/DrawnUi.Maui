@@ -14,7 +14,7 @@
     <draw:Canvas 
         
         Gestures="Enabled"
-        BackgroundColor="Red"
+        BackgroundColor="DarkKhaki"
         VerticalOptions="Fill" HorizontalOptions="Fill">
         <draw:SkiaLayer VerticalOptions="Fill">
 
@@ -32,7 +32,7 @@
                 VerticalOptions="Center">
 
                 <draw:SkiaLayout Type="Column">
-                    <draw:SkiaLabel Text="Text 1" />
+                    <draw:SkiaLabel Text="Text 10" />
                     <draw:SkiaLabel Text="Text 2" />
                 </draw:SkiaLayout>
 

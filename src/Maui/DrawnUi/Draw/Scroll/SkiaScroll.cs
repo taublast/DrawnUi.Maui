@@ -2643,7 +2643,7 @@ namespace DrawnUi.Draw
         {
             base.ApplyBindingContext();
 
-            if (Content?.BindingContext == null)
+            if (Content!=null && Content?.BindingContext == null)
                 Content?.SetInheritedBindingContext(BindingContext);
         }
 
