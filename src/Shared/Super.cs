@@ -238,10 +238,14 @@ public partial class Super
     public static Action OnMauiAppCreated;
 
 
+    /// <summary>
+    /// This will force recalculate canvas visibility in ViewTree and update those visible. Also when GRContext changes, all references must be cleared to avoid crash on next draw
+    /// </summary>
     public static event EventHandler NeedGlobalRefresh;
 
+
     /// <summary>
-    /// This will force recalculate canvas visibility in ViewTree and update those visible
+    /// This will force recalculate canvas visibility in ViewTree and update those visible. Also when GRContext changes, all references must be cleared to avoid crash on next draw
     /// </summary>
     public static void NeedGlobalUpdate()
     {

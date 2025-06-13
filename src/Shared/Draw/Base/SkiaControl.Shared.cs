@@ -6217,13 +6217,16 @@ namespace DrawnUi.Draw
                 Super.Log($"[SkiaControl] InvalidateWithChildren");
             }
 
-            ;
-
             LockUpdate(true);
 
-            foreach (var view in Views.ToList()) //todo why on earth adapter is not used??
+            foreach (var view in Views.ToList())  
             {
                 InvalidateChildren(view as SkiaControl);
+            }
+
+            foreach (var effect in this.VisualEffects.ToList())
+            {
+                effect.Update();
             }
 
             LockUpdate(false);

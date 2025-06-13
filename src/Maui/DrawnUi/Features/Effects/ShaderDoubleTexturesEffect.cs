@@ -467,7 +467,4 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
 
     #endregion
 
-
-
-
 }

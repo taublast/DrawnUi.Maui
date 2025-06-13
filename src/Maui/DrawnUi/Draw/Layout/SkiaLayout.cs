@@ -615,9 +615,14 @@ namespace DrawnUi.Draw
             if (ChildrenFactory == null)
                 return;
 
-            //todo cannot really spam this if we find out we need this need to find some
-            //more optimizations to minimize the lag from recreating templates
-            //ChildrenFactory.TemplatesInvalidated = true;
+            if (IsTemplated)
+            {
+                //todo cannot really spam this if we find out we need this need to find some
+                //more optimizations to minimize the lag from recreating templates
+                //ChildrenFactory.TemplatesInvalidated = true;
+
+                OnItemSourceChanged();
+            }
 
             base.InvalidateWithChildren();
         }

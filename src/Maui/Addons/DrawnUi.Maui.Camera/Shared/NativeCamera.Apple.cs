@@ -846,6 +846,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             System.Diagnostics.Debug.WriteLine($"[NativeCameraiOS] Frame stats - Processed: {_processedFrameCount}, Skipped: {_skippedFrameCount}");
         }
 
+        bool hasFrame=false;
         try
         {
             using var pixelBuffer = sampleBuffer.GetImageBuffer() as CVPixelBuffer;
@@ -939,11 +940,15 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 };
 
                 SetRawFrame(rawFrame);
-                FormsControl.UpdatePreview();
+                hasFrame=true;
             }
             finally
             {
                 pixelBuffer.Unlock(CVPixelBufferLock.ReadOnly);
+                if (hasFrame)
+                {
+                    FormsControl.UpdatePreview();
+                }
             }
         }
         catch (Exception e)

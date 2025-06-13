@@ -12,7 +12,7 @@ public interface INativeCamera : IDisposable
     /// If you get the preview via this method you are now responsible to dispose it yourself to avoid memory leaks.
     /// </summary>
     /// <returns></returns>
-    CapturedImage GetPreviewImage();
+    SKImage GetPreviewImage();
 
     void ApplyDeviceOrientation(int orientation);
 

@@ -279,16 +279,16 @@ public partial class SkiaCamera : SkiaControl
             System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting adaptive brightness measurement with {meteringMode} mode");
 
             // A - Get preview to check what camera has chosen (auto exposure)
-            CapturedImage autoFrame = null;
+            SKImage autoFrame = null;
             for (int attempts = 0; attempts < 10; attempts++)
             {
                 autoFrame = NativeControl.GetPreviewImage();
-                if (autoFrame?.Image != null)
+                if (autoFrame != null)
                     break;
                 await Task.Delay(100);
             }
 
-            if (autoFrame?.Image == null)
+            if (autoFrame == null)
                 return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
 
             // Check auto exposure metadata to understand lighting conditions
@@ -315,21 +315,21 @@ public partial class SkiaCamera : SkiaControl
                 // Fallback to direct pixel analysis when manual exposure is not supported
                 System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
 
-                CapturedImage frame = null;
+                SKImage frame = null;
                 for (int attempts = 0; attempts < 10; attempts++)
                 {
                     frame = NativeControl.GetPreviewImage();
-                    if (frame?.Image != null)
+                    if (frame != null)
                         break;
                     await Task.Delay(100);
                 }
 
-                if (frame?.Image == null)
+                if (frame == null)
                     return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
 
                 using (frame)
                 {
-                    var pixelLuminance = AnalyzeFrameLuminance(frame.Image, meteringMode);
+                    var pixelLuminance = AnalyzeFrameLuminance(frame, meteringMode);
                     var brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
 
                     System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel brightness: {brightness:F0} lux");
@@ -444,16 +444,16 @@ public partial class SkiaCamera : SkiaControl
             await Task.Delay(1000);
 
             // Capture frame
-            CapturedImage frame = null;
+            SKImage frame = null;
             for (int attempts = 0; attempts < 5; attempts++)
             {
                 frame = NativeControl.GetPreviewImage();
-                if (frame?.Image != null)
+                if (frame != null)
                     break;
                 await Task.Delay(100);
             }
 
-            if (frame?.Image == null)
+            if (frame == null)
             {
                 return (false, 0, false, false);
             }
@@ -461,8 +461,8 @@ public partial class SkiaCamera : SkiaControl
             using (frame)
             {
                 // Analyze luminance and check for clipping and darkness
-                var pixelLuminance = AnalyzeFrameLuminance(frame.Image, meteringMode);
-                var clippingInfo = AnalyzeClipping(frame.Image, meteringMode);
+                var pixelLuminance = AnalyzeFrameLuminance(frame, meteringMode);
+                var clippingInfo = AnalyzeClipping(frame, meteringMode);
 
                 System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Luminance: {pixelLuminance:F1}, Clipped pixels: {clippingInfo.ClippedPercentage:F1}%");
 
@@ -571,23 +571,23 @@ public partial class SkiaCamera : SkiaControl
                 await Task.Delay(1000);
             }
 
-            CapturedImage frame = null;
+            SKImage frame = null;
             for (int attempts = 0; attempts < 5; attempts++)
             {
                 frame = NativeControl.GetPreviewImage();
-                if (frame?.Image != null)
+                if (frame != null)
                     break;
                 await Task.Delay(100);
             }
 
-            if (frame?.Image == null)
+            if (frame == null)
             {
                 return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for fallback analysis" };
             }
 
             using (frame)
             {
-                var clippingInfo = AnalyzeClipping(frame.Image, meteringMode);
+                var clippingInfo = AnalyzeClipping(frame, meteringMode);
 
                 if (clippingInfo.AverageOfNonClipped > 0)
                 {

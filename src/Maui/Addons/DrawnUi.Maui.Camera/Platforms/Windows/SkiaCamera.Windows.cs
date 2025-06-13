@@ -92,13 +92,13 @@ public partial class SkiaCamera : SkiaControl
         return status == PermissionStatus.Granted;
     }
 
-    public SKBitmap GetPreviewBitmap()
-    {
-        var preview = NativeControl?.GetPreviewImage();
-        if (preview?.Image != null)
-        {
-            return SKBitmap.FromImage(preview.Image);
-        }
-        return null;
-    }
+    //public SKBitmap GetPreviewBitmap()
+    //{
+    //    var preview = NativeControl?.GetPreviewImage();
+    //    if (preview?.Image != null)
+    //    {
+    //        return SKBitmap.FromImage(preview.Image);
+    //    }
+    //    return null;
+    //}
 }
