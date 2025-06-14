@@ -139,7 +139,14 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         {
             try
             {
-                CompileShader();
+                if (string.IsNullOrEmpty(_customCode))
+                {
+                    CompileShader();
+                }
+                else
+                {
+                    CompileShader(_customCode, false);
+                }
             }
             catch (Exception e)
             {
@@ -187,6 +194,8 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     // ✅ KEEP: Only CPU-side compiled shader
     protected SKRuntimeEffect CompiledShader;
     private bool _hasNewShader;
+    private string _customCode;
+    private string _lastSource;
 
     public override bool NeedApply
     {
@@ -240,22 +249,43 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     /// </summary>
     protected virtual void CompileShader()
     {
+        string shaderCode = SkSl.LoadFromResources(ShaderSource);
+        CompileShader(shaderCode);
+    }
+
+    public string NormalizeShaderCode(string shaderText)
+    {
+        return shaderText.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+    }
+
+    protected virtual void CompileShader(string shaderCode, bool useCache=true)
+    {
+        shaderCode = NormalizeShaderCode(shaderCode);
+        LoadedCode = shaderCode;
         if (!string.IsNullOrEmpty(ShaderTemplate))
         {
             if (string.IsNullOrEmpty(_template))
                 _template = SkSl.LoadFromResources(ShaderTemplate);
         }
-        string shaderCode = SkSl.LoadFromResources(ShaderSource);
         if (!string.IsNullOrEmpty(_template))
         {
             shaderCode = _template.Replace(_templatePlacehodler, shaderCode);
         }
-
-        CompiledShader = SkSl.Compile(shaderCode, ShaderSource, true);
+        CompiledShader = SkSl.Compile(shaderCode, ShaderSource, useCache);
     }
+
+    public string LoadedCode { get; set; }
 
     protected virtual void ApplyShaderSource()
     {
+        if (_lastSource != ShaderSource || string.IsNullOrEmpty(ShaderSource))
+        {
+            _customCode = ShaderCode;
+        }
+        else
+        {
+            _customCode = "";
+        }
         _hasNewShader = true;
         _template = null;
         Update();
@@ -267,6 +297,17 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         {
             control.ApplyShaderSource();
         }
+    }
+
+    public static readonly BindableProperty ShaderCodeProperty = BindableProperty.Create(nameof(ShaderCode),
+        typeof(string),
+        typeof(SkiaShaderEffect),
+        string.Empty, propertyChanged: NeedChangeSource);
+
+    public string ShaderCode
+    {
+        get { return (string)GetValue(ShaderCodeProperty); }
+        set { SetValue(ShaderCodeProperty, value); }
     }
 
     public static readonly BindableProperty ShaderSourceProperty = BindableProperty.Create(nameof(ShaderSource),

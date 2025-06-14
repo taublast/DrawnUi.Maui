@@ -1,28 +1,20 @@
 ﻿global using DrawnUi.Draw;
 global using SkiaSharp;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using AppoMobi.Specials;
-using DrawnUi.Views;
-using Microsoft.Maui.Controls;
-using static Microsoft.Maui.ApplicationModel.Permissions;
-using Color = Microsoft.Maui.Graphics.Color;
 
 namespace DrawnUi.Camera;
 
 public partial class SkiaCamera : SkiaControl
 {
-
-
     /// <summary>
     /// Going to overlay any SkiaLayout over the captured photo and return a new bitmap.
     /// So do not forget to dispose the old one if not needed anymore.
+    /// Can change the created SkiaImage that will be used for rendering by passing a callback `createdImage`, could add effects etc.
     /// </summary>
     /// <param name="captured"></param>
     /// <param name="overlay"></param>
+    /// <param name="createdImage"></param>
     /// <returns></returns>
-    public virtual SKImage RenderCapturedPhoto(CapturedImage captured, SkiaLayout overlay)
+    public virtual SKImage RenderCapturedPhoto(CapturedImage captured, SkiaLayout overlay, Action<SkiaImage> createdImage = null)
     {
         var scaleOverlay = GetRenderingScaleFor(captured.Image.Width, captured.Image.Height);
         double zoomCapturedPhotoX = TextureScale;
@@ -53,6 +45,7 @@ public partial class SkiaCamera : SkiaControl
             //create offscreen rendering context
             var context = new SkiaDrawingContext()
             {
+                Surface = surface,
                 Canvas = surface.Canvas,
                 Width = info.Width,
                 Height = info.Height
@@ -84,6 +77,8 @@ public partial class SkiaCamera : SkiaControl
                 }
                 image.Rotation = transfromRotation;
             }
+
+            createdImage?.Invoke(image);
 
             var ctx = new DrawingContext(context, destination, 1, null);
             image.Render(ctx);

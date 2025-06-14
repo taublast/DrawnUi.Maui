@@ -33,6 +33,16 @@ namespace DrawnUi.Camera;
 
 public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvailableListener, INativeCamera
 {
+    //todo create upper properties:
+
+    // Max preview width that is guaranteed by Camera2 API
+    public int MaxPreviewWidth = 800;
+
+    // Max preview height that is guaranteed by Camera2 API
+    public int MaxPreviewHeight = 800;
+
+
+
     public void SetZoom(float zoom)
     {
         ZoomScale = zoom;
@@ -644,12 +654,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     // Camera state: Picture was taken.
     public const int STATE_PICTURE_TAKEN = 4;
 
-    // Max preview width that is guaranteed by Camera2 API
-    private static readonly int MAX_PREVIEW_WIDTH = 1000;
-
-    // Max preview height that is guaranteed by Camera2 API
-    private static readonly int MAX_PREVIEW_HEIGHT = 1000;
-
     // ID of the current {@link CameraDevice}.
     private string CameraId;
 
@@ -897,14 +901,14 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                     maxPreviewHeight = displaySize.X + allowPreviewOverflow;
                 }
 
-                if (maxPreviewWidth > MAX_PREVIEW_WIDTH)
+                if (maxPreviewWidth > MaxPreviewWidth)
                 {
-                    maxPreviewWidth = MAX_PREVIEW_WIDTH;
+                    maxPreviewWidth = MaxPreviewWidth;
                 }
 
-                if (maxPreviewHeight > MAX_PREVIEW_HEIGHT)
+                if (maxPreviewHeight > MaxPreviewHeight)
                 {
-                    maxPreviewHeight = MAX_PREVIEW_HEIGHT;
+                    maxPreviewHeight = MaxPreviewHeight;
                 }
 
                 #region STILL PHOTO
@@ -971,12 +975,10 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
                 var previewSize = ChooseOptimalSize(map.GetOutputSizes(Class.FromType(typeof(SurfaceTexture))),
-                    maxPreviewWidth,
-                    maxPreviewHeight, selectedSize);
+                    maxPreviewWidth, maxPreviewHeight, selectedSize);
 
                 PreviewWidth = previewSize.Width;
                 PreviewHeight = previewSize.Height;
-
 
                 mImageReaderPreview = ImageReader.NewInstance(PreviewWidth, PreviewHeight, ImageFormatType.Yuv420888, 3);
                 mImageReaderPreview.SetOnImageAvailableListener(this, mBackgroundHandler);
