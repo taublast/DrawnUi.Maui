@@ -7,10 +7,9 @@ namespace DrawnUi.Controls
     [ContentProperty("Content")]
     public class SkiaDrawer : SnappingLayout, IVisibilityAware
     {
-
         public override void ApplyBindingContext()
         {
-            if (Content!=null && Content.BindingContext == null)
+            if (Content != null && Content.BindingContext == null)
                 Content?.SetInheritedBindingContext(this.BindingContext);
 
             base.ApplyBindingContext();
@@ -470,6 +469,7 @@ namespace DrawnUi.Controls
                 if (SnapPoints[1] == CurrentSnap)
                     isOpen = false;
             }
+
             //Debug.WriteLine($"[SkiaDrawer] SetIsOpen: open {isOpen} moving {InTransition}");
             IsOpen = isOpen;
         }
@@ -571,6 +571,7 @@ namespace DrawnUi.Controls
                     {
                         IsOpen = false;
                     }
+
                     return null;
                 }
             }
@@ -579,7 +580,7 @@ namespace DrawnUi.Controls
                 var passed = true;
             }
 
-                bool passedToChildren = false;
+            bool passedToChildren = false;
 
             ISkiaGestureListener PassToChildren()
             {
@@ -605,15 +606,17 @@ namespace DrawnUi.Controls
                     //BlockGesturesBelow fired
                     consumed = null;
                 }
+
                 if (consumed != null && args.Type != TouchActionResult.Up)
                 {
-                    //if (TouchEffect.LogEnabled)
+                    if (TouchEffect.LogEnabled)
                         Super.Log($"[DRAWER] {this.Tag} {args.Type} CONSUMED by {consumed}");
 
                     if (args.Type == TouchActionResult.Tapped)
                     {
                         ChildWasTapped = true;
                     }
+
                     return consumed;
                 }
             }
@@ -801,10 +804,11 @@ namespace DrawnUi.Controls
                             useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
                             velocity = new(0, useVelocity);
                         }
+
                         VelocityAccumulator.CaptureVelocity(velocity);
 
                         Velocity = VelocityAccumulator.CalculateFinalVelocity(3000);
-                        Debug.WriteLine($"[SKiaDrawer] Velocity: {Velocity}");
+                        //Debug.WriteLine($"[SKiaDrawer] Velocity: {Velocity}");
 
                         bool rightDirection = false;
 
@@ -857,7 +861,7 @@ namespace DrawnUi.Controls
 
                 if (consumed != null || IsUserPanning) // || args.Event.NumberOfTouches > 1)
                 {
-                    if (consumed==null &&  args.Type != TouchActionResult.Up)
+                    if (consumed == null && args.Type != TouchActionResult.Up)
                     {
                         return this;
                     }
