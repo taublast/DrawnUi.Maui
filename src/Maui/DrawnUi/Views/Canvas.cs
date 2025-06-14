@@ -644,6 +644,9 @@ public class Canvas : DrawnView, IGestureListener
     public static float FirstPanThreshold = 5;
 
     bool _isPanning;
+    bool _blockedPanning;
+    bool _hadTap;
+    bool _hadLong;
 
     /// <summary>
     /// IGestureListener implementation
@@ -656,7 +659,37 @@ public class Canvas : DrawnView, IGestureListener
     {
         //Debug.WriteLine($"[Canvas] {touchAction} {type}");
 
-#if ANDROID
+#if ANDROID //todo move all this fun to gestures lib now:
+        // on some devices like galaxy the screen is too sensitive for panning
+        // so it send micro-panning gestures when the finger just went down to screen
+        // like not moving yet so we filter micro-pan
+        // at the same time those screens detect pan instead of tap inside getsure lib
+        // so this is a specific android workaround, to be moved to gestures lib
+        if (touchAction == TouchActionResult.Tapped)
+        {
+            _hadTap = true;
+        }
+        else
+        if (touchAction == TouchActionResult.LongPressing)
+        {
+            _hadLong = true;
+        }
+        else
+        if (touchAction == TouchActionResult.Down)
+        {
+            _hadLong = false;
+            _hadTap = false;
+            _blockedPanning = false;
+        }
+        else
+        if (touchAction == TouchActionResult.Up)
+        {
+            if (_blockedPanning && !_hadTap && !_isPanning && !_hadLong)
+            {
+                touchAction = TouchActionResult.Tapped;
+            }
+        }
+        else
         if (touchAction == TouchActionResult.Panning)
         {
             //filter micro-gestures
@@ -664,6 +697,7 @@ public class Canvas : DrawnView, IGestureListener
                 || (Math.Abs(args1.Distance.Velocity.X / RenderingScale) < 1 &&
                     Math.Abs(args1.Distance.Velocity.Y / RenderingScale) < 1))
             {
+                _blockedPanning = true;
                 return;
             }
 
@@ -675,10 +709,11 @@ public class Canvas : DrawnView, IGestureListener
                 if (Math.Abs(args1.Distance.Total.X) < threshold && Math.Abs(args1.Distance.Total.Y) < threshold)
                 {
                     _panningOffset = SKPoint.Empty;
-                    Debug.WriteLine($"[Canvas] Blocked micro-pan");
+                    //Debug.WriteLine($"[Canvas] Blocked micro-pan");
                     return;
                 }
 
+                //Debug.WriteLine($"[Canvas] pan {args1.Distance.Total.X / RenderingScale:0.0} {args1.Distance.Total.Y / RenderingScale:0.0} pts");
                 if (_panningOffset == SKPoint.Empty)
                 {
                     _panningOffset = args1.Distance.Total.ToSKPoint();
@@ -691,7 +726,6 @@ public class Canvas : DrawnView, IGestureListener
         }
 
 #endif
-
 
         if (touchAction == TouchActionResult.Tapped)
         {
