@@ -121,7 +121,7 @@ half4 main(float2 fragCoord) {
     half3 res = half3(greyScale(lighten));
     
     // Enhance contrast for cleaner lines
-    res = half3(pow(res.x, 3.0)); 
+    res = half3(pow(res.x, 6.0)); 
     
     // Add subtle vignette effect
     res *= 0.3 + 0.7 * pow(16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y), 0.2);

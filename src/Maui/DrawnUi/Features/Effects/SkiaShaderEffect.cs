@@ -143,7 +143,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
             }
             catch (Exception e)
             {
-                Super.Log(e);
+                Super.Log($"[SkiaShaderEffect] Failed to compile shader {e}");
                 return null;
             }
             _hasNewShader = false;

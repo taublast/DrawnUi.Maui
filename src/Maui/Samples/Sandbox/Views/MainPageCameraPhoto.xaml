@@ -190,6 +190,7 @@
 
                         <!--  SHADER ITEMS SCROLL  -->
                         <draw:SkiaScroll
+                            RespondsToGestures="{Binding Source={x:Reference ShaderDrawer}, Path=IsOpen}"
                             BackgroundColor="WhiteSmoke"
                             Margin="0,0,20,0"
                             Orientation="Horizontal"
@@ -207,7 +208,7 @@
                                 ItemsSource="{Binding ShaderItems}">
 
                                 <draw:SkiaLayout.ItemTemplate>
-                                    <DataTemplate x:DataType="viewModels1:ShaderItem">
+                                    <DataTemplate x:DataType="views:ShaderItem">
 
                                         <draw:SkiaShape
                                             Type="Rectangle"
