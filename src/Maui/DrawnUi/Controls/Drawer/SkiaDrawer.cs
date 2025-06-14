@@ -607,6 +607,9 @@ namespace DrawnUi.Controls
                 }
                 if (consumed != null && args.Type != TouchActionResult.Up)
                 {
+                    //if (TouchEffect.LogEnabled)
+                        Super.Log($"[DRAWER] {this.Tag} {args.Type} CONSUMED by {consumed}");
+
                     if (args.Type == TouchActionResult.Tapped)
                     {
                         ChildWasTapped = true;
@@ -617,7 +620,6 @@ namespace DrawnUi.Controls
 
             if (!RespondsToGestures)
                 return consumed;
-
 
 
             // todo
@@ -636,6 +638,9 @@ namespace DrawnUi.Controls
 
                 _panningOffset = new((float)TranslationX, (float)TranslationY);
             }
+
+            Vector2 velocity;
+            float useVelocity = 0;
 
             if (true)
             {
@@ -719,8 +724,6 @@ namespace DrawnUi.Controls
 
                         if (IsUserPanning)
                         {
-                            Vector2 velocity;
-                            float useVelocity = 0;
                             if (direction == DirectionType.Horizontal)
                             {
                                 useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
@@ -788,9 +791,20 @@ namespace DrawnUi.Controls
                         direction = DirectionType.None;
                         var Velocity = Vector2.Zero;
 
-                        Velocity = VelocityAccumulator.CalculateFinalVelocity(500);
-                        //Velocity = new((float)(args.Event.Distance.Velocity.X / RenderingScale), (float)(args.Event.Distance.Velocity.Y / RenderingScale));
+                        if (direction == DirectionType.Horizontal)
+                        {
+                            useVelocity = (float)(args.Event.Distance.Velocity.X / RenderingScale);
+                            velocity = new(useVelocity, 0);
+                        }
+                        else
+                        {
+                            useVelocity = (float)(args.Event.Distance.Velocity.Y / RenderingScale);
+                            velocity = new(0, useVelocity);
+                        }
+                        VelocityAccumulator.CaptureVelocity(velocity);
 
+                        Velocity = VelocityAccumulator.CalculateFinalVelocity(3000);
+                        Debug.WriteLine($"[SKiaDrawer] Velocity: {Velocity}");
 
                         bool rightDirection = false;
 
