@@ -201,7 +201,7 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
     /// Loading from local files only
     /// </summary>
     /// <param name="fileName"></param>
-    /// <returns>
+    /// <returns></returns>
     public async Task LoadPrimarySource(string fileName)
     {
         if (string.IsNullOrEmpty(fileName))
@@ -360,7 +360,7 @@ public class ShaderDoubleTexturesEffect : SkiaShaderEffect
     /// Loading from local files only
     /// </summary>
     /// <param name="fileName"></param>
-    /// <returns>
+    /// <returns></returns>
     public async Task LoadSecondarySource(string fileName)
     {
         if (string.IsNullOrEmpty(fileName))

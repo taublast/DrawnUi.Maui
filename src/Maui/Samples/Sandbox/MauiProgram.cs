@@ -31,17 +31,14 @@ namespace Sandbox
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "FontTextTitle");
-                    fonts.AddFont("OpenSans-Regular.ttf", "FontText");
                     fonts.AddFont("NotoColorEmoji-Regular.ttf", "FontEmoji");
 
-                    fonts.AddFont("Orbitron-Regular.ttf", "FontGame"); //400
-                    fonts.AddFont("Orbitron-Medium.ttf", "FontGameMedium"); //500
-                    fonts.AddFont("Orbitron-SemiBold.ttf", "FontGameSemiBold"); //600
-                    fonts.AddFont("Orbitron-Bold.ttf", "FontGameBold"); //700
-                    fonts.AddFont("Orbitron-ExtraBold.ttf", "FontGameExtraBold"); //800
+                    fonts.AddFont("OpenSans-Regular.ttf", "FontText");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "FontTextBol");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "FontTextTitle");
+
+                    fonts.AddFont("DOM.TTF", "FontBrand");
+                    fonts.AddFont("DOMB.TTF", "FontBrandBold");
                 });
 
             builder.UseDrawnUi(new()
@@ -55,15 +52,6 @@ namespace Sandbox
                 }
             });
 
-            if (Super.SkiaGeneration == 2)
-            {
-                ShadersFolder = "Shaders2";
-            }
-
-#if ANDROID
-            var t = 1;
-#endif
-
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
@@ -71,6 +59,6 @@ namespace Sandbox
             return builder.Build();
         }
 
-        public static string ShadersFolder = "Shaders";
+        public static readonly string ShadersFolder = "Shaders";
     }
 }

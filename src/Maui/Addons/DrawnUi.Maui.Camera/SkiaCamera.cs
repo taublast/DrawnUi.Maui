@@ -506,10 +506,10 @@ public partial class SkiaCamera : SkiaControl
         //draw DisplayImage
         DrawViews(ctx);
 
-        //if (State == CameraState.On)
-        //{
-        //    Update();
-        //}
+        if (ConstantUpdate && State == CameraState.On)
+        {
+            Update();
+        }
     }
 
     #endregion
@@ -1403,10 +1403,31 @@ public partial class SkiaCamera : SkiaControl
         1.0,
         propertyChanged: NeedSetZoom);
 
+    /// <summary>
+    /// Zoom camera
+    /// </summary>
     public double Zoom
     {
         get { return (double)GetValue(ZoomProperty); }
         set { SetValue(ZoomProperty, value); }
+    }
+
+    public static readonly BindableProperty ConstantUpdateProperty = BindableProperty.Create(
+        nameof(ConstantUpdate),
+        typeof(bool),
+        typeof(SkiaCamera),
+        true);
+
+    /// <summary>
+    /// Default is true.
+    /// Whether it should update non-stop or only when a new frame is acquired.
+    /// For example if your camera gives frames at 30 fps your screen might update around 40fps without this set to true.
+    /// If enabled will force max redraws at 60 fps.
+    /// </summary>
+    public bool ConstantUpdate
+    {
+        get { return (bool)GetValue(ConstantUpdateProperty); }
+        set { SetValue(ConstantUpdateProperty, value); }
     }
 
     public static readonly BindableProperty ViewportScaleProperty = BindableProperty.Create(
@@ -1415,6 +1436,9 @@ public partial class SkiaCamera : SkiaControl
         typeof(SkiaCamera),
         1.0);
 
+    /// <summary>
+    /// Zoom viewport value, NOT a camera zoom,
+    /// </summary>
     public double ViewportScale
     {
         get { return (double)GetValue(ViewportScaleProperty); }

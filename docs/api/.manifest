@@ -1327,6 +1327,7 @@
   "DrawnUi.Draw.DrawingRect.Contains(System.Single,System.Single)": "DrawnUi.Draw.DrawingRect.yml",
   "DrawnUi.Draw.DrawingRect.Empty": "DrawnUi.Draw.DrawingRect.yml",
   "DrawnUi.Draw.DrawingRect.Equals(System.Object)": "DrawnUi.Draw.DrawingRect.yml",
+  "DrawnUi.Draw.DrawingRect.GetHashCode": "DrawnUi.Draw.DrawingRect.yml",
   "DrawnUi.Draw.DrawingRect.Height": "DrawnUi.Draw.DrawingRect.yml",
   "DrawnUi.Draw.DrawingRect.IntersectsWith(DrawnUi.Draw.DrawingRect)": "DrawnUi.Draw.DrawingRect.yml",
   "DrawnUi.Draw.DrawingRect.IntersectsWith(SkiaSharp.SKRect)": "DrawnUi.Draw.DrawingRect.yml",

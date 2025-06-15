@@ -5983,6 +5983,16 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/drawing-pipeline.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/drawing-pipeline.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/first-app.md",
       "output": {
         ".html": {

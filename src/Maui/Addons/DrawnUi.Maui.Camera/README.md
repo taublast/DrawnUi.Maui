@@ -25,11 +25,26 @@ Apply shaders, adjustments and transforms to camera preview in realtime and draw
 //todo
 ```
 
-## Basic Usage Example
+Apple:
+
+Add this this your Infi.plist:
+
+```xml
 
 ```
-//todo
-```
+
+## Basic Usage Example
+
+Create SkiaControl and call an embedded command:
+
+ 
+
+It's important to understand the difference between setting the `IsOn` property to `true` and invoking the `Start` method directly.
+
+In some rare scenarios your app could have several camera controls and `IsOn` is like a radiobutton value, meaning "this camera is `On` right now", others must have this value set to `false`.
+When app goes to background all cameras stop and when app returns from background state the control would need to know whether to automatically resume (start again basically) a specific camera instance, and it would if `IsOn` was set to `true`. 
+
+Also when your control appears for the first time and you didn't get user camera permissions yet the native platform camera control should not be created yet, and it wouldn't if `SkiaControl` `IsOn` is still false. So the main workflow here is to create `SkiaCamera`, execute your needed preliminary logic and then safely turn the camera on by setting `IsOn` to `true`. For example, you can invoke `public ICommand CommandCheckPermissionsAndStart` it does something similar, like one could guess by it's name.
 
 ## Testing
 

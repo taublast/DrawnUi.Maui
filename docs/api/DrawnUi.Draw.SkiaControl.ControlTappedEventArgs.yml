@@ -23,7 +23,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ControlTappedEventArgs
     path: ../src/Shared/Draw/Base/SkiaControl.Shared.cs
-    startLine: 1350
+    startLine: 1351
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -62,7 +62,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Control
     path: ../src/Shared/Draw/Base/SkiaControl.Shared.cs
-    startLine: 1352
+    startLine: 1353
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -91,7 +91,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Parameters
     path: ../src/Shared/Draw/Base/SkiaControl.Shared.cs
-    startLine: 1353
+    startLine: 1354
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -120,7 +120,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ProcessingInfo
     path: ../src/Shared/Draw/Base/SkiaControl.Shared.cs
-    startLine: 1354
+    startLine: 1355
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -149,7 +149,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Shared/Draw/Base/SkiaControl.Shared.cs
-    startLine: 1356
+    startLine: 1357
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw

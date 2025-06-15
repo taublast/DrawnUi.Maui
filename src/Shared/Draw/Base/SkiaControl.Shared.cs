@@ -761,13 +761,14 @@ namespace DrawnUi.Draw
 
         /// <summary>
         /// When the animator is cancelled if applyEndValueOnStop is true then the end value will be sent to your callback
+        /// </summary>
         /// <param name="callback"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <param name="length"></param>
         /// <param name="easing"></param>
         /// <param name="cancel"></param>
-        /// <param name="onStopped"></param>
+        /// <param name="applyEndValueOnStop"></param>
         /// <returns></returns>
         public Task AnimateRangeAsync(Action<double> callback, double start, double end, double length = 250,
             Easing easing = null,
@@ -2339,7 +2340,7 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Gets or sets Z-perspective translation. This is a bindable property.
         /// </summary>
-        /// <remarks>Rotation is applied relative to <see cref="AnchorX"/> and <see cref="AnchorY" />.</remarks>
+        /// <remarks>Rotation is applied relative to <see cref="Microsoft.Maui.Controls.VisualElement.AnchorX"/> and <see cref="Microsoft.Maui.Controls.VisualElement.AnchorY" />.</remarks>
         public double TranslationZ
         {
             get { return (double)GetValue(TranslationZProperty); }
@@ -2354,7 +2355,7 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Gets or sets the rotation (in degrees) about the Z-axis (perspective rotation) when the element is rendered. This is a bindable property.
         /// </summary>
-        /// <remarks>Rotation is applied relative to <see cref="AnchorX"/> and <see cref="AnchorY" />.</remarks>
+        /// <remarks>Rotation is applied relative to <see cref="Microsoft.Maui.Controls.VisualElement.AnchorX"/> and <see cref="Microsoft.Maui.Controls.VisualElement.AnchorY" />.</remarks>
         public double RotationZ
         {
             get { return (double)GetValue(RotationZProperty); }

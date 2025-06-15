@@ -1453,13 +1453,17 @@ items:
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
+  summary: This is not replacing current animation, only pre-loading! Use SetAnimation after that if needed.
+  example: []
   syntax:
     content: public Task<GifAnimation> LoadSource(string fileName)
     parameters:
     - id: fileName
       type: System.String
+      description: ''
     return:
       type: System.Threading.Tasks.Task{DrawnUi.Controls.GifAnimation}
+      description: ''
     content.vb: Public Function LoadSource(fileName As String) As Task(Of GifAnimation)
   overload: DrawnUi.Controls.SkiaGif.LoadSource*
   nameWithType.vb: SkiaGif.LoadSource(String)

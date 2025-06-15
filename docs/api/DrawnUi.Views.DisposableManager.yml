@@ -65,15 +65,18 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 20
+    startLine: 19
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
+  summary: Initializes a new instance of the DisposableManager class.
+  example: []
   syntax:
     content: public DisposableManager(int framesToHold = 3)
     parameters:
     - id: framesToHold
       type: System.Int32
+      description: The number of frames to hold before disposing. Default is 3 frames.
     content.vb: Public Sub New(framesToHold As Integer = 3)
   overload: DrawnUi.Views.DisposableManager.#ctor*
   nameWithType.vb: DisposableManager.New(Integer)
@@ -97,7 +100,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EnqueueDisposable
     path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 34
+    startLine: 33
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -135,7 +138,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DisposeDisposables
     path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 48
+    startLine: 47
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -173,7 +176,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Dispose
     path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 84
+    startLine: 83
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -203,7 +206,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PendingDisposalCount
     path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 124
+    startLine: 123
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views

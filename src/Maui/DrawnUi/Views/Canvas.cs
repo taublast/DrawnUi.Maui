@@ -653,8 +653,7 @@ public class Canvas : DrawnView, IGestureListener
     /// </summary>
     /// <param name="type"></param>
     /// <param name="args1"></param>
-    /// <param name="args1"></param>
-    /// <param name=""></param>
+    /// <param name="touchAction"></param>
     public virtual void OnGestureEvent(TouchActionType type, TouchActionEventArgs args1, TouchActionResult touchAction)
     {
         //Debug.WriteLine($"[Canvas] {touchAction} {type}");

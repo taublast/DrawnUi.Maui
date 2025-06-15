@@ -1577,13 +1577,17 @@ items:
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
+  summary: This is not replacing current animation, only pre-loading! Use SetAnimation after that if needed.
+  example: []
   syntax:
     content: public Task<Animation> LoadSource(string fileName)
     parameters:
     - id: fileName
       type: System.String
+      description: ''
     return:
       type: System.Threading.Tasks.Task{SkiaSharp.Skottie.Animation}
+      description: ''
     content.vb: Public Function LoadSource(fileName As String) As Task(Of Animation)
   overload: DrawnUi.Controls.SkiaLottie.LoadSource*
   nameWithType.vb: SkiaLottie.LoadSource(String)

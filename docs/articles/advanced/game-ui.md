@@ -1,6 +1,6 @@
 # Building Game UIs and Interactive Games with DrawnUi.Maui
 
-DrawnUi.Maui is not just for business apps—it’s also a powerful platform for building interactive games and game-like UIs. With direct SkiaSharp rendering, real-time animation, and flexible input handling, you can create everything from simple arcade games to rich, animated dashboards.
+DrawnUi.Maui is not just for business apps—it’s also a platform for building interactive games and game-like UIs. With direct SkiaSharp rendering, real-time animation, and flexible input handling, you can create everything from simple arcade games to rich, animated dashboards.
 
 ## Why Use DrawnUi.Maui for Games?
 - **High-performance canvas rendering** on all platforms
@@ -140,7 +140,7 @@ private void OnTap(object sender, SkiaGesturesParameters e)
 - Use SkiaLabelFps to monitor frame rate
 - For complex games, manage game state and rendering in a dedicated class
 
-## Advanced: Integrating Addons (Camera, Maps, Charts)
+## Integrating Addons (Camera, Maps, Charts)
 - Use DrawnUi.Maui.Camera for AR or camera-based games
 - Overlay charts or live data with DrawnUi.Maui.LiveCharts
 - Add maps or location-based features with DrawnUi.Maui.MapsUi

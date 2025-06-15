@@ -210,15 +210,15 @@ namespace DrawnUi.Draw
         /// Spans are rendered in the order they appear in the collection.
         /// 
         /// Example XAML usage:
-        /// ```xml
-        /// <draw:SkiaLabel>
-        ///     <draw:SkiaLabel.Spans>
-        ///         <draw:TextSpan Text="This is " />
-        ///         <draw:TextSpan Text="bold" FontAttributes="Bold" TextColor="Red" />
-        ///         <draw:TextSpan Text=" text" />
-        ///     </draw:SkiaLabel.Spans>
-        /// </draw:SkiaLabel>
-        /// ```
+        /// <code>
+        /// &lt;draw:SkiaLabel&gt;
+        ///     &lt;draw:SkiaLabel.Spans&gt;
+        ///         &lt;draw:TextSpan Text="This is " /&gt;
+        ///         &lt;draw:TextSpan Text="bold" FontAttributes="Bold" TextColor="Red" /&gt;
+        ///         &lt;draw:TextSpan Text=" text" /&gt;
+        ///     &lt;/draw:SkiaLabel.Spans&gt;
+        /// &lt;/draw:SkiaLabel&gt;
+        /// </code>
         /// 
         /// When spans are used, the Text property is ignored. To reset to using
         /// the Text property, clear the Spans collection.

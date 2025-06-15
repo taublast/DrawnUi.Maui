@@ -5803,14 +5803,17 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetVisualChildren
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Maui.cs
-    startLine: 65
+    startLine: 66
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
+  summary: For Xaml HotReload. This is semetimes not called when we add and remove views.
+  example: []
   syntax:
     content: public override IReadOnlyList<IVisualTreeElement> GetVisualChildren()
     return:
       type: System.Collections.Generic.IReadOnlyList{Microsoft.Maui.IVisualTreeElement}
+      description: ''
     content.vb: Public Overrides Function GetVisualChildren() As IReadOnlyList(Of IVisualTreeElement)
   overridden: DrawnUi.Draw.SkiaControl.GetVisualChildren
   overload: DrawnUi.Draw.SkiaLayout.GetVisualChildren*

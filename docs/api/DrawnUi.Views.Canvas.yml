@@ -1601,7 +1601,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnGestureEvent
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 657
+    startLine: 656
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1618,6 +1618,7 @@ items:
       description: ''
     - id: touchAction
       type: AppoMobi.Maui.Gestures.TouchActionResult
+      description: ''
     content.vb: Public Overridable Sub OnGestureEvent(type As TouchActionType, args1 As TouchActionEventArgs, touchAction As TouchActionResult)
   overload: DrawnUi.Views.Canvas.OnGestureEvent*
   implements:
@@ -1640,7 +1641,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: BreakLine
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 794
+    startLine: 793
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1666,7 +1667,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LineBreaks
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 799
+    startLine: 798
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1693,7 +1694,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 801
+    startLine: 800
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1722,7 +1723,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Clear
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 805
+    startLine: 804
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1748,7 +1749,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PlayRippleAnimation
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 810
+    startLine: 809
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1786,7 +1787,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PlayShimmerAnimation
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 816
+    startLine: 815
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1826,7 +1827,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TimeLastGC
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 826
+    startLine: 825
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1855,7 +1856,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DelayNanosBetweenGC
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 827
+    startLine: 826
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1884,7 +1885,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CollectGarbage
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 829
+    startLine: 828
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1916,7 +1917,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnPropertyChanged
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 846
+    startLine: 845
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1952,7 +1953,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GesturesDebugColorProperty
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 859
+    startLine: 858
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1979,7 +1980,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GesturesDebugColor
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 865
+    startLine: 864
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2008,7 +2009,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ReserveSpaceAroundProperty
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 871
+    startLine: 870
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2035,7 +2036,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ReserveSpaceAround
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 877
+    startLine: 876
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2064,7 +2065,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GesturesProperty
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 891
+    startLine: 890
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2091,7 +2092,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Gestures
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 897
+    startLine: 896
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2120,7 +2121,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ContentProperty
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 905
+    startLine: 904
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2147,7 +2148,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Content
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 921
+    startLine: 920
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2176,7 +2177,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnParentChanged
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 931
+    startLine: 930
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2206,7 +2207,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EnableUpdates
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 941
+    startLine: 940
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2234,7 +2235,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DisableUpdates
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 951
+    startLine: 950
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2262,7 +2263,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Draw
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 956
+    startLine: 955
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views

@@ -83,7 +83,7 @@ public partial class SkiaCamera : SkiaControl
     }
 
     /// <summary>
-    /// Call on UI thread only
+    /// Call on UI thread only. Called by CheckPermissions.
     /// </summary>
     /// <returns></returns>
     public async Task<bool> RequestPermissions()

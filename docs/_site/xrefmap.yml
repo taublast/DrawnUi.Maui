@@ -15452,6 +15452,19 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.DrawingRect.Equals
   nameWithType: DrawingRect.Equals
+- uid: DrawnUi.Draw.DrawingRect.GetHashCode
+  name: GetHashCode()
+  href: api/DrawnUi.Draw.DrawingRect.html#DrawnUi_Draw_DrawingRect_GetHashCode
+  commentId: M:DrawnUi.Draw.DrawingRect.GetHashCode
+  fullName: DrawnUi.Draw.DrawingRect.GetHashCode()
+  nameWithType: DrawingRect.GetHashCode()
+- uid: DrawnUi.Draw.DrawingRect.GetHashCode*
+  name: GetHashCode
+  href: api/DrawnUi.Draw.DrawingRect.html#DrawnUi_Draw_DrawingRect_GetHashCode_
+  commentId: Overload:DrawnUi.Draw.DrawingRect.GetHashCode
+  isSpec: "True"
+  fullName: DrawnUi.Draw.DrawingRect.GetHashCode
+  nameWithType: DrawingRect.GetHashCode
 - uid: DrawnUi.Draw.DrawingRect.Height
   name: Height
   href: api/DrawnUi.Draw.DrawingRect.html#DrawnUi_Draw_DrawingRect_Height

@@ -110,7 +110,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HotReload
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 47
+    startLine: 46
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -139,7 +139,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ColorAccent
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 55
+    startLine: 54
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -168,7 +168,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ColorPrimary
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 57
+    startLine: 56
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -197,7 +197,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: App
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 59
+    startLine: 58
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -226,7 +226,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DisplayException
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 66
+    startLine: 65
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -261,7 +261,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Log
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 136
+    startLine: 135
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -297,7 +297,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Services
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 151
+    startLine: 150
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -326,7 +326,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AppContext
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 173
+    startLine: 172
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -355,7 +355,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ResizeWindow
     path: ../src/Maui/DrawnUi/Super.Maui.cs
-    startLine: 208
+    startLine: 207
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw

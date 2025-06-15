@@ -365,7 +365,10 @@ items:
   remarks: If the minimum size that the element needs in order to be displayed on the device is larger than can be accommodated by <code class="paramref">widthConstraint</code> and <code class="paramref">heightConstraint</code>, the return value may represent a rectangle that is larger in either one or both of those parameters.
   example: []
   syntax:
-    content: public override SizeRequest Measure(double widthConstraint, double heightConstraint, MeasureFlags flags = MeasureFlags.None)
+    content: >-
+      [Obsolete("Use Microsoft.Maui.Size instead.")]
+
+      public override SizeRequest Measure(double widthConstraint, double heightConstraint, MeasureFlags flags = MeasureFlags.None)
     parameters:
     - id: widthConstraint
       type: System.Double
@@ -379,9 +382,18 @@ items:
     return:
       type: Microsoft.Maui.SizeRequest
       description: The minimum size that an element needs in order to be displayed on the device.
-    content.vb: Public Overrides Function Measure(widthConstraint As Double, heightConstraint As Double, flags As MeasureFlags = MeasureFlags.None) As SizeRequest
+    content.vb: >-
+      <Obsolete("Use Microsoft.Maui.Size instead.")>
+
+      Public Overrides Function Measure(widthConstraint As Double, heightConstraint As Double, flags As MeasureFlags = MeasureFlags.None) As SizeRequest
   overridden: Microsoft.Maui.Controls.VisualElement.Measure(System.Double,System.Double,Microsoft.Maui.Controls.MeasureFlags)
   overload: DrawnUi.Controls.MauiEditor.Measure*
+  attributes:
+  - type: System.ObsoleteAttribute
+    ctor: System.ObsoleteAttribute.#ctor(System.String)
+    arguments:
+    - type: System.String
+      value: Use Microsoft.Maui.Size instead.
   nameWithType.vb: MauiEditor.Measure(Double, Double, MeasureFlags)
   fullName.vb: DrawnUi.Controls.MauiEditor.Measure(Double, Double, Microsoft.Maui.Controls.MeasureFlags)
   name.vb: Measure(Double, Double, MeasureFlags)
@@ -403,7 +415,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ArrangeOverride
     path: ../src/Maui/DrawnUi/Controls/EditText/MauiEditor.cs
-    startLine: 18
+    startLine: 19
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -440,7 +452,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: MaxLinesProperty
     path: ../src/Maui/DrawnUi/Controls/EditText/MauiEditor.cs
-    startLine: 25
+    startLine: 26
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -467,7 +479,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: MaxLines
     path: ../src/Maui/DrawnUi/Controls/EditText/MauiEditor.cs
-    startLine: 30
+    startLine: 31
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -498,7 +510,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ReturnTypeProperty
     path: ../src/Maui/DrawnUi/Controls/EditText/MauiEditor.cs
-    startLine: 36
+    startLine: 37
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -525,7 +537,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ReturnType
     path: ../src/Maui/DrawnUi/Controls/EditText/MauiEditor.cs
-    startLine: 40
+    startLine: 41
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls

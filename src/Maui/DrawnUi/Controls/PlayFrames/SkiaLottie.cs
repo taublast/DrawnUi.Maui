@@ -309,7 +309,7 @@ public class SkiaLottie : AnimatedFramesRenderer
     /// This is not replacing current animation, only pre-loading! Use SetAnimation after that if needed.
     /// </summary>
     /// <param name="fileName"></param>
-    /// <returns>
+    /// <returns></returns>
     public async Task<Animation> LoadSource(string fileName)
     {
         if (string.IsNullOrEmpty(fileName))
