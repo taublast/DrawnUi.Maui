@@ -17,7 +17,6 @@ using SkiaSharp.Views.Android;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using static global::DrawnUi.Camera.NativeCamera;
 using Boolean = System.Boolean;
 using Debug = System.Diagnostics.Debug;
 using Exception = System.Exception;
@@ -41,7 +40,26 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     // Max preview height that is guaranteed by Camera2 API
     public int MaxPreviewHeight = 800;
 
+    public static void FillMetadata(Metadata meta, CaptureResult result)
+    {
+        // Get the camera's chosen exposure settings for "proper" exposure
+        var measuredExposureTime = (long)result.Get(CaptureResult.SensorExposureTime);
+        var measuredSensitivity = (int)result.Get(CaptureResult.SensorSensitivity);
+        var measuredAperture = (float)result.Get(CaptureResult.LensAperture);
+        var usedLens = (float)result.Get(CaptureResult.LensFocalLength);
 
+        // Convert to standard units
+        double shutterSpeed = measuredExposureTime / 1_000_000_000.0; // nanoseconds to seconds
+        double iso = measuredSensitivity;
+        double aperture = measuredAperture;
+
+        meta.FocalLength = usedLens;
+        meta.ISO = (int)iso;
+        meta.Aperture = aperture;
+        meta.Shutter = shutterSpeed;
+
+        meta.Orientation = (int)result.Get(CaptureResult.JpegOrientation);
+    }
 
     public void SetZoom(float zoom)
     {
@@ -169,12 +187,13 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
             var baselines = new CameraExposureBaseline[]
             {
-                new CameraExposureBaseline(100, 1.0f/60.0f, "Indoor", "Office/bright indoor lighting"),
-                new CameraExposureBaseline(400, 1.0f/30.0f, "Mixed", "Dim indoor/overcast outdoor"),
-                new CameraExposureBaseline(800, 1.0f/15.0f, "Low Light", "Evening/dark indoor")
+                new CameraExposureBaseline(100, 1.0f / 60.0f, "Indoor", "Office/bright indoor lighting"),
+                new CameraExposureBaseline(400, 1.0f / 30.0f, "Mixed", "Dim indoor/overcast outdoor"),
+                new CameraExposureBaseline(800, 1.0f / 15.0f, "Low Light", "Evening/dark indoor")
             };
 
-            System.Diagnostics.Debug.WriteLine($"[Android RANGE] ISO: {minISO}-{maxISO}, Shutter: {minShutter}-{maxShutter}s");
+            System.Diagnostics.Debug.WriteLine(
+                $"[Android RANGE] ISO: {minISO}-{maxISO}, Shutter: {minShutter}-{maxShutter}s");
 
             return new CameraManualExposureRange(minISO, maxISO, minShutter, maxShutter, true, baselines);
         }
@@ -211,7 +230,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 }
             }
 
-            newexif.SetAttribute(ExifInterface.TagDatetime, DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+            newexif.SetAttribute(ExifInterface.TagDatetime,
+                DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
 
             newexif.SaveAttributes();
         }
@@ -229,7 +249,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     /// <param name="sensor"></param>
     /// <param name="album"></param>
     /// <returns></returns>
-    public async Task<string> SaveJpgStreamToGallery(System.IO.Stream stream, string filename, double sensor, string album)
+    public async Task<string> SaveJpgStreamToGallery(System.IO.Stream stream, string filename, double sensor,
+        string album)
     {
         if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
         {
@@ -263,7 +284,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     /// <param name="sensor"></param>
     /// <param name="album"></param>
     /// <returns></returns>
-    public async Task<string> SaveJpgStreamToGalleryLegacy(System.IO.Stream stream, string filename, double sensor, string album)
+    public async Task<string> SaveJpgStreamToGalleryLegacy(System.IO.Stream stream, string filename, double sensor,
+        string album)
     {
         string fullFilename = System.IO.Path.Combine(GetOutputGalleryFolder(album).AbsolutePath, filename);
 
@@ -287,7 +309,9 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         if (string.IsNullOrEmpty(album))
             album = "Camera";
 
-        var jFolder = new Java.IO.File(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDcim), album);
+        var jFolder =
+            new Java.IO.File(
+                Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDcim), album);
 
         if (!jFolder.Exists())
             jFolder.Mkdirs();
@@ -304,7 +328,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
     protected void AllocateOutSurface(bool reset = false)
     {
-
 #if DEBUG_RELEASE
 		Trace.WriteLine($"[CAMERA] reallocating surface {mPreviewSize.Width}x{mPreviewSize.Height}");
 #endif
@@ -333,7 +356,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         //	AllocationUsage.IoOutput | AllocationUsage.Script);
 
         //output.Surface = FormsControl.FrameSurface;
-
 
 
         //old
@@ -366,7 +388,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     public SplinesHelper Splines { get; set; } = new();
 
 
-
     /// <summary>
     /// Using renderscript here
     /// </summary>
@@ -379,7 +400,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         if (Effect == CameraEffect.ColorNegativeAuto)
         {
             if (Splines.Current != null)
-                Rendering.BlitWithLUT(rs, Splines.Renderer, Splines.Current.RendererLUT, image, output, rotation, Gamma);
+                Rendering.BlitWithLUT(rs, Splines.Renderer, Splines.Current.RendererLUT, image, output, rotation,
+                    Gamma);
             else
                 Rendering.TestOutput(rs, output);
         }
@@ -389,13 +411,11 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             {
                 Rendering.BlitAdjust(rs, Splines.Renderer, image, output, rotation, Gamma, false, true);
             }
-            else
-            if (Effect == CameraEffect.GrayscaleNegative)
+            else if (Effect == CameraEffect.GrayscaleNegative)
             {
                 Rendering.BlitAdjust(rs, Splines.Renderer, image, output, rotation, Gamma, true, true);
             }
-            else
-            if (Effect == CameraEffect.Grayscale)
+            else if (Effect == CameraEffect.Grayscale)
             {
                 Rendering.BlitAdjust(rs, Splines.Renderer, image, output, rotation, Gamma, true, false);
             }
@@ -406,8 +426,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 //Rendering.TestOutput(rs, output);
             }
         }
-
-
     }
 
     //public SKImage GetPreviewImage(Allocation androidAllocation, int width, int height)
@@ -464,6 +482,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 this._preview.Image = null; //protected from GC
                 _preview = null; // Transfer ownership - renderer will dispose the SKImage 
             }
+
             return preview;
         }
     }
@@ -492,24 +511,19 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
             OpenCamera(width, height);
 
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                DeviceDisplay.Current.KeepScreenOn = true;
-            });
-
+            MainThread.BeginInvokeOnMainThread(() => { DeviceDisplay.Current.KeepScreenOn = true; });
         }
         catch (Exception e)
         {
             Trace.WriteLine(e);
             State = CameraProcessorState.Error;
         }
-
     }
 
     /// <summary>
     /// Call when inactive to free resources
     /// </summary>
-    public void Stop(bool force=false)
+    public void Stop(bool force = false)
     {
         try
         {
@@ -521,10 +535,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             State = CameraProcessorState.Error;
         }
 
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            DeviceDisplay.Current.KeepScreenOn = false;
-        });
+        MainThread.BeginInvokeOnMainThread(() => { DeviceDisplay.Current.KeepScreenOn = false; });
     }
 
 
@@ -544,84 +555,11 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     SemaphoreSlim semaphireSlim = new SemaphoreSlim(1, 1);
 
 
-
     private object lockProcessingPreviewFrame = new();
     bool lockProcessing;
 
     //volatile bool lockAllocation;
 
-    /// <summary>
-    /// IOnImageAvailableListener
-    /// </summary>
-    /// <param name="reader"></param>
-    public void OnImageAvailable(ImageReader reader)
-    {
-        lock (lockProcessingPreviewFrame)
-        {
-            if (lockProcessing || FormsControl.Height <= 0 || FormsControl.Width <= 0 || CapturingStill)
-                return;
-
-            FramesReader = reader;
-
-            if (Output != null)
-            {
-                var allocated = Output;
-
-                lockProcessing = true;
-
-                Android.Media.Image image = null;
-                try
-                {
-                    // ImageReader
-                    image = reader.AcquireLatestImage();
-                    if (image != null)
-                    {
-                        if (allocated.Allocation != null && allocated.Bitmap is { Width: > 0, Height: > 0 })
-                        {
-                            ProcessImage(image, allocated.Allocation);
-                            allocated.Update();
-                            var sk = allocated.Bitmap.ToSKImage();
-                            if (sk != null)
-                            {
-                                var outImage = new CapturedImage()
-                                {
-                                    Facing = FormsControl.Facing,
-                                    Time = DateTime.UtcNow, // todo use image.Timestamp ?
-                                    Image = sk,
-                                    Orientation = FormsControl.DeviceRotation
-                                };
-                                Preview = outImage;
-                                OnPreviewCaptureSuccess(outImage);
-                                FormsControl.UpdatePreview();
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Trace.WriteLine(e.Message);
-                }
-                finally
-                {
-
-                    if (image != null)
-                    {
-                        //lockAllocation = false;
-                        image.Close();
-                    }
-
-                    lockProcessing = false;
-                }
-
-
-            }
-
-            
-
-        }
-
-
-    }
 
     private List<Image> processing = new List<Image>();
 
@@ -630,8 +568,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
 
     #region FRAGMENT
-
-
 
     public static readonly int REQUEST_CAMERA_PERMISSION = 1;
     private static readonly string FRAGMENT_DIALOG = "dialog";
@@ -662,7 +598,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
     // A reference to the opened CameraDevice
     public CameraDevice mCameraDevice;
-
 
 
     /// <summary>
@@ -705,7 +640,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     public int SensorOrientation { get; set; }
 
     // A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
-    public PreviewCaptureCallback mCaptureCallback;
+    public StillPhotoCaptureCallback mCaptureCallback;
 
     // Shows a {@link Toast} on the UI thread.
     public void ShowToast(string text)
@@ -780,7 +715,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
 
-
     /// <summary>
     /// Pass preview size as params
     /// </summary>
@@ -788,7 +722,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     /// <param name="height"></param>
     protected virtual void SetupHardware(int width, int height)
     {
-        int allowPreviewOverflow = 200;//by px
+        int allowPreviewOverflow = 200; //by px
 
         var activity = Platform.CurrentActivity;
         var manager = (CameraManager)activity.GetSystemService(Context.CameraService);
@@ -809,10 +743,11 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 var facing = (Integer)characteristics.Get(CameraCharacteristics.LensFacing);
                 if (facing != null)
                 {
-                    if (FormsControl.Facing == CameraPosition.Default && facing == (Integer.ValueOf((int)LensFacing.Front)))
+                    if (FormsControl.Facing == CameraPosition.Default &&
+                        facing == (Integer.ValueOf((int)LensFacing.Front)))
                         continue;
-                    else
-                    if (FormsControl.Facing == CameraPosition.Selfie && facing == (Integer.ValueOf((int)LensFacing.Back)))
+                    else if (FormsControl.Facing == CameraPosition.Selfie &&
+                             facing == (Integer.ValueOf((int)LensFacing.Back)))
                         continue;
                 }
 
@@ -864,11 +799,13 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             {
                 CameraCharacteristics characteristics = manager.GetCameraCharacteristics(cameraUnit.Id);
 
-                var map = (StreamConfigurationMap)characteristics.Get(CameraCharacteristics.ScalerStreamConfigurationMap);
+                var map = (StreamConfigurationMap)characteristics.Get(
+                    CameraCharacteristics.ScalerStreamConfigurationMap);
                 if (map == null)
                 {
                     return false;
                 }
+
                 // Check if the flash is supported.
                 var available = (Boolean)characteristics.Get(CameraCharacteristics.FlashInfoAvailable);
                 if (available == null)
@@ -919,16 +856,19 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 List<Size> validSizes;
                 if (rotated)
                 {
-                    validSizes = stillSizes.Where(x => x.Width > x.Height).OrderByDescending(x => x.Width * x.Height).ToList();
+                    validSizes = stillSizes.Where(x => x.Width > x.Height).OrderByDescending(x => x.Width * x.Height)
+                        .ToList();
                 }
                 else
                 {
-                    validSizes = stillSizes.Where(x => x.Width < x.Height).OrderByDescending(x => x.Width * x.Height).ToList();
+                    validSizes = stillSizes.Where(x => x.Width < x.Height).OrderByDescending(x => x.Width * x.Height)
+                        .ToList();
                 }
 
                 if (!validSizes.Any())
                 {
-                    validSizes = stillSizes.Where(x => x.Width == x.Height).OrderByDescending(x => x.Width * x.Height).ToList();
+                    validSizes = stillSizes.Where(x => x.Width == x.Height).OrderByDescending(x => x.Width * x.Height)
+                        .ToList();
                 }
 
                 Size selectedSize;
@@ -958,7 +898,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
                 if (selectedSize.Width > 1 && selectedSize.Height > 1)
                 {
-                    mImageReaderPhoto = ImageReader.NewInstance(CaptureWidth, CaptureHeight, ImageFormatType.Yuv420888, 2);
+                    mImageReaderPhoto =
+                        ImageReader.NewInstance(CaptureWidth, CaptureHeight, ImageFormatType.Yuv420888, 2);
                     mImageReaderPhoto.SetOnImageAvailableListener(mCaptureCallback, mBackgroundHandler);
 
                     FormsControl.CapturePhotoSize = new(CaptureWidth, CaptureHeight);
@@ -980,7 +921,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 PreviewWidth = previewSize.Width;
                 PreviewHeight = previewSize.Height;
 
-                mImageReaderPreview = ImageReader.NewInstance(PreviewWidth, PreviewHeight, ImageFormatType.Yuv420888, 3);
+                mImageReaderPreview =
+                    ImageReader.NewInstance(PreviewWidth, PreviewHeight, ImageFormatType.Yuv420888, 3);
                 mImageReaderPreview.SetOnImageAvailableListener(this, mBackgroundHandler);
 
                 //will notify forms control inside of the allocation size
@@ -1003,8 +945,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 return;
 
             System.Diagnostics.Debug.WriteLine($"[CameraFragment] No outputs!");
-
-
         }
         catch (CameraAccessException e)
         {
@@ -1034,6 +974,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     //}
 
     private int _PreviewWidth;
+
     public int PreviewWidth
     {
         get { return _PreviewWidth; }
@@ -1048,6 +989,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
     private int _PreviewHeight;
+
     public int PreviewHeight
     {
         get { return _PreviewHeight; }
@@ -1062,6 +1004,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
     private int _CaptureWidth;
+
     public int CaptureWidth
     {
         get { return _CaptureWidth; }
@@ -1076,6 +1019,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
     private int _CaptureHeight;
+
     public int CaptureHeight
     {
         get { return _CaptureHeight; }
@@ -1091,6 +1035,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
 
     private CameraProcessorState _state;
+
     public CameraProcessorState State
     {
         get { return _state; }
@@ -1132,6 +1077,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
         changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
     #endregion
 
     /// <summary>
@@ -1158,7 +1104,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 }
 
                 if (mCaptureCallback == null)
-                    mCaptureCallback = new PreviewCaptureCallback(this);
+                    mCaptureCallback = new StillPhotoCaptureCallback(this);
 
                 SetupHardware(width, height);
 
@@ -1184,8 +1130,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 mCameraOpenCloseLock.Release();
             }
         }
-        return false;
 
+        return false;
     }
 
     public event EventHandler OnImageTaken;
@@ -1194,7 +1140,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     public event EventHandler OnUpdateFPS;
 
     public event EventHandler OnUpdateOrientation;
-
 
 
     // Closes the current {@link CameraDevice}.
@@ -1236,7 +1181,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 mImageReaderPhoto.Close();
                 mImageReaderPhoto = null;
             }
-
 
 
             State = CameraProcessorState.None;
@@ -1369,7 +1313,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
         try
         {
-
             CapturingStill = true;
 
             PlaySound();
@@ -1397,9 +1340,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             CaptureSession.StopRepeating();
 
             CaptureSession
-                .Capture(stillCaptureBuilder.Build(), new StillPhotoCaptureCallback(this),
+                .Capture(stillCaptureBuilder.Build(), new StillPhotoCaptureFinishedCallback(this),
                     mBackgroundHandler);
-
         }
         catch (Exception e)
         {
@@ -1408,7 +1350,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
         finally
         {
-
         }
     }
 
@@ -1424,7 +1365,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
             mCameraDevice.CreateCaptureSession(
                 new List<Surface> { mImageReaderPreview.Surface, mImageReaderPhoto.Surface },
-
                 new CameraCaptureSessionCallback(this),
                 mBackgroundHandler);
         }
@@ -1442,7 +1382,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         var propertyInfo = obj.GetType().GetProperty("Instance");
         return propertyInfo == null ? null : propertyInfo.GetValue(obj, null) as T;
     }
-
 
 
     // Initiate a still image capture.
@@ -1477,7 +1416,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         try
         {
             // This is how to tell the camera to trigger.
-            mPreviewRequestBuilder.Set(CaptureRequest.ControlAePrecaptureTrigger, (int)ControlAEPrecaptureTrigger.Start);
+            mPreviewRequestBuilder.Set(CaptureRequest.ControlAePrecaptureTrigger,
+                (int)ControlAEPrecaptureTrigger.Start);
             // Tell #mCaptureCallback to wait for the precapture sequence to be set.
             mState = STATE_WAITING_PRECAPTURE;
             CaptureSession.Capture(mPreviewRequestBuilder.Build(), mCaptureCallback, null);
@@ -1550,31 +1490,27 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
 
-
-
     /*
-	private int GetJpegOrientation()
-	{
-		int sensorOrientation = mRotateTexture;
+    private int GetJpegOrientation()
+    {
+        int sensorOrientation = mRotateTexture;
 
-		var deviceOrientation = 0;
+        var deviceOrientation = 0;
 
-		// Round device orientation to a multiple of 90
-		deviceOrientation = (deviceOrientation + 45) / 90 * 90;
+        // Round device orientation to a multiple of 90
+        deviceOrientation = (deviceOrientation + 45) / 90 * 90;
 
-		// Reverse device orientation for front-facing cameras
-		boolean facingFront = c.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
-		if (facingFront) deviceOrientation = -deviceOrientation;
+        // Reverse device orientation for front-facing cameras
+        boolean facingFront = c.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT;
+        if (facingFront) deviceOrientation = -deviceOrientation;
 
-		// Calculate desired JPEG orientation relative to camera orientation to make
-		// the image upright relative to the device orientation
-		int jpegOrientation = (sensorOrientation + deviceOrientation + 360) % 360;
+        // Calculate desired JPEG orientation relative to camera orientation to make
+        // the image upright relative to the device orientation
+        int jpegOrientation = (sensorOrientation + deviceOrientation + 360) % 360;
 
-		return jpegOrientation;
-	}
-	*/
-
-
+        return jpegOrientation;
+    }
+    */
 
 
     public void StopCapturingStillImage()
@@ -1601,40 +1537,40 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
 
     /*
-	public RenderScript rs;
+    public RenderScript rs;
 
-	protected Allocation Output { get; set; }
+    protected Allocation Output { get; set; }
 
 
-	protected void AllocateOutSurface(bool reset = false)
-	{
-		if (Output != null && !reset)
-			return;
+    protected void AllocateOutSurface(bool reset = false)
+    {
+        if (Output != null && !reset)
+            return;
 
-		Debug.WriteLine($"[CAMERA] reallocating surface {mRotatedPreviewSize.Width}x{mRotatedPreviewSize.Height}");
+        Debug.WriteLine($"[CAMERA] reallocating surface {mRotatedPreviewSize.Width}x{mRotatedPreviewSize.Height}");
 
-		var oldOutput = Output;
+        var oldOutput = Output;
 
-		var output = Allocation.CreateTyped(rs,
-					 new Android.Renderscripts.Type.Builder(rs,
-							 Android.Renderscripts.Element.RGBA_8888(rs))
-						 .SetX(mRotatedPreviewSize.Width)
-						 .SetY(mRotatedPreviewSize.Height).Create(),
-					 AllocationUsage.IoOutput | AllocationUsage.Script);
+        var output = Allocation.CreateTyped(rs,
+                     new Android.Renderscripts.Type.Builder(rs,
+                             Android.Renderscripts.Element.RGBA_8888(rs))
+                         .SetX(mRotatedPreviewSize.Width)
+                         .SetY(mRotatedPreviewSize.Height).Create(),
+                     AllocationUsage.IoOutput | AllocationUsage.Script);
 
-		output.Surface = new Surface(mTextureView.SurfaceTexture);
+        output.Surface = new Surface(mTextureView.SurfaceTexture);
 
-		Output = output;
+        Output = output;
 
-		if (oldOutput != null)
-		{
-			oldOutput.Destroy();
-			oldOutput.Dispose();
-		}
+        if (oldOutput != null)
+        {
+            oldOutput.Destroy();
+            oldOutput.Dispose();
+        }
 
-	}
+    }
 
-	*/
+    */
 
     protected override void Dispose(bool disposing)
     {
@@ -1653,10 +1589,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
     public bool CapturingStill
     {
-        get
-        {
-            return _capturingStill;
-        }
+        get { return _capturingStill; }
 
         set
         {
@@ -1667,8 +1600,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             }
         }
     }
-    bool _capturingStill;
 
+    bool _capturingStill;
 
 
     public bool Silent { get; set; }
@@ -1702,6 +1635,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
 
     private double _SavedRotation;
+
     public double SavedRotation
     {
         get { return _SavedRotation; }
@@ -1728,6 +1662,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             }
         }
     }
+
     private string _SavedFilename;
 
     public Action<CapturedImage> PreviewCaptureSuccess { get; set; }
@@ -1739,10 +1674,8 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
     public void ApplyDeviceOrientation(int orientation)
     {
-
         Debug.WriteLine($"[SkiaCamera] New orientation {orientation}");
     }
-
 
 
     /// <summary>
@@ -1799,8 +1732,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             Trace.WriteLine(e);
             OnCaptureError(e);
         }
-
-
     }
 
     public static string ConvertCoords(double coord)
@@ -1850,6 +1781,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     public float _minZoom = 0.1f;
 
     private float _ZoomScale = 1.0f;
+
     public float ZoomScale
     {
         get { return _ZoomScale; }
@@ -1866,6 +1798,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
 
     private float _ZoomScaleTexture = 1.0f;
+
     public float ZoomScaleTexture
     {
         get { return _ZoomScaleTexture; }
@@ -1877,6 +1810,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
     private float _ViewportScale = 1.0f;
+
     public float ViewportScale
     {
         get { return _ViewportScale; }
@@ -1888,6 +1822,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
     private float _focalLength = 0.0f;
+
     public float FocalLength
     {
         get { return _focalLength; }
@@ -1909,10 +1844,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
     public CameraEffect Effect
     {
-        get
-        {
-            return _effect;
-        }
+        get { return _effect; }
         set
         {
             _effect = value;
@@ -1920,12 +1852,5 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
-
-
-
-
-
     #endregion
-
-
 }
