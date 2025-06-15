@@ -349,14 +349,7 @@ public partial class SkiaLayout
                 FinalizeRow(maxHeight);
             }
 
-            if (_layout.InitializeTemplatesInBackgroundDelay > 0)
-            {
-                _layout.StackStructure = structure;
-            }
-            else
-            {
-                _layout.StackStructureMeasured = structure;
-            }
+            _layout.StackStructureMeasured = structure;
 
             if (_layout.HorizontalOptions.Alignment == LayoutAlignment.Fill && _layout.WidthRequest < 0)
             {

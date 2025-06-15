@@ -268,14 +268,7 @@ public partial class SkiaLayout
             }
 
             var structure = new LayoutStructure(rows);
-            if (InitializeTemplatesInBackgroundDelay > 0)
-            {
-                StackStructure = structure;
-            }
-            else
-            {
-                StackStructureMeasured = structure;
-            }
+            StackStructureMeasured = structure;
 
             FirstVisibleIndex = -1;
             FirstMeasuredIndex = 0;
@@ -395,11 +388,6 @@ public partial class SkiaLayout
                         {
                             cell.IsVisible = true;
                         }
-                    }
-
-                    if (!ChildrenFactory.TemplatesAvailable && InitializeTemplatesInBackgroundDelay > 0)
-                    {
-                        break; //itemssource was changed by other thread
                     }
 
                     if (cell.IsVisible)
@@ -628,14 +616,7 @@ public partial class SkiaLayout
     {
         var structure = LatestStackStructure.Clone();
         structure.Append(rows);
-        if (InitializeTemplatesInBackgroundDelay > 0)
-        {
-            StackStructure = structure;
-        }
-        else
-        {
-            StackStructureMeasured = structure;
-        }
+        StackStructureMeasured = structure;
     }
 
     public int MeasureAdditionalItems(int batchSize, int aheadCount, float scale)
@@ -761,14 +742,7 @@ public partial class SkiaLayout
             }
 
             structure.Append(rows);
-            if (InitializeTemplatesInBackgroundDelay > 0)
-            {
-                StackStructure = structure;
-            }
-            else
-            {
-                StackStructureMeasured = structure;
-            }
+            StackStructureMeasured = structure;
 
             LastMeasuredIndex = startIndex + countToMeasure - 1;
 

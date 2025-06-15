@@ -727,14 +727,7 @@ namespace DrawnUi.Draw
 
             var structure = new LayoutStructure(rows);
 
-            if (InitializeTemplatesInBackgroundDelay > 0)
-            {
-                StackStructure = structure;
-            }
-            else
-            {
-                StackStructureMeasured = structure;
-            }
+            StackStructureMeasured = structure;
 
             return structure;
         }
@@ -914,11 +907,6 @@ namespace DrawnUi.Draw
                         SkiaControl child = null;
                         if (IsTemplated)
                         {
-                            if (!ChildrenFactory.TemplatesAvailable && InitializeTemplatesInBackgroundDelay > 0)
-                            {
-                                break;
-                            }
-
                             child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, null,
                                 GetSizeKey(cell.Measured.Pixels));
                             if (child == null)

@@ -90,37 +90,56 @@
 cd MyDrawnUiApp
 </code></pre>
 <h2 id="2-add-drawnui-to-your-project">2. Add DrawnUi to Your Project</h2>
-<pre><code class="lang-bash">dotnet add package DrawnUi
+<pre><code class="lang-bash">dotnet add package AppoMobi.Maui.DrawnUi
 </code></pre>
 <h2 id="3-add-a-drawnui-canvas-to-mainpage">3. Add a DrawnUi Canvas to MainPage</h2>
 <p>Open <code>MainPage.xaml</code> and replace the content with:</p>
 <pre><code class="lang-xml">&lt;ContentPage xmlns=&quot;http://schemas.microsoft.com/dotnet/2021/maui&quot;
              xmlns:x=&quot;http://schemas.microsoft.com/winfx/2009/xaml&quot;
-             xmlns:draw=&quot;clr-namespace:DrawnUi.Maui;assembly=DrawnUi.Maui&quot;
+             xmlns:draw=&quot;http://schemas.appomobi.com/drawnUi/2023/draw&quot;
              x:Class=&quot;MyDrawnUiApp.MainPage&quot;&gt;
     &lt;draw:Canvas HorizontalOptions=&quot;Fill&quot; VerticalOptions=&quot;Fill&quot;&gt;
-        &lt;draw:SkiaLayout LayoutType=&quot;Column&quot; Padding=&quot;32&quot; Spacing=&quot;24&quot;&gt;
+        &lt;draw:SkiaLayout Type=&quot;Column&quot; Padding=&quot;32&quot; Spacing=&quot;24&quot;&gt;
             &lt;draw:SkiaLabel Text=&quot;Hello, DrawnUi!&quot; FontSize=&quot;32&quot; TextColor=&quot;Blue&quot; /&gt;
-            &lt;draw:SkiaButton Text=&quot;Click Me&quot; Tapped=&quot;OnButtonTapped&quot; /&gt;
+            &lt;draw:SkiaButton Text=&quot;Click Me&quot; Clicked=&quot;OnButtonClicked&quot; /&gt;
         &lt;/draw:SkiaLayout&gt;
     &lt;/draw:Canvas&gt;
 &lt;/ContentPage&gt;
 </code></pre>
-<h2 id="4-handle-button-tap-in-code">4. Handle Button Tap in Code</h2>
-<p>In <code>MainPage.xaml.cs</code>:</p>
-<pre><code class="lang-csharp">private void OnButtonTapped(object sender, EventArgs e)
+<h2 id="4-initialize-drawnui-in-mauiprogramcs">4. Initialize DrawnUi in MauiProgram.cs</h2>
+<p>Add the DrawnUi initialization to your <code>MauiProgram.cs</code>:</p>
+<pre><code class="lang-csharp">public static class MauiProgram
 {
-    // Show a message or update UI
-    DisplayAlert(&quot;DrawnUi&quot;, &quot;Button tapped!&quot;, &quot;OK&quot;);
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp&lt;App&gt;()
+            .UseDrawnUi() // Add this line
+            .ConfigureFonts(fonts =&gt;
+            {
+                fonts.AddFont(&quot;OpenSans-Regular.ttf&quot;, &quot;OpenSansRegular&quot;);
+            });
+
+        return builder.Build();
+    }
 }
 </code></pre>
-<h2 id="5-run-your-app">5. Run Your App</h2>
+<h2 id="5-handle-button-click-in-code">5. Handle Button Click in Code</h2>
+<p>In <code>MainPage.xaml.cs</code>:</p>
+<pre><code class="lang-csharp">private void OnButtonClicked(SkiaButton sender, SkiaGesturesParameters e)
+{
+    // Show a message or update UI
+    DisplayAlert(&quot;DrawnUi&quot;, &quot;Button clicked!&quot;, &quot;OK&quot;);
+}
+</code></pre>
+<h2 id="6-run-your-app">6. Run Your App</h2>
 <p>Build and run your app on Windows, Android, iOS, or Mac.</p>
 <h2 id="next-steps">Next Steps</h2>
 <ul>
 <li>Explore the <a href="controls/index.html">Controls documentation</a></li>
 <li>Try out <a href="samples.html">Samples</a></li>
-<li>Read about <a href="advanced/index.md">Advanced features</a></li>
+<li>Read about <a href="advanced/index.html">Advanced features</a></li>
 </ul>
 <p>Welcome to the DrawnUi community!</p>
 

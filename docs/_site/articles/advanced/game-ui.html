@@ -163,22 +163,22 @@ PlayerSprite.CurrentFrame = 0; // Set frame
 <p>For drag or swipe, use gesture listeners or override touch methods in your control.</p>
 <h2 id="combining-ui-and-game-elements">Combining UI and Game Elements</h2>
 <p>You can mix game elements with standard DrawnUi controls:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaLayout LayoutType=&quot;Column&quot;&gt;
-    &lt;DrawUi:SkiaLabel Text=&quot;Score: 123&quot; FontSize=&quot;24&quot; /&gt;
-    &lt;DrawUi:SkiaSprite ... /&gt;
-    &lt;DrawUi:SkiaButton Text=&quot;Pause&quot; Tapped=&quot;OnPause&quot; /&gt;
-&lt;/DrawUi:SkiaLayout&gt;
+<pre><code class="lang-xml">&lt;draw:SkiaLayout Type=&quot;Column&quot;&gt;
+    &lt;draw:SkiaLabel Text=&quot;Score: 123&quot; FontSize=&quot;24&quot; /&gt;
+    &lt;draw:SkiaSprite ... /&gt;
+    &lt;draw:SkiaButton Text=&quot;Pause&quot; Clicked=&quot;OnPause&quot; /&gt;
+&lt;/draw:SkiaLayout&gt;
 </code></pre>
 <h2 id="example-simple-tap-game">Example: Simple Tap Game</h2>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaLayout&gt;
-    &lt;DrawUi:SkiaHotspot Tapped=&quot;OnTap&quot;&gt;
-        &lt;DrawUi:SkiaShape Type=&quot;Circle&quot; WidthRequest=&quot;100&quot; HeightRequest=&quot;100&quot; BackgroundColor=&quot;Red&quot; /&gt;
-    &lt;/DrawUi:SkiaHotspot&gt;
-    &lt;DrawUi:SkiaLabel x:Name=&quot;ScoreLabel&quot; Text=&quot;Score: 0&quot; FontSize=&quot;24&quot; /&gt;
-&lt;/DrawUi:SkiaLayout&gt;
+<pre><code class="lang-xml">&lt;draw:SkiaLayout&gt;
+    &lt;draw:SkiaHotspot Tapped=&quot;OnTap&quot;&gt;
+        &lt;draw:SkiaShape Type=&quot;Circle&quot; WidthRequest=&quot;100&quot; HeightRequest=&quot;100&quot; BackgroundColor=&quot;Red&quot; /&gt;
+    &lt;/draw:SkiaHotspot&gt;
+    &lt;draw:SkiaLabel x:Name=&quot;ScoreLabel&quot; Text=&quot;Score: 0&quot; FontSize=&quot;24&quot; /&gt;
+&lt;/draw:SkiaLayout&gt;
 </code></pre>
 <pre><code class="lang-csharp">private int _score = 0;
-private void OnTap(object sender, EventArgs e)
+private void OnTap(object sender, SkiaGesturesParameters e)
 {
     _score++;
     ScoreLabel.Text = $&quot;Score: {_score}&quot;;

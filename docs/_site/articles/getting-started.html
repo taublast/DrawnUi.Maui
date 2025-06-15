@@ -85,11 +85,24 @@
 <p>Install the DrawnUi NuGet package in your .NET MAUI project:</p>
 <pre><code class="lang-bash">dotnet add package AppoMobi.Maui.DrawnUi
 </code></pre>
-<p>You might need at least the following maui versions inside your csproj:</p>
-<pre><code>    &lt;ItemGroup&gt;
+<blockquote>
+<p><strong>Note</strong>: The main package name is <code>AppoMobi.Maui.DrawnUi</code>. Additional addon packages are available for specific features like Camera, Maps, and Games.</p>
+</blockquote>
+<p>You might also need at least the following MAUI setup inside your csproj:</p>
+<pre><code>	&lt;PropertyGroup&gt;
+        &lt;WindowsPackageType&gt;MSIX&lt;/WindowsPackageType&gt;
+		&lt;SupportedOSPlatformVersion Condition=&quot;$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'&quot;&gt;15.0&lt;/SupportedOSPlatformVersion&gt;
+		&lt;SupportedOSPlatformVersion Condition=&quot;$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'&quot;&gt;15.2&lt;/SupportedOSPlatformVersion&gt;
+		&lt;SupportedOSPlatformVersion Condition=&quot;$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'&quot;&gt;21.0&lt;/SupportedOSPlatformVersion&gt;
+        &lt;SupportedOSPlatformVersion Condition=&quot;$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'&quot;&gt;10.0.19041.0&lt;/SupportedOSPlatformVersion&gt;
+        &lt;TargetPlatformMinVersion Condition=&quot;$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'&quot;&gt;10.0.19041.0&lt;/TargetPlatformMinVersion&gt;
+	&lt;/PropertyGroup&gt;
+    
+    &lt;ItemGroup&gt;
         &lt;PackageReference Include=&quot;Microsoft.Maui.Controls&quot; Version=&quot;9.0.30&quot; /&gt;
         &lt;PackageReference Include=&quot;Microsoft.Maui.Controls.Compatibility&quot; Version=&quot;9.0.30&quot; /&gt;
     &lt;/ItemGroup&gt;
+
 </code></pre>
 <h3 id="2-initialize-in-your-maui-app">2. Initialize in Your MAUI App</h3>
 <p>Update your <code>MauiProgram.cs</code> file to initialize draw:</p>
@@ -122,37 +135,75 @@ public static class MauiProgram
     &lt;!-- Page content --&gt;
 &lt;/ContentPage&gt;
 </code></pre>
-<h3 id="using-drawnui-controls">using DrawnUi Controls</h3>
-<p>Now you can add DrawnUi controls to your page:</p>
-<pre><code class="lang-xml">&lt;draw:DrawnUiBasePage&gt;
-    &lt;draw:SkiaLayout&gt;
-        &lt;draw:SkiaLabel 
-            Text=&quot;Hello DrawnUi!&quot; 
-            FontSize=&quot;24&quot;
-            HorizontalOptions=&quot;Center&quot;
-            VerticalOptions=&quot;Center&quot; /&gt;
-            
-        &lt;draw:SkiaButton
-            Text=&quot;Click Me&quot;
-            WidthRequest=&quot;120&quot;
-            HeightRequest=&quot;40&quot;
-            CornerRadius=&quot;8&quot;
-            BackgroundColor=&quot;Blue&quot;
-            TextColor=&quot;White&quot;
-            VerticalOptions=&quot;Center&quot;
-            HorizontalOptions=&quot;Center&quot;
-            Margin=&quot;0,50,0,0&quot;
-            Clicked=&quot;OnButtonClicked&quot; /&gt;
-    &lt;/draw:SkiaLayout&gt;
+<h3 id="using-drawnui-controls">Using DrawnUi Controls</h3>
+<p>Now you can add DrawnUi controls to your page. You have two main options:</p>
+<h4 id="option-1-use-canvas-inside-a-regular-contentpage">Option 1: Use Canvas inside a regular ContentPage</h4>
+<pre><code class="lang-xml">&lt;ContentPage xmlns=&quot;http://schemas.microsoft.com/dotnet/2021/maui&quot;
+             xmlns:x=&quot;http://schemas.microsoft.com/winfx/2009/xaml&quot;
+             xmlns:draw=&quot;http://schemas.appomobi.com/drawnUi/2023/draw&quot;
+             x:Class=&quot;YourNamespace.YourPage&quot;&gt;
+
+    &lt;draw:Canvas HorizontalOptions=&quot;Fill&quot; VerticalOptions=&quot;Fill&quot;&gt;
+        &lt;draw:SkiaLayout Type=&quot;Column&quot; Spacing=&quot;16&quot; Padding=&quot;32&quot;&gt;
+            &lt;draw:SkiaLabel
+                Text=&quot;Hello DrawnUi!&quot;
+                FontSize=&quot;24&quot;
+                HorizontalOptions=&quot;Center&quot;
+                VerticalOptions=&quot;Center&quot; /&gt;
+
+            &lt;draw:SkiaButton
+                Text=&quot;Click Me&quot;
+                WidthRequest=&quot;120&quot;
+                HeightRequest=&quot;40&quot;
+                CornerRadius=&quot;8&quot;
+                BackgroundColor=&quot;Blue&quot;
+                TextColor=&quot;White&quot;
+                VerticalOptions=&quot;Center&quot;
+                HorizontalOptions=&quot;Center&quot;
+                Clicked=&quot;OnButtonClicked&quot; /&gt;
+        &lt;/draw:SkiaLayout&gt;
+    &lt;/draw:Canvas&gt;
+&lt;/ContentPage&gt;
+</code></pre>
+<h4 id="option-2-use-drawnuibasepage-for-keyboard-support">Option 2: Use DrawnUiBasePage (for keyboard support)</h4>
+<pre><code class="lang-xml">&lt;draw:DrawnUiBasePage xmlns=&quot;http://schemas.microsoft.com/dotnet/2021/maui&quot;
+                      xmlns:x=&quot;http://schemas.microsoft.com/winfx/2009/xaml&quot;
+                      xmlns:draw=&quot;http://schemas.appomobi.com/drawnUi/2023/draw&quot;
+                      x:Class=&quot;YourNamespace.YourPage&quot;&gt;
+
+    &lt;draw:Canvas HorizontalOptions=&quot;Fill&quot; VerticalOptions=&quot;Fill&quot;&gt;
+        &lt;draw:SkiaLayout Type=&quot;Column&quot; Spacing=&quot;16&quot; Padding=&quot;32&quot;&gt;
+            &lt;draw:SkiaLabel
+                Text=&quot;Hello DrawnUi!&quot;
+                FontSize=&quot;24&quot;
+                HorizontalOptions=&quot;Center&quot;
+                VerticalOptions=&quot;Center&quot; /&gt;
+
+            &lt;draw:SkiaButton
+                Text=&quot;Click Me&quot;
+                WidthRequest=&quot;120&quot;
+                HeightRequest=&quot;40&quot;
+                CornerRadius=&quot;8&quot;
+                BackgroundColor=&quot;Blue&quot;
+                TextColor=&quot;White&quot;
+                VerticalOptions=&quot;Center&quot;
+                HorizontalOptions=&quot;Center&quot;
+                Clicked=&quot;OnButtonClicked&quot; /&gt;
+        &lt;/draw:SkiaLayout&gt;
+    &lt;/draw:Canvas&gt;
 &lt;/draw:DrawnUiBasePage&gt;
 </code></pre>
 <h3 id="handling-events">Handling Events</h3>
 <p>Handle control events in your code-behind:</p>
-<pre><code class="lang-csharp">private void OnButtonClicked(object sender, SkiaGesturesParameters e)
+<pre><code class="lang-csharp">private void OnButtonClicked(SkiaButton sender, SkiaGesturesParameters e)
 {
     // Handle button click
+    DisplayAlert(&quot;DrawnUi&quot;, &quot;Button clicked!&quot;, &quot;OK&quot;);
 }
 </code></pre>
+<blockquote>
+<p><strong>Important</strong>: DrawnUi button events use <code>Action&lt;SkiaButton, SkiaGesturesParameters&gt;</code> instead of the standard EventHandler pattern. The first parameter is the specific control type (SkiaButton), and the second contains gesture information.</p>
+</blockquote>
 <h2 id="using-platform-specific-styles">Using Platform-Specific Styles</h2>
 <p>DrawnUi controls support platform-specific styling:</p>
 <pre><code class="lang-xml">&lt;draw:SkiaButton

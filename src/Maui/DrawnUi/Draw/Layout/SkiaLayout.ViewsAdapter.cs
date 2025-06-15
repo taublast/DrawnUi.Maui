@@ -67,30 +67,7 @@ public class ViewsAdapter : IDisposable
                 AddedMore = 0;
             }
 
-            if (_parent.InitializeTemplatesInBackgroundDelay > 0)
-            {
-                //postpone initialization to be executed in background
-                Tasks.StartDelayed(TimeSpan.FromMilliseconds(_parent.InitializeTemplatesInBackgroundDelay),
-                    () =>
-                    {
-                        Task.Run(async () => //100% background thread
-                        {
-                            try
-                            {
-                                InitializeFull(_parent.RecyclingTemplate == RecyclingTemplate.Disabled, template,
-                                    dataContexts, poolSize, reserve);
-                            }
-                            catch (Exception e)
-                            {
-                                Super.Log(e);
-                            }
-                        }).ConfigureAwait(false);
-                    });
-            }
-            else
-            {
-                InitializeFull(false, template, dataContexts, poolSize, reserve); //.ConfigureAwait(false);
-            }
+            InitializeFull(false, template, dataContexts, poolSize, reserve); //.ConfigureAwait(false);
         }
         else
         {

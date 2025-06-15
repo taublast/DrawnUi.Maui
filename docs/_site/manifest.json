@@ -1,5 +1,5 @@
 {
-  "source_base_path": "E:/Dev/Cases/GitHub/DrawnUi.Maui/docs",
+  "source_base_path": "C:/Dev/Cases/GitHub/DrawnUi.Maui/docs",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -56,6 +56,16 @@
       "output": {
         ".html": {
           "relative_path": "articles/advanced/gradients.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/advanced/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/advanced/index.html"
         }
       },
       "version": ""
@@ -295,6 +305,16 @@
         },
         ".json": {
           "relative_path": "articles/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "demo.md",
+      "output": {
+        ".html": {
+          "relative_path": "demo.html"
         }
       },
       "version": ""

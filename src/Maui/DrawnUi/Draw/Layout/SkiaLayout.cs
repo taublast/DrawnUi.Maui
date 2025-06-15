@@ -1257,24 +1257,24 @@ namespace DrawnUi.Draw
 
         #region ItemsSource
 
-        public static readonly BindableProperty InitializeTemplatesInBackgroundDelayProperty = BindableProperty.Create(
-            nameof(InitializeTemplatesInBackgroundDelay),
-            typeof(int),
-            typeof(SkiaLayout),
-            0, propertyChanged: NeedUpdateItemsSource);
+        //public static readonly BindableProperty InitializeTemplatesInBackgroundDelayProperty = BindableProperty.Create(
+        //    nameof(InitializeTemplatesInBackgroundDelay),
+        //    typeof(int),
+        //    typeof(SkiaLayout),
+        //    0, propertyChanged: NeedUpdateItemsSource);
 
-        /// <summary>
-        /// Whether should initialize templates in background instead of blocking UI thread, default is 0.
-        /// Set your delay in Milliseconds to enable.
-        /// When this is enabled and RecyclingTemplate is Disabled will also measure the layout in background
-        /// when templates are available without blocking UI-tread.
-        /// After that OnTemplatesAvailable will be called on parent layout.
-        /// </summary>
-        public int InitializeTemplatesInBackgroundDelay
-        {
-            get { return (int)GetValue(InitializeTemplatesInBackgroundDelayProperty); }
-            set { SetValue(InitializeTemplatesInBackgroundDelayProperty, value); }
-        }
+        ///// <summary>
+        ///// Whether should initialize templates in background instead of blocking UI thread, default is 0.
+        ///// Set your delay in Milliseconds to enable.
+        ///// When this is enabled and RecyclingTemplate is Disabled will also measure the layout in background
+        ///// when templates are available without blocking UI-tread.
+        ///// After that OnTemplatesAvailable will be called on parent layout.
+        ///// </summary>
+        //public int InitializeTemplatesInBackgroundDelay
+        //{
+        //    get { return (int)GetValue(InitializeTemplatesInBackgroundDelayProperty); }
+        //    set { SetValue(InitializeTemplatesInBackgroundDelayProperty, value); }
+        //}
 
         public static readonly BindableProperty MeasureItemsStrategyProperty = BindableProperty.Create(
             nameof(MeasureItemsStrategy),

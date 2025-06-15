@@ -83,7 +83,7 @@
 <h2 id="skiaimage">SkiaImage</h2>
 <p>SkiaImage is the core image control in DrawnUi.Maui, providing efficient image loading, rendering, and manipulation capabilities with direct SkiaSharp rendering.</p>
 <h3 id="basic-usage">Basic Usage</h3>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaImage
+<pre><code class="lang-xml">&lt;draw:SkiaImage
     Source=&quot;image.png&quot;
     Aspect=&quot;AspectFit&quot;
     HorizontalOptions=&quot;Center&quot;
@@ -212,7 +212,7 @@
 <p><strong>Note:</strong> The <code>UseCache</code> property is not directly on SkiaImage, but caching is handled by the SkiaControl base class or internally. You can set <code>Cache</code> on SkiaImage for caching strategies (e.g., <code>Cache=&quot;Image&quot;</code>).</p>
 </blockquote>
 <blockquote>
-<p><strong>Note:</strong> The <code>VisualEffects</code> property is inherited from SkiaControl. You can use <code>&lt;DrawUi:SkiaControl.VisualEffects&gt;</code> in XAML to apply effects like drop shadow or color presets.</p>
+<p><strong>Note:</strong> The <code>VisualEffects</code> property is inherited from SkiaControl. You can use <code>&lt;draw:SkiaControl.VisualEffects&gt;</code> in XAML to apply effects like drop shadow or color presets.</p>
 </blockquote>
 <h3 id="aspect-modes">Aspect Modes</h3>
 <p>The <code>Aspect</code> property controls how the image is sized and positioned within its container. This is a critical property for ensuring that your images display correctly while maintaining their proportions when appropriate.</p>
@@ -310,26 +310,26 @@
 </table>
 <h4 id="examples-and-visual-guide">Examples and Visual Guide</h4>
 <pre><code class="lang-xml">&lt;!-- Maintain aspect ratio, fit within bounds --&gt;
-&lt;DrawUi:SkiaImage Source=&quot;image.png&quot; Aspect=&quot;AspectFit&quot; /&gt;
+&lt;draw:SkiaImage Source=&quot;image.png&quot; Aspect=&quot;AspectFit&quot; /&gt;
 </code></pre>
 <p>This ensures the entire image is visible, possibly with letterboxing (empty space) on the sides or top/bottom.</p>
 <pre><code class="lang-xml">&lt;!-- Maintain aspect ratio, fill bounds (may crop) --&gt;
-&lt;DrawUi:SkiaImage Source=&quot;image.png&quot; Aspect=&quot;AspectFill&quot; /&gt;
+&lt;draw:SkiaImage Source=&quot;image.png&quot; Aspect=&quot;AspectFill&quot; /&gt;
 </code></pre>
 <p>This fills the entire control with the image, possibly cropping parts that don't fit. Great for background images or thumbnails.</p>
 <pre><code class="lang-xml">&lt;!-- Stretch to fill bounds (may distort) --&gt;
-&lt;DrawUi:SkiaImage Source=&quot;image.png&quot; Aspect=&quot;Fill&quot; /&gt;
+&lt;draw:SkiaImage Source=&quot;image.png&quot; Aspect=&quot;Fill&quot; /&gt;
 </code></pre>
 <p>This stretches the image to fill the control exactly, potentially distorting the image proportions.</p>
 <pre><code class="lang-xml">&lt;!-- Center the image without scaling --&gt;
-&lt;DrawUi:SkiaImage Source=&quot;image.png&quot; Aspect=&quot;Center&quot; /&gt;
+&lt;draw:SkiaImage Source=&quot;image.png&quot; Aspect=&quot;Center&quot; /&gt;
 </code></pre>
 <p>This displays the image at its original size, centered in the control. Parts may be clipped if the image is larger than the control.</p>
 <h4 id="combining-aspect-and-alignment">Combining Aspect and Alignment</h4>
 <p>You can combine <code>Aspect</code> with <code>HorizontalAlignment</code> and <code>VerticalAlignment</code> for precise control:</p>
 <pre><code class="lang-xml">&lt;!-- AspectFit with custom alignment --&gt;
-&lt;DrawUi:SkiaImage 
-    Source=&quot;image.png&quot; 
+&lt;draw:SkiaImage
+    Source=&quot;image.png&quot;
     Aspect=&quot;AspectFit&quot;
     HorizontalAlignment=&quot;Start&quot;
     VerticalAlignment=&quot;End&quot; /&gt;
@@ -345,7 +345,7 @@
 </ul>
 <h3 id="image-alignment">Image Alignment</h3>
 <p>Control the alignment of the image within its container:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaImage
+<pre><code class="lang-xml">&lt;draw:SkiaImage
     Source=&quot;image.png&quot;
     Aspect=&quot;AspectFit&quot;
     HorizontalAlignment=&quot;End&quot;
@@ -355,24 +355,24 @@
 <h3 id="image-effects">Image Effects</h3>
 <p>SkiaImage supports various built-in effects through the <code>AddEffect</code> property:</p>
 <pre><code class="lang-xml">&lt;!-- Apply a sepia effect --&gt;
-&lt;DrawUi:SkiaImage
+&lt;draw:SkiaImage
     Source=&quot;image.png&quot;
     AddEffect=&quot;Sepia&quot; /&gt;
 
 &lt;!-- Apply a tint effect --&gt;
-&lt;DrawUi:SkiaImage
+&lt;draw:SkiaImage
     Source=&quot;image.png&quot;
     AddEffect=&quot;Tint&quot;
     ColorTint=&quot;Red&quot; /&gt;
 
 &lt;!-- Apply grayscale effect --&gt;
-&lt;DrawUi:SkiaImage
+&lt;draw:SkiaImage
     Source=&quot;image.png&quot;
     AddEffect=&quot;BlackAndWhite&quot; /&gt;
 </code></pre>
 <h3 id="image-adjustments">Image Adjustments</h3>
 <p>Fine-tune image appearance with various adjustment properties:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaImage
+<pre><code class="lang-xml">&lt;draw:SkiaImage
     Source=&quot;image.png&quot;
     Brightness=&quot;1.2&quot;
     Contrast=&quot;1.1&quot;
@@ -381,16 +381,16 @@
 </code></pre>
 <h3 id="advanced-effects">Advanced Effects</h3>
 <p>For more complex effects, use the VisualEffects collection:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaImage Source=&quot;image.png&quot;&gt;
-    &lt;DrawUi:SkiaControl.VisualEffects&gt;
-        &lt;DrawUi:DropShadowEffect 
+<pre><code class="lang-xml">&lt;draw:SkiaImage Source=&quot;image.png&quot;&gt;
+    &lt;draw:SkiaControl.VisualEffects&gt;
+        &lt;draw:DropShadowEffect
             Blur=&quot;8&quot;
             X=&quot;2&quot;
             Y=&quot;2&quot;
             Color=&quot;#80000000&quot; /&gt;
-        &lt;DrawUi:ChainColorPresetEffect Preset=&quot;Sepia&quot; /&gt;
-    &lt;/DrawUi:SkiaControl.VisualEffects&gt;
-&lt;/DrawUi:SkiaImage&gt;
+        &lt;draw:ChainColorPresetEffect Preset=&quot;Sepia&quot; /&gt;
+    &lt;/draw:SkiaControl.VisualEffects&gt;
+&lt;/draw:SkiaImage&gt;
 </code></pre>
 <h3 id="sprite-sheets">Sprite Sheets</h3>
 <p>SkiaImage supports sprite sheets for displaying a single sprite from a larger image:</p>

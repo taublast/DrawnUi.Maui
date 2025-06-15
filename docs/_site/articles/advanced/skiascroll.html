@@ -90,67 +90,68 @@
 <li><strong>Works with any DrawnUi content: layouts, images, shapes, etc.</strong></li>
 </ul>
 <h2 id="basic-usage">Basic Usage</h2>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaScroll Orientation=&quot;Vertical&quot; WidthRequest=&quot;400&quot; HeightRequest=&quot;600&quot;&gt;
-    &lt;DrawUi:SkiaLayout LayoutType=&quot;Column&quot; Spacing=&quot;10&quot;&gt;
-        &lt;DrawUi:SkiaLabel Text=&quot;Item 1&quot; /&gt;
-        &lt;DrawUi:SkiaLabel Text=&quot;Item 2&quot; /&gt;
+<pre><code class="lang-xml">&lt;draw:SkiaScroll Orientation=&quot;Vertical&quot; WidthRequest=&quot;400&quot; HeightRequest=&quot;600&quot;&gt;
+    &lt;draw:SkiaLayout Type=&quot;Column&quot; Spacing=&quot;10&quot;&gt;
+        &lt;draw:SkiaLabel Text=&quot;Item 1&quot; /&gt;
+        &lt;draw:SkiaLabel Text=&quot;Item 2&quot; /&gt;
         &lt;!-- More items --&gt;
-    &lt;/DrawUi:SkiaLayout&gt;
-&lt;/DrawUi:SkiaScroll&gt;
+    &lt;/draw:SkiaLayout&gt;
+&lt;/draw:SkiaScroll&gt;
 </code></pre>
 <h2 id="multi-directional-and-zoomable-scrolling">Multi-Directional and Zoomable Scrolling</h2>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaScroll Orientation=&quot;Both&quot; ZoomLocked=&quot;False&quot; ZoomMin=&quot;1&quot; ZoomMax=&quot;3&quot;&gt;
-    &lt;DrawUi:SkiaLayout&gt;
-        &lt;DrawUi:SkiaImage Source=&quot;large_map.jpg&quot; /&gt;
-    &lt;/DrawUi:SkiaLayout&gt;
-&lt;/DrawUi:SkiaScroll&gt;
+<pre><code class="lang-xml">&lt;draw:SkiaScroll Orientation=&quot;Both&quot; ZoomLocked=&quot;False&quot; ZoomMin=&quot;1&quot; ZoomMax=&quot;3&quot;&gt;
+    &lt;draw:SkiaLayout&gt;
+        &lt;draw:SkiaImage Source=&quot;large_map.jpg&quot; /&gt;
+    &lt;/draw:SkiaLayout&gt;
+&lt;/draw:SkiaScroll&gt;
 </code></pre>
 <h2 id="virtualization-for-large-data-sets">Virtualization for Large Data Sets</h2>
 <p>Enable virtualization for smooth performance with thousands of items:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaScroll UseVirtual=&quot;True&quot; Orientation=&quot;Vertical&quot;&gt;
-    &lt;DrawUi:SkiaLayout 
-        LayoutType=&quot;Column&quot; 
+<pre><code class="lang-xml">&lt;draw:SkiaScroll Virtualisation=&quot;Enabled&quot; Orientation=&quot;Vertical&quot;&gt;
+    &lt;draw:SkiaLayout
+        Type=&quot;Column&quot;
         ItemsSource=&quot;{Binding LargeItemCollection}&quot;
-        VirtualizationMode=&quot;Enabled&quot;&gt;
-        &lt;DrawUi:SkiaLayout.ItemTemplate&gt;
+        Virtualisation=&quot;Enabled&quot;&gt;
+        &lt;draw:SkiaLayout.ItemTemplate&gt;
             &lt;DataTemplate&gt;
-                &lt;DrawUi:SkiaLabel Text=&quot;{Binding Title}&quot; /&gt;
+                &lt;draw:SkiaLabel Text=&quot;{Binding Title}&quot; /&gt;
             &lt;/DataTemplate&gt;
-        &lt;/DrawUi:SkiaLayout.ItemTemplate&gt;
-    &lt;/DrawUi:SkiaLayout&gt;
-&lt;/DrawUi:SkiaScroll&gt;
+        &lt;/draw:SkiaLayout.ItemTemplate&gt;
+    &lt;/draw:SkiaLayout&gt;
+&lt;/draw:SkiaScroll&gt;
 </code></pre>
 <ul>
-<li><code>UseVirtual</code> on SkiaScroll enables virtualization.</li>
-<li><code>VirtualizationMode</code> on SkiaLayout controls the strategy (Enabled, Smart, Managed).</li>
+<li><code>Virtualisation</code> on SkiaScroll controls viewport-based rendering.</li>
+<li><code>Virtualisation</code> on SkiaLayout controls the strategy (Enabled, Disabled).</li>
 <li>Combine with <code>RecyclingTemplate</code> for template reuse.</li>
+<li>Use <code>VirtualisationInflated</code> to control how much content outside the viewport is still rendered.</li>
 </ul>
 <h2 id="custom-headers-footers-and-overlays">Custom Headers, Footers, and Overlays</h2>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaScroll HeaderSticky=&quot;True&quot; HeaderBehind=&quot;False&quot;&gt;
-    &lt;DrawUi:SkiaScroll.Header&gt;
-        &lt;DrawUi:SkiaShape Type=&quot;Rectangle&quot; BackgroundColor=&quot;#3498DB&quot; HeightRequest=&quot;80&quot;&gt;
-            &lt;DrawUi:SkiaLabel Text=&quot;Sticky Header&quot; TextColor=&quot;White&quot; FontSize=&quot;18&quot; /&gt;
-        &lt;/DrawUi:SkiaShape&gt;
-    &lt;/DrawUi:SkiaScroll.Header&gt;
-    &lt;DrawUi:SkiaLayout LayoutType=&quot;Column&quot;&gt;
+<pre><code class="lang-xml">&lt;draw:SkiaScroll HeaderSticky=&quot;True&quot; HeaderBehind=&quot;False&quot;&gt;
+    &lt;draw:SkiaScroll.Header&gt;
+        &lt;draw:SkiaShape Type=&quot;Rectangle&quot; BackgroundColor=&quot;#3498DB&quot; HeightRequest=&quot;80&quot;&gt;
+            &lt;draw:SkiaLabel Text=&quot;Sticky Header&quot; TextColor=&quot;White&quot; FontSize=&quot;18&quot; /&gt;
+        &lt;/draw:SkiaShape&gt;
+    &lt;/draw:SkiaScroll.Header&gt;
+    &lt;draw:SkiaLayout Type=&quot;Column&quot;&gt;
         &lt;!-- Content --&gt;
-    &lt;/DrawUi:SkiaLayout&gt;
-    &lt;DrawUi:SkiaScroll.Footer&gt;
-        &lt;DrawUi:SkiaShape Type=&quot;Rectangle&quot; BackgroundColor=&quot;#2C3E50&quot; HeightRequest=&quot;60&quot;&gt;
-            &lt;DrawUi:SkiaLabel Text=&quot;Footer&quot; TextColor=&quot;White&quot; /&gt;
-        &lt;/DrawUi:SkiaShape&gt;
-    &lt;/DrawUi:SkiaScroll.Footer&gt;
-&lt;/DrawUi:SkiaScroll&gt;
+    &lt;/draw:SkiaLayout&gt;
+    &lt;draw:SkiaScroll.Footer&gt;
+        &lt;draw:SkiaShape Type=&quot;Rectangle&quot; BackgroundColor=&quot;#2C3E50&quot; HeightRequest=&quot;60&quot;&gt;
+            &lt;draw:SkiaLabel Text=&quot;Footer&quot; TextColor=&quot;White&quot; /&gt;
+        &lt;/draw:SkiaShape&gt;
+    &lt;/draw:SkiaScroll.Footer&gt;
+&lt;/draw:SkiaScroll&gt;
 </code></pre>
 <h2 id="pull-to-refresh">Pull-to-Refresh</h2>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaScroll x:Name=&quot;MyScrollView&quot; Refreshing=&quot;OnRefreshing&quot;&gt;
-    &lt;DrawUi:SkiaScroll.RefreshIndicator&gt;
-        &lt;DrawUi:RefreshIndicator /&gt;
-    &lt;/DrawUi:SkiaScroll.RefreshIndicator&gt;
-    &lt;DrawUi:SkiaLayout LayoutType=&quot;Column&quot;&gt;
+<pre><code class="lang-xml">&lt;draw:SkiaScroll x:Name=&quot;MyScrollView&quot; Refreshing=&quot;OnRefreshing&quot;&gt;
+    &lt;draw:SkiaScroll.RefreshIndicator&gt;
+        &lt;draw:RefreshIndicator /&gt;
+    &lt;/draw:SkiaScroll.RefreshIndicator&gt;
+    &lt;draw:SkiaLayout Type=&quot;Column&quot;&gt;
         &lt;!-- Content items --&gt;
-    &lt;/DrawUi:SkiaLayout&gt;
-&lt;/DrawUi:SkiaScroll&gt;
+    &lt;/draw:SkiaLayout&gt;
+&lt;/draw:SkiaScroll&gt;
 </code></pre>
 <p>In code-behind:</p>
 <pre><code class="lang-csharp">private async void OnRefreshing(object sender, EventArgs e)
@@ -162,13 +163,13 @@
 </code></pre>
 <h2 id="infinite-and-looped-scrolling">Infinite and Looped Scrolling</h2>
 <p>Use SkiaScrollLooped for banners, carousels, or infinite galleries:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaScrollLooped Orientation=&quot;Horizontal&quot; IsBanner=&quot;True&quot; CycleSpace=&quot;100&quot;&gt;
-    &lt;DrawUi:SkiaLayout LayoutType=&quot;Row&quot;&gt;
-        &lt;DrawUi:SkiaImage Source=&quot;image1.jpg&quot; /&gt;
-        &lt;DrawUi:SkiaImage Source=&quot;image2.jpg&quot; /&gt;
+<pre><code class="lang-xml">&lt;draw:SkiaScrollLooped Orientation=&quot;Horizontal&quot; IsBanner=&quot;True&quot; CycleSpace=&quot;100&quot;&gt;
+    &lt;draw:SkiaLayout Type=&quot;Row&quot;&gt;
+        &lt;draw:SkiaImage Source=&quot;image1.jpg&quot; /&gt;
+        &lt;draw:SkiaImage Source=&quot;image2.jpg&quot; /&gt;
         &lt;!-- More images --&gt;
-    &lt;/DrawUi:SkiaLayout&gt;
-&lt;/DrawUi:SkiaScrollLooped&gt;
+    &lt;/draw:SkiaLayout&gt;
+&lt;/draw:SkiaScrollLooped&gt;
 </code></pre>
 <h2 id="programmatic-scrolling-and-position-tracking">Programmatic Scrolling and Position Tracking</h2>
 <pre><code class="lang-csharp">// Scroll to a specific position
