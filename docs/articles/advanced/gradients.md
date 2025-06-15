@@ -97,16 +97,29 @@ Or define inline:
 </DrawUi:SkiaLabel>
 ```
 
-## Applying Gradients to Images
+## Applying Gradients to SVG, code behind
 
 You can overlay gradients on images using the `UseGradient`, `StartColor`, and `EndColor` properties on `SkiaImage`:
 
-```xml
-<DrawUi:SkiaImage 
-    Source="photo.jpg" 
-    UseGradient="True" 
-    StartColor="#00000000" 
-    EndColor="#CC000000" />
+```csharp
+new SkiaSvg()
+{
+    HorizontalOptions = LayoutOptions.Center,
+    HeightRequest = 20,
+    LockRatio = 1,
+    UseCache = SkiaCacheType.Image,
+    FillGradient =
+        new SkiaGradient()
+        {
+            StartXRatio = 1,
+            EndXRatio = 0,
+            StartYRatio = 0,
+            EndYRatio = 1,
+            Colors =
+                new Color[] { BackColors.GradientStartNav,
+                    BackColors.GradientEndNav }
+        },
+}
 ```
 
 This creates a fade effect from transparent to black over the image.
@@ -139,16 +152,13 @@ var gradient = new SkiaGradient
     EndPoint = new Point(1, 1)
 };
 
-myShape.BackgroundGradient = gradient;
+control.FillGradient = gradient;
 ```
 
 ## Tips and Best Practices
 
 - Use gradients to add depth and visual interest to your UI.
 - For performance, prefer simple gradients or reuse gradient resources.
-- Gradients can be animated by changing their properties in code.
+- Gradients can be animated by changing their properties 
 - Combine gradients with shadows for modern card and button designs.
 
-## Summary
-
-Gradients in DrawnUi.Maui are flexible and easy to use across shapes, text, and images. Use the provided properties and examples to create visually appealing, modern interfaces.
