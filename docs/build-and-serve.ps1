@@ -27,8 +27,8 @@ if (Test-Path "_site") {
 }
 
 # Build the documentation
-Write-Host "Running DocFX build..."
-docfx build
+Write-Host "Building documentation with metadata extraction..."
+docfx
 
 # Check if build was successful
 if ($LASTEXITCODE -ne 0) {
@@ -39,9 +39,6 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "Documentation built successfully!"
 Write-Host "Output directory: _site"
 
-# Serve the documentation if requested
-if ($Serve) {
     Write-Host "Starting documentation server at http://localhost:8080"
     Write-Host "Press Ctrl+C to stop the server"
     docfx serve _site
-}

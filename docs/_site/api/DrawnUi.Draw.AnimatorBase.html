@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class AnimatorBase | DrawnUi Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class AnimatorBase | DrawnUi Documentation ">
+    
+    
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="DrawnUi.Draw.AnimatorBase">
+
+
+
+  <h1 id="DrawnUi_Draw_AnimatorBase" data-uid="DrawnUi.Draw.AnimatorBase" class="text-break">Class AnimatorBase</h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+    <div class="level1"><span class="xref">AnimatorBase</span></div>
+      <div class="level2"><a class="xref" href="DrawnUi.Draw.ActionOnTickAnimator.html">ActionOnTickAnimator</a></div>
+      <div class="level2"><a class="xref" href="DrawnUi.Draw.SkiaValueAnimator.html">SkiaValueAnimator</a></div>
+  </div>
+  <div class="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="DrawnUi.Draw.ISkiaAnimator.html">ISkiaAnimator</a></div>
+    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Draw.html">Draw</a></h6>
+  <h6><strong>Assembly</strong>: DrawnUi.Maui.dll</h6>
+  <h5 id="DrawnUi_Draw_AnimatorBase_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class AnimatorBase : ISkiaAnimator, IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase__ctor_DrawnUi_Draw_IDrawnBase_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.%23ctor(DrawnUi.Draw.IDrawnBase)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L23">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase__ctor_" data-uid="DrawnUi.Draw.AnimatorBase.#ctor*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase__ctor_DrawnUi_Draw_IDrawnBase_" data-uid="DrawnUi.Draw.AnimatorBase.#ctor(DrawnUi.Draw.IDrawnBase)">AnimatorBase(IDrawnBase)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AnimatorBase(IDrawnBase parent)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></td>
+        <td><span class="parametername">parent</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="fields">Fields
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_runDelayMs.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.runDelayMs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L33">View Source</a>
+  </span>
+  <h4 id="DrawnUi_Draw_AnimatorBase_runDelayMs" data-uid="DrawnUi.Draw.AnimatorBase.runDelayMs">runDelayMs</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected double runDelayMs</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_IsDeactivated.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.IsDeactivated%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L178">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_IsDeactivated_" data-uid="DrawnUi.Draw.AnimatorBase.IsDeactivated*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_IsDeactivated" data-uid="DrawnUi.Draw.AnimatorBase.IsDeactivated">IsDeactivated</h4>
+  <div class="markdown level1 summary"><p>Can and will be removed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsDeactivated { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_IsHiddenInViewTree.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.IsHiddenInViewTree%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L21">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_IsHiddenInViewTree_" data-uid="DrawnUi.Draw.AnimatorBase.IsHiddenInViewTree*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_IsHiddenInViewTree" data-uid="DrawnUi.Draw.AnimatorBase.IsHiddenInViewTree">IsHiddenInViewTree</h4>
+  <div class="markdown level1 summary"><p>For internal use by the engine</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsHiddenInViewTree { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_IsPaused.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.IsPaused%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L160">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_IsPaused_" data-uid="DrawnUi.Draw.AnimatorBase.IsPaused*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_IsPaused" data-uid="DrawnUi.Draw.AnimatorBase.IsPaused">IsPaused</h4>
+  <div class="markdown level1 summary"><p>Just should not execute on tick</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsPaused { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_IsPostAnimator.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.IsPostAnimator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L6">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_IsPostAnimator_" data-uid="DrawnUi.Draw.AnimatorBase.IsPostAnimator*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_IsPostAnimator" data-uid="DrawnUi.Draw.AnimatorBase.IsPostAnimator">IsPostAnimator</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsPostAnimator { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_IsRunning.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.IsRunning%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L218">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_IsRunning_" data-uid="DrawnUi.Draw.AnimatorBase.IsRunning*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_IsRunning" data-uid="DrawnUi.Draw.AnimatorBase.IsRunning">IsRunning</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsRunning { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_LastFrameTimeNanos.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.LastFrameTimeNanos%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L187">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_LastFrameTimeNanos_" data-uid="DrawnUi.Draw.AnimatorBase.LastFrameTimeNanos*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_LastFrameTimeNanos" data-uid="DrawnUi.Draw.AnimatorBase.LastFrameTimeNanos">LastFrameTimeNanos</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long LastFrameTimeNanos { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_OnStart.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.OnStart%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L174">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_OnStart_" data-uid="DrawnUi.Draw.AnimatorBase.OnStart*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_OnStart" data-uid="DrawnUi.Draw.AnimatorBase.OnStart">OnStart</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Action OnStart { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_OnStop.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.OnStop%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L173">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_OnStop_" data-uid="DrawnUi.Draw.AnimatorBase.OnStop*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_OnStop" data-uid="DrawnUi.Draw.AnimatorBase.OnStop">OnStop</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Action OnStop { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.action">Action</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Parent.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Parent%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L176">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Parent_" data-uid="DrawnUi.Draw.AnimatorBase.Parent*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Parent" data-uid="DrawnUi.Draw.AnimatorBase.Parent">Parent</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDrawnBase Parent { get; protected set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_StartFrameTimeNanos.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.StartFrameTimeNanos%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L189">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_StartFrameTimeNanos_" data-uid="DrawnUi.Draw.AnimatorBase.StartFrameTimeNanos*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_StartFrameTimeNanos" data-uid="DrawnUi.Draw.AnimatorBase.StartFrameTimeNanos">StartFrameTimeNanos</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long StartFrameTimeNanos { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Uid.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Uid%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L195">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Uid_" data-uid="DrawnUi.Draw.AnimatorBase.Uid*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Uid" data-uid="DrawnUi.Draw.AnimatorBase.Uid">Uid</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Guid Uid { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_WasStarted.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.WasStarted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L240">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_WasStarted_" data-uid="DrawnUi.Draw.AnimatorBase.WasStarted*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_WasStarted" data-uid="DrawnUi.Draw.AnimatorBase.WasStarted">WasStarted</h4>
+  <div class="markdown level1 summary"><p>Main flag to detect if animator stopped after being started (WasStarted) or stop was just called on an already stopped animator.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool WasStarted { get; protected set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+</h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Cancel.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Cancel%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L85">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Cancel_" data-uid="DrawnUi.Draw.AnimatorBase.Cancel*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Cancel" data-uid="DrawnUi.Draw.AnimatorBase.Cancel">Cancel()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Cancel()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Dispose.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Dispose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L197">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Dispose_" data-uid="DrawnUi.Draw.AnimatorBase.Dispose*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Dispose" data-uid="DrawnUi.Draw.AnimatorBase.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Dispose()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_OnRunningStateChanged_System_Boolean_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.OnRunningStateChanged(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L206">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_OnRunningStateChanged_" data-uid="DrawnUi.Draw.AnimatorBase.OnRunningStateChanged*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_OnRunningStateChanged_System_Boolean_" data-uid="DrawnUi.Draw.AnimatorBase.OnRunningStateChanged(System.Boolean)">OnRunningStateChanged(bool)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnRunningStateChanged(bool isRunning)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td><span class="parametername">isRunning</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Pause.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Pause%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L149">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Pause_" data-uid="DrawnUi.Draw.AnimatorBase.Pause*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Pause" data-uid="DrawnUi.Draw.AnimatorBase.Pause">Pause()</h4>
+  <div class="markdown level1 summary"><p>Used by ui, please use play stop for manual control</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Pause()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Radians_System_Double_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Radians(System.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L28">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Radians_" data-uid="DrawnUi.Draw.AnimatorBase.Radians*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Radians_System_Double_" data-uid="DrawnUi.Draw.AnimatorBase.Radians(System.Double)">Radians(double)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double Radians(double degrees)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td><span class="parametername">degrees</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Register.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Register%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L36">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Register_" data-uid="DrawnUi.Draw.AnimatorBase.Register*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Register" data-uid="DrawnUi.Draw.AnimatorBase.Register">Register()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool Register()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Resume.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Resume%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L154">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Resume_" data-uid="DrawnUi.Draw.AnimatorBase.Resume*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Resume" data-uid="DrawnUi.Draw.AnimatorBase.Resume">Resume()</h4>
+  <div class="markdown level1 summary"><p>Used by ui, please use play stop for manual control</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Resume()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Start_System_Double_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Start(System.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L100">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Start_" data-uid="DrawnUi.Draw.AnimatorBase.Start*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Start_System_Double_" data-uid="DrawnUi.Draw.AnimatorBase.Start(System.Double)">Start(double)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Start(double delayMs = 0)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
+        <td><span class="parametername">delayMs</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Stop.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Stop%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L162">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Stop_" data-uid="DrawnUi.Draw.AnimatorBase.Stop*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Stop" data-uid="DrawnUi.Draw.AnimatorBase.Stop">Stop()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Stop()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_TickFrame_System_Int64_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.TickFrame(System.Int64)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L140">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_TickFrame_" data-uid="DrawnUi.Draw.AnimatorBase.TickFrame*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_TickFrame_System_Int64_" data-uid="DrawnUi.Draw.AnimatorBase.TickFrame(System.Int64)">TickFrame(long)</h4>
+  <div class="markdown level1 summary"><p>Time in NANOS</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool TickFrame(long frameTimeNanos)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
+        <td><span class="parametername">frameTimeNanos</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase_Unregister.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase.Unregister%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L61">View Source</a>
+  </span>
+  <a id="DrawnUi_Draw_AnimatorBase_Unregister_" data-uid="DrawnUi.Draw.AnimatorBase.Unregister*"></a>
+  <h4 id="DrawnUi_Draw_AnimatorBase_Unregister" data-uid="DrawnUi.Draw.AnimatorBase.Unregister">Unregister()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="declaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void Unregister()</code></pre>
+  </div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.ISkiaAnimator.html">ISkiaAnimator</a>
+  </div>
+  <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
+  </div>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="DrawnUi.Extensions.InternalExtensions.html#DrawnUi_Extensions_InternalExtensions_FromPlatform_System_Object_">InternalExtensions.FromPlatform(object)</a>
+  </div>
+
+</article>
+          </div>
+
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AnimatorBase.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AnimatorBase%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/AnimatorBase.cs/#L3" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In this article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+      
+      <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
