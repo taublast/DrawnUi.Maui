@@ -26,7 +26,6 @@ public partial class SkiaCamera : SkiaControl
 
     public override void LockUpdate(bool value)
     {
-        //not using for constantly-async updated scenario
     }
 
     public override void OnWillDisposeWithChildren()
@@ -484,7 +483,7 @@ public partial class SkiaCamera : SkiaControl
     {
         if (NativeControl != null && !FrameAquired)
         {
-            //aquire latest image from camera
+            //acquire latest image from camera
             var image = AquireFrameFromNative();
             if (image != null)
             {
@@ -503,7 +502,6 @@ public partial class SkiaCamera : SkiaControl
             SetFrameFromNative();
         }
 
-        //draw DisplayImage
         DrawViews(ctx);
 
         if (ConstantUpdate && State == CameraState.On)

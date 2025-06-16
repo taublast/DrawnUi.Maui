@@ -16,13 +16,9 @@ public partial class SkiaCamera : SkiaControl
 
     public virtual void SetZoom(double value)
     {
-        //Set texture scale for digital zoom beyond hardware limits
         TextureScale = value;
-
-        //Apply hardware zoom through native control
         NativeControl?.SetZoom((float)value);
 
-        //Update display zoom - preview is our texture
         if (Display != null)
         {
             Display.ZoomX = TextureScale;

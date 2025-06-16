@@ -116,7 +116,6 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     private DeviceInformation _cameraDevice;
     private MediaFrameSource _frameSource;
 
-    // Improved frame processing synchronization
     private readonly SemaphoreSlim _frameSemaphore = new(1, 1);
     private volatile bool _isProcessingFrame = false;
 
@@ -1100,7 +1099,6 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 StillImageCaptureSuccess?.Invoke(capturedImage);
             });
 
-            // IMPORTANT: Restart frame reader to resume preview
             Debug.WriteLine("[NativeCameraWindows] Restarting frame reader to resume preview...");
             await RestartFrameReaderAsync();
         }

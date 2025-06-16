@@ -635,7 +635,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     private bool mFlashSupported;
 
     /// <summary>
-    /// Orientation of the camera sensor, this doesn't change when rotating device, it's a built value. It will define our transforms we would need to apply to the received frame
+    /// Camera sensor orientation in degrees
     /// </summary>
     public int SensorOrientation { get; set; }
 
@@ -780,7 +780,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                     unit.FocalLengths.Add(focalLength);
                 }
 
-                //todo get more info about htis shit
                 unit.FocalLength = unit.FocalLengths[0];
 
                 cameras.Add(unit);
@@ -788,10 +787,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
             if (!cameras.Any())
                 return;
-
-            //todo choose camera.
-
-            //atm just take nb 1
 
             var selectedCamera = cameras[0];
 
@@ -888,7 +883,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                         break;
 
                     default:
-                        //todo: handle case of Preview
                         selectedSize = new(1, 1);
                         break;
                 }
@@ -912,9 +906,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 #endregion
 
 
-                // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-                // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-                // garbage capture data.
                 var previewSize = ChooseOptimalSize(map.GetOutputSizes(Class.FromType(typeof(SurfaceTexture))),
                     maxPreviewWidth, maxPreviewHeight, selectedSize);
 
@@ -925,7 +916,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                     ImageReader.NewInstance(PreviewWidth, PreviewHeight, ImageFormatType.Yuv420888, 3);
                 mImageReaderPreview.SetOnImageAvailableListener(this, mBackgroundHandler);
 
-                //will notify forms control inside of the allocation size
                 AllocateOutSurface();
 
                 CameraId = cameraUnit.Id;
@@ -952,8 +942,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
         catch (NullPointerException e)
         {
-            // Currently an NPE is thrown when the Camera2API is used but not supported on the
-            // device this code runs.
             //ErrorDialog.NewInstance(GetString(Resource.String.camera_error)).Show(ChildFragmentManager, FRAGMENT_DIALOG);
         }
     }
@@ -1121,7 +1109,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             }
             catch (Exception e)
             {
-                //todo something - log errors!
                 Trace.WriteLine(e);
                 return false;
             }
@@ -1304,8 +1291,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
-    // Capture a still picture. This method should be called when we get a response in
-    // {@link #mCaptureCallback} from both {@link #lockFocus()}.
     public void StartCapturingStill()
     {
         if (CapturingStill)
@@ -1325,8 +1310,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                 return;
             }
 
-            // This is the CaptureRequest.Builder that we use to take a picture.
-            //if (stillCaptureBuilder == null)
             var stillCaptureBuilder = mCameraDevice.CreateCaptureRequest(CameraTemplate.StillCapture);
             stillCaptureBuilder.AddTarget(mImageReaderPhoto.Surface);
 
@@ -1353,7 +1336,6 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
-    // Creates a new {@link CameraCaptureSession} for camera preview.
     public void CreateCameraPreviewSession()
     {
         try
@@ -1384,21 +1366,16 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
 
-    // Initiate a still image capture.
     public void TakePicture()
     {
-        CaptureStillImage(); //CaptureStillPicture will ba called when focus is locked
+        CaptureStillImage();
     }
 
-    // Lock the focus as the first step for a still image capture.
     private void CaptureStillImage()
     {
         try
         {
-            // This is how to tell the camera to lock focus.
             mPreviewRequestBuilder.Set(CaptureRequest.ControlAfTrigger, (int)ControlAFTrigger.Start);
-
-            // Tell #mCaptureCallback to wait for the lock.
             mState = STATE_WAITING_LOCK;
             CaptureSession.Capture(mPreviewRequestBuilder.Build(), mCaptureCallback,
                 mBackgroundHandler);
@@ -1409,16 +1386,12 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
-    // Run the precapture sequence for capturing a still image. This method should be called when
-    // we get a response in {@link #mCaptureCallback} from {@link #lockFocus()}.
     public void RunPrecaptureSequence()
     {
         try
         {
-            // This is how to tell the camera to trigger.
             mPreviewRequestBuilder.Set(CaptureRequest.ControlAePrecaptureTrigger,
                 (int)ControlAEPrecaptureTrigger.Start);
-            // Tell #mCaptureCallback to wait for the precapture sequence to be set.
             mState = STATE_WAITING_PRECAPTURE;
             CaptureSession.Capture(mPreviewRequestBuilder.Build(), mCaptureCallback, null);
         }
@@ -1517,12 +1490,10 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     {
         try
         {
-            // Reset the auto-focus trigger
             mPreviewRequestBuilder.Set(CaptureRequest.ControlAfTrigger, (int)ControlAFTrigger.Cancel);
             SetCapturingStillOptions(mPreviewRequestBuilder);
             CaptureSession.Capture(mPreviewRequestBuilder.Build(), mCaptureCallback,
                 mBackgroundHandler);
-            // After this, the camera will go back to the normal state of preview.
             mState = STATE_PREVIEW;
             CaptureSession.SetRepeatingRequest(
                 mPreviewRequest,
@@ -1697,7 +1668,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
             using var allocated = new AllocatedBitmap(rs, width, height);
 
-            ProcessImage(image, allocated.Allocation); //todo constantly update SensorOrientation !!!
+            ProcessImage(image, allocated.Allocation);
 
             allocated.Update();
 
@@ -1790,7 +1761,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             _ZoomScale = value;
             //mTextureView?.SetZoomScale(value);
 
-            ZoomScaleTexture = value; //todo use camera zoom
+            ZoomScaleTexture = value;
 
             OnPropertyChanged();
         }

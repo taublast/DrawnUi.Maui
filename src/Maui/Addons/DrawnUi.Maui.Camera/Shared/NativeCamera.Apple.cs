@@ -685,7 +685,6 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 var get = _preview;
                 _preview = null;
 
-                // If we're returning an image, make sure we don't have it queued for disposal
                 if (_kill == get)
                 {
                     _kill = null;
