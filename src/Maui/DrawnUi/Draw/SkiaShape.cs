@@ -405,15 +405,13 @@ namespace DrawnUi.Draw
         {
             if (WillStroke)
             {
-                var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
-
-                var strokeAwareChildrenSize
-                    = ContractPixelsRect(strokeAwareSize, scale, Padding);
-
-                return strokeAwareChildrenSize;
+                destination = CalculateShapeSizeForStroke(destination, scale);
             }
 
-            return destination;
+            var strokeAwareChildrenSize
+                = ContractPixelsRect(destination, scale, Padding);
+
+            return strokeAwareChildrenSize;
         }
 
         protected SKRect CalculateClipSizeForStroke(SKRect destination, float scale)
@@ -465,6 +463,11 @@ namespace DrawnUi.Draw
 
         protected void CalculateSizeForStroke(SKRect destination, float scale)
         {
+            if (Tag == "BUG")
+            {
+                var stop = 1;
+            }
+
             MeasuredStrokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
             MeasuredStrokeAwareClipSize = CalculateClipSizeForStroke(destination, scale);
             MeasuredStrokeAwareChildrenSize = CalculateContentSizeForStroke(MeasuredStrokeAwareSize, scale);
@@ -861,6 +864,11 @@ namespace DrawnUi.Draw
 
         protected override void Paint(DrawingContext ctx)
         {
+            if (Tag == "BUG")
+            {
+                var stop = 1;
+            }
+
             var scale = ctx.Scale;
             var strokeAwareSize = MeasuredStrokeAwareSize;
             var strokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize;
