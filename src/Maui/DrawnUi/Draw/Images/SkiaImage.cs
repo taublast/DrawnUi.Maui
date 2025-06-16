@@ -333,8 +333,8 @@ public class SkiaImage : SkiaControl
         CancelLoading?.Cancel();
 
         OnCleared = null;
-        OnError = null;
-        OnSuccess = null;
+        Error = null;
+        Success = null;
 
         base.OnWillDisposeWithChildren();
     }
@@ -475,7 +475,7 @@ public class SkiaImage : SkiaControl
         {
             TraceLog($"[SkiaImage] source is null");
             ClearBitmap();
-            OnSourceSuccess(null);
+            OnSuccess(null);
         }
         else
         {
@@ -506,7 +506,7 @@ public class SkiaImage : SkiaControl
                         //{
                         //    ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
                         //};
-                        OnSourceSuccess(uri);
+                        OnSuccess(uri);
                         return;
                     }
                 }
@@ -522,8 +522,16 @@ public class SkiaImage : SkiaControl
                     if (source is StreamImageSource || source is FileImageSource)
                     {
                         //load in sync mode
-                        var bitmap = SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel).GetAwaiter()
-                            .GetResult();
+                        SKBitmap bitmap = null;
+                        try
+                        {
+                            bitmap = SkiaImageManager.Instance.LoadImageManagedAsync(source, cancel).GetAwaiter()
+                                .GetResult();
+                        }
+                        catch (Exception e)
+                        {
+                            Super.Log(e);
+                        }
                         if (bitmap != null)
                         {
                             //ImageBitmap = new LoadedImageSource(bitmap)
@@ -531,13 +539,12 @@ public class SkiaImage : SkiaControl
                             //    ProtectBitmapFromDispose = SkiaImageManager.ReuseBitmaps
                             //};
                             SetImageInternal(SKImage.FromBitmap(bitmap), SkiaImageManager.ReuseBitmaps);
-                            OnSourceSuccess(uri);
+                            OnSuccess(uri);
                         }
                         else
                         {
-                            OnSourceError(url);
+                            OnError(url);
                         }
-
                         return;
                     }
                 }
@@ -600,7 +607,7 @@ public class SkiaImage : SkiaControl
                                         }; //at the end will use SetImage(new InstancedBitmap(bitmap));
 
                                         //TraceLog($"[SkiaImage] Loaded {source}");
-                                        OnSourceSuccess(uri);
+                                        OnSuccess(uri);
                                         return;
                                     }
 
@@ -625,12 +632,12 @@ public class SkiaImage : SkiaControl
                             await LoadAction();
                         }
 
-                        OnSourceError(url);
+                        OnError(url);
                     }
                     catch (Exception e)
                     {
                         TraceLog(e.Message);
-                        OnSourceError(url);
+                        OnError(url);
                     }
                 };
 
@@ -656,7 +663,7 @@ public class SkiaImage : SkiaControl
             {
                 TraceLog($"[SkiaImage] Source already loaded {source}");
 
-                OnSourceSuccess(null);
+                OnSuccess(null);
             }
         }
     }
@@ -1007,16 +1014,16 @@ public class SkiaImage : SkiaControl
         _needClearBitmap = true;
     }
 
-    public virtual void OnSourceError(string source)
+    public virtual void OnError(string source)
     {
         HasError = true;
-        OnError?.Invoke(this, new ContentLoadedEventArgs(source));
+        Error?.Invoke(this, new ContentLoadedEventArgs(source));
     }
 
-    public virtual void OnSourceSuccess(string source)
+    public virtual void OnSuccess(string source)
     {
         HasError = false;
-        OnSuccess?.Invoke(this, new ContentLoadedEventArgs(source));
+        Success?.Invoke(this, new ContentLoadedEventArgs(source));
     }
 
     protected virtual void SubscribeToCanReload()
@@ -1041,8 +1048,8 @@ public class SkiaImage : SkiaControl
         }
     }
 
-    public event EventHandler<ContentLoadedEventArgs> OnError;
-    public event EventHandler<ContentLoadedEventArgs> OnSuccess;
+    public event EventHandler<ContentLoadedEventArgs> Error;
+    public event EventHandler<ContentLoadedEventArgs> Success;
 
     #region RENDERiNG
 
@@ -1549,7 +1556,7 @@ public class SkiaImage : SkiaControl
     /// <summary>
     /// Alternative approach: Edge-preserving resize for icons with transparency
     /// </summary>
-    private SKBitmap CreateEdgePreservingResize(SKBitmap source, SKSizeI targetSize)
+    private SKBitmap CreateEdgePreservingResize(SKBitmap source, SKSizeI targetSize, SKFilterQuality quality)
     {
         // Create result bitmap
         var result = new SKBitmap(targetSize.Width, targetSize.Height, source.ColorType, source.AlphaType);
@@ -1558,7 +1565,7 @@ public class SkiaImage : SkiaControl
         using var paint = new SKPaint
         {
             IsAntialias = false, // Critical for sharp edges!
-            FilterQuality = SKFilterQuality.None,
+            FilterQuality = quality,
             IsDither = false,
             BlendMode = SKBlendMode.Src // Preserve exact alpha values
         };
@@ -1680,9 +1687,7 @@ public class SkiaImage : SkiaControl
 
                         SKBitmap resizedBmp = this.RescalingType switch
                         {
-                            RescalingType.GammaCorrection => CreateGammaCorrectedResize(bitmapToResize, targetSize, RescalingQuality),
-
-                            RescalingType.EdgePreserving => CreateEdgePreservingResize(bitmapToResize, targetSize),
+                            RescalingType.EdgePreserving => CreateEdgePreservingResize(bitmapToResize, targetSize, RescalingQuality),
 
                             RescalingType.MultiPass => RescalingQuality switch
                             {
