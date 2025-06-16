@@ -419,6 +419,10 @@ public class Canvas : DrawnView, IGestureListener
         });
     }
 
+    /// <summary>
+    /// Will be called by canvas when framework platform is initialized (true) OR .NET HotReload triggered (false)
+    /// </summary>
+    /// <param name="firsttime"></param>
     protected virtual void Create(bool firsttime)
     {
 
