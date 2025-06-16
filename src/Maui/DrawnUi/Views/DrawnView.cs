@@ -727,6 +727,7 @@ namespace DrawnUi.Views
 
                 //bug this creates garbage on aandroid on every frame
                 // DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
+                InitFramework(true);
             }
         }
 
@@ -1006,6 +1007,8 @@ namespace DrawnUi.Views
                 try
                 {
                     IsDisposing = true;
+
+                    InitFramework(false);
 
                     OnDisposing();
 

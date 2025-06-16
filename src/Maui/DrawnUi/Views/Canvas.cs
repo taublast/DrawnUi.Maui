@@ -56,6 +56,14 @@ public class Canvas : DrawnView, IGestureListener
             if (oldContent != null)
             {
                 RemoveSubView(oldContent);
+                try
+                {
+                    oldContent.Dispose();
+                }
+                catch (Exception e)
+                {
+                    Super.Log(e);
+                }
             }
 
             if (view != null)
@@ -385,11 +393,35 @@ public class Canvas : DrawnView, IGestureListener
 
     #endregion
 
+    private bool isEmpty=true;
+
     protected override void OnHandlerChanged()
     {
         base.OnHandlerChanged();
 
+        if (Handler != null)
+        {
+            Create(isEmpty);
+            isEmpty = false;
+        }
+           
         OnGesturesAttachChanged();
+    }
+
+    public override void OnHotReload()
+    {
+        base.OnHotReload();
+
+        //MAUI..
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            Create(false);
+        });
+    }
+
+    protected virtual void Create(bool firsttime)
+    {
+
     }
 
     #region GESTURES
