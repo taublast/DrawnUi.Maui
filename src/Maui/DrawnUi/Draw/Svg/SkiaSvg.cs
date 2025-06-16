@@ -985,7 +985,7 @@ namespace DrawnUi.Draw
 
         protected override void Paint(DrawingContext ctx)
         {
-            if (Svg != null) // !string.IsNullOrEmpty(LoadedString))
+            if (Svg != null)
             {
                 var scale = ctx.Scale;
                 var area = ContractPixelsRect(ctx.Destination, ctx.Scale, Padding);
@@ -994,10 +994,7 @@ namespace DrawnUi.Draw
                 area = new SKRect((float)Math.Round(area.Left), (float)Math.Round(area.Top),
                     (float)Math.Round(area.Right), (float)Math.Round(area.Bottom));
 
-                RenderingPaint ??= new SKPaint()
-                {
-                    IsAntialias = true
-                };
+                RenderingPaint ??= new SKPaint() { IsAntialias = true };
                 RenderingPaint.IsDither = IsDistorted;
                 RenderingPaint.BlendMode = DefaultBlendMode;
 
@@ -1005,8 +1002,11 @@ namespace DrawnUi.Draw
 
                 SKPath clipPath = null;
 
-                if (TintColor != Colors.Transparent && FillGradient == null)
+                if (TintColor != Colors.Transparent
+                    && FillGradient == null)
                 {
+                    base.Paint(ctx);
+
                     var kill1 = RenderingPaint.Shader;
                     RenderingPaint.Shader = null;
                     if (kill1 != null)
@@ -1018,8 +1018,7 @@ namespace DrawnUi.Draw
 
                     ctx.Context.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
                 }
-                else
-                if (FillGradient != null)
+                else if (FillGradient != null)
                 {
                     var kill1 = RenderingPaint.ColorFilter;
                     RenderingPaint.ColorFilter = null;
@@ -1027,7 +1026,8 @@ namespace DrawnUi.Draw
                         DisposeObject(kill1);
 
                     var destination = ctx.Destination;
-                    var info = new SKImageInfo((int)destination.Width, (int)destination.Height, SKColorType.Rgba8888,
+                    var info = new SKImageInfo((int)destination.Width, (int)destination.Height,
+                        SKColorType.Rgba8888,
                         SKAlphaType.Premul);
 
                     using var intermediateSurface = SKSurface.Create(info);
@@ -1059,6 +1059,8 @@ namespace DrawnUi.Draw
                 }
                 else
                 {
+                    base.Paint(ctx);
+
                     var kill1 = RenderingPaint.Shader;
                     var kill2 = RenderingPaint.ColorFilter;
                     RenderingPaint.Shader = null;
@@ -1093,6 +1095,10 @@ namespace DrawnUi.Draw
                         ctx.Context.Canvas.DrawPicture(Svg.Picture, ref matrix, RenderingPaint);
                     }
                 }
+            }
+            else
+            {
+                base.Paint(ctx);
             }
         }
     }
