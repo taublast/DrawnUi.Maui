@@ -216,7 +216,8 @@ namespace DrawnUi.Draw
             propertyChanged: NeedInvalidateMeasure);
 
         /// <summary>
-        /// Gets or sets the width of the stroke (outline) in device-independent units. If you set it negative it will be in PIXELS instead of point.
+        /// Gets or sets the width of the stroke (outline) in device-independent units.
+        /// If you set it negative it will be in PIXELS instead of point.
         /// </summary>
         /// <remarks>
         /// - A value of 0 (default) means no stroke will be drawn
@@ -381,10 +382,7 @@ namespace DrawnUi.Draw
 
         public virtual bool WillStroke
         {
-            get
-            {
-                return StrokeColor != TransparentColor && StrokeWidth != 0;
-            }
+            get { return StrokeColor != TransparentColor && StrokeWidth != 0; }
         }
 
         protected float GetHalfStroke(float scale)
@@ -537,7 +535,8 @@ namespace DrawnUi.Draw
         {
             if (WillStroke)
             {
-                var rect= CalculateSizeForStrokeFromContent(new (0,0, ContentSize.Pixels.Width, ContentSize.Pixels.Height), ContentSize.Scale);
+                var rect = CalculateSizeForStrokeFromContent(
+                    new(0, 0, ContentSize.Pixels.Width, ContentSize.Pixels.Height), ContentSize.Scale);
                 return rect.Size;
 
                 var halfStroke = GetHalfStroke(RenderingScale);
@@ -548,7 +547,8 @@ namespace DrawnUi.Draw
             return base.GetContentSizeForAutosizeInPixels();
         }
 
-        protected override ScaledSize MeasureContent(IEnumerable<SkiaControl> children, SKRect rectForChildrenPixels, float scale)
+        protected override ScaledSize MeasureContent(IEnumerable<SkiaControl> children, SKRect rectForChildrenPixels,
+            float scale)
         {
             var adjust = CalculateContentSizeForStroke(rectForChildrenPixels, scale);
 
@@ -994,6 +994,7 @@ namespace DrawnUi.Draw
                             paint.StrokeWidth = pixelsStrokeWidth;
                             ctx.Context.Canvas.DrawRect(outRect, paint);
                         }
+
                         break;
 
                     case ShapeType.Circle:
@@ -1003,7 +1004,7 @@ namespace DrawnUi.Draw
                         break;
 
                     case ShapeType.Line:
-                        paint.StrokeWidth = pixelsStrokeWidth;
+                        paint.StrokeWidth = pixelsStrokeWidth / 2.0f;
                         if (Points != null && Points.Count > 1)
                         {
                             DrawPathShape.Reset();
@@ -1018,6 +1019,7 @@ namespace DrawnUi.Draw
 
                             ctx.Context.Canvas.DrawPath(DrawPathShape, paint);
                         }
+
                         break;
 
                     case ShapeType.Ellipse:
@@ -1067,6 +1069,7 @@ namespace DrawnUi.Draw
 
                             ctx.Context.Canvas.DrawPath(path, RenderingPaint);
                         }
+
                         break;
                 }
             }
@@ -1660,6 +1663,5 @@ namespace DrawnUi.Draw
 
             return originalStrokeWidth * compensationFactor;
         }
-
     }
 }

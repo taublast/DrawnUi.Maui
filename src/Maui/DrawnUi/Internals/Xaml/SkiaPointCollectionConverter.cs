@@ -30,7 +30,7 @@ namespace DrawnUi.Infrastructure.Xaml
                 return points;
 
             // Split the string into individual point representations
-            var pointStrings = str.Split(';');
+            var pointStrings = str.Split(new char[] { ';', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var pointString in pointStrings)
             {
@@ -39,7 +39,7 @@ namespace DrawnUi.Infrastructure.Xaml
                     continue;
 
                 // Split each point into X and Y coordinates, allowing for ',' or ' ' as separators
-                var coordinates = trimmedPointString.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var coordinates = trimmedPointString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                 if (coordinates.Length != 2)
                     throw new FormatException($"Invalid point format: '{trimmedPointString}'");

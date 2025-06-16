@@ -27,3 +27,12 @@ This section contains documentation articles and guides for using DrawnUi.
 - [Game UI & Interactive Games](advanced/game-ui.md)
 - [SkiaScroll & Virtualization](advanced/skiascroll.md)
 - [Gestures & Touch Input](advanced/gestures.md)
+
+
+## FAQ - TODO
+
+- How do i create a custom button?
+- While you can use SkiaButton and set a custom content to it, You can also use a click handler Tapped with ANY control you like.
+
+- Knowing that properties are in points, how do i create a line or stroke of exactly 1 pixel?
+- When working with SKiaShape use a negative value (ex: -1) to pass pixels instead of points to compatible properties like StrokeWidth and similar.
