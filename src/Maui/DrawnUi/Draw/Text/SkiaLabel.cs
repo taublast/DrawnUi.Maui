@@ -360,7 +360,10 @@ namespace DrawnUi.Draw
             using (var blob = SKTextBlob.Create(characters, font))
             {
                 if (blob != null)
-                    canvas.DrawText(blob, x, y, paint);
+                {
+                    //canvas.DrawText(blob, x, y, paint);
+                    canvas.DrawText(blob, (int)Math.Round(x), (int)Math.Round(y), paint);
+                }
             }
 
             //canvas.DrawText(text, (int)Math.Round(x), (int)Math.Round(y), paint);
