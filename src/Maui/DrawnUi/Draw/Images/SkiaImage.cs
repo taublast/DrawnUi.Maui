@@ -594,7 +594,9 @@ public class SkiaImage : SkiaControl
                                         IsLoading = false;
                                         TraceLog($"[SkiaImage] Canceled already loaded {source}");
                                         if (bitmap != null && !SkiaImageManager.ReuseBitmaps)
-                                            SafeAction(() => { bitmap.Dispose(); });
+                                        {
+                                            DisposeObject(bitmap);
+                                        }
                                         return;
                                     }
 
