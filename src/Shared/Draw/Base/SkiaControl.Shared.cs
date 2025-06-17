@@ -313,14 +313,25 @@ namespace DrawnUi.Draw
                 if (!IsVisible || IsDisposed || IsDisposing || SkipRendering)
                     return false;
 
-                if (Superview != null && !Superview.CanDraw)
-                {
-                    return false;
-                }
+                //if (Superview != null && !Superview.CanDraw)
+                //{
+                //    return false;
+                //}
 
                 return true;
             }
         }
+
+        //public virtual bool ShouldMeasure
+        //{
+        //    get
+        //    {
+        //        if (!IsVisible || IsDisposed || IsDisposing || SkipRendering)
+        //            return false;
+
+        //        return true;
+        //    }
+        //}
 
         /// <summary>
         /// Can be set but custom controls while optimizing rendering etc. Will affect CanDraw.

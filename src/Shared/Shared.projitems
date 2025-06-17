@@ -164,6 +164,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\SpringWithVelocityAnimator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\SpringWithVelocityVectorAnimator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Animators\VelocitySkiaAnimator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\SkiaFrame.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\SkiaLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\HStack.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Features\Fluent\SkiaGrid.cs" />

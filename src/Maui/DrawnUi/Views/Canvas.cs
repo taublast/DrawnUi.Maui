@@ -5,8 +5,6 @@ using Size = Microsoft.Maui.Graphics.Size;
 
 namespace DrawnUi.Views;
 
-
-
 /// <summary>
 /// Optimized DrawnView having only one child inside Content property. Can autosize to to children size.
 /// For all drawn app put this directly inside the ContentPage as root view.
@@ -142,69 +140,72 @@ public class Canvas : DrawnView, IGestureListener
 
     protected override Size MeasureOverride(double widthConstraint, double heightConstraint)
     {
-        //Debug.WriteLine($"[Canvas] Measure for {widthConstraint} {heightConstraint}");
-
-        //we need this for NET 9, where we might have `heightConstraint` Infinity
-        //while `HeightRequest` was defined to exact value
-        if (!double.IsFinite(heightConstraint) && double.IsFinite(HeightRequest))
+        lock (lockMeasure)
         {
-            heightConstraint = HeightRequest;
-        }
+            //Debug.WriteLine($"[Canvas] Measure for {widthConstraint} {heightConstraint}");
 
-        if (!double.IsFinite(widthConstraint) && double.IsFinite(WidthRequest))
-        {
-            widthConstraint = WidthRequest;
-        }
+            //we need this for NET 9, where we might have `heightConstraint` Infinity
+            //while `HeightRequest` was defined to exact value
+            if (!double.IsFinite(heightConstraint) && double.IsFinite(HeightRequest))
+            {
+                heightConstraint = HeightRequest;
+            }
+
+            if (!double.IsFinite(widthConstraint) && double.IsFinite(WidthRequest))
+            {
+                widthConstraint = WidthRequest;
+            }
 
 
-        if (!this.NeedMeasure && _lastMeasureConstraints.Width == widthConstraint &&
-            _lastMeasureConstraints.Height == heightConstraint)
-        {
+            if (!this.NeedMeasure && _lastMeasureConstraints.Width == widthConstraint &&
+                _lastMeasureConstraints.Height == heightConstraint)
+            {
+                return _lastMeasureResult;
+            }
+
+            //we are going to receive the size NOT reduced by Maui margins
+            Size ret;
+            NeedCheckParentVisibility = true;
+
+            ret = base.MeasureOverride(widthConstraint, heightConstraint);
+
+            if (NeedAutoSize)
+            {
+                var measured = AdaptSizeToContentIfNeeded(widthConstraint, heightConstraint, NeedMeasure);
+
+                if (double.IsFinite(measured.Width))
+                    ret.Width = measured.Width;
+
+                if (double.IsFinite(measured.Height))
+                    ret.Height = measured.Height;
+            }
+
+            _lastMeasureConstraints = new(widthConstraint, heightConstraint);
+            _lastMeasureResult = ret;
+
             NeedMeasure = false;
-            return _lastMeasureResult;
+            Update();
+
+            return ret;
         }
-
-        //we are going to receive the size NOT reduced by Maui margins
-        Size ret;
-        NeedCheckParentVisibility = true;
-
-        ret = base.MeasureOverride(widthConstraint, heightConstraint);
-        NeedMeasure = false;
-        Update();
-
-        if (NeedAutoSize)
-        {
-            var measured = AdaptSizeToContentIfNeeded(widthConstraint, heightConstraint, NeedMeasure);
-
-            if (double.IsFinite(measured.Width))
-                ret.Width = measured.Width;
-
-            if (double.IsFinite(measured.Height))
-                ret.Height = measured.Height;
-        }
-        else
-        {
-            //ret = base.MeasureOverride(widthConstraint, heightConstraint);
-            //NeedMeasure = false;
-        }
-
-
-        _lastMeasureConstraints = new(widthConstraint, heightConstraint);
-        _lastMeasureResult = ret;
-
-        return ret;
     }
+
+    private object lockMeasure = new();
 
     public override void Invalidate()
     {
         if (NeedAutoSize)
         {
-            //will trigger parent calling our MeasureOverride
-            //this can be called from main thread only !!!
-            MainThread.BeginInvokeOnMainThread(() =>
+            lock (lockMeasure)
             {
-                InvalidateMeasureNonVirtual(InvalidationTrigger.HorizontalOptionsChanged);
-            });
+                //will trigger parent calling our MeasureOverride
+                //this can be called from main thread only !!!
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    NeedMeasure = true;
+                    InvalidateMeasureNonVirtual(InvalidationTrigger.HorizontalOptionsChanged);
+                });
+            }
         }
 
         base.Invalidate();
@@ -393,7 +394,7 @@ public class Canvas : DrawnView, IGestureListener
 
     #endregion
 
-    private bool isEmpty=true;
+    private bool isEmpty = true;
 
     protected override void OnHandlerChanged()
     {
@@ -404,7 +405,7 @@ public class Canvas : DrawnView, IGestureListener
             Create(isEmpty);
             isEmpty = false;
         }
-           
+
         OnGesturesAttachChanged();
     }
 
@@ -413,10 +414,7 @@ public class Canvas : DrawnView, IGestureListener
         base.OnHotReload();
 
         //MAUI..
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            Create(false);
-        });
+        MainThread.BeginInvokeOnMainThread(() => { Create(false); });
     }
 
     /// <summary>
@@ -425,7 +423,6 @@ public class Canvas : DrawnView, IGestureListener
     /// <param name="firsttime"></param>
     protected virtual void Create(bool firsttime)
     {
-
     }
 
     #region GESTURES
@@ -807,8 +804,7 @@ public class Canvas : DrawnView, IGestureListener
         }
 
         //this is intended to not lose gestures when fps drops and avoid crashes in double-buffering
-        PostponeExecutionBeforeDraw(
-        () =>
+        PostponeExecutionBeforeDraw(() =>
         {
             try
             {
@@ -1023,8 +1019,7 @@ public class Canvas : DrawnView, IGestureListener
                     {
                         using (SKPaint paint = new SKPaint
                                {
-                                   Style = SKPaintStyle.StrokeAndFill,
-                                   Color = GesturesDebugColor.ToSKColor()
+                                   Style = SKPaintStyle.StrokeAndFill, Color = GesturesDebugColor.ToSKColor()
                                })
                         {
                             var circleRadius = 10f * RenderingScale; //half size
@@ -1040,7 +1035,6 @@ public class Canvas : DrawnView, IGestureListener
                     DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX,
                         _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
                 }
-
             }
             else
             {
@@ -1078,7 +1072,7 @@ public class Canvas : DrawnView, IGestureListener
                     DebugPointer.Render(Context.WithDestination(new SKRect(_PressedPosition.X + offsetHandX,
                         _PressedPosition.Y + offsetHandY, Context.Context.Width, Context.Context.Height)));
                 }
-           }
+            }
         }
     }
 
