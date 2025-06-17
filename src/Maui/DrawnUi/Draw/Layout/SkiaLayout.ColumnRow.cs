@@ -778,6 +778,16 @@ namespace DrawnUi.Draw
             return visibleArea;
         }
 
+
+        /// <summary>
+        /// Can be called by some layouts after they calculated the list of visible children to be drawn, but have not drawn them yet
+        /// </summary>
+        protected virtual void OnBeforeDrawingVisibleChildren(DrawingContext ctx, LayoutStructure structure,
+            List<ControlInStack> visibleElements)
+        {
+
+        }   
+
         /// <summary>
         /// Renders stack/wrap layout.
         /// Returns number of drawn children.
@@ -800,10 +810,6 @@ namespace DrawnUi.Draw
                 var expendRecycle = ((float)RecyclingBuffer * ctx.Scale);
                 recyclingAreaPixels.Inflate(expendRecycle, expendRecycle);
 
-                if (IsTemplated)
-                {
-                    var stop = 2;
-                }
 
                 //PASS 1 - VISIBILITY
                 Vector2 offsetOthers = Vector2.Zero;
@@ -881,11 +887,7 @@ namespace DrawnUi.Draw
                         $"[SkiaLayout] visibility area {visibilityArea}, recycling area {recyclingAreaPixels}, visible items: {visibleElements.Count}");
                 }
 
-                if (IsTemplated)
-                {
-                    var stop = 2;
-                }
-
+                OnBeforeDrawingVisibleChildren(ctx, structure, visibleElements);
 
                 //PASS 2 DRAW VISIBLE
                 bool hadAdjustments = false;
