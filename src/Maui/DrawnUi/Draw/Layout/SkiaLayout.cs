@@ -1455,25 +1455,22 @@ namespace DrawnUi.Draw
                     return;
                 }
 
-                // Fall back to full reset for complex changes
-                if (ViewsAdapter.LogEnabled)
-                {
-                    Trace.WriteLine($"[SkiaLayout] {Tag} Falling back to full reset for {args.Action}");
-                }
-
                 ApplyNewItemsSource = false;
-                ChildrenFactory.InitializeTemplates(args, CreateContentFromTemplate, ItemsSource,
-                    GetTemplatesPoolLimit(),
-                    GetTemplatesPoolPrefill());
 
-                if (args.Action == NotifyCollectionChangedAction.Reset)
+                //we could enter here from a different thread:
+                SafeAction(() =>
                 {
-                    ResetScroll();
-                }
+                    ChildrenFactory.InitializeTemplates(args, CreateContentFromTemplate, ItemsSource,
+                        GetTemplatesPoolLimit(),
+                        GetTemplatesPoolPrefill());
 
-                Invalidate();
-
-                //CheckAndSetupIfEmpty(); todo
+                    if (args.Action == NotifyCollectionChangedAction.Reset)
+                    {
+                        ResetScroll();
+                        Invalidate();
+                    }
+                });
+                
             }
         }
 
