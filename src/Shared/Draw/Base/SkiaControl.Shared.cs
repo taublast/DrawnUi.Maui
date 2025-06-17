@@ -5440,37 +5440,24 @@ namespace DrawnUi.Draw
         private bool _needMeasure = true;
 
         /// <summary>
-        /// If attached to a SuperView and rendering is in progress will run after it. Run now otherwise.
+        /// If attached to a SuperView and rendering is in progress will run before drawing it. Run now otherwise.
         /// </summary>
         /// <param name="action"></param>
-        protected void SafePostAction(Action action)
+        protected void SafeAction(Action action)
         {
             var super = this.Superview;
             if (super != null)
             {
-                Superview.PostponeExecutionBeforeDraw(() => { action(); });
-
+                Superview.PostponeExecutionBeforeDraw(() =>
+                {
+                    action();
+                });
                 Repaint();
             }
             else
             {
                 action();
             }
-        }
-
-        /// <summary>
-        /// If attached to a SuperView will run only after draw to avoid memory access conflicts. If not attached will run after 3 secs..
-        /// </summary>
-        /// <param name="action"></param>
-        protected void SafeAction(Action action)
-        {
-            var super = this.Superview;
-            if (super == null || !Superview.IsRendering)
-            {
-                Tasks.StartDelayed(TimeSpan.FromSeconds(3), action);
-            }
-            else
-                Superview.PostponeExecutionAfterDraw(action);
         }
 
         protected bool NeedRemeasuring;
