@@ -33,7 +33,6 @@ public partial class SKGLViewHandlerRetained : ViewHandler<ISKGLView, SkiaGLText
 
     protected override void DisconnectHandler(SkiaGLTexture platformView)
     {
-
         platformView.PaintSurface -= OnPaintSurface;
 
         base.DisconnectHandler(platformView);
@@ -43,13 +42,16 @@ public partial class SKGLViewHandlerRetained : ViewHandler<ISKGLView, SkiaGLText
 
     public static void OnInvalidateSurface(SKGLViewHandlerRetained handler, ISKGLView view, object? args)
     {
+        if (handler?.PlatformView == null)
+            return;
+
         if (handler.PlatformView.RenderMode == Rendermode.WhenDirty)
             handler.PlatformView.RequestRender();
     }
 
     public static void MapIgnorePixelScaling(SKGLViewHandlerRetained handler, ISKGLView view)
     {
-        if (handler.PlatformView is not MauiSKGLTextureView pv)
+        if (handler?.PlatformView is not MauiSKGLTextureView pv)
             return;
 
         pv.IgnorePixelScaling = view.IgnorePixelScaling;
@@ -58,6 +60,9 @@ public partial class SKGLViewHandlerRetained : ViewHandler<ISKGLView, SkiaGLText
 
     public static void MapHasRenderLoop(SKGLViewHandlerRetained handler, ISKGLView view)
     {
+        if (handler?.PlatformView == null)
+            return;
+
         handler.PlatformView.RenderMode = view.HasRenderLoop
             ? Rendermode.Continuously
             : Rendermode.WhenDirty;

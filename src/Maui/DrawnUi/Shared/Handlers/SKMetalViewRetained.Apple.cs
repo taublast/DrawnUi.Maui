@@ -106,17 +106,21 @@ namespace DrawnUi.Views
             ColorPixelFormat = MTLPixelFormat.BGRA8Unorm;
             DepthStencilPixelFormat = MTLPixelFormat.Depth32Float_Stencil8;
 
-            // Make simulator performant
-            if (DeviceInfo.Current.DeviceType == DeviceType.Virtual)
+            nuint sampling = 1;
+            if (UIKit.UIDevice.CurrentDevice.CheckSystemVersion(16, 0))
             {
-                DepthStencilStorageMode = MTLStorageMode.Private;
-                SampleCount = 4;
+                // Make simulator performant
+                if (DeviceInfo.Current.DeviceType == DeviceType.Virtual)
+                {
+                    DepthStencilStorageMode = MTLStorageMode.Private;
+                    sampling = 4;
+                }
+                else
+                {
+                    DepthStencilStorageMode = MTLStorageMode.Shared;
+                }
             }
-            else
-            {
-                DepthStencilStorageMode = MTLStorageMode.Shared;
-                SampleCount = 2;
-            }
+            SampleCount = sampling;
 
             // GPU memory used not only for rendering but could be read by SkiaSharp too
             FramebufferOnly = false;
