@@ -990,9 +990,12 @@ namespace DrawnUi.Views
             OnDispose();
         }
 
+        public event EventHandler ViewDisposing;
+
         protected virtual void WillDispose()
         {
             IsDisposing = true;
+            ViewDisposing?.Invoke(this, EventArgs.Empty);
             Parent = null;
             this.SizeChanged -= OnFormsSizeChanged;
         }
