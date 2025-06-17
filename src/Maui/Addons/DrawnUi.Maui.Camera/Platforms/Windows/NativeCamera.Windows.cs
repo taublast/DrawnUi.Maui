@@ -621,6 +621,9 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             }
             if (capturedImage != null)
             {
+                // Update camera metadata with current exposure settings
+                UpdateCameraMetadata();
+
                 //PREVIEW FRAME READY
                 FormsControl.UpdatePreview();
             }
@@ -699,6 +702,9 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     _preview?.Dispose(); // Only dispose old preview, not the new SKImage
                     _preview = capturedImage;
                 }
+
+                // Update camera metadata with current exposure settings
+                UpdateCameraMetadata();
 
                 //PREVIEW FRAME READY
                 FormsControl.UpdatePreview();
@@ -1017,6 +1023,83 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             {
                 Debug.WriteLine($"[NativeCameraWindows] SetZoom error: {e}");
             }
+        }
+    }
+
+    /// <summary>
+    /// Updates camera metadata with current exposure settings from the camera
+    /// </summary>
+    private void UpdateCameraMetadata()
+    {
+        try
+        {
+            if (_mediaCapture?.VideoDeviceController == null || FormsControl?.CameraDevice?.Meta == null)
+                return;
+
+            var controller = _mediaCapture.VideoDeviceController;
+            var meta = FormsControl.CameraDevice.Meta;
+
+            // Update ISO if supported
+            if (controller.IsoSpeedControl.Supported)
+            {
+                try
+                {
+                    var currentISO = controller.IsoSpeedControl.Value;
+                    if (currentISO > 0)
+                    {
+                        meta.ISO = (int)currentISO;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Silently handle - ISO might not be available in auto mode
+                    System.Diagnostics.Debug.WriteLine($"[Windows Camera] Could not read ISO: {ex.Message}");
+                }
+            }
+
+            // Update exposure time if supported
+            if (controller.ExposureControl.Supported)
+            {
+                try
+                {
+                    var currentExposure = controller.ExposureControl.Value;
+                    if (currentExposure.TotalSeconds > 0)
+                    {
+                        meta.Shutter = currentExposure.TotalSeconds;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Silently handle - exposure might not be available in auto mode
+                    System.Diagnostics.Debug.WriteLine($"[Windows Camera] Could not read exposure: {ex.Message}");
+                }
+            }
+
+            // Set a default aperture value since Windows doesn't expose this
+            // Most webcams have a fixed aperture around f/2.0 to f/2.8
+            if (meta.Aperture <= 0)
+            {
+                meta.Aperture = 2.4; // Common webcam aperture
+            }
+
+            // Set default values if we couldn't read from camera
+            if (meta.ISO <= 0)
+            {
+                meta.ISO = 100; // Default ISO
+            }
+            if (meta.Shutter <= 0)
+            {
+                meta.Shutter = 1.0 / 30; // Default 30fps = 1/30s exposure
+            }
+
+            //if (DateTime.Now.Millisecond % 1000 < 50) // Log roughly once per second
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"[Windows Camera Meta] ISO: {meta.ISO}, Shutter: {meta.Shutter:F4}s, Aperture: f/{meta.Aperture:F1}");
+            //}
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[Windows Camera] UpdateCameraMetadata error: {ex.Message}");
         }
     }
 
