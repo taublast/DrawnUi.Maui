@@ -29,6 +29,40 @@ You can apply gradients to the background or stroke of any `SkiaShape` using the
 </DrawUi:SkiaShape>
 ```
 
+Maybe you have colors defined in a static class?
+
+```xml
+<draw:SkiaFrame
+    AnimationTapped="Ripple"
+    Tapped="OnTapped_Item"
+    WidthRequest="60"
+    StrokeWidth="1"
+    HeightRequest="28"
+    StrokeColor="{Binding SelectionColor}"
+    CornerRadius="4">
+    <draw:SkiaControl.FillGradient>
+        <draw:SkiaGradient
+            Opacity="0.1"
+            EndXRatio="0"
+            EndYRatio="1"
+            StartXRatio="0"
+            StartYRatio="0"
+            Type="Linear">
+            <draw:SkiaGradient.Colors>
+                <x:Static Member="xam:BackColors.GradientStartNav"/>
+                <x:Static Member="xam:BackColors.GradientEndNav"/>
+            </draw:SkiaGradient.Colors>
+        </draw:SkiaGradient>
+    </draw:SkiaControl.FillGradient>
+    <draw:SkiaMarkdownLabel
+        HorizontalOptions="Center"
+        HorizontalTextAlignment="Center"
+        Text="{Binding Title}"
+        TextColor="{Binding SelectionColor}"
+        VerticalOptions="Center" />
+</draw:SkiaFrame>
+```
+
 ### Radial Gradient Example
 
 ```xml

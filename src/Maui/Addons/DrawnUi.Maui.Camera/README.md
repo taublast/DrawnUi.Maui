@@ -1,14 +1,13 @@
 ﻿# SkiaCamera
 
-A drawn camera control for .NET MAUI.
+A totally drawn camera control for.NET MAUI.
 Supports Android, iOS, MacCatalyst, Windows.
 
-
 * Provides preview frames and still capture results for further processing.  
-Easily pass images images to AI/ML!
+Easily pass images images to AI/ML.
 
 * Renders live preview on a SkiaShap canvas with hardware acceleration.
-Apply shaders, adjustments and transforms to camera preview in realtime and draw anything over!
+Apply shaders, adjustments and transforms to camera preview in realtime and draw anything over.
 
 ## Platform Support
 
@@ -22,15 +21,54 @@ Apply shaders, adjustments and transforms to camera preview in realtime and draw
 ## Installation
 
 ```
-//todo
+//todo add drawnui.maui.camera nuget etc
 ```
 
-Apple:
+## Set up permissions
 
-Add this this your Infi.plist:
+### Windows:
+
+No specific setup needed.
+
+### Apple:
+
+Put this inside the file `Platforms/iOS/Info.plist` and `Platforms/MacCatalyst/Info.plist` inside the `<dict>` tag:
 
 ```xml
+  <key>NSCameraUsageDescription</key>
+  <string>Allow access to the camera</string>	
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Allow access to the library to save photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to the library to save photos</string>
+```
 
+If you want to geo-tag photos (get and save GPS location metadata) add this:
+
+```xml
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>To be able to geotag photos</string>
+```
+
+### Android
+
+Put this inside the file `Platforms/Android/AndroidManifest.xml` inside the `<manifest>` tag:
+
+```xml
+    <!--for camera and gallery access-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+```
+
+If you want to geo-tag photos (get and save GPS location metadata) add this:
+
+```xml
+  <!--geotag photos-->
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 ```
 
 ## Basic Usage Example
@@ -58,18 +96,14 @@ A test page is provided in the Sandbox project:
 
 ### Consume preview for AI/ML processing
 
-## Permissions
-
-```
-//todo
-```
+ 
 
 ## Troubleshooting
 
 1. **Camera not starting**: Check permissions and camera availability
 2. **Black preview**: Verify camera device enumeration
 3. **Capture failures**: Check storage permissions and available space
-4. **Performance issues**: Ensure logs not running for every frame, cache controls that are drawn over
+4. **Performance issues**: Сache controls that are drawn over. Ensure logs not running for every frame.
 
 ## Future Enhancements
 

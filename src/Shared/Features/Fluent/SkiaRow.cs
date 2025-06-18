@@ -3,9 +3,9 @@
     /// <summary>
     /// Horizontal stack,  like MAUI HorizontalStackLayout
     /// </summary>
-    public class HStack : SkiaLayout
+    public class SkiaRow : SkiaLayout
     {
-        public HStack()
+        public SkiaRow()
         {
             Type = LayoutType.Row;
         }

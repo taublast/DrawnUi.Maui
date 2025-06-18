@@ -834,7 +834,10 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// Use this to control how fast the scroll will decelerate. Values 0.1 - 0.9 are the best, default is 0.3. Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
+        /// Use this to control how fast the scroll will decelerate.
+        /// Values 0.1 - 0.9 are the best, default is 0.3.
+        /// Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
+        /// For a picker: 05 - 0.9.
         /// </summary>
         public float FrictionScrolled
         {

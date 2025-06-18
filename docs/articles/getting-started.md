@@ -12,9 +12,11 @@ Install the DrawnUi NuGet package in your .NET MAUI project:
 dotnet add package AppoMobi.Maui.DrawnUi
 ```
 
-> **Note**: The main package name is `AppoMobi.Maui.DrawnUi`. Additional addon packages are available for specific features like Camera, Maps, and Games.
+or fork the DrawnUi repo and referece the main project directly.
 
-You might also need at least the following MAUI setup inside your csproj:
+> **Note**: There are some additional packages supporting optional features like games, camera, maps etc, they must be refereced separately.
+
+To make everything compile from first attempt You might also need at least the following MAUI setup inside your csproj:
 
 ```
 	<PropertyGroup>
@@ -32,6 +34,8 @@ You might also need at least the following MAUI setup inside your csproj:
     </ItemGroup>
 
 ```
+
+For Windows to overcome an existing restriction in SKiaSharp you would need to enable MSIX packaging for your Windows project. This limitation will be resolved.
 
 
 ### 2. Initialize in Your MAUI App
@@ -103,6 +107,7 @@ Now you can add DrawnUi controls to your page. You have two main options:
                 VerticalOptions="Center"
                 HorizontalOptions="Center"
                 Clicked="OnButtonClicked" />
+
         </draw:SkiaLayout>
     </draw:Canvas>
 </ContentPage>
@@ -116,7 +121,10 @@ Now you can add DrawnUi controls to your page. You have two main options:
                       xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
                       x:Class="YourNamespace.YourPage">
 
-    <draw:Canvas HorizontalOptions="Fill" VerticalOptions="Fill">
+    <draw:Canvas 
+        RenderingMode="Accelerated"
+        Gestures="Lock"
+        HorizontalOptions="Fill" VerticalOptions="Fill">
         <draw:SkiaLayout Type="Column" Spacing="16" Padding="32">
             <draw:SkiaLabel
                 Text="Hello DrawnUi!"
@@ -138,6 +146,11 @@ Now you can add DrawnUi controls to your page. You have two main options:
     </draw:Canvas>
 </draw:DrawnUiBasePage>
 ```
+
+### Setup Canvas
+
+If you indend to process gestures inside your canvas setup the `Gestures` property accordingly
+If you would have animated content or use shaders set `RenderingMode` to `Accelerated`. Otherwise leave it as it is to use the default lightweight `Software` mode, it is still perfect for rendering static content.
 
 ### Handling Events
 

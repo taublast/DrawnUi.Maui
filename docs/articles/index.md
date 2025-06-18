@@ -36,3 +36,6 @@ This section contains documentation articles and guides for using DrawnUi.
 
 - Knowing that properties are in points, how do i create a line or stroke of exactly 1 pixel?
 - When working with SKiaShape use a negative value (ex: -1) to pass pixels instead of points to compatible properties like StrokeWidth and similar.
+
+- How do i bind SkiaImage source not to a file/url for to an existing bitmap?
+- Use `ImageBitmap` property for that, type is `LoadedImageSource`.
