@@ -801,7 +801,6 @@ items:
   - DrawnUi.Draw.SkiaControl.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)
   - DrawnUi.Draw.SkiaControl.ShouldClipAntialiased
   - DrawnUi.Draw.SkiaControl.NeedMeasure
-  - DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
   - DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   - DrawnUi.Draw.SkiaControl.NeedRemeasuring
   - DrawnUi.Draw.SkiaControl.PaintWithShadows(DrawnUi.Draw.DrawingContext,System.Action)
@@ -3598,11 +3597,18 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FrictionScrolled
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 838
+    startLine: 841
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
-  summary: Use this to control how fast the scroll will decelerate. Values 0.1 - 0.9 are the best, default is 0.3. Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
+  summary: >-
+    Use this to control how fast the scroll will decelerate.
+
+    Values 0.1 - 0.9 are the best, default is 0.3.
+
+    Usually you would set higher friction for ScrollView-like scrolls and much lower for CollectionView-like scrolls (0.1 or 0.2).
+
+    For a picker: 05 - 0.9.
   example: []
   syntax:
     content: public float FrictionScrolled { get; set; }
@@ -3629,7 +3635,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FrictionScrolledProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 844
+    startLine: 847
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3656,7 +3662,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: IgnoreWrongDirectionProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 851
+    startLine: 854
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3683,7 +3689,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: IgnoreWrongDirection
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 860
+    startLine: 863
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3714,7 +3720,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ResetScrollPositionOnContentSizeChangedProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 883
+    startLine: 886
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3741,7 +3747,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ResetScrollPositionOnContentSizeChanged
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 890
+    startLine: 893
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3770,7 +3776,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ChangeVelocityScrolled
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 899
+    startLine: 902
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3801,7 +3807,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ChangeVelocityScrolledProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 905
+    startLine: 908
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3828,7 +3834,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: MaxVelocityProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 911
+    startLine: 914
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3855,7 +3861,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: MaxVelocity
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 920
+    startLine: 923
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3886,7 +3892,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: MaxBounceVelocityProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 926
+    startLine: 929
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3913,7 +3919,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: MaxBounceVelocity
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 935
+    startLine: 938
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3944,7 +3950,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ChangeDistancePanned
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 944
+    startLine: 947
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3975,7 +3981,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ChangeDistancePannedProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 950
+    startLine: 953
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4002,7 +4008,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CurrentIndex
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 966
+    startLine: 969
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4031,7 +4037,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: IndexChanged
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 981
+    startLine: 984
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4058,7 +4064,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CurrentIndexHit
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 983
+    startLine: 986
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4087,7 +4093,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DetectIndexChildIndexAt
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1002
+    startLine: 1005
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4114,7 +4120,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetDetectIndexChildPoint
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1004
+    startLine: 1007
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4143,7 +4149,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CalculateVisibleIndex
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1057
+    startLine: 1060
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4176,7 +4182,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetItemIndex
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1097
+    startLine: 1100
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4216,7 +4222,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ClampedOrderedScrollOffset
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1238
+    startLine: 1241
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4247,7 +4253,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CalculateScrollOffsetForIndex
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1258
+    startLine: 1261
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4288,7 +4294,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CheckNeedToSnap
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1366
+    startLine: 1369
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4316,7 +4322,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Snap
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1386
+    startLine: 1389
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4348,7 +4354,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SnapToChildrenProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1493
+    startLine: 1496
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4375,7 +4381,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SnapToChildren
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1501
+    startLine: 1504
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4406,7 +4412,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TrackIndexPositionProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1507
+    startLine: 1510
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4433,7 +4439,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TrackIndexPosition
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1524
+    startLine: 1527
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4466,7 +4472,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TrackIndexPositionOffsetProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1530
+    startLine: 1533
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4493,7 +4499,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TrackIndexPositionOffset
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1536
+    startLine: 1539
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4522,7 +4528,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadMoreCommandProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1542
+    startLine: 1545
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4549,7 +4555,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadMoreCommand
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1548
+    startLine: 1551
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4578,7 +4584,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadMoreOffsetProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1554
+    startLine: 1557
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4605,7 +4611,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadMoreOffset
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1559
+    startLine: 1562
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4634,7 +4640,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LastContentSizePixels
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1567
+    startLine: 1570
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4661,7 +4667,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LastMeasuredSizePixels
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1568
+    startLine: 1571
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4688,7 +4694,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ApplyContentSize
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1570
+    startLine: 1573
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4714,7 +4720,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnMeasured
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1584
+    startLine: 1587
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4742,7 +4748,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PassGestureToChildren
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1595
+    startLine: 1598
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4775,7 +4781,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VelocityY
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1606
+    startLine: 1609
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4804,7 +4810,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VelocityX
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1626
+    startLine: 1629
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4833,7 +4839,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetZoom
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1652
+    startLine: 1655
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4867,7 +4873,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomScaleInternal
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1718
+    startLine: 1721
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4898,7 +4904,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HeaderSize
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1720
+    startLine: 1723
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4925,7 +4931,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FooterSize
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1721
+    startLine: 1724
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4952,7 +4958,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: MeasureContent
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1730
+    startLine: 1733
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4996,7 +5002,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: MeasureInternal
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1735
+    startLine: 1738
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5029,7 +5035,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Viewport
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1824
+    startLine: 1827
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5061,7 +5067,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetMeasured
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1826
+    startLine: 1829
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5110,7 +5116,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetContentAvailableRect
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1843
+    startLine: 1846
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5145,7 +5151,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InternalViewportOffset
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1870
+    startLine: 1873
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5176,7 +5182,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ContentViewport
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1875
+    startLine: 1878
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5207,7 +5213,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AdjustHeaderParallax
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1877
+    startLine: 1880
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5233,7 +5239,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PositionViewport
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 1910
+    startLine: 1913
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5289,7 +5295,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SendScrolled
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2026
+    startLine: 2029
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5315,7 +5321,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SendScrollingEnded
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2037
+    startLine: 2040
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5341,7 +5347,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnScrollCompleted
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2046
+    startLine: 2049
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5369,7 +5375,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: IsScrolling
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2058
+    startLine: 2061
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5398,7 +5404,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HideRefreshIndicator
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2084
+    startLine: 2087
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5424,7 +5430,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnScrolled
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2094
+    startLine: 2097
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5452,7 +5458,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ScrollingEnded
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2110
+    startLine: 2113
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5479,7 +5485,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Scrolled
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2111
+    startLine: 2114
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5506,7 +5512,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: UsingRefreshDistanceLimit
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2113
+    startLine: 2116
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5535,7 +5541,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShowRefreshIndicatorForced
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2127
+    startLine: 2130
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5561,7 +5567,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ApplyScrollPositionToRefreshViewUnsafe
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2150
+    startLine: 2153
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5587,7 +5593,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CheckNeedRefresh
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2185
+    startLine: 2188
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5613,7 +5619,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetIsRefreshing
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2215
+    startLine: 2218
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5645,7 +5651,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PaintViews
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2247
+    startLine: 2250
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5677,7 +5683,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Paint
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2262
+    startLine: 2265
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5715,7 +5721,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Draw
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2283
+    startLine: 2286
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5746,7 +5752,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetScrollOffset
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2335
+    startLine: 2338
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5788,7 +5794,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ParallaxComputedValue
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2388
+    startLine: 2391
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5817,7 +5823,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DrawViews
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2399
+    startLine: 2402
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5856,7 +5862,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ContentAvailableSpace
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2616
+    startLine: 2619
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5885,7 +5891,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ContentRectWithOffset
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2621
+    startLine: 2624
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5916,7 +5922,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2623
+    startLine: 2626
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5945,7 +5951,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Init
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2628
+    startLine: 2631
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -5971,7 +5977,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetChildren
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2634
+    startLine: 2637
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6005,7 +6011,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ApplyBindingContext
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2641
+    startLine: 2644
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6034,7 +6040,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetContent
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2653
+    startLine: 2656
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6066,7 +6072,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetHeader
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2670
+    startLine: 2673
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6095,7 +6101,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetFooter
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2688
+    startLine: 2691
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6124,7 +6130,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ScrollingSpeedMsProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2707
+    startLine: 2710
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6151,7 +6157,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ScrollingSpeedMs
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2716
+    startLine: 2719
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6182,7 +6188,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomLockedProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2722
+    startLine: 2725
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6209,7 +6215,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomLocked
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2727
+    startLine: 2730
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6238,7 +6244,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomMinProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2733
+    startLine: 2736
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6265,7 +6271,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomMin
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2738
+    startLine: 2741
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6294,7 +6300,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomMaxProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2744
+    startLine: 2747
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6321,7 +6327,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomMax
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2749
+    startLine: 2752
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6350,7 +6356,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ViewportZoomProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2755
+    startLine: 2758
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6377,7 +6383,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ViewportZoom
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2760
+    startLine: 2763
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6406,7 +6412,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VelocityImageLoaderLockProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2766
+    startLine: 2769
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6433,7 +6439,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VelocityImageLoaderLock
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2775
+    startLine: 2778
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6464,7 +6470,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ContentProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2819
+    startLine: 2822
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6491,7 +6497,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Content
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2833
+    startLine: 2836
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6523,7 +6529,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OrientationProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2839
+    startLine: 2842
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6550,7 +6556,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Orientation
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2847
+    startLine: 2850
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6581,7 +6587,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ScrollTypeProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2853
+    startLine: 2856
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6608,7 +6614,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ScrollType
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2861
+    startLine: 2864
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6639,7 +6645,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VirtualisationProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2867
+    startLine: 2870
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6666,7 +6672,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Virtualisation
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2878
+    startLine: 2881
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6700,7 +6706,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AdaptToKeyboardForProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2890
+    startLine: 2893
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6727,7 +6733,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AdaptToKeyboardFor
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2896
+    startLine: 2899
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6756,7 +6762,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AdaptToKeyboardSizeProperty
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2902
+    startLine: 2905
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6783,7 +6789,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AdaptToKeyboardSize
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2908
+    startLine: 2911
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6812,7 +6818,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CalculateNeededScrollForKeyboard
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2925
+    startLine: 2928
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6838,7 +6844,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AdaptToKeyboard
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2955
+    startLine: 2958
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6864,7 +6870,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnPropertyChanged
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2972
+    startLine: 2975
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6900,7 +6906,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InvalidateViewport
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2983
+    startLine: 2986
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6929,7 +6935,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: WillClipBounds
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 2991
+    startLine: 2994
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -6961,7 +6967,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnDrawn
     path: ../src/Maui/DrawnUi/Draw/Scroll/SkiaScroll.cs
-    startLine: 3005
+    startLine: 3008
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -19586,34 +19592,6 @@ references:
   name: NeedMeasure
   nameWithType: SkiaControl.NeedMeasure
   fullName: DrawnUi.Draw.SkiaControl.NeedMeasure
-- uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  commentId: M:DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  parent: DrawnUi.Draw.SkiaControl
-  isExternal: true
-  href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  name: SafePostAction(Action)
-  nameWithType: SkiaControl.SafePostAction(Action)
-  fullName: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  spec.csharp:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
-  spec.vb:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
 - uid: DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   commentId: M:DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   parent: DrawnUi.Draw.SkiaControl

@@ -7,7 +7,6 @@ items:
   children:
   - DrawnUi.Draw.RescalingType.Default
   - DrawnUi.Draw.RescalingType.EdgePreserving
-  - DrawnUi.Draw.RescalingType.GammaCorrection
   - DrawnUi.Draw.RescalingType.MultiPass
   langs:
   - csharp
@@ -65,63 +64,6 @@ items:
     content: Default = 0
     return:
       type: DrawnUi.Draw.RescalingType
-- uid: DrawnUi.Draw.RescalingType.MultiPass
-  commentId: F:DrawnUi.Draw.RescalingType.MultiPass
-  id: MultiPass
-  parent: DrawnUi.Draw.RescalingType
-  langs:
-  - csharp
-  - vb
-  name: MultiPass
-  nameWithType: RescalingType.MultiPass
-  fullName: DrawnUi.Draw.RescalingType.MultiPass
-  type: Field
-  source:
-    remote:
-      path: src/Shared/Draw/Internals/Enums/RescalingType.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: MultiPass
-    path: ../src/Shared/Draw/Internals/Enums/RescalingType.cs
-    startLine: 17
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  summary: >-
-    Multi-pass progressive rescaling for superior quality on significant size changes: "I want good quality".
-
-    Best for: Icons, logos, transparent graphics with sharp edges, large size reductions (2x smaller).
-  example: []
-  syntax:
-    content: MultiPass = 1
-    return:
-      type: DrawnUi.Draw.RescalingType
-- uid: DrawnUi.Draw.RescalingType.GammaCorrection
-  commentId: F:DrawnUi.Draw.RescalingType.GammaCorrection
-  id: GammaCorrection
-  parent: DrawnUi.Draw.RescalingType
-  langs:
-  - csharp
-  - vb
-  name: GammaCorrection
-  nameWithType: RescalingType.GammaCorrection
-  fullName: DrawnUi.Draw.RescalingType.GammaCorrection
-  type: Field
-  source:
-    remote:
-      path: src/Shared/Draw/Internals/Enums/RescalingType.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: GammaCorrection
-    path: ../src/Shared/Draw/Internals/Enums/RescalingType.cs
-    startLine: 24
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: GammaCorrection = 2
-    return:
-      type: DrawnUi.Draw.RescalingType
 - uid: DrawnUi.Draw.RescalingType.EdgePreserving
   commentId: F:DrawnUi.Draw.RescalingType.EdgePreserving
   id: EdgePreserving
@@ -140,17 +82,48 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EdgePreserving
     path: ../src/Shared/Draw/Internals/Enums/RescalingType.cs
-    startLine: 30
+    startLine: 17
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
   summary: >-
-    Edge-preserving rescaling optimized for sharp graphics and pixel-perfect content, RescalingQuality not used here:  "I'm working with pixel art/UI graphics".
+    Edge-preserving rescaling optimized for sharp graphics and pixel-perfect content, RescalingQuality not used here: "I'm working with pixel art/UI graphics".
 
     Best for: Pixel art, very small icons (16x16, 32x32), screenshots, text graphics.
   example: []
   syntax:
-    content: EdgePreserving = 3
+    content: EdgePreserving = 1
+    return:
+      type: DrawnUi.Draw.RescalingType
+- uid: DrawnUi.Draw.RescalingType.MultiPass
+  commentId: F:DrawnUi.Draw.RescalingType.MultiPass
+  id: MultiPass
+  parent: DrawnUi.Draw.RescalingType
+  langs:
+  - csharp
+  - vb
+  name: MultiPass
+  nameWithType: RescalingType.MultiPass
+  fullName: DrawnUi.Draw.RescalingType.MultiPass
+  type: Field
+  source:
+    remote:
+      path: src/Shared/Draw/Internals/Enums/RescalingType.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: MultiPass
+    path: ../src/Shared/Draw/Internals/Enums/RescalingType.cs
+    startLine: 23
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  summary: >-
+    Multi-pass progressive rescaling for superior quality on significant size changes: "I want good quality".
+
+    Best for: Icons, logos, transparent graphics with sharp edges, large size reductions (2x smaller).
+  example: []
+  syntax:
+    content: MultiPass = 2
     return:
       type: DrawnUi.Draw.RescalingType
 references:

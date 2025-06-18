@@ -364,9 +364,6 @@ items:
   - uid: DrawnUi.Draw.GradientType
     name: GradientType
     type: Enum
-  - uid: DrawnUi.Draw.HStack
-    name: HStack
-    type: Class
   - uid: DrawnUi.Draw.IAfterEffectDelete
     name: IAfterEffectDelete
     type: Interface
@@ -745,6 +742,9 @@ items:
   - uid: DrawnUi.Draw.SkiaFontManager
     name: SkiaFontManager
     type: Class
+  - uid: DrawnUi.Draw.SkiaFrame
+    name: SkiaFrame
+    type: Class
   - uid: DrawnUi.Draw.SkiaGesturesParameters
     name: SkiaGesturesParameters
     type: Class
@@ -829,6 +829,9 @@ items:
   - uid: DrawnUi.Draw.SkiaPoint
     name: SkiaPoint
     type: Class
+  - uid: DrawnUi.Draw.SkiaRow
+    name: SkiaRow
+    type: Class
   - uid: DrawnUi.Draw.SkiaScroll
     name: SkiaScroll
     type: Class
@@ -873,6 +876,9 @@ items:
     type: Class
   - uid: DrawnUi.Draw.SkiaVectorAnimator
     name: SkiaVectorAnimator
+    type: Class
+  - uid: DrawnUi.Draw.SkiaWrap
+    name: SkiaWrap
     type: Class
   - uid: DrawnUi.Draw.SliderThumb
     name: SliderThumb
@@ -970,9 +976,6 @@ items:
   - uid: DrawnUi.Draw.UsedGlyph
     name: UsedGlyph
     type: Struct
-  - uid: DrawnUi.Draw.VStack
-    name: VStack
-    type: Class
   - uid: DrawnUi.Draw.VelocityAccumulator
     name: VelocityAccumulator
     type: Class

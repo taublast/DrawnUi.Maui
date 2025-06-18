@@ -71,7 +71,6 @@ items:
   - DrawnUi.Draw.GesturesMode
   - DrawnUi.Draw.GlowPosition
   - DrawnUi.Draw.GradientType
-  - DrawnUi.Draw.HStack
   - DrawnUi.Draw.IAfterEffectDelete
   - DrawnUi.Draw.IAnimatorsManager
   - DrawnUi.Draw.IBindingContextDebuggable
@@ -198,6 +197,7 @@ items:
   - DrawnUi.Draw.SkiaEditor
   - DrawnUi.Draw.SkiaEffect
   - DrawnUi.Draw.SkiaFontManager
+  - DrawnUi.Draw.SkiaFrame
   - DrawnUi.Draw.SkiaGesturesParameters
   - DrawnUi.Draw.SkiaGradient
   - DrawnUi.Draw.SkiaGrid
@@ -226,6 +226,7 @@ items:
   - DrawnUi.Draw.SkiaMarkdownLabel
   - DrawnUi.Draw.SkiaMauiElement
   - DrawnUi.Draw.SkiaPoint
+  - DrawnUi.Draw.SkiaRow
   - DrawnUi.Draw.SkiaScroll
   - DrawnUi.Draw.SkiaScrollLooped
   - DrawnUi.Draw.SkiaSetter
@@ -241,6 +242,7 @@ items:
   - DrawnUi.Draw.SkiaTouchAnimation
   - DrawnUi.Draw.SkiaValueAnimator
   - DrawnUi.Draw.SkiaVectorAnimator
+  - DrawnUi.Draw.SkiaWrap
   - DrawnUi.Draw.SliderThumb
   - DrawnUi.Draw.SliderTrail
   - DrawnUi.Draw.SliderValueDesc
@@ -273,7 +275,6 @@ items:
   - DrawnUi.Draw.UnderdampedSpringTimingParameters
   - DrawnUi.Draw.UnderdampedSpringTimingVectorParameters
   - DrawnUi.Draw.UsedGlyph
-  - DrawnUi.Draw.VStack
   - DrawnUi.Draw.VelocityAccumulator
   - DrawnUi.Draw.ViewportScrollType
   - DrawnUi.Draw.ViewsAdapter
@@ -2443,36 +2444,42 @@ references:
   name: SpringWithVelocityVectorAnimator
   nameWithType: SpringWithVelocityVectorAnimator
   fullName: DrawnUi.Draw.SpringWithVelocityVectorAnimator
+- uid: DrawnUi.Draw.SkiaFrame
+  commentId: T:DrawnUi.Draw.SkiaFrame
+  href: DrawnUi.Draw.SkiaFrame.html
+  name: SkiaFrame
+  nameWithType: SkiaFrame
+  fullName: DrawnUi.Draw.SkiaFrame
 - uid: DrawnUi.Draw.SkiaLayer
   commentId: T:DrawnUi.Draw.SkiaLayer
   href: DrawnUi.Draw.SkiaLayer.html
   name: SkiaLayer
   nameWithType: SkiaLayer
   fullName: DrawnUi.Draw.SkiaLayer
-- uid: DrawnUi.Draw.HStack
-  commentId: T:DrawnUi.Draw.HStack
-  href: DrawnUi.Draw.HStack.html
-  name: HStack
-  nameWithType: HStack
-  fullName: DrawnUi.Draw.HStack
+- uid: DrawnUi.Draw.SkiaRow
+  commentId: T:DrawnUi.Draw.SkiaRow
+  href: DrawnUi.Draw.SkiaRow.html
+  name: SkiaRow
+  nameWithType: SkiaRow
+  fullName: DrawnUi.Draw.SkiaRow
 - uid: DrawnUi.Draw.SkiaGrid
   commentId: T:DrawnUi.Draw.SkiaGrid
   href: DrawnUi.Draw.SkiaGrid.html
   name: SkiaGrid
   nameWithType: SkiaGrid
   fullName: DrawnUi.Draw.SkiaGrid
-- uid: DrawnUi.Draw.VStack
-  commentId: T:DrawnUi.Draw.VStack
-  href: DrawnUi.Draw.VStack.html
-  name: VStack
-  nameWithType: VStack
-  fullName: DrawnUi.Draw.VStack
 - uid: DrawnUi.Draw.SkiaStack
   commentId: T:DrawnUi.Draw.SkiaStack
   href: DrawnUi.Draw.SkiaStack.html
   name: SkiaStack
   nameWithType: SkiaStack
   fullName: DrawnUi.Draw.SkiaStack
+- uid: DrawnUi.Draw.SkiaWrap
+  commentId: T:DrawnUi.Draw.SkiaWrap
+  href: DrawnUi.Draw.SkiaWrap.html
+  name: SkiaWrap
+  nameWithType: SkiaWrap
+  fullName: DrawnUi.Draw.SkiaWrap
 - uid: DrawnUi.Draw.Sk3dView
   commentId: T:DrawnUi.Draw.Sk3dView
   parent: DrawnUi.Draw

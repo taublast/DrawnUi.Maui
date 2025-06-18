@@ -157,7 +157,7 @@ public class ScreenSearchOnMap : AppScreen
                     }.Assign(out ButtonPosition),
 
                     // Top buttons with status bar handling
-                    new VStack()
+                    new SkiaStack()
                     {
                         Spacing = 0,
                         Children = new List<SkiaControl>()
@@ -320,7 +320,7 @@ public class ScreenChat : AppScreen
                     }),
 
                     // EMPTY VIEW with conditional visibility using ObserveBindingContext
-                    new VStack()
+                    new SkiaStack()
                     {
                         IsVisible = false,
                         UseCache = SkiaCacheType.Image,
@@ -437,7 +437,7 @@ public class ScreenChat : AppScreen
                     }),
 
                     // SEND BAR with complex entry and buttons
-                    new VStack()
+                    new SkiaStack()
                     {
                         IsParentIndependent = true,
                         BackgroundColor = AppColors.Focus,
@@ -1001,7 +1001,7 @@ public class CellServiceRequest : FastCellWithBanner
                                 }.Assign(out labelFrom),
 
                                 // Address TO and cargo details
-                                new VStack()
+                                new SkiaStack()
                                 {
                                     Spacing = 4,
                                     Margin = new Thickness(0, 74, 0, 0),
@@ -1293,7 +1293,7 @@ public class MessageListCell : SkiaLayout
     public MessageListCell()
     {
         // Real pattern: inline creation with Assign in Children collection
-        var cellContent = new VStack()
+        var cellContent = new SkiaStack()
         {
             Spacing = 0,
             Children = new List<SkiaControl>()
@@ -1312,7 +1312,7 @@ public class MessageListCell : SkiaLayout
                 }.Assign(out LabelFirstDate),
 
                 // Message row
-                new HStack()
+                new SkiaRow()
                 {
                     Spacing = 12,
                     Padding = new Thickness(16, 8, 16, 8),
@@ -1328,7 +1328,7 @@ public class MessageListCell : SkiaLayout
                             BackgroundColor = AppColors.ImagePlaceholder
                         }.Assign(out ImageUser),
 
-                        new VStack()
+                        new SkiaStack()
                         {
                             Spacing = 4,
                             HorizontalOptions = LayoutOptions.Fill,

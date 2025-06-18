@@ -799,7 +799,6 @@ items:
   - DrawnUi.Draw.SkiaControl.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)
   - DrawnUi.Draw.SkiaControl.ShouldClipAntialiased
   - DrawnUi.Draw.SkiaControl.NeedMeasure
-  - DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
   - DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   - DrawnUi.Draw.SkiaControl.NeedRemeasuring
   - DrawnUi.Draw.SkiaControl.PaintWithShadows(DrawnUi.Draw.DrawingContext,System.Action)
@@ -15627,34 +15626,6 @@ references:
   name: NeedMeasure
   nameWithType: SkiaControl.NeedMeasure
   fullName: DrawnUi.Draw.SkiaControl.NeedMeasure
-- uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  commentId: M:DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  parent: DrawnUi.Draw.SkiaControl
-  isExternal: true
-  href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  name: SafePostAction(Action)
-  nameWithType: SkiaControl.SafePostAction(Action)
-  fullName: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  spec.csharp:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
-  spec.vb:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
 - uid: DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   commentId: M:DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   parent: DrawnUi.Draw.SkiaControl

@@ -19,7 +19,7 @@ public class ChatMessageCell : SkiaLayout
     public ChatMessageCell()
     {
         // Real-world pattern: inline creation with Assign in Children collection
-        var messageLayout = new VStack()
+        var messageLayout = new SkiaStack()
         {
             Spacing = 8,
             Padding = new Thickness(16, 12, 16, 12),
@@ -39,7 +39,7 @@ public class ChatMessageCell : SkiaLayout
                 }.Assign(out LabelTime),
 
                 // Message content row
-                new HStack()
+                new SkiaRow()
                 {
                     Spacing = 12,
                     Children = new List<SkiaControl>()

@@ -97,6 +97,7 @@ items:
   - DrawnUi.Draw.SkiaLayout.MeasureWrap(SkiaSharp.SKRect,System.Single)
   - DrawnUi.Draw.SkiaLayout.OnAppeared
   - DrawnUi.Draw.SkiaLayout.OnAppearing
+  - DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure,System.Collections.Generic.List{DrawnUi.Draw.ControlInStack})
   - DrawnUi.Draw.SkiaLayout.OnChildrenChanged
   - DrawnUi.Draw.SkiaLayout.OnDisappeared
   - DrawnUi.Draw.SkiaLayout.OnDisappearing
@@ -198,19 +199,19 @@ items:
   - DrawnUi.Controls.SkiaTabsSelector
   - DrawnUi.Controls.SkiaViewSwitcher
   - DrawnUi.Draw.ContentLayout
-  - DrawnUi.Draw.HStack
   - DrawnUi.Draw.RefreshIndicator
   - DrawnUi.Draw.SkiaButton
   - DrawnUi.Draw.SkiaEditor
   - DrawnUi.Draw.SkiaGrid
   - DrawnUi.Draw.SkiaLayer
+  - DrawnUi.Draw.SkiaRow
   - DrawnUi.Draw.SkiaSlider
   - DrawnUi.Draw.SkiaStack
   - DrawnUi.Draw.SkiaToggle
+  - DrawnUi.Draw.SkiaWrap
   - DrawnUi.Draw.SliderThumb
   - DrawnUi.Draw.SliderValueDesc
   - DrawnUi.Draw.SnappingLayout
-  - DrawnUi.Draw.VStack
   implements:
   - System.ComponentModel.INotifyPropertyChanged
   - Microsoft.Maui.Controls.IEffectControlProvider
@@ -672,7 +673,6 @@ items:
   - DrawnUi.Draw.SkiaControl.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)
   - DrawnUi.Draw.SkiaControl.ShouldClipAntialiased
   - DrawnUi.Draw.SkiaControl.NeedMeasure
-  - DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
   - DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   - DrawnUi.Draw.SkiaControl.NeedRemeasuring
   - DrawnUi.Draw.SkiaControl.PaintWithShadows(DrawnUi.Draw.DrawingContext,System.Action)
@@ -1319,6 +1319,44 @@ items:
   nameWithType.vb: SkiaLayout.MeasureStack(SKRect, Single)
   fullName.vb: DrawnUi.Draw.SkiaLayout.MeasureStack(SkiaSharp.SKRect, Single)
   name.vb: MeasureStack(SKRect, Single)
+- uid: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure,System.Collections.Generic.List{DrawnUi.Draw.ControlInStack})
+  commentId: M:DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure,System.Collections.Generic.List{DrawnUi.Draw.ControlInStack})
+  id: OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure,System.Collections.Generic.List{DrawnUi.Draw.ControlInStack})
+  parent: DrawnUi.Draw.SkiaLayout
+  langs:
+  - csharp
+  - vb
+  name: OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List<ControlInStack>)
+  nameWithType: SkiaLayout.OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List<ControlInStack>)
+  fullName: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext, DrawnUi.Draw.LayoutStructure, System.Collections.Generic.List<DrawnUi.Draw.ControlInStack>)
+  type: Method
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Draw/Layout/SkiaLayout.ColumnRow.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: OnBeforeDrawingVisibleChildren
+    path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.ColumnRow.cs
+    startLine: 784
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  summary: Can be called by some layouts after they calculated the list of visible children to be drawn, but have not drawn them yet
+  example: []
+  syntax:
+    content: protected virtual void OnBeforeDrawingVisibleChildren(DrawingContext ctx, LayoutStructure structure, List<ControlInStack> visibleElements)
+    parameters:
+    - id: ctx
+      type: DrawnUi.Draw.DrawingContext
+    - id: structure
+      type: DrawnUi.Draw.LayoutStructure
+    - id: visibleElements
+      type: System.Collections.Generic.List{DrawnUi.Draw.ControlInStack}
+    content.vb: Protected Overridable Sub OnBeforeDrawingVisibleChildren(ctx As DrawingContext, [structure] As LayoutStructure, visibleElements As List(Of ControlInStack))
+  overload: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren*
+  nameWithType.vb: SkiaLayout.OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List(Of ControlInStack))
+  fullName.vb: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext, DrawnUi.Draw.LayoutStructure, System.Collections.Generic.List(Of DrawnUi.Draw.ControlInStack))
+  name.vb: OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List(Of ControlInStack))
 - uid: DrawnUi.Draw.SkiaLayout.DrawStack(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure)
   commentId: M:DrawnUi.Draw.SkiaLayout.DrawStack(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure)
   id: DrawStack(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure)
@@ -1337,7 +1375,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DrawStack
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.ColumnRow.cs
-    startLine: 784
+    startLine: 794
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4156,7 +4194,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: RefreshAllViews
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1482
+    startLine: 1479
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4184,7 +4222,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetCacheDebugInfo
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1497
+    startLine: 1494
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4214,7 +4252,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnPrintDebug
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1529
+    startLine: 1526
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4243,7 +4281,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnLayoutReady
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1551
+    startLine: 1548
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4272,7 +4310,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnAppearing
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1556
+    startLine: 1553
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4302,7 +4340,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnDisappearing
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1560
+    startLine: 1557
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4331,7 +4369,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnAppeared
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1564
+    startLine: 1561
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4361,7 +4399,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnDisappeared
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1568
+    startLine: 1565
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4390,7 +4428,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnLoaded
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1572
+    startLine: 1569
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4420,7 +4458,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetVisibleChildIndexAt
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1576
+    startLine: 1573
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4457,7 +4495,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetChildIndexAt
     path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.cs
-    startLine: 1593
+    startLine: 1590
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -15494,34 +15532,6 @@ references:
   name: NeedMeasure
   nameWithType: SkiaControl.NeedMeasure
   fullName: DrawnUi.Draw.SkiaControl.NeedMeasure
-- uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  commentId: M:DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  parent: DrawnUi.Draw.SkiaControl
-  isExternal: true
-  href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  name: SafePostAction(Action)
-  nameWithType: SkiaControl.SafePostAction(Action)
-  fullName: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  spec.csharp:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
-  spec.vb:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
 - uid: DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   commentId: M:DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   parent: DrawnUi.Draw.SkiaControl
@@ -30150,12 +30160,12 @@ references:
   name: MeasureStack
   nameWithType: SkiaLayout.MeasureStack
   fullName: DrawnUi.Draw.SkiaLayout.MeasureStack
-- uid: DrawnUi.Draw.SkiaLayout.DrawStack*
-  commentId: Overload:DrawnUi.Draw.SkiaLayout.DrawStack
-  href: DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_DrawStack_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_LayoutStructure_
-  name: DrawStack
-  nameWithType: SkiaLayout.DrawStack
-  fullName: DrawnUi.Draw.SkiaLayout.DrawStack
+- uid: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren*
+  commentId: Overload:DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren
+  href: DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnBeforeDrawingVisibleChildren_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_LayoutStructure_System_Collections_Generic_List_DrawnUi_Draw_ControlInStack__
+  name: OnBeforeDrawingVisibleChildren
+  nameWithType: SkiaLayout.OnBeforeDrawingVisibleChildren
+  fullName: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren
 - uid: DrawnUi.Draw.DrawingContext
   commentId: T:DrawnUi.Draw.DrawingContext
   parent: DrawnUi.Draw
@@ -30163,6 +30173,73 @@ references:
   name: DrawingContext
   nameWithType: DrawingContext
   fullName: DrawnUi.Draw.DrawingContext
+- uid: System.Collections.Generic.List{DrawnUi.Draw.ControlInStack}
+  commentId: T:System.Collections.Generic.List{DrawnUi.Draw.ControlInStack}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<ControlInStack>
+  nameWithType: List<ControlInStack>
+  fullName: System.Collections.Generic.List<DrawnUi.Draw.ControlInStack>
+  nameWithType.vb: List(Of ControlInStack)
+  fullName.vb: System.Collections.Generic.List(Of DrawnUi.Draw.ControlInStack)
+  name.vb: List(Of ControlInStack)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: DrawnUi.Draw.ControlInStack
+    name: ControlInStack
+    href: DrawnUi.Draw.ControlInStack.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: DrawnUi.Draw.ControlInStack
+    name: ControlInStack
+    href: DrawnUi.Draw.ControlInStack.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: DrawnUi.Draw.SkiaLayout.DrawStack*
+  commentId: Overload:DrawnUi.Draw.SkiaLayout.DrawStack
+  href: DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_DrawStack_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_LayoutStructure_
+  name: DrawStack
+  nameWithType: SkiaLayout.DrawStack
+  fullName: DrawnUi.Draw.SkiaLayout.DrawStack
 - uid: DrawnUi.Draw.SkiaControl.PreArrange(SkiaSharp.SKRect,System.Single,System.Single,System.Single)
   commentId: M:DrawnUi.Draw.SkiaControl.PreArrange(SkiaSharp.SKRect,System.Single,System.Single,System.Single)
   parent: DrawnUi.Draw.SkiaControl
@@ -30619,34 +30696,6 @@ references:
   - uid: DrawnUi.Draw.ISkiaControl
     name: ISkiaControl
     href: DrawnUi.Draw.ISkiaControl.html
-  - name: )
-- uid: System.Collections.Generic.List`1
-  commentId: T:System.Collections.Generic.List`1
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
-  name: List<T>
-  nameWithType: List<T>
-  fullName: System.Collections.Generic.List<T>
-  nameWithType.vb: List(Of T)
-  fullName.vb: System.Collections.Generic.List(Of T)
-  name.vb: List(Of T)
-  spec.csharp:
-  - uid: System.Collections.Generic.List`1
-    name: List
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
-  - name: <
-  - name: T
-  - name: '>'
-  spec.vb:
-  - uid: System.Collections.Generic.List`1
-    name: List
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
-  - name: (
-  - name: Of
-  - name: " "
-  - name: T
   - name: )
 - uid: DrawnUi.Draw.SkiaLayout.BreakLine*
   commentId: Overload:DrawnUi.Draw.SkiaLayout.BreakLine

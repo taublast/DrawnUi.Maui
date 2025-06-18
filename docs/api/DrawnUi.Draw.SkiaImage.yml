@@ -39,6 +39,7 @@ items:
   - DrawnUi.Draw.SkiaImage.EndColorProperty
   - DrawnUi.Draw.SkiaImage.EraseChangedContent
   - DrawnUi.Draw.SkiaImage.EraseChangedContentProperty
+  - DrawnUi.Draw.SkiaImage.Error
   - DrawnUi.Draw.SkiaImage.Gamma
   - DrawnUi.Draw.SkiaImage.GammaProperty
   - DrawnUi.Draw.SkiaImage.GetRenderedSource
@@ -73,12 +74,10 @@ items:
   - DrawnUi.Draw.SkiaImage.NeedInvalidateImageFilter
   - DrawnUi.Draw.SkiaImage.OnCleared
   - DrawnUi.Draw.SkiaImage.OnDisposing
-  - DrawnUi.Draw.SkiaImage.OnError
+  - DrawnUi.Draw.SkiaImage.OnError(System.String)
   - DrawnUi.Draw.SkiaImage.OnLayoutChanged
   - DrawnUi.Draw.SkiaImage.OnScaleChanged
-  - DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
-  - DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-  - DrawnUi.Draw.SkiaImage.OnSuccess
+  - DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
   - DrawnUi.Draw.SkiaImage.OnWillDisposeWithChildren
   - DrawnUi.Draw.SkiaImage.Paint(DrawnUi.Draw.DrawingContext)
   - DrawnUi.Draw.SkiaImage.PaintColorFilter
@@ -118,6 +117,7 @@ items:
   - DrawnUi.Draw.SkiaImage.StartColorProperty
   - DrawnUi.Draw.SkiaImage.StopLoading
   - DrawnUi.Draw.SkiaImage.SubscribeToCanReload
+  - DrawnUi.Draw.SkiaImage.Success
   - DrawnUi.Draw.SkiaImage.SwapSources(System.Single)
   - DrawnUi.Draw.SkiaImage.TextureScale
   - DrawnUi.Draw.SkiaImage.UseAssembly
@@ -633,7 +633,6 @@ items:
   - DrawnUi.Draw.SkiaControl.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)
   - DrawnUi.Draw.SkiaControl.ShouldClipAntialiased
   - DrawnUi.Draw.SkiaControl.NeedMeasure
-  - DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
   - DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   - DrawnUi.Draw.SkiaControl.NeedRemeasuring
   - DrawnUi.Draw.SkiaControl.PaintWithShadows(DrawnUi.Draw.DrawingContext,System.Action)
@@ -2350,7 +2349,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LastSource
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 666
+    startLine: 675
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2381,7 +2380,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ImageSource
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 668
+    startLine: 677
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2410,7 +2409,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AddEffectProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 688
+    startLine: 697
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2437,7 +2436,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AddEffect
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 695
+    startLine: 704
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2466,7 +2465,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ColorTintProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 701
+    startLine: 710
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2493,7 +2492,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ColorTint
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 708
+    startLine: 717
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2522,7 +2521,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomXProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 714
+    startLine: 723
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2549,7 +2548,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomX
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 721
+    startLine: 730
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2578,7 +2577,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomYProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 727
+    startLine: 736
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2605,7 +2604,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomY
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 734
+    startLine: 743
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2634,7 +2633,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DarkenProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 740
+    startLine: 749
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2661,7 +2660,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Darken
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 747
+    startLine: 756
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2690,7 +2689,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LightenProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 753
+    startLine: 762
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2717,7 +2716,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Lighten
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 760
+    startLine: 769
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2746,7 +2745,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ContrastProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 766
+    startLine: 775
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2773,7 +2772,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Contrast
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 773
+    startLine: 782
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2802,7 +2801,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: BrightnessProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 779
+    startLine: 788
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2829,7 +2828,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Brightness
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 786
+    startLine: 795
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2858,7 +2857,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GammaProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 792
+    startLine: 801
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2885,7 +2884,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Gamma
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 799
+    startLine: 808
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2914,7 +2913,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: BlurProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 805
+    startLine: 814
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2941,7 +2940,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Blur
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 812
+    startLine: 821
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2970,7 +2969,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SaturationProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 818
+    startLine: 827
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2997,7 +2996,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Saturation
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 825
+    startLine: 834
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3026,7 +3025,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InflateAmountProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 831
+    startLine: 840
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3053,7 +3052,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InflateAmount
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 838
+    startLine: 847
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3082,7 +3081,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: UseGradientProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 844
+    startLine: 853
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3109,7 +3108,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: UseGradient
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 851
+    startLine: 860
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3138,7 +3137,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EraseChangedContentProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 857
+    startLine: 866
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3165,7 +3164,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EraseChangedContent
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 868
+    startLine: 877
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3196,7 +3195,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: StartColorProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 874
+    startLine: 883
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3223,7 +3222,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: StartColor
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 881
+    startLine: 890
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3252,7 +3251,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EndColorProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 887
+    startLine: 896
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3279,7 +3278,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EndColor
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 894
+    startLine: 903
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3308,7 +3307,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EffectBlendModeProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 900
+    startLine: 909
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3335,7 +3334,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EffectBlendMode
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 907
+    startLine: 916
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3364,7 +3363,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HorizontalOffsetProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 913
+    startLine: 922
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3391,7 +3390,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HorizontalOffset
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 920
+    startLine: 929
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3420,7 +3419,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VerticalOffsetProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 926
+    startLine: 935
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3447,7 +3446,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VerticalOffset
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 933
+    startLine: 942
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3476,7 +3475,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DrawWhenEmptyProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 939
+    startLine: 948
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3503,7 +3502,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DrawWhenEmpty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 944
+    startLine: 953
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3532,7 +3531,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SpriteHeightProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 950
+    startLine: 959
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3559,7 +3558,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SpriteHeight
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 956
+    startLine: 965
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3588,7 +3587,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SpriteWidthProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 962
+    startLine: 971
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3615,7 +3614,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SpriteWidth
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 968
+    startLine: 977
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3644,7 +3643,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SpriteIndexProperty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 974
+    startLine: 983
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3671,7 +3670,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SpriteIndex
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 980
+    startLine: 989
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3700,7 +3699,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CanDraw
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 988
+    startLine: 997
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3731,7 +3730,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ClearBitmap
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1003
+    startLine: 1012
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3739,70 +3738,70 @@ items:
     content: public virtual void ClearBitmap()
     content.vb: Public Overridable Sub ClearBitmap()
   overload: DrawnUi.Draw.SkiaImage.ClearBitmap*
-- uid: DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
-  commentId: M:DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
-  id: OnSourceError(System.String)
+- uid: DrawnUi.Draw.SkiaImage.OnError(System.String)
+  commentId: M:DrawnUi.Draw.SkiaImage.OnError(System.String)
+  id: OnError(System.String)
   parent: DrawnUi.Draw.SkiaImage
   langs:
   - csharp
   - vb
-  name: OnSourceError(string)
-  nameWithType: SkiaImage.OnSourceError(string)
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceError(string)
+  name: OnError(string)
+  nameWithType: SkiaImage.OnError(string)
+  fullName: DrawnUi.Draw.SkiaImage.OnError(string)
   type: Method
   source:
     remote:
       path: src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
-    id: OnSourceError
+    id: OnError
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1009
+    startLine: 1018
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
   syntax:
-    content: public virtual void OnSourceError(string source)
+    content: public virtual void OnError(string source)
     parameters:
     - id: source
       type: System.String
-    content.vb: Public Overridable Sub OnSourceError(source As String)
-  overload: DrawnUi.Draw.SkiaImage.OnSourceError*
-  nameWithType.vb: SkiaImage.OnSourceError(String)
-  fullName.vb: DrawnUi.Draw.SkiaImage.OnSourceError(String)
-  name.vb: OnSourceError(String)
-- uid: DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-  commentId: M:DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-  id: OnSourceSuccess(System.String)
+    content.vb: Public Overridable Sub OnError(source As String)
+  overload: DrawnUi.Draw.SkiaImage.OnError*
+  nameWithType.vb: SkiaImage.OnError(String)
+  fullName.vb: DrawnUi.Draw.SkiaImage.OnError(String)
+  name.vb: OnError(String)
+- uid: DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
+  commentId: M:DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
+  id: OnSuccess(System.String)
   parent: DrawnUi.Draw.SkiaImage
   langs:
   - csharp
   - vb
-  name: OnSourceSuccess(string)
-  nameWithType: SkiaImage.OnSourceSuccess(string)
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceSuccess(string)
+  name: OnSuccess(string)
+  nameWithType: SkiaImage.OnSuccess(string)
+  fullName: DrawnUi.Draw.SkiaImage.OnSuccess(string)
   type: Method
   source:
     remote:
       path: src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
-    id: OnSourceSuccess
+    id: OnSuccess
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1015
+    startLine: 1024
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
   syntax:
-    content: public virtual void OnSourceSuccess(string source)
+    content: public virtual void OnSuccess(string source)
     parameters:
     - id: source
       type: System.String
-    content.vb: Public Overridable Sub OnSourceSuccess(source As String)
-  overload: DrawnUi.Draw.SkiaImage.OnSourceSuccess*
-  nameWithType.vb: SkiaImage.OnSourceSuccess(String)
-  fullName.vb: DrawnUi.Draw.SkiaImage.OnSourceSuccess(String)
-  name.vb: OnSourceSuccess(String)
+    content.vb: Public Overridable Sub OnSuccess(source As String)
+  overload: DrawnUi.Draw.SkiaImage.OnSuccess*
+  nameWithType.vb: SkiaImage.OnSuccess(String)
+  fullName.vb: DrawnUi.Draw.SkiaImage.OnSuccess(String)
+  name.vb: OnSuccess(String)
 - uid: DrawnUi.Draw.SkiaImage.SubscribeToCanReload
   commentId: M:DrawnUi.Draw.SkiaImage.SubscribeToCanReload
   id: SubscribeToCanReload
@@ -3821,7 +3820,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SubscribeToCanReload
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1021
+    startLine: 1030
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3847,7 +3846,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HasError
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1032
+    startLine: 1041
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3858,60 +3857,60 @@ items:
       type: System.Boolean
     content.vb: Public Property HasError As Boolean
   overload: DrawnUi.Draw.SkiaImage.HasError*
-- uid: DrawnUi.Draw.SkiaImage.OnError
-  commentId: E:DrawnUi.Draw.SkiaImage.OnError
-  id: OnError
+- uid: DrawnUi.Draw.SkiaImage.Error
+  commentId: E:DrawnUi.Draw.SkiaImage.Error
+  id: Error
   parent: DrawnUi.Draw.SkiaImage
   langs:
   - csharp
   - vb
-  name: OnError
-  nameWithType: SkiaImage.OnError
-  fullName: DrawnUi.Draw.SkiaImage.OnError
+  name: Error
+  nameWithType: SkiaImage.Error
+  fullName: DrawnUi.Draw.SkiaImage.Error
   type: Event
   source:
     remote:
       path: src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
-    id: OnError
+    id: Error
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1043
+    startLine: 1052
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
   syntax:
-    content: public event EventHandler<ContentLoadedEventArgs> OnError
+    content: public event EventHandler<ContentLoadedEventArgs> Error
     return:
       type: System.EventHandler{DrawnUi.Infrastructure.Models.ContentLoadedEventArgs}
-    content.vb: Public Event OnError As EventHandler(Of ContentLoadedEventArgs)
-- uid: DrawnUi.Draw.SkiaImage.OnSuccess
-  commentId: E:DrawnUi.Draw.SkiaImage.OnSuccess
-  id: OnSuccess
+    content.vb: Public Event [Error] As EventHandler(Of ContentLoadedEventArgs)
+- uid: DrawnUi.Draw.SkiaImage.Success
+  commentId: E:DrawnUi.Draw.SkiaImage.Success
+  id: Success
   parent: DrawnUi.Draw.SkiaImage
   langs:
   - csharp
   - vb
-  name: OnSuccess
-  nameWithType: SkiaImage.OnSuccess
-  fullName: DrawnUi.Draw.SkiaImage.OnSuccess
+  name: Success
+  nameWithType: SkiaImage.Success
+  fullName: DrawnUi.Draw.SkiaImage.Success
   type: Event
   source:
     remote:
       path: src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
-    id: OnSuccess
+    id: Success
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1044
+    startLine: 1053
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
   syntax:
-    content: public event EventHandler<ContentLoadedEventArgs> OnSuccess
+    content: public event EventHandler<ContentLoadedEventArgs> Success
     return:
       type: System.EventHandler{DrawnUi.Infrastructure.Models.ContentLoadedEventArgs}
-    content.vb: Public Event OnSuccess As EventHandler(Of ContentLoadedEventArgs)
+    content.vb: Public Event Success As EventHandler(Of ContentLoadedEventArgs)
 - uid: DrawnUi.Draw.SkiaImage.ImagePaint
   commentId: F:DrawnUi.Draw.SkiaImage.ImagePaint
   id: ImagePaint
@@ -3930,7 +3929,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ImagePaint
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1051
+    startLine: 1060
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3959,7 +3958,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PaintImageFilter
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1056
+    startLine: 1065
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3988,7 +3987,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PaintColorFilter
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1064
+    startLine: 1073
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4017,7 +4016,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: NeedInvalidateImageFilter
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1066
+    startLine: 1075
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4046,7 +4045,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InvalidateImageFilter
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1068
+    startLine: 1077
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4072,7 +4071,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: NeedInvalidateColorFilter
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1073
+    startLine: 1082
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4101,7 +4100,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InvalidateColorFilter
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1075
+    startLine: 1084
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4127,7 +4126,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Paint
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1080
+    startLine: 1089
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4165,7 +4164,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ClipSource
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1200
+    startLine: 1209
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4192,7 +4191,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadSourceIfNeeded
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1206
+    startLine: 1215
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4218,7 +4217,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Invalidate
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1219
+    startLine: 1228
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4247,7 +4246,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SwapSources
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1230
+    startLine: 1239
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4284,7 +4283,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Draw
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1278
+    startLine: 1287
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4315,7 +4314,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnLayoutChanged
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1290
+    startLine: 1299
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4343,7 +4342,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnDisposing
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1300
+    startLine: 1309
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4372,7 +4371,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AspectScale
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1320
+    startLine: 1329
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4401,7 +4400,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ScaledSource
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1322
+    startLine: 1331
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4430,7 +4429,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DrawSource
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1606
+    startLine: 1615
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4471,7 +4470,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TextureScale
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1744
+    startLine: 1751
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4500,7 +4499,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SourceImageSize
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1745
+    startLine: 1752
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4529,7 +4528,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetAspectScale
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1747
+    startLine: 1754
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4569,7 +4568,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SetMeasuredAsEmpty
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1759
+    startLine: 1766
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4605,7 +4604,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Measure
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1780
+    startLine: 1787
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4647,7 +4646,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SourceWidth
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1904
+    startLine: 1911
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4678,7 +4677,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SourceHeight
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1909
+    startLine: 1916
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -4709,7 +4708,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CalculateDisplayRect
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImage.cs
-    startLine: 1911
+    startLine: 1918
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -14706,34 +14705,6 @@ references:
   name: NeedMeasure
   nameWithType: SkiaControl.NeedMeasure
   fullName: DrawnUi.Draw.SkiaControl.NeedMeasure
-- uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  commentId: M:DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  parent: DrawnUi.Draw.SkiaControl
-  isExternal: true
-  href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  name: SafePostAction(Action)
-  nameWithType: SkiaControl.SafePostAction(Action)
-  fullName: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  spec.csharp:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
-  spec.vb:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
 - uid: DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   commentId: M:DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   parent: DrawnUi.Draw.SkiaControl
@@ -29515,18 +29486,18 @@ references:
   name: ClearBitmap
   nameWithType: SkiaImage.ClearBitmap
   fullName: DrawnUi.Draw.SkiaImage.ClearBitmap
-- uid: DrawnUi.Draw.SkiaImage.OnSourceError*
-  commentId: Overload:DrawnUi.Draw.SkiaImage.OnSourceError
-  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceError_System_String_
-  name: OnSourceError
-  nameWithType: SkiaImage.OnSourceError
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceError
-- uid: DrawnUi.Draw.SkiaImage.OnSourceSuccess*
-  commentId: Overload:DrawnUi.Draw.SkiaImage.OnSourceSuccess
-  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceSuccess_System_String_
-  name: OnSourceSuccess
-  nameWithType: SkiaImage.OnSourceSuccess
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceSuccess
+- uid: DrawnUi.Draw.SkiaImage.OnError*
+  commentId: Overload:DrawnUi.Draw.SkiaImage.OnError
+  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnError_System_String_
+  name: OnError
+  nameWithType: SkiaImage.OnError
+  fullName: DrawnUi.Draw.SkiaImage.OnError
+- uid: DrawnUi.Draw.SkiaImage.OnSuccess*
+  commentId: Overload:DrawnUi.Draw.SkiaImage.OnSuccess
+  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSuccess_System_String_
+  name: OnSuccess
+  nameWithType: SkiaImage.OnSuccess
+  fullName: DrawnUi.Draw.SkiaImage.OnSuccess
 - uid: DrawnUi.Draw.SkiaImage.SubscribeToCanReload*
   commentId: Overload:DrawnUi.Draw.SkiaImage.SubscribeToCanReload
   href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_SubscribeToCanReload

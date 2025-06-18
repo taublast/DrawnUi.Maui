@@ -98,6 +98,7 @@
     <div class="level9"><span class="xref">SkiaShape</span></div>
       <div class="level10"><a class="xref" href="DrawnUi.Draw.DebugImage.html">DebugImage</a></div>
       <div class="level10"><a class="xref" href="DrawnUi.Draw.SkiaCursor.html">SkiaCursor</a></div>
+      <div class="level10"><a class="xref" href="DrawnUi.Draw.SkiaFrame.html">SkiaFrame</a></div>
       <div class="level10"><a class="xref" href="DrawnUi.Draw.SkiaHoverMask.html">SkiaHoverMask</a></div>
       <div class="level10"><a class="xref" href="DrawnUi.Draw.SliderTrail.html">SliderTrail</a></div>
   </div>
@@ -188,6 +189,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStack_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStack(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnBeforeDrawingVisibleChildren_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_LayoutStructure_System_Collections_Generic_List_DrawnUi_Draw_ControlInStack__">SkiaLayout.OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List&lt;ControlInStack&gt;)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_DrawStack_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_LayoutStructure_">SkiaLayout.DrawStack(DrawingContext, LayoutStructure)</a>
@@ -1879,9 +1883,6 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedMeasure">SkiaControl.NeedMeasure</a>
     </div>
     <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_">SkiaControl.SafePostAction(Action)</a>
-    </div>
-    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafeAction_System_Action_">SkiaControl.SafeAction(Action)</a>
     </div>
     <div>
@@ -2812,7 +2813,7 @@ For complex shapes, use PathData or Points properties to define custom geometrie
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_LayoutChildrenProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.LayoutChildrenProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L266">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L267">View Source</a>
   </span>
   <h4 id="DrawnUi_Draw_SkiaShape_LayoutChildrenProperty" data-uid="DrawnUi.Draw.SkiaShape.LayoutChildrenProperty">LayoutChildrenProperty</h4>
   <div class="markdown level1 summary"></div>
@@ -2870,7 +2871,7 @@ For complex shapes, use PathData or Points properties to define custom geometrie
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_PointsProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.PointsProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1269">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1271">View Source</a>
   </span>
   <h4 id="DrawnUi_Draw_SkiaShape_PointsProperty" data-uid="DrawnUi.Draw.SkiaShape.PointsProperty">PointsProperty</h4>
   <div class="markdown level1 summary"></div>
@@ -2899,7 +2900,7 @@ For complex shapes, use PathData or Points properties to define custom geometrie
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_ShadowsProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.ShadowsProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1222">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1224">View Source</a>
   </span>
   <h4 id="DrawnUi_Draw_SkiaShape_ShadowsProperty" data-uid="DrawnUi.Draw.SkiaShape.ShadowsProperty">ShadowsProperty</h4>
   <div class="markdown level1 summary"></div>
@@ -2928,7 +2929,7 @@ For complex shapes, use PathData or Points properties to define custom geometrie
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_SmoothPointsProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.SmoothPointsProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1355">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1357">View Source</a>
   </span>
   <h4 id="DrawnUi_Draw_SkiaShape_SmoothPointsProperty" data-uid="DrawnUi.Draw.SkiaShape.SmoothPointsProperty">SmoothPointsProperty</h4>
   <div class="markdown level1 summary"></div>
@@ -2957,7 +2958,7 @@ For complex shapes, use PathData or Points properties to define custom geometrie
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_StrokeBlendModeProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.StrokeBlendModeProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L295">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L296">View Source</a>
   </span>
   <h4 id="DrawnUi_Draw_SkiaShape_StrokeBlendModeProperty" data-uid="DrawnUi.Draw.SkiaShape.StrokeBlendModeProperty">StrokeBlendModeProperty</h4>
   <div class="markdown level1 summary"></div>
@@ -2986,7 +2987,7 @@ For complex shapes, use PathData or Points properties to define custom geometrie
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_StrokeCapProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.StrokeCapProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L237">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L238">View Source</a>
   </span>
   <h4 id="DrawnUi_Draw_SkiaShape_StrokeCapProperty" data-uid="DrawnUi.Draw.SkiaShape.StrokeCapProperty">StrokeCapProperty</h4>
   <div class="markdown level1 summary"></div>
@@ -3243,7 +3244,7 @@ including depth, light color, shadow color, and opacity.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_BorderWithPixels.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.BorderWithPixels%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L563">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L562">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_BorderWithPixels_" data-uid="DrawnUi.Draw.SkiaShape.BorderWithPixels*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_BorderWithPixels" data-uid="DrawnUi.Draw.SkiaShape.BorderWithPixels">BorderWithPixels</h4>
@@ -3357,7 +3358,7 @@ corners, just provide a single value.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_DrawPath.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.DrawPath%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L581">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L580">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_DrawPath_" data-uid="DrawnUi.Draw.SkiaShape.DrawPath*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_DrawPath" data-uid="DrawnUi.Draw.SkiaShape.DrawPath">DrawPath</h4>
@@ -3395,7 +3396,7 @@ to fit the shape's bounds.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_DrawPathAligned.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.DrawPathAligned%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L560">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L559">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_DrawPathAligned_" data-uid="DrawnUi.Draw.SkiaShape.DrawPathAligned*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_DrawPathAligned" data-uid="DrawnUi.Draw.SkiaShape.DrawPathAligned">DrawPathAligned</h4>
@@ -3425,7 +3426,7 @@ to fit the shape's bounds.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_DrawPathResized.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.DrawPathResized%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L559">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L558">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_DrawPathResized_" data-uid="DrawnUi.Draw.SkiaShape.DrawPathResized*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_DrawPathResized" data-uid="DrawnUi.Draw.SkiaShape.DrawPathResized">DrawPathResized</h4>
@@ -3455,7 +3456,7 @@ to fit the shape's bounds.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_DrawPathShape.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.DrawPathShape%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L583">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L582">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_DrawPathShape_" data-uid="DrawnUi.Draw.SkiaShape.DrawPathShape*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_DrawPathShape" data-uid="DrawnUi.Draw.SkiaShape.DrawPathShape">DrawPathShape</h4>
@@ -3485,7 +3486,7 @@ to fit the shape's bounds.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_DrawRoundedRect.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.DrawRoundedRect%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L595">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L594">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_DrawRoundedRect_" data-uid="DrawnUi.Draw.SkiaShape.DrawRoundedRect*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_DrawRoundedRect" data-uid="DrawnUi.Draw.SkiaShape.DrawRoundedRect">DrawRoundedRect</h4>
@@ -3522,7 +3523,7 @@ and corner radii based on the shape's properties.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_LayoutChildren.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.LayoutChildren%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L289">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L290">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_LayoutChildren_" data-uid="DrawnUi.Draw.SkiaShape.LayoutChildren*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_LayoutChildren" data-uid="DrawnUi.Draw.SkiaShape.LayoutChildren">LayoutChildren</h4>
@@ -3706,7 +3707,7 @@ standard SVG path syntax, for example:
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_Points.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.Points%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1283">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1285">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_Points_" data-uid="DrawnUi.Draw.SkiaShape.Points*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_Points" data-uid="DrawnUi.Draw.SkiaShape.Points">Points</h4>
@@ -3737,7 +3738,7 @@ public IList&lt;SkiaPoint&gt; Points { get; set; }</code></pre>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_PolygonStar.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.PolygonStar%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1290">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1292">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_PolygonStar_" data-uid="DrawnUi.Draw.SkiaShape.PolygonStar*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_PolygonStar" data-uid="DrawnUi.Draw.SkiaShape.PolygonStar">PolygonStar</h4>
@@ -3767,7 +3768,7 @@ public IList&lt;SkiaPoint&gt; Points { get; set; }</code></pre>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_RenderingPaint.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.RenderingPaint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L568">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L567">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_RenderingPaint_" data-uid="DrawnUi.Draw.SkiaShape.RenderingPaint*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_RenderingPaint" data-uid="DrawnUi.Draw.SkiaShape.RenderingPaint">RenderingPaint</h4>
@@ -3797,7 +3798,7 @@ public IList&lt;SkiaPoint&gt; Points { get; set; }</code></pre>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_Shadows.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.Shadows%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1238">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1240">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_Shadows_" data-uid="DrawnUi.Draw.SkiaShape.Shadows*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_Shadows" data-uid="DrawnUi.Draw.SkiaShape.Shadows">Shadows</h4>
@@ -3827,7 +3828,7 @@ public IList&lt;SkiaPoint&gt; Points { get; set; }</code></pre>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_SmoothPoints.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.SmoothPoints%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1385">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1387">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_SmoothPoints_" data-uid="DrawnUi.Draw.SkiaShape.SmoothPoints*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_SmoothPoints" data-uid="DrawnUi.Draw.SkiaShape.SmoothPoints">SmoothPoints</h4>
@@ -3871,7 +3872,7 @@ not produce expected results with arbitrary point configurations.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_StrokeBlendMode.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.StrokeBlendMode%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L320">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L321">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_StrokeBlendMode_" data-uid="DrawnUi.Draw.SkiaShape.StrokeBlendMode*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_StrokeBlendMode" data-uid="DrawnUi.Draw.SkiaShape.StrokeBlendMode">StrokeBlendMode</h4>
@@ -3918,7 +3919,7 @@ not produce expected results with arbitrary point configurations.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_StrokeCap.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.StrokeCap%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L260">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L261">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_StrokeCap_" data-uid="DrawnUi.Draw.SkiaShape.StrokeCap*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_StrokeCap" data-uid="DrawnUi.Draw.SkiaShape.StrokeCap">StrokeCap</h4>
@@ -4091,11 +4092,12 @@ StrokePath=&quot;3,1&quot; or StrokePath=&quot;5,2,1,2&quot;</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_StrokeWidth.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.StrokeWidth%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L231">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L232">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_StrokeWidth_" data-uid="DrawnUi.Draw.SkiaShape.StrokeWidth*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_StrokeWidth" data-uid="DrawnUi.Draw.SkiaShape.StrokeWidth">StrokeWidth</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the width of the stroke (outline) in device-independent units. If you set it negative it will be in PIXELS instead of point.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the width of the stroke (outline) in device-independent units.
+If you set it negative it will be in PIXELS instead of point.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="declaration">Declaration</h5>
@@ -4178,7 +4180,7 @@ such as PathData for Path type or Points for Polygon/Line types.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_WillStroke.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.WillStroke%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L382">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L383">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_WillStroke_" data-uid="DrawnUi.Draw.SkiaShape.WillStroke*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_WillStroke" data-uid="DrawnUi.Draw.SkiaShape.WillStroke">WillStroke</h4>
@@ -4210,7 +4212,7 @@ such as PathData for Path type or Points for Polygon/Line types.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_AddPaintArguments_DrawnUi_Draw_DrawingContext_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.AddPaintArguments(DrawnUi.Draw.DrawingContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L851">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L850">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_AddPaintArguments_" data-uid="DrawnUi.Draw.SkiaShape.AddPaintArguments*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_AddPaintArguments_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Draw.SkiaShape.AddPaintArguments(DrawnUi.Draw.DrawingContext)">AddPaintArguments(DrawingContext)</h4>
@@ -4277,7 +4279,7 @@ such as PathData for Path type or Points for Polygon/Line types.</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_Arrange_SkiaSharp_SKRect_System_Single_System_Single_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.Arrange(SkiaSharp.SKRect%2CSystem.Single%2CSystem.Single%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L529">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L526">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_Arrange_" data-uid="DrawnUi.Draw.SkiaShape.Arrange*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_Arrange_SkiaSharp_SKRect_System_Single_System_Single_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.Arrange(SkiaSharp.SKRect,System.Single,System.Single,System.Single)">Arrange(SKRect, float, float, float)</h4>
@@ -4331,7 +4333,7 @@ DrawUsingRenderObject wil call this among others..</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_CalculateClipSizeForStroke_SkiaSharp_SKRect_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.CalculateClipSizeForStroke(SkiaSharp.SKRect%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L419">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L415">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_CalculateClipSizeForStroke_" data-uid="DrawnUi.Draw.SkiaShape.CalculateClipSizeForStroke*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_CalculateClipSizeForStroke_SkiaSharp_SKRect_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.CalculateClipSizeForStroke(SkiaSharp.SKRect,System.Single)">CalculateClipSizeForStroke(SKRect, float)</h4>
@@ -4383,7 +4385,7 @@ DrawUsingRenderObject wil call this among others..</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_CalculateContentSizeForStroke_SkiaSharp_SKRect_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.CalculateContentSizeForStroke(SkiaSharp.SKRect%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L404">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L402">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_CalculateContentSizeForStroke_" data-uid="DrawnUi.Draw.SkiaShape.CalculateContentSizeForStroke*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_CalculateContentSizeForStroke_SkiaSharp_SKRect_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.CalculateContentSizeForStroke(SkiaSharp.SKRect,System.Single)">CalculateContentSizeForStroke(SKRect, float)</h4>
@@ -4435,7 +4437,7 @@ DrawUsingRenderObject wil call this among others..</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_CalculateShapeSizeForStroke_SkiaSharp_SKRect_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.CalculateShapeSizeForStroke(SkiaSharp.SKRect%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L434">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L430">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_CalculateShapeSizeForStroke_" data-uid="DrawnUi.Draw.SkiaShape.CalculateShapeSizeForStroke*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_CalculateShapeSizeForStroke_SkiaSharp_SKRect_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.CalculateShapeSizeForStroke(SkiaSharp.SKRect,System.Single)">CalculateShapeSizeForStroke(SKRect, float)</h4>
@@ -4487,7 +4489,7 @@ DrawUsingRenderObject wil call this among others..</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_CalculateSizeForStroke_SkiaSharp_SKRect_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.CalculateSizeForStroke(SkiaSharp.SKRect%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L466">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L462">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_CalculateSizeForStroke_" data-uid="DrawnUi.Draw.SkiaShape.CalculateSizeForStroke*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_CalculateSizeForStroke_SkiaSharp_SKRect_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.CalculateSizeForStroke(SkiaSharp.SKRect,System.Single)">CalculateSizeForStroke(SKRect, float)</h4>
@@ -4524,7 +4526,7 @@ DrawUsingRenderObject wil call this among others..</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_CalculateSizeForStrokeFromContent_SkiaSharp_SKRect_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.CalculateSizeForStrokeFromContent(SkiaSharp.SKRect%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L502">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L499">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_CalculateSizeForStrokeFromContent_" data-uid="DrawnUi.Draw.SkiaShape.CalculateSizeForStrokeFromContent*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_CalculateSizeForStrokeFromContent_SkiaSharp_SKRect_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.CalculateSizeForStrokeFromContent(SkiaSharp.SKRect,System.Single)">CalculateSizeForStrokeFromContent(SKRect, float)</h4>
@@ -4576,7 +4578,7 @@ DrawUsingRenderObject wil call this among others..</p>
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_CreateClip_System_Object_System_Boolean_SkiaSharp_SKPath_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.CreateClip(System.Object%2CSystem.Boolean%2CSkiaSharp.SKPath)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L614">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L613">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_CreateClip_" data-uid="DrawnUi.Draw.SkiaShape.CreateClip*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_CreateClip_System_Object_System_Boolean_SkiaSharp_SKPath_" data-uid="DrawnUi.Draw.SkiaShape.CreateClip(System.Object,System.Boolean,SkiaSharp.SKPath)">CreateClip(object, bool, SKPath)</h4>
@@ -4637,7 +4639,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_CreateStarPoints_System_Int32_System_Double_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.CreateStarPoints(System.Int32%2CSystem.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1532">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1534">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_CreateStarPoints_" data-uid="DrawnUi.Draw.SkiaShape.CreateStarPoints*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_CreateStarPoints_System_Int32_System_Double_" data-uid="DrawnUi.Draw.SkiaShape.CreateStarPoints(System.Int32,System.Double)">CreateStarPoints(int, double)</h4>
@@ -4689,7 +4691,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_CreateStarPointsCrossed_System_Int32_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.CreateStarPointsCrossed(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1580">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1582">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_CreateStarPointsCrossed_" data-uid="DrawnUi.Draw.SkiaShape.CreateStarPointsCrossed*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_CreateStarPointsCrossed_System_Int32_" data-uid="DrawnUi.Draw.SkiaShape.CreateStarPointsCrossed(System.Int32)">CreateStarPointsCrossed(int)</h4>
@@ -4736,7 +4738,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_GetCompensatedStrokeWidth_System_Single_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.GetCompensatedStrokeWidth(System.Single%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1638">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L1640">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_GetCompensatedStrokeWidth_" data-uid="DrawnUi.Draw.SkiaShape.GetCompensatedStrokeWidth*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_GetCompensatedStrokeWidth_System_Single_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.GetCompensatedStrokeWidth(System.Single,System.Single)">GetCompensatedStrokeWidth(float, float)</h4>
@@ -4792,7 +4794,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_GetContentSizeForAutosizeInPixels.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.GetContentSizeForAutosizeInPixels%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L537">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L534">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_GetContentSizeForAutosizeInPixels_" data-uid="DrawnUi.Draw.SkiaShape.GetContentSizeForAutosizeInPixels*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_GetContentSizeForAutosizeInPixels" data-uid="DrawnUi.Draw.SkiaShape.GetContentSizeForAutosizeInPixels">GetContentSizeForAutosizeInPixels()</h4>
@@ -4825,7 +4827,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_GetDashArray_System_Double___System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.GetDashArray(System.Double%5B%5D%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L330">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L331">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_GetDashArray_" data-uid="DrawnUi.Draw.SkiaShape.GetDashArray*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_GetDashArray_System_Double___System_Single_" data-uid="DrawnUi.Draw.SkiaShape.GetDashArray(System.Double[],System.Single)">GetDashArray(double[], float)</h4>
@@ -4877,7 +4879,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_GetHalfStroke_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.GetHalfStroke(System.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L390">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L388">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_GetHalfStroke_" data-uid="DrawnUi.Draw.SkiaShape.GetHalfStroke*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_GetHalfStroke_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.GetHalfStroke(System.Single)">GetHalfStroke(float)</h4>
@@ -4924,7 +4926,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_GetInflationForStroke_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.GetInflationForStroke(System.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L399">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L397">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_GetInflationForStroke_" data-uid="DrawnUi.Draw.SkiaShape.GetInflationForStroke*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_GetInflationForStroke_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.GetInflationForStroke(System.Single)">GetInflationForStroke(float)</h4>
@@ -4971,7 +4973,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_MapStrokeCapToStrokeJoin_SkiaSharp_SKStrokeCap_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.MapStrokeCapToStrokeJoin(SkiaSharp.SKStrokeCap)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L832">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L831">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_MapStrokeCapToStrokeJoin_" data-uid="DrawnUi.Draw.SkiaShape.MapStrokeCapToStrokeJoin*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_MapStrokeCapToStrokeJoin_SkiaSharp_SKStrokeCap_" data-uid="DrawnUi.Draw.SkiaShape.MapStrokeCapToStrokeJoin(SkiaSharp.SKStrokeCap)">MapStrokeCapToStrokeJoin(SKStrokeCap)</h4>
@@ -5018,7 +5020,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_MeasureContent_System_Collections_Generic_IEnumerable_DrawnUi_Draw_SkiaControl__SkiaSharp_SKRect_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.MeasureContent(System.Collections.Generic.IEnumerable%7BDrawnUi.Draw.SkiaControl%7D%2CSkiaSharp.SKRect%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L552">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L550">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_MeasureContent_" data-uid="DrawnUi.Draw.SkiaShape.MeasureContent*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_MeasureContent_System_Collections_Generic_IEnumerable_DrawnUi_Draw_SkiaControl__SkiaSharp_SKRect_System_Single_" data-uid="DrawnUi.Draw.SkiaShape.MeasureContent(System.Collections.Generic.IEnumerable{DrawnUi.Draw.SkiaControl},SkiaSharp.SKRect,System.Single)">MeasureContent(IEnumerable&lt;SkiaControl&gt;, SKRect, float)</h4>
@@ -5078,7 +5080,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_OnDisposing.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.OnDisposing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L599">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L598">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_OnDisposing_" data-uid="DrawnUi.Draw.SkiaShape.OnDisposing*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_OnDisposing" data-uid="DrawnUi.Draw.SkiaShape.OnDisposing">OnDisposing()</h4>
@@ -5096,7 +5098,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_Paint_DrawnUi_Draw_DrawingContext_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.Paint(DrawnUi.Draw.DrawingContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L862">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L861">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_Paint_" data-uid="DrawnUi.Draw.SkiaShape.Paint*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_Paint_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Draw.SkiaShape.Paint(DrawnUi.Draw.DrawingContext)">Paint(DrawingContext)</h4>
@@ -5133,7 +5135,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_PaintBackground_DrawnUi_Draw_SkiaDrawingContext_SkiaSharp_SKRect_SkiaSharp_SKPoint___System_Single_SkiaSharp_SKPaint_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.PaintBackground(DrawnUi.Draw.SkiaDrawingContext%2CSkiaSharp.SKRect%2CSkiaSharp.SKPoint%5B%5D%2CSystem.Single%2CSkiaSharp.SKPaint)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L745">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L744">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_PaintBackground_" data-uid="DrawnUi.Draw.SkiaShape.PaintBackground*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_PaintBackground_DrawnUi_Draw_SkiaDrawingContext_SkiaSharp_SKRect_SkiaSharp_SKPoint___System_Single_SkiaSharp_SKPaint_" data-uid="DrawnUi.Draw.SkiaShape.PaintBackground(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,SkiaSharp.SKPoint[],System.Single,SkiaSharp.SKPaint)">PaintBackground(SkiaDrawingContext, SKRect, SKPoint[], float, SKPaint)</h4>
@@ -5233,7 +5235,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_PaintWithShadows_DrawnUi_Draw_DrawingContext_System_Action_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.PaintWithShadows(DrawnUi.Draw.DrawingContext%2CSystem.Action)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L846">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L845">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_PaintWithShadows_" data-uid="DrawnUi.Draw.SkiaShape.PaintWithShadows*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_PaintWithShadows_DrawnUi_Draw_DrawingContext_System_Action_" data-uid="DrawnUi.Draw.SkiaShape.PaintWithShadows(DrawnUi.Draw.DrawingContext,System.Action)">PaintWithShadows(DrawingContext, Action)</h4>
@@ -5272,7 +5274,7 @@ Pass arguments if you want to use some time-frozen data for painting at any time
     <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SkiaShape_SetupType.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SkiaShape.SetupType%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L358">View Source</a>
+    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/SkiaShape.cs/#L359">View Source</a>
   </span>
   <a id="DrawnUi_Draw_SkiaShape_SetupType_" data-uid="DrawnUi.Draw.SkiaShape.SetupType*"></a>
   <h4 id="DrawnUi_Draw_SkiaShape_SetupType" data-uid="DrawnUi.Draw.SkiaShape.SetupType">SetupType()</h4>

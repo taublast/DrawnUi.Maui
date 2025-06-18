@@ -101,6 +101,37 @@
     &lt;/DrawUi:SkiaShape.BackgroundGradient&gt;
 &lt;/DrawUi:SkiaShape&gt;
 </code></pre>
+<p>Maybe you have colors defined in a static class?</p>
+<pre><code class="lang-xml">&lt;draw:SkiaFrame
+    AnimationTapped=&quot;Ripple&quot;
+    Tapped=&quot;OnTapped_Item&quot;
+    WidthRequest=&quot;60&quot;
+    StrokeWidth=&quot;1&quot;
+    HeightRequest=&quot;28&quot;
+    StrokeColor=&quot;{Binding SelectionColor}&quot;
+    CornerRadius=&quot;4&quot;&gt;
+    &lt;draw:SkiaControl.FillGradient&gt;
+        &lt;draw:SkiaGradient
+            Opacity=&quot;0.1&quot;
+            EndXRatio=&quot;0&quot;
+            EndYRatio=&quot;1&quot;
+            StartXRatio=&quot;0&quot;
+            StartYRatio=&quot;0&quot;
+            Type=&quot;Linear&quot;&gt;
+            &lt;draw:SkiaGradient.Colors&gt;
+                &lt;x:Static Member=&quot;xam:BackColors.GradientStartNav&quot;/&gt;
+                &lt;x:Static Member=&quot;xam:BackColors.GradientEndNav&quot;/&gt;
+            &lt;/draw:SkiaGradient.Colors&gt;
+        &lt;/draw:SkiaGradient&gt;
+    &lt;/draw:SkiaControl.FillGradient&gt;
+    &lt;draw:SkiaMarkdownLabel
+        HorizontalOptions=&quot;Center&quot;
+        HorizontalTextAlignment=&quot;Center&quot;
+        Text=&quot;{Binding Title}&quot;
+        TextColor=&quot;{Binding SelectionColor}&quot;
+        VerticalOptions=&quot;Center&quot; /&gt;
+&lt;/draw:SkiaFrame&gt;
+</code></pre>
 <h3 id="radial-gradient-example">Radial Gradient Example</h3>
 <pre><code class="lang-xml">&lt;DrawUi:SkiaShape Type=&quot;Circle&quot; WidthRequest=&quot;120&quot; HeightRequest=&quot;120&quot;&gt;
     &lt;DrawUi:SkiaShape.BackgroundGradient&gt;
@@ -152,13 +183,26 @@
     &lt;/DrawUi:SkiaLabel.FillGradient&gt;
 &lt;/DrawUi:SkiaLabel&gt;
 </code></pre>
-<h2 id="applying-gradients-to-images">Applying Gradients to Images</h2>
+<h2 id="applying-gradients-to-svg-code-behind">Applying Gradients to SVG, code behind</h2>
 <p>You can overlay gradients on images using the <code>UseGradient</code>, <code>StartColor</code>, and <code>EndColor</code> properties on <code>SkiaImage</code>:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaImage 
-    Source=&quot;photo.jpg&quot; 
-    UseGradient=&quot;True&quot; 
-    StartColor=&quot;#00000000&quot; 
-    EndColor=&quot;#CC000000&quot; /&gt;
+<pre><code class="lang-csharp">new SkiaSvg()
+{
+    HorizontalOptions = LayoutOptions.Center,
+    HeightRequest = 20,
+    LockRatio = 1,
+    UseCache = SkiaCacheType.Image,
+    FillGradient =
+        new SkiaGradient()
+        {
+            StartXRatio = 1,
+            EndXRatio = 0,
+            StartYRatio = 0,
+            EndYRatio = 1,
+            Colors =
+                new Color[] { BackColors.GradientStartNav,
+                    BackColors.GradientEndNav }
+        },
+}
 </code></pre>
 <p>This creates a fade effect from transparent to black over the image.</p>
 <h2 id="defining-gradients-as-resources">Defining Gradients as Resources</h2>
@@ -180,17 +224,15 @@
     EndPoint = new Point(1, 1)
 };
 
-myShape.BackgroundGradient = gradient;
+control.FillGradient = gradient;
 </code></pre>
 <h2 id="tips-and-best-practices">Tips and Best Practices</h2>
 <ul>
 <li>Use gradients to add depth and visual interest to your UI.</li>
 <li>For performance, prefer simple gradients or reuse gradient resources.</li>
-<li>Gradients can be animated by changing their properties in code.</li>
+<li>Gradients can be animated by changing their properties</li>
 <li>Combine gradients with shadows for modern card and button designs.</li>
 </ul>
-<h2 id="summary">Summary</h2>
-<p>Gradients in DrawnUi.Maui are flexible and easy to use across shapes, text, and images. Use the provided properties and examples to create visually appealing, modern interfaces.</p>
 
 </article>
           </div>

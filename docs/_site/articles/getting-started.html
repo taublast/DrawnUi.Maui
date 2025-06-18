@@ -85,10 +85,11 @@
 <p>Install the DrawnUi NuGet package in your .NET MAUI project:</p>
 <pre><code class="lang-bash">dotnet add package AppoMobi.Maui.DrawnUi
 </code></pre>
+<p>or fork the DrawnUi repo and referece the main project directly.</p>
 <blockquote>
-<p><strong>Note</strong>: The main package name is <code>AppoMobi.Maui.DrawnUi</code>. Additional addon packages are available for specific features like Camera, Maps, and Games.</p>
+<p><strong>Note</strong>: There are some additional packages supporting optional features like games, camera, maps etc, they must be refereced separately.</p>
 </blockquote>
-<p>You might also need at least the following MAUI setup inside your csproj:</p>
+<p>To make everything compile from first attempt You might also need at least the following MAUI setup inside your csproj:</p>
 <pre><code>	&lt;PropertyGroup&gt;
         &lt;WindowsPackageType&gt;MSIX&lt;/WindowsPackageType&gt;
 		&lt;SupportedOSPlatformVersion Condition=&quot;$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'&quot;&gt;15.0&lt;/SupportedOSPlatformVersion&gt;
@@ -104,6 +105,7 @@
     &lt;/ItemGroup&gt;
 
 </code></pre>
+<p>For Windows to overcome an existing restriction in SKiaSharp you would need to enable MSIX packaging for your Windows project. This limitation will be resolved.</p>
 <h3 id="2-initialize-in-your-maui-app">2. Initialize in Your MAUI App</h3>
 <p>Update your <code>MauiProgram.cs</code> file to initialize draw:</p>
 <pre><code class="lang-csharp">using DrawnUi.Draw;
@@ -161,6 +163,7 @@ public static class MauiProgram
                 VerticalOptions=&quot;Center&quot;
                 HorizontalOptions=&quot;Center&quot;
                 Clicked=&quot;OnButtonClicked&quot; /&gt;
+
         &lt;/draw:SkiaLayout&gt;
     &lt;/draw:Canvas&gt;
 &lt;/ContentPage&gt;
@@ -171,7 +174,10 @@ public static class MauiProgram
                       xmlns:draw=&quot;http://schemas.appomobi.com/drawnUi/2023/draw&quot;
                       x:Class=&quot;YourNamespace.YourPage&quot;&gt;
 
-    &lt;draw:Canvas HorizontalOptions=&quot;Fill&quot; VerticalOptions=&quot;Fill&quot;&gt;
+    &lt;draw:Canvas 
+        RenderingMode=&quot;Accelerated&quot;
+        Gestures=&quot;Lock&quot;
+        HorizontalOptions=&quot;Fill&quot; VerticalOptions=&quot;Fill&quot;&gt;
         &lt;draw:SkiaLayout Type=&quot;Column&quot; Spacing=&quot;16&quot; Padding=&quot;32&quot;&gt;
             &lt;draw:SkiaLabel
                 Text=&quot;Hello DrawnUi!&quot;
@@ -193,6 +199,9 @@ public static class MauiProgram
     &lt;/draw:Canvas&gt;
 &lt;/draw:DrawnUiBasePage&gt;
 </code></pre>
+<h3 id="setup-canvas">Setup Canvas</h3>
+<p>If you indend to process gestures inside your canvas setup the <code>Gestures</code> property accordingly
+If you would have animated content or use shaders set <code>RenderingMode</code> to <code>Accelerated</code>. Otherwise leave it as it is to use the default lightweight <code>Software</code> mode, it is still perfect for rendering static content.</p>
 <h3 id="handling-events">Handling Events</h3>
 <p>Handle control events in your code-behind:</p>
 <pre><code class="lang-csharp">private void OnButtonClicked(SkiaButton sender, SkiaGesturesParameters e)

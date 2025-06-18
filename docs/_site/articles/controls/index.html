@@ -83,34 +83,60 @@
 <p>The main spirit is to have all controlls subclassable and customizable at the maximum possible extent.</p>
 <p>DrawnUi provides a comprehensive set of UI controls rendered with SkiaSharp for optimal performance. All controls support platform-specific styling and extensive customization options.</p>
 <h2 id="control-categories">Control Categories</h2>
-<p>DrawnUi controls are organized into several categories:</p>
+<p>DrawnUi controls can be organized into several categories:</p>
+<h3 id="aliases">Aliases</h3>
+<p>There are controls that are aliases for other controls, te make porting existing native apps easier, to replace one name in code with another:</p>
+<ul>
+<li>SkiaFrame is an alias for SKiaShape of Rectangle type, MAUI Frame</li>
+<li>SkiaStack is for SKiaLayout type Column with default horizontal Fill, MAUI VerticalStackLayout</li>
+<li>SkiaRow is for SkiaLayout type Row, MAUI HorizontalStackLayout</li>
+<li>SkiaLayer is for SkiaLayout type Absolute with default horizontal Fill, MAUI Grid with 1 col/row used for layering</li>
+<li>SkiaGrid is for SkiaLayout type Grid with default horizontal Fill, MAUI Grid</li>
+<li>SkiaWrap is for SkiaLayout type Wrap with default horizontal Fill, a bit similar to MAUI FlexLayout</li>
+</ul>
+<h3 id="layout-controls">Layout Controls</h3>
+<ul>
+<li><a href="layouts.html#skialayout">SkiaLayout</a>: Base layout container. supported types: Absolute, Grid, Column, Row, Wrap.</li>
+<li>SkiaScroll: Scrolling container with virtualization support</li>
+<li>SnappingLayout: Base class for snap points</li>
+<li>SkiaDrawer: Swipe-in/out panel, subclassed SnappingLayout,</li>
+<li>SkiaCarousel: Swipeable carousel, subclassed SnappingLayout</li>
+<li><a href="layouts.html#gridlayout">ContentLayout</a>: Optimized for single child, SKiaShape derives from this one</li>
+<li>SkiaShape: Base class for all shapes, can wrap other elements to be clipped inside</li>
+</ul>
+<h3 id="text-controls">Text Controls</h3>
+<ul>
+<li><a href="text.html#skialabel">SkiaLabel</a>: High-performance text rendering, supports spans</li>
+<li><a href="text.html#skiamarkdownlabel">SkiaMarkdownLabel</a>: Markdown-capable text, unicode friendly, autofinds font its text (auto-creates spans). Use for text with complex formatting, smileys, and different languages</li>
+</ul>
+<h3 id="graphics-controls">Graphics Controls</h3>
+<ul>
+<li><a href="images.html#skiaimage">SkiaImage</a>: Image rendering</li>
+<li><a href="images.html#skiasvg">SkiaSvg</a>: SVG rendering</li>
+<li><a href="images.html#skiagif">SkiaGif</a>: Animated GIF support</li>
+<li>SkiaMediaImage: Media image, subclassed SkiaImage</li>
+<li>SkiaLottie: Lottie animation, subclassed SkiaImage</li>
+</ul>
 <h3 id="button-controls">Button Controls</h3>
+<p>It's important to notice that every control can behaive like a button with gestures attached, but here is a pre-made button control, providing different platforms looks via <code>ControlStyle</code> property:</p>
 <ul>
 <li><a href="buttons.html">SkiaButton</a>: Standard button with platform-specific styling</li>
-<li><a href="buttons.html#variants">Custom button variants</a>: Outlined, text-only, and other button styles</li>
 </ul>
 <h3 id="toggle-controls">Toggle Controls</h3>
 <ul>
 <li><a href="switches.html#skiaswitch">SkiaSwitch</a>: Platform-styled toggle switch</li>
 <li><a href="switches.html#skiacheckbox">SkiaCheckbox</a>: Platform-styled checkbox</li>
 <li><a href="switches.html#skiatoggle">SkiaToggle</a>: Base toggle class for custom toggles</li>
+<li>SkiaRadioButton: Radio button, subclassed SkiaToggle</li>
 </ul>
-<h3 id="layout-controls">Layout Controls</h3>
+<h3 id="navigation-control">Navigation control</h3>
 <ul>
-<li><a href="layouts.html#skialayout">SkiaLayout</a>: Base layout container</li>
-<li><a href="layouts.html#gridlayout">GridLayout</a>: Grid-based layout</li>
-<li><a href="layouts.html#stack">HStack/VStack</a>: Horizontal and vertical stack layouts</li>
+<li><a href="shell.html">SkiaShell</a>: Navigation framework, subclassed SkiaLayout</li>
+<li>SkiaViewSwitcher: View switcher, subclassed SkiaLayout</li>
 </ul>
-<h3 id="text-controls">Text Controls</h3>
+<h3 id="helper-controls">Helper controls</h3>
 <ul>
-<li><a href="text.html#skialabel">SkiaLabel</a>: High-performance text rendering</li>
-<li><a href="text.html#skiamarkdownlabel">SkiaMarkdownLabel</a>: Markdown-capable text control</li>
-</ul>
-<h3 id="image-controls">Image Controls</h3>
-<ul>
-<li><a href="images.html#skiaimage">SkiaImage</a>: High-performance image rendering</li>
-<li><a href="images.html#skiasvg">SkiaSvg</a>: SVG rendering</li>
-<li><a href="images.html#skiagif">SkiaGif</a>: Animated GIF support</li>
+<li>SkiaDecoratedGrid: A grid able to draw shapes between cells</li>
 </ul>
 
 </article>

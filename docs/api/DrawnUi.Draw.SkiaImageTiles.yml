@@ -15,7 +15,7 @@ items:
   - DrawnUi.Draw.SkiaImageTiles.OnDisposing
   - DrawnUi.Draw.SkiaImageTiles.OnMeasured
   - DrawnUi.Draw.SkiaImageTiles.OnPropertyChanged(System.String)
-  - DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(System.String)
+  - DrawnUi.Draw.SkiaImageTiles.OnSuccess(System.String)
   - DrawnUi.Draw.SkiaImageTiles.SetupTiles
   - DrawnUi.Draw.SkiaImageTiles.Tile
   - DrawnUi.Draw.SkiaImageTiles.TileAspect
@@ -183,11 +183,11 @@ items:
   - DrawnUi.Draw.SkiaImage.SpriteIndex
   - DrawnUi.Draw.SkiaImage.CanDraw
   - DrawnUi.Draw.SkiaImage.ClearBitmap
-  - DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
+  - DrawnUi.Draw.SkiaImage.OnError(System.String)
   - DrawnUi.Draw.SkiaImage.SubscribeToCanReload
   - DrawnUi.Draw.SkiaImage.HasError
-  - DrawnUi.Draw.SkiaImage.OnError
-  - DrawnUi.Draw.SkiaImage.OnSuccess
+  - DrawnUi.Draw.SkiaImage.Error
+  - DrawnUi.Draw.SkiaImage.Success
   - DrawnUi.Draw.SkiaImage.ImagePaint
   - DrawnUi.Draw.SkiaImage.PaintImageFilter
   - DrawnUi.Draw.SkiaImage.PaintColorFilter
@@ -652,7 +652,6 @@ items:
   - DrawnUi.Draw.SkiaControl.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)
   - DrawnUi.Draw.SkiaControl.ShouldClipAntialiased
   - DrawnUi.Draw.SkiaControl.NeedMeasure
-  - DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
   - DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   - DrawnUi.Draw.SkiaControl.NeedRemeasuring
   - DrawnUi.Draw.SkiaControl.PaintWithShadows(DrawnUi.Draw.DrawingContext,System.Action)
@@ -1449,23 +1448,23 @@ items:
       type: System.Boolean
     content.vb: Protected Property DrawTiles As Boolean
   overload: DrawnUi.Draw.SkiaImageTiles.DrawTiles*
-- uid: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(System.String)
-  commentId: M:DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(System.String)
-  id: OnSourceSuccess(System.String)
+- uid: DrawnUi.Draw.SkiaImageTiles.OnSuccess(System.String)
+  commentId: M:DrawnUi.Draw.SkiaImageTiles.OnSuccess(System.String)
+  id: OnSuccess(System.String)
   parent: DrawnUi.Draw.SkiaImageTiles
   langs:
   - csharp
   - vb
-  name: OnSourceSuccess(string)
-  nameWithType: SkiaImageTiles.OnSourceSuccess(string)
-  fullName: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(string)
+  name: OnSuccess(string)
+  nameWithType: SkiaImageTiles.OnSuccess(string)
+  fullName: DrawnUi.Draw.SkiaImageTiles.OnSuccess(string)
   type: Method
   source:
     remote:
       path: src/Maui/DrawnUi/Draw/Images/SkiaImageTiles.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
-    id: OnSourceSuccess
+    id: OnSuccess
     path: ../src/Maui/DrawnUi/Draw/Images/SkiaImageTiles.cs
     startLine: 118
   assemblies:
@@ -1474,16 +1473,16 @@ items:
   summary: Source was loaded, we can create tile
   example: []
   syntax:
-    content: public override void OnSourceSuccess(string source)
+    content: public override void OnSuccess(string source)
     parameters:
     - id: source
       type: System.String
-    content.vb: Public Overrides Sub OnSourceSuccess(source As String)
-  overridden: DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-  overload: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess*
-  nameWithType.vb: SkiaImageTiles.OnSourceSuccess(String)
-  fullName.vb: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(String)
-  name.vb: OnSourceSuccess(String)
+    content.vb: Public Overrides Sub OnSuccess(source As String)
+  overridden: DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
+  overload: DrawnUi.Draw.SkiaImageTiles.OnSuccess*
+  nameWithType.vb: SkiaImageTiles.OnSuccess(String)
+  fullName.vb: DrawnUi.Draw.SkiaImageTiles.OnSuccess(String)
+  name.vb: OnSuccess(String)
 - uid: DrawnUi.Draw.SkiaImageTiles.CreateTile(System.Double,System.Double,DrawnUi.Draw.LoadedImageSource)
   commentId: M:DrawnUi.Draw.SkiaImageTiles.CreateTile(System.Double,System.Double,DrawnUi.Draw.LoadedImageSource)
   id: CreateTile(System.Double,System.Double,DrawnUi.Draw.LoadedImageSource)
@@ -3210,21 +3209,21 @@ references:
     href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_ClearBitmap
   - name: (
   - name: )
-- uid: DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
-  commentId: M:DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
+- uid: DrawnUi.Draw.SkiaImage.OnError(System.String)
+  commentId: M:DrawnUi.Draw.SkiaImage.OnError(System.String)
   parent: DrawnUi.Draw.SkiaImage
   isExternal: true
-  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceError_System_String_
-  name: OnSourceError(string)
-  nameWithType: SkiaImage.OnSourceError(string)
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceError(string)
-  nameWithType.vb: SkiaImage.OnSourceError(String)
-  fullName.vb: DrawnUi.Draw.SkiaImage.OnSourceError(String)
-  name.vb: OnSourceError(String)
+  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnError_System_String_
+  name: OnError(string)
+  nameWithType: SkiaImage.OnError(string)
+  fullName: DrawnUi.Draw.SkiaImage.OnError(string)
+  nameWithType.vb: SkiaImage.OnError(String)
+  fullName.vb: DrawnUi.Draw.SkiaImage.OnError(String)
+  name.vb: OnError(String)
   spec.csharp:
-  - uid: DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
-    name: OnSourceError
-    href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceError_System_String_
+  - uid: DrawnUi.Draw.SkiaImage.OnError(System.String)
+    name: OnError
+    href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnError_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -3232,9 +3231,9 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
-    name: OnSourceError
-    href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceError_System_String_
+  - uid: DrawnUi.Draw.SkiaImage.OnError(System.String)
+    name: OnError
+    href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnError_System_String_
   - name: (
   - uid: System.String
     name: String
@@ -3267,20 +3266,20 @@ references:
   name: HasError
   nameWithType: SkiaImage.HasError
   fullName: DrawnUi.Draw.SkiaImage.HasError
-- uid: DrawnUi.Draw.SkiaImage.OnError
-  commentId: E:DrawnUi.Draw.SkiaImage.OnError
+- uid: DrawnUi.Draw.SkiaImage.Error
+  commentId: E:DrawnUi.Draw.SkiaImage.Error
   parent: DrawnUi.Draw.SkiaImage
-  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnError
-  name: OnError
-  nameWithType: SkiaImage.OnError
-  fullName: DrawnUi.Draw.SkiaImage.OnError
-- uid: DrawnUi.Draw.SkiaImage.OnSuccess
-  commentId: E:DrawnUi.Draw.SkiaImage.OnSuccess
+  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_Error
+  name: Error
+  nameWithType: SkiaImage.Error
+  fullName: DrawnUi.Draw.SkiaImage.Error
+- uid: DrawnUi.Draw.SkiaImage.Success
+  commentId: E:DrawnUi.Draw.SkiaImage.Success
   parent: DrawnUi.Draw.SkiaImage
-  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSuccess
-  name: OnSuccess
-  nameWithType: SkiaImage.OnSuccess
-  fullName: DrawnUi.Draw.SkiaImage.OnSuccess
+  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_Success
+  name: Success
+  nameWithType: SkiaImage.Success
+  fullName: DrawnUi.Draw.SkiaImage.Success
 - uid: DrawnUi.Draw.SkiaImage.ImagePaint
   commentId: F:DrawnUi.Draw.SkiaImage.ImagePaint
   parent: DrawnUi.Draw.SkiaImage
@@ -13345,34 +13344,6 @@ references:
   name: NeedMeasure
   nameWithType: SkiaControl.NeedMeasure
   fullName: DrawnUi.Draw.SkiaControl.NeedMeasure
-- uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  commentId: M:DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  parent: DrawnUi.Draw.SkiaControl
-  isExternal: true
-  href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  name: SafePostAction(Action)
-  nameWithType: SkiaControl.SafePostAction(Action)
-  fullName: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  spec.csharp:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
-  spec.vb:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
 - uid: DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   commentId: M:DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   parent: DrawnUi.Draw.SkiaControl
@@ -27441,21 +27412,21 @@ references:
   name: DrawTiles
   nameWithType: SkiaImageTiles.DrawTiles
   fullName: DrawnUi.Draw.SkiaImageTiles.DrawTiles
-- uid: DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-  commentId: M:DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
+- uid: DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
+  commentId: M:DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
   parent: DrawnUi.Draw.SkiaImage
   isExternal: true
-  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceSuccess_System_String_
-  name: OnSourceSuccess(string)
-  nameWithType: SkiaImage.OnSourceSuccess(string)
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceSuccess(string)
-  nameWithType.vb: SkiaImage.OnSourceSuccess(String)
-  fullName.vb: DrawnUi.Draw.SkiaImage.OnSourceSuccess(String)
-  name.vb: OnSourceSuccess(String)
+  href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSuccess_System_String_
+  name: OnSuccess(string)
+  nameWithType: SkiaImage.OnSuccess(string)
+  fullName: DrawnUi.Draw.SkiaImage.OnSuccess(string)
+  nameWithType.vb: SkiaImage.OnSuccess(String)
+  fullName.vb: DrawnUi.Draw.SkiaImage.OnSuccess(String)
+  name.vb: OnSuccess(String)
   spec.csharp:
-  - uid: DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-    name: OnSourceSuccess
-    href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceSuccess_System_String_
+  - uid: DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
+    name: OnSuccess
+    href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSuccess_System_String_
   - name: (
   - uid: System.String
     name: string
@@ -27463,21 +27434,21 @@ references:
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
   spec.vb:
-  - uid: DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-    name: OnSourceSuccess
-    href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceSuccess_System_String_
+  - uid: DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
+    name: OnSuccess
+    href: DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSuccess_System_String_
   - name: (
   - uid: System.String
     name: String
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/system.string
   - name: )
-- uid: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess*
-  commentId: Overload:DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess
-  href: DrawnUi.Draw.SkiaImageTiles.html#DrawnUi_Draw_SkiaImageTiles_OnSourceSuccess_System_String_
-  name: OnSourceSuccess
-  nameWithType: SkiaImageTiles.OnSourceSuccess
-  fullName: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess
+- uid: DrawnUi.Draw.SkiaImageTiles.OnSuccess*
+  commentId: Overload:DrawnUi.Draw.SkiaImageTiles.OnSuccess
+  href: DrawnUi.Draw.SkiaImageTiles.html#DrawnUi_Draw_SkiaImageTiles_OnSuccess_System_String_
+  name: OnSuccess
+  nameWithType: SkiaImageTiles.OnSuccess
+  fullName: DrawnUi.Draw.SkiaImageTiles.OnSuccess
 - uid: System.String
   commentId: T:System.String
   parent: System

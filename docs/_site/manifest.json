@@ -1660,17 +1660,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/DrawnUi.Draw.HStack.yml",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaRow.yml",
       "output": {
         ".html": {
-          "relative_path": "api/DrawnUi.Draw.HStack.html"
+          "relative_path": "api/DrawnUi.Draw.SkiaRow.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "DrawnUi.Draw.HStack",
-      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.HStack.yml\" sourcestartlinenumber=\"1\">Horizontal stack,  like MAUI HorizontalStackLayout</p>\n"
+      "Title": "DrawnUi.Draw.SkiaRow",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaRow.yml\" sourcestartlinenumber=\"1\">Horizontal stack,  like MAUI HorizontalStackLayout</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3438,6 +3438,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaFrame.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SkiaFrame.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SkiaFrame",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaFrame.yml\" sourcestartlinenumber=\"1\">Alias for SkiaShape type Rectangle</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/DrawnUi.Draw.SkiaGesturesParameters.yml",
       "output": {
         ".html": {
@@ -3830,6 +3844,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaRow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SkiaRow.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SkiaRow",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaRow.yml\" sourcestartlinenumber=\"1\">Horizontal stack,  like MAUI HorizontalStackLayout</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/DrawnUi.Draw.SkiaScroll.yml",
       "output": {
         ".html": {
@@ -3952,7 +3980,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "DrawnUi.Draw.SkiaStack",
-      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaStack.yml\" sourcestartlinenumber=\"1\">A powerful flexible control, a bit like WPF StackPanel, arranges children in a responsive way according available size. Can change the number of Columns to use by default.</p>\n"
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaStack.yml\" sourcestartlinenumber=\"1\">Vertical stack, like MAUI VerticalStackLayout</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4037,6 +4065,20 @@
       "IsMRef": true,
       "Title": "DrawnUi.Draw.SkiaVectorAnimator",
       "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaWrap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SkiaWrap.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SkiaWrap",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaWrap.yml\" sourcestartlinenumber=\"1\">A powerful flexible control, a bit like WPF StackPanel, arranges children in a responsive way according available size. Can change the number of Columns to use by default.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4488,17 +4530,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/DrawnUi.Draw.VStack.yml",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaStack.yml",
       "output": {
         ".html": {
-          "relative_path": "api/DrawnUi.Draw.VStack.html"
+          "relative_path": "api/DrawnUi.Draw.SkiaStack.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "DrawnUi.Draw.VStack",
-      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.VStack.yml\" sourcestartlinenumber=\"1\">Vertical stack, like MAUI VerticalStackLayout</p>\n"
+      "Title": "DrawnUi.Draw.SkiaStack",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaStack.yml\" sourcestartlinenumber=\"1\">Vertical stack, like MAUI VerticalStackLayout</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -6017,6 +6059,16 @@
       "output": {
         ".html": {
           "relative_path": "articles/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/porting-maui.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/porting-maui.html"
         }
       },
       "version": ""

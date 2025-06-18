@@ -40,7 +40,7 @@
                             Padding="6"
                             BackgroundColor="Black"
                             HorizontalOptions="Fill"
-                            Tag="VStack"
+                            Tag="SkiaStack"
                             Type="Column">
 
                             <draw:SkiaMarkdownLabel

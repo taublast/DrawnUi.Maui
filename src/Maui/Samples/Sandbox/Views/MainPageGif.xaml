@@ -31,7 +31,7 @@
                     BackgroundColor="DarkSlateGrey"
                     HorizontalOptions="Fill"
                     Spacing="20"
-                    Tag="VStack"
+                    Tag="SkiaStack"
                     Type="Column"
                     UseCache="None">
 

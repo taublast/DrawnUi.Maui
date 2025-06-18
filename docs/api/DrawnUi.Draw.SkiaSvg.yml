@@ -12,12 +12,6 @@ items:
   - DrawnUi.Draw.SkiaSvg.Clear
   - DrawnUi.Draw.SkiaSvg.CreateSvg(System.String)
   - DrawnUi.Draw.SkiaSvg.DrawPicture(SkiaSharp.SKCanvas,SkiaSharp.SKPicture,SkiaSharp.SKRect,DrawnUi.Draw.TransformAspect,DrawnUi.Draw.DrawImageAlignment,DrawnUi.Draw.DrawImageAlignment,SkiaSharp.SKPaint)
-  - DrawnUi.Draw.SkiaSvg.EndColor
-  - DrawnUi.Draw.SkiaSvg.EndColorProperty
-  - DrawnUi.Draw.SkiaSvg.EndXRatio
-  - DrawnUi.Draw.SkiaSvg.EndXRatioProperty
-  - DrawnUi.Draw.SkiaSvg.EndYRatio
-  - DrawnUi.Draw.SkiaSvg.EndYRatioProperty
   - DrawnUi.Draw.SkiaSvg.FontAwesomePrimaryColor
   - DrawnUi.Draw.SkiaSvg.FontAwesomePrimaryColorProperty
   - DrawnUi.Draw.SkiaSvg.FontAwesomeSecondaryColor
@@ -51,12 +45,6 @@ items:
   - DrawnUi.Draw.SkiaSvg.ShadowYProperty
   - DrawnUi.Draw.SkiaSvg.Source
   - DrawnUi.Draw.SkiaSvg.SourceProperty
-  - DrawnUi.Draw.SkiaSvg.StartColor
-  - DrawnUi.Draw.SkiaSvg.StartColorProperty
-  - DrawnUi.Draw.SkiaSvg.StartXRatio
-  - DrawnUi.Draw.SkiaSvg.StartXRatioProperty
-  - DrawnUi.Draw.SkiaSvg.StartYRatio
-  - DrawnUi.Draw.SkiaSvg.StartYRatioProperty
   - DrawnUi.Draw.SkiaSvg.Svg
   - DrawnUi.Draw.SkiaSvg.SvgHorizontalOptions
   - DrawnUi.Draw.SkiaSvg.SvgHorizontalOptionsProperty
@@ -69,8 +57,6 @@ items:
   - DrawnUi.Draw.SkiaSvg.UpdateIcon
   - DrawnUi.Draw.SkiaSvg.UpdateImageFromFile
   - DrawnUi.Draw.SkiaSvg.UpdateImageFromString(System.String)
-  - DrawnUi.Draw.SkiaSvg.UseGradient
-  - DrawnUi.Draw.SkiaSvg.UseGradientProperty
   - DrawnUi.Draw.SkiaSvg.VerticalAlignment
   - DrawnUi.Draw.SkiaSvg.VerticalAlignmentProperty
   - DrawnUi.Draw.SkiaSvg.VerticalOffset
@@ -95,7 +81,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SkiaSvg
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 8
+    startLine: 10
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -591,7 +577,6 @@ items:
   - DrawnUi.Draw.SkiaControl.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)
   - DrawnUi.Draw.SkiaControl.ShouldClipAntialiased
   - DrawnUi.Draw.SkiaControl.NeedMeasure
-  - DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
   - DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   - DrawnUi.Draw.SkiaControl.NeedRemeasuring
   - DrawnUi.Draw.SkiaControl.PaintWithShadows(DrawnUi.Draw.DrawingContext,System.Action)
@@ -980,7 +965,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TintColor
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 16
+    startLine: 18
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1009,7 +994,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShadowColorProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 28
+    startLine: 31
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1036,7 +1021,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShadowColor
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 31
+    startLine: 36
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1065,7 +1050,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShadowXProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 41
+    startLine: 47
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1092,7 +1077,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShadowX
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 44
+    startLine: 52
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1121,7 +1106,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShadowYProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 54
+    startLine: 63
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1148,7 +1133,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShadowY
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 57
+    startLine: 68
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1177,7 +1162,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShadowBlurProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 67
+    startLine: 79
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1204,7 +1189,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ShadowBlur
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 70
+    startLine: 84
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1233,7 +1218,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 90
+    startLine: 103
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1262,7 +1247,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: NeedUpdateIcon
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 105
+    startLine: 117
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1298,7 +1283,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AspectProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 119
+    startLine: 130
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1325,7 +1310,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Aspect
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 126
+    startLine: 137
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1336,62 +1321,6 @@ items:
       type: DrawnUi.Draw.TransformAspect
     content.vb: Public Property Aspect As TransformAspect
   overload: DrawnUi.Draw.SkiaSvg.Aspect*
-- uid: DrawnUi.Draw.SkiaSvg.UseGradientProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.UseGradientProperty
-  id: UseGradientProperty
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: UseGradientProperty
-  nameWithType: SkiaSvg.UseGradientProperty
-  fullName: DrawnUi.Draw.SkiaSvg.UseGradientProperty
-  type: Field
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: UseGradientProperty
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 132
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public static readonly BindableProperty UseGradientProperty
-    return:
-      type: Microsoft.Maui.Controls.BindableProperty
-    content.vb: Public Shared ReadOnly UseGradientProperty As BindableProperty
-- uid: DrawnUi.Draw.SkiaSvg.UseGradient
-  commentId: P:DrawnUi.Draw.SkiaSvg.UseGradient
-  id: UseGradient
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: UseGradient
-  nameWithType: SkiaSvg.UseGradient
-  fullName: DrawnUi.Draw.SkiaSvg.UseGradient
-  type: Property
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: UseGradient
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 139
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public bool UseGradient { get; set; }
-    parameters: []
-    return:
-      type: System.Boolean
-    content.vb: Public Property UseGradient As Boolean
-  overload: DrawnUi.Draw.SkiaSvg.UseGradient*
 - uid: DrawnUi.Draw.SkiaSvg.FontAwesomePrimaryColorProperty
   commentId: F:DrawnUi.Draw.SkiaSvg.FontAwesomePrimaryColorProperty
   id: FontAwesomePrimaryColorProperty
@@ -1410,7 +1339,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FontAwesomePrimaryColorProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 146
+    startLine: 143
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1437,7 +1366,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FontAwesomePrimaryColor
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 152
+    startLine: 149
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1466,7 +1395,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FontAwesomeSecondaryColorProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 158
+    startLine: 155
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1493,7 +1422,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FontAwesomeSecondaryColor
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 164
+    startLine: 161
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1504,118 +1433,6 @@ items:
       type: Microsoft.Maui.Graphics.Color
     content.vb: Public Property FontAwesomeSecondaryColor As Color
   overload: DrawnUi.Draw.SkiaSvg.FontAwesomeSecondaryColor*
-- uid: DrawnUi.Draw.SkiaSvg.StartColorProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.StartColorProperty
-  id: StartColorProperty
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: StartColorProperty
-  nameWithType: SkiaSvg.StartColorProperty
-  fullName: DrawnUi.Draw.SkiaSvg.StartColorProperty
-  type: Field
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: StartColorProperty
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 171
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public static readonly BindableProperty StartColorProperty
-    return:
-      type: Microsoft.Maui.Controls.BindableProperty
-    content.vb: Public Shared ReadOnly StartColorProperty As BindableProperty
-- uid: DrawnUi.Draw.SkiaSvg.StartColor
-  commentId: P:DrawnUi.Draw.SkiaSvg.StartColor
-  id: StartColor
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: StartColor
-  nameWithType: SkiaSvg.StartColor
-  fullName: DrawnUi.Draw.SkiaSvg.StartColor
-  type: Property
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: StartColor
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 178
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public Color StartColor { get; set; }
-    parameters: []
-    return:
-      type: Microsoft.Maui.Graphics.Color
-    content.vb: Public Property StartColor As Color
-  overload: DrawnUi.Draw.SkiaSvg.StartColor*
-- uid: DrawnUi.Draw.SkiaSvg.EndColorProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.EndColorProperty
-  id: EndColorProperty
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: EndColorProperty
-  nameWithType: SkiaSvg.EndColorProperty
-  fullName: DrawnUi.Draw.SkiaSvg.EndColorProperty
-  type: Field
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: EndColorProperty
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 184
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public static readonly BindableProperty EndColorProperty
-    return:
-      type: Microsoft.Maui.Controls.BindableProperty
-    content.vb: Public Shared ReadOnly EndColorProperty As BindableProperty
-- uid: DrawnUi.Draw.SkiaSvg.EndColor
-  commentId: P:DrawnUi.Draw.SkiaSvg.EndColor
-  id: EndColor
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: EndColor
-  nameWithType: SkiaSvg.EndColor
-  fullName: DrawnUi.Draw.SkiaSvg.EndColor
-  type: Property
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: EndColor
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 191
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public Color EndColor { get; set; }
-    parameters: []
-    return:
-      type: Microsoft.Maui.Graphics.Color
-    content.vb: Public Property EndColor As Color
-  overload: DrawnUi.Draw.SkiaSvg.EndColor*
 - uid: DrawnUi.Draw.SkiaSvg.GradientBlendModeProperty
   commentId: F:DrawnUi.Draw.SkiaSvg.GradientBlendModeProperty
   id: GradientBlendModeProperty
@@ -1634,7 +1451,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GradientBlendModeProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 197
+    startLine: 168
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1661,10 +1478,12 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GradientBlendMode
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 204
+    startLine: 178
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
+  summary: When FIllGradient is set this will override its blend mode for drawing SVG with gradient
+  example: []
   syntax:
     content: public SKBlendMode GradientBlendMode { get; set; }
     parameters: []
@@ -1672,230 +1491,6 @@ items:
       type: SkiaSharp.SKBlendMode
     content.vb: Public Property GradientBlendMode As SKBlendMode
   overload: DrawnUi.Draw.SkiaSvg.GradientBlendMode*
-- uid: DrawnUi.Draw.SkiaSvg.StartXRatioProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.StartXRatioProperty
-  id: StartXRatioProperty
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: StartXRatioProperty
-  nameWithType: SkiaSvg.StartXRatioProperty
-  fullName: DrawnUi.Draw.SkiaSvg.StartXRatioProperty
-  type: Field
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: StartXRatioProperty
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 210
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public static readonly BindableProperty StartXRatioProperty
-    return:
-      type: Microsoft.Maui.Controls.BindableProperty
-    content.vb: Public Shared ReadOnly StartXRatioProperty As BindableProperty
-- uid: DrawnUi.Draw.SkiaSvg.StartXRatio
-  commentId: P:DrawnUi.Draw.SkiaSvg.StartXRatio
-  id: StartXRatio
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: StartXRatio
-  nameWithType: SkiaSvg.StartXRatio
-  fullName: DrawnUi.Draw.SkiaSvg.StartXRatio
-  type: Property
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: StartXRatio
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 217
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public float StartXRatio { get; set; }
-    parameters: []
-    return:
-      type: System.Single
-    content.vb: Public Property StartXRatio As Single
-  overload: DrawnUi.Draw.SkiaSvg.StartXRatio*
-- uid: DrawnUi.Draw.SkiaSvg.StartYRatioProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.StartYRatioProperty
-  id: StartYRatioProperty
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: StartYRatioProperty
-  nameWithType: SkiaSvg.StartYRatioProperty
-  fullName: DrawnUi.Draw.SkiaSvg.StartYRatioProperty
-  type: Field
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: StartYRatioProperty
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 223
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public static readonly BindableProperty StartYRatioProperty
-    return:
-      type: Microsoft.Maui.Controls.BindableProperty
-    content.vb: Public Shared ReadOnly StartYRatioProperty As BindableProperty
-- uid: DrawnUi.Draw.SkiaSvg.StartYRatio
-  commentId: P:DrawnUi.Draw.SkiaSvg.StartYRatio
-  id: StartYRatio
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: StartYRatio
-  nameWithType: SkiaSvg.StartYRatio
-  fullName: DrawnUi.Draw.SkiaSvg.StartYRatio
-  type: Property
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: StartYRatio
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 230
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public float StartYRatio { get; set; }
-    parameters: []
-    return:
-      type: System.Single
-    content.vb: Public Property StartYRatio As Single
-  overload: DrawnUi.Draw.SkiaSvg.StartYRatio*
-- uid: DrawnUi.Draw.SkiaSvg.EndXRatioProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.EndXRatioProperty
-  id: EndXRatioProperty
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: EndXRatioProperty
-  nameWithType: SkiaSvg.EndXRatioProperty
-  fullName: DrawnUi.Draw.SkiaSvg.EndXRatioProperty
-  type: Field
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: EndXRatioProperty
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 236
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public static readonly BindableProperty EndXRatioProperty
-    return:
-      type: Microsoft.Maui.Controls.BindableProperty
-    content.vb: Public Shared ReadOnly EndXRatioProperty As BindableProperty
-- uid: DrawnUi.Draw.SkiaSvg.EndXRatio
-  commentId: P:DrawnUi.Draw.SkiaSvg.EndXRatio
-  id: EndXRatio
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: EndXRatio
-  nameWithType: SkiaSvg.EndXRatio
-  fullName: DrawnUi.Draw.SkiaSvg.EndXRatio
-  type: Property
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: EndXRatio
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 243
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public float EndXRatio { get; set; }
-    parameters: []
-    return:
-      type: System.Single
-    content.vb: Public Property EndXRatio As Single
-  overload: DrawnUi.Draw.SkiaSvg.EndXRatio*
-- uid: DrawnUi.Draw.SkiaSvg.EndYRatioProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.EndYRatioProperty
-  id: EndYRatioProperty
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: EndYRatioProperty
-  nameWithType: SkiaSvg.EndYRatioProperty
-  fullName: DrawnUi.Draw.SkiaSvg.EndYRatioProperty
-  type: Field
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: EndYRatioProperty
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 249
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public static readonly BindableProperty EndYRatioProperty
-    return:
-      type: Microsoft.Maui.Controls.BindableProperty
-    content.vb: Public Shared ReadOnly EndYRatioProperty As BindableProperty
-- uid: DrawnUi.Draw.SkiaSvg.EndYRatio
-  commentId: P:DrawnUi.Draw.SkiaSvg.EndYRatio
-  id: EndYRatio
-  parent: DrawnUi.Draw.SkiaSvg
-  langs:
-  - csharp
-  - vb
-  name: EndYRatio
-  nameWithType: SkiaSvg.EndYRatio
-  fullName: DrawnUi.Draw.SkiaSvg.EndYRatio
-  type: Property
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: EndYRatio
-    path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 256
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Draw
-  syntax:
-    content: public float EndYRatio { get; set; }
-    parameters: []
-    return:
-      type: System.Single
-    content.vb: Public Property EndYRatio As Single
-  overload: DrawnUi.Draw.SkiaSvg.EndYRatio*
 - uid: DrawnUi.Draw.SkiaSvg.SvgHorizontalOptionsProperty
   commentId: F:DrawnUi.Draw.SkiaSvg.SvgHorizontalOptionsProperty
   id: SvgHorizontalOptionsProperty
@@ -1914,7 +1509,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SvgHorizontalOptionsProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 263
+    startLine: 184
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1941,7 +1536,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SvgHorizontalOptions
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 269
+    startLine: 190
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1970,7 +1565,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SvgVerticalOptionsProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 275
+    startLine: 196
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1997,7 +1592,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SvgVerticalOptions
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 281
+    startLine: 202
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2026,7 +1621,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SvgStringProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 287
+    startLine: 208
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2053,7 +1648,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SvgString
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 295
+    startLine: 216
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2082,7 +1677,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomXProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 316
+    startLine: 237
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2109,7 +1704,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomX
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 323
+    startLine: 244
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2138,7 +1733,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomYProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 329
+    startLine: 250
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2165,7 +1760,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomY
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 336
+    startLine: 257
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2194,7 +1789,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InflateAmountProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 342
+    startLine: 263
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2221,7 +1816,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InflateAmount
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 349
+    startLine: 270
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2250,7 +1845,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VerticalAlignmentProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 355
+    startLine: 276
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2277,7 +1872,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VerticalAlignment
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 362
+    startLine: 283
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2306,7 +1901,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HorizontalAlignmentProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 368
+    startLine: 289
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2333,7 +1928,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HorizontalAlignment
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 375
+    startLine: 296
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2362,7 +1957,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HorizontalOffsetProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 381
+    startLine: 302
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2389,7 +1984,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HorizontalOffset
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 388
+    startLine: 309
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2418,7 +2013,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VerticalOffsetProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 394
+    startLine: 315
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2445,7 +2040,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: VerticalOffset
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 401
+    startLine: 322
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2474,7 +2069,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HasContentProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 408
+    startLine: 330
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2501,7 +2096,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HasContent
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 415
+    startLine: 337
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2530,7 +2125,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: IconFilePathProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 422
+    startLine: 344
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2557,7 +2152,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: IconFilePath
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 430
+    startLine: 352
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2586,7 +2181,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadedString
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 459
+    startLine: 379
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2615,7 +2210,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: RenderingPaint
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 476
+    startLine: 393
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2644,7 +2239,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnDisposing
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 478
+    startLine: 395
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2673,7 +2268,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Svg
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 491
+    startLine: 408
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2702,7 +2297,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Clear
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 495
+    startLine: 412
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2728,7 +2323,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: UpdateIcon
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 504
+    startLine: 421
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2754,7 +2349,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnPropertyChanged
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 533
+    startLine: 450
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2790,7 +2385,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: UpdateImageFromString
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 554
+    startLine: 470
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2822,7 +2417,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SourceProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 595
+    startLine: 506
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2849,7 +2444,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Source
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 601
+    startLine: 512
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2878,7 +2473,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadSource
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 615
+    startLine: 526
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2916,7 +2511,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: UpdateImageFromFile
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 653
+    startLine: 564
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2942,7 +2537,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CalculateDisplayRect
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 823
+    startLine: 731
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2984,7 +2579,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DrawPicture
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 863
+    startLine: 771
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3025,7 +2620,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ZoomProperty
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 944
+    startLine: 847
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3052,7 +2647,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Zoom
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 946
+    startLine: 851
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3081,7 +2676,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CreateSvg
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 952
+    startLine: 857
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -3115,7 +2710,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Paint
     path: ../src/Maui/DrawnUi/Draw/Svg/SkiaSvg.cs
-    startLine: 1084
+    startLine: 985
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -13240,34 +12835,6 @@ references:
   name: NeedMeasure
   nameWithType: SkiaControl.NeedMeasure
   fullName: DrawnUi.Draw.SkiaControl.NeedMeasure
-- uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  commentId: M:DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  parent: DrawnUi.Draw.SkiaControl
-  isExternal: true
-  href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  name: SafePostAction(Action)
-  nameWithType: SkiaControl.SafePostAction(Action)
-  fullName: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  spec.csharp:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
-  spec.vb:
-  - uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-    name: SafePostAction
-    href: DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  - name: (
-  - uid: System.Action
-    name: Action
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/system.action
-  - name: )
 - uid: DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   commentId: M:DrawnUi.Draw.SkiaControl.SafeAction(System.Action)
   parent: DrawnUi.Draw.SkiaControl
@@ -27275,23 +26842,6 @@ references:
   name: TransformAspect
   nameWithType: TransformAspect
   fullName: DrawnUi.Draw.TransformAspect
-- uid: DrawnUi.Draw.SkiaSvg.UseGradient*
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.UseGradient
-  href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_UseGradient
-  name: UseGradient
-  nameWithType: SkiaSvg.UseGradient
-  fullName: DrawnUi.Draw.SkiaSvg.UseGradient
-- uid: System.Boolean
-  commentId: T:System.Boolean
-  parent: System
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.boolean
-  name: bool
-  nameWithType: bool
-  fullName: bool
-  nameWithType.vb: Boolean
-  fullName.vb: Boolean
-  name.vb: Boolean
 - uid: DrawnUi.Draw.SkiaSvg.FontAwesomePrimaryColor*
   commentId: Overload:DrawnUi.Draw.SkiaSvg.FontAwesomePrimaryColor
   href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_FontAwesomePrimaryColor
@@ -27304,18 +26854,6 @@ references:
   name: FontAwesomeSecondaryColor
   nameWithType: SkiaSvg.FontAwesomeSecondaryColor
   fullName: DrawnUi.Draw.SkiaSvg.FontAwesomeSecondaryColor
-- uid: DrawnUi.Draw.SkiaSvg.StartColor*
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.StartColor
-  href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartColor
-  name: StartColor
-  nameWithType: SkiaSvg.StartColor
-  fullName: DrawnUi.Draw.SkiaSvg.StartColor
-- uid: DrawnUi.Draw.SkiaSvg.EndColor*
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.EndColor
-  href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndColor
-  name: EndColor
-  nameWithType: SkiaSvg.EndColor
-  fullName: DrawnUi.Draw.SkiaSvg.EndColor
 - uid: DrawnUi.Draw.SkiaSvg.GradientBlendMode*
   commentId: Overload:DrawnUi.Draw.SkiaSvg.GradientBlendMode
   href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_GradientBlendMode
@@ -27337,41 +26875,6 @@ references:
   name: SkiaSharp
   nameWithType: SkiaSharp
   fullName: SkiaSharp
-- uid: DrawnUi.Draw.SkiaSvg.StartXRatio*
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.StartXRatio
-  href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartXRatio
-  name: StartXRatio
-  nameWithType: SkiaSvg.StartXRatio
-  fullName: DrawnUi.Draw.SkiaSvg.StartXRatio
-- uid: System.Single
-  commentId: T:System.Single
-  parent: System
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/system.single
-  name: float
-  nameWithType: float
-  fullName: float
-  nameWithType.vb: Single
-  fullName.vb: Single
-  name.vb: Single
-- uid: DrawnUi.Draw.SkiaSvg.StartYRatio*
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.StartYRatio
-  href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartYRatio
-  name: StartYRatio
-  nameWithType: SkiaSvg.StartYRatio
-  fullName: DrawnUi.Draw.SkiaSvg.StartYRatio
-- uid: DrawnUi.Draw.SkiaSvg.EndXRatio*
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.EndXRatio
-  href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndXRatio
-  name: EndXRatio
-  nameWithType: SkiaSvg.EndXRatio
-  fullName: DrawnUi.Draw.SkiaSvg.EndXRatio
-- uid: DrawnUi.Draw.SkiaSvg.EndYRatio*
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.EndYRatio
-  href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndYRatio
-  name: EndYRatio
-  nameWithType: SkiaSvg.EndYRatio
-  fullName: DrawnUi.Draw.SkiaSvg.EndYRatio
 - uid: DrawnUi.Draw.SkiaSvg.SvgHorizontalOptions*
   commentId: Overload:DrawnUi.Draw.SkiaSvg.SvgHorizontalOptions
   href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_SvgHorizontalOptions
@@ -27464,6 +26967,17 @@ references:
   name: HasContent
   nameWithType: SkiaSvg.HasContent
   fullName: DrawnUi.Draw.SkiaSvg.HasContent
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
 - uid: DrawnUi.Draw.SkiaSvg.IconFilePath*
   commentId: Overload:DrawnUi.Draw.SkiaSvg.IconFilePath
   href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_IconFilePath
@@ -27682,6 +27196,17 @@ references:
   name: SKRect
   nameWithType: SKRect
   fullName: SkiaSharp.SKRect
+- uid: System.Single
+  commentId: T:System.Single
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.single
+  name: float
+  nameWithType: float
+  fullName: float
+  nameWithType.vb: Single
+  fullName.vb: Single
+  name.vb: Single
 - uid: DrawnUi.Draw.SkiaSvg.DrawPicture*
   commentId: Overload:DrawnUi.Draw.SkiaSvg.DrawPicture
   href: DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_DrawPicture_SkiaSharp_SKCanvas_SkiaSharp_SKPicture_SkiaSharp_SKRect_DrawnUi_Draw_TransformAspect_DrawnUi_Draw_DrawImageAlignment_DrawnUi_Draw_DrawImageAlignment_SkiaSharp_SKPaint_

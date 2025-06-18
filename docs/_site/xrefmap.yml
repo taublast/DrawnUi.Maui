@@ -17860,31 +17860,31 @@ references:
   commentId: F:DrawnUi.Draw.GradientType.Sweep
   fullName: DrawnUi.Draw.GradientType.Sweep
   nameWithType: GradientType.Sweep
-- uid: DrawnUi.Draw.HStack
-  name: HStack
-  href: api/DrawnUi.Draw.HStack.html
-  commentId: T:DrawnUi.Draw.HStack
-  fullName: DrawnUi.Draw.HStack
-  nameWithType: HStack
-- uid: DrawnUi.Draw.HStack.#ctor
-  name: HStack()
-  href: api/DrawnUi.Draw.HStack.html#DrawnUi_Draw_HStack__ctor
-  commentId: M:DrawnUi.Draw.HStack.#ctor
+- uid: DrawnUi.Draw.SkiaRow
+  name: SkiaRow
+  href: api/DrawnUi.Draw.SkiaRow.html
+  commentId: T:DrawnUi.Draw.SkiaRow
+  fullName: DrawnUi.Draw.SkiaRow
+  nameWithType: SkiaRow
+- uid: DrawnUi.Draw.SkiaRow.#ctor
+  name: SkiaRow()
+  href: api/DrawnUi.Draw.SkiaRow.html#DrawnUi_Draw_HStack__ctor
+  commentId: M:DrawnUi.Draw.SkiaRow.#ctor
   name.vb: New()
-  fullName: DrawnUi.Draw.HStack.HStack()
-  fullName.vb: DrawnUi.Draw.HStack.New()
-  nameWithType: HStack.HStack()
-  nameWithType.vb: HStack.New()
-- uid: DrawnUi.Draw.HStack.#ctor*
-  name: HStack
-  href: api/DrawnUi.Draw.HStack.html#DrawnUi_Draw_HStack__ctor_
-  commentId: Overload:DrawnUi.Draw.HStack.#ctor
+  fullName: DrawnUi.Draw.SkiaRow.SkiaRow()
+  fullName.vb: DrawnUi.Draw.SkiaRow.New()
+  nameWithType: SkiaRow.SkiaRow()
+  nameWithType.vb: SkiaRow.New()
+- uid: DrawnUi.Draw.SkiaRow.#ctor*
+  name: SkiaRow
+  href: api/DrawnUi.Draw.SkiaRow.html#DrawnUi_Draw_HStack__ctor_
+  commentId: Overload:DrawnUi.Draw.SkiaRow.#ctor
   isSpec: "True"
   name.vb: New
-  fullName: DrawnUi.Draw.HStack.HStack
-  fullName.vb: DrawnUi.Draw.HStack.New
-  nameWithType: HStack.HStack
-  nameWithType.vb: HStack.New
+  fullName: DrawnUi.Draw.SkiaRow.SkiaRow
+  fullName.vb: DrawnUi.Draw.SkiaRow.New
+  nameWithType: SkiaRow.SkiaRow
+  nameWithType.vb: SkiaRow.New
 - uid: DrawnUi.Draw.IAfterEffectDelete
   name: IAfterEffectDelete
   href: api/DrawnUi.Draw.IAfterEffectDelete.html
@@ -24038,12 +24038,6 @@ references:
   commentId: F:DrawnUi.Draw.RescalingType.EdgePreserving
   fullName: DrawnUi.Draw.RescalingType.EdgePreserving
   nameWithType: RescalingType.EdgePreserving
-- uid: DrawnUi.Draw.RescalingType.GammaCorrection
-  name: GammaCorrection
-  href: api/DrawnUi.Draw.RescalingType.html#DrawnUi_Draw_RescalingType_GammaCorrection
-  commentId: F:DrawnUi.Draw.RescalingType.GammaCorrection
-  fullName: DrawnUi.Draw.RescalingType.GammaCorrection
-  nameWithType: RescalingType.GammaCorrection
 - uid: DrawnUi.Draw.RescalingType.MultiPass
   name: MultiPass
   href: api/DrawnUi.Draw.RescalingType.html#DrawnUi_Draw_RescalingType_MultiPass
@@ -33422,19 +33416,6 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaControl.SafeAction
   nameWithType: SkiaControl.SafeAction
-- uid: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  name: SafePostAction(Action)
-  href: api/DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_System_Action_
-  commentId: M:DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  fullName: DrawnUi.Draw.SkiaControl.SafePostAction(System.Action)
-  nameWithType: SkiaControl.SafePostAction(Action)
-- uid: DrawnUi.Draw.SkiaControl.SafePostAction*
-  name: SafePostAction
-  href: api/DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SafePostAction_
-  commentId: Overload:DrawnUi.Draw.SkiaControl.SafePostAction
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaControl.SafePostAction
-  nameWithType: SkiaControl.SafePostAction
 - uid: DrawnUi.Draw.SkiaControl.Scale
   name: Scale
   href: api/DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Scale
@@ -36458,6 +36439,31 @@ references:
   commentId: F:DrawnUi.Draw.SkiaFontManager.ThrowIfFailedToCreateFont
   fullName: DrawnUi.Draw.SkiaFontManager.ThrowIfFailedToCreateFont
   nameWithType: SkiaFontManager.ThrowIfFailedToCreateFont
+- uid: DrawnUi.Draw.SkiaFrame
+  name: SkiaFrame
+  href: api/DrawnUi.Draw.SkiaFrame.html
+  commentId: T:DrawnUi.Draw.SkiaFrame
+  fullName: DrawnUi.Draw.SkiaFrame
+  nameWithType: SkiaFrame
+- uid: DrawnUi.Draw.SkiaFrame.#ctor
+  name: SkiaFrame()
+  href: api/DrawnUi.Draw.SkiaFrame.html#DrawnUi_Draw_SkiaFrame__ctor
+  commentId: M:DrawnUi.Draw.SkiaFrame.#ctor
+  name.vb: New()
+  fullName: DrawnUi.Draw.SkiaFrame.SkiaFrame()
+  fullName.vb: DrawnUi.Draw.SkiaFrame.New()
+  nameWithType: SkiaFrame.SkiaFrame()
+  nameWithType.vb: SkiaFrame.New()
+- uid: DrawnUi.Draw.SkiaFrame.#ctor*
+  name: SkiaFrame
+  href: api/DrawnUi.Draw.SkiaFrame.html#DrawnUi_Draw_SkiaFrame__ctor_
+  commentId: Overload:DrawnUi.Draw.SkiaFrame.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: DrawnUi.Draw.SkiaFrame.SkiaFrame
+  fullName.vb: DrawnUi.Draw.SkiaFrame.New
+  nameWithType: SkiaFrame.SkiaFrame
+  nameWithType.vb: SkiaFrame.New
 - uid: DrawnUi.Draw.SkiaGesturesParameters
   name: SkiaGesturesParameters
   href: api/DrawnUi.Draw.SkiaGesturesParameters.html
@@ -37696,6 +37702,12 @@ references:
   commentId: F:DrawnUi.Draw.SkiaImage.EraseChangedContentProperty
   fullName: DrawnUi.Draw.SkiaImage.EraseChangedContentProperty
   nameWithType: SkiaImage.EraseChangedContentProperty
+- uid: DrawnUi.Draw.SkiaImage.Error
+  name: Error
+  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_Error
+  commentId: E:DrawnUi.Draw.SkiaImage.Error
+  fullName: DrawnUi.Draw.SkiaImage.Error
+  nameWithType: SkiaImage.Error
 - uid: DrawnUi.Draw.SkiaImage.Gamma
   name: Gamma
   href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_Gamma
@@ -38071,10 +38083,20 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaImage.OnDisposing
   nameWithType: SkiaImage.OnDisposing
-- uid: DrawnUi.Draw.SkiaImage.OnError
+- uid: DrawnUi.Draw.SkiaImage.OnError(System.String)
+  name: OnError(string)
+  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnError_System_String_
+  commentId: M:DrawnUi.Draw.SkiaImage.OnError(System.String)
+  name.vb: OnError(String)
+  fullName: DrawnUi.Draw.SkiaImage.OnError(string)
+  fullName.vb: DrawnUi.Draw.SkiaImage.OnError(String)
+  nameWithType: SkiaImage.OnError(string)
+  nameWithType.vb: SkiaImage.OnError(String)
+- uid: DrawnUi.Draw.SkiaImage.OnError*
   name: OnError
-  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnError
-  commentId: E:DrawnUi.Draw.SkiaImage.OnError
+  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnError_
+  commentId: Overload:DrawnUi.Draw.SkiaImage.OnError
+  isSpec: "True"
   fullName: DrawnUi.Draw.SkiaImage.OnError
   nameWithType: SkiaImage.OnError
 - uid: DrawnUi.Draw.SkiaImage.OnLayoutChanged
@@ -38103,42 +38125,20 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaImage.OnScaleChanged
   nameWithType: SkiaImage.OnScaleChanged
-- uid: DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
-  name: OnSourceError(string)
-  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceError_System_String_
-  commentId: M:DrawnUi.Draw.SkiaImage.OnSourceError(System.String)
-  name.vb: OnSourceError(String)
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceError(string)
-  fullName.vb: DrawnUi.Draw.SkiaImage.OnSourceError(String)
-  nameWithType: SkiaImage.OnSourceError(string)
-  nameWithType.vb: SkiaImage.OnSourceError(String)
-- uid: DrawnUi.Draw.SkiaImage.OnSourceError*
-  name: OnSourceError
-  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceError_
-  commentId: Overload:DrawnUi.Draw.SkiaImage.OnSourceError
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceError
-  nameWithType: SkiaImage.OnSourceError
-- uid: DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-  name: OnSourceSuccess(string)
-  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceSuccess_System_String_
-  commentId: M:DrawnUi.Draw.SkiaImage.OnSourceSuccess(System.String)
-  name.vb: OnSourceSuccess(String)
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceSuccess(string)
-  fullName.vb: DrawnUi.Draw.SkiaImage.OnSourceSuccess(String)
-  nameWithType: SkiaImage.OnSourceSuccess(string)
-  nameWithType.vb: SkiaImage.OnSourceSuccess(String)
-- uid: DrawnUi.Draw.SkiaImage.OnSourceSuccess*
-  name: OnSourceSuccess
-  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSourceSuccess_
-  commentId: Overload:DrawnUi.Draw.SkiaImage.OnSourceSuccess
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaImage.OnSourceSuccess
-  nameWithType: SkiaImage.OnSourceSuccess
-- uid: DrawnUi.Draw.SkiaImage.OnSuccess
+- uid: DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
+  name: OnSuccess(string)
+  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSuccess_System_String_
+  commentId: M:DrawnUi.Draw.SkiaImage.OnSuccess(System.String)
+  name.vb: OnSuccess(String)
+  fullName: DrawnUi.Draw.SkiaImage.OnSuccess(string)
+  fullName.vb: DrawnUi.Draw.SkiaImage.OnSuccess(String)
+  nameWithType: SkiaImage.OnSuccess(string)
+  nameWithType.vb: SkiaImage.OnSuccess(String)
+- uid: DrawnUi.Draw.SkiaImage.OnSuccess*
   name: OnSuccess
-  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSuccess
-  commentId: E:DrawnUi.Draw.SkiaImage.OnSuccess
+  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_OnSuccess_
+  commentId: Overload:DrawnUi.Draw.SkiaImage.OnSuccess
+  isSpec: "True"
   fullName: DrawnUi.Draw.SkiaImage.OnSuccess
   nameWithType: SkiaImage.OnSuccess
 - uid: DrawnUi.Draw.SkiaImage.OnWillDisposeWithChildren
@@ -38655,6 +38655,12 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaImage.SubscribeToCanReload
   nameWithType: SkiaImage.SubscribeToCanReload
+- uid: DrawnUi.Draw.SkiaImage.Success
+  name: Success
+  href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_Success
+  commentId: E:DrawnUi.Draw.SkiaImage.Success
+  fullName: DrawnUi.Draw.SkiaImage.Success
+  nameWithType: SkiaImage.Success
 - uid: DrawnUi.Draw.SkiaImage.SwapSources(System.Single)
   name: SwapSources(float)
   href: api/DrawnUi.Draw.SkiaImage.html#DrawnUi_Draw_SkiaImage_SwapSources_System_Single_
@@ -39703,22 +39709,22 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaImageTiles.OnPropertyChanged
   nameWithType: SkiaImageTiles.OnPropertyChanged
-- uid: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(System.String)
-  name: OnSourceSuccess(string)
-  href: api/DrawnUi.Draw.SkiaImageTiles.html#DrawnUi_Draw_SkiaImageTiles_OnSourceSuccess_System_String_
-  commentId: M:DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(System.String)
-  name.vb: OnSourceSuccess(String)
-  fullName: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(string)
-  fullName.vb: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess(String)
-  nameWithType: SkiaImageTiles.OnSourceSuccess(string)
-  nameWithType.vb: SkiaImageTiles.OnSourceSuccess(String)
-- uid: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess*
-  name: OnSourceSuccess
-  href: api/DrawnUi.Draw.SkiaImageTiles.html#DrawnUi_Draw_SkiaImageTiles_OnSourceSuccess_
-  commentId: Overload:DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess
+- uid: DrawnUi.Draw.SkiaImageTiles.OnSuccess(System.String)
+  name: OnSuccess(string)
+  href: api/DrawnUi.Draw.SkiaImageTiles.html#DrawnUi_Draw_SkiaImageTiles_OnSuccess_System_String_
+  commentId: M:DrawnUi.Draw.SkiaImageTiles.OnSuccess(System.String)
+  name.vb: OnSuccess(String)
+  fullName: DrawnUi.Draw.SkiaImageTiles.OnSuccess(string)
+  fullName.vb: DrawnUi.Draw.SkiaImageTiles.OnSuccess(String)
+  nameWithType: SkiaImageTiles.OnSuccess(string)
+  nameWithType.vb: SkiaImageTiles.OnSuccess(String)
+- uid: DrawnUi.Draw.SkiaImageTiles.OnSuccess*
+  name: OnSuccess
+  href: api/DrawnUi.Draw.SkiaImageTiles.html#DrawnUi_Draw_SkiaImageTiles_OnSuccess_
+  commentId: Overload:DrawnUi.Draw.SkiaImageTiles.OnSuccess
   isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaImageTiles.OnSourceSuccess
-  nameWithType: SkiaImageTiles.OnSourceSuccess
+  fullName: DrawnUi.Draw.SkiaImageTiles.OnSuccess
+  nameWithType: SkiaImageTiles.OnSuccess
 - uid: DrawnUi.Draw.SkiaImageTiles.SetupTiles
   name: SetupTiles()
   href: api/DrawnUi.Draw.SkiaImageTiles.html#DrawnUi_Draw_SkiaImageTiles_SetupTiles
@@ -43439,6 +43445,22 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaLayout.OnAppearing
   nameWithType: SkiaLayout.OnAppearing
+- uid: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure,System.Collections.Generic.List{DrawnUi.Draw.ControlInStack})
+  name: OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List<ControlInStack>)
+  href: api/DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnBeforeDrawingVisibleChildren_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_LayoutStructure_System_Collections_Generic_List_DrawnUi_Draw_ControlInStack__
+  commentId: M:DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext,DrawnUi.Draw.LayoutStructure,System.Collections.Generic.List{DrawnUi.Draw.ControlInStack})
+  name.vb: OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List(Of ControlInStack))
+  fullName: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext, DrawnUi.Draw.LayoutStructure, System.Collections.Generic.List<DrawnUi.Draw.ControlInStack>)
+  fullName.vb: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren(DrawnUi.Draw.DrawingContext, DrawnUi.Draw.LayoutStructure, System.Collections.Generic.List(Of DrawnUi.Draw.ControlInStack))
+  nameWithType: SkiaLayout.OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List<ControlInStack>)
+  nameWithType.vb: SkiaLayout.OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List(Of ControlInStack))
+- uid: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren*
+  name: OnBeforeDrawingVisibleChildren
+  href: api/DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnBeforeDrawingVisibleChildren_
+  commentId: Overload:DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren
+  isSpec: "True"
+  fullName: DrawnUi.Draw.SkiaLayout.OnBeforeDrawingVisibleChildren
+  nameWithType: SkiaLayout.OnBeforeDrawingVisibleChildren
 - uid: DrawnUi.Draw.SkiaLayout.OnChildrenChanged
   name: OnChildrenChanged()
   href: api/DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnChildrenChanged
@@ -45602,6 +45624,31 @@ references:
   commentId: F:DrawnUi.Draw.SkiaPoint.YProperty
   fullName: DrawnUi.Draw.SkiaPoint.YProperty
   nameWithType: SkiaPoint.YProperty
+- uid: DrawnUi.Draw.SkiaRow
+  name: SkiaRow
+  href: api/DrawnUi.Draw.SkiaRow.html
+  commentId: T:DrawnUi.Draw.SkiaRow
+  fullName: DrawnUi.Draw.SkiaRow
+  nameWithType: SkiaRow
+- uid: DrawnUi.Draw.SkiaRow.#ctor
+  name: SkiaRow()
+  href: api/DrawnUi.Draw.SkiaRow.html#DrawnUi_Draw_SkiaRow__ctor
+  commentId: M:DrawnUi.Draw.SkiaRow.#ctor
+  name.vb: New()
+  fullName: DrawnUi.Draw.SkiaRow.SkiaRow()
+  fullName.vb: DrawnUi.Draw.SkiaRow.New()
+  nameWithType: SkiaRow.SkiaRow()
+  nameWithType.vb: SkiaRow.New()
+- uid: DrawnUi.Draw.SkiaRow.#ctor*
+  name: SkiaRow
+  href: api/DrawnUi.Draw.SkiaRow.html#DrawnUi_Draw_SkiaRow__ctor_
+  commentId: Overload:DrawnUi.Draw.SkiaRow.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: DrawnUi.Draw.SkiaRow.SkiaRow
+  fullName.vb: DrawnUi.Draw.SkiaRow.New
+  nameWithType: SkiaRow.SkiaRow
+  nameWithType.vb: SkiaRow.New
 - uid: DrawnUi.Draw.SkiaScroll
   name: SkiaScroll
   href: api/DrawnUi.Draw.SkiaScroll.html
@@ -51372,63 +51419,6 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaSvg.DrawPicture
   nameWithType: SkiaSvg.DrawPicture
-- uid: DrawnUi.Draw.SkiaSvg.EndColor
-  name: EndColor
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndColor
-  commentId: P:DrawnUi.Draw.SkiaSvg.EndColor
-  fullName: DrawnUi.Draw.SkiaSvg.EndColor
-  nameWithType: SkiaSvg.EndColor
-- uid: DrawnUi.Draw.SkiaSvg.EndColor*
-  name: EndColor
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndColor_
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.EndColor
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaSvg.EndColor
-  nameWithType: SkiaSvg.EndColor
-- uid: DrawnUi.Draw.SkiaSvg.EndColorProperty
-  name: EndColorProperty
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndColorProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.EndColorProperty
-  fullName: DrawnUi.Draw.SkiaSvg.EndColorProperty
-  nameWithType: SkiaSvg.EndColorProperty
-- uid: DrawnUi.Draw.SkiaSvg.EndXRatio
-  name: EndXRatio
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndXRatio
-  commentId: P:DrawnUi.Draw.SkiaSvg.EndXRatio
-  fullName: DrawnUi.Draw.SkiaSvg.EndXRatio
-  nameWithType: SkiaSvg.EndXRatio
-- uid: DrawnUi.Draw.SkiaSvg.EndXRatio*
-  name: EndXRatio
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndXRatio_
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.EndXRatio
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaSvg.EndXRatio
-  nameWithType: SkiaSvg.EndXRatio
-- uid: DrawnUi.Draw.SkiaSvg.EndXRatioProperty
-  name: EndXRatioProperty
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndXRatioProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.EndXRatioProperty
-  fullName: DrawnUi.Draw.SkiaSvg.EndXRatioProperty
-  nameWithType: SkiaSvg.EndXRatioProperty
-- uid: DrawnUi.Draw.SkiaSvg.EndYRatio
-  name: EndYRatio
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndYRatio
-  commentId: P:DrawnUi.Draw.SkiaSvg.EndYRatio
-  fullName: DrawnUi.Draw.SkiaSvg.EndYRatio
-  nameWithType: SkiaSvg.EndYRatio
-- uid: DrawnUi.Draw.SkiaSvg.EndYRatio*
-  name: EndYRatio
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndYRatio_
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.EndYRatio
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaSvg.EndYRatio
-  nameWithType: SkiaSvg.EndYRatio
-- uid: DrawnUi.Draw.SkiaSvg.EndYRatioProperty
-  name: EndYRatioProperty
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_EndYRatioProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.EndYRatioProperty
-  fullName: DrawnUi.Draw.SkiaSvg.EndYRatioProperty
-  nameWithType: SkiaSvg.EndYRatioProperty
 - uid: DrawnUi.Draw.SkiaSvg.FontAwesomePrimaryColor
   name: FontAwesomePrimaryColor
   href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_FontAwesomePrimaryColor
@@ -51776,63 +51766,6 @@ references:
   commentId: F:DrawnUi.Draw.SkiaSvg.SourceProperty
   fullName: DrawnUi.Draw.SkiaSvg.SourceProperty
   nameWithType: SkiaSvg.SourceProperty
-- uid: DrawnUi.Draw.SkiaSvg.StartColor
-  name: StartColor
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartColor
-  commentId: P:DrawnUi.Draw.SkiaSvg.StartColor
-  fullName: DrawnUi.Draw.SkiaSvg.StartColor
-  nameWithType: SkiaSvg.StartColor
-- uid: DrawnUi.Draw.SkiaSvg.StartColor*
-  name: StartColor
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartColor_
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.StartColor
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaSvg.StartColor
-  nameWithType: SkiaSvg.StartColor
-- uid: DrawnUi.Draw.SkiaSvg.StartColorProperty
-  name: StartColorProperty
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartColorProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.StartColorProperty
-  fullName: DrawnUi.Draw.SkiaSvg.StartColorProperty
-  nameWithType: SkiaSvg.StartColorProperty
-- uid: DrawnUi.Draw.SkiaSvg.StartXRatio
-  name: StartXRatio
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartXRatio
-  commentId: P:DrawnUi.Draw.SkiaSvg.StartXRatio
-  fullName: DrawnUi.Draw.SkiaSvg.StartXRatio
-  nameWithType: SkiaSvg.StartXRatio
-- uid: DrawnUi.Draw.SkiaSvg.StartXRatio*
-  name: StartXRatio
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartXRatio_
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.StartXRatio
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaSvg.StartXRatio
-  nameWithType: SkiaSvg.StartXRatio
-- uid: DrawnUi.Draw.SkiaSvg.StartXRatioProperty
-  name: StartXRatioProperty
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartXRatioProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.StartXRatioProperty
-  fullName: DrawnUi.Draw.SkiaSvg.StartXRatioProperty
-  nameWithType: SkiaSvg.StartXRatioProperty
-- uid: DrawnUi.Draw.SkiaSvg.StartYRatio
-  name: StartYRatio
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartYRatio
-  commentId: P:DrawnUi.Draw.SkiaSvg.StartYRatio
-  fullName: DrawnUi.Draw.SkiaSvg.StartYRatio
-  nameWithType: SkiaSvg.StartYRatio
-- uid: DrawnUi.Draw.SkiaSvg.StartYRatio*
-  name: StartYRatio
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartYRatio_
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.StartYRatio
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaSvg.StartYRatio
-  nameWithType: SkiaSvg.StartYRatio
-- uid: DrawnUi.Draw.SkiaSvg.StartYRatioProperty
-  name: StartYRatioProperty
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_StartYRatioProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.StartYRatioProperty
-  fullName: DrawnUi.Draw.SkiaSvg.StartYRatioProperty
-  nameWithType: SkiaSvg.StartYRatioProperty
 - uid: DrawnUi.Draw.SkiaSvg.Svg
   name: Svg
   href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_Svg
@@ -51964,25 +51897,6 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaSvg.UpdateImageFromString
   nameWithType: SkiaSvg.UpdateImageFromString
-- uid: DrawnUi.Draw.SkiaSvg.UseGradient
-  name: UseGradient
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_UseGradient
-  commentId: P:DrawnUi.Draw.SkiaSvg.UseGradient
-  fullName: DrawnUi.Draw.SkiaSvg.UseGradient
-  nameWithType: SkiaSvg.UseGradient
-- uid: DrawnUi.Draw.SkiaSvg.UseGradient*
-  name: UseGradient
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_UseGradient_
-  commentId: Overload:DrawnUi.Draw.SkiaSvg.UseGradient
-  isSpec: "True"
-  fullName: DrawnUi.Draw.SkiaSvg.UseGradient
-  nameWithType: SkiaSvg.UseGradient
-- uid: DrawnUi.Draw.SkiaSvg.UseGradientProperty
-  name: UseGradientProperty
-  href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_UseGradientProperty
-  commentId: F:DrawnUi.Draw.SkiaSvg.UseGradientProperty
-  fullName: DrawnUi.Draw.SkiaSvg.UseGradientProperty
-  nameWithType: SkiaSvg.UseGradientProperty
 - uid: DrawnUi.Draw.SkiaSvg.VerticalAlignment
   name: VerticalAlignment
   href: api/DrawnUi.Draw.SkiaSvg.html#DrawnUi_Draw_SkiaSvg_VerticalAlignment
@@ -53108,6 +53022,31 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.SkiaVectorAnimator.Vector
   nameWithType: SkiaVectorAnimator.Vector
+- uid: DrawnUi.Draw.SkiaWrap
+  name: SkiaWrap
+  href: api/DrawnUi.Draw.SkiaWrap.html
+  commentId: T:DrawnUi.Draw.SkiaWrap
+  fullName: DrawnUi.Draw.SkiaWrap
+  nameWithType: SkiaWrap
+- uid: DrawnUi.Draw.SkiaWrap.#ctor
+  name: SkiaWrap()
+  href: api/DrawnUi.Draw.SkiaWrap.html#DrawnUi_Draw_SkiaWrap__ctor
+  commentId: M:DrawnUi.Draw.SkiaWrap.#ctor
+  name.vb: New()
+  fullName: DrawnUi.Draw.SkiaWrap.SkiaWrap()
+  fullName.vb: DrawnUi.Draw.SkiaWrap.New()
+  nameWithType: SkiaWrap.SkiaWrap()
+  nameWithType.vb: SkiaWrap.New()
+- uid: DrawnUi.Draw.SkiaWrap.#ctor*
+  name: SkiaWrap
+  href: api/DrawnUi.Draw.SkiaWrap.html#DrawnUi_Draw_SkiaWrap__ctor_
+  commentId: Overload:DrawnUi.Draw.SkiaWrap.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: DrawnUi.Draw.SkiaWrap.SkiaWrap
+  fullName.vb: DrawnUi.Draw.SkiaWrap.New
+  nameWithType: SkiaWrap.SkiaWrap
+  nameWithType.vb: SkiaWrap.New
 - uid: DrawnUi.Draw.SliderThumb
   name: SliderThumb
   href: api/DrawnUi.Draw.SliderThumb.html
@@ -57141,31 +57080,31 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Draw.UsedGlyph.Symbol
   nameWithType: UsedGlyph.Symbol
-- uid: DrawnUi.Draw.VStack
-  name: VStack
-  href: api/DrawnUi.Draw.VStack.html
-  commentId: T:DrawnUi.Draw.VStack
-  fullName: DrawnUi.Draw.VStack
-  nameWithType: VStack
-- uid: DrawnUi.Draw.VStack.#ctor
-  name: VStack()
-  href: api/DrawnUi.Draw.VStack.html#DrawnUi_Draw_VStack__ctor
-  commentId: M:DrawnUi.Draw.VStack.#ctor
+- uid: DrawnUi.Draw.SkiaStack
+  name: SkiaStack
+  href: api/DrawnUi.Draw.SkiaStack.html
+  commentId: T:DrawnUi.Draw.SkiaStack
+  fullName: DrawnUi.Draw.SkiaStack
+  nameWithType: SkiaStack
+- uid: DrawnUi.Draw.SkiaStack.#ctor
+  name: SkiaStack()
+  href: api/DrawnUi.Draw.SkiaStack.html#DrawnUi_Draw_VStack__ctor
+  commentId: M:DrawnUi.Draw.SkiaStack.#ctor
   name.vb: New()
-  fullName: DrawnUi.Draw.VStack.VStack()
-  fullName.vb: DrawnUi.Draw.VStack.New()
-  nameWithType: VStack.VStack()
-  nameWithType.vb: VStack.New()
-- uid: DrawnUi.Draw.VStack.#ctor*
-  name: VStack
-  href: api/DrawnUi.Draw.VStack.html#DrawnUi_Draw_VStack__ctor_
-  commentId: Overload:DrawnUi.Draw.VStack.#ctor
+  fullName: DrawnUi.Draw.SkiaStack.SkiaStack()
+  fullName.vb: DrawnUi.Draw.SkiaStack.New()
+  nameWithType: SkiaStack.SkiaStack()
+  nameWithType.vb: SkiaStack.New()
+- uid: DrawnUi.Draw.SkiaStack.#ctor*
+  name: SkiaStack
+  href: api/DrawnUi.Draw.SkiaStack.html#DrawnUi_Draw_VStack__ctor_
+  commentId: Overload:DrawnUi.Draw.SkiaStack.#ctor
   isSpec: "True"
   name.vb: New
-  fullName: DrawnUi.Draw.VStack.VStack
-  fullName.vb: DrawnUi.Draw.VStack.New
-  nameWithType: VStack.VStack
-  nameWithType.vb: VStack.New
+  fullName: DrawnUi.Draw.SkiaStack.SkiaStack
+  fullName.vb: DrawnUi.Draw.SkiaStack.New
+  nameWithType: SkiaStack.SkiaStack
+  nameWithType.vb: SkiaStack.New
 - uid: DrawnUi.Draw.VelocityAccumulator
   name: VelocityAccumulator
   href: api/DrawnUi.Draw.VelocityAccumulator.html
@@ -63596,6 +63535,22 @@ references:
   commentId: F:DrawnUi.Views.Canvas.Context
   fullName: DrawnUi.Views.Canvas.Context
   nameWithType: Canvas.Context
+- uid: DrawnUi.Views.Canvas.Create(System.Boolean)
+  name: Create(bool)
+  href: api/DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_Create_System_Boolean_
+  commentId: M:DrawnUi.Views.Canvas.Create(System.Boolean)
+  name.vb: Create(Boolean)
+  fullName: DrawnUi.Views.Canvas.Create(bool)
+  fullName.vb: DrawnUi.Views.Canvas.Create(Boolean)
+  nameWithType: Canvas.Create(bool)
+  nameWithType.vb: Canvas.Create(Boolean)
+- uid: DrawnUi.Views.Canvas.Create*
+  name: Create
+  href: api/DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_Create_
+  commentId: Overload:DrawnUi.Views.Canvas.Create
+  isSpec: "True"
+  fullName: DrawnUi.Views.Canvas.Create
+  nameWithType: Canvas.Create
 - uid: DrawnUi.Views.Canvas.CreateDebugPointer
   name: CreateDebugPointer()
   href: api/DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_CreateDebugPointer
@@ -63918,6 +63873,19 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Views.Canvas.OnHandlerChanged
   nameWithType: Canvas.OnHandlerChanged
+- uid: DrawnUi.Views.Canvas.OnHotReload
+  name: OnHotReload()
+  href: api/DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_OnHotReload
+  commentId: M:DrawnUi.Views.Canvas.OnHotReload
+  fullName: DrawnUi.Views.Canvas.OnHotReload()
+  nameWithType: Canvas.OnHotReload()
+- uid: DrawnUi.Views.Canvas.OnHotReload*
+  name: OnHotReload
+  href: api/DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_OnHotReload_
+  commentId: Overload:DrawnUi.Views.Canvas.OnHotReload
+  isSpec: "True"
+  fullName: DrawnUi.Views.Canvas.OnHotReload
+  nameWithType: Canvas.OnHotReload
 - uid: DrawnUi.Views.Canvas.OnParentChanged
   name: OnParentChanged()
   href: api/DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_OnParentChanged
@@ -65090,6 +65058,22 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Views.DrawnView.HasHandler
   nameWithType: DrawnView.HasHandler
+- uid: DrawnUi.Views.DrawnView.InitFramework(System.Boolean)
+  name: InitFramework(bool)
+  href: api/DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_InitFramework_System_Boolean_
+  commentId: M:DrawnUi.Views.DrawnView.InitFramework(System.Boolean)
+  name.vb: InitFramework(Boolean)
+  fullName: DrawnUi.Views.DrawnView.InitFramework(bool)
+  fullName.vb: DrawnUi.Views.DrawnView.InitFramework(Boolean)
+  nameWithType: DrawnView.InitFramework(bool)
+  nameWithType.vb: DrawnView.InitFramework(Boolean)
+- uid: DrawnUi.Views.DrawnView.InitFramework*
+  name: InitFramework
+  href: api/DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_InitFramework_
+  commentId: Overload:DrawnUi.Views.DrawnView.InitFramework
+  isSpec: "True"
+  fullName: DrawnUi.Views.DrawnView.InitFramework
+  nameWithType: DrawnView.InitFramework
 - uid: DrawnUi.Views.DrawnView.Invalidate
   name: Invalidate()
   href: api/DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_Invalidate
@@ -65721,6 +65705,19 @@ references:
   isSpec: "True"
   fullName: DrawnUi.Views.DrawnView.OnHandlerChanging
   nameWithType: DrawnView.OnHandlerChanging
+- uid: DrawnUi.Views.DrawnView.OnHotReload
+  name: OnHotReload()
+  href: api/DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnHotReload
+  commentId: M:DrawnUi.Views.DrawnView.OnHotReload
+  fullName: DrawnUi.Views.DrawnView.OnHotReload()
+  nameWithType: DrawnView.OnHotReload()
+- uid: DrawnUi.Views.DrawnView.OnHotReload*
+  name: OnHotReload
+  href: api/DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnHotReload_
+  commentId: Overload:DrawnUi.Views.DrawnView.OnHotReload
+  isSpec: "True"
+  fullName: DrawnUi.Views.DrawnView.OnHotReload
+  nameWithType: DrawnView.OnHotReload
 - uid: DrawnUi.Views.DrawnView.OnMeasured
   name: OnMeasured()
   href: api/DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnMeasured
@@ -66655,6 +66652,12 @@ references:
   commentId: F:DrawnUi.Views.DrawnView.Value4Property
   fullName: DrawnUi.Views.DrawnView.Value4Property
   nameWithType: DrawnView.Value4Property
+- uid: DrawnUi.Views.DrawnView.ViewDisposing
+  name: ViewDisposing
+  href: api/DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_ViewDisposing
+  commentId: E:DrawnUi.Views.DrawnView.ViewDisposing
+  fullName: DrawnUi.Views.DrawnView.ViewDisposing
+  nameWithType: DrawnView.ViewDisposing
 - uid: DrawnUi.Views.DrawnView.Views
   name: Views
   href: api/DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_Views

@@ -188,7 +188,7 @@ items:
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Infrastructure
-  summary: Splits a VStack content into multiple pages based on the provided paper size, considering height only.
+  summary: Splits a SkiaStack content into multiple pages based on the provided paper size, considering height only.
   example: []
   syntax:
     content: public static List<PdfPagePosition> SplitToPages(SKSize content, SKSize paper)

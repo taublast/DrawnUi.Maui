@@ -99,7 +99,7 @@ SkiaLabel statusLabel;
 SkiaButton button;
 int counter = 0;
 
-var layout = new VStack
+var layout = new SkiaStack
 {
     Children = new List<SkiaControl>
     {           
@@ -135,7 +135,7 @@ var layout = new VStack
 You would normally include children like this:
 
 ```csharp
-new VStack
+new SkiaStack
 {
     Children = new List<SkiaControl>
     {           
@@ -148,7 +148,7 @@ new VStack
 Or you might prefer this approach:
 
 ```csharp
-new VStack()
+new SkiaStack()
     .WithChildren(
         new SkiaLabel("0"),
         new SkiaButton("Click Me")
@@ -618,8 +618,8 @@ new AppButton("Click Me")
 For convenience, some helpers come out of the box:
 
 * `SkiaLayer` - absolute layout, children will be super-positioned, create layers and anything. This is a `SkiaLayout` with horizontal Fill by default.
-* `VStack` - Vertical stack, like MAUI VerticalStackLayout. This is a `SkiaLayout` type `Column` with horizontal Fill by default.
-* `HStack` - Horizontal stack, like MAUI HorizontalStackLayout. This is a `SkiaLayout` type `Row`.
+* `SkiaStack` - Vertical stack, like MAUI VerticalStackLayout. This is a `SkiaLayout` type `Column` with horizontal Fill by default.
+* `SkiaRow` - Horizontal stack, like MAUI HorizontalStackLayout. This is a `SkiaLayout` type `Row`.
 * `SkiaStack` - A powerful flexible control that arranges children in a responsive way according to available size. This is a `SkiaLayout` type `Wrap` with horizontal Fill by default.
 * `SkiaGrid` - MAUI Grid alternative to use rows and columns at will. If you are used to a MAUI grid with a single row/col just to position items one over the other, please use `SkiaLayer` instead!
 
