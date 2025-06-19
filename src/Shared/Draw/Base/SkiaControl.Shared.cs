@@ -4227,7 +4227,7 @@ namespace DrawnUi.Draw
                     widthConstraint *= (float)HorizontalFillRatio;
                 }
 
-                if (MaximumWidthRequest >= 0)
+                if (double.IsFinite(MaximumWidthRequest) && MaximumWidthRequest >= 0)
                 {
                     var maxWidth = (float)(MaximumWidthRequest * scale);
                     if (widthConstraint > maxWidth)
@@ -4244,7 +4244,7 @@ namespace DrawnUi.Draw
                     heightConstraint *= (float)VerticalFillRatio;
                 }
 
-                if (MaximumHeightRequest >= 0)
+                if (double.IsFinite(MaximumHeightRequest) && MaximumHeightRequest >= 0)
                 {
                     var maxHeight = (float)(MaximumHeightRequest * scale);
                     if (widthConstraint > maxHeight)
