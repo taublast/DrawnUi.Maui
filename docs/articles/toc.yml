@@ -6,6 +6,8 @@
       href: getting-started.md
     - name: Your First DrawnUi App
       href: first-app.md
+    - name: Porting native to drawn
+      href: porting-maui.md
 - name: Controls
   href: controls/index.md
 - name: Advanced
