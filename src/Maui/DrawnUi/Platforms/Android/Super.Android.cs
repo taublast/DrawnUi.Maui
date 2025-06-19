@@ -41,6 +41,8 @@ public partial class Super
 
         Super.StatusBarHeight = GetStatusBarHeight(activity) / Super.Screen.Density;
 
+        Super.NavigationBarHeight = GetNavigationHeight(activity) / Super.Screen.Density;
+
         bool isRendering = false;
         object lockFrane = new();
 
@@ -156,6 +158,21 @@ public partial class Super
             }
             return _returnInsets;
         }
+    }
+
+    public static int GetNavigationHeight(Context context)
+    {
+
+        int statusBarHeight = 0, totalHeight = 0, contentHeight = 0;
+        int resourceId = context.Resources.GetIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0)
+        {
+            statusBarHeight = context.Resources.GetDimensionPixelSize(resourceId);
+            totalHeight = context.Resources.DisplayMetrics.HeightPixels;
+            contentHeight = totalHeight - statusBarHeight;
+        }
+
+        return statusBarHeight;
     }
 
     public static int GetStatusBarHeight(Context context)

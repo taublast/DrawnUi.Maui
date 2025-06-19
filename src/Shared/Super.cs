@@ -187,6 +187,11 @@ public partial class Super
     public static double StatusBarHeight { get; set; }
 
     /// <summary>
+    /// In DP, actually Android only
+    /// </summary>
+    public static double NavigationBarHeight { get; set; }
+
+    /// <summary>
     /// In DP
     /// </summary>
     public static double BottomTabsHeight { get; set; } = 56;
