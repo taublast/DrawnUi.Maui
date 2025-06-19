@@ -1,9 +1,4 @@
 ﻿using System.Buffers;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
 using SkiaSharp.HarfBuzz;
 using Color = Microsoft.Maui.Graphics.Color;
 using Font = Microsoft.Maui.Font;
@@ -1013,8 +1008,6 @@ namespace DrawnUi.Draw
                 }
 
                 IsMeasuring = true;
-
-
 
                 try
                 {
@@ -3042,6 +3035,18 @@ namespace DrawnUi.Draw
             set { SetValue(FormattedTextProperty, value); }
         }
 
+
+        public static readonly BindableProperty FormatProperty = BindableProperty.Create(
+            nameof(Format), typeof(string), typeof(SkiaLabel),
+            string.Empty,
+            propertyChanged: TextWasChanged);
+
+        public string Format
+        {
+            get { return (string)GetValue(FormatProperty); }
+            set { SetValue(FormatProperty, value); }
+        }
+
         public static readonly BindableProperty TextProperty = BindableProperty.Create(
             nameof(Text), typeof(string), typeof(SkiaLabel),
             string.Empty,
@@ -3117,7 +3122,16 @@ namespace DrawnUi.Draw
             if (IsDisposed || IsDisposing)
                 return;
 
-            var text = Text;
+            var text = string.Empty;
+            if (!string.IsNullOrEmpty(Format))
+            {
+                text = string.Format(Format, Text);
+            }
+            else
+            {
+                text = Text;
+            }
+              
             if (text != null)
             {
                 switch (TextTransform)
