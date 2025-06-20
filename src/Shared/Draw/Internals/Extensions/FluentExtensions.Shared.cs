@@ -1190,7 +1190,7 @@ namespace DrawnUi.Draw
         /// <param name="view">The control whose height is being set.</param>
         /// <param name="size">The new height value to be applied to the control.</param>
         /// <returns>The modified control with the updated height.</returns>
-        public static T Height<T>(this T view, double size) where T : SkiaControl
+        public static T SetHeight<T>(this T view, double size) where T : SkiaControl
         {
             view.HeightRequest = size;
             return view;
