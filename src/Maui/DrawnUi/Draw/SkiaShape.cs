@@ -396,7 +396,11 @@ namespace DrawnUi.Draw
 
         protected float GetInflationForStroke(float halfStroke)
         {
-            return -(float)Math.Ceiling(halfStroke);
+            if (halfStroke < 0.5f)
+            {
+                return -1f;
+            }
+            return -(float)Math.Round(halfStroke);
         }
 
         protected SKRect CalculateContentSizeForStroke(SKRect destination, float scale)
