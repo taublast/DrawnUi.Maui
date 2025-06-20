@@ -449,7 +449,7 @@ namespace DrawnUi.Draw
                 v.BindingContext = BindingContext;
         }
 
-        public void Reload()
+        public virtual void Reload()
         {
             Invalidate();
         }
