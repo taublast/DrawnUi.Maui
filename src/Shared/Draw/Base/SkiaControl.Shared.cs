@@ -6943,6 +6943,10 @@ namespace DrawnUi.Draw
             }
         }
 
+        /// <summary>
+        /// Just a helper to pass children one by one comma separated instead of using a list
+        /// </summary>
+        /// <param name="children"></param>
         public void SetChildrenAsParameters(params SkiaControl[] children)
         {
             SetChildren(children);
