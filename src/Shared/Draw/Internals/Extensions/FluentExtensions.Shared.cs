@@ -1506,6 +1506,12 @@ namespace DrawnUi.Draw
             return view;
         }
 
+        public static T WithVisibility<T>(this T view, bool value) where T : SkiaControl
+        {
+            view.IsVisible =value;
+            return view;
+        }
+
         #endregion
 
         #region SKIASHAPE EXTENSIONS
