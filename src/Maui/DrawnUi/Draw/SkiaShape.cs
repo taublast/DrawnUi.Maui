@@ -22,7 +22,7 @@ namespace DrawnUi.Draw
     /// Use properties like Type, CornerRadius, StrokeWidth, and BackgroundColor to customize appearance.
     /// For complex shapes, use PathData or Points properties to define custom geometries.
     /// </remarks>
-    public partial class SkiaShape : ContentLayout
+    public partial class SkiaShape : SkiaLayout
     {
         public override void ApplyBindingContext()
         {

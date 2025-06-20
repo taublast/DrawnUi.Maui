@@ -79,7 +79,10 @@ public partial class DebugImage : SkiaShape
                     VerticalOptions = LayoutOptions.Fill
                 }
                 .WithChildren(Display, Caption);
-            Content = layout;
+            Children = new List<SkiaControl>()
+            {
+                layout
+            };
         }
 
         return base.Measure(widthConstraint, heightConstraint, scale);
