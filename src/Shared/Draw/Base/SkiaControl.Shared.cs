@@ -630,10 +630,10 @@ namespace DrawnUi.Draw
             var startScaleY = this.ScaleY;
 
             return AnimateAsync(value =>
-                {
-                    this.ScaleX = startScaleX + (x - startScaleX) * value;
-                    this.ScaleY = startScaleY + (y - startScaleY) * value;
-                },
+            {
+                this.ScaleX = startScaleX + (x - startScaleX) * value;
+                this.ScaleY = startScaleY + (y - startScaleY) * value;
+            },
                 () =>
                 {
                     this.ScaleX = x;
@@ -684,10 +684,10 @@ namespace DrawnUi.Draw
             var startTranslationY = this.TranslationY;
 
             return AnimateAsync(value =>
-                {
-                    this.TranslationX = (float)(startTranslationX + (x - startTranslationX) * value);
-                    this.TranslationY = (float)(startTranslationY + (y - startTranslationY) * value);
-                },
+            {
+                this.TranslationX = (float)(startTranslationX + (x - startTranslationX) * value);
+                this.TranslationY = (float)(startTranslationY + (y - startTranslationY) * value);
+            },
                 () =>
                 {
                     this.TranslationX = x;
@@ -3846,7 +3846,8 @@ namespace DrawnUi.Draw
             var maxChildHeight = -1.0f;
             var maxChildWidth = -1.0f;
 
-            List<SkiaControl> fill = new();
+            List<SkiaControl> fullFill = new();
+            List<(SkiaControl child, ScaledSize measured)> partialFill = new();
             var autosize = this.NeedAutoSize;
             var hadFixedSize = false;
 
@@ -3906,30 +3907,40 @@ namespace DrawnUi.Draw
                 if (child == null)
                     continue;
 
-                child.OnBeforeMeasure(); //could set IsVisible or whatever inside
+                child.OnBeforeMeasure();
+                if (!child.CanDraw)
+                    continue;
 
-                if (autosize &&
-                    (child.HorizontalOptions.Alignment == LayoutAlignment.Fill
-                     && child.VerticalOptions.Alignment == LayoutAlignment.Fill)
-                    || (!autosize && (child.HorizontalOptions.Alignment == LayoutAlignment.Fill ||
-                                      child.VerticalOptions.Alignment == LayoutAlignment.Fill))
-                   )
+                var hasHorizontalFill = child.HorizontalOptions.Alignment == LayoutAlignment.Fill;
+                var hasVerticalFill = child.VerticalOptions.Alignment == LayoutAlignment.Fill;
+
+                // Only defer children with Fill in BOTH dimensions
+                bool shouldDefer = hasHorizontalFill && hasVerticalFill;
+
+                if (shouldDefer)
                 {
-                    fill.Add(child); //todo not very correct for the case just 1 dimension is Fill and other one may by bigger that other children!
+                    fullFill.Add(child);
                     continue;
                 }
 
                 hadFixedSize = true;
                 var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
 
-                if (measured.Pixels.Width > maxChildWidth)
+                // Only record dimensions that are NOT Fill
+                if (!hasHorizontalFill && measured.Pixels.Width > maxChildWidth)
                 {
                     maxChildWidth = measured.Pixels.Width;
                 }
 
-                if (measured.Pixels.Height > maxChildHeight)
+                if (!hasVerticalFill && measured.Pixels.Height > maxChildHeight)
                 {
                     maxChildHeight = measured.Pixels.Height;
+                }
+
+                // Add to partialFill if has Fill in only one dimension
+                if (hasHorizontalFill != hasVerticalFill) // XOR - only one is true
+                {
+                    partialFill.Add((child, measured));
                 }
 
                 PostProcessMeasuredChild(measured, child, true);
@@ -3938,14 +3949,14 @@ namespace DrawnUi.Draw
                 heightCut |= measured.HeightCut;
             }
 
-            //PASS 2 for those with Fill 
-            foreach (var child in fill)
+            //PASS 2 for those with full Fill (both dimensions)
+            foreach (var child in fullFill)
             {
                 ScaledSize measured;
-                if (!hadFixedSize) //we had only children with fill so no fixed dimensions yet
+                if (!hadFixedSize)
                 {
                     measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
-                    PostProcessMeasuredChild(measured, child, false);
+                    // Don't process fill children sizes - they adapt to parent, not define it
                 }
                 else
                 {
@@ -3962,16 +3973,45 @@ namespace DrawnUi.Draw
                     }
 
                     measured = MeasureChild(child, provideWidth, provideHeight, scale);
-                    if (maxHeight <= 0 || maxWidth <= 0 || float.IsInfinity(provideHeight) ||
-                        float.IsInfinity(provideWidth))
-                    {
-                        PostProcessMeasuredChild(measured, child, false);
-                    }
+                    // Don't call PostProcessMeasuredChild for fill children
                 }
 
                 widthCut |= measured.WidthCut;
                 heightCut |= measured.HeightCut;
             }
+
+
+            //PASS 3 for those with partial Fill (only one dimension)
+            foreach (var (child, originalMeasured) in partialFill)
+            {
+                var hasHorizontalFill = child.HorizontalOptions.Alignment == LayoutAlignment.Fill;
+                var hasVerticalFill = child.VerticalOptions.Alignment == LayoutAlignment.Fill;
+
+                var provideWidth = hasHorizontalFill ?
+                    (NeedAutoWidth && maxWidth >= 0 ? maxWidth : rectForChildrenPixels.Width) :
+                    rectForChildrenPixels.Width;
+
+                var provideHeight = hasVerticalFill ?
+                    (NeedAutoHeight && maxHeight >= 0 ? maxHeight : rectForChildrenPixels.Height) :
+                    rectForChildrenPixels.Height;
+
+                var measured = MeasureChild(child, provideWidth, provideHeight, scale);
+
+                // Only record dimensions that are NOT Fill
+                if (!hasHorizontalFill && measured.Pixels.Width > maxChildWidth)
+                {
+                    maxChildWidth = measured.Pixels.Width;
+                }
+
+                if (!hasVerticalFill && measured.Pixels.Height > maxChildHeight)
+                {
+                    maxChildHeight = measured.Pixels.Height;
+                }
+
+                widthCut |= measured.WidthCut;
+                heightCut |= measured.HeightCut;
+            }
+
 
             if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0 &&
                 float.IsFinite(rectForChildrenPixels.Width))
@@ -5923,7 +5963,8 @@ namespace DrawnUi.Draw
             {
                 Repaint();
                 return;
-            };
+            }
+            ;
 
             if (OutputDebug)
             {
@@ -6218,7 +6259,7 @@ namespace DrawnUi.Draw
 
             LockUpdate(true);
 
-            foreach (var view in Views.ToList())  
+            foreach (var view in Views.ToList())
             {
                 InvalidateChildren(view as SkiaControl);
             }
@@ -6443,7 +6484,10 @@ namespace DrawnUi.Draw
 
             var animation = new ShimmerAnimator(this)
             {
-                Color = color.ToSKColor(), ShimmerWidth = shimmerWidth, ShimmerAngle = shimmerAngle, Speed = speedMs
+                Color = color.ToSKColor(),
+                ShimmerWidth = shimmerWidth,
+                ShimmerAngle = shimmerAngle,
+                Speed = speedMs
             };
             animation.Start();
         }
@@ -6897,6 +6941,11 @@ namespace DrawnUi.Draw
                     RemoveSubView(subView);
                 }
             }
+        }
+
+        public void SetChildrenAsParameters(params SkiaControl[] children)
+        {
+            SetChildren(children);
         }
 
         public virtual void SetChildren(IEnumerable<SkiaControl> views)
