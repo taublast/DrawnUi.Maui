@@ -37,7 +37,7 @@
 
                     <draw:SkiaMarkdownLabel
                         Margin="16,0"
-                        FontFamily="OpenSansRegular"
+                        FontFamily="FontText"
                         FontSize="15"
                         HorizontalOptions="Center"
                         HorizontalTextAlignment="Center"

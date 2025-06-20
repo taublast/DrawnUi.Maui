@@ -39,6 +39,12 @@ namespace Sandbox
 
                     fonts.AddFont("DOM.TTF", "FontBrand");
                     fonts.AddFont("DOMB.TTF", "FontBrandBold");
+
+                    fonts.AddFont("Orbitron-Regular.ttf", "FontGame"); //400
+                    fonts.AddFont("Orbitron-Medium.ttf", "FontGameMedium"); //500
+                    fonts.AddFont("Orbitron-SemiBold.ttf", "FontGameSemiBold"); //600
+                    fonts.AddFont("Orbitron-Bold.ttf", "FontGameBold"); //700
+                    fonts.AddFont("Orbitron-ExtraBold.ttf", "FontGameExtraBold"); //800
                 });
 
             builder.UseDrawnUi(new()

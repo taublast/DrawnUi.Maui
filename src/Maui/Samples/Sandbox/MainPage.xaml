@@ -46,6 +46,7 @@
                             HorizontalOptions="Center"
                             LoadSourceOnFirstDraw="False"
                             RescalingQuality="Medium"
+                            RescalingType="Default"
                             SemanticProperties.Description="dot net maui drawn ui"
                             SemanticProperties.Hint="image of a car"
                             Source="car.png"

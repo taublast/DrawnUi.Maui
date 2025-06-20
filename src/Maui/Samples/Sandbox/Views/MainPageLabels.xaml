@@ -75,7 +75,7 @@
 
                     <draw:SkiaLabel
                         BackgroundColor="#22000000"
-                        FontFamily="OpenSansRegular"
+                        FontFamily="FontText"
                         FontSize="16"
                         Opacity="0.85"
                         Text=" SkiaLabel "
@@ -93,7 +93,7 @@
                     <!--  SOME SPANS DEFINED  -->
                     <draw:SkiaLabel
                         FallbackCharacter="?"
-                        FontFamily="OpenSansRegular"
+                        FontFamily="FontText"
                         FontSize="15"
                         HorizontalOptions="Fill"
                         HorizontalTextAlignment="Start"
@@ -110,7 +110,7 @@
                         <draw:TextSpan Text="span can be made " />
 
                         <draw:TextSpan
-                            FontFamily="OpenSansRegular"
+                            FontFamily="FontText"
                             FontSize="15"
                             IsItalic="True"
                             Tag="The Tappable One"
@@ -170,7 +170,7 @@
 
                     <draw:SkiaLabel
                         BackgroundColor="#22000000"
-                        FontFamily="OpenSansRegular"
+                        FontFamily="FontText"
                         FontSize="16"
                         Opacity="0.85"
                         Text=" SkiaMarkdownLabel "
@@ -181,7 +181,7 @@
                     <draw:SkiaMarkdownLabel
                         x:Name="TestMarkdown"
                         BackgroundColor="Transparent"
-                        FontFamily="OpenSansRegular"
+                        FontFamily="FontText"
                         FontSize="14"
                         HorizontalOptions="Fill"
                         HorizontalTextAlignment="Start"

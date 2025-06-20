@@ -62,17 +62,21 @@ public class SkiaCheckbox : SkiaToggle
             StrokeWidth = 1,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
-        }.WithContent(new SkiaShape()
-        {
-            Tag = "ViewCheckOn",
-            UseCache = SkiaCacheType.Operations,
-            Type = ShapeType.Rectangle,
-            BackgroundColor = this.ColorCheckOn,
-            Margin = 3,
-            LockRatio = 1,
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill,
-        }));
+            Children = new List<SkiaControl>()
+            {
+                new SkiaShape()
+                {
+                    Tag = "ViewCheckOn",
+                    UseCache = SkiaCacheType.Operations,
+                    Type = ShapeType.Rectangle,
+                    BackgroundColor = this.ColorCheckOn,
+                    Margin = 3,
+                    LockRatio = 1,
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
+                }
+            }
+        });
     }
     
     protected virtual void CreateCupertinoStyleContent()

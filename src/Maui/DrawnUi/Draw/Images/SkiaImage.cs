@@ -61,7 +61,7 @@ public class SkiaImage : SkiaControl
     {
         if (loaded == null)
         {
-            OnCleared?.Invoke(this, null);
+            Cleared?.Invoke(this, null);
             _needClearBitmap = true;
         }
 
@@ -332,7 +332,7 @@ public class SkiaImage : SkiaControl
     {
         CancelLoading?.Cancel();
 
-        OnCleared = null;
+        Cleared = null;
         Error = null;
         Success = null;
 
@@ -455,7 +455,7 @@ public class SkiaImage : SkiaControl
             SetImageSource(LastSource);
     }
 
-    public event EventHandler OnCleared;
+    public event EventHandler Cleared;
 
     protected virtual async Task<SKBitmap> LoadImageManagedAsync(ImageSource source, CancellationTokenSource cancel,
         LoadPriority priority = LoadPriority.Normal)

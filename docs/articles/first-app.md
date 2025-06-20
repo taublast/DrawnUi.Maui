@@ -52,7 +52,7 @@ public static class MauiProgram
             .UseDrawnUi() // Add this line
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Regular.ttf", "FontText");
             });
 
         return builder.Build();
