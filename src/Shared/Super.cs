@@ -11,7 +11,8 @@ public partial class Super
     public static bool UseFrozenVisualLayers = false;
 
     /// <summary>
-    /// Since we removed IHttpClientFactory for faster app startup one can set this delegate to be used to create a custom client that would be used for loading internet sources.
+    /// Since we removed IHttpClientFactory for faster app startup on mobile
+    /// one can set this delegate to be used to create a custom client that would be used for loading internet sources.
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>

@@ -21,18 +21,12 @@ public static partial class DrawnExtensions
     {
         StartupSettings = settings;
 
+#if ONPLATFORM
         builder.ConfigureMauiHandlers(handlers =>
         {
-#if ANDROID
             ConfigureHandlers(handlers);
-#elif IOS
-            ConfigureHandlers(handlers);
-#elif MACCATALYST
-            ConfigureHandlers(handlers);
-#elif WINDOWS
-            ConfigureHandlers(handlers);
-#endif
         });
+#endif
 
         builder
             .ConfigureAnimations();
@@ -41,7 +35,10 @@ public static partial class DrawnExtensions
 
         builder.UseGestures();
 
-        //builder.Services.AddUriImageSourceHttpClient(); //removed for faster startup without ihttpclientfactory
+#if WINDOWS || MACCATALYST
+        // on mobile removed IHttpClientFactory for faster app startup
+        builder.Services.AddUriImageSourceHttpClient(); 
+#endif
 
         //In-Memory Caching of bitmaps
         builder.Services  //Important step for In-Memory Caching
