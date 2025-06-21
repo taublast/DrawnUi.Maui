@@ -468,7 +468,7 @@ namespace DrawnUi.Draw
             MeasuredStrokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
             MeasuredStrokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
             MeasuredStrokeAwareClipSize = CalculateClipSizeForStroke(destination, scale);
-            MeasuredStrokeAwareChildrenSize = CalculateContentSizeForStroke(MeasuredStrokeAwareSize, scale);
+            MeasuredStrokeAwareChildrenSize = CalculateContentSizeForStroke(destination, scale);
 
             //rescale the path to match container
             if (Type == ShapeType.Path)
@@ -554,9 +554,11 @@ namespace DrawnUi.Draw
         protected override ScaledSize MeasureContent(IEnumerable<SkiaControl> children, SKRect rectForChildrenPixels,
             float scale)
         {
-            var adjust = CalculateContentSizeForStroke(rectForChildrenPixels, scale);
+            //nothing special just overriding for debug
 
-            return base.MeasureContent(children, adjust, scale);
+            var measured = base.MeasureContent(children, rectForChildrenPixels, scale);
+
+            return measured;
         }
 
         public SKPath DrawPathResized { get; } = new();
@@ -874,8 +876,6 @@ namespace DrawnUi.Draw
                 strokeAwareSize = defined.StrokeAwareSize;
                 strokeAwareChildrenSize = defined.StrokeAwareChildrenSize;
             }
-
-            //base.Paint(ctx, destination, scale, arguments); //for debug
 
             //we gonna set stroke On only when drawing the last pass
             //otherwise stroke antialiasing will not work
