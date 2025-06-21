@@ -355,13 +355,6 @@ else
                 List<SecondPassArrange> listSecondPass = new();
                 bool stopMeasuring = false;
 
-                //var visibleArea = GetOnScreenVisibleArea((float)this.VirtualisationInflated * scale);
-
-                if (Tag == "Debug")
-                {
-                    var stop = 1;
-                }
-
                 //measure
                 //left to right, top to bottom
                 var cellsToRelease = new List<SkiaControl>();
@@ -516,10 +509,16 @@ else
 
                                 if (!measured.IsEmpty)
                                 {
-                                    maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
+                                    if (IsTemplated || child.HorizontalOptions != LayoutOptions.Fill || Type != LayoutType.Column)
+                                    {
+                                        maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
+                                    }
 
-                                    if (measured.Pixels.Height > maxHeight)
-                                        maxHeight = measured.Pixels.Height;
+                                    if (IsTemplated || child.VerticalOptions != LayoutOptions.Fill || Type != LayoutType.Row)
+                                    {
+                                        if (measured.Pixels.Height > maxHeight)
+                                            maxHeight = measured.Pixels.Height;
+                                    }
 
                                     //offset -->
                                     rectForChild.Left += (float)(measured.Pixels.Width);
@@ -793,8 +792,7 @@ else
         protected virtual void OnBeforeDrawingVisibleChildren(DrawingContext ctx, LayoutStructure structure,
             List<ControlInStack> visibleElements)
         {
-
-        }   
+        }
 
         /// <summary>
         /// Renders stack/wrap layout.
@@ -818,7 +816,6 @@ else
                 var expendRecycle = ((float)RecyclingBuffer * ctx.Scale);
                 recyclingAreaPixels.Inflate(expendRecycle, expendRecycle);
 
-
                 //PASS 1 - VISIBILITY
                 Vector2 offsetOthers = Vector2.Zero;
                 var currentIndex = -1;
@@ -829,7 +826,8 @@ else
 
                     currentIndex++;
 
-                    if (cell.Destination == SKRect.Empty || cell.Measured.Pixels.Width<1 || cell.Measured.Pixels.Height < 1)
+                    if (cell.Destination == SKRect.Empty || cell.Measured.Pixels.Width < 1 ||
+                        cell.Measured.Pixels.Height < 1)
                     {
                         cell.IsVisible = false;
                     }
@@ -1001,11 +999,6 @@ else
                                     destinationRect,
                                     control.LastDrawnAt,
                                     index));
-                            }
-                            else
-                            {
-                                //todo offset stuff
-                                var stop = 1;
                             }
                         }
                     }
