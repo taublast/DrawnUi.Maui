@@ -401,11 +401,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             if (videoConnection != null && videoConnection.SupportsVideoOrientation)
             {
                 _videoOrientation = videoConnection.VideoOrientation;
-#if MACCATALYST
-                Console.WriteLine($"[NativeCameraMac] Initial video orientation: {_videoOrientation}");
-#else
                 System.Diagnostics.Debug.WriteLine($"[CAMERA SETUP] Initial video orientation: {_videoOrientation}");
-#endif
             }
         } 
         else
