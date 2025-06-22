@@ -721,19 +721,9 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                     using var rawImage = SKImage.FromPixels(info, pinnedPtr, _latestRawFrame.BytesPerRow);
 
                     // Apply rotation if needed
-                    SKImage rotatedImage;
-                    if (_latestRawFrame.CurrentRotation != Rotation.rotate0Degrees)
-                    {
-                        using var bitmap = SKBitmap.FromImage(rawImage);
-                        using var rotatedBitmap = HandleOrientation(bitmap, (double)_latestRawFrame.CurrentRotation);
-                        rotatedImage = SKImage.FromBitmap(rotatedBitmap);
-                    }
-                    else
-                    {
-                        rotatedImage = rawImage.Subset(SKRectI.Create(0, 0, _latestRawFrame.Width, _latestRawFrame.Height));
-                    }
-
-                    return rotatedImage;
+                    using var bitmap = SKBitmap.FromImage(rawImage);
+                    using var rotatedBitmap = HandleOrientation(bitmap, (double)_latestRawFrame.CurrentRotation);
+                    return SKImage.FromBitmap(rotatedBitmap);
                 }
                 finally
                 {
