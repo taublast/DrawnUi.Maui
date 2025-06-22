@@ -202,6 +202,9 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         _session.BeginConfiguration();
         _cameraUnitInitialized = false;
 
+#if MACCATALYST
+            _session.SessionPreset = AVCaptureSession.PresetHigh;
+#else
         // Set session preset
         if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
         {
@@ -211,6 +214,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         {
             _session.SessionPreset = AVCaptureSession.PresetInputPriority;
         }
+#endif
 
         // Configure camera position
         var cameraPosition = FormsControl.Facing == CameraPosition.Selfie 
@@ -234,8 +238,12 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             if (videoDevice == null)
             {
                 var videoDevices = AVCaptureDevice.DevicesWithMediaType(AVMediaTypes.Video.GetConstant());
-                videoDevice = videoDevices.FirstOrDefault(d => d.Position == cameraPosition);
                 
+#if MACCATALYST
+                videoDevice = videoDevices.FirstOrDefault();
+#else
+                videoDevice = videoDevices.FirstOrDefault(d => d.Position == cameraPosition);
+#endif                
                 if (videoDevice == null)
                 {
                     State = CameraProcessorState.Error;
