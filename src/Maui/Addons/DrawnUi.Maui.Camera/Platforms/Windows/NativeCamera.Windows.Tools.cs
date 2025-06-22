@@ -169,6 +169,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                     {
                         Success = false,
                         ErrorMessage = "ExposureControl not supported"
+                    };
 #endif
                 }
             }

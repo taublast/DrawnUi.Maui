@@ -34,13 +34,13 @@ interface IDirect3DDxgiInterfaceAccess
 interface IDXGISurface : IDXGIDeviceSubObject
 {
     // IDXGIObject methods
-    void SetPrivateData([In] ref Guid Name, uint DataSize, IntPtr pData);
-    void SetPrivateDataInterface([In] ref Guid Name, [In, MarshalAs(UnmanagedType.IUnknown)] object pUnknown);
-    void GetPrivateData([In] ref Guid Name, ref uint pDataSize, IntPtr pData);
-    void GetParent([In] ref Guid riid, out IntPtr ppParent);
+    //void SetPrivateData([In] ref Guid Name, uint DataSize, IntPtr pData);
+    //void SetPrivateDataInterface([In] ref Guid Name, [In, MarshalAs(UnmanagedType.IUnknown)] object pUnknown);
+    //void GetPrivateData([In] ref Guid Name, ref uint pDataSize, IntPtr pData);
+    //void GetParent([In] ref Guid riid, out IntPtr ppParent);
 
     // IDXGIDeviceSubObject methods
-    void GetDevice([In] ref Guid riid, out IntPtr ppDevice);
+    //void GetDevice([In] ref Guid riid, out IntPtr ppDevice);
 
     // IDXGISurface methods
     void GetDesc(out DXGI_SURFACE_DESC pDesc);

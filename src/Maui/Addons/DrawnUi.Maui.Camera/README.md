@@ -15,7 +15,7 @@ Apply shaders, adjustments and transforms to camera preview in realtime and draw
 |----------|--------|----------------|
 | Android | ✅ Complete | Camera2 API with CameraX |
 | iOS | ✅ Complete | AVFoundation (shared with macCatalyst) |
-| macCatalyst | ✅ Complete | AVFoundation (shared with iOS) |
+| MacCatalyst | ✅ Complete | AVFoundation (shared with iOS) |
 | Windows | ✅ Complete | MediaCapture with WinRT APIs |
 
 ## Installation

@@ -653,39 +653,33 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     }
 
     /// <summary>
-    /// Given choices of Sizes supported by a camera, choose the smallest one that
-    /// is at least as large as the respective texture view size, and that is at most as large as the
-    /// respective max size, and whose aspect ratio matches with the specified value.If such size
-    /// doesn't exist, choose the largest one that is at most as large as the respective max size,
-    /// and whose aspect ratio matches with the specified value.
+    /// Given choices of sizes supported by a camera, choose the one with closest aspect ratio match
+    /// that fits within the specified maximum dimensions. Optionally applies ratio tolerance.
     /// </summary>
     /// <param name="choices">The list of sizes that the camera supports for the intended output class</param>
-    /// <param name="textureViewWidth">The width of the texture view relative to sensor coordinate</param>
-    /// <param name="textureViewHeight">The height of the texture view relative to sensor coordinate</param>
     /// <param name="maxWidth">The maximum width that can be chosen</param>
     /// <param name="maxHeight">The maximum height that can be chosen</param>
-    /// <param name="aspectRatio">The aspect ratio</param>
-    /// <returns>The optimal Size, or an arbitrary one if none were big enough</returns>
-    private static Size ChooseOptimalSize(Size[] choices, int maxWidth, int maxHeight, Size aspectRatio)
+    /// <param name="aspectRatio">The desired aspect ratio</param>
+    /// <param name="ratioTolerance">Tolerance for aspect ratio matching (default 0.1 = 10%)</param>
+    /// <returns>The optimal Size, or first choice if none were suitable</returns>
+    private static Size ChooseOptimalSize(Size[] choices, int maxWidth, int maxHeight, Size aspectRatio, double ratioTolerance = 0.1)
     {
-        double targetRatio = (double)aspectRatio.Width / aspectRatio.Height; // Target aspect ratio
-
-        Size optimalSize = null; // The optimal size
-        double minDiffRatio = double.MaxValue; // Start with max value for the difference in aspect ratio
+        double targetRatio = (double)aspectRatio.Width / aspectRatio.Height;
+        Size optimalSize = null;
+        double minDiffRatio = double.MaxValue;
 
         foreach (Size size in choices)
         {
             int width = size.Width;
             int height = size.Height;
 
-            // Skip sizes not meeting size constraints
             if (width > maxWidth || height > maxHeight) continue;
 
-            double ratio = (double)width / height; // Aspect ratio of the current size
-            double diffRatio = Math.Abs(targetRatio - ratio); // Difference with the target ratio
+            double ratio = (double)width / height;
+            double diffRatio = Math.Abs(targetRatio - ratio);
+            double normalizedDiff = diffRatio / targetRatio;
 
-            // If the size meets the minimal difference in aspect ratio, update optimal size and difference
-            if (diffRatio < minDiffRatio)
+            if (normalizedDiff <= ratioTolerance && diffRatio < minDiffRatio)
             {
                 optimalSize = size;
                 minDiffRatio = diffRatio;
@@ -694,15 +688,30 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
         if (optimalSize == null)
         {
-            Log.Error(TAG, "Couldn't find any suitable preview size");
-            return choices[0]; // Return the first choice if no optimal size found
-        }
-        else
-        {
-            return optimalSize;
-        }
-    }
+            foreach (Size size in choices)
+            {
+                if (size.Width <= maxWidth && size.Height <= maxHeight)
+                {
+                    double ratio = (double)size.Width / size.Height;
+                    double diffRatio = Math.Abs(targetRatio - ratio);
 
+                    if (diffRatio < minDiffRatio)
+                    {
+                        optimalSize = size;
+                        minDiffRatio = diffRatio;
+                    }
+                }
+            }
+        }
+
+        if (optimalSize == null)
+        {
+            Super.Log("Couldn't find any suitable preview size");
+            return choices[0];
+        }
+
+        return optimalSize;
+    }
 
     public bool ManualZoomEnabled = true;
 
