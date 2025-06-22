@@ -28,7 +28,45 @@ public partial class MainPageCamera : BasePageCodeBehind
         try
         {
             StatusLabel.Text = "Camera Status: Requesting permissions...";
+            Debug.WriteLine($"[CameraTestPage] Starting camera on platform: {DeviceInfo.Platform}");
+            Debug.WriteLine($"[CameraTestPage] Device idiom: {DeviceInfo.Idiom}");
+
+            // Add a small delay to ensure UI is ready
+            await Task.Delay(100);
+
             CameraControl.Start();
+
+            // Monitor camera state
+            _ = Task.Run(async () =>
+            {
+                for (int i = 0; i < 50; i++) // Monitor for 5 seconds
+                {
+                    await Task.Delay(100);
+                    var state = CameraControl.NativeControl?.State ?? CameraProcessorState.None;
+                    var isRunning = CameraControl.NativeControl?.IsRunning ?? false;
+
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Debug.WriteLine($"[CameraTestPage] Camera state check {i}: State={state}, IsRunning={isRunning}, IsOn={CameraControl.IsOn}");
+
+                        if (state == CameraProcessorState.Error)
+                        {
+                            StatusLabel.Text = "Camera Status: Error state detected";
+                        }
+                        else if (state == CameraProcessorState.Enabled && isRunning)
+                        {
+                            StatusLabel.Text = "Camera Status: Running successfully";
+                        }
+                        else if (state == CameraProcessorState.None)
+                        {
+                            StatusLabel.Text = "Camera Status: Not initialized";
+                        }
+                    });
+
+                    if (state == CameraProcessorState.Enabled && isRunning)
+                        break;
+                }
+            });
         }
         catch (Exception ex)
         {

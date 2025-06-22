@@ -199,29 +199,52 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
     private void SetupHardware()
     {
+#if MACCATALYST
+        Console.WriteLine("[NativeCameraMac] Starting hardware setup...");
+        Console.WriteLine($"[NativeCameraMac] Device idiom: {UIDevice.CurrentDevice.UserInterfaceIdiom}");
+        Console.WriteLine($"[NativeCameraMac] Requested facing: {FormsControl.Facing}");
+        Console.WriteLine($"[NativeCameraMac] Requested type: {FormsControl.Type}");
+#endif
+
         _session.BeginConfiguration();
         _cameraUnitInitialized = false;
 
-        // Set session preset
+        // Set session preset - Mac Catalyst may need different presets
         if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad)
         {
             _session.SessionPreset = AVCaptureSession.PresetHigh;
+#if MACCATALYST
+            Console.WriteLine("[NativeCameraMac] Using PresetHigh for iPad idiom");
+#endif
         }
         else
         {
+#if MACCATALYST
+            // Mac Catalyst might work better with PresetHigh instead of PresetInputPriority
+            _session.SessionPreset = AVCaptureSession.PresetHigh;
+            Console.WriteLine("[NativeCameraMac] Using PresetHigh for Mac Catalyst");
+#else
             _session.SessionPreset = AVCaptureSession.PresetInputPriority;
+#endif
         }
 
         // Configure camera position
-        var cameraPosition = FormsControl.Facing == CameraPosition.Selfie 
-            ? AVCaptureDevicePosition.Front 
+        var cameraPosition = FormsControl.Facing == CameraPosition.Selfie
+            ? AVCaptureDevicePosition.Front
             : AVCaptureDevicePosition.Back;
 
+#if MACCATALYST
+        Console.WriteLine($"[NativeCameraMac] Looking for camera at position: {cameraPosition}");
+#endif
+
         AVCaptureDevice videoDevice = null;
-        
+
         if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0) && FormsControl.Type == CameraType.Max)
         {
             videoDevice = AVCaptureDevice.GetDefaultDevice(AVCaptureDeviceType.BuiltInTripleCamera, AVMediaTypes.Video, cameraPosition);
+#if MACCATALYST
+            Console.WriteLine($"[NativeCameraMac] Triple camera device: {videoDevice?.LocalizedName ?? "null"}");
+#endif
         }
 
         if (videoDevice == null)
@@ -229,19 +252,54 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 2) && FormsControl.Type == CameraType.Max)
             {
                 videoDevice = AVCaptureDevice.GetDefaultDevice(AVCaptureDeviceType.BuiltInDualCamera, AVMediaTypes.Video, cameraPosition);
+#if MACCATALYST
+                Console.WriteLine($"[NativeCameraMac] Dual camera device: {videoDevice?.LocalizedName ?? "null"}");
+#endif
             }
 
             if (videoDevice == null)
             {
                 var videoDevices = AVCaptureDevice.DevicesWithMediaType(AVMediaTypes.Video.GetConstant());
+#if MACCATALYST
+                Console.WriteLine($"[NativeCameraMac] Available video devices: {videoDevices?.Length ?? 0}");
+                if (videoDevices != null)
+                {
+                    foreach (var device in videoDevices)
+                    {
+                        Console.WriteLine($"[NativeCameraMac] - Device: {device.LocalizedName}, Position: {device.Position}, Connected: {device.Connected}");
+                    }
+                }
+#endif
                 videoDevice = videoDevices.FirstOrDefault(d => d.Position == cameraPosition);
-                
+
+                // Mac Catalyst fallback: if no camera found for requested position, try any available camera
+#if MACCATALYST
+                if (videoDevice == null && videoDevices?.Length > 0)
+                {
+                    Console.WriteLine($"[NativeCameraMac] No camera found for position {cameraPosition}, trying first available camera");
+                    videoDevice = videoDevices.FirstOrDefault(d => d.Connected);
+                    if (videoDevice != null)
+                    {
+                        Console.WriteLine($"[NativeCameraMac] Using fallback device: {videoDevice.LocalizedName}, Position: {videoDevice.Position}");
+                    }
+                }
+#endif
+
                 if (videoDevice == null)
                 {
+#if MACCATALYST
+                    Console.WriteLine($"[NativeCameraMac] ERROR: No camera found for position {cameraPosition}");
+#endif
                     State = CameraProcessorState.Error;
                     _session.CommitConfiguration();
                     return;
                 }
+#if MACCATALYST
+                else
+                {
+                    Console.WriteLine($"[NativeCameraMac] Selected device: {videoDevice.LocalizedName}");
+                }
+#endif
             }
         }
 
@@ -315,18 +373,41 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         {
             _session.AddOutput(_videoDataOutput);
             _videoDataOutput.AlwaysDiscardsLateVideoFrames = true;
-            _videoDataOutput.WeakVideoSettings = new NSDictionary(CVPixelBuffer.PixelFormatTypeKey, 
+
+#if MACCATALYST
+            // Mac Catalyst may work better with different pixel formats
+            // Try CV32BGRA first, fallback to CV420YpCbCr8BiPlanarFullRange if needed
+            try
+            {
+                _videoDataOutput.WeakVideoSettings = new NSDictionary(CVPixelBuffer.PixelFormatTypeKey,
+                    CVPixelFormatType.CV32BGRA);
+                Console.WriteLine("[NativeCameraMac] Using CV32BGRA pixel format");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[NativeCameraMac] CV32BGRA failed, trying fallback: {ex.Message}");
+                _videoDataOutput.WeakVideoSettings = new NSDictionary(CVPixelBuffer.PixelFormatTypeKey,
+                    CVPixelFormatType.CV420YpCbCr8BiPlanarFullRange);
+            }
+#else
+            _videoDataOutput.WeakVideoSettings = new NSDictionary(CVPixelBuffer.PixelFormatTypeKey,
                 CVPixelFormatType.CV32BGRA);
+#endif
+
             _videoDataOutput.SetSampleBufferDelegate(this, _videoDataOutputQueue);
-            
+
             // Set initial video orientation from the connection
             var videoConnection = _videoDataOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
             if (videoConnection != null && videoConnection.SupportsVideoOrientation)
             {
                 _videoOrientation = videoConnection.VideoOrientation;
+#if MACCATALYST
+                Console.WriteLine($"[NativeCameraMac] Initial video orientation: {_videoOrientation}");
+#else
                 System.Diagnostics.Debug.WriteLine($"[CAMERA SETUP] Initial video orientation: {_videoOrientation}");
+#endif
             }
-        }
+        } 
         else
         {
             Console.WriteLine("Could not add video data output to the session");
@@ -375,13 +456,30 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
     public void Start()
     {
         if (State == CameraProcessorState.Enabled && _session.Running)
+        {
+#if MACCATALYST
+            Console.WriteLine("[NativeCameraMac] Camera already running, skipping start");
+#endif
             return;
+        }
 
         try
         {
+#if MACCATALYST
+            Console.WriteLine("[NativeCameraMac] Starting camera session...");
+            Console.WriteLine($"[NativeCameraMac] Session inputs: {_session.Inputs?.Length ?? 0}");
+            Console.WriteLine($"[NativeCameraMac] Session outputs: {_session.Outputs?.Length ?? 0}");
+            Console.WriteLine($"[NativeCameraMac] Device input: {_deviceInput?.Device?.LocalizedName ?? "null"}");
+            Console.WriteLine($"[NativeCameraMac] Session preset: {_session.SessionPreset}");
+#endif
+
             _session.StartRunning();
             State = CameraProcessorState.Enabled;
-            
+
+#if MACCATALYST
+            Console.WriteLine($"[NativeCameraMac] Session started successfully. Running: {_session.Running}");
+#endif
+
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 DeviceDisplay.Current.KeepScreenOn = true;
@@ -389,7 +487,11 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         }
         catch (Exception e)
         {
+#if MACCATALYST
+            Console.WriteLine($"[NativeCameraMac] Start error: {e}");
+#else
             Console.WriteLine($"[NativeCameraiOS] Start error: {e}");
+#endif
             State = CameraProcessorState.Error;
         }
     }
@@ -834,7 +936,11 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         // Log stats every 300 frames
         if (_processedFrameCount % 300 == 0)
         {
+#if MACCATALYST
+            System.Diagnostics.Debug.WriteLine($"[NativeCameraMac] Frame stats - Processed: {_processedFrameCount}, Skipped: {_skippedFrameCount}");
+#else
             System.Diagnostics.Debug.WriteLine($"[NativeCameraiOS] Frame stats - Processed: {_processedFrameCount}, Skipped: {_skippedFrameCount}");
+#endif
         }
 
         bool hasFrame=false;
@@ -842,7 +948,12 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         {
             using var pixelBuffer = sampleBuffer.GetImageBuffer() as CVPixelBuffer;
             if (pixelBuffer == null)
+            {
+#if MACCATALYST
+                Console.WriteLine("[NativeCameraMac] ERROR: No pixel buffer in sample");
+#endif
                 return;
+            }
 
             pixelBuffer.Lock(CVPixelBufferLock.ReadOnly);
 
@@ -912,9 +1023,26 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 var bytesPerRow = (int)pixelBuffer.BytesPerRow;
                 var baseAddress = pixelBuffer.BaseAddress;
 
+#if MACCATALYST
+                // Only log occasionally to avoid spam
+                if (_processedFrameCount % 300 == 0)
+                {
+                    Console.WriteLine($"[NativeCameraMac] Frame data: {width}x{height}, bytesPerRow: {bytesPerRow}, baseAddress: {baseAddress != IntPtr.Zero}");
+                }
+#endif
+
                 // Copy pixel data to avoid CVPixelBuffer lifetime issues - minimal memory copy
                 var dataSize = height * bytesPerRow;
                 var pixelData = new byte[dataSize];
+
+                if (baseAddress == IntPtr.Zero)
+                {
+#if MACCATALYST
+                    Console.WriteLine("[NativeCameraMac] ERROR: Pixel buffer base address is null");
+#endif
+                    return;
+                }
+
                 System.Runtime.InteropServices.Marshal.Copy(baseAddress, pixelData, 0, dataSize);
 
                 // Store raw frame data for lazy SKImage creation on main thread
@@ -944,7 +1072,11 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         }
         catch (Exception e)
         {
+#if MACCATALYST
+            Console.WriteLine($"[NativeCameraMac] Frame processing error: {e}");
+#else
             Console.WriteLine($"[NativeCameraiOS] Frame processing error: {e}");
+#endif
         }
         finally
         {
