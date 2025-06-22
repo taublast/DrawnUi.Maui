@@ -152,13 +152,27 @@ public partial class MauiEntryHandler : EntryHandler
         //fricky fix
         if (keyboard == Keyboard.Numeric || keyboard == Keyboard.Telephone)
         {
-            platformView.InputType = InputTypes.ClassNumber | InputTypes.NumberVariationPassword;
+            if (Control.IsPassword)
+            {
+                platformView.InputType = InputTypes.ClassNumber | InputTypes.NumberVariationPassword;
+            }
+            else
+            {
+                platformView.InputType = InputTypes.ClassNumber | InputTypes.NumberVariationNormal;
+            }
         }
         else
-        //if ()
         {
-            platformView.InputType =
-                InputTypes.ClassText | InputTypes.TextFlagMultiLine | InputTypes.TextFlagNoSuggestions | InputTypes.TextVariationVisiblePassword;
+            if (Control.IsPassword)
+            {
+                platformView.InputType =
+                    InputTypes.ClassText | InputTypes.TextFlagMultiLine | InputTypes.TextFlagNoSuggestions | InputTypes.TextVariationVisiblePassword;
+            }
+            else
+            {
+                platformView.InputType =
+                    InputTypes.ClassText | InputTypes.TextFlagMultiLine | InputTypes.TextFlagNoSuggestions;
+            }
         }
  
         Debug.WriteLine(
