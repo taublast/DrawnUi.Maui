@@ -9,9 +9,13 @@
 		<integer>1</integer>
 		<integer>2</integer>
 	</array>
-    <key>NSCameraUsageDescription</key>
-    <string>Allow access to the camcorder for the camera</string>
-	<key>UIRequiredDeviceCapabilities</key>
+  <key>NSCameraUsageDescription</key>
+  <string>Allow access to the camera</string>
+  <key>NSPhotoLibraryAddUsageDescription</key>
+  <string>Allow access to the library to save photos</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Allow access to the library to save photos</string>
+  <key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
 	</array>
