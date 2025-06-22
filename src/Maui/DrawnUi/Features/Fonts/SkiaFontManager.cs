@@ -136,7 +136,7 @@ public partial class SkiaFontManager
         return codePoints;
     }
 
-#if (!ANDROID && !IOS && !MACCATALYST && !WINDOWS && !TIZEN)
+#if (!ONPLATFORM)
 
     public SKTypeface GetFont(string alias)
     {
