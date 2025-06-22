@@ -46,10 +46,7 @@ namespace DrawnUi.Draw
         /// </summary>
         public virtual SKImage CachedImage
         {
-            get
-            {
-                return RenderObject?.Image;
-            }
+            get { return RenderObject?.Image; }
         }
 
         /// <summary>
@@ -630,10 +627,10 @@ namespace DrawnUi.Draw
             var startScaleY = this.ScaleY;
 
             return AnimateAsync(value =>
-            {
-                this.ScaleX = startScaleX + (x - startScaleX) * value;
-                this.ScaleY = startScaleY + (y - startScaleY) * value;
-            },
+                {
+                    this.ScaleX = startScaleX + (x - startScaleX) * value;
+                    this.ScaleY = startScaleY + (y - startScaleY) * value;
+                },
                 () =>
                 {
                     this.ScaleX = x;
@@ -684,10 +681,10 @@ namespace DrawnUi.Draw
             var startTranslationY = this.TranslationY;
 
             return AnimateAsync(value =>
-            {
-                this.TranslationX = (float)(startTranslationX + (x - startTranslationX) * value);
-                this.TranslationY = (float)(startTranslationY + (y - startTranslationY) * value);
-            },
+                {
+                    this.TranslationX = (float)(startTranslationX + (x - startTranslationX) * value);
+                    this.TranslationY = (float)(startTranslationY + (y - startTranslationY) * value);
+                },
                 () =>
                 {
                     this.TranslationX = x;
@@ -3987,13 +3984,13 @@ namespace DrawnUi.Draw
                 var hasHorizontalFill = child.HorizontalOptions.Alignment == LayoutAlignment.Fill;
                 var hasVerticalFill = child.VerticalOptions.Alignment == LayoutAlignment.Fill;
 
-                var provideWidth = hasHorizontalFill ?
-                    (NeedAutoWidth && maxWidth >= 0 ? maxWidth : rectForChildrenPixels.Width) :
-                    rectForChildrenPixels.Width;
+                var provideWidth = hasHorizontalFill
+                    ? (NeedAutoWidth && maxWidth >= 0 ? maxWidth : rectForChildrenPixels.Width)
+                    : rectForChildrenPixels.Width;
 
-                var provideHeight = hasVerticalFill ?
-                    (NeedAutoHeight && maxHeight >= 0 ? maxHeight : rectForChildrenPixels.Height) :
-                    rectForChildrenPixels.Height;
+                var provideHeight = hasVerticalFill
+                    ? (NeedAutoHeight && maxHeight >= 0 ? maxHeight : rectForChildrenPixels.Height)
+                    : rectForChildrenPixels.Height;
 
                 var measured = MeasureChild(child, provideWidth, provideHeight, scale);
 
@@ -5499,10 +5496,7 @@ namespace DrawnUi.Draw
             var super = this.Superview;
             if (super != null)
             {
-                Superview.PostponeExecutionBeforeDraw(() =>
-                {
-                    action();
-                });
+                Superview.PostponeExecutionBeforeDraw(() => { action(); });
                 Repaint();
             }
             else
@@ -5718,7 +5712,8 @@ namespace DrawnUi.Draw
             {
                 if (EffectPostRenderer != null)
                 {
-                    EffectPostRenderer.Render(context); //post renderer will use this render object for rendering itsself
+                    EffectPostRenderer
+                        .Render(context); //post renderer will use this render object for rendering itsself
                 }
                 else
                 {
@@ -5961,10 +5956,9 @@ namespace DrawnUi.Draw
         {
             if (NeedUpdate && Thread.CurrentThread.ManagedThreadId == _updatedFromThread)
             {
-                Repaint();
+                //Repaint(); //todo!!!
                 return;
             }
-            ;
 
             if (OutputDebug)
             {
@@ -6484,10 +6478,7 @@ namespace DrawnUi.Draw
 
             var animation = new ShimmerAnimator(this)
             {
-                Color = color.ToSKColor(),
-                ShimmerWidth = shimmerWidth,
-                ShimmerAngle = shimmerAngle,
-                Speed = speedMs
+                Color = color.ToSKColor(), ShimmerWidth = shimmerWidth, ShimmerAngle = shimmerAngle, Speed = speedMs
             };
             animation.Start();
         }
