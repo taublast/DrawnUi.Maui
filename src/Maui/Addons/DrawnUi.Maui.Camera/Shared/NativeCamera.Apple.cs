@@ -321,6 +321,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
         if (_session.CanAddOutput(_videoDataOutput))
         {
+            // Configure video data output BEFORE adding to session
             _session.AddOutput(_videoDataOutput);
             _videoDataOutput.AlwaysDiscardsLateVideoFrames = true;
             _videoDataOutput.WeakVideoSettings = new NSDictionary(CVPixelBuffer.PixelFormatTypeKey, 
@@ -940,6 +941,10 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
                 SetRawFrame(rawFrame);
                 hasFrame=true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[NativeCameraiOS] pixelBuffer processing error: {e}");
             }
             finally
             {
