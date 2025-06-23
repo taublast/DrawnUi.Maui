@@ -1690,7 +1690,7 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// Calculates compensated stroke width for curved shapes to maintain visual consistency with straight edges
+        /// Calculates compensated stroke width for curved shapes to fix antialiasing at rounded corners
         /// </summary>
         /// <param name="originalStrokeWidth">The original stroke width in pixels</param>
         /// <param name="scale">The current rendering scale</param>
@@ -1700,26 +1700,12 @@ namespace DrawnUi.Draw
             if (originalStrokeWidth <= 0)
                 return originalStrokeWidth;
 
-            float compensationFactor = 1.0f;
-
-            if (originalStrokeWidth <= 2.0f * scale)
+            if (originalStrokeWidth <= 1.0f * scale)
             {
-                compensationFactor = 1.15f;
-            }
-            else if (originalStrokeWidth <= 4.0f * scale)
-            {
-                compensationFactor = 1.10f;
-            }
-            else if (originalStrokeWidth <= 6.0f * scale)
-            {
-                compensationFactor = 1.08f;
-            }
-            else
-            {
-                compensationFactor = 1.05f;
+                return originalStrokeWidth * 0.55f; // Make curves thinner to match straight lines
             }
 
-            return originalStrokeWidth * compensationFactor;
+            return originalStrokeWidth;
         }
 
         public static new readonly BindableProperty LayoutProperty = BindableProperty.Create(nameof(LayoutType),
