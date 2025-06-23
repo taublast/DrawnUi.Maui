@@ -394,12 +394,22 @@ namespace DrawnUi.Draw
             return (float)(pixelsStrokeWidth / 2.0f);
         }
 
+        protected float GetStrokePixels(float scale)
+        {
+            var pixelsStrokeWidth = StrokeWidth > 0
+                ? (float)(StrokeWidth * scale)
+                : (float)(-StrokeWidth);
+
+            return (float)(pixelsStrokeWidth);
+        }
+
         protected float GetInflationForStroke(float halfStroke)
         {
             if (halfStroke < 0.5f)
             {
                 return -1f;
             }
+
             return -(float)Math.Round(halfStroke);
         }
 
@@ -422,8 +432,11 @@ namespace DrawnUi.Draw
             {
                 var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
 
+                var contract = GetHalfStroke(scale);
+                //var contract = -GetInflationForStroke(GetHalfStroke(scale));
+
                 var strokeAwareChildrenSize
-                    = ContractPixelsRect(strokeAwareSize, scale, new Thickness());
+                    = ContractPixelsRect(strokeAwareSize, contract);
 
                 return strokeAwareChildrenSize;
             }
@@ -465,7 +478,11 @@ namespace DrawnUi.Draw
 
         protected void CalculateSizeForStroke(SKRect destination, float scale)
         {
-            MeasuredStrokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
+            if (Tag == "EndLabelShape")
+            {
+                var stop = 1;
+            }
+
             MeasuredStrokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
             MeasuredStrokeAwareClipSize = CalculateClipSizeForStroke(destination, scale);
             MeasuredStrokeAwareChildrenSize = CalculateContentSizeForStroke(destination, scale);
@@ -698,8 +715,6 @@ namespace DrawnUi.Draw
                     {
                         ShouldClipAntialiased = true;
 
-                        //path.AddRect(strokeAwareSize); //was debugging
-
                         var scaledRadiusLeftTop = (float)(CornerRadius.TopLeft * RenderingScale);
                         var scaledRadiusRightTop = (float)(CornerRadius.TopRight * RenderingScale);
                         var scaledRadiusLeftBottom = (float)(CornerRadius.BottomLeft * RenderingScale);
@@ -747,6 +762,41 @@ namespace DrawnUi.Draw
             return path;
         }
 
+        /// <summary>
+        /// Calculates corrected corner radii for the background rectangle to maintain visual consistency with the stroke
+        /// </summary>
+        /// <param name="originalRadii">The original radii used for the stroke</param>
+        /// <param name="strokeRect">The rectangle used for drawing the stroke</param>
+        /// <param name="backgroundRect">The contracted rectangle used for drawing the background</param>
+        /// <returns>Corrected radii array for the background</returns>
+        protected SKPoint[] GetCorrectedBackgroundRadii(SKPoint[] originalRadii, SKRect strokeRect,
+            SKRect backgroundRect)
+        {
+            // Calculate how much the rectangle was contracted
+            float widthContraction = strokeRect.Width - backgroundRect.Width;
+            float heightContraction = strokeRect.Height - backgroundRect.Height;
+
+            // Calculate the reduction per side
+            float horizontalReduction = widthContraction / 2.0f;
+            float verticalReduction = heightContraction / 2.0f;
+
+            // Use the smaller reduction to maintain the circular nature of corners
+            float radiusReduction = Math.Min(horizontalReduction, verticalReduction);
+
+            var correctedRadii = new SKPoint[4];
+
+            for (int i = 0; i < originalRadii.Length; i++)
+            {
+                // Reduce each radius component, but never go below 0
+                float correctedX = Math.Max(0, originalRadii[i].X - radiusReduction);
+                float correctedY = Math.Max(0, originalRadii[i].Y - radiusReduction);
+
+                correctedRadii[i] = new SKPoint(correctedX, correctedY);
+            }
+
+            return correctedRadii;
+        }
+
         protected virtual void PaintBackground(SkiaDrawingContext ctx,
             SKRect outRect,
             SKPoint[] radii,
@@ -761,18 +811,16 @@ namespace DrawnUi.Draw
                 case ShapeType.Rectangle:
                     if (CornerRadius != default)
                     {
-                        if (StrokeWidth == 0 || StrokeColor == TransparentColor)
-                        {
-                            paint.IsAntialias = true;
-                        }
+                        paint.IsAntialias = true;
 
                         if (DrawRoundedRect == null)
                             DrawRoundedRect = new();
+
                         DrawRoundedRect.SetRectRadii(outRect, radii);
-                        ctx.Canvas.DrawRoundRect(DrawRoundedRect, RenderingPaint);
+                        ctx.Canvas.DrawRoundRect(DrawRoundedRect, paint);
                     }
                     else
-                        ctx.Canvas.DrawRect(outRect, RenderingPaint);
+                        ctx.Canvas.DrawRect(outRect, paint);
 
                     break;
 
@@ -869,6 +917,8 @@ namespace DrawnUi.Draw
             var scale = ctx.Scale;
             var strokeAwareSize = MeasuredStrokeAwareSize;
             var strokeAwareChildrenSize = MeasuredStrokeAwareChildrenSize;
+            var rectBackground = MeasuredStrokeAwareClipSize;
+
             ShapePaintArguments? arguments = null;
             if (ctx.GetArgument("ShapePaintArguments") is ShapePaintArguments defined)
             {
@@ -937,11 +987,6 @@ namespace DrawnUi.Draw
                 SetupGradient(paint, StrokeGradient, outRect);
 
                 paint.ImageFilter = null;
-
-                if (StrokeGradient?.Opacity != 1)
-                {
-                    paint.Shader = null;
-                }
 
                 paint.Style = SKPaintStyle.Stroke;
                 paint.StrokeCap = this.StrokeCap;
@@ -1128,9 +1173,18 @@ namespace DrawnUi.Draw
             //background with shadows pass, no stroke
             PaintWithShadowsInternal(() =>
             {
-                if (SetupBackgroundPaint(RenderingPaint, outRect))
+                if (SetupBackgroundPaint(RenderingPaint, rectBackground))
                 {
-                    PaintBackground(ctx.Context, outRect, radii, minSize, RenderingPaint);
+                    //correct radii for inner rounded rect, must be smaller than stroke!
+                    if (WillStroke && StrokeWidth > 1)
+                    {
+                        var backgroundRadii = GetCorrectedBackgroundRadii(radii, outRect, rectBackground);
+                        PaintBackground(ctx.Context, rectBackground, backgroundRadii, minSize, RenderingPaint);
+                    }
+                    else
+                    {
+                        PaintBackground(ctx.Context, rectBackground, radii, minSize, RenderingPaint);
+                    }
                 }
             });
 
@@ -1666,6 +1720,23 @@ namespace DrawnUi.Draw
             }
 
             return originalStrokeWidth * compensationFactor;
+        }
+
+        public static new readonly BindableProperty LayoutProperty = BindableProperty.Create(nameof(LayoutType),
+            typeof(LayoutType), typeof(SkiaShape), LayoutType.Absolute, propertyChanged: NeedChangeLayoutType);
+
+        private static void NeedChangeLayoutType(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is SkiaLayout layout)
+            {
+                layout.Type = (LayoutType)newValue;
+            }
+        }
+
+        public new LayoutType Layout
+        {
+            get { return (LayoutType)GetValue(LayoutProperty); }
+            set { SetValue(LayoutProperty, value); }
         }
     }
 }
