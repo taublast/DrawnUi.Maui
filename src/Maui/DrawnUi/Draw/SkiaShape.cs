@@ -394,6 +394,15 @@ namespace DrawnUi.Draw
             return (float)(pixelsStrokeWidth / 2.0f);
         }
 
+        protected float GetSmallUnderStroke(float scale)
+        {
+            var pixelsStrokeWidth = StrokeWidth > 0
+                ? (float)(StrokeWidth * scale)
+                : (float)(-StrokeWidth);
+
+            return (float)(pixelsStrokeWidth / 3.0f);
+        }
+
         protected float GetStrokePixels(float scale)
         {
             var pixelsStrokeWidth = StrokeWidth > 0
@@ -432,8 +441,8 @@ namespace DrawnUi.Draw
             {
                 var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
 
+                //var contract = GetSmallUnderStroke(scale);
                 var contract = GetHalfStroke(scale);
-                //var contract = -GetInflationForStroke(GetHalfStroke(scale));
 
                 var strokeAwareChildrenSize
                     = ContractPixelsRect(strokeAwareSize, contract);

@@ -88,7 +88,7 @@ public class SkiaCheckbox : SkiaToggle
         this.AddSubView(new SkiaShape
         {
             Tag = "FrameOff",
-            StrokeWidth = 1,
+            StrokeWidth = 1.5,
             Type = ShapeType.Rectangle,
             CornerRadius = 4, // iOS slightly rounded corners
             StrokeColor = Color.FromRgba(191, 191, 191, 255), // iOS light gray
