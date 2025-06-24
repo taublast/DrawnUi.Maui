@@ -269,6 +269,7 @@ public partial class SkiaLayout
 
                 ScaledSize measured;
 
+                //will use dynamically changing rectFitChild
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]
                 ScaledSize MeasureCellInternal()
                 {
@@ -305,6 +306,17 @@ public partial class SkiaLayout
                     //non-templated
                     //return MeasureAndArrangeCell(rectFitChild, cell, child, scale);
                     return MeasureCell(rectFitChild, cell, child, scale);
+                }
+
+                //we know we will not fit in advance
+                if (child.WidthRequestWithMargins * scale > rectFitChild.Width)
+                {
+                    BreakRow();
+                    remainingSize = rectForChild.Width;
+                    if (useFixedSplitSize)
+                    {
+                        remainingSize = rectFitChild.Width;
+                    }
                 }
 
                 measured = MeasureCellInternal();
