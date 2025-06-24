@@ -415,7 +415,7 @@ namespace DrawnUi.Views
 
         public void AddAnimator(ISkiaAnimator animator)
         {
-            lock (LockAnimatingControls)
+            //lock (LockAnimatingControls)
             {
                 animator.IsDeactivated = false;
                 if (animator.Parent != null && !animator.Parent.IsVisible)
@@ -436,7 +436,7 @@ namespace DrawnUi.Views
 
         public void RemoveAnimator(Guid uid)
         {
-            lock (LockAnimatingControls)
+            //lock (LockAnimatingControls)
             {
                 if (AnimatingControls.TryGetValue(uid, out var animator))
                 {
@@ -465,7 +465,7 @@ namespace DrawnUi.Views
 
         public virtual IEnumerable<ISkiaAnimator> UnregisterAllAnimatorsByType(Type type)
         {
-            lock (LockAnimatingControls)
+            //lock (LockAnimatingControls)
             {
                 var ret = AnimatingControls.Where(x => x.Value.GetType() == type).Select(s => s.Value).ToArray();
                 foreach (var animator in ret)
@@ -486,7 +486,7 @@ namespace DrawnUi.Views
 
         public virtual IEnumerable<ISkiaAnimator> UnregisterAllAnimatorsByParent(SkiaControl parent)
         {
-            lock (LockAnimatingControls)
+            //lock (LockAnimatingControls)
             {
                 var ret = AnimatingControls.Values.Where(x => x.Parent == parent).ToArray();
                 foreach (var animator in ret)
@@ -513,7 +513,7 @@ namespace DrawnUi.Views
         /// <returns></returns>
         public virtual IEnumerable<ISkiaAnimator> SetViewTreeVisibilityByParent(SkiaControl parent, bool state)
         {
-            lock (LockAnimatingControls)
+            //lock (LockAnimatingControls)
             {
                 var ret = AnimatingControls.Values.Where(x => x.Parent == parent).ToArray();
                 foreach (var animator in ret)
@@ -534,7 +534,7 @@ namespace DrawnUi.Views
 
         public virtual IEnumerable<ISkiaAnimator> SetPauseStateOfAllAnimatorsByParent(SkiaControl parent, bool state)
         {
-            lock (LockAnimatingControls)
+            //lock (LockAnimatingControls)
             {
                 var ret = AnimatingControls.Values.Where(x => x.Parent == parent).ToArray();
                 foreach (var animator in ret)
@@ -591,7 +591,7 @@ namespace DrawnUi.Views
             return executed;
         }
 
-        protected object LockAnimatingControls = new();
+        //protected object LockAnimatingControls = new();
 
         /// <summary>
         /// Executed after the rendering
@@ -604,7 +604,7 @@ namespace DrawnUi.Views
         /// Tracking controls that what to be animated right now so we constantly refresh
         /// canvas until there is none left
         /// </summary>
-        public Dictionary<Guid, ISkiaAnimator> AnimatingControls { get; } = new(512);
+        public ConcurrentDictionary<Guid, ISkiaAnimator> AnimatingControls { get; } = new();
 
         protected FrameTimeInterpolator FrameTimeInterpolator = new();
         public long mLastFrameTime { get; set; }
@@ -614,7 +614,7 @@ namespace DrawnUi.Views
             var executed = 0;
 
 
-            lock (LockAnimatingControls)
+            //lock (LockAnimatingControls)
             {
                 try
                 {
@@ -679,7 +679,7 @@ namespace DrawnUi.Views
                     foreach (var key in _listRemoveAnimators)
                     {
                         //Debug.WriteLine($"ANIMATORS - REMOVED {key}");
-                        AnimatingControls.Remove(key);
+                        AnimatingControls.TryRemove(key, out _);
                     }
                 }
                 catch (Exception e)
