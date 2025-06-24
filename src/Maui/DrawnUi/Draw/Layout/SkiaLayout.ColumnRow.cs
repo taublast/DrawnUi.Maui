@@ -308,911 +308,438 @@ else
 }
 */
 
+
         /// <summary>
         /// Measuring column/row with 3-pass approach to handle Fill options correctly
         /// </summary>
-        /// <param name="rectForChildrenPixels"></param>
-        /// <param name="scale"></param>
-        /// <returns></returns>
         public virtual ScaledSize MeasureStackNonTemplated(SKRect rectForChildrenPixels, float scale)
         {
-            if (ChildrenFactory.GetChildrenCount() > 0)
-            {
-                bool isRtl = Super.IsRtl; //todo!!!
+            if (ChildrenFactory.GetChildrenCount() <= 0)
+                return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
 
-                ScaledSize measured;
-                SKRect rectForChild = rectForChildrenPixels;
+            var nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
+            var layoutStructure = BuildStackStructure(scale);
 
-                SkiaControl[] nonTemplated = null;
-                if (!IsTemplated)
-                {
-                    nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
-                }
-
-                SkiaControl template = null;
-                ControlInStack firstCell = null;
-                measured = ScaledSize.Default;
-
-                var stackHeight = 0.0f;
-                var stackWidth = 0.0f;
-
-                var layoutStructure = BuildStackStructure(scale);
-
-                bool useOneTemplate = IsTemplated &&
-                                      RecyclingTemplate != RecyclingTemplate.Disabled;
-
-                if (useOneTemplate)
-                {
-                    template = ChildrenFactory.GetTemplateInstance();
-                }
-
-                List<SecondPassArrange> listSecondPass = new();
-                bool stopMeasuring = false;
-
-                var cellsToRelease = new List<SkiaControl>();
-                var index = -1;
-
-                try
-                {
-                    // PASS 1: Pre-scan to calculate space requirements
-                    var fillChildren = new List<(ControlInStack cell, SkiaControl child, int row, int column)>();
-                    var fixedSpaceUsed = 0.0f;
-                    var spacingUsed = 0.0f;
-
-                    for (var row = 0; row < layoutStructure.MaxRows; row++)
-                    {
-                        if (row > 0) spacingUsed += GetSpacingForIndex(row, scale);
-
-                        var columnsCount = layoutStructure.GetColumnCountForRow(row);
-                        if (!DynamicColumns && columnsCount < Split)
-                        {
-                            columnsCount = Split;
-                        }
-
-                        for (int column = 0; column < columnsCount; column++)
-                        {
-                            if (layoutStructure.GetColumnCountForRow(row) < column + 1)
-                                continue;
-
-                            var cell = layoutStructure.Get(column, row);
-                            SkiaControl child = GetChildAtIndex(cell.ControlIndex, template, nonTemplated, cellsToRelease);
-
-                            if (child == null || !child.CanDraw) continue;
-
-                            // Check if this child has Fill in stack direction
-                            bool isFillChild = (Type == LayoutType.Column &&
-                                               child.VerticalOptions.Alignment == LayoutAlignment.Fill &&
-                                               child.HeightRequest < 0) ||
-                                              (Type == LayoutType.Row &&
-                                               child.HorizontalOptions.Alignment == LayoutAlignment.Fill &&
-                                               child.WidthRequest < 0);
-
-                            if (isFillChild)
-                            {
-                                fillChildren.Add((cell, child, row, column));
-                            }
-                            else
-                            {
-                                // For non-Fill children, calculate their size requirements
-                                if (Type == LayoutType.Column && child.HeightRequest >= 0)
-                                {
-                                    fixedSpaceUsed += (float)(child.HeightRequest * scale);
-                                }
-                                else if (Type == LayoutType.Row && child.WidthRequest >= 0)
-                                {
-                                    fixedSpaceUsed += (float)(child.WidthRequest * scale);
-                                }
-                                else
-                                {
-                                    // Measure to get size for auto-sized non-Fill children
-                                    var tempRect = Type == LayoutType.Column
-                                        ? new SKRect(0, 0, rectForChildrenPixels.Width, float.PositiveInfinity)
-                                        : new SKRect(0, 0, float.PositiveInfinity, rectForChildrenPixels.Height);
-
-                                    var tempMeasured = MeasureChild(child, tempRect.Width, tempRect.Height, scale);
-                                    if (Type == LayoutType.Column)
-                                    {
-                                        fixedSpaceUsed += tempMeasured.Pixels.Height;
-                                    }
-                                    else
-                                    {
-                                        fixedSpaceUsed += tempMeasured.Pixels.Width;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Calculate space available for Fill children
-                    var totalAvailableSpace = Type == LayoutType.Column
-                        ? rectForChildrenPixels.Height
-                        : rectForChildrenPixels.Width;
-                    var remainingSpace = Math.Max(0, totalAvailableSpace - fixedSpaceUsed - spacingUsed);
-                    var spacePerFillChild = fillChildren.Count > 0 ? remainingSpace / fillChildren.Count : 0;
-
-                    // PASS 2: Measure all children with correct sizes
-                    rectForChild = rectForChildrenPixels;
-                    index = -1;
-
-                    for (var row = 0; row < layoutStructure.MaxRows; row++)
-                    {
-                        if (stopMeasuring) break;
-
-                        var maxHeight = 0.0f;
-                        var maxWidth = 0.0f;
-                        var columnsCount = layoutStructure.GetColumnCountForRow(row);
-
-                        var needMeasureAll = true;
-                        if (useOneTemplate)
-                        {
-                            needMeasureAll = RecyclingTemplate == RecyclingTemplate.Disabled ||
-                                             MeasureItemsStrategy == MeasuringStrategy.MeasureAll ||
-                                             (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && columnsCount != Split) ||
-                                             !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && firstCell != null);
-                        }
-
-                        if (!DynamicColumns && columnsCount < Split)
-                        {
-                            columnsCount = Split;
-                        }
-
-                        float widthPerColumn;
-                        if (Type == LayoutType.Column)
-                        {
-                            widthPerColumn = (float)Math.Round(columnsCount > 1
-                                ? (rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount
-                                : rectForChildrenPixels.Width);
-                        }
-                        else
-                        {
-                            widthPerColumn = rectForChildrenPixels.Width;
-                        }
-
-                        for (int column = 0; column < columnsCount; column++)
-                        {
-                            try
-                            {
-                                if (layoutStructure.GetColumnCountForRow(row) < column + 1)
-                                    continue;
-
-                                index++;
-                                var cell = layoutStructure.Get(column, row);
-                                SkiaControl child = GetChildAtIndex(cell.ControlIndex, template, nonTemplated, cellsToRelease);
-
-                                if (child == null)
-                                {
-                                    Super.Log($"[MeasureStack] FAILED to get child at index {cell.ControlIndex}");
-                                    return ScaledSize.Default;
-                                }
-
-                                if (!child.CanDraw)
-                                {
-                                    cell.Measured = ScaledSize.Default;
-                                    continue;
-                                }
-
-                                if (column == 0)
-                                    rectForChild.Top += GetSpacingForIndex(row, scale);
-
-                                rectForChild.Left += GetSpacingForIndex(column, scale);
-
-                                // Create appropriate rect for this child
-                                var rectFitChild = new SKRect(rectForChild.Left, rectForChild.Top,
-                                    rectForChild.Left + widthPerColumn, rectForChild.Bottom);
-
-                                // Adjust rect for Fill children
-                                bool isFillChild = fillChildren.Any(f => f.cell == cell);
-                                if (isFillChild)
-                                {
-                                    if (Type == LayoutType.Column)
-                                    {
-                                        rectFitChild = new SKRect(rectFitChild.Left, rectFitChild.Top,
-                                            rectFitChild.Right, rectFitChild.Top + spacePerFillChild);
-                                    }
-                                    else
-                                    {
-                                        rectFitChild = new SKRect(rectFitChild.Left, rectFitChild.Top,
-                                            rectFitChild.Left + spacePerFillChild, rectFitChild.Bottom);
-                                    }
-                                }
-
-                                if (IsTemplated)
-                                {
-                                    bool needMeasure = needMeasureAll ||
-                                                     (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst &&
-                                                      columnsCount != Split) ||
-                                                     !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst &&
-                                                       firstCell != null);
-
-                                    if (needMeasure)
-                                    {
-                                        measured = MeasureAndArrangeCell(rectFitChild, cell, child,
-                                            rectForChildrenPixels, scale);
-                                        firstCell = cell;
-                                    }
-                                    else
-                                    {
-                                        var offsetX = rectFitChild.Left - firstCell.Area.Left;
-                                        var offsetY = rectFitChild.Top - firstCell.Area.Top;
-                                        var arranged = firstCell.Destination;
-                                        arranged.Offset(new(offsetX, offsetY));
-
-                                        cell.Area = rectFitChild;
-                                        cell.Measured = measured.Clone();
-                                        cell.Destination = arranged;
-                                        cell.WasMeasured = true;
-                                    }
-                                }
-                                else
-                                {
-                                    measured = MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels, scale);
-
-                                    if (Type == LayoutType.Column && child.HorizontalOptions != LayoutOptions.Start)
-                                    {
-                                        listSecondPass.Add(new(cell, child, scale));
-                                    }
-                                    else if (Type == LayoutType.Row && child.VerticalOptions != LayoutOptions.Start)
-                                    {
-                                        listSecondPass.Add(new(cell, child, scale));
-                                    }
-                                }
-
-                                if (!measured.IsEmpty)
-                                {
-                                    if (IsTemplated || child.HorizontalOptions != LayoutOptions.Fill || Type != LayoutType.Column)
-                                    {
-                                        maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
-                                    }
-
-                                    if (IsTemplated || child.VerticalOptions != LayoutOptions.Fill || Type != LayoutType.Row)
-                                    {
-                                        if (measured.Pixels.Height > maxHeight)
-                                            maxHeight = measured.Pixels.Height;
-                                    }
-
-                                    rectForChild.Left += (float)(measured.Pixels.Width);
-                                }
-
-                                cell.WasMeasured = true;
-                            }
-                            catch (Exception e)
-                            {
-                                Super.Log(e);
-                                break;
-                            }
-                        }
-
-                        if (maxWidth > stackWidth)
-                            stackWidth = maxWidth;
-
-                        stackHeight += maxHeight + GetSpacingForIndex(row, scale);
-                        rectForChild.Top += (float)(maxHeight);
-                        rectForChild.Left = 0;
-                    }
-
-                    if (HorizontalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Width >= 0)
-                    {
-                        stackWidth = rectForChildrenPixels.Width;
-                    }
-
-                    if (VerticalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Height >= 0)
-                    {
-                        stackHeight = rectForChildrenPixels.Height;
-                    }
-
-                    // PASS 3: Handle alignment adjustments
-                    var autoRight = rectForChildrenPixels.Right;
-                    if (this.HorizontalOptions != LayoutOptions.Fill)
-                    {
-                        autoRight = rectForChildrenPixels.Left + stackWidth;
-                    }
-
-                    var autoBottom = rectForChildrenPixels.Bottom;
-                    if (this.VerticalOptions != LayoutOptions.Fill)
-                    {
-                        autoBottom = rectForChildrenPixels.Top + stackHeight;
-                    }
-
-                    var autoRect = new SKRect(
-                        rectForChildrenPixels.Left, rectForChildrenPixels.Top,
-                        autoRight, autoBottom);
-
-                    foreach (var secondPass in listSecondPass)
-                    {
-                        if (float.IsInfinity(secondPass.Cell.Area.Bottom))
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Right, secondPass.Cell.Area.Top + stackHeight);
-                        }
-                        else if (float.IsInfinity(secondPass.Cell.Area.Top))
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left,
-                                secondPass.Cell.Area.Bottom - stackHeight,
-                                secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
-                        }
-
-                        if (secondPass.Cell.Area.Height > stackHeight)
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Right, secondPass.Cell.Area.Top + stackHeight);
-                        }
-
-                        if (float.IsInfinity(secondPass.Cell.Area.Right))
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
-                        }
-                        else if (float.IsInfinity(secondPass.Cell.Area.Left))
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Right - stackWidth,
-                                secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
-                        }
-
-                        if (secondPass.Cell.Area.Width > stackWidth)
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
-                        }
-
-                        LayoutCell(secondPass.Child.MeasuredSize, secondPass.Cell, secondPass.Child,
-                            autoRect, secondPass.Scale);
-                    }
-                }
-                finally
-                {
-                    if (useOneTemplate)
-                    {
-                        ChildrenFactory.ReleaseTemplateInstance(template);
-                    }
-                    else if (IsTemplated)
-                    {
-                        foreach (var cell in cellsToRelease)
-                        {
-                            ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
-                        }
-                    }
-                }
-
-                if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
-                {
-                    stackWidth = rectForChildrenPixels.Width;
-                }
-
-                if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
-                {
-                    stackHeight = rectForChildrenPixels.Height;
-                }
-
-                return ScaledSize.FromPixels(stackWidth, stackHeight, scale);
-            }
-
-            return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
-        }
-
-        /// <summary>
-        /// Helper method to get child at index, handling both templated and non-templated scenarios
-        /// </summary>
-        protected SkiaControl GetChildAtIndex(int controlIndex, SkiaControl template, SkiaControl[] nonTemplated, List<SkiaControl> cellsToRelease)
-        {
-            if (IsTemplated)
-            {
-                var child = ChildrenFactory.GetViewForIndex(controlIndex, template, 0,
-                    RecyclingTemplate != RecyclingTemplate.Disabled);
-                if (template == null)
-                {
-                    cellsToRelease.Add(child);
-                }
-                return child;
-            }
-            else
-            {
-                return nonTemplated[controlIndex];
-            }
+            return MeasureStackCore(rectForChildrenPixels, scale, layoutStructure, false, null, nonTemplated);
         }
 
         /// <summary>
         /// Measuring column/row for templated for fastest way possible
         /// </summary>
-        /// <param name="rectForChildrenPixels"></param>
-        /// <param name="scale"></param>
-        /// <returns></returns>
         public virtual ScaledSize MeasureStackTemplated(SKRect rectForChildrenPixels, float scale)
         {
-            if (ChildrenFactory.GetChildrenCount() > 0)
+            if (ChildrenFactory.GetChildrenCount() <= 0)
+                return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
+
+            var layoutStructure = BuildStackStructure(scale);
+            var useOneTemplate = IsTemplated && RecyclingTemplate != RecyclingTemplate.Disabled;
+            var template = useOneTemplate ? ChildrenFactory.GetTemplateInstance() : null;
+
+            try
             {
-                bool isRtl = Super.IsRtl; //todo!!!
-
-                ScaledSize measured;
-                SKRect rectForChild = rectForChildrenPixels; //.Clone();
-
-                SkiaControl[] nonTemplated = null;
-                if (!IsTemplated)
+                return MeasureStackCore(rectForChildrenPixels, scale, layoutStructure, true, template, null);
+            }
+            finally
+            {
+                if (useOneTemplate && template != null)
                 {
-                    //preload with condition..
-                    nonTemplated = GetUnorderedSubviews().Where(c => c.CanDraw).ToArray();
+                    ChildrenFactory.ReleaseTemplateInstance(template);
                 }
+            }
+        }
 
-                bool smartMeasuring = false;
+        /// <summary>
+        /// Core measurement logic shared between templated and non-templated scenarios
+        /// </summary>
+        private ScaledSize MeasureStackCore(SKRect rectForChildrenPixels, float scale, LayoutStructure layoutStructure,
+            bool isTemplated, SkiaControl template, SkiaControl[] nonTemplated)
+        {
+            var stackHeight = 0.0f;
+            var stackWidth = 0.0f;
+            var firstCell = (ControlInStack)null;
+            var useOneTemplate = template != null;
 
-                /*
-                List<SkiaControl> dirtyChildren = DirtyChildrenTracker.GetList();
+            // Reuse existing collections to avoid allocations
+            _tempSecondPassList.Clear();
+            _tempCellsToRelease.Clear();
 
-                if (Superview != null)
+            // Handle Fill children pre-calculation for non-templated
+            var hasFillHandling = !isTemplated;
+            var fixedSpaceUsed = 0.0f;
+            var spacingUsed = 0.0f;
+            var spacePerFillChild = 0.0f;
+
+            if (hasFillHandling)
+            {
+                CalculateFillSpace(rectForChildrenPixels, scale, layoutStructure, nonTemplated,
+                    ref fixedSpaceUsed, ref spacingUsed, ref spacePerFillChild);
+            }
+
+            var rectForChild = rectForChildrenPixels;
+            var index = -1;
+
+            try
+            {
+                for (var row = 0; row < layoutStructure.MaxRows; row++)
                 {
-                    //enable measuring one changed item in foreground only,
-                    //for background thread need full measurement
-                    smartMeasuring =
-                        WasMeasured
-                        && dirtyChildren.Count > 0
-                        && Superview.DrawingThreadId == Thread.CurrentThread.ManagedThreadId
-                                     && UsingCacheType != SkiaCacheType.ImageDoubleBuffered;
-                }
+                    var maxHeight = 0.0f;
+                    var maxWidth = 0.0f;
+                    var columnsCount = GetEffectiveColumnsCount(layoutStructure, row);
+                    var needMeasureAll = ShouldMeasureAll(isTemplated, useOneTemplate, columnsCount, firstCell);
+                    var widthPerColumn = CalculateWidthPerColumn(rectForChildrenPixels, columnsCount, scale);
 
-                var dirty = dirtyChildren.FirstOrDefault();
-                if (smartMeasuring && dirty != null)
-                {
-                    //measure only changed child
-                    var viewIndex = -1;
-                    if (IsTemplated)
+                    for (int column = 0; column < columnsCount; column++)
                     {
-                        viewIndex = dirty.ContextIndex;
-                        if (viewIndex >= 0)
+                        if (layoutStructure.GetColumnCountForRow(row) < column + 1)
+                            continue;
+
+                        index++;
+                        var cell = layoutStructure.Get(column, row);
+                        var child = GetChildForMeasurement(cell.ControlIndex, isTemplated, template, nonTemplated);
+
+                        if (child?.CanDraw != true)
                         {
-                            ScaledSize newContentSize = null;
-                            SKSize sizeChange = new();
-
-                            IReadOnlyList<SkiaControl> views = null;
-                            if (!IsTemplated)
-                            {
-                                views = GetUnorderedSubviews();
-                            }
-
-                            var index = -1;
-                            foreach (var cell in LatestStackStructure.GetChildren())
-                            {
-                                index++;
-
-                                if (newContentSize != null)
-                                {
-                                    //Offset the subsequent children
-                                    cell.Area = new SKRect(
-                                        cell.Area.Left + sizeChange.Width,
-                                        cell.Area.Top + sizeChange.Height,
-                                        cell.Area.Right + sizeChange.Width,
-                                        cell.Area.Bottom + sizeChange.Height);
-
-                                    //todo layout cell ?
-                                    if (views != null)
-                                    {
-                                        LayoutCell(cell.Measured, cell, views[index], scale);
-                                    }
-                                }
-                                else
-                                if (cell.ControlIndex == viewIndex)
-                                {
-                                    //Measure only DirtyChild
-                                    measured = MeasureAndArrangeCell(cell.Area, cell, dirty, scale);
-
-                                    //todo offset other children accroding new size of this cell
-                                    //and adjust new content size to be returned
-
-                                    sizeChange = new SKSize(measured.Pixels.Width - cell.Measured.Pixels.Width,
-                                        measured.Pixels.Height - cell.Measured.Pixels.Height);
-
-                                    newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width + sizeChange.Width, MeasuredSize.Pixels.Height + sizeChange.Height, scale);
-                                }
-                            }
-
-                            if (newContentSize != null)
-                            {
-                                return newContentSize;
-                            }
-                        }
-                    }
-                    else
-                    if (false) //todo for non templated too!
-                    {
-                        viewIndex = nonTemplated.FindIndex(dirty);
-                        if (viewIndex >= 0)
-                        {
-                            ScaledSize newContentSize = null;
-                            SKSize sizeChange = new();
-
-                            IReadOnlyList<SkiaControl> views = null;
-                            if (!IsTemplated)
-                            {
-                                views = GetUnorderedSubviews();
-                            }
-
-                            var index = -1;
-                            foreach (var cell in LatestStackStructure.GetChildren())
-                            {
-                                index++;
-
-                                if (newContentSize != null)
-                                {
-                                    //Offset the subsequent children
-                                    cell.Area = new SKRect(
-                                        cell.Area.Left + sizeChange.Width,
-                                        cell.Area.Top + sizeChange.Height,
-                                        cell.Area.Right + sizeChange.Width,
-                                        cell.Area.Bottom + sizeChange.Height);
-
-                                    //todo layout cell ?
-                                    if (views != null)
-                                    {
-                                        LayoutCell(cell.Measured, cell, views[index], scale);
-                                    }
-                                }
-                                else
-                                if (cell.ControlIndex == viewIndex)
-                                {
-                                    if (dirty.CanDraw)
-                                    {
-                                        //Measure only DirtyChild
-                                        measured = MeasureAndArrangeCell(cell.Area, cell, dirty, scale);
-
-                                        //todo offset other children accroding new size of this cell
-                                        //and adjust new content size to be returned
-
-                                        sizeChange = new SKSize(measured.Pixels.Width - cell.Measured.Pixels.Width,
-                                            measured.Pixels.Height - cell.Measured.Pixels.Height);
-
-                                        newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width + sizeChange.Width, MeasuredSize.Pixels.Height + sizeChange.Height, scale);
-                                    }
-                                    else
-                                    {
-                                        if (cell.Measured != ScaledSize.Default)
-                                        {
-                                            //add new space
-                                            sizeChange = new SKSize(measured.Pixels.Width + cell.Measured.Pixels.Width,
-                                                measured.Pixels.Height + cell.Measured.Pixels.Height);
-
-                                            newContentSize = ScaledSize.FromPixels(MeasuredSize.Pixels.Width - sizeChange.Width, MeasuredSize.Pixels.Height - sizeChange.Height, scale);
-                                        }
-                                        cell.Measured = ScaledSize.Default;
-                                    }
-                                }
-
-
-
-                            }
-
-                            if (newContentSize != null)
-                            {
-                                return newContentSize;
-                            }
-                        }
-                    }
-                }
-                else
-                else
-                {
-
-
-                }
-                */
-
-                SkiaControl template = null;
-                ControlInStack firstCell = null;
-                measured = ScaledSize.Default;
-
-                var stackHeight = 0.0f;
-                var stackWidth = 0.0f;
-
-                var layoutStructure = BuildStackStructure(scale);
-
-                bool useOneTemplate = IsTemplated && //ItemSizingStrategy == ItemSizingStrategy.MeasureFirstItem &&
-                                      RecyclingTemplate != RecyclingTemplate.Disabled;
-
-                if (useOneTemplate)
-                {
-                    template = ChildrenFactory.GetTemplateInstance();
-                }
-
-                var maybeSecondPass = true;
-                List<SecondPassArrange> listSecondPass = new();
-                bool stopMeasuring = false;
-
-                //var visibleArea = GetOnScreenVisibleArea((float)this.VirtualisationInflated * scale);
-
-                //measure
-                //left to right, top to bottom
-                var cellsToRelease = new List<SkiaControl>();
-                var index = -1;
-                try
-                {
-                    for (var row = 0; row < layoutStructure.MaxRows; row++)
-                    {
-                        if (stopMeasuring)
-                        {
-                            break;
+                            if (child != null) cell.Measured = ScaledSize.Default;
+                            continue;
                         }
 
-                        var maxHeight = 0.0f;
-                        var maxWidth = 0.0f;
+                        ApplySpacing(ref rectForChild, row, column, scale);
+                        var rectFitChild = CreateChildMeasureRect(rectForChild, widthPerColumn, cell,
+                            hasFillHandling, spacePerFillChild, nonTemplated);
 
-                        var columnsCount = layoutStructure.GetColumnCountForRow(row);
+                        var measured = MeasureChildCell(rectFitChild, cell, child, rectForChildrenPixels, scale,
+                            isTemplated, needMeasureAll, ref firstCell);
 
-                        var needMeasureAll = true;
-                        if (useOneTemplate)
+                        if (!measured.IsEmpty)
                         {
-                            needMeasureAll = RecyclingTemplate == RecyclingTemplate.Disabled ||
-                                             MeasureItemsStrategy == MeasuringStrategy.MeasureAll ||
-                                             (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst
-                                              && columnsCount != Split)
-                                             || !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst
-                                                  && firstCell != null);
+                            UpdateRowDimensions(ref maxWidth, ref maxHeight, measured, child, column, scale, isTemplated);
+                            rectForChild.Left += measured.Pixels.Width;
                         }
 
-                        if (!DynamicColumns && columnsCount < Split)
-                        {
-                            columnsCount = Split;
-                        }
-
-                        // Calculate the width for each column
-                        float widthPerColumn;
-                        if (Type == LayoutType.Column)
-                        {
-                            widthPerColumn = (float)Math.Round(columnsCount > 1
-                                ? (rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount
-                                : rectForChildrenPixels.Width);
-                        }
-                        else
-                        {
-                            widthPerColumn = rectForChildrenPixels.Width;
-                        }
-
-                        int column;
-
-                        for (column = 0; column < columnsCount; column++)
-                        {
-                            try
-                            {
-                                if (layoutStructure.GetColumnCountForRow(row) < column + 1)
-                                    continue; //case when we last row with less items to fill all columns
-
-                                index++;
-
-                                var cell = layoutStructure.Get(column, row);
-
-                                SkiaControl child = null;
-                                if (IsTemplated)
-                                {
-                                    child = ChildrenFactory.GetViewForIndex(cell.ControlIndex, template, 0,
-                                        RecyclingTemplate != RecyclingTemplate.Disabled);
-                                    //Trace.WriteLine($"[CELL] MEASURE {index} {child.Uid}");
-                                    if (template == null)
-                                    {
-                                        cellsToRelease.Add(child);
-                                    }
-                                }
-                                else
-                                {
-                                    child = nonTemplated[cell.ControlIndex];
-                                }
-
-                                if (child == null)
-                                {
-                                    Super.Log($"[MeasureStack] FAILED to get child at index {cell.ControlIndex}");
-                                    return ScaledSize.Default;
-                                }
-
-                                if (!child.CanDraw)
-                                {
-                                    cell.Measured = ScaledSize.Default;
-                                }
-
-                                if (column == 0)
-                                    rectForChild.Top += GetSpacingForIndex(row, scale);
-
-                                rectForChild.Left += GetSpacingForIndex(column, scale);
-                                var rectFitChild = new SKRect(rectForChild.Left, rectForChild.Top,
-                                    rectForChild.Left + widthPerColumn, rectForChild.Bottom);
-
-                                if (IsTemplated)
-                                {
-                                    bool needMeasure =
-                                        needMeasureAll ||
-                                        (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst &&
-                                         columnsCount != Split)
-                                        || !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst &&
-                                             firstCell != null);
-
-                                    if (needMeasure)
-                                    {
-                                        measured = MeasureAndArrangeCell(rectFitChild, cell, child,
-                                            rectForChildrenPixels, scale);
-                                        firstCell = cell;
-                                    }
-                                    else
-                                    {
-                                        //apply first measured size to cell
-                                        var offsetX = rectFitChild.Left - firstCell.Area.Left;
-                                        var offsetY = rectFitChild.Top - firstCell.Area.Top;
-                                        var arranged = firstCell.Destination;
-                                        arranged.Offset(new(offsetX, offsetY));
-
-                                        cell.Area = rectFitChild;
-                                        cell.Measured = measured.Clone();
-                                        cell.Destination = arranged;
-                                        cell.WasMeasured = true;
-                                    }
-                                }
-                                //todo !!!
-                                //else
-                                //if (Type == LayoutType.Column && child.VerticalOptions == LayoutOptions.Fill)
-                                //{
-                                //    listSecondPass.Add(new(cell, child, scale));
-                                //}
-                                //else
-                                //if (Type == LayoutType.Row && child.HorizontalOptions == LayoutOptions.Fill)
-                                //{
-                                //    listSecondPass.Add(new(cell, child, scale));
-                                //}
-                                else
-                                {
-                                    measured = MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels,
-                                        scale);
-
-                                    if (maybeSecondPass) //has infinity in destination
-                                    {
-                                        if (Type == LayoutType.Column && child.HorizontalOptions != LayoutOptions.Start)
-                                        {
-                                            listSecondPass.Add(new(cell, child, scale));
-                                        }
-                                        else if (Type == LayoutType.Row && child.VerticalOptions != LayoutOptions.Start)
-                                        {
-                                            listSecondPass.Add(new(cell, child, scale));
-                                        }
-                                    }
-                                }
-
-                                if (!measured.IsEmpty)
-                                {
-                                    maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
-
-                                    if (measured.Pixels.Height > maxHeight)
-                                        maxHeight = measured.Pixels.Height;
-
-                                    //offset -->
-                                    rectForChild.Left += (float)(measured.Pixels.Width);
-                                }
-
-                                cell.WasMeasured = true;
-
-                                //if (IsTemplated && MeasureItemsStrategy == MeasuringStrategy.MeasureVisible)
-                                //{
-                                //    if (!visibleArea.Pixels.IntersectsWithInclusive(cell.Destination))
-                                //    {
-                                //        stopMeasuring = true;
-                                //        break;
-                                //    }
-                                //}
-
-                                //if (!useOneTemplate && IsTemplated)
-                                //{
-                                //    ChildrenFactory.ReleaseView(child);
-                                //}
-                            }
-                            catch (Exception e)
-                            {
-                                Super.Log(e);
-                                break;
-                            }
-                        } //end of iterate columns
-
-                        if (maxWidth > stackWidth)
-                            stackWidth = maxWidth;
-
-                        stackHeight += maxHeight + GetSpacingForIndex(row, scale);
-                        rectForChild.Top += (float)(maxHeight);
-
-                        rectForChild.Left = 0; //reset to start
-                    } //end of iterate rows
-
-
-                    if (HorizontalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Width >= 0)
-                    {
-                        stackWidth = rectForChildrenPixels.Width;
+                        CheckSecondPassNeeded(cell, child, scale, isTemplated);
+                        cell.WasMeasured = true;
                     }
 
-                    if (VerticalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Height >= 0)
-                    {
-                        stackHeight = rectForChildrenPixels.Height;
-                    }
-
-                    //second layout pass in some cases
-                    var autoRight = rectForChildrenPixels.Right;
-                    if (this.HorizontalOptions != LayoutOptions.Fill)
-                    {
-                        autoRight = rectForChildrenPixels.Left + stackWidth;
-                    }
-
-                    var autoBottom = rectForChildrenPixels.Bottom;
-                    if (this.VerticalOptions != LayoutOptions.Fill)
-                    {
-                        autoBottom = rectForChildrenPixels.Top + stackHeight;
-                    }
-
-                    var autoRect = new SKRect(
-                        rectForChildrenPixels.Left, rectForChildrenPixels.Top,
-                        autoRight,
-                        autoBottom);
-
-                    foreach (var secondPass in listSecondPass)
-                    {
-                        if (float.IsInfinity(secondPass.Cell.Area.Bottom))
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Right, secondPass.Cell.Area.Top + stackHeight);
-                        }
-                        else if (float.IsInfinity(secondPass.Cell.Area.Top))
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left,
-                                secondPass.Cell.Area.Bottom - stackHeight,
-                                secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
-                        }
-
-                        if (secondPass.Cell.Area.Height > stackHeight)
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Right, secondPass.Cell.Area.Top + stackHeight);
-                        }
-
-                        if (float.IsInfinity(secondPass.Cell.Area.Right))
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
-                        }
-                        else if (float.IsInfinity(secondPass.Cell.Area.Left))
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Right - stackWidth,
-                                secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Right, secondPass.Cell.Area.Bottom);
-                        }
-
-                        if (secondPass.Cell.Area.Width > stackWidth)
-                        {
-                            secondPass.Cell.Area = new(secondPass.Cell.Area.Left, secondPass.Cell.Area.Top,
-                                secondPass.Cell.Area.Left + stackWidth, secondPass.Cell.Area.Bottom);
-                        }
-
-                        LayoutCell(secondPass.Child.MeasuredSize, secondPass.Cell, secondPass.Child,
-                            autoRect,
-                            secondPass.Scale);
-                    }
-                }
-                finally
-                {
-                    if (useOneTemplate)
-                    {
-                        ChildrenFactory.ReleaseTemplateInstance(template);
-                    }
-                    else if (IsTemplated)
-                        foreach (var cell in cellsToRelease)
-                        {
-                            ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
-                        }
+                    UpdateStackSize(ref stackWidth, ref stackHeight, maxWidth, maxHeight, row, scale);
+                    rectForChild.Top += maxHeight;
+                    rectForChild.Left = 0;
                 }
 
-
-                if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0)
-                {
-                    stackWidth = rectForChildrenPixels.Width;
-                }
-
-                if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0)
-                {
-                    stackHeight = rectForChildrenPixels.Height;
-                }
+                ApplyFillConstraints(ref stackWidth, ref stackHeight, rectForChildrenPixels);
+                ProcessSecondPass(rectForChildrenPixels, stackWidth, stackHeight);
 
                 return ScaledSize.FromPixels(stackWidth, stackHeight, scale);
             }
-
-            return ScaledSize.FromPixels(rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
+            finally
+            {
+                if (isTemplated && !useOneTemplate)
+                {
+                    foreach (var cell in _tempCellsToRelease)
+                    {
+                        ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
+                    }
+                }
+            }
         }
+
+        /// <summary>
+        /// Calculate space requirements for Fill children (PASS 1)
+        /// </summary>
+        private void CalculateFillSpace(SKRect rectForChildrenPixels, float scale, LayoutStructure layoutStructure,
+            SkiaControl[] nonTemplated, ref float fixedSpaceUsed, ref float spacingUsed, ref float spacePerFillChild)
+        {
+            var fillChildrenCount = 0;
+
+            for (var row = 0; row < layoutStructure.MaxRows; row++)
+            {
+                if (row > 0) spacingUsed += GetSpacingForIndex(row, scale);
+
+                var columnsCount = GetEffectiveColumnsCount(layoutStructure, row);
+
+                for (int column = 0; column < columnsCount; column++)
+                {
+                    if (layoutStructure.GetColumnCountForRow(row) < column + 1)
+                        continue;
+
+                    var cell = layoutStructure.Get(column, row);
+                    var child = nonTemplated[cell.ControlIndex];
+
+                    if (child?.CanDraw != true) continue;
+
+                    var isFillChild = IsChildFill(child);
+
+                    if (isFillChild)
+                    {
+                        fillChildrenCount++;
+                    }
+                    else
+                    {
+                        fixedSpaceUsed += CalculateChildFixedSpace(child, rectForChildrenPixels, scale);
+                    }
+                }
+            }
+
+            var totalAvailableSpace = Type == LayoutType.Column
+                ? rectForChildrenPixels.Height
+                : rectForChildrenPixels.Width;
+            var remainingSpace = Math.Max(0, totalAvailableSpace - fixedSpaceUsed - spacingUsed);
+            spacePerFillChild = fillChildrenCount > 0 ? remainingSpace / fillChildrenCount : 0;
+        }
+
+        /// <summary>
+        /// Get child for measurement based on strategy
+        /// </summary>
+        private SkiaControl GetChildForMeasurement(int controlIndex, bool isTemplated, SkiaControl template, SkiaControl[] nonTemplated)
+        {
+            if (isTemplated)
+            {
+                var child = ChildrenFactory.GetViewForIndex(controlIndex, template, 0,
+                    RecyclingTemplate != RecyclingTemplate.Disabled);
+                if (template == null)
+                {
+                    _tempCellsToRelease.Add(child);
+                }
+                return child;
+            }
+
+            return controlIndex < nonTemplated.Length ? nonTemplated[controlIndex] : null;
+        }
+
+        /// <summary>
+        /// Create measurement rectangle for child
+        /// </summary>
+        private SKRect CreateChildMeasureRect(SKRect rectForChild, float widthPerColumn, ControlInStack cell,
+            bool hasFillHandling, float spacePerFillChild, SkiaControl[] nonTemplated)
+        {
+            var rectFitChild = new SKRect(rectForChild.Left, rectForChild.Top,
+                rectForChild.Left + widthPerColumn, rectForChild.Bottom);
+
+            if (hasFillHandling)
+            {
+                var child = nonTemplated[cell.ControlIndex];
+                var isFillChild = IsChildFill(child);
+
+                if (isFillChild)
+                {
+                    if (Type == LayoutType.Column)
+                    {
+                        rectFitChild = new SKRect(rectFitChild.Left, rectFitChild.Top,
+                            rectFitChild.Right, rectFitChild.Top + spacePerFillChild);
+                    }
+                    else
+                    {
+                        rectFitChild = new SKRect(rectFitChild.Left, rectFitChild.Top,
+                            rectFitChild.Left + spacePerFillChild, rectFitChild.Bottom);
+                    }
+                }
+            }
+
+            return rectFitChild;
+        }
+
+        /// <summary>
+        /// Measure individual child cell
+        /// </summary>
+        private ScaledSize MeasureChildCell(SKRect rectFitChild, ControlInStack cell, SkiaControl child,
+            SKRect rectForChildrenPixels, float scale, bool isTemplated, bool needMeasureAll, ref ControlInStack firstCell)
+        {
+            if (isTemplated)
+            {
+                if (needMeasureAll)
+                {
+                    var measured = MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels, scale);
+                    firstCell = cell;
+                    return measured;
+                }
+                else
+                {
+                    var offsetX = rectFitChild.Left - firstCell.Area.Left;
+                    var offsetY = rectFitChild.Top - firstCell.Area.Top;
+                    var arranged = firstCell.Destination;
+                    arranged.Offset(new(offsetX, offsetY));
+
+                    cell.Area = rectFitChild;
+                    cell.Measured = firstCell.Measured.Clone();
+                    cell.Destination = arranged;
+                    cell.WasMeasured = true;
+
+                    return firstCell.Measured;
+                }
+            }
+
+            return MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels, scale);
+        }
+
+        /// <summary>
+        /// Helper methods to reduce code duplication
+        /// </summary>
+        private int GetEffectiveColumnsCount(LayoutStructure layoutStructure, int row)
+        {
+            var columnsCount = layoutStructure.GetColumnCountForRow(row);
+            return !DynamicColumns && columnsCount < Split ? Split : columnsCount;
+        }
+
+        private float CalculateWidthPerColumn(SKRect rectForChildrenPixels, int columnsCount, float scale)
+        {
+            if (Type == LayoutType.Column)
+            {
+                return (float)Math.Round(columnsCount > 1
+                    ? (rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount
+                    : rectForChildrenPixels.Width);
+            }
+            return rectForChildrenPixels.Width;
+        }
+
+        private bool ShouldMeasureAll(bool isTemplated, bool useOneTemplate, int columnsCount, ControlInStack firstCell)
+        {
+            if (!isTemplated || !useOneTemplate) return true;
+
+            return RecyclingTemplate == RecyclingTemplate.Disabled ||
+                   MeasureItemsStrategy == MeasuringStrategy.MeasureAll ||
+                   (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && columnsCount != Split) ||
+                   !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && firstCell != null);
+        }
+
+        private bool IsChildFill(SkiaControl child)
+        {
+            return (Type == LayoutType.Column &&
+                    child.VerticalOptions.Alignment == LayoutAlignment.Fill &&
+                    child.HeightRequest < 0) ||
+                   (Type == LayoutType.Row &&
+                    child.HorizontalOptions.Alignment == LayoutAlignment.Fill &&
+                    child.WidthRequest < 0);
+        }
+
+        private float CalculateChildFixedSpace(SkiaControl child, SKRect rectForChildrenPixels, float scale)
+        {
+            if (Type == LayoutType.Column && child.HeightRequest >= 0)
+            {
+                return (float)(child.HeightRequest * scale);
+            }
+            else if (Type == LayoutType.Row && child.WidthRequest >= 0)
+            {
+                return (float)(child.WidthRequest * scale);
+            }
+            else
+            {
+                var tempRect = Type == LayoutType.Column
+                    ? new SKRect(0, 0, rectForChildrenPixels.Width, float.PositiveInfinity)
+                    : new SKRect(0, 0, float.PositiveInfinity, rectForChildrenPixels.Height);
+
+                var tempMeasured = MeasureChild(child, tempRect.Width, tempRect.Height, scale);
+                return Type == LayoutType.Column ? tempMeasured.Pixels.Height : tempMeasured.Pixels.Width;
+            }
+        }
+
+        private void ApplySpacing(ref SKRect rectForChild, int row, int column, float scale)
+        {
+            if (column == 0)
+                rectForChild.Top += GetSpacingForIndex(row, scale);
+
+            rectForChild.Left += GetSpacingForIndex(column, scale);
+        }
+
+        private void UpdateRowDimensions(ref float maxWidth, ref float maxHeight, ScaledSize measured,
+            SkiaControl child, int column, float scale, bool isTemplated)
+        {
+            if (isTemplated || child.HorizontalOptions != LayoutOptions.Fill || Type != LayoutType.Column)
+            {
+                maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
+            }
+
+            if (isTemplated || child.VerticalOptions != LayoutOptions.Fill || Type != LayoutType.Row)
+            {
+                if (measured.Pixels.Height > maxHeight)
+                    maxHeight = measured.Pixels.Height;
+            }
+        }
+
+        private void UpdateStackSize(ref float stackWidth, ref float stackHeight, float maxWidth, float maxHeight, int row, float scale)
+        {
+            if (maxWidth > stackWidth)
+                stackWidth = maxWidth;
+
+            stackHeight += maxHeight + GetSpacingForIndex(row, scale);
+        }
+
+        private void CheckSecondPassNeeded(ControlInStack cell, SkiaControl child, float scale, bool isTemplated)
+        {
+            if (!isTemplated)
+            {
+                if ((Type == LayoutType.Column && child.HorizontalOptions != LayoutOptions.Start) ||
+                    (Type == LayoutType.Row && child.VerticalOptions != LayoutOptions.Start))
+                {
+                    _tempSecondPassList.Add(new(cell, child, scale));
+                }
+            }
+        }
+
+        private void ApplyFillConstraints(ref float stackWidth, ref float stackHeight, SKRect rectForChildrenPixels)
+        {
+            if (HorizontalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Width >= 0)
+            {
+                stackWidth = rectForChildrenPixels.Width;
+            }
+
+            if (VerticalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Height >= 0)
+            {
+                stackHeight = rectForChildrenPixels.Height;
+            }
+        }
+
+        private void ProcessSecondPass(SKRect rectForChildrenPixels, float stackWidth, float stackHeight)
+        {
+            var autoRight = HorizontalOptions != LayoutOptions.Fill
+                ? rectForChildrenPixels.Left + stackWidth
+                : rectForChildrenPixels.Right;
+
+            var autoBottom = VerticalOptions != LayoutOptions.Fill
+                ? rectForChildrenPixels.Top + stackHeight
+                : rectForChildrenPixels.Bottom;
+
+            var autoRect = new SKRect(rectForChildrenPixels.Left, rectForChildrenPixels.Top, autoRight, autoBottom);
+
+            foreach (var secondPass in _tempSecondPassList)
+            {
+                AdjustSecondPassCell(secondPass.Cell, stackWidth, stackHeight);
+                LayoutCell(secondPass.Child.MeasuredSize, secondPass.Cell, secondPass.Child, autoRect, secondPass.Scale);
+            }
+        }
+
+        private void AdjustSecondPassCell(ControlInStack cell, float stackWidth, float stackHeight)
+        {
+            if (float.IsInfinity(cell.Area.Bottom))
+            {
+                cell.Area = new(cell.Area.Left, cell.Area.Top, cell.Area.Right, cell.Area.Top + stackHeight);
+            }
+            else if (float.IsInfinity(cell.Area.Top))
+            {
+                cell.Area = new(cell.Area.Left, cell.Area.Bottom - stackHeight, cell.Area.Right, cell.Area.Bottom);
+            }
+
+            if (cell.Area.Height > stackHeight)
+            {
+                cell.Area = new(cell.Area.Left, cell.Area.Top, cell.Area.Right, cell.Area.Top + stackHeight);
+            }
+
+            if (float.IsInfinity(cell.Area.Right))
+            {
+                cell.Area = new(cell.Area.Left, cell.Area.Top, cell.Area.Left + stackWidth, cell.Area.Bottom);
+            }
+            else if (float.IsInfinity(cell.Area.Left))
+            {
+                cell.Area = new(cell.Area.Right - stackWidth, cell.Area.Top, cell.Area.Right, cell.Area.Bottom);
+            }
+
+            if (cell.Area.Width > stackWidth)
+            {
+                cell.Area = new(cell.Area.Left, cell.Area.Top, cell.Area.Left + stackWidth, cell.Area.Bottom);
+            }
+        }
+
+        // Reusable collections to avoid allocations - these should be class fields
+        private readonly List<SecondPassArrange> _tempSecondPassList = new();
+        private readonly List<SkiaControl> _tempCellsToRelease = new();
 
         private LayoutStructure BuildStackStructure(float scale)
         {
