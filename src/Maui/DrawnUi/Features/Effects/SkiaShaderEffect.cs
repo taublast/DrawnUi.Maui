@@ -88,7 +88,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
         }
 
         var image = GetPrimaryTextureImage(ctx.Context, ctx.Destination);
-        bool shouldDisposeImage = IsNewSnapshot(image);
+        bool shouldDisposeImage = ShouldDisposePreviousTexture(image);
         SKShader shader = null;
 
         try
@@ -120,7 +120,7 @@ public class SkiaShaderEffect : SkiaEffect, IPostRendererEffect
     /// <summary>
     /// Checks if image is a new snapshot that needs disposal
     /// </summary>
-    private bool IsNewSnapshot(SKImage image)
+    protected virtual bool ShouldDisposePreviousTexture(SKImage image)
     {
         // Don't dispose if it's the cached image from parent
         return image != null && image != Parent?.CachedImage;
