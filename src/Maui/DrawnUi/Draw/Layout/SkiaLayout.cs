@@ -865,9 +865,14 @@ namespace DrawnUi.Draw
                                     ContentSize = MeasureList(constraints.Content, request.Scale);
                                     break;
                                 }
-                            }
 
-                            ContentSize = MeasureStack(constraints.Content, request.Scale);
+                                ContentSize = MeasureStackTemplated(constraints.Content, request.Scale);
+                            }
+                            else
+                            {
+                                ContentSize = MeasureStackNonTemplated(constraints.Content, request.Scale);
+                            }
+                                
                             break;
 
                         case LayoutType.Wrap:
