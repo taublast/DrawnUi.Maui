@@ -98,6 +98,11 @@ public partial class SkiaCamera : SkiaControl
         return new SkiaImage()
         {
             LoadSourceOnFirstDraw = true,
+#if WINDOWS || MACCATALYST
+            RescalingQuality = SKFilterQuality.Low,
+#else
+            RescalingQuality = SKFilterQuality.None,
+#endif
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
             Aspect = this.Aspect,
@@ -126,7 +131,7 @@ public partial class SkiaCamera : SkiaControl
         DisplayReady?.Invoke(this, EventArgs.Empty);
     }
 
-    public event EventHandler DisplayReady; 
+    public event EventHandler DisplayReady;
 
     /// <summary>
     /// Apply effects on preview

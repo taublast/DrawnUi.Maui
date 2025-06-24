@@ -278,12 +278,11 @@ public class SkiaImage : SkiaControl
         nameof(RescalingQuality),
         typeof(SKFilterQuality),
         typeof(SkiaImage),
-        SKFilterQuality.None,
+        SKFilterQuality.Low,
         propertyChanged: NeedDraw);
 
     /// <summary>
-    /// Default value is None.
-    /// You might want to set this to Medium for static images for better quality.
+    /// Default value is Low.
     /// </summary>
     public SKFilterQuality RescalingQuality
     {

@@ -676,6 +676,7 @@ namespace DrawnUi.Controls
                 EffectBlendMode = SKBlendMode.SrcATop,
                 //Darken = FrozenBackgroundDim,
                 Opacity = 0,
+                RescalingQuality = SKFilterQuality.None,
                 BackgroundColor = Colors.Black,
             };
 
