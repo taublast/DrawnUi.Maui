@@ -1008,12 +1008,6 @@ namespace DrawnUi.Draw
 
                 IsMeasuring = true;
 
-                if (Text == "спасибо вам")
-                {
-                    var stop = 1;
-                }
-
-
                 try
                 {
                     if (NeedSetText)
