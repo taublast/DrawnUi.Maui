@@ -3,8 +3,8 @@
     x:Class="Sandbox.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:views1="clr-namespace:AppoMobi.Maui.DrawnUi.Demo.Views"
     xmlns:mauiNet8="clr-namespace:MauiNet8"
+    xmlns:sandbox="clr-namespace:Sandbox"
     Title="DrawnUI for .NET MAUI"
     Shell.FlyoutBehavior="Disabled">
 

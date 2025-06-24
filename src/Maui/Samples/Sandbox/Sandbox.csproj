@@ -99,20 +99,6 @@
 
     <None Remove="Resources\Raw\Markdown.md" />
 
-    <None Remove="Resources\raw\Shaders2\blit.sksl" />
-
-    <None Remove="Resources\raw\Shaders2\blur.sksl" />
-
-    <None Remove="Resources\raw\Shaders2\blurmasked.sksl" />
-
-    <None Remove="Resources\raw\Shaders2\curl.glsl" />
-
-    <None Remove="Resources\raw\Shaders2\curl.sksl" />
-
-    <None Remove="Resources\raw\Shaders2\glowblur.glsl" />
-
-    <None Remove="Resources\raw\Shaders2\glowblur.sksl" />
-
     <None Remove="Resources\Raw\Shaders\apple.sksl" />
 
     <None Remove="Resources\Raw\Shaders\invert.sksl" />
@@ -202,31 +188,10 @@
     <MauiAsset Update="Resources\Raw\Lottie\ok.json">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders2\blit.sksl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders2\blurmasked.sksl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders2\curl.glsl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders2\blur.sksl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders2\glowblur.glsl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders2\glowblur.sksl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\ripples.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\apple.sksl">
-      <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-    </MauiAsset>
-    <MauiAsset Update="Resources\Raw\Shaders\Camera\invert.sksl">
       <LogicalName>%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
     </MauiAsset>
     <MauiAsset Update="Resources\Raw\Shaders\transfade.sksl">
@@ -290,6 +255,9 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainPageTestRange.xaml.cs">
+      <DependentUpon>MainPageTestRange.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
