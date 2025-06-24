@@ -478,11 +478,6 @@ namespace DrawnUi.Draw
 
         protected void CalculateSizeForStroke(SKRect destination, float scale)
         {
-            if (Tag == "EndLabelShape")
-            {
-                var stop = 1;
-            }
-
             MeasuredStrokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
             MeasuredStrokeAwareClipSize = CalculateClipSizeForStroke(destination, scale);
             MeasuredStrokeAwareChildrenSize = CalculateContentSizeForStroke(destination, scale);
@@ -1702,7 +1697,7 @@ namespace DrawnUi.Draw
 
             if (originalStrokeWidth <= 1.0f * scale)
             {
-                return originalStrokeWidth * 0.55f; // Make curves thinner to match straight lines
+                return originalStrokeWidth * 0.55f; // Make curves thinner
             }
 
             return originalStrokeWidth;
