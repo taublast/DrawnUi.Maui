@@ -836,35 +836,51 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Apply margins to SizeRequest
         /// </summary>
-        /// <param name="widthConstraint"></param>
+        /// <param name="sizeConstraint"></param>
         /// <param name="scale"></param>
         /// <returns></returns>
-        public float AdaptWidthConstraintToRequest(float widthConstraint, Thickness constraints, double scale)
+        public float AdaptWidthConstraintToRequest(float sizeConstraint, Thickness constraints, double scale)
         {
-            var widthPixels = (float)Math.Round(SizeRequest.Width * scale + constraints.HorizontalThickness);
+            var ret = sizeConstraint;
+
+            //if (Tag == "ServiceName")
+            //{
+            //    var stop = 1;
+            //}
 
             if (SizeRequest.Width >= 0)
-                widthConstraint = widthPixels;
+            {
+                ret = (float)Math.Round(SizeRequest.Width * scale + constraints.HorizontalThickness);
+                if (sizeConstraint >= 0 && ret > sizeConstraint)
+                {
+                    return sizeConstraint;
+                }
+            }
 
-            return widthConstraint;
+            return ret;
         }
 
         /// <summary>
         /// Apply margins to SizeRequest
         /// </summary>
-        /// <param name="heightConstraint"></param>
+        /// <param name="sizeConstraint"></param>
         /// <param name="scale"></param>
         /// <returns></returns>
-        public float AdaptHeightContraintToRequest(float heightConstraint, Thickness constraints, double scale)
+        public float AdaptHeightContraintToRequest(float sizeConstraint, Thickness constraints, double scale)
         {
-            var thickness = constraints.VerticalThickness;
-
-            var widthPixels = (float)Math.Round(SizeRequest.Height * scale + thickness);
+            var ret = sizeConstraint;
 
             if (SizeRequest.Height >= 0)
-                heightConstraint = widthPixels;
+            {
+                ret = (float)Math.Round(SizeRequest.Height * scale + constraints.VerticalThickness);
+                if (sizeConstraint >= 0 && ret > sizeConstraint)
+                {
+                    return sizeConstraint;
+                }
+            }
 
-            return heightConstraint;
+            return ret;
+
         }
 
         public virtual MeasuringConstraints GetMeasuringConstraints(MeasureRequest request)
@@ -3383,15 +3399,18 @@ namespace DrawnUi.Draw
                 return;
             }
 
-            var moveX = UseTranslationX * RenderingScale;
-            var moveY = UseTranslationY * RenderingScale;
+            var provider = LinkTransforms != null ? LinkTransforms : this;
+
+            var moveX = provider.UseTranslationX * RenderingScale;
+            var moveY = provider.UseTranslationY * RenderingScale;
 
             // Fast path for simple translation
-            if (Rotation == 0 &&
-                ScaleX == 1 && ScaleY == 1 &&
-                SkewX == 0 && SkewY == 0 &&
-                Perspective1 == 0 && Perspective2 == 0 &&
-                RotationX == 0 && RotationY == 0 && RotationZ == 0 && TranslationZ == 0)
+            if (provider.Rotation == 0 &&
+                provider.ScaleX == 1 && provider.ScaleY == 1 &&
+                provider.SkewX == 0 && provider.SkewY == 0 &&
+                provider.Perspective1 == 0 && provider.Perspective2 == 0 &&
+                provider.RotationX == 0 && provider.RotationY == 0 && provider.RotationZ == 0 &&
+                provider.TranslationZ == 0)
             {
                 RenderTransformMatrix = SKMatrix.CreateTranslation((float)moveX, (float)moveY);
                 return;
@@ -3419,21 +3438,22 @@ namespace DrawnUi.Draw
                 SkewX = skewX,
                 SkewY = skewY,
                 Persp2 = 1,
-                ScaleX = (float)ScaleX,
-                ScaleY = (float)ScaleY
+                ScaleX = (float)provider.ScaleX,
+                ScaleY = (float)provider.ScaleY
             };
             matrix = matrix.PostConcat(transformMatrix);
 
             // Apply 3D transformations if needed
-            if (draw3d || RotationX != 0 || RotationY != 0 || RotationZ != 0 || TranslationZ != 0)
+            if (draw3d || provider.RotationX != 0 || provider.RotationY != 0 || provider.RotationZ != 0 ||
+                provider.TranslationZ != 0)
             {
                 draw3d = true;
                 Helper3d ??= new();
                 Helper3d.Reset();
-                Helper3d.RotateXDegrees((float)RotationX);
-                Helper3d.RotateYDegrees((float)RotationY);
-                Helper3d.RotateZDegrees(-(float)RotationZ);
-                Helper3d.Translate(0, 0, (float)TranslationZ);
+                Helper3d.RotateXDegrees((float)provider.RotationX);
+                Helper3d.RotateYDegrees((float)provider.RotationY);
+                Helper3d.RotateZDegrees(-(float)provider.RotationZ);
+                Helper3d.Translate(0, 0, (float)provider.TranslationZ);
                 matrix = matrix.PostConcat(Helper3d.Matrix);
             }
 
@@ -3441,7 +3461,7 @@ namespace DrawnUi.Draw
             matrix = matrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY));
 
             // Apply rotation around center if needed
-            if (Rotation != 0)
+            if (provider.Rotation != 0)
             {
                 SKMatrix rotationMatrix =
                     SKMatrix.CreateRotationDegrees((float)Rotation, (float)centerX, (float)centerY);
@@ -4382,6 +4402,16 @@ namespace DrawnUi.Draw
             }
 
             return ScaledSize.FromPixels(width, height, scale);
+        }
+
+        public static SKRect ContractPixelsRect(SKRect rect, float pixels)
+        {
+            return new SKRect(
+                rect.Left + pixels,
+                rect.Top + pixels,
+                rect.Right - pixels,
+                rect.Bottom - pixels
+            );
         }
 
         public static SKRect ContractPixelsRect(SKRect rect, float scale, Thickness amount)
@@ -5678,14 +5708,17 @@ namespace DrawnUi.Draw
             get
             {
                 return
+                    LinkTransforms != null ||
                     UseTranslationY != 0 || UseTranslationX != 0
-                                         || ScaleY != 1f || ScaleX != 1f
-                                         || Perspective1 != 0f || Perspective2 != 0f
-                                         || SkewX != 0 || SkewY != 0
-                                         || Rotation != 0 || TranslationZ != 0
-                                         || RotationX != 0 || RotationY != 0 || RotationZ != 0;
+                    || ScaleY != 1f || ScaleX != 1f
+                    || Perspective1 != 0f || Perspective2 != 0f
+                    || SkewX != 0 || SkewY != 0
+                    || Rotation != 0 || TranslationZ != 0
+                    || RotationX != 0 || RotationY != 0 || RotationZ != 0;
             }
         }
+
+        public SkiaControl LinkTransforms { get; set; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public bool IsDistorted
@@ -5693,6 +5726,7 @@ namespace DrawnUi.Draw
             get
             {
                 return
+                    LinkTransforms != null ||
                     Rotation != 0 || ScaleY != 1f || ScaleX != 1f
                     || Perspective1 != 0f || Perspective2 != 0f
                     || SkewX != 0 || SkewY != 0 || TranslationZ != 0
