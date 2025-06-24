@@ -220,7 +220,6 @@ namespace DrawnUi.Draw
         /// </remarks>
         public IList<TextSpan> Spans => _spans;
 
- 
 
         void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -266,7 +265,7 @@ namespace DrawnUi.Draw
 
         void OnItemPropertyChanging(object sender, PropertyChangingEventArgs e) => OnPropertyChanging(nameof(Spans));
 
-        protected readonly SpanCollection _spans = new ();
+        protected readonly SpanCollection _spans = new();
 
         public event NotifyCollectionChangedEventHandler SpansCollectionChanged;
 
@@ -893,7 +892,7 @@ namespace DrawnUi.Draw
             SKPaint paint)
         {
             if (string.IsNullOrEmpty(text) || Shaper == null || paint == null || paint.Typeface == null)
-            return;
+                return;
 
             SetupShaper(paint.Typeface);
             DrawShapedText(canvas, Shaper, text, x, y, paint);
@@ -908,7 +907,7 @@ namespace DrawnUi.Draw
             float y,
             SKPaint paint)
         {
-            if (string.IsNullOrEmpty(text) || shaper==null || paint==null || paint.Typeface==null)
+            if (string.IsNullOrEmpty(text) || shaper == null || paint == null || paint.Typeface == null)
                 return;
 
             using var font = paint.ToFont();
@@ -1008,6 +1007,12 @@ namespace DrawnUi.Draw
                 }
 
                 IsMeasuring = true;
+
+                if (Text == "спасибо вам")
+                {
+                    var stop = 1;
+                }
+
 
                 try
                 {
@@ -1390,7 +1395,7 @@ namespace DrawnUi.Draw
                 return (finalWidth, arr2);
             }
 
-            var simpleValue = MeasureTextWidth(paint, text);
+            var simpleValue = MeasureTextWidthWithAdvance(paint, text);
             if (paint.TextSkewX != 0)
             {
                 float additionalWidth = Math.Abs(paint.TextSkewX) * paint.TextSize;
@@ -2071,15 +2076,6 @@ namespace DrawnUi.Draw
             return bounds;
         }
 
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public float MeasureTextWidth(SKPaint paint, string text)
-        {
-            var rect = SKRect.Empty;
-            MeasureText(paint, text, ref rect);
-            return rect.Width;
-        }
-
         /// <summary>
         /// Returns text taken size in pixels. Accounts paint transforms like skew etc.
         /// </summary>
@@ -2097,11 +2093,31 @@ namespace DrawnUi.Draw
                 bounds.Right += additionalWidth; //notice passed by ref struct will be modified
             }
 
-            if (StrokeWidth > 0)
-            {
-                float additionalWidth = (float)(StrokeWidth * 2 * RenderingScale);
-                bounds.Right += additionalWidth; //notice passed by ref struct will be modified
-            }
+
+
+            //if (StrokeWidth > 0 && StrokeColor != TransparentColor)
+            //{
+            //    float additionalWidth = (float)(StrokeWidth * 2 * RenderingScale);
+            //    bounds.Right += additionalWidth;
+            //    bounds.Left -= additionalWidth;
+            //    bounds.Bottom += additionalWidth * 2;
+            //}
+
+            //if (DropShadowSize > 0 && DropShadowColor != TransparentColor)
+            //{
+            //    float additionalWidth = (float)(DropShadowSize * RenderingScale + DropShadowOffsetX * RenderingScale);
+            //    bounds.Right += additionalWidth;
+            //    float additionalHeight = (float)(DropShadowSize * RenderingScale + DropShadowOffsetY * RenderingScale);
+            //    bounds.Bottom += additionalHeight;
+            //}
+
+
+            bounds = new SKRect(
+                (float)Math.Floor(bounds.Left),
+                (float)Math.Floor(bounds.Top),
+                (float)Math.Ceiling(bounds.Right),
+                (float)Math.Ceiling(bounds.Bottom)
+            );
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -2460,12 +2476,13 @@ namespace DrawnUi.Draw
         void UpdateFontMetrics(SKPaint paint)
         {
             FontMetrics = paint.FontMetrics;
-            LineHeightPixels = (float)Math.Round((-FontMetrics.Ascent + FontMetrics.Descent) * LineHeight); //PaintText.FontSpacing;
+            LineHeightPixels =
+                (float)Math.Round((-FontMetrics.Ascent + FontMetrics.Descent) * LineHeight); //PaintText.FontSpacing;
             fontUnderline = FontMetrics.UnderlinePosition.GetValueOrDefault();
 
             if (!string.IsNullOrEmpty(this.MonoForDigits))
             {
-                charMonoWidthPixels = MeasureTextWidth(paint, this.MonoForDigits);
+                charMonoWidthPixels = MeasureTextWidthWithAdvance(paint, this.MonoForDigits);
             }
             else
             {
@@ -2564,12 +2581,13 @@ namespace DrawnUi.Draw
 
         void CleanAllocations()
         {
-            if (PaintDefault!=null)
+            if (PaintDefault != null)
             {
                 PaintDefault.Typeface = null;
                 PaintDefault.Dispose();
                 PaintDefault = null;
             }
+
             PaintStroke?.Dispose();
             PaintStroke = null;
             PaintShadow?.Dispose();
@@ -2629,7 +2647,7 @@ namespace DrawnUi.Draw
         protected float fontUnderline;
 
         private DecomposedText _lastDecomposed;
- 
+
         private int _fontWeight;
         private static float _scaleResampleText = 1.0f;
         private SKTypeface _replaceFont;
@@ -3131,7 +3149,7 @@ namespace DrawnUi.Draw
             {
                 text = Text;
             }
-              
+
             if (text != null)
             {
                 switch (TextTransform)
