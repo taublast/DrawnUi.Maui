@@ -1,4 +1,5 @@
 ﻿using System.Buffers;
+using System.Collections.Concurrent;
 using SkiaSharp.HarfBuzz;
 using Color = Microsoft.Maui.Graphics.Color;
 using Font = Microsoft.Maui.Font;
@@ -171,7 +172,9 @@ namespace DrawnUi.Draw
             {
                 if (Spans.Count > 0)
                 {
-                    var sb = new StringBuilder();
+                    // Use pooled StringBuilder to avoid allocation
+                    using var pooledSb = PooledStringBuilder.Get();
+                    var sb = pooledSb.StringBuilder;
                     foreach (var span in Spans)
                     {
                         sb.Append(span.Text);
@@ -1061,13 +1064,20 @@ namespace DrawnUi.Draw
                         }
                         else if (Glyphs.Count > 0)
                         {
-                            // Replace unprintable symbols with fallback using StringBuilder to reduce allocations
-                            var sb = new StringBuilder(Glyphs.Count);
+                            // Replace unprintable symbols with fallback using pooled StringBuilder
+                            using var pooledSb = PooledStringBuilder.Get();
+                            var sb = pooledSb.StringBuilder;
+                            sb.EnsureCapacity(Glyphs.Count); // Pre-allocate capacity
                             for (int i = 0; i < Glyphs.Count; i++)
                             {
-                                sb.Append(Glyphs[i].IsAvailable
-                                    ? Glyphs[i].GetGlyphText()
-                                    : FallbackCharacter.ToString());
+                                if (Glyphs[i].IsAvailable)
+                                {
+                                    SpanMeasurement.AppendSpan(sb, Glyphs[i].GetGlyphText());
+                                }
+                                else
+                                {
+                                    SpanMeasurement.AppendChar(sb, FallbackCharacter);
+                                }
                             }
 
                             text = sb.ToString();
@@ -1089,7 +1099,9 @@ namespace DrawnUi.Draw
                     else
                     {
                         // Measure multiple spans
-                        var mergedLines = new List<TextLine>();
+                        // Use pooled list to avoid allocation
+                        using var pooledMergedLines = PooledTextLineList.Get();
+                        var mergedLines = pooledMergedLines.List;
                         SKPoint offset = SKPoint.Empty;
                         TextLine previousSpanLastLine = null;
 
@@ -1274,9 +1286,45 @@ namespace DrawnUi.Draw
         protected float MeasurePartialTextWidth(SKPaint paint, ReadOnlySpan<char> textSpan,
             bool needsShaping, float scale)
         {
-            string text = textSpan.ToString();
-            var (w, _) = MeasureLineGlyphs(paint, text, needsShaping, scale);
-            return w;
+            // Use optimized span-based measurement to avoid string allocation
+            return MeasurePartialTextWidthOptimized(paint, textSpan, needsShaping, scale);
+        }
+
+        /// <summary>
+        /// Optimized version of MeasurePartialTextWidth that uses span-based operations
+        /// </summary>
+        public float MeasurePartialTextWidthOptimized(SKPaint paint, ReadOnlySpan<char> textSpan,
+            bool needsShaping, float scale)
+        {
+            var paintTypeface = paint.Typeface ?? SkiaFontManager.DefaultTypeface;
+
+            // For simple cases, measure directly with span
+            if (!needsShaping && textSpan.Length <= 32) // Small text threshold
+            {
+                return SpanMeasurement.MeasureTextWidthWithAdvanceSpan(paint, textSpan);
+            }
+
+            // For complex cases or cache lookup, we need string conversion
+            // This is the controlled fallback to maintain cache compatibility
+            string text = SpanMeasurement.SpanToStringForCache(textSpan);
+
+            // Check cache first
+            if (GlyphMeasurementCache.TryGetValue(paintTypeface, needsShaping, text, out var cachedResult))
+            {
+                return cachedResult.Width;
+            }
+
+            // Measure using instance method and cache result
+            var (width, _) = MeasureLineGlyphs(paint, text, needsShaping, scale);
+            return width;
+        }
+
+        /// <summary>
+        /// Optimized version of LastNonSpaceIndex that works with spans
+        /// </summary>
+        public static int LastNonSpaceIndexOptimized(ReadOnlySpan<char> textSpan)
+        {
+            return SpanMeasurement.LastNonSpaceIndexSpan(textSpan);
         }
 
         protected (float Width, LineGlyph[] Glyphs) MeasureLineGlyphs(SKPaint paint, string text, bool needsShaping,
@@ -1294,7 +1342,9 @@ namespace DrawnUi.Draw
 
             var glyphs = GetGlyphs(text, paintTypeface);
 
-            var positions = new List<LineGlyph>();
+            // Use pooled list to avoid allocation
+            using var pooledPositions = PooledLineGlyphList.Get();
+            var positions = pooledPositions.List;
             float value = 0.0f;
             float offsetX = 0f;
 
@@ -1365,12 +1415,12 @@ namespace DrawnUi.Draw
 
                 if (paint.TextSkewX != 0)
                 {
-                    addAtIndex = LastNonSpaceIndex(text);
+                    addAtIndex = LastNonSpaceIndexOptimized(text.AsSpan());
                 }
 
                 foreach (var g in glyphs)
                 {
-                    var thisWidth = MeasureTextWidthWithAdvance(paint, g.GetGlyphText());
+                    var thisWidth = SpanMeasurement.MeasureTextWidthWithAdvanceSpan(paint, g.GetGlyphText());
                     if (pos == addAtIndex)
                     {
                         var additionalWidth = (int)Math.Round(Math.Abs(paint.TextSkewX) * paint.TextSize / 2f);
@@ -1409,7 +1459,9 @@ namespace DrawnUi.Draw
             TextSpan span, float scale)
         {
             var ret = new DecomposedText();
-            var result = new List<TextLine>();
+            // Use pooled list to avoid allocation
+            using var pooledResult = PooledTextLineList.Get();
+            var result = pooledResult.List;
 
             if (span != null)
             {
@@ -2008,7 +2060,9 @@ namespace DrawnUi.Draw
                     lastSpan.End + 1,
                     lastSpan.End + line.Glyphs.Length));
 
-                var characterPositions = new List<LineGlyph>();
+                // Use pooled list to avoid allocation
+                using var pooledCharacterPositions = PooledLineGlyphList.Get();
+                var characterPositions = pooledCharacterPositions.List;
                 characterPositions.AddRange(previousSpanLastLine.Glyphs);
                 var startAt = previousSpanLastLine.Width;
                 foreach (var glyph in line.Glyphs)
