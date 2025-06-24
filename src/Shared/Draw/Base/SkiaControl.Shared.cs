@@ -627,10 +627,10 @@ namespace DrawnUi.Draw
             var startScaleY = this.ScaleY;
 
             return AnimateAsync(value =>
-                {
-                    this.ScaleX = startScaleX + (x - startScaleX) * value;
-                    this.ScaleY = startScaleY + (y - startScaleY) * value;
-                },
+            {
+                this.ScaleX = startScaleX + (x - startScaleX) * value;
+                this.ScaleY = startScaleY + (y - startScaleY) * value;
+            },
                 () =>
                 {
                     this.ScaleX = x;
@@ -681,10 +681,10 @@ namespace DrawnUi.Draw
             var startTranslationY = this.TranslationY;
 
             return AnimateAsync(value =>
-                {
-                    this.TranslationX = (float)(startTranslationX + (x - startTranslationX) * value);
-                    this.TranslationY = (float)(startTranslationY + (y - startTranslationY) * value);
-                },
+            {
+                this.TranslationX = (float)(startTranslationX + (x - startTranslationX) * value);
+                this.TranslationY = (float)(startTranslationY + (y - startTranslationY) * value);
+            },
                 () =>
                 {
                     this.TranslationX = x;
@@ -834,6 +834,21 @@ namespace DrawnUi.Draw
         public SKSize SizeRequest { get; protected set; }
 
         /// <summary>
+        /// Points
+        /// </summary>
+        public double WidthRequestWithMargins
+        {
+            get
+            {
+                if (WidthRequest >= 0)
+                {
+                    return WidthRequest + Margins.HorizontalThickness;
+                }
+                return WidthRequest;
+            }
+        }
+
+        /// <summary>
         /// Apply margins to SizeRequest
         /// </summary>
         /// <param name="sizeConstraint"></param>
@@ -875,7 +890,6 @@ namespace DrawnUi.Draw
             }
 
             return ret;
-
         }
 
         public virtual MeasuringConstraints GetMeasuringConstraints(MeasureRequest request)
@@ -897,6 +911,23 @@ namespace DrawnUi.Draw
                 Content = rectForChildrenPixels
             };
         }
+
+        public bool NeedFillHorizontally
+        {
+            get
+            {
+                return WidthRequest < 0 && HorizontalOptions.Alignment == LayoutAlignment.Fill;
+            }
+        }
+
+        public bool NeedFillVertically
+        {
+            get
+            {
+                return HeightRequest < 0 && VerticalOptions.Alignment == LayoutAlignment.Fill;
+            }
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float AdaptConstraintToContentRequest(
@@ -2470,6 +2501,23 @@ namespace DrawnUi.Draw
 
         public new event EventHandler<IDrawnBase> ParentChanged;
 
+
+        public static readonly BindableProperty FastMeasurementProperty = BindableProperty.Create(
+            nameof(FastMeasurement),
+            typeof(bool),
+            typeof(SkiaControl),
+            false,
+            propertyChanged: NeedInvalidateMeasure);
+
+        /// <summary>
+        /// When true, uses single-pass fast measurement. When false, uses 3-pass measurement with Fill handling.
+        /// </summary>
+        public bool FastMeasurement
+        {
+            get => (bool)GetValue(FastMeasurementProperty);
+            set => SetValue(FastMeasurementProperty, value);
+        }
+
         public static readonly BindableProperty AdjustClippingProperty = BindableProperty.Create(
             nameof(AdjustClipping),
             typeof(Thickness),
@@ -3892,12 +3940,10 @@ namespace DrawnUi.Draw
 
                     if (ignoreFill)
                     {
-                        if (measuredWidth > maxWidth && (child.HorizontalOptions.Alignment != LayoutAlignment.Fill ||
-                                                         child.WidthRequest >= 0))
+                        if (measuredWidth > maxWidth && !NeedFillHorizontally)
                             maxWidth = measuredWidth;
 
-                        if (measuredHeight > maxHeight && (child.VerticalOptions.Alignment != LayoutAlignment.Fill ||
-                                                           child.HeightRequest >= 0))
+                        if (measuredHeight > maxHeight && !NeedFillVertically)
                             maxHeight = measuredHeight;
                     }
                     else
@@ -3923,8 +3969,8 @@ namespace DrawnUi.Draw
                 if (!child.CanDraw)
                     continue;
 
-                var hasHorizontalFill = child.HorizontalOptions.Alignment == LayoutAlignment.Fill;
-                var hasVerticalFill = child.VerticalOptions.Alignment == LayoutAlignment.Fill;
+                var hasHorizontalFill = child.NeedFillHorizontally;
+                var hasVerticalFill = child.NeedFillVertically;
 
                 // Only defer children with Fill in BOTH dimensions
                 bool shouldDefer = hasHorizontalFill && hasVerticalFill;
@@ -3996,8 +4042,8 @@ namespace DrawnUi.Draw
             //PASS 3 for those with partial Fill (only one dimension)
             foreach (var (child, originalMeasured) in partialFill)
             {
-                var hasHorizontalFill = child.HorizontalOptions.Alignment == LayoutAlignment.Fill;
-                var hasVerticalFill = child.VerticalOptions.Alignment == LayoutAlignment.Fill;
+                var hasHorizontalFill = child.NeedFillHorizontally;
+                var hasVerticalFill = child.NeedFillVertically;
 
                 var provideWidth = hasHorizontalFill
                     ? (NeedAutoWidth && maxWidth >= 0 ? maxWidth : rectForChildrenPixels.Width)
@@ -4024,15 +4070,12 @@ namespace DrawnUi.Draw
                 heightCut |= measured.HeightCut;
             }
 
-
-            if (HorizontalOptions.Alignment == LayoutAlignment.Fill && WidthRequest < 0 &&
-                float.IsFinite(rectForChildrenPixels.Width))
+            if (NeedFillHorizontally && float.IsFinite(rectForChildrenPixels.Width))
             {
                 maxWidth = rectForChildrenPixels.Width;
             }
 
-            if (VerticalOptions.Alignment == LayoutAlignment.Fill && HeightRequest < 0 &&
-                float.IsFinite(rectForChildrenPixels.Height))
+            if (NeedFillVertically && float.IsFinite(rectForChildrenPixels.Height))
             {
                 maxHeight = rectForChildrenPixels.Height;
             }
@@ -6507,7 +6550,10 @@ namespace DrawnUi.Draw
 
             var animation = new ShimmerAnimator(this)
             {
-                Color = color.ToSKColor(), ShimmerWidth = shimmerWidth, ShimmerAngle = shimmerAngle, Speed = speedMs
+                Color = color.ToSKColor(),
+                ShimmerWidth = shimmerWidth,
+                ShimmerAngle = shimmerAngle,
+                Speed = speedMs
             };
             animation.Start();
         }
