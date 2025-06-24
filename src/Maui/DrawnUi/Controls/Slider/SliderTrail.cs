@@ -57,9 +57,17 @@ public class SliderTrail : SkiaShape
             || propertyName == nameof(XPos)
             || propertyName == nameof(SideOffset))
         {
-            this.Margin = new Thickness(XPos + SideOffset + ModifyXPosStart, 0, ModifyXPosEnd, 0);
-            this.WidthRequest = XPosEnd - XPos + (ModifyXPosEnd + ModifyXPosStart);
-            //Debug.WriteLine($"[DEBUG] {XPos} {XPosEnd} -> {XPosEnd - XPos}");
+
+            var offsetLeft = XPos + SideOffset + ModifyXPosStart;
+            var offsetRight = ModifyXPosEnd;
+
+            this.Margin = new Thickness(
+                offsetLeft,
+                0,
+                offsetRight,
+                0);
+
+            this.WidthRequest = offsetLeft + XPosEnd - XPos + (ModifyXPosEnd*2 + ModifyXPosStart*2);
         }
 
     }
