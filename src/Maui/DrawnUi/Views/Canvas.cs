@@ -400,29 +400,7 @@ public class Canvas : DrawnView, IGestureListener
     {
         base.OnHandlerChanged();
 
-        if (Handler != null)
-        {
-            Create(isEmpty);
-            isEmpty = false;
-        }
-
         OnGesturesAttachChanged();
-    }
-
-    public override void OnHotReload()
-    {
-        base.OnHotReload();
-
-        //MAUI..
-        MainThread.BeginInvokeOnMainThread(() => { Create(false); });
-    }
-
-    /// <summary>
-    /// Will be called by canvas when framework platform is initialized (true) OR .NET HotReload triggered (false)
-    /// </summary>
-    /// <param name="firsttime"></param>
-    protected virtual void Create(bool firsttime)
-    {
     }
 
     #region GESTURES
