@@ -843,11 +843,6 @@ namespace DrawnUi.Draw
         {
             var ret = sizeConstraint;
 
-            //if (Tag == "ServiceName")
-            //{
-            //    var stop = 1;
-            //}
-
             if (SizeRequest.Width >= 0)
             {
                 ret = (float)Math.Round(SizeRequest.Width * scale + constraints.HorizontalThickness);
