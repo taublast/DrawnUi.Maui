@@ -441,9 +441,8 @@ namespace DrawnUi.Draw
             {
                 var strokeAwareSize = CalculateShapeSizeForStroke(destination, scale);
 
-                //var contract = GetSmallUnderStroke(scale);
-                var contract = GetHalfStroke(scale);
-
+                var contract = GetSmallUnderStroke(scale);
+                
                 var strokeAwareChildrenSize
                     = ContractPixelsRect(strokeAwareSize, contract);
 
