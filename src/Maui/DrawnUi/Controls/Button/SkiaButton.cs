@@ -12,6 +12,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 {
     public SkiaButton()
     {
+
     }
 
     public SkiaButton(string caption)
@@ -31,12 +32,12 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     #region DEFAULT CONTENT
 
-    public class ButtonLabel : SkiaLabel
+    public class ButtonLabel : SkiaMarkdownLabel
     {
         public ButtonLabel()
         {
             Margin = new Thickness(10, 0);
-            UseCache = SkiaCacheType.Operations;
+            //UseCache = SkiaCacheType.OperationsFull; todo fix, OperationsFull not working for some reason
             Tag = "BtnText";
             HorizontalOptions = LayoutOptions.Center;
             VerticalOptions = LayoutOptions.Center;
@@ -452,6 +453,15 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                     break;
             }
 
+            if (StrokeColor != TransparentColor)
+            {
+                MainFrame.StrokeColor = this.StrokeColor;
+            }
+            if (StrokeWidth != 0)
+            {
+                MainFrame.StrokeWidth = this.StrokeWidth;
+            }
+
             MainFrame.Background = this.Background;
             if (CornerRadius != 8)
             {
@@ -537,6 +547,9 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
                     }
                 }
             }
+
+            MainFrame.Bevel = this.Bevel;
+            MainFrame.BevelType = this.BevelType;
         }
         else
         {
@@ -1041,6 +1054,31 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
     {
         get { return GetValue(CommandLongPressingParameterProperty); }
         set { SetValue(CommandLongPressingParameterProperty, value); }
+    }
+
+    public static readonly BindableProperty StrokeColorProperty = BindableProperty.Create(
+        nameof(StrokeColor),
+        typeof(Color),
+        typeof(SkiaButton),
+        TransparentColor,
+        propertyChanged: NeedApplyProperties);
+
+    public Color StrokeColor
+    {
+        get { return (Color)GetValue(StrokeColorProperty); }
+        set { SetValue(StrokeColorProperty, value); }
+    }
+
+    public static readonly BindableProperty StrokeWidthProperty = BindableProperty.Create(
+        nameof(StrokeWidth),
+        typeof(float),
+        typeof(SkiaButton),
+        0.0f, propertyChanged: NeedApplyProperties);
+
+    public float StrokeWidth
+    {
+        get { return (float)GetValue(StrokeWidthProperty); }
+        set { SetValue(StrokeWidthProperty, value); }
     }
 
     protected SKPoint _lastDownPts;
