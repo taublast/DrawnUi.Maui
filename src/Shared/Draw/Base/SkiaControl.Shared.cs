@@ -3900,14 +3900,103 @@ namespace DrawnUi.Draw
             SKRect rectForChildrenPixels,
             float scale)
         {
+            // Use FastMeasurement property to conditionally skip multi-pass FILL calculations
+            if (FastMeasurement)
+            {
+                return MeasureContentFast(children, rectForChildrenPixels, scale);
+            }
+            else
+            {
+                return MeasureContentCore(children, rectForChildrenPixels, scale);
+            }
+        }
+
+        /// <summary>
+        /// Fast single-pass measurement for absolute layouts when FastMeasurement=true
+        /// Optimized version that skips FILL handling for maximum performance
+        /// </summary>
+        private ScaledSize MeasureContentFast(
+            IEnumerable<SkiaControl> children,
+            SKRect rectForChildrenPixels,
+            float scale)
+        {
+            var maxHeight = -1.0f;
+            var maxWidth = -1.0f;
+            bool heightCut = false, widthCut = false;
+
+            // Single pass - measure all children directly
+            foreach (var child in children)
+            {
+                if (child == null)
+                    continue;
+
+                child.OnBeforeMeasure();
+                if (!child.CanDraw)
+                    continue;
+
+                var measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
+
+                if (!measured.IsEmpty)
+                {
+                    var measuredHeight = measured.Pixels.Height;
+                    var measuredWidth = measured.Pixels.Width;
+
+                    // Apply viewport limits if set
+                    if (child.ViewportHeightLimit >= 0)
+                    {
+                        float mHeight = (float)(child.ViewportHeightLimit * scale);
+                        if (measuredHeight > mHeight)
+                            measuredHeight = mHeight;
+                    }
+
+                    if (child.ViewportWidthLimit >= 0)
+                    {
+                        float mWidth = (float)(child.ViewportWidthLimit * scale);
+                        if (measuredWidth > mWidth)
+                            measuredWidth = mWidth;
+                    }
+
+                    if (measuredWidth > maxWidth)
+                        maxWidth = measuredWidth;
+
+                    if (measuredHeight > maxHeight)
+                        maxHeight = measuredHeight;
+                }
+
+                widthCut |= measured.WidthCut;
+                heightCut |= measured.HeightCut;
+            }
+
+            // Apply Fill constraints for parent
+            if (NeedFillHorizontally && float.IsFinite(rectForChildrenPixels.Width))
+                maxWidth = rectForChildrenPixels.Width;
+
+            if (NeedFillVertically && float.IsFinite(rectForChildrenPixels.Height))
+                maxHeight = rectForChildrenPixels.Height;
+
+            if (maxWidth < 0) maxWidth = 0;
+            if (maxHeight < 0) maxHeight = 0;
+
+            return ScaledSize.FromPixels(maxWidth, maxHeight, widthCut, heightCut, scale);
+        }
+
+        /// <summary>
+        /// Core 3-pass measurement logic for absolute layouts with full FILL support
+        /// </summary>
+        private ScaledSize MeasureContentCore(
+            IEnumerable<SkiaControl> children,
+            SKRect rectForChildrenPixels,
+            float scale)
+        {
             var maxHeight = -1.0f;
             var maxWidth = -1.0f;
 
             var maxChildHeight = -1.0f;
             var maxChildWidth = -1.0f;
 
-            List<SkiaControl> fullFill = new();
-            List<(SkiaControl child, ScaledSize measured)> partialFill = new();
+            // Optimize: only allocate collections if we'll actually use them
+            List<SkiaControl> fullFill = null;
+            List<(SkiaControl child, ScaledSize measured)> partialFill = null;
             var autosize = this.NeedAutoSize;
             var hadFixedSize = false;
 
@@ -3923,8 +4012,7 @@ namespace DrawnUi.Draw
                         float mHeight = (float)(child.ViewportHeightLimit * scale);
                         if (measuredHeight > mHeight)
                         {
-                            float excessHeight = measuredHeight - mHeight;
-                            measuredHeight -= excessHeight;
+                            measuredHeight = mHeight; // Optimized: direct assignment
                         }
                     }
 
@@ -3933,8 +4021,7 @@ namespace DrawnUi.Draw
                         float mWidth = (float)(child.ViewportWidthLimit * scale);
                         if (measuredWidth > mWidth)
                         {
-                            float excessWidth = measuredWidth - mWidth;
-                            measuredWidth -= excessWidth;
+                            measuredWidth = mWidth; // Optimized: direct assignment
                         }
                     }
 
@@ -3977,6 +4064,9 @@ namespace DrawnUi.Draw
 
                 if (shouldDefer)
                 {
+                    // Lazy allocation: only create collection when needed
+                    if (fullFill == null)
+                        fullFill = new List<SkiaControl>();
                     fullFill.Add(child);
                     continue;
                 }
@@ -3998,6 +4088,9 @@ namespace DrawnUi.Draw
                 // Add to partialFill if has Fill in only one dimension
                 if (hasHorizontalFill != hasVerticalFill) // XOR - only one is true
                 {
+                    // Lazy allocation: only create collection when needed
+                    if (partialFill == null)
+                        partialFill = new List<(SkiaControl child, ScaledSize measured)>();
                     partialFill.Add((child, measured));
                 }
 
@@ -4007,67 +4100,72 @@ namespace DrawnUi.Draw
                 heightCut |= measured.HeightCut;
             }
 
-            //PASS 2 for those with full Fill (both dimensions)
-            foreach (var child in fullFill)
+            //PASS 2 for those with full Fill (both dimensions) - only if needed
+            if (fullFill != null)
             {
-                ScaledSize measured;
-                if (!hadFixedSize)
+                foreach (var child in fullFill)
                 {
-                    measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
-                    // Don't process fill children sizes - they adapt to parent, not define it
-                }
-                else
-                {
-                    var provideWidth = rectForChildrenPixels.Width;
-                    if (NeedAutoWidth && maxWidth >= 0)
+                    ScaledSize measured;
+                    if (!hadFixedSize)
                     {
-                        provideWidth = maxWidth;
+                        measured = MeasureChild(child, rectForChildrenPixels.Width, rectForChildrenPixels.Height, scale);
+                        // Don't process fill children sizes - they adapt to parent, not define it
+                    }
+                    else
+                    {
+                        var provideWidth = rectForChildrenPixels.Width;
+                        if (NeedAutoWidth && maxWidth >= 0)
+                        {
+                            provideWidth = maxWidth;
+                        }
+
+                        var provideHeight = rectForChildrenPixels.Height;
+                        if (NeedAutoHeight && maxHeight >= 0)
+                        {
+                            provideHeight = maxHeight;
+                        }
+
+                        measured = MeasureChild(child, provideWidth, provideHeight, scale);
+                        // Don't call PostProcessMeasuredChild for fill children
                     }
 
-                    var provideHeight = rectForChildrenPixels.Height;
-                    if (NeedAutoHeight && maxHeight >= 0)
-                    {
-                        provideHeight = maxHeight;
-                    }
-
-                    measured = MeasureChild(child, provideWidth, provideHeight, scale);
-                    // Don't call PostProcessMeasuredChild for fill children
+                    widthCut |= measured.WidthCut;
+                    heightCut |= measured.HeightCut;
                 }
-
-                widthCut |= measured.WidthCut;
-                heightCut |= measured.HeightCut;
             }
 
-
-            //PASS 3 for those with partial Fill (only one dimension)
-            foreach (var (child, originalMeasured) in partialFill)
+            //PASS 3 for those with partial Fill (only one dimension) - only if needed
+            if (partialFill != null)
             {
-                var hasHorizontalFill = child.NeedFillHorizontally;
-                var hasVerticalFill = child.NeedFillVertically;
-
-                var provideWidth = hasHorizontalFill
-                    ? (NeedAutoWidth && maxWidth >= 0 ? maxWidth : rectForChildrenPixels.Width)
-                    : rectForChildrenPixels.Width;
-
-                var provideHeight = hasVerticalFill
-                    ? (NeedAutoHeight && maxHeight >= 0 ? maxHeight : rectForChildrenPixels.Height)
-                    : rectForChildrenPixels.Height;
-
-                var measured = MeasureChild(child, provideWidth, provideHeight, scale);
-
-                // Only record dimensions that are NOT Fill
-                if (!hasHorizontalFill && measured.Pixels.Width > maxChildWidth)
+                foreach (var (child, originalMeasured) in partialFill)
                 {
-                    maxChildWidth = measured.Pixels.Width;
-                }
+                    var hasHorizontalFill = child.NeedFillHorizontally;
+                    var hasVerticalFill = child.NeedFillVertically;
 
-                if (!hasVerticalFill && measured.Pixels.Height > maxChildHeight)
-                {
-                    maxChildHeight = measured.Pixels.Height;
-                }
+                    var provideWidth = hasHorizontalFill
+                        ? (NeedAutoWidth && maxWidth >= 0 ? maxWidth : rectForChildrenPixels.Width)
+                        : rectForChildrenPixels.Width;
 
-                widthCut |= measured.WidthCut;
-                heightCut |= measured.HeightCut;
+                    var provideHeight = hasVerticalFill
+                        ? (NeedAutoHeight && maxHeight >= 0 ? maxHeight : rectForChildrenPixels.Height)
+                        : rectForChildrenPixels.Height;
+
+                    var measured = MeasureChild(child, provideWidth, provideHeight, scale);
+
+                    // Only record dimensions that are NOT Fill
+                    if (!hasHorizontalFill && measured.Pixels.Width > maxChildWidth)
+                    {
+                        maxChildWidth = measured.Pixels.Width;
+                    }
+
+                    if (!hasVerticalFill && measured.Pixels.Height > maxChildHeight)
+                    {
+                        maxChildHeight = measured.Pixels.Height;
+                    }
+
+                    widthCut |= measured.WidthCut;
+                    heightCut |= measured.HeightCut;
+                }
             }
 
             if (NeedFillHorizontally && float.IsFinite(rectForChildrenPixels.Width))

@@ -729,7 +729,7 @@ namespace DrawnUi.Draw
 
         public override ScaledSize MeasureAbsolute(SKRect rectForChildrenPixels, float scale)
         {
-            var childrenCount = ChildrenFactory.GetChildrenCount();
+            var childrenCount = ChildrenFactory.GetChildrenCount(); // Cache count
             if (childrenCount > 0)
             {
                 if (!IsTemplated)
@@ -758,13 +758,24 @@ namespace DrawnUi.Draw
                             scale);
                         if (!measured.IsEmpty)
                         {
-                            if (measured.Pixels.Width > maxWidth
-                                && child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
-                                maxWidth = measured.Pixels.Width;
+                            // FastMeasurement: skip FILL checks for performance
+                            if (FastMeasurement)
+                            {
+                                if (measured.Pixels.Width > maxWidth)
+                                    maxWidth = measured.Pixels.Width;
+                                if (measured.Pixels.Height > maxHeight)
+                                    maxHeight = measured.Pixels.Height;
+                            }
+                            else
+                            {
+                                if (measured.Pixels.Width > maxWidth
+                                    && child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
+                                    maxWidth = measured.Pixels.Width;
 
-                            if (measured.Pixels.Height > maxHeight
-                                && child.VerticalOptions.Alignment != LayoutAlignment.Fill)
-                                maxHeight = measured.Pixels.Height;
+                                if (measured.Pixels.Height > maxHeight
+                                    && child.VerticalOptions.Alignment != LayoutAlignment.Fill)
+                                    maxHeight = measured.Pixels.Height;
+                            }
                         }
 
                         ChildrenFactory.ReleaseTemplateInstance(template);
@@ -772,13 +783,17 @@ namespace DrawnUi.Draw
                     else if (this.MeasureItemsStrategy == MeasuringStrategy.MeasureAll
                              || RecyclingTemplate == RecyclingTemplate.Disabled)
                     {
-                        var cellsToRelease = new List<SkiaControl>();
+                        // Optimize: only allocate collection if templated
+                        List<SkiaControl> cellsToRelease = null;
+                        if (IsTemplated)
+                            cellsToRelease = new List<SkiaControl>();
+
                         try
                         {
                             for (int index = 0; index < childrenCount; index++)
                             {
                                 var child = ChildrenFactory.GetViewForIndex(index, null, 0, true);
-                                if (IsTemplated) cellsToRelease.Add(child);
+                                if (IsTemplated) cellsToRelease?.Add(child);
 
                                 if (child == null)
                                 {
@@ -789,22 +804,35 @@ namespace DrawnUi.Draw
                                     rectForChildrenPixels.Height, scale);
                                 if (!measured.IsEmpty)
                                 {
-                                    if (measured.Pixels.Width > maxWidth &&
-                                        child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
-                                        maxWidth = measured.Pixels.Width;
-                                    if (measured.Pixels.Height > maxHeight &&
-                                        child.VerticalOptions.Alignment != LayoutAlignment.Fill)
-                                        maxHeight = measured.Pixels.Height;
+                                    // FastMeasurement: skip FILL checks for performance
+                                    if (true)//FastMeasurement)
+                                    {
+                                        if (measured.Pixels.Width > maxWidth)
+                                            maxWidth = measured.Pixels.Width;
+                                        if (measured.Pixels.Height > maxHeight)
+                                            maxHeight = measured.Pixels.Height;
+                                    }
+                                    else
+                                    {
+                                        if (measured.Pixels.Width > maxWidth &&
+                                            child.HorizontalOptions.Alignment != LayoutAlignment.Fill)
+                                            maxWidth = measured.Pixels.Width;
+                                        if (measured.Pixels.Height > maxHeight &&
+                                            child.VerticalOptions.Alignment != LayoutAlignment.Fill)
+                                            maxHeight = measured.Pixels.Height;
+                                    }
                                 }
                             }
                         }
                         finally
                         {
-                            if (IsTemplated)
+                            if (cellsToRelease?.Count > 0)
+                            {
                                 foreach (var cell in cellsToRelease)
                                 {
                                     ChildrenFactory.ReleaseViewInUse(cell.ContextIndex, cell);
                                 }
+                            }
                         }
                     }
 
