@@ -12,7 +12,7 @@ namespace DrawnUi.Draw
 {
     [ContentProperty(nameof(Children))]
     public partial class SkiaControl : VisualElement,
-        IHotReloadableView, IReloadHandler, // to support New HotReload
+        //IHotReloadableView, IReloadHandler, // to support New HotReload
         IVisualTreeElement, // to support VS HotReload
         IContainer // to support VS HotReload full page reload mode
     {
@@ -290,11 +290,11 @@ namespace DrawnUi.Draw
             if (Debugger.IsAttached)
                 Superview?.PostponeExecutionAfterDraw(() => { ReportHotreloadChildAdded(control); });
 
-            if (control is IHotReloadableView ihr)
-            {
-                ihr.ReloadHandler = this;
-                MauiHotReloadHelper.AddActiveView(ihr);
-            }
+            //if (control is IHotReloadableView ihr)
+            //{
+            //    ihr.ReloadHandler = this;
+            //    MauiHotReloadHelper.AddActiveView(ihr);
+            //}
         }
 
         public virtual void RemoveSubView(SkiaControl control)
@@ -437,6 +437,7 @@ namespace DrawnUi.Draw
             return (float)Super.Screen.Density;
         }
 
+        /*
         #region HotReload
 
         IView IReplaceableView.ReplacedView =>
@@ -457,5 +458,6 @@ namespace DrawnUi.Draw
         public IReloadHandler ReloadHandler { get; set; }
 
         #endregion
+        */
     }
 }
