@@ -90,7 +90,7 @@ public class SkiaLabelFps : SkiaLabel, ISkiaAnimator
         if (Superview == null)
             return;
 
-        Text = $"{Superview.FPS:00}";
+        Text = $"{Superview.FPS:00.0}";
 
         UpdateForceRefresh();
  
