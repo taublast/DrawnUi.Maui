@@ -14,7 +14,8 @@ public partial class SkiaCamera : SkiaControl
     /// <param name="overlay"></param>
     /// <param name="createdImage"></param>
     /// <returns></returns>
-    public virtual SKImage RenderCapturedPhoto(CapturedImage captured, SkiaLayout overlay, Action<SkiaImage> createdImage = null)
+    public virtual SKImage RenderCapturedPhoto(CapturedImage captured, SkiaLayout overlay,
+        Action<SkiaImage> createdImage = null)
     {
         var scaleOverlay = GetRenderingScaleFor(captured.Image.Width, captured.Image.Height);
         double zoomCapturedPhotoX = TextureScale;
@@ -45,10 +46,7 @@ public partial class SkiaCamera : SkiaControl
             //create offscreen rendering context
             var context = new SkiaDrawingContext()
             {
-                Surface = surface,
-                Canvas = surface.Canvas,
-                Width = info.Width,
-                Height = info.Height
+                Surface = surface, Canvas = surface.Canvas, Width = info.Width, Height = info.Height
             };
             var destination = new SKRect(0, 0, info.Width, info.Height);
 
@@ -65,7 +63,9 @@ public partial class SkiaCamera : SkiaControl
                 Aspect = TransformAspect.None,
                 ZoomX = zoomCapturedPhotoX,
                 ZoomY = zoomCapturedPhotoY,
-                ImageBitmap = new LoadedImageSource(captured.Image) //must not dispose bitmap after that, it's used by preview outside
+                ImageBitmap =
+                    new LoadedImageSource(captured
+                        .Image) //must not dispose bitmap after that, it's used by preview outside
             };
 
             if (captured.Orientation != 0)
@@ -75,6 +75,7 @@ public partial class SkiaCamera : SkiaControl
                 {
                     transfromRotation = (float)((360 - captured.Orientation) % 360);
                 }
+
                 image.Rotation = transfromRotation;
             }
 
@@ -87,7 +88,6 @@ public partial class SkiaCamera : SkiaControl
             surface.Canvas.Flush();
             return surface.Snapshot();
         }
-
     }
 
 
@@ -122,7 +122,8 @@ public partial class SkiaCamera : SkiaControl
         int endY = Math.Min(height, centerY + sampleSizePixels / 2);
 
         System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Analyzing frame: {width}x{height}");
-        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Sampling: {sampleSizePoints}x{sampleSizePoints} pts * {renderingScale:F1} = {sampleSizePixels}x{sampleSizePixels} px");
+        System.Diagnostics.Debug.WriteLine(
+            $"[SHARED CAMERA] Sampling: {sampleSizePoints}x{sampleSizePoints} pts * {renderingScale:F1} = {sampleSizePixels}x{sampleSizePixels} px");
         System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Sampling area: ({startX},{startY}) to ({endX},{endY})");
 
         // Sample pixels from the target area
@@ -148,7 +149,8 @@ public partial class SkiaCamera : SkiaControl
             throw new InvalidOperationException("No pixels to analyze in the specified area");
 
         var averageLuminance = totalLuminance / pixelCount;
-        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Average luminance: {averageLuminance:F1} (0-255 scale), pixels: {pixelCount}");
+        System.Diagnostics.Debug.WriteLine(
+            $"[SHARED CAMERA] Average luminance: {averageLuminance:F1} (0-255 scale), pixels: {pixelCount}");
 
         return averageLuminance;
     }
@@ -161,14 +163,17 @@ public partial class SkiaCamera : SkiaControl
     /// <param name="iso">Camera ISO value</param>
     /// <param name="aperture">Camera aperture (f-number)</param>
     /// <returns>Estimated brightness in lux</returns>
-    public static double CalculateBrightnessFromExposure(double pixelLuminance, double exposureDuration, float iso, float aperture)
+    public static double CalculateBrightnessFromExposure(double pixelLuminance, double exposureDuration, float iso,
+        float aperture)
     {
         // Normalize pixel luminance to account for camera exposure settings
         // Formula: Actual_Luminance = Pixel_Luminance * (ISO/100) * (1/exposure_duration) / (aperture^2)
         var normalizedLuminance = pixelLuminance * (iso / 100.0) * (1.0 / exposureDuration) / (aperture * aperture);
 
-        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Exposure compensation: Duration={exposureDuration:F6}s, ISO={iso:F0}, Aperture=f/{aperture:F1}");
-        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Raw luminance: {pixelLuminance:F1} → Normalized: {normalizedLuminance:F1}");
+        System.Diagnostics.Debug.WriteLine(
+            $"[SHARED CAMERA] Exposure compensation: Duration={exposureDuration:F6}s, ISO={iso:F0}, Aperture=f/{aperture:F1}");
+        System.Diagnostics.Debug.WriteLine(
+            $"[SHARED CAMERA] Raw luminance: {pixelLuminance:F1} → Normalized: {normalizedLuminance:F1}");
 
         // Convert normalized luminance to lux using calibrated scale
         double estimatedLux;
@@ -271,7 +276,8 @@ public partial class SkiaCamera : SkiaControl
             if (NativeControl == null)
                 return new BrightnessResult { Success = false, ErrorMessage = "Camera not initialized" };
 
-            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting adaptive brightness measurement with {meteringMode} mode");
+            System.Diagnostics.Debug.WriteLine(
+                $"[SHARED CAMERA] Starting adaptive brightness measurement with {meteringMode} mode");
 
             if (autoFrame == null)
                 return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
@@ -281,20 +287,23 @@ public partial class SkiaCamera : SkiaControl
             var autoShutter = CameraDevice.Meta.Shutter;
             var autoAperture = CameraDevice.Meta.Aperture;
 
-            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Auto exposure detected: ISO {autoISO}, Shutter {autoShutter}s, Aperture f/{autoAperture}");
+            System.Diagnostics.Debug.WriteLine(
+                $"[SHARED CAMERA] Auto exposure detected: ISO {autoISO}, Shutter {autoShutter}s, Aperture f/{autoAperture}");
 
             // Get possible exposure ranges
             var exposureRange = NativeControl.GetExposureRange();
 
-            if (exposureRange.IsManualExposureSupported)
-            {
-                // Use adaptive exposure bracketing for accurate measurement
-                var result = await MeasureWithAdaptiveExposure(meteringMode, autoISO, autoShutter, exposureRange);
-                return result;
-            }
-
+//#if IOS
+//            if (exposureRange.IsManualExposureSupported)
+//            {
+//                // Use adaptive exposure bracketing for accurate measurement
+//                var result = await MeasureWithAdaptiveExposure(meteringMode, autoISO, autoShutter, exposureRange);
+//                return result;
+//            }
+//#endif
             // Fallback to direct pixel analysis when manual exposure is not supported
-            System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
+            System.Diagnostics.Debug.WriteLine(
+                "[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
 
             {
                 var pixelLuminance = AnalyzeFrameLuminance(autoFrame, meteringMode);
@@ -302,11 +311,7 @@ public partial class SkiaCamera : SkiaControl
 
                 System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel brightness: {brightness:F0} lux");
 
-                return new BrightnessResult
-                {
-                    Success = true,
-                    Brightness = brightness
-                };
+                return new BrightnessResult { Success = true, Brightness = brightness };
             }
         }
         catch (Exception ex)
@@ -319,9 +324,11 @@ public partial class SkiaCamera : SkiaControl
     /// <summary>
     /// Measures brightness using adaptive exposure bracketing to handle extreme lighting conditions
     /// </summary>
-    private async Task<BrightnessResult> MeasureWithAdaptiveExposure(MeteringMode meteringMode, double autoISO, double autoShutter, CameraManualExposureRange exposureRange)
+    private async Task<BrightnessResult> MeasureWithAdaptiveExposure(MeteringMode meteringMode, double autoISO,
+        double autoShutter, CameraManualExposureRange exposureRange)
     {
-        System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Starting adaptive exposure measurement (aggressive-to-conservative)");
+        System.Diagnostics.Debug.WriteLine(
+            "[SHARED CAMERA] Starting adaptive exposure measurement (aggressive-to-conservative)");
 
         // Define exposure bracketing sequence from conservative to aggressive
         var exposureSequence = new List<(float iso, float shutter, string description)>();
@@ -362,9 +369,11 @@ public partial class SkiaCamera : SkiaControl
 
             // Constrain to hardware limits
             var constrainedISO = Math.Max(exposureRange.MinISO, Math.Min(exposureRange.MaxISO, iso));
-            var constrainedShutter = Math.Max(exposureRange.MinShutterSpeed, Math.Min(exposureRange.MaxShutterSpeed, shutter));
+            var constrainedShutter = Math.Max(exposureRange.MinShutterSpeed,
+                Math.Min(exposureRange.MaxShutterSpeed, shutter));
 
-            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Attempt {i + 1}: {description} - ISO {constrainedISO}, Shutter {constrainedShutter}s");
+            System.Diagnostics.Debug.WriteLine(
+                $"[SHARED CAMERA] Attempt {i + 1}: {description} - ISO {constrainedISO}, Shutter {constrainedShutter}s");
 
             var result = await TryExposureSettings(meteringMode, constrainedISO, constrainedShutter);
 
@@ -372,17 +381,20 @@ public partial class SkiaCamera : SkiaControl
             {
                 if (result.IsClipped)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Attempt {i + 1} overexposed (white screen), trying next DARKER setting");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"[SHARED CAMERA] Attempt {i + 1} overexposed (white screen), trying next DARKER setting");
                     continue; // This should never happen since we start dark, but just in case
                 }
                 else if (result.IsTooDark)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Attempt {i + 1} too dark, trying next LIGHTER setting");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"[SHARED CAMERA] Attempt {i + 1} too dark, trying next LIGHTER setting");
                     continue; // Move to next setting which should be lighter
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Successful measurement with {description}: {result.Brightness:F0} lux");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"[SHARED CAMERA] Successful measurement with {description}: {result.Brightness:F0} lux");
                     return new BrightnessResult { Success = true, Brightness = result.Brightness };
                 }
             }
@@ -396,7 +408,8 @@ public partial class SkiaCamera : SkiaControl
     /// <summary>
     /// Tries a specific exposure setting and returns measurement result with clipping and darkness detection
     /// </summary>
-    private async Task<(bool Success, double Brightness, bool IsClipped, bool IsTooDark)> TryExposureSettings(MeteringMode meteringMode, float iso, float shutter)
+    private async Task<(bool Success, double Brightness, bool IsClipped, bool IsTooDark)> TryExposureSettings(
+        MeteringMode meteringMode, float iso, float shutter)
     {
         try
         {
@@ -437,16 +450,19 @@ public partial class SkiaCamera : SkiaControl
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine($"[EXPOSURE VALIDATION] Frame {attempts + 1} has wrong exposure settings, retrying...");
+                        System.Diagnostics.Debug.WriteLine(
+                            $"[EXPOSURE VALIDATION] Frame {attempts + 1} has wrong exposure settings, retrying...");
                     }
                 }
+
                 await Task.Delay(150);
             }
 
             if (frame == null || !frameValidated)
             {
                 frame?.Dispose();
-                System.Diagnostics.Debug.WriteLine($"[EXPOSURE ERROR] Failed to capture validated frame after 8 attempts");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[EXPOSURE ERROR] Failed to capture validated frame after 8 attempts");
                 return (false, 0, false, false);
             }
 
@@ -456,7 +472,8 @@ public partial class SkiaCamera : SkiaControl
                 var pixelLuminance = AnalyzeFrameLuminance(frame, meteringMode);
                 var clippingInfo = AnalyzeClipping(frame, meteringMode);
 
-                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Luminance: {pixelLuminance:F1}, Clipped pixels: {clippingInfo.ClippedPercentage:F1}%");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[SHARED CAMERA] Luminance: {pixelLuminance:F1}, Clipped pixels: {clippingInfo.ClippedPercentage:F1}%");
 
                 // Consider it clipped if more than 80% of sampled pixels are near maximum
                 bool isClipped = clippingInfo.ClippedPercentage > 80;
@@ -471,7 +488,8 @@ public partial class SkiaCamera : SkiaControl
                     var actualShutter = CameraDevice.Meta.Shutter;
                     var actualAperture = CameraDevice.Meta.Aperture;
 
-                    var brightness = CalculateSceneBrightnessFromPixels(pixelLuminance, actualISO, actualAperture, actualShutter);
+                    var brightness =
+                        CalculateSceneBrightnessFromPixels(pixelLuminance, actualISO, actualAperture, actualShutter);
                     return (true, brightness, false, false);
                 }
                 else
@@ -521,12 +539,14 @@ public partial class SkiaCamera : SkiaControl
 
             if (isoMatches && shutterMatches)
             {
-                System.Diagnostics.Debug.WriteLine($"[EXPOSURE VALIDATION] ✓ Frame validated - Expected: ISO{expectedISO}, {expectedShutter}s | Actual: ISO{actualISO}, {actualShutter}s");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[EXPOSURE VALIDATION] ✓ Frame validated - Expected: ISO{expectedISO}, {expectedShutter}s | Actual: ISO{actualISO}, {actualShutter}s");
                 return true;
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine($"[EXPOSURE VALIDATION] ✗ Frame mismatch - Expected: ISO{expectedISO}, {expectedShutter}s | Actual: ISO{actualISO}, {actualShutter}s");
+                System.Diagnostics.Debug.WriteLine(
+                    $"[EXPOSURE VALIDATION] ✗ Frame mismatch - Expected: ISO{expectedISO}, {expectedShutter}s | Actual: ISO{actualISO}, {actualShutter}s");
                 return false;
             }
         }
@@ -540,7 +560,8 @@ public partial class SkiaCamera : SkiaControl
     /// <summary>
     /// Analyzes pixel clipping in the metering area
     /// </summary>
-    private (double ClippedPercentage, double AverageOfNonClipped) AnalyzeClipping(SKImage frame, MeteringMode meteringMode)
+    private (double ClippedPercentage, double AverageOfNonClipped) AnalyzeClipping(SKImage frame,
+        MeteringMode meteringMode)
     {
         var renderingScale = GetRenderingScaleFor(frame.Width, frame.Height);
         var sampleSizePoints = meteringMode == MeteringMode.Spot ? 10 : 50;
@@ -600,7 +621,8 @@ public partial class SkiaCamera : SkiaControl
             var minISO = Math.Max(25, exposureRange.MinISO);
             var fastestShutter = Math.Max(1 / 1000f, exposureRange.MinShutterSpeed);
 
-            System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Fallback analysis with ISO {minISO}, Shutter {fastestShutter}s");
+            System.Diagnostics.Debug.WriteLine(
+                $"[SHARED CAMERA] Fallback analysis with ISO {minISO}, Shutter {fastestShutter}s");
 
             bool exposureSet = NativeControl.SetManualExposure(minISO, fastestShutter);
             if (exposureSet)
@@ -619,7 +641,10 @@ public partial class SkiaCamera : SkiaControl
 
             if (frame == null)
             {
-                return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for fallback analysis" };
+                return new BrightnessResult
+                {
+                    Success = false, ErrorMessage = "Could not capture frame for fallback analysis"
+                };
             }
 
             using (frame)
@@ -634,8 +659,10 @@ public partial class SkiaCamera : SkiaControl
                     var actualAperture = CameraDevice.Meta.Aperture;
 
                     // Extrapolate from non-clipped pixels - assume they represent shadows in very bright scene
-                    var estimatedSceneLuminance = clippingInfo.AverageOfNonClipped * 3; // Assume shadows are ~1/3 of scene brightness
-                    var brightness = CalculateSceneBrightnessFromPixels(estimatedSceneLuminance, actualISO, actualAperture, actualShutter);
+                    var estimatedSceneLuminance =
+                        clippingInfo.AverageOfNonClipped * 3; // Assume shadows are ~1/3 of scene brightness
+                    var brightness = CalculateSceneBrightnessFromPixels(estimatedSceneLuminance, actualISO,
+                        actualAperture, actualShutter);
 
                     // For extremely bright conditions, apply a multiplier since we're measuring shadows
                     if (clippingInfo.ClippedPercentage > 95)
@@ -643,14 +670,19 @@ public partial class SkiaCamera : SkiaControl
                         brightness *= 5; // Very bright outdoor conditions
                     }
 
-                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Fallback estimate: {brightness:F0} lux (from {clippingInfo.ClippedPercentage:F1}% clipped)");
+                    System.Diagnostics.Debug.WriteLine(
+                        $"[SHARED CAMERA] Fallback estimate: {brightness:F0} lux (from {clippingInfo.ClippedPercentage:F1}% clipped)");
 
-                    return new BrightnessResult { Success = true, Brightness = Math.Min(brightness, 200000) }; // Cap at reasonable maximum
+                    return new BrightnessResult
+                    {
+                        Success = true, Brightness = Math.Min(brightness, 200000)
+                    }; // Cap at reasonable maximum
                 }
                 else
                 {
                     // Everything is clipped - return maximum estimate
-                    System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Complete saturation detected - returning maximum estimate");
+                    System.Diagnostics.Debug.WriteLine(
+                        "[SHARED CAMERA] Complete saturation detected - returning maximum estimate");
                     return new BrightnessResult { Success = true, Brightness = 100000 }; // Bright daylight estimate
                 }
             }
@@ -682,7 +714,8 @@ public partial class SkiaCamera : SkiaControl
         double aperture,
         double shutter)
     {
-        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] CalculateSceneBrightnessFromPixels: pixels {pixelLuminance:F0}, iso {iso:0}, aperture {aperture:0.00}, shutter {shutter:0.0000}");
+        System.Diagnostics.Debug.WriteLine(
+            $"[SHARED CAMERA] CalculateSceneBrightnessFromPixels: pixels {pixelLuminance:F0}, iso {iso:0}, aperture {aperture:0.00}, shutter {shutter:0.0000}");
 
         // Camera exposure settings tell us what the camera thinks is "proper exposure"
         // This represents the brightness level the camera is targeting (middle gray = 18% reflectance)
@@ -694,7 +727,8 @@ public partial class SkiaCamera : SkiaControl
         const double K = 12.5; // Standard photometric constant
         double cameraTargetLuminance = K * Math.Pow(2, cameraEV);
 
-        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Camera EV: {cameraEV:F1}, Target luminance: {cameraTargetLuminance:F0}");
+        System.Diagnostics.Debug.WriteLine(
+            $"[SHARED CAMERA] Camera EV: {cameraEV:F1}, Target luminance: {cameraTargetLuminance:F0}");
 
         // Now use actual pixel values to determine how bright the scene really is
         // Middle gray (18% reflectance) should appear as ~128 on 0-255 scale
@@ -711,12 +745,11 @@ public partial class SkiaCamera : SkiaControl
         // If ratio > 1.0: scene is brighter than camera expected
         double finalSceneBrightness = cameraTargetLuminance * actualBrightnessRatio;
 
-        System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Brightness ratio: {actualBrightnessRatio:F3}, Final: {finalSceneBrightness:F0} lux");
+        System.Diagnostics.Debug.WriteLine(
+            $"[SHARED CAMERA] Brightness ratio: {actualBrightnessRatio:F3}, Final: {finalSceneBrightness:F0} lux");
 
         return finalSceneBrightness;
     }
 
-
     #endregion
-
 }

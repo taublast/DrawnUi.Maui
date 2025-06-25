@@ -3037,6 +3037,9 @@ namespace DrawnUi.Draw
             typeof(double), typeof(SkiaLabel), 0.25,
             propertyChanged: NeedInvalidateMeasure);
 
+        /// <summary>
+        /// Default is 0.25
+        /// </summary>
         public double ParagraphSpacing
         {
             get { return (double)GetValue(ParagraphSpacingProperty); }
