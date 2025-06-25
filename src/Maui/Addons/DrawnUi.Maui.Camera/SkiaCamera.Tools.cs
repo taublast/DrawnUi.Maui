@@ -290,17 +290,17 @@ public partial class SkiaCamera : SkiaControl
             System.Diagnostics.Debug.WriteLine(
                 $"[SHARED CAMERA] Auto exposure detected: ISO {autoISO}, Shutter {autoShutter}s, Aperture f/{autoAperture}");
 
-            // Get possible exposure ranges
-            var exposureRange = NativeControl.GetExposureRange();
 
-//#if IOS
-//            if (exposureRange.IsManualExposureSupported)
-//            {
-//                // Use adaptive exposure bracketing for accurate measurement
-//                var result = await MeasureWithAdaptiveExposure(meteringMode, autoISO, autoShutter, exposureRange);
-//                return result;
-//            }
-//#endif
+            //#if IOS
+            // Get possible exposure ranges
+            //            var exposureRange = NativeControl.GetExposureRange();
+            //            if (exposureRange.IsManualExposureSupported)
+            //            {
+            //                // Use adaptive exposure bracketing for accurate measurement
+            //                var result = await MeasureWithAdaptiveExposure(meteringMode, autoISO, autoShutter, exposureRange);
+            //                return result;
+            //            }
+            //#endif
             // Fallback to direct pixel analysis when manual exposure is not supported
             System.Diagnostics.Debug.WriteLine(
                 "[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
