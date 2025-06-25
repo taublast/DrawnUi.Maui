@@ -4000,7 +4000,7 @@ namespace DrawnUi.Draw
             var autosize = this.NeedAutoSize;
             var hadFixedSize = false;
 
-            void PostProcessMeasuredChild(ScaledSize measured, SkiaControl child, bool ignoreFill)
+            void PostProcessMeasuredChild(ScaledSize measured, SkiaControl child)
             {
                 if (!measured.IsEmpty)
                 {
@@ -4025,22 +4025,11 @@ namespace DrawnUi.Draw
                         }
                     }
 
-                    if (ignoreFill)
-                    {
-                        if (measuredWidth > maxWidth && !NeedFillHorizontally)
-                            maxWidth = measuredWidth;
+                    if (measuredWidth > maxWidth && !child.NeedFillHorizontally)
+                        maxWidth = measuredWidth;
 
-                        if (measuredHeight > maxHeight && !NeedFillVertically)
-                            maxHeight = measuredHeight;
-                    }
-                    else
-                    {
-                        if (measuredWidth > maxWidth)
-                            maxWidth = measuredWidth;
-
-                        if (measuredHeight > maxHeight)
-                            maxHeight = measuredHeight;
-                    }
+                    if (measuredHeight > maxHeight && !child.NeedFillVertically)
+                        maxHeight = measuredHeight;
                 }
             }
 
@@ -4094,7 +4083,7 @@ namespace DrawnUi.Draw
                     partialFill.Add((child, measured));
                 }
 
-                PostProcessMeasuredChild(measured, child, true);
+                PostProcessMeasuredChild(measured, child);
 
                 widthCut |= measured.WidthCut;
                 heightCut |= measured.HeightCut;
