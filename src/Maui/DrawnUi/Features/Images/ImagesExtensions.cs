@@ -1,4 +1,4 @@
-﻿#if WINDOWS || MACCATALYST
+﻿#if!ANDROID
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http;
 using Polly;
@@ -15,7 +15,7 @@ namespace DrawnUi.Features.Images
         /// </summary>
         public static string HttpClientKey = "drawnui";
 
-#if WINDOWS || MACCATALYST
+#if !ANDROID
 
         public static IServiceCollection AddUriImageSourceHttpClient(this IServiceCollection services,
             Action<HttpClient>? configureDelegate = null,

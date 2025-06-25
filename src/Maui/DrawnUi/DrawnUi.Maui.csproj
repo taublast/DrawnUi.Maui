@@ -88,11 +88,7 @@
         <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
     </ItemGroup>
 
-    <ItemGroup Condition="$(TargetFramework.Contains('windows')) == true">
-        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.6" />
-    </ItemGroup>
-
-    <ItemGroup Condition="$(TargetFramework.Contains('catalyst')) == true">
+    <ItemGroup Condition="$(TargetFramework.Contains('android')) != true">
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.6" />
     </ItemGroup>
 
