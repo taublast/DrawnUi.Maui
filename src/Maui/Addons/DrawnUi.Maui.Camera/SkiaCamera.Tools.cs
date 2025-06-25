@@ -110,7 +110,7 @@ public partial class SkiaCamera : SkiaControl
         var height = frame.Height;
 
         // Define sampling area based on metering mode - in points, then convert to pixels
-        int sampleSizePoints = meteringMode == MeteringMode.Spot ? 10 : 50;
+        int sampleSizePoints = meteringMode == MeteringMode.Spot ? 5 : 100;
         int sampleSizePixels = (int)(sampleSizePoints * renderingScale);
 
         int centerX = width / 2;
@@ -264,7 +264,7 @@ public partial class SkiaCamera : SkiaControl
     /// </summary>
     /// <param name="meteringMode">Spot (10x10 points) or CenterWeighted (50x50 points)</param>
     /// <returns>Brightness measurement result</returns>
-    public async Task<BrightnessResult> MeasureSceneBrightness(MeteringMode meteringMode)
+    public async Task<BrightnessResult> MeasureSceneBrightness(MeteringMode meteringMode, SKImage autoFrame)
     {
         try
         {
@@ -272,16 +272,6 @@ public partial class SkiaCamera : SkiaControl
                 return new BrightnessResult { Success = false, ErrorMessage = "Camera not initialized" };
 
             System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Starting adaptive brightness measurement with {meteringMode} mode");
-
-            // A - Get preview to check what camera has chosen (auto exposure)
-            SKImage autoFrame = null;
-            for (int attempts = 0; attempts < 10; attempts++)
-            {
-                autoFrame = NativeControl.GetPreviewImage();
-                if (autoFrame != null)
-                    break;
-                await Task.Delay(100);
-            }
 
             if (autoFrame == null)
                 return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
@@ -293,8 +283,6 @@ public partial class SkiaCamera : SkiaControl
 
             System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Auto exposure detected: ISO {autoISO}, Shutter {autoShutter}s, Aperture f/{autoAperture}");
 
-            autoFrame.Dispose(); // We only needed this for metadata
-
             // Get possible exposure ranges
             var exposureRange = NativeControl.GetExposureRange();
 
@@ -305,36 +293,20 @@ public partial class SkiaCamera : SkiaControl
                 return result;
             }
 
-            else
+            // Fallback to direct pixel analysis when manual exposure is not supported
+            System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
+
             {
-                // Fallback to direct pixel analysis when manual exposure is not supported
-                System.Diagnostics.Debug.WriteLine("[SHARED CAMERA] Manual exposure not supported - using direct pixel approach");
+                var pixelLuminance = AnalyzeFrameLuminance(autoFrame, meteringMode);
+                var brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
 
-                SKImage frame = null;
-                for (int attempts = 0; attempts < 10; attempts++)
+                System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel brightness: {brightness:F0} lux");
+
+                return new BrightnessResult
                 {
-                    frame = NativeControl.GetPreviewImage();
-                    if (frame != null)
-                        break;
-                    await Task.Delay(100);
-                }
-
-                if (frame == null)
-                    return new BrightnessResult { Success = false, ErrorMessage = "Could not capture frame for analysis" };
-
-                using (frame)
-                {
-                    var pixelLuminance = AnalyzeFrameLuminance(frame, meteringMode);
-                    var brightness = CalculateBrightnessFromPixelsOnly(pixelLuminance);
-
-                    System.Diagnostics.Debug.WriteLine($"[SHARED CAMERA] Direct pixel brightness: {brightness:F0} lux");
-
-                    return new BrightnessResult
-                    {
-                        Success = true,
-                        Brightness = brightness
-                    };
-                }
+                    Success = true,
+                    Brightness = brightness
+                };
             }
         }
         catch (Exception ex)
@@ -435,21 +407,46 @@ public partial class SkiaCamera : SkiaControl
                 return (false, 0, false, false);
             }
 
-            // Wait for camera to apply settings
-            await Task.Delay(1000);
+            // Wait longer for camera to apply settings and flush old frames
+            await Task.Delay(1500);
 
-            // Capture frame
-            SKImage frame = null;
-            for (int attempts = 0; attempts < 5; attempts++)
+            // Flush any old frames from buffer by capturing and discarding several frames
+            for (int flushAttempt = 0; flushAttempt < 3; flushAttempt++)
             {
-                frame = NativeControl.GetPreviewImage();
-                if (frame != null)
-                    break;
-                await Task.Delay(100);
+                var flushFrame = NativeControl.GetPreviewImage();
+                flushFrame?.Dispose();
+                await Task.Delay(200);
             }
 
-            if (frame == null)
+            // Now capture frame with validated exposure settings
+            SKImage frame = null;
+            bool frameValidated = false;
+
+            for (int attempts = 0; attempts < 8; attempts++)
             {
+                frame?.Dispose(); // Dispose previous attempt
+                frame = NativeControl.GetPreviewImage();
+
+                if (frame != null)
+                {
+                    // Validate that the frame was captured with the expected exposure settings
+                    if (ValidateFrameExposure(iso, shutter))
+                    {
+                        frameValidated = true;
+                        break;
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[EXPOSURE VALIDATION] Frame {attempts + 1} has wrong exposure settings, retrying...");
+                    }
+                }
+                await Task.Delay(150);
+            }
+
+            if (frame == null || !frameValidated)
+            {
+                frame?.Dispose();
+                System.Diagnostics.Debug.WriteLine($"[EXPOSURE ERROR] Failed to capture validated frame after 8 attempts");
                 return (false, 0, false, false);
             }
 
@@ -492,6 +489,51 @@ public partial class SkiaCamera : SkiaControl
         {
             // Always restore auto exposure
             NativeControl.SetAutoExposure();
+        }
+    }
+
+    /// <summary>
+    /// Validates that the current camera exposure settings match the expected values
+    /// </summary>
+    /// <param name="expectedISO">Expected ISO value</param>
+    /// <param name="expectedShutter">Expected shutter speed in seconds</param>
+    /// <returns>True if the frame was captured with the expected exposure settings</returns>
+    private bool ValidateFrameExposure(float expectedISO, float expectedShutter)
+    {
+        try
+        {
+            var meta = CameraDevice?.Meta;
+            if (meta == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[EXPOSURE VALIDATION] No camera metadata available");
+                return false; // If we can't validate, assume it's wrong
+            }
+
+            var actualISO = meta.ISO;
+            var actualShutter = meta.Shutter;
+
+            // Allow some tolerance for floating point comparison and camera rounding
+            var isoTolerance = Math.Max(50, expectedISO * 0.1f); // 10% tolerance or minimum 50
+            var shutterTolerance = Math.Max(0.001f, expectedShutter * 0.15f); // 15% tolerance or minimum 1ms
+
+            bool isoMatches = Math.Abs(actualISO - expectedISO) <= isoTolerance;
+            bool shutterMatches = Math.Abs(actualShutter - expectedShutter) <= shutterTolerance;
+
+            if (isoMatches && shutterMatches)
+            {
+                System.Diagnostics.Debug.WriteLine($"[EXPOSURE VALIDATION] ✓ Frame validated - Expected: ISO{expectedISO}, {expectedShutter}s | Actual: ISO{actualISO}, {actualShutter}s");
+                return true;
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"[EXPOSURE VALIDATION] ✗ Frame mismatch - Expected: ISO{expectedISO}, {expectedShutter}s | Actual: ISO{actualISO}, {actualShutter}s");
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[EXPOSURE VALIDATION] Error validating frame: {ex.Message}");
+            return false;
         }
     }
 
