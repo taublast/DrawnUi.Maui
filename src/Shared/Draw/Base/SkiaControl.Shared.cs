@@ -5040,16 +5040,7 @@ namespace DrawnUi.Draw
 
             if (WillInvalidateMeasure || NeedMeasure)
             {
-                //self measuring
-                //var adjustedDestination = CalculateLayout(destination, widthRequest, heightRequest, scale);
-                //ArrangedDestination = adjustedDestination;
-                //Measure(adjustedDestination.Width, adjustedDestination.Height, scale);
-                //ApplyMeasureResult();
-
-                //self measuring, for top controls and those invalidated-redrawn when parents didn't re-measure them
-                var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale, false);
-                Measure(rectAvailable.Pixels.Width, rectAvailable.Pixels.Height, scale);
-                ApplyMeasureResult();
+                MeasureSelf(destination, widthRequest, heightRequest, scale);
             }
             else
             {
@@ -5057,6 +5048,30 @@ namespace DrawnUi.Draw
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Self measuring, for top controls and those invalidated-redrawn when parents didn't re-measure them
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="widthRequest"></param>
+        /// <param name="heightRequest"></param>
+        /// <param name="scale"></param>
+        protected virtual void MeasureSelf(SKRect destination, float widthRequest, float heightRequest, float scale)
+        {
+            var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale, false);
+            var width = rectAvailable.Pixels.Width + (float)Margins.HorizontalThickness * scale;
+            var height = rectAvailable.Pixels.Height + (float)Margins.VerticalThickness * scale;
+            if (width > destination.Width)
+            {
+                width = destination.Width;
+            }
+            if (height > destination.Height)
+            {
+                height = destination.Height;
+            }
+            Measure(width, height, scale);
+            ApplyMeasureResult();
         }
 
         protected bool IsRendering { get; set; }

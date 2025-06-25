@@ -23,10 +23,7 @@ namespace DrawnUi.Draw
 
             if (NeedMeasure)
             {
-                //self measuring, for top controls and those invalidated-redrawn when parents didn't re-measure them
-                var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale, false);
-                Measure(rectAvailable.Pixels.Width, rectAvailable.Pixels.Height, scale);
-                ApplyMeasureResult();
+                MeasureSelf(destination, widthRequest, heightRequest, scale);
             }
             else
             {
@@ -35,7 +32,6 @@ namespace DrawnUi.Draw
 
             return true;
         }
-
 
         public override bool IsGestureForChild(SkiaControlWithRect child, SKPoint point)
         {
