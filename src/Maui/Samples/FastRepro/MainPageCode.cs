@@ -1,5 +1,4 @@
-﻿using AppoMobi.Maui.DrawnUi.Demo.Views.Controls;
-using DrawnUi.Views;
+﻿using DrawnUi.Views;
 using Canvas = DrawnUi.Views.Canvas;
 
 namespace Sandbox
@@ -32,37 +31,61 @@ namespace Sandbox
                 Gestures = GesturesMode.Enabled,
                 Children =
                 {
+
                     new SkiaLayout()
                     {
-                        //Type = LayoutType.Column,
-                        WidthRequest = 200,
+                        BackgroundColor = Colors.Black,
+                        HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill,
-                        Children = new List<SkiaControl>()
+                        Children =
                         {
-                            new SkiaShape() //VLine
+                            new SkiaLayout()
                             {
-                                UseCache = SkiaCacheType.Image,
-                                Margin = new Thickness(10, 0, 0, 0),
-                                Tag="BuggyShape",
-                                Type = ShapeType.Circle,
-                                WidthRequest = 30,
-                                LockRatio = 1,
-                                StrokeColor = Colors.Black,
-                                StrokeWidth = 2,
-                                Padding = 2,
-                                BackgroundColor = Colors.IndianRed,
+                                WidthRequest = 200,
+                                VerticalOptions = LayoutOptions.Fill,
                                 Children = new List<SkiaControl>()
                                 {
-                                    new SkiaShape()
+                                    new SkiaStack()
+                                    {
+                                        Spacing = 0,
+                                        BackgroundColor = Colors.LightPink,
+                                        VerticalOptions = LayoutOptions.Fill,
+                                        Children =
                                         {
-                                            Tag="ChildShape",
-                                            BackgroundColor = Colors.DarkGray, Type = ShapeType.Circle
+                                            new SkiaLayer()
+                                            {
+                                                Tag = "1",
+                                                HeightRequest = 100,
+                                                BackgroundColor = Colors.Red,
+                                            },
+                                            new SkiaLayer()
+                                            {
+                                                Tag = "2 - Fill",
+                                                VerticalOptions = LayoutOptions.Fill,
+                                                BackgroundColor = Colors.Green,
+                                            },
+                                            new SkiaButton()
+                                            {
+                                                Tag = "3",
+                                                CornerRadius = 11,
+                                                HeightRequest = 38,
+                                                WidthRequest = 100,
+                                                Text = "XXXXXX",
+                                                BackgroundColor = Colors.White,
+                                                TextColor = Colors.Black,
+                                                VerticalOptions = LayoutOptions.Start,
+                                                //UseCache = SkiaCacheType.Image,
+                                                HorizontalOptions = LayoutOptions.Center,
+                                                Margin = 16
+                                            },
                                         }
-                                        .Fill()
+                                    }
                                 }
-                            },
+                            }
                         }
                     }
+
+      
                 }
             };
 
