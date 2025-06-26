@@ -852,10 +852,8 @@ else
             {
                 return MeasureStackNonTemplatedFast(rectForChildrenPixels, scale, layoutStructure, nonTemplated);
             }
-            else
-            {
-                return MeasureStackCore(rectForChildrenPixels, scale, layoutStructure, false, null, nonTemplated);
-            }
+
+            return MeasureStackCore(rectForChildrenPixels, scale, layoutStructure, false, null, nonTemplated);
         }
 
         /// <summary>
@@ -1467,11 +1465,11 @@ else
         {
             if (Type == LayoutType.Column && child.HeightRequest >= 0)
             {
-                return (float)(child.HeightRequest * scale);
+                return (float)((child.HeightRequest+child.Margins.VerticalThickness) * scale);
             }
             else if (Type == LayoutType.Row && child.WidthRequest >= 0)
             {
-                return (float)(child.WidthRequest * scale);
+                return (float)((child.WidthRequest+child.Margins.HorizontalThickness) * scale);
             }
             else
             {
