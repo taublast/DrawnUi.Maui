@@ -550,17 +550,30 @@ namespace DrawnUi.Draw
 
                 UpdateImageFromString(json);
                 UpdateIcon();
+
+                Success?.Invoke(this, fileName);
             }
             catch (Exception e)
             {
                 Trace.WriteLine($"[SkiaSvg] LoadSource failed to load {fileName}");
                 Trace.WriteLine(e);
+                Error?.Invoke(this, e);
             }
             finally
             {
                 _semaphoreLoadFile.Release();
             }
         }
+
+        /// <summary>
+        /// Happens when loaded fine from `Source`. Will pass source as string.
+        /// </summary>
+        public event EventHandler<string> Success;
+
+        /// <summary>
+        /// Happens when loaded with error from `Source`. Will pass exception.
+        /// </summary>
+        public event EventHandler<Exception> Error;
 
         protected void UpdateImageFromFile()
         {
