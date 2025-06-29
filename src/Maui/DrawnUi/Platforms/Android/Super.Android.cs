@@ -565,4 +565,27 @@ public partial class Super
 
     #endregion
 
+    private static bool _keepScreenOn;
+    /// <summary>
+    /// Prevents display from auto-turning off  Everytime you set this the setting will be applied.
+    /// </summary>
+    public static bool KeepScreenOn
+    {
+        get
+        {
+            return _keepScreenOn;
+        }
+        set
+        {
+            if (value)
+            {
+                Platform.CurrentActivity.Window.AddFlags(WindowManagerFlags.KeepScreenOn);
+            }
+            else
+            {
+                Platform.CurrentActivity.Window.ClearFlags(WindowManagerFlags.KeepScreenOn);
+            }
+            _keepScreenOn = value;
+        }
+    }
 }

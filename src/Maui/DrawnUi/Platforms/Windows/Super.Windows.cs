@@ -204,6 +204,21 @@ namespace DrawnUi.Draw
             }
         }
 
+
+        /// <summary>
+        /// Prevents display from auto-turning off  Everytime you set this the setting will be applied.
+        /// </summary>
+        public static bool KeepScreenOn
+        {
+            get
+            {
+                return false;
+            }
+            set
+            {
+                Console.WriteLine("Not implemented on Windows");
+            }
+        }
     }
 
 
