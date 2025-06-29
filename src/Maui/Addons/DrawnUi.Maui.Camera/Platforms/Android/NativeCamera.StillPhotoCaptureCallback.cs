@@ -44,7 +44,7 @@ namespace DrawnUi.Camera
                     if (image != null)
                     {
                         System.Diagnostics.Debug.WriteLine("[CAMERA] Processing still image..");
-                        _camera.OnCapturedImage(image);
+                        _camera.OnCapturedStillImage(image);
                     }
                 }
                 catch (Exception e)

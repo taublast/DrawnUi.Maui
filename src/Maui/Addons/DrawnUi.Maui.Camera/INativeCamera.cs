@@ -36,7 +36,7 @@ public interface INativeCamera : IDisposable
     /// <param name="cameraSavedRotation"></param>
     /// <param name="album"></param>
     /// <returns></returns>
-    Task<string> SaveJpgStreamToGallery(Stream stream, string filename, double cameraSavedRotation, string album);
+    Task<string> SaveJpgStreamToGallery(Stream stream, string filename, double cameraSavedRotation, Metadata meta, string album);
 
     void SetZoom(float value);
 

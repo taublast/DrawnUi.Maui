@@ -17,6 +17,7 @@ using SkiaSharp.Views.Android;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using AppoMobi.Specials;
 using Boolean = System.Boolean;
 using Debug = System.Diagnostics.Debug;
 using Exception = System.Exception;
@@ -204,35 +205,14 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         }
     }
 
-    public void PublishFile(string filename)
+    public void PublishFile(string filename, Metadata meta)
     {
-        var meta = FormsControl.CameraDevice.Meta;
         if (meta != null)
         {
             var newexif = new ExifInterface(filename);
 
-            newexif.SetAttribute(ExifInterface.TagSoftware, meta.Model);
-            newexif.SetAttribute(ExifInterface.TagMake, meta.Vendor);
-            newexif.SetAttribute(ExifInterface.TagModel, meta.Model);
-            newexif.SetAttribute(ExifInterface.TagOrientation, meta.Orientation.ToString());
-
-            if (FormsControl != null)
-            {
-                var latitude = FormsControl.LocationLat;
-                var longitude = FormsControl.LocationLon;
-
-                if (latitude != 0 && longitude != 0)
-                {
-                    newexif.SetAttribute(ExifInterface.TagGpsLatitude, ConvertCoords(latitude));
-                    newexif.SetAttribute(ExifInterface.TagGpsLongitude, ConvertCoords(longitude));
-                    newexif.SetAttribute(ExifInterface.TagGpsLatitudeRef, latitude > 0 ? "N" : "S");
-                    newexif.SetAttribute(ExifInterface.TagGpsLongitudeRef, longitude > 0 ? "E" : "W");
-                }
-            }
-
-            newexif.SetAttribute(ExifInterface.TagDatetime,
-                DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
-
+            Metadata.FillExif(newexif, meta);
+             
             newexif.SaveAttributes();
         }
 
@@ -246,15 +226,15 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     /// </summary>
     /// <param name="stream"></param>
     /// <param name="filename"></param>
-    /// <param name="sensor"></param>
+    /// <param name="rotation"></param>
     /// <param name="album"></param>
     /// <returns></returns>
-    public async Task<string> SaveJpgStreamToGallery(System.IO.Stream stream, string filename, double sensor,
-        string album)
+    public async Task<string> SaveJpgStreamToGallery(System.IO.Stream stream, string filename,
+        double rotation, Metadata meta, string album)
     {
         if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
         {
-            return await SaveJpgStreamToGalleryLegacy(stream, filename, sensor, album);
+            return await SaveJpgStreamToGalleryLegacy(stream, filename, rotation, meta, album);
         }
 
         var sub = "Camera";
@@ -281,17 +261,17 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     /// </summary>
     /// <param name="stream"></param>
     /// <param name="filename"></param>
-    /// <param name="sensor"></param>
+    /// <param name="rotation"></param>
     /// <param name="album"></param>
     /// <returns></returns>
-    public async Task<string> SaveJpgStreamToGalleryLegacy(System.IO.Stream stream, string filename, double sensor,
-        string album)
+    public async Task<string> SaveJpgStreamToGalleryLegacy(System.IO.Stream stream, string filename,
+        double rotation, Metadata meta, string album)
     {
         string fullFilename = System.IO.Path.Combine(GetOutputGalleryFolder(album).AbsolutePath, filename);
 
         SaveStreamAsFile(stream, fullFilename);
 
-        PublishFile(fullFilename);
+        PublishFile(fullFilename, meta);
 
         return fullFilename;
     }
@@ -1662,7 +1642,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     /// Ex-SaveImageFromYUV
     /// </summary>
     /// <param name="image"></param>
-    public void OnCapturedImage(Image image)
+    public void OnCapturedStillImage(Image image)
     {
         try
         {
@@ -1697,12 +1677,17 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                     break;
             }
 
+            var meta = Reflection.Clone(FormsControl.CameraDevice.Meta);
+            var rotation = FormsControl.DeviceRotation;
+            Metadata.ApplyRotation(meta, rotation);
+
             var outImage = new CapturedImage()
             {
                 Facing = FormsControl.Facing,
                 Time = DateTime.UtcNow,
                 Image = allocated.Bitmap.ToSKImage(),
-                Orientation = FormsControl.DeviceRotation
+                Meta = meta,
+                Rotation = rotation
             };
 
             OnCaptureSuccess(outImage);

@@ -24,7 +24,7 @@ public partial class SkiaCamera : SkiaControl
         var width = captured.Image.Width;
         var height = captured.Image.Height;
 
-        if (captured.Orientation == 90 || captured.Orientation == 270)
+        if (captured.Rotation == 90 || captured.Rotation == 270)
         {
             height = captured.Image.Width;
             width = captured.Image.Height;
@@ -68,15 +68,15 @@ public partial class SkiaCamera : SkiaControl
                         .Image) //must not dispose bitmap after that, it's used by preview outside
             };
 
-            if (captured.Orientation != 0)
+            if (captured.Rotation != 0)
             {
-                var transfromRotation = (float)captured.Orientation;
+                var transfromRotation = (float)captured.Rotation;
                 if (captured.Facing == CameraPosition.Selfie)
                 {
-                    transfromRotation = (float)((360 - captured.Orientation) % 360);
+                    transfromRotation = (float)((360 - captured.Rotation) % 360);
                 }
 
-                image.Rotation = transfromRotation;
+                image.Rotation = -transfromRotation;
             }
 
             createdImage?.Invoke(image);
@@ -489,7 +489,7 @@ public partial class SkiaCamera : SkiaControl
                     var actualAperture = CameraDevice.Meta.Aperture;
 
                     var brightness =
-                        CalculateSceneBrightnessFromPixels(pixelLuminance, actualISO, actualAperture, actualShutter);
+                        CalculateSceneBrightnessFromPixels(pixelLuminance, actualISO.GetValueOrDefault(), actualAperture.GetValueOrDefault(), actualShutter.GetValueOrDefault());
                     return (true, brightness, false, false);
                 }
                 else
@@ -534,8 +534,8 @@ public partial class SkiaCamera : SkiaControl
             var isoTolerance = Math.Max(50, expectedISO * 0.1f); // 10% tolerance or minimum 50
             var shutterTolerance = Math.Max(0.001f, expectedShutter * 0.15f); // 15% tolerance or minimum 1ms
 
-            bool isoMatches = Math.Abs(actualISO - expectedISO) <= isoTolerance;
-            bool shutterMatches = Math.Abs(actualShutter - expectedShutter) <= shutterTolerance;
+            bool isoMatches = Math.Abs(actualISO.GetValueOrDefault() - expectedISO) <= isoTolerance;
+            bool shutterMatches = Math.Abs(actualShutter.GetValueOrDefault() - expectedShutter) <= shutterTolerance;
 
             if (isoMatches && shutterMatches)
             {
@@ -661,8 +661,8 @@ public partial class SkiaCamera : SkiaControl
                     // Extrapolate from non-clipped pixels - assume they represent shadows in very bright scene
                     var estimatedSceneLuminance =
                         clippingInfo.AverageOfNonClipped * 3; // Assume shadows are ~1/3 of scene brightness
-                    var brightness = CalculateSceneBrightnessFromPixels(estimatedSceneLuminance, actualISO,
-                        actualAperture, actualShutter);
+                    var brightness = CalculateSceneBrightnessFromPixels(estimatedSceneLuminance, actualISO.GetValueOrDefault(),
+                        actualAperture.GetValueOrDefault(), actualShutter.GetValueOrDefault());
 
                     // For extremely bright conditions, apply a multiplier since we're measuring shadows
                     if (clippingInfo.ClippedPercentage > 95)

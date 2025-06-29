@@ -1,5 +1,6 @@
 ﻿#if IOS || MACCATALYST
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using AppoMobi.Specials;
 using AVFoundation;
@@ -654,6 +655,52 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 var sampleBuffer = await _stillImageOutput.CaptureStillImageTaskAsync(videoConnection);
                 var jpegData = AVCaptureStillImageOutput.JpegStillToNSData(sampleBuffer);
 
+                using var image = CIImage.FromData(jpegData);
+
+                //get metadata
+                var metaData = image.Properties.Dictionary.MutableCopy() as NSMutableDictionary;
+                var orientation = metaData["Orientation"].ToString().ToInteger();
+                var props = image.Properties;
+
+#if DEBUG
+                var exif = image.Properties.Exif;
+                foreach (var key in exif.Dictionary.Keys)
+                {
+                    Debug.WriteLine($"{key}: {exif.Dictionary[key]}");
+                }
+#endif
+
+                var rotation = 0;
+                bool flipHorizontal, flipVertical; //unused
+                switch (orientation)
+                {
+                    case 1:
+                        break;
+                    case 2:
+                        flipHorizontal = true; 
+                        break;
+                    case 3:
+                        rotation = 180;
+                        break;
+                    case 4:
+                        flipVertical = true; 
+                        break;
+                    case 5:
+                        rotation = 270;
+                        flipHorizontal = true;
+                        break;
+                    case 6:
+                        rotation = 270;
+                        break;
+                    case 7:
+                        rotation = 90;
+                        flipHorizontal = true;
+                        break;
+                    case 8:
+                        rotation = 90;
+                        break;
+                }
+
                 using var uiImage = UIImage.LoadFromData(jpegData);
                 var skImage = uiImage.ToSKImage();
 
@@ -662,7 +709,8 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                     Facing = FormsControl.Facing,
                     Time = DateTime.UtcNow,
                     Image = skImage,
-                    Orientation = FormsControl.DeviceRotation
+                    Rotation = rotation,
+                    Meta = Metadata.CreateMetadataFromProperties(props, metaData)
                 };
 
                 MainThread.BeginInvokeOnMainThread(() =>
@@ -684,6 +732,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         });
     }
 
+ 
     public SKImage GetPreviewImage()
     {
         // First check if we have a ready preview
@@ -738,7 +787,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         }
     }
 
-    public async Task<string> SaveJpgStreamToGallery(Stream stream, string filename, double cameraSavedRotation, string album)
+    public async Task<string> SaveJpgStreamToGallery(Stream stream, string filename, double cameraSavedRotation, Metadata meta, string album)
     {
         try
         {
@@ -906,7 +955,23 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 FormsControl.CameraDevice.Meta.Aperture = aperture;
                 FormsControl.CameraDevice.Meta.Shutter = shutterSpeed;
 
-                var width = (int)pixelBuffer.Width;
+                switch ((int)CurrentRotation)
+                {
+                    case 90:
+                        FormsControl.CameraDevice.Meta.Orientation = 6;
+                        break;
+                    case 270:
+                        FormsControl.CameraDevice.Meta.Orientation = 8;
+                        break;
+                    case 180:
+                        FormsControl.CameraDevice.Meta.Orientation = 3;
+                        break;
+                    default:
+                        FormsControl.CameraDevice.Meta.Orientation = 1;
+                        break;
+                }
+
+               var width = (int)pixelBuffer.Width;
                 var height = (int)pixelBuffer.Height;
                 var bytesPerRow = (int)pixelBuffer.BytesPerRow;
                 var baseAddress = pixelBuffer.BaseAddress;

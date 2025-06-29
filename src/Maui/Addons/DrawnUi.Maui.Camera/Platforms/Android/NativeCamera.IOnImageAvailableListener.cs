@@ -1,4 +1,5 @@
 ﻿using Android.Media;
+using AppoMobi.Specials;
 using SkiaSharp.Views.Android;
 using Exception = System.Exception;
 using Trace = System.Diagnostics.Trace;
@@ -40,12 +41,17 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
                             var sk = allocated.Bitmap.ToSKImage();
                             if (sk != null)
                             {
+                                var meta = FormsControl.CameraDevice.Meta;
+                                var rotation = FormsControl.DeviceRotation;
+                                Metadata.ApplyRotation(meta, rotation);
+
                                 var outImage = new CapturedImage()
                                 {
                                     Facing = FormsControl.Facing,
-                                    Time = DateTime.UtcNow, // todo use image.Timestamp ?
+                                    Time = DateTime.UtcNow, // or use image.Timestamp ?
                                     Image = sk,
-                                    Orientation = FormsControl.DeviceRotation
+                                    Meta = meta,
+                                    Rotation = rotation
                                 };
                                 Preview = outImage;
                                 OnPreviewCaptureSuccess(outImage);

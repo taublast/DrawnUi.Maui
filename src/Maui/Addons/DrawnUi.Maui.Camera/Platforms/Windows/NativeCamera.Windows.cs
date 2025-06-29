@@ -3,7 +3,11 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.InteropServices.WindowsRuntime;
+using AppoMobi.Specials;
+using DrawnUi.Views;
 using Microsoft.Maui.ApplicationModel;
+using SkiaSharp;
 using Windows.Devices.Enumeration;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
@@ -12,9 +16,6 @@ using Windows.Media.Devices;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using System.Runtime.InteropServices.WindowsRuntime;
-using SkiaSharp;
-using DrawnUi.Views;
 
 namespace DrawnUi.Camera;
 
@@ -595,12 +596,17 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 var skImage = await ConvertToSKImageDirectAsync(softwareBitmap);
                 if (skImage != null)
                 {
+                    var meta = FormsControl.CameraDevice.Meta;
+                    var rotation = FormsControl.DeviceRotation;
+                    Metadata.ApplyRotation(meta, rotation);
+
                     capturedImage = new CapturedImage()
                     {
                         Facing = FormsControl.Facing,
                         Time = DateTime.UtcNow,
                         Image = skImage, // Transfer ownership to CapturedImage - renderer will dispose
-                        Orientation = FormsControl.DeviceRotation
+                        Meta = meta,
+                        Rotation = rotation
                     };
                 }
                 softwareBitmap.Dispose();
@@ -688,12 +694,17 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             var skImage = await ConvertToSKImageDirectAsync(softwareBitmap);
             if (skImage != null)
             {
+                var meta = FormsControl.CameraDevice.Meta;
+                var rotation = FormsControl.DeviceRotation;
+                Metadata.ApplyRotation(meta, rotation);
+
                 var capturedImage = new CapturedImage()
                 {
                     Facing = FormsControl.Facing,
                     Time = DateTime.UtcNow,
                     Image = skImage, // Transfer ownership to CapturedImage - renderer will dispose
-                    Orientation = FormsControl.DeviceRotation
+                    Meta = meta,
+                    Rotation = rotation
                 };
 
                 // Update preview safely
@@ -1077,17 +1088,17 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
 
             // Set a default aperture value since Windows doesn't expose this
             // Most webcams have a fixed aperture around f/2.0 to f/2.8
-            if (meta.Aperture <= 0)
+            if (meta.Aperture.GetValueOrDefault() <= 0)
             {
                 meta.Aperture = 2.4; // Common webcam aperture
             }
 
             // Set default values if we couldn't read from camera
-            if (meta.ISO <= 0)
+            if (meta.ISO.GetValueOrDefault() <= 0)
             {
                 meta.ISO = 100; // Default ISO
             }
-            if (meta.Shutter <= 0)
+            if (meta.Shutter.GetValueOrDefault() <= 0)
             {
                 meta.Shutter = 1.0 / 30; // Default 30fps = 1/30s exposure
             }
@@ -1169,12 +1180,17 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             var skImage = SKImage.FromEncodedData(bytes);
             Debug.WriteLine($"[NativeCameraWindows] SKImage created: {skImage?.Width}x{skImage?.Height}");
 
+            var meta = Reflection.Clone(FormsControl.CameraDevice.Meta);
+            var rotation = FormsControl.DeviceRotation;
+            Metadata.ApplyRotation(meta, rotation);
+
             var capturedImage = new CapturedImage()
             {
                 Facing = FormsControl.Facing,
                 Time = DateTime.UtcNow,
                 Image = skImage,
-                Orientation = FormsControl.DeviceRotation
+                Rotation = rotation,
+                Meta = meta
             };
 
             MainThread.BeginInvokeOnMainThread(() =>
@@ -1238,7 +1254,8 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         }
     }
 
-    public async Task<string> SaveJpgStreamToGallery(Stream stream, string filename, double cameraSavedRotation, string album)
+    public async Task<string> SaveJpgStreamToGallery(Stream stream, string filename,
+        double rotation, Metadata meta, string album)
     {
         try
         {

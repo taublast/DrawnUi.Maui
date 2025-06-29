@@ -244,14 +244,15 @@ public partial class SkiaCamera : SkiaControl
         var filename = GenerateJpgFileName();
 
         await using var stream = CreateOutputStream(captured, reorient);
-
         if (stream != null)
         {
+            using var exifStream = await JpegExifInjector.InjectExifMetadata(stream, captured.Meta);
+
             var filenameOutput = GenerateJpgFileName();
 
-            var path = await NativeControl.SaveJpgStreamToGallery(stream, filename, captured.Orientation, album);
+            //tofo apply gps etc
 
-            stream.Dispose();
+            var path = await NativeControl.SaveJpgStreamToGallery(exifStream, filename, captured.Rotation, captured.Meta,  album);
 
             if (!string.IsNullOrEmpty(path))
             {
@@ -331,7 +332,7 @@ public partial class SkiaCamera : SkiaControl
 
                 SKBitmap rotated;
 
-                switch (captured.Orientation)
+                switch (captured.Rotation)
                 {
                     case 180:
                         using (var surface = new SKCanvas(bitmap))
