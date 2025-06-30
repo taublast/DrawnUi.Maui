@@ -37,11 +37,15 @@ ___Please star ⭐ if you like it!___
 
 ## What's new
 
-* BREAKING: SkiaShape now can contain many `Children` instead of one `Content`, can change layout type with `Layout` property. Plus fixes for stroke and other pixel-perfect rendering.
-* BREAKING: Stack and absolute layouts now correctly apply one-directional Fill of children, might break some legacy UIs (or might not). Margins and Padding now work properly everywhere.
-* Performance optimizations for layouts and SkiaLabel.
+* BREAKING: `SkiaShape` now can contain many `Children` instead of one `Content`, can change layout type with `Layout` property. Plus fixes for stroke and other for pixel-perfect rendering.
+* BREAKING: Stack and absolute layouts now correctly apply one-directional `Fill` of children, might break some legacy UIs (or might not). `Margins` and `Padding` now work properly everywhere.
+* BREAKING: can override virtual `OnMeasuring`, while `Measure` is not virtual anymore to assure faster screen creation and avoid re-measurements when initializing for the first time.
+* Important performance optimizations for layouts and SkiaLabel.
 * Performance and safety optimizations for accelerated rendering handlers (`SkiaViewAccelerated:SKGLView`) on all platforms.
-* Many silent fixes and new properties/features, will be reflected in docs.
+* Windows accelerated handler is now synched with display when its refresh rate is >=120.
+* DrawnUi.Maui.Game: frame time interpolator adjustments.
+* DrawnUi.Maui.Camera: iOS, MacCatalyst, Windows, Android implementations for `SkiaCamera`.
+* Many silent fixes and new properties/features, will be later reflected in docs.
 * Example apps updated to align with changes.
  
 ## Shipped With

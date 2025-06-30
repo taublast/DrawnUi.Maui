@@ -9,9 +9,10 @@ namespace Sandbox
 
     public class TrackCell : SkiaShape
     {
-        public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+        public override ScaledSize OnMeasuring(float widthConstraint, float heightConstraint, float scale)
         {
-            var ret = base.Measure(widthConstraint, heightConstraint, scale);
+            var ret = base.OnMeasuring(widthConstraint, heightConstraint, scale);
+
             Debug.WriteLine($"[CELL] {BindingContext} measured {ret.Pixels}");
             return ret;
         }

@@ -20,15 +20,6 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
         Text = caption;
     }
 
-    public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
-    {
-        if (IsDisposed || IsDisposing)
-            return ScaledSize.Default;
-
-        var measured = base.Measure(widthConstraint, heightConstraint, scale);
-
-        return measured;
-    }
 
     #region DEFAULT CONTENT
 

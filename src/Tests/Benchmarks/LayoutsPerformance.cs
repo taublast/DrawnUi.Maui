@@ -25,19 +25,14 @@ namespace SomeBenchmarks
         }
     }
 
+
     //[MemoryDiagnoser]
     [Config(typeof(CustomBenchmarkConfig))]
-    public class MauiLayout
+    public class LayoutsPerformance
     {
 
         private List<SkiaControl> drawnUi;
         private List<VisualElement> maui;
-
-        //private ContentLayout simpleLayout;
-        //private SkiaLayout skiaLayout;
-        //private VerticalStackLayout mauiLayout;
-
-        //private ImmutableArray<SkiaControl> myImmutableArray;
 
         const int Iterations = 16;
 
@@ -59,8 +54,11 @@ namespace SomeBenchmarks
             //mauiLayout = new();
         }
 
+        /// <summary>
+        /// Not really relevant because not creating handlers for every view
+        /// </summary>
         [Benchmark]
-        public void CreateMauiLayout()
+        public void CreateMauiStackLayoutWithChildren()
         {
             var layout = new StackLayout();
 
@@ -71,92 +69,7 @@ namespace SomeBenchmarks
                 layout.GetLayoutHandlerIndex(view);
             }
         }
-
-        /*
-
-        [Benchmark]
-        public void CreateDrawnUiLayoutInterface()
-        {
-            var layout = new SkiaLayout()
-            {
-                Type = LayoutType.Stack
-            };
-
-            for (int i = 0; i < Iterations; i++)
-            {
-                var view = drawnUi[i];
-                layout.Add(view);
-                layout.GetLayoutHandlerIndex(view);
-            }
-        }
-
-        [Benchmark]
-        public void CreateDrawnUiLayout()
-        {
-            var layout = new SkiaLayout()
-            {
-                Type = LayoutType.Stack
-            };
-
-            for (int i = 0; i < Iterations; i++)
-            {
-                var view = drawnUi[i];
-                layout.AddSubView(view);
-                layout.GetLayoutHandlerIndexFast(view);
-            }
-        }
-
-
-
-        [Benchmark]
-        public void CreateDrawnUiLayoutSmart()
-        {
-            var layout = new SkiaLayout()
-            {
-                Type = LayoutType.Stack
-            };
-
-            for (int i = 0; i < Iterations; i++)
-            {
-                var view = drawnUi[i];
-                layout.AddSubView(view);
-                layout.GetLayoutHandlerIndexSmart(view);
-            }
-        }
-
-
-           [Benchmark]
-           public void CreateDrawnUiLayoutBasic()
-           {
-               var layout = new ContentLayout();
-
-               for (int i = 0; i < Iterations; i++)
-               {
-                   var view = drawnUi[i];
-                   layout.AddSubView(view);
-                   layout.GetLayoutHandlerIndexSmart(view);
-               }
-           }
-
-        */
-
-        //[Benchmark]
-        //public void CreateDrawnUiLayoutSlow()
-        //{
-        //    //var layout = skiaLayout;
-        //    var layout = new SkiaLayout()
-        //    {
-        //        //Type = LayoutType.Stack
-        //    };
-
-        //    for (int i = 0; i < Iterations; i++)
-        //    {
-        //        var view = drawnUi[i];
-        //        layout.AddSubView(view);
-        //        layout.GetLayoutHandlerIndexSmart(view);
-        //    }
-        //}
-
+         
         [Benchmark]
         public void CreateDrawnUiLayout()
         {
@@ -171,7 +84,36 @@ namespace SomeBenchmarks
         }
 
         [Benchmark]
-        public void CreateDrawnUiLayoutWrap()
+        public void CreateLayoutAbsoluteWrapperWithChildren()
+        {
+            var layout = new SkiaLayer();
+            
+            for (int i = 0; i < Iterations; i++)
+            {
+                var view = drawnUi[i];
+                layout.AddSubView(view);
+                layout.GetLayoutHandlerIndexToDo(view);
+            }
+        }
+
+        [Benchmark]
+        public void CreateLayoutAbsoluteWithChildren()
+        {
+            var layout = new SkiaLayout()
+            {
+                Type = LayoutType.Absolute
+            };
+
+            for (int i = 0; i < Iterations; i++)
+            {
+                var view = drawnUi[i];
+                layout.AddSubView(view);
+                layout.GetLayoutHandlerIndexToDo(view);
+            }
+        }
+
+        [Benchmark]
+        public void CreateLayoutWrapWithChildren()
         {
             var layout = new SkiaLayout()
             {
@@ -187,9 +129,28 @@ namespace SomeBenchmarks
         }
 
         [Benchmark]
-        public void CreateDrawnUiLayoutSimple()
+        public void CreateLayoutColumnWithChildren()
         {
-            var layout = new ContentLayout();
+            var layout = new SkiaLayout()
+            {
+                Type = LayoutType.Column
+            };
+
+            for (int i = 0; i < Iterations; i++)
+            {
+                var view = drawnUi[i];
+                layout.AddSubView(view);
+                layout.GetLayoutHandlerIndexToDo(view);
+            }
+        }
+
+        [Benchmark]
+        public void CreateLayoutRowWithChildren()
+        {
+            var layout = new SkiaLayout()
+            {
+                Type = LayoutType.Row
+            };
 
             for (int i = 0; i < Iterations; i++)
             {

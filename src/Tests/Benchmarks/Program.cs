@@ -8,7 +8,7 @@ class Program
     static void Main(string[] args)
     {
         var summary = BenchmarkRunner
-            .Run<MauiLayout>();
+            .Run<LayoutsPerformance>();
 
 
         //var layout = new SkiaLayout();

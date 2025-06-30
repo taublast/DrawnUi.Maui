@@ -996,11 +996,8 @@ namespace DrawnUi.Draw
 
         #region MEASURE
 
-        public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+        public override ScaledSize OnMeasuring(float widthConstraint, float heightConstraint, float scale)
         {
-            if (IsDisposed || IsDisposing)
-                return ScaledSize.Default;
-
             lock (LockSetup)
             {
                 // If measuring in a background context, or control can't draw, or constraints are invalid, return cached

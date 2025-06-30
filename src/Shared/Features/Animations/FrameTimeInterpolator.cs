@@ -15,7 +15,7 @@ public class FrameTimeInterpolator
     private const float QUALITY_CHANGE_THRESHOLD = 0.75f; // 75% of frames must exceed threshold
 
     // Quality reduction ratio from target FPS
-    private const float QUALITY_REDUCTION_RATIO = 0.75f; 
+    private const float QUALITY_REDUCTION_RATIO = 0.75f;
 
     private float _lastFrameTime;
     private float _currentTimeStep;
@@ -155,10 +155,11 @@ public class FrameTimeInterpolator
 
     void SetTargetFps()
     {
-        _framerate = DEFAULT_TARGET_FPS;
 
-#if WINDOWS
-        _framerate = Super.GetPreciseRefreshRate();
+#if ONPLATFORM
+        _framerate = Super.GetDisplayRefreshRate(DEFAULT_TARGET_FPS);
+#else
+        _framerate = DEFAULT_TARGET_FPS;
 #endif
 
         _targetFps = _framerate;
@@ -180,7 +181,6 @@ public class FrameTimeInterpolator
         _frameHistoryCount = 0;
         _currentTimeStep = 1f / _targetFps;
     }
-
 
 
     /// <summary>
@@ -247,8 +247,7 @@ public class FrameTimeInterpolator
 
     // Singleton pattern
     private static FrameTimeInterpolator _instance;
+
     public static FrameTimeInterpolator Instance =>
         _instance ??= new FrameTimeInterpolator();
-
- 
 }

@@ -20,9 +20,15 @@
         /// </summary>
         public virtual void Invalidate()
         {
-            InvalidateInternal();
-
-            InvalidateParent();
+            if (WasMeasured)
+            {
+                InvalidateInternal();
+                InvalidateParent();
+            }
+            else
+            {
+                NeedMeasure = true;
+            }
         }
 
         public virtual bool ShouldInvalidateByChildren

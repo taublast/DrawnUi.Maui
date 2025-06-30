@@ -415,7 +415,11 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// Apply all postponed invalidation other logic that was postponed until the first draw for optimization. Use this for special code-behind cases, like tests etc, if you cannot wait until the first Draw(). In this version this affects ItemsSource only.
+        /// Apply all postponed invalidation other logic that was postponed until
+        /// the first draw for optimization.
+        /// Use this for special code-behind cases, like tests etc,
+        /// if you cannot wait until the first Draw().
+        /// In this version this affects ItemsSource only.
         /// </summary>
         public void CommitInvalidations()
         {
@@ -3788,10 +3792,6 @@ namespace DrawnUi.Draw
         /// <param name="scale"></param>
         public virtual void Arrange(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
-            //todo
-            //CreateTransformationMatrix(context.Context, recordingArea);
-            //CreateRenderedNode(recordingArea, context.Scale);
-
             if (!PreArrange(destination, widthRequest, heightRequest, scale))
             {
                 DrawingRect = SKRect.Empty;
@@ -4269,13 +4269,40 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
+        /// Main method for measuring, override OnMeasuring to plug-in.
+        /// </summary>
+        /// <param name="widthConstraint"></param>
+        /// <param name="heightConstraint"></param>
+        /// <param name="scale"></param>
+        /// <returns></returns>
+        public ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+        {
+            if (IsDisposed || IsDisposing)
+                return ScaledSize.Default;
+
+            if (!WasMeasured)
+            {
+                InitializeMeasuring();
+            }
+
+            return OnMeasuring(widthConstraint, heightConstraint, scale);
+        }
+
+        protected virtual void InitializeMeasuring()
+        {
+            CalculateMargins();
+            CalculateSizeRequest();
+            NeedMeasure = true;
+        }
+
+        /// <summary>
         /// Input in POINTS
         /// </summary>
         /// <param name="widthConstraint"></param>
         /// <param name="heightConstraint"></param>
         /// <param name="scale"></param>
         /// <returns></returns>
-        public virtual ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+        public virtual ScaledSize OnMeasuring(float widthConstraint, float heightConstraint, float scale)
         {
             if (IsDisposed || IsDisposing)
                 return ScaledSize.Default;
@@ -5059,6 +5086,11 @@ namespace DrawnUi.Draw
         /// <param name="scale"></param>
         protected virtual void MeasureSelf(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
+            if (!WasMeasured)
+            {
+                InitializeMeasuring();
+            }
+
             var rectAvailable = DefineAvailableSize(destination, widthRequest, heightRequest, scale, false);
             var width = rectAvailable.Pixels.Width + (float)Margins.HorizontalThickness * scale;
             var height = rectAvailable.Pixels.Height + (float)Margins.VerticalThickness * scale;
@@ -5070,7 +5102,9 @@ namespace DrawnUi.Draw
             {
                 height = destination.Height;
             }
+
             Measure(width, height, scale);
+
             ApplyMeasureResult();
         }
 
@@ -6493,9 +6527,15 @@ namespace DrawnUi.Draw
 
         protected override void InvalidateMeasure()
         {
-            InvalidateMeasureInternal();
-
-            Update();
+            if (WasMeasured)
+            {
+                InvalidateMeasureInternal();
+                Update();
+            }
+            else
+            {
+                NeedMeasure = true;
+            }
         }
 
         protected static void NeedInvalidateViewport(BindableObject bindable, object oldvalue, object newvalue)

@@ -23,11 +23,34 @@ public partial class Super
     public static event EventHandler OnFrame;
     static Looper Looper { get; set; }
 
+    public static int RefreshRate { get; protected set; }
+
+    public static int GetDisplayRefreshRate(int fallback)
+    {
+        var ret = fallback;
+        try
+        {
+            RefreshRate = 60;
+
+            if (Platform.CurrentActivity?.WindowManager?.DefaultDisplay != null)
+            {
+                var display = Platform.CurrentActivity.WindowManager.DefaultDisplay;
+                ret = (int)display.RefreshRate;
+            }
+        }
+        catch
+        {
+        }
+        return ret;
+    }
+    
     public static void Init(Android.App.Activity activity)
     {
         Initialized = true;
 
         MainActivity = activity;
+
+        RefreshRate = GetDisplayRefreshRate(60);
 
         Super.Screen.Density = activity.Resources.DisplayMetrics.Density;
 

@@ -4,11 +4,11 @@
   items:
     - name: Installation and Setup
       href: getting-started.md
-    - name: Your First DrawnUi App
-      href: first-app.md
-    - name: Porting native to drawn
+    - name: Porting Native to Drawn
       href: porting-maui.md
-- name: Controls
+- name: Your First DrawnUi App
+      href: first-app.md
+    - name: Controls
   href: controls/index.md
 - name: Advanced
   href: advanced/index.md

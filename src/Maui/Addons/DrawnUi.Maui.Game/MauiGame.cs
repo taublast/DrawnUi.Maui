@@ -83,8 +83,10 @@ namespace DrawnUi.Gaming
             // Calculate delta time in seconds for later use
             float deltaSeconds = (frameTimeNanos - LastFrameTimeNanos) / 1_000_000_000.0f;
 
+#if WINDOWS || MACCATALYST
             // Use stable time
             deltaSeconds = FrameTimeInterpolator.GetDeltaTime(deltaSeconds);
+#endif
 
             LastFrameTimeNanos = frameTimeNanos;
 

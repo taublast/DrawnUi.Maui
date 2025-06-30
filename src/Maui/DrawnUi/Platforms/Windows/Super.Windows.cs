@@ -54,7 +54,7 @@ namespace DrawnUi.Draw
             public int dmDisplayFrequency;
         }
 
-        public static int GetPreciseRefreshRate()
+        public static int GetDisplayRefreshRate(int fallback)
         {
             // Method 1: GetDeviceCaps
             IntPtr hdc = GetDC(IntPtr.Zero);
@@ -73,7 +73,7 @@ namespace DrawnUi.Draw
                 return devMode.dmDisplayFrequency;
             }
 
-            return 60; // fallback
+            return fallback; 
         }
 
         public static int RefreshRate { get; protected set; }
@@ -99,7 +99,7 @@ namespace DrawnUi.Draw
             //VisualDiagnostics.VisualTreeChanged += OnVisualTreeChanged;
             InitShared();
 
-            RefreshRate = GetPreciseRefreshRate();
+            RefreshRate = GetDisplayRefreshRate(60);
 
             UsingDisplaySync = RefreshRate >= 120;
 

@@ -1784,7 +1784,7 @@ public class SkiaImage : SkiaControl
     //    base.Arrange(destination, MeasuredSize.Units.Width, MeasuredSize.Units.Height, scale);
     //}
 
-    public override ScaledSize Measure(float widthRequest, float heightRequest, float dscale)
+    public override ScaledSize OnMeasuring(float widthRequest, float heightRequest, float dscale)
     {
         //background measuring or invisible or self measure from draw because layout will never pass -1
         if (IsMeasuring || !CanDraw)

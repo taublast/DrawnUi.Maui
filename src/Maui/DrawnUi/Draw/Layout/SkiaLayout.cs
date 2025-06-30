@@ -935,10 +935,10 @@ namespace DrawnUi.Draw
         /// <param name="heightConstraint"></param>
         /// <param name="scale"></param>
         /// <returns></returns>
-        public override ScaledSize Measure(float widthConstraint, float heightConstraint, float scale)
+        public override ScaledSize OnMeasuring(float widthConstraint, float heightConstraint, float scale)
         {
-            //background measuring or invisible or self measure from draw because layout will never pass -1
-            if (IsMeasuring || !CanDraw || (widthConstraint < 0 || heightConstraint < 0)
+            //background measuring or invisible
+            if (IsMeasuring //|| !CanDraw
                 || (IsTemplated && ChildrenFactory.TemplatesBusy))
             {
                 NeedRemeasuring = true;

@@ -256,9 +256,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Views\MainPageTestRange.xaml.cs">
-      <DependentUpon>MainPageTestRange.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
     
