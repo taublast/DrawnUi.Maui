@@ -93,7 +93,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
         SetupOrientationObserver();
 
-        Setup();
+
     }
 
    
@@ -300,6 +300,12 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             _session.RemoveInput(_session.Inputs[0]);
         }
 
+        // Remove all existing outputs before adding new ones
+        while (_session.Outputs.Any())
+        {
+            _session.RemoveOutput(_session.Outputs[0]);
+        }
+
         _deviceInput = new AVCaptureDeviceInput(videoDevice, out error);
         if (error != null)
         {
@@ -318,7 +324,18 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
             OutputSettings = new NSDictionary()
         };
         _stillImageOutput.HighResolutionStillImageOutputEnabled = true;
-        _session.AddOutput(_stillImageOutput);
+
+        if (_session.CanAddOutput(_stillImageOutput))
+        {
+            _session.AddOutput(_stillImageOutput);
+        }
+        else
+        {
+            Console.WriteLine("Could not add still image output to the session");
+            _session.CommitConfiguration();
+            State = CameraProcessorState.Error;
+            return;
+        }
 
         if (_session.CanAddOutput(_videoDataOutput))
         {
@@ -389,6 +406,8 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
         try
         {
+            Setup();
+
             _session.StartRunning();
             State = CameraProcessorState.Enabled;
             
