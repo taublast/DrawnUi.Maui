@@ -83,6 +83,63 @@ public partial class SkiaCamera
         NativeControl = new NativeCamera(this);
     }
 
+    protected async Task<List<CameraInfo>> GetAvailableCamerasPlatform()
+    {
+        var cameras = new List<CameraInfo>();
+
+        try
+        {
+            var deviceTypes = new AVFoundation.AVCaptureDeviceType[]
+            {
+                AVFoundation.AVCaptureDeviceType.BuiltInWideAngleCamera,
+                AVFoundation.AVCaptureDeviceType.BuiltInTelephotoCamera,
+                AVFoundation.AVCaptureDeviceType.BuiltInUltraWideCamera
+            };
+
+            if (UIKit.UIDevice.CurrentDevice.CheckSystemVersion(13, 0))
+            {
+                deviceTypes = deviceTypes.Concat(new[]
+                {
+                    AVFoundation.AVCaptureDeviceType.BuiltInDualCamera,
+                    AVFoundation.AVCaptureDeviceType.BuiltInTripleCamera
+                }).ToArray();
+            }
+
+            var discoverySession = AVFoundation.AVCaptureDeviceDiscoverySession.Create(
+                deviceTypes,
+                AVFoundation.AVMediaTypes.Video,
+                AVFoundation.AVCaptureDevicePosition.Unspecified);
+
+            var devices = discoverySession.Devices;
+
+            for (int i = 0; i < devices.Length; i++)
+            {
+                var device = devices[i];
+                var position = device.Position switch
+                {
+                    AVFoundation.AVCaptureDevicePosition.Front => CameraPosition.Selfie,
+                    AVFoundation.AVCaptureDevicePosition.Back => CameraPosition.Default,
+                    _ => CameraPosition.Default
+                };
+
+                cameras.Add(new CameraInfo
+                {
+                    Id = device.UniqueID,
+                    Name = device.LocalizedName,
+                    Position = position,
+                    Index = i,
+                    HasFlash = device.HasFlash
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SkiaCameraApple] Error enumerating cameras: {ex.Message}");
+        }
+
+        return cameras;
+    }
+
     /// <summary>
     /// Call on UI thread only. Called by CheckPermissions.
     /// </summary>

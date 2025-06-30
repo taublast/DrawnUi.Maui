@@ -33,7 +33,7 @@ namespace DrawnUi.Camera;
 
 public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvailableListener, INativeCamera
 {
-    //todo create upper properties:
+    // Camera configuration constants
 
     // Max preview width that is guaranteed by Camera2 API
     public int MaxPreviewWidth = 800;
@@ -369,7 +369,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
 
     /// <summary>
-    /// Using renderscript here
+    /// Process image using RenderScript
     /// </summary>
     /// <param name="image"></param>
     /// <param name="output"></param>
@@ -564,7 +564,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     // Camera state: Waiting for the exposure to be precapture state.
     public const int STATE_WAITING_PRECAPTURE = 2;
 
-    //Camera state: Waiting for the exposure state to be something other than precapture.
+    // Camera state: Waiting for the exposure state to be something other than precapture.
     public const int STATE_WAITING_NON_PRECAPTURE = 3;
 
     // Camera state: Picture was taken.
@@ -728,9 +728,9 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
 
                 #region compatible camera
 
-                // Skip wrong facing cameras
+                // Skip wrong facing cameras (only if not in manual mode)
                 var facing = (Integer)characteristics.Get(CameraCharacteristics.LensFacing);
-                if (facing != null)
+                if (FormsControl.Facing != CameraPosition.Manual && facing != null)
                 {
                     if (FormsControl.Facing == CameraPosition.Default &&
                         facing == (Integer.ValueOf((int)LensFacing.Front)))
@@ -777,7 +777,25 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
             if (!cameras.Any())
                 return;
 
-            var selectedCamera = cameras[0];
+            // Select camera based on manual index or default to first
+            CameraUnit selectedCamera;
+            if (FormsControl.Facing == CameraPosition.Manual && FormsControl.CameraIndex >= 0)
+            {
+                if (FormsControl.CameraIndex < cameras.Count)
+                {
+                    selectedCamera = cameras[FormsControl.CameraIndex];
+                    Debug.WriteLine($"[NativeCameraAndroid] Selected camera by index {FormsControl.CameraIndex}: {selectedCamera.Id}");
+                }
+                else
+                {
+                    Debug.WriteLine($"[NativeCameraAndroid] Invalid camera index {FormsControl.CameraIndex}, falling back to first camera");
+                    selectedCamera = cameras[0];
+                }
+            }
+            else
+            {
+                selectedCamera = cameras[0];
+            }
 
             bool SetupCamera(CameraUnit cameraUnit)
             {
@@ -1434,7 +1452,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
     void OnCaptureError(Exception e)
     {
         StillImageCaptureFailed(e);
-        //OnImageTakingFailed?.Invoke(this, e);
+
         CapturingStill = false;
         StopCapturingStillImage();
     }
@@ -1813,7 +1831,7 @@ public partial class NativeCamera : Java.Lang.Object, ImageReader.IOnImageAvaila
         set
         {
             _effect = value;
-            //todo update!
+    
         }
     }
 

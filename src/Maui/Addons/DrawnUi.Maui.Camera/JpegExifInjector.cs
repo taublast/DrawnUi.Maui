@@ -575,7 +575,7 @@ namespace DrawnUi.Camera
         /// <summary>
         /// Represents an IFD entry
         /// </summary>
-        private class IfdEntry
+        public class IfdEntry
         {
             public ushort Tag { get; }
             public ushort Type { get; }

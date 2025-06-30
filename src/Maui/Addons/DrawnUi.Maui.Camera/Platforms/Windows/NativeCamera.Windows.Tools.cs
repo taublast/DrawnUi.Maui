@@ -351,12 +351,12 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         }
     }
 
-    private class CameraCharacteristics
+    public class CameraCharacteristics
     {
         public double Aperture { get; set; }
     }
 
-    private class ExposureData
+    public class ExposureData
     {
         public bool Success { get; set; }
         public string ErrorMessage { get; set; }

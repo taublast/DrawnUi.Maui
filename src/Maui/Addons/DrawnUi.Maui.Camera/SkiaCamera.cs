@@ -11,6 +11,17 @@ using Color = Microsoft.Maui.Graphics.Color;
 
 namespace DrawnUi.Camera;
 
+/// <summary>
+/// SkiaCamera control with support for manual camera selection.
+///
+/// Basic usage:
+/// - Set Facing to Default/Selfie for automatic camera selection
+/// - Set Facing to Manual and CameraIndex for manual camera selection
+///
+/// Example:
+/// var camera = new SkiaCamera { Facing = CameraPosition.Manual, CameraIndex = 2 };
+/// var cameras = await camera.GetAvailableCamerasAsync();
+/// </summary>
 public partial class SkiaCamera : SkiaControl
 {
     public override bool CanUseCacheDoubleBuffering => false;
@@ -53,7 +64,7 @@ public partial class SkiaCamera : SkiaControl
     }
 
     /// <summary>
-    /// Your "quick-start friend"
+    /// Command to start the camera
     /// </summary>
     public ICommand CommandStart
     {
@@ -252,7 +263,8 @@ public partial class SkiaCamera : SkiaControl
 
             //tofo apply gps etc
 
-            var path = await NativeControl.SaveJpgStreamToGallery(exifStream, filename, captured.Rotation, captured.Meta,  album);
+            var path = await NativeControl.SaveJpgStreamToGallery(exifStream, filename, captured.Rotation,
+                captured.Meta, album);
 
             if (!string.IsNullOrEmpty(path))
             {
@@ -264,6 +276,44 @@ public partial class SkiaCamera : SkiaControl
 
         Debug.WriteLine($"[SkiaCamera] failed to save photo");
         return null;
+    }
+
+    /// <summary>
+    /// Gets the list of available cameras on the device
+    /// </summary>
+    /// <returns>List of available cameras</returns>
+    public virtual async Task<List<CameraInfo>> GetAvailableCamerasAsync()
+    {
+        return await GetAvailableCamerasInternal();
+    }
+
+    /// <summary>
+    /// Refreshes and returns the list of available cameras
+    /// </summary>
+    /// <returns>List of available cameras</returns>
+    public virtual async Task<List<CameraInfo>> RefreshAvailableCamerasAsync()
+    {
+        _availableCameras = null; // Clear cache
+        return await GetAvailableCamerasInternal();
+    }
+
+    private List<CameraInfo> _availableCameras;
+
+    /// <summary>
+    /// Internal method to get available cameras with caching
+    /// </summary>
+    protected virtual async Task<List<CameraInfo>> GetAvailableCamerasInternal()
+    {
+        if (_availableCameras != null)
+            return _availableCameras;
+
+#if ONPLATFORM
+        _availableCameras = await GetAvailableCamerasPlatform();
+#else
+                _availableCameras = new List<CameraInfo>();
+#endif
+
+        return _availableCameras;
     }
 
     #endregion
@@ -292,7 +342,7 @@ public partial class SkiaCamera : SkiaControl
 
 
     /// <summary>
-    /// Override this to set your own DisplayInfo
+    /// Override this method to customize DisplayInfo content
     /// </summary>
     public virtual void UpdateInfo()
     {
@@ -740,7 +790,7 @@ public partial class SkiaCamera : SkiaControl
                     }
 
 
-                    // Additionally could prompt the user to turn on in settings
+                    // Could prompt to enable in settings if needed
                 }
                 catch (Exception ex)
                 {
@@ -1058,7 +1108,7 @@ public partial class SkiaCamera : SkiaControl
                 }
 
 
-                // Additionally could prompt the user to turn on in settings
+                // Could prompt to enable in settings if needed
             }
             catch (Exception ex)
             {
@@ -1158,6 +1208,23 @@ public partial class SkiaCamera : SkiaControl
     {
         get { return (CameraPosition)GetValue(FacingProperty); }
         set { SetValue(FacingProperty, value); }
+    }
+
+    public static readonly BindableProperty CameraIndexProperty = BindableProperty.Create(
+        nameof(CameraIndex),
+        typeof(int),
+        typeof(SkiaCamera),
+        -1, propertyChanged: NeedRestart);
+
+    /// <summary>
+    /// Camera index for manual camera selection.
+    /// When set to -1 (default), uses automatic selection based on Facing property.
+    /// When Facing is set to Manual, this property determines which camera to use.
+    /// </summary>
+    public int CameraIndex
+    {
+        get { return (int)GetValue(CameraIndexProperty); }
+        set { SetValue(CameraIndexProperty, value); }
     }
 
     public static readonly BindableProperty CapturePhotoQualityProperty = BindableProperty.Create(
@@ -1425,7 +1492,7 @@ public partial class SkiaCamera : SkiaControl
     /// <summary>
     /// Default is true.
     /// Whether it should update non-stop or only when a new frame is acquired.
-    /// For example if your camera gives frames at 30 fps your screen might update around 40fps without this set to true.
+    /// For example if camera gives frames at 30 fps, screen might update around 40fps without this set to true.
     /// If enabled will force max redraws at 60 fps.
     /// </summary>
     public bool ConstantUpdate

@@ -185,10 +185,6 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     {
         //Debug.WriteLine("[NativeCameraWindows] Finding camera devices...");
 
-        var cameraPosition = FormsControl.Facing == CameraPosition.Selfie
-            ? Panel.Front
-            : Panel.Back;
-
         var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
         Debug.WriteLine($"[NativeCameraWindows] Found {devices.Count} camera devices");
 
@@ -197,11 +193,33 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
             Debug.WriteLine($"[NativeCameraWindows] Device: {device.Name}, Id: {device.Id}, Panel: {device.EnclosureLocation?.Panel}");
         }
 
-        _cameraDevice = devices.FirstOrDefault(d =>
+        // Manual camera selection
+        if (FormsControl.Facing == CameraPosition.Manual && FormsControl.CameraIndex >= 0)
         {
-            var location = d.EnclosureLocation;
-            return location?.Panel == cameraPosition;
-        }) ?? devices.FirstOrDefault();
+            if (FormsControl.CameraIndex < devices.Count)
+            {
+                _cameraDevice = devices[FormsControl.CameraIndex];
+                Debug.WriteLine($"[NativeCameraWindows] Selected camera by index {FormsControl.CameraIndex}: {_cameraDevice.Name}");
+            }
+            else
+            {
+                Debug.WriteLine($"[NativeCameraWindows] Invalid camera index {FormsControl.CameraIndex}, falling back to first camera");
+                _cameraDevice = devices.FirstOrDefault();
+            }
+        }
+        else
+        {
+            // Automatic selection based on facing
+            var cameraPosition = FormsControl.Facing == CameraPosition.Selfie
+                ? Panel.Front
+                : Panel.Back;
+
+            _cameraDevice = devices.FirstOrDefault(d =>
+            {
+                var location = d.EnclosureLocation;
+                return location?.Panel == cameraPosition;
+            }) ?? devices.FirstOrDefault();
+        }
 
         if (_cameraDevice == null)
         {
@@ -388,7 +406,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
         return specs;
     }
 
-    private class WindowsCameraSpecs
+    public class WindowsCameraSpecs
     {
         public float FocalLength { get; set; }
         public List<float> FocalLengths { get; set; } = new List<float>();
@@ -582,7 +600,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     /// </summary>
     private async void ProcessDirect3DFrameAsync(Windows.Graphics.DirectX.Direct3D11.IDirect3DSurface d3dSurface)
     {
-        if (!await _frameSemaphore.WaitAsync(1)) // Don't wait, just skip if busy
+        if (!await _frameSemaphore.WaitAsync(1)) // Skip if busy processing
             return;
 
         _isProcessingFrame = true;
@@ -684,7 +702,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
     /// </summary>
     private async void ProcessFrameAsync(SoftwareBitmap softwareBitmap)
     {
-        if (!await _frameSemaphore.WaitAsync(1)) // Don't wait, just skip if busy
+        if (!await _frameSemaphore.WaitAsync(1)) // Skip if busy processing
             return;
 
         _isProcessingFrame = true;
@@ -1063,7 +1081,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 }
                 catch (Exception ex)
                 {
-                    // Silently handle - ISO might not be available in auto mode
+                    // ISO might not be available in auto mode
                     System.Diagnostics.Debug.WriteLine($"[Windows Camera] Could not read ISO: {ex.Message}");
                 }
             }
@@ -1081,7 +1099,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 }
                 catch (Exception ex)
                 {
-                    // Silently handle - exposure might not be available in auto mode
+                    // Exposure might not be available in auto mode
                     System.Diagnostics.Debug.WriteLine($"[Windows Camera] Could not read exposure: {ex.Message}");
                 }
             }
@@ -1209,7 +1227,7 @@ public partial class NativeCamera : IDisposable, INativeCamera, INotifyPropertyC
                 StillImageCaptureFailed?.Invoke(e);
             });
 
-            // Try to restart frame reader even if capture failed
+            // Restart frame reader even if capture failed
             try
             {
                 await RestartFrameReaderAsync();

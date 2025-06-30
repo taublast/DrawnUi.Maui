@@ -20,8 +20,7 @@ public partial class SkiaCamera
 
     public virtual void SetZoom(double value)
     {
-        //todo
-        //since hardware zoom not supported on droid atm we set this here manually
+        // Hardware zoom not supported on Android currently, using manual scaling
         TextureScale = value;
 
         //in theory nativecontrol should set TextureScale regarding on the amount it was able to set using hardware
@@ -50,7 +49,7 @@ public partial class SkiaCamera
         // Set the Intent data to the Uri
         intent.SetDataAndType(photoUri, "image/*");
 
-        // Add this line to give temporary permission to the external app to use your FileProvider
+        // Grant temporary permission to external app to use FileProvider
         intent.AddFlags(ActivityFlags.NewTask | ActivityFlags.GrantReadUriPermission);
 
         // Start the external activity
@@ -61,7 +60,7 @@ public partial class SkiaCamera
     {
         return new Metadata()
         {
-            Software = "SkiaCamera Android", //todo let customize
+            Software = "SkiaCamera Android",
             Vendor = $"{Android.OS.Build.Manufacturer}",
             Model = $"{Android.OS.Build.Model}",
 
@@ -86,6 +85,54 @@ public partial class SkiaCamera
         //OnUpdateOrientation(null, null);
 
         //SubscribeToNativeControl();
+    }
+
+    protected async Task<List<CameraInfo>> GetAvailableCamerasPlatform()
+    {
+        var cameras = new List<CameraInfo>();
+
+        try
+        {
+            var context = Platform.CurrentActivity ?? Android.App.Application.Context;
+            var manager = (Android.Hardware.Camera2.CameraManager)context.GetSystemService(Android.Content.Context.CameraService);
+            var cameraIds = manager.GetCameraIdList();
+
+            for (int i = 0; i < cameraIds.Length; i++)
+            {
+                var cameraId = cameraIds[i];
+                var characteristics = manager.GetCameraCharacteristics(cameraId);
+
+                var facing = (Java.Lang.Integer)characteristics.Get(Android.Hardware.Camera2.CameraCharacteristics.LensFacing);
+                var position = CameraPosition.Default;
+
+                if (facing != null)
+                {
+                    position = facing.IntValue() switch
+                    {
+                        (int)Android.Hardware.Camera2.LensFacing.Front => CameraPosition.Selfie,
+                        (int)Android.Hardware.Camera2.LensFacing.Back => CameraPosition.Default,
+                        _ => CameraPosition.Default
+                    };
+                }
+
+                var flashAvailable = (Java.Lang.Boolean)characteristics.Get(Android.Hardware.Camera2.CameraCharacteristics.FlashInfoAvailable);
+
+                cameras.Add(new CameraInfo
+                {
+                    Id = cameraId,
+                    Name = $"Camera {i} ({position})",
+                    Position = position,
+                    Index = i,
+                    HasFlash = flashAvailable?.BooleanValue() ?? false
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SkiaCameraAndroid] Error enumerating cameras: {ex.Message}");
+        }
+
+        return cameras;
     }
 
 

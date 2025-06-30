@@ -6,9 +6,9 @@ namespace DrawnUi.Camera;
 public partial class SkiaCamera : SkiaControl
 {
     /// <summary>
-    /// Going to overlay any SkiaLayout over the captured photo and return a new bitmap.
-    /// So do not forget to dispose the old one if not needed anymore.
-    /// Can change the created SkiaImage that will be used for rendering by passing a callback `createdImage`, could add effects etc.
+    /// Overlays any SkiaLayout over the captured photo and returns a new bitmap.
+    /// Remember to dispose the old bitmap if not needed anymore.
+    /// Can modify the created SkiaImage used for rendering by passing a callback `createdImage` to add effects etc.
     /// </summary>
     /// <param name="captured"></param>
     /// <param name="overlay"></param>
@@ -420,7 +420,7 @@ public partial class SkiaCamera : SkiaControl
                 return (false, 0, false, false);
             }
 
-            // Wait longer for camera to apply settings and flush old frames
+            // Wait for camera to apply settings and flush old frames
             await Task.Delay(1500);
 
             // Flush any old frames from buffer by capturing and discarding several frames

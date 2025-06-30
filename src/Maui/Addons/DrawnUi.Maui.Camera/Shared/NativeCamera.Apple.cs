@@ -217,39 +217,57 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
         }
 #endif
 
-        // Configure camera position
-        var cameraPosition = FormsControl.Facing == CameraPosition.Selfie 
-            ? AVCaptureDevicePosition.Front 
-            : AVCaptureDevicePosition.Back;
-
         AVCaptureDevice videoDevice = null;
-        
-        if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0) && FormsControl.Type == CameraType.Max)
-        {
-            videoDevice = AVCaptureDevice.GetDefaultDevice(AVCaptureDeviceType.BuiltInTripleCamera, AVMediaTypes.Video, cameraPosition);
-        }
 
-        if (videoDevice == null)
+        // Manual camera selection
+        if (FormsControl.Facing == CameraPosition.Manual && FormsControl.CameraIndex >= 0)
         {
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 2) && FormsControl.Type == CameraType.Max)
+            var allDevices = AVCaptureDevice.DevicesWithMediaType(AVMediaTypes.Video.GetConstant());
+            if (FormsControl.CameraIndex < allDevices.Length)
             {
-                videoDevice = AVCaptureDevice.GetDefaultDevice(AVCaptureDeviceType.BuiltInDualCamera, AVMediaTypes.Video, cameraPosition);
+                videoDevice = allDevices[FormsControl.CameraIndex];
+                Console.WriteLine($"[NativeCameraApple] Selected camera by index {FormsControl.CameraIndex}: {videoDevice.LocalizedName}");
+            }
+            else
+            {
+                Console.WriteLine($"[NativeCameraApple] Invalid camera index {FormsControl.CameraIndex}, falling back to default");
+                videoDevice = allDevices.FirstOrDefault();
+            }
+        }
+        else
+        {
+            // Automatic selection based on facing
+            var cameraPosition = FormsControl.Facing == CameraPosition.Selfie
+                ? AVCaptureDevicePosition.Front
+                : AVCaptureDevicePosition.Back;
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0) && FormsControl.Type == CameraType.Max)
+            {
+                videoDevice = AVCaptureDevice.GetDefaultDevice(AVCaptureDeviceType.BuiltInTripleCamera, AVMediaTypes.Video, cameraPosition);
             }
 
             if (videoDevice == null)
             {
-                var videoDevices = AVCaptureDevice.DevicesWithMediaType(AVMediaTypes.Video.GetConstant());
-                
-#if MACCATALYST
-                videoDevice = videoDevices.FirstOrDefault();
-#else
-                videoDevice = videoDevices.FirstOrDefault(d => d.Position == cameraPosition);
-#endif                
+                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 2) && FormsControl.Type == CameraType.Max)
+                {
+                    videoDevice = AVCaptureDevice.GetDefaultDevice(AVCaptureDeviceType.BuiltInDualCamera, AVMediaTypes.Video, cameraPosition);
+                }
+
                 if (videoDevice == null)
                 {
-                    State = CameraProcessorState.Error;
-                    _session.CommitConfiguration();
-                    return;
+                    var videoDevices = AVCaptureDevice.DevicesWithMediaType(AVMediaTypes.Video.GetConstant());
+
+#if MACCATALYST
+                    videoDevice = videoDevices.FirstOrDefault();
+#else
+                    videoDevice = videoDevices.FirstOrDefault(d => d.Position == cameraPosition);
+#endif
+                    if (videoDevice == null)
+                    {
+                        State = CameraProcessorState.Error;
+                        _session.CommitConfiguration();
+                        return;
+                    }
                 }
             }
         }
@@ -778,7 +796,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
 
             try
             {
-                // Create SKImage on main thread from copied pixel data - no memory leak
+                // Create SKImage on main thread from copied pixel data
                 var info = new SKImageInfo(_latestRawFrame.Width, _latestRawFrame.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
 
                 // Pin the byte array and create SKImage
@@ -944,7 +962,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                         focals.Add((float)focal);
                     }
 
-                    //FOV = 2 arctan (x / (2 f)), where x is the diagonal of the film.
+                    // FOV = 2 arctan (x / (2 f)), where x is the diagonal of the film.
                     var unit = FormsControl.CameraDevice;
 
                     unit.Id = name;
@@ -1000,7 +1018,7 @@ public partial class NativeCamera : NSObject, IDisposable, INativeCamera, INotif
                 var pixelData = new byte[dataSize];
                 System.Runtime.InteropServices.Marshal.Copy(baseAddress, pixelData, 0, dataSize);
 
-                // Store raw frame data for lazy SKImage creation on main thread
+                // Store raw frame data for SKImage creation on main thread
                 var rawFrame = new RawFrameData
                 {
                     Width = width,

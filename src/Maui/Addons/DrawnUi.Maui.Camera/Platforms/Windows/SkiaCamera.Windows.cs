@@ -78,6 +78,47 @@ public partial class SkiaCamera : SkiaControl
         Debug.WriteLine("[SkiaCameraWindows] Native camera created");
     }
 
+    protected async Task<List<CameraInfo>> GetAvailableCamerasPlatform()
+    {
+        var cameras = new List<CameraInfo>();
+
+        try
+        {
+            var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.VideoCapture);
+
+            for (int i = 0; i < devices.Count; i++)
+            {
+                var device = devices[i];
+                var position = CameraPosition.Default;
+
+                if (device.EnclosureLocation?.Panel != null)
+                {
+                    position = device.EnclosureLocation.Panel switch
+                    {
+                        Windows.Devices.Enumeration.Panel.Front => CameraPosition.Selfie,
+                        Windows.Devices.Enumeration.Panel.Back => CameraPosition.Default,
+                        _ => CameraPosition.Default
+                    };
+                }
+
+                cameras.Add(new CameraInfo
+                {
+                    Id = device.Id,
+                    Name = device.Name,
+                    Position = position,
+                    Index = i,
+                    HasFlash = false // TODO: Detect flash support
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[SkiaCameraWindows] Error enumerating cameras: {ex.Message}");
+        }
+
+        return cameras;
+    }
+
     /// <summary>
     /// Call on UI thread only. Called by CheckPermissions.
     /// </summary>
