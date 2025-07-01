@@ -43,6 +43,22 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
         set => SetValue(WheelRadiusProperty, value);
     }
 
+    public static readonly BindableProperty InverseVisualRotationProperty = BindableProperty.Create(
+        nameof(InverseVisualRotation),
+        typeof(bool),
+        typeof(SkiaWheelShape),
+        false,
+        propertyChanged: NeedDraw);
+
+    /// <summary>
+    /// Controls the visual orientation direction. False = normal, True = inverted
+    /// </summary>
+    public bool InverseVisualRotation
+    {
+        get => (bool)GetValue(InverseVisualRotationProperty);
+        set => SetValue(InverseVisualRotationProperty, value);
+    }
+
     #endregion
 
     #region GESTURE HANDLING
@@ -152,16 +168,31 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
 
         // Get the selection position from parent spinner
         var positionOffset = 90.0; // Default to Right
+        bool inverseVisualRotation = false;
         if (Parent is SkiaSpinner spinner)
         {
             positionOffset = spinner.GetSelectionPositionOffset();
+            inverseVisualRotation = spinner.InverseVisualRotation;
         }
 
         var adjustedRotation = (-WheelRotation + positionOffset) % 360;
         if (adjustedRotation < 0) adjustedRotation += 360;
 
+        // When visual rotation is inverted, we need to flip the rotation calculation
+        if (inverseVisualRotation)
+        {
+            adjustedRotation = (-adjustedRotation + positionOffset * 2) % 360;
+            if (adjustedRotation < 0) adjustedRotation += 360;
+        }
+
         var nearestIndex = Math.Round(adjustedRotation / anglePerItem);
         var targetRotation = -(nearestIndex * anglePerItem + positionOffset);
+
+        // When visual rotation is inverted, flip the target rotation calculation
+        if (inverseVisualRotation)
+        {
+            targetRotation = -targetRotation - positionOffset * 2;
+        }
 
         // Animate to the nearest position
         var animator = new RangeAnimator(this);
@@ -197,6 +228,12 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
                 var textRadius = radius * 0.5;
                 var anglePerItem = 360.0 / total;
                 var itemAngle = index * anglePerItem - 90;
+                //var angleInRadians = itemAngle * Math.PI / 180.0;
+                if (InverseVisualRotation)
+                {
+                    itemAngle = -itemAngle;
+                }
+
                 var angleInRadians = itemAngle * Math.PI / 180.0;
 
                 // Calculate relative to center (Translation might be center-based)
@@ -210,7 +247,15 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
 
                 child.TranslationX = offsetXUnits;
                 child.TranslationY = offsetYUnits;
-                child.Rotation = itemAngle;
+
+                var textRotation = itemAngle;
+                if (InverseVisualRotation)
+                {
+                    // When direction is reversed, we need to flip the text orientation
+                    // so it's readable on the opposite side
+                    textRotation += 180;
+                }
+                child.Rotation = textRotation;
 
                 child.Clipping = (path, childRect) =>
                 {
@@ -230,6 +275,14 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
                     path.LineTo(childRect.Right, childRect.Bottom - cutDepth);
                     path.LineTo(halfWidth, centerY);
                     path.Close();
+
+                    if (InverseVisualRotation)
+                    {
+                        // Flip the path horizontally around its center
+                        var centerX = childRect.MidX;
+                        var flipMatrix = SKMatrix.CreateScale(-1, 1, centerX, centerY);
+                        path.Transform(flipMatrix);
+                    }
                 };
 
                 child.Render(context);

@@ -50,6 +50,8 @@ namespace Sandbox
             _spinner = new SkiaSpinner
             {
                 ItemsSource = _spinnerItems,
+                InverseVisualRotation = true,
+                SelectionPosition = SelectionPosition.Left,
                 WheelRadius = 150,
                 WidthRequest = 320,
                 HeightRequest = 320,

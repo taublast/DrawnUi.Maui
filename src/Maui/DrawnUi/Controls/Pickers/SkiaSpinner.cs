@@ -54,6 +54,7 @@ public class SkiaSpinner : SkiaLayout
         {
             _wheelShape.ItemsSource = this.ItemsSource;
             _wheelShape.ItemTemplate = this.ItemTemplate ?? DefaultTemplate;
+            _wheelShape.InverseVisualRotation = this.InverseVisualRotation; 
         }
         UpdateSelectedIndexFromRotation();
     }
@@ -195,6 +196,37 @@ public class SkiaSpinner : SkiaLayout
         }
     }
 
+    public static readonly BindableProperty InverseVisualRotationProperty = BindableProperty.Create(
+        nameof(InverseVisualRotation),
+        typeof(bool),
+        typeof(SkiaSpinner),
+        false,
+        propertyChanged: NeedDraw);
+
+    /// <summary>
+    /// Controls the visual orientation direction. False = normal (readable at right), True = inverted (readable at left)
+    /// </summary>
+    public bool InverseVisualRotation
+    {
+        get => (bool)GetValue(InverseVisualRotationProperty);
+        set => SetValue(InverseVisualRotationProperty, value);
+    }
+
+    public static readonly BindableProperty RespondsToGesturesProperty = BindableProperty.Create(
+        nameof(RespondsToGestures),
+        typeof(bool),
+        typeof(SkiaSpinner),
+        true);
+
+    /// <summary>
+    /// If disabled will not scroll using gestures. Scrolling will still be possible by code.
+    /// </summary>
+    public bool RespondsToGestures
+    {
+        get { return (bool)GetValue(RespondsToGesturesProperty); }
+        set { SetValue(RespondsToGesturesProperty, value); }
+    }
+
     #endregion
 
     #region EVENTS
@@ -253,6 +285,8 @@ public class SkiaSpinner : SkiaLayout
             new Binding(nameof(WheelRotation), source: this));
         _wheelShape.SetBinding(SkiaWheelShape.WheelRadiusProperty,
             new Binding(nameof(WheelRadius), source: this));
+        _wheelShape.SetBinding(SkiaWheelShape.InverseVisualRotationProperty,
+            new Binding(nameof(InverseVisualRotation), source: this));
 
         Children = new List<SkiaControl>() { _wheelShape };
     }
@@ -269,6 +303,7 @@ public class SkiaSpinner : SkiaLayout
             return ItemsSource.Count;
         }
     }
+
     void UpdateSelectedIndexFromRotation()
     {
         if (ItemsCount == 0)
@@ -279,11 +314,17 @@ public class SkiaSpinner : SkiaLayout
         _isUpdatingFromRotation = true;
 
         var anglePerItem = 360.0 / ItemsCount;
-
-        // Get the offset based on selection position
         var positionOffset = GetSelectionPositionOffset();
+
         var adjustedRotation = (-WheelRotation + positionOffset) % 360;
         if (adjustedRotation < 0) adjustedRotation += 360;
+
+        // When visual rotation is inverted, we need to flip the rotation calculation
+        if (InverseVisualRotation)
+        {
+            adjustedRotation = (-adjustedRotation + positionOffset * 2) % 360;
+            if (adjustedRotation < 0) adjustedRotation += 360;
+        }
 
         var index = (int)Math.Round(adjustedRotation / anglePerItem) % ItemsCount;
 
@@ -301,13 +342,22 @@ public class SkiaSpinner : SkiaLayout
 
         var anglePerItem = 360.0 / ItemsCount;
         var positionOffset = GetSelectionPositionOffset();
+
         var targetRotation = -(SelectedIndex * anglePerItem + positionOffset);
+
+        // When visual rotation is inverted, flip the rotation calculation
+        if (InverseVisualRotation)
+        {
+            targetRotation = -targetRotation - positionOffset * 2;
+        }
 
         if (Math.Abs(WheelRotation - targetRotation) > 0.1)
         {
             WheelRotation = targetRotation;
         }
     }
+
+
 
     /// <summary>
     /// Gets the angle offset for the current selection position
