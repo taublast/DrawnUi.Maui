@@ -1,11 +1,17 @@
 ﻿using DrawnUi.Views;
+using DrawnUi.Controls;
 using Canvas = DrawnUi.Views.Canvas;
+using System.Collections.ObjectModel;
+using AppoMobi.Specials;
 
 namespace Sandbox
 {
     public class MainPageCode : BasePageReloadable, IDisposable
     {
         Canvas Canvas;
+        SkiaSpinner _spinner;
+        SkiaLabel _selectedLabel;
+        ObservableCollection<string> _spinnerItems;
 
         protected override void Dispose(bool isDisposing)
         {
@@ -23,74 +29,187 @@ namespace Sandbox
         {
             Canvas?.Dispose();
 
+            // Initialize spinner items
+            _spinnerItems = new ObservableCollection<string>
+            {
+                "Alice",
+                "Bob",
+                "Charlie",
+                "Diana",
+                "Edward",
+                "Fiona",
+                "George",
+                "Hannah",
+                "Ivan",
+                "Julia",
+                "Kevin",
+                "Luna"
+            };
+
+            // Create the spinner
+            _spinner = new SkiaSpinner
+            {
+                ItemsSource = _spinnerItems,
+                WheelRadius = 150,
+                WidthRequest = 320,
+                HeightRequest = 320,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            };
+
+            // Create selected item label
+            _selectedLabel = new SkiaLabel
+            {
+                FontSize = 18,
+                TextColor = Colors.White,
+                HorizontalOptions = LayoutOptions.Center,
+                Margin = new Thickness(0, 20, 0, 0)
+            }.Observe(_spinner, (me, prop) =>
+            {
+                if (prop.IsEither(nameof(BindingContext), nameof(SkiaSpinner.SelectedIndex)))
+                {
+                    var itemName = "None";
+                    if (_spinner.SelectedIndex >= 0)
+                    {
+                        itemName = $"{_spinnerItems[_spinner.SelectedIndex]} [{_spinner.SelectedIndex}]";
+                    }
+                    me.Text = $"Selected: {itemName}";
+                }
+            });
+
+            // Subscribe to selection changes
+            _spinner.SelectedIndexChanged += OnSpinnerSelectionChanged;
+
             Canvas = new Canvas()
             {
                 VerticalOptions = LayoutOptions.Fill,
                 HorizontalOptions = LayoutOptions.Fill,
-                BackgroundColor = Colors.White,
+                BackgroundColor = Colors.DarkSlateBlue,
                 Gestures = GesturesMode.Enabled,
                 Children =
                 {
-
                     new SkiaLayout()
                     {
-                        BackgroundColor = Colors.Black,
+                        Type = LayoutType.Column,
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill,
+                        Spacing = 20,
+                        Padding = new Thickness(20),
                         Children =
                         {
+                            // Title
+                            new SkiaLabel()
+                            {
+                                Text = "SkiaSpinner Demo",
+                                FontSize = 24,
+                                FontWeight = FontWeights.Bold,
+                                TextColor = Colors.White,
+                                HorizontalOptions = LayoutOptions.Center,
+                                Margin = new Thickness(0, 20, 0, 0)
+                            },
+
+                            // Instructions
+                            new SkiaLabel()
+                            {
+                                Text = "Pan to spin the wheel, or tap the buttons below",
+                                FontSize = 14,
+                                TextColor = Colors.LightGray,
+                                HorizontalOptions = LayoutOptions.Center,
+                                HorizontalTextAlignment = DrawTextAlignment.Center
+                            },
+
+                            // Spinner container
                             new SkiaLayout()
                             {
-                                WidthRequest = 200,
+                                HorizontalOptions = LayoutOptions.Fill,
                                 VerticalOptions = LayoutOptions.Fill,
-                                Children = new List<SkiaControl>()
+                                Children = { _spinner }
+                            },
+
+                            // Selected item display
+                            _selectedLabel,
+
+                            // Control buttons
+                            new SkiaLayout()
+                            {
+                                Type = LayoutType.Row,
+                                HorizontalOptions = LayoutOptions.Center,
+                                Spacing = 15,
+                                Children =
                                 {
-                                    new SkiaStack()
+                                    new SkiaButton()
                                     {
-                                        Spacing = 0,
-                                        BackgroundColor = Colors.LightPink,
-                                        VerticalOptions = LayoutOptions.Fill,
-                                        Children =
-                                        {
-                                            new SkiaLayer()
-                                            {
-                                                Tag = "1",
-                                                HeightRequest = 100,
-                                                BackgroundColor = Colors.Red,
-                                            },
-                                            new SkiaLayer()
-                                            {
-                                                Tag = "2 - Fill",
-                                                VerticalOptions = LayoutOptions.Fill,
-                                                BackgroundColor = Colors.Green,
-                                            },
-                                            new SkiaButton()
-                                            {
-                                                Tag = "3",
-                                                CornerRadius = 11,
-                                                HeightRequest = 38,
-                                                WidthRequest = 100,
-                                                Text = "XXXXXX",
-                                                BackgroundColor = Colors.White,
-                                                TextColor = Colors.Black,
-                                                VerticalOptions = LayoutOptions.Start,
-                                                //UseCache = SkiaCacheType.Image,
-                                                HorizontalOptions = LayoutOptions.Center,
-                                                Margin = 16
-                                            },
-                                        }
-                                    }
+                                        Text = "Spin Random",
+                                        BackgroundColor = Colors.Orange,
+                                        TextColor = Colors.White,
+                                        CornerRadius = 8,
+                                        Padding = new Thickness(15, 10),
+                                    }.OnTapped(me => { OnButtonTapped("spin"); }),
+                                    new SkiaButton()
+                                    {
+                                        Text = "Add Item",
+                                        BackgroundColor = Colors.Green,
+                                        TextColor = Colors.White,
+                                        CornerRadius = 8,
+                                        Padding = new Thickness(15, 10),
+                                    }.OnTapped(me => { OnButtonTapped("add"); }),
+                                    new SkiaButton()
+                                    {
+                                        Text = "Remove Item",
+                                        BackgroundColor = Colors.Red,
+                                        TextColor = Colors.White,
+                                        CornerRadius = 8,
+                                        Padding = new Thickness(15, 10),
+                                    }.OnTapped(me => { OnButtonTapped("remove"); }),
                                 }
                             }
                         }
                     }
-
-      
                 }
             };
 
-
             this.Content = Canvas;
+        }
+
+        void OnSpinnerSelectionChanged(object sender, int selectedIndex)
+        {
+            if (selectedIndex >= 0 && selectedIndex < _spinnerItems.Count)
+            {
+                _selectedLabel.Text = $"Selected: {_spinnerItems[selectedIndex]}";
+            }
+            else
+            {
+                _selectedLabel.Text = "Selected: None";
+            }
+        }
+
+        void OnButtonTapped(object parameter)
+        {
+            var action = parameter?.ToString();
+
+            switch (action)
+            {
+                case "spin":
+                    _spinner.SpinToRandom();
+                    break;
+
+                case "add":
+                    if (_spinnerItems.Count < 150)
+                    {
+                        var newName = $"Person {_spinnerItems.Count + 1}";
+                        _spinnerItems.Add(newName);
+                    }
+
+                    break;
+
+                case "remove":
+                    if (_spinnerItems.Count > 2)
+                    {
+                        _spinnerItems.RemoveAt(_spinnerItems.Count - 1);
+                    }
+
+                    break;
+            }
         }
     }
 }
