@@ -34,24 +34,21 @@ public class SkiaSpinner : SkiaLayout
         {
             Type = ShapeType.Circle,
             BackgroundColor = Colors.Black,
-            StrokeColor = Colors.CadetBlue,
+            StrokeColor = Colors.Grey,
             StrokeWidth = 2,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill
         };
     }
 
-    new void CreateUi()
+    void CreateUi()
     {
         Wheel = CreateWheel();
 
-        // Bind the wheel rotation between spinner and wheel shape
-        Wheel.SetBinding(SkiaWheelShape.WheelRotationProperty,
-            new Binding(nameof(WheelRotation), source: this));
-        Wheel.SetBinding(SkiaWheelShape.InverseVisualRotationProperty,
-            new Binding(nameof(InverseVisualRotation), source: this));
-
-        Children = new List<SkiaControl>() { Wheel };
+        Children = new List<SkiaControl>()
+        {
+            Wheel
+        };
     }
 
     #endregion
@@ -139,9 +136,12 @@ public class SkiaSpinner : SkiaLayout
         var cell = new SkiaMarkdownLabel()
         {
             UseCache = SkiaCacheType.Operations,
+            HorizontalFillRatio = 0.5,
+            HorizontalTextAlignment = DrawTextAlignment.Center,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
-            HorizontalTextAlignment = DrawTextAlignment.Center,
+            //VerticalOptions = LayoutOptions.Center,
+            //Padding = 10,
             VerticalTextAlignment = TextAlignment.Center
         }.ObserveSelf((me, prop) =>
         {
@@ -211,12 +211,65 @@ public class SkiaSpinner : SkiaLayout
         }
     }
 
+    static void OnNeedUpdateWheel(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is SkiaSpinner control)
+        {
+            control.SyncItemsSource();
+        }
+    }
+
+    public static readonly BindableProperty SnapProperty = BindableProperty.Create(
+        nameof(Snap),
+        typeof(bool),
+        typeof(SkiaSpinner),
+        true);
+
+    /// <summary>
+    /// Whether it should snap after scrolling stopped, default is True.
+    /// </summary>
+    public bool Snap
+    {
+        get => (bool)GetValue(SnapProperty);
+        set => SetValue(SnapProperty, value);
+    }
+
+    public static readonly BindableProperty VelocityProperty = BindableProperty.Create(
+        nameof(Velocity),
+        typeof(double),
+        typeof(SkiaSpinner),
+        2.0);
+
+    /// <summary>
+    /// How much the velocity in increased when rotating wheel using gestures. Default is 2.0.
+    /// </summary>
+    public double Velocity
+    {
+        get => (double)GetValue(VelocityProperty);
+        set => SetValue(VelocityProperty, value);
+    }
+
+    public static readonly BindableProperty DecelerationProperty = BindableProperty.Create(
+        nameof(Deceleration),
+        typeof(double),
+        typeof(SkiaSpinner),
+        0.0003);
+
+    /// <summary>
+    /// How much friction will be applied when rotating. Default is 0.0003. 
+    /// /// </summary>
+    public double Deceleration
+    {
+        get => (double)GetValue(DecelerationProperty);
+        set => SetValue(DecelerationProperty, value);
+    }
+
     public static readonly BindableProperty InverseVisualRotationProperty = BindableProperty.Create(
         nameof(InverseVisualRotation),
         typeof(bool),
         typeof(SkiaSpinner),
         false,
-        propertyChanged: NeedDraw);
+        propertyChanged: OnNeedUpdateWheel);
 
     /// <summary>
     /// Controls the visual orientation direction. False = normal (readable at right), True = inverted (readable at left)
@@ -527,17 +580,15 @@ public class SkiaSpinner : SkiaLayout
             _flingAnimator.Stop();
         }
 
-        var deceleration = 1 - 0.002f; // make property from this?
-
         Debug.WriteLine($"Start FLEEING with velocity {angularVelocity}");
 
-        _flingAnimator.InitializeWithVelocity((float)WheelRotation, (float)angularVelocity, deceleration);
+        _flingAnimator.InitializeWithVelocity((float)WheelRotation, (float)angularVelocity, 1 - (float)Deceleration);
         _flingAnimator.Start();
     }
 
     void SnapToNearestItem()
     {
-        if (Children.Count == 0)
+        if (Children.Count == 0 || !Snap)
         {
             return;
         }
@@ -556,7 +607,6 @@ public class SkiaSpinner : SkiaLayout
 
     protected bool IsUserPanning;
     double _lastPanAngle;
-    double _panStartRotation;
 
     double GetAngleFromPoint(PointF point)
     {
@@ -587,25 +637,23 @@ public class SkiaSpinner : SkiaLayout
 
     protected virtual void ResetPan()
     {
-        //_pannedOffset = Vector2.Zero;
-        //_pannedVelocity = Vector2.Zero;
-        //_pannedVelocityRemaining = Vector2.Zero;
-
-        //ChildWasTapped = false;
-        //WasSwiping = false;
-        //IsUserFocused = true;
         IsUserPanning = false;
-        //ChildWasPanning = false;
-        //ChildWasTapped = false;
-
         StopScrolling();
+    }
 
-        //SwipeVelocityAccumulator.Clear();
+    /// <summary>
+    /// Checks if a point is inside the wheel's circular area
+    /// </summary>
+    bool IsPointInsideWheel(PointF point)
+    {
+        var center = new SKPoint(DrawingRect.MidX, DrawingRect.MidY);
+        var radius = Math.Min(DrawingRect.Width, DrawingRect.Height) / 2.0;
 
-        //_panningLastDelta = Vector2.Zero;
-        //_panningStartOffsetPts = new(ViewportOffsetX, ViewportOffsetY);
-        //_panningCurrentOffsetPts =
-        //    _panningStartOffsetPts; //new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
+        var dx = point.X - center.X;
+        var dy = point.Y - center.Y;
+        var distanceSquared = dx * dx + dy * dy;
+
+        return distanceSquared <= radius * radius; // Using squared values avoids expensive sqrt
     }
 
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
@@ -620,10 +668,14 @@ public class SkiaSpinner : SkiaLayout
         if (args.Type == TouchActionResult.Down)
         {
             InContact = true;
+
+            if (!IsPointInsideWheel(args.Event.Location))
+            {
+                return this;
+            }
+
             HadDown = true;
             ResetPan();
-
-            _panStartRotation = WheelRotation;
             _lastPanAngle = GetAngleFromPoint(args.Event.Location);
             return this;
         }
@@ -632,7 +684,41 @@ public class SkiaSpinner : SkiaLayout
         {
             HadDown = false;
             InContact = false;
+            if (IsUserPanning)
+            {
+                IsUserPanning = false;
+
+                // Start fling animation if there's sufficient velocity
+                var velocity = args.Event.Distance.Velocity;
+                var angularVelocity = GetAngularVelocity(velocity, args.Event.Location);
+
+                if (Math.Abs(angularVelocity) > 50)
+                {
+                    StartFlingAnimation(angularVelocity * Velocity);
+                }
+                else
+                {
+                    SnapToNearestItem();
+                }
+
+                return null;
+            }
         }
+
+        if (!IsPointInsideWheel(args.Event.Location))
+        {
+            Debug.WriteLine("GESTURES outside");
+            return consumedDefault;
+        }
+
+        if (!HadDown)
+        {
+            HadDown = true;
+            ResetPan();
+            _lastPanAngle = GetAngleFromPoint(args.Event.Location);
+        }
+
+        Debug.WriteLine("GESTURES IN-side");
 
         if (args.Type == TouchActionResult.Panning)
         {
@@ -651,25 +737,6 @@ public class SkiaSpinner : SkiaLayout
             return this;
         }
 
-        if (args.Type == TouchActionResult.Up && IsUserPanning)
-        {
-            IsUserPanning = false;
-
-            // Start fling animation if there's sufficient velocity
-            var velocity = args.Event.Distance.Velocity;
-            var angularVelocity = GetAngularVelocity(velocity, args.Event.Location); 
-
-            if (Math.Abs(angularVelocity) > 50) 
-            {
-                StartFlingAnimation(angularVelocity);
-            }
-            else
-            {
-                SnapToNearestItem();
-            }
-
-            return null;
-        }
 
         return base.ProcessGestures(args, apply);
     }
