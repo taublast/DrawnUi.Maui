@@ -13,6 +13,11 @@ namespace DrawnUi.Gaming
     /// </summary>
     public class MauiGame : SkiaLayout, IMauiGame
     {
+        /// <summary>
+        /// Can disable frame time interpolator
+        /// </summary>
+        public static bool FrameInterpolatorDisabled { get; set; }
+
         private ActionOnTickAnimator _appLoop;
         protected long LastFrameTimeNanos;
 
@@ -83,10 +88,9 @@ namespace DrawnUi.Gaming
             // Calculate delta time in seconds for later use
             float deltaSeconds = (frameTimeNanos - LastFrameTimeNanos) / 1_000_000_000.0f;
 
-#if WINDOWS || MACCATALYST
             // Use stable time
-            deltaSeconds = FrameTimeInterpolator.GetDeltaTime(deltaSeconds);
-#endif
+            if (!MauiGame.FrameInterpolatorDisabled)
+                deltaSeconds = FrameTimeInterpolator.GetDeltaTime(deltaSeconds);
 
             LastFrameTimeNanos = frameTimeNanos;
 
