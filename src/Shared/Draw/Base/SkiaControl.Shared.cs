@@ -3005,6 +3005,9 @@ namespace DrawnUi.Draw
         /// </summary>
         public string Hero { get; set; }
 
+        /// <summary>
+        /// For internal use, will be set for recycled/templated views by the ViewFactory to the corresponding index in the data source.
+        /// </summary>
         public int ContextIndex { get; set; } = -1;
 
         public bool IsRootView()
@@ -5536,75 +5539,6 @@ namespace DrawnUi.Draw
 
         private bool usePixelSnapping = false;
 
-        /*
-        protected virtual void ApplyTransforms(SkiaDrawingContext ctx, SKRect destination)
-        {
-            var moveX = UseTranslationX * RenderingScale;
-            var moveY = UseTranslationY * RenderingScale;
-
-            if (Rotation == 0 &&
-                ScaleX == 1 && ScaleY == 1 &&
-                SkewX == 0 && SkewY == 0 &&
-                Perspective1 == 0 && Perspective2 == 0 &&
-                RotationX == 0 && RotationY == 0 && RotationZ == 0 && TranslationZ == 0)
-            {
-                // fast translation
-                ctx.Canvas.Translate((float)moveX, (float)moveY);
-                return;
-            }
-
-            float pivotX = (float)(destination.Left + destination.Width * AnchorX);
-            float pivotY = (float)(destination.Top + destination.Height * AnchorY);
-
-            var centerX = moveX + destination.Left + destination.Width * AnchorX;
-            var centerY = moveY + destination.Top + destination.Height * AnchorY;
-
-            var skewX = SkewX > 0 ? (float)Math.Tan(Math.PI * SkewX / 180f) : 0f;
-            var skewY = SkewY > 0 ? (float)Math.Tan(Math.PI * SkewY / 180f) : 0f;
-
-            if (Rotation != 0)
-            {
-                ctx.Canvas.RotateDegrees((float)Rotation, (float)centerX, (float)centerY);
-            }
-
-            var matrixTransforms = new SKMatrix
-            {
-                TransX = (float)moveX,
-                TransY = (float)moveY,
-                Persp0 = Perspective1,
-                Persp1 = Perspective2,
-                SkewX = skewX,
-                SkewY = skewY,
-                Persp2 = 1,
-                ScaleX = (float)ScaleX,
-                ScaleY = (float)ScaleY
-            };
-
-            var drawingMatrix = SKMatrix.CreateTranslation((float)-pivotX, (float)-pivotY).PostConcat(matrixTransforms);
-
-            if (draw3d || RotationX != 0 || RotationY != 0 || RotationZ != 0 || TranslationZ != 0)
-            {
-                draw3d = true;
-
-                Helper3d ??= new();
-                Helper3d.Reset();
-                Helper3d.RotateXDegrees((float)RotationX);
-                Helper3d.RotateYDegrees((float)RotationY);
-                Helper3d.RotateZDegrees(-(float)RotationZ);
-                Helper3d.Translate(0, 0, (float)TranslationZ);
-
-                drawingMatrix = drawingMatrix.PostConcat(Helper3d.Matrix);
-
-                draw3d = !(RotationX != 0 || RotationY != 0 || RotationZ != 0 || TranslationZ != 0);
-            }
-
-
-            drawingMatrix = drawingMatrix.PostConcat(SKMatrix.CreateTranslation(pivotX, pivotY))
-                .PostConcat(ctx.Canvas.TotalMatrix);
-
-            ctx.Canvas.SetMatrix(drawingMatrix);
-        }
-        */
         private bool draw3d;
 
         public static bool IsSimpleRectangle(SKPath path)
