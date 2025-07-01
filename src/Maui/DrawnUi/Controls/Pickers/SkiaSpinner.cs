@@ -558,7 +558,6 @@ public class SkiaSpinner : SkiaLayout
 
     #endregion
 
-
     #region GESTURES
 
     protected bool IsUserPanning;
@@ -573,12 +572,20 @@ public class SkiaSpinner : SkiaLayout
         return Math.Atan2(dy, dx) * 180.0 / Math.PI;
     }
 
-    double GetAngularVelocity(PointF velocity)
+    double GetAngularVelocity(PointF velocity, PointF touchPoint)
     {
         var center = new SKPoint(DrawingRect.MidX, DrawingRect.MidY);
         var radius = Math.Min(DrawingRect.Width, DrawingRect.Height) / 2.0;
         var linearVelocity = Math.Sqrt(velocity.X * velocity.X + velocity.Y * velocity.Y);
-        return linearVelocity / radius * 180.0 / Math.PI; // Convert to degrees per second
+
+        // need sign based on the direction of the swipe
+        var dx = touchPoint.X - center.X;
+        var dy = touchPoint.Y - center.Y;
+
+        var crossProduct = dx * velocity.Y - dy * velocity.X;
+        var sign = crossProduct >= 0 ? 1 : -1;
+
+        return sign * linearVelocity / radius * 180.0 / Math.PI; // degrees per second
     }
 
     protected bool InContact;
@@ -656,9 +663,9 @@ public class SkiaSpinner : SkiaLayout
 
             // Start fling animation if there's sufficient velocity
             var velocity = args.Event.Distance.Velocity;
-            var angularVelocity = GetAngularVelocity(velocity);
+            var angularVelocity = GetAngularVelocity(velocity, args.Event.Location); 
 
-            if (Math.Abs(angularVelocity) > 50) // Minimum velocity threshold
+            if (Math.Abs(angularVelocity) > 50) 
             {
                 StartFlingAnimation(angularVelocity);
             }
