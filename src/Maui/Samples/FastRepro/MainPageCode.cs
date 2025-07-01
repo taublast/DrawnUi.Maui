@@ -10,7 +10,7 @@ namespace Sandbox
     public class MainPageCode : BasePageReloadable, IDisposable
     {
         Canvas Canvas;
-        SkiaSpinner _spinner;
+        SkiaSpinner Spinner;
         SkiaLabel _selectedLabel;
         ObservableCollection<string> _spinnerItems;
 
@@ -52,8 +52,10 @@ namespace Sandbox
             };
 
             // Create the spinner
-            _spinner = new SkiaSpinner
+            Spinner = new SkiaSpinner
             {
+                //BackgroundColor = Colors.Aquamarine,
+                Velocity = 2.0,
                 ItemsSource = _spinnerItems,
                 InverseVisualRotation = true,
                 SidePosition = SidePosition.Left,
@@ -66,18 +68,19 @@ namespace Sandbox
             // Create selected item label
             _selectedLabel = new SkiaLabel
             {
+                //UseCache = SkiaCacheType.Operations,
                 FontSize = 18,
                 TextColor = Colors.White,
                 HorizontalOptions = LayoutOptions.Center,
                 Margin = new Thickness(0, 20, 0, 0)
-            }.Observe(_spinner, (me, prop) =>
+            }.Observe(Spinner, (me, prop) =>
             {
                 if (prop.IsEither(nameof(BindingContext), nameof(SkiaSpinner.SelectedIndex)))
                 {
                     var itemName = "None";
-                    if (_spinner.SelectedIndex >= 0)
+                    if (Spinner.SelectedIndex >= 0)
                     {
-                        itemName = $"{_spinnerItems[_spinner.SelectedIndex]} [{_spinner.SelectedIndex}]";
+                        itemName = $"{_spinnerItems[Spinner.SelectedIndex]} [{Spinner.SelectedIndex}]";
                     }
 
                     me.Text = $"Selected: {itemName}";
@@ -85,34 +88,37 @@ namespace Sandbox
             });
 
             // Subscribe to selection changes
-            _spinner.SelectedIndexChanged += OnSpinnerSelectionChanged;
+            Spinner.SelectedIndexChanged += OnSpinnerSelectionChanged;
 
             Canvas = new Canvas()
             {
+                RenderingMode = RenderingModeType.Accelerated,
                 VerticalOptions = LayoutOptions.Fill,
                 HorizontalOptions = LayoutOptions.Fill,
                 BackgroundColor = Colors.DarkSlateBlue,
                 Gestures = GesturesMode.Enabled,
-                Children =
-                {
+                Content =
                     new SkiaLayer()
                     {
                         VerticalOptions = LayoutOptions.Fill,
                         Children =
                         {
+            
                             new SkiaLayout()
                             {
                                 Type = LayoutType.Column,
+                                //UseCache = SkiaCacheType.ImageComposite,
                                 HorizontalOptions = LayoutOptions.Fill,
                                 VerticalOptions = LayoutOptions.Fill,
                                 Spacing = 20,
-                                Padding = new Thickness(20),
+                                Padding = new (20),
                                 Children =
                                 {
                                     // Title
                                     new SkiaLabel()
                                     {
                                         Text = "SkiaSpinner Demo",
+                                        UseCache = SkiaCacheType.Operations,
                                         FontSize = 24,
                                         FontWeight = FontWeights.Bold,
                                         TextColor = Colors.White,
@@ -123,6 +129,7 @@ namespace Sandbox
                                     // Instructions
                                     new SkiaLabel()
                                     {
+                                        UseCache = SkiaCacheType.Operations,
                                         Text = "Pan to spin the wheel, or tap the buttons below",
                                         FontSize = 14,
                                         TextColor = Colors.LightGray,
@@ -133,27 +140,28 @@ namespace Sandbox
                                     // Spinner container with triangle indicator
                                     new SkiaLayout()
                                     {
-                                        HorizontalOptions = LayoutOptions.Fill,
+                                        HorizontalOptions = LayoutOptions.Center,
                                         VerticalOptions = LayoutOptions.Fill,
-                                        Children = {
-                                            _spinner,
-                                            // Triangle indicator pointing at left center of spinner
+                                        Children =
+                                        {
+                                            Spinner,
+                                                // Selected item indicator
                                             new SkiaShape()
-                                            {
-                                                UseCache = SkiaCacheType.Operations,
-                                                Type = ShapeType.Polygon,
-                                                BackgroundColor = Colors.Red,
-                                                StrokeColor = Colors.White,
-                                                StrokeWidth = 1.5,
-                                                WidthRequest = 20,
-                                                HeightRequest = 30,
-                                                HorizontalOptions = LayoutOptions.Center,
-                                                VerticalOptions = LayoutOptions.Center,
-                                                Margin = new Thickness(0, 0, wheelSizePts, 0), 
-                                                ZIndex = 10 // Ensure it appears on top
-                                            }
-                                            .WithPoints( "1.0, 0.5; 0.0, 0.0; 0.0, 1.0;") // Triangle pointing right
-                                            //.WithPoints( "0.0, 0.5; 1.0, 0.0; 1.0, 1.0;") // Triangle pointing left
+                                                {
+                                                    Tag = "Arrow",
+                                                    UseCache = SkiaCacheType.Operations,
+                                                    Type = ShapeType.Polygon,
+                                                    BackgroundColor = Colors.Red,
+                                                    StrokeColor = Colors.White,
+                                                    StrokeWidth = 1.5,
+                                                    WidthRequest = 24,
+                                                    HeightRequest = 16,
+                                                    VerticalOptions = LayoutOptions.Center,
+                                                    TranslationX = -10,
+                                                    ZIndex = 10 // Ensure it appears on top
+                                                }
+                                                .WithPoints("1.0, 0.5; 0.0, 0.0; 0.0, 1.0;") // Triangle pointing right
+                                                //.WithPoints( "0.0, 0.5; 1.0, 0.0; 1.0, 1.0;") // Triangle pointing left
                                         }
                                     },
 
@@ -163,6 +171,7 @@ namespace Sandbox
                                     // Control buttons
                                     new SkiaLayout()
                                     {
+                                        UseCache = SkiaCacheType.Operations,
                                         Type = LayoutType.Row,
                                         HorizontalOptions = LayoutOptions.Center,
                                         Spacing = 15,
@@ -170,6 +179,7 @@ namespace Sandbox
                                         {
                                             new SkiaButton()
                                             {
+                                                UseCache = SkiaCacheType.Image,
                                                 Text = "Spin Random",
                                                 BackgroundColor = Colors.Orange,
                                                 TextColor = Colors.White,
@@ -178,6 +188,7 @@ namespace Sandbox
                                             new SkiaButton()
                                             {
                                                 Text = "Add Item",
+                                                UseCache = SkiaCacheType.Image,
                                                 BackgroundColor = Colors.Green,
                                                 TextColor = Colors.White,
                                                 CornerRadius = 8,
@@ -185,6 +196,7 @@ namespace Sandbox
                                             new SkiaButton()
                                             {
                                                 Text = "Remove Item",
+                                                UseCache = SkiaCacheType.Image,
                                                 BackgroundColor = Colors.Red,
                                                 TextColor = Colors.White,
                                                 CornerRadius = 8,
@@ -193,6 +205,7 @@ namespace Sandbox
                                     }
                                 }
                             },
+                  
 #if DEBUG
                             new SkiaLabelFps()
                             {
@@ -207,7 +220,6 @@ namespace Sandbox
 #endif
                         }
                     }
-                }
             };
 
             this.Content = Canvas;
@@ -232,7 +244,7 @@ namespace Sandbox
             switch (action)
             {
                 case "spin":
-                    _spinner.SpinToRandom();
+                    Spinner.SpinToRandom();
                     break;
 
                 case "add":
