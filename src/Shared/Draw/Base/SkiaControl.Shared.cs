@@ -3125,6 +3125,7 @@ namespace DrawnUi.Draw
 
             var useMaxWidth = rectAvailable.Pixels.Width;
             var useMaxHeight = rectAvailable.Pixels.Height;
+
             var availableWidth = destination.Width;
             var availableHeight = destination.Height;
 
@@ -3140,12 +3141,20 @@ namespace DrawnUi.Draw
             bool snapX = layoutHorizontal.Alignment != LayoutAlignment.Center;
             bool snapY = layoutVertical.Alignment != LayoutAlignment.Center;
 
+            bool useHorizontalThickness = widthRequest > 0;
+            bool useVerticalThickness = heightRequest > 0;
+            float marginHorizontalDelta = (float)((Margins.Left - Margins.Right) * scale);
+            float marginVerticalDelta = (float)((Margins.Top - Margins.Bottom) * scale);
+
+            var realWidth = useHorizontalThickness ? useMaxWidth + marginHorizontalDelta : useMaxWidth;
+            var realHeight = useVerticalThickness ? useMaxHeight + marginVerticalDelta : useMaxWidth;
+
             // layoutHorizontal
             switch (layoutHorizontal.Alignment)
             {
                 case LayoutAlignment.Center when float.IsFinite(availableWidth) && availableWidth > useMaxWidth:
                 {
-                    var half = availableWidth / 2.0f - useMaxWidth / 2.0f;
+                    var half = availableWidth / 2.0f - realWidth / 2.0f;
                     if (RoundCenterAlignment)
                     {
                         left += (float)Math.Ceiling(half);
@@ -3166,6 +3175,12 @@ namespace DrawnUi.Draw
                     if (right > destination.Right)
                     {
                         right = destination.Right;
+                    }
+
+                    if (useHorizontalThickness)
+                    {
+                        left += marginHorizontalDelta;
+                        right += marginHorizontalDelta;
                     }
 
                     break;
@@ -3200,7 +3215,7 @@ namespace DrawnUi.Draw
             {
                 case LayoutAlignment.Center when float.IsFinite(availableHeight) && availableHeight > useMaxHeight:
                 {
-                    var half = availableHeight / 2.0f - useMaxHeight / 2.0f;
+                    var half = availableHeight / 2.0f - realHeight / 2.0f;
                     if (RoundCenterAlignment)
                     {
                         top += (float)Math.Ceiling(half);
@@ -3222,6 +3237,12 @@ namespace DrawnUi.Draw
                     {
                         bottom = destination.Bottom;
                         top = bottom - useMaxHeight;
+                    }
+
+                    if (useVerticalThickness)
+                    {
+                        left += marginVerticalDelta;
+                        right += marginVerticalDelta;
                     }
 
                     break;
@@ -5134,7 +5155,11 @@ namespace DrawnUi.Draw
 
         public virtual VisualLayer CreateRenderedNode(SKRect destination, float scale)
         {
-            VisualLayer parentVisualNode = (Parent as SkiaControl)?.VisualLayer;
+            VisualLayer parentVisualNode = null;
+            if (Parent is SkiaControl skia)
+            {
+                parentVisualNode = skia.VisualLayer;
+            }
 
             VisualLayer = new VisualLayer(this, parentVisualNode, destination, scale);
 
