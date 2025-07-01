@@ -48,8 +48,6 @@ public class SkiaSpinner : SkiaLayout
         // Bind the wheel rotation between spinner and wheel shape
         Wheel.SetBinding(SkiaWheelShape.WheelRotationProperty,
             new Binding(nameof(WheelRotation), source: this));
-        Wheel.SetBinding(SkiaWheelShape.WheelRadiusProperty,
-            new Binding(nameof(WheelRadius), source: this));
         Wheel.SetBinding(SkiaWheelShape.InverseVisualRotationProperty,
             new Binding(nameof(InverseVisualRotation), source: this));
 
@@ -187,19 +185,6 @@ public class SkiaSpinner : SkiaLayout
     {
         get => (DataTemplate)GetValue(ItemTemplateProperty);
         set => SetValue(ItemTemplateProperty, value);
-    }
-
-    public static readonly BindableProperty WheelRadiusProperty = BindableProperty.Create(
-        nameof(WheelRadius),
-        typeof(double),
-        typeof(SkiaSpinner),
-        100.0,
-        propertyChanged: NeedDraw);
-
-    public double WheelRadius
-    {
-        get => (double)GetValue(WheelRadiusProperty);
-        set => SetValue(WheelRadiusProperty, value);
     }
 
     public static readonly BindableProperty SelectionPositionProperty = BindableProperty.Create(
@@ -390,7 +375,7 @@ public class SkiaSpinner : SkiaLayout
     /// <param name="index">Target index to spin to</param>
     /// <param name="spins">Number of extra full rotations (0 = direct spin)</param>
     /// <param name="speed">Animation duration in milliseconds</param>
-    public void SpinToIndex(int index, int spins = 0, uint speed = 300)
+    public void SpinToIndex(int index, int spins = 0, uint speed = 350)
     {
         if (ItemsCount == 0 || index < 0 || index >= ItemsCount) return;
 
@@ -408,7 +393,7 @@ public class SkiaSpinner : SkiaLayout
     /// <param name="index">Target index to spin to</param>
     /// <param name="spins">Number of extra full rotations (0 = direct spin)</param>
     /// <param name="speed">Animation duration in milliseconds</param>
-    public void SpinToIndexShortest(int index, uint speed = 300)
+    public void SpinToIndexShortest(int index, uint speed = 350)
     {
         if (ItemsCount == 0 || index < 0 || index >= ItemsCount) return;
 
@@ -469,6 +454,8 @@ public class SkiaSpinner : SkiaLayout
     public void SpinToRandom()
     {
         if (ItemsCount == 0) return;
+
+        StopScrolling();
 
         var random = new Random();
         var randomIndex = random.Next(ItemsCount);

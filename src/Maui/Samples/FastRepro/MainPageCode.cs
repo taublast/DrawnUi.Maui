@@ -1,5 +1,6 @@
 ﻿using DrawnUi.Views;
 using DrawnUi.Controls;
+using DrawnUi.Draw;
 using Canvas = DrawnUi.Views.Canvas;
 using System.Collections.ObjectModel;
 using AppoMobi.Specials;
@@ -31,6 +32,8 @@ namespace Sandbox
         {
             Canvas?.Dispose();
 
+            var wheelSizePts = 320.0;
+
             // Initialize spinner items
             _spinnerItems = new ObservableCollection<string>
             {
@@ -54,9 +57,8 @@ namespace Sandbox
                 ItemsSource = _spinnerItems,
                 InverseVisualRotation = true,
                 SidePosition = SidePosition.Left,
-                WheelRadius = 150,
-                WidthRequest = 320,
-                HeightRequest = 320,
+                WidthRequest = wheelSizePts,
+                HeightRequest = wheelSizePts,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center
             };
@@ -128,12 +130,31 @@ namespace Sandbox
                                         HorizontalTextAlignment = DrawTextAlignment.Center
                                     },
 
-                                    // Spinner container
+                                    // Spinner container with triangle indicator
                                     new SkiaLayout()
                                     {
                                         HorizontalOptions = LayoutOptions.Fill,
                                         VerticalOptions = LayoutOptions.Fill,
-                                        Children = { _spinner }
+                                        Children = {
+                                            _spinner,
+                                            // Triangle indicator pointing at left center of spinner
+                                            new SkiaShape()
+                                            {
+                                                UseCache = SkiaCacheType.Operations,
+                                                Type = ShapeType.Polygon,
+                                                BackgroundColor = Colors.Red,
+                                                StrokeColor = Colors.White,
+                                                StrokeWidth = 1.5,
+                                                WidthRequest = 20,
+                                                HeightRequest = 30,
+                                                HorizontalOptions = LayoutOptions.Center,
+                                                VerticalOptions = LayoutOptions.Center,
+                                                Margin = new Thickness(0, 0, wheelSizePts, 0), 
+                                                ZIndex = 10 // Ensure it appears on top
+                                            }
+                                            .WithPoints( "1.0, 0.5; 0.0, 0.0; 0.0, 1.0;") // Triangle pointing right
+                                            //.WithPoints( "0.0, 0.5; 1.0, 0.0; 1.0, 1.0;") // Triangle pointing left
+                                        }
                                     },
 
                                     // Selected item display

@@ -32,22 +32,6 @@ public class SkiaWheelShape : SkiaShape
         set => SetValue(WheelRotationProperty, value);
     }
 
-    public static readonly BindableProperty WheelRadiusProperty = BindableProperty.Create(
-        nameof(WheelRadius),
-        typeof(double),
-        typeof(SkiaWheelShape),
-        100.0,
-        propertyChanged: NeedDraw);
-
-    /// <summary>
-    /// Gets or sets the radius of the wheel in pixels
-    /// </summary>
-    public double WheelRadius
-    {
-        get => (double)GetValue(WheelRadiusProperty);
-        set => SetValue(WheelRadiusProperty, value);
-    }
-
     public static readonly BindableProperty InverseVisualRotationProperty = BindableProperty.Create(
         nameof(InverseVisualRotation),
         typeof(bool),
