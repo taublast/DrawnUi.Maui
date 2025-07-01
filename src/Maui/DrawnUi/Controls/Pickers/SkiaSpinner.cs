@@ -19,16 +19,21 @@ public enum SelectionPosition
 [ContentProperty("ItemTemplate")]
 public class SkiaSpinner : SkiaLayout
 {
-
-
     public class SpinnerSlice : SkiaShape
     {
-
     }
 
     public SkiaSpinner()
     {
         CreateUi();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        _rangeAnimator?.Dispose();
+        _flingAnimator?.Dispose();
     }
 
     #region BINDABLE PROPERTIES
@@ -54,8 +59,9 @@ public class SkiaSpinner : SkiaLayout
         {
             _wheelShape.ItemsSource = this.ItemsSource;
             _wheelShape.ItemTemplate = this.ItemTemplate ?? DefaultTemplate;
-            _wheelShape.InverseVisualRotation = this.InverseVisualRotation; 
+            _wheelShape.InverseVisualRotation = this.InverseVisualRotation;
         }
+
         UpdateSelectedIndexFromRotation();
     }
 
@@ -88,16 +94,8 @@ public class SkiaSpinner : SkiaLayout
 
     static Color[] DefaultColors = new[]
     {
-        Colors.Cyan,
-        Colors.Blue,
-        Colors.Green,
-        Colors.Lime,
-        Colors.Yellow,
-        Colors.Orange,
-        Colors.Red,
-        Colors.Purple,
-        Colors.Magenta,
-        Colors.Pink,
+        Colors.Cyan, Colors.Blue, Colors.Green, Colors.Lime, Colors.Yellow, Colors.Orange, Colors.Red,
+        Colors.Purple, Colors.Magenta, Colors.Pink,
     };
 
     /// <summary>
@@ -141,6 +139,7 @@ public class SkiaSpinner : SkiaLayout
                         }
                     }
                 }
+
                 _lastRandomColor = color;
                 me.BackgroundColor = color;
                 if (me.ContextIndex == 0)
@@ -300,6 +299,7 @@ public class SkiaSpinner : SkiaLayout
             {
                 return 0;
             }
+
             return ItemsSource.Count;
         }
     }
@@ -358,7 +358,6 @@ public class SkiaSpinner : SkiaLayout
     }
 
 
-
     /// <summary>
     /// Gets the angle offset for the current selection position
     /// </summary>
@@ -374,11 +373,88 @@ public class SkiaSpinner : SkiaLayout
         };
     }
 
-
-
     #endregion
 
     #region PUBLIC METHODS
+
+    /// <summary>
+    /// Spins the wheel to a specific index with animation
+    /// </summary>
+    /// <param name="index">Target index to spin to</param>
+    /// <param name="spins">Number of extra full rotations (0 = direct spin)</param>
+    /// <param name="speed">Animation duration in milliseconds</param>
+    public void SpinToIndex(int index, int spins = 0, uint speed = 300)
+    {
+        if (ItemsCount == 0 || index < 0 || index >= ItemsCount) return;
+
+        var targetRotation = GetRotationForIndex(index);
+
+        // Add extra spins for dramatic effect
+        targetRotation += (spins * 360);
+
+        Rotate(targetRotation, speed);
+    }
+
+    /// <summary>
+    /// Spins the wheel to a specific index with shortest path with animation
+    /// </summary>
+    /// <param name="index">Target index to spin to</param>
+    /// <param name="spins">Number of extra full rotations (0 = direct spin)</param>
+    /// <param name="speed">Animation duration in milliseconds</param>
+    public void SpinToIndexShortest(int index, uint speed = 300)
+    {
+        if (ItemsCount == 0 || index < 0 || index >= ItemsCount) return;
+
+        var baseTargetRotation = GetRotationForIndex(index);
+        double finalTargetRotation;
+
+        var shortestDistance = GetShortestRotationDistance(WheelRotation, baseTargetRotation);
+        finalTargetRotation = WheelRotation + shortestDistance;
+
+        Rotate(finalTargetRotation, speed);
+    }
+
+    /// <summary>
+    /// Gets the shortest rotation distance from current rotation to target rotation
+    /// </summary>
+    /// <param name="currentRotation">Current wheel rotation</param>
+    /// <param name="targetRotation">Target rotation</param>
+    /// <returns>Shortest rotation distance (can be negative for counterclockwise)</returns>
+    public double GetShortestRotationDistance(double currentRotation, double targetRotation)
+    {
+        var difference = targetRotation - currentRotation;
+
+        // Normalize the difference to [-180, 180] range for shortest path
+        while (difference > 180) difference -= 360;
+        while (difference < -180) difference += 360;
+
+        return difference;
+    }
+
+    /// <summary>
+    /// Gets the rotation value needed to position a specific index at the selection position
+    /// </summary>
+    /// <param name="index">Target index</param>
+    /// <returns>Rotation value in degrees</returns>
+    public double GetRotationForIndex(int index)
+    {
+        if (ItemsCount == 0 || index < 0 || index >= ItemsCount)
+            return WheelRotation;
+
+        var anglePerItem = 360.0 / ItemsCount;
+        var positionOffset = GetSelectionPositionOffset();
+
+        // Calculate target rotation using the same logic as UpdateWheelRotationFromIndex
+        var targetRotation = -(index * anglePerItem + positionOffset);
+
+        // When visual rotation is inverted, flip the rotation calculation
+        if (InverseVisualRotation)
+        {
+            targetRotation = -targetRotation - positionOffset * 2;
+        }
+
+        return targetRotation;
+    }
 
     /// <summary>
     /// Spins the wheel to a random position with animation
@@ -390,11 +466,10 @@ public class SkiaSpinner : SkiaLayout
         var random = new Random();
         var randomIndex = random.Next(ItemsCount);
         var extraSpins = random.Next(3, 8); // 3-7 full rotations for dramatic effect
+        var animationDuration = (uint)(2000 + random.Next(1000)); // 2-3 seconds
 
-        var anglePerItem = 360.0 / ItemsCount;
-        var targetRotation = -(randomIndex * anglePerItem) + (extraSpins * 360);
-
-        Rotate(targetRotation, (uint)(2000 + random.Next(1000))); // 2-3 seconds
+        Debug.WriteLine($"SpinToRandom {randomIndex}");
+        SpinToIndex(randomIndex, extraSpins, animationDuration);
     }
 
     /// <summary>
@@ -402,12 +477,193 @@ public class SkiaSpinner : SkiaLayout
     /// </summary>
     public void Rotate(double targetRotation, uint durationMs = 500)
     {
-        var animator = new RangeAnimator(this);
-        animator.Start(value =>
+        if (_rangeAnimator == null)
         {
-            WheelRotation = value;
+            _rangeAnimator = new RangeAnimator(this);
+        }
+        else if (_rangeAnimator.IsRunning)
+        {
+            _rangeAnimator.Stop();
+        }
 
-        }, WheelRotation, targetRotation, durationMs, Easing.CubicOut);
+        _rangeAnimator.Start(value => { WheelRotation = value; }, WheelRotation, targetRotation, durationMs,
+            Easing.CubicOut);
+    }
+
+    #endregion
+
+    #region SCROLLING
+
+    protected RangeAnimator _rangeAnimator;
+    protected ScrollFlingAnimator _flingAnimator;
+
+    public void StopScrolling()
+    {
+        if (_flingAnimator != null && _flingAnimator.IsRunning)
+        {
+            _flingAnimator.Stop();
+        }
+
+        if (_rangeAnimator != null && _rangeAnimator.IsRunning)
+        {
+            _rangeAnimator.Stop();
+        }
+
+        //VelocityTrackerPan.Clear();
+        //VelocityTrackerScale.Clear();
+    }
+
+    void StartFlingAnimation(double angularVelocity)
+    {
+        if (_flingAnimator == null)
+        {
+            _flingAnimator = new ScrollFlingAnimator(this);
+        }
+
+        var deceleration = 0.95f; // Adjust for desired friction
+        var threshold = 1.0f; // Stop when velocity is below this threshold
+
+        _flingAnimator.OnUpdated = (value) => { WheelRotation = value; };
+
+        _flingAnimator.OnStop = () => { SnapToNearestItem(); };
+
+        _flingAnimator.InitializeWithVelocity((float)WheelRotation, (float)angularVelocity, deceleration, threshold);
+        _flingAnimator.Start();
+    }
+
+
+    void SnapToNearestItem()
+    {
+        if (Children.Count == 0)
+        {
+            return;
+        }
+
+        var targetRotation = GetRotationForIndex(SelectedIndex);
+        if (!CompareDoubles(targetRotation, WheelRotation, 0.1))
+        {
+            Debug.WriteLine($"Snapping from {WheelRotation} to {targetRotation} at {SelectedIndex}");
+            SpinToIndexShortest(SelectedIndex);
+        }
+    }
+
+    #endregion
+
+
+    #region GESTURES
+
+    protected bool IsUserPanning;
+    double _lastPanAngle;
+    double _panStartRotation;
+
+    double GetAngleFromPoint(PointF point)
+    {
+        var center = new SKPoint(DrawingRect.MidX, DrawingRect.MidY);
+        var dx = point.X - center.X;
+        var dy = point.Y - center.Y;
+        return Math.Atan2(dy, dx) * 180.0 / Math.PI;
+    }
+
+    double GetAngularVelocity(PointF velocity)
+    {
+        var center = new SKPoint(DrawingRect.MidX, DrawingRect.MidY);
+        var radius = Math.Min(DrawingRect.Width, DrawingRect.Height) / 2.0;
+        var linearVelocity = Math.Sqrt(velocity.X * velocity.X + velocity.Y * velocity.Y);
+        return linearVelocity / radius * 180.0 / Math.PI; // Convert to degrees per second
+    }
+
+    protected bool InContact;
+    public bool HadDown { get; protected set; }
+
+    protected virtual void ResetPan()
+    {
+        //_pannedOffset = Vector2.Zero;
+        //_pannedVelocity = Vector2.Zero;
+        //_pannedVelocityRemaining = Vector2.Zero;
+
+        //ChildWasTapped = false;
+        //WasSwiping = false;
+        //IsUserFocused = true;
+        IsUserPanning = false;
+        //ChildWasPanning = false;
+        //ChildWasTapped = false;
+
+        StopScrolling();
+
+        //SwipeVelocityAccumulator.Clear();
+
+        //_panningLastDelta = Vector2.Zero;
+        //_panningStartOffsetPts = new(ViewportOffsetX, ViewportOffsetY);
+        //_panningCurrentOffsetPts =
+        //    _panningStartOffsetPts; //new(InternalViewportOffset.Units.X, InternalViewportOffset.Units.Y);
+    }
+
+    public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
+    {
+        var consumedDefault = BlockGesturesBelow ? this : null;
+
+        if (!RespondsToGestures || _wheelShape == null || ItemsCount < 1)
+        {
+            return consumedDefault;
+        }
+
+        if (args.Type == TouchActionResult.Down)
+        {
+            InContact = true;
+            HadDown = true;
+            ResetPan();
+
+            _panStartRotation = WheelRotation;
+            _lastPanAngle = GetAngleFromPoint(args.Event.Location);
+            return this;
+        }
+
+        if (args.Type == TouchActionResult.Up)
+        {
+            HadDown = false;
+            InContact = false;
+        }
+
+        if (args.Type == TouchActionResult.Panning)
+        {
+            IsUserPanning = true;
+
+            var currentAngle = GetAngleFromPoint(args.Event.Location);
+            var deltaAngle = currentAngle - _lastPanAngle;
+
+            // Handle angle wrapping
+            if (deltaAngle > 180) deltaAngle -= 360;
+            if (deltaAngle < -180) deltaAngle += 360;
+
+            WheelRotation += deltaAngle;
+            _lastPanAngle = currentAngle;
+
+            return this;
+        }
+
+        if (args.Type == TouchActionResult.Up && IsUserPanning)
+        {
+            IsUserPanning = false;
+
+            // Start fling animation if there's sufficient velocity
+            var velocity = args.Event.Distance.Velocity;
+            var angularVelocity = GetAngularVelocity(velocity);
+
+            if (Math.Abs(angularVelocity) > 50) // Minimum velocity threshold
+            {
+                //StartFlingAnimation(angularVelocity);
+                Debug.WriteLine($"WONNA FLEE velocity {angularVelocity}");
+            }
+
+            //else
+            {
+                SnapToNearestItem();
+            }
+
+            return null;
+        }
+
+        return base.ProcessGestures(args, apply);
     }
 
     #endregion
