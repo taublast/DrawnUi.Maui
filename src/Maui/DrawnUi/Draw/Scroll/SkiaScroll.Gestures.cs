@@ -68,7 +68,7 @@ public partial class SkiaScroll
         return forChild;
     }
 
-    private bool inContact;
+    protected bool InContact;
 
     protected bool LockGesturesUntilDown;
 
@@ -175,14 +175,14 @@ public partial class SkiaScroll
         if (args.Type == TouchActionResult.Down)
         {
             lockHeader = false;
-            inContact = true;
+            InContact = true;
             HadDown = true;
         }
         else if (args.Type == TouchActionResult.Up)
         {
             lockHeader = false;
             HadDown = false;
-            inContact = false;
+            InContact = false;
         }
 
         var preciseStop = false;
