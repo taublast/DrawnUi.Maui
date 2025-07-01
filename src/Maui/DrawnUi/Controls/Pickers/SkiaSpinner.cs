@@ -518,19 +518,28 @@ public class SkiaSpinner : SkiaLayout
         if (_flingAnimator == null)
         {
             _flingAnimator = new ScrollFlingAnimator(this);
+            _flingAnimator.OnStop = () =>
+            {
+                SnapToNearestItem();
+            };
+            _flingAnimator.OnUpdated = (value) =>
+            {
+                WheelRotation = value;
+            };
+        }
+        else
+        if (_flingAnimator.IsRunning)
+        {
+            _flingAnimator.Stop();
         }
 
-        var deceleration = 0.95f; // Adjust for desired friction
-        var threshold = 1.0f; // Stop when velocity is below this threshold
+        var deceleration = 1 - 0.002f; // make property from this?
 
-        _flingAnimator.OnUpdated = (value) => { WheelRotation = value; };
+        Debug.WriteLine($"Start FLEEING with velocity {angularVelocity}");
 
-        _flingAnimator.OnStop = () => { SnapToNearestItem(); };
-
-        _flingAnimator.InitializeWithVelocity((float)WheelRotation, (float)angularVelocity, deceleration, threshold);
+        _flingAnimator.InitializeWithVelocity((float)WheelRotation, (float)angularVelocity, deceleration);
         _flingAnimator.Start();
     }
-
 
     void SnapToNearestItem()
     {
@@ -651,11 +660,9 @@ public class SkiaSpinner : SkiaLayout
 
             if (Math.Abs(angularVelocity) > 50) // Minimum velocity threshold
             {
-                //StartFlingAnimation(angularVelocity);
-                Debug.WriteLine($"WONNA FLEE velocity {angularVelocity}");
+                StartFlingAnimation(angularVelocity);
             }
-
-            //else
+            else
             {
                 SnapToNearestItem();
             }

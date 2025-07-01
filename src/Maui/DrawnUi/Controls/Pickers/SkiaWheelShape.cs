@@ -71,12 +71,10 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
         if (skiaControls == null)
             return 0;
 
-
         var total = ItemsSource.Count;
 
         List<SkiaControlWithRect> tree = new();
-        var childrenList = skiaControls.ToList();
-
+ 
         for (int index = 0; index < total; index++)
         {
             var child = ChildrenFactory.GetViewForIndex(index);
