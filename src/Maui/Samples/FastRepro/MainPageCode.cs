@@ -24,7 +24,9 @@ namespace Sandbox
             base.Dispose(isDisposing);
         }
 
-
+        /// <summary>
+        /// This will be called by HotReload
+        /// </summary>
         public override void Build()
         {
             Canvas?.Dispose();
@@ -51,7 +53,7 @@ namespace Sandbox
             {
                 ItemsSource = _spinnerItems,
                 InverseVisualRotation = true,
-                SelectionPosition = SelectionPosition.Left,
+                SidePosition = SidePosition.Left,
                 WheelRadius = 150,
                 WidthRequest = 320,
                 HeightRequest = 320,
@@ -75,6 +77,7 @@ namespace Sandbox
                     {
                         itemName = $"{_spinnerItems[_spinner.SelectedIndex]} [{_spinner.SelectedIndex}]";
                     }
+
                     me.Text = $"Selected: {itemName}";
                 }
             });
@@ -90,81 +93,97 @@ namespace Sandbox
                 Gestures = GesturesMode.Enabled,
                 Children =
                 {
-                    new SkiaLayout()
+                    new SkiaLayer()
                     {
-                        Type = LayoutType.Column,
-                        HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill,
-                        Spacing = 20,
-                        Padding = new Thickness(20),
                         Children =
                         {
-                            // Title
-                            new SkiaLabel()
-                            {
-                                Text = "SkiaSpinner Demo",
-                                FontSize = 24,
-                                FontWeight = FontWeights.Bold,
-                                TextColor = Colors.White,
-                                HorizontalOptions = LayoutOptions.Center,
-                                Margin = new Thickness(0, 20, 0, 0)
-                            },
-
-                            // Instructions
-                            new SkiaLabel()
-                            {
-                                Text = "Pan to spin the wheel, or tap the buttons below",
-                                FontSize = 14,
-                                TextColor = Colors.LightGray,
-                                HorizontalOptions = LayoutOptions.Center,
-                                HorizontalTextAlignment = DrawTextAlignment.Center
-                            },
-
-                            // Spinner container
                             new SkiaLayout()
                             {
+                                Type = LayoutType.Column,
                                 HorizontalOptions = LayoutOptions.Fill,
                                 VerticalOptions = LayoutOptions.Fill,
-                                Children = { _spinner }
-                            },
-
-                            // Selected item display
-                            _selectedLabel,
-
-                            // Control buttons
-                            new SkiaLayout()
-                            {
-                                Type = LayoutType.Row,
-                                HorizontalOptions = LayoutOptions.Center,
-                                Spacing = 15,
+                                Spacing = 20,
+                                Padding = new Thickness(20),
                                 Children =
                                 {
-                                    new SkiaButton()
+                                    // Title
+                                    new SkiaLabel()
                                     {
-                                        Text = "Spin Random",
-                                        BackgroundColor = Colors.Orange,
+                                        Text = "SkiaSpinner Demo",
+                                        FontSize = 24,
+                                        FontWeight = FontWeights.Bold,
                                         TextColor = Colors.White,
-                                        CornerRadius = 8,
-                                        Padding = new Thickness(15, 10),
-                                    }.OnTapped(me => { OnButtonTapped("spin"); }),
-                                    new SkiaButton()
+                                        HorizontalOptions = LayoutOptions.Center,
+                                        Margin = new Thickness(0, 20, 0, 0)
+                                    },
+
+                                    // Instructions
+                                    new SkiaLabel()
                                     {
-                                        Text = "Add Item",
-                                        BackgroundColor = Colors.Green,
-                                        TextColor = Colors.White,
-                                        CornerRadius = 8,
-                                        Padding = new Thickness(15, 10),
-                                    }.OnTapped(me => { OnButtonTapped("add"); }),
-                                    new SkiaButton()
+                                        Text = "Pan to spin the wheel, or tap the buttons below",
+                                        FontSize = 14,
+                                        TextColor = Colors.LightGray,
+                                        HorizontalOptions = LayoutOptions.Center,
+                                        HorizontalTextAlignment = DrawTextAlignment.Center
+                                    },
+
+                                    // Spinner container
+                                    new SkiaLayout()
                                     {
-                                        Text = "Remove Item",
-                                        BackgroundColor = Colors.Red,
-                                        TextColor = Colors.White,
-                                        CornerRadius = 8,
-                                        Padding = new Thickness(15, 10),
-                                    }.OnTapped(me => { OnButtonTapped("remove"); }),
+                                        HorizontalOptions = LayoutOptions.Fill,
+                                        VerticalOptions = LayoutOptions.Fill,
+                                        Children = { _spinner }
+                                    },
+
+                                    // Selected item display
+                                    _selectedLabel,
+
+                                    // Control buttons
+                                    new SkiaLayout()
+                                    {
+                                        Type = LayoutType.Row,
+                                        HorizontalOptions = LayoutOptions.Center,
+                                        Spacing = 15,
+                                        Children =
+                                        {
+                                            new SkiaButton()
+                                            {
+                                                Text = "Spin Random",
+                                                BackgroundColor = Colors.Orange,
+                                                TextColor = Colors.White,
+                                                CornerRadius = 8,
+                                            }.OnTapped(me => { OnButtonTapped("spin"); }),
+                                            new SkiaButton()
+                                            {
+                                                Text = "Add Item",
+                                                BackgroundColor = Colors.Green,
+                                                TextColor = Colors.White,
+                                                CornerRadius = 8,
+                                            }.OnTapped(me => { OnButtonTapped("add"); }),
+                                            new SkiaButton()
+                                            {
+                                                Text = "Remove Item",
+                                                BackgroundColor = Colors.Red,
+                                                TextColor = Colors.White,
+                                                CornerRadius = 8,
+                                            }.OnTapped(me => { OnButtonTapped("remove"); }),
+                                        }
+                                    }
                                 }
+                            },
+#if DEBUG
+                            new SkiaLabelFps()
+                            {
+                                Margin = new(0, 0, 4, 24),
+                                VerticalOptions = LayoutOptions.End,
+                                HorizontalOptions = LayoutOptions.End,
+                                Rotation = -45,
+                                BackgroundColor = Colors.DarkRed,
+                                TextColor = Colors.White,
+                                ZIndex = 110,
                             }
+#endif
                         }
                     }
                 }

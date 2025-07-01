@@ -4,14 +4,6 @@ using System.ComponentModel;
 
 namespace DrawnUi.Controls;
 
-public enum SelectionPosition
-{
-    Top,
-    Right,
-    Bottom,
-    Left
-}
-
 /// <summary>
 /// A wheel-of-names spinner control that displays items in a circular arrangement
 /// and allows spinning to select an item through gesture interaction.
@@ -19,10 +11,6 @@ public enum SelectionPosition
 [ContentProperty("ItemTemplate")]
 public class SkiaSpinner : SkiaLayout
 {
-    public class SpinnerSlice : SkiaShape
-    {
-    }
-
     public SkiaSpinner()
     {
         CreateUi();
@@ -36,30 +24,70 @@ public class SkiaSpinner : SkiaLayout
         _flingAnimator?.Dispose();
     }
 
+    #region UI
+
+    protected SkiaWheelShape Wheel;
+
+    protected virtual SkiaWheelShape CreateWheel()
+    {
+        return new SkiaWheelShape
+        {
+            Type = ShapeType.Circle,
+            BackgroundColor = Colors.Black,
+            StrokeColor = Colors.CadetBlue,
+            StrokeWidth = 2,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill
+        };
+    }
+
+    new void CreateUi()
+    {
+        Wheel = CreateWheel();
+
+        // Bind the wheel rotation between spinner and wheel shape
+        Wheel.SetBinding(SkiaWheelShape.WheelRotationProperty,
+            new Binding(nameof(WheelRotation), source: this));
+        Wheel.SetBinding(SkiaWheelShape.WheelRadiusProperty,
+            new Binding(nameof(WheelRadius), source: this));
+        Wheel.SetBinding(SkiaWheelShape.InverseVisualRotationProperty,
+            new Binding(nameof(InverseVisualRotation), source: this));
+
+        Children = new List<SkiaControl>() { Wheel };
+    }
+
+    #endregion
+
     #region BINDABLE PROPERTIES
 
+    // Redirect ItemsSource property to inner wheel shape
     public override void ResetItemsSource()
     {
         SyncItemsSource();
     }
 
+    // Redirect ItemsSource property to inner wheel shape
     public override void OnItemSourceChanged()
     {
         SyncItemsSource();
     }
 
+    // Redirect ItemsSource property to inner wheel shape
     protected override void ItemsSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
     {
         SyncItemsSource();
     }
 
+    /// <summary>
+    /// Redirect ItemsSource property to inner wheel shape
+    /// </summary>
     void SyncItemsSource()
     {
-        if (_wheelShape != null)
+        if (Wheel != null)
         {
-            _wheelShape.ItemsSource = this.ItemsSource;
-            _wheelShape.ItemTemplate = this.ItemTemplate ?? DefaultTemplate;
-            _wheelShape.InverseVisualRotation = this.InverseVisualRotation;
+            Wheel.ItemsSource = this.ItemsSource;
+            Wheel.ItemTemplate = this.ItemTemplate ?? DefaultTemplate;
+            Wheel.InverseVisualRotation = this.InverseVisualRotation;
         }
 
         UpdateSelectedIndexFromRotation();
@@ -112,7 +140,7 @@ public class SkiaSpinner : SkiaLayout
     {
         var cell = new SkiaMarkdownLabel()
         {
-            UseCache = SkiaCacheType.Image,
+            UseCache = SkiaCacheType.Operations,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
             HorizontalTextAlignment = DrawTextAlignment.Center,
@@ -152,6 +180,9 @@ public class SkiaSpinner : SkiaLayout
         return cell;
     });
 
+
+
+
     public new DataTemplate ItemTemplate
     {
         get => (DataTemplate)GetValue(ItemTemplateProperty);
@@ -172,18 +203,18 @@ public class SkiaSpinner : SkiaLayout
     }
 
     public static readonly BindableProperty SelectionPositionProperty = BindableProperty.Create(
-        nameof(SelectionPosition),
-        typeof(SelectionPosition),
+        nameof(SidePosition),
+        typeof(SidePosition),
         typeof(SkiaSpinner),
-        SelectionPosition.Right,
+        SidePosition.Right,
         propertyChanged: OnSelectionPositionChanged);
 
     /// <summary>
     /// Determines where on the wheel the selected item is calculated (Top, Right, Bottom, Left)
     /// </summary>
-    public SelectionPosition SelectionPosition
+    public SidePosition SidePosition
     {
-        get => (SelectionPosition)GetValue(SelectionPositionProperty);
+        get => (SidePosition)GetValue(SelectionPositionProperty);
         set => SetValue(SelectionPositionProperty, value);
     }
 
@@ -236,8 +267,6 @@ public class SkiaSpinner : SkiaLayout
 
     #region PRIVATE FIELDS
 
-    SkiaWheelShape _wheelShape;
-
     //readonly List<object> _itemsList = new();
     bool _isUpdatingFromRotation;
 
@@ -259,37 +288,11 @@ public class SkiaSpinner : SkiaLayout
         if (bindable is SkiaSpinner spinner)
         {
             spinner.UpdateSelectedIndexFromRotation();
-            spinner._wheelShape.Rotation = spinner.WheelRotation;
+            spinner.Wheel.Rotation = spinner.WheelRotation;
         }
     }
 
     #endregion
-
-    #region PRIVATE METHODS
-
-    new void CreateUi()
-    {
-        _wheelShape = new SkiaWheelShape
-        {
-            Type = ShapeType.Circle,
-            BackgroundColor = Colors.Black,
-            StrokeColor = Colors.CadetBlue,
-            StrokeWidth = 2,
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill
-        };
-
-        // Bind the wheel rotation between spinner and wheel shape
-        _wheelShape.SetBinding(SkiaWheelShape.WheelRotationProperty,
-            new Binding(nameof(WheelRotation), source: this));
-        _wheelShape.SetBinding(SkiaWheelShape.WheelRadiusProperty,
-            new Binding(nameof(WheelRadius), source: this));
-        _wheelShape.SetBinding(SkiaWheelShape.InverseVisualRotationProperty,
-            new Binding(nameof(InverseVisualRotation), source: this));
-
-        Children = new List<SkiaControl>() { _wheelShape };
-    }
-
 
     protected int ItemsCount
     {
@@ -303,6 +306,10 @@ public class SkiaSpinner : SkiaLayout
             return ItemsSource.Count;
         }
     }
+
+    #region PRIVATE METHODS
+
+
 
     void UpdateSelectedIndexFromRotation()
     {
@@ -363,12 +370,12 @@ public class SkiaSpinner : SkiaLayout
     /// </summary>
     public double GetSelectionPositionOffset()
     {
-        return SelectionPosition switch
+        return SidePosition switch
         {
-            SelectionPosition.Top => 0,
-            SelectionPosition.Right => 90,
-            SelectionPosition.Bottom => 180,
-            SelectionPosition.Left => 270,
+            SidePosition.Top => 0,
+            SidePosition.Right => 90,
+            SidePosition.Bottom => 180,
+            SidePosition.Left => 270,
             _ => 90
         };
     }
@@ -618,7 +625,7 @@ public class SkiaSpinner : SkiaLayout
     {
         var consumedDefault = BlockGesturesBelow ? this : null;
 
-        if (!RespondsToGestures || _wheelShape == null || ItemsCount < 1)
+        if (!RespondsToGestures || Wheel == null || ItemsCount < 1)
         {
             return consumedDefault;
         }

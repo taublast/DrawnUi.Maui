@@ -6,13 +6,12 @@ namespace DrawnUi.Controls;
 /// Custom SkiaShape that positions children in a circular arrangement around the wheel circumference.
 /// Handles rotation and positioning calculations for the spinner wheel.
 /// </summary>
-public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
+public class SkiaWheelShape : SkiaShape
 {
     public SkiaWheelShape()
     {
         Type = ShapeType.Circle;
-        UseCache = SkiaCacheType.Operations;
-        RecyclingTemplate = RecyclingTemplate.Disabled;
+        UseCache = SkiaCacheType.Image;
     }
 
     #region BINDABLE PROPERTIES
@@ -22,8 +21,11 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
         typeof(double),
         typeof(SkiaWheelShape),
         0.0,
-        propertyChanged: NeedDraw);
+        propertyChanged: NeedRepaint);
 
+    /// <summary>
+    /// Gets or sets the current rotation of the wheel in degrees
+    /// </summary>
     public double WheelRotation
     {
         get => (double)GetValue(WheelRotationProperty);
@@ -37,6 +39,9 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
         100.0,
         propertyChanged: NeedDraw);
 
+    /// <summary>
+    /// Gets or sets the radius of the wheel in pixels
+    /// </summary>
     public double WheelRadius
     {
         get => (double)GetValue(WheelRadiusProperty);
@@ -66,15 +71,17 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
     /// <summary>
     /// Renders children positioned around the wheel circumference with proper rotation
     /// </summary>
+    /// <param name="context">Drawing context</param>
+    /// <param name="skiaControls">Collection of controls to render</param>
+    /// <returns>Number of rendered items</returns>
     protected override int RenderViewsList(DrawingContext context, IEnumerable<SkiaControl> skiaControls)
     {
         if (skiaControls == null)
             return 0;
 
         var total = ItemsSource.Count;
-
         List<SkiaControlWithRect> tree = new();
- 
+
         for (int index = 0; index < total; index++)
         {
             var child = ChildrenFactory.GetViewForIndex(index);
@@ -82,11 +89,13 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
             child.OptionalOnBeforeDrawing();
             if (child.CanDraw)
             {
+                // Calculate positioning
                 var radius = Math.Min(DrawingRect.Width, DrawingRect.Height) / 2.0;
                 var textRadius = radius * 0.5;
                 var anglePerItem = 360.0 / total;
                 var itemAngle = index * anglePerItem - 90;
-                //var angleInRadians = itemAngle * Math.PI / 180.0;
+
+                // Apply inverse visual rotation if enabled
                 if (InverseVisualRotation)
                 {
                     itemAngle = -itemAngle;
@@ -94,7 +103,7 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
 
                 var angleInRadians = itemAngle * Math.PI / 180.0;
 
-                // Calculate relative to center (Translation might be center-based)
+                // Calculate offset from center
                 var offsetXPixels = Math.Cos(angleInRadians) * textRadius;
                 var offsetYPixels = Math.Sin(angleInRadians) * textRadius;
 
@@ -106,20 +115,22 @@ public class SkiaWheelShape : SkiaShape, ISkiaGestureListener
                 child.TranslationX = offsetXUnits;
                 child.TranslationY = offsetYUnits;
 
+                // Calculate text rotation
                 var textRotation = itemAngle;
                 if (InverseVisualRotation)
                 {
-                    // When direction is reversed, we need to flip the text orientation
-                    // so it's readable on the opposite side
+                    // When direction is reversed, flip the text orientation for readability
                     textRotation += 180;
                 }
                 child.Rotation = textRotation;
 
+                // Set up clipping for pie slice shape
                 child.Clipping = (path, childRect) =>
                 {
                     child.ShouldClipAntialiased = true;
                     path.Reset();
-                    var halfAngle = anglePerItem / 2.0;   
+
+                    var halfAngle = anglePerItem / 2.0;
                     var tanHalfAngle = Math.Tan(halfAngle * Math.PI / 180.0);
                     var centerY = childRect.MidY;
                     var halfWidth = childRect.Width * 0.5f;

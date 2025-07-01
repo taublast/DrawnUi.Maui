@@ -6429,6 +6429,12 @@ namespace DrawnUi.Draw
 
         protected bool WillInvalidateMeasure { get; set; }
 
+        /// <summary>
+        /// Need to re-measure and then redraw from scratch
+        /// </summary>
+        /// <param name="bindable"></param>
+        /// <param name="oldvalue"></param>
+        /// <param name="newvalue"></param>
         protected static void NeedInvalidateMeasure(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is SkiaControl control)
@@ -6438,6 +6444,12 @@ namespace DrawnUi.Draw
             }
         }
 
+        /// <summary>
+        /// Need to erase cache and draw from scratch
+        /// </summary>
+        /// <param name="bindable"></param>
+        /// <param name="oldvalue"></param>
+        /// <param name="newvalue"></param>
         protected static void NeedDraw(BindableObject bindable, object oldvalue, object newvalue)
         {
             if (bindable is SkiaControl control)
@@ -6448,7 +6460,7 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// Just make us repaint to apply new transforms etc
+        /// Just make us repaint to apply new transforms etc keeping existing cache if any
         /// </summary>
         protected static void NeedRepaint(BindableObject bindable, object oldvalue, object newvalue)
         {
