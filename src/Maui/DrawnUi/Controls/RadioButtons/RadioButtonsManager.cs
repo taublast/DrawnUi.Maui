@@ -5,25 +5,97 @@ using System.Text;
 
 namespace DrawnUi.Controls
 {
-    public class RadioButtonGroupManager
+    public class RadioButtons
     {
-        static RadioButtonGroupManager _instance;
+        static RadioButtons _instance;
 
-        public static RadioButtonGroupManager Instance
+        public static RadioButtons All
         {
             get
             {
                 if (_instance == null)
-                    _instance = new RadioButtonGroupManager();
+                    _instance = new RadioButtons();
 
                 return _instance;
+            }
+        }
+
+        public event EventHandler Changed;
+
+        public SkiaControl GetSelected(SkiaControl parent)
+        {
+            var group = GroupsByParent[parent];
+
+            if (group == null)
+            {
+                return null;
+            }
+            return group.FirstOrDefault(c => c.GetValueInternal()) as SkiaControl;
+        }
+
+        public SkiaControl GetSelected(string groupName)
+        {
+            var group = GroupsByName[groupName];
+
+            if (group == null)
+            {
+                return null;
+            }
+            return group.FirstOrDefault(c => c.GetValueInternal()) as SkiaControl;
+        }
+
+        public int GetSelectedIndex(SkiaControl parent)
+        {
+            var group = GroupsByParent[parent];
+            if (group == null)
+            {
+                return -1;
+            }
+            return GetSelectedIndexInternal(group);
+        }
+
+        public int GetSelectedIndex(string groupName)
+        {
+            var group = GroupsByName[groupName];
+            if (group == null)
+            {
+                return -1;
+            }
+            return GetSelectedIndexInternal(group);
+        }
+
+        int GetSelectedIndexInternal(List<ISkiaRadioButton> group)
+        {
+            var index = -1;
+            foreach (ISkiaRadioButton radio in group)
+            {
+                index++;
+                if (radio.GetValueInternal())
+                {
+                    return index;
+                }
+            }
+            return -1;
+        }
+
+        public void Select(SkiaControl container, int index)
+        {
+            var group = GroupsByParent[container];
+            if (group != null)
+            {
+                var i = -1;
+                foreach (ISkiaRadioButton radio in group)
+                {
+                    i++;
+                    radio.SetValueInternal(index == i);
+                }
             }
         }
 
         protected Dictionary<string, List<ISkiaRadioButton>> GroupsByName { get; private set; }
         protected Dictionary<SkiaControl, List<ISkiaRadioButton>> GroupsByParent { get; private set; }
 
-        public RadioButtonGroupManager()
+        public RadioButtons()
         {
             GroupsByName = new Dictionary<string, List<ISkiaRadioButton>>();
             GroupsByParent = new Dictionary<SkiaControl, List<ISkiaRadioButton>>();
@@ -127,6 +199,10 @@ namespace DrawnUi.Controls
                 if (GroupsByName[groupName].Contains(control))
                 {
                     SetGroupValuesExcept(groupName, control, newValue, false);
+                    if (newValue)
+                    {
+                        Changed?.Invoke(control, EventArgs.Empty);
+                    }
                     return;
                 }
             }
@@ -136,6 +212,10 @@ namespace DrawnUi.Controls
                 if (GroupsByParent[parent].Contains(control))
                 {
                     SetGroupValuesExcept(parent, control, newValue, true);
+                    if (newValue)
+                    {
+                        Changed?.Invoke(control, EventArgs.Empty);
+                    }
                     return;
                 }
             }

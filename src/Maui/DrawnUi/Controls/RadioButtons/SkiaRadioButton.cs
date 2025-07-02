@@ -183,7 +183,7 @@ public class SkiaRadioButton : SkiaToggle, ISkiaRadioButton
         UpdateGroup();
     }
 
-    RadioButtonGroupManager Manager => RadioButtonGroupManager.Instance;
+    RadioButtons Manager => RadioButtons.All;
 
     bool _lockIsToggled;
 
