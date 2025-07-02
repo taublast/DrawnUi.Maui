@@ -1874,11 +1874,16 @@ else
 
                             if (child.NeedMeasure)
                             {
-                                if (!child.WasMeasured || InvalidatedChildrenInternal.Contains(child) ||
+                                if (!IsTemplated || !child.WasMeasured || InvalidatedChildrenInternal.Contains(child) ||
                                     GetSizeKey(child.MeasuredSize.Pixels) != GetSizeKey(cell.Measured.Pixels))
                                 {
                                     var oldSize = child.MeasuredSize.Pixels;
-                                    child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
+                                    var measured= child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
+
+                                    cell.Measured = measured;
+                                    cell.WasMeasured = true;
+                                    LayoutCell(measured, cell, child, cell.Area, ctx.Scale);
+
                                     if (oldSize != SKSize.Empty && !CompareSize(oldSize, MeasuredSize.Pixels, 1f))
                                     {
                                         //Trace.WriteLine($"[CELL] remeasured {child.Uid}");
