@@ -20,10 +20,10 @@
         /// </summary>
         public virtual void Invalidate()
         {
+            InvalidateParent();
             if (WasMeasured)
             {
                 InvalidateInternal();
-                InvalidateParent();
             }
             else
             {
