@@ -1061,11 +1061,11 @@ namespace DrawnUi.Draw
 
             if (!NeedAutoSize && (child.NeedAutoSize || IsTemplated))
             {
-                UpdateByChild(child);
+                UpdateByChild(child); //simple update
                 return;
             }
 
-            base.InvalidateByChild(child);
+            base.InvalidateByChild(child);  //calling Invalidate
         }
 
         bool _trackWasDrawn;
