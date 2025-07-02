@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DrawnUi.Controls
+﻿namespace DrawnUi.Controls
 {
+    /// <summary>
+    /// Manages radio button groups, ensuring only one button is selected per group.
+    /// Supports grouping by parent control or by string name.
+    /// </summary>
     public class RadioButtons
     {
         static RadioButtons _instance;
 
+        /// <summary>
+        /// Gets the singleton instance of the RadioButtons manager.
+        /// </summary>
         public static RadioButtons All
         {
             get
@@ -20,8 +22,16 @@ namespace DrawnUi.Controls
             }
         }
 
+        /// <summary>
+        /// Occurs when a radio button selection changes in any group.
+        /// </summary>
         public event EventHandler Changed;
 
+        /// <summary>
+        /// Gets the currently selected radio button in the group associated with the specified parent control.
+        /// </summary>
+        /// <param name="parent">The parent control that defines the radio button group.</param>
+        /// <returns>The selected SkiaControl, or null if no button is selected or group doesn't exist.</returns>
         public SkiaControl GetSelected(SkiaControl parent)
         {
             var group = GroupsByParent[parent];
@@ -33,6 +43,11 @@ namespace DrawnUi.Controls
             return group.FirstOrDefault(c => c.GetValueInternal()) as SkiaControl;
         }
 
+        /// <summary>
+        /// Gets the currently selected radio button in the group with the specified name.
+        /// </summary>
+        /// <param name="groupName">The name of the radio button group.</param>
+        /// <returns>The selected SkiaControl, or null if no button is selected or group doesn't exist.</returns>
         public SkiaControl GetSelected(string groupName)
         {
             var group = GroupsByName[groupName];
@@ -44,6 +59,11 @@ namespace DrawnUi.Controls
             return group.FirstOrDefault(c => c.GetValueInternal()) as SkiaControl;
         }
 
+        /// <summary>
+        /// Gets the index of the currently selected radio button in the group associated with the specified parent control.
+        /// </summary>
+        /// <param name="parent">The parent control that defines the radio button group.</param>
+        /// <returns>The zero-based index of the selected button, or -1 if no button is selected or group doesn't exist.</returns>
         public int GetSelectedIndex(SkiaControl parent)
         {
             var group = GroupsByParent[parent];
@@ -54,6 +74,11 @@ namespace DrawnUi.Controls
             return GetSelectedIndexInternal(group);
         }
 
+        /// <summary>
+        /// Gets the index of the currently selected radio button in the group with the specified name.
+        /// </summary>
+        /// <param name="groupName">The name of the radio button group.</param>
+        /// <returns>The zero-based index of the selected button, or -1 if no button is selected or group doesn't exist.</returns>
         public int GetSelectedIndex(string groupName)
         {
             var group = GroupsByName[groupName];
@@ -78,6 +103,11 @@ namespace DrawnUi.Controls
             return -1;
         }
 
+        /// <summary>
+        /// Selects the radio button at the specified index in the group associated with the container control.
+        /// </summary>
+        /// <param name="container">The parent control that defines the radio button group.</param>
+        /// <param name="index">The zero-based index of the button to select.</param>
         public void Select(SkiaControl container, int index)
         {
             var group = GroupsByParent[container];
@@ -95,13 +125,20 @@ namespace DrawnUi.Controls
         protected Dictionary<string, List<ISkiaRadioButton>> GroupsByName { get; private set; }
         protected Dictionary<SkiaControl, List<ISkiaRadioButton>> GroupsByParent { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the RadioButtons class.
+        /// </summary>
         public RadioButtons()
         {
             GroupsByName = new Dictionary<string, List<ISkiaRadioButton>>();
             GroupsByParent = new Dictionary<SkiaControl, List<ISkiaRadioButton>>();
         }
 
-        // Adds a control to a named group (Group A).
+        /// <summary>
+        /// Adds a radio button control to a named group. Ensures at least one button in the group is selected.
+        /// </summary>
+        /// <param name="control">The radio button control to add to the group.</param>
+        /// <param name="groupName">The name of the group to add the control to.</param>
         public void AddToGroup(ISkiaRadioButton control, string groupName)
         {
             if (!GroupsByName.ContainsKey(groupName))
@@ -112,7 +149,11 @@ namespace DrawnUi.Controls
             MakeAtLeastOneSelected(GroupsByName[groupName]);
         }
 
-        // Adds a control to a parent-based group (Group B).
+        /// <summary>
+        /// Adds a radio button control to a parent-based group. Ensures at least one button in the group is selected.
+        /// </summary>
+        /// <param name="control">The radio button control to add to the group.</param>
+        /// <param name="parent">The parent control that defines the group.</param>
         public void AddToGroup(ISkiaRadioButton control, SkiaControl parent)
         {
             if (!GroupsByParent.ContainsKey(parent))
@@ -123,33 +164,42 @@ namespace DrawnUi.Controls
             MakeAtLeastOneSelected(GroupsByParent[parent]);
         }
 
-        // Removes a control from a named group (Group A).
+        /// <summary>
+        /// Removes a radio button control from a named group. Ensures at least one button remains selected in the group.
+        /// </summary>
+        /// <param name="groupName">The name of the group to remove the control from.</param>
+        /// <param name="control">The radio button control to remove.</param>
         public void RemoveFromGroup(string groupName, ISkiaRadioButton control)
         {
             if (GroupsByName.ContainsKey(groupName) && GroupsByName[groupName].Contains(control))
             {
                 GroupsByName[groupName].Remove(control);
-                // After removal, check and ensure that at least one button is selected.
                 MakeAtLeastOneSelected(GroupsByName[groupName]);
             }
         }
 
-        // Removes a control from a parent-based group (Group B).
+        /// <summary>
+        /// Removes a radio button control from a parent-based group. Ensures at least one button remains selected in the group.
+        /// </summary>
+        /// <param name="parent">The parent control that defines the group to remove the control from.</param>
+        /// <param name="control">The radio button control to remove.</param>
         public void RemoveFromGroup(SkiaControl parent, ISkiaRadioButton control)
         {
             if (GroupsByParent.ContainsKey(parent) && GroupsByParent[parent].Contains(control))
             {
                 GroupsByParent[parent].Remove(control);
-                // After removal, check and ensure that at least one button is selected.
                 MakeAtLeastOneSelected(GroupsByParent[parent]);
             }
         }
 
+        /// <summary>
+        /// Removes a radio button control from all groups it belongs to. Ensures at least one button remains selected in affected groups.
+        /// </summary>
+        /// <param name="control">The radio button control to remove from all groups.</param>
         public void RemoveFromGroups(ISkiaRadioButton control)
         {
-            // Attempt to remove from GroupsByName
             bool removed = false;
-            foreach (var groupName in GroupsByName.Keys.ToList()) // ToList to avoid modification issues during iteration
+            foreach (var groupName in GroupsByName.Keys.ToList())
             {
                 var group = GroupsByName[groupName];
                 if (group.Contains(control))
@@ -157,32 +207,29 @@ namespace DrawnUi.Controls
                     group.Remove(control);
                     MakeAtLeastOneSelected(group);
                     removed = true;
-                    break; // Assuming a control can only belong to one group, we stop once found
+                    break;
                 }
             }
 
-            if (!removed) // If not removed from GroupsByName, try GroupsByParent
+            if (!removed)
             {
-                foreach (var parent in GroupsByParent.Keys.ToList()) // ToList for safe iteration
+                foreach (var parent in GroupsByParent.Keys.ToList())
                 {
                     var group = GroupsByParent[parent];
                     if (group.Contains(control))
                     {
                         group.Remove(control);
                         MakeAtLeastOneSelected(group);
-                        break; // Assuming a control can only belong to one group, we stop once found
+                        break;
                     }
                 }
             }
         }
 
-
         private void MakeAtLeastOneSelected(List<ISkiaRadioButton> group)
         {
-            // Check if any button is still selected in the group.
             if (!group.Any(c => c.GetValueInternal()))
             {
-                // If no button is selected, and the group is not empty, select the first one.
                 var firstControl = group.FirstOrDefault();
                 if (firstControl != null)
                 {
@@ -191,7 +238,11 @@ namespace DrawnUi.Controls
             }
         }
 
-        // Method called by a SkiaControl to report its value change.
+        /// <summary>
+        /// Called by radio button controls to report value changes. Manages mutual exclusion within groups and fires the Changed event.
+        /// </summary>
+        /// <param name="control">The radio button control reporting the change.</param>
+        /// <param name="newValue">The new value of the control (true for selected, false for unselected).</param>
         public void ReportValueChange(ISkiaRadioButton control, bool newValue)
         {
             foreach (var groupName in GroupsByName.Keys)
