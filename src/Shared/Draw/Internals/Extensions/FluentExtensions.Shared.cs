@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using System.Linq.Expressions;
 using DrawnUi.Controls;
 using static System.Net.Mime.MediaTypeNames;
@@ -196,6 +197,58 @@ namespace DrawnUi.Draw
 
 
             return control;
+        }
+
+        /// <summary>
+        /// Subscribes to one specific property changes on a source control and executes a callback when they occur.
+        /// Will unsubscribe upon control disposal.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="control"></param>
+        /// <param name="target"></param>
+        /// <param name="propertyName"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public static T ObserveProperty<T, TSource>(
+            this T control,
+            TSource target,
+            string propertyName,
+            Action<T> callback)
+            where T : SkiaControl
+            where TSource : INotifyPropertyChanged
+        {
+            return control.Observe(target, (me, prop) =>
+            {
+                callback?.Invoke(me);
+            }, new[] { nameof(BindableObject.BindingContext), propertyName });
+        }
+
+        /// <summary>
+        /// Subscribes to specific properties changes on a source control and executes a callback when they occur.
+        /// You can omit BindingContext will be added at all times.
+        /// Will unsubscribe upon control disposal.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="control"></param>
+        /// <param name="target"></param>
+        /// <param name="propertyNames"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public static T ObserveProperties<T, TSource>(
+            this T control,
+            TSource target,
+            IEnumerable<string> propertyNames,
+            Action<T> callback)
+            where T : SkiaControl
+            where TSource : INotifyPropertyChanged
+        {
+            var props = propertyNames.Concat(new[] { nameof(BindableObject.BindingContext) }).ToArray();
+            return control.Observe(target, (me, prop) =>
+            {
+                callback?.Invoke(me);
+            }, props);
         }
 
         /// <summary>
