@@ -1,10 +1,9 @@
 ﻿# DrawnUI Fluent C# Extensions - Developer Guide
 
-version 1.1a
+version 1.2a
 
 This guide covers the essential patterns of DrawnUI fluent extensions for drawn controls.
 Not all methods are listed here, as extensions are evolving.
-
 
 ## Table of Contents
 
@@ -101,7 +100,7 @@ int counter = 0;
 
 var layout = new SkiaStack
 {
-    Children = new List<SkiaControl>
+    Children =  
     {           
         new SkiaLabel("0")
             .Assign(out statusLabel),
@@ -111,7 +110,7 @@ var layout = new SkiaStack
         {
             if (prop.IsEither(nameof(BindingContext), nameof(Text)))
             {
-                me.Text = $"Label text changed to: {statusLabel.Text}"";
+                me.Text = $"Label text changed to: {statusLabel.Text}";
             }
         }),
 
@@ -137,7 +136,7 @@ You would normally include children like this:
 ```csharp
 new SkiaStack
 {
-    Children = new List<SkiaControl>
+    Children = 
     {           
         new SkiaLabel("0"),
         new SkiaButton("Click Me")
@@ -167,7 +166,7 @@ or
 
 ```csharp
 var child = new SkiaLabel("I'm a child");
-parentLayout.AddSubview(child);
+parentLayout.AddSubView(child);
 ```
 
 To properly remove children by code:
@@ -175,7 +174,7 @@ To properly remove children by code:
 ```csharp
 layout.Children.RemoveAt(0); //remove the first one
 
-layout.RemoveSubview(child); //remove child
+layout.RemoveSubView(child); //remove child
 
 layout.ClearChildren(); //clear them all
 ```
@@ -234,59 +233,87 @@ new SkiaLabel()
 });
 ```
 
+### 4. `.ObserveProperties(target, propertyNames, callback)` - Multiple Properties
+
+Observes specific properties on a source control. BindingContext is automatically included:
+
 ```csharp
-// Sync slider value with viewModel
-var slider = new SkiaSlider()
-
-     //simulate BindingMode.TwoWay
-
-    .ObserveBindingContext<SkiaSlider, MyViewModel>((sld, vm, prop) => {
-        bool attached = prop == nameof(BindingContext);
-        if (attached || prop == nameof(vm.Volume))
+new SkiaButton("Submit")
+.ObserveProperties(viewModel, 
+    new[] { nameof(viewModel.CanSubmit), nameof(viewModel.IsLoading) }, 
+    me => 
+    {
+        if (viewModel.CanSubmit && !viewModel.IsLoading)
         {
-            if (Math.Abs(sld.Value - vm.Volume) > 0.01) // Prevent loops
-                sld.Value = vm.Volume;
+            me.IsEnabled = true;
+            me.Opacity = 1.0;
         }
-    })
-    .ObserveSelf((sld, prop) => {
-        if (prop == nameof(sld.Value))
+        else
         {
-            if (BindingContext is MyViewModel vm)
-                vm.Volume = sld.Value;
+            me.IsEnabled = false;
+            me.Opacity = 0.5;
         }
     });
 ```
 
-### 4. `.ObserveDeep()` - Deep Property Watching
+### 5. `.ObservePropertyOn(parent, targetSelector, parentPropertyName, callback)` - Dynamic Target
 
-For nested property chains like `vm.Country.SkiaFlag`:
+Observes a dynamically resolved target object using a function selector. When the parent's properties change, re-evaluates the selector and automatically unsubscribes from old target and subscribes to new one:
 
 ```csharp
-new SkiaSvg()
-{
-    Aspect = TransformAspect.Fill,
-    Margin = new Microsoft.Maui.Thickness(0, 0, 4, 0),
-    HeightRequest = 24,
-    VerticalOptions = LayoutOptions.Center,
-    WidthRequest = 34
-}
-.ObserveDeep<SkiaSvg, LoginSmsViewModel, Country, string>(
-    vm => vm.Country,  
-    nameof(LoginSmsViewModel.Country),  
-    country => country.SkiaFlag,  
-    nameof(Country.SkiaFlag),  
-    (me, value) => 
+new SkiaLabel()
+.ObservePropertyOn(
+    this,  
+    () => CurrentTimer,   
+    nameof(CurrentTimer),   
+    (me, prop) =>
     {
-        me.SvgString = value;
+        if (prop.IsEither(nameof(BindingContext), nameof(RunningTimer.Time)))
+        {
+            me.Text = $"{CurrentTimer.Time:mm\\:ss}";
+        }
     }
 )
 ```
 
-At the same time, this method is provided for backward compatibility with existing codebases. 
-For this example scenario, it is safer and faster to call `OnPropertyChanged(nameof(Country))` in the viewmodel 
-after potentially changing any of its properties so that the control can react to this event only to apply all linked properties.
-This would be similar to calling `UpdateState` inside Blazor after changing the Country model.
- 
+### 6. `.ObservePropertiesOn(parent, targetSelector, parentPropertyName, propertyNames, callback)` - Dynamic Target Multiple Properties
+
+Similar to `ObservePropertyOn` but observes multiple specific properties on the dynamically resolved target:
+
+```csharp
+new SkiaLabel()
+.ObservePropertiesOn(
+    parentViewModel,
+    () => parentViewModel.CurrentUser,
+    nameof(ParentViewModel.CurrentUser),
+    new[] { nameof(User.Name), nameof(User.Status) },
+    me =>
+    {
+        var user = parentViewModel.CurrentUser;
+        me.Text = user != null ? $"{user.Name} - {user.Status}" : "No user";
+    }
+)
+```
+
+### 7. `.ObserveBindingContextOn<TControl, TTarget, TViewModel>(target, callback)` - Another Control's BindingContext
+
+Watches for property changes on another control's BindingContext:
+
+```csharp
+new SkiaLabel()
+.ObserveBindingContextOn<SkiaLabel, SkiaEntry, MyViewModel>(
+    entryControl,
+    (me, target, vm, prop) => 
+    {
+        if (prop.IsEither(nameof(BindingContext), nameof(vm.ValidationError)))
+        {
+            me.Text = vm.ValidationError ?? "";
+            me.IsVisible = !string.IsNullOrEmpty(vm.ValidationError);
+        }
+    }
+)
+```
+
 
 ## Common Patterns
 
@@ -295,7 +322,6 @@ This would be similar to calling `UpdateState` inside Blazor after changing the 
 When you inject your ViewModel in the page/screen constructor you can observe a fixed reference:
 
 ```csharp
-
 public class MyScreen : AppScreen //subclassed custom SkiaLayout
 {
     public readonly InjectedViewModel Model;
@@ -304,11 +330,9 @@ public class MyScreen : AppScreen //subclassed custom SkiaLayout
     {
         Model = vm;
         BindingContext = Model;
-        ...
-
+        
         CreateContent();
     }
-
 }
 
 protected void CreateContent()
@@ -318,7 +342,7 @@ protected void CreateContent()
     Type = LayoutType.Column;
     Spacing = 0;
     Padding = 16;
-    Children = new List<SkiaControl>()
+    Children =  
     {
         new SkiaLabel()
         .Observe(Model, (me, prop) => //observe Model reference directly
@@ -333,17 +357,39 @@ protected void CreateContent()
                 me.TextColor = Model.Error ? Colors.Red : Colors.Black;
             }
         }),
-        ...
     };
-        
-    }
-
+}
 ```
 
 ### Observe another control property
 
+You have few options here, simple and advanced. 
+
+Simple, when `Model` is not likely to change:
+
 ```csharp
 
+new SkiaLabel()
+.ObserveProperty(Model, nameof(Title), me =>
+{
+    me.Text = Model.Title;
+}),
+```
+
+When `Model` is likely to change and is implementing INotifyPropertyChanged and is member of (for example) `this`:
+
+```csharp
+
+new SkiaLabel()
+.ObservePropertyOn(this, ()=>Model, nameof(Model), (me, propertyName) =>
+{
+    me.Text = Model.Title;
+}),
+```
+
+Advanced:
+
+```csharp
 SkiaLabel labelTitle;
 
 new SkiaLabel()
@@ -363,10 +409,9 @@ new SkiaLabel()
     bool attached = prop == nameof(BindingContext);
     if (attached || prop == nameof(Text))
     {
-        me.Text = $"The title was: {labelTitle.Text}"";
+        me.Text = $"The title was: {labelTitle.Text}";
     }
 }),
-
 ```
 
 ### Two-Way bindings
@@ -478,7 +523,6 @@ var slider = new SkiaSlider()
     });
 ```
 
-
 ## Layout and UI Extensions
 
 ### Positioning and Sizing
@@ -492,6 +536,8 @@ new SkiaLabel("Hello")
     .FillX()            // Fills horizontally
     .FillY()            // Fills vertically
     .StartX()           // Aligns to start horizontally
+    .StartY()           // Aligns to start vertically
+    .EndX()             // Aligns to end horizontally
     .EndY()             // Aligns to end vertically
     .SetHeight(100)     // Sets height
     .SetWidth(200)      // Sets width
@@ -510,41 +556,66 @@ new SkiaLayout()
     .WithContent(singleChild);    // For IWithContent containers
 ```
 
-### Grid Layout Extensions
-
-#### Basic Grid Setup
+### Additional UI Extensions
 
 ```csharp
-new SkiaLayout()
-    .WithRowDefinitions("Auto,*,Auto")      // Auto, Star, Auto
-    .WithColumnDefinitions("100,*,2*,Auto") // Fixed, Star, 2*Star, Auto
+new SkiaLabel("Hello")
+    .WithCache(SkiaCacheType.Operations)    // Set cache type
+    .WithBackgroundColor(Colors.Blue)       // Set background color
+    .WithHorizontalOptions(LayoutOptions.Center) // Set horizontal options
+    .WithVerticalOptions(LayoutOptions.End) // Set vertical options
+    .WithHeightRequest(100)                 // Set height request
+    .WithWidthRequest(200)                  // Set width request
+    .WithMargin(new Thickness(16))          // Set margin with Thickness
+    .WithVisibility(true)                   // Set visibility
+    .WithTag("MyLabel");                    // Set tag
 ```
 
-#### Positioning Children
+### Shape Extensions
 
 ```csharp
-child1.WithRow(0).WithColumn(0);           // Position at (0,0)
-child2.SetGrid(1, 0);                      // Position at column 1, row 0
-child3.SetGrid(0, 1, 2, 1);               // column, row, columnSpan, rowSpan
-child4.WithRowSpan(2).WithColumnSpan(3);  // Spanning
+new SkiaShape()
+    .WithShapeType(ShapeType.Rectangle)     // Set shape type
+    .Shape(ShapeType.Circle);               // Shorter alias
 ```
 
-#### Complete Grid Example
+### Image Extensions
 
 ```csharp
-new SkiaLayout()
-{
-    Type = LayoutType.Grid,
-    Children = new List<SkiaControl>
+new SkiaImage()
+    .WithAspect(TransformAspect.Fill);      // Set image aspect
+```
+
+### Label Extensions
+
+```csharp
+new SkiaLabel("Text")
+    .WithFontSize(16)                       // Set font size
+    .WithTextColor(Colors.Red)              // Set text color
+    .WithHorizontalTextAlignment(DrawTextAlignment.Center); // Set text alignment
+```
+
+### Entry Extensions
+
+```csharp
+new SkiaMauiEntry()
+    .OnTextChanged((entry, text) => 
     {
-        new SkiaLabel("Header").WithRow(0).WithColumnSpan(2),
-        new SkiaLabel("Left").WithRow(1).WithColumn(0),
-        new SkiaLabel("Right").WithRow(1).WithColumn(1),
-        new SkiaButton("Footer").WithRow(2).WithColumnSpan(2)
-    }
-}
-.WithRowDefinitions("Auto,*,Auto")
-.WithColumnDefinitions("*,*");
+        // Handle text changes
+        Console.WriteLine($"Text changed to: {text}");
+    });
+
+new SkiaMauiEditor()
+    .OnTextChanged((editor, text) => 
+    {
+        // Handle editor text changes
+    });
+
+new SkiaLabel()
+    .OnTextChanged((label, text) => 
+    {
+        // Handle label text changes via PropertyChanged
+    });
 ```
 
 ## Gesture Handling
@@ -580,7 +651,7 @@ layout.WithGestures((me, args, apply) => {
     //your logic
     if (args.Type == TouchActionResult.Panning)
     {
-        ...
+        // Handle panning
         consumed = this; //we consumed this one
     }
 
@@ -620,9 +691,8 @@ For convenience, some helpers come out of the box:
 * `SkiaLayer` - absolute layout, children will be super-positioned, create layers and anything. This is a `SkiaLayout` with horizontal Fill by default.
 * `SkiaStack` - Vertical stack, like MAUI VerticalStackLayout. This is a `SkiaLayout` type `Column` with horizontal Fill by default.
 * `SkiaRow` - Horizontal stack, like MAUI HorizontalStackLayout. This is a `SkiaLayout` type `Row`.
-* `SkiaStack` - A powerful flexible control that arranges children in a responsive way according to available size. This is a `SkiaLayout` type `Wrap` with horizontal Fill by default.
+* `SkiaWrap` - A powerful flexible control that arranges children in a responsive way according to available size. This is a `SkiaLayout` type `Wrap` with horizontal Fill by default.
 * `SkiaGrid` - MAUI Grid alternative to use rows and columns at will. If you are used to a MAUI grid with a single row/col just to position items one over the other, please use `SkiaLayer` instead!
-
 
 ## Best Practices
 
