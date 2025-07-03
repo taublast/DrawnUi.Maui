@@ -3,19 +3,34 @@ namespace DrawnUi.Controls
     [ContentProperty("ItemTemplate")]
     public class SkiaWheelPicker : SkiaLayout
     {
-        protected SkiaWheelScroll Scroller;
+        public SkiaWheelScroll Scroller { get; private set; }
+
         protected SkiaWheelStack Wheel;
 
         public SkiaWheelPicker()
         {
         }
 
+        protected virtual void AttachScroller(SkiaWheelScroll scroller)
+        {
+            if (scroller != null)
+            {
+                Scroller = scroller;
+                AddSubView(scroller);
+                Scroller.SelectedIndexChanged += ScrollerOnIndexChanged;
+            }
+        }
+
+        private void ScrollerOnIndexChanged(object sender, int e)
+        {
+            UpdateIndexFromWheel();
+        }
 
         protected override void CreateDefaultContent()
         {
             if (this.Views.Count == 0)
             {
-                Scroller = new SkiaWheelScroll()
+                var scroller = new SkiaWheelScroll()
                 {
                     //todo properties
                     LinesColor = this.LinesColor,
@@ -45,7 +60,7 @@ namespace DrawnUi.Controls
 
                 SetBackgroundView(this.BackgroundView, true);
 
-                AddSubView(Scroller);
+                AttachScroller(scroller);
 
                 SyncItemsSource();
             }
@@ -107,7 +122,7 @@ namespace DrawnUi.Controls
             }
         }
 
-        protected void UpdateWheelFromIndex()
+        protected void UpdateIndexFromWheel()
         {
             if (ItemsCount == 0 || Scroller == null)
             {
@@ -116,9 +131,26 @@ namespace DrawnUi.Controls
 
             _isUpdatingFromIndex = true;
 
-            Scroller.SelectedIndex = SelectedIndex;
+            var index = Scroller.SelectedIndex;
+
+            Debug.WriteLine($"UpdateIndexFromWheel: {index}");
+
+            if (SelectedIndex != index)
+            {
+                SelectedIndex = index;
+            }
 
             _isUpdatingFromIndex = false;
+        }
+
+        protected void UpdateWheelFromIndex()
+        {
+            if (ItemsCount == 0 || Scroller == null)
+            {
+                return;
+            }
+
+            Scroller.SelectedIndex = SelectedIndex;
         }
 
         #region EVENTS
