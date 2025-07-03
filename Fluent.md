@@ -1,6 +1,6 @@
 ﻿# DrawnUI Fluent C# Extensions - Developer Guide
 
-version 1.2a
+version 1.4a
 
 This guide covers the essential patterns of DrawnUI fluent extensions for drawn controls.
 Not all methods are listed here, as extensions are evolving.
