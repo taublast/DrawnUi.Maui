@@ -56,7 +56,7 @@ public class SkiaSpinner : SkiaLayout
     #region BINDABLE PROPERTIES
 
     // Redirect ItemsSource property to inner wheel shape
-    public override void ResetItemsSource()
+    public override void ApplyItemsSource()
     {
         SyncItemsSource();
     }

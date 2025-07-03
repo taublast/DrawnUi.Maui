@@ -271,7 +271,7 @@ namespace DrawnUi.Draw
         {
             ChildrenFactory = new(this);
 
-            PostponeInvalidation(nameof(ResetItemsSource), ResetItemsSource);
+            PostponeInvalidation(nameof(ApplyItemsSource), ApplyItemsSource);
             //OnItemSourceChanged();
         }
 
@@ -1365,6 +1365,7 @@ namespace DrawnUi.Draw
             set => SetValue(ItemsSourceProperty, value);
         }
 
+
         private static void ItemsSourcePropertyChanged(BindableObject bindable, object oldvalue, object newvalue)
         {
             var skiaControl = (SkiaLayout)bindable;
@@ -1410,23 +1411,26 @@ namespace DrawnUi.Draw
             //skiaControl.PostponeInvalidation(nameof(UpdateItemsSource), skiaControl.UpdateItemsSource);
             //skiaControl.Update();
 
-            skiaControl.ResetItemsSource();
+            skiaControl.ApplyItemsSource();
         }
 
         public override void OnItemTemplateChanged()
         {
             //PostponeInvalidation(nameof(OnItemSourceChanged), OnItemSourceChanged);
-            ResetItemsSource();
+            ApplyItemsSource();
         }
 
         public bool ApplyNewItemsSource { get; set; }
 
         public virtual void OnItemSourceChanged()
         {
-            ResetItemsSource();
+            ApplyItemsSource();
         }
 
-        public virtual void ResetItemsSource()
+        /// <summary>
+        /// Invalidate and re-apply ItemsSource
+        /// </summary>
+        public virtual void ApplyItemsSource()
         {
             //if (!string.IsNullOrEmpty(Tag))
             //    Debug.WriteLine($"OnItemSourceChanged {Tag} {IsTemplated} {IsMeasuring}");

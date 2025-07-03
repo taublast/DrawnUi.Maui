@@ -63,7 +63,7 @@ namespace DrawnUi.Controls
 
 
         // Redirect ItemsSource property to inner wheel  
-        public override void ResetItemsSource()
+        public override void ApplyItemsSource()
         {
             SyncItemsSource();
         }
