@@ -812,29 +812,4 @@ public class MyViewModel : INotifyPropertyChanged
    * `UseCache = SkiaCacheType.GPU` for small static overlays like headers, navbars.
 2. Check that you do not have logs spamming the console on every rendering frame.
 
-## Advanced Patterns
 
-### Custom Extension Method
-
-You can easily create your own methods (propose a PR if you think it could serve everyone!).
-
-Example:
-
-```csharp
-public static T SetupLoadingStates<T, TViewModel>(this T control) 
-    where T : SkiaControl 
-    where TViewModel : INotifyPropertyChanged
-{
-    return control.ObserveBindingContext<T, TViewModel>((ctrl, vm, prop) => {
-        // Common loading state logic
-        bool attached = prop == nameof(BindingContext);
-        if (attached || prop == nameof(vm.IsLoading))
-        {
-            ctrl.Opacity = vm.IsLoading ? 0.5 : 1.0;
-        }
-    });
-}
-
-// Usage
-new MyControl().SetupLoadingStates<MyControl, MyViewModel>();
-```
