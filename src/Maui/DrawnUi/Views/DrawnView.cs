@@ -2007,7 +2007,14 @@ namespace DrawnUi.Views
             set
             {
                 _renderingScale = value;
-                SetValue(RenderingScaleProperty, value);
+                try
+                {
+                    SetValue(RenderingScaleProperty, value);
+                }
+                catch (Exception e)
+                {
+                    Super.Log(e);
+                }
             }
         }
 
