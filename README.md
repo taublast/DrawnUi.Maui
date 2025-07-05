@@ -31,6 +31,7 @@ Current development state is _ALPHA for prod_.
 
 ## What's new
 
+* The nuget package `DrawnUi.Maui` replaces the old package Id, you can still use the old one kept for compatibility for some time.
 * Docs, first appearence inside `/docs`! To teach LMs use `/aidocs` subfolder.
 * `SkiaCamera` inside DrawnUi.Maui.Camera: iOS, MacCatalyst, Windows, Android implementations.
 * `SkiaShape` now can contain many `Children` instead of one `Content`, can change layout type with `Layout` property. Plus fixes for stroke and other for pixel-perfect rendering.
