@@ -4,6 +4,7 @@ using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using DrawnUi.Features.Images;
 using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Storage;
 using Svg.Skia;
 
 namespace DrawnUi.Draw
@@ -888,7 +889,7 @@ namespace DrawnUi.Draw
                 }
                 catch (Exception e)
                 {
-                    Trace.WriteLine(e);
+                    Super.Log($"CreateSvg source: \"{Source}\" {e}");
                 }
 
                 return false;
