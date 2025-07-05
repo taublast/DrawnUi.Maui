@@ -82,6 +82,7 @@ ___Please star ⭐ if you like it!___
 	* __SkiaViewSwitcher__ switch your views, pop, push and slide	
 	* __SkiaTabsSelector__ create top and bottom tabs
 	* __SkiaLabelFps__ for developement
+    * __Other__ we hidden deep but still public
 	* __Create your own!__      
 
 * Animated Effects
