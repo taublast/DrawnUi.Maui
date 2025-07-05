@@ -8,7 +8,7 @@ DrawnUI for .NET MAUI is a cross-platform rendering engine that draws UI using S
 
 **Key Technology Stack:**
 - .NET 9 (minimum requirement)
-- MAUI Controls 9.0.30+
+- MAUI Controls 9.0.70+
 - SkiaSharp v3 
 - Hardware-accelerated rendering via Skia canvas
 

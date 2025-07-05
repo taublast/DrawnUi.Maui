@@ -29,8 +29,8 @@ To make everything compile from first attempt You might also need at least the f
 	</PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.30" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.30" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.70" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.70" />
     </ItemGroup>
 
 ```
