@@ -9,7 +9,7 @@ This guide will help you get started with DrawnUi in your .NET MAUI application.
 Install the DrawnUi NuGet package in your .NET MAUI project:
 
 ```bash
-dotnet add package AppoMobi.Maui.DrawnUi
+dotnet add package DrawnUi.Maui
 ```
 
 or fork the DrawnUi repo and referece the main project directly.

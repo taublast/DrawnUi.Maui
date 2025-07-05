@@ -16,7 +16,7 @@ cd MyDrawnUiApp
 ## 2. Add DrawnUi to Your Project
 
 ```bash
-dotnet add package AppoMobi.Maui.DrawnUi
+dotnet add package DrawnUi.Maui
 ```
 
 ## 3. Add a DrawnUi Canvas to MainPage
