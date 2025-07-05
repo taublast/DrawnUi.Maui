@@ -38,7 +38,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RecycleTemplateType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RecyclingTemplate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RelativePositionType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\RescalingType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\ScrollInteractionState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\SelectionPosition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Draw\Internals\Enums\ShapeType.cs" />
