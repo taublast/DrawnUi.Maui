@@ -42,12 +42,12 @@ new SkiaLabel()
         label.Text = Model.DisplayName;
     }
 })
-.OnTapped((me) => 
-{ 
-    Model.CommandAddRequest.Execute(null); 
+.OnTapped((me) =>
+{
+    Model.CommandAddRequest.Execute(null);
 })
 .CenterX()
-.SetHeight(44);
+.WithHeight(44);
 ```
 
 ## Actions and References
@@ -303,7 +303,7 @@ Watches for property changes on another control's BindingContext:
 new SkiaLabel()
 .ObserveBindingContextOn<SkiaLabel, SkiaEntry, MyViewModel>(
     entryControl,
-    (me, target, vm, prop) => 
+    (me, target, vm, prop) =>
     {
         if (prop.IsEither(nameof(BindingContext), nameof(vm.ValidationError)))
         {
@@ -312,6 +312,40 @@ new SkiaLabel()
         }
     }
 )
+```
+
+### 8. `.ObserveOn<T, TParent, TTarget>(parent, targetSelector, parentPropertyName, callback, propertyFilter)` - Core Dynamic Observation
+
+The foundational method for observing dynamically resolved target objects. When the parent's properties change, re-evaluates the selector and automatically unsubscribes from old target and subscribes to new one. This is AOT-compatible:
+
+```csharp
+new SkiaLabel()
+.ObserveOn(
+    parentViewModel,
+    () => parentViewModel.CurrentTimer,
+    nameof(parentViewModel.CurrentTimer),
+    (me, prop) => {
+        if (prop.IsEither(nameof(BindingContext), nameof(Timer.RemainingTime)))
+        {
+            me.Text = $"Time: {parentViewModel.CurrentTimer?.RemainingTime ?? 0}";
+        }
+    },
+    new[] { nameof(BindingContext), nameof(Timer.RemainingTime) }
+);
+```
+
+### 9. `.Observe<T, TSource>(sourceFetcher, callback, propertyFilter)` - Delayed Assignment Observation
+
+Observes a control that will be assigned later in the initialization process using a function selector:
+
+```csharp
+new SkiaLabel()
+.Observe(() => statusLabel, (me, prop) => {
+    if (prop.IsEither(nameof(BindingContext), nameof(SkiaLabel.Text)))
+    {
+        me.TextColor = statusLabel.Text.Contains("Error") ? Colors.Red : Colors.Green;
+    }
+});
 ```
 
 
@@ -539,11 +573,11 @@ new SkiaLabel("Hello")
     .StartY()           // Aligns to start vertically
     .EndX()             // Aligns to end horizontally
     .EndY()             // Aligns to end vertically
-    .SetHeight(100)     // Sets height
-    .SetWidth(200)      // Sets width
-    .SetMargin(16)      // Uniform margin
-    .SetMargin(16, 8)   // Horizontal, vertical
-    .SetMargin(16, 8, 16, 8); // Left, top, right, bottom
+    .WithHeight(100)    // Sets height (HeightRequest)
+    .WithWidth(200)     // Sets width (WidthRequest)
+    .WithMargin(16)     // Uniform margin
+    .WithMargin(16, 8)  // Horizontal, vertical
+    .WithMargin(16, 8, 16, 8); // Left, top, right, bottom
 ```
 
 ### Layout-Specific Extensions
@@ -564,8 +598,8 @@ new SkiaLabel("Hello")
     .WithBackgroundColor(Colors.Blue)       // Set background color
     .WithHorizontalOptions(LayoutOptions.Center) // Set horizontal options
     .WithVerticalOptions(LayoutOptions.End) // Set vertical options
-    .WithHeightRequest(100)                 // Set height request
-    .WithWidthRequest(200)                  // Set width request
+    .WithHeight(100)                        // Set height request
+    .WithWidth(200)                         // Set width request
     .WithMargin(new Thickness(16))          // Set margin with Thickness
     .WithVisibility(true)                   // Set visibility
     .WithTag("MyLabel");                    // Set tag
@@ -744,9 +778,9 @@ if (prop == nameof(BindingContext) || prop == nameof(vm.Prop1) || prop == nameof
 
 ```csharp
 new SkiaButton("Save")
-    .SetHeight(44)
+    .WithHeight(44)
     .CenterX()
-    .SetMargin(16, 8)
+    .WithMargin(16, 8)
     .ObserveBindingContext<SkiaButton, MyViewModel>((btn, vm, prop) => {
         // Reactive logic
     })

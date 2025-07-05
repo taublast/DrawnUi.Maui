@@ -1294,9 +1294,18 @@ namespace DrawnUi.Draw
         /// <summary>
         /// Sets the Type property for SkiaLayout
         /// </summary>
-        public static T WithLayoutType<T>(this T layout, LayoutType type) where T : SkiaLayout
+        public static T WithType<T>(this T layout, LayoutType type) where T : SkiaLayout
         {
             layout.Type = type;
+            return layout;
+        }
+
+        /// <summary>
+        /// Sets the Type property for SkiaShape
+        /// </summary>
+        public static T WithLayoutType<T>(this T layout, LayoutType type) where T : SkiaShape
+        {
+            layout.Layout = type;
             return layout;
         }
 
