@@ -187,6 +187,16 @@ public class SkiaGif : AnimatedFramesRenderer
 
     private object lockSource = new();
 
+    /// <summary>
+    /// Happens when loaded fine from `Source`. Will pass source as string.
+    /// </summary>
+    public event EventHandler<string> Success;
+
+    /// <summary>
+    /// Happens when loaded with error from `Source`. Will pass exception.
+    /// </summary>
+    public event EventHandler<Exception> Error;
+
     public virtual void ReloadSource()
     {
         if (string.IsNullOrEmpty(Source))
@@ -206,7 +216,12 @@ public class SkiaGif : AnimatedFramesRenderer
                         var a = await LoadSource(Source);
                         if (a != null)
                         {
+                            Success?.Invoke(this, Source);
                             SetAnimation(a, true);
+                        }
+                        else
+                        {
+                            Error?.Invoke(this, new Exception($"Failed to load source {Source}"));
                         }
                     });
                     break;
@@ -232,12 +247,18 @@ public class SkiaGif : AnimatedFramesRenderer
                         }
                         if (animation != null)
                         {
+                            Success?.Invoke(this, Source);
                             SetAnimation(animation, true);
+                        }
+                        else
+                        {
+                            Error?.Invoke(this, new Exception($"Failed to load source {Source}"));
                         }
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        Super.Log(e);
+                        Error?.Invoke(this, new Exception($"Failed to load source {Source}"));
                     }
                     break;
             }
