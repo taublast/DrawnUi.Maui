@@ -1,13 +1,13 @@
 # DrawnUi.Maui
 
-**A small library for .NET MAUI built on top of SkiaSharp, to layout and draw your UI on a Skia canvas.**
+**A lightweight library for .NET MAUI built on top of SkiaSharp, to layout and draw your UI on a Skia canvas.**
 
 * Provides infrastructure to create and render drawn controls with gestures and animations, comes with some pre-built controls.  
-* Hardware-accelerated rendering on iOS • MacCatalyst • Android • Windows  
+* Profits from hardware-accelerated rendering on iOS • MacCatalyst • Android • Windows  
 * Free to use under the MIT license, a nuget package is available.
-* To consume inside a usual MAUI app, wrap drawn controls inside `Canvas` views.
-* To create a totally drawn apps with just one `Canvas` as root view. `SkiaShell`, `SkiaViewSwitcher` provided for navigation with modals, popups, toasts etc.
-* Drawn controls are virtual: no native views/handlers are created, UI-thread is not required to accessed and modify them.
+* To consume inside a usual MAUI app - wrap drawn controls inside `Canvas` views.
+* To create a totally drawn apps with just one `Canvas` as root view - `SkiaShell`, `SkiaViewSwitcher` are provided for navigation with modals, popups, toasts etc.
+* Drawn controls are virtual: no native views/handlers created, UI-thread is not required to accessed and modify them.
  
 
 ## Live Examples
@@ -23,14 +23,14 @@
 
 ### General
 
-**Q: What is it at all, what is the difference between DrawnUi and Uno/Avalonia?**  
-A: This is really not comparable, it's a library for .NET MAUI to avoid using native controls where possible.
+**Q: Drawn? What is the difference between DrawnUi and Uno/Avalonia?**  
+A: This is not comparable at all, DrawnUI is a library for .NET MAUI to avoid using native controls where possible.
 
 **Q: Why avoid native controls?**  
-A: A matter of choice to just draw anything without using pre-built designs.
+A: A matter of choice to draw anything without using pre-built designs.
 
 **Q: Do I neded to know how to draw on a canvas??**  
-A: Nope, just use prebuild drawn controls and customize them at will without limits. You would find that almost every method is virtual, all controls are initially designed to be subclassed and customized.
+A: No, you can use prebuild drawn controls to customize them without limits. You would find that almost every method is virtual and all controls are initially designed to be subclassed and customized.
 
 **Q: Can I still use XAML?**  
 A: Yes you can use both XAML and code-behind to create your UI.  
@@ -43,6 +43,9 @@ A: Inherit from `SkiaControl` for basic controls or `SkiaLayout` for container c
 
 **Q: Can I embed native MAUI controls inside DrawnUI?**  
 A: Yes! Use `SkiaMauiElement` to embed native MAUI controls like WebView inside your DrawnUI canvas. This allows you to combine the best of both worlds.
+
+**Q: I have heard about making games with DrawnUI?**  
+A: Well, since you draw, why not just draw a game instead of a business app. DrawnUI comes with gaming helpers and custom accelerated platform views to assure a smooth display-synched rendering. 
 
 ### Advanced
 
