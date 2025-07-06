@@ -26,8 +26,8 @@ An interactive card gallery featuring:
 
 ### Create New MAUI Project
 ```bash
-dotnet new maui -n InteractiveCardGallery
-cd InteractiveCardGallery
+dotnet new maui -n InteractiveCardsTutorial
+cd InteractiveCardsTutorial
 ```
 
 ### Add DrawnUI Package
@@ -79,7 +79,7 @@ Replace `MainPage.xaml` with our card gallery:
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage x:Class="InteractiveCardGallery.MainPage"
+<ContentPage x:Class="InteractiveCardsTutorial.MainPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
@@ -340,7 +340,7 @@ Replace `MainPage.xaml` with our card gallery:
 
 ---
 
-## Step 3: Add Interactive Behaviors
+## Step 3: Add Interactive Code
 
 Replace `MainPage.xaml.cs` with the interaction logic:
 
@@ -348,7 +348,7 @@ Replace `MainPage.xaml.cs` with the interaction logic:
 using DrawnUi.Maui.Draw;
 using DrawnUi.Maui.Infrastructure;
 
-namespace InteractiveCardGallery;
+namespace InteractiveCardsTutorial;
 
 public partial class MainPage : ContentPage
 {
