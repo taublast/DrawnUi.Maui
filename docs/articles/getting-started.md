@@ -1,20 +1,12 @@
-# Getting Started with DrawnUi
+# Getting Started with DrawnUI
 
-This guide will help you get started with DrawnUi in your .NET MAUI application.
+This guide will help you get started with DrawnUI in your .NET MAUI application.
 
 ## Installation
 
-### 1. Add the NuGet Package
+### Prerequisites
 
-Install the DrawnUi NuGet package in your .NET MAUI project:
-
-```bash
-dotnet add package DrawnUi.Maui
-```
-
-or fork the DrawnUi repo and referece the main project directly.
-
-> **Note**: There are some additional packages supporting optional features like games, camera, maps etc, they must be refereced separately.
+Target .NET 9.
 
 To make everything compile from first attempt You might also need at least the following MAUI setup inside your csproj:
 
@@ -36,7 +28,26 @@ To make everything compile from first attempt You might also need at least the f
 ```
 
 For Windows to overcome an existing restriction in SkiaSharp you would need to enable MSIX packaging for your Windows project. This limitation will be resolved.
+### Add the NuGet Package
 
+Install the **DrawnUi.Maui** NuGet package in your .NET MAUI project:
+
+```bash
+dotnet add package DrawnUi.Maui
+```
+
+> **Important**: Please install stable versions only.
+
+Alternatively, you can fork the DrawnUi repo and reference the main project directly.
+
+### Additional Packages
+
+There are additional packages supporting optional features:
+- **DrawnUi.Maui.Camera** - Camera implementations for all platforms
+- **DrawnUi.Maui.Game** - Gaming helpers and frame time interpolators
+- **DrawnUi.Maui.Maps** - Map integration features
+
+These must be referenced separately if needed.
 
 ### 2. Initialize in Your MAUI App
 
@@ -183,8 +194,68 @@ DrawnUi controls support platform-specific styling:
     Margin="0,20,0,0" />
 ```
 
+## Important Differences from Standard MAUI
+
+When working with DrawnUI, keep these key differences in mind:
+
+* **Layout Options**: `HorizontalOptions` and `VerticalOptions` defaults are `Start`, not `Fill`. Request size explicitly or set options to `Fill`, otherwise your control will take zero space.
+* **Grid Spacing**: `Grid` layout type default Row- and ColumnSpacing are 1, not 8.
+* **Canvas Behavior**: The `Canvas` control is aware of its children's size and will resize accordingly. You can also set a fixed size for the `Canvas` and its children will adapt to it.
+
+## Quick Examples
+
+### Simple SVG Icon
+```xml
+<draw:Canvas>
+    <draw:SkiaSvg
+        Source="Svg/dotnet_bot.svg"
+        LockRatio="1"
+        TintColor="White"
+        WidthRequest="44" />
+</draw:Canvas>
+```
+
+In this example, `LockRatio="1"` tells the engine to take the highest calculated dimension and multiply it by 1, so even without `HeightRequest`, it becomes 44x44 pts.
+
+### Code-Behind Example
+```csharp
+Canvas = new Canvas()
+{
+    Gestures = GesturesMode.Enabled,
+    RenderingMode = RenderingModeType.Accelerated,
+    HorizontalOptions = LayoutOptions.Fill,
+    VerticalOptions = LayoutOptions.Fill,
+    BackgroundColor = Colors.Black,
+    Content = new SkiaLayout()
+    {
+        HorizontalOptions = LayoutOptions.Fill,
+        VerticalOptions = LayoutOptions.Fill,
+        Children = new List<SkiaControl>()
+        {
+            new SkiaShape()
+            {
+                BackgroundColor = Colors.DodgerBlue,
+                CornerRadius = 16,
+                WidthRequest = 150,
+                HeightRequest = 150,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                Content = new SkiaLabel()
+                {
+                    TextColor = Colors.White,
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    Text = "Hello DrawnUI!"
+                }
+            }
+        }
+    }
+};
+```
+
 ## Next Steps
 
 - Explore the [Controls documentation](controls/index.md) to learn about available controls
 - See [Platform-Specific Styling](advanced/platform-styling.md) for more styling options
 - Check out the [Sample Applications](samples.md) for complete examples
+- Review [Development Notes](development-notes.md) for technical requirements and best practices

@@ -1,10 +1,10 @@
-# Building Game UIs and Interactive Games with DrawnUi.Maui
+# Building Game UIs and Interactive Games with DrawnUI
 
-DrawnUi.Maui is not just for business apps—it’s also a platform for building interactive 2D-games and game-like UIs. With direct SkiaSharp rendering, real-time animation, and flexible input handling, you can create everything from simple arcade games to rich, animated dashboards.
+DrawnUi is not just for business apps — with direct SkiaSharp rendering, real-time animation, and flexible input handling, you can create everything from simple arcade games to rich, animated dashboards.
 
 Mainly tested for  scenarios 
 
-## Why Use DrawnUi.Maui for 2D-Games?
+## Why Use DrawnUi for 2D-Games?
 
 - **True cross-platform**  
    No more Windows-only, your game will look and run the same way on Apple and Android devices along with Windows and Mac desktops, with sound and all the goodies .NET MAUI provides for those platforms. 

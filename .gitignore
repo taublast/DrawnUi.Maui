@@ -28,7 +28,7 @@ log.txt
 
 # DocFX API documentation (auto-generated from source code)
 **/api/**.yml
-**/api/index.md
+# Note: docs/api/index.md is manually created and should be tracked
 
 # Build results
 [Dd]ebug/

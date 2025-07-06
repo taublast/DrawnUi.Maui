@@ -212,3 +212,78 @@ public partial class ScreenBrowser
 3. **Test on All Platforms**: Verify behavior across iOS, Android, and Windows
 4. **Consider Alternatives**: Check if DrawnUI has a native equivalent before embedding
 5. **Performance**: Monitor performance impact, especially with multiple embedded controls
+
+## SkiaCamera
+
+SkiaCamera is a specialized control that provides camera functionality directly within the DrawnUI canvas. It allows you to capture photos and video while maintaining the performance and visual consistency of the DrawnUI rendering pipeline.
+
+### Basic Usage
+
+```xml
+<draw:SkiaCamera
+    IsPreviewEnabled="True"
+    CameraFacing="Back"
+    WidthRequest="300"
+    HeightRequest="400" />
+```
+
+### Key Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `IsPreviewEnabled` | bool | true | Whether to show camera preview |
+| `CameraFacing` | CameraFacing | Back | Camera to use (Front/Back) |
+| `FlashMode` | FlashMode | Off | Flash mode (Off/On/Auto) |
+| `IsRecording` | bool | false | Whether currently recording video |
+
+### Examples
+
+```xml
+<!-- Basic camera with controls -->
+<draw:SkiaLayout Type="Column" Spacing="10">
+    <draw:SkiaCamera
+        x:Name="Camera"
+        IsPreviewEnabled="True"
+        CameraFacing="Back"
+        WidthRequest="300"
+        HeightRequest="400" />
+
+    <draw:SkiaLayout Type="Row" Spacing="10">
+        <draw:SkiaButton
+            Text="Capture"
+            Clicked="OnCaptureClicked" />
+        <draw:SkiaButton
+            Text="Switch Camera"
+            Clicked="OnSwitchCameraClicked" />
+    </draw:SkiaLayout>
+</draw:SkiaLayout>
+```
+
+### Code-Behind Example
+
+```csharp
+private async void OnCaptureClicked(object sender, EventArgs e)
+{
+    try
+    {
+        var photo = await Camera.CapturePhotoAsync();
+        if (photo != null)
+        {
+            // Handle captured photo
+            await SavePhotoAsync(photo);
+        }
+    }
+    catch (Exception ex)
+    {
+        // Handle error
+        await DisplayAlert("Error", $"Failed to capture photo: {ex.Message}", "OK");
+    }
+}
+
+private void OnSwitchCameraClicked(object sender, EventArgs e)
+{
+    Camera.CameraFacing = Camera.CameraFacing == CameraFacing.Back
+        ? CameraFacing.Front
+        : CameraFacing.Back;
+}
+```

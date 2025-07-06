@@ -25,7 +25,7 @@ There are controls that are aliases for other controls, te make porting existing
 - SnappingLayout: Base class for snap points
 - SkiaDrawer: Swipe-in/out panel, subclassed SnappingLayout,
 - SkiaCarousel: Swipeable carousel, subclassed SnappingLayout
-- [ContentLayout](layouts.md#gridlayout): Optimized for single child, SkiaShape derives from this one
+- [ContentLayout](layouts.md#contentlayout): Optimized for single child, SkiaShape derives from this one
 - SkiaShape: Base class for all shapes, can wrap other elements to be clipped inside
 
 ### Text Controls
@@ -64,7 +64,7 @@ It's important to notice that every control can behaive like a button with gestu
 - [SkiaDecoratedGrid](layouts.md#skiadecoratedgrid): Grid able to draw shapes between rows and columns
 - [RefreshIndicator](scroll.md#refreshindicator): Can use Lottie and anything as ActivityIndicator or for your scroll RefreshView
 - [SkiaHoverMask](shapes.md#skiahovermask): Overlay a clipping shape
-- [SkiaTabsSelector](shell.md#skiatabs): Create top and bottom tabs
+- [SkiaTabsSelector](shell.md#skiatabsselector): Create top and bottom tabs
 - [SkiaCamera](native-integration.md#skiacamera): Camera control that draws on the canvas
 - [SkiaHotspot](layouts.md#skiahotspot): Handle gestures in a lazy way
 - [SkiaBackdrop](layouts.md#skiabackdrop): Apply effects to background below, like blur etc

@@ -1,9 +1,11 @@
 # DrawnUI Fluent C# Extensions - Developer Guide
 
-version 1.4a
+version 1.5a
 
 This guide covers the essential patterns of DrawnUI fluent extensions for drawn controls.
 Not all methods are listed here, as extensions are evolving.
+
+**WARNING: this API could become obsolete as i recently discovered UNO platform fluent syntax and thinking much about replicating it.**
 
 ## Table of Contents
 
@@ -556,7 +558,7 @@ var slider = new SkiaSlider()
     });
 ```
 
-## Layout and UI Extensions
+## Layout Extensions
 
 ### Positioning and Sizing
 
@@ -789,6 +791,7 @@ new SkiaButton("Save")
     });
 ```
 
+
 ## Troubleshooting
 
 ### Problem: Observer Not Triggering
@@ -844,3 +847,6 @@ public class MyViewModel : INotifyPropertyChanged
    * `UseCache = SkiaCacheType.ImageDoubleBuffered` for equally sized recycled cells. Will show old cache while preparing new one in background.
    * `UseCache = SkiaCacheType.GPU` for small static overlays like headers, navbars.
 2. Check that you do not have logs spamming the console on every rendering frame.
+
+
+

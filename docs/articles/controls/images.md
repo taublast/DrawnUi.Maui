@@ -809,3 +809,121 @@ if (loadedSource != null)
 - Consider performance impact of multiple effects
 
 This comprehensive guide covers all aspects of using SkiaImage in DrawnUi.Maui, from basic usage to advanced optimization techniques. The control provides powerful image handling capabilities while maintaining excellent performance through intelligent caching and rendering strategies.
+
+## SkiaSvg
+
+SkiaSvg is a specialized control for rendering SVG (Scalable Vector Graphics) files with high performance and quality. It extends SkiaImage to provide SVG-specific features while maintaining all the image manipulation capabilities.
+
+### Basic Usage
+
+```xml
+<draw:SkiaSvg
+    Source="icon.svg"
+    TintColor="Blue"
+    WidthRequest="64"
+    HeightRequest="64" />
+```
+
+### Key Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `TintColor` | Color | Transparent | Color to tint the SVG |
+| `LockRatio` | bool | true | Whether to maintain aspect ratio |
+
+### Examples
+
+```xml
+<!-- Tinted SVG icon -->
+<draw:SkiaSvg
+    Source="heart.svg"
+    TintColor="Red"
+    WidthRequest="32"
+    HeightRequest="32" />
+
+<!-- SVG with effects -->
+<draw:SkiaSvg Source="logo.svg">
+    <draw:SkiaControl.VisualEffects>
+        <draw:DropShadowEffect Blur="4" X="2" Y="2" Color="#40000000" />
+    </draw:SkiaControl.VisualEffects>
+</draw:SkiaSvg>
+```
+
+## SkiaGif
+
+SkiaGif is a dedicated control for displaying animated GIF files with playback control and optimization features.
+
+### Basic Usage
+
+```xml
+<draw:SkiaGif
+    Source="animation.gif"
+    IsPlaying="True"
+    RepeatCount="0"
+    WidthRequest="200"
+    HeightRequest="200" />
+```
+
+### Key Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `IsPlaying` | bool | true | Whether the animation is playing |
+| `RepeatCount` | int | 0 | Number of times to repeat (0 = infinite) |
+| `Speed` | double | 1.0 | Playback speed multiplier |
+| `CurrentFrame` | int | 0 | Current frame index |
+| `FrameCount` | int | 0 | Total number of frames (read-only) |
+
+### Examples
+
+```xml
+<!-- Auto-playing GIF -->
+<draw:SkiaGif
+    Source="loading.gif"
+    IsPlaying="True"
+    RepeatCount="0" />
+
+<!-- Controlled GIF playback -->
+<draw:SkiaGif
+    Source="animation.gif"
+    IsPlaying="{Binding IsAnimating}"
+    Speed="0.5"
+    RepeatCount="3" />
+```
+
+## SkiaMediaImage
+
+SkiaMediaImage is a versatile control that can display various types of media including static images, animated GIFs, and other supported formats. It automatically detects the media type and uses the appropriate rendering method.
+
+### Basic Usage
+
+```xml
+<draw:SkiaMediaImage
+    Source="{Binding MediaUrl}"
+    AutoPlay="True"
+    WidthRequest="300"
+    HeightRequest="200" />
+```
+
+### Key Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `AutoPlay` | bool | true | Whether to auto-play animated content |
+| `MediaType` | MediaType | Auto | Force specific media type handling |
+
+### Examples
+
+```xml
+<!-- Auto-detecting media type -->
+<draw:SkiaMediaImage
+    Source="{Binding MediaSource}"
+    AutoPlay="True"
+    Aspect="AspectCover" />
+
+<!-- Force GIF handling -->
+<draw:SkiaMediaImage
+    Source="image.gif"
+    MediaType="Gif"
+    AutoPlay="False" />
+```

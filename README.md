@@ -27,6 +27,7 @@ Current development state is _ALPHA for prod_.
 * __Caching system__ for faster re-drawing
 * __Optimized for performance__, rendering only visible elements, recycling templates etc
 * __Gestures__ support for anything, panning, scrolling, zooming etc
+* __Keyboard support__, track any key
 * __Navigate__ on canvas with familiar MAUI Shell techniques 
 
 ## What's new

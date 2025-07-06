@@ -869,9 +869,8 @@ namespace DrawnUi.Draw
             set { SetValue(ZoomProperty, value); }
         }
 
-        protected bool CreateSvg(string loadedString)
+        public virtual bool LoadSvgFromBytes(byte[] byteArray)
         {
-            byte[] byteArray = Encoding.ASCII.GetBytes(loadedString);
             using (Stream stream = new MemoryStream(byteArray))
             {
                 var svg = new SKSvg();
@@ -883,17 +882,21 @@ namespace DrawnUi.Draw
                     {
                         throw new Exception("[SkiaSvg] Failed to load string");
                     }
-
                     Update();
                     return true;
                 }
                 catch (Exception e)
                 {
-                    Super.Log($"CreateSvg source: \"{Source}\" {e}");
+                    Super.Log($"Failed to load {e}");
                 }
-
                 return false;
             }
+        }
+
+        public virtual bool CreateSvg(string loadedString)
+        {
+            byte[] byteArray = Encoding.ASCII.GetBytes(loadedString);
+            return LoadSvgFromBytes(byteArray);
         }
 
 

@@ -1,4 +1,4 @@
-# Porting Native to Drawn with DrawnUi
+# Porting Native to Drawn with DrawnUI
 
 There can come a time when You feel that some complex parts of the app are not rendering the way You wish, or you cannot implement some UI with out-of-the box native controls. At the same time You want to stay with MAUI and not rewrite the app in something else.  
 We can then replace chunks of our UI with drawn controls. Or for the whole app.
@@ -25,13 +25,13 @@ First please follow the Getting [Started guide](./getting-started.md) to setup y
 
 ## The theory
 
-To replace native controls with DrawnUi ones would take several steps: 
+To replace native controls with DrawnUI ones would take several steps: 
 
 1. Put used images inside `Resources/Raw` folder.
 
 2. Create copies of your existing views
 
-3. Replace native views names with DrawnUi ones. 
+3. Replace native views names with DrawnUI ones. 
 
 4. Fix properties/event handlers mismatch
 

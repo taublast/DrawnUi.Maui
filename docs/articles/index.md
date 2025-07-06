@@ -1,84 +1,75 @@
-# DrawnUi.Maui
+# DrawnUI for .NET MAUI
 
 **A lightweight library for .NET MAUI built on top of SkiaSharp, to layout and draw your UI on a Skia canvas.**
 
-* Provides infrastructure to create and render drawn controls with gestures and animations, comes with some pre-built controls.  
-* Profits from hardware-accelerated rendering on iOS • MacCatalyst • Android • Windows  
+## 🎯 The Purpose
+
+* Provides infrastructure to create and render drawn controls with gestures and animations, comes with some pre-built controls.
+* Profits from hardware-accelerated rendering on iOS • MacCatalyst • Android • Windows
 * Free to use under the MIT license, a nuget package is available.
 * To consume inside a usual MAUI app - wrap drawn controls inside `Canvas` views.
 * To create a totally drawn apps with just one `Canvas` as root view - `SkiaShell`, `SkiaViewSwitcher` are provided for navigation with modals, popups, toasts etc.
-* Drawn controls are virtual: no native views/handlers created, UI-thread is not required to accessed and modify them.
- 
 
-## Live Examples
+**Drawn controls are virtual: no native views/handlers created, UI-thread is not required to accessed and modify them.**
+
+## ⚡ Features
+
+* __Draws using SkiaSharp with hardware acceleration__
+* __Create your own animated pixel-perfect controls__
+* __Port existing native controls to be drawn__
+* __Design in XAML or code-behind__
+* __2D and 3D Transforms__
+* __Visual effects__ for every control, filters and shaders
+* __Animations__ targeting max FPS
+* __Caching system__ for faster re-drawing
+* __Optimized for performance__, rendering only visible elements, recycling templates etc
+* __Gestures__ support for anything, panning, scrolling, zooming etc
+* __Keyboard support__, track any key
+* __Navigate__ on canvas with familiar MAUI Shell techniques 
+* __Shipped with pre-built controls__ consume, customize and get inspired to create your own!
+
+## 🎮 Live Examples
 
 - **[Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo)** - A totally drawn app demo with recycled cells, camera etc
-- **[Space Shooter Game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter)** - Arcade game etude built with DrawnUi
+- **[Space Shooter Game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter)** - Arcade game etude built with DrawnUI
 - **[Shaders Carousel](https://github.com/taublast/ShadersCarousel/)** - A totally drawn app with making use of SkiaSharp v3 shaders
 - **[Sandbox project](https://github.com/taublast/DrawnUi.Maui/tree/main/src/Maui/Samples/Sandbox)** - Experiment with pre-built drawn controls and more
 
----
 
-## Frequently Asked Questions
+## 🤔 Onboarding
 
-### General
+**Q: What is the difference between DrawnUi and other drawn frameworks?**  
+A: Not really comparable since DrawnUI is just a library for **.NET MAUI**, to let you draw UI instead of using native views.
 
-**Q: Drawn? What is the difference between DrawnUi and Uno/Avalonia?**  
-A: This is not comparable at all, DrawnUI is a library for .NET MAUI to avoid using native controls where possible.
+**Q: Why choose drawn over native UI?**  
+A: Rather a freedom choice to draw what you want and how you see it.  
+It also can bemore performant to draw a complex UI on just one canvas instead of composing it with many native views.
 
-**Q: Why avoid native controls?**  
-A: A matter of choice to draw anything without using pre-built designs.
-
-**Q: Do I neded to know how to draw on a canvas??**  
-A: No, you can use prebuild drawn controls to customize them without limits. You would find that almost every method is virtual and all controls are initially designed to be subclassed and customized.
+**Q: Do I need to know how to draw on a canvas??**  
+A: No, you can start by using prebuilt drawn controls and customize them. All controls are initially designed to be subclassed, customized, and almost every method is virtual. 
 
 **Q: Can I still use XAML?**  
 A: Yes you can use both XAML and code-behind to create your UI.  
 
 **Q: Can I avoid using XAML at all costs?**  
-A: Yes feel free to use code-behind, up to using background thread to access and modify drawn controls properties.
+A: Yes feel free to use code-behind to create your UI, up to using background thread to access and modify drawn controls properties.
 
 **Q: How do I create custom controls with DrawnUI?**  
-A: Inherit from `SkiaControl` for basic controls or `SkiaLayout` for container controls. Override the `Paint` method to define your custom drawing logic using SkiaSharp.
+A: Inherit from `SkiaControl` for basic controls or `SkiaLayout` for containers etc. Override the `Paint` method to draw with SkiaSharp.
 
 **Q: Can I embed native MAUI controls inside DrawnUI?**  
 A: Yes! Use `SkiaMauiElement` to embed native MAUI controls like WebView inside your DrawnUI canvas. This allows you to combine the best of both worlds.
 
-**Q: I have heard about making games with DrawnUI?**  
-A: Well, since you draw, why not just draw a game instead of a business app. DrawnUI comes with gaming helpers and custom accelerated platform views to assure a smooth display-synched rendering. 
+**Q: Possible to create a game with DrawnUI?**  
+A: Well, since you draw, why not just draw a game instead of a business app. DrawnUI comes with gaming helpers and custom accelerated platform views to assure a smooth display-synched rendering.
 
-### Advanced
+## 📚 Knowledge Base
 
-**Q: How do I use set SkiaImage source?**  
-A: You have several options:
-1. Place images in `Resources/Raw` folder: `<draw:SkiaImage Source="baboon.jpg" />`
-2. Set images directly: `mySkiaImage.SetImageInternal(mySkImage)` or `mySkiaImage.SetBitmapInternal(mySkBitmap)`
-
-**Q: Can I use MAUI's default Images folder?**  
-A: No.
-
-**Q: How do I prevent touch events from passing through overlapping controls?**  
-A: Use the `BlockGesturesBelow="True"` property on the top control. Note that `InputTransparent` makes the control itself avoid gestures, not controls below it in the Z-axis.
-
-**Q: How can I enable mouse wheel scrolling in SkiaScroll?**  
-A: Mouse wheel scrolling isn't built-in, but you can easily add it by subclassing SkiaScroll and overriding `ProcessGestures` to handle `TouchActionResult.Wheel` events. Check the discussions for a complete code example.
-
-**Q: How do I maintain scroll position when reloading items in SkiaScroll?**  
-A: Save the current `ViewportOffsetY` before reloading, then restore it after the new items are loaded using `ScrollTo(x, savedOffsetY, 0)`.
-
-**Q: How do I internally rebuild the ItemsSource?**  
-A: Directly call ApplyItemsSource().
-
-
----
+- **[FAQ](faq.md)** - Frequently asked questions and answers
+- **[GitHub Issues](https://github.com/taublast/DrawnUi.Maui/issues)** - Report bugs or ask questions
+- **[Background Article](https://taublast.github.io/posts/MauiJuly/)** - Why DrawnUi was created
 
 **Can't find the answer to your question?** → **[Ask in GitHub Discussions](https://github.com/taublast/DrawnUi/discussions)** - The community is here to help!
-
-## Need More Help?
-
-- **[❓ Troubleshooting](fluent-extensions.md#troubleshooting)** - Common issues and solutions
-- **[💬 GitHub Issues](https://github.com/taublast/DrawnUi.Maui/issues)** - Report bugs or ask questions
-- **[📖 Background Article](https://taublast.github.io/posts/MauiJuly/)** - Why DrawnUi was created
 
 ---
 
