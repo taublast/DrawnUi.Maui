@@ -18,16 +18,15 @@
 **/Droid/**/[Rr]esource.[Dd]esigner.cs
 
 # DocFX generated files
-_site/
-api/
-obj/
+docs/_site/
+docs/api/
 
 # DocFX temporary files
 .docfx/
 docfx_project/log.txt
 log.txt
 
-# API documentation (auto-generated from source code)
+# DocFX API documentation (auto-generated from source code)
 **/api/**.yml
 **/api/index.md
 
