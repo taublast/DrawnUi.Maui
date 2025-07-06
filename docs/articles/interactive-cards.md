@@ -381,15 +381,15 @@ public partial class MainPage : ContentPage
 
                         // Brighten colors
                         var gradientStartColor = Color.FromRgba(
-                            Math.Min(255, originalStart.Red * lighter),
-                            Math.Min(255, originalStart.Green * lighter),
-                            Math.Min(255, originalStart.Blue * lighter),
+                            Math.Min(1, originalStart.Red * lighter),
+                            Math.Min(1, originalStart.Green * lighter),
+                            Math.Min(1, originalStart.Blue * lighter),
                             originalStart.Alpha);
 
                         var gradientEndColor = Color.FromRgba(
-                            Math.Min(255, originalEnd.Red * lighter),
-                            Math.Min(255, originalEnd.Green * lighter),
-                            Math.Min(255, originalEnd.Blue * lighter),
+                            Math.Min(1, originalEnd.Red * lighter),
+                            Math.Min(1, originalEnd.Green * lighter),
+                            Math.Min(1, originalEnd.Blue * lighter),
                             originalEnd.Alpha);
 
                         gradient.Colors = new List<Color>() { gradientStartColor, gradientEndColor };
@@ -450,7 +450,176 @@ public partial class MainPage : ContentPage
 
 ---
 
-## Step 4: Run Your Impressive App!
+## Step 4: Understanding the Technical Details
+
+Let's dive into why certain technical choices were made in this tutorial:
+
+### SkiaRichLabel for Unicode Emoji Support
+
+```xml
+<draw:SkiaRichLabel
+    Text="🎨 Gradient Card"
+    FontSize="20"
+    FontAttributes="Bold"
+    TextColor="White" />
+```
+
+**Why SkiaRichLabel?** Unlike regular `SkiaLabel`, `SkiaRichLabel` (formerly `SkiaMarkdownLabel`) provides:
+- **Unicode emoji rendering** with fallback font support
+- **Automatic font detection** for complex characters like 🎨🖌❤ 
+- **Rich text capabilities** including markdown formatting
+
+When the font you are using for the `FontFamily` property doesn't have emoji glyphs, `SkiaRichLabel` automatically finds and uses appropriate fallback fonts, ensuring your emojis display correctly.
+
+### Strategic Caching with UseCache
+
+Each container uses specific caching strategies for optimal performance:
+
+```xml
+<!-- Static title section - cache the drawing operations -->
+<draw:SkiaLayout UseCache="Operations" ... >
+    <draw:SkiaLabel Text="Interactive Cards" ... />
+</draw:SkiaLayout>
+
+<!-- Cards with shadows - cache the entire visual result -->
+<draw:SkiaLayer UseCache="Image" ... >
+    <draw:SkiaShape>
+        <draw:SkiaShape.VisualEffects>
+            <draw:DropShadowEffect ... />
+        </draw:SkiaShape.VisualEffects>
+    </draw:SkiaShape>
+</draw:SkiaLayer>
+```
+
+**Cache Strategy Explained:**
+
+- **`UseCache="Operations"`** - Caches drawing operations (shapes, text, paths) as SKPicture objects
+  - Perfect for vector-based content
+  - Very memory efficient
+  
+- **`UseCache="Image"`** - Caches the entire visual result as a bitmap
+  - Essential for **shadow effects** - shadows are expensive to recalculate every frame
+  - Used on card containers instead of cards to avoid clipping shadows
+
+**Why Cache Shadows?**   
+Drop shadows require complex blur calculations on every frame. Without caching, animating a card with shadows would:
+1. Recalculate the blur effect for every frame
+2. Re-render all shadow pixels each frame
+3. Cause visible stuttering and frame drops
+
+With `UseCache="Image"`, the shadow is calculated once and stored as a bitmap, giving you smooth animations.
+
+### Z-Index and Layer Management
+
+```xml
+<draw:SkiaLayer
+    Padding="20,8"
+    ZIndex="10"
+    x:Name="Pannable"
+    ConsumeGestures="OnCardGestures">
+```
+
+**Why ZIndex="10"?** The draggable card gets higher z-index so it appears above other cards when moved. This creates a natural layering effect during interactions.
+
+### Gesture Consumption Strategy
+
+```xml
+ConsumeGestures="OnCardGestures"
+```
+
+```csharp
+if (e.Args.Type == TouchActionResult.Tapped)
+{
+    e.Consumed = true; // Prevents gesture bubbling
+    // ... animation code
+}
+```
+
+**Gesture Management:**  
+Notice `IgnoreWrongDirection="True"` on the `SkiaScroll` so that it passes horizontal panning to children.
+Cards consume their touch events to prevent:
+- Scroll interference during card interactions
+- Multiple cards responding to the same touch
+
+### Gradient Configuration
+
+```xml
+<draw:SkiaGradient
+    Type="Linear"
+    Angle="45">
+    <draw:SkiaGradient.Colors>
+        <Color>#667eea</Color>
+        <Color>#764ba2</Color>
+    </draw:SkiaGradient.Colors>
+</draw:SkiaGradient>
+```
+
+**Gradient Types Used:**
+- **Linear with Angle** - Traditional diagonal gradients
+- **Circular with StartXRatio/StartYRatio** - Radial gradients positioned off-center for dynamic effects
+
+### Animation Performance Patterns
+
+```csharp
+private void OnCardGestures(object sender, SkiaGesturesInfo e)
+{
+    if (e.Args.Type == TouchActionResult.Tapped)
+    {
+        e.Consumed = true; // MUST happen synchronously!
+        
+        Task.Run(async () =>
+        {
+            // Scale animation runs on background thread
+            control.ScaleToAsync(1.1, 1.1, 150, Easing.CubicOut);
+            await Task.Delay(100);
+            control.ScaleToAsync(1.0, 1.0, 200, Easing.BounceOut);
+        });
+    }
+}
+```
+
+**Why Task.Run for animations?** 
+
+The gesture event handler **must remain synchronous** so that `e.Consumed = true` is processed correctly by the gesture system. If we made the event handler `async`, the gesture processing would exit the thread before `e.Consumed` is evaluated, leaving it as `false`.
+
+**The Pattern:**
+1. **Synchronous gesture handling** - Set `e.Consumed = true` immediately
+2. **Background animations** - Use `Task.Run` for time-consuming animations
+3. **Non-blocking UI** - Gesture system gets immediate response, animations run separately
+
+This ensures:
+- Gesture consumption works correctly
+- Multiple animations can run simultaneously
+- No gesture conflicts or scroll interference
+
+**Easing Functions:**
+- `CubicOut` - Smooth deceleration for professional feel
+- `BounceOut` - Playful bounce effect that feels responsive
+- `SpringOut` - Natural spring physics for snap-back behaviors
+
+### Error Handling Pattern
+
+```csharp
+public MainPage()
+{
+    try
+    {
+        InitializeComponent();
+    }
+    catch (Exception e)
+    {
+        Super.DisplayException(this, e);
+    }
+}
+```
+
+**Why wrap InitializeComponent in try-catch?**
+
+DrawnUI provides developer-friendly error handling through `Super.DisplayException()`. Instead of your app crashing when you make XAML design mistakes, the error gets displayed **directly on the canvas** with full stack trace so you can see the issue immediately.
+
+---
+
+## Step 5: Run Your App!
 
 Build and run the app:
 
@@ -462,12 +631,11 @@ dotnet run
 ### What You'll Experience:
 
 1. **🎨 Beautiful Cards**: Gradient backgrounds with glowing shadows
-2. **✨ Smooth Animations**: 60fps interactions that feel native
+2. **✨ Smooth Animations**: interactions that feel native  
 3. **👆 Responsive Touch**: Immediate feedback to every gesture
-4. **🚀 Superior Performance**: Faster than equivalent native MAUI controls
+4. **🚀 Nice Performance**: Cached shadows enable smooth animations
 
 ---
-
 
 ## Troubleshooting
 
@@ -478,30 +646,24 @@ dotnet run
 - Verify .NET 9 is installed
 - Check that MAUI workload is installed: `dotnet workload install maui`
 
-**Cards not animating:**
+**App not animating:**
 - Verify gestures are enabled on the Canvas
-- Check that controls have proper `x:Name` attributes
-- Ensure animations are awaited properly
 
 **Performance issues:**
+- Check that hardware acceleration is enabled
 - Use appropriate `UseCache` for your content
 - Avoid nested animations during heavy interactions
 - Profile with platform tools to identify bottlenecks
-
-**Visual effects not showing:**
-- Check that hardware acceleration is enabled
-- Verify effect properties (blur, color) are valid
-- Test on different devices for hardware limitations
 
 ---
 
 ## 🎉 Congratulations!
 
-You've built a **genuinely impressive** first DrawnUI app that demonstrates:
+You've built an **mpressive** first DrawnUI app that demonstrates:
 - ✅ **Beautiful, pixel-perfect UI**
-- ✅ **Smooth 60fps animations** 
+- ✅ **Smooth animations** 
 - ✅ **Professional visual effects**
-- ✅ **Superior performance**
+- ✅ **Nice performance**
 - ✅ **Cross-platform consistency**
 
 **This isn't just "Hello World" - this is what DrawnUI enables you to build!**

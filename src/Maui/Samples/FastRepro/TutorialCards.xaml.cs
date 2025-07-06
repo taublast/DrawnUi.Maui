@@ -35,15 +35,15 @@ public partial class TutorialCards : ContentPage
 
                         // Brighten colors
                         var gradientStartColor = Color.FromRgba(
-                            Math.Min(255, originalStart.Red * lighter),
-                            Math.Min(255, originalStart.Green * lighter),
-                            Math.Min(255, originalStart.Blue * lighter),
+                            Math.Min(1, originalStart.Red * lighter),
+                            Math.Min(1, originalStart.Green * lighter),
+                            Math.Min(1, originalStart.Blue * lighter),
                             originalStart.Alpha);
 
                         var gradientEndColor = Color.FromRgba(
-                            Math.Min(255, originalEnd.Red * lighter),
-                            Math.Min(255, originalEnd.Green * lighter),
-                            Math.Min(255, originalEnd.Blue * lighter),
+                            Math.Min(1, originalEnd.Red * lighter),
+                            Math.Min(1, originalEnd.Green * lighter),
+                            Math.Min(1, originalEnd.Blue * lighter),
                             originalEnd.Alpha);
 
                         gradient.Colors = new List<Color>() { gradientStartColor, gradientEndColor };
