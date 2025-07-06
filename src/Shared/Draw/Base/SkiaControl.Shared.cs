@@ -18,12 +18,18 @@ namespace DrawnUi.Draw
 {
     [DebuggerDisplay("{DebugString}")]
     public partial class SkiaControl :
+        ISkiaGestureListener,
         IHasAfterEffects,
         ISkiaControl
     {
         public SkiaControl()
         {
             Init();
+        }
+
+        public virtual bool OnFocusChanged(bool focus)
+        {
+            return false;
         }
 
         public VisualLayer? VisualLayer { get; set; }
@@ -1312,12 +1318,6 @@ namespace DrawnUi.Draw
             set { SetValue(CommandChildTappedProperty, value); }
         }
 
-        /// <summary>
-        /// Fast usage event handler to handle taps. For more control over gestures use AddGestures or code-behind ProcessGestures override.
-        /// If this is set then the Tapped gesture will be consumed by this control without alternatives.
-        /// </summary>
-        public event EventHandler<ControlTappedEventArgs> Tapped;
-
         public static readonly BindableProperty TouchEffectColorProperty = BindableProperty.Create(
             nameof(TouchEffectColor), typeof(Color),
             typeof(SkiaControl),
@@ -1451,6 +1451,18 @@ namespace DrawnUi.Draw
         /// </summary>
         public Func<SkiaGesturesParameters, GestureEventProcessingInfo, ISkiaGestureListener> OnGestures;
 
+        /// <summary>
+        /// Fast usage event handler to handle taps.
+        /// For more control over gestures use AddGestures or code-behind ProcessGestures override.
+        /// If this is set then the Tapped gesture will be consumed by this control without alternatives.
+        /// </summary>
+        public event EventHandler<ControlTappedEventArgs> Tapped;
+
+        /// <summary>
+        /// Gestures event handler for fast access. To mark a gesture as consumed set `e.Consumed` to `true` inside a synchronous (!) event handler.
+        /// Can also use code-behind ProcessGestures override for more control.
+        /// </summary>
+        public event EventHandler<SkiaGesturesInfo> ConsumeGestures;
 
         public virtual ISkiaGestureListener ProcessGestures(
             SkiaGesturesParameters args,
@@ -1506,6 +1518,16 @@ namespace DrawnUi.Draw
                 if (consumed != null)
                 {
                     return consumed;
+                }
+            }
+
+            if (ConsumeGestures != null)
+            {
+                var sent = SkiaGesturesInfo.Create(args, apply);
+                ConsumeGestures.Invoke(this, sent);
+                if (args.Type != TouchActionResult.Up && sent.Consumed)
+                {
+                    return this;
                 }
             }
 
@@ -2034,9 +2056,17 @@ namespace DrawnUi.Draw
         {
             if (bindable is SkiaControl control)
             {
+
+                if (oldvalue is SkiaGradient old)
+                {
+                    old.BindingContext = null;
+                    old.Parent = null;
+                }
+
                 if (newvalue is SkiaGradient gradient)
                 {
                     gradient.BindingContext = control.BindingContext;
+                    gradient.Parent = control;
                 }
 
                 control.Update();
