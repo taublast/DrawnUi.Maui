@@ -1,6 +1,8 @@
-# Interactive Card Gallery Tutorial
+# Interactive Cards Tutorial
 
-Ready for something **impressive**? Let's build an animated, interactive card gallery that showcases the true power of DrawnUI! You'll create smooth 60fps animations, beautiful visual effects, and responsive touch interactions - all with better performance than native controls.
+Ready for something **impressive**? Let's build an animated, interactive card gallery that showcases the true power of DrawnUI! You'll create smooth animations, beautiful visual effects, and responsive touch interactions - all with better performance than native controls.
+
+This example is using XAML! If you want to see how to do the same in code, check out the [Cards with C#](interactive-cards-code.md) version of this article.
 
 > 💡 **Prerequisites**: Complete [Your First DrawnUI App](first-app.md) before starting this tutorial.
 
@@ -71,7 +73,7 @@ public static class MauiProgram
 
 ---
 
-## Step 2: Create the Interactive Card
+## Step 2: Create the UI in XAML
 
 Replace `MainPage.xaml` with our card gallery:
 
@@ -362,7 +364,7 @@ public partial class MainPage : ContentPage
         }
     }
 
-        private void OnCardGestures(object sender, SkiaGesturesInfo e)
+    private void OnCardGestures(object sender, SkiaGesturesInfo e)
     {
         if (sender is SkiaControl control)
         {
