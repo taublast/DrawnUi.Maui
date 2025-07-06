@@ -1,130 +1,159 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Class AddGestures.GestureListener | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class AddGestures.GestureListener | DrawnUi Documentation ">
-    
-    
-      <link rel="shortcut icon" href="../images/favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../styles/docfx.css">
-      <link rel="stylesheet" href="../styles/main.css">
-      <meta property="docfx:navrel" content="../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../">
-    
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="DrawnUi.Draw.AddGestures.GestureListener">
+
+        <article data-uid="DrawnUi.Draw.AddGestures.GestureListener">
 
 
 
-  <h1 id="DrawnUi_Draw_AddGestures_GestureListener" data-uid="DrawnUi.Draw.AddGestures.GestureListener" class="text-break">Class AddGestures.GestureListener</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
-    <div class="level2"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
-    <div class="level3"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
-    <div class="level4"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
-    <div class="level5"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
-    <div class="level6"><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
-    <div class="level7"><span class="xref">AddGestures.GestureListener</span></div>
+  <h1 id="DrawnUi_Draw_AddGestures_GestureListener" data-uid="DrawnUi.Draw.AddGestures.GestureListener" class="text-break">
+Class AddGestures.GestureListener  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Draw.html">Draw</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>DrawnUi.Maui.dll</dd></dl>
   </div>
-  <div class="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class AddGestures.GestureListener : SkiaControl, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IView, ITransform, IElement, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaControl, IDrawnBase, IDisposable, ICanBeUpdatedWithContext, ICanBeUpdated, ISkiaGestureListener</code></pre>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
+      <div><span class="xref">AddGestures.GestureListener</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetEnumerator">SkiaControl.GetEnumerator()</a>
     </div>
@@ -223,15 +252,6 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetDensity">SkiaControl.GetDensity()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_TransferState_Microsoft_Maui_IView_">SkiaControl.TransferState(IView)</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Reload">SkiaControl.Reload()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ReloadHandler">SkiaControl.ReloadHandler</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseCacheProperty">SkiaControl.UseCacheProperty</a>
@@ -552,6 +572,9 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SizeRequest">SkiaControl.SizeRequest</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_WidthRequestWithMargins">SkiaControl.WidthRequestWithMargins</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptWidthConstraintToRequest_System_Single_Microsoft_Maui_Thickness_System_Double_">SkiaControl.AdaptWidthConstraintToRequest(float, Thickness, double)</a>
     </div>
     <div>
@@ -559,6 +582,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetMeasuringConstraints_DrawnUi_Draw_MeasureRequest_">SkiaControl.GetMeasuringConstraints(MeasureRequest)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillHorizontally">SkiaControl.NeedFillHorizontally</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillVertically">SkiaControl.NeedFillVertically</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptConstraintToContentRequest_System_Single_System_Double_System_Double_System_Boolean_System_Double_System_Double_System_Single_System_Boolean_">SkiaControl.AdaptConstraintToContentRequest(float, double, double, bool, double, double, float, bool)</a>
@@ -886,6 +915,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ParentChanged">SkiaControl.ParentChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurementProperty">SkiaControl.FastMeasurementProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurement">SkiaControl.FastMeasurement</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdjustClippingProperty">SkiaControl.AdjustClippingProperty</a>
@@ -1218,6 +1253,12 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Measure_System_Single_System_Single_System_Single_">SkiaControl.Measure(float, float, float)</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeMeasuring">SkiaControl.InitializeMeasuring()</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnMeasuring_System_Single_System_Single_System_Single_">SkiaControl.OnMeasuring(float, float, float)</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeDefaultContent_System_Boolean_">SkiaControl.InitializeDefaultContent(bool)</a>
     </div>
     <div>
@@ -1243,6 +1284,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureAbsoluteBase_SkiaSharp_SKRect_System_Single_">SkiaControl.MeasureAbsoluteBase(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_">SkiaControl.ContractPixelsRect(SKRect, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_Microsoft_Maui_Thickness_">SkiaControl.ContractPixelsRect(SKRect, float, Thickness)</a>
@@ -1357,6 +1401,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_PreArrange_SkiaSharp_SKRect_System_Single_System_Single_System_Single_">SkiaControl.PreArrange(SKRect, float, float, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureSelf_SkiaSharp_SKRect_System_Single_System_Single_System_Single_">SkiaControl.MeasureSelf(SKRect, float, float, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_IsRendering">SkiaControl.IsRendering</a>
@@ -1489,6 +1536,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseTranslationX">SkiaControl.UseTranslationX</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_LinkTransforms">SkiaControl.LinkTransforms</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_DrawRenderObject_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_CachedObject_">SkiaControl.DrawRenderObject(DrawingContext, CachedObject)</a>
@@ -1732,6 +1782,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AddOrRemoveView_DrawnUi_Draw_SkiaControl_System_Boolean_">SkiaControl.AddOrRemoveView(SkiaControl, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SetChildrenAsParameters_DrawnUi_Draw_SkiaControl___">SkiaControl.SetChildrenAsParameters(params SkiaControl[])</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SetChildren_System_Collections_Generic_IEnumerable_DrawnUi_Draw_SkiaControl__">SkiaControl.SetChildren(IEnumerable&lt;SkiaControl&gt;)</a>
@@ -2279,520 +2332,11 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Draw.html">Draw</a></h6>
-  <h6><strong>Assembly</strong>: DrawnUi.Maui.dll</h6>
-  <h5 id="DrawnUi_Draw_AddGestures_GestureListener_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AddGestures.GestureListener : SkiaControl, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IHotReloadableView, IReplaceableView, IView, IElement, ITransform, IReloadHandler, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaControl, IDrawnBase, IDisposable, ICanBeUpdatedWithContext, ICanBeUpdated, ISkiaGestureListener</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener__ctor_DrawnUi_Draw_SkiaControl_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.%23ctor(DrawnUi.Draw.SkiaControl)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L47">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener__ctor_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.#ctor*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener__ctor_DrawnUi_Draw_SkiaControl_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.#ctor(DrawnUi.Draw.SkiaControl)">GestureListener(SkiaControl)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public GestureListener(SkiaControl control)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></td>
-        <td><span class="parametername">control</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_CanDraw.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.CanDraw%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L25">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_CanDraw_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.CanDraw*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_CanDraw" data-uid="DrawnUi.Draw.AddGestures.GestureListener.CanDraw">CanDraw</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool CanDraw { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_CanDraw">SkiaControl.CanDraw</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_HitBoxAuto.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.HitBoxAuto%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L61">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_HitBoxAuto_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.HitBoxAuto*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_HitBoxAuto" data-uid="DrawnUi.Draw.AddGestures.GestureListener.HitBoxAuto">HitBoxAuto</h4>
-  <div class="markdown level1 summary"><p>This can be absolutely false if we are inside a cached
-rendering object parent that already moved somewhere.
-So coords will be of the moment we were first drawn,
-while if cached parent moved, our coords might differ.
-todo detect if parent is cached somewhere and offset hotbox by cached parent movement offset...
-todo think about it baby =) meanwhile just do not set gestures below cached level</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override SKRect HitBoxAuto { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_HitBoxAuto">SkiaControl.HitBoxAuto</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_Tag.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.Tag%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L13">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_Tag_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.Tag*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_Tag" data-uid="DrawnUi.Draw.AddGestures.GestureListener.Tag">Tag</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Tag { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_GetTopParentView.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.GetTopParentView%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L36">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_GetTopParentView_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.GetTopParentView*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_GetTopParentView" data-uid="DrawnUi.Draw.AddGestures.GestureListener.GetTopParentView">GetTopParentView()</h4>
-  <div class="markdown level1 summary"><p>Use Superview from public area</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override DrawnView GetTopParentView()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Views.DrawnView.html">DrawnView</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetTopParentView">SkiaControl.GetTopParentView()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_HitIsInside_System_Single_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.HitIsInside(System.Single%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L52">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_HitIsInside_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.HitIsInside*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_HitIsInside_System_Single_System_Single_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.HitIsInside(System.Single,System.Single)">HitIsInside(float, float)</h4>
-  <div class="markdown level1 summary"><p>ISkiaGestureListener impl</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool HitIsInside(float x, float y)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">x</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">y</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_HitIsInside_System_Single_System_Single_">SkiaControl.HitIsInside(float, float)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_OnFocusChanged_System_Boolean_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.OnFocusChanged(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L146">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_OnFocusChanged_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.OnFocusChanged*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_OnFocusChanged_System_Boolean_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.OnFocusChanged(System.Boolean)">OnFocusChanged(bool)</h4>
-  <div class="markdown level1 summary"><p>This will be called only for views registered at Superview.FocusedChild.
-The view must return true of false to indicate if it accepts focus.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool OnFocusChanged(bool focus)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">focus</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_PlayTouchAnimation_DrawnUi_Draw_SkiaTouchAnimation_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.PlayTouchAnimation(DrawnUi.Draw.SkiaTouchAnimation%2CDrawnUi.Draw.SkiaGesturesParameters%2CDrawnUi.Draw.GestureEventProcessingInfo)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L153">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_PlayTouchAnimation_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.PlayTouchAnimation*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_PlayTouchAnimation_DrawnUi_Draw_SkiaTouchAnimation_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.PlayTouchAnimation(DrawnUi.Draw.SkiaTouchAnimation,DrawnUi.Draw.SkiaGesturesParameters,DrawnUi.Draw.GestureEventProcessingInfo)">PlayTouchAnimation(SkiaTouchAnimation, SkiaGesturesParameters, GestureEventProcessingInfo)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PlayTouchAnimation(SkiaTouchAnimation anim, SkiaGesturesParameters args, GestureEventProcessingInfo apply)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaTouchAnimation.html">SkiaTouchAnimation</a></td>
-        <td><span class="parametername">anim</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaGesturesParameters.html">SkiaGesturesParameters</a></td>
-        <td><span class="parametername">args</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.GestureEventProcessingInfo.html">GestureEventProcessingInfo</a></td>
-        <td><span class="parametername">apply</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_ProcessGestures_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.ProcessGestures(DrawnUi.Draw.SkiaGesturesParameters%2CDrawnUi.Draw.GestureEventProcessingInfo)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L74">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_ProcessGestures_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.ProcessGestures*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_ProcessGestures_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.ProcessGestures(DrawnUi.Draw.SkiaGesturesParameters,DrawnUi.Draw.GestureEventProcessingInfo)">ProcessGestures(SkiaGesturesParameters, GestureEventProcessingInfo)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaGesturesParameters.html">SkiaGesturesParameters</a></td>
-        <td><span class="parametername">args</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.GestureEventProcessingInfo.html">GestureEventProcessingInfo</a></td>
-        <td><span class="parametername">apply</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ProcessGestures_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_">SkiaControl.ProcessGestures(SkiaGesturesParameters, GestureEventProcessingInfo)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener_TranslateInputCoords_SkiaSharp_SKPoint_System_Boolean_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener.TranslateInputCoords(SkiaSharp.SKPoint%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L69">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_AddGestures_GestureListener_TranslateInputCoords_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.TranslateInputCoords*"></a>
-  <h4 id="DrawnUi_Draw_AddGestures_GestureListener_TranslateInputCoords_SkiaSharp_SKPoint_System_Boolean_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.TranslateInputCoords(SkiaSharp.SKPoint,System.Boolean)">TranslateInputCoords(SKPoint, bool)</h4>
-  <div class="markdown level1 summary"><p>Use this to consume gestures in your control only,
-do not use result for passing gestures below</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override SKPoint TranslateInputCoords(SKPoint childOffset, bool accountForCache = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></td>
-        <td><span class="parametername">childOffset</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">accountForCache</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_TranslateInputCoords_SkiaSharp_SKPoint_System_Boolean_">SkiaControl.TranslateInputCoords(SKPoint, bool)</a></div>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a>
-  </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Adapt__1___0_System_Action___0__">FluentExtensions.Adapt&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
@@ -2839,28 +2383,31 @@ do not use result for passing gestures below</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Fill__1___0_">FluentExtensions.Fill&lt;T&gt;(T)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Height__1___0_System_Double_">FluentExtensions.Height&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContextOn__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveBindingContextOn&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContext__2___0_System_Action___0___1_System_String__System_Boolean_">FluentExtensions.ObserveBindingContext&lt;T, TSource&gt;(T, Action&lt;T, TSource, string&gt;, bool)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeepNestedProperty__5___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Func___3___4__System_String_System_Action___0___4____4_System_Boolean_">FluentExtensions.ObserveDeepNestedProperty&lt;T, TSource, TIntermediate1, TIntermediate2, TProperty&gt;(T, Func&lt;TSource, TIntermediate1&gt;, string, Func&lt;TIntermediate1, TIntermediate2&gt;, string, Func&lt;TIntermediate2, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveOn__3___0___1_System_Func___2__System_String_System_Action___0_System_String__System_String___">FluentExtensions.ObserveOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, Action&lt;T, string&gt;, string[])</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeep__4___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveDeep&lt;T, TSource, TIntermediate, TProperty&gt;(T, Func&lt;TSource, TIntermediate&gt;, string, Func&lt;TIntermediate, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertiesOn__3___0___1_System_Func___2__System_String_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObservePropertiesOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperties__2___0___1_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObserveProperties&lt;T, TSource&gt;(T, TSource, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertyOn__3___0___1_System_Func___2__System_String_System_String_System_Action___0__">FluentExtensions.ObservePropertyOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, string, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperty__2___0___1_System_String_System_Action___0__">FluentExtensions.ObserveProperty&lt;T, TSource&gt;(T, TSource, string, Action&lt;T&gt;)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveSelf__1___0_System_Action___0_System_String__">FluentExtensions.ObserveSelf&lt;T&gt;(T, Action&lt;T, string&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetBindingContext__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveTargetBindingContext&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetProperty__4___0_System_Linq_Expressions_Expression_System_Func___1___2___System_Linq_Expressions_Expression_System_Func___2___3___System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveTargetProperty&lt;T, TSource, TIntermediate, TProperty&gt;(T, Expression&lt;Func&lt;TSource, TIntermediate&gt;&gt;, Expression&lt;Func&lt;TIntermediate, TProperty&gt;&gt;, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Observe__2___0_System_Func___1__System_Action___0_System_String__System_String___">FluentExtensions.Observe&lt;T, TSource&gt;(T, Func&lt;TSource&gt;, Action&lt;T, string&gt;, string[])</a>
@@ -2887,18 +2434,6 @@ do not use result for passing gestures below</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetGrid__1___0_System_Int32_System_Int32_System_Int32_System_Int32_">FluentExtensions.SetGrid&lt;T&gt;(T, int, int, int, int)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetWidth__1___0_System_Double_">FluentExtensions.SetWidth&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_StartX__1___0_">FluentExtensions.StartX&lt;T&gt;(T)</a>
   </div>
   <div>
@@ -2917,7 +2452,10 @@ do not use result for passing gestures below</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithColumn__1___0_System_Int32_">FluentExtensions.WithColumn&lt;T&gt;(T, int)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeightRequest__1___0_System_Double_">FluentExtensions.WithHeightRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithEnabled__1___0_System_Boolean_">FluentExtensions.WithEnabled&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeight__1___0_System_Double_">FluentExtensions.WithHeight&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHorizontalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithHorizontalOptions&lt;T&gt;(T, LayoutOptions)</a>
@@ -2926,7 +2464,22 @@ do not use result for passing gestures below</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_Microsoft_Maui_Thickness_">FluentExtensions.WithMargin&lt;T&gt;(T, Thickness)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithOpacity__1___0_System_Double_">FluentExtensions.WithOpacity&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithParent__1___0_DrawnUi_Draw_IDrawnBase_">FluentExtensions.WithParent&lt;T&gt;(T, IDrawnBase)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRotation__1___0_System_Double_">FluentExtensions.WithRotation&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRowSpan__1___0_System_Int32_">FluentExtensions.WithRowSpan&lt;T&gt;(T, int)</a>
@@ -2935,13 +2488,22 @@ do not use result for passing gestures below</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRow__1___0_System_Int32_">FluentExtensions.WithRow&lt;T&gt;(T, int)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithTag__1___0_System_String_">FluentExtensions.WithTag&lt;T&gt;(T, string)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVerticalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithVerticalOptions&lt;T&gt;(T, LayoutOptions)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidthRequest__1___0_System_Double_">FluentExtensions.WithWidthRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVisibility__1___0_System_Boolean_">FluentExtensions.WithVisibility&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidth__1___0_System_Double_">FluentExtensions.WithWidth&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.DrawnExtensions.html#DrawnUi_Draw_DrawnExtensions_GetVelocityRatioForChild_DrawnUi_Draw_IDrawnBase_DrawnUi_Draw_ISkiaControl_">DrawnExtensions.GetVelocityRatioForChild(IDrawnBase, ISkiaControl)</a>
@@ -2982,47 +2544,399 @@ do not use result for passing gestures below</p>
   <div>
       <a class="xref" href="DrawnUi.Extensions.InternalExtensions.html#DrawnUi_Extensions_InternalExtensions_FromPlatform_System_Object_">InternalExtensions.FromPlatform(object)</a>
   </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener__ctor_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.#ctor*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener__ctor_DrawnUi_Draw_SkiaControl_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.#ctor(DrawnUi.Draw.SkiaControl)">
+  GestureListener(SkiaControl)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GestureListener(SkiaControl control)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>control</code> <a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_CanDraw_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.CanDraw*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_CanDraw" data-uid="DrawnUi.Draw.AddGestures.GestureListener.CanDraw">
+  CanDraw
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool CanDraw { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_HitBoxAuto_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.HitBoxAuto*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_HitBoxAuto" data-uid="DrawnUi.Draw.AddGestures.GestureListener.HitBoxAuto">
+  HitBoxAuto
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This can be absolutely false if we are inside a cached
+rendering object parent that already moved somewhere.
+So coords will be of the moment we were first drawn,
+while if cached parent moved, our coords might differ.
+todo detect if parent is cached somewhere and offset hotbox by cached parent movement offset...
+todo think about it baby =) meanwhile just do not set gestures below cached level</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override SKRect HitBoxAuto { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_Tag_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.Tag*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_Tag" data-uid="DrawnUi.Draw.AddGestures.GestureListener.Tag">
+  Tag
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Tag { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_GetTopParentView_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.GetTopParentView*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_GetTopParentView" data-uid="DrawnUi.Draw.AddGestures.GestureListener.GetTopParentView">
+  GetTopParentView()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Use Superview from public area</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override DrawnView GetTopParentView()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Views.DrawnView.html">DrawnView</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_HitIsInside_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.HitIsInside*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_HitIsInside_System_Single_System_Single_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.HitIsInside(System.Single,System.Single)">
+  HitIsInside(float, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>ISkiaGestureListener impl</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool HitIsInside(float x, float y)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_OnFocusChanged_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.OnFocusChanged*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_OnFocusChanged_System_Boolean_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.OnFocusChanged(System.Boolean)">
+  OnFocusChanged(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This will be called only for views registered at Superview.FocusedChild.
+The view must return true of false to indicate if it accepts focus.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool OnFocusChanged(bool focus)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>focus</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_PlayTouchAnimation_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.PlayTouchAnimation*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_PlayTouchAnimation_DrawnUi_Draw_SkiaTouchAnimation_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.PlayTouchAnimation(DrawnUi.Draw.SkiaTouchAnimation,DrawnUi.Draw.SkiaGesturesParameters,DrawnUi.Draw.GestureEventProcessingInfo)">
+  PlayTouchAnimation(SkiaTouchAnimation, SkiaGesturesParameters, GestureEventProcessingInfo)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L153"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PlayTouchAnimation(SkiaTouchAnimation anim, SkiaGesturesParameters args, GestureEventProcessingInfo apply)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>anim</code> <a class="xref" href="DrawnUi.Draw.SkiaTouchAnimation.html">SkiaTouchAnimation</a></dt>
+    <dd></dd>
+    <dt><code>args</code> <a class="xref" href="DrawnUi.Draw.SkiaGesturesParameters.html">SkiaGesturesParameters</a></dt>
+    <dd></dd>
+    <dt><code>apply</code> <a class="xref" href="DrawnUi.Draw.GestureEventProcessingInfo.html">GestureEventProcessingInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_ProcessGestures_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.ProcessGestures*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_ProcessGestures_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.ProcessGestures(DrawnUi.Draw.SkiaGesturesParameters,DrawnUi.Draw.GestureEventProcessingInfo)">
+  ProcessGestures(SkiaGesturesParameters, GestureEventProcessingInfo)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="DrawnUi.Draw.SkiaGesturesParameters.html">SkiaGesturesParameters</a></dt>
+    <dd></dd>
+    <dt><code>apply</code> <a class="xref" href="DrawnUi.Draw.GestureEventProcessingInfo.html">GestureEventProcessingInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_AddGestures_GestureListener_TranslateInputCoords_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.TranslateInputCoords*"></a>
+
+  <h3 id="DrawnUi_Draw_AddGestures_GestureListener_TranslateInputCoords_SkiaSharp_SKPoint_System_Boolean_" data-uid="DrawnUi.Draw.AddGestures.GestureListener.TranslateInputCoords(SkiaSharp.SKPoint,System.Boolean)">
+  TranslateInputCoords(SKPoint, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Use this to consume gestures in your control only,
+do not use result for passing gestures below</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override SKPoint TranslateInputCoords(SKPoint childOffset, bool accountForCache = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>childOffset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+    <dd></dd>
+    <dt><code>accountForCache</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_AddGestures_GestureListener.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.AddGestures.GestureListener%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L11" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Features/Gestures/AddGestures.cs/#L11" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

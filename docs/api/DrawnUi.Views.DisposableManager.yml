@@ -19,12 +19,12 @@ items:
   type: Class
   source:
     remote:
-      path: src/Maui/DrawnUi/Views/DrawnView.cs
+      path: src/Maui/DrawnUi/Views/DisposableManager.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
     id: DisposableManager
-    path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 9
+    path: ../src/Maui/DrawnUi/Views/DisposableManager.cs
+    startLine: 7
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -60,12 +60,12 @@ items:
   type: Constructor
   source:
     remote:
-      path: src/Maui/DrawnUi/Views/DrawnView.cs
+      path: src/Maui/DrawnUi/Views/DisposableManager.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
-    path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 19
+    path: ../src/Maui/DrawnUi/Views/DisposableManager.cs
+    startLine: 37
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -95,12 +95,12 @@ items:
   type: Method
   source:
     remote:
-      path: src/Maui/DrawnUi/Views/DrawnView.cs
+      path: src/Maui/DrawnUi/Views/DisposableManager.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
     id: EnqueueDisposable
-    path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 33
+    path: ../src/Maui/DrawnUi/Views/DisposableManager.cs
+    startLine: 51
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -133,12 +133,12 @@ items:
   type: Method
   source:
     remote:
-      path: src/Maui/DrawnUi/Views/DrawnView.cs
+      path: src/Maui/DrawnUi/Views/DisposableManager.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
     id: DisposeDisposables
-    path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 47
+    path: ../src/Maui/DrawnUi/Views/DisposableManager.cs
+    startLine: 65
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -171,12 +171,12 @@ items:
   type: Method
   source:
     remote:
-      path: src/Maui/DrawnUi/Views/DrawnView.cs
+      path: src/Maui/DrawnUi/Views/DisposableManager.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
     id: Dispose
-    path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 83
+    path: ../src/Maui/DrawnUi/Views/DisposableManager.cs
+    startLine: 101
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -201,12 +201,12 @@ items:
   type: Property
   source:
     remote:
-      path: src/Maui/DrawnUi/Views/DrawnView.cs
+      path: src/Maui/DrawnUi/Views/DisposableManager.cs
       branch: 2-A
       repo: https://github.com/taublast/DrawnUi.git
     id: PendingDisposalCount
-    path: ../src/Maui/DrawnUi/Views/DrawnView.cs
-    startLine: 123
+    path: ../src/Maui/DrawnUi/Views/DisposableManager.cs
+    startLine: 141
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views

@@ -420,7 +420,7 @@ items:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
   summary: Allows subclasses to implement custom Arrange logic during a controls layout pass.
-  remarks: Subclasses will stil want to call <xref href="Microsoft.Maui.Controls.VisualElement.ArrangeOverride(Microsoft.Maui.Graphics.Rect)" data-throw-if-not-resolved="false"></xref> on the base class or call <xref href="Microsoft.Maui.IViewHandler.PlatformArrange(Microsoft.Maui.Graphics.Rect)" data-throw-if-not-resolved="false"></xref> on the <xref href="Microsoft.Maui.Controls.VisualElement.Handler" data-throw-if-not-resolved="false"></xref> .
+  remarks: Subclasses will still want to call <xref href="Microsoft.Maui.Controls.VisualElement.ArrangeOverride(Microsoft.Maui.Graphics.Rect)" data-throw-if-not-resolved="false"></xref> on the base class or call <xref href="Microsoft.Maui.IViewHandler.PlatformArrange(Microsoft.Maui.Graphics.Rect)" data-throw-if-not-resolved="false"></xref> on the <xref href="Microsoft.Maui.Controls.VisualElement.Handler" data-throw-if-not-resolved="false"></xref> .
   example: []
   syntax:
     content: protected override Size ArrangeOverride(Rect bounds)

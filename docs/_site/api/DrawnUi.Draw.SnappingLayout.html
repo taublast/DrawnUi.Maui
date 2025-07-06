@@ -1,138 +1,172 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Class SnappingLayout | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SnappingLayout | DrawnUi Documentation ">
-    
-    
-      <link rel="shortcut icon" href="../images/favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../styles/docfx.css">
-      <link rel="stylesheet" href="../styles/main.css">
-      <meta property="docfx:navrel" content="../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../">
-    
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="DrawnUi.Draw.SnappingLayout">
+
+        <article data-uid="DrawnUi.Draw.SnappingLayout">
 
 
 
-  <h1 id="DrawnUi_Draw_SnappingLayout" data-uid="DrawnUi.Draw.SnappingLayout" class="text-break">Class SnappingLayout</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
-    <div class="level2"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
-    <div class="level3"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
-    <div class="level4"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
-    <div class="level5"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
-    <div class="level6"><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
-    <div class="level7"><a class="xref" href="DrawnUi.Draw.SkiaLayout.html">SkiaLayout</a></div>
-    <div class="level8"><span class="xref">SnappingLayout</span></div>
-      <div class="level9"><a class="xref" href="DrawnUi.Controls.SkiaCarousel.html">SkiaCarousel</a></div>
-      <div class="level9"><a class="xref" href="DrawnUi.Controls.SkiaDrawer.html">SkiaDrawer</a></div>
+  <h1 id="DrawnUi_Draw_SnappingLayout" data-uid="DrawnUi.Draw.SnappingLayout" class="text-break">
+Class SnappingLayout  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Draw.html">Draw</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>DrawnUi.Maui.dll</dd></dl>
   </div>
-  <div class="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaGridLayout.html">ISkiaGridLayout</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaLayout.html">ISkiaLayout</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ILayoutInsideViewport.html">ILayoutInsideViewport</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IInsideViewport.html">IInsideViewport</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IVisibilityAware.html">IVisibilityAware</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SnappingLayout : SkiaLayout, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IView, ITransform, IElement, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaGestureListener, ISkiaGridLayout, ISkiaLayout, ISkiaControl, IDrawnBase, ICanBeUpdatedWithContext, ICanBeUpdated, ILayoutInsideViewport, IInsideViewport, IVisibilityAware, IDisposable</code></pre>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SkiaLayout.html">SkiaLayout</a></div>
+      <div><span class="xref">SnappingLayout</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaGridLayout.html">ISkiaGridLayout</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaLayout.html">ISkiaLayout</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ILayoutInsideViewport.html">ILayoutInsideViewport</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IInsideViewport.html">IInsideViewport</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IVisibilityAware.html">IVisibilityAware</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="DrawnUi.Controls.SkiaCarousel.html">SkiaCarousel</a></div>
+      <div><a class="xref" href="DrawnUi.Controls.SkiaDrawer.html">SkiaDrawer</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_StackStructure">SkiaLayout.StackStructure</a>
     </div>
@@ -158,7 +192,13 @@
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_GetSizeKey_SkiaSharp_SKSize_">SkiaLayout.GetSizeKey(SKSize)</a>
     </div>
     <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStack_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStack(SKRect, float)</a>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStackLegacy_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStackLegacy(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStackNonTemplated_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStackNonTemplated(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStackTemplated_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStackTemplated(SKRect, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnBeforeDrawingVisibleChildren_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_LayoutStructure_System_Collections_Generic_List_DrawnUi_Draw_ControlInStack__">SkiaLayout.OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List&lt;ControlInStack&gt;)</a>
@@ -356,7 +396,7 @@
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout__lockTemplates">SkiaLayout._lockTemplates</a>
     </div>
     <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_Measure_System_Single_System_Single_System_Single_">SkiaLayout.Measure(float, float, float)</a>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnMeasuring_System_Single_System_Single_System_Single_">SkiaLayout.OnMeasuring(float, float, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ApplyMeasureResult">SkiaLayout.ApplyMeasureResult()</a>
@@ -425,7 +465,7 @@
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnItemSourceChanged">SkiaLayout.OnItemSourceChanged()</a>
     </div>
     <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ResetItemsSource">SkiaLayout.ResetItemsSource()</a>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ApplyItemsSource">SkiaLayout.ApplyItemsSource()</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ResetScroll">SkiaLayout.ResetScroll()</a>
@@ -684,15 +724,6 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetDensity">SkiaControl.GetDensity()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_TransferState_Microsoft_Maui_IView_">SkiaControl.TransferState(IView)</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Reload">SkiaControl.Reload()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ReloadHandler">SkiaControl.ReloadHandler</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseCacheProperty">SkiaControl.UseCacheProperty</a>
@@ -998,6 +1029,9 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SizeRequest">SkiaControl.SizeRequest</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_WidthRequestWithMargins">SkiaControl.WidthRequestWithMargins</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptWidthConstraintToRequest_System_Single_Microsoft_Maui_Thickness_System_Double_">SkiaControl.AdaptWidthConstraintToRequest(float, Thickness, double)</a>
     </div>
     <div>
@@ -1005,6 +1039,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetMeasuringConstraints_DrawnUi_Draw_MeasureRequest_">SkiaControl.GetMeasuringConstraints(MeasureRequest)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillHorizontally">SkiaControl.NeedFillHorizontally</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillVertically">SkiaControl.NeedFillVertically</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptConstraintToContentRequest_System_Single_System_Double_System_Double_System_Boolean_System_Double_System_Double_System_Single_System_Boolean_">SkiaControl.AdaptConstraintToContentRequest(float, double, double, bool, double, double, float, bool)</a>
@@ -1332,6 +1372,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ParentChanged">SkiaControl.ParentChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurementProperty">SkiaControl.FastMeasurementProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurement">SkiaControl.FastMeasurement</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdjustClippingProperty">SkiaControl.AdjustClippingProperty</a>
@@ -1664,6 +1710,12 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureInternal_DrawnUi_Draw_MeasureRequest_">SkiaControl.MeasureInternal(MeasureRequest)</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Measure_System_Single_System_Single_System_Single_">SkiaControl.Measure(float, float, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeMeasuring">SkiaControl.InitializeMeasuring()</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeDefaultContent_System_Boolean_">SkiaControl.InitializeDefaultContent(bool)</a>
     </div>
     <div>
@@ -1686,6 +1738,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureAbsoluteBase_SkiaSharp_SKRect_System_Single_">SkiaControl.MeasureAbsoluteBase(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_">SkiaControl.ContractPixelsRect(SKRect, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_Microsoft_Maui_Thickness_">SkiaControl.ContractPixelsRect(SKRect, float, Thickness)</a>
@@ -1788,6 +1843,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnSuperviewShouldRenderChanged_System_Boolean_">SkiaControl.OnSuperviewShouldRenderChanged(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureSelf_SkiaSharp_SKRect_System_Single_System_Single_System_Single_">SkiaControl.MeasureSelf(SKRect, float, float, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_IsRendering">SkiaControl.IsRendering</a>
@@ -1908,6 +1966,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseTranslationX">SkiaControl.UseTranslationX</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_LinkTransforms">SkiaControl.LinkTransforms</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_RenderViewsList_DrawnUi_Draw_DrawingContext_System_Collections_Generic_IEnumerable_DrawnUi_Draw_SkiaControl__">SkiaControl.RenderViewsList(DrawingContext, IEnumerable&lt;SkiaControl&gt;)</a>
@@ -2130,6 +2191,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AddOrRemoveView_DrawnUi_Draw_SkiaControl_System_Boolean_">SkiaControl.AddOrRemoveView(SkiaControl, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SetChildrenAsParameters_DrawnUi_Draw_SkiaControl___">SkiaControl.SetChildrenAsParameters(params SkiaControl[])</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_HasItemTemplate">SkiaControl.HasItemTemplate</a>
@@ -2674,1660 +2738,11 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Draw.html">Draw</a></h6>
-  <h6><strong>Assembly</strong>: DrawnUi.Maui.dll</h6>
-  <h5 id="DrawnUi_Draw_SnappingLayout_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SnappingLayout : SkiaLayout, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IHotReloadableView, IReplaceableView, IView, IElement, ITransform, IReloadHandler, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaGestureListener, ISkiaGridLayout, ISkiaLayout, ISkiaControl, IDrawnBase, ICanBeUpdatedWithContext, ICanBeUpdated, ILayoutInsideViewport, IInsideViewport, IVisibilityAware, IDisposable</code></pre>
-  </div>
-  <h3 id="fields">Fields
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_AnimatedProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.AnimatedProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L349">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_AnimatedProperty" data-uid="DrawnUi.Draw.SnappingLayout.AnimatedProperty">AnimatedProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty AnimatedProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_AnimatorRange.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.AnimatorRange%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L176">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_AnimatorRange" data-uid="DrawnUi.Draw.SnappingLayout.AnimatorRange">AnimatorRange</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected RangeVectorAnimator AnimatorRange</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.RangeVectorAnimator.html">RangeVectorAnimator</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_AutoVelocityMultiplyPtsProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPtsProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L469">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_AutoVelocityMultiplyPtsProperty" data-uid="DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPtsProperty">AutoVelocityMultiplyPtsProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty AutoVelocityMultiplyPtsProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_BouncesProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.BouncesProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L401">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_BouncesProperty" data-uid="DrawnUi.Draw.SnappingLayout.BouncesProperty">BouncesProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty BouncesProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_IgnoreWrongDirectionProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.IgnoreWrongDirectionProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L385">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_IgnoreWrongDirectionProperty" data-uid="DrawnUi.Draw.SnappingLayout.IgnoreWrongDirectionProperty">IgnoreWrongDirectionProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty IgnoreWrongDirectionProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_InTransitionProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.InTransitionProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L426">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_InTransitionProperty" data-uid="DrawnUi.Draw.SnappingLayout.InTransitionProperty">InTransitionProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty InTransitionProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_RespondsToGesturesProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.RespondsToGesturesProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L370">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_RespondsToGesturesProperty" data-uid="DrawnUi.Draw.SnappingLayout.RespondsToGesturesProperty">RespondsToGesturesProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty RespondsToGesturesProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_RubberDampingProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.RubberDampingProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L454">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_RubberDampingProperty" data-uid="DrawnUi.Draw.SnappingLayout.RubberDampingProperty">RubberDampingProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty RubberDampingProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_RubberEffectProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.RubberEffectProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L485">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_RubberEffectProperty" data-uid="DrawnUi.Draw.SnappingLayout.RubberEffectProperty">RubberEffectProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty RubberEffectProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_TransitionDirectionProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.TransitionDirectionProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L414">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_TransitionDirectionProperty" data-uid="DrawnUi.Draw.SnappingLayout.TransitionDirectionProperty">TransitionDirectionProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty TransitionDirectionProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_VectorAnimatorSpring.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.VectorAnimatorSpring%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L174">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_VectorAnimatorSpring" data-uid="DrawnUi.Draw.SnappingLayout.VectorAnimatorSpring">VectorAnimatorSpring</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected SpringWithVelocityVectorAnimator VectorAnimatorSpring</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SpringWithVelocityVectorAnimator.html">SpringWithVelocityVectorAnimator</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_Animated.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.Animated%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L355">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_Animated_" data-uid="DrawnUi.Draw.SnappingLayout.Animated*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_Animated" data-uid="DrawnUi.Draw.SnappingLayout.Animated">Animated</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool Animated { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_AutoVelocityMultiplyPts.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPts%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L479">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_AutoVelocityMultiplyPts_" data-uid="DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPts*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_AutoVelocityMultiplyPts" data-uid="DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPts">AutoVelocityMultiplyPts</h4>
-  <div class="markdown level1 summary"><p>If velocity is near 0 define how much we multiply the auto-velocity used to animate snappoing point.
-For example when in carousel you cancel the swipe and release finger..</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double AutoVelocityMultiplyPts { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_Bounces.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.Bounces%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L407">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_Bounces_" data-uid="DrawnUi.Draw.SnappingLayout.Bounces*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_Bounces" data-uid="DrawnUi.Draw.SnappingLayout.Bounces">Bounces</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool Bounces { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_CanAnimate.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.CanAnimate%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L164">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_CanAnimate_" data-uid="DrawnUi.Draw.SnappingLayout.CanAnimate*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_CanAnimate" data-uid="DrawnUi.Draw.SnappingLayout.CanAnimate">CanAnimate</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool CanAnimate { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ContentOffsetBounds.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ContentOffsetBounds%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L33">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_ContentOffsetBounds_" data-uid="DrawnUi.Draw.SnappingLayout.ContentOffsetBounds*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ContentOffsetBounds" data-uid="DrawnUi.Draw.SnappingLayout.ContentOffsetBounds">ContentOffsetBounds</h4>
-  <div class="markdown level1 summary"><p>There are the bounds the scroll offset can go to.. This are NOT the bounds of the whole content.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected SKRect ContentOffsetBounds { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_CurrentPosition.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.CurrentPosition%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L323">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_CurrentPosition_" data-uid="DrawnUi.Draw.SnappingLayout.CurrentPosition*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_CurrentPosition" data-uid="DrawnUi.Draw.SnappingLayout.CurrentPosition">CurrentPosition</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Vector2 CurrentPosition { get; protected set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_CurrentSnap.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.CurrentSnap%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L179">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_CurrentSnap_" data-uid="DrawnUi.Draw.SnappingLayout.CurrentSnap*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_CurrentSnap" data-uid="DrawnUi.Draw.SnappingLayout.CurrentSnap">CurrentSnap</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected Vector2 CurrentSnap { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_IgnoreWrongDirection.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.IgnoreWrongDirection%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L394">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_IgnoreWrongDirection_" data-uid="DrawnUi.Draw.SnappingLayout.IgnoreWrongDirection*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_IgnoreWrongDirection" data-uid="DrawnUi.Draw.SnappingLayout.IgnoreWrongDirection">IgnoreWrongDirection</h4>
-  <div class="markdown level1 summary"><p>Will ignore gestures of the wrong direction, like if this Orientation is Horizontal will ignore gestures with vertical direction velocity</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool IgnoreWrongDirection { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_InTransition.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.InTransition%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L440">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_InTransition_" data-uid="DrawnUi.Draw.SnappingLayout.InTransition*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_InTransition" data-uid="DrawnUi.Draw.SnappingLayout.InTransition">InTransition</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool InTransition { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_RespondsToGestures.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.RespondsToGestures%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L379">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_RespondsToGestures_" data-uid="DrawnUi.Draw.SnappingLayout.RespondsToGestures*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_RespondsToGestures" data-uid="DrawnUi.Draw.SnappingLayout.RespondsToGestures">RespondsToGestures</h4>
-  <div class="markdown level1 summary"><p>Can be open/closed by gestures along with code-behind, default is true</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool RespondsToGestures { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_RubberDamping.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.RubberDamping%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L463">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_RubberDamping_" data-uid="DrawnUi.Draw.SnappingLayout.RubberDamping*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_RubberDamping" data-uid="DrawnUi.Draw.SnappingLayout.RubberDamping">RubberDamping</h4>
-  <div class="markdown level1 summary"><p>If Bounce is enabled this basically controls how less the scroll will bounce when displaced from limit by finger or inertia. Default is 0.8.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double RubberDamping { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_RubberEffect.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.RubberEffect%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L494">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_RubberEffect_" data-uid="DrawnUi.Draw.SnappingLayout.RubberEffect*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_RubberEffect" data-uid="DrawnUi.Draw.SnappingLayout.RubberEffect">RubberEffect</h4>
-  <div class="markdown level1 summary"><p>If Bounce is enabled this basically controls how far from the limit can the scroll be elastically offset by finger or inertia. Default is 0.15.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double RubberEffect { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ScrollLocked.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ScrollLocked%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L172">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_ScrollLocked_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollLocked*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ScrollLocked" data-uid="DrawnUi.Draw.SnappingLayout.ScrollLocked">ScrollLocked</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool ScrollLocked { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_SnapDistanceRatio.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.SnapDistanceRatio%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L140">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_SnapDistanceRatio_" data-uid="DrawnUi.Draw.SnappingLayout.SnapDistanceRatio*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_SnapDistanceRatio" data-uid="DrawnUi.Draw.SnappingLayout.SnapDistanceRatio">SnapDistanceRatio</h4>
-  <div class="markdown level1 summary"><p>0.2 - Part of the distance between snap points the velocity need to cover to trigger going to the next snap point. NOT a bindable property (yet).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double SnapDistanceRatio { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_SnapPoints.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.SnapPoints%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L84">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_SnapPoints_" data-uid="DrawnUi.Draw.SnappingLayout.SnapPoints*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_SnapPoints" data-uid="DrawnUi.Draw.SnappingLayout.SnapPoints">SnapPoints</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IList&lt;Vector2&gt; SnapPoints { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_TransitionDirection.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.TransitionDirection%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L420">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_TransitionDirection_" data-uid="DrawnUi.Draw.SnappingLayout.TransitionDirection*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_TransitionDirection" data-uid="DrawnUi.Draw.SnappingLayout.TransitionDirection">TransitionDirection</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LinearDirectionType TransitionDirection { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.LinearDirectionType.html">LinearDirectionType</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_Viewport.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.Viewport%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L64">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_Viewport_" data-uid="DrawnUi.Draw.SnappingLayout.Viewport*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_Viewport" data-uid="DrawnUi.Draw.SnappingLayout.Viewport">Viewport</h4>
-  <div class="markdown level1 summary"><p>Using this instead of RenderingViewport</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected SKRect Viewport { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ApplyOptions.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ApplyOptions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L344">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_ApplyOptions_" data-uid="DrawnUi.Draw.SnappingLayout.ApplyOptions*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ApplyOptions" data-uid="DrawnUi.Draw.SnappingLayout.ApplyOptions">ApplyOptions()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void ApplyOptions()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ApplyPosition_System_Numerics_Vector2_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ApplyPosition(System.Numerics.Vector2)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L296">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_ApplyPosition_" data-uid="DrawnUi.Draw.SnappingLayout.ApplyPosition*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ApplyPosition_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.ApplyPosition(System.Numerics.Vector2)">ApplyPosition(Vector2)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void ApplyPosition(Vector2 position)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">position</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_CheckTransitionEnded.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.CheckTransitionEnded%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L316">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_CheckTransitionEnded_" data-uid="DrawnUi.Draw.SnappingLayout.CheckTransitionEnded*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_CheckTransitionEnded" data-uid="DrawnUi.Draw.SnappingLayout.CheckTransitionEnded">CheckTransitionEnded()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool CheckTransitionEnded()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ClampOffset_System_Single_System_Single_System_Boolean_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ClampOffset(System.Single%2CSystem.Single%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L35">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_ClampOffset_" data-uid="DrawnUi.Draw.SnappingLayout.ClampOffset*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ClampOffset_System_Single_System_Single_System_Boolean_" data-uid="DrawnUi.Draw.SnappingLayout.ClampOffset(System.Single,System.Single,System.Boolean)">ClampOffset(float, float, bool)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Vector2 ClampOffset(float x, float y, bool rubber)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">x</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">y</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">rubber</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ClampOffsetWithRubberBand_System_Single_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ClampOffsetWithRubberBand(System.Single%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L54">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_ClampOffsetWithRubberBand_" data-uid="DrawnUi.Draw.SnappingLayout.ClampOffsetWithRubberBand*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ClampOffsetWithRubberBand_System_Single_System_Single_" data-uid="DrawnUi.Draw.SnappingLayout.ClampOffsetWithRubberBand(System.Single,System.Single)">ClampOffsetWithRubberBand(float, float)</h4>
-  <div class="markdown level1 summary"><p>Called for manual finger panning</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual Vector2 ClampOffsetWithRubberBand(float x, float y)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">x</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">y</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_FindNearestAnchor_System_Numerics_Vector2_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.FindNearestAnchor(System.Numerics.Vector2)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L86">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_FindNearestAnchor_" data-uid="DrawnUi.Draw.SnappingLayout.FindNearestAnchor*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_FindNearestAnchor_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.FindNearestAnchor(System.Numerics.Vector2)">FindNearestAnchor(Vector2)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Vector2 FindNearestAnchor(Vector2 current)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">current</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_FindNearestAnchorInternal_System_Numerics_Vector2_System_Numerics_Vector2_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.FindNearestAnchorInternal(System.Numerics.Vector2%2CSystem.Numerics.Vector2)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L96">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_FindNearestAnchorInternal_" data-uid="DrawnUi.Draw.SnappingLayout.FindNearestAnchorInternal*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_FindNearestAnchorInternal_System_Numerics_Vector2_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.FindNearestAnchorInternal(System.Numerics.Vector2,System.Numerics.Vector2)">FindNearestAnchorInternal(Vector2, Vector2)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual Vector2 FindNearestAnchorInternal(Vector2 current, Vector2 velocity)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">current</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">velocity</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_GetAutoVelocity_System_Numerics_Vector2_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.GetAutoVelocity(System.Numerics.Vector2)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L186">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_GetAutoVelocity_" data-uid="DrawnUi.Draw.SnappingLayout.GetAutoVelocity*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_GetAutoVelocity_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.GetAutoVelocity(System.Numerics.Vector2)">GetAutoVelocity(Vector2)</h4>
-  <div class="markdown level1 summary"><p>todo calc upon measured size + prop for speed</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual Vector2 GetAutoVelocity(Vector2 displacement)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">displacement</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_GetContentOffsetBounds.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.GetContentOffsetBounds%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L69">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_GetContentOffsetBounds_" data-uid="DrawnUi.Draw.SnappingLayout.GetContentOffsetBounds*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_GetContentOffsetBounds" data-uid="DrawnUi.Draw.SnappingLayout.GetContentOffsetBounds">GetContentOffsetBounds()</h4>
-  <div class="markdown level1 summary"><p>There are the bounds the scroll offset can go to.. This are NOT the bounds of the whole content.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual SKRect GetContentOffsetBounds()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_NeedApplyOptions_Microsoft_Maui_Controls_BindableObject_System_Object_System_Object_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.NeedApplyOptions(Microsoft.Maui.Controls.BindableObject%2CSystem.Object%2CSystem.Object)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L362">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_NeedApplyOptions_" data-uid="DrawnUi.Draw.SnappingLayout.NeedApplyOptions*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_NeedApplyOptions_Microsoft_Maui_Controls_BindableObject_System_Object_System_Object_" data-uid="DrawnUi.Draw.SnappingLayout.NeedApplyOptions(Microsoft.Maui.Controls.BindableObject,System.Object,System.Object)">NeedApplyOptions(BindableObject, object, object)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected static void NeedApplyOptions(BindableObject bindable, object oldvalue, object newvalue)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></td>
-        <td><span class="parametername">bindable</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
-        <td><span class="parametername">oldvalue</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></td>
-        <td><span class="parametername">newvalue</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_OnTransitionChanged.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.OnTransitionChanged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L449">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_OnTransitionChanged_" data-uid="DrawnUi.Draw.SnappingLayout.OnTransitionChanged*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_OnTransitionChanged" data-uid="DrawnUi.Draw.SnappingLayout.OnTransitionChanged">OnTransitionChanged()</h4>
-  <div class="markdown level1 summary"><p>Invokes TransitionChanged event</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void OnTransitionChanged()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_OnWillDisposeWithChildren.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.OnWillDisposeWithChildren%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L17">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_OnWillDisposeWithChildren_" data-uid="DrawnUi.Draw.SnappingLayout.OnWillDisposeWithChildren*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_OnWillDisposeWithChildren" data-uid="DrawnUi.Draw.SnappingLayout.OnWillDisposeWithChildren">OnWillDisposeWithChildren()</h4>
-  <div class="markdown level1 summary"><p>The OnDisposing might come with a delay to avoid disposing resources at use.
-This method will be called without delay when Dispose() is invoked. Disposed will set to True and for Views their OnWillDisposeWithChildren will be called.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnWillDisposeWithChildren()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnWillDisposeWithChildren">SkiaControl.OnWillDisposeWithChildren()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ScrollToNearestAnchor_System_Numerics_Vector2_System_Numerics_Vector2_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ScrollToNearestAnchor(System.Numerics.Vector2%2CSystem.Numerics.Vector2)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L142">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_ScrollToNearestAnchor_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollToNearestAnchor*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ScrollToNearestAnchor_System_Numerics_Vector2_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollToNearestAnchor(System.Numerics.Vector2,System.Numerics.Vector2)">ScrollToNearestAnchor(Vector2, Vector2)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void ScrollToNearestAnchor(Vector2 location, Vector2 velocity)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">location</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">velocity</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ScrollToOffset_System_Numerics_Vector2_System_Numerics_Vector2_System_Boolean_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ScrollToOffset(System.Numerics.Vector2%2CSystem.Numerics.Vector2%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L199">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_ScrollToOffset_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollToOffset*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ScrollToOffset_System_Numerics_Vector2_System_Numerics_Vector2_System_Boolean_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollToOffset(System.Numerics.Vector2,System.Numerics.Vector2,System.Boolean)">ScrollToOffset(Vector2, Vector2, bool)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual bool ScrollToOffset(Vector2 targetOffset, Vector2 velocity, bool animate)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">targetOffset</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">velocity</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">animate</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_SelectNextAnchor_System_Numerics_Vector2_System_Numerics_Vector2_.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.SelectNextAnchor(System.Numerics.Vector2%2CSystem.Numerics.Vector2)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L112">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_SelectNextAnchor_" data-uid="DrawnUi.Draw.SnappingLayout.SelectNextAnchor*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_SelectNextAnchor_System_Numerics_Vector2_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.SelectNextAnchor(System.Numerics.Vector2,System.Numerics.Vector2)">SelectNextAnchor(Vector2, Vector2)</h4>
-  <div class="markdown level1 summary"><p>Return an anchor depending on direction and strength of of the velocity</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Vector2 SelectNextAnchor(Vector2 origin, Vector2 velocity)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">origin</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">velocity</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_SendScrolled.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.SendScrolled%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L309">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_SendScrolled_" data-uid="DrawnUi.Draw.SnappingLayout.SendScrolled*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_SendScrolled" data-uid="DrawnUi.Draw.SnappingLayout.SendScrolled">SendScrolled()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void SendScrolled()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_UpdateReportedPosition.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.UpdateReportedPosition%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L335">View Source</a>
-  </span>
-  <a id="DrawnUi_Draw_SnappingLayout_UpdateReportedPosition_" data-uid="DrawnUi.Draw.SnappingLayout.UpdateReportedPosition*"></a>
-  <h4 id="DrawnUi_Draw_SnappingLayout_UpdateReportedPosition" data-uid="DrawnUi.Draw.SnappingLayout.UpdateReportedPosition">UpdateReportedPosition()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void UpdateReportedPosition()</code></pre>
-  </div>
-  <h3 id="events">Events
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_Scrolled.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.Scrolled%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L314">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_Scrolled" data-uid="DrawnUi.Draw.SnappingLayout.Scrolled">Scrolled</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Vector2&gt; Scrolled</code></pre>
-  </div>
-  <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_TransitionChanged.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.TransitionChanged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L13">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_TransitionChanged" data-uid="DrawnUi.Draw.SnappingLayout.TransitionChanged">TransitionChanged</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler&lt;bool&gt; TransitionChanged</code></pre>
-  </div>
-  <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout_ViewportReady.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout.ViewportReady%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L11">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Draw_SnappingLayout_ViewportReady" data-uid="DrawnUi.Draw.SnappingLayout.ViewportReady">ViewportReady</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler ViewportReady</code></pre>
-  </div>
-  <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaGridLayout.html">ISkiaGridLayout</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaLayout.html">ISkiaLayout</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ILayoutInsideViewport.html">ILayoutInsideViewport</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IInsideViewport.html">IInsideViewport</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IVisibilityAware.html">IVisibilityAware</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
-  </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
   <div>
       <a class="xref" href="DrawnUi.Draw.DrawnExtensions.html#DrawnUi_Draw_DrawnExtensions_GetVelocityRatioForChild_DrawnUi_Draw_IDrawnBase_DrawnUi_Draw_ISkiaControl_">DrawnExtensions.GetVelocityRatioForChild(IDrawnBase, ISkiaControl)</a>
   </div>
@@ -4401,28 +2816,31 @@ This method will be called without delay when Dispose() is invoked. Disposed wil
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Fill__1___0_">FluentExtensions.Fill&lt;T&gt;(T)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Height__1___0_System_Double_">FluentExtensions.Height&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContextOn__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveBindingContextOn&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContext__2___0_System_Action___0___1_System_String__System_Boolean_">FluentExtensions.ObserveBindingContext&lt;T, TSource&gt;(T, Action&lt;T, TSource, string&gt;, bool)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeepNestedProperty__5___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Func___3___4__System_String_System_Action___0___4____4_System_Boolean_">FluentExtensions.ObserveDeepNestedProperty&lt;T, TSource, TIntermediate1, TIntermediate2, TProperty&gt;(T, Func&lt;TSource, TIntermediate1&gt;, string, Func&lt;TIntermediate1, TIntermediate2&gt;, string, Func&lt;TIntermediate2, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveOn__3___0___1_System_Func___2__System_String_System_Action___0_System_String__System_String___">FluentExtensions.ObserveOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, Action&lt;T, string&gt;, string[])</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeep__4___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveDeep&lt;T, TSource, TIntermediate, TProperty&gt;(T, Func&lt;TSource, TIntermediate&gt;, string, Func&lt;TIntermediate, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertiesOn__3___0___1_System_Func___2__System_String_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObservePropertiesOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperties__2___0___1_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObserveProperties&lt;T, TSource&gt;(T, TSource, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertyOn__3___0___1_System_Func___2__System_String_System_String_System_Action___0__">FluentExtensions.ObservePropertyOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, string, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperty__2___0___1_System_String_System_Action___0__">FluentExtensions.ObserveProperty&lt;T, TSource&gt;(T, TSource, string, Action&lt;T&gt;)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveSelf__1___0_System_Action___0_System_String__">FluentExtensions.ObserveSelf&lt;T&gt;(T, Action&lt;T, string&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetBindingContext__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveTargetBindingContext&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetProperty__4___0_System_Linq_Expressions_Expression_System_Func___1___2___System_Linq_Expressions_Expression_System_Func___2___3___System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveTargetProperty&lt;T, TSource, TIntermediate, TProperty&gt;(T, Expression&lt;Func&lt;TSource, TIntermediate&gt;&gt;, Expression&lt;Func&lt;TIntermediate, TProperty&gt;&gt;, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Observe__2___0_System_Func___1__System_Action___0_System_String__System_String___">FluentExtensions.Observe&lt;T, TSource&gt;(T, Func&lt;TSource&gt;, Action&lt;T, string&gt;, string[])</a>
@@ -4449,18 +2867,6 @@ This method will be called without delay when Dispose() is invoked. Disposed wil
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetGrid__1___0_System_Int32_System_Int32_System_Int32_System_Int32_">FluentExtensions.SetGrid&lt;T&gt;(T, int, int, int, int)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetWidth__1___0_System_Double_">FluentExtensions.SetWidth&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_StartX__1___0_">FluentExtensions.StartX&lt;T&gt;(T)</a>
   </div>
   <div>
@@ -4482,16 +2888,34 @@ This method will be called without delay when Dispose() is invoked. Disposed wil
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithColumn__1___0_System_Int32_">FluentExtensions.WithColumn&lt;T&gt;(T, int)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithEnabled__1___0_System_Boolean_">FluentExtensions.WithEnabled&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithGestures__1___0_System_Func___0_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_DrawnUi_Draw_ISkiaGestureListener__">FluentExtensions.WithGestures&lt;T&gt;(T, Func&lt;T, SkiaGesturesParameters, GestureEventProcessingInfo, ISkiaGestureListener&gt;)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeightRequest__1___0_System_Double_">FluentExtensions.WithHeightRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeight__1___0_System_Double_">FluentExtensions.WithHeight&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHorizontalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithHorizontalOptions&lt;T&gt;(T, LayoutOptions)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithItemsSource__1___0_System_Collections_IList_">FluentExtensions.WithItemsSource&lt;T&gt;(T, IList)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_Microsoft_Maui_Thickness_">FluentExtensions.WithMargin&lt;T&gt;(T, Thickness)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithOpacity__1___0_System_Double_">FluentExtensions.WithOpacity&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithPadding__1___0_System_Double_">FluentExtensions.WithPadding&lt;T&gt;(T, double)</a>
@@ -4506,19 +2930,37 @@ This method will be called without delay when Dispose() is invoked. Disposed wil
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithParent__1___0_DrawnUi_Draw_IDrawnBase_">FluentExtensions.WithParent&lt;T&gt;(T, IDrawnBase)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRotation__1___0_System_Double_">FluentExtensions.WithRotation&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRowSpan__1___0_System_Int32_">FluentExtensions.WithRowSpan&lt;T&gt;(T, int)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRow__1___0_System_Int32_">FluentExtensions.WithRow&lt;T&gt;(T, int)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithSpacing__1___0_System_Double_">FluentExtensions.WithSpacing&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithTag__1___0_System_String_">FluentExtensions.WithTag&lt;T&gt;(T, string)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithType__1___0_DrawnUi_Draw_LayoutType_">FluentExtensions.WithType&lt;T&gt;(T, LayoutType)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVerticalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithVerticalOptions&lt;T&gt;(T, LayoutOptions)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidthRequest__1___0_System_Double_">FluentExtensions.WithWidthRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVisibility__1___0_System_Boolean_">FluentExtensions.WithVisibility&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidth__1___0_System_Double_">FluentExtensions.WithWidth&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.StaticResourcesExtensions.html#DrawnUi_Draw_StaticResourcesExtensions_FindParent__1_Microsoft_Maui_Controls_Element_">StaticResourcesExtensions.FindParent&lt;T&gt;(Element)</a>
@@ -4538,47 +2980,1571 @@ This method will be called without delay when Dispose() is invoked. Disposed wil
   <div>
       <a class="xref" href="DrawnUi.Extensions.InternalExtensions.html#DrawnUi_Extensions_InternalExtensions_FromPlatform_System_Object_">InternalExtensions.FromPlatform(object)</a>
   </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_AnimatedProperty" data-uid="DrawnUi.Draw.SnappingLayout.AnimatedProperty">
+  AnimatedProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L349"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty AnimatedProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_AnimatorRange" data-uid="DrawnUi.Draw.SnappingLayout.AnimatorRange">
+  AnimatorRange
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected RangeVectorAnimator AnimatorRange</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.RangeVectorAnimator.html">RangeVectorAnimator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_AutoVelocityMultiplyPtsProperty" data-uid="DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPtsProperty">
+  AutoVelocityMultiplyPtsProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L469"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty AutoVelocityMultiplyPtsProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_BouncesProperty" data-uid="DrawnUi.Draw.SnappingLayout.BouncesProperty">
+  BouncesProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L401"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty BouncesProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_IgnoreWrongDirectionProperty" data-uid="DrawnUi.Draw.SnappingLayout.IgnoreWrongDirectionProperty">
+  IgnoreWrongDirectionProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L385"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty IgnoreWrongDirectionProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_InTransitionProperty" data-uid="DrawnUi.Draw.SnappingLayout.InTransitionProperty">
+  InTransitionProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L426"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty InTransitionProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_RespondsToGesturesProperty" data-uid="DrawnUi.Draw.SnappingLayout.RespondsToGesturesProperty">
+  RespondsToGesturesProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L370"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty RespondsToGesturesProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_RubberDampingProperty" data-uid="DrawnUi.Draw.SnappingLayout.RubberDampingProperty">
+  RubberDampingProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L454"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty RubberDampingProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_RubberEffectProperty" data-uid="DrawnUi.Draw.SnappingLayout.RubberEffectProperty">
+  RubberEffectProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L485"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty RubberEffectProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_TransitionDirectionProperty" data-uid="DrawnUi.Draw.SnappingLayout.TransitionDirectionProperty">
+  TransitionDirectionProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L414"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty TransitionDirectionProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_VectorAnimatorSpring" data-uid="DrawnUi.Draw.SnappingLayout.VectorAnimatorSpring">
+  VectorAnimatorSpring
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected SpringWithVelocityVectorAnimator VectorAnimatorSpring</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.SpringWithVelocityVectorAnimator.html">SpringWithVelocityVectorAnimator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_Animated_" data-uid="DrawnUi.Draw.SnappingLayout.Animated*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_Animated" data-uid="DrawnUi.Draw.SnappingLayout.Animated">
+  Animated
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L355"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Animated { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_AutoVelocityMultiplyPts_" data-uid="DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPts*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_AutoVelocityMultiplyPts" data-uid="DrawnUi.Draw.SnappingLayout.AutoVelocityMultiplyPts">
+  AutoVelocityMultiplyPts
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L479"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>If velocity is near 0 define how much we multiply the auto-velocity used to animate snappoing point.
+For example when in carousel you cancel the swipe and release finger..</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double AutoVelocityMultiplyPts { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_Bounces_" data-uid="DrawnUi.Draw.SnappingLayout.Bounces*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_Bounces" data-uid="DrawnUi.Draw.SnappingLayout.Bounces">
+  Bounces
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L407"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Bounces { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_CanAnimate_" data-uid="DrawnUi.Draw.SnappingLayout.CanAnimate*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_CanAnimate" data-uid="DrawnUi.Draw.SnappingLayout.CanAnimate">
+  CanAnimate
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CanAnimate { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_ContentOffsetBounds_" data-uid="DrawnUi.Draw.SnappingLayout.ContentOffsetBounds*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ContentOffsetBounds" data-uid="DrawnUi.Draw.SnappingLayout.ContentOffsetBounds">
+  ContentOffsetBounds
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>There are the bounds the scroll offset can go to.. This are NOT the bounds of the whole content.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected SKRect ContentOffsetBounds { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_CurrentPosition_" data-uid="DrawnUi.Draw.SnappingLayout.CurrentPosition*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_CurrentPosition" data-uid="DrawnUi.Draw.SnappingLayout.CurrentPosition">
+  CurrentPosition
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L323"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Vector2 CurrentPosition { get; protected set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_CurrentSnap_" data-uid="DrawnUi.Draw.SnappingLayout.CurrentSnap*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_CurrentSnap" data-uid="DrawnUi.Draw.SnappingLayout.CurrentSnap">
+  CurrentSnap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Vector2 CurrentSnap { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_IgnoreWrongDirection_" data-uid="DrawnUi.Draw.SnappingLayout.IgnoreWrongDirection*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_IgnoreWrongDirection" data-uid="DrawnUi.Draw.SnappingLayout.IgnoreWrongDirection">
+  IgnoreWrongDirection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L394"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Will ignore gestures of the wrong direction, like if this Orientation is Horizontal will ignore gestures with vertical direction velocity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IgnoreWrongDirection { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_InTransition_" data-uid="DrawnUi.Draw.SnappingLayout.InTransition*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_InTransition" data-uid="DrawnUi.Draw.SnappingLayout.InTransition">
+  InTransition
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L440"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool InTransition { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_RespondsToGestures_" data-uid="DrawnUi.Draw.SnappingLayout.RespondsToGestures*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_RespondsToGestures" data-uid="DrawnUi.Draw.SnappingLayout.RespondsToGestures">
+  RespondsToGestures
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L379"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Can be open/closed by gestures along with code-behind, default is true</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool RespondsToGestures { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_RubberDamping_" data-uid="DrawnUi.Draw.SnappingLayout.RubberDamping*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_RubberDamping" data-uid="DrawnUi.Draw.SnappingLayout.RubberDamping">
+  RubberDamping
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L463"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>If Bounce is enabled this basically controls how less the scroll will bounce when displaced from limit by finger or inertia. Default is 0.8.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double RubberDamping { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_RubberEffect_" data-uid="DrawnUi.Draw.SnappingLayout.RubberEffect*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_RubberEffect" data-uid="DrawnUi.Draw.SnappingLayout.RubberEffect">
+  RubberEffect
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L494"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>If Bounce is enabled this basically controls how far from the limit can the scroll be elastically offset by finger or inertia. Default is 0.15.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double RubberEffect { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_ScrollLocked_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollLocked*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ScrollLocked" data-uid="DrawnUi.Draw.SnappingLayout.ScrollLocked">
+  ScrollLocked
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool ScrollLocked { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_SnapDistanceRatio_" data-uid="DrawnUi.Draw.SnappingLayout.SnapDistanceRatio*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_SnapDistanceRatio" data-uid="DrawnUi.Draw.SnappingLayout.SnapDistanceRatio">
+  SnapDistanceRatio
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>0.2 - Part of the distance between snap points the velocity need to cover to trigger going to the next snap point. NOT a bindable property (yet).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double SnapDistanceRatio { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_SnapPoints_" data-uid="DrawnUi.Draw.SnappingLayout.SnapPoints*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_SnapPoints" data-uid="DrawnUi.Draw.SnappingLayout.SnapPoints">
+  SnapPoints
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IList&lt;Vector2&gt; SnapPoints { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_TransitionDirection_" data-uid="DrawnUi.Draw.SnappingLayout.TransitionDirection*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_TransitionDirection" data-uid="DrawnUi.Draw.SnappingLayout.TransitionDirection">
+  TransitionDirection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L420"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LinearDirectionType TransitionDirection { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.LinearDirectionType.html">LinearDirectionType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_Viewport_" data-uid="DrawnUi.Draw.SnappingLayout.Viewport*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_Viewport" data-uid="DrawnUi.Draw.SnappingLayout.Viewport">
+  Viewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Using this instead of RenderingViewport</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected SKRect Viewport { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_ApplyOptions_" data-uid="DrawnUi.Draw.SnappingLayout.ApplyOptions*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ApplyOptions" data-uid="DrawnUi.Draw.SnappingLayout.ApplyOptions">
+  ApplyOptions()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L344"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ApplyOptions()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_ApplyPosition_" data-uid="DrawnUi.Draw.SnappingLayout.ApplyPosition*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ApplyPosition_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.ApplyPosition(System.Numerics.Vector2)">
+  ApplyPosition(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L296"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ApplyPosition(Vector2 position)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_CheckTransitionEnded_" data-uid="DrawnUi.Draw.SnappingLayout.CheckTransitionEnded*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_CheckTransitionEnded" data-uid="DrawnUi.Draw.SnappingLayout.CheckTransitionEnded">
+  CheckTransitionEnded()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L316"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool CheckTransitionEnded()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_ClampOffset_" data-uid="DrawnUi.Draw.SnappingLayout.ClampOffset*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ClampOffset_System_Single_System_Single_System_Boolean_" data-uid="DrawnUi.Draw.SnappingLayout.ClampOffset(System.Single,System.Single,System.Boolean)">
+  ClampOffset(float, float, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Vector2 ClampOffset(float x, float y, bool rubber)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>rubber</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_ClampOffsetWithRubberBand_" data-uid="DrawnUi.Draw.SnappingLayout.ClampOffsetWithRubberBand*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ClampOffsetWithRubberBand_System_Single_System_Single_" data-uid="DrawnUi.Draw.SnappingLayout.ClampOffsetWithRubberBand(System.Single,System.Single)">
+  ClampOffsetWithRubberBand(float, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called for manual finger panning</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Vector2 ClampOffsetWithRubberBand(float x, float y)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_FindNearestAnchor_" data-uid="DrawnUi.Draw.SnappingLayout.FindNearestAnchor*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_FindNearestAnchor_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.FindNearestAnchor(System.Numerics.Vector2)">
+  FindNearestAnchor(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Vector2 FindNearestAnchor(Vector2 current)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>current</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_FindNearestAnchorInternal_" data-uid="DrawnUi.Draw.SnappingLayout.FindNearestAnchorInternal*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_FindNearestAnchorInternal_System_Numerics_Vector2_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.FindNearestAnchorInternal(System.Numerics.Vector2,System.Numerics.Vector2)">
+  FindNearestAnchorInternal(Vector2, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Vector2 FindNearestAnchorInternal(Vector2 current, Vector2 velocity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>current</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>velocity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_GetAutoVelocity_" data-uid="DrawnUi.Draw.SnappingLayout.GetAutoVelocity*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_GetAutoVelocity_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.GetAutoVelocity(System.Numerics.Vector2)">
+  GetAutoVelocity(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>todo calc upon measured size + prop for speed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Vector2 GetAutoVelocity(Vector2 displacement)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>displacement</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_GetContentOffsetBounds_" data-uid="DrawnUi.Draw.SnappingLayout.GetContentOffsetBounds*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_GetContentOffsetBounds" data-uid="DrawnUi.Draw.SnappingLayout.GetContentOffsetBounds">
+  GetContentOffsetBounds()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>There are the bounds the scroll offset can go to.. This are NOT the bounds of the whole content.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual SKRect GetContentOffsetBounds()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_NeedApplyOptions_" data-uid="DrawnUi.Draw.SnappingLayout.NeedApplyOptions*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_NeedApplyOptions_Microsoft_Maui_Controls_BindableObject_System_Object_System_Object_" data-uid="DrawnUi.Draw.SnappingLayout.NeedApplyOptions(Microsoft.Maui.Controls.BindableObject,System.Object,System.Object)">
+  NeedApplyOptions(BindableObject, object, object)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L362"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected static void NeedApplyOptions(BindableObject bindable, object oldvalue, object newvalue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bindable</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></dt>
+    <dd></dd>
+    <dt><code>oldvalue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+    <dt><code>newvalue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_OnTransitionChanged_" data-uid="DrawnUi.Draw.SnappingLayout.OnTransitionChanged*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_OnTransitionChanged" data-uid="DrawnUi.Draw.SnappingLayout.OnTransitionChanged">
+  OnTransitionChanged()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L449"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Invokes TransitionChanged event</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void OnTransitionChanged()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_OnWillDisposeWithChildren_" data-uid="DrawnUi.Draw.SnappingLayout.OnWillDisposeWithChildren*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_OnWillDisposeWithChildren" data-uid="DrawnUi.Draw.SnappingLayout.OnWillDisposeWithChildren">
+  OnWillDisposeWithChildren()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The OnDisposing might come with a delay to avoid disposing resources at use.
+This method will be called without delay when Dispose() is invoked. Disposed will set to True and for Views their OnWillDisposeWithChildren will be called.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnWillDisposeWithChildren()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_ScrollToNearestAnchor_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollToNearestAnchor*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ScrollToNearestAnchor_System_Numerics_Vector2_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollToNearestAnchor(System.Numerics.Vector2,System.Numerics.Vector2)">
+  ScrollToNearestAnchor(Vector2, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ScrollToNearestAnchor(Vector2 location, Vector2 velocity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>location</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>velocity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_ScrollToOffset_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollToOffset*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ScrollToOffset_System_Numerics_Vector2_System_Numerics_Vector2_System_Boolean_" data-uid="DrawnUi.Draw.SnappingLayout.ScrollToOffset(System.Numerics.Vector2,System.Numerics.Vector2,System.Boolean)">
+  ScrollToOffset(Vector2, Vector2, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual bool ScrollToOffset(Vector2 targetOffset, Vector2 velocity, bool animate)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>targetOffset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>velocity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>animate</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_SelectNextAnchor_" data-uid="DrawnUi.Draw.SnappingLayout.SelectNextAnchor*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_SelectNextAnchor_System_Numerics_Vector2_System_Numerics_Vector2_" data-uid="DrawnUi.Draw.SnappingLayout.SelectNextAnchor(System.Numerics.Vector2,System.Numerics.Vector2)">
+  SelectNextAnchor(Vector2, Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Return an anchor depending on direction and strength of of the velocity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Vector2 SelectNextAnchor(Vector2 origin, Vector2 velocity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>origin</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+    <dt><code>velocity</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_SendScrolled_" data-uid="DrawnUi.Draw.SnappingLayout.SendScrolled*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_SendScrolled" data-uid="DrawnUi.Draw.SnappingLayout.SendScrolled">
+  SendScrolled()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L309"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void SendScrolled()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Draw_SnappingLayout_UpdateReportedPosition_" data-uid="DrawnUi.Draw.SnappingLayout.UpdateReportedPosition*"></a>
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_UpdateReportedPosition" data-uid="DrawnUi.Draw.SnappingLayout.UpdateReportedPosition">
+  UpdateReportedPosition()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L335"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void UpdateReportedPosition()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_Scrolled" data-uid="DrawnUi.Draw.SnappingLayout.Scrolled">
+  Scrolled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L314"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Vector2&gt; Scrolled</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_TransitionChanged" data-uid="DrawnUi.Draw.SnappingLayout.TransitionChanged">
+  TransitionChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;bool&gt; TransitionChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Draw_SnappingLayout_ViewportReady" data-uid="DrawnUi.Draw.SnappingLayout.ViewportReady">
+  ViewportReady
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler ViewportReady</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Draw_SnappingLayout.md&amp;value=---%0Auid%3A%20DrawnUi.Draw.SnappingLayout%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L7" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Draw/Layout/SnappingLayout.cs/#L7" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

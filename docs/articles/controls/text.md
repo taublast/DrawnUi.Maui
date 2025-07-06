@@ -1,6 +1,6 @@
 # Text Controls
 
-DrawnUi.Maui offers powerful text rendering capabilities through its specialized text controls. These controls provide high-performance text rendering with advanced formatting options while maintaining consistent appearance across all platforms.
+DrawnUi.Maui offers text rendering capabilities through its specialized text controls. These controls provide text rendering with advanced formatting options while maintaining consistent appearance across all platforms.
 
 ## SkiaLabel
 
@@ -231,7 +231,6 @@ var label = new SkiaMarkdownLabel();
     LinkColor="Blue"
     CodeTextColor="DarkGreen"
     CodeBackgroundColor="#EEEEEE"
-    CodeBlockBackgroundColor="#F5F5F5"
     StrikeoutColor="Red"
     PrefixBullet="• "
     PrefixNumbered="{0}. "
@@ -257,10 +256,10 @@ Check out [this link](https://example.com)!
 In your code-behind:
 
 ```csharp
-private void OnLinkTapped(object sender, LinkTappedEventArgs e)
+private void OnLinkTapped(object sender, string url)
 {
-    // e.Link contains the link URL
-    Browser.OpenAsync(e.Link);
+    // url parameter contains the link URL
+    Browser.OpenAsync(url);
 }
 ```
 

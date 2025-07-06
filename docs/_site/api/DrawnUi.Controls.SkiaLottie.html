@@ -1,130 +1,159 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Class SkiaLottie | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SkiaLottie | DrawnUi Documentation ">
-    
-    
-      <link rel="shortcut icon" href="../images/favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../styles/docfx.css">
-      <link rel="stylesheet" href="../styles/main.css">
-      <meta property="docfx:navrel" content="../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../">
-    
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="DrawnUi.Controls.SkiaLottie">
+
+        <article data-uid="DrawnUi.Controls.SkiaLottie">
 
 
 
-  <h1 id="DrawnUi_Controls_SkiaLottie" data-uid="DrawnUi.Controls.SkiaLottie" class="text-break">Class SkiaLottie</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
-    <div class="level2"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
-    <div class="level3"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
-    <div class="level4"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
-    <div class="level5"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
-    <div class="level6"><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
-    <div class="level7"><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html">AnimatedFramesRenderer</a></div>
-    <div class="level8"><span class="xref">SkiaLottie</span></div>
+  <h1 id="DrawnUi_Controls_SkiaLottie" data-uid="DrawnUi.Controls.SkiaLottie" class="text-break">
+Class SkiaLottie  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Controls.html">Controls</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>DrawnUi.Maui.dll</dd></dl>
   </div>
-  <div class="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SkiaLottie : AnimatedFramesRenderer, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IView, ITransform, IElement, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaControl, IDrawnBase, IDisposable, ICanBeUpdatedWithContext, ICanBeUpdated</code></pre>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
+      <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html">AnimatedFramesRenderer</a></div>
+      <div><span class="xref">SkiaLottie</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_WasPlayingBeforeVisibilityChanged">AnimatedFramesRenderer.WasPlayingBeforeVisibilityChanged</a>
     </div>
@@ -304,15 +333,6 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetDensity">SkiaControl.GetDensity()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_TransferState_Microsoft_Maui_IView_">SkiaControl.TransferState(IView)</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Reload">SkiaControl.Reload()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ReloadHandler">SkiaControl.ReloadHandler</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseCacheProperty">SkiaControl.UseCacheProperty</a>
@@ -636,6 +656,9 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SizeRequest">SkiaControl.SizeRequest</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_WidthRequestWithMargins">SkiaControl.WidthRequestWithMargins</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptWidthConstraintToRequest_System_Single_Microsoft_Maui_Thickness_System_Double_">SkiaControl.AdaptWidthConstraintToRequest(float, Thickness, double)</a>
     </div>
     <div>
@@ -643,6 +666,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetMeasuringConstraints_DrawnUi_Draw_MeasureRequest_">SkiaControl.GetMeasuringConstraints(MeasureRequest)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillHorizontally">SkiaControl.NeedFillHorizontally</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillVertically">SkiaControl.NeedFillVertically</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptConstraintToContentRequest_System_Single_System_Double_System_Double_System_Boolean_System_Double_System_Double_System_Single_System_Boolean_">SkiaControl.AdaptConstraintToContentRequest(float, double, double, bool, double, double, float, bool)</a>
@@ -973,6 +1002,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ParentChanged">SkiaControl.ParentChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurementProperty">SkiaControl.FastMeasurementProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurement">SkiaControl.FastMeasurement</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdjustClippingProperty">SkiaControl.AdjustClippingProperty</a>
@@ -1314,6 +1349,12 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Measure_System_Single_System_Single_System_Single_">SkiaControl.Measure(float, float, float)</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeMeasuring">SkiaControl.InitializeMeasuring()</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnMeasuring_System_Single_System_Single_System_Single_">SkiaControl.OnMeasuring(float, float, float)</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeDefaultContent_System_Boolean_">SkiaControl.InitializeDefaultContent(bool)</a>
     </div>
     <div>
@@ -1339,6 +1380,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureAbsoluteBase_SkiaSharp_SKRect_System_Single_">SkiaControl.MeasureAbsoluteBase(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_">SkiaControl.ContractPixelsRect(SKRect, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_Microsoft_Maui_Thickness_">SkiaControl.ContractPixelsRect(SKRect, float, Thickness)</a>
@@ -1453,6 +1497,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_PreArrange_SkiaSharp_SKRect_System_Single_System_Single_System_Single_">SkiaControl.PreArrange(SKRect, float, float, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureSelf_SkiaSharp_SKRect_System_Single_System_Single_System_Single_">SkiaControl.MeasureSelf(SKRect, float, float, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_IsRendering">SkiaControl.IsRendering</a>
@@ -1582,6 +1629,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseTranslationX">SkiaControl.UseTranslationX</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_LinkTransforms">SkiaControl.LinkTransforms</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_DrawRenderObject_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_CachedObject_">SkiaControl.DrawRenderObject(DrawingContext, CachedObject)</a>
@@ -1822,6 +1872,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AddOrRemoveView_DrawnUi_Draw_SkiaControl_System_Boolean_">SkiaControl.AddOrRemoveView(SkiaControl, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SetChildrenAsParameters_DrawnUi_Draw_SkiaControl___">SkiaControl.SetChildrenAsParameters(params SkiaControl[])</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SetChildren_System_Collections_Generic_IEnumerable_DrawnUi_Draw_SkiaControl__">SkiaControl.SetChildren(IEnumerable&lt;SkiaControl&gt;)</a>
@@ -2369,1619 +2422,11 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Controls.html">Controls</a></h6>
-  <h6><strong>Assembly</strong>: DrawnUi.Maui.dll</h6>
-  <h5 id="DrawnUi_Controls_SkiaLottie_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SkiaLottie : AnimatedFramesRenderer, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IHotReloadableView, IReplaceableView, IView, IElement, ITransform, IReloadHandler, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaControl, IDrawnBase, IDisposable, ICanBeUpdatedWithContext, ICanBeUpdated</code></pre>
-  </div>
-  <h3 id="fields">Fields
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ApplyIsOnWhenNotPlayingProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ApplyIsOnWhenNotPlayingProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L141">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ApplyIsOnWhenNotPlayingProperty" data-uid="DrawnUi.Controls.SkiaLottie.ApplyIsOnWhenNotPlayingProperty">ApplyIsOnWhenNotPlayingProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty ApplyIsOnWhenNotPlayingProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_CachedAnimations.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.CachedAnimations%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L19">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaLottie_CachedAnimations" data-uid="DrawnUi.Controls.SkiaLottie.CachedAnimations">CachedAnimations</h4>
-  <div class="markdown level1 summary"><p>To avoid reloading same files multiple times..</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ConcurrentDictionary&lt;string, string&gt; CachedAnimations</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentdictionary-2">ConcurrentDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ColorTintProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ColorTintProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L175">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ColorTintProperty" data-uid="DrawnUi.Controls.SkiaLottie.ColorTintProperty">ColorTintProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty ColorTintProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ColorsProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ColorsProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L191">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ColorsProperty" data-uid="DrawnUi.Controls.SkiaLottie.ColorsProperty">ColorsProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty ColorsProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_DefaultFrameWhenOnProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOnProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L161">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaLottie_DefaultFrameWhenOnProperty" data-uid="DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOnProperty">DefaultFrameWhenOnProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty DefaultFrameWhenOnProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_IsOnProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.IsOnProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L151">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaLottie_IsOnProperty" data-uid="DrawnUi.Controls.SkiaLottie.IsOnProperty">IsOnProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty IsOnProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ProcessJson.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ProcessJson%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L693">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ProcessJson" data-uid="DrawnUi.Controls.SkiaLottie.ProcessJson">ProcessJson</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Func&lt;string, string&gt; ProcessJson</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_SourceProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.SourceProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L252">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaLottie_SourceProperty" data-uid="DrawnUi.Controls.SkiaLottie.SourceProperty">SourceProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty SourceProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_Animation.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.Animation%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L127">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_Animation_" data-uid="DrawnUi.Controls.SkiaLottie.Animation*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_Animation" data-uid="DrawnUi.Controls.SkiaLottie.Animation">Animation</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Animation Animation { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ApplyIsOnWhenNotPlaying.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ApplyIsOnWhenNotPlaying%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L145">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ApplyIsOnWhenNotPlaying_" data-uid="DrawnUi.Controls.SkiaLottie.ApplyIsOnWhenNotPlaying*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ApplyIsOnWhenNotPlaying" data-uid="DrawnUi.Controls.SkiaLottie.ApplyIsOnWhenNotPlaying">ApplyIsOnWhenNotPlaying</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool ApplyIsOnWhenNotPlaying { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ColorTint.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ColorTint%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L181">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ColorTint_" data-uid="DrawnUi.Controls.SkiaLottie.ColorTint*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ColorTint" data-uid="DrawnUi.Controls.SkiaLottie.ColorTint">ColorTint</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Color ColorTint { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_Colors.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.Colors%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L206">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_Colors_" data-uid="DrawnUi.Controls.SkiaLottie.Colors*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_Colors" data-uid="DrawnUi.Controls.SkiaLottie.Colors">Colors</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IList&lt;Color&gt; Colors { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_DefaultFrameWhenOn.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOn%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L169">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_DefaultFrameWhenOn_" data-uid="DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOn*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_DefaultFrameWhenOn" data-uid="DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOn">DefaultFrameWhenOn</h4>
-  <div class="markdown level1 summary"><p>For the case IsOn = True. What frame should we display at start or when stopped. 0 (START) is default, can specify other number. if value is less than 0 then will seek to the last available frame (END).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int DefaultFrameWhenOn { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_IsOn.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.IsOn%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L155">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_IsOn_" data-uid="DrawnUi.Controls.SkiaLottie.IsOn*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_IsOn" data-uid="DrawnUi.Controls.SkiaLottie.IsOn">IsOn</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool IsOn { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_Source.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.Source%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L259">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_Source_" data-uid="DrawnUi.Controls.SkiaLottie.Source*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_Source" data-uid="DrawnUi.Controls.SkiaLottie.Source">Source</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Source { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ApplyDefaultFrame.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ApplyDefaultFrame%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L86">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ApplyDefaultFrame_" data-uid="DrawnUi.Controls.SkiaLottie.ApplyDefaultFrame*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ApplyDefaultFrame" data-uid="DrawnUi.Controls.SkiaLottie.ApplyDefaultFrame">ApplyDefaultFrame()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void ApplyDefaultFrame()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_ApplyDefaultFrame">AnimatedFramesRenderer.ApplyDefaultFrame()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ApplySpeed.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ApplySpeed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L551">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ApplySpeed_" data-uid="DrawnUi.Controls.SkiaLottie.ApplySpeed*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ApplySpeed" data-uid="DrawnUi.Controls.SkiaLottie.ApplySpeed">ApplySpeed()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void ApplySpeed()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_ApplySpeed">AnimatedFramesRenderer.ApplySpeed()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ApplyTint_System_String_System_Collections_Generic_IList_Microsoft_Maui_Graphics_Color__.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ApplyTint(System.String%2CSystem.Collections.Generic.IList%7BMicrosoft.Maui.Graphics.Color%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L695">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ApplyTint_" data-uid="DrawnUi.Controls.SkiaLottie.ApplyTint*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ApplyTint_System_String_System_Collections_Generic_IList_Microsoft_Maui_Graphics_Color__" data-uid="DrawnUi.Controls.SkiaLottie.ApplyTint(System.String,System.Collections.Generic.IList{Microsoft.Maui.Graphics.Color})">ApplyTint(string, IList&lt;Color&gt;)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string ApplyTint(string json, IList&lt;Color&gt; newTints)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">json</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a>&gt;</td>
-        <td><span class="parametername">newTints</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_CalculateSaturation_Microsoft_Maui_Graphics_Color_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.CalculateSaturation(Microsoft.Maui.Graphics.Color)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L877">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_CalculateSaturation_" data-uid="DrawnUi.Controls.SkiaLottie.CalculateSaturation*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_CalculateSaturation_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.CalculateSaturation(Microsoft.Maui.Graphics.Color)">CalculateSaturation(Color)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static float CalculateSaturation(Color color)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></td>
-        <td><span class="parametername">color</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_CheckCanStartAnimator.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.CheckCanStartAnimator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L577">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_CheckCanStartAnimator_" data-uid="DrawnUi.Controls.SkiaLottie.CheckCanStartAnimator*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_CheckCanStartAnimator" data-uid="DrawnUi.Controls.SkiaLottie.CheckCanStartAnimator">CheckCanStartAnimator()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override bool CheckCanStartAnimator()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_CheckCanStartAnimator">AnimatedFramesRenderer.CheckCanStartAnimator()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ColorToArrayString_Microsoft_Maui_Graphics_Color_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ColorToArrayString(Microsoft.Maui.Graphics.Color)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L804">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ColorToArrayString_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToArrayString*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ColorToArrayString_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToArrayString(Microsoft.Maui.Graphics.Color)">ColorToArrayString(Color)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string ColorToArrayString(Color color)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></td>
-        <td><span class="parametername">color</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ColorToHexString_Microsoft_Maui_Graphics_Color_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ColorToHexString(Microsoft.Maui.Graphics.Color)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L794">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ColorToHexString_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToHexString*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ColorToHexString_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToHexString(Microsoft.Maui.Graphics.Color)">ColorToHexString(Color)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string ColorToHexString(Color color)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></td>
-        <td><span class="parametername">color</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ColorToRGBHexString_Microsoft_Maui_Graphics_Color_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ColorToRGBHexString(Microsoft.Maui.Graphics.Color)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L786">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ColorToRGBHexString_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToRGBHexString*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ColorToRGBHexString_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToRGBHexString(Microsoft.Maui.Graphics.Color)">ColorToRGBHexString(Color)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string ColorToRGBHexString(Color color)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></td>
-        <td><span class="parametername">color</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ColorToString_Microsoft_Maui_Graphics_Color_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ColorToString(Microsoft.Maui.Graphics.Color)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L861">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ColorToString_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToString*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ColorToString_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToString(Microsoft.Maui.Graphics.Color)">ColorToString(Color)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string ColorToString(Color color)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></td>
-        <td><span class="parametername">color</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_CreateAnimation_System_String_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.CreateAnimation(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L385">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_CreateAnimation_" data-uid="DrawnUi.Controls.SkiaLottie.CreateAnimation*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_CreateAnimation_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.CreateAnimation(System.String)">CreateAnimation(string)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Animation CreateAnimation(string json)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">json</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_FindColorProperties_Newtonsoft_Json_Linq_JToken_System_Collections_Generic_List_System_ValueTuple_Newtonsoft_Json_Linq_JToken_Microsoft_Maui_Graphics_Color___.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.FindColorProperties(Newtonsoft.Json.Linq.JToken%2CSystem.Collections.Generic.List%7BSystem.ValueTuple%7BNewtonsoft.Json.Linq.JToken%2CMicrosoft.Maui.Graphics.Color%7D%7D)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L750">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_FindColorProperties_" data-uid="DrawnUi.Controls.SkiaLottie.FindColorProperties*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_FindColorProperties_Newtonsoft_Json_Linq_JToken_System_Collections_Generic_List_System_ValueTuple_Newtonsoft_Json_Linq_JToken_Microsoft_Maui_Graphics_Color___" data-uid="DrawnUi.Controls.SkiaLottie.FindColorProperties(Newtonsoft.Json.Linq.JToken,System.Collections.Generic.List{System.ValueTuple{Newtonsoft.Json.Linq.JToken,Microsoft.Maui.Graphics.Color}})">FindColorProperties(JToken, List&lt;(JToken Token, Color Color)&gt;)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void FindColorProperties(JToken token, List&lt;(JToken Token, Color Color)&gt; colorList)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">JToken</span></td>
-        <td><span class="parametername">token</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<span class="xref">JToken</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-newtonsoft.json.linq.jtoken,microsoft.maui.graphics.color-.token">Token</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-newtonsoft.json.linq.jtoken,microsoft.maui.graphics.color-.color">Color</a>)&gt;</td>
-        <td><span class="parametername">colorList</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_GoToEnd.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.GoToEnd%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L596">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_GoToEnd_" data-uid="DrawnUi.Controls.SkiaLottie.GoToEnd*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_GoToEnd" data-uid="DrawnUi.Controls.SkiaLottie.GoToEnd">GoToEnd()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void GoToEnd()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_GoToStart.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.GoToStart%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L587">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_GoToStart_" data-uid="DrawnUi.Controls.SkiaLottie.GoToStart*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_GoToStart" data-uid="DrawnUi.Controls.SkiaLottie.GoToStart">GoToStart()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void GoToStart()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_LoadAnimationFromJson_System_String_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.LoadAnimationFromJson(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L458">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_LoadAnimationFromJson_" data-uid="DrawnUi.Controls.SkiaLottie.LoadAnimationFromJson*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_LoadAnimationFromJson_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.LoadAnimationFromJson(System.String)">LoadAnimationFromJson(string)</h4>
-  <div class="markdown level1 summary"><p>This is not replacing current animation, use SetAnimation for that.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Animation LoadAnimationFromJson(string json)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">json</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_LoadLocalJson_System_String_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.LoadLocalJson(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L278">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_LoadLocalJson_" data-uid="DrawnUi.Controls.SkiaLottie.LoadLocalJson*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_LoadLocalJson_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.LoadLocalJson(System.String)">LoadLocalJson(string)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string LoadLocalJson(string fileName)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">fileName</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_LoadSource_System_String_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.LoadSource(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L313">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_LoadSource_" data-uid="DrawnUi.Controls.SkiaLottie.LoadSource*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_LoadSource_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.LoadSource(System.String)">LoadSource(string)</h4>
-  <div class="markdown level1 summary"><p>This is not replacing current animation, only pre-loading! Use SetAnimation after that if needed.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;Animation&gt; LoadSource(string fileName)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">fileName</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_OnAnimatorInitializing.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.OnAnimatorInitializing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L564">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_OnAnimatorInitializing_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorInitializing*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_OnAnimatorInitializing" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorInitializing">OnAnimatorInitializing()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void OnAnimatorInitializing()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorInitializing">AnimatedFramesRenderer.OnAnimatorInitializing()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_OnAnimatorSeeking_System_Double_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.OnAnimatorSeeking(System.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L72">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_OnAnimatorSeeking_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorSeeking*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_OnAnimatorSeeking_System_Double_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorSeeking(System.Double)">OnAnimatorSeeking(double)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void OnAnimatorSeeking(double frame)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td><span class="parametername">frame</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorSeeking_System_Double_">AnimatedFramesRenderer.OnAnimatorSeeking(double)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_OnAnimatorStarting.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.OnAnimatorStarting%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L582">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_OnAnimatorStarting_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorStarting*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_OnAnimatorStarting" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorStarting">OnAnimatorStarting()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void OnAnimatorStarting()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorStarting">AnimatedFramesRenderer.OnAnimatorStarting()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_OnAnimatorUpdated_System_Double_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.OnAnimatorUpdated(System.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L540">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_OnAnimatorUpdated_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorUpdated*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_OnAnimatorUpdated_System_Double_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorUpdated(System.Double)">OnAnimatorUpdated(double)</h4>
-  <div class="markdown level1 summary"><p>Override this to react on animator running.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void OnAnimatorUpdated(double value)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorUpdated_System_Double_">AnimatedFramesRenderer.OnAnimatorUpdated(double)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_OnDisposing.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.OnDisposing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L524">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_OnDisposing_" data-uid="DrawnUi.Controls.SkiaLottie.OnDisposing*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_OnDisposing" data-uid="DrawnUi.Controls.SkiaLottie.OnDisposing">OnDisposing()</h4>
-  <div class="markdown level1 summary"><p>Base performs some cleanup actions with Superview</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnDisposing()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_OnDisposing">AnimatedFramesRenderer.OnDisposing()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_OnFinished.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.OnFinished%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L28">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_OnFinished_" data-uid="DrawnUi.Controls.SkiaLottie.OnFinished*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_OnFinished" data-uid="DrawnUi.Controls.SkiaLottie.OnFinished">OnFinished()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void OnFinished()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_OnFinished">AnimatedFramesRenderer.OnFinished()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_OnJsonLoaded_System_String_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.OnJsonLoaded(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L448">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_OnJsonLoaded_" data-uid="DrawnUi.Controls.SkiaLottie.OnJsonLoaded*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_OnJsonLoaded_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.OnJsonLoaded(System.String)">OnJsonLoaded(string)</h4>
-  <div class="markdown level1 summary"><p>Called by LoadAnimationFromResources after file was loaded so we can modify json if needed before it it consumed.
-Return json to be used.
-This is not called by LoadAnimationFromJson.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual string OnJsonLoaded(string json)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">json</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_OnLayoutChanged.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.OnLayoutChanged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L57">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_OnLayoutChanged_" data-uid="DrawnUi.Controls.SkiaLottie.OnLayoutChanged*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_OnLayoutChanged" data-uid="DrawnUi.Controls.SkiaLottie.OnLayoutChanged">OnLayoutChanged()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void OnLayoutChanged()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_OnLayoutChanged">AnimatedFramesRenderer.OnLayoutChanged()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_ReloadSource.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.ReloadSource%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L607">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_ReloadSource_" data-uid="DrawnUi.Controls.SkiaLottie.ReloadSource*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_ReloadSource" data-uid="DrawnUi.Controls.SkiaLottie.ReloadSource">ReloadSource()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void ReloadSource()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_RenderFrame_DrawnUi_Draw_DrawingContext_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.RenderFrame(DrawnUi.Draw.DrawingContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L265">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_RenderFrame_" data-uid="DrawnUi.Controls.SkiaLottie.RenderFrame*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_RenderFrame_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Controls.SkiaLottie.RenderFrame(DrawnUi.Draw.DrawingContext)">RenderFrame(DrawingContext)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void RenderFrame(DrawingContext ctx)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.DrawingContext.html">DrawingContext</a></td>
-        <td><span class="parametername">ctx</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_RenderFrame_DrawnUi_Draw_DrawingContext_">AnimatedFramesRenderer.RenderFrame(DrawingContext)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_SeekToDefaultFrame.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.SeekToDefaultFrame%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L35">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_SeekToDefaultFrame_" data-uid="DrawnUi.Controls.SkiaLottie.SeekToDefaultFrame*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_SeekToDefaultFrame" data-uid="DrawnUi.Controls.SkiaLottie.SeekToDefaultFrame">SeekToDefaultFrame()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void SeekToDefaultFrame()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_SetAnimation_SkiaSharp_Skottie_Animation_System_Boolean_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.SetAnimation(SkiaSharp.Skottie.Animation%2CSystem.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L477">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_SetAnimation_" data-uid="DrawnUi.Controls.SkiaLottie.SetAnimation*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_SetAnimation_SkiaSharp_Skottie_Animation_System_Boolean_" data-uid="DrawnUi.Controls.SkiaLottie.SetAnimation(SkiaSharp.Skottie.Animation,System.Boolean)">SetAnimation(Animation, bool)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SetAnimation(Animation animation, bool disposePrevious)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></td>
-        <td><span class="parametername">animation</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">disposePrevious</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_Stop.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.Stop%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L21">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_Stop_" data-uid="DrawnUi.Controls.SkiaLottie.Stop*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_Stop" data-uid="DrawnUi.Controls.SkiaLottie.Stop">Stop()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Stop()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Controls.AnimatedFramesRenderer.html#DrawnUi_Controls_AnimatedFramesRenderer_Stop">AnimatedFramesRenderer.Stop()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_StreamFromResourceUrl_System_String_System_Reflection_Assembly_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.StreamFromResourceUrl(System.String%2CSystem.Reflection.Assembly)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L417">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_StreamFromResourceUrl_" data-uid="DrawnUi.Controls.SkiaLottie.StreamFromResourceUrl*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_StreamFromResourceUrl_System_String_System_Reflection_Assembly_" data-uid="DrawnUi.Controls.SkiaLottie.StreamFromResourceUrl(System.String,System.Reflection.Assembly)">StreamFromResourceUrl(string, Assembly)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Stream StreamFromResourceUrl(string url, Assembly assembly = null)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">url</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.reflection.assembly">Assembly</a></td>
-        <td><span class="parametername">assembly</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_StringToXamarinColor_System_String_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.StringToXamarinColor(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L843">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_StringToXamarinColor_" data-uid="DrawnUi.Controls.SkiaLottie.StringToXamarinColor*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_StringToXamarinColor_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.StringToXamarinColor(System.String)">StringToXamarinColor(string)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Color StringToXamarinColor(string colorString)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">colorString</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie_StringToXamarinColorFromHex_System_String_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie.StringToXamarinColorFromHex(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L814">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaLottie_StringToXamarinColorFromHex_" data-uid="DrawnUi.Controls.SkiaLottie.StringToXamarinColorFromHex*"></a>
-  <h4 id="DrawnUi_Controls_SkiaLottie_StringToXamarinColorFromHex_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.StringToXamarinColorFromHex(System.String)">StringToXamarinColorFromHex(string)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Color StringToXamarinColorFromHex(string hexColor)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">hexColor</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a>
-  </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Adapt__1___0_System_Action___0__">FluentExtensions.Adapt&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
@@ -4028,28 +2473,31 @@ This is not called by LoadAnimationFromJson.</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Fill__1___0_">FluentExtensions.Fill&lt;T&gt;(T)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Height__1___0_System_Double_">FluentExtensions.Height&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContextOn__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveBindingContextOn&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContext__2___0_System_Action___0___1_System_String__System_Boolean_">FluentExtensions.ObserveBindingContext&lt;T, TSource&gt;(T, Action&lt;T, TSource, string&gt;, bool)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeepNestedProperty__5___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Func___3___4__System_String_System_Action___0___4____4_System_Boolean_">FluentExtensions.ObserveDeepNestedProperty&lt;T, TSource, TIntermediate1, TIntermediate2, TProperty&gt;(T, Func&lt;TSource, TIntermediate1&gt;, string, Func&lt;TIntermediate1, TIntermediate2&gt;, string, Func&lt;TIntermediate2, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveOn__3___0___1_System_Func___2__System_String_System_Action___0_System_String__System_String___">FluentExtensions.ObserveOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, Action&lt;T, string&gt;, string[])</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeep__4___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveDeep&lt;T, TSource, TIntermediate, TProperty&gt;(T, Func&lt;TSource, TIntermediate&gt;, string, Func&lt;TIntermediate, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertiesOn__3___0___1_System_Func___2__System_String_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObservePropertiesOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperties__2___0___1_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObserveProperties&lt;T, TSource&gt;(T, TSource, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertyOn__3___0___1_System_Func___2__System_String_System_String_System_Action___0__">FluentExtensions.ObservePropertyOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, string, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperty__2___0___1_System_String_System_Action___0__">FluentExtensions.ObserveProperty&lt;T, TSource&gt;(T, TSource, string, Action&lt;T&gt;)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveSelf__1___0_System_Action___0_System_String__">FluentExtensions.ObserveSelf&lt;T&gt;(T, Action&lt;T, string&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetBindingContext__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveTargetBindingContext&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetProperty__4___0_System_Linq_Expressions_Expression_System_Func___1___2___System_Linq_Expressions_Expression_System_Func___2___3___System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveTargetProperty&lt;T, TSource, TIntermediate, TProperty&gt;(T, Expression&lt;Func&lt;TSource, TIntermediate&gt;&gt;, Expression&lt;Func&lt;TIntermediate, TProperty&gt;&gt;, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Observe__2___0_System_Func___1__System_Action___0_System_String__System_String___">FluentExtensions.Observe&lt;T, TSource&gt;(T, Func&lt;TSource&gt;, Action&lt;T, string&gt;, string[])</a>
@@ -4076,18 +2524,6 @@ This is not called by LoadAnimationFromJson.</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetGrid__1___0_System_Int32_System_Int32_System_Int32_System_Int32_">FluentExtensions.SetGrid&lt;T&gt;(T, int, int, int, int)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetWidth__1___0_System_Double_">FluentExtensions.SetWidth&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_StartX__1___0_">FluentExtensions.StartX&lt;T&gt;(T)</a>
   </div>
   <div>
@@ -4106,7 +2542,10 @@ This is not called by LoadAnimationFromJson.</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithColumn__1___0_System_Int32_">FluentExtensions.WithColumn&lt;T&gt;(T, int)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeightRequest__1___0_System_Double_">FluentExtensions.WithHeightRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithEnabled__1___0_System_Boolean_">FluentExtensions.WithEnabled&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeight__1___0_System_Double_">FluentExtensions.WithHeight&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHorizontalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithHorizontalOptions&lt;T&gt;(T, LayoutOptions)</a>
@@ -4115,7 +2554,22 @@ This is not called by LoadAnimationFromJson.</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_Microsoft_Maui_Thickness_">FluentExtensions.WithMargin&lt;T&gt;(T, Thickness)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithOpacity__1___0_System_Double_">FluentExtensions.WithOpacity&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithParent__1___0_DrawnUi_Draw_IDrawnBase_">FluentExtensions.WithParent&lt;T&gt;(T, IDrawnBase)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRotation__1___0_System_Double_">FluentExtensions.WithRotation&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRowSpan__1___0_System_Int32_">FluentExtensions.WithRowSpan&lt;T&gt;(T, int)</a>
@@ -4124,13 +2578,22 @@ This is not called by LoadAnimationFromJson.</p>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRow__1___0_System_Int32_">FluentExtensions.WithRow&lt;T&gt;(T, int)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithTag__1___0_System_String_">FluentExtensions.WithTag&lt;T&gt;(T, string)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVerticalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithVerticalOptions&lt;T&gt;(T, LayoutOptions)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidthRequest__1___0_System_Double_">FluentExtensions.WithWidthRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVisibility__1___0_System_Boolean_">FluentExtensions.WithVisibility&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidth__1___0_System_Double_">FluentExtensions.WithWidth&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.DrawnExtensions.html#DrawnUi_Draw_DrawnExtensions_GetVelocityRatioForChild_DrawnUi_Draw_IDrawnBase_DrawnUi_Draw_ISkiaControl_">DrawnExtensions.GetVelocityRatioForChild(IDrawnBase, ISkiaControl)</a>
@@ -4171,47 +2634,1536 @@ This is not called by LoadAnimationFromJson.</p>
   <div>
       <a class="xref" href="DrawnUi.Extensions.InternalExtensions.html#DrawnUi_Extensions_InternalExtensions_FromPlatform_System_Object_">InternalExtensions.FromPlatform(object)</a>
   </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ApplyIsOnWhenNotPlayingProperty" data-uid="DrawnUi.Controls.SkiaLottie.ApplyIsOnWhenNotPlayingProperty">
+  ApplyIsOnWhenNotPlayingProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty ApplyIsOnWhenNotPlayingProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_CachedAnimations" data-uid="DrawnUi.Controls.SkiaLottie.CachedAnimations">
+  CachedAnimations
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>To avoid reloading same files multiple times..</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ConcurrentDictionary&lt;string, string&gt; CachedAnimations</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentdictionary-2">ConcurrentDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ColorTintProperty" data-uid="DrawnUi.Controls.SkiaLottie.ColorTintProperty">
+  ColorTintProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L188"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty ColorTintProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ColorsProperty" data-uid="DrawnUi.Controls.SkiaLottie.ColorsProperty">
+  ColorsProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty ColorsProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_DefaultFrameWhenOnProperty" data-uid="DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOnProperty">
+  DefaultFrameWhenOnProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty DefaultFrameWhenOnProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_IsOnProperty" data-uid="DrawnUi.Controls.SkiaLottie.IsOnProperty">
+  IsOnProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L157"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty IsOnProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ProcessJson" data-uid="DrawnUi.Controls.SkiaLottie.ProcessJson">
+  ProcessJson
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L716"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Func&lt;string, string&gt; ProcessJson</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.func-2">Func</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_SourceProperty" data-uid="DrawnUi.Controls.SkiaLottie.SourceProperty">
+  SourceProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty SourceProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_Animation_" data-uid="DrawnUi.Controls.SkiaLottie.Animation*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_Animation" data-uid="DrawnUi.Controls.SkiaLottie.Animation">
+  Animation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Animation Animation { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ApplyIsOnWhenNotPlaying_" data-uid="DrawnUi.Controls.SkiaLottie.ApplyIsOnWhenNotPlaying*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ApplyIsOnWhenNotPlaying" data-uid="DrawnUi.Controls.SkiaLottie.ApplyIsOnWhenNotPlaying">
+  ApplyIsOnWhenNotPlaying
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets whether the IsOn state should be applied when the animation is not playing.
+When true (default), changing IsOn will immediately seek to the appropriate frame.
+When false, IsOn state is only applied during animation playback.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ApplyIsOnWhenNotPlaying { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ColorTint_" data-uid="DrawnUi.Controls.SkiaLottie.ColorTint*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ColorTint" data-uid="DrawnUi.Controls.SkiaLottie.ColorTint">
+  ColorTint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a global color tint applied to the entire Lottie animation.
+This provides a quick way to theme animations without modifying the source file.
+For multiple color replacements, use the Colors collection instead.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Color ColorTint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_Colors_" data-uid="DrawnUi.Controls.SkiaLottie.Colors*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_Colors" data-uid="DrawnUi.Controls.SkiaLottie.Colors">
+  Colors
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IList&lt;Color&gt; Colors { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_DefaultFrameWhenOn_" data-uid="DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOn*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_DefaultFrameWhenOn" data-uid="DrawnUi.Controls.SkiaLottie.DefaultFrameWhenOn">
+  DefaultFrameWhenOn
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>For the case IsOn = True. What frame should we display at start or when stopped. 0 (START) is default, can specify other number. if value is less than 0 then will seek to the last available frame (END).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int DefaultFrameWhenOn { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_IsOn_" data-uid="DrawnUi.Controls.SkiaLottie.IsOn*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_IsOn" data-uid="DrawnUi.Controls.SkiaLottie.IsOn">
+  IsOn
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the toggle state for animations with distinct on/off states.
+When true, displays DefaultFrameWhenOn frame when stopped.
+When false, displays DefaultFrame when stopped.
+Perfect for animated toggles, checkboxes, or switch controls.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsOn { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_Source_" data-uid="DrawnUi.Controls.SkiaLottie.Source*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_Source" data-uid="DrawnUi.Controls.SkiaLottie.Source">
+  Source
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L282"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the path or URL to the Lottie JSON file.
+Supports web URLs, native file system paths (file://), and bundled resources from Resources/Raw folder.
+Example: &quot;Lottie/animation.json&quot; loads from Resources/Raw/Lottie/animation.json</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Source { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ApplyDefaultFrame_" data-uid="DrawnUi.Controls.SkiaLottie.ApplyDefaultFrame*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ApplyDefaultFrame" data-uid="DrawnUi.Controls.SkiaLottie.ApplyDefaultFrame">
+  ApplyDefaultFrame()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void ApplyDefaultFrame()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ApplySpeed_" data-uid="DrawnUi.Controls.SkiaLottie.ApplySpeed*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ApplySpeed" data-uid="DrawnUi.Controls.SkiaLottie.ApplySpeed">
+  ApplySpeed()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L574"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void ApplySpeed()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ApplyTint_" data-uid="DrawnUi.Controls.SkiaLottie.ApplyTint*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ApplyTint_System_String_System_Collections_Generic_IList_Microsoft_Maui_Graphics_Color__" data-uid="DrawnUi.Controls.SkiaLottie.ApplyTint(System.String,System.Collections.Generic.IList{Microsoft.Maui.Graphics.Color})">
+  ApplyTint(string, IList&lt;Color&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L718"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string ApplyTint(string json, IList&lt;Color&gt; newTints)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>json</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>newTints</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_CalculateSaturation_" data-uid="DrawnUi.Controls.SkiaLottie.CalculateSaturation*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_CalculateSaturation_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.CalculateSaturation(Microsoft.Maui.Graphics.Color)">
+  CalculateSaturation(Color)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L900"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static float CalculateSaturation(Color color)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>color</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_CheckCanStartAnimator_" data-uid="DrawnUi.Controls.SkiaLottie.CheckCanStartAnimator*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_CheckCanStartAnimator" data-uid="DrawnUi.Controls.SkiaLottie.CheckCanStartAnimator">
+  CheckCanStartAnimator()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L600"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override bool CheckCanStartAnimator()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ColorToArrayString_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToArrayString*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ColorToArrayString_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToArrayString(Microsoft.Maui.Graphics.Color)">
+  ColorToArrayString(Color)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L827"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string ColorToArrayString(Color color)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>color</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ColorToHexString_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToHexString*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ColorToHexString_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToHexString(Microsoft.Maui.Graphics.Color)">
+  ColorToHexString(Color)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L817"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string ColorToHexString(Color color)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>color</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ColorToRGBHexString_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToRGBHexString*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ColorToRGBHexString_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToRGBHexString(Microsoft.Maui.Graphics.Color)">
+  ColorToRGBHexString(Color)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L809"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string ColorToRGBHexString(Color color)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>color</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ColorToString_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToString*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ColorToString_Microsoft_Maui_Graphics_Color_" data-uid="DrawnUi.Controls.SkiaLottie.ColorToString(Microsoft.Maui.Graphics.Color)">
+  ColorToString(Color)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L884"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string ColorToString(Color color)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>color</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_CreateAnimation_" data-uid="DrawnUi.Controls.SkiaLottie.CreateAnimation*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_CreateAnimation_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.CreateAnimation(System.String)">
+  CreateAnimation(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L408"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Animation CreateAnimation(string json)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>json</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_FindColorProperties_" data-uid="DrawnUi.Controls.SkiaLottie.FindColorProperties*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_FindColorProperties_Newtonsoft_Json_Linq_JToken_System_Collections_Generic_List_System_ValueTuple_Newtonsoft_Json_Linq_JToken_Microsoft_Maui_Graphics_Color___" data-uid="DrawnUi.Controls.SkiaLottie.FindColorProperties(Newtonsoft.Json.Linq.JToken,System.Collections.Generic.List{System.ValueTuple{Newtonsoft.Json.Linq.JToken,Microsoft.Maui.Graphics.Color}})">
+  FindColorProperties(JToken, List&lt;(JToken Token, Color Color)&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L773"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void FindColorProperties(JToken token, List&lt;(JToken Token, Color Color)&gt; colorList)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>token</code> <span class="xref">JToken</span></dt>
+    <dd></dd>
+    <dt><code>colorList</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;(<span class="xref">JToken</span> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-newtonsoft.json.linq.jtoken,microsoft.maui.graphics.color-.token">Token</a>, <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetuple-newtonsoft.json.linq.jtoken,microsoft.maui.graphics.color-.color">Color</a>)&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_GoToEnd_" data-uid="DrawnUi.Controls.SkiaLottie.GoToEnd*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_GoToEnd" data-uid="DrawnUi.Controls.SkiaLottie.GoToEnd">
+  GoToEnd()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L619"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void GoToEnd()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_GoToStart_" data-uid="DrawnUi.Controls.SkiaLottie.GoToStart*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_GoToStart" data-uid="DrawnUi.Controls.SkiaLottie.GoToStart">
+  GoToStart()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L610"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void GoToStart()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_LoadAnimationFromJson_" data-uid="DrawnUi.Controls.SkiaLottie.LoadAnimationFromJson*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_LoadAnimationFromJson_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.LoadAnimationFromJson(System.String)">
+  LoadAnimationFromJson(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L481"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This is not replacing current animation, use SetAnimation for that.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Animation LoadAnimationFromJson(string json)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>json</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_LoadLocalJson_" data-uid="DrawnUi.Controls.SkiaLottie.LoadLocalJson*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_LoadLocalJson_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.LoadLocalJson(System.String)">
+  LoadLocalJson(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L301"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string LoadLocalJson(string fileName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_LoadSource_" data-uid="DrawnUi.Controls.SkiaLottie.LoadSource*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_LoadSource_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.LoadSource(System.String)">
+  LoadSource(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L336"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This is not replacing current animation, only pre-loading! Use SetAnimation after that if needed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;Animation&gt; LoadSource(string fileName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_OnAnimatorInitializing_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorInitializing*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_OnAnimatorInitializing" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorInitializing">
+  OnAnimatorInitializing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L587"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnAnimatorInitializing()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_OnAnimatorSeeking_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorSeeking*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_OnAnimatorSeeking_System_Double_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorSeeking(System.Double)">
+  OnAnimatorSeeking(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnAnimatorSeeking(double frame)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>frame</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_OnAnimatorStarting_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorStarting*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_OnAnimatorStarting" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorStarting">
+  OnAnimatorStarting()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L605"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnAnimatorStarting()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_OnAnimatorUpdated_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorUpdated*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_OnAnimatorUpdated_System_Double_" data-uid="DrawnUi.Controls.SkiaLottie.OnAnimatorUpdated(System.Double)">
+  OnAnimatorUpdated(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L563"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Override this to react on animator running.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnAnimatorUpdated(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_OnDisposing_" data-uid="DrawnUi.Controls.SkiaLottie.OnDisposing*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_OnDisposing" data-uid="DrawnUi.Controls.SkiaLottie.OnDisposing">
+  OnDisposing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L547"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Base performs some cleanup actions with Superview</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnDisposing()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_OnFinished_" data-uid="DrawnUi.Controls.SkiaLottie.OnFinished*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_OnFinished" data-uid="DrawnUi.Controls.SkiaLottie.OnFinished">
+  OnFinished()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnFinished()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_OnJsonLoaded_" data-uid="DrawnUi.Controls.SkiaLottie.OnJsonLoaded*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_OnJsonLoaded_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.OnJsonLoaded(System.String)">
+  OnJsonLoaded(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L471"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called by LoadAnimationFromResources after file was loaded so we can modify json if needed before it it consumed.
+Return json to be used.
+This is not called by LoadAnimationFromJson.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual string OnJsonLoaded(string json)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>json</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_OnLayoutChanged_" data-uid="DrawnUi.Controls.SkiaLottie.OnLayoutChanged*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_OnLayoutChanged" data-uid="DrawnUi.Controls.SkiaLottie.OnLayoutChanged">
+  OnLayoutChanged()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnLayoutChanged()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_ReloadSource_" data-uid="DrawnUi.Controls.SkiaLottie.ReloadSource*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_ReloadSource" data-uid="DrawnUi.Controls.SkiaLottie.ReloadSource">
+  ReloadSource()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L630"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void ReloadSource()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_RenderFrame_" data-uid="DrawnUi.Controls.SkiaLottie.RenderFrame*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_RenderFrame_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Controls.SkiaLottie.RenderFrame(DrawnUi.Draw.DrawingContext)">
+  RenderFrame(DrawingContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L288"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void RenderFrame(DrawingContext ctx)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ctx</code> <a class="xref" href="DrawnUi.Draw.DrawingContext.html">DrawingContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_SeekToDefaultFrame_" data-uid="DrawnUi.Controls.SkiaLottie.SeekToDefaultFrame*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_SeekToDefaultFrame" data-uid="DrawnUi.Controls.SkiaLottie.SeekToDefaultFrame">
+  SeekToDefaultFrame()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void SeekToDefaultFrame()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_SetAnimation_" data-uid="DrawnUi.Controls.SkiaLottie.SetAnimation*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_SetAnimation_SkiaSharp_Skottie_Animation_System_Boolean_" data-uid="DrawnUi.Controls.SkiaLottie.SetAnimation(SkiaSharp.Skottie.Animation,System.Boolean)">
+  SetAnimation(Animation, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L500"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetAnimation(Animation animation, bool disposePrevious)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>animation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skottie.animation">Animation</a></dt>
+    <dd></dd>
+    <dt><code>disposePrevious</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_Stop_" data-uid="DrawnUi.Controls.SkiaLottie.Stop*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_Stop" data-uid="DrawnUi.Controls.SkiaLottie.Stop">
+  Stop()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Stop()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_StreamFromResourceUrl_" data-uid="DrawnUi.Controls.SkiaLottie.StreamFromResourceUrl*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_StreamFromResourceUrl_System_String_System_Reflection_Assembly_" data-uid="DrawnUi.Controls.SkiaLottie.StreamFromResourceUrl(System.String,System.Reflection.Assembly)">
+  StreamFromResourceUrl(string, Assembly)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L440"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Stream StreamFromResourceUrl(string url, Assembly assembly = null)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>url</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>assembly</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.reflection.assembly">Assembly</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_StringToXamarinColor_" data-uid="DrawnUi.Controls.SkiaLottie.StringToXamarinColor*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_StringToXamarinColor_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.StringToXamarinColor(System.String)">
+  StringToXamarinColor(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L866"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Color StringToXamarinColor(string colorString)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>colorString</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaLottie_StringToXamarinColorFromHex_" data-uid="DrawnUi.Controls.SkiaLottie.StringToXamarinColorFromHex*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaLottie_StringToXamarinColorFromHex_System_String_" data-uid="DrawnUi.Controls.SkiaLottie.StringToXamarinColorFromHex(System.String)">
+  StringToXamarinColorFromHex(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L837"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Color StringToXamarinColorFromHex(string hexColor)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>hexColor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.color">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaLottie.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaLottie%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L14" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/SkiaLottie.cs/#L14" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

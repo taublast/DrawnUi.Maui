@@ -1,133 +1,167 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Class AnimatedFramesRenderer | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class AnimatedFramesRenderer | DrawnUi Documentation ">
-    
-    <meta name="description" content="Base class for playing frames. Subclass to play spritesheets, gifs, custom animations etc.">
-      <link rel="shortcut icon" href="../images/favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../styles/docfx.css">
-      <link rel="stylesheet" href="../styles/main.css">
-      <meta property="docfx:navrel" content="../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../">
-    
+      
+      <meta name="description" content="Base class for playing frames. Subclass to play spritesheets, gifs, custom animations etc.">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="DrawnUi.Controls.AnimatedFramesRenderer">
+
+        <article data-uid="DrawnUi.Controls.AnimatedFramesRenderer">
 
 
 
-  <h1 id="DrawnUi_Controls_AnimatedFramesRenderer" data-uid="DrawnUi.Controls.AnimatedFramesRenderer" class="text-break">Class AnimatedFramesRenderer</h1>
-  <div class="markdown level0 summary"><p>Base class for playing frames. Subclass to play spritesheets, gifs, custom animations etc.</p>
+  <h1 id="DrawnUi_Controls_AnimatedFramesRenderer" data-uid="DrawnUi.Controls.AnimatedFramesRenderer" class="text-break">
+Class AnimatedFramesRenderer  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L6"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Controls.html">Controls</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>DrawnUi.Maui.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Base class for playing frames. Subclass to play spritesheets, gifs, custom animations etc.</p>
 </div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
-    <div class="level2"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
-    <div class="level3"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
-    <div class="level4"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
-    <div class="level5"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
-    <div class="level6"><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
-    <div class="level7"><span class="xref">AnimatedFramesRenderer</span></div>
-      <div class="level8"><a class="xref" href="DrawnUi.Controls.SkiaGif.html">SkiaGif</a></div>
-      <div class="level8"><a class="xref" href="DrawnUi.Controls.SkiaLottie.html">SkiaLottie</a></div>
-      <div class="level8"><a class="xref" href="DrawnUi.Controls.SkiaSprite.html">SkiaSprite</a></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class AnimatedFramesRenderer : SkiaControl, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IView, ITransform, IElement, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaControl, IDrawnBase, IDisposable, ICanBeUpdatedWithContext, ICanBeUpdated</code></pre>
   </div>
-  <div class="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
+      <div><span class="xref">AnimatedFramesRenderer</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="DrawnUi.Controls.SkiaGif.html">SkiaGif</a></div>
+      <div><a class="xref" href="DrawnUi.Controls.SkiaLottie.html">SkiaLottie</a></div>
+      <div><a class="xref" href="DrawnUi.Controls.SkiaSprite.html">SkiaSprite</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetEnumerator">SkiaControl.GetEnumerator()</a>
     </div>
@@ -223,15 +257,6 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetDensity">SkiaControl.GetDensity()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_TransferState_Microsoft_Maui_IView_">SkiaControl.TransferState(IView)</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Reload">SkiaControl.Reload()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ReloadHandler">SkiaControl.ReloadHandler</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseCacheProperty">SkiaControl.UseCacheProperty</a>
@@ -555,6 +580,9 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SizeRequest">SkiaControl.SizeRequest</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_WidthRequestWithMargins">SkiaControl.WidthRequestWithMargins</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptWidthConstraintToRequest_System_Single_Microsoft_Maui_Thickness_System_Double_">SkiaControl.AdaptWidthConstraintToRequest(float, Thickness, double)</a>
     </div>
     <div>
@@ -562,6 +590,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetMeasuringConstraints_DrawnUi_Draw_MeasureRequest_">SkiaControl.GetMeasuringConstraints(MeasureRequest)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillHorizontally">SkiaControl.NeedFillHorizontally</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillVertically">SkiaControl.NeedFillVertically</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptConstraintToContentRequest_System_Single_System_Double_System_Double_System_Boolean_System_Double_System_Double_System_Single_System_Boolean_">SkiaControl.AdaptConstraintToContentRequest(float, double, double, bool, double, double, float, bool)</a>
@@ -892,6 +926,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ParentChanged">SkiaControl.ParentChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurementProperty">SkiaControl.FastMeasurementProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurement">SkiaControl.FastMeasurement</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdjustClippingProperty">SkiaControl.AdjustClippingProperty</a>
@@ -1233,6 +1273,12 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Measure_System_Single_System_Single_System_Single_">SkiaControl.Measure(float, float, float)</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeMeasuring">SkiaControl.InitializeMeasuring()</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnMeasuring_System_Single_System_Single_System_Single_">SkiaControl.OnMeasuring(float, float, float)</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeDefaultContent_System_Boolean_">SkiaControl.InitializeDefaultContent(bool)</a>
     </div>
     <div>
@@ -1258,6 +1304,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureAbsoluteBase_SkiaSharp_SKRect_System_Single_">SkiaControl.MeasureAbsoluteBase(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_">SkiaControl.ContractPixelsRect(SKRect, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_Microsoft_Maui_Thickness_">SkiaControl.ContractPixelsRect(SKRect, float, Thickness)</a>
@@ -1372,6 +1421,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_PreArrange_SkiaSharp_SKRect_System_Single_System_Single_System_Single_">SkiaControl.PreArrange(SKRect, float, float, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureSelf_SkiaSharp_SKRect_System_Single_System_Single_System_Single_">SkiaControl.MeasureSelf(SKRect, float, float, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_IsRendering">SkiaControl.IsRendering</a>
@@ -1501,6 +1553,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseTranslationX">SkiaControl.UseTranslationX</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_LinkTransforms">SkiaControl.LinkTransforms</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_DrawRenderObject_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_CachedObject_">SkiaControl.DrawRenderObject(DrawingContext, CachedObject)</a>
@@ -1741,6 +1796,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AddOrRemoveView_DrawnUi_Draw_SkiaControl_System_Boolean_">SkiaControl.AddOrRemoveView(SkiaControl, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SetChildrenAsParameters_DrawnUi_Draw_SkiaControl___">SkiaControl.SetChildrenAsParameters(params SkiaControl[])</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SetChildren_System_Collections_Generic_IEnumerable_DrawnUi_Draw_SkiaControl__">SkiaControl.SetChildren(IEnumerable&lt;SkiaControl&gt;)</a>
@@ -2288,1182 +2346,11 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Controls.html">Controls</a></h6>
-  <h6><strong>Assembly</strong>: DrawnUi.Maui.dll</h6>
-  <h5 id="DrawnUi_Controls_AnimatedFramesRenderer_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AnimatedFramesRenderer : SkiaControl, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IHotReloadableView, IReplaceableView, IView, IElement, ITransform, IReloadHandler, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaControl, IDrawnBase, IDisposable, ICanBeUpdatedWithContext, ICanBeUpdated</code></pre>
-  </div>
-  <h3 id="fields">Fields
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_AutoPlayProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.AutoPlayProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L381">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_AutoPlayProperty" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.AutoPlayProperty">AutoPlayProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty AutoPlayProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_DefaultFrameProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.DefaultFrameProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L318">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_DefaultFrameProperty" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.DefaultFrameProperty">DefaultFrameProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty DefaultFrameProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_RepeatProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.RepeatProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L355">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_RepeatProperty" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.RepeatProperty">RepeatProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty RepeatProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_SpeedRatioProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.SpeedRatioProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L338">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_SpeedRatioProperty" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.SpeedRatioProperty">SpeedRatioProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty SpeedRatioProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_WasPlayingBeforeVisibilityChanged.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.WasPlayingBeforeVisibilityChanged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L10">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_WasPlayingBeforeVisibilityChanged" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.WasPlayingBeforeVisibilityChanged">WasPlayingBeforeVisibilityChanged</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool WasPlayingBeforeVisibilityChanged</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_WasStarted.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.WasStarted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L11">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_WasStarted" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.WasStarted">WasStarted</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool WasStarted</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_Animator.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.Animator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L12">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Animator_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Animator*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_Animator" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Animator">Animator</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public RangeAnimator Animator { get; protected set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.RangeAnimator.html">RangeAnimator</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_AutoPlay.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.AutoPlay%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L386">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_AutoPlay_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.AutoPlay*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_AutoPlay" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.AutoPlay">AutoPlay</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool AutoPlay { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_CanPlay.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.CanPlay%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L15">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_CanPlay_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.CanPlay*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_CanPlay" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.CanPlay">CanPlay</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool CanPlay { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_DefaultFrame.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.DefaultFrame%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L332">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_DefaultFrame_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.DefaultFrame*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_DefaultFrame" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.DefaultFrame">DefaultFrame</h4>
-  <div class="markdown level1 summary"><p>Default is 0. If you set to -1 that would mean &quot;last frame&quot;.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int DefaultFrame { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_IsPlaying.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.IsPlaying%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L20">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_IsPlaying_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.IsPlaying*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_IsPlaying" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.IsPlaying">IsPlaying</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool IsPlaying { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_IsStandalone.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.IsStandalone%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L33">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_IsStandalone_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.IsStandalone*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_IsStandalone" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.IsStandalone">IsStandalone</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool IsStandalone { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_PlayWhenAvailable.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.PlayWhenAvailable%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L13">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_PlayWhenAvailable_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.PlayWhenAvailable*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_PlayWhenAvailable" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.PlayWhenAvailable">PlayWhenAvailable</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool PlayWhenAvailable { get; protected set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_Repeat.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.Repeat%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L375">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Repeat_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Repeat*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_Repeat" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Repeat">Repeat</h4>
-  <div class="markdown level1 summary"><blockquote>
-<p>0 how many times should repeat, if less than 0 will loop forever</p>
-</blockquote>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int Repeat { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_SpeedRatio.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.SpeedRatio%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L349">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_SpeedRatio_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.SpeedRatio*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_SpeedRatio" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.SpeedRatio">SpeedRatio</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double SpeedRatio { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_ApplyDefaultFrame.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.ApplyDefaultFrame%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L286">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_ApplyDefaultFrame_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.ApplyDefaultFrame*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_ApplyDefaultFrame" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.ApplyDefaultFrame">ApplyDefaultFrame()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void ApplyDefaultFrame()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_ApplySpeed.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.ApplySpeed%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L282">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_ApplySpeed_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.ApplySpeed*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_ApplySpeed" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.ApplySpeed">ApplySpeed()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void ApplySpeed()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_CheckCanStartAnimator.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.CheckCanStartAnimator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L201">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_CheckCanStartAnimator_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.CheckCanStartAnimator*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_CheckCanStartAnimator" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.CheckCanStartAnimator">CheckCanStartAnimator()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual bool CheckCanStartAnimator()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_GetAnimatorParent.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.GetAnimatorParent%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L147">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_GetAnimatorParent_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetAnimatorParent*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_GetAnimatorParent" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetAnimatorParent">GetAnimatorParent()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual SkiaControl GetAnimatorParent()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_GetFrameAt_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.GetFrameAt(System.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L255">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_GetFrameAt_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetFrameAt*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_GetFrameAt_System_Single_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetFrameAt(System.Single)">GetFrameAt(float)</h4>
-  <div class="markdown level1 summary"><p>ratio 0-1</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double GetFrameAt(float ratio)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">ratio</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_GetSourceType_System_String_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.GetSourceType(System.String)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L60">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_GetSourceType_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetSourceType*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_GetSourceType_System_String_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetSourceType(System.String)">GetSourceType(string)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public SourceType GetSourceType(string fileName)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></td>
-        <td><span class="parametername">fileName</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SourceType.html">SourceType</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_InitializeAnimator.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.InitializeAnimator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L152">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_InitializeAnimator_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.InitializeAnimator*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_InitializeAnimator" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.InitializeAnimator">InitializeAnimator()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void InitializeAnimator()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorInitializing.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorInitializing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L189">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorInitializing_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorInitializing*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorInitializing" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorInitializing">OnAnimatorInitializing()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void OnAnimatorInitializing()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorSeeking_System_Double_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorSeeking(System.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L210">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorSeeking_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorSeeking*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorSeeking_System_Double_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorSeeking(System.Double)">OnAnimatorSeeking(double)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void OnAnimatorSeeking(double frame)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td><span class="parametername">frame</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorStarting.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorStarting%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L206">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorStarting_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorStarting*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorStarting" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorStarting">OnAnimatorStarting()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void OnAnimatorStarting()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorUpdated_System_Double_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorUpdated(System.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L197">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorUpdated_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorUpdated*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorUpdated_System_Double_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorUpdated(System.Double)">OnAnimatorUpdated(double)</h4>
-  <div class="markdown level1 summary"><p>Override this to react on animator running.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void OnAnimatorUpdated(double value)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnDisposing.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnDisposing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L270">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnDisposing_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnDisposing*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnDisposing" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnDisposing">OnDisposing()</h4>
-  <div class="markdown level1 summary"><p>Base performs some cleanup actions with Superview</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnDisposing()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnDisposing">SkiaControl.OnDisposing()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnFinished.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnFinished%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L260">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnFinished_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnFinished*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnFinished" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnFinished">OnFinished()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void OnFinished()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnLayoutChanged.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnLayoutChanged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L107">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnLayoutChanged_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnLayoutChanged*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnLayoutChanged" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnLayoutChanged">OnLayoutChanged()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void OnLayoutChanged()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnLayoutChanged">SkiaControl.OnLayoutChanged()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnStarted.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnStarted%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L265">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnStarted_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnStarted*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnStarted" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnStarted">OnStarted()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void OnStarted()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnVisibilityChanged_System_Boolean_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnVisibilityChanged(System.Boolean)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L35">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnVisibilityChanged_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnVisibilityChanged*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnVisibilityChanged_System_Boolean_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnVisibilityChanged(System.Boolean)">OnVisibilityChanged(bool)</h4>
-  <div class="markdown level1 summary"><p>todo override for templated skialayout to use ViewsProvider</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnVisibilityChanged(bool newvalue)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td><span class="parametername">newvalue</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnVisibilityChanged_System_Boolean_">SkiaControl.OnVisibilityChanged(bool)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_OnWillDisposeWithChildren.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.OnWillDisposeWithChildren%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L297">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnWillDisposeWithChildren_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnWillDisposeWithChildren*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_OnWillDisposeWithChildren" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnWillDisposeWithChildren">OnWillDisposeWithChildren()</h4>
-  <div class="markdown level1 summary"><p>The OnDisposing might come with a delay to avoid disposing resources at use.
-This method will be called without delay when Dispose() is invoked. Disposed will set to True and for Views their OnWillDisposeWithChildren will be called.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnWillDisposeWithChildren()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnWillDisposeWithChildren">SkiaControl.OnWillDisposeWithChildren()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_Paint_DrawnUi_Draw_DrawingContext_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.Paint(DrawnUi.Draw.DrawingContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L91">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Paint_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Paint*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_Paint_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Paint(DrawnUi.Draw.DrawingContext)">Paint(DrawingContext)</h4>
-  <div class="markdown level1 summary"><p>This is the main drawing routine you should override to draw something.
-Base one paints background color inside DrawingRect that was defined by Arrange inside base.Draw.
-Pass arguments if you want to use some time-frozen data for painting at any time from any thread..</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void Paint(DrawingContext ctx)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.DrawingContext.html">DrawingContext</a></td>
-        <td><span class="parametername">ctx</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Paint_DrawnUi_Draw_DrawingContext_">SkiaControl.Paint(DrawingContext)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_PlayIfNeeded.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.PlayIfNeeded%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L118">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_PlayIfNeeded_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.PlayIfNeeded*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_PlayIfNeeded" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.PlayIfNeeded">PlayIfNeeded()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PlayIfNeeded()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_RenderFrame_DrawnUi_Draw_DrawingContext_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.RenderFrame(DrawnUi.Draw.DrawingContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L103">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_RenderFrame_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.RenderFrame*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_RenderFrame_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.RenderFrame(DrawnUi.Draw.DrawingContext)">RenderFrame(DrawingContext)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void RenderFrame(DrawingContext ctx)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.DrawingContext.html">DrawingContext</a></td>
-        <td><span class="parametername">ctx</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_Seek_System_Double_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.Seek(System.Double)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L214">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Seek_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Seek*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_Seek_System_Double_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Seek(System.Double)">Seek(double)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Seek(double frame)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td><span class="parametername">frame</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_Start_System_Int32_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.Start(System.Int32)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L220">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Start_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Start*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_Start_System_Int32_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Start(System.Int32)">Start(int)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void Start(int delayMs = 0)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></td>
-        <td><span class="parametername">delayMs</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_Stop.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.Stop%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L245">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Stop_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Stop*"></a>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_Stop" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Stop">Stop()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void Stop()</code></pre>
-  </div>
-  <h3 id="events">Events
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_Finished.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.Finished%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L310">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_Finished" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Finished">Finished</h4>
-  <div class="markdown level1 summary"><p>All repeats completed</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler Finished</code></pre>
-  </div>
-  <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer_Started.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer.Started%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L312">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_AnimatedFramesRenderer_Started" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Started">Started</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler Started</code></pre>
-  </div>
-  <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a>
-  </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Adapt__1___0_System_Action___0__">FluentExtensions.Adapt&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
@@ -3510,28 +2397,31 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Fill__1___0_">FluentExtensions.Fill&lt;T&gt;(T)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Height__1___0_System_Double_">FluentExtensions.Height&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContextOn__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveBindingContextOn&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContext__2___0_System_Action___0___1_System_String__System_Boolean_">FluentExtensions.ObserveBindingContext&lt;T, TSource&gt;(T, Action&lt;T, TSource, string&gt;, bool)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeepNestedProperty__5___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Func___3___4__System_String_System_Action___0___4____4_System_Boolean_">FluentExtensions.ObserveDeepNestedProperty&lt;T, TSource, TIntermediate1, TIntermediate2, TProperty&gt;(T, Func&lt;TSource, TIntermediate1&gt;, string, Func&lt;TIntermediate1, TIntermediate2&gt;, string, Func&lt;TIntermediate2, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveOn__3___0___1_System_Func___2__System_String_System_Action___0_System_String__System_String___">FluentExtensions.ObserveOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, Action&lt;T, string&gt;, string[])</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeep__4___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveDeep&lt;T, TSource, TIntermediate, TProperty&gt;(T, Func&lt;TSource, TIntermediate&gt;, string, Func&lt;TIntermediate, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertiesOn__3___0___1_System_Func___2__System_String_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObservePropertiesOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperties__2___0___1_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObserveProperties&lt;T, TSource&gt;(T, TSource, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertyOn__3___0___1_System_Func___2__System_String_System_String_System_Action___0__">FluentExtensions.ObservePropertyOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, string, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperty__2___0___1_System_String_System_Action___0__">FluentExtensions.ObserveProperty&lt;T, TSource&gt;(T, TSource, string, Action&lt;T&gt;)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveSelf__1___0_System_Action___0_System_String__">FluentExtensions.ObserveSelf&lt;T&gt;(T, Action&lt;T, string&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetBindingContext__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveTargetBindingContext&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetProperty__4___0_System_Linq_Expressions_Expression_System_Func___1___2___System_Linq_Expressions_Expression_System_Func___2___3___System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveTargetProperty&lt;T, TSource, TIntermediate, TProperty&gt;(T, Expression&lt;Func&lt;TSource, TIntermediate&gt;&gt;, Expression&lt;Func&lt;TIntermediate, TProperty&gt;&gt;, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Observe__2___0_System_Func___1__System_Action___0_System_String__System_String___">FluentExtensions.Observe&lt;T, TSource&gt;(T, Func&lt;TSource&gt;, Action&lt;T, string&gt;, string[])</a>
@@ -3558,18 +2448,6 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetGrid__1___0_System_Int32_System_Int32_System_Int32_System_Int32_">FluentExtensions.SetGrid&lt;T&gt;(T, int, int, int, int)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetWidth__1___0_System_Double_">FluentExtensions.SetWidth&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_StartX__1___0_">FluentExtensions.StartX&lt;T&gt;(T)</a>
   </div>
   <div>
@@ -3588,7 +2466,10 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithColumn__1___0_System_Int32_">FluentExtensions.WithColumn&lt;T&gt;(T, int)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeightRequest__1___0_System_Double_">FluentExtensions.WithHeightRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithEnabled__1___0_System_Boolean_">FluentExtensions.WithEnabled&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeight__1___0_System_Double_">FluentExtensions.WithHeight&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHorizontalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithHorizontalOptions&lt;T&gt;(T, LayoutOptions)</a>
@@ -3597,7 +2478,22 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_Microsoft_Maui_Thickness_">FluentExtensions.WithMargin&lt;T&gt;(T, Thickness)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithOpacity__1___0_System_Double_">FluentExtensions.WithOpacity&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithParent__1___0_DrawnUi_Draw_IDrawnBase_">FluentExtensions.WithParent&lt;T&gt;(T, IDrawnBase)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRotation__1___0_System_Double_">FluentExtensions.WithRotation&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRowSpan__1___0_System_Int32_">FluentExtensions.WithRowSpan&lt;T&gt;(T, int)</a>
@@ -3606,13 +2502,22 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRow__1___0_System_Int32_">FluentExtensions.WithRow&lt;T&gt;(T, int)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithTag__1___0_System_String_">FluentExtensions.WithTag&lt;T&gt;(T, string)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVerticalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithVerticalOptions&lt;T&gt;(T, LayoutOptions)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidthRequest__1___0_System_Double_">FluentExtensions.WithWidthRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVisibility__1___0_System_Boolean_">FluentExtensions.WithVisibility&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidth__1___0_System_Double_">FluentExtensions.WithWidth&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.DrawnExtensions.html#DrawnUi_Draw_DrawnExtensions_GetVelocityRatioForChild_DrawnUi_Draw_IDrawnBase_DrawnUi_Draw_ISkiaControl_">DrawnExtensions.GetVelocityRatioForChild(IDrawnBase, ISkiaControl)</a>
@@ -3653,47 +2558,1247 @@ Pass arguments if you want to use some time-frozen data for painting at any time
   <div>
       <a class="xref" href="DrawnUi.Extensions.InternalExtensions.html#DrawnUi_Extensions_InternalExtensions_FromPlatform_System_Object_">InternalExtensions.FromPlatform(object)</a>
   </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_AutoPlayProperty" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.AutoPlayProperty">
+  AutoPlayProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L381"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty AutoPlayProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_DefaultFrameProperty" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.DefaultFrameProperty">
+  DefaultFrameProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L318"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty DefaultFrameProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_RepeatProperty" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.RepeatProperty">
+  RepeatProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L355"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty RepeatProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_SpeedRatioProperty" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.SpeedRatioProperty">
+  SpeedRatioProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L338"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty SpeedRatioProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_WasPlayingBeforeVisibilityChanged" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.WasPlayingBeforeVisibilityChanged">
+  WasPlayingBeforeVisibilityChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool WasPlayingBeforeVisibilityChanged</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_WasStarted" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.WasStarted">
+  WasStarted
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool WasStarted</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Animator_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Animator*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_Animator" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Animator">
+  Animator
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RangeAnimator Animator { get; protected set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.RangeAnimator.html">RangeAnimator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_AutoPlay_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.AutoPlay*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_AutoPlay" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.AutoPlay">
+  AutoPlay
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L386"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool AutoPlay { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_CanPlay_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.CanPlay*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_CanPlay" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.CanPlay">
+  CanPlay
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool CanPlay { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_DefaultFrame_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.DefaultFrame*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_DefaultFrame" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.DefaultFrame">
+  DefaultFrame
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L332"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Default is 0. If you set to -1 that would mean &quot;last frame&quot;.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int DefaultFrame { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_IsPlaying_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.IsPlaying*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_IsPlaying" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.IsPlaying">
+  IsPlaying
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsPlaying { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_IsStandalone_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.IsStandalone*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_IsStandalone" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.IsStandalone">
+  IsStandalone
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool IsStandalone { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_PlayWhenAvailable_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.PlayWhenAvailable*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_PlayWhenAvailable" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.PlayWhenAvailable">
+  PlayWhenAvailable
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool PlayWhenAvailable { get; protected set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Repeat_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Repeat*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_Repeat" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Repeat">
+  Repeat
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L375"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><blockquote>
+<p>0 how many times should repeat, if less than 0 will loop forever</p>
+</blockquote>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Repeat { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_SpeedRatio_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.SpeedRatio*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_SpeedRatio" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.SpeedRatio">
+  SpeedRatio
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L349"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double SpeedRatio { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_ApplyDefaultFrame_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.ApplyDefaultFrame*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_ApplyDefaultFrame" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.ApplyDefaultFrame">
+  ApplyDefaultFrame()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L286"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void ApplyDefaultFrame()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_ApplySpeed_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.ApplySpeed*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_ApplySpeed" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.ApplySpeed">
+  ApplySpeed()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L282"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void ApplySpeed()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_CheckCanStartAnimator_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.CheckCanStartAnimator*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_CheckCanStartAnimator" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.CheckCanStartAnimator">
+  CheckCanStartAnimator()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual bool CheckCanStartAnimator()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_GetAnimatorParent_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetAnimatorParent*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_GetAnimatorParent" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetAnimatorParent">
+  GetAnimatorParent()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual SkiaControl GetAnimatorParent()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_GetFrameAt_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetFrameAt*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_GetFrameAt_System_Single_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetFrameAt(System.Single)">
+  GetFrameAt(float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L255"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>ratio 0-1</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GetFrameAt(float ratio)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ratio</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_GetSourceType_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetSourceType*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_GetSourceType_System_String_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.GetSourceType(System.String)">
+  GetSourceType(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SourceType GetSourceType(string fileName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.SourceType.html">SourceType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_InitializeAnimator_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.InitializeAnimator*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_InitializeAnimator" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.InitializeAnimator">
+  InitializeAnimator()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void InitializeAnimator()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorInitializing_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorInitializing*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorInitializing" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorInitializing">
+  OnAnimatorInitializing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnAnimatorInitializing()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorSeeking_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorSeeking*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorSeeking_System_Double_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorSeeking(System.Double)">
+  OnAnimatorSeeking(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnAnimatorSeeking(double frame)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>frame</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorStarting_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorStarting*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorStarting" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorStarting">
+  OnAnimatorStarting()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnAnimatorStarting()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorUpdated_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorUpdated*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnAnimatorUpdated_System_Double_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnAnimatorUpdated(System.Double)">
+  OnAnimatorUpdated(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L197"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Override this to react on animator running.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnAnimatorUpdated(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnDisposing_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnDisposing*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnDisposing" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnDisposing">
+  OnDisposing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Base performs some cleanup actions with Superview</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnDisposing()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnFinished_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnFinished*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnFinished" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnFinished">
+  OnFinished()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L260"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnFinished()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnLayoutChanged_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnLayoutChanged*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnLayoutChanged" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnLayoutChanged">
+  OnLayoutChanged()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnLayoutChanged()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnStarted_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnStarted*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnStarted" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnStarted">
+  OnStarted()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L265"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void OnStarted()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnVisibilityChanged_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnVisibilityChanged*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnVisibilityChanged_System_Boolean_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnVisibilityChanged(System.Boolean)">
+  OnVisibilityChanged(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>todo override for templated skialayout to use ViewsProvider</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnVisibilityChanged(bool newvalue)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>newvalue</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_OnWillDisposeWithChildren_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnWillDisposeWithChildren*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_OnWillDisposeWithChildren" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.OnWillDisposeWithChildren">
+  OnWillDisposeWithChildren()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L297"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The OnDisposing might come with a delay to avoid disposing resources at use.
+This method will be called without delay when Dispose() is invoked. Disposed will set to True and for Views their OnWillDisposeWithChildren will be called.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnWillDisposeWithChildren()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Paint_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Paint*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_Paint_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Paint(DrawnUi.Draw.DrawingContext)">
+  Paint(DrawingContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This is the main drawing routine you should override to draw something.
+Base one paints background color inside DrawingRect that was defined by Arrange inside base.Draw.
+Pass arguments if you want to use some time-frozen data for painting at any time from any thread..</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void Paint(DrawingContext ctx)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ctx</code> <a class="xref" href="DrawnUi.Draw.DrawingContext.html">DrawingContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_PlayIfNeeded_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.PlayIfNeeded*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_PlayIfNeeded" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.PlayIfNeeded">
+  PlayIfNeeded()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void PlayIfNeeded()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_RenderFrame_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.RenderFrame*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_RenderFrame_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.RenderFrame(DrawnUi.Draw.DrawingContext)">
+  RenderFrame(DrawingContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void RenderFrame(DrawingContext ctx)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ctx</code> <a class="xref" href="DrawnUi.Draw.DrawingContext.html">DrawingContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Seek_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Seek*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_Seek_System_Double_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Seek(System.Double)">
+  Seek(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L214"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Seek(double frame)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>frame</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Start_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Start*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_Start_System_Int32_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Start(System.Int32)">
+  Start(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L220"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Start(int delayMs = 0)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>delayMs</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_AnimatedFramesRenderer_Stop_" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Stop*"></a>
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_Stop" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Stop">
+  Stop()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L245"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Stop()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_Finished" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Finished">
+  Finished
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L310"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>All repeats completed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler Finished</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_AnimatedFramesRenderer_Started" data-uid="DrawnUi.Controls.AnimatedFramesRenderer.Started">
+  Started
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L312"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler Started</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler">EventHandler</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_AnimatedFramesRenderer.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.AnimatedFramesRenderer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L6" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/PlayFrames/AnimatedFramesRenderer.cs/#L6" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

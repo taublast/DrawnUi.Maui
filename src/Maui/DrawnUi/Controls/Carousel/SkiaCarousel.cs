@@ -4,6 +4,11 @@ using SkiaControl = DrawnUi.Draw.SkiaControl;
 
 namespace DrawnUi.Controls;
 
+/// <summary>
+/// A specialized scroll control designed for creating swipeable carousels with automatic snapping to items.
+/// Supports data binding through ItemsSource and ItemTemplate, peek effects with SidesOffset, and smooth transitions.
+/// Ideal for image galleries, tab interfaces, and any swipeable content display.
+/// </summary>
 public class SkiaCarousel : SnappingLayout
 {
     public SkiaCarousel()

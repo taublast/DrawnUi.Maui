@@ -124,7 +124,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AddFont
     path: ../src/Maui/DrawnUi/Internals/Extensions/DrawnExtensions.cs
-    startLine: 445
+    startLine: 442
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -165,7 +165,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AddFont
     path: ../src/Maui/DrawnUi/Internals/Extensions/DrawnExtensions.cs
-    startLine: 455
+    startLine: 452
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -206,7 +206,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AnimateRangeAsync
     path: ../src/Maui/DrawnUi/Internals/Extensions/DrawnExtensions.cs
-    startLine: 469
+    startLine: 466
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -253,7 +253,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetVelocityRatioForChild
     path: ../src/Maui/DrawnUi/Internals/Extensions/DrawnExtensions.cs
-    startLine: 506
+    startLine: 503
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw

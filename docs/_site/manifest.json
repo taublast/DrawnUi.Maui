@@ -21,6 +21,16 @@
       "version": ""
     },
     {
+      "type": "Conceptual",
+      "source_relative_path": "SkiaLabel-GC-Optimizations.md",
+      "output": {
+        ".html": {
+          "relative_path": "SkiaLabel-GC-Optimizations.html"
+        }
+      },
+      "version": ""
+    },
+    {
       "type": "ManagedReference",
       "source_relative_path": "api/DrawnUi.Animate.Animators.VelocitySkiaAnimator.DragForce.yml",
       "output": {
@@ -190,6 +200,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.IWheelPickerCell.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.IWheelPickerCell.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.IWheelPickerCell",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/DrawnUi.Controls.MauiEditor.yml",
       "output": {
         ".html": {
@@ -274,6 +298,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.RadioButtons.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.RadioButtons.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.RadioButtons",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Controls.RadioButtons.yml\" sourcestartlinenumber=\"1\">Manages radio button groups, ensuring only one button is selected per group.\nSupports grouping by parent control or by string name.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/DrawnUi.Controls.ScrollPickerLabelContainer.yml",
       "output": {
         ".html": {
@@ -312,7 +350,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "DrawnUi.Controls.SkiaCarousel",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/DrawnUi.Controls.SkiaCarousel.yml\" sourcestartlinenumber=\"1\">A specialized scroll control designed for creating swipeable carousels with automatic snapping to items.\nSupports data binding through ItemsSource and ItemTemplate, peek effects with SidesOffset, and smooth transitions.\nIdeal for image galleries, tab interfaces, and any swipeable content display.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -638,6 +676,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.SkiaSpinner.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.SkiaSpinner.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.SkiaSpinner",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Controls.SkiaSpinner.yml\" sourcestartlinenumber=\"1\">A wheel-of-names spinner control that displays items in a circular arrangement\nand allows spinning to select an item through gesture interaction.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/DrawnUi.Controls.SkiaSprite.yml",
       "output": {
         ".html": {
@@ -705,6 +757,90 @@
       "IsMRef": true,
       "Title": "DrawnUi.Controls.SkiaViewSwitcher",
       "Summary": "<p sourcefile=\"api/DrawnUi.Controls.SkiaViewSwitcher.yml\" sourcestartlinenumber=\"1\">Display and hide views, eventually animating them</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.SkiaWheelPicker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.SkiaWheelPicker.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.SkiaWheelPicker",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.SkiaWheelPickerCell.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.SkiaWheelPickerCell.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.SkiaWheelPickerCell",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.SkiaWheelScroll.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.SkiaWheelScroll.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.SkiaWheelScroll",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Controls.SkiaWheelScroll.yml\" sourcestartlinenumber=\"1\">A specialized scroll view that displays items in a 3D wheel-like arrangement</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.SkiaWheelShape.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.SkiaWheelShape.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.SkiaWheelShape",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Controls.SkiaWheelShape.yml\" sourcestartlinenumber=\"1\">Custom SkiaShape that positions children in a circular arrangement around the wheel circumference.\nHandles rotation and positioning calculations for the spinner wheel.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.SkiaWheelStack.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.SkiaWheelStack.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.SkiaWheelStack",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Controls.WheelCellInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Controls.WheelCellInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Controls.WheelCellInfo",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
@@ -1660,17 +1796,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/DrawnUi.Draw.SkiaRow.yml",
+      "source_relative_path": "api/DrawnUi.Draw.HStack.yml",
       "output": {
         ".html": {
-          "relative_path": "api/DrawnUi.Draw.SkiaRow.html"
+          "relative_path": "api/DrawnUi.Draw.HStack.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
       "Title": "DrawnUi.Draw.SkiaRow",
-      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaRow.yml\" sourcestartlinenumber=\"1\">Horizontal stack,  like MAUI HorizontalStackLayout</p>\n"
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.HStack.yml\" sourcestartlinenumber=\"1\">Horizontal stack,  like MAUI HorizontalStackLayout</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -2696,6 +2832,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.ProgressTrail.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.ProgressTrail.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.ProgressTrail",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.ProgressTrail.yml\" sourcestartlinenumber=\"1\">Progress trail component for linear progress bars.\nSimilar to SliderTrail but optimized for progress display.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/DrawnUi.Draw.RangeAnimator.yml",
       "output": {
         ".html": {
@@ -3084,6 +3234,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "DrawnUi.Draw.ShimmerAnimator",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SidePosition.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SidePosition.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SidePosition",
       "Summary": null
     },
     {
@@ -3662,6 +3826,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaLabel.ObjectPools.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SkiaLabel.ObjectPools.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SkiaLabel.ObjectPools",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaLabel.ObjectPools.yml\" sourcestartlinenumber=\"1\">Thread-safe object pools for reducing GC allocations in text measurement</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaLabel.PooledStringBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SkiaLabel.PooledStringBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SkiaLabel.PooledStringBuilder",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaLabel.PooledStringBuilder.yml\" sourcestartlinenumber=\"1\">Helper struct for managing pooled StringBuilder with automatic return</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/DrawnUi.Draw.SkiaLabel.SpanCollection.yml",
       "output": {
         ".html": {
@@ -3673,6 +3865,20 @@
       "IsMRef": true,
       "Title": "DrawnUi.Draw.SkiaLabel.SpanCollection",
       "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaLabel.SpanMeasurement.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SkiaLabel.SpanMeasurement.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SkiaLabel.SpanMeasurement",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaLabel.SpanMeasurement.yml\" sourcestartlinenumber=\"1\">Span-based measurement methods to avoid string allocations</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3841,6 +4047,34 @@
       "IsMRef": true,
       "Title": "DrawnUi.Draw.SkiaPoint",
       "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaProgress.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SkiaProgress.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SkiaProgress",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaProgress.yml\" sourcestartlinenumber=\"1\">Linear progress bar control with platform-specific styling.\nShows progress from Min to Value within the Min-Max range.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/DrawnUi.Draw.SkiaRangeBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/DrawnUi.Draw.SkiaRangeBase.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "DrawnUi.Draw.SkiaRangeBase",
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaRangeBase.yml\" sourcestartlinenumber=\"1\">Base class for range-based controls like sliders and progress bars.\nProvides common functionality for value ranges, track management, and platform styling.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4530,17 +4764,17 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/DrawnUi.Draw.SkiaStack.yml",
+      "source_relative_path": "api/DrawnUi.Draw.VStack.yml",
       "output": {
         ".html": {
-          "relative_path": "api/DrawnUi.Draw.SkiaStack.html"
+          "relative_path": "api/DrawnUi.Draw.VStack.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
       "Title": "DrawnUi.Draw.SkiaStack",
-      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.SkiaStack.yml\" sourcestartlinenumber=\"1\">Vertical stack, like MAUI VerticalStackLayout</p>\n"
+      "Summary": "<p sourcefile=\"api/DrawnUi.Draw.VStack.yml\" sourcestartlinenumber=\"1\">Vertical stack, like MAUI VerticalStackLayout</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -5942,10 +6176,30 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/controls/input.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/input.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/controls/layouts.md",
       "output": {
         ".html": {
           "relative_path": "articles/controls/layouts.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/controls/native-integration.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/controls/native-integration.html"
         }
       },
       "version": ""
@@ -6039,6 +6293,16 @@
       "output": {
         ".html": {
           "relative_path": "articles/first-app.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/fluent-extensions.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/fluent-extensions.html"
         }
       },
       "version": ""

@@ -1,82 +1,90 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Drawer Controls | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Drawer Controls | DrawnUi Documentation ">
-    
-    
-      <link rel="shortcut icon" href="../../images/favicon.ico">
-      <link rel="stylesheet" href="../../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../../styles/docfx.css">
-      <link rel="stylesheet" href="../../styles/main.css">
-      <meta property="docfx:navrel" content="../../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../../">
-    
+      
+      
+      <link rel="icon" href="../../images/favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/drawers.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../../index.html">
-                <img id="logo" class="svg" src="../../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="">
+
+        <article data-uid="">
 <h1 id="drawer-controls">Drawer Controls</h1>
 
 <p>DrawnUi.Maui provides powerful drawer controls for creating sliding panels that can appear from any edge of the screen. This article covers the drawer components available in the framework.</p>
@@ -201,74 +209,178 @@
 <li><strong>Content</strong>: The main body of the drawer that slides in and out</li>
 </ul>
 <p>The <code>HeaderSize</code> property determines how much of the drawer remains visible when closed.</p>
-<h3 id="controlling-the-drawer">Controlling the Drawer</h3>
-<p>You can control the drawer programmatically:</p>
-<pre><code class="lang-csharp">// Open the drawer
-myDrawer.IsOpen = true;
-
-// Close the drawer
-myDrawer.IsOpen = false;
-
-// Toggle the drawer
-myDrawer.IsOpen = !myDrawer.IsOpen;
-</code></pre>
-<p>You can also use binding:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaDrawer
-    IsOpen=&quot;{Binding IsDrawerOpen, Mode=TwoWay}&quot;&gt;
+<h3 id="programmatic-control">Programmatic Control</h3>
+<p>SkiaDrawer provides multiple ways to control the drawer programmatically through bindable properties and built-in commands.</p>
+<h4 id="bindable-properties">Bindable Properties</h4>
+<p>All key properties support data binding for dynamic control:</p>
+<pre><code class="lang-xml">&lt;draw:SkiaDrawer
+    x:Name=&quot;Drawer&quot;
+    Direction=&quot;FromBottom&quot;
+    HeaderSize=&quot;{Binding DrawerHeaderSize}&quot;
+    HeightRequest=&quot;500&quot;
+    HorizontalOptions=&quot;Fill&quot;
+    IsOpen=&quot;{Binding IsOpen, Mode=TwoWay}&quot;
+    VerticalOptions=&quot;End&quot;&gt;
     &lt;!-- Content --&gt;
-&lt;/DrawUi:SkiaDrawer&gt;
+&lt;/draw:SkiaDrawer&gt;
 </code></pre>
-<h3 id="commands">Commands</h3>
-<p>SkiaDrawer provides built-in commands for programmatic control:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaButton
+<p><strong>ViewModel Example:</strong></p>
+<pre><code class="lang-csharp">public class DrawerViewModel : INotifyPropertyChanged
+{
+    private bool _isOpen;
+    private double _drawerHeaderSize = 60;
+
+    public bool IsOpen
+    {
+        get =&gt; _isOpen;
+        set
+        {
+            _isOpen = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public double DrawerHeaderSize
+    {
+        get =&gt; _drawerHeaderSize;
+        set
+        {
+            _drawerHeaderSize = value;
+            OnPropertyChanged();
+        }
+    }
+
+    // Toggle drawer from code
+    public void ToggleDrawer()
+    {
+        IsOpen = !IsOpen;
+    }
+}
+</code></pre>
+<h4 id="built-in-commands">Built-in Commands</h4>
+<p>SkiaDrawer provides convenient commands for common operations:</p>
+<pre><code class="lang-xml">&lt;!-- Command buttons --&gt;
+&lt;draw:SkiaButton
     Text=&quot;Open Drawer&quot;
-    CommandTapped=&quot;{Binding Source={x:Reference MyDrawer}, Path=CommandOpen}&quot; /&gt;
-    
-&lt;DrawUi:SkiaButton
+    CommandTapped=&quot;{Binding Source={x:Reference Drawer}, Path=CommandOpen}&quot; /&gt;
+
+&lt;draw:SkiaButton
     Text=&quot;Close Drawer&quot;
-    CommandTapped=&quot;{Binding Source={x:Reference MyDrawer}, Path=CommandClose}&quot; /&gt;
-    
-&lt;DrawUi:SkiaButton
+    CommandTapped=&quot;{Binding Source={x:Reference Drawer}, Path=CommandClose}&quot; /&gt;
+
+&lt;draw:SkiaButton
     Text=&quot;Toggle Drawer&quot;
-    CommandTapped=&quot;{Binding Source={x:Reference MyDrawer}, Path=CommandToggle}&quot; /&gt;
+    CommandTapped=&quot;{Binding Source={x:Reference Drawer}, Path=CommandToggle}&quot; /&gt;
 </code></pre>
-<h3 id="scrollable-drawer-content">Scrollable Drawer Content</h3>
-<p>For scrollable content within the drawer, combine with SkiaScroll:</p>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaDrawer
-    x:Name=&quot;BottomDrawer&quot;
+<p><strong>Available Commands:</strong></p>
+<ul>
+<li><code>CommandOpen</code> - Opens the drawer</li>
+<li><code>CommandClose</code> - Closes the drawer</li>
+<li><code>CommandToggle</code> - Toggles the drawer state</li>
+</ul>
+<h4 id="code-behind-control">Code-Behind Control</h4>
+<p>You can also control the drawer directly from code-behind:</p>
+<pre><code class="lang-csharp">// Direct property access
+Drawer.IsOpen = true;
+Drawer.HeaderSize = 80;
+
+// Using commands
+Drawer.CommandOpen.Execute(null);
+Drawer.CommandClose.Execute(null);
+Drawer.CommandToggle.Execute(null);
+</code></pre>
+<h3 id="skiascroll-inside-skiadrawer-pattern">SkiaScroll inside SkiaDrawer Pattern</h3>
+<p>A common and powerful pattern is embedding a <code>SkiaScroll</code> inside a <code>SkiaDrawer</code>. This allows for scrollable content within the drawer while maintaining proper gesture handling. When the scroll reaches its bounds, the drawer responds to gestures.</p>
+<p><strong>Key Benefits:</strong></p>
+<ul>
+<li>Smooth gesture coordination between scroll and drawer</li>
+<li>Non-bouncing scroll setup allows drawer to respond when scroll reaches limits</li>
+<li>Perfect for content that exceeds drawer height</li>
+</ul>
+<pre><code class="lang-xml">&lt;draw:SkiaDrawer
+    x:Name=&quot;Drawer&quot;
     Direction=&quot;FromBottom&quot;
     HeaderSize=&quot;60&quot;
     HeightRequest=&quot;500&quot;
+    HorizontalOptions=&quot;Fill&quot;
+    IsOpen=&quot;{Binding IsOpen, Mode=TwoWay}&quot;
     VerticalOptions=&quot;End&quot;&gt;
-    
-    &lt;DrawUi:SkiaLayout&gt;
-        &lt;!-- Header --&gt;
-        &lt;DrawUi:SkiaShape
-            BackgroundColor=&quot;Blue&quot;
+
+    &lt;draw:SkiaLayout
+        HorizontalOptions=&quot;Fill&quot;
+        VerticalOptions=&quot;Fill&quot;&gt;
+
+        &lt;!-- Header (drag handle area) --&gt;
+        &lt;draw:SkiaShape
+            BackgroundColor=&quot;Red&quot;
+            CornerRadius=&quot;20,20,0,0&quot;
             HeightRequest=&quot;60&quot;
-            CornerRadius=&quot;20,20,0,0&quot;&gt;
-            &lt;!-- Header content --&gt;
-        &lt;/DrawUi:SkiaShape&gt;
-        
-        &lt;!-- Scrollable content --&gt;
-        &lt;DrawUi:SkiaScroll
+            HorizontalOptions=&quot;Fill&quot;&gt;
+
+            &lt;draw:SkiaLabel
+                Margin=&quot;16,0&quot;
+                FontSize=&quot;14&quot;
+                HorizontalOptions=&quot;Center&quot;
+                Text=&quot;Drag Me&quot;
+                TextColor=&quot;White&quot;
+                VerticalOptions=&quot;Center&quot; /&gt;
+
+        &lt;/draw:SkiaShape&gt;
+
+        &lt;!-- Scrollable content area --&gt;
+        &lt;draw:SkiaScroll
             AddMarginTop=&quot;60&quot;
+            BackgroundColor=&quot;Gainsboro&quot;
             Bounces=&quot;False&quot;
-            BackgroundColor=&quot;White&quot;&gt;
-            
-            &lt;DrawUi:SkiaLayout
-                Type=&quot;Column&quot;
-                Padding=&quot;20&quot;
-                Spacing=&quot;16&quot;&gt;
-                &lt;!-- Many items here --&gt;
-            &lt;/DrawUi:SkiaLayout&gt;
-            
-        &lt;/DrawUi:SkiaScroll&gt;
-    &lt;/DrawUi:SkiaLayout&gt;
-    
-&lt;/DrawUi:SkiaDrawer&gt;
+            HorizontalOptions=&quot;Fill&quot;
+            VerticalOptions=&quot;Fill&quot;&gt;
+
+            &lt;draw:SkiaLayout
+                Margin=&quot;2&quot;
+                HorizontalOptions=&quot;Fill&quot;
+                Spacing=&quot;24&quot;
+                Type=&quot;Column&quot;&gt;
+
+                &lt;draw:SkiaLabel
+                    Margin=&quot;24&quot;
+                    HorizontalOptions=&quot;Center&quot;
+                    Text=&quot;A SkiaScroll can be embedded inside a SkiaDrawer, in case of a non-bouncing setup the drawer would respond to gestures and scroll when the internal scroll reaches its bounds.&quot; /&gt;
+
+                &lt;draw:SkiaShape
+                    BackgroundColor=&quot;LightGoldenrodYellow&quot;
+                    HeightRequest=&quot;80&quot;
+                    HorizontalOptions=&quot;Center&quot;
+                    LockRatio=&quot;1&quot;
+                    Type=&quot;Circle&quot; /&gt;
+
+                &lt;draw:SkiaShape
+                    BackgroundColor=&quot;Aquamarine&quot;
+                    HeightRequest=&quot;300&quot;
+                    HorizontalOptions=&quot;Center&quot;
+                    WidthRequest=&quot;50&quot; /&gt;
+
+                &lt;draw:SkiaShape
+                    BackgroundColor=&quot;Goldenrod&quot;
+                    HeightRequest=&quot;80&quot;
+                    HorizontalOptions=&quot;Center&quot;
+                    LockRatio=&quot;1&quot;
+                    Type=&quot;Circle&quot; /&gt;
+
+                &lt;!-- Add more content to demonstrate scrolling --&gt;
+
+            &lt;/draw:SkiaLayout&gt;
+
+        &lt;/draw:SkiaScroll&gt;
+    &lt;/draw:SkiaLayout&gt;
+
+&lt;/draw:SkiaDrawer&gt;
 </code></pre>
-<p>The <code>AddMarginTop</code> property on SkiaScroll helps create space for the header.</p>
+<p><strong>Important Notes:</strong></p>
+<ul>
+<li>Set <code>Bounces=&quot;False&quot;</code> on SkiaScroll for proper gesture coordination</li>
+<li>Use <code>AddMarginTop</code> to account for header space</li>
+<li>The drawer will respond to gestures when scroll reaches its bounds</li>
+</ul>
 <h2 id="examples">Examples</h2>
 <h3 id="bottom-sheet-with-form">Bottom Sheet with Form</h3>
 <pre><code class="lang-xml">&lt;DrawUi:SkiaDrawer
@@ -484,42 +596,28 @@ myDrawer.IsOpen = !myDrawer.IsOpen;
 </ul>
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/drawers.md/#L1" class="contribution-link">Edit this page</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/drawers.md/#L1" class="edit-link">Edit this page</a>
         </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../../styles/docfx.js"></script>
-    <script type="text/javascript" src="../../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

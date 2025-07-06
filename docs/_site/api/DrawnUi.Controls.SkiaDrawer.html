@@ -1,137 +1,167 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Class SkiaDrawer | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class SkiaDrawer | DrawnUi Documentation ">
-    
-    
-      <link rel="shortcut icon" href="../images/favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../styles/docfx.css">
-      <link rel="stylesheet" href="../styles/main.css">
-      <meta property="docfx:navrel" content="../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../">
-    
+      
+      
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="DrawnUi.Controls.SkiaDrawer">
+
+        <article data-uid="DrawnUi.Controls.SkiaDrawer">
 
 
 
-  <h1 id="DrawnUi_Controls_SkiaDrawer" data-uid="DrawnUi.Controls.SkiaDrawer" class="text-break">Class SkiaDrawer</h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
-    <div class="level2"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
-    <div class="level3"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
-    <div class="level4"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
-    <div class="level5"><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
-    <div class="level6"><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
-    <div class="level7"><a class="xref" href="DrawnUi.Draw.SkiaLayout.html">SkiaLayout</a></div>
-    <div class="level8"><a class="xref" href="DrawnUi.Draw.SnappingLayout.html">SnappingLayout</a></div>
-    <div class="level9"><span class="xref">SkiaDrawer</span></div>
+  <h1 id="DrawnUi_Controls_SkiaDrawer" data-uid="DrawnUi.Controls.SkiaDrawer" class="text-break">
+Class SkiaDrawer  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Controls.html">Controls</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>DrawnUi.Maui.dll</dd></dl>
   </div>
-  <div class="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaGridLayout.html">ISkiaGridLayout</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaLayout.html">ISkiaLayout</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.ILayoutInsideViewport.html">ILayoutInsideViewport</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IInsideViewport.html">IInsideViewport</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
-    <div><a class="xref" href="DrawnUi.Draw.IVisibilityAware.html">IVisibilityAware</a></div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ContentProperty(&quot;Content&quot;)]
+public class SkiaDrawer : SnappingLayout, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IView, ITransform, IElement, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaGestureListener, ISkiaGridLayout, ISkiaLayout, ISkiaControl, IDrawnBase, ICanBeUpdatedWithContext, ICanBeUpdated, ILayoutInsideViewport, IInsideViewport, IDisposable, IVisibilityAware</code></pre>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableobject">BindableObject</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.element">Element</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.styleableelement">StyleableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.navigableelement">NavigableElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement">VisualElement</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SkiaLayout.html">SkiaLayout</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html">SnappingLayout</a></div>
+      <div><span class="xref">SkiaDrawer</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaGridLayout.html">ISkiaGridLayout</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaLayout.html">ISkiaLayout</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.ILayoutInsideViewport.html">ILayoutInsideViewport</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IInsideViewport.html">IInsideViewport</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.IVisibilityAware.html">IVisibilityAware</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_ViewportReady">SnappingLayout.ViewportReady</a>
     </div>
@@ -277,7 +307,13 @@
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_GetSizeKey_SkiaSharp_SKSize_">SkiaLayout.GetSizeKey(SKSize)</a>
     </div>
     <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStack_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStack(SKRect, float)</a>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStackLegacy_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStackLegacy(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStackNonTemplated_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStackNonTemplated(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_MeasureStackTemplated_SkiaSharp_SKRect_System_Single_">SkiaLayout.MeasureStackTemplated(SKRect, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnBeforeDrawingVisibleChildren_DrawnUi_Draw_DrawingContext_DrawnUi_Draw_LayoutStructure_System_Collections_Generic_List_DrawnUi_Draw_ControlInStack__">SkiaLayout.OnBeforeDrawingVisibleChildren(DrawingContext, LayoutStructure, List&lt;ControlInStack&gt;)</a>
@@ -472,7 +508,7 @@
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout__lockTemplates">SkiaLayout._lockTemplates</a>
     </div>
     <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_Measure_System_Single_System_Single_System_Single_">SkiaLayout.Measure(float, float, float)</a>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnMeasuring_System_Single_System_Single_System_Single_">SkiaLayout.OnMeasuring(float, float, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ApplyMeasureResult">SkiaLayout.ApplyMeasureResult()</a>
@@ -538,7 +574,7 @@
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnItemSourceChanged">SkiaLayout.OnItemSourceChanged()</a>
     </div>
     <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ResetItemsSource">SkiaLayout.ResetItemsSource()</a>
+      <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ApplyItemsSource">SkiaLayout.ApplyItemsSource()</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ResetScroll">SkiaLayout.ResetScroll()</a>
@@ -782,15 +818,6 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetDensity">SkiaControl.GetDensity()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_TransferState_Microsoft_Maui_IView_">SkiaControl.TransferState(IView)</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Reload">SkiaControl.Reload()</a>
-    </div>
-    <div>
-      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ReloadHandler">SkiaControl.ReloadHandler</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseCacheProperty">SkiaControl.UseCacheProperty</a>
@@ -1096,6 +1123,9 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SizeRequest">SkiaControl.SizeRequest</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_WidthRequestWithMargins">SkiaControl.WidthRequestWithMargins</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptWidthConstraintToRequest_System_Single_Microsoft_Maui_Thickness_System_Double_">SkiaControl.AdaptWidthConstraintToRequest(float, Thickness, double)</a>
     </div>
     <div>
@@ -1103,6 +1133,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_GetMeasuringConstraints_DrawnUi_Draw_MeasureRequest_">SkiaControl.GetMeasuringConstraints(MeasureRequest)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillHorizontally">SkiaControl.NeedFillHorizontally</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_NeedFillVertically">SkiaControl.NeedFillVertically</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdaptConstraintToContentRequest_System_Single_System_Double_System_Double_System_Boolean_System_Double_System_Double_System_Single_System_Boolean_">SkiaControl.AdaptConstraintToContentRequest(float, double, double, bool, double, double, float, bool)</a>
@@ -1427,6 +1463,12 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ParentChanged">SkiaControl.ParentChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurementProperty">SkiaControl.FastMeasurementProperty</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_FastMeasurement">SkiaControl.FastMeasurement</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AdjustClippingProperty">SkiaControl.AdjustClippingProperty</a>
@@ -1759,6 +1801,12 @@
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureInternal_DrawnUi_Draw_MeasureRequest_">SkiaControl.MeasureInternal(MeasureRequest)</a>
     </div>
     <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_Measure_System_Single_System_Single_System_Single_">SkiaControl.Measure(float, float, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeMeasuring">SkiaControl.InitializeMeasuring()</a>
+    </div>
+    <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_InitializeDefaultContent_System_Boolean_">SkiaControl.InitializeDefaultContent(bool)</a>
     </div>
     <div>
@@ -1781,6 +1829,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureAbsoluteBase_SkiaSharp_SKRect_System_Single_">SkiaControl.MeasureAbsoluteBase(SKRect, float)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_">SkiaControl.ContractPixelsRect(SKRect, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ContractPixelsRect_SkiaSharp_SKRect_System_Single_Microsoft_Maui_Thickness_">SkiaControl.ContractPixelsRect(SKRect, float, Thickness)</a>
@@ -1883,6 +1934,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnSuperviewShouldRenderChanged_System_Boolean_">SkiaControl.OnSuperviewShouldRenderChanged(bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_MeasureSelf_SkiaSharp_SKRect_System_Single_System_Single_System_Single_">SkiaControl.MeasureSelf(SKRect, float, float, float)</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_IsRendering">SkiaControl.IsRendering</a>
@@ -2003,6 +2057,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_UseTranslationX">SkiaControl.UseTranslationX</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_LinkTransforms">SkiaControl.LinkTransforms</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_RenderViewsList_DrawnUi_Draw_DrawingContext_System_Collections_Generic_IEnumerable_DrawnUi_Draw_SkiaControl__">SkiaControl.RenderViewsList(DrawingContext, IEnumerable&lt;SkiaControl&gt;)</a>
@@ -2225,6 +2282,9 @@
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_AddOrRemoveView_DrawnUi_Draw_SkiaControl_System_Boolean_">SkiaControl.AddOrRemoveView(SkiaControl, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_SetChildrenAsParameters_DrawnUi_Draw_SkiaControl___">SkiaControl.SetChildrenAsParameters(params SkiaControl[])</a>
     </div>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_HasItemTemplate">SkiaControl.HasItemTemplate</a>
@@ -2769,1419 +2829,11 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Controls.html">Controls</a></h6>
-  <h6><strong>Assembly</strong>: DrawnUi.Maui.dll</h6>
-  <h5 id="DrawnUi_Controls_SkiaDrawer_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[ContentProperty(&quot;Content&quot;)]
-public class SkiaDrawer : SnappingLayout, INotifyPropertyChanged, IEffectControlProvider, IToolTipElement, IContextFlyoutElement, IAnimatable, IVisualElementController, IElementController, IHotReloadableView, IReplaceableView, IView, IElement, ITransform, IReloadHandler, IVisualTreeElement, IContainer, IList&lt;IView&gt;, ICollection&lt;IView&gt;, IEnumerable&lt;IView&gt;, IEnumerable, IHasAfterEffects, ISkiaGestureListener, ISkiaGridLayout, ISkiaLayout, ISkiaControl, IDrawnBase, ICanBeUpdatedWithContext, ICanBeUpdated, ILayoutInsideViewport, IInsideViewport, IDisposable, IVisibilityAware</code></pre>
-  </div>
-  <h3 id="fields">Fields
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_AmplitudeSizeProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.AmplitudeSizeProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L138">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_AmplitudeSizeProperty" data-uid="DrawnUi.Controls.SkiaDrawer.AmplitudeSizeProperty">AmplitudeSizeProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty AmplitudeSizeProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_ChildWasTapped.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.ChildWasTapped%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L545">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_ChildWasTapped" data-uid="DrawnUi.Controls.SkiaDrawer.ChildWasTapped">ChildWasTapped</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool ChildWasTapped</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_ContentProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.ContentProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L201">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_ContentProperty" data-uid="DrawnUi.Controls.SkiaDrawer.ContentProperty">ContentProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty ContentProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_DirectionProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.DirectionProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L168">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_DirectionProperty" data-uid="DrawnUi.Controls.SkiaDrawer.DirectionProperty">DirectionProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty DirectionProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_HeaderSizeProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.HeaderSizeProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L153">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_HeaderSizeProperty" data-uid="DrawnUi.Controls.SkiaDrawer.HeaderSizeProperty">HeaderSizeProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty HeaderSizeProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_IsOpenProperty.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.IsOpenProperty%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L180">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_IsOpenProperty" data-uid="DrawnUi.Controls.SkiaDrawer.IsOpenProperty">IsOpenProperty</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static readonly BindableProperty IsOpenProperty</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer__panningOffset.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer._panningOffset%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L541">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer__panningOffset" data-uid="DrawnUi.Controls.SkiaDrawer._panningOffset">_panningOffset</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected Vector2 _panningOffset</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_AmplitudeSize.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.AmplitudeSize%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L147">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_AmplitudeSize_" data-uid="DrawnUi.Controls.SkiaDrawer.AmplitudeSize*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_AmplitudeSize" data-uid="DrawnUi.Controls.SkiaDrawer.AmplitudeSize">AmplitudeSize</h4>
-  <div class="markdown level1 summary"><p>If set to other than -1 will be used instead of HeaderSize for amplitude calculation, amplitude = drawer size - header.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double AmplitudeSize { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_AutoClose.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.AutoClose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L881">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_AutoClose_" data-uid="DrawnUi.Controls.SkiaDrawer.AutoClose*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_AutoClose" data-uid="DrawnUi.Controls.SkiaDrawer.AutoClose">AutoClose</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool AutoClose { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_CommandClose.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.CommandClose%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L18">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_CommandClose_" data-uid="DrawnUi.Controls.SkiaDrawer.CommandClose*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_CommandClose" data-uid="DrawnUi.Controls.SkiaDrawer.CommandClose">CommandClose</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ICommand CommandClose { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.windows.input.icommand">ICommand</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_CommandOpen.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.CommandOpen%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L32">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_CommandOpen_" data-uid="DrawnUi.Controls.SkiaDrawer.CommandOpen*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_CommandOpen" data-uid="DrawnUi.Controls.SkiaDrawer.CommandOpen">CommandOpen</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ICommand CommandOpen { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.windows.input.icommand">ICommand</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_CommandToggle.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.CommandToggle%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L46">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_CommandToggle_" data-uid="DrawnUi.Controls.SkiaDrawer.CommandToggle*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_CommandToggle" data-uid="DrawnUi.Controls.SkiaDrawer.CommandToggle">CommandToggle</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ICommand CommandToggle { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.windows.input.icommand">ICommand</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_Content.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.Content%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L215">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_Content_" data-uid="DrawnUi.Controls.SkiaDrawer.Content*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_Content" data-uid="DrawnUi.Controls.SkiaDrawer.Content">Content</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public SkiaControl Content { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_Direction.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.Direction%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L174">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_Direction_" data-uid="DrawnUi.Controls.SkiaDrawer.Direction*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_Direction" data-uid="DrawnUi.Controls.SkiaDrawer.Direction">Direction</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DrawerDirection Direction { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Controls.DrawerDirection.html">DrawerDirection</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_HeaderSize.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.HeaderSize%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L162">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_HeaderSize_" data-uid="DrawnUi.Controls.SkiaDrawer.HeaderSize*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_HeaderSize" data-uid="DrawnUi.Controls.SkiaDrawer.HeaderSize">HeaderSize</h4>
-  <div class="markdown level1 summary"><p>Size of the area that will remain on screen when drawer is closed</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double HeaderSize { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_IsOpen.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.IsOpen%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L195">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_IsOpen_" data-uid="DrawnUi.Controls.SkiaDrawer.IsOpen*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_IsOpen" data-uid="DrawnUi.Controls.SkiaDrawer.IsOpen">IsOpen</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool IsOpen { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_IsUserFocused.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.IsUserFocused%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L539">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_IsUserFocused_" data-uid="DrawnUi.Controls.SkiaDrawer.IsUserFocused*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_IsUserFocused" data-uid="DrawnUi.Controls.SkiaDrawer.IsUserFocused">IsUserFocused</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool IsUserFocused { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_IsUserPanning.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.IsUserPanning%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L540">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_IsUserPanning_" data-uid="DrawnUi.Controls.SkiaDrawer.IsUserPanning*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_IsUserPanning" data-uid="DrawnUi.Controls.SkiaDrawer.IsUserPanning">IsUserPanning</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool IsUserPanning { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_VelocityAccumulator.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.VelocityAccumulator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L543">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_VelocityAccumulator_" data-uid="DrawnUi.Controls.SkiaDrawer.VelocityAccumulator*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_VelocityAccumulator" data-uid="DrawnUi.Controls.SkiaDrawer.VelocityAccumulator">VelocityAccumulator</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected VelocityAccumulator VelocityAccumulator { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.VelocityAccumulator.html">VelocityAccumulator</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_ApplyBindingContext.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.ApplyBindingContext%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L10">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_ApplyBindingContext_" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyBindingContext*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_ApplyBindingContext" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyBindingContext">ApplyBindingContext()</h4>
-  <div class="markdown level1 summary"><p><a href="https://github.com/taublast/DrawnUi/issues/92#issuecomment-2408805077">https://github.com/taublast/DrawnUi/issues/92#issuecomment-2408805077</a></p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void ApplyBindingContext()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_ApplyBindingContext">SkiaLayout.ApplyBindingContext()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_ApplyOptions.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.ApplyOptions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L405">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_ApplyOptions_" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyOptions*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_ApplyOptions" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyOptions">ApplyOptions()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void ApplyOptions()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_ApplyOptions">SnappingLayout.ApplyOptions()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_ApplyPosition_System_Numerics_Vector2_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.ApplyPosition(System.Numerics.Vector2)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L397">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_ApplyPosition_" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyPosition*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_ApplyPosition_System_Numerics_Vector2_" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyPosition(System.Numerics.Vector2)">ApplyPosition(Vector2)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void ApplyPosition(Vector2 position)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">position</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_ApplyPosition_System_Numerics_Vector2_">SnappingLayout.ApplyPosition(Vector2)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_CheckNeedToSnap.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.CheckNeedToSnap%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L456">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_CheckNeedToSnap_" data-uid="DrawnUi.Controls.SkiaDrawer.CheckNeedToSnap*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_CheckNeedToSnap" data-uid="DrawnUi.Controls.SkiaDrawer.CheckNeedToSnap">CheckNeedToSnap()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool CheckNeedToSnap()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_ClampOffsetWithRubberBand_System_Single_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.ClampOffsetWithRubberBand(System.Single%2CSystem.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L889">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_ClampOffsetWithRubberBand_" data-uid="DrawnUi.Controls.SkiaDrawer.ClampOffsetWithRubberBand*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_ClampOffsetWithRubberBand_System_Single_System_Single_" data-uid="DrawnUi.Controls.SkiaDrawer.ClampOffsetWithRubberBand(System.Single,System.Single)">ClampOffsetWithRubberBand(float, float)</h4>
-  <div class="markdown level1 summary"><p>Called for manual finger panning</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Vector2 ClampOffsetWithRubberBand(float x, float y)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">x</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">y</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_ClampOffsetWithRubberBand_System_Single_System_Single_">SnappingLayout.ClampOffsetWithRubberBand(float, float)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_Close.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.Close%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L240">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_Close_" data-uid="DrawnUi.Controls.SkiaDrawer.Close*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_Close" data-uid="DrawnUi.Controls.SkiaDrawer.Close">Close()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Close()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_GetAutoVelocity_System_Numerics_Vector2_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.GetAutoVelocity(System.Numerics.Vector2)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L339">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_GetAutoVelocity_" data-uid="DrawnUi.Controls.SkiaDrawer.GetAutoVelocity*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_GetAutoVelocity_System_Numerics_Vector2_" data-uid="DrawnUi.Controls.SkiaDrawer.GetAutoVelocity(System.Numerics.Vector2)">GetAutoVelocity(Vector2)</h4>
-  <div class="markdown level1 summary"><p>todo calc upon measured size + prop for speed</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Vector2 GetAutoVelocity(Vector2 displacement)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td><span class="parametername">displacement</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_GetAutoVelocity_System_Numerics_Vector2_">SnappingLayout.GetAutoVelocity(Vector2)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_GetClosestSidePoint_SkiaSharp_SKPoint_SkiaSharp_SKRect_SkiaSharp_SKSize_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.GetClosestSidePoint(SkiaSharp.SKPoint%2CSkiaSharp.SKRect%2CSkiaSharp.SKSize)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L493">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_GetClosestSidePoint_" data-uid="DrawnUi.Controls.SkiaDrawer.GetClosestSidePoint*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_GetClosestSidePoint_SkiaSharp_SKPoint_SkiaSharp_SKRect_SkiaSharp_SKSize_" data-uid="DrawnUi.Controls.SkiaDrawer.GetClosestSidePoint(SkiaSharp.SKPoint,SkiaSharp.SKRect,SkiaSharp.SKSize)">GetClosestSidePoint(SKPoint, SKRect, SKSize)</h4>
-  <div class="markdown level1 summary"><p>This uses whole viewport size, do not use this for snapping</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static SKPoint GetClosestSidePoint(SKPoint overscrollPoint, SKRect contentRect, SKSize viewportSize)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></td>
-        <td><span class="parametername">overscrollPoint</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></td>
-        <td><span class="parametername">contentRect</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.sksize">SKSize</a></td>
-        <td><span class="parametername">viewportSize</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_GetContentOffsetBounds.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.GetContentOffsetBounds%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L357">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_GetContentOffsetBounds_" data-uid="DrawnUi.Controls.SkiaDrawer.GetContentOffsetBounds*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_GetContentOffsetBounds" data-uid="DrawnUi.Controls.SkiaDrawer.GetContentOffsetBounds">GetContentOffsetBounds()</h4>
-  <div class="markdown level1 summary"><p>There are the bounds the scroll offset can go to.. This are NOT the bounds of the whole content.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override SKRect GetContentOffsetBounds()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_GetContentOffsetBounds">SnappingLayout.GetContentOffsetBounds()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_GetOffsetToHide.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.GetOffsetToHide%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L292">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_GetOffsetToHide_" data-uid="DrawnUi.Controls.SkiaDrawer.GetOffsetToHide*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_GetOffsetToHide" data-uid="DrawnUi.Controls.SkiaDrawer.GetOffsetToHide">GetOffsetToHide()</h4>
-  <div class="markdown level1 summary"><p>In points</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual Vector2 GetOffsetToHide()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_OnAppeared.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.OnAppeared%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L60">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_OnAppeared_" data-uid="DrawnUi.Controls.SkiaDrawer.OnAppeared*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_OnAppeared" data-uid="DrawnUi.Controls.SkiaDrawer.OnAppeared">OnAppeared()</h4>
-  <div class="markdown level1 summary"><p>This event can sometimes be called without prior OnAppearing</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnAppeared()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnAppeared">SkiaLayout.OnAppeared()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_OnAppearing.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.OnAppearing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L90">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_OnAppearing_" data-uid="DrawnUi.Controls.SkiaDrawer.OnAppearing*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_OnAppearing" data-uid="DrawnUi.Controls.SkiaDrawer.OnAppearing">OnAppearing()</h4>
-  <div class="markdown level1 summary"><p>This can sometimes be omitted,</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnAppearing()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnAppearing">SkiaLayout.OnAppearing()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_OnDisappeared.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.OnDisappeared%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L80">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_OnDisappeared_" data-uid="DrawnUi.Controls.SkiaDrawer.OnDisappeared*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_OnDisappeared" data-uid="DrawnUi.Controls.SkiaDrawer.OnDisappeared">OnDisappeared()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnDisappeared()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnDisappeared">SkiaLayout.OnDisappeared()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_OnDisappearing.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.OnDisappearing%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L70">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_OnDisappearing_" data-uid="DrawnUi.Controls.SkiaDrawer.OnDisappearing*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_OnDisappearing" data-uid="DrawnUi.Controls.SkiaDrawer.OnDisappearing">OnDisappearing()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnDisappearing()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_OnDisappearing">SkiaLayout.OnDisappearing()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_OnLayoutChanged.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.OnLayoutChanged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L272">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_OnLayoutChanged_" data-uid="DrawnUi.Controls.SkiaDrawer.OnLayoutChanged*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_OnLayoutChanged" data-uid="DrawnUi.Controls.SkiaDrawer.OnLayoutChanged">OnLayoutChanged()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void OnLayoutChanged()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_OnLayoutChanged">SkiaControl.OnLayoutChanged()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_OnTransitionChanged.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.OnTransitionChanged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L100">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_OnTransitionChanged_" data-uid="DrawnUi.Controls.SkiaDrawer.OnTransitionChanged*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_OnTransitionChanged" data-uid="DrawnUi.Controls.SkiaDrawer.OnTransitionChanged">OnTransitionChanged()</h4>
-  <div class="markdown level1 summary"><p>Invokes TransitionChanged event</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnTransitionChanged()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_OnTransitionChanged">SnappingLayout.OnTransitionChanged()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_OnWillDisposeWithChildren.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.OnWillDisposeWithChildren%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L111">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_OnWillDisposeWithChildren_" data-uid="DrawnUi.Controls.SkiaDrawer.OnWillDisposeWithChildren*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_OnWillDisposeWithChildren" data-uid="DrawnUi.Controls.SkiaDrawer.OnWillDisposeWithChildren">OnWillDisposeWithChildren()</h4>
-  <div class="markdown level1 summary"><p>The OnDisposing might come with a delay to avoid disposing resources at use.
-This method will be called without delay when Dispose() is invoked. Disposed will set to True and for Views their OnWillDisposeWithChildren will be called.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void OnWillDisposeWithChildren()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_OnWillDisposeWithChildren">SnappingLayout.OnWillDisposeWithChildren()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_Open.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.Open%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L245">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_Open_" data-uid="DrawnUi.Controls.SkiaDrawer.Open*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_Open" data-uid="DrawnUi.Controls.SkiaDrawer.Open">Open()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Open()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_Paint_DrawnUi_Draw_DrawingContext_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.Paint(DrawnUi.Draw.DrawingContext)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L437">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_Paint_" data-uid="DrawnUi.Controls.SkiaDrawer.Paint*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_Paint_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Controls.SkiaDrawer.Paint(DrawnUi.Draw.DrawingContext)">Paint(DrawingContext)</h4>
-  <div class="markdown level1 summary"><p>This is the main drawing routine you should override to draw something.
-Base one paints background color inside DrawingRect that was defined by Arrange inside base.Draw.
-Pass arguments if you want to use some time-frozen data for painting at any time from any thread..</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void Paint(DrawingContext ctx)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.DrawingContext.html">DrawingContext</a></td>
-        <td><span class="parametername">ctx</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaLayout.html#DrawnUi_Draw_SkiaLayout_Paint_DrawnUi_Draw_DrawingContext_">SkiaLayout.Paint(DrawingContext)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_ProcessGestures_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.ProcessGestures(DrawnUi.Draw.SkiaGesturesParameters%2CDrawnUi.Draw.GestureEventProcessingInfo)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L549">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_ProcessGestures_" data-uid="DrawnUi.Controls.SkiaDrawer.ProcessGestures*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_ProcessGestures_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_" data-uid="DrawnUi.Controls.SkiaDrawer.ProcessGestures(DrawnUi.Draw.SkiaGesturesParameters,DrawnUi.Draw.GestureEventProcessingInfo)">ProcessGestures(SkiaGesturesParameters, GestureEventProcessingInfo)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaGesturesParameters.html">SkiaGesturesParameters</a></td>
-        <td><span class="parametername">args</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.GestureEventProcessingInfo.html">GestureEventProcessingInfo</a></td>
-        <td><span class="parametername">apply</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaControl.html#DrawnUi_Draw_SkiaControl_ProcessGestures_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_">SkiaControl.ProcessGestures(SkiaGesturesParameters, GestureEventProcessingInfo)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_SendStateTransitionComplete.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.SendStateTransitionComplete%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L124">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_SendStateTransitionComplete_" data-uid="DrawnUi.Controls.SkiaDrawer.SendStateTransitionComplete*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_SendStateTransitionComplete" data-uid="DrawnUi.Controls.SkiaDrawer.SendStateTransitionComplete">SendStateTransitionComplete()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void SendStateTransitionComplete()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_SetContent_DrawnUi_Draw_SkiaControl_.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.SetContent(DrawnUi.Draw.SkiaControl)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L223">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_SetContent_" data-uid="DrawnUi.Controls.SkiaDrawer.SetContent*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_SetContent_DrawnUi_Draw_SkiaControl_" data-uid="DrawnUi.Controls.SkiaDrawer.SetContent(DrawnUi.Draw.SkiaControl)">SetContent(SkiaControl)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void SetContent(SkiaControl view)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></td>
-        <td><span class="parametername">view</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_SetIsOpen.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.SetIsOpen%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L464">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_SetIsOpen_" data-uid="DrawnUi.Controls.SkiaDrawer.SetIsOpen*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_SetIsOpen" data-uid="DrawnUi.Controls.SkiaDrawer.SetIsOpen">SetIsOpen()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SetIsOpen()</code></pre>
-  </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_UpdateReportedPosition.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.UpdateReportedPosition%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L477">View Source</a>
-  </span>
-  <a id="DrawnUi_Controls_SkiaDrawer_UpdateReportedPosition_" data-uid="DrawnUi.Controls.SkiaDrawer.UpdateReportedPosition*"></a>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_UpdateReportedPosition" data-uid="DrawnUi.Controls.SkiaDrawer.UpdateReportedPosition">UpdateReportedPosition()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void UpdateReportedPosition()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SnappingLayout.html#DrawnUi_Draw_SnappingLayout_UpdateReportedPosition">SnappingLayout.UpdateReportedPosition()</a></div>
-  <h3 id="events">Events
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_IsOpenChanged.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.IsOpenChanged%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L131">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_IsOpenChanged" data-uid="DrawnUi.Controls.SkiaDrawer.IsOpenChanged">IsOpenChanged</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler&lt;bool&gt; IsOpenChanged</code></pre>
-  </div>
-  <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_StateTransitionComplete.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.StateTransitionComplete%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L129">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_StateTransitionComplete" data-uid="DrawnUi.Controls.SkiaDrawer.StateTransitionComplete">StateTransitionComplete</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler&lt;bool&gt; StateTransitionComplete</code></pre>
-  </div>
-  <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer_Stopped.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer.Stopped%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L132">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Controls_SkiaDrawer_Stopped" data-uid="DrawnUi.Controls.SkiaDrawer.Stopped">Stopped</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Vector2&gt; Stopped</code></pre>
-  </div>
-  <h5 class="eventType">Event Type</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged">INotifyPropertyChanged</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ieffectcontrolprovider">IEffectControlProvider</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itooltipelement">IToolTipElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontextflyoutelement">IContextFlyoutElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ianimatable">IAnimatable</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ivisualelementcontroller">IVisualElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.ielementcontroller">IElementController</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ihotreloadableview">IHotReloadableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ireplaceableview">IReplaceableView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.iview">IView</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ielement">IElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.itransform">ITransform</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.hotreload.ireloadhandler">IReloadHandler</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.ivisualtreeelement">IVisualTreeElement</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.icontainer">IContainer</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.icollection-1">ICollection&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable&lt;T&gt;</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IHasAfterEffects.html">IHasAfterEffects</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaGridLayout.html">ISkiaGridLayout</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaLayout.html">ISkiaLayout</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaControl.html">ISkiaControl</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IDrawnBase.html">IDrawnBase</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdatedWithContext.html">ICanBeUpdatedWithContext</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ICanBeUpdated.html">ICanBeUpdated</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ILayoutInsideViewport.html">ILayoutInsideViewport</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IInsideViewport.html">IInsideViewport</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.IVisibilityAware.html">IVisibilityAware</a>
-  </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Adapt__1___0_System_Action___0__">FluentExtensions.Adapt&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
@@ -4228,28 +2880,31 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Fill__1___0_">FluentExtensions.Fill&lt;T&gt;(T)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Height__1___0_System_Double_">FluentExtensions.Height&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Initialize__1___0_System_Action___0__">FluentExtensions.Initialize&lt;T&gt;(T, Action&lt;T&gt;)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContextOn__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveBindingContextOn&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveBindingContext__2___0_System_Action___0___1_System_String__System_Boolean_">FluentExtensions.ObserveBindingContext&lt;T, TSource&gt;(T, Action&lt;T, TSource, string&gt;, bool)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeepNestedProperty__5___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Func___3___4__System_String_System_Action___0___4____4_System_Boolean_">FluentExtensions.ObserveDeepNestedProperty&lt;T, TSource, TIntermediate1, TIntermediate2, TProperty&gt;(T, Func&lt;TSource, TIntermediate1&gt;, string, Func&lt;TIntermediate1, TIntermediate2&gt;, string, Func&lt;TIntermediate2, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveOn__3___0___1_System_Func___2__System_String_System_Action___0_System_String__System_String___">FluentExtensions.ObserveOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, Action&lt;T, string&gt;, string[])</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveDeep__4___0_System_Func___1___2__System_String_System_Func___2___3__System_String_System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveDeep&lt;T, TSource, TIntermediate, TProperty&gt;(T, Func&lt;TSource, TIntermediate&gt;, string, Func&lt;TIntermediate, TProperty&gt;, string, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertiesOn__3___0___1_System_Func___2__System_String_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObservePropertiesOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperties__2___0___1_System_Collections_Generic_IEnumerable_System_String__System_Action___0__">FluentExtensions.ObserveProperties&lt;T, TSource&gt;(T, TSource, IEnumerable&lt;string&gt;, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObservePropertyOn__3___0___1_System_Func___2__System_String_System_String_System_Action___0__">FluentExtensions.ObservePropertyOn&lt;T, TParent, TTarget&gt;(T, TParent, Func&lt;TTarget&gt;, string, string, Action&lt;T&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveProperty__2___0___1_System_String_System_Action___0__">FluentExtensions.ObserveProperty&lt;T, TSource&gt;(T, TSource, string, Action&lt;T&gt;)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveSelf__1___0_System_Action___0_System_String__">FluentExtensions.ObserveSelf&lt;T&gt;(T, Action&lt;T, string&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetBindingContext__3___0___1_System_Action___0___1___2_System_String__System_Boolean_">FluentExtensions.ObserveTargetBindingContext&lt;T, TTarget, TSource&gt;(T, TTarget, Action&lt;T, TTarget, TSource, string&gt;, bool)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_ObserveTargetProperty__4___0_System_Linq_Expressions_Expression_System_Func___1___2___System_Linq_Expressions_Expression_System_Func___2___3___System_Action___0___3____3_System_Boolean_">FluentExtensions.ObserveTargetProperty&lt;T, TSource, TIntermediate, TProperty&gt;(T, Expression&lt;Func&lt;TSource, TIntermediate&gt;&gt;, Expression&lt;Func&lt;TIntermediate, TProperty&gt;&gt;, Action&lt;T, TProperty&gt;, TProperty, bool)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_Observe__2___0_System_Func___1__System_Action___0_System_String__System_String___">FluentExtensions.Observe&lt;T, TSource&gt;(T, Func&lt;TSource&gt;, Action&lt;T, string&gt;, string[])</a>
@@ -4276,18 +2931,6 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetGrid__1___0_System_Int32_System_Int32_System_Int32_System_Int32_">FluentExtensions.SetGrid&lt;T&gt;(T, int, int, int, int)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.SetMargin&lt;T&gt;(T, double, double, double, double)</a>
-  </div>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_SetWidth__1___0_System_Double_">FluentExtensions.SetWidth&lt;T&gt;(T, double)</a>
-  </div>
-  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_StartX__1___0_">FluentExtensions.StartX&lt;T&gt;(T)</a>
   </div>
   <div>
@@ -4309,16 +2952,34 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithColumn__1___0_System_Int32_">FluentExtensions.WithColumn&lt;T&gt;(T, int)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithEnabled__1___0_System_Boolean_">FluentExtensions.WithEnabled&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithGestures__1___0_System_Func___0_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_DrawnUi_Draw_ISkiaGestureListener__">FluentExtensions.WithGestures&lt;T&gt;(T, Func&lt;T, SkiaGesturesParameters, GestureEventProcessingInfo, ISkiaGestureListener&gt;)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeightRequest__1___0_System_Double_">FluentExtensions.WithHeightRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHeight__1___0_System_Double_">FluentExtensions.WithHeight&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithHorizontalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithHorizontalOptions&lt;T&gt;(T, LayoutOptions)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithItemsSource__1___0_System_Collections_IList_">FluentExtensions.WithItemsSource&lt;T&gt;(T, IList)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_Microsoft_Maui_Thickness_">FluentExtensions.WithMargin&lt;T&gt;(T, Thickness)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithMargin__1___0_System_Double_System_Double_System_Double_System_Double_">FluentExtensions.WithMargin&lt;T&gt;(T, double, double, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithOpacity__1___0_System_Double_">FluentExtensions.WithOpacity&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithPadding__1___0_System_Double_">FluentExtensions.WithPadding&lt;T&gt;(T, double)</a>
@@ -4333,19 +2994,37 @@ Pass arguments if you want to use some time-frozen data for painting at any time
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithParent__1___0_DrawnUi_Draw_IDrawnBase_">FluentExtensions.WithParent&lt;T&gt;(T, IDrawnBase)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRotation__1___0_System_Double_">FluentExtensions.WithRotation&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRowSpan__1___0_System_Int32_">FluentExtensions.WithRowSpan&lt;T&gt;(T, int)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithRow__1___0_System_Int32_">FluentExtensions.WithRow&lt;T&gt;(T, int)</a>
   </div>
   <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithScale__1___0_System_Double_System_Double_">FluentExtensions.WithScale&lt;T&gt;(T, double, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithSpacing__1___0_System_Double_">FluentExtensions.WithSpacing&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithTag__1___0_System_String_">FluentExtensions.WithTag&lt;T&gt;(T, string)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithType__1___0_DrawnUi_Draw_LayoutType_">FluentExtensions.WithType&lt;T&gt;(T, LayoutType)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVerticalOptions__1___0_Microsoft_Maui_Controls_LayoutOptions_">FluentExtensions.WithVerticalOptions&lt;T&gt;(T, LayoutOptions)</a>
   </div>
   <div>
-      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidthRequest__1___0_System_Double_">FluentExtensions.WithWidthRequest&lt;T&gt;(T, double)</a>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithVisibility__1___0_System_Boolean_">FluentExtensions.WithVisibility&lt;T&gt;(T, bool)</a>
+  </div>
+  <div>
+      <a class="xref" href="DrawnUi.Draw.FluentExtensions.html#DrawnUi_Draw_FluentExtensions_WithWidth__1___0_System_Double_">FluentExtensions.WithWidth&lt;T&gt;(T, double)</a>
   </div>
   <div>
       <a class="xref" href="DrawnUi.Draw.DrawnExtensions.html#DrawnUi_Draw_DrawnExtensions_GetVelocityRatioForChild_DrawnUi_Draw_IDrawnBase_DrawnUi_Draw_ISkiaControl_">DrawnExtensions.GetVelocityRatioForChild(IDrawnBase, ISkiaControl)</a>
@@ -4392,47 +3071,1444 @@ Pass arguments if you want to use some time-frozen data for painting at any time
   <div>
       <a class="xref" href="DrawnUi.Extensions.InternalExtensions.html#DrawnUi_Extensions_InternalExtensions_FromPlatform_System_Object_">InternalExtensions.FromPlatform(object)</a>
   </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_AmplitudeSizeProperty" data-uid="DrawnUi.Controls.SkiaDrawer.AmplitudeSizeProperty">
+  AmplitudeSizeProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty AmplitudeSizeProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_ChildWasTapped" data-uid="DrawnUi.Controls.SkiaDrawer.ChildWasTapped">
+  ChildWasTapped
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L554"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool ChildWasTapped</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_ContentProperty" data-uid="DrawnUi.Controls.SkiaDrawer.ContentProperty">
+  ContentProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L210"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty ContentProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_DirectionProperty" data-uid="DrawnUi.Controls.SkiaDrawer.DirectionProperty">
+  DirectionProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty DirectionProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_HeaderSizeProperty" data-uid="DrawnUi.Controls.SkiaDrawer.HeaderSizeProperty">
+  HeaderSizeProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty HeaderSizeProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_IsOpenProperty" data-uid="DrawnUi.Controls.SkiaDrawer.IsOpenProperty">
+  IsOpenProperty
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BindableProperty IsOpenProperty</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.bindableproperty">BindableProperty</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer__panningOffset" data-uid="DrawnUi.Controls.SkiaDrawer._panningOffset">
+  _panningOffset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L550"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Vector2 _panningOffset</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_AmplitudeSize_" data-uid="DrawnUi.Controls.SkiaDrawer.AmplitudeSize*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_AmplitudeSize" data-uid="DrawnUi.Controls.SkiaDrawer.AmplitudeSize">
+  AmplitudeSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>If set to other than -1 will be used instead of HeaderSize for amplitude calculation, amplitude = drawer size - header.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double AmplitudeSize { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_AutoClose_" data-uid="DrawnUi.Controls.SkiaDrawer.AutoClose*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_AutoClose" data-uid="DrawnUi.Controls.SkiaDrawer.AutoClose">
+  AutoClose
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L890"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool AutoClose { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_CommandClose_" data-uid="DrawnUi.Controls.SkiaDrawer.CommandClose*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_CommandClose" data-uid="DrawnUi.Controls.SkiaDrawer.CommandClose">
+  CommandClose
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Command to close the drawer programmatically. Sets IsOpen to false.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ICommand CommandClose { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.windows.input.icommand">ICommand</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_CommandOpen_" data-uid="DrawnUi.Controls.SkiaDrawer.CommandOpen*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_CommandOpen" data-uid="DrawnUi.Controls.SkiaDrawer.CommandOpen">
+  CommandOpen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Command to open the drawer programmatically. Sets IsOpen to true.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ICommand CommandOpen { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.windows.input.icommand">ICommand</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_CommandToggle_" data-uid="DrawnUi.Controls.SkiaDrawer.CommandToggle*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_CommandToggle" data-uid="DrawnUi.Controls.SkiaDrawer.CommandToggle">
+  CommandToggle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Command to toggle the drawer state programmatically. Inverts the current IsOpen value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ICommand CommandToggle { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.windows.input.icommand">ICommand</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_Content_" data-uid="DrawnUi.Controls.SkiaDrawer.Content*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_Content" data-uid="DrawnUi.Controls.SkiaDrawer.Content">
+  Content
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SkiaControl Content { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_Direction_" data-uid="DrawnUi.Controls.SkiaDrawer.Direction*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_Direction" data-uid="DrawnUi.Controls.SkiaDrawer.Direction">
+  Direction
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DrawerDirection Direction { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Controls.DrawerDirection.html">DrawerDirection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_HeaderSize_" data-uid="DrawnUi.Controls.SkiaDrawer.HeaderSize*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_HeaderSize" data-uid="DrawnUi.Controls.SkiaDrawer.HeaderSize">
+  HeaderSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Size of the area that will remain on screen when drawer is closed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double HeaderSize { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_IsOpen_" data-uid="DrawnUi.Controls.SkiaDrawer.IsOpen*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_IsOpen" data-uid="DrawnUi.Controls.SkiaDrawer.IsOpen">
+  IsOpen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsOpen { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_IsUserFocused_" data-uid="DrawnUi.Controls.SkiaDrawer.IsUserFocused*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_IsUserFocused" data-uid="DrawnUi.Controls.SkiaDrawer.IsUserFocused">
+  IsUserFocused
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L548"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool IsUserFocused { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_IsUserPanning_" data-uid="DrawnUi.Controls.SkiaDrawer.IsUserPanning*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_IsUserPanning" data-uid="DrawnUi.Controls.SkiaDrawer.IsUserPanning">
+  IsUserPanning
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L549"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool IsUserPanning { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_VelocityAccumulator_" data-uid="DrawnUi.Controls.SkiaDrawer.VelocityAccumulator*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_VelocityAccumulator" data-uid="DrawnUi.Controls.SkiaDrawer.VelocityAccumulator">
+  VelocityAccumulator
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L552"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected VelocityAccumulator VelocityAccumulator { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.VelocityAccumulator.html">VelocityAccumulator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_ApplyBindingContext_" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyBindingContext*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_ApplyBindingContext" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyBindingContext">
+  ApplyBindingContext()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p><a href="https://github.com/taublast/DrawnUi/issues/92#issuecomment-2408805077">https://github.com/taublast/DrawnUi/issues/92#issuecomment-2408805077</a></p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ApplyBindingContext()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_ApplyOptions_" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyOptions*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_ApplyOptions" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyOptions">
+  ApplyOptions()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L414"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ApplyOptions()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_ApplyPosition_" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyPosition*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_ApplyPosition_System_Numerics_Vector2_" data-uid="DrawnUi.Controls.SkiaDrawer.ApplyPosition(System.Numerics.Vector2)">
+  ApplyPosition(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L406"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ApplyPosition(Vector2 position)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>position</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_CheckNeedToSnap_" data-uid="DrawnUi.Controls.SkiaDrawer.CheckNeedToSnap*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_CheckNeedToSnap" data-uid="DrawnUi.Controls.SkiaDrawer.CheckNeedToSnap">
+  CheckNeedToSnap()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L465"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool CheckNeedToSnap()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_ClampOffsetWithRubberBand_" data-uid="DrawnUi.Controls.SkiaDrawer.ClampOffsetWithRubberBand*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_ClampOffsetWithRubberBand_System_Single_System_Single_" data-uid="DrawnUi.Controls.SkiaDrawer.ClampOffsetWithRubberBand(System.Single,System.Single)">
+  ClampOffsetWithRubberBand(float, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L898"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Called for manual finger panning</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Vector2 ClampOffsetWithRubberBand(float x, float y)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_Close_" data-uid="DrawnUi.Controls.SkiaDrawer.Close*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_Close" data-uid="DrawnUi.Controls.SkiaDrawer.Close">
+  Close()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L249"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Close()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_GetAutoVelocity_" data-uid="DrawnUi.Controls.SkiaDrawer.GetAutoVelocity*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_GetAutoVelocity_System_Numerics_Vector2_" data-uid="DrawnUi.Controls.SkiaDrawer.GetAutoVelocity(System.Numerics.Vector2)">
+  GetAutoVelocity(Vector2)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L348"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>todo calc upon measured size + prop for speed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Vector2 GetAutoVelocity(Vector2 displacement)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>displacement</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_GetClosestSidePoint_" data-uid="DrawnUi.Controls.SkiaDrawer.GetClosestSidePoint*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_GetClosestSidePoint_SkiaSharp_SKPoint_SkiaSharp_SKRect_SkiaSharp_SKSize_" data-uid="DrawnUi.Controls.SkiaDrawer.GetClosestSidePoint(SkiaSharp.SKPoint,SkiaSharp.SKRect,SkiaSharp.SKSize)">
+  GetClosestSidePoint(SKPoint, SKRect, SKSize)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L502"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This uses whole viewport size, do not use this for snapping</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static SKPoint GetClosestSidePoint(SKPoint overscrollPoint, SKRect contentRect, SKSize viewportSize)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>overscrollPoint</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+    <dd></dd>
+    <dt><code>contentRect</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
+    <dd></dd>
+    <dt><code>viewportSize</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.sksize">SKSize</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skpoint">SKPoint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_GetContentOffsetBounds_" data-uid="DrawnUi.Controls.SkiaDrawer.GetContentOffsetBounds*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_GetContentOffsetBounds" data-uid="DrawnUi.Controls.SkiaDrawer.GetContentOffsetBounds">
+  GetContentOffsetBounds()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L366"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>There are the bounds the scroll offset can go to.. This are NOT the bounds of the whole content.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override SKRect GetContentOffsetBounds()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/skiasharp.skrect">SKRect</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_GetOffsetToHide_" data-uid="DrawnUi.Controls.SkiaDrawer.GetOffsetToHide*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_GetOffsetToHide" data-uid="DrawnUi.Controls.SkiaDrawer.GetOffsetToHide">
+  GetOffsetToHide()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L301"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>In points</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Vector2 GetOffsetToHide()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_OnAppeared_" data-uid="DrawnUi.Controls.SkiaDrawer.OnAppeared*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_OnAppeared" data-uid="DrawnUi.Controls.SkiaDrawer.OnAppeared">
+  OnAppeared()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This event can sometimes be called without prior OnAppearing</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnAppeared()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_OnAppearing_" data-uid="DrawnUi.Controls.SkiaDrawer.OnAppearing*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_OnAppearing" data-uid="DrawnUi.Controls.SkiaDrawer.OnAppearing">
+  OnAppearing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This can sometimes be omitted,</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnAppearing()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_OnDisappeared_" data-uid="DrawnUi.Controls.SkiaDrawer.OnDisappeared*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_OnDisappeared" data-uid="DrawnUi.Controls.SkiaDrawer.OnDisappeared">
+  OnDisappeared()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnDisappeared()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_OnDisappearing_" data-uid="DrawnUi.Controls.SkiaDrawer.OnDisappearing*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_OnDisappearing" data-uid="DrawnUi.Controls.SkiaDrawer.OnDisappearing">
+  OnDisappearing()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnDisappearing()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_OnLayoutChanged_" data-uid="DrawnUi.Controls.SkiaDrawer.OnLayoutChanged*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_OnLayoutChanged" data-uid="DrawnUi.Controls.SkiaDrawer.OnLayoutChanged">
+  OnLayoutChanged()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L281"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnLayoutChanged()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_OnTransitionChanged_" data-uid="DrawnUi.Controls.SkiaDrawer.OnTransitionChanged*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_OnTransitionChanged" data-uid="DrawnUi.Controls.SkiaDrawer.OnTransitionChanged">
+  OnTransitionChanged()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Invokes TransitionChanged event</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnTransitionChanged()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_OnWillDisposeWithChildren_" data-uid="DrawnUi.Controls.SkiaDrawer.OnWillDisposeWithChildren*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_OnWillDisposeWithChildren" data-uid="DrawnUi.Controls.SkiaDrawer.OnWillDisposeWithChildren">
+  OnWillDisposeWithChildren()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The OnDisposing might come with a delay to avoid disposing resources at use.
+This method will be called without delay when Dispose() is invoked. Disposed will set to True and for Views their OnWillDisposeWithChildren will be called.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnWillDisposeWithChildren()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_Open_" data-uid="DrawnUi.Controls.SkiaDrawer.Open*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_Open" data-uid="DrawnUi.Controls.SkiaDrawer.Open">
+  Open()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Open()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_Paint_" data-uid="DrawnUi.Controls.SkiaDrawer.Paint*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_Paint_DrawnUi_Draw_DrawingContext_" data-uid="DrawnUi.Controls.SkiaDrawer.Paint(DrawnUi.Draw.DrawingContext)">
+  Paint(DrawingContext)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L446"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This is the main drawing routine you should override to draw something.
+Base one paints background color inside DrawingRect that was defined by Arrange inside base.Draw.
+Pass arguments if you want to use some time-frozen data for painting at any time from any thread..</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void Paint(DrawingContext ctx)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>ctx</code> <a class="xref" href="DrawnUi.Draw.DrawingContext.html">DrawingContext</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_ProcessGestures_" data-uid="DrawnUi.Controls.SkiaDrawer.ProcessGestures*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_ProcessGestures_DrawnUi_Draw_SkiaGesturesParameters_DrawnUi_Draw_GestureEventProcessingInfo_" data-uid="DrawnUi.Controls.SkiaDrawer.ProcessGestures(DrawnUi.Draw.SkiaGesturesParameters,DrawnUi.Draw.GestureEventProcessingInfo)">
+  ProcessGestures(SkiaGesturesParameters, GestureEventProcessingInfo)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L558"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>args</code> <a class="xref" href="DrawnUi.Draw.SkiaGesturesParameters.html">SkiaGesturesParameters</a></dt>
+    <dd></dd>
+    <dt><code>apply</code> <a class="xref" href="DrawnUi.Draw.GestureEventProcessingInfo.html">GestureEventProcessingInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Draw.ISkiaGestureListener.html">ISkiaGestureListener</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_SendStateTransitionComplete_" data-uid="DrawnUi.Controls.SkiaDrawer.SendStateTransitionComplete*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_SendStateTransitionComplete" data-uid="DrawnUi.Controls.SkiaDrawer.SendStateTransitionComplete">
+  SendStateTransitionComplete()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void SendStateTransitionComplete()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_SetContent_" data-uid="DrawnUi.Controls.SkiaDrawer.SetContent*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_SetContent_DrawnUi_Draw_SkiaControl_" data-uid="DrawnUi.Controls.SkiaDrawer.SetContent(DrawnUi.Draw.SkiaControl)">
+  SetContent(SkiaControl)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L232"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void SetContent(SkiaControl view)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>view</code> <a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_SetIsOpen_" data-uid="DrawnUi.Controls.SkiaDrawer.SetIsOpen*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_SetIsOpen" data-uid="DrawnUi.Controls.SkiaDrawer.SetIsOpen">
+  SetIsOpen()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L473"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetIsOpen()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="DrawnUi_Controls_SkiaDrawer_UpdateReportedPosition_" data-uid="DrawnUi.Controls.SkiaDrawer.UpdateReportedPosition*"></a>
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_UpdateReportedPosition" data-uid="DrawnUi.Controls.SkiaDrawer.UpdateReportedPosition">
+  UpdateReportedPosition()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L486"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void UpdateReportedPosition()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="events">Events
+</h2>
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_IsOpenChanged" data-uid="DrawnUi.Controls.SkiaDrawer.IsOpenChanged">
+  IsOpenChanged
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;bool&gt; IsOpenChanged</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_StateTransitionComplete" data-uid="DrawnUi.Controls.SkiaDrawer.StateTransitionComplete">
+  StateTransitionComplete
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;bool&gt; StateTransitionComplete</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Controls_SkiaDrawer_Stopped" data-uid="DrawnUi.Controls.SkiaDrawer.Stopped">
+  Stopped
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Vector2&gt; Stopped</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.numerics.vector2">Vector2</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Controls_SkiaDrawer.md&amp;value=---%0Auid%3A%20DrawnUi.Controls.SkiaDrawer%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L7" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Maui/DrawnUi/Controls/Drawer/SkiaDrawer.cs/#L7" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

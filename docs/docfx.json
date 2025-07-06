@@ -21,7 +21,7 @@
       }
     }
   ],
-  "build": {
+  "build": { 
     "content": [
       {
         "files": [
@@ -61,7 +61,7 @@
     "fileMetadataFiles": [],
     "template": [
       "default",
-      "templates/material"
+      "modern"
     ],
     "postProcessors": [],
     "markdownEngineName": "markdig",

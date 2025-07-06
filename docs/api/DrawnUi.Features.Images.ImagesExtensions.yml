@@ -6,6 +6,7 @@ items:
   parent: DrawnUi.Features.Images
   children:
   - DrawnUi.Features.Images.ImagesExtensions.CreateHttpClient(System.IServiceProvider)
+  - DrawnUi.Features.Images.ImagesExtensions.HttpClientKey
   langs:
   - csharp
   - vb
@@ -20,7 +21,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ImagesExtensions
     path: ../src/Maui/DrawnUi/Features/Images/ImagesExtensions.cs
-    startLine: 8
+    startLine: 10
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Features.Images
@@ -37,6 +38,35 @@ items:
   - System.Object.MemberwiseClone
   - System.Object.ReferenceEquals(System.Object,System.Object)
   - System.Object.ToString
+- uid: DrawnUi.Features.Images.ImagesExtensions.HttpClientKey
+  commentId: F:DrawnUi.Features.Images.ImagesExtensions.HttpClientKey
+  id: HttpClientKey
+  parent: DrawnUi.Features.Images.ImagesExtensions
+  langs:
+  - csharp
+  - vb
+  name: HttpClientKey
+  nameWithType: ImagesExtensions.HttpClientKey
+  fullName: DrawnUi.Features.Images.ImagesExtensions.HttpClientKey
+  type: Field
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Features/Images/ImagesExtensions.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: HttpClientKey
+    path: ../src/Maui/DrawnUi/Features/Images/ImagesExtensions.cs
+    startLine: 15
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Features.Images
+  summary: Can customize this to your needs
+  example: []
+  syntax:
+    content: public static string HttpClientKey
+    return:
+      type: System.String
+    content.vb: Public Shared HttpClientKey As String
 - uid: DrawnUi.Features.Images.ImagesExtensions.CreateHttpClient(System.IServiceProvider)
   commentId: M:DrawnUi.Features.Images.ImagesExtensions.CreateHttpClient(System.IServiceProvider)
   id: CreateHttpClient(System.IServiceProvider)
@@ -346,6 +376,17 @@ references:
   name: System
   nameWithType: System
   fullName: System
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
 - uid: DrawnUi.Features.Images.ImagesExtensions.CreateHttpClient*
   commentId: Overload:DrawnUi.Features.Images.ImagesExtensions.CreateHttpClient
   href: DrawnUi.Features.Images.ImagesExtensions.html#DrawnUi_Features_Images_ImagesExtensions_CreateHttpClient_System_IServiceProvider_

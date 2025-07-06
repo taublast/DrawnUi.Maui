@@ -20,7 +20,6 @@ items:
   - DrawnUi.Views.Canvas.ContentProperty
   - DrawnUi.Views.Canvas.ContentSize
   - DrawnUi.Views.Canvas.Context
-  - DrawnUi.Views.Canvas.Create(System.Boolean)
   - DrawnUi.Views.Canvas.CreateDebugPointer
   - DrawnUi.Views.Canvas.DebugPointer
   - DrawnUi.Views.Canvas.DelayNanosBetweenGC
@@ -47,7 +46,6 @@ items:
   - DrawnUi.Views.Canvas.OnGestureEvent(AppoMobi.Maui.Gestures.TouchActionType,AppoMobi.Maui.Gestures.TouchActionEventArgs,AppoMobi.Maui.Gestures.TouchActionResult)
   - DrawnUi.Views.Canvas.OnGesturesAttachChanged
   - DrawnUi.Views.Canvas.OnHandlerChanged
-  - DrawnUi.Views.Canvas.OnHotReload
   - DrawnUi.Views.Canvas.OnParentChanged
   - DrawnUi.Views.Canvas.OnPropertyChanged(System.String)
   - DrawnUi.Views.Canvas.OnSizeChanged
@@ -174,7 +172,6 @@ items:
   - DrawnUi.Views.DrawnView.SetViewTreeVisibilityByParent(DrawnUi.Draw.SkiaControl,System.Boolean)
   - DrawnUi.Views.DrawnView.SetPauseStateOfAllAnimatorsByParent(DrawnUi.Draw.SkiaControl,System.Boolean)
   - DrawnUi.Views.DrawnView.ExecutePostAnimators(DrawnUi.Draw.DrawingContext)
-  - DrawnUi.Views.DrawnView.LockAnimatingControls
   - DrawnUi.Views.DrawnView.PostAnimators
   - DrawnUi.Views.DrawnView.AnimatingControls
   - DrawnUi.Views.DrawnView.FrameTimeInterpolator
@@ -319,6 +316,7 @@ items:
   - DrawnUi.Views.DrawnView.GetIsVisibleWithParent(Microsoft.Maui.Controls.VisualElement)
   - DrawnUi.Views.DrawnView.CheckElementVisibility(Microsoft.Maui.Controls.VisualElement)
   - DrawnUi.Views.DrawnView.ClipSmart(SkiaSharp.SKCanvas,SkiaSharp.SKPath,SkiaSharp.SKClipOperation)
+  - DrawnUi.Views.DrawnView.OnHotReload
   - DrawnUi.Views.DrawnView.InitFramework(System.Boolean)
   - Microsoft.Maui.Controls.TemplatedView.ControlTemplateProperty
   - Microsoft.Maui.Controls.TemplatedView.LayoutChildren(System.Double,System.Double,System.Double,System.Double)
@@ -343,7 +341,6 @@ items:
   - Microsoft.Maui.Controls.Compatibility.Layout.ShouldInvalidateOnChildAdded(Microsoft.Maui.Controls.View)
   - Microsoft.Maui.Controls.Compatibility.Layout.ShouldInvalidateOnChildRemoved(Microsoft.Maui.Controls.View)
   - Microsoft.Maui.Controls.Compatibility.Layout.UpdateChildrenLayout
-  - Microsoft.Maui.Controls.Compatibility.Layout.InvalidateMeasureOverride
   - Microsoft.Maui.Controls.Compatibility.Layout.CrossPlatformMeasure(System.Double,System.Double)
   - Microsoft.Maui.Controls.Compatibility.Layout.CrossPlatformArrange(Microsoft.Maui.Graphics.Rect)
   - Microsoft.Maui.Controls.Compatibility.Layout.IsClippedToBounds
@@ -410,6 +407,7 @@ items:
   - Microsoft.Maui.Controls.VisualElement.RefreshIsEnabledProperty
   - Microsoft.Maui.Controls.VisualElement.Arrange(Microsoft.Maui.Graphics.Rect)
   - Microsoft.Maui.Controls.VisualElement.Layout(Microsoft.Maui.Graphics.Rect)
+  - Microsoft.Maui.Controls.VisualElement.InvalidateMeasureOverride
   - Microsoft.Maui.Controls.VisualElement.MapBackgroundColor(Microsoft.Maui.IViewHandler,Microsoft.Maui.IView)
   - Microsoft.Maui.Controls.VisualElement.MapBackgroundImageSource(Microsoft.Maui.IViewHandler,Microsoft.Maui.IView)
   - Microsoft.Maui.Controls.VisualElement.Visual
@@ -1232,69 +1230,6 @@ items:
     content.vb: Protected Overrides Sub OnHandlerChanged()
   overridden: DrawnUi.Views.DrawnView.OnHandlerChanged
   overload: DrawnUi.Views.Canvas.OnHandlerChanged*
-- uid: DrawnUi.Views.Canvas.OnHotReload
-  commentId: M:DrawnUi.Views.Canvas.OnHotReload
-  id: OnHotReload
-  parent: DrawnUi.Views.Canvas
-  langs:
-  - csharp
-  - vb
-  name: OnHotReload()
-  nameWithType: Canvas.OnHotReload()
-  fullName: DrawnUi.Views.Canvas.OnHotReload()
-  type: Method
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Views/Canvas.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: OnHotReload
-    path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 411
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Views
-  example: []
-  syntax:
-    content: public override void OnHotReload()
-    content.vb: Public Overrides Sub OnHotReload()
-  overridden: DrawnUi.Views.DrawnView.OnHotReload
-  overload: DrawnUi.Views.Canvas.OnHotReload*
-- uid: DrawnUi.Views.Canvas.Create(System.Boolean)
-  commentId: M:DrawnUi.Views.Canvas.Create(System.Boolean)
-  id: Create(System.Boolean)
-  parent: DrawnUi.Views.Canvas
-  langs:
-  - csharp
-  - vb
-  name: Create(bool)
-  nameWithType: Canvas.Create(bool)
-  fullName: DrawnUi.Views.Canvas.Create(bool)
-  type: Method
-  source:
-    remote:
-      path: src/Maui/DrawnUi/Views/Canvas.cs
-      branch: 2-A
-      repo: https://github.com/taublast/DrawnUi.git
-    id: Create
-    path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 423
-  assemblies:
-  - DrawnUi.Maui
-  namespace: DrawnUi.Views
-  summary: Will be called by canvas when framework platform is initialized (true) OR .NET HotReload triggered (false)
-  example: []
-  syntax:
-    content: protected virtual void Create(bool firsttime)
-    parameters:
-    - id: firsttime
-      type: System.Boolean
-      description: ''
-    content.vb: Protected Overridable Sub Create(firsttime As Boolean)
-  overload: DrawnUi.Views.Canvas.Create*
-  nameWithType.vb: Canvas.Create(Boolean)
-  fullName.vb: DrawnUi.Views.Canvas.Create(Boolean)
-  name.vb: Create(Boolean)
 - uid: DrawnUi.Views.Canvas.OnGesturesAttachChanged
   commentId: M:DrawnUi.Views.Canvas.OnGesturesAttachChanged
   id: OnGesturesAttachChanged
@@ -1313,7 +1248,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnGesturesAttachChanged
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 429
+    startLine: 407
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1339,7 +1274,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CreateDebugPointer
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 455
+    startLine: 433
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1367,7 +1302,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DebugPointer
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 468
+    startLine: 446
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1396,7 +1331,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnDisposing
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 470
+    startLine: 448
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1424,7 +1359,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Context
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 478
+    startLine: 456
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1451,7 +1386,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ReceivedInput
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 488
+    startLine: 466
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1482,7 +1417,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HadInput
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 493
+    startLine: 471
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1513,7 +1448,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: IsSavedGesture
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 500
+    startLine: 478
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1548,7 +1483,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ProcessGestures
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 510
+    startLine: 488
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1577,7 +1512,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SignalInput
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 656
+    startLine: 634
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1612,7 +1547,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Tapped
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 671
+    startLine: 649
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1639,7 +1574,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FirstPanThreshold
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 676
+    startLine: 654
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1668,7 +1603,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnGestureEvent
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 689
+    startLine: 667
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1708,7 +1643,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: BreakLine
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 825
+    startLine: 803
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1734,7 +1669,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LineBreaks
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 830
+    startLine: 808
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1761,7 +1696,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 832
+    startLine: 810
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1790,7 +1725,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Clear
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 836
+    startLine: 814
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1816,7 +1751,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PlayRippleAnimation
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 841
+    startLine: 819
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1854,7 +1789,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PlayShimmerAnimation
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 847
+    startLine: 825
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1894,7 +1829,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TimeLastGC
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 857
+    startLine: 835
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1923,7 +1858,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DelayNanosBetweenGC
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 858
+    startLine: 836
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1952,7 +1887,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CollectGarbage
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 860
+    startLine: 838
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -1984,7 +1919,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnPropertyChanged
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 877
+    startLine: 855
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2020,7 +1955,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GesturesDebugColorProperty
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 890
+    startLine: 868
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2047,7 +1982,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GesturesDebugColor
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 896
+    startLine: 874
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2076,7 +2011,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ReserveSpaceAroundProperty
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 902
+    startLine: 880
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2103,7 +2038,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ReserveSpaceAround
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 908
+    startLine: 886
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2132,7 +2067,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GesturesProperty
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 922
+    startLine: 900
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2159,7 +2094,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Gestures
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 928
+    startLine: 906
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2188,7 +2123,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ContentProperty
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 936
+    startLine: 914
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2215,7 +2150,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Content
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 952
+    startLine: 930
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2244,7 +2179,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnParentChanged
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 962
+    startLine: 940
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2274,7 +2209,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: EnableUpdates
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 972
+    startLine: 950
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2302,7 +2237,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: DisableUpdates
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 982
+    startLine: 960
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -2330,7 +2265,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Draw
     path: ../src/Maui/DrawnUi/Views/Canvas.cs
-    startLine: 987
+    startLine: 965
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -3473,13 +3408,6 @@ references:
     name: DrawingContext
     href: DrawnUi.Draw.DrawingContext.html
   - name: )
-- uid: DrawnUi.Views.DrawnView.LockAnimatingControls
-  commentId: F:DrawnUi.Views.DrawnView.LockAnimatingControls
-  parent: DrawnUi.Views.DrawnView
-  href: DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_LockAnimatingControls
-  name: LockAnimatingControls
-  nameWithType: DrawnView.LockAnimatingControls
-  fullName: DrawnUi.Views.DrawnView.LockAnimatingControls
 - uid: DrawnUi.Views.DrawnView.PostAnimators
   commentId: P:DrawnUi.Views.DrawnView.PostAnimators
   parent: DrawnUi.Views.DrawnView
@@ -5746,6 +5674,25 @@ references:
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/skiasharp.skclipoperation
   - name: )
+- uid: DrawnUi.Views.DrawnView.OnHotReload
+  commentId: M:DrawnUi.Views.DrawnView.OnHotReload
+  parent: DrawnUi.Views.DrawnView
+  href: DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnHotReload
+  name: OnHotReload()
+  nameWithType: DrawnView.OnHotReload()
+  fullName: DrawnUi.Views.DrawnView.OnHotReload()
+  spec.csharp:
+  - uid: DrawnUi.Views.DrawnView.OnHotReload
+    name: OnHotReload
+    href: DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnHotReload
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: DrawnUi.Views.DrawnView.OnHotReload
+    name: OnHotReload
+    href: DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnHotReload
+  - name: (
+  - name: )
 - uid: DrawnUi.Views.DrawnView.InitFramework(System.Boolean)
   commentId: M:DrawnUi.Views.DrawnView.InitFramework(System.Boolean)
   parent: DrawnUi.Views.DrawnView
@@ -6448,28 +6395,6 @@ references:
     name: UpdateChildrenLayout
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.compatibility.layout.updatechildrenlayout
-  - name: (
-  - name: )
-- uid: Microsoft.Maui.Controls.Compatibility.Layout.InvalidateMeasureOverride
-  commentId: M:Microsoft.Maui.Controls.Compatibility.Layout.InvalidateMeasureOverride
-  parent: Microsoft.Maui.Controls.Compatibility.Layout
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.compatibility.layout.invalidatemeasureoverride
-  name: InvalidateMeasureOverride()
-  nameWithType: Layout.InvalidateMeasureOverride()
-  fullName: Microsoft.Maui.Controls.Compatibility.Layout.InvalidateMeasureOverride()
-  spec.csharp:
-  - uid: Microsoft.Maui.Controls.Compatibility.Layout.InvalidateMeasureOverride
-    name: InvalidateMeasureOverride
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.compatibility.layout.invalidatemeasureoverride
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: Microsoft.Maui.Controls.Compatibility.Layout.InvalidateMeasureOverride
-    name: InvalidateMeasureOverride
-    isExternal: true
-    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.compatibility.layout.invalidatemeasureoverride
   - name: (
   - name: )
 - uid: Microsoft.Maui.Controls.Compatibility.Layout.CrossPlatformMeasure(System.Double,System.Double)
@@ -7343,6 +7268,28 @@ references:
     name: Rect
     isExternal: true
     href: https://learn.microsoft.com/dotnet/api/microsoft.maui.graphics.rect
+  - name: )
+- uid: Microsoft.Maui.Controls.VisualElement.InvalidateMeasureOverride
+  commentId: M:Microsoft.Maui.Controls.VisualElement.InvalidateMeasureOverride
+  parent: Microsoft.Maui.Controls.VisualElement
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement.invalidatemeasureoverride
+  name: InvalidateMeasureOverride()
+  nameWithType: VisualElement.InvalidateMeasureOverride()
+  fullName: Microsoft.Maui.Controls.VisualElement.InvalidateMeasureOverride()
+  spec.csharp:
+  - uid: Microsoft.Maui.Controls.VisualElement.InvalidateMeasureOverride
+    name: InvalidateMeasureOverride
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement.invalidatemeasureoverride
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: Microsoft.Maui.Controls.VisualElement.InvalidateMeasureOverride
+    name: InvalidateMeasureOverride
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.controls.visualelement.invalidatemeasureoverride
+  - name: (
   - name: )
 - uid: Microsoft.Maui.Controls.VisualElement.MapBackgroundColor(Microsoft.Maui.IViewHandler,Microsoft.Maui.IView)
   commentId: M:Microsoft.Maui.Controls.VisualElement.MapBackgroundColor(Microsoft.Maui.IViewHandler,Microsoft.Maui.IView)
@@ -10494,37 +10441,6 @@ references:
   name: OnHandlerChanged
   nameWithType: Canvas.OnHandlerChanged
   fullName: DrawnUi.Views.Canvas.OnHandlerChanged
-- uid: DrawnUi.Views.DrawnView.OnHotReload
-  commentId: M:DrawnUi.Views.DrawnView.OnHotReload
-  parent: DrawnUi.Views.DrawnView
-  href: DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnHotReload
-  name: OnHotReload()
-  nameWithType: DrawnView.OnHotReload()
-  fullName: DrawnUi.Views.DrawnView.OnHotReload()
-  spec.csharp:
-  - uid: DrawnUi.Views.DrawnView.OnHotReload
-    name: OnHotReload
-    href: DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnHotReload
-  - name: (
-  - name: )
-  spec.vb:
-  - uid: DrawnUi.Views.DrawnView.OnHotReload
-    name: OnHotReload
-    href: DrawnUi.Views.DrawnView.html#DrawnUi_Views_DrawnView_OnHotReload
-  - name: (
-  - name: )
-- uid: DrawnUi.Views.Canvas.OnHotReload*
-  commentId: Overload:DrawnUi.Views.Canvas.OnHotReload
-  href: DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_OnHotReload
-  name: OnHotReload
-  nameWithType: Canvas.OnHotReload
-  fullName: DrawnUi.Views.Canvas.OnHotReload
-- uid: DrawnUi.Views.Canvas.Create*
-  commentId: Overload:DrawnUi.Views.Canvas.Create
-  href: DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_Create_System_Boolean_
-  name: Create
-  nameWithType: Canvas.Create
-  fullName: DrawnUi.Views.Canvas.Create
 - uid: DrawnUi.Views.Canvas.OnGesturesAttachChanged*
   commentId: Overload:DrawnUi.Views.Canvas.OnGesturesAttachChanged
   href: DrawnUi.Views.Canvas.html#DrawnUi_Views_Canvas_OnGesturesAttachChanged

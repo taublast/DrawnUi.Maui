@@ -15,6 +15,9 @@ namespace DrawnUi.Controls
             base.ApplyBindingContext();
         }
 
+        /// <summary>
+        /// Command to close the drawer programmatically. Sets IsOpen to false.
+        /// </summary>
         public ICommand CommandClose
         {
             get
@@ -29,6 +32,9 @@ namespace DrawnUi.Controls
             }
         }
 
+        /// <summary>
+        /// Command to open the drawer programmatically. Sets IsOpen to true.
+        /// </summary>
         public ICommand CommandOpen
         {
             get
@@ -43,6 +49,9 @@ namespace DrawnUi.Controls
             }
         }
 
+        /// <summary>
+        /// Command to toggle the drawer state programmatically. Inverts the current IsOpen value.
+        /// </summary>
         public ICommand CommandToggle
         {
             get
@@ -808,7 +817,7 @@ namespace DrawnUi.Controls
                         VelocityAccumulator.CaptureVelocity(velocity);
 
                         Velocity = VelocityAccumulator.CalculateFinalVelocity(3000);
-                        //Debug.WriteLine($"[SKiaDrawer] Velocity: {Velocity}");
+                        //Debug.WriteLine($"[SkiaDrawer] Velocity: {Velocity}");
 
                         bool rightDirection = false;
 

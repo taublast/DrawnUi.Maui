@@ -321,6 +321,41 @@ Customize line appearance with:
 - Avoid excessive shadows or complex paths in performance-critical UI
 - For very complex paths, pre-process SVG data when possible rather than computing at runtime
 
+## SkiaHoverMask
+
+`SkiaHoverMask` is a control deriving from SkiaShape that can be used to create hover effects. It will render a mask over its children when hovered, think of it as an inverted shape.
+
+### Basic Usage
+
+```xml
+<draw:SkiaHoverMask
+    Type="Rectangle"
+    CornerRadius="8"
+    MaskColor="#40000000"
+    WidthRequest="200"
+    HeightRequest="100">
+
+    <draw:SkiaLabel
+        Text="Hover over me"
+        HorizontalOptions="Center"
+        VerticalOptions="Center"
+        TextColor="White" />
+</draw:SkiaHoverMask>
+```
+
+### Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `MaskColor` | Color | Color of the hover mask overlay |
+| `IsHovered` | bool | Whether the control is currently hovered |
+| `HoverAnimationDuration` | int | Duration of hover animation in milliseconds |
+
+### Events
+
+- `HoverStarted`: Raised when hover begins
+- `HoverEnded`: Raised when hover ends
+
 ## Platform Specific Notes
 
 SkiaShape renders consistently across all platforms supported by MAUI, ensuring that your UI maintains the same appearance on Android, iOS, Windows, and macOS.

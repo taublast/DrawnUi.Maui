@@ -5,6 +5,7 @@ items:
   id: DrawnUiBasePage
   parent: DrawnUi.Views
   children:
+  - DrawnUi.Views.DrawnUiBasePage.#ctor
   - DrawnUi.Views.DrawnUiBasePage.KeyboardResized(System.Double)
   - DrawnUi.Views.DrawnUiBasePage.OnKeyboardResized(System.Double)
   langs:
@@ -297,6 +298,35 @@ items:
   - Microsoft.Maui.Controls.VisualElement.DrawnUi.Draw.StaticResourcesExtensions.GetAllWithMyselfParents
   - Microsoft.Maui.IView.DrawnUi.Extensions.InternalExtensions.DisposeControlAndChildren
   - System.Object.DrawnUi.Extensions.InternalExtensions.FromPlatform
+- uid: DrawnUi.Views.DrawnUiBasePage.#ctor
+  commentId: M:DrawnUi.Views.DrawnUiBasePage.#ctor
+  id: '#ctor'
+  parent: DrawnUi.Views.DrawnUiBasePage
+  langs:
+  - csharp
+  - vb
+  name: DrawnUiBasePage()
+  nameWithType: DrawnUiBasePage.DrawnUiBasePage()
+  fullName: DrawnUi.Views.DrawnUiBasePage.DrawnUiBasePage()
+  type: Constructor
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Views/DrawnUiBasePage.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: .ctor
+    path: ../src/Maui/DrawnUi/Views/DrawnUiBasePage.cs
+    startLine: 8
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Views
+  syntax:
+    content: public DrawnUiBasePage()
+    content.vb: Public Sub New()
+  overload: DrawnUi.Views.DrawnUiBasePage.#ctor*
+  nameWithType.vb: DrawnUiBasePage.New()
+  fullName.vb: DrawnUi.Views.DrawnUiBasePage.New()
+  name.vb: New()
 - uid: DrawnUi.Views.DrawnUiBasePage.KeyboardResized(System.Double)
   commentId: M:DrawnUi.Views.DrawnUiBasePage.KeyboardResized(System.Double)
   id: KeyboardResized(System.Double)
@@ -315,7 +345,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: KeyboardResized
     path: ../src/Maui/DrawnUi/Views/DrawnUiBasePage.cs
-    startLine: 8
+    startLine: 13
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -347,7 +377,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnKeyboardResized
     path: ../src/Maui/DrawnUi/Views/DrawnUiBasePage.cs
-    startLine: 15
+    startLine: 19
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Views
@@ -5364,6 +5394,15 @@ references:
   - uid: DrawnUi.Extensions
     name: Extensions
     href: DrawnUi.Extensions.html
+- uid: DrawnUi.Views.DrawnUiBasePage.#ctor*
+  commentId: Overload:DrawnUi.Views.DrawnUiBasePage.#ctor
+  href: DrawnUi.Views.DrawnUiBasePage.html#DrawnUi_Views_DrawnUiBasePage__ctor
+  name: DrawnUiBasePage
+  nameWithType: DrawnUiBasePage.DrawnUiBasePage
+  fullName: DrawnUi.Views.DrawnUiBasePage.DrawnUiBasePage
+  nameWithType.vb: DrawnUiBasePage.New
+  fullName.vb: DrawnUi.Views.DrawnUiBasePage.New
+  name.vb: New
 - uid: DrawnUi.Views.DrawnUiBasePage.KeyboardResized*
   commentId: Overload:DrawnUi.Views.DrawnUiBasePage.KeyboardResized
   href: DrawnUi.Views.DrawnUiBasePage.html#DrawnUi_Views_DrawnUiBasePage_KeyboardResized_System_Double_

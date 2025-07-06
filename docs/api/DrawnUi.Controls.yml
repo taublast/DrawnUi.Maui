@@ -11,12 +11,13 @@ items:
   - DrawnUi.Controls.GridLayout
   - DrawnUi.Controls.ISkiaRadioButton
   - DrawnUi.Controls.ISmartNative
+  - DrawnUi.Controls.IWheelPickerCell
   - DrawnUi.Controls.MauiEditor
   - DrawnUi.Controls.MauiEditorHandler
   - DrawnUi.Controls.MauiEntry
   - DrawnUi.Controls.MauiEntryHandler
   - DrawnUi.Controls.NavigationSource
-  - DrawnUi.Controls.RadioButtonGroupManager
+  - DrawnUi.Controls.RadioButtons
   - DrawnUi.Controls.ScrollPickerLabelContainer
   - DrawnUi.Controls.ScrollPickerWheel
   - DrawnUi.Controls.SkiaCarousel
@@ -43,11 +44,18 @@ items:
   - DrawnUi.Controls.SkiaShell.TypeRouteFactory
   - DrawnUi.Controls.SkiaShellNavigatedArgs
   - DrawnUi.Controls.SkiaShellNavigatingArgs
+  - DrawnUi.Controls.SkiaSpinner
   - DrawnUi.Controls.SkiaSprite
   - DrawnUi.Controls.SkiaTabsSelector
   - DrawnUi.Controls.SkiaTabsSelector.TabEntry
   - DrawnUi.Controls.SkiaViewSwitcher
   - DrawnUi.Controls.SkiaViewSwitcher.NavigationStackEntry
+  - DrawnUi.Controls.SkiaWheelPicker
+  - DrawnUi.Controls.SkiaWheelPickerCell
+  - DrawnUi.Controls.SkiaWheelScroll
+  - DrawnUi.Controls.SkiaWheelShape
+  - DrawnUi.Controls.SkiaWheelStack
+  - DrawnUi.Controls.WheelCellInfo
   langs:
   - csharp
   - vb
@@ -400,6 +408,26 @@ references:
   name: SkiaShellNavigatingArgs
   nameWithType: SkiaShellNavigatingArgs
   fullName: DrawnUi.Controls.SkiaShellNavigatingArgs
+- uid: DrawnUi.Controls.SkiaSpinner
+  commentId: T:DrawnUi.Controls.SkiaSpinner
+  href: DrawnUi.Controls.SkiaSpinner.html
+  name: SkiaSpinner
+  nameWithType: SkiaSpinner
+  fullName: DrawnUi.Controls.SkiaSpinner
+- uid: DrawnUi.Controls.SkiaWheelShape
+  commentId: T:DrawnUi.Controls.SkiaWheelShape
+  parent: DrawnUi.Controls
+  href: DrawnUi.Controls.SkiaWheelShape.html
+  name: SkiaWheelShape
+  nameWithType: SkiaWheelShape
+  fullName: DrawnUi.Controls.SkiaWheelShape
+- uid: DrawnUi.Controls.IWheelPickerCell
+  commentId: T:DrawnUi.Controls.IWheelPickerCell
+  parent: DrawnUi.Controls
+  href: DrawnUi.Controls.IWheelPickerCell.html
+  name: IWheelPickerCell
+  nameWithType: IWheelPickerCell
+  fullName: DrawnUi.Controls.IWheelPickerCell
 - uid: DrawnUi.Controls.ScrollPickerLabelContainer
   commentId: T:DrawnUi.Controls.ScrollPickerLabelContainer
   href: DrawnUi.Controls.ScrollPickerLabelContainer.html
@@ -412,6 +440,39 @@ references:
   name: ScrollPickerWheel
   nameWithType: ScrollPickerWheel
   fullName: DrawnUi.Controls.ScrollPickerWheel
+- uid: DrawnUi.Controls.SkiaWheelPicker
+  commentId: T:DrawnUi.Controls.SkiaWheelPicker
+  href: DrawnUi.Controls.SkiaWheelPicker.html
+  name: SkiaWheelPicker
+  nameWithType: SkiaWheelPicker
+  fullName: DrawnUi.Controls.SkiaWheelPicker
+- uid: DrawnUi.Controls.SkiaWheelPickerCell
+  commentId: T:DrawnUi.Controls.SkiaWheelPickerCell
+  href: DrawnUi.Controls.SkiaWheelPickerCell.html
+  name: SkiaWheelPickerCell
+  nameWithType: SkiaWheelPickerCell
+  fullName: DrawnUi.Controls.SkiaWheelPickerCell
+- uid: DrawnUi.Controls.SkiaWheelScroll
+  commentId: T:DrawnUi.Controls.SkiaWheelScroll
+  parent: DrawnUi.Controls
+  href: DrawnUi.Controls.SkiaWheelScroll.html
+  name: SkiaWheelScroll
+  nameWithType: SkiaWheelScroll
+  fullName: DrawnUi.Controls.SkiaWheelScroll
+- uid: DrawnUi.Controls.SkiaWheelStack
+  commentId: T:DrawnUi.Controls.SkiaWheelStack
+  parent: DrawnUi.Controls
+  href: DrawnUi.Controls.SkiaWheelStack.html
+  name: SkiaWheelStack
+  nameWithType: SkiaWheelStack
+  fullName: DrawnUi.Controls.SkiaWheelStack
+- uid: DrawnUi.Controls.WheelCellInfo
+  commentId: T:DrawnUi.Controls.WheelCellInfo
+  parent: DrawnUi.Controls
+  href: DrawnUi.Controls.WheelCellInfo.html
+  name: WheelCellInfo
+  nameWithType: WheelCellInfo
+  fullName: DrawnUi.Controls.WheelCellInfo
 - uid: DrawnUi.Controls.AnimatedFramesRenderer
   commentId: T:DrawnUi.Controls.AnimatedFramesRenderer
   parent: DrawnUi.Controls
@@ -481,13 +542,13 @@ references:
   name: ISkiaRadioButton
   nameWithType: ISkiaRadioButton
   fullName: DrawnUi.Controls.ISkiaRadioButton
-- uid: DrawnUi.Controls.RadioButtonGroupManager
-  commentId: T:DrawnUi.Controls.RadioButtonGroupManager
+- uid: DrawnUi.Controls.RadioButtons
+  commentId: T:DrawnUi.Controls.RadioButtons
   parent: DrawnUi.Controls
-  href: DrawnUi.Controls.RadioButtonGroupManager.html
-  name: RadioButtonGroupManager
-  nameWithType: RadioButtonGroupManager
-  fullName: DrawnUi.Controls.RadioButtonGroupManager
+  href: DrawnUi.Controls.RadioButtons.html
+  name: RadioButtons
+  nameWithType: RadioButtons
+  fullName: DrawnUi.Controls.RadioButtons
 - uid: DrawnUi.Controls.SkiaRadioButton
   commentId: T:DrawnUi.Controls.SkiaRadioButton
   href: DrawnUi.Controls.SkiaRadioButton.html

@@ -36,7 +36,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ScaledSize
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 20
+    startLine: 19
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -73,7 +73,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 22
+    startLine: 21
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -102,7 +102,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: WithCut
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 31
+    startLine: 30
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -138,7 +138,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Default
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 43
+    startLine: 42
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -167,7 +167,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: _scale
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 45
+    startLine: 44
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -194,7 +194,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Scale
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 46
+    startLine: 45
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -223,7 +223,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Units
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 58
+    startLine: 57
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -252,7 +252,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Pixels
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 59
+    startLine: 58
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -281,7 +281,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: WidthCut
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 60
+    startLine: 59
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -310,7 +310,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: HeightCut
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 61
+    startLine: 60
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -339,7 +339,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Clone
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 63
+    startLine: 62
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -367,7 +367,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CreateEmpty
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 75
+    startLine: 74
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -401,7 +401,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: IsEmpty
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 85
+    startLine: 84
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -430,7 +430,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SnapToPixel
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 93
+    startLine: 92
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -466,7 +466,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FromUnits
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 99
+    startLine: 98
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -504,7 +504,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FromPixels
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 131
+    startLine: 130
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -540,7 +540,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FromPixels
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 136
+    startLine: 135
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -578,7 +578,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: FromPixels
     path: ../src/Shared/Draw/Internals/Models/ScaledSize.cs
-    startLine: 141
+    startLine: 140
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw

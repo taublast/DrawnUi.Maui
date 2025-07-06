@@ -39,13 +39,6 @@ references:
   name: Canvas
   nameWithType: Canvas
   fullName: DrawnUi.Views.Canvas
-- uid: DrawnUi.Views.DrawnUiBasePage
-  commentId: T:DrawnUi.Views.DrawnUiBasePage
-  parent: DrawnUi.Views
-  href: DrawnUi.Views.DrawnUiBasePage.html
-  name: DrawnUiBasePage
-  nameWithType: DrawnUiBasePage
-  fullName: DrawnUi.Views.DrawnUiBasePage
 - uid: DrawnUi.Views.DisposableManager
   commentId: T:DrawnUi.Views.DisposableManager
   parent: DrawnUi.Views
@@ -53,6 +46,13 @@ references:
   name: DisposableManager
   nameWithType: DisposableManager
   fullName: DrawnUi.Views.DisposableManager
+- uid: DrawnUi.Views.DrawnUiBasePage
+  commentId: T:DrawnUi.Views.DrawnUiBasePage
+  parent: DrawnUi.Views
+  href: DrawnUi.Views.DrawnUiBasePage.html
+  name: DrawnUiBasePage
+  nameWithType: DrawnUiBasePage
+  fullName: DrawnUi.Views.DrawnUiBasePage
 - uid: DrawnUi.Views.DrawnView
   commentId: T:DrawnUi.Views.DrawnView
   parent: DrawnUi.Views

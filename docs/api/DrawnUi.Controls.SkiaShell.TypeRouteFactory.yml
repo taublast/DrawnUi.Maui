@@ -25,7 +25,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TypeRouteFactory
     path: ../src/Maui/DrawnUi/Controls/Navigation/SkiaShell.cs
-    startLine: 2007
+    startLine: 2008
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -61,7 +61,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Maui/DrawnUi/Controls/Navigation/SkiaShell.cs
-    startLine: 2012
+    startLine: 2013
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -95,7 +95,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetOrCreate
     path: ../src/Maui/DrawnUi/Controls/Navigation/SkiaShell.cs
-    startLine: 2018
+    startLine: 2019
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -125,7 +125,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetOrCreateObject
     path: ../src/Maui/DrawnUi/Controls/Navigation/SkiaShell.cs
-    startLine: 2023
+    startLine: 2024
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -156,7 +156,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetOrCreate
     path: ../src/Maui/DrawnUi/Controls/Navigation/SkiaShell.cs
-    startLine: 2049
+    startLine: 2050
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -189,7 +189,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Equals
     path: ../src/Maui/DrawnUi/Controls/Navigation/SkiaShell.cs
-    startLine: 2065
+    startLine: 2066
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls
@@ -228,7 +228,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetHashCode
     path: ../src/Maui/DrawnUi/Controls/Navigation/SkiaShell.cs
-    startLine: 2073
+    startLine: 2074
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Controls

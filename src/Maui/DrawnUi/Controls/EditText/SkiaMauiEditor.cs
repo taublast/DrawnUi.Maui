@@ -237,7 +237,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     /// <param name="e"></param>
     private void OnControlFocused(object sender, FocusEventArgs e)
     {
-        Debug.WriteLine($"[SKiaMauiEditor] Focused by native");
+        Debug.WriteLine($"[SkiaMauiEditor] Focused by native");
         //IsFocused = true;
         lock (lockFocus)
         {
@@ -254,7 +254,7 @@ public class SkiaMauiEditor : SkiaMauiElement, ISkiaGestureListener
     /// <param name="e"></param>
     private void OnControlUnfocused(object sender, FocusEventArgs e)
     {
-        Debug.WriteLine($"[SKiaMauiEditor] Unfocused by native");
+        Debug.WriteLine($"[SkiaMauiEditor] Unfocused by native");
         //IsFocused = false;
         lock (lockFocus)
         {

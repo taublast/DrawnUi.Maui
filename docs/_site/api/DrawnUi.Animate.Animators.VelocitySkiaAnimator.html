@@ -1,103 +1,135 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Class VelocitySkiaAnimator | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class VelocitySkiaAnimator | DrawnUi Documentation ">
-    
-    <meta name="description" content="Basically a modified port of Android FlingAnimation">
-      <link rel="shortcut icon" href="../images/favicon.ico">
-      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../styles/docfx.css">
-      <link rel="stylesheet" href="../styles/main.css">
-      <meta property="docfx:navrel" content="../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../">
-    
+      
+      <meta name="description" content="Basically a modified port of Android FlingAnimation">
+      <link rel="icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../index.html">
-                <img id="logo" class="svg" src="../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator">
+
+        <article data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator">
 
 
 
-  <h1 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator" class="text-break">Class VelocitySkiaAnimator</h1>
-  <div class="markdown level0 summary"><p>Basically a modified port of Android FlingAnimation</p>
+  <h1 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator" class="text-break">
+Class VelocitySkiaAnimator  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Animate.html">Animate</a>.<a class="xref" href="DrawnUi.Animate.Animators.html">Animators</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>DrawnUi.Maui.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Basically a modified port of Android FlingAnimation</p>
 </div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
-    <div class="level1"><a class="xref" href="DrawnUi.Draw.AnimatorBase.html">AnimatorBase</a></div>
-    <div class="level2"><a class="xref" href="DrawnUi.Draw.SkiaValueAnimator.html">SkiaValueAnimator</a></div>
-    <div class="level3"><span class="xref">VelocitySkiaAnimator</span></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class VelocitySkiaAnimator : SkiaValueAnimator, ISkiaAnimator, IDisposable</code></pre>
   </div>
-  <div class="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="DrawnUi.Draw.ISkiaAnimator.html">ISkiaAnimator</a></div>
-    <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.AnimatorBase.html">AnimatorBase</a></div>
+      <div><a class="xref" href="DrawnUi.Draw.SkiaValueAnimator.html">SkiaValueAnimator</a></div>
+      <div><span class="xref">VelocitySkiaAnimator</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="DrawnUi.Draw.ISkiaAnimator.html">ISkiaAnimator</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
     <div>
       <a class="xref" href="DrawnUi.Draw.SkiaValueAnimator.html#DrawnUi_Draw_SkiaValueAnimator_Dispose">SkiaValueAnimator.Dispose()</a>
     </div>
@@ -251,1005 +283,994 @@
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
     </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="DrawnUi.Extensions.InternalExtensions.html#DrawnUi_Extensions_InternalExtensions_FromPlatform_System_Object_">InternalExtensions.FromPlatform(object)</a>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="DrawnUi.html">DrawnUi</a>.<a class="xref" href="DrawnUi.Animate.html">Animate</a>.<a class="xref" href="DrawnUi.Animate.Animators.html">Animators</a></h6>
-  <h6><strong>Assembly</strong>: DrawnUi.Maui.dll</h6>
-  <h5 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class VelocitySkiaAnimator : SkiaValueAnimator, ISkiaAnimator, IDisposable</code></pre>
-  </div>
-  <h3 id="constructors">Constructors
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator__ctor_DrawnUi_Draw_SkiaControl_.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.%23ctor(DrawnUi.Draw.SkiaControl)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L457">View Source</a>
-  </span>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator__ctor_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.#ctor*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator__ctor_DrawnUi_Draw_SkiaControl_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.#ctor(DrawnUi.Draw.SkiaControl)">VelocitySkiaAnimator(SkiaControl)</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator__ctor_DrawnUi_Draw_SkiaControl_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.#ctor(DrawnUi.Draw.SkiaControl)">
+  VelocitySkiaAnimator(SkiaControl)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L457"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public VelocitySkiaAnimator(SkiaControl parent)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></td>
-        <td><span class="parametername">parent</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="fields">Fields
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_ALPHA.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_ALPHA%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L466">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_ALPHA" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_ALPHA">MIN_VISIBLE_CHANGE_ALPHA</h4>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>parent</code> <a class="xref" href="DrawnUi.Draw.SkiaControl.html">SkiaControl</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_ALPHA" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_ALPHA">
+  MIN_VISIBLE_CHANGE_ALPHA
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L466"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const float MIN_VISIBLE_CHANGE_ALPHA = 0</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_PIXELS.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_PIXELS%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L464">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_PIXELS" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_PIXELS">MIN_VISIBLE_CHANGE_PIXELS</h4>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_PIXELS" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_PIXELS">
+  MIN_VISIBLE_CHANGE_PIXELS
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L464"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const float MIN_VISIBLE_CHANGE_PIXELS = 1</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_ROTATION_DEGREES.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_ROTATION_DEGREES%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L465">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_ROTATION_DEGREES" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_ROTATION_DEGREES">MIN_VISIBLE_CHANGE_ROTATION_DEGREES</h4>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_ROTATION_DEGREES" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_ROTATION_DEGREES">
+  MIN_VISIBLE_CHANGE_ROTATION_DEGREES
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L465"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const float MIN_VISIBLE_CHANGE_ROTATION_DEGREES = 0</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_SCALE.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_SCALE%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L467">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_SCALE" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_SCALE">MIN_VISIBLE_CHANGE_SCALE</h4>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MIN_VISIBLE_CHANGE_SCALE" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MIN_VISIBLE_CHANGE_SCALE">
+  MIN_VISIBLE_CHANGE_SCALE
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L467"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const float MIN_VISIBLE_CHANGE_SCALE = 0</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_THRESHOLD_MULTIPLIER.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.THRESHOLD_MULTIPLIER%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L469">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_THRESHOLD_MULTIPLIER" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.THRESHOLD_MULTIPLIER">THRESHOLD_MULTIPLIER</h4>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_THRESHOLD_MULTIPLIER" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.THRESHOLD_MULTIPLIER">
+  THRESHOLD_MULTIPLIER
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L469"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const float THRESHOLD_MULTIPLIER = 0.75</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_UNSET.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.UNSET%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L468">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_UNSET" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.UNSET">UNSET</h4>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_UNSET" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.UNSET">
+  UNSET
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L468"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const float UNSET = 3.4028235E+38</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mFlingForce.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mFlingForce%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L317">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mFlingForce" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mFlingForce">mFlingForce</h4>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mFlingForce" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mFlingForce">
+  mFlingForce
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L317"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">protected VelocitySkiaAnimator.DragForce mFlingForce</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a>.<a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.DragForce.html">DragForce</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMassState.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMassState%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L311">View Source</a>
-  </span>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMassState" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMassState">mMassState</h4>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a>.<a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.DragForce.html">DragForce</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMassState" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMassState">
+  mMassState
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L311"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">protected VelocitySkiaAnimator.MassState mMassState</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a>.<a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MassState.html">MassState</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_Friction.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.Friction%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L290">View Source</a>
-  </span>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a>.<a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MassState.html">MassState</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Friction_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Friction*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Friction" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Friction">Friction</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Friction" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Friction">
+  Friction
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L290"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>The bigger the sooner animation will slow down, default is 1.0</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float Friction { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_InverseK.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.InverseK%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L91">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_InverseK_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.InverseK*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_InverseK" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.InverseK">InverseK</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_InverseK" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.InverseK">
+  InverseK
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L91"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float InverseK { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_InvertOnLimits.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.InvertOnLimits%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L58">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_InvertOnLimits_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.InvertOnLimits*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_InvertOnLimits" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.InvertOnLimits">InvertOnLimits</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_InvertOnLimits" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.InvertOnLimits">
+  InvertOnLimits
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public bool InvertOnLimits { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_MaxLimit.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.MaxLimit%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L48">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MaxLimit_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MaxLimit*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MaxLimit" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MaxLimit">MaxLimit</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MaxLimit" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MaxLimit">
+  MaxLimit
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float MaxLimit { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_MinLimit.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.MinLimit%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L40">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MinLimit_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MinLimit*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MinLimit" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MinLimit">MinLimit</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_MinLimit" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.MinLimit">
+  MinLimit
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float MinLimit { get; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_Preset.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.Preset%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L408">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Preset_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Preset*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Preset" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Preset">Preset</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Preset" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Preset">
+  Preset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L408"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public VelocitySkiaAnimator.PresetType Preset { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a>.<a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.PresetType.html">PresetType</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_RemainingVelocity.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.RemainingVelocity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L309">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a>.<a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.PresetType.html">PresetType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_RemainingVelocity_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.RemainingVelocity*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_RemainingVelocity" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.RemainingVelocity">RemainingVelocity</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_RemainingVelocity" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.RemainingVelocity">
+  RemainingVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L309"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>This is set after we are done so we will know at OnStop if we have some energy left</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float RemainingVelocity { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_Scale.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.Scale%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L425">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Scale_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Scale*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Scale" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Scale">Scale</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Scale" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Scale">
+  Scale
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L425"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float Scale { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_SnapBouncingIfVelocityLessThan.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.SnapBouncingIfVelocityLessThan%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L57">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SnapBouncingIfVelocityLessThan_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SnapBouncingIfVelocityLessThan*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SnapBouncingIfVelocityLessThan" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SnapBouncingIfVelocityLessThan">SnapBouncingIfVelocityLessThan</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SnapBouncingIfVelocityLessThan" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SnapBouncingIfVelocityLessThan">
+  SnapBouncingIfVelocityLessThan
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float SnapBouncingIfVelocityLessThan { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMaxOverscrollValue.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxOverscrollValue%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L38">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMaxOverscrollValue_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxOverscrollValue*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMaxOverscrollValue" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxOverscrollValue">mMaxOverscrollValue</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMaxOverscrollValue" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxOverscrollValue">
+  mMaxOverscrollValue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Must be over 0</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float mMaxOverscrollValue { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMaxVelocity.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxVelocity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L61">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMaxVelocity_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxVelocity*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMaxVelocity" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxVelocity">mMaxVelocity</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMaxVelocity" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMaxVelocity">
+  mMaxVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float mMaxVelocity { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinOverscrollValue.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinOverscrollValue%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L33">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinOverscrollValue_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinOverscrollValue*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinOverscrollValue" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinOverscrollValue">mMinOverscrollValue</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinOverscrollValue" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinOverscrollValue">
+  mMinOverscrollValue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Must be over 0</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float mMinOverscrollValue { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinVelocity.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinVelocity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L63">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinVelocity_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinVelocity*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinVelocity" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinVelocity">mMinVelocity</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinVelocity" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinVelocity">
+  mMinVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float mMinVelocity { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinVisibleChange.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinVisibleChange%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L256">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinVisibleChange_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinVisibleChange*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinVisibleChange" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinVisibleChange">mMinVisibleChange</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mMinVisibleChange" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mMinVisibleChange">
+  mMinVisibleChange
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L256"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float mMinVisibleChange { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mVelocity.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mVelocity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L59">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mVelocity_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mVelocity*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mVelocity" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mVelocity">mVelocity</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mVelocity" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mVelocity">
+  mVelocity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float mVelocity { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_mVerticalVelocityChange.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.mVerticalVelocityChange%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L65">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mVerticalVelocityChange_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mVerticalVelocityChange*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mVerticalVelocityChange" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mVerticalVelocityChange">mVerticalVelocityChange</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_mVerticalVelocityChange" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.mVerticalVelocityChange">
+  mVerticalVelocityChange
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public float mVerticalVelocityChange { get; set; }</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-</h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_ClampOnStart.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.ClampOnStart%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L78">View Source</a>
-  </span>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_ClampOnStart_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.ClampOnStart*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_ClampOnStart" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.ClampOnStart">ClampOnStart()</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_ClampOnStart" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.ClampOnStart">
+  ClampOnStart()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">protected override void ClampOnStart()</code></pre>
   </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaValueAnimator.html#DrawnUi_Draw_SkiaValueAnimator_ClampOnStart">SkiaValueAnimator.ClampOnStart()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_SetFriction_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.SetFriction(System.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L249">View Source</a>
-  </span>
+
+
+
+
+
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SetFriction_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SetFriction*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SetFriction_System_Single_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SetFriction(System.Single)">SetFriction(float)</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SetFriction_System_Single_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SetFriction(System.Single)">
+  SetFriction(float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L249"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public VelocitySkiaAnimator SetFriction(float value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_SetVelocity_System_Single_.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.SetVelocity(System.Single)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L243">View Source</a>
-  </span>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SetVelocity_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SetVelocity*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SetVelocity_System_Single_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SetVelocity(System.Single)">SetVelocity(float)</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_SetVelocity_System_Single_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.SetVelocity(System.Single)">
+  SetVelocity(float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L243"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public VelocitySkiaAnimator SetVelocity(float value)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></td>
-        <td><span class="parametername">value</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_Stop.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.Stop%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L71">View Source</a>
-  </span>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="DrawnUi.Animate.Animators.VelocitySkiaAnimator.html">VelocitySkiaAnimator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Stop_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Stop*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Stop" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Stop">Stop()</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_Stop" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.Stop">
+  Stop()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public override void Stop()</code></pre>
   </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaValueAnimator.html#DrawnUi_Draw_SkiaValueAnimator_Stop">SkiaValueAnimator.Stop()</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator_UpdateValue_System_Int64_System_Int64_.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator.UpdateValue(System.Int64%2CSystem.Int64)%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Edit this page</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L93">View Source</a>
-  </span>
+
+
+
+
+
+
+
+
+
+
+
+
+
   <a id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_UpdateValue_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.UpdateValue*"></a>
-  <h4 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_UpdateValue_System_Int64_System_Int64_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.UpdateValue(System.Int64,System.Int64)">UpdateValue(long, long)</h4>
+
+  <h3 id="DrawnUi_Animate_Animators_VelocitySkiaAnimator_UpdateValue_System_Int64_System_Int64_" data-uid="DrawnUi.Animate.Animators.VelocitySkiaAnimator.UpdateValue(System.Int64,System.Int64)">
+  UpdateValue(long, long)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
   <div class="markdown level1 summary"><p>Update mValue using time distance between rendered frames.
 Return true if anims is finished.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
-  <h5 class="declaration">Declaration</h5>
+
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">protected override bool UpdateValue(long deltaT, long deltaFromStart)</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
-        <td><span class="parametername">deltaT</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></td>
-        <td><span class="parametername">deltaFromStart</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="DrawnUi.Draw.SkiaValueAnimator.html#DrawnUi_Draw_SkiaValueAnimator_UpdateValue_System_Int64_System_Int64_">SkiaValueAnimator.UpdateValue(long, long)</a></div>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="DrawnUi.Draw.ISkiaAnimator.html">ISkiaAnimator</a>
-  </div>
-  <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a>
-  </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
-  <div>
-      <a class="xref" href="DrawnUi.Extensions.InternalExtensions.html#DrawnUi_Extensions_InternalExtensions_FromPlatform_System_Object_">InternalExtensions.FromPlatform(object)</a>
-  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>deltaT</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+    <dt><code>deltaFromStart</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/new/master/apiSpec/new?filename=DrawnUi_Animate_Animators_VelocitySkiaAnimator.md&amp;value=---%0Auid%3A%20DrawnUi.Animate.Animators.VelocitySkiaAnimator%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Edit this page</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L28" class="contribution-link">View Source</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/2-A/src/Shared/Features/Animators/VelocitySkiaAnimator.cs/#L28" class="edit-link">Edit this page</a>
         </div>
+
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../styles/docfx.js"></script>
-    <script type="text/javascript" src="../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

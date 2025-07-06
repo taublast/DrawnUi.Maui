@@ -10,10 +10,11 @@ items:
   - DrawnUi.Draw.ScrollFlingAnimator.InitializeWithDestination(System.Single,System.Single,System.Single,System.Single,System.Single)
   - DrawnUi.Draw.ScrollFlingAnimator.InitializeWithVelocity(System.Single,System.Single,System.Single,System.Single)
   - DrawnUi.Draw.ScrollFlingAnimator.Parameters
-  - DrawnUi.Draw.ScrollFlingAnimator.RunAsync(System.Single,System.Single,System.Single,System.Single,System.Threading.CancellationToken)
+  - DrawnUi.Draw.ScrollFlingAnimator.RunAsync(System.Single,System.Single,System.Single,System.Threading.CancellationToken)
   - DrawnUi.Draw.ScrollFlingAnimator.SelfFinished
   - DrawnUi.Draw.ScrollFlingAnimator.Start(System.Double)
   - DrawnUi.Draw.ScrollFlingAnimator.UpdateValue(System.Int64,System.Int64)
+  - DrawnUi.Draw.ScrollFlingAnimator.ValueThreshold
   langs:
   - csharp
   - vb
@@ -28,7 +29,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ScrollFlingAnimator
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 6
+    startLine: 4
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -115,7 +116,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SelfFinished
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 8
+    startLine: 6
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -126,16 +127,45 @@ items:
       type: System.Boolean
     content.vb: Public Property SelfFinished As Boolean
   overload: DrawnUi.Draw.ScrollFlingAnimator.SelfFinished*
-- uid: DrawnUi.Draw.ScrollFlingAnimator.RunAsync(System.Single,System.Single,System.Single,System.Single,System.Threading.CancellationToken)
-  commentId: M:DrawnUi.Draw.ScrollFlingAnimator.RunAsync(System.Single,System.Single,System.Single,System.Single,System.Threading.CancellationToken)
-  id: RunAsync(System.Single,System.Single,System.Single,System.Single,System.Threading.CancellationToken)
+- uid: DrawnUi.Draw.ScrollFlingAnimator.ValueThreshold
+  commentId: P:DrawnUi.Draw.ScrollFlingAnimator.ValueThreshold
+  id: ValueThreshold
   parent: DrawnUi.Draw.ScrollFlingAnimator
   langs:
   - csharp
   - vb
-  name: RunAsync(float, float, float, float, CancellationToken)
-  nameWithType: ScrollFlingAnimator.RunAsync(float, float, float, float, CancellationToken)
-  fullName: DrawnUi.Draw.ScrollFlingAnimator.RunAsync(float, float, float, float, System.Threading.CancellationToken)
+  name: ValueThreshold
+  nameWithType: ScrollFlingAnimator.ValueThreshold
+  fullName: DrawnUi.Draw.ScrollFlingAnimator.ValueThreshold
+  type: Property
+  source:
+    remote:
+      path: src/Shared/Features/Animators/ScrollFlingAnimator.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: ValueThreshold
+    path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
+    startLine: 7
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  syntax:
+    content: public float ValueThreshold { get; set; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public Property ValueThreshold As Single
+  overload: DrawnUi.Draw.ScrollFlingAnimator.ValueThreshold*
+- uid: DrawnUi.Draw.ScrollFlingAnimator.RunAsync(System.Single,System.Single,System.Single,System.Threading.CancellationToken)
+  commentId: M:DrawnUi.Draw.ScrollFlingAnimator.RunAsync(System.Single,System.Single,System.Single,System.Threading.CancellationToken)
+  id: RunAsync(System.Single,System.Single,System.Single,System.Threading.CancellationToken)
+  parent: DrawnUi.Draw.ScrollFlingAnimator
+  langs:
+  - csharp
+  - vb
+  name: RunAsync(float, float, float, CancellationToken)
+  nameWithType: ScrollFlingAnimator.RunAsync(float, float, float, CancellationToken)
+  fullName: DrawnUi.Draw.ScrollFlingAnimator.RunAsync(float, float, float, System.Threading.CancellationToken)
   type: Method
   source:
     remote:
@@ -144,12 +174,12 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: RunAsync
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 10
+    startLine: 13
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
   syntax:
-    content: public Task RunAsync(float position, float velocity, float deceleration = 0.998, float threshold = 0.5, CancellationToken cancellationToken = default)
+    content: public Task RunAsync(float position, float velocity, float deceleration = 0.998, CancellationToken cancellationToken = default)
     parameters:
     - id: position
       type: System.Single
@@ -157,17 +187,15 @@ items:
       type: System.Single
     - id: deceleration
       type: System.Single
-    - id: threshold
-      type: System.Single
     - id: cancellationToken
       type: System.Threading.CancellationToken
     return:
       type: System.Threading.Tasks.Task
-    content.vb: Public Function RunAsync(position As Single, velocity As Single, deceleration As Single = 0.998, threshold As Single = 0.5, cancellationToken As CancellationToken = Nothing) As Task
+    content.vb: Public Function RunAsync(position As Single, velocity As Single, deceleration As Single = 0.998, cancellationToken As CancellationToken = Nothing) As Task
   overload: DrawnUi.Draw.ScrollFlingAnimator.RunAsync*
-  nameWithType.vb: ScrollFlingAnimator.RunAsync(Single, Single, Single, Single, CancellationToken)
-  fullName.vb: DrawnUi.Draw.ScrollFlingAnimator.RunAsync(Single, Single, Single, Single, System.Threading.CancellationToken)
-  name.vb: RunAsync(Single, Single, Single, Single, CancellationToken)
+  nameWithType.vb: ScrollFlingAnimator.RunAsync(Single, Single, Single, CancellationToken)
+  fullName.vb: DrawnUi.Draw.ScrollFlingAnimator.RunAsync(Single, Single, Single, System.Threading.CancellationToken)
+  name.vb: RunAsync(Single, Single, Single, CancellationToken)
 - uid: DrawnUi.Draw.ScrollFlingAnimator.InitializeWithVelocity(System.Single,System.Single,System.Single,System.Single)
   commentId: M:DrawnUi.Draw.ScrollFlingAnimator.InitializeWithVelocity(System.Single,System.Single,System.Single,System.Single)
   id: InitializeWithVelocity(System.Single,System.Single,System.Single,System.Single)
@@ -186,22 +214,28 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InitializeWithVelocity
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 15
+    startLine: 25
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
+  summary: Initialize with velocity and optional value threshold for early termination
+  example: []
   syntax:
-    content: public void InitializeWithVelocity(float position, float velocity, float deceleration = 0.998, float threshold = 0.5)
+    content: public void InitializeWithVelocity(float position, float velocity, float deceleration = 0.998, float valueThreshold = 1.85)
     parameters:
     - id: position
       type: System.Single
+      description: Starting position
     - id: velocity
       type: System.Single
+      description: Initial velocity
     - id: deceleration
       type: System.Single
-    - id: threshold
+      description: Deceleration rate
+    - id: valueThreshold
       type: System.Single
-    content.vb: Public Sub InitializeWithVelocity(position As Single, velocity As Single, deceleration As Single = 0.998, threshold As Single = 0.5)
+      description: Stop when value change per frame is below this
+    content.vb: Public Sub InitializeWithVelocity(position As Single, velocity As Single, deceleration As Single = 0.998, valueThreshold As Single = 1.85)
   overload: DrawnUi.Draw.ScrollFlingAnimator.InitializeWithVelocity*
   nameWithType.vb: ScrollFlingAnimator.InitializeWithVelocity(Single, Single, Single, Single)
   fullName.vb: DrawnUi.Draw.ScrollFlingAnimator.InitializeWithVelocity(Single, Single, Single, Single)
@@ -224,24 +258,31 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: InitializeWithDestination
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 21
+    startLine: 43
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
+  summary: Initialize to reach a specific destination in given time
+  example: []
   syntax:
-    content: public void InitializeWithDestination(float position, float target, float timeSecs, float deceleration = 0.998, float threshold = 0.5)
+    content: public void InitializeWithDestination(float position, float target, float timeSecs, float deceleration = 0.998, float valueThreshold = 0.1)
     parameters:
     - id: position
       type: System.Single
+      description: Starting position
     - id: target
       type: System.Single
+      description: Target position
     - id: timeSecs
       type: System.Single
+      description: Duration in seconds
     - id: deceleration
       type: System.Single
-    - id: threshold
+      description: Deceleration rate
+    - id: valueThreshold
       type: System.Single
-    content.vb: Public Sub InitializeWithDestination(position As Single, target As Single, timeSecs As Single, deceleration As Single = 0.998, threshold As Single = 0.5)
+      description: Stop when value change per frame is below this
+    content.vb: Public Sub InitializeWithDestination(position As Single, target As Single, timeSecs As Single, deceleration As Single = 0.998, valueThreshold As Single = 0.1)
   overload: DrawnUi.Draw.ScrollFlingAnimator.InitializeWithDestination*
   nameWithType.vb: ScrollFlingAnimator.InitializeWithDestination(Single, Single, Single, Single, Single)
   fullName.vb: DrawnUi.Draw.ScrollFlingAnimator.InitializeWithDestination(Single, Single, Single, Single, Single)
@@ -264,7 +305,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Parameters
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 27
+    startLine: 52
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -293,7 +334,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CurrentVelocity
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 29
+    startLine: 53
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -322,7 +363,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: Start
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 31
+    startLine: 55
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -356,7 +397,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: UpdateValue
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 38
+    startLine: 62
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -400,7 +441,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: .ctor
     path: ../src/Shared/Features/Animators/ScrollFlingAnimator.cs
-    startLine: 53
+    startLine: 106
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -1446,12 +1487,12 @@ references:
   nameWithType.vb: Boolean
   fullName.vb: Boolean
   name.vb: Boolean
-- uid: DrawnUi.Draw.ScrollFlingAnimator.RunAsync*
-  commentId: Overload:DrawnUi.Draw.ScrollFlingAnimator.RunAsync
-  href: DrawnUi.Draw.ScrollFlingAnimator.html#DrawnUi_Draw_ScrollFlingAnimator_RunAsync_System_Single_System_Single_System_Single_System_Single_System_Threading_CancellationToken_
-  name: RunAsync
-  nameWithType: ScrollFlingAnimator.RunAsync
-  fullName: DrawnUi.Draw.ScrollFlingAnimator.RunAsync
+- uid: DrawnUi.Draw.ScrollFlingAnimator.ValueThreshold*
+  commentId: Overload:DrawnUi.Draw.ScrollFlingAnimator.ValueThreshold
+  href: DrawnUi.Draw.ScrollFlingAnimator.html#DrawnUi_Draw_ScrollFlingAnimator_ValueThreshold
+  name: ValueThreshold
+  nameWithType: ScrollFlingAnimator.ValueThreshold
+  fullName: DrawnUi.Draw.ScrollFlingAnimator.ValueThreshold
 - uid: System.Single
   commentId: T:System.Single
   parent: System
@@ -1463,6 +1504,12 @@ references:
   nameWithType.vb: Single
   fullName.vb: Single
   name.vb: Single
+- uid: DrawnUi.Draw.ScrollFlingAnimator.RunAsync*
+  commentId: Overload:DrawnUi.Draw.ScrollFlingAnimator.RunAsync
+  href: DrawnUi.Draw.ScrollFlingAnimator.html#DrawnUi_Draw_ScrollFlingAnimator_RunAsync_System_Single_System_Single_System_Single_System_Threading_CancellationToken_
+  name: RunAsync
+  nameWithType: ScrollFlingAnimator.RunAsync
+  fullName: DrawnUi.Draw.ScrollFlingAnimator.RunAsync
 - uid: System.Threading.CancellationToken
   commentId: T:System.Threading.CancellationToken
   parent: System.Threading

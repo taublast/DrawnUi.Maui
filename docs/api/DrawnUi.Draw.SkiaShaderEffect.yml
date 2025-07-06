@@ -33,6 +33,7 @@ items:
   - DrawnUi.Draw.SkiaShaderEffect.ShaderSourceProperty
   - DrawnUi.Draw.SkiaShaderEffect.ShaderTemplate
   - DrawnUi.Draw.SkiaShaderEffect.ShaderTemplateProperty
+  - DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
   - DrawnUi.Draw.SkiaShaderEffect.Update
   - DrawnUi.Draw.SkiaShaderEffect.UseContext
   - DrawnUi.Draw.SkiaShaderEffect.UseContextProperty
@@ -356,6 +357,39 @@ items:
   overload: DrawnUi.Draw.SkiaShaderEffect.Render*
   implements:
   - DrawnUi.Draw.IPostRendererEffect.Render(DrawnUi.Draw.DrawingContext)
+- uid: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  commentId: M:DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  id: ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  parent: DrawnUi.Draw.SkiaShaderEffect
+  langs:
+  - csharp
+  - vb
+  name: ShouldDisposePreviousTexture(SKImage)
+  nameWithType: SkiaShaderEffect.ShouldDisposePreviousTexture(SKImage)
+  fullName: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  type: Method
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Features/Effects/SkiaShaderEffect.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: ShouldDisposePreviousTexture
+    path: ../src/Maui/DrawnUi/Features/Effects/SkiaShaderEffect.cs
+    startLine: 122
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  summary: Checks if image is a new snapshot that needs disposal
+  example: []
+  syntax:
+    content: protected virtual bool ShouldDisposePreviousTexture(SKImage image)
+    parameters:
+    - id: image
+      type: SkiaSharp.SKImage
+    return:
+      type: System.Boolean
+    content.vb: Protected Overridable Function ShouldDisposePreviousTexture(image As SKImage) As Boolean
+  overload: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture*
 - uid: DrawnUi.Draw.SkiaShaderEffect.CreateShader(DrawnUi.Draw.DrawingContext,SkiaSharp.SKImage)
   commentId: M:DrawnUi.Draw.SkiaShaderEffect.CreateShader(DrawnUi.Draw.DrawingContext,SkiaSharp.SKImage)
   id: CreateShader(DrawnUi.Draw.DrawingContext,SkiaSharp.SKImage)
@@ -2341,6 +2375,12 @@ references:
   name: DrawingContext
   nameWithType: DrawingContext
   fullName: DrawnUi.Draw.DrawingContext
+- uid: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture*
+  commentId: Overload:DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture
+  href: DrawnUi.Draw.SkiaShaderEffect.html#DrawnUi_Draw_SkiaShaderEffect_ShouldDisposePreviousTexture_SkiaSharp_SKImage_
+  name: ShouldDisposePreviousTexture
+  nameWithType: SkiaShaderEffect.ShouldDisposePreviousTexture
+  fullName: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture
 - uid: DrawnUi.Draw.SkiaShaderEffect.CreateShader*
   commentId: Overload:DrawnUi.Draw.SkiaShaderEffect.CreateShader
   href: DrawnUi.Draw.SkiaShaderEffect.html#DrawnUi_Draw_SkiaShaderEffect_CreateShader_DrawnUi_Draw_DrawingContext_SkiaSharp_SKImage_

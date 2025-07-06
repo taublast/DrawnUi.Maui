@@ -1,82 +1,90 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Controls Overview | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Controls Overview | DrawnUi Documentation ">
-    
-    
-      <link rel="shortcut icon" href="../../images/favicon.ico">
-      <link rel="stylesheet" href="../../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../../styles/docfx.css">
-      <link rel="stylesheet" href="../../styles/main.css">
-      <meta property="docfx:navrel" content="../../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../../">
-    
+      
+      
+      <link rel="icon" href="../../images/favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/index.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../../index.html">
-                <img id="logo" class="svg" src="../../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="">
+
+        <article data-uid="">
 <h1 id="controls-overview">Controls Overview</h1>
 
 <p>DrawnUi positions itsself as an angine providing a toolset to create and use custom drawn controls. Out-of-the box it provides you with base controls that can be used a lego-bricks to composite custom controls, and proposes some useful pre-made custom controls.</p>
@@ -87,8 +95,8 @@
 <h3 id="aliases">Aliases</h3>
 <p>There are controls that are aliases for other controls, te make porting existing native apps easier, to replace one name in code with another:</p>
 <ul>
-<li>SkiaFrame is an alias for SKiaShape of Rectangle type, MAUI Frame</li>
-<li>SkiaStack is for SKiaLayout type Column with default horizontal Fill, MAUI VerticalStackLayout</li>
+<li>SkiaFrame is an alias for SkiaShape of Rectangle type, MAUI Frame</li>
+<li>SkiaStack is for SkiaLayout type Column with default horizontal Fill, MAUI VerticalStackLayout</li>
 <li>SkiaRow is for SkiaLayout type Row, MAUI HorizontalStackLayout</li>
 <li>SkiaLayer is for SkiaLayout type Absolute with default horizontal Fill, MAUI Grid with 1 col/row used for layering</li>
 <li>SkiaGrid is for SkiaLayout type Grid with default horizontal Fill, MAUI Grid</li>
@@ -101,7 +109,7 @@
 <li>SnappingLayout: Base class for snap points</li>
 <li>SkiaDrawer: Swipe-in/out panel, subclassed SnappingLayout,</li>
 <li>SkiaCarousel: Swipeable carousel, subclassed SnappingLayout</li>
-<li><a href="layouts.html#gridlayout">ContentLayout</a>: Optimized for single child, SKiaShape derives from this one</li>
+<li><a href="layouts.html#gridlayout">ContentLayout</a>: Optimized for single child, SkiaShape derives from this one</li>
 <li>SkiaShape: Base class for all shapes, can wrap other elements to be clipped inside</li>
 </ul>
 <h3 id="text-controls">Text Controls</h3>
@@ -111,11 +119,11 @@
 </ul>
 <h3 id="graphics-controls">Graphics Controls</h3>
 <ul>
-<li><a href="images.html#skiaimage">SkiaImage</a>: Image rendering</li>
-<li><a href="images.html#skiasvg">SkiaSvg</a>: SVG rendering</li>
-<li><a href="images.html#skiagif">SkiaGif</a>: Animated GIF support</li>
-<li>SkiaMediaImage: Media image, subclassed SkiaImage</li>
-<li>SkiaLottie: Lottie animation, subclassed SkiaImage</li>
+<li><a href="images.html#skiaimage">SkiaImage</a>: Image rendering with many options and filters</li>
+<li><a href="images.html#skiasvg">SkiaSvg</a>: SVG rendering with many options</li>
+<li><a href="images.html#skiagif">SkiaGif</a>: Animated GIF support - dedicated lightweight GIF-player with playback properties</li>
+<li><a href="images.html#skiamediaimage">SkiaMediaImage</a>: Media image, subclassed SkiaImage for displaying any kind of images (image/animated gif/more..)</li>
+<li><a href="animations.html#skialottie">SkiaLottie</a>: Lottie animation with tint customization, subclassed SkiaImage</li>
 </ul>
 <h3 id="button-controls">Button Controls</h3>
 <p>It's important to notice that every control can behaive like a button with gestures attached, but here is a pre-made button control, providing different platforms looks via <code>ControlStyle</code> property:</p>
@@ -124,58 +132,63 @@
 </ul>
 <h3 id="toggle-controls">Toggle Controls</h3>
 <ul>
-<li><a href="switches.html#skiaswitch">SkiaSwitch</a>: Platform-styled toggle switch</li>
+<li><a href="switches.html#skiaswitch">SkiaSwitch</a>: Platform-styled toggle switch to be able to toggle anything</li>
 <li><a href="switches.html#skiacheckbox">SkiaCheckbox</a>: Platform-styled checkbox</li>
 <li><a href="switches.html#skiatoggle">SkiaToggle</a>: Base toggle class for custom toggles</li>
-<li>SkiaRadioButton: Radio button, subclassed SkiaToggle</li>
+<li><a href="switches.html#skiaradiobutton">SkiaRadioButton</a>: Radio button to select something unique from options, subclassed SkiaToggle</li>
 </ul>
-<h3 id="navigation-control">Navigation control</h3>
+<h3 id="navigation-controls">Navigation Controls</h3>
 <ul>
-<li><a href="shell.html">SkiaShell</a>: Navigation framework, subclassed SkiaLayout</li>
-<li>SkiaViewSwitcher: View switcher, subclassed SkiaLayout</li>
+<li><a href="shell.html">SkiaShell</a>: Navigation framework for navigation inside a drawn app, subclassed SkiaLayout</li>
+<li><a href="shell.html#skiaviewswitcher">SkiaViewSwitcher</a>: View switcher to switch your views, pop, push and slide, subclassed SkiaLayout</li>
 </ul>
-<h3 id="helper-controls">Helper controls</h3>
+<h3 id="input-controls">Input Controls</h3>
 <ul>
-<li>SkiaDecoratedGrid: A grid able to draw shapes between cells</li>
+<li><a href="input.html#skiaslider">SkiaSlider</a>: Slider including range selection capability</li>
+<li><a href="input.html#skiaprogress">SkiaProgress</a>: Progress indicator to show that you are actually doing something</li>
+<li><a href="input.html#skiawheelpicker">SkiaWheelPicker</a>: iOS-look picker wheel</li>
+<li><a href="input.html#skiaspinner">SkiaSpinner</a>: Spinner to test your luck</li>
+</ul>
+<h3 id="specialized-controls">Specialized Controls</h3>
+<ul>
+<li><a href="scroll.html#skiascrolllooped">SkiaScrollLooped</a>: Subclassed SkiaScroll for neverending scrolls</li>
+<li><a href="layouts.html#skiadecoratedgrid">SkiaDecoratedGrid</a>: Grid able to draw shapes between rows and columns</li>
+<li><a href="scroll.html#refreshindicator">RefreshIndicator</a>: Can use Lottie and anything as ActivityIndicator or for your scroll RefreshView</li>
+<li><a href="shapes.html#skiahovermask">SkiaHoverMask</a>: Overlay a clipping shape</li>
+<li><a href="shell.html#skiatabs">SkiaTabsSelector</a>: Create top and bottom tabs</li>
+<li><a href="native-integration.html#skiacamera">SkiaCamera</a>: Camera control that draws on the canvas</li>
+<li><a href="layouts.html#skiahotspot">SkiaHotspot</a>: Handle gestures in a lazy way</li>
+<li><a href="layouts.html#skiabackdrop">SkiaBackdrop</a>: Apply effects to background below, like blur etc</li>
+<li><a href="native-integration.html#skiamauielement">SkiaMauiElement</a>: Embed MAUI controls in your canvas</li>
+</ul>
+<h3 id="development-controls">Development Controls</h3>
+<ul>
+<li><a href="text.html#skialabelfps">SkiaLabelFps</a>: FPS display for development</li>
 </ul>
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/index.md/#L1" class="contribution-link">Edit this page</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/index.md/#L1" class="edit-link">Edit this page</a>
         </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../../styles/docfx.js"></script>
-    <script type="text/javascript" src="../../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

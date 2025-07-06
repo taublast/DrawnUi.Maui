@@ -35,7 +35,7 @@ To make everything compile from first attempt You might also need at least the f
 
 ```
 
-For Windows to overcome an existing restriction in SKiaSharp you would need to enable MSIX packaging for your Windows project. This limitation will be resolved.
+For Windows to overcome an existing restriction in SkiaSharp you would need to enable MSIX packaging for your Windows project. This limitation will be resolved.
 
 
 ### 2. Initialize in Your MAUI App

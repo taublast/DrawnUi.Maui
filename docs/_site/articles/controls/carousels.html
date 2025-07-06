@@ -1,82 +1,90 @@
 <!DOCTYPE html>
-<!--[if IE]><![endif]-->
 <html>
-
   <head>
     <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
       <title>Carousel Controls | DrawnUi Documentation </title>
-      <meta name="viewport" content="width=device-width">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Carousel Controls | DrawnUi Documentation ">
-    
-    
-      <link rel="shortcut icon" href="../../images/favicon.ico">
-      <link rel="stylesheet" href="../../styles/docfx.vendor.min.css">
-      <link rel="stylesheet" href="../../styles/docfx.css">
-      <link rel="stylesheet" href="../../styles/main.css">
-      <meta property="docfx:navrel" content="../../toc.html">
-      <meta property="docfx:tocrel" content="toc.html">
-    
-    <meta property="docfx:rel" content="../../">
-    
+      
+      
+      <link rel="icon" href="../../images/favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/carousels.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
   </head>
-  <body data-spy="scroll" data-target="#affix" data-offset="120">
-    <div id="wrapper">
-      <header>
 
-        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-
-              <a class="navbar-brand" href="../../index.html">
-                <img id="logo" class="svg" src="../../images/logo.png" alt="">
-              </a>
-            </div>
-            <div class="collapse navbar-collapse" id="navbar">
-              <form class="navbar-form navbar-right" role="search" id="search">
-                <div class="form-group">
-                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
-                </div>
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo.png" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
               </form>
             </div>
           </div>
-        </nav>
-
-        <div class="subnav navbar navbar-default">
-          <div class="container hide-when-search" id="breadcrumb">
-            <ul class="breadcrumb">
-              <li></li>
-            </ul>
-          </div>
         </div>
-      </header>
-      <div class="container body-content">
+      </nav>
+    </header>
 
-        <div id="search-results">
-          <div class="search-list">Search Results for <span></span></div>
-          <div class="sr-items">
-            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
           </div>
-          <ul id="pagination" data-first=First data-prev=Previous data-next=Next data-last=Last></ul>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
         </div>
       </div>
-      <div role="main" class="container body-content hide-when-search">
 
-        <div class="sidenav hide-when-search">
-          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
-          <div class="sidetoggle collapse" id="sidetoggle">
-            <div id="sidetoc"></div>
-          </div>
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
         </div>
-        <div class="article row grid-right">
-          <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="">
+
+        <article data-uid="">
 <h1 id="carousel-controls">Carousel Controls</h1>
 
 <p>DrawnUi.Maui provides powerful carousel controls for creating interactive, swipeable displays of content. This article covers the carousel components available in the framework.</p>
@@ -237,95 +245,220 @@ myCarousel.PropertyChanged += (sender, e) =&gt; {
     }
 };
 </code></pre>
-<h2 id="advanced-examples">Advanced Examples</h2>
-<h3 id="image-gallery-carousel">Image Gallery Carousel</h3>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaCarousel
-    WidthRequest=&quot;400&quot;
-    HeightRequest=&quot;300&quot;
-    SidesOffset=&quot;50&quot;
-    Bounces=&quot;True&quot;&gt;
-    
-    &lt;DrawUi:SkiaShape Type=&quot;Rectangle&quot; BackgroundColor=&quot;White&quot; CornerRadius=&quot;12&quot;&gt;
-        &lt;DrawUi:SkiaShape.Shadows&gt;
-            &lt;DrawUi:SkiaShadow Color=&quot;#40000000&quot; BlurRadius=&quot;10&quot; Offset=&quot;0,4&quot; /&gt;
-        &lt;/DrawUi:SkiaShape.Shadows&gt;
-        &lt;DrawUi:SkiaImage Source=&quot;image1.jpg&quot; Aspect=&quot;AspectFill&quot; /&gt;
-    &lt;/DrawUi:SkiaShape&gt;
-    
-    &lt;DrawUi:SkiaShape Type=&quot;Rectangle&quot; BackgroundColor=&quot;White&quot; CornerRadius=&quot;12&quot;&gt;
-        &lt;DrawUi:SkiaShape.Shadows&gt;
-            &lt;DrawUi:SkiaShadow Color=&quot;#40000000&quot; BlurRadius=&quot;10&quot; Offset=&quot;0,4&quot; /&gt;
-        &lt;/DrawUi:SkiaShape.Shadows&gt;
-        &lt;DrawUi:SkiaImage Source=&quot;image2.jpg&quot; Aspect=&quot;AspectFill&quot; /&gt;
-    &lt;/DrawUi:SkiaShape&gt;
-    
-    &lt;DrawUi:SkiaShape Type=&quot;Rectangle&quot; BackgroundColor=&quot;White&quot; CornerRadius=&quot;12&quot;&gt;
-        &lt;DrawUi:SkiaShape.Shadows&gt;
-            &lt;DrawUi:SkiaShadow Color=&quot;#40000000&quot; BlurRadius=&quot;10&quot; Offset=&quot;0,4&quot; /&gt;
-        &lt;/DrawUi:SkiaShape.Shadows&gt;
-        &lt;DrawUi:SkiaImage Source=&quot;image3.jpg&quot; Aspect=&quot;AspectFill&quot; /&gt;
-    &lt;/DrawUi:SkiaShape&gt;
-    
-&lt;/DrawUi:SkiaCarousel&gt;
+<h2 id="real-world-examples">Real-World Examples</h2>
+<h3 id="gallery-popup-with-zoom">Gallery Popup with Zoom</h3>
+<p>A powerful pattern is using SkiaCarousel inside a popup for image galleries with zoom capabilities:</p>
+<pre><code class="lang-xml">&lt;draw:SkiaCarousel
+    x:Name=&quot;MainCarousel&quot;
+    Bounces=&quot;True&quot;
+    HorizontalOptions=&quot;Fill&quot;
+    ItemsSource=&quot;{Binding GalleryItems}&quot;
+    SelectedIndex=&quot;{Binding SelectedGalleryIndex}&quot;
+    SidesOffset=&quot;0&quot;
+    Spacing=&quot;16&quot;
+    VerticalOptions=&quot;Fill&quot;&gt;
+
+    &lt;draw:SkiaLayout.ItemTemplate&gt;
+        &lt;DataTemplate&gt;
+
+            &lt;draw:ZoomContent
+                PanningMode=&quot;OneFinger&quot;
+                UseCache=&quot;GPU&quot;
+                ZoomMax=&quot;2&quot;
+                ZoomMin=&quot;1&quot;&gt;
+
+                &lt;draw:SkiaLayout
+                    x:DataType=&quot;x:String&quot;
+                    BackgroundColor=&quot;Transparent&quot;
+                    HorizontalOptions=&quot;Fill&quot;
+                    UseCache=&quot;Operations&quot;
+                    VerticalOptions=&quot;Fill&quot;&gt;
+
+                    &lt;!-- Loading indicator --&gt;
+                    &lt;draw:SkiaSvg
+                        Source=&quot;loading.svg&quot;
+                        TintColor=&quot;White&quot;
+                        HorizontalOptions=&quot;Center&quot;
+                        VerticalOptions=&quot;Center&quot; /&gt;
+
+                    &lt;!-- Main image --&gt;
+                    &lt;draw:SkiaImage
+                        Aspect=&quot;AspectFit&quot;
+                        EraseChangedContent=&quot;True&quot;
+                        HorizontalOptions=&quot;Fill&quot;
+                        LoadSourceOnFirstDraw=&quot;False&quot;
+                        Source=&quot;{Binding .}&quot;
+                        VerticalOptions=&quot;Fill&quot; /&gt;
+
+                &lt;/draw:SkiaLayout&gt;
+
+            &lt;/draw:ZoomContent&gt;
+
+        &lt;/DataTemplate&gt;
+
+    &lt;/draw:SkiaLayout.ItemTemplate&gt;
+
+&lt;/draw:SkiaCarousel&gt;
 </code></pre>
-<h3 id="card-carousel-with-indicators">Card Carousel with Indicators</h3>
-<pre><code class="lang-xml">&lt;DrawUi:SkiaLayout LayoutType=&quot;Column&quot; HorizontalOptions=&quot;Fill&quot;&gt;
-    
-    &lt;DrawUi:SkiaCarousel
-        x:Name=&quot;CardCarousel&quot;
-        WidthRequest=&quot;400&quot;
-        HeightRequest=&quot;300&quot;
-        SelectedIndex=&quot;{Binding CurrentCardIndex, Mode=TwoWay}&quot;&gt;
-        
-        &lt;!-- Card items here --&gt;
-        
-    &lt;/DrawUi:SkiaCarousel&gt;
-    
-    &lt;!-- Page indicators --&gt;
-    &lt;DrawUi:SkiaLayout 
-        LayoutType=&quot;Row&quot; 
-        Spacing=&quot;8&quot; 
-        HorizontalOptions=&quot;Center&quot;
-        Margin=&quot;0,16,0,0&quot;&gt;
-        
-        &lt;DrawUi:SkiaShape 
-            Type=&quot;Circle&quot; 
-            WidthRequest=&quot;12&quot; 
-            HeightRequest=&quot;12&quot; 
-            BackgroundColor=&quot;{Binding Source={x:Reference CardCarousel}, Path=SelectedIndex, Converter={StaticResource SelectedIndexConverter}, ConverterParameter=0}&quot; /&gt;
-        
-        &lt;DrawUi:SkiaShape 
-            Type=&quot;Circle&quot; 
-            WidthRequest=&quot;12&quot; 
-            HeightRequest=&quot;12&quot; 
-            BackgroundColor=&quot;{Binding Source={x:Reference CardCarousel}, Path=SelectedIndex, Converter={StaticResource SelectedIndexConverter}, ConverterParameter=1}&quot; /&gt;
-        
-        &lt;DrawUi:SkiaShape 
-            Type=&quot;Circle&quot; 
-            WidthRequest=&quot;12&quot; 
-            HeightRequest=&quot;12&quot; 
-            BackgroundColor=&quot;{Binding Source={x:Reference CardCarousel}, Path=SelectedIndex, Converter={StaticResource SelectedIndexConverter}, ConverterParameter=2}&quot; /&gt;
-        
-    &lt;/DrawUi:SkiaLayout&gt;
-    
-&lt;/DrawUi:SkiaLayout&gt;
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>ZoomContent</strong>: Enables pinch-to-zoom on each image</li>
+<li><strong>Data Binding</strong>: Uses ItemsSource for dynamic image collection</li>
+<li><strong>Performance</strong>: GPU caching and optimized image loading</li>
+<li><strong>UX</strong>: Loading indicators and smooth transitions</li>
+</ul>
+<h3 id="dedicated-carousel-demo-page">Dedicated Carousel Demo Page</h3>
+<p>A comprehensive carousel demonstration with spacing and offset effects:</p>
+<pre><code class="lang-xml">&lt;draw:SkiaCarousel
+    x:Name=&quot;MainCarousel&quot;
+    BackgroundColor=&quot;Transparent&quot;
+    Bounces=&quot;True&quot;
+    HeightRequest=&quot;200&quot;
+    HorizontalOptions=&quot;Fill&quot;
+    InTransition=&quot;{Binding SomeBoolean}&quot;
+    SelectedIndex=&quot;{Binding SelectedIndex}&quot;
+    SidesOffset=&quot;40&quot;
+    Spacing=&quot;20&quot;
+    VerticalOptions=&quot;Center&quot;&gt;
+
+    &lt;draw:SkiaLayout
+        BackgroundColor=&quot;Red&quot;
+        UseCache=&quot;None&quot;&gt;
+
+        &lt;draw:SkiaLabel
+            Margin=&quot;24&quot;
+            FontSize=&quot;16&quot;
+            HorizontalOptions=&quot;Center&quot;
+            HorizontalTextAlignment=&quot;Center&quot;
+            Text=&quot;Here we have Spacing 20 and SidesOffset 40.&quot;
+            VerticalOptions=&quot;Center&quot; /&gt;
+
+    &lt;/draw:SkiaLayout&gt;
+
+    &lt;draw:SkiaLayout BackgroundColor=&quot;Green&quot;&gt;
+        &lt;draw:SkiaLabel
+            FontSize=&quot;40&quot;
+            HorizontalOptions=&quot;Center&quot;
+            Text=&quot;2&quot;
+            VerticalOptions=&quot;Center&quot; /&gt;
+    &lt;/draw:SkiaLayout&gt;
+
+    &lt;draw:SkiaLayout BackgroundColor=&quot;Blue&quot;&gt;
+        &lt;draw:SkiaLabel
+            FontSize=&quot;40&quot;
+            HorizontalOptions=&quot;Center&quot;
+            Text=&quot;3&quot;
+            VerticalOptions=&quot;Center&quot; /&gt;
+    &lt;/draw:SkiaLayout&gt;
+
+    &lt;draw:SkiaLayout BackgroundColor=&quot;Fuchsia&quot;&gt;
+        &lt;draw:SkiaLabel
+            FontSize=&quot;40&quot;
+            HorizontalOptions=&quot;Center&quot;
+            Text=&quot;4&quot;
+            VerticalOptions=&quot;Center&quot; /&gt;
+    &lt;/draw:SkiaLayout&gt;
+
+&lt;/draw:SkiaCarousel&gt;
 </code></pre>
-<p>With a converter to change color based on selection:</p>
-<pre><code class="lang-csharp">public class SelectedIndexConverter : IValueConverter
+<p><strong>Configuration Highlights:</strong></p>
+<ul>
+<li><code>SidesOffset=&quot;40&quot;</code> - Shows 40px of adjacent slides</li>
+<li><code>Spacing=&quot;20&quot;</code> - 20px gap between slides</li>
+<li><code>Bounces=&quot;True&quot;</code> - Elastic bounce at edges</li>
+<li><code>InTransition</code> binding - Track transition state</li>
+</ul>
+<h3 id="advanced-tab-carousel-with-custom-header">Advanced Tab Carousel with Custom Header</h3>
+<p>A sophisticated pattern combining SkiaCarousel with a custom tab header that tracks scroll progress:</p>
+<pre><code class="lang-xml">&lt;!-- Custom tab header that syncs with carousel --&gt;
+&lt;draw:SkiaShape
+    CornerRadius=&quot;24&quot;
+    HorizontalOptions=&quot;Fill&quot;
+    UseCache=&quot;GPU&quot;&gt;
+
+    &lt;controls:DrawnTabsHeader
+        HeightRequest=&quot;46&quot;
+        ScrollAmount=&quot;{Binding Source={x:Reference Carousel}, Path=ScrollProgress}&quot;
+        SelectedIndex=&quot;{Binding Source={x:Reference Carousel}, Path=SelectedIndex, Mode=TwoWay}&quot;
+        TabsCount=&quot;{Binding Source={x:Reference Carousel}, Path=ChildrenCount}&quot;
+        TouchEffectColor=&quot;White&quot;&gt;
+
+        &lt;!-- Tab content definitions --&gt;
+        &lt;draw:SkiaLayout BackgroundColor=&quot;LightBlue&quot;&gt;
+            &lt;draw:SkiaLabel Text=&quot;Tab 1&quot; HorizontalOptions=&quot;Center&quot; VerticalOptions=&quot;Center&quot; /&gt;
+        &lt;/draw:SkiaLayout&gt;
+
+        &lt;draw:SkiaLayout BackgroundColor=&quot;LightGreen&quot;&gt;
+            &lt;draw:SkiaLabel Text=&quot;Tab 2&quot; HorizontalOptions=&quot;Center&quot; VerticalOptions=&quot;Center&quot; /&gt;
+        &lt;/draw:SkiaLayout&gt;
+
+        &lt;draw:SkiaLayout BackgroundColor=&quot;LightCoral&quot;&gt;
+            &lt;draw:SkiaLabel Text=&quot;Tab 3&quot; HorizontalOptions=&quot;Center&quot; VerticalOptions=&quot;Center&quot; /&gt;
+        &lt;/draw:SkiaLayout&gt;
+
+    &lt;/controls:DrawnTabsHeader&gt;
+
+&lt;/draw:SkiaShape&gt;
+
+&lt;!-- Main carousel content --&gt;
+&lt;draw:SkiaCarousel
+    x:Name=&quot;Carousel&quot;
+    AutoVelocityMultiplyPts=&quot;10&quot;
+    HorizontalOptions=&quot;Fill&quot;
+    VerticalOptions=&quot;Fill&quot;&gt;
+
+    &lt;!-- Tab content pages --&gt;
+    &lt;draw:SkiaScroll IgnoreWrongDirection=&quot;True&quot;&gt;
+        &lt;!-- Tab 1 content with vertical scroll --&gt;
+        &lt;draw:SkiaLayout Type=&quot;Column&quot; Spacing=&quot;16&quot;&gt;
+            &lt;!-- Content items --&gt;
+        &lt;/draw:SkiaLayout&gt;
+    &lt;/draw:SkiaScroll&gt;
+
+    &lt;draw:SkiaLayout&gt;
+        &lt;!-- Tab 2 content --&gt;
+    &lt;/draw:SkiaLayout&gt;
+
+    &lt;draw:SkiaLayout&gt;
+        &lt;!-- Tab 3 content --&gt;
+    &lt;/draw:SkiaLayout&gt;
+
+&lt;/draw:SkiaCarousel&gt;
+</code></pre>
+<p><strong>Advanced Features:</strong></p>
+<ul>
+<li><strong>ScrollProgress Binding</strong>: Tab header tracks carousel scroll position</li>
+<li><strong>Two-Way Selection</strong>: Tapping tabs changes carousel, swiping carousel updates tabs</li>
+<li><strong>Nested Scrolling</strong>: <code>IgnoreWrongDirection=&quot;True&quot;</code> allows vertical scroll within horizontal carousel</li>
+<li><strong>Auto Velocity</strong>: <code>AutoVelocityMultiplyPts</code> controls swipe sensitivity</li>
+</ul>
+<h3 id="code-behind-gallery-implementation">Code-Behind Gallery Implementation</h3>
+<p>For programmatic control, you can create carousels entirely in code:</p>
+<pre><code class="lang-csharp">var galleryCarousel = new SkiaCarousel()
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    HorizontalOptions = LayoutOptions.Fill,
+    VerticalOptions = LayoutOptions.Fill,
+    ItemsSource = Model.GalleryItems,
+    Spacing = 16,
+    ItemTemplate = new DataTemplate(() =&gt;
     {
-        int selectedIndex = (int)value;
-        int targetIndex = int.Parse(parameter.ToString());
-        
-        return selectedIndex == targetIndex ? Colors.Blue : Colors.LightGray;
-    }
-    
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
+        var cell = new SkiaLayer()
+        {
+            UseCache = SkiaCacheType.Operations,
+            Children = new List&lt;SkiaControl&gt;()
+            {
+                // Image with loading placeholder
+                new SkiaImage()
+                {
+                    Aspect = ImageAspect.AspectFit,
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill
+                }.Bind(SkiaImage.SourceProperty, &quot;.&quot;)
+            }
+        };
+        return cell;
+    })
+};
 </code></pre>
 <h2 id="performance-considerations">Performance Considerations</h2>
 <ul>
@@ -336,42 +469,28 @@ myCarousel.PropertyChanged += (sender, e) =&gt; {
 </ul>
 
 </article>
-          </div>
 
-          <div class="hidden-sm col-md-2" role="complementary">
-            <div class="sideaffix">
-              <div class="contribution">
-                <ul class="nav">
-                  <li>
-                    <a href="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/carousels.md/#L1" class="contribution-link">Edit this page</a>
-                  </li>
-                </ul>
-              </div>
-              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-                <h5>In this article</h5>
-                <div></div>
-              </nav>
-            </div>
-          </div>
+        <div class="contribution d-print-none">
+          <a href="https://github.com/taublast/DrawnUi/blob/master/docs/articles/controls/carousels.md/#L1" class="edit-link">Edit this page</a>
         </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
       </div>
 
-      <footer>
-        <div class="grad-bottom"></div>
-        <div class="footer">
-          <div class="container">
-            <span class="pull-right">
-              <a href="#top">Back to top</a>
-            </span>
-      
-      <span>Generated by <strong>DocFX</strong></span>
-          </div>
-        </div>
-      </footer>
-    </div>
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
 
-    <script type="text/javascript" src="../../styles/docfx.vendor.min.js"></script>
-    <script type="text/javascript" src="../../styles/docfx.js"></script>
-    <script type="text/javascript" src="../../styles/main.js"></script>
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

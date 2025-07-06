@@ -215,12 +215,12 @@ public class SnappingLayout : SkiaLayout
 
             var displacement = start - end;
 
-            //Debug.WriteLine($"[SKiaDrawer] will scroll, v: {velocity}");
+            //Debug.WriteLine($"[SkiaDrawer] will scroll, v: {velocity}");
 
             if (velocity == Vector2.Zero)
             {
                 velocity = GetAutoVelocity(displacement);
-                //Debug.WriteLine($"[SKiaDrawer] auto-velocity: {velocity}");
+                //Debug.WriteLine($"[SkiaDrawer] auto-velocity: {velocity}");
             }
 
             //if (Math.Abs(displacement.Length()) >= 0.5) //todo move threshold to options
@@ -259,7 +259,7 @@ public class SnappingLayout : SkiaLayout
                         }
                     }
 
-                    //Debug.WriteLine($"[SKiaDrawer] calculated speed {speed} for velocity: {velocity}");
+                    //Debug.WriteLine($"[SkiaDrawer] calculated speed {speed} for velocity: {velocity}");
                     AnimatorRange.Initialize(start, end, (float)speed, Easing.CubicInOut);
                     AnimatorRange.Start();
                 }

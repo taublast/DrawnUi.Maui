@@ -30,6 +30,7 @@ items:
   - DrawnUi.Draw.ShaderDoubleTexturesEffect.SecondarySource
   - DrawnUi.Draw.ShaderDoubleTexturesEffect.SecondarySourceProperty
   - DrawnUi.Draw.ShaderDoubleTexturesEffect.SecondaryTexture
+  - DrawnUi.Draw.ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
   - DrawnUi.Draw.ShaderDoubleTexturesEffect.TilingSecondaryTexture
   langs:
   - csharp
@@ -160,6 +161,40 @@ items:
       type: System.Boolean
     content.vb: Protected Function ParentReady() As Boolean
   overload: DrawnUi.Draw.ShaderDoubleTexturesEffect.ParentReady*
+- uid: DrawnUi.Draw.ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  commentId: M:DrawnUi.Draw.ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  id: ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  parent: DrawnUi.Draw.ShaderDoubleTexturesEffect
+  langs:
+  - csharp
+  - vb
+  name: ShouldDisposePreviousTexture(SKImage)
+  nameWithType: ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture(SKImage)
+  fullName: DrawnUi.Draw.ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  type: Method
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: ShouldDisposePreviousTexture
+    path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
+    startLine: 14
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  summary: Checks if image is a new snapshot that needs disposal
+  example: []
+  syntax:
+    content: protected override bool ShouldDisposePreviousTexture(SKImage image)
+    parameters:
+    - id: image
+      type: SkiaSharp.SKImage
+    return:
+      type: System.Boolean
+    content.vb: Protected Overrides Function ShouldDisposePreviousTexture(image As SKImage) As Boolean
+  overridden: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  overload: DrawnUi.Draw.ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture*
 - uid: DrawnUi.Draw.ShaderDoubleTexturesEffect.OnDisposing
   commentId: M:DrawnUi.Draw.ShaderDoubleTexturesEffect.OnDisposing
   id: OnDisposing
@@ -178,7 +213,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: OnDisposing
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 14
+    startLine: 29
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -207,7 +242,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: TilingSecondaryTexture
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 28
+    startLine: 43
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -234,7 +269,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CreateTexturesUniforms
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 30
+    startLine: 45
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -272,7 +307,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetPrimaryTextureImage
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 56
+    startLine: 71
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -307,7 +342,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ControlFromProperty
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 104
+    startLine: 119
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -334,7 +369,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ControlFrom
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 110
+    startLine: 125
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -363,7 +398,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PrimarySourceProperty
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 122
+    startLine: 137
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -390,7 +425,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: PrimarySource
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 129
+    startLine: 144
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -419,7 +454,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ResizePrimaryLoadedBitmap
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 155
+    startLine: 170
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -445,7 +480,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ResizedPrimaryImage
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 194
+    startLine: 209
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -476,7 +511,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadedPrimaryBitmap
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 195
+    startLine: 210
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -505,7 +540,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadPrimarySource
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 204
+    startLine: 219
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -543,7 +578,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: GetSecondaryTexture
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 249
+    startLine: 264
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -571,7 +606,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SecondaryTexture
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 274
+    startLine: 289
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -600,7 +635,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: CompileSecondaryTexture
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 276
+    startLine: 291
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -629,7 +664,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadedSecondaryBitmap
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 295
+    startLine: 310
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -656,7 +691,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SecondarySourceProperty
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 299
+    startLine: 314
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -683,7 +718,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: SecondarySource
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 306
+    startLine: 321
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -712,7 +747,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ResizeSecondaryLoadedBitmapAndCompileTexture
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 333
+    startLine: 348
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -738,7 +773,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: LoadSecondarySource
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 363
+    startLine: 378
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -776,7 +811,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: AssignedControlTo
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 403
+    startLine: 418
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -803,7 +838,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ImportCacheTo
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 405
+    startLine: 420
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -829,7 +864,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ApplyControlTo
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 420
+    startLine: 435
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -858,7 +893,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ControlToProperty
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 451
+    startLine: 466
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -885,7 +920,7 @@ items:
       repo: https://github.com/taublast/DrawnUi.git
     id: ControlTo
     path: ../src/Maui/DrawnUi/Features/Effects/ShaderDoubleTexturesEffect.cs
-    startLine: 457
+    startLine: 472
   assemblies:
   - DrawnUi.Maui
   namespace: DrawnUi.Draw
@@ -2495,6 +2530,55 @@ references:
   nameWithType.vb: Boolean
   fullName.vb: Boolean
   name.vb: Boolean
+- uid: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  commentId: M:DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  parent: DrawnUi.Draw.SkiaShaderEffect
+  isExternal: true
+  href: DrawnUi.Draw.SkiaShaderEffect.html#DrawnUi_Draw_SkiaShaderEffect_ShouldDisposePreviousTexture_SkiaSharp_SKImage_
+  name: ShouldDisposePreviousTexture(SKImage)
+  nameWithType: SkiaShaderEffect.ShouldDisposePreviousTexture(SKImage)
+  fullName: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+  spec.csharp:
+  - uid: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+    name: ShouldDisposePreviousTexture
+    href: DrawnUi.Draw.SkiaShaderEffect.html#DrawnUi_Draw_SkiaShaderEffect_ShouldDisposePreviousTexture_SkiaSharp_SKImage_
+  - name: (
+  - uid: SkiaSharp.SKImage
+    name: SKImage
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/skiasharp.skimage
+  - name: )
+  spec.vb:
+  - uid: DrawnUi.Draw.SkiaShaderEffect.ShouldDisposePreviousTexture(SkiaSharp.SKImage)
+    name: ShouldDisposePreviousTexture
+    href: DrawnUi.Draw.SkiaShaderEffect.html#DrawnUi_Draw_SkiaShaderEffect_ShouldDisposePreviousTexture_SkiaSharp_SKImage_
+  - name: (
+  - uid: SkiaSharp.SKImage
+    name: SKImage
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/skiasharp.skimage
+  - name: )
+- uid: DrawnUi.Draw.ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture*
+  commentId: Overload:DrawnUi.Draw.ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture
+  href: DrawnUi.Draw.ShaderDoubleTexturesEffect.html#DrawnUi_Draw_ShaderDoubleTexturesEffect_ShouldDisposePreviousTexture_SkiaSharp_SKImage_
+  name: ShouldDisposePreviousTexture
+  nameWithType: ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture
+  fullName: DrawnUi.Draw.ShaderDoubleTexturesEffect.ShouldDisposePreviousTexture
+- uid: SkiaSharp.SKImage
+  commentId: T:SkiaSharp.SKImage
+  parent: SkiaSharp
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/skiasharp.skimage
+  name: SKImage
+  nameWithType: SKImage
+  fullName: SkiaSharp.SKImage
+- uid: SkiaSharp
+  commentId: N:SkiaSharp
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/skiasharp
+  name: SkiaSharp
+  nameWithType: SkiaSharp
+  fullName: SkiaSharp
 - uid: DrawnUi.Draw.SkiaShaderEffect.OnDisposing
   commentId: M:DrawnUi.Draw.SkiaShaderEffect.OnDisposing
   parent: DrawnUi.Draw.SkiaShaderEffect
@@ -2528,13 +2612,6 @@ references:
   name: SKShaderTileMode
   nameWithType: SKShaderTileMode
   fullName: SkiaSharp.SKShaderTileMode
-- uid: SkiaSharp
-  commentId: N:SkiaSharp
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/skiasharp
-  name: SkiaSharp
-  nameWithType: SkiaSharp
-  fullName: SkiaSharp
 - uid: DrawnUi.Draw.SkiaShaderEffect.CreateTexturesUniforms(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,SkiaSharp.SKShader)
   commentId: M:DrawnUi.Draw.SkiaShaderEffect.CreateTexturesUniforms(DrawnUi.Draw.SkiaDrawingContext,SkiaSharp.SKRect,SkiaSharp.SKShader)
   parent: DrawnUi.Draw.SkiaShaderEffect
@@ -2666,14 +2743,6 @@ references:
   name: GetPrimaryTextureImage
   nameWithType: ShaderDoubleTexturesEffect.GetPrimaryTextureImage
   fullName: DrawnUi.Draw.ShaderDoubleTexturesEffect.GetPrimaryTextureImage
-- uid: SkiaSharp.SKImage
-  commentId: T:SkiaSharp.SKImage
-  parent: SkiaSharp
-  isExternal: true
-  href: https://learn.microsoft.com/dotnet/api/skiasharp.skimage
-  name: SKImage
-  nameWithType: SKImage
-  fullName: SkiaSharp.SKImage
 - uid: Microsoft.Maui.Controls.BindableProperty
   commentId: T:Microsoft.Maui.Controls.BindableProperty
   parent: Microsoft.Maui.Controls

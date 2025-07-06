@@ -48,6 +48,9 @@ items:
   - uid: DrawnUi.Controls.ISmartNative
     name: ISmartNative
     type: Interface
+  - uid: DrawnUi.Controls.IWheelPickerCell
+    name: IWheelPickerCell
+    type: Interface
   - uid: DrawnUi.Controls.MauiEditor
     name: MauiEditor
     type: Class
@@ -63,8 +66,8 @@ items:
   - uid: DrawnUi.Controls.NavigationSource
     name: NavigationSource
     type: Enum
-  - uid: DrawnUi.Controls.RadioButtonGroupManager
-    name: RadioButtonGroupManager
+  - uid: DrawnUi.Controls.RadioButtons
+    name: RadioButtons
     type: Class
   - uid: DrawnUi.Controls.ScrollPickerLabelContainer
     name: ScrollPickerLabelContainer
@@ -144,6 +147,9 @@ items:
   - uid: DrawnUi.Controls.SkiaShellNavigatingArgs
     name: SkiaShellNavigatingArgs
     type: Class
+  - uid: DrawnUi.Controls.SkiaSpinner
+    name: SkiaSpinner
+    type: Class
   - uid: DrawnUi.Controls.SkiaSprite
     name: SkiaSprite
     type: Class
@@ -158,6 +164,24 @@ items:
     type: Class
   - uid: DrawnUi.Controls.SkiaViewSwitcher.NavigationStackEntry
     name: SkiaViewSwitcher.NavigationStackEntry
+    type: Class
+  - uid: DrawnUi.Controls.SkiaWheelPicker
+    name: SkiaWheelPicker
+    type: Class
+  - uid: DrawnUi.Controls.SkiaWheelPickerCell
+    name: SkiaWheelPickerCell
+    type: Class
+  - uid: DrawnUi.Controls.SkiaWheelScroll
+    name: SkiaWheelScroll
+    type: Class
+  - uid: DrawnUi.Controls.SkiaWheelShape
+    name: SkiaWheelShape
+    type: Class
+  - uid: DrawnUi.Controls.SkiaWheelStack
+    name: SkiaWheelStack
+    type: Class
+  - uid: DrawnUi.Controls.WheelCellInfo
+    name: WheelCellInfo
     type: Class
 - uid: DrawnUi.Draw
   name: DrawnUi.Draw
@@ -583,6 +607,9 @@ items:
   - uid: DrawnUi.Draw.ProgressAnimator
     name: ProgressAnimator
     type: Class
+  - uid: DrawnUi.Draw.ProgressTrail
+    name: ProgressTrail
+    type: Class
   - uid: DrawnUi.Draw.RangeAnimator
     name: RangeAnimator
     type: Class
@@ -625,9 +652,6 @@ items:
   - uid: DrawnUi.Draw.RenderingModeType
     name: RenderingModeType
     type: Enum
-  - uid: DrawnUi.Draw.RescalingType
-    name: RescalingType
-    type: Enum
   - uid: DrawnUi.Draw.RippleAnimator
     name: RippleAnimator
     type: Class
@@ -667,6 +691,9 @@ items:
   - uid: DrawnUi.Draw.ShimmerAnimator
     name: ShimmerAnimator
     type: Class
+  - uid: DrawnUi.Draw.SidePosition
+    name: SidePosition
+    type: Enum
   - uid: DrawnUi.Draw.Sk3dView
     name: Sk3dView
     type: Class
@@ -793,8 +820,17 @@ items:
   - uid: DrawnUi.Draw.SkiaLabel.EmojiData
     name: SkiaLabel.EmojiData
     type: Class
+  - uid: DrawnUi.Draw.SkiaLabel.ObjectPools
+    name: SkiaLabel.ObjectPools
+    type: Class
+  - uid: DrawnUi.Draw.SkiaLabel.PooledStringBuilder
+    name: SkiaLabel.PooledStringBuilder
+    type: Struct
   - uid: DrawnUi.Draw.SkiaLabel.SpanCollection
     name: SkiaLabel.SpanCollection
+    type: Class
+  - uid: DrawnUi.Draw.SkiaLabel.SpanMeasurement
+    name: SkiaLabel.SpanMeasurement
     type: Class
   - uid: DrawnUi.Draw.SkiaLabel.TextMetrics
     name: SkiaLabel.TextMetrics
@@ -828,6 +864,12 @@ items:
     type: Class
   - uid: DrawnUi.Draw.SkiaPoint
     name: SkiaPoint
+    type: Class
+  - uid: DrawnUi.Draw.SkiaProgress
+    name: SkiaProgress
+    type: Class
+  - uid: DrawnUi.Draw.SkiaRangeBase
+    name: SkiaRangeBase
     type: Class
   - uid: DrawnUi.Draw.SkiaRow
     name: SkiaRow

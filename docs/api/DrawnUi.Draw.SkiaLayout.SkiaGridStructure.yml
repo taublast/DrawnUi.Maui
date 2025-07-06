@@ -6,6 +6,8 @@ items:
   parent: DrawnUi.Draw
   children:
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.#ctor(DrawnUi.Draw.ISkiaGridLayout,System.Double,System.Double)
+  - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.ColumnDefinitions
+  - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.ColumnSpacing
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.Columns
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.DecompressStars(SkiaSharp.SKSize)
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.DecompressStarsInternal(Microsoft.Maui.Graphics.Size)
@@ -16,6 +18,9 @@ items:
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.LeftEdgeOfColumn(System.Int32)
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.MeasuredGridHeight
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.MeasuredGridWidth
+  - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.Padding
+  - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.RowDefinitions
+  - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.RowSpacing
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.Rows
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.TopEdgeOfRow(System.Int32)
   - DrawnUi.Draw.SkiaLayout.SkiaGridStructure.WidthConstraint
@@ -168,6 +173,141 @@ items:
       type: DrawnUi.Models.DefinitionInfo[]
     content.vb: Public ReadOnly Property Columns As DefinitionInfo()
   overload: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.Columns*
+- uid: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.Padding
+  commentId: F:DrawnUi.Draw.SkiaLayout.SkiaGridStructure.Padding
+  id: Padding
+  parent: DrawnUi.Draw.SkiaLayout.SkiaGridStructure
+  langs:
+  - csharp
+  - vb
+  name: Padding
+  nameWithType: SkiaLayout.SkiaGridStructure.Padding
+  fullName: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.Padding
+  type: Field
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: Padding
+    path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+    startLine: 40
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  syntax:
+    content: public readonly Thickness Padding
+    return:
+      type: Microsoft.Maui.Thickness
+    content.vb: Public ReadOnly Padding As Thickness
+- uid: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.RowSpacing
+  commentId: F:DrawnUi.Draw.SkiaLayout.SkiaGridStructure.RowSpacing
+  id: RowSpacing
+  parent: DrawnUi.Draw.SkiaLayout.SkiaGridStructure
+  langs:
+  - csharp
+  - vb
+  name: RowSpacing
+  nameWithType: SkiaLayout.SkiaGridStructure.RowSpacing
+  fullName: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.RowSpacing
+  type: Field
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: RowSpacing
+    path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+    startLine: 41
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  syntax:
+    content: public readonly double RowSpacing
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly RowSpacing As Double
+- uid: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.ColumnSpacing
+  commentId: F:DrawnUi.Draw.SkiaLayout.SkiaGridStructure.ColumnSpacing
+  id: ColumnSpacing
+  parent: DrawnUi.Draw.SkiaLayout.SkiaGridStructure
+  langs:
+  - csharp
+  - vb
+  name: ColumnSpacing
+  nameWithType: SkiaLayout.SkiaGridStructure.ColumnSpacing
+  fullName: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.ColumnSpacing
+  type: Field
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: ColumnSpacing
+    path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+    startLine: 42
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  syntax:
+    content: public readonly double ColumnSpacing
+    return:
+      type: System.Double
+    content.vb: Public ReadOnly ColumnSpacing As Double
+- uid: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.RowDefinitions
+  commentId: F:DrawnUi.Draw.SkiaLayout.SkiaGridStructure.RowDefinitions
+  id: RowDefinitions
+  parent: DrawnUi.Draw.SkiaLayout.SkiaGridStructure
+  langs:
+  - csharp
+  - vb
+  name: RowDefinitions
+  nameWithType: SkiaLayout.SkiaGridStructure.RowDefinitions
+  fullName: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.RowDefinitions
+  type: Field
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: RowDefinitions
+    path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+    startLine: 43
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  syntax:
+    content: public readonly IReadOnlyList<IGridRowDefinition> RowDefinitions
+    return:
+      type: System.Collections.Generic.IReadOnlyList{Microsoft.Maui.IGridRowDefinition}
+    content.vb: Public ReadOnly RowDefinitions As IReadOnlyList(Of IGridRowDefinition)
+- uid: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.ColumnDefinitions
+  commentId: F:DrawnUi.Draw.SkiaLayout.SkiaGridStructure.ColumnDefinitions
+  id: ColumnDefinitions
+  parent: DrawnUi.Draw.SkiaLayout.SkiaGridStructure
+  langs:
+  - csharp
+  - vb
+  name: ColumnDefinitions
+  nameWithType: SkiaLayout.SkiaGridStructure.ColumnDefinitions
+  fullName: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.ColumnDefinitions
+  type: Field
+  source:
+    remote:
+      path: src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+      branch: 2-A
+      repo: https://github.com/taublast/DrawnUi.git
+    id: ColumnDefinitions
+    path: ../src/Maui/DrawnUi/Draw/Layout/SkiaLayout.Grid.Structure.cs
+    startLine: 44
+  assemblies:
+  - DrawnUi.Maui
+  namespace: DrawnUi.Draw
+  syntax:
+    content: public readonly IReadOnlyList<IGridColumnDefinition> ColumnDefinitions
+    return:
+      type: System.Collections.Generic.IReadOnlyList{Microsoft.Maui.IGridColumnDefinition}
+    content.vb: Public ReadOnly ColumnDefinitions As IReadOnlyList(Of IGridColumnDefinition)
 - uid: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.#ctor(DrawnUi.Draw.ISkiaGridLayout,System.Double,System.Double)
   commentId: M:DrawnUi.Draw.SkiaLayout.SkiaGridStructure.#ctor(DrawnUi.Draw.ISkiaGridLayout,System.Double,System.Double)
   id: '#ctor(DrawnUi.Draw.ISkiaGridLayout,System.Double,System.Double)'
@@ -886,6 +1026,176 @@ references:
   name: Columns
   nameWithType: SkiaLayout.SkiaGridStructure.Columns
   fullName: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.Columns
+- uid: Microsoft.Maui.Thickness
+  commentId: T:Microsoft.Maui.Thickness
+  parent: Microsoft.Maui
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft.maui.thickness
+  name: Thickness
+  nameWithType: Thickness
+  fullName: Microsoft.Maui.Thickness
+- uid: Microsoft.Maui
+  commentId: N:Microsoft.Maui
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/microsoft
+  name: Microsoft.Maui
+  nameWithType: Microsoft.Maui
+  fullName: Microsoft.Maui
+  spec.csharp:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Maui
+    name: Maui
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui
+  spec.vb:
+  - uid: Microsoft
+    name: Microsoft
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft
+  - name: .
+  - uid: Microsoft.Maui
+    name: Maui
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui
+- uid: System.Collections.Generic.IReadOnlyList{Microsoft.Maui.IGridRowDefinition}
+  commentId: T:System.Collections.Generic.IReadOnlyList{Microsoft.Maui.IGridRowDefinition}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IReadOnlyList`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<IGridRowDefinition>
+  nameWithType: IReadOnlyList<IGridRowDefinition>
+  fullName: System.Collections.Generic.IReadOnlyList<Microsoft.Maui.IGridRowDefinition>
+  nameWithType.vb: IReadOnlyList(Of IGridRowDefinition)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of Microsoft.Maui.IGridRowDefinition)
+  name.vb: IReadOnlyList(Of IGridRowDefinition)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - uid: Microsoft.Maui.IGridRowDefinition
+    name: IGridRowDefinition
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.igridrowdefinition
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Microsoft.Maui.IGridRowDefinition
+    name: IGridRowDefinition
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.igridrowdefinition
+  - name: )
+- uid: System.Collections.Generic.IReadOnlyList`1
+  commentId: T:System.Collections.Generic.IReadOnlyList`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<T>
+  nameWithType: IReadOnlyList<T>
+  fullName: System.Collections.Generic.IReadOnlyList<T>
+  nameWithType.vb: IReadOnlyList(Of T)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of T)
+  name.vb: IReadOnlyList(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: System.Collections.Generic.IReadOnlyList{Microsoft.Maui.IGridColumnDefinition}
+  commentId: T:System.Collections.Generic.IReadOnlyList{Microsoft.Maui.IGridColumnDefinition}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IReadOnlyList`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<IGridColumnDefinition>
+  nameWithType: IReadOnlyList<IGridColumnDefinition>
+  fullName: System.Collections.Generic.IReadOnlyList<Microsoft.Maui.IGridColumnDefinition>
+  nameWithType.vb: IReadOnlyList(Of IGridColumnDefinition)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of Microsoft.Maui.IGridColumnDefinition)
+  name.vb: IReadOnlyList(Of IGridColumnDefinition)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - uid: Microsoft.Maui.IGridColumnDefinition
+    name: IGridColumnDefinition
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.igridcolumndefinition
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: Microsoft.Maui.IGridColumnDefinition
+    name: IGridColumnDefinition
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/microsoft.maui.igridcolumndefinition
+  - name: )
 - uid: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.#ctor*
   commentId: Overload:DrawnUi.Draw.SkiaLayout.SkiaGridStructure.#ctor
   href: DrawnUi.Draw.SkiaLayout.SkiaGridStructure.html#DrawnUi_Draw_SkiaLayout_SkiaGridStructure__ctor_DrawnUi_Draw_ISkiaGridLayout_System_Double_System_Double_

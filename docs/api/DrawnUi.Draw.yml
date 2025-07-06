@@ -144,6 +144,7 @@ items:
   - DrawnUi.Draw.PointedDirectionType
   - DrawnUi.Draw.PrebuiltControlStyle
   - DrawnUi.Draw.ProgressAnimator
+  - DrawnUi.Draw.ProgressTrail
   - DrawnUi.Draw.RangeAnimator
   - DrawnUi.Draw.RangeF
   - DrawnUi.Draw.RangeVectorAnimator
@@ -158,7 +159,6 @@ items:
   - DrawnUi.Draw.RenderTreeRenderer
   - DrawnUi.Draw.RenderingAnimator
   - DrawnUi.Draw.RenderingModeType
-  - DrawnUi.Draw.RescalingType
   - DrawnUi.Draw.RippleAnimator
   - DrawnUi.Draw.SaturationEffect
   - DrawnUi.Draw.ScaledPoint
@@ -172,6 +172,7 @@ items:
   - DrawnUi.Draw.ShaderDoubleTexturesEffect
   - DrawnUi.Draw.ShapeType
   - DrawnUi.Draw.ShimmerAnimator
+  - DrawnUi.Draw.SidePosition
   - DrawnUi.Draw.Sk3dView
   - DrawnUi.Draw.SkCamera3D
   - DrawnUi.Draw.SkCamera3D2
@@ -214,7 +215,10 @@ items:
   - DrawnUi.Draw.SkiaLabel
   - DrawnUi.Draw.SkiaLabel.DecomposedText
   - DrawnUi.Draw.SkiaLabel.EmojiData
+  - DrawnUi.Draw.SkiaLabel.ObjectPools
+  - DrawnUi.Draw.SkiaLabel.PooledStringBuilder
   - DrawnUi.Draw.SkiaLabel.SpanCollection
+  - DrawnUi.Draw.SkiaLabel.SpanMeasurement
   - DrawnUi.Draw.SkiaLabel.TextMetrics
   - DrawnUi.Draw.SkiaLabelFps
   - DrawnUi.Draw.SkiaLayer
@@ -226,6 +230,8 @@ items:
   - DrawnUi.Draw.SkiaMarkdownLabel
   - DrawnUi.Draw.SkiaMauiElement
   - DrawnUi.Draw.SkiaPoint
+  - DrawnUi.Draw.SkiaProgress
+  - DrawnUi.Draw.SkiaRangeBase
   - DrawnUi.Draw.SkiaRow
   - DrawnUi.Draw.SkiaScroll
   - DrawnUi.Draw.SkiaScrollLooped
@@ -380,10 +386,30 @@ references:
   fullName: DrawnUi.Draw.SkiaLabelFps
 - uid: DrawnUi.Draw.SkiaMarkdownLabel
   commentId: T:DrawnUi.Draw.SkiaMarkdownLabel
+  parent: DrawnUi.Draw
   href: DrawnUi.Draw.SkiaMarkdownLabel.html
   name: SkiaMarkdownLabel
   nameWithType: SkiaMarkdownLabel
   fullName: DrawnUi.Draw.SkiaMarkdownLabel
+- uid: DrawnUi.Draw.ProgressTrail
+  commentId: T:DrawnUi.Draw.ProgressTrail
+  href: DrawnUi.Draw.ProgressTrail.html
+  name: ProgressTrail
+  nameWithType: ProgressTrail
+  fullName: DrawnUi.Draw.ProgressTrail
+- uid: DrawnUi.Draw.SkiaProgress
+  commentId: T:DrawnUi.Draw.SkiaProgress
+  href: DrawnUi.Draw.SkiaProgress.html
+  name: SkiaProgress
+  nameWithType: SkiaProgress
+  fullName: DrawnUi.Draw.SkiaProgress
+- uid: DrawnUi.Draw.SkiaRangeBase
+  commentId: T:DrawnUi.Draw.SkiaRangeBase
+  parent: DrawnUi.Draw
+  href: DrawnUi.Draw.SkiaRangeBase.html
+  name: SkiaRangeBase
+  nameWithType: SkiaRangeBase
+  fullName: DrawnUi.Draw.SkiaRangeBase
 - uid: DrawnUi.Draw.SkiaHoverMask
   commentId: T:DrawnUi.Draw.SkiaHoverMask
   href: DrawnUi.Draw.SkiaHoverMask.html
@@ -1072,6 +1098,73 @@ references:
   - uid: DrawnUi.Draw.SkiaLabel.DecomposedText
     name: DecomposedText
     href: DrawnUi.Draw.SkiaLabel.DecomposedText.html
+- uid: DrawnUi.Draw.SkiaLabel.ObjectPools
+  commentId: T:DrawnUi.Draw.SkiaLabel.ObjectPools
+  href: DrawnUi.Draw.SkiaLabel.html
+  name: SkiaLabel.ObjectPools
+  nameWithType: SkiaLabel.ObjectPools
+  fullName: DrawnUi.Draw.SkiaLabel.ObjectPools
+  spec.csharp:
+  - uid: DrawnUi.Draw.SkiaLabel
+    name: SkiaLabel
+    href: DrawnUi.Draw.SkiaLabel.html
+  - name: .
+  - uid: DrawnUi.Draw.SkiaLabel.ObjectPools
+    name: ObjectPools
+    href: DrawnUi.Draw.SkiaLabel.ObjectPools.html
+  spec.vb:
+  - uid: DrawnUi.Draw.SkiaLabel
+    name: SkiaLabel
+    href: DrawnUi.Draw.SkiaLabel.html
+  - name: .
+  - uid: DrawnUi.Draw.SkiaLabel.ObjectPools
+    name: ObjectPools
+    href: DrawnUi.Draw.SkiaLabel.ObjectPools.html
+- uid: DrawnUi.Draw.SkiaLabel.PooledStringBuilder
+  commentId: T:DrawnUi.Draw.SkiaLabel.PooledStringBuilder
+  parent: DrawnUi.Draw
+  href: DrawnUi.Draw.SkiaLabel.html
+  name: SkiaLabel.PooledStringBuilder
+  nameWithType: SkiaLabel.PooledStringBuilder
+  fullName: DrawnUi.Draw.SkiaLabel.PooledStringBuilder
+  spec.csharp:
+  - uid: DrawnUi.Draw.SkiaLabel
+    name: SkiaLabel
+    href: DrawnUi.Draw.SkiaLabel.html
+  - name: .
+  - uid: DrawnUi.Draw.SkiaLabel.PooledStringBuilder
+    name: PooledStringBuilder
+    href: DrawnUi.Draw.SkiaLabel.PooledStringBuilder.html
+  spec.vb:
+  - uid: DrawnUi.Draw.SkiaLabel
+    name: SkiaLabel
+    href: DrawnUi.Draw.SkiaLabel.html
+  - name: .
+  - uid: DrawnUi.Draw.SkiaLabel.PooledStringBuilder
+    name: PooledStringBuilder
+    href: DrawnUi.Draw.SkiaLabel.PooledStringBuilder.html
+- uid: DrawnUi.Draw.SkiaLabel.SpanMeasurement
+  commentId: T:DrawnUi.Draw.SkiaLabel.SpanMeasurement
+  href: DrawnUi.Draw.SkiaLabel.html
+  name: SkiaLabel.SpanMeasurement
+  nameWithType: SkiaLabel.SpanMeasurement
+  fullName: DrawnUi.Draw.SkiaLabel.SpanMeasurement
+  spec.csharp:
+  - uid: DrawnUi.Draw.SkiaLabel
+    name: SkiaLabel
+    href: DrawnUi.Draw.SkiaLabel.html
+  - name: .
+  - uid: DrawnUi.Draw.SkiaLabel.SpanMeasurement
+    name: SpanMeasurement
+    href: DrawnUi.Draw.SkiaLabel.SpanMeasurement.html
+  spec.vb:
+  - uid: DrawnUi.Draw.SkiaLabel
+    name: SkiaLabel
+    href: DrawnUi.Draw.SkiaLabel.html
+  - name: .
+  - uid: DrawnUi.Draw.SkiaLabel.SpanMeasurement
+    name: SpanMeasurement
+    href: DrawnUi.Draw.SkiaLabel.SpanMeasurement.html
 - uid: DrawnUi.Draw.StringReference
   commentId: T:DrawnUi.Draw.StringReference
   href: DrawnUi.Draw.StringReference.html
@@ -1694,13 +1787,6 @@ references:
   name: RelativePositionType
   nameWithType: RelativePositionType
   fullName: DrawnUi.Draw.RelativePositionType
-- uid: DrawnUi.Draw.RescalingType
-  commentId: T:DrawnUi.Draw.RescalingType
-  parent: DrawnUi.Draw
-  href: DrawnUi.Draw.RescalingType.html
-  name: RescalingType
-  nameWithType: RescalingType
-  fullName: DrawnUi.Draw.RescalingType
 - uid: DrawnUi.Draw.ScrollInteractionState
   commentId: T:DrawnUi.Draw.ScrollInteractionState
   parent: DrawnUi.Draw
@@ -1708,6 +1794,13 @@ references:
   name: ScrollInteractionState
   nameWithType: ScrollInteractionState
   fullName: DrawnUi.Draw.ScrollInteractionState
+- uid: DrawnUi.Draw.SidePosition
+  commentId: T:DrawnUi.Draw.SidePosition
+  parent: DrawnUi.Draw
+  href: DrawnUi.Draw.SidePosition.html
+  name: SidePosition
+  nameWithType: SidePosition
+  fullName: DrawnUi.Draw.SidePosition
 - uid: DrawnUi.Draw.ShapeType
   commentId: T:DrawnUi.Draw.ShapeType
   parent: DrawnUi.Draw

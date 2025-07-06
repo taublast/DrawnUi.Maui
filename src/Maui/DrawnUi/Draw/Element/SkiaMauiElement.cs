@@ -651,6 +651,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the native MAUI VisualElement to embed within the DrawnUI canvas.
+        /// This can be any MAUI control like WebView, MediaElement, Entry, Picker, etc.
+        /// The control will be rendered using platform-specific optimizations.
+        /// </summary>
         public VisualElement Content
         {
             get { return (VisualElement)GetValue(ContentProperty); }
