@@ -109,7 +109,7 @@ namespace Sandbox
                             //    HorizontalOptions = LayoutOptions.Fill,
                             //    //Children = new List<SkiaControl>()
                             //    //{
-                            //    //    //new SkiaMarkdownLabel()
+                            //    //    //new SkiaRichLabel()
                             //    //    //{
                             //    //    //    Margin=16,
                             //    //    //    FontFamily="FontText",

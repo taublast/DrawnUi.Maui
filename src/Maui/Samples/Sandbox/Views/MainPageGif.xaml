@@ -35,7 +35,7 @@
                     Type="Column"
                     UseCache="None">
 
-                    <draw:SkiaMarkdownLabel
+                    <draw:SkiaRichLabel
                         Margin="16,0"
                         FontFamily="FontText"
                         FontSize="15"

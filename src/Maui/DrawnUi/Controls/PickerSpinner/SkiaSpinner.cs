@@ -133,7 +133,7 @@ public class SkiaSpinner : SkiaLayout
 
     private static DataTemplate DefaultTemplate = new DataTemplate(() =>
     {
-        var cell = new SkiaMarkdownLabel()
+        var cell = new SkiaRichLabel()
         {
             UseCache = SkiaCacheType.Operations,
             HorizontalFillRatio = 0.5,

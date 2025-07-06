@@ -43,7 +43,7 @@
                             Tag="SkiaStack"
                             Type="Column">
 
-                            <draw:SkiaMarkdownLabel
+                            <draw:SkiaRichLabel
                                 x:Name="LabelMarkdown"
                                 FontSize="13"
                                 HorizontalOptions="Center"

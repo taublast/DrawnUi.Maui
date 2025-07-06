@@ -23,7 +23,7 @@ public partial class SkiaButton : SkiaLayout, ISkiaGestureListener
 
     #region DEFAULT CONTENT
 
-    public class ButtonLabel : SkiaMarkdownLabel
+    public class ButtonLabel : SkiaRichLabel
     {
         public ButtonLabel()
         {
