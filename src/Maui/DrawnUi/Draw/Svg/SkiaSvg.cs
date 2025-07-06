@@ -407,6 +407,9 @@ namespace DrawnUi.Draw
             base.OnDisposing();
         }
 
+        /// <summary>
+        /// Protected SKSvg container
+        /// </summary>
         public SKSvg Svg { get; protected set; }
 
         //protected SKMatrix DrawingMatrix;
@@ -869,6 +872,11 @@ namespace DrawnUi.Draw
             set { SetValue(ZoomProperty, value); }
         }
 
+        /// <summary>
+        /// Directly loads svg from bytes array into container
+        /// </summary>
+        /// <param name="byteArray"></param>
+        /// <returns></returns>
         public virtual bool LoadSvgFromBytes(byte[] byteArray)
         {
             using (Stream stream = new MemoryStream(byteArray))
@@ -893,7 +901,12 @@ namespace DrawnUi.Draw
             }
         }
 
-        public virtual bool CreateSvg(string loadedString)
+        /// <summary>
+        /// Loads svg into container from string. For public access use SvgString property instead.
+        /// </summary>
+        /// <param name="loadedString"></param>
+        /// <returns></returns>
+        protected virtual bool CreateSvg(string loadedString)
         {
             byte[] byteArray = Encoding.ASCII.GetBytes(loadedString);
             return LoadSvgFromBytes(byteArray);
