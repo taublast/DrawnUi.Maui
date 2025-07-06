@@ -1724,7 +1724,7 @@ namespace DrawnUi.Controls
         public virtual void ShowToast(string text,
             int msShowTime = 4000)
         {
-            var content = new SkiaMarkdownLabel()
+            var content = new SkiaRichLabel()
             {
                 TextColor = ToastTextColor,
                 Text = text,

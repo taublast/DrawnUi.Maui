@@ -1,48 +1,48 @@
 # Porting Native to Drawn with DrawnUI
 
-There can come a time when You feel that some complex parts of the app are not rendering the way You wish, or you cannot implement some UI with out-of-the box native controls. At the same time You want to stay with MAUI and not rewrite the app in something else.  
-We can then replace chunks of our UI with drawn controls. Or for the whole app.
+There may come a time when you feel that some complex parts of your app are not rendering the way you wish, or you cannot implement certain UI elements with out-of-the-box native controls. At the same time, you want to stay with MAUI and not rewrite the app in something else.
+In such cases, you can replace chunks of your UI with drawn controls, or even convert the whole app.
 
 Why even bother?
 
-* __You want complex layouts not to affect your app performance__  
-_In some scenarios native layouts can be slower than drawn ones. Like 5 horses vs a car with a 5 horse power engine: for example, app has to handle 5 natives views instead of just 1 - the Canvas. Rasterized caching makes shadows and other heavy-duty elements never affect your performance._
+* __You want complex layouts not to affect your app performance__
+In some scenarios, native layouts can be slower than drawn ones. Think of it like 5 horses vs a car with a 5 horsepower engine: your app has to handle 5 native views instead of just 1 - the Canvas. Rasterized caching ensures that shadows and other heavy-duty elements never affect your performance.
 
-* __Your designer gave you something to implement that pre-built controls can't handle__  
-_DrawnUi is designed with freedom in mind, to be able to draw just about anything you can imagine. With direct access to canvas you can achieve exactly your unique result._
+* __Your designer gave you something to implement that pre-built controls can't handle__
+DrawnUI is designed with freedom in mind, allowing you to draw just about anything you can imagine. With direct access to the canvas, you can achieve exactly the unique result you're looking for.
 
-* __You want consistency across platforms__  
-_On all platforms the rendering is done with same logic, make you certain that font, controls and layouts will render the same way._
+* __You want consistency across platforms__
+On all platforms, the rendering is done with the same logic, ensuring that fonts, controls, and layouts will render identically across different devices.
 
-* __You want to be in control__   
-_DrawnUi is a lightweight open-source project that can be directly referenced and customized up to your app needs. When you meet a bug you can can hotfix it in the engine source code, and if you miss some property/control You can easily add them._
+* __You want to be in control__
+DrawnUI is a lightweight open-source project that can be directly referenced and customized to meet your app's specific needs. When you encounter a bug, you can hotfix it directly in the engine source code, and if you need additional properties or controls, you can easily add them.
 
-This guide will help you port your existing native controls to DrawnUi.
+This guide will help you port your existing native MAUI controls to DrawnUI.
 
 ## Prerequisites
 
-First please follow the Getting [Started guide](./getting-started.md) to setup your project for DrawnUi.
+First, please follow the [Getting Started guide](./getting-started.md) to set up your project for DrawnUI.
 
 ## The theory
 
-To replace native controls with DrawnUI ones would take several steps: 
+Replacing native controls with DrawnUI ones involves several steps:
 
-1. Put used images inside `Resources/Raw` folder.
+1. Move used images to the `Resources/Raw` folder.
 
-2. Create copies of your existing views
+2. Create copies of your existing views.
 
-3. Replace native views names with DrawnUI ones. 
+3. Replace native view names with DrawnUI equivalents.
 
-4. Fix properties/event handlers mismatch
+4. Fix property and event handler mismatches.
 
-5. Optimize: add caching etc
+5. Optimize by adding caching and other performance enhancements.
 
 ## Native vs Drawn names table
 
-There are some direct alternatives to native controls You can use. At the same time now that you can "draw" you controls You can create your own controls from scratch.  
-You can also just place MAUI controls over the canvas if You need to stick with native, use `SkiaMauiElement` as wrapper for them.
+There are direct alternatives to native controls that you can use. At the same time, now that you can "draw" your controls, you can create your own controls from scratch.
+You can also place MAUI controls over the canvas if you need to stick with native controls - use `SkiaMauiElement` as a wrapper for them.
 
-| Native MAUI Control | DrawnUi Equivalent | Notes |
+| Native MAUI Control | DrawnUI Equivalent | Notes |
 |---------------------|-------------------|-------|
 | **Layout Controls** |
 | `Frame` | `SkiaFrame` | Alias for SkiaShape with Rectangle type |
@@ -56,10 +56,10 @@ You can also just place MAUI controls over the canvas if You need to stick with 
 | `ScrollView` | `SkiaScroll` | Scrolling container with virtualization |
 | **Text Controls** |
 | `Label` | `SkiaLabel` | Renders unicode, spans support |
-| `Label` (with markdown) | `SkiaMarkdownLabel` | For complex formatting, emojis, different languages, auto-finds fonts |
+| `Label` (with markdown) | `SkiaRichLabel` | For complex formatting, emojis, different languages, auto-finds fonts |
 | **Input Controls** |
-| `Entry` | `SkiaMauiEntry` | Native entry wrapped for DrawnUi |
-| `Editor` | `SkiaMauiEditor` | Native editor wrapped for DrawnUi |
+| `Entry` | `SkiaMauiEntry` | Native entry wrapped for DrawnUI |
+| `Editor` | `SkiaMauiEditor` | Native editor wrapped for DrawnUI |
 | **Button Controls** |
 | `Button` | `SkiaButton` | Platform-specific styling via ControlStyle |
 | **Toggle Controls** |
@@ -98,7 +98,7 @@ You can also just place MAUI controls over the canvas if You need to stick with 
 | `ActivityIndicator` | `LottieRefreshIndicator`/anything | Loading/busy indicator |
 | `Map` | `SkiaMapsUi` | Map control, SkiaMapsUi addon |
 | N/A | `SkiaDrawer` | Swipe-in/out panel |
-| N/A | `SkiaCamera` | Mlti-platform camera, SkiaCamera addon  |
+| N/A | `SkiaCamera` | Multi-platform camera, SkiaCamera addon  |
 | **Use native (wrap over canvas)** |
 | `WebView` | `SkiaMauiElement`+`WebView` | wrap native over the canvas |
 | `MediaElement` | `SkiaMauiElement`+`MediaElement` | Video/audio playback |
@@ -113,7 +113,7 @@ You can also just place MAUI controls over the canvas if You need to stick with 
 
 ## The practice
 
-Let's take a look at a simple example of porting a native MAUI page to DrawnUi.
+Let's look at a simple example of porting a native MAUI page to DrawnUI.
 
 ### Before: Native MAUI
 
@@ -156,9 +156,9 @@ Here's a typical MAUI page with native controls:
 </ContentPage>
 ```
 
-### After: DrawnUi
+### After: DrawnUI
 
-Here's the same page converted to DrawnUi:
+Here's the same page converted to DrawnUI:
 
 ```xml
 <draw:DrawnUiBasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -177,7 +177,7 @@ Here's the same page converted to DrawnUi:
                 <draw:SkiaFrame BackgroundColor="LightBlue"
                                 Padding="20"
                                 CornerRadius="10">
-                    <draw:SkiaLabel Text="Welcome to DrawnUi!"
+                    <draw:SkiaLabel Text="Welcome to DrawnUI!"
                                     FontSize="18"
                                     HorizontalOptions="Center" />
                 </draw:SkiaFrame>
@@ -209,7 +209,7 @@ Here's the same page converted to DrawnUi:
 
 ### Key Changes Made
 
-1. **Root Container**: Changed from `ContentPage` to `draw:DrawnUiBasePage` just for keyboard support. You don't need it leave `ContentPage` as it is.
+1. **Root Container**: Changed from `ContentPage` to `draw:DrawnUiBasePage` for keyboard support. If you don't need keyboard support, you can leave `ContentPage` as it is.
 2. **Canvas**: Added `draw:Canvas` as the root drawing surface
 3. **Layout Controls**:
    - `ScrollView` → `draw:SkiaScroll`
@@ -220,7 +220,7 @@ Here's the same page converted to DrawnUi:
    - `Label` → `draw:SkiaLabel`
    - `Image` → `draw:SkiaImage`
    - `Button` → `draw:SkiaButton`
-5. **Button Sizing**: Added explicit `WidthRequest` and `HeightRequest` to button (DrawnUi buttons need explicit sizing)
+5. **Button Sizing**: Added explicit `WidthRequest` and `HeightRequest` to button (DrawnUI buttons need explicit sizing)
 
 ### Code-Behind Changes
 
@@ -233,7 +233,7 @@ private void OnButtonClicked(object sender, EventArgs e)
     // Handle click
 }
 
-// After (DrawnUi)
+// After (DrawnUI)
 private void OnButtonClicked(SkiaButton button, SkiaGesturesParameters args)
 {
     // Handle click - note the different parameters
@@ -242,13 +242,13 @@ private void OnButtonClicked(SkiaButton button, SkiaGesturesParameters args)
 
 ### Optimize: add caching
 
-Imagine your page redrawing.. What could stay same if you redraw one element?
+Imagine your page redrawing. What could stay the same if you redraw one element?
 
 ```xml
         <draw:SkiaScroll>
-            <!--this is a small stack, just cache it in whole -->
+            <!--this is a small stack, just cache it as a whole -->
             <!--"composite" will redraw only changed areas, for instance the clicked button,
-            leaving other area raster unchaged -->
+            leaving other raster areas unchanged -->
             <draw:SkiaStack Spacing="25" Padding="30,0" UseCache="ImageComposite">
 
             <!-- unchaged code -->
@@ -267,8 +267,8 @@ After conversion, you'll get:
 - **Advanced Caching**: Built-in rasterization and caching capabilities
 - **Custom Drawing**: Ability to add custom graphics and effects
 
-### Example with dynamic content
+### Further Reading
 
-TODO point is with dynamic we need other type of caching, groupping controls into cached layers
+Please see [sample apps](samples.md) and [controls documentation](controls/index.md) for more examples and details.
 
 

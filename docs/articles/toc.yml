@@ -1,17 +1,22 @@
 - name: Home
   href: index.md
-- name: What's New
-  href: whats-new.md
+
 - name: Getting Started
   items:
     - name: Installation and Setup
       href: getting-started.md
     - name: Your First DrawnUi App
       href: first-app.md
+    - name: Interactive Card Gallery
+      href: interactive-cards.md
+    - name: News Feed Tutorial
+      href: news-feed-tutorial.md
     - name: Porting Native to Drawn
       href: porting-maui.md
+
 - name: Samples
   href: samples.md
+
 - name: Controls
   href: controls/index.md
   items:
@@ -45,6 +50,7 @@
       href: controls/animations.md
     - name: Navigation Shell
       href: controls/shell.md
+
 - name: Advanced
   href: advanced/index.md
   items:
@@ -64,7 +70,6 @@
       href: advanced/skiascroll.md
     - name: Gestures & Touch Input
       href: advanced/gestures.md
-    - name: Development Notes
-      href: development-notes.md
+
 - name: FAQ
   href: faq.md

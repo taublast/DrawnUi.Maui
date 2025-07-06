@@ -8,7 +8,7 @@ using Microsoft.Maui.Controls;
 
 namespace DrawnUi.Draw
 {
-    public partial class SkiaLayout : SkiaControl, ISkiaGestureListener, ISkiaGridLayout
+    public partial class SkiaLayout : SkiaControl, ISkiaGridLayout
     {
         public override bool PreArrange(SKRect destination, float widthRequest, float heightRequest, float scale)
         {
@@ -260,11 +260,6 @@ namespace DrawnUi.Draw
             return null;
         }
 
-
-        public virtual bool OnFocusChanged(bool focus)
-        {
-            return false;
-        }
 
 
         public SkiaLayout()

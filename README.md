@@ -62,7 +62,7 @@ ___Please star ⭐ if you like it!___
 	* __SkiaMauiElement__ to embed maui controls in your canvas
 
 * __Custom controls derived from base ones__
-	* __SkiaMarkdownLabel__, will find an installed font for any unicode text and auto-create spans for markdown
+	* __SkiaRichLabel__, will find an installed font for any unicode text and auto-create spans for markdown
     * __SkiaButton__ include anything inside, text, images etc
 	* __SkiaRadioButton__ select something unique from options
     * __SkiaSwitch__ to be able to toggle anything

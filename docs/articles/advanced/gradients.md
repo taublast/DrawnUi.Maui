@@ -54,7 +54,7 @@ Maybe you have colors defined in a static class?
             </draw:SkiaGradient.Colors>
         </draw:SkiaGradient>
     </draw:SkiaControl.FillGradient>
-    <draw:SkiaMarkdownLabel
+    <draw:SkiaRichLabel
         HorizontalOptions="Center"
         HorizontalTextAlignment="Center"
         Text="{Binding Title}"

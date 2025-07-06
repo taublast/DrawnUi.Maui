@@ -130,7 +130,6 @@ public partial class MainPage : ContentPage
     BackgroundColor="#2196F3"
     TextColor="White"
     CornerRadius="4"
-    Elevation="2"
     WidthRequest="160"
     HeightRequest="36" />
 ```

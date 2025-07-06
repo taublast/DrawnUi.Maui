@@ -163,6 +163,9 @@
     <MauiXaml Update="DrawnRadioButton.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="TutorialCards.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
   </ItemGroup>
 
 
@@ -170,6 +173,13 @@
     <Folder Include="Resources\Raw\Anims\" />
     <Folder Include="Resources\Raw\Json\" />
     <Folder Include="Resources\Raw\Lottie\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="TutorialCards.xaml.cs">
+      <DependentUpon>TutorialCards.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
  

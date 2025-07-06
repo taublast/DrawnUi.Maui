@@ -1,45 +1,29 @@
-# Your First DrawnUi App
+# Your First DrawnUI App
 
-This quickstart guide will help you create your first DrawnUi.Maui application from scratch.
+This quickstart guide will help you create your first DrawnUi.Maui application from scratch in just a few minutes.
 
 ## Prerequisites
-- .NET 8 or later
-- Visual Studio 2022+ (with MAUI workload) or VS Code
 
-## 1. Create a New MAUI Project
+- **.NET 9** or later
+- **MAUI 9.0.70** minimum
+- **Visual Studio 2022** or **VS Code** with MAUI extension
+
+## Step 1: Create a New MAUI Project
 
 ```bash
-dotnet new maui -n MyDrawnUiApp
-cd MyDrawnUiApp
+dotnet new maui -n MyFirstDrawnApp
+cd MyFirstDrawnApp
 ```
 
-## 2. Add DrawnUi to Your Project
+## Step 2: Add DrawnUi Package
 
 ```bash
 dotnet add package DrawnUi.Maui
 ```
 
-## 3. Add a DrawnUi Canvas to MainPage
+## Step 3: Initialize DrawnUi
 
-Open `MainPage.xaml` and replace the content with:
-
-```xml
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw"
-             x:Class="MyDrawnUiApp.MainPage">
-    <draw:Canvas HorizontalOptions="Fill" VerticalOptions="Fill">
-        <draw:SkiaLayout Type="Column" Padding="32" Spacing="24">
-            <draw:SkiaLabel Text="Hello, DrawnUi!" FontSize="32" TextColor="Blue" />
-            <draw:SkiaButton Text="Click Me" Clicked="OnButtonClicked" />
-        </draw:SkiaLayout>
-    </draw:Canvas>
-</ContentPage>
-```
-
-## 4. Initialize DrawnUi in MauiProgram.cs
-
-Add the DrawnUi initialization to your `MauiProgram.cs`:
+Open `MauiProgram.cs` and add DrawnUi initialization:
 
 ```csharp
 public static class MauiProgram
@@ -60,25 +44,125 @@ public static class MauiProgram
 }
 ```
 
-## 5. Handle Button Click in Code
+## Step 4: Create Your First Drawn UI
 
-In `MainPage.xaml.cs`:
+Replace the content of `MainPage.xaml`:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="MyFirstDrawnApp.MainPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw">
+
+    <draw:Canvas BackgroundColor="White">
+        <draw:SkiaLayout Type="Column" Padding="40" Spacing="20" VerticalOptions="Center">
+            
+            <draw:SkiaLabel 
+                Text="Welcome to DrawnUI!" 
+                FontSize="28" 
+                FontWeight="Bold"
+                TextColor="DarkBlue" 
+                HorizontalOptions="Center" />
+                
+            <draw:SkiaLabel 
+                Text="This text is drawn with SkiaSharp ✨" 
+                FontSize="16" 
+                TextColor="Gray" 
+                HorizontalOptions="Center" />
+                
+            <draw:SkiaButton 
+                x:Name="MyButton"
+                Text="Click Me!" 
+                BackgroundColor="CornflowerBlue"
+                TextColor="White"
+                CornerRadius="8"
+                Padding="20,12"
+                HorizontalOptions="Center"
+                Clicked="OnButtonClicked" />
+                
+            <draw:SkiaLabel 
+                x:Name="ClickLabel"
+                Text="👆 Try clicking the button" 
+                FontSize="14" 
+                TextColor="Green" 
+                HorizontalOptions="Center" />
+        </draw:SkiaLayout>
+    </draw:Canvas>
+</ContentPage>
+```
+
+## Step 5: Add Button Click Handler
+
+In `MainPage.xaml.cs`, add the button click handler:
 
 ```csharp
-private void OnButtonClicked(SkiaButton sender, SkiaGesturesParameters e)
+using DrawnUi.Maui.Draw;
+
+namespace MyFirstDrawnApp;
+
+public partial class MainPage : ContentPage
 {
-    // Show a message or update UI
-    DisplayAlert("DrawnUi", "Button clicked!", "OK");
+    private int clickCount = 0;
+
+    public MainPage()
+    {
+        InitializeComponent();
+    }
+
+    private void OnButtonClicked(SkiaButton sender, SkiaGesturesParameters args)
+    {
+        clickCount++;
+        ClickLabel.Text = $"Button clicked {clickCount} times! 🎉";
+        
+        // Simple animation
+        MyButton.AnimateScaleTo(1.2, 100);
+        MyButton.AnimateScaleTo(1.0, 100);
+    }
 }
 ```
 
-## 6. Run Your App
+## Step 6: Run Your App
 
-Build and run your app on Windows, Android, iOS, or Mac.
+Build and run your first DrawnUI app:
+
+```bash
+dotnet build
+dotnet run
+```
+
+## What You've Learned
+
+Congratulations! You've just created your first DrawnUI app that demonstrates:
+
+- ✅ **Canvas**: The container that hosts drawn controls
+- ✅ **SkiaLayout**: Layout container for organizing controls
+- ✅ **SkiaLabel**: High-performance text rendering
+- ✅ **SkiaButton**: Interactive button with animations
+- ✅ **Gestures**: Touch handling with smooth animations
+
+## Key Differences from Regular MAUI
+
+**DrawnUI controls are virtual** - they're not native platform controls, but drawn directly on a Skia canvas. This gives you:
+
+- **Consistent appearance** across all platforms
+- **Better performance** for complex UIs
+- **Pixel-perfect control** over every detail
+- **Smooth 60fps animations** out of the box
 
 ## Next Steps
-- Explore the [Controls documentation](controls/index.md)
-- Try out [Samples](samples.md)
-- Read about [Advanced features](advanced/index.md)
 
-Welcome to the DrawnUi community!
+Now that you've mastered the basics, you're ready for more exciting projects:
+
+### 🚀 **Ready for More?**
+- **[Interactive Card Gallery](interactive-cards.md)** - Build something impressive with animations and effects!
+- **[Controls Gallery](controls/index.md)** - Explore all available controls
+- **[Getting Started Guide](getting-started.md)** - Deep dive into DrawnUI concepts
+
+### 📚 **Learn More:**
+- **[Fluent Extensions](fluent-extensions.md)** - Code-behind UI creation
+- **[Advanced Features](advanced/index.md)** - Performance and platform-specific topics
+
+---
+
+**Great job!** You've taken your first step into the world of high-performance, pixel-perfect mobile UIs with DrawnUI! 🎉

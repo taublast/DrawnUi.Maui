@@ -2,7 +2,9 @@
 
 **A lightweight library for .NET MAUI built on top of SkiaSharp, to layout and draw your UI on a Skia canvas.**
 
-## 🎯 The Purpose
+---
+
+## 🎯 Purpose
 
 * Provides infrastructure to create and render drawn controls with gestures and animations, comes with some pre-built controls.
 * Profits from hardware-accelerated rendering on iOS • MacCatalyst • Android • Windows

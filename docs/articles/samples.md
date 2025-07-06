@@ -48,18 +48,15 @@ Explore real-world examples and code snippets to help you get started and master
 Real-world applications built with DrawnUI:
 
 ### Bug ID: Insect Identifier AI
-_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever drawn MAUI app!_
+_Totally drawn with just one root view `Canvas` and `SkiaShell` for navigation. First ever totally drawn published MAUI app._
 
-- **Google Play**: [Bug ID: Insect Identifier AI](https://play.google.com/store/apps/details?id=com.niroapps.insects)
 - **Video Demo**: [Watch on YouTube](https://www.youtube.com/watch?v=5QIaM0xsLbA)
 - **Architecture**: Single Canvas root with SkiaShell navigation
 - **Features**: AI-powered insect identification with fully drawn UI
 
 ### Racebox - Vehicle Dynamics
-_MAUI pages with canvases, custom navigation. All scrolls, cells collections, maps, buttons, labels and custom controls are drawn._
+_MAUI native pages with canvases and custom navigation. All scrolls, cells collections, maps, buttons, labels and custom controls are drawn._
 
-- **iOS**: [Racebox on App Store](https://apps.apple.com/us/app/racebox-vehicle-dynamics/id6444165250)
-- **Google Play**: [Racebox on Google Play](https://play.google.com/store/apps/details?id=com.raceboxcompanion.app)
 - **Video Demo**: [Watch on YouTube](https://www.youtube.com/watch?v=JQkJhXR9IMY)
 - **Architecture**: MAUI pages with Canvas components
 - **Features**: Vehicle telemetry, maps, data visualization, custom controls

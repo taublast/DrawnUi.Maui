@@ -1830,6 +1830,11 @@ else
 
                 OnBeforeDrawingVisibleChildren(ctx, structure, visibleElements);
 
+                if (visibleElements.Count > 1)
+                {
+                    visibleElements.Sort((a, b) => a.ZIndex.CompareTo(b.ZIndex)); 
+                }
+
                 //PASS 2 DRAW VISIBLE
                 bool hadAdjustments = false;
                 bool wasVisible = false;

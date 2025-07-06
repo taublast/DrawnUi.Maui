@@ -810,44 +810,6 @@ if (loadedSource != null)
 
 This comprehensive guide covers all aspects of using SkiaImage in DrawnUi.Maui, from basic usage to advanced optimization techniques. The control provides powerful image handling capabilities while maintaining excellent performance through intelligent caching and rendering strategies.
 
-## SkiaSvg
-
-SkiaSvg is a specialized control for rendering SVG (Scalable Vector Graphics) files with high performance and quality. It extends SkiaImage to provide SVG-specific features while maintaining all the image manipulation capabilities.
-
-### Basic Usage
-
-```xml
-<draw:SkiaSvg
-    Source="icon.svg"
-    TintColor="Blue"
-    WidthRequest="64"
-    HeightRequest="64" />
-```
-
-### Key Properties
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `TintColor` | Color | Transparent | Color to tint the SVG |
-| `LockRatio` | bool | true | Whether to maintain aspect ratio |
-
-### Examples
-
-```xml
-<!-- Tinted SVG icon -->
-<draw:SkiaSvg
-    Source="heart.svg"
-    TintColor="Red"
-    WidthRequest="32"
-    HeightRequest="32" />
-
-<!-- SVG with effects -->
-<draw:SkiaSvg Source="logo.svg">
-    <draw:SkiaControl.VisualEffects>
-        <draw:DropShadowEffect Blur="4" X="2" Y="2" Color="#40000000" />
-    </draw:SkiaControl.VisualEffects>
-</draw:SkiaSvg>
-```
 
 ## SkiaGif
 

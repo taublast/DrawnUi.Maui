@@ -189,14 +189,14 @@ SkiaLabel provides the ability to render text in a monospaced style, regardless 
 - Use monospaced features only when needed as it adds some calculation overhead
 - For complex shadow effects, consider using `Cache="Image"` to optimize rendering
 
-## SkiaMarkdownLabel
+## SkiaRichLabel
 
-SkiaMarkdownLabel extends SkiaLabel to provide Markdown formatting capabilities. It parses Markdown syntax and renders properly formatted text.
+SkiaRichLabel extends SkiaLabel to provide Markdown formatting capabilities. It parses Markdown syntax and renders properly formatted text.
 
 ### Basic Usage
 
 ```xml
-<draw:SkiaMarkdownLabel>
+<draw:SkiaRichLabel>
 # Markdown Title
 
 This is a paragraph with **bold** and *italic* text.
@@ -210,9 +210,9 @@ This is a paragraph with **bold** and *italic* text.
 
 ```csharp
 // Code block
-var label = new SkiaMarkdownLabel();
+var label = new SkiaRichLabel();
 ```
-</draw:SkiaMarkdownLabel>
+</draw:SkiaRichLabel>
 ```
 
 ### Supported Markdown Features
@@ -227,7 +227,7 @@ var label = new SkiaMarkdownLabel();
 ### Customizing Markdown Style
 
 ```xml
-<draw:SkiaMarkdownLabel
+<draw:SkiaRichLabel
     LinkColor="Blue"
     CodeTextColor="DarkGreen"
     CodeBackgroundColor="#EEEEEE"
@@ -238,19 +238,19 @@ var label = new SkiaMarkdownLabel();
     UnderlineWidth="1">
 # Custom Styled Markdown
 This has **custom** styling for [links](https://example.com) and `code blocks`.
-</draw:SkiaMarkdownLabel>
+</draw:SkiaRichLabel>
 ```
 
 ### Link Handling
 
-SkiaMarkdownLabel provides built-in support for handling link taps:
+SkiaRichLabel provides built-in support for handling link taps:
 
 ```xml
-<draw:SkiaMarkdownLabel
+<draw:SkiaRichLabel
     LinkTapped="OnLinkTapped"
     CommandLinkTapped="{Binding OpenLinkCommand}">
 Check out [this link](https://example.com)!
-</draw:SkiaMarkdownLabel>
+</draw:SkiaRichLabel>
 ```
 
 In your code-behind:
@@ -265,7 +265,7 @@ private void OnLinkTapped(object sender, string url)
 
 ### Implementation Notes
 
-- SkiaMarkdownLabel implements a lightweight Markdown parser optimized for display, not full CommonMark compliance
+- SkiaRichLabel implements a lightweight Markdown parser optimized for display, not full CommonMark compliance
 - The parser focuses on the most commonly used Markdown syntax for mobile applications
 - For more complex Markdown rendering needs, consider creating a custom renderer
 

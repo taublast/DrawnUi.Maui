@@ -30,11 +30,11 @@ There are controls that are aliases for other controls, te make porting existing
 
 ### Text Controls
 - [SkiaLabel](text.md#skialabel): High-performance text rendering, supports spans
-- [SkiaMarkdownLabel](text.md#skiamarkdownlabel): Markdown-capable text, unicode friendly, autofinds font its text (auto-creates spans). Use for text with complex formatting, smileys, and different languages
+- [SkiaRichLabel](text.md#skiamarkdownlabel): Markdown-capable text, unicode friendly, autofinds font its text (auto-creates spans). Use for text with complex formatting, smileys, and different languages
 
 ### Graphics Controls
 - [SkiaImage](images.md#skiaimage): Image rendering with many options and filters
-- [SkiaSvg](images.md#skiasvg): SVG rendering with many options
+- [SkiaSvg](shapes.md#skiasvg): SVG vector graphics rendering with styling and effects
 - [SkiaGif](images.md#skiagif): Animated GIF support - dedicated lightweight GIF-player with playback properties
 - [SkiaMediaImage](images.md#skiamediaimage): Media image, subclassed SkiaImage for displaying any kind of images (image/animated gif/more..)
 - [SkiaLottie](animations.md#skialottie): Lottie animation with tint customization, subclassed SkiaImage

@@ -230,7 +230,7 @@ await Shell.ClosePopupAsync(animated: true);
 Shell.ShowToast("Operation completed successfully", msShowTime: 3000);
 
 // Show a custom toast
-Shell.ShowToast(new SkiaMarkdownLabel
+Shell.ShowToast(new SkiaRichLabel
 {
     Text = "**Important:** Your data has been saved.",
     TextColor = Colors.White

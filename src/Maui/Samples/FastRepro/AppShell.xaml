@@ -9,7 +9,7 @@
 
     <ShellContent
         Title="Drawn UI for .NET MAUI"
-        ContentTemplate="{DataTemplate sandbox:MainPageCode}"
+        ContentTemplate="{DataTemplate sandbox:TutorialCards}"
         Route="MainPage" />
 
 </Shell>
