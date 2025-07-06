@@ -7,13 +7,10 @@ Ready for something **impressive**? Let's build an animated, interactive card ga
 ## What We're Building
 
 An interactive card gallery featuring:
-- 🎨 **Beautiful gradient cards** with shadows and glows
-- ✨ **Smooth animations** (scale, rotation, color transitions)
-- 👆 **Gesture interactions** (tap, pan, pinch)
-- 🚀 **60fps performance** thanks to hardware acceleration
-- 💫 **Visual effects** that would be complex in native MAUI
-
-**This demonstrates DrawnUI's core advantages: pixel-perfect control, smooth animations, and superior performance.**
+- 🎨 **Beautiful gradient cards** with unicode text, controls and gradients
+- ✨ **Smooth animations** (scale, rotation, color changing)
+- 👆 **Gesture interactions** (tap, pan)
+- 💫 **Visual effects** for shadows and glow
 
 ---
 
