@@ -1,113 +1,81 @@
 # DrawnUi.Maui
 
-**Build beautiful, high-performance mobile apps with C# code-behind instead of XAML**
+**A small library for .NET MAUI built on top of SkiaSharp, to layout and draw your UI on a Skia canvas.**
 
-DrawnUi is a rendering engine that draws your entire UI on a hardware-accelerated Skia canvas. Create pixel-perfect custom controls with gestures and animations, all powered by [SkiaSharp](https://github.com/mono/SkiaSharp) 😍.
+* Provides infrastructure to create and render drawn controls with gestures and animations, comes with some pre-built controls.  
+* Hardware-accelerated rendering on iOS • MacCatalyst • Android • Windows  
+* Free to use under the MIT license, a nuget package is available.
+* To consume inside a usual MAUI app, wrap drawn controls inside `Canvas` views.
+* To create a totally drawn apps with just one `Canvas` as root view. `SkiaShell`, `SkiaViewSwitcher` provided for navigation with modals, popups, toasts etc.
+* Drawn controls are virtual: no native views/handlers are created, UI-thread is not required to accessed and modify them.
+ 
 
-**Supports:** iOS • MacCatalyst • Android • Windows
+## Live Examples
 
----
-
-## 🚀 Quick Start
-
-### 1. Install DrawnUi
-```bash
-dotnet add package DrawnUi.Maui
-```
-
-### 2. Learn the Basics
-- **[📖 Getting Started](getting-started.md)** - Installation and setup guide
-- **[🎯 Your First App](first-app.md)** - Build your first DrawnUI app in 5 minutes
-- **[⚡ Fluent Extensions](fluent-extensions.md)** - Master the code-behind fluent API
-
-### 3. Explore Controls
-- **[🎛️ All Controls](controls/index.md)** - Buttons, layouts, animations, and more
-- **[📱 Live Demo](../demo.md)** - Interactive examples you can try
-
-### 4. Go Advanced
-- **[🏗️ Advanced Topics](advanced/index.md)** - Architecture, performance, and platform-specific features
-- **[📚 API Reference](../api/index.md)** - Complete technical documentation
+- **[Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo)** - A totally drawn app demo with recycled cells, camera etc
+- **[Space Shooter Game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter)** - Arcade game etude built with DrawnUi
+- **[Shaders Carousel](https://github.com/taublast/ShadersCarousel/)** - A totally drawn app with making use of SkiaSharp v3 shaders
+- **[Sandbox project](https://github.com/taublast/DrawnUi.Maui/tree/main/src/Maui/Samples/Sandbox)** - Experiment with pre-built drawn controls and more
 
 ---
 
-## ✨ Why DrawnUi?
+## Frequently Asked Questions
 
-**🎨 Code-Behind First**
-- Write UI in C# with fluent extensions - no XAML needed
-- Type-safe, IntelliSense-friendly development
-- Reactive property observation without traditional bindings
+### General
 
-**⚡ High Performance**
-- Hardware-accelerated Skia rendering
-- Efficient caching and virtualization
-- Smooth 60fps animations and gestures
+**Q: What is it at all, what is the difference between DrawnUi and Uno/Avalonia?**  
+A: This is really not comparable, it's a library for .NET MAUI to avoid using native controls where possible.
 
-**🎯 Pixel Perfect**
-- Consistent UI across all platforms
-- Custom controls that look exactly how you want
-- Full control over every pixel
+**Q: Why avoid native controls?**  
+A: A matter of choice to just draw anything without using pre-built designs.
 
-**🔧 Flexible Architecture**
-- Use alongside existing MAUI controls
-- Or go fully drawn with SkiaShell navigation
-- MIT licensed and production-ready
+**Q: Do I neded to know how to draw on a canvas??**  
+A: Nope, just use prebuild drawn controls and customize them at will without limits. You would find that almost every method is virtual, all controls are initially designed to be subclassed and customized.
 
----
+**Q: Can I still use XAML?**  
+A: Yes you can use both XAML and code-behind to create your UI.  
 
-## 📱 See It In Action
+**Q: Can I avoid using XAML at all costs?**  
+A: Yes feel free to use code-behind, up to using background thread to access and modify drawn controls properties.
 
-**Live Examples:**
-- **[Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo)** - Comprehensive control showcase
-- **[Space Shooter Game](https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter)** - Full arcade game built with DrawnUI
-- **[CollectionView Demo](https://github.com/taublast/SurfAppCompareDrawn)** - Performance comparison with native controls
-- **[Shaders Carousel](https://github.com/taublast/ShadersCarousel/)** - Advanced SkiaSharp v3 effects
+**Q: How do I create custom controls with DrawnUI?**  
+A: Inherit from `SkiaControl` for basic controls or `SkiaLayout` for container controls. Override the `Paint` method to define your custom drawing logic using SkiaSharp.
 
----
+**Q: Can I embed native MAUI controls inside DrawnUI?**  
+A: Yes! Use `SkiaMauiElement` to embed native MAUI controls like WebView inside your DrawnUI canvas. This allows you to combine the best of both worlds.
 
-## ❓ Frequently Asked Questions
+### Advanced
 
-### Getting Started
-
-**Q: Can I use DrawnUI with .NET 9?**
-A: Yes! DrawnUI works with .NET 9. Remember that SkiaLabel, SkiaLayout etc. are virtual drawn controls that must be placed inside a `Canvas`: `<draw:Canvas>your skia controls</draw:Canvas>`. Only `Canvas` has handlers for normal and hardware accelerated views.
-
-**Q: Can I use MAUI's default Images folder with DrawnUI?**
-A: Unfortunately no. DrawnUI can read from `Resources/Raw` folder and from native storage if the app has written there, but not from the Images folder. The Images folder is "hardcoded-designed for MAUI views". Place your images in `Resources/Raw` instead, subfolders are allowed.
-
-**Q: How do I use my own SKBitmap or MAUI resource images with SkiaImage?**
-A: You have two options:
+**Q: How do I use set SkiaImage source?**  
+A: You have several options:
 1. Place images in `Resources/Raw` folder: `<draw:SkiaImage Source="baboon.jpg" />`
 2. Set images directly: `mySkiaImage.SetImageInternal(mySkImage)` or `mySkiaImage.SetBitmapInternal(mySkBitmap)`
 
-### Controls & Gestures
+**Q: Can I use MAUI's default Images folder?**  
+A: No.
 
-**Q: How do I prevent touch events from passing through overlapping controls?**
+**Q: How do I prevent touch events from passing through overlapping controls?**  
 A: Use the `BlockGesturesBelow="True"` property on the top control. Note that `InputTransparent` makes the control itself avoid gestures, not controls below it in the Z-axis.
 
-**Q: How can I enable mouse wheel scrolling in SkiaScroll?**
+**Q: How can I enable mouse wheel scrolling in SkiaScroll?**  
 A: Mouse wheel scrolling isn't built-in, but you can easily add it by subclassing SkiaScroll and overriding `ProcessGestures` to handle `TouchActionResult.Wheel` events. Check the discussions for a complete code example.
 
-**Q: How do I maintain scroll position when reloading items in SkiaScroll?**
+**Q: How do I maintain scroll position when reloading items in SkiaScroll?**  
 A: Save the current `ViewportOffsetY` before reloading, then restore it after the new items are loaded using `ScrollTo(x, savedOffsetY, 0)`.
 
-### Advanced Usage
+**Q: How do I internally rebuild the ItemsSource?**  
+A: Directly call ApplyItemsSource().
 
-**Q: Can I embed native MAUI controls inside DrawnUI?**
-A: Yes! Use `SkiaMauiElement` to embed native MAUI controls like WebView inside your DrawnUI canvas. This allows you to combine the best of both worlds.
-
-**Q: How do I create custom controls with DrawnUI?**
-A: Inherit from `SkiaControl` for basic controls or `SkiaLayout` for container controls. Override the `Paint` method to define your custom drawing logic using SkiaSharp.
 
 ---
 
-## 🆘 Need Help?
+**Can't find the answer to your question?** → **[Ask in GitHub Discussions](https://github.com/taublast/DrawnUi/discussions)** - The community is here to help!
+
+## Need More Help?
 
 - **[❓ Troubleshooting](fluent-extensions.md#troubleshooting)** - Common issues and solutions
 - **[💬 GitHub Issues](https://github.com/taublast/DrawnUi.Maui/issues)** - Report bugs or ask questions
-- **[🗨️ GitHub Discussions](https://github.com/taublast/DrawnUi/discussions)** - Ask questions and get community help
-- **[📖 Background Article](https://taublast.github.io/posts/MauiJuly/)** - Why DrawnUI was created
-
-**Can't find the answer to your question?** → **[Ask in GitHub Discussions](https://github.com/taublast/DrawnUi/discussions)** - The community is here to help!
+- **[📖 Background Article](https://taublast.github.io/posts/MauiJuly/)** - Why DrawnUi was created
 
 ---
 

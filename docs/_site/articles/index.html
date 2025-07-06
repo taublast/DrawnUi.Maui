@@ -87,99 +87,64 @@
         <article data-uid="">
 <h1 id="drawnuimaui">DrawnUi.Maui</h1>
 
-<p><strong>Build beautiful, high-performance mobile apps with C# code-behind instead of XAML</strong></p>
-<p>DrawnUi is a rendering engine that draws your entire UI on a hardware-accelerated Skia canvas. Create pixel-perfect custom controls with gestures and animations, all powered by <a href="https://github.com/mono/SkiaSharp">SkiaSharp</a> 😍.</p>
-<p><strong>Supports:</strong> iOS • MacCatalyst • Android • Windows</p>
-<hr>
-<h2 id="-quick-start">🚀 Quick Start</h2>
-<h3 id="1-install-drawnui">1. Install DrawnUi</h3>
-<pre><code class="lang-bash">dotnet add package DrawnUi.Maui
-</code></pre>
-<h3 id="2-learn-the-basics">2. Learn the Basics</h3>
+<p><strong>A small library for .NET MAUI built on top of SkiaSharp, to layout and draw your UI on a Skia canvas.</strong></p>
 <ul>
-<li><strong><a href="getting-started.html">📖 Getting Started</a></strong> - Installation and setup guide</li>
-<li><strong><a href="first-app.html">🎯 Your First App</a></strong> - Build your first DrawnUI app in 5 minutes</li>
-<li><strong><a href="fluent-extensions.html">⚡ Fluent Extensions</a></strong> - Master the code-behind fluent API</li>
+<li>Provides infrastructure to create and render drawn controls with gestures and animations, comes with some pre-built controls.</li>
+<li>Hardware-accelerated rendering on iOS • MacCatalyst • Android • Windows</li>
+<li>Free to use under the MIT license, a nuget package is available.</li>
+<li>To consume inside a usual MAUI app, wrap drawn controls inside <code>Canvas</code> views.</li>
+<li>To create a totally drawn apps with just one <code>Canvas</code> as root view. <code>SkiaShell</code>, <code>SkiaViewSwitcher</code> provided for navigation with modals, popups, toasts etc.</li>
+<li>Drawn controls are virtual: no native views/handlers are created, UI-thread is not required to accessed and modify them.</li>
 </ul>
-<h3 id="3-explore-controls">3. Explore Controls</h3>
+<h2 id="live-examples">Live Examples</h2>
 <ul>
-<li><strong><a href="controls/index.html">🎛️ All Controls</a></strong> - Buttons, layouts, animations, and more</li>
-<li><strong><a href="../demo.html">📱 Live Demo</a></strong> - Interactive examples you can try</li>
-</ul>
-<h3 id="4-go-advanced">4. Go Advanced</h3>
-<ul>
-<li><strong><a href="advanced/index.html">🏗️ Advanced Topics</a></strong> - Architecture, performance, and platform-specific features</li>
-<li><strong><a href="../api/index.html">📚 API Reference</a></strong> - Complete technical documentation</li>
+<li><strong><a href="https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo">Engine Demo</a></strong> - A totally drawn app demo with recycled cells, camera etc</li>
+<li><strong><a href="https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter">Space Shooter Game</a></strong> - Arcade game etude built with DrawnUi</li>
+<li><strong><a href="https://github.com/taublast/ShadersCarousel/">Shaders Carousel</a></strong> - A totally drawn app with making use of SkiaSharp v3 shaders</li>
+<li><strong><a href="https://github.com/taublast/DrawnUi.Maui/tree/main/src/Maui/Samples/Sandbox">Sandbox project</a></strong> - Experiment with pre-built drawn controls and more</li>
 </ul>
 <hr>
-<h2 id="-why-drawnui">✨ Why DrawnUi?</h2>
-<p><strong>🎨 Code-Behind First</strong></p>
-<ul>
-<li>Write UI in C# with fluent extensions - no XAML needed</li>
-<li>Type-safe, IntelliSense-friendly development</li>
-<li>Reactive property observation without traditional bindings</li>
-</ul>
-<p><strong>⚡ High Performance</strong></p>
-<ul>
-<li>Hardware-accelerated Skia rendering</li>
-<li>Efficient caching and virtualization</li>
-<li>Smooth 60fps animations and gestures</li>
-</ul>
-<p><strong>🎯 Pixel Perfect</strong></p>
-<ul>
-<li>Consistent UI across all platforms</li>
-<li>Custom controls that look exactly how you want</li>
-<li>Full control over every pixel</li>
-</ul>
-<p><strong>🔧 Flexible Architecture</strong></p>
-<ul>
-<li>Use alongside existing MAUI controls</li>
-<li>Or go fully drawn with SkiaShell navigation</li>
-<li>MIT licensed and production-ready</li>
-</ul>
-<hr>
-<h2 id="-see-it-in-action">📱 See It In Action</h2>
-<p><strong>Live Examples:</strong></p>
-<ul>
-<li><strong><a href="https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo">Engine Demo</a></strong> - Comprehensive control showcase</li>
-<li><strong><a href="https://github.com/taublast/AppoMobi.Maui.DrawnUi.SpaceShooter">Space Shooter Game</a></strong> - Full arcade game built with DrawnUI</li>
-<li><strong><a href="https://github.com/taublast/SurfAppCompareDrawn">CollectionView Demo</a></strong> - Performance comparison with native controls</li>
-<li><strong><a href="https://github.com/taublast/ShadersCarousel/">Shaders Carousel</a></strong> - Advanced SkiaSharp v3 effects</li>
-</ul>
-<hr>
-<h2 id="-frequently-asked-questions">❓ Frequently Asked Questions</h2>
-<h3 id="getting-started">Getting Started</h3>
-<p><strong>Q: Can I use DrawnUI with .NET 9?</strong>
-A: Yes! DrawnUI works with .NET 9. Remember that SkiaLabel, SkiaLayout etc. are virtual drawn controls that must be placed inside a <code>Canvas</code>: <code>&lt;draw:Canvas&gt;your skia controls&lt;/draw:Canvas&gt;</code>. Only <code>Canvas</code> has handlers for normal and hardware accelerated views.</p>
-<p><strong>Q: Can I use MAUI's default Images folder with DrawnUI?</strong>
-A: Unfortunately no. DrawnUI can read from <code>Resources/Raw</code> folder and from native storage if the app has written there, but not from the Images folder. The Images folder is &quot;hardcoded-designed for MAUI views&quot;. Place your images in <code>Resources/Raw</code> instead, subfolders are allowed.</p>
-<p><strong>Q: How do I use my own SKBitmap or MAUI resource images with SkiaImage?</strong>
-A: You have two options:</p>
+<h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
+<h3 id="general">General</h3>
+<p><strong>Q: What is it at all, what is the difference between DrawnUi and Uno/Avalonia?</strong><br>
+A: This is really not comparable, it's a library for .NET MAUI to avoid using native controls where possible.</p>
+<p><strong>Q: Why avoid native controls?</strong><br>
+A: A matter of choice to just draw anything without using pre-built designs.</p>
+<p><strong>Q: Do I neded to know how to draw on a canvas??</strong><br>
+A: Nope, just use prebuild drawn controls and customize them at will without limits. You would find that almost every method is virtual, all controls are initially designed to be subclassed and customized.</p>
+<p><strong>Q: Can I still use XAML?</strong><br>
+A: Yes you can use both XAML and code-behind to create your UI.</p>
+<p><strong>Q: Can I avoid using XAML at all costs?</strong><br>
+A: Yes feel free to use code-behind, up to using background thread to access and modify drawn controls properties.</p>
+<p><strong>Q: How do I create custom controls with DrawnUI?</strong><br>
+A: Inherit from <code>SkiaControl</code> for basic controls or <code>SkiaLayout</code> for container controls. Override the <code>Paint</code> method to define your custom drawing logic using SkiaSharp.</p>
+<p><strong>Q: Can I embed native MAUI controls inside DrawnUI?</strong><br>
+A: Yes! Use <code>SkiaMauiElement</code> to embed native MAUI controls like WebView inside your DrawnUI canvas. This allows you to combine the best of both worlds.</p>
+<h3 id="advanced">Advanced</h3>
+<p><strong>Q: How do I use set SkiaImage source?</strong><br>
+A: You have several options:</p>
 <ol>
 <li>Place images in <code>Resources/Raw</code> folder: <code>&lt;draw:SkiaImage Source=&quot;baboon.jpg&quot; /&gt;</code></li>
 <li>Set images directly: <code>mySkiaImage.SetImageInternal(mySkImage)</code> or <code>mySkiaImage.SetBitmapInternal(mySkBitmap)</code></li>
 </ol>
-<h3 id="controls--gestures">Controls &amp; Gestures</h3>
-<p><strong>Q: How do I prevent touch events from passing through overlapping controls?</strong>
+<p><strong>Q: Can I use MAUI's default Images folder?</strong><br>
+A: No.</p>
+<p><strong>Q: How do I prevent touch events from passing through overlapping controls?</strong><br>
 A: Use the <code>BlockGesturesBelow=&quot;True&quot;</code> property on the top control. Note that <code>InputTransparent</code> makes the control itself avoid gestures, not controls below it in the Z-axis.</p>
-<p><strong>Q: How can I enable mouse wheel scrolling in SkiaScroll?</strong>
+<p><strong>Q: How can I enable mouse wheel scrolling in SkiaScroll?</strong><br>
 A: Mouse wheel scrolling isn't built-in, but you can easily add it by subclassing SkiaScroll and overriding <code>ProcessGestures</code> to handle <code>TouchActionResult.Wheel</code> events. Check the discussions for a complete code example.</p>
-<p><strong>Q: How do I maintain scroll position when reloading items in SkiaScroll?</strong>
+<p><strong>Q: How do I maintain scroll position when reloading items in SkiaScroll?</strong><br>
 A: Save the current <code>ViewportOffsetY</code> before reloading, then restore it after the new items are loaded using <code>ScrollTo(x, savedOffsetY, 0)</code>.</p>
-<h3 id="advanced-usage">Advanced Usage</h3>
-<p><strong>Q: Can I embed native MAUI controls inside DrawnUI?</strong>
-A: Yes! Use <code>SkiaMauiElement</code> to embed native MAUI controls like WebView inside your DrawnUI canvas. This allows you to combine the best of both worlds.</p>
-<p><strong>Q: How do I create custom controls with DrawnUI?</strong>
-A: Inherit from <code>SkiaControl</code> for basic controls or <code>SkiaLayout</code> for container controls. Override the <code>Paint</code> method to define your custom drawing logic using SkiaSharp.</p>
+<p><strong>Q: How do I internally rebuild the ItemsSource?</strong><br>
+A: Directly call ApplyItemsSource().</p>
 <hr>
-<h2 id="-need-help">🆘 Need Help?</h2>
+<p><strong>Can't find the answer to your question?</strong> → <strong><a href="https://github.com/taublast/DrawnUi/discussions">Ask in GitHub Discussions</a></strong> - The community is here to help!</p>
+<h2 id="need-more-help">Need More Help?</h2>
 <ul>
 <li><strong><a href="fluent-extensions.html#troubleshooting">❓ Troubleshooting</a></strong> - Common issues and solutions</li>
 <li><strong><a href="https://github.com/taublast/DrawnUi.Maui/issues">💬 GitHub Issues</a></strong> - Report bugs or ask questions</li>
-<li><strong><a href="https://github.com/taublast/DrawnUi/discussions">🗨️ GitHub Discussions</a></strong> - Ask questions and get community help</li>
-<li><strong><a href="https://taublast.github.io/posts/MauiJuly/">📖 Background Article</a></strong> - Why DrawnUI was created</li>
+<li><strong><a href="https://taublast.github.io/posts/MauiJuly/">📖 Background Article</a></strong> - Why DrawnUi was created</li>
 </ul>
-<p><strong>Can't find the answer to your question?</strong> → <strong><a href="https://github.com/taublast/DrawnUi/discussions">Ask in GitHub Discussions</a></strong> - The community is here to help!</p>
 <hr>
 <p><strong>Ready to get started?</strong> → <strong><a href="getting-started.html">Install and Setup Guide</a></strong></p>
 

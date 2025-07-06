@@ -17,8 +17,19 @@
 **/Android/**/[Rr]esource.[Dd]esigner.cs
 **/Droid/**/[Rr]esource.[Dd]esigner.cs
 
-# Xamarin Components
-Components/
+# DocFX generated files
+_site/
+api/
+obj/
+
+# DocFX temporary files
+.docfx/
+docfx_project/log.txt
+log.txt
+
+# API documentation (auto-generated from source code)
+**/api/**.yml
+**/api/index.md
 
 # Build results
 [Dd]ebug/
