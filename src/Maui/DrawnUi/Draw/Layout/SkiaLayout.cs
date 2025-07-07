@@ -949,10 +949,11 @@ namespace DrawnUi.Draw
                     InitializeDefaultContent();
 
                     var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-                    if (request.IsSame)
-                    {
-                        return MeasuredSize;
-                    }
+                    //this optimization WAS nice (byebye) but not working for Grid inside a recycled cell where request is same but height is different 
+                    //if (request.IsSame)
+                    //{
+                    //    return MeasuredSize;
+                    //}
 
                     if (request.WidthRequest == 0 || request.HeightRequest == 0)
                     {
