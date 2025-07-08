@@ -52,12 +52,21 @@ namespace Sandbox
                     {
                         if (control.BindingContext is TestDataItem item)
                         {
+                            var index = item.Id;
                             Debug.WriteLine($"[TAPPED] child {item.Id}");
+                            //try hide NEXT item
+                            if (index < ItemsSource.Count-1)
+                            {
+                                var nextItem = ItemsSource[index];
+                                nextItem.Hide = !nextItem.Hide;
+                                Debug.WriteLine($"[CHANGED] child {index+1} HIDE {item.Hide}");
+                            }
                         }
                     }
                 });
             }
         }
+
         protected override void Dispose(bool isDisposing)
         {
             if (isDisposing)
@@ -134,16 +143,20 @@ namespace Sandbox
                             HeightRequest = 32,
                             BackgroundColor = Color.FromArgb("#4A90E2"),
                             VerticalOptions = LayoutOptions.Start,
-                        }.ObserveSelf((circle, prop) =>
+                        }.ObserveBindingContext<SkiaShape, TestDataItem>((me, item, prop) =>
                         {
                             if (prop.IsEither(nameof(BindingContext)))
                             {
-                                if (circle.BindingContext is TestDataItem item)
-                                {
-                                    // Change color based on item ID to make binding visible
-                                    var colors = new[] { "#4A90E2", "#E24A4A", "#4AE24A", "#E2E24A", "#E24AE2" };
-                                    circle.BackgroundColor = Color.FromArgb(colors[item.Id % colors.Length]);
-                                }
+                                // Change color based on item ID to make binding visible
+                                var colors = new[] { "#4A90E2", "#E24A4A", "#4AE24A", "#E2E24A", "#E24AE2" };
+                                me.BackgroundColor = Color.FromArgb(colors[item.Id % colors.Length]);
+                            }
+                            else
+                            if (prop == nameof(TestDataItem.Hide))
+                            {
+                                me.BackgroundColor = Colors.White;
+                                //me.IsVisible = !item.Hide;
+                                //me.Parent?.InvalidateByChild(me);
                             }
                         }),
                         
@@ -522,11 +535,27 @@ namespace Sandbox
     /// <summary>
     /// Test data model for virtualization testing
     /// </summary>
-    public class TestDataItem
+    public class TestDataItem : BindableObject
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Metadata { get; set; }
+
+        private bool hide;
+        public bool Hide    
+        {
+            get => hide;
+            set
+            {
+                if (value == hide)
+                {
+                    return;
+                }
+
+                hide = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }
