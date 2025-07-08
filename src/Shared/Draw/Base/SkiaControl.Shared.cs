@@ -4367,6 +4367,11 @@ namespace DrawnUi.Draw
                 return MeasuredSize;
             }
 
+            if (!IsVisible)
+            {
+                return SetMeasuredAsEmpty(scale);
+            }
+
             try
             {
                 IsMeasuring = true;

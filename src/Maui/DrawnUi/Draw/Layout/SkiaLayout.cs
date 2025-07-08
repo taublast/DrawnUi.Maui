@@ -97,11 +97,21 @@ namespace DrawnUi.Draw
         /// When using InitializeTemplatesInBackground this is your callbacl to wait for.  
         /// </summary>
         /// <returns></returns>
+        /// <summary>
+        /// Flag to expand viewport temporarily for initial drawing to pre-create cells with different heights
+        /// </summary>
+        private bool _isInitialDrawingFromFreshSource = false;
+        private int _initialDrawFrameCount = 0;
+
         public virtual void OnTemplatesAvailable()
         {
             _measuredNewTemplates = false;
             NeedMeasure = true;
             InvalidateParent();
+            
+            // Enable initial drawing mode to pre-create more cells
+            _isInitialDrawingFromFreshSource = true;
+            _initialDrawFrameCount = 0;
         }
 
         protected override ScaledSize SetMeasured(float width, float height, bool widthCut, bool heightCut, float scale)
@@ -938,6 +948,11 @@ namespace DrawnUi.Draw
             {
                 NeedRemeasuring = true;
                 return MeasuredSize;
+            }
+
+            if (!IsVisible)
+            {
+                return SetMeasuredAsEmpty(scale);
             }
 
             try

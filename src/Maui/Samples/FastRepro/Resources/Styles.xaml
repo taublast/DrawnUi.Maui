@@ -11,10 +11,6 @@
         <Setter Property="FontFamily" Value="FontText" />
     </Style>
 
-    <Style ApplyToDerivedTypes="True" TargetType="draw:SkiaButton">
-        <!--<Setter Property="TextColor" Value="Aqua" />
-        <Setter Property="BackgroundColor" Value="Red" />-->
-    </Style>
  
 
 </ResourceDictionary>

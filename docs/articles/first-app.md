@@ -21,7 +21,7 @@ cd MyFirstDrawnApp
 dotnet add package DrawnUi.Maui
 ```
 
-## Step 3: Initialize DrawnUi
+## Step 3: Initialize DrawnUI
 
 Open `MauiProgram.cs` and add DrawnUi initialization:
 
@@ -33,7 +33,7 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
-            .UseDrawnUi() // Add this line
+            .UseDrawnUi() // <-- Add this line
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "FontText");
@@ -44,7 +44,31 @@ public static class MauiProgram
 }
 ```
 
-## Step 4: Create Your First Drawn UI
+## Step 4: Set Up Default Styles (Optional)
+
+You can set default properties for drawn controls all like you would do it for native.
+Add this to `Resources/Styles.xaml` to set default fonts for all SkiaLabel and SkiaRichLabel controls:
+
+```xml
+ ...
+
+ <ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw">
+
+    <Style ApplyToDerivedTypes="True" TargetType="draw:SkiaLabel">
+        <Setter Property="TextColor" Value="Black" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontFamily" Value="FontText" />
+    </Style>
+
+...
+```
+ 
+**Why set default styles?** This lets you define consistent fonts, colors, and sizes across your entire app. Instead of setting `FontFamily="FontText"` on every SkiaLabel, it's applied automatically!
+
+## Step 5: Create Your First Drawn UI
 
 Replace the content of `MainPage.xaml`:
 
@@ -55,23 +79,33 @@ Replace the content of `MainPage.xaml`:
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:draw="http://schemas.appomobi.com/drawnUi/2023/draw">
 
-    <draw:Canvas BackgroundColor="White">
-        <draw:SkiaLayout Type="Column" Padding="40" Spacing="20" VerticalOptions="Center">
+    <draw:Canvas 
+        Gestures="Enabled"
+        BackgroundColor="White">
+
+        <draw:SkiaLayout 
+        Type="Column" 
+        Padding="40" Spacing="20" 
+        UseCache="ImageComposite"
+        VerticalOptions="Center">
             
             <draw:SkiaLabel 
+                UseCache="Operations"
                 Text="Welcome to DrawnUI!" 
                 FontSize="28" 
                 FontWeight="Bold"
                 TextColor="DarkBlue" 
                 HorizontalOptions="Center" />
                 
-            <draw:SkiaLabel 
+            <draw:SkiaRichLabel 
+                UseCache="Operations"
                 Text="This text is drawn with SkiaSharp ✨" 
                 FontSize="16" 
                 TextColor="Gray" 
                 HorizontalOptions="Center" />
                 
             <draw:SkiaButton 
+                UseCache="Image"
                 x:Name="MyButton"
                 Text="Click Me!" 
                 BackgroundColor="CornflowerBlue"
@@ -81,18 +115,55 @@ Replace the content of `MainPage.xaml`:
                 HorizontalOptions="Center"
                 Clicked="OnButtonClicked" />
                 
-            <draw:SkiaLabel 
+            <draw:SkiaRichLabel 
+                UseCache="Operations"
                 x:Name="ClickLabel"
                 Text="👆 Try clicking the button" 
                 FontSize="14" 
                 TextColor="Green" 
                 HorizontalOptions="Center" />
+
         </draw:SkiaLayout>
     </draw:Canvas>
+
 </ContentPage>
 ```
 
-## Step 5: Add Button Click Handler
+## Technical Notes About This Implementation
+
+### Why SkiaRichLabel for Emojis?
+```xml
+<draw:SkiaRichLabel Text="This text is drawn with SkiaSharp ✨" />
+<draw:SkiaRichLabel Text="👆 Try clicking the button" />
+```
+
+**SkiaRichLabel vs SkiaLabel:** For text containing emojis (✨👆), we use `SkiaRichLabel` because it automatically find an installed font to render all unicode characters. Regular `SkiaLabel` will not render emojis if your selected font doesn't include emoji glyphs.
+
+### Canvas Configuration
+```xml
+<draw:Canvas Gestures="Enabled" BackgroundColor="White">
+```
+
+**Key decisions:**
+- **`Gestures = "Enabled"`** - Essential! Without this, your SkiaButton won't receive touch events
+- **No hardware acceleration** - For simple UIs like this, software rendering is enough and uses less resources than GPU acceleration.
+
+### Smart Caching Strategy
+```xml
+<draw:SkiaLayout UseCache="ImageComposite" ... >
+    <draw:SkiaLabel UseCache="Operations" ... />
+    <draw:SkiaButton UseCache="Image" ... />
+    <draw:SkiaRichLabel UseCache="Operations" ... />
+```
+
+**Cache types explained:**
+- **`UseCache="Operations"`** - For text and simple shapes (very memory efficient)
+- **`UseCache="Image"`** - For the button (handles rounded corners and background efficiently)  
+- **`UseCache="ImageComposite"`** - The whole area will be cached as bitmap and only changed areas (button when clicked) will be redrawn.
+
+This caching setup ensures smooth performance and avoids unnecessary redraws and calculations.
+
+## Step 6: Add Button Click Handler
 
 In `MainPage.xaml.cs`, add the button click handler:
 
@@ -122,7 +193,7 @@ public partial class MainPage : ContentPage
 }
 ```
 
-## Step 6: Run Your App
+## Step 7: Run Your App
 
 Build and run your first DrawnUI app:
 
