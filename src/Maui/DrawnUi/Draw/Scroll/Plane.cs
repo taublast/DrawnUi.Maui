@@ -21,6 +21,38 @@
         public bool IsReady { get; set; } = false;
         public string Id { get; set; }
 
+        /// <summary>
+        /// Rendering tree specific to this plane's content, captured during plane preparation.
+        /// Immutable snapshot to prevent race conditions during gesture processing.
+        /// </summary>
+        public IReadOnlyList<SkiaControlWithRect> RenderTree { get; private set; }
+
+        /// <summary>
+        /// The scroll position when this plane's render tree was captured.
+        /// Used for coordinate transformation during gesture processing.
+        /// </summary>
+        public SKPoint RenderTreeCaptureOffset { get; private set; }
+
+        /// <summary>
+        /// The plane's OffsetY when this plane's render tree was captured.
+        /// Used for coordinate transformation during gesture processing.
+        /// </summary>
+        public float RenderTreeCapturePlaneOffsetY { get; private set; }
+
+        /// <summary>
+        /// Captures rendering tree when plane content is prepared
+        /// </summary>
+        /// <param name="tree">The rendering tree to capture</param>
+        /// <param name="captureOffset">The scroll offset when this tree was captured</param>
+        /// <param name="planeOffsetY">The plane's OffsetY when this tree was captured</param>
+        public void CaptureRenderTree(List<SkiaControlWithRect> tree, SKPoint captureOffset, float planeOffsetY)
+        {
+            // Create immutable snapshot - old references remain valid during gesture processing
+            RenderTree = tree?.ToList().AsReadOnly();
+            RenderTreeCaptureOffset = captureOffset;
+            RenderTreeCapturePlaneOffsetY = planeOffsetY;
+        }
+
         public void Reset(SKSurface surface, SKRect source)
         {
             OffsetX = 0;
@@ -33,6 +65,7 @@
         {
             IsReady = false;
             LastDrawnAt = SKRect.Empty;
+            // Don't clear RenderTree - let immutable snapshots be garbage collected naturally
         }
     }
 }

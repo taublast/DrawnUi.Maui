@@ -1,4 +1,5 @@
 ﻿using System.Resources;
+using HarfBuzzSharp;
 using SKBlendMode = SkiaSharp.SKBlendMode;
 using SKCanvas = SkiaSharp.SKCanvas;
 using SKClipOperation = SkiaSharp.SKClipOperation;
@@ -1464,6 +1465,25 @@ namespace DrawnUi.Draw
         /// </summary>
         public event EventHandler<SkiaGesturesInfo> ConsumeGestures;
 
+        /// <summary>
+        /// Layout detected that child was tapped, base used to call callback ChildTapped 
+        /// </summary>
+        /// <param name="child"></param>
+        /// <param name="args"></param>
+        /// <param name="apply"></param>
+        public virtual void OnChildTapped(SkiaControl child, SkiaGesturesParameters args, GestureEventProcessingInfo apply)
+        {
+            if (ChildTapped != null)
+            {
+                ChildTapped.Invoke(this, new(child, args, apply));
+            }
+
+            if (CommandChildTapped != null)
+            {
+                CommandChildTapped.Execute(child);
+            }
+        }
+
         public virtual ISkiaGestureListener ProcessGestures(
             SkiaGesturesParameters args,
             GestureEventProcessingInfo apply)
@@ -1573,22 +1593,15 @@ namespace DrawnUi.Draw
                             //    forChildOld = IsGestureForChild(child, touchLocationWIthOffset);
                             //    forChild = IsGestureForChild(child.Control, args);
                             //}
-
+                            if (Tag == "VirtualizedLayout")
+                            {
+                                var stop = 1;
+                            }
                             if (forChild)
                             {
                                 if (args.Type == TouchActionResult.Tapped)
                                 {
-                                    if (ChildTapped != null)
-                                    {
-                                        breakForChild = listener;
-                                        ChildTapped.Invoke(this, new(child.Control, args, apply));
-                                    }
-
-                                    if (CommandChildTapped != null)
-                                    {
-                                        breakForChild = listener;
-                                        CommandChildTapped.Execute(listener);
-                                    }
+                                    OnChildTapped(child.Control, args, apply);
                                 }
 
                                 //Trace.WriteLine($"[HIT] for cell {i} at Y {y:0.0}");
@@ -1693,14 +1706,13 @@ namespace DrawnUi.Draw
                                         if (ChildTapped != null)
                                         {
                                             breakForChild = listener;
-                                            ChildTapped.Invoke(this, new(listener, args, apply));
                                         }
-
                                         if (CommandChildTapped != null)
                                         {
                                             breakForChild = listener;
-                                            CommandChildTapped.Execute(listener);
                                         }
+
+                                        OnChildTapped(listener as SkiaControl, args, apply);
                                     }
 
                                     if (manageChildFocus && listener == Superview.FocusedChild)
@@ -5199,7 +5211,7 @@ namespace DrawnUi.Draw
             VisualLayer = new VisualLayer(this, parentVisualNode, destination, scale);
 
             if (parentVisualNode != null)
-                ((SkiaControl)Parent).VisualLayer.Children.Add(VisualLayer);
+                ((SkiaControl)Parent).VisualLayer?.Children.Add(VisualLayer);
 
             NodeAttached = true;
 
