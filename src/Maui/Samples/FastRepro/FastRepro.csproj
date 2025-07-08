@@ -30,7 +30,6 @@
         <CodesignKey>iPhone Developer</CodesignKey>
 	</PropertyGroup>
 
-   
   <ItemGroup>
 	  <MauiImage Include="Resources\Raw\Svg\dotnet_bot.svg">
 	    <BaseSize>168,208</BaseSize>

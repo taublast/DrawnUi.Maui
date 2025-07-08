@@ -11,9 +11,9 @@ namespace Sandbox
 {
     /// <summary>
     /// Test page for 3-plane virtualization system in SkiaScroll + SkiaLayout
-    /// Tests the configuration: MeasureItemsStrategy="MeasureVisible", Virtualisation="Managed", IsTemplated=true
+    /// Tests the configuration: Virtualisation="Managed", IsTemplated=true
     /// </summary>
-    public class ThreePlaneVirtualizationTest : BasePageReloadable, IDisposable
+    public class PlanesTest : BasePageReloadable, IDisposable
     {
         Canvas Canvas;
         SkiaScroll MainScroll;
