@@ -1985,15 +1985,33 @@ else
             var needrebuild = templatesInvalidated;
             List<ControlInStack> visibleElements = new();
             bool updateInternal = false;
+            
+            var planeId = ctx.GetArgument(nameof(ContextArguments.Plane)) as string;
 
             if (structure != null)
             {
                 //var inflate = (float)(this.VirtualisationInflated * ctx.Scale);
 
-                var visibilityArea = GetVisibleAreaCached(ctx);
+                // For managed virtualization, bypass cache to ensure each plane gets its own visibility area
+                ScaledRect visibilityArea;
+                if (Virtualisation == VirtualisationType.Managed)
+                {
+                    var inflate = (float)(this.VirtualisationInflated * ctx.Scale);
+                    visibilityArea = GetOnScreenVisibleArea(ctx, new(inflate, inflate));
+                }
+                else
+                {
+                    visibilityArea = GetVisibleAreaCached(ctx);
+                }
+                
+                // for plane virtualization
+                if (!string.IsNullOrEmpty(planeId))
+                //{
+                //    Debug.WriteLine($"[{planeId}] DrawStack visibility area: {visibilityArea.Pixels}");
+                //}
 
                 // EXPAND DRAWING VIEWPORT during initial drawing to pre-create cells and avoid lagspike at scrolling start
-                if (IsTemplated && _isInitialDrawingFromFreshSource && _initialDrawFrameCount < 2)
+                if (Virtualisation != VirtualisationType.Managed &&  IsTemplated && _isInitialDrawingFromFreshSource && _initialDrawFrameCount < 2)
                 {
                     if (Type == LayoutType.Column)
                     {
@@ -2050,6 +2068,12 @@ else
                             {
                                 // SOLUTION PART 1: Use normal area for visibility
                                 cell.IsVisible = cell.Drawn.IntersectsWith(visibilityArea.Pixels);
+                                
+                                // for plane virtualization
+                                //if (!string.IsNullOrEmpty(planeId) && cell.ControlIndex < 3)
+                                //{
+                                //    Debug.WriteLine($"[{planeId}] Cell {cell.ControlIndex}: drawn={cell.Drawn}, visible={cell.IsVisible}");
+                                //}
                             }
                         }
                         else
@@ -2260,9 +2284,15 @@ else
                 if (_initialDrawFrameCount >= 2)
                 {
                     _isInitialDrawingFromFreshSource = false;
-                    Super.Log($"[SkiaLayout] Initial drawing complete, created cells for {drawn} items, returning to normal viewport");
+                    //Super.Log($"[SkiaLayout] Initial drawing complete, created cells for {drawn} items, returning to normal viewport");
                 }
             }
+
+            // for plane virtualization
+            //if (!string.IsNullOrEmpty(planeId))
+            //{
+            //    Debug.WriteLine($"[{planeId}] DrawStack result: {drawn} children drawn, {structure.GetCount()} total cells");
+            //}
 
             return drawn;
         }

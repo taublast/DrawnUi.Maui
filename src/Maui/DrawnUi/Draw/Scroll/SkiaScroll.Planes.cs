@@ -221,7 +221,7 @@ namespace DrawnUi.Draw
             if (state.IsBuilding && state.Cts != null)
             {
                 state.Cts.Cancel(); // signal old task to stop
-                Debug.WriteLine($"Canceling previous rendering: {planeId}");
+                //Debug.WriteLine($"Canceling previous rendering: {planeId}");
             }
 
             // Create a fresh CTS and mark building
@@ -237,7 +237,7 @@ namespace DrawnUi.Draw
                 {
                     if (token.IsCancellationRequested)
                     {
-                        Debug.WriteLine($"Plane rendering canceled: {planeId}");
+                        //Debug.WriteLine($"Plane rendering canceled: {planeId}");
                         return; // canceled before starting
                     }
 
@@ -245,7 +245,7 @@ namespace DrawnUi.Draw
 
                     // Now do the actual PreparePlane
                     var plane = GetPlaneById(planeId);
-                    Debug.WriteLine($"Run prepare plane {plane?.Id}");
+                    //Debug.WriteLine($"Run prepare plane {plane?.Id}");
 
                     await _globalPlanePreparationLock.WaitAsync(token);
 
@@ -253,7 +253,7 @@ namespace DrawnUi.Draw
                 }
                 catch (OperationCanceledException)
                 {
-                    Debug.WriteLine($"Plane rendering canceled: {planeId}");
+                    //Debug.WriteLine($"Plane rendering canceled: {planeId}");
                     // Normal if we got canceled
                 }
                 catch (Exception ex)
@@ -329,11 +329,11 @@ namespace DrawnUi.Draw
                 return;
             }
 
-            Debug.WriteLine($"Preparing PLANE {PlaneGreen}..");
+            //Debug.WriteLine($"Preparing PLANE {PlaneGreen}..");
 
             // Capture current viewport state to avoid race conditions
             var capturedOffset = InternalViewportOffset.Pixels;
-            var capturedContext = context.WithArgument(new("CapturedOffset", capturedOffset));
+            var capturedContext = context.WithArgument(new(nameof(ContextArguments.Offset), capturedOffset));
 
             TriggerPreparePlane(capturedContext, PlaneGreen);
 
@@ -351,11 +351,11 @@ namespace DrawnUi.Draw
                 return;
             }
 
-            Debug.WriteLine($"Preparing PLANE {PlaneBlue}..");
+            //Debug.WriteLine($"Preparing PLANE {PlaneBlue}..");
 
             // Capture current viewport state to avoid race conditions
             var capturedOffset = InternalViewportOffset.Pixels;
-            var capturedContext = context.WithArgument(new("CapturedOffset", capturedOffset));
+            var capturedContext = context.WithArgument(new(nameof(ContextArguments.Offset), capturedOffset));
 
             TriggerPreparePlane(capturedContext, PlaneBlue);
         }
@@ -434,7 +434,7 @@ namespace DrawnUi.Draw
 
             if (!PlaneCurrent.IsReady)
             {
-                Debug.WriteLine($"Preparing PLANE {PlaneCurrent.Id}..");
+                //Debug.WriteLine($"Preparing PLANE {PlaneCurrent.Id}..");
                 PreparePlane(context.WithDestination(displayRectA), PlaneCurrent);
             }
 
@@ -589,6 +589,24 @@ namespace DrawnUi.Draw
             PlaneBackward.Invalidate();
         }
 
+        /// <summary>
+        /// Calculate the specific viewport area this plane should render
+        /// </summary>
+        protected virtual SKRect CalculateViewportForPlane(Plane plane, SKPoint offsetToUse)
+        {
+            // Create a viewport that represents the area this plane should render
+            var planeViewport = new SKRect(0, 0, _planeWidth, _planeHeight);
+            
+            // Apply the same offsets as the plane rendering
+            planeViewport.Offset(offsetToUse.X, offsetToUse.Y);
+            planeViewport.Offset(DrawingRect.Left, DrawingRect.Top);
+            planeViewport.Offset(plane.OffsetX, plane.OffsetY);
+            
+            //Debug.WriteLine($"[{plane.Id}] Calculated plane-specific viewport: {planeViewport}");
+            
+            return planeViewport;
+        }
+
         protected virtual void PreparePlane(DrawingContext context, Plane plane)
         {
             var destination = plane.Destination;
@@ -598,21 +616,24 @@ namespace DrawnUi.Draw
             var viewport = plane.Destination;
 
             // Use captured offset from trigger time to avoid race conditions
-            var capturedOffset = context.GetArgument("CapturedOffset") as SKPoint?;
+            var capturedOffset = context.GetArgument(nameof(ContextArguments.Offset)) as SKPoint?;
             var offsetToUse = capturedOffset ?? InternalViewportOffset.Pixels;
 
-            if (capturedOffset.HasValue)
-            {
-                Debug.WriteLine($"Using captured offset for {plane.Id}: {capturedOffset.Value}");
-            }
-            else
-            {
-                Debug.WriteLine($"No captured offset for {plane.Id}, using current: {InternalViewportOffset.Pixels}");
-            }
+            //if (capturedOffset.HasValue)
+            //{
+            //    Debug.WriteLine($"Using captured offset for {plane.Id}: {capturedOffset.Value}");
+            //}
+            //else
+            //{
+            //    Debug.WriteLine($"No captured offset for {plane.Id}, using current: {InternalViewportOffset.Pixels}");
+            //}
 
             viewport.Offset(offsetToUse.X, offsetToUse.Y);
             viewport.Offset(DrawingRect.Left, DrawingRect.Top);
             viewport.Offset(plane.OffsetX, plane.OffsetY);
+
+            // Calculate plane-specific viewport for managed virtualization
+            var planeSpecificViewport = CalculateViewportForPlane(plane, offsetToUse);
 
             var c = recordingContext.Context.Canvas.Save();
             recordingContext.Context.Canvas.Translate(-viewport.Left, -viewport.Top);
@@ -621,8 +642,9 @@ namespace DrawnUi.Draw
             PaintOnPlane(recordingContext
                 .WithDestination(viewport)
                 .WithArguments(
-                    new(ContextArguments.Plane.ToString(), plane.Id),
-                    new(ContextArguments.Viewport.ToString(), viewport)), plane);
+                    new(nameof(ContextArguments.Plane), plane.Id),
+                    new(nameof(ContextArguments.Viewport), viewport),
+                    new(nameof(ContextArguments.PlaneViewport), planeSpecificViewport)), plane);
 
             recordingContext.Context.Canvas.RestoreToCount(c);
 
@@ -630,7 +652,7 @@ namespace DrawnUi.Draw
             if (Content is SkiaLayout layout && layout.RenderTree != null)
             {
                 plane.CaptureRenderTree(layout.RenderTree, offsetToUse, plane.OffsetY);
-                Debug.WriteLine($"Captured render tree for {plane.Id}: {plane.RenderTree?.Count ?? 0} controls at offset {offsetToUse}, planeOffsetY: {plane.OffsetY}");
+                //Debug.WriteLine($"Captured render tree for {plane.Id}: {plane.RenderTree?.Count ?? 0} controls at offset {offsetToUse}, planeOffsetY: {plane.OffsetY}");
             }
 
             recordingContext.Context.Canvas.Flush();
@@ -642,7 +664,7 @@ namespace DrawnUi.Draw
                 destination) { PreserveSourceFromDispose = true };
 
             plane.IsReady = true;
-            Debug.WriteLine($"Plane rendering READY: {plane.Id}");
+            //Debug.WriteLine($"Plane rendering READY: {plane.Id}");
         }
 
 
@@ -711,22 +733,22 @@ namespace DrawnUi.Draw
                 var adjustedHitRect = child.HitRect;
                 adjustedHitRect.Offset(0, totalMovement);
 
-                if (args.Type == TouchActionResult.Tapped && !hadDebug)
-                {
-                    hadDebug = true;
-                    Debug.WriteLine($"[PLANE {plane.Id}] Raw gesture: {args.Event.Location}, thisOffset: {thisOffset}");
-                    Debug.WriteLine($"[PLANE {plane.Id}] currentScroll: {currentScroll}, plane.OffsetY: {plane.OffsetY}, planeOffsetY: {planeOffsetY}");
-                    Debug.WriteLine($"[PLANE {plane.Id}] captureOffset: {plane.RenderTreeCaptureOffset}, capturePlaneOffsetY: {plane.RenderTreeCapturePlaneOffsetY}");
-                    Debug.WriteLine($"[PLANE {plane.Id}] scrollMovement: {scrollMovement}, planeMovement: {planeMovement}, totalMovement: {totalMovement}");
-                    Debug.WriteLine($"[PLANE {plane.Id}] Gesture point: {gesturePoint}");
-                    Debug.WriteLine($"[PLANE {plane.Id}] Child {i} original HitRect: {child.HitRect}");
-                    Debug.WriteLine($"[PLANE {plane.Id}] Child {i} adjusted HitRect: {adjustedHitRect}");
-                }
+                //if (args.Type == TouchActionResult.Tapped && !hadDebug)
+                //{
+                //    hadDebug = true;
+                //    Debug.WriteLine($"[PLANE {plane.Id}] Raw gesture: {args.Event.Location}, thisOffset: {thisOffset}");
+                //    Debug.WriteLine($"[PLANE {plane.Id}] currentScroll: {currentScroll}, plane.OffsetY: {plane.OffsetY}, planeOffsetY: {planeOffsetY}");
+                //    Debug.WriteLine($"[PLANE {plane.Id}] captureOffset: {plane.RenderTreeCaptureOffset}, capturePlaneOffsetY: {plane.RenderTreeCapturePlaneOffsetY}");
+                //    Debug.WriteLine($"[PLANE {plane.Id}] scrollMovement: {scrollMovement}, planeMovement: {planeMovement}, totalMovement: {totalMovement}");
+                //    Debug.WriteLine($"[PLANE {plane.Id}] Gesture point: {gesturePoint}");
+                //    Debug.WriteLine($"[PLANE {plane.Id}] Child {i} original HitRect: {child.HitRect}");
+                //    Debug.WriteLine($"[PLANE {plane.Id}] Child {i} adjusted HitRect: {adjustedHitRect}");
+                //}
 
                 // Use the adjusted HitRect for hit testing
                 if (adjustedHitRect.ContainsInclusive(gesturePoint.X, gesturePoint.Y))
                 {
-                    Debug.WriteLine($"[PLANE {plane.Id}] HIT! Loop index {i}, ContextIndex {child.Control.ContextIndex}");
+                    //Debug.WriteLine($"[PLANE {plane.Id}] HIT! Loop index {i}, ContextIndex {child.Control.ContextIndex}");
 
                     // Handle child tapped events
                     if (args.Type == TouchActionResult.Tapped)

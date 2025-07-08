@@ -906,7 +906,7 @@ namespace DrawnUi.Draw
 
         public override DrawingContext AddPaintArguments(DrawingContext ctx)
         {
-            return ctx.WithArgument(new("ShapePaintArguments",
+            return ctx.WithArgument(new(nameof(ContextArguments.ShapePaint),
                 new ShapePaintArguments()
                 {
                     StrokeAwareSize = MeasuredStrokeAwareSize,
@@ -923,7 +923,7 @@ namespace DrawnUi.Draw
             var rectBackground = MeasuredStrokeAwareClipSize;
 
             ShapePaintArguments? arguments = null;
-            if (ctx.GetArgument("ShapePaintArguments") is ShapePaintArguments defined)
+            if (ctx.GetArgument(nameof(ContextArguments.ShapePaint)) is ShapePaintArguments defined)
             {
                 arguments = defined;
                 strokeAwareSize = defined.StrokeAwareSize;

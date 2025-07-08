@@ -360,6 +360,13 @@ namespace DrawnUi.Draw
 
             if (Virtualisation == VirtualisationType.Managed)
             {
+                // Check if we have a plane-specific viewport for managed virtualization
+                var planeSpecificViewport = context.GetArgument(nameof(ContextArguments.PlaneViewport)) as SKRect?;
+                if (planeSpecificViewport.HasValue)
+                {
+                    return ScaledRect.FromPixels(planeSpecificViewport.Value, RenderingScale);
+                }
+                
                 return onscreen;
             }
 
