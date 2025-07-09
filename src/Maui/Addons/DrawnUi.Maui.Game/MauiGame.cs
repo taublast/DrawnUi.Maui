@@ -23,7 +23,7 @@ namespace DrawnUi.Gaming
 
         public MauiGame()
         {
-            Trace.WriteLine("****************** MAUIGAME CREATED **********************");
+            Super.Log("****************** MAUIGAME CREATED **********************");
 
             KeyboardManager.KeyDown += OnKeyboardDownEvent;
             KeyboardManager.KeyUp += OnKeyboardUpEvent;
@@ -58,7 +58,7 @@ namespace DrawnUi.Gaming
         /// </summary>
         public virtual void StopLoop()
         {
-            _appLoop.Stop();
+            _appLoop?.Stop();
         }
 
         /// <summary>
