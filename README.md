@@ -35,7 +35,7 @@ Current development state is _ALPHA for prod_.
 * The nuget package `DrawnUi.Maui` replaces the old package Id, you can still use the old one kept for compatibility for some time.
 * Docs, first appearence inside `/docs`! To teach LMs use `/aidocs` subfolder.
 * `SkiaCamera` inside DrawnUi.Maui.Camera: iOS, MacCatalyst, Windows, Android implementations.
-* `SkiaShape` now can contain many `Children` instead of one `Content`, can change layout type with `Layout` property. Plus fixes for stroke and other for pixel-perfect rendering.
+* `SkiaShape` now can contain many `Children` instead of one `Content`. Plus fixes for stroke and other for pixel-perfect rendering.
 * Stack and absolute layouts now correctly apply one-directional `Fill` of children, might break some legacy UIs (or might not). `Margins` and `Padding` now work properly everywhere.
 * Can override virtual `OnMeasuring`, while `Measure` is not virtual anymore to assure faster screen creation and avoid re-measurements when initializing for the first time.
 * Important performance optimizations and fixes for layouts and SkiaLabel.

@@ -85,6 +85,8 @@ namespace Sandbox
             ItemsSource = new ObservableCollection<TestDataItem>();
             GenerateInitialData(50); // Start with 50 items
 
+            this.ItemsSource[1].Hide = true;
+
             // Create status labels
             StatusLabel = new SkiaLabel
             {
@@ -109,8 +111,7 @@ namespace Sandbox
             {
                 Tag = "VirtualizedLayout",
                 Type = LayoutType.Column,
-                Spacing = 8,
-                Padding = new Thickness(16),
+                Spacing = 0,
                 HorizontalOptions = LayoutOptions.Fill,
                 
                 // KEY CONFIGURATION FOR 3-PLANE VIRTUALIZATION
@@ -125,9 +126,12 @@ namespace Sandbox
             // Set up the item template
             VirtualizedLayout.ItemTemplate = new DataTemplate(() =>
             {
-                return new SkiaLayout
+                SkiaLayout lazyParent=null;
+
+                var cell = new SkiaLayout
                 {
                     Type = LayoutType.Row,
+                    Margin = 2,
                     UseCache = SkiaCacheType.Image,
                     Spacing = 12,
                     Padding = new Thickness(12, 8),
@@ -143,20 +147,14 @@ namespace Sandbox
                             HeightRequest = 32,
                             BackgroundColor = Color.FromArgb("#4A90E2"),
                             VerticalOptions = LayoutOptions.Start,
-                        }.ObserveBindingContext<SkiaShape, TestDataItem>((me, item, prop) =>
+                        }
+                        .ObserveBindingContext<SkiaShape, TestDataItem>((me, item, prop) =>
                         {
                             if (prop.IsEither(nameof(BindingContext)))
                             {
                                 // Change color based on item ID to make binding visible
                                 var colors = new[] { "#4A90E2", "#E24A4A", "#4AE24A", "#E2E24A", "#E24AE2" };
                                 me.BackgroundColor = Color.FromArgb(colors[item.Id % colors.Length]);
-                            }
-                            else
-                            if (prop == nameof(TestDataItem.Hide))
-                            {
-                                me.BackgroundColor = Colors.White;
-                                //me.IsVisible = !item.Hide;
-                                //me.Parent?.InvalidateByChild(me);
                             }
                         }),
                         
@@ -222,7 +220,41 @@ namespace Sandbox
             
 
                     }
-                };
+                }
+                .ObserveSelf((me, prop) =>
+                {
+                    if (prop.IsEither(nameof(Parent)))
+                    {
+                        if (me.Parent!=null)
+                            lazyParent = me.Parent as SkiaLayout;
+                    }
+                })
+                .ObserveBindingContext<SkiaLayout, TestDataItem>((me, item, prop) =>
+                {
+                    if (prop == nameof(BindingContext))
+                    {
+                        //setup cell initially
+                        me.IsVisible = !item.Hide;
+                    }
+                    else
+                    if (prop == nameof(TestDataItem.Hide))
+                    {
+                        me.IsVisible = !item.Hide;
+                        if (lazyParent != null)
+                        {
+                            lazyParent.TrackChildAsDirty(me);
+                            me.Parent.InvalidateByChild(me);
+                        }
+                        else
+                        {
+                            //this cell was never drawn because was initially invisible
+                            var scroll = (VirtualizedLayout.Parent as SkiaScroll);
+                            scroll.Invalidate();
+                        }
+                    }
+                });
+
+                return cell;
             });
 
             // Create the scroll container that will use 3-plane virtualization
@@ -284,16 +316,16 @@ namespace Sandbox
                     VerticalOptions = LayoutOptions.Fill,
                     Children =
                     {
-                        new SkiaLayout()
+                        new SkiaStack()
                         {
                             Type = LayoutType.Column,
-                            HorizontalOptions = LayoutOptions.Fill,
                             VerticalOptions = LayoutOptions.Fill,
                             Children =
                             {
                                 // Header with title and status
-                                new SkiaLayout()
+                                new SkiaStack()
                                 {
+                                    UseCache = SkiaCacheType.Operations,
                                     Type = LayoutType.Column,
                                     BackgroundColor = Color.FromArgb("#161B22"),
                                     Padding = new Thickness(0, 0, 0, 8),
@@ -314,9 +346,9 @@ namespace Sandbox
                                 },
                                 
                                 // Control buttons row 1
-                                new SkiaLayout()
+                                new SkiaWrap()
                                 {
-                                    Type = LayoutType.Row,
+                                    UseCache = SkiaCacheType.Image,
                                     Spacing = 8,
                                     Padding = new Thickness(16, 8),
                                     BackgroundColor = Color.FromArgb("#161B22"),
@@ -326,6 +358,7 @@ namespace Sandbox
                                 // Control buttons row 2
                                 new SkiaLayout()
                                 {
+                                    UseCache = SkiaCacheType.Image,
                                     Type = LayoutType.Row,
                                     Spacing = 8,
                                     Padding = new Thickness(16, 4, 16, 8),
@@ -334,6 +367,7 @@ namespace Sandbox
                                 },
                                 
                                 // Main scrollable content
+
                                 MainScroll
                             }
                         },

@@ -1301,15 +1301,6 @@ namespace DrawnUi.Draw
         }
 
         /// <summary>
-        /// Sets the Type property for SkiaShape
-        /// </summary>
-        public static T WithLayoutType<T>(this T layout, LayoutType type) where T : SkiaShape
-        {
-            layout.Layout = type;
-            return layout;
-        }
-
-        /// <summary>
         /// Sets the Spacing property for SkiaLayout
         /// </summary>
         public static T WithSpacing<T>(this T layout, double spacing) where T : SkiaLayout

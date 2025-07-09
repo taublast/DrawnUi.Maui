@@ -2,6 +2,14 @@
 namespace DrawnUi.Draw;
 
 /// <summary>
+/// Left for compatibility, use SkiaRichLabel
+/// </summary>
+public class SkiaMarkdownLabel : SkiaRichLabel
+{
+
+}
+
+/// <summary>
 /// Will internally create spans from markdown.
 /// Spans property must not be set directly.
 /// </summary>

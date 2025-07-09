@@ -63,9 +63,14 @@
 
         public void Invalidate()
         {
-            IsReady = false;
-            LastDrawnAt = SKRect.Empty;
-            // Don't clear RenderTree - let immutable snapshots be garbage collected naturally
+            if (IsReady)
+            {
+                Debug.WriteLine($"PLANE {Id} invalidated!");
+
+                IsReady = false;
+                LastDrawnAt = SKRect.Empty;
+                // Don't clear RenderTree - let immutable snapshots be garbage collected naturally
+            }
         }
     }
 }

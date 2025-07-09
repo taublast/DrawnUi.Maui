@@ -69,7 +69,7 @@ public partial class SkiaFontManager
         }
     }
 
-    public static bool ThrowIfFailedToCreateFont = true;
+    public static bool ThrowIfFailedToCreateFont;
     static SKFontManager _SKFontManager;
 
     public static SKFontManager Manager

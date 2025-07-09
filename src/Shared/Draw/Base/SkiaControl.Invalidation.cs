@@ -131,7 +131,7 @@
             }
         }
 
-        protected readonly ControlsTracker DirtyChildrenTracker = new();
+        public readonly ControlsTracker DirtyChildrenTracker = new();
 
         protected HashSet<SkiaControl> DirtyChildrenInternal { get; set; } = new();
 

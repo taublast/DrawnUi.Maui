@@ -19,6 +19,10 @@ public class ControlsTracker
 
     public bool HasItems => _dic.Count > 0;
 
+    public bool IsEmpty => _dic.Count < 1;
+
+    public int Count => _dic.Count;
+
     public List<SkiaControl> GetList()
     {
         lock (_dic)

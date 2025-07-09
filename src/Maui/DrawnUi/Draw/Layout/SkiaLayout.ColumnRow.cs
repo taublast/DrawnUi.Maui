@@ -895,7 +895,8 @@ else
                 // Inline CalculateWidthPerColumn with pre-calculated spacing
                 var widthPerColumn = isColumn
                     ? (columnsCount > 1
-                        ? (float)Math.Round((rectForChildrenPixels.Width - (columnsCount - 1) * spacingScaled) / columnsCount)
+                        ? (float)Math.Round((rectForChildrenPixels.Width - (columnsCount - 1) * spacingScaled) /
+                                            columnsCount)
                         : rectForChildrenPixels.Width)
                     : rectForChildrenPixels.Width;
 
@@ -955,12 +956,17 @@ else
             return ScaledSize.FromPixels(stackWidth, stackHeight, scale);
         }
 
+        public void TrackChildAsDirty(SkiaControl child)
+        {
+            DirtyChildrenTracker.Add(child);
+        }
+
         /// <summary>
         /// Measuring column/row for templated for fastest way possible
         /// </summary>
         public virtual ScaledSize MeasureStackTemplated(SKRect rectForChildrenPixels, float scale)
         {
-           //return MeasureStackLegacy(rectForChildrenPixels, scale);
+            //return MeasureStackLegacy(rectForChildrenPixels, scale);
 
             var childrenCount = ChildrenFactory.GetChildrenCount(); // Cache count
             if (childrenCount <= 0)
@@ -978,7 +984,7 @@ else
             try
             {
                 // Use FastMeasurement property to conditionally skip multi-pass FILL calculations
-                if (true)//FastMeasurement)
+                if (true) //FastMeasurement)
                 {
                     return MeasureStackTemplatedFast(rectForChildrenPixels, scale, layoutStructure, template);
                 }
@@ -1035,15 +1041,17 @@ else
 
                     // Inline ShouldMeasureAll
                     var needMeasureAll = !useOneTemplate ||
-                                       RecyclingTemplate == RecyclingTemplate.Disabled ||
-                                       MeasureItemsStrategy == MeasuringStrategy.MeasureAll ||
-                                       (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && columnsCount != Split) ||
-                                       !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && firstCell != null);
+                                         RecyclingTemplate == RecyclingTemplate.Disabled ||
+                                         MeasureItemsStrategy == MeasuringStrategy.MeasureAll ||
+                                         (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst &&
+                                          columnsCount != Split) ||
+                                         !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && firstCell != null);
 
                     // Inline CalculateWidthPerColumn with pre-calculated spacing
                     var widthPerColumn = isColumn
                         ? (columnsCount > 1
-                            ? (float)Math.Round((rectForChildrenPixels.Width - (columnsCount - 1) * spacingScaled) / columnsCount)
+                            ? (float)Math.Round((rectForChildrenPixels.Width - (columnsCount - 1) * spacingScaled) /
+                                                columnsCount)
                             : rectForChildrenPixels.Width)
                         : rectForChildrenPixels.Width;
 
@@ -1189,15 +1197,17 @@ else
 
                     // Inline ShouldMeasureAll
                     var needMeasureAll = !isTemplated || !useOneTemplate ||
-                                       RecyclingTemplate == RecyclingTemplate.Disabled ||
-                                       MeasureItemsStrategy == MeasuringStrategy.MeasureAll ||
-                                       (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && columnsCount != Split) ||
-                                       !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && firstCell != null);
+                                         RecyclingTemplate == RecyclingTemplate.Disabled ||
+                                         MeasureItemsStrategy == MeasuringStrategy.MeasureAll ||
+                                         (MeasureItemsStrategy == MeasuringStrategy.MeasureFirst &&
+                                          columnsCount != Split) ||
+                                         !(MeasureItemsStrategy == MeasuringStrategy.MeasureFirst && firstCell != null);
 
                     // Inline CalculateWidthPerColumn
                     var widthPerColumn = isColumn
                         ? (columnsCount > 1
-                            ? (float)Math.Round((rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount)
+                            ? (float)Math.Round((rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) /
+                                                columnsCount)
                             : rectForChildrenPixels.Width)
                         : rectForChildrenPixels.Width;
 
@@ -1269,6 +1279,7 @@ else
                                 needSecondPass = true;
                                 _tempSecondPassList.Clear();
                             }
+
                             _tempSecondPassList.Add(new(cell, child, scale));
                         }
 
@@ -1357,7 +1368,8 @@ else
         /// <summary>
         /// Get child for measurement based on strategy
         /// </summary>
-        private SkiaControl GetChildForMeasurement(int controlIndex, bool isTemplated, SkiaControl template, SkiaControl[] nonTemplated)
+        private SkiaControl GetChildForMeasurement(int controlIndex, bool isTemplated, SkiaControl template,
+            SkiaControl[] nonTemplated)
         {
             if (isTemplated)
             {
@@ -1367,6 +1379,7 @@ else
                 {
                     _tempCellsToRelease.Add(child);
                 }
+
                 return child;
             }
 
@@ -1409,7 +1422,8 @@ else
         /// Measure individual child cell
         /// </summary>
         private ScaledSize MeasureChildCell(SKRect rectFitChild, ControlInStack cell, SkiaControl child,
-            SKRect rectForChildrenPixels, float scale, bool isTemplated, bool needMeasureAll, ref ControlInStack firstCell)
+            SKRect rectForChildrenPixels, float scale, bool isTemplated, bool needMeasureAll,
+            ref ControlInStack firstCell)
         {
             if (isTemplated)
             {
@@ -1455,6 +1469,7 @@ else
                     ? (rectForChildrenPixels.Width - (columnsCount - 1) * Spacing * scale) / columnsCount
                     : rectForChildrenPixels.Width);
             }
+
             return rectForChildrenPixels.Width;
         }
 
@@ -1482,11 +1497,11 @@ else
         {
             if (Type == LayoutType.Column && child.HeightRequest >= 0)
             {
-                return (float)((child.HeightRequest+child.Margins.VerticalThickness) * scale);
+                return (float)((child.HeightRequest + child.Margins.VerticalThickness) * scale);
             }
             else if (Type == LayoutType.Row && child.WidthRequest >= 0)
             {
-                return (float)((child.WidthRequest+child.Margins.HorizontalThickness) * scale);
+                return (float)((child.WidthRequest + child.Margins.HorizontalThickness) * scale);
             }
             else
             {
@@ -1522,7 +1537,8 @@ else
             }
         }
 
-        private void UpdateStackSize(ref float stackWidth, ref float stackHeight, float maxWidth, float maxHeight, int row, float scale)
+        private void UpdateStackSize(ref float stackWidth, ref float stackHeight, float maxWidth, float maxHeight,
+            int row, float scale)
         {
             if (maxWidth > stackWidth)
                 stackWidth = maxWidth;
@@ -1570,7 +1586,8 @@ else
             foreach (var secondPass in _tempSecondPassList)
             {
                 AdjustSecondPassCell(secondPass.Cell, stackWidth, stackHeight);
-                LayoutCell(secondPass.Child.MeasuredSize, secondPass.Cell, secondPass.Child, autoRect, secondPass.Scale);
+                LayoutCell(secondPass.Child.MeasuredSize, secondPass.Cell, secondPass.Child, autoRect,
+                    secondPass.Scale);
             }
         }
 
@@ -1617,10 +1634,9 @@ else
             result = ScaledSize.Default;
 
             // Performance guard: Only attempt smart measuring if conditions are optimal
-            if (!IsTemplated || 
+            if (!IsTemplated ||
                 //MeasureItemsStrategy != MeasuringStrategy.MeasureAll ||
-                !DirtyChildrenTracker.HasItems ||
-                !WasMeasured ||
+                DirtyChildrenTracker.IsEmpty || !WasMeasured ||
                 Type == LayoutType.Wrap) // Wrap layouts are too complex for this optimization
             {
                 return false;
@@ -1656,7 +1672,7 @@ else
         /// <summary>
         /// Core smart measuring logic - re-measure only dirty cells and offset others
         /// </summary>
-        private bool ProcessIncrementalChanges(SKRect rectForChildrenPixels, float scale, 
+        private bool ProcessIncrementalChanges(SKRect rectForChildrenPixels, float scale,
             LayoutStructure layoutStructure, List<SkiaControl> dirtyChildren, out ScaledSize result)
         {
             result = ScaledSize.Default;
@@ -1675,7 +1691,7 @@ else
                     var currentCell = FindCellByContextIndex(layoutStructure, dirtyChild.ContextIndex);
                     if (currentCell == null) continue; // Child not found in layout
                     var oldSize = currentCell.Measured;
-                    
+
                     // Get the actual child view for re-measuring
                     SkiaControl childView = null;
                     if (IsTemplated)
@@ -1691,7 +1707,7 @@ else
 
                     // Re-measure only this cell with same constraints
                     ScaledSize newSize = ScaledSize.CreateEmpty(scale);
-                    
+
                     if (childView.CanDraw)
                     {
                         newSize = MeasureChild(childView, currentCell.Area.Width, currentCell.Area.Height, scale);
@@ -1702,26 +1718,26 @@ else
                     // Calculate size delta
                     var deltaWidth = newSize.Pixels.Width - oldSize.Pixels.Width;
                     var deltaHeight = newSize.Pixels.Height - oldSize.Pixels.Height;
-                    
+
                     // Skip if change is negligible (avoid floating-point noise)
                     if (Math.Abs(deltaWidth) < 0.5f && Math.Abs(deltaHeight) < 0.5f)
                         continue;
 
                     hasChanges = true;
-                    
+
                     // Update this cell with new measurements
                     currentCell.Measured = newSize;
                     currentCell.WasMeasured = true;
-                    
+
                     // Re-layout this cell to update Destination
                     LayoutCell(newSize, currentCell, childView, rectForChildrenPixels, scale);
-                    
+
                     // Accumulate deltas for content size adjustment
                     if (Type == LayoutType.Column)
                     {
                         totalDeltaHeight += deltaHeight;
                         // For row layout in column mode, only add width if it makes the row wider
-                        if (deltaWidth > 0) 
+                        if (deltaWidth > 0)
                         {
                             totalDeltaWidth = Math.Max(totalDeltaWidth, deltaWidth);
                         }
@@ -1735,28 +1751,28 @@ else
                             totalDeltaHeight = Math.Max(totalDeltaHeight, deltaHeight);
                         }
                     }
-                    
+
                     // Offset subsequent cells in the layout  
                     OffsetSubsequentCells(layoutStructure, currentCell, deltaWidth, deltaHeight);
                 }
-                
+
                 if (hasChanges)
                 {
                     // Calculate new content size by adjusting current size
                     var newContentWidth = MeasuredSize.Pixels.Width + totalDeltaWidth;
                     var newContentHeight = MeasuredSize.Pixels.Height + totalDeltaHeight;
-                    
+
                     // Apply layout constraints (Fill options)
                     if (HorizontalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Width >= 0)
                         newContentWidth = rectForChildrenPixels.Width;
                     if (VerticalOptions.Alignment == LayoutAlignment.Fill || SizeRequest.Height >= 0)
                         newContentHeight = rectForChildrenPixels.Height;
-                    
+
                     result = ScaledSize.FromPixels(newContentWidth, newContentHeight, scale);
-                    
+
                     // Clear dirty tracking since we've processed all changes
                     DirtyChildrenTracker.Clear();
-                    
+
                     return true; // Smart measuring succeeded!
                 }
             }
@@ -1767,10 +1783,10 @@ else
                     ChildrenFactory.ReleaseTemplateInstance(template);
                 }
             }
-            
+
             return false; // No significant changes, fall back to full measure
         }
-        
+
         /// <summary>
         /// Find cell by child's ContextIndex for smart measuring
         /// </summary>
@@ -1783,31 +1799,32 @@ else
                     return cell;
                 }
             }
+
             return null; // Not found
         }
-        
+
         /// <summary>
         /// Offset subsequent cells after a size change - optimized for performance
         /// </summary>
-        private void OffsetSubsequentCells(LayoutStructure layoutStructure, ControlInStack changedCell, 
+        private void OffsetSubsequentCells(LayoutStructure layoutStructure, ControlInStack changedCell,
             float deltaWidth, float deltaHeight)
         {
             // Early exit if no significant change
             if (Math.Abs(deltaWidth) < 0.1f && Math.Abs(deltaHeight) < 0.1f) return;
-            
+
             // Determine which dimension to offset based on layout type
             var offsetX = Type == LayoutType.Row ? deltaWidth : 0f;
             var offsetY = Type == LayoutType.Column ? deltaHeight : 0f;
-            
+
             if (Math.Abs(offsetX) < 0.1f && Math.Abs(offsetY) < 0.1f) return;
-            
+
             // Find cells that come after the changed cell and offset them
             foreach (var cell in layoutStructure.GetChildren())
             {
                 // For Column layout: offset cells in same column that are in rows below
                 // For Row layout: offset cells in same row that are in columns to the right
                 bool shouldOffset = false;
-                
+
                 if (Type == LayoutType.Column)
                 {
                     // Same column, row is after the changed cell
@@ -1818,7 +1835,7 @@ else
                     // Same row, column is after the changed cell
                     shouldOffset = cell.Row == changedCell.Row && cell.Column > changedCell.Column;
                 }
-                
+
                 if (shouldOffset)
                 {
                     // Offset both Area (for measuring) and Destination (for rendering)
@@ -1827,7 +1844,7 @@ else
                         cell.Area.Top + offsetY,
                         cell.Area.Right + offsetX,
                         cell.Area.Bottom + offsetY);
-                        
+
                     cell.Destination = new SKRect(
                         cell.Destination.Left + offsetX,
                         cell.Destination.Top + offsetY,
@@ -1957,9 +1974,7 @@ else
             // Cache the result
             _visibleAreaCache = new VisibleAreaCache
             {
-                Destination = ctx.Destination,
-                VisibleArea = visibleArea,
-                CalculatedAt = now
+                Destination = ctx.Destination, VisibleArea = visibleArea, CalculatedAt = now
             };
 
             return visibleArea;
@@ -1974,6 +1989,7 @@ else
         {
         }
 
+ 
         /// <summary>
         /// Renders stack/wrap layout.
         /// Returns number of drawn children.
@@ -1985,7 +2001,7 @@ else
             var needrebuild = templatesInvalidated;
             List<ControlInStack> visibleElements = new();
             bool updateInternal = false;
-            
+
             var planeId = ctx.GetArgument(nameof(ContextArguments.Plane)) as string;
 
             if (structure != null)
@@ -2003,29 +2019,28 @@ else
                 {
                     visibilityArea = GetVisibleAreaCached(ctx);
                 }
-                
+
                 // for plane virtualization
                 if (!string.IsNullOrEmpty(planeId))
-                //{
-                //    Debug.WriteLine($"[{planeId}] DrawStack visibility area: {visibilityArea.Pixels}");
-                //}
+                    //{
+                    //    Debug.WriteLine($"[{planeId}] DrawStack visibility area: {visibilityArea.Pixels}");
+                    //}
 
-                // EXPAND DRAWING VIEWPORT during initial drawing to pre-create cells and avoid lagspike at scrolling start
-                if (Virtualisation != VirtualisationType.Managed &&  IsTemplated && _isInitialDrawingFromFreshSource && _initialDrawFrameCount < 2)
-                {
-                    if (Type == LayoutType.Column)
+                    // EXPAND DRAWING VIEWPORT during initial drawing to pre-create cells and avoid lagspike at scrolling start
+                    if (Virtualisation != VirtualisationType.Managed && IsTemplated &&
+                        _isInitialDrawingFromFreshSource && _initialDrawFrameCount < 2)
                     {
-                        var expand = visibilityArea.Pixels.Height / 4f;
-                        var expanded = visibilityArea.Pixels;
-                        expanded.Inflate(0, expand);
-                        visibilityArea = ScaledRect.FromPixels(expanded, visibilityArea.Scale);
+                        if (Type == LayoutType.Column)
+                        {
+                            var expand = visibilityArea.Pixels.Height / 4f;
+                            var expanded = visibilityArea.Pixels;
+                            expanded.Inflate(0, expand);
+                            visibilityArea = ScaledRect.FromPixels(expanded, visibilityArea.Scale);
+                        }
+                        else if (Type == LayoutType.Row)
+                        {
+                        }
                     }
-                    else
-                    if (Type == LayoutType.Row)
-                    {
-
-                    }
-                }
 
                 var recyclingAreaPixels = visibilityArea.Pixels;
                 var expendRecycle = ((float)RecyclingBuffer * ctx.Scale);
@@ -2037,7 +2052,10 @@ else
                 foreach (var cell in structure.GetChildrenAsSpans())
                 {
                     if (!cell.WasMeasured)
-                        continue;
+                    {
+                        Super.Log("DrawStack tried to draw unmeasured cell!"); //would be unexpected due to flaw in custom control
+                        continue; //structure changed, must be measured by Measure method
+                    }
 
                     currentIndex++;
 
@@ -2068,7 +2086,7 @@ else
                             {
                                 // SOLUTION PART 1: Use normal area for visibility
                                 cell.IsVisible = cell.Drawn.IntersectsWith(visibilityArea.Pixels);
-                                
+
                                 // for plane virtualization
                                 //if (!string.IsNullOrEmpty(planeId) && cell.ControlIndex < 3)
                                 //{
@@ -2089,10 +2107,9 @@ else
                     {
                         ChildrenFactory.MarkViewAsHidden(cell.ControlIndex);
                     }
-                    else
-                    if (Virtualisation != VirtualisationType.Disabled &&
-                        cell.Destination != SKRect.Empty &&
-                        !cell.Measured.Pixels.IsEmpty)
+                    else if (Virtualisation != VirtualisationType.Disabled &&
+                             cell.Destination != SKRect.Empty &&
+                             !cell.Measured.Pixels.IsEmpty)
                     {
                         if (!cell.Drawn.IntersectsWith(recyclingAreaPixels))
                         {
@@ -2117,7 +2134,7 @@ else
 
                 if (visibleElements.Count > 1)
                 {
-                    visibleElements.Sort((a, b) => a.ZIndex.CompareTo(b.ZIndex)); 
+                    visibleElements.Sort((a, b) => a.ZIndex.CompareTo(b.ZIndex));
                 }
 
                 //PASS 2 DRAW VISIBLE
@@ -2173,7 +2190,8 @@ else
                                     GetSizeKey(child.MeasuredSize.Pixels) != GetSizeKey(cell.Measured.Pixels))
                                 {
                                     var oldSize = child.MeasuredSize.Pixels;
-                                    var measured= child.Measure((float)cell.Area.Width, (float)cell.Area.Height, ctx.Scale);
+                                    var measured = child.Measure((float)cell.Area.Width, (float)cell.Area.Height,
+                                        ctx.Scale);
 
                                     cell.Measured = measured;
                                     cell.WasMeasured = true;
@@ -2189,7 +2207,6 @@ else
                                         var diff = child.MeasuredSize.Pixels - oldSize;
                                         cell.OffsetOthers = new Vector2(diff.Width, diff.Height);
                                     }
-
                                 }
                             }
 
@@ -2242,7 +2259,6 @@ else
                                         control.LastDrawnAt,
                                         index));
                                 }
-
                             }
                         }
                     }

@@ -29,19 +29,150 @@ namespace DrawnUi.Draw
         public const string PlaneGreen = "Greeen";
         public const string PlaneBlue = "Blue";
 
+        private bool _childrenNeedRedraw = false;
+
+        public override bool NeedMeasure
+        {
+            get
+            {
+                return base.NeedMeasure;
+            }
+            set
+            {
+                base.NeedMeasure = value;
+            }
+        }
+
+        public override void InvalidateInternal()
+        {
+            base.InvalidateInternal();
+
+            InvalidatePlanes();
+        }
+
+        protected virtual void InvalidatePlanes()
+        {
+            PlaneCurrent?.Invalidate();
+            PlaneBackward?.Invalidate();
+            PlaneForward?.Invalidate();
+        }
+
+
         public override void UpdateByChild(SkiaControl control)
         {
             if (UseVirtual)
             {
-                //todo somehow detect which plane is invalidated upon child on it
+                // Just set a flag - we'll determine which planes need invalidation during painting
+                if (HasDirtyChildren())
+                {
+                    NeedMeasure = true;
+                    _childrenNeedRedraw = true;
+                    Content.DirtyChildrenTracker.Clear();
+                    //Update();
+                }
+                //Update(); // Trigger redraw
                 return;
-
-                PlaneCurrent?.Invalidate();
-                PlaneForward?.Invalidate();
             }
 
             base.UpdateByChild(control);
         }
+
+        /// <summary>
+        /// Check dirty children and invalidate specific planes that contain them
+        /// </summary>
+        protected virtual void CheckAndInvalidateDirtyPlanes()
+        {
+            if (Content == null)
+                return;
+                
+            var dirtyChildren = Content.DirtyChildrenTracker;
+            if (dirtyChildren == null || dirtyChildren.IsEmpty)
+                return;
+
+            var planesToInvalidate = new HashSet<Plane>();
+            
+            // For each dirty child, find which plane contains it
+            foreach (var dirtyChild in dirtyChildren.GetList())
+            {
+                var plane = FindPlaneContainingChild(dirtyChild);
+                if (plane != null)
+                {
+                    planesToInvalidate.Add(plane);
+                }
+            }
+            
+            // Invalidate only the planes that contain dirty children
+            foreach (var plane in planesToInvalidate)
+            {
+                plane.Invalidate();
+                Debug.WriteLine($"[PLANES] Invalidated plane {plane.Id} due to dirty children");
+            }
+            
+            // Clear the dirty children tracker
+            dirtyChildren.Clear();
+        }
+
+        protected virtual bool HasDirtyChildren()
+        {
+            if (Content == null)
+                return false;
+
+            var dirtyChildren = Content.DirtyChildrenTracker;
+            if (dirtyChildren == null || dirtyChildren.IsEmpty)
+                return false;
+
+            var planesToInvalidate = new HashSet<Plane>();
+
+            // For each dirty child, find which plane contains it
+            foreach (var dirtyChild in dirtyChildren.GetList())
+            {
+                var plane = FindPlaneContainingChild(dirtyChild);
+                if (plane != null)
+                {
+                    return true;
+                    planesToInvalidate.Add(plane);
+                }
+            }
+
+            //// Invalidate only the planes that contain dirty children
+            //foreach (var plane in planesToInvalidate)
+            //{
+            //    plane.Invalidate();
+            //    Debug.WriteLine($"[PLANES] Invalidated plane {plane.Id} due to dirty children");
+            //}
+
+            //// Clear the dirty children tracker
+            //dirtyChildren.Clear();
+
+            return false;
+        }
+
+        /// <summary>
+        /// Determines which plane contains the given child control by checking render trees
+        /// </summary>
+        protected virtual Plane FindPlaneContainingChild(SkiaControl control)
+        {
+            // Check each plane's render tree for the invalidated child
+            var planes = new[] { PlaneCurrent, PlaneForward, PlaneBackward };
+
+            foreach (var plane in planes)
+            {
+                if (plane?.RenderTree != null)
+                {
+                    // Check if this plane's render tree contains the invalidated control
+                    for (int i = 0; i < plane.RenderTree.Count; i++)
+                    {
+                        if (plane.RenderTree[i].Control == control)
+                        {
+                            return plane;
+                        }
+                    }
+                }
+            }
+
+            return null; // Child not found in any plane's render tree
+        }
+
 
         //todo use when context size is bigger than 2 viewports?
         public virtual bool UseVirtual
@@ -151,48 +282,12 @@ namespace DrawnUi.Draw
             };
 
         }
-
-        //protected float _baseOffsetY;
-        protected bool _planesInverted;
-
-        protected void SwapPlanes()
-        {
-            // Swap the planes and mark the new PlaneB as not ready.
-            (PlaneCurrent, PlaneForward) = (PlaneForward, PlaneCurrent);
-            if (_planesInverted)
-            {
-                PlaneCurrent.Invalidate();
-            }
-            else
-            {
-                PlaneForward.Invalidate();
-            }
-
-            _planesInverted = !_planesInverted;
-        }
-
-
-        void SetContentVisibleDelegate()
-        {
-            if (Content != null && Content.DelegateGetOnScreenVisibleArea == null)
-            {
-                Content.DelegateGetOnScreenVisibleArea = ReportVisibleAreToContent;
-            }
-        }
-
-        private ScaledRect ReportVisibleAreToContent(Vector2 arg)
-        {
-            return ScaledRect.FromPixels(PlaneCurrent.Destination, RenderingScale);
-        }
-
+  
 
         private int visibleAreaCaller = 0;
-        protected bool _buildingPlaneB;
-        protected bool _buildingPlaneC;
         private bool _availablePlaneC;
         private bool _availablePlaneB;
-        private SemaphoreSlim _lockPlanesWorker = new(1);
-
+  
         private readonly Dictionary<string, PlaneBuildState> _planeBuildStates
             = new Dictionary<string, PlaneBuildState>
             {
@@ -250,6 +345,11 @@ namespace DrawnUi.Draw
                     await _globalPlanePreparationLock.WaitAsync(token);
 
                     PreparePlane(clone.WithArgument(new("BThread", true)), plane);
+
+                    if (plane.IsReady)
+                    {
+                        Repaint();
+                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -415,6 +515,15 @@ namespace DrawnUi.Draw
         /// <param name="context"></param>
         public virtual void DrawVirtual(DrawingContext context)
         {
+            // Check if children need redraw and invalidate specific planes
+            if (_childrenNeedRedraw)
+            {
+                Content.DirtyChildrenTracker.Clear();
+                _childrenNeedRedraw = false;
+
+                InvalidatePlanes();
+            }
+            
             if (PlaneCurrent == null)
             {
                 InitializePlanes();
@@ -609,6 +718,15 @@ namespace DrawnUi.Draw
 
         protected virtual void PreparePlane(DrawingContext context, Plane plane)
         {
+            // Ensure content is properly measured before painting the plane
+            //if (Content != null && Content.NeedMeasure)
+            //{
+            //    // Force re-measurement of the entire content to handle cases where
+            //    // cells have !WasMeasured (strategy changes, global layout changes, etc.)
+            //    var availableSize = ContentSize.Pixels;
+            //    Content.Measure(availableSize.Width, availableSize.Height, RenderingScale);
+            //}
+            
             var destination = plane.Destination;
 
             var recordingContext = context.CreateForRecordingImage(plane.Surface, destination.Size);

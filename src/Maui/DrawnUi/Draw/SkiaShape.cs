@@ -1711,21 +1711,5 @@ namespace DrawnUi.Draw
             return originalStrokeWidth;
         }
 
-        public static new readonly BindableProperty LayoutProperty = BindableProperty.Create(nameof(LayoutType),
-            typeof(LayoutType), typeof(SkiaShape), LayoutType.Absolute, propertyChanged: NeedChangeLayoutType);
-
-        private static void NeedChangeLayoutType(BindableObject bindable, object oldValue, object newValue)
-        {
-            if (bindable is SkiaLayout layout)
-            {
-                layout.Type = (LayoutType)newValue;
-            }
-        }
-
-        public new LayoutType Layout
-        {
-            get { return (LayoutType)GetValue(LayoutProperty); }
-            set { SetValue(LayoutProperty, value); }
-        }
     }
 }
