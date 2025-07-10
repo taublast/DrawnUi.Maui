@@ -159,6 +159,54 @@ public partial class SkiaScroll
         _pannedVelocityRemaining = Vector2.Zero;
     }
 
+    #region MOUSE WHEEL
+
+    /// <summary>
+    /// How many points (not pixels) we want to scroll for 1 wheel line
+    /// </summary>
+    public static float WheelLineSize = 150;
+
+    /// <summary>
+    /// Scroll "like in Windows" by lines. No bouncing here.
+    /// Mouse wheel UP gives positive value, mouse wheel DOWN give negative.
+    /// </summary>
+    /// <param name="value">In point how much to scroll</param>
+    /// <param name="position">Reserved</param>
+    void ApplyWheelScroll(float value, SKPoint position)
+    {
+        var offsetY = ViewportOffsetY;
+        var offsetX = ViewportOffsetX;
+
+        if (this.Orientation == ScrollOrientation.Vertical)
+        {
+            offsetY += WheelLineSize * Math.Sign(value);
+        }
+        else if (this.Orientation == ScrollOrientation.Horizontal)
+        {
+            offsetX += WheelLineSize * Math.Sign(value);
+        }
+
+        var clamped = ClampOffsetHard(offsetX, offsetY);
+
+        ScrollTo(clamped.X, clamped.Y, AutoScrollingSpeedMs);
+    }
+
+    /// <summary>
+    /// "Just clamp". Currently used for wheel scroll.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    protected virtual Vector2 ClampOffsetHard(float x, float y)
+    {
+        var clampedX = Math.Max(ContentOffsetBounds.Left, Math.Min(ContentOffsetBounds.Right, x));
+        var clampedY = Math.Max(ContentOffsetBounds.Top, Math.Min(ContentOffsetBounds.Bottom, y));
+
+        return new Vector2(clampedX, clampedY);
+    }
+
+    #endregion
+
     public override ISkiaGestureListener ProcessGestures(SkiaGesturesParameters args, GestureEventProcessingInfo apply)
     {
         var consumedDefault = BlockGesturesBelow ? this : null;
@@ -591,6 +639,19 @@ public partial class SkiaScroll
                         break;
                     }
 
+                    break;
+
+                case TouchActionResult.Wheel:
+
+                    Debug.WriteLine($"Wheel {args.Event.Wheel.Delta}");
+
+                    //just in case you might want to know where is the mouse cursor
+                    var point = TranslateInputOffsetToPixels(args.Event.Wheel.Center, apply.ChildOffset);
+                    var position = new SKPoint((point.X - DrawingRect.Left) / RenderingScale,
+                        (point.Y - DrawingRect.Top) / RenderingScale);
+
+                    ApplyWheelScroll(args.Event.Wheel.Delta, position);
+                    consumed = this;
                     break;
             }
         }
