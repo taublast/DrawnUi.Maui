@@ -863,6 +863,11 @@ else
                 return MeasureStackNonTemplatedFast(rectForChildrenPixels, scale, layoutStructure, nonTemplated);
             }
 
+            if (UsingCacheType == SkiaCacheType.ImageComposite)
+            {
+                return MeasureStackLegacy(rectForChildrenPixels, scale);
+            }
+
             return MeasureStackCore(rectForChildrenPixels, scale, layoutStructure, false, null, nonTemplated);
         }
 
@@ -1627,11 +1632,17 @@ else
         private readonly List<SkiaControl> _tempCellsToRelease = new();
 
         /// <summary>
-        /// SMART INCREMENTAL MEASURING - Only re-measure dirty cells for maximum FPS
+        /// SMART INCREMENTAL MEASURING - Only re-measure dirty cells
         /// </summary>
         private bool TrySmartIncrementalMeasure(SKRect rectForChildrenPixels, float scale, out ScaledSize result)
         {
             result = ScaledSize.Default;
+
+            // Cache type safety
+            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered || UsingCacheType == SkiaCacheType.ImageComposite)
+            {
+                return false;
+            }
 
             // Performance guard: Only attempt smart measuring if conditions are optimal
             if (!IsTemplated ||
@@ -1648,11 +1659,6 @@ else
                 return false;
             }
 
-            // Cache type safety: Avoid for ImageDoubleBuffered due to threading
-            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered)
-            {
-                return false;
-            }
 
             var layoutStructure = LatestMeasuredStackStructure;
             if (layoutStructure?.GetChildren() == null || layoutStructure.GetCount() == 0)
