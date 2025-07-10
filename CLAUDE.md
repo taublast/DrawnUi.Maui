@@ -135,5 +135,6 @@ builder.UseDrawnUi(new()
 Each addon is a separate NuGet package that can be referenced independently.
 
 ## Core strategy
-When creating code always consider that we we are inside a rendering engine trying to avoid new allocations during frame processing to avoid GC and looking for max fps! 
+When creating code always consider that we we are inside a rendering engine trying to avoid new allocations during frame processing to avoid GC and looking for max fps.
 Apply this concept to new code and if you find existing code that can be adjusted to this line correct it at all times.
+Act a a principal engineer: you cannot disable or remove a feature to fix an issue, the fix must never make the system worse somewhere else or potentially break something else. You are looking to build a robust and stable system, and always think how we can modify the code flow in deep to make it better, and if needed add new functionnality to solve issues or challenges.

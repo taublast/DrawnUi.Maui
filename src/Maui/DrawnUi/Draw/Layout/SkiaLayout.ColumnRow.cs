@@ -863,11 +863,6 @@ else
                 return MeasureStackNonTemplatedFast(rectForChildrenPixels, scale, layoutStructure, nonTemplated);
             }
 
-            if (UsingCacheType == SkiaCacheType.ImageComposite)
-            {
-                return MeasureStackLegacy(rectForChildrenPixels, scale);
-            }
-
             return MeasureStackCore(rectForChildrenPixels, scale, layoutStructure, false, null, nonTemplated);
         }
 
@@ -929,6 +924,12 @@ else
                         rectForChild.Left + widthPerColumn, rectForChild.Bottom);
 
                     var measured = MeasureAndArrangeCell(rectFitChild, cell, child, rectForChildrenPixels, scale);
+
+                    // Track child as dirty for ImageComposite cache support
+                    if (UsingCacheType == SkiaCacheType.ImageComposite)
+                    {
+                        TrackChildAsDirty(child);
+                    }
 
                     if (!measured.IsEmpty)
                     {
@@ -1109,6 +1110,12 @@ else
                             measured = firstCell.Measured;
                         }
 
+                        // Track child as dirty for ImageComposite cache support
+                        if (UsingCacheType == SkiaCacheType.ImageComposite)
+                        {
+                            TrackChildAsDirty(child);
+                        }
+
                         if (!measured.IsEmpty)
                         {
                             // Inline UpdateRowDimensions with pre-calculated spacing
@@ -1256,6 +1263,12 @@ else
 
                         var measured = MeasureChildCell(rectFitChild, cell, child, rectForChildrenPixels, scale,
                             isTemplated, needMeasureAll, ref firstCell);
+
+                        // Track child as dirty for ImageComposite cache support
+                        if (UsingCacheType == SkiaCacheType.ImageComposite)
+                        {
+                            TrackChildAsDirty(child);
+                        }
 
                         if (!measured.IsEmpty)
                         {
