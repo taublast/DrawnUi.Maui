@@ -863,6 +863,7 @@ else
                 return MeasureStackNonTemplatedFast(rectForChildrenPixels, scale, layoutStructure, nonTemplated);
             }
 
+            //todo fix gestures for ImageComposite without this and then remove
             if (UsingCacheType == SkiaCacheType.ImageComposite)
             {
                 return MeasureStackLegacy(rectForChildrenPixels, scale);
