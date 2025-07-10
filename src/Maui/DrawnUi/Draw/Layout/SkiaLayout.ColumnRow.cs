@@ -863,6 +863,11 @@ else
                 return MeasureStackNonTemplatedFast(rectForChildrenPixels, scale, layoutStructure, nonTemplated);
             }
 
+            if (UsingCacheType == SkiaCacheType.ImageComposite)
+            {
+                return MeasureStackLegacy(rectForChildrenPixels, scale);
+            }
+
             return MeasureStackCore(rectForChildrenPixels, scale, layoutStructure, false, null, nonTemplated);
         }
 
@@ -2008,7 +2013,7 @@ else
         {
         }
 
- 
+
         /// <summary>
         /// Renders stack/wrap layout.
         /// Returns number of drawn children.
@@ -2072,7 +2077,8 @@ else
                 {
                     if (!cell.WasMeasured)
                     {
-                        Super.Log("DrawStack tried to draw unmeasured cell!"); //would be unexpected due to flaw in custom control
+                        Super.Log(
+                            "DrawStack tried to draw unmeasured cell!"); //would be unexpected due to flaw in custom control
                         continue; //structure changed, must be measured by Measure method
                     }
 
