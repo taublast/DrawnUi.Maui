@@ -3,7 +3,8 @@
 ![NuGet Version](https://img.shields.io/nuget/v/AppoMobi.Maui.DrawnUi.svg)
 ![NuGet Downloads](https://img.shields.io/nuget/dt/AppoMobi.Maui.DrawnUi.svg)
 
-To replace native controls with with just one native view - the Canvas! 🤩 On **iOS**, **MacCatalyst**, **Android**, **Windows** with hardware acceleration.
+
+To replace native controls with a Skia Canvas! 🤩 On **iOS**, **MacCatalyst**, **Android**, **Windows** with hardware acceleration.
 
 Rendering engine with an enhanced layout system, gestures and animations powered by [SkiaSharp](https://github.com/mono/SkiaSharp).   
 
@@ -14,6 +15,9 @@ Rendering engine with an enhanced layout system, gestures and animations powered
 * Free to use under the MIT license, a nuget package is available.
 
 Current development state is _ALPHA for prod_.
+
+>This is a rendering engine you can use to create, layout and render your drawn controls, 
+NOT a development framework. Prebuilt controls are here for convenience, they are optional and you could use your own.
 
 ## Features
 

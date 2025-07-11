@@ -52,7 +52,7 @@ public class ViewsAdapter : IDisposable
 
         var needReset = args.Action == NotifyCollectionChangedAction.Reset
                         || (layoutChanged || _templatedViewsPool == null || _dataContexts != dataContexts ||
-                         CheckTemplateChanged());
+                            CheckTemplateChanged());
 
         if (needReset)
         {
@@ -408,7 +408,7 @@ public class ViewsAdapter : IDisposable
         {
             Super.Log($"[ViewsAdapter] Removed {removeCount} items from index {removeIndex}");
         }
- 
+
         return true;
     }
 
@@ -592,7 +592,7 @@ public class ViewsAdapter : IDisposable
 
         lock (lockVisible)
         {
-            _cellsInUseViews[index]=view;
+            _cellsInUseViews[index] = view;
         }
     }
 
@@ -852,36 +852,45 @@ public class ViewsAdapter : IDisposable
 
             view.IsParentIndependent = true;
 
-            if (index == 0 || view.ContextIndex != index)
+            try
             {
-                try
+                if (index < _dataContexts?.Count)
                 {
-                    if (index < _dataContexts?.Count)
+                    // Double-check before setting binding context
+                    if (!view.IsDisposed && !view.IsDisposing)
                     {
-                        // Double-check before setting binding context
-                        if (!view.IsDisposed && !view.IsDisposing)
+
+                        var context = _dataContexts[index];
+
+                        if (index == 0 || view.ContextIndex != index || view.BindingContext != context)
                         {
-                            var context = _dataContexts[index];
                             if (!isMeasuring)
                             {
                                 view.Parent = _parent;
                             }
+
                             view.ContextIndex = index;
+                            var ctx = view.BindingContext;
                             view.BindingContext = context; // ← where crashes could happen
+                            if (ctx != context)
+                            {
+                                view.NeedMeasure = true;
+                            }
                             if (!isMeasuring)
                             {
                                 _parent.OnViewAttached();
                             }
                         }
+
                     }
                 }
-                catch (ObjectDisposedException ex)
-                {
-                    // View disposed between checks 
-                    if (LogEnabled)
-                        Trace.WriteLine(
-                            $"[ViewsAdapter] View {view.Uid} disposed during binding context set: {ex.Message}");
-                }
+            }
+            catch (ObjectDisposedException ex)
+            {
+                // View disposed between checks 
+                if (LogEnabled)
+                    Trace.WriteLine(
+                        $"[ViewsAdapter] View {view.Uid} disposed during binding context set: {ex.Message}");
             }
         }
         catch (ObjectDisposedException ex)

@@ -1279,7 +1279,7 @@ namespace DrawnUi.Draw
                 !child.Control.InputTransparent && child.Control.CanDraw)
             {
                 var transformed = child.Control.ApplyTransforms(child.HitRect);
-                inside = transformed.ContainsInclusive(point.X, point.Y); // || child.Control == Superview.FocusedChild;
+                inside = transformed.ContainsInclusive(point.X, point.Y); 
             }
 
             return inside;
@@ -1484,6 +1484,8 @@ namespace DrawnUi.Draw
             }
         }
 
+ 
+ 
         public virtual ISkiaGestureListener ProcessGestures(
             SkiaGesturesParameters args,
             GestureEventProcessingInfo apply)
@@ -1560,6 +1562,7 @@ namespace DrawnUi.Draw
                 if (consumed == null || args.Type == TouchActionResult.Up)
                 {
                     var asSpan = CollectionsMarshal.AsSpan(RenderTree);
+
                     for (int i = asSpan.Length - 1; i >= 0; i--)
                     {
                         var child = asSpan[i];
@@ -1585,18 +1588,10 @@ namespace DrawnUi.Draw
                             {
                                 var touchLocationWIthOffset = new SKPoint(apply.MappedLocation.X + thisOffset.X,
                                     apply.MappedLocation.Y + thisOffset.Y);
+
                                 forChild = IsGestureForChild(child, touchLocationWIthOffset);
                             }
-                            //if (forChildOld != forChild)
-                            //{
-                            //    var stop = 1;
-                            //    forChildOld = IsGestureForChild(child, touchLocationWIthOffset);
-                            //    forChild = IsGestureForChild(child.Control, args);
-                            //}
-                            if (Tag == "VirtualizedLayout")
-                            {
-                                var stop = 1;
-                            }
+
                             if (forChild)
                             {
                                 if (args.Type == TouchActionResult.Tapped)
@@ -1604,7 +1599,6 @@ namespace DrawnUi.Draw
                                     OnChildTapped(child.Control, args, apply);
                                 }
 
-                                //Trace.WriteLine($"[HIT] for cell {i} at Y {y:0.0}");
                                 if (manageChildFocus && listener == Superview.FocusedChild)
                                 {
                                     manageChildFocus = false;
@@ -1774,6 +1768,7 @@ namespace DrawnUi.Draw
 
             return consumed;
         }
+ 
 
         public static readonly BindableProperty BlockGesturesBelowProperty = BindableProperty.Create(
             nameof(BlockGesturesBelow),
@@ -3387,10 +3382,10 @@ namespace DrawnUi.Draw
         /// </summary>
         public SKRect DrawingRect
         {
-            get => drawingRect;
+            get => _drawingRect;
             set
             {
-                drawingRect = value;
+                _drawingRect = value;
                 var dirty = value;
                 if (ExpandDirtyRegion != Thickness.Zero)
                 {
@@ -3680,6 +3675,21 @@ namespace DrawnUi.Draw
             return new SKPoint(location.X + thisOffset.X, location.Y + thisOffset.Y);
         }
 
+        public virtual SKRect GetHitBoxOnCanvas()
+        {
+            SKRect hitbox;
+            if (Super.UseFrozenVisualLayers)
+            {
+                hitbox = this.VisualLayer.HitBoxWithTransforms.Pixels;
+            }
+            else
+            {
+                var legacy = this.GetPositionOnCanvas();
+                hitbox = new SKRect(legacy.X, legacy.Y, legacy.X + DrawingRect.Width, legacy.Y + DrawingRect.Height);
+            }
+            return hitbox;
+        }
+
         /// <summary>
         /// Use this to consume gestures in your control only,
         /// do not use result for passing gestures below
@@ -3697,11 +3707,11 @@ namespace DrawnUi.Draw
             {
                 if (RenderObject != null)
                 {
-                    thisOffset.Offset(RenderObject.TranslateInputCoords(LastDrawnAt));
+                    thisOffset.Offset(RenderObject.TranslateInputCoords(DrawingRect));
                 }
                 else if (RenderObjectPrevious != null)
                 {
-                    thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(LastDrawnAt));
+                    thisOffset.Offset(RenderObjectPrevious.TranslateInputCoords(DrawingRect));
                 }
             }
 
@@ -3709,7 +3719,7 @@ namespace DrawnUi.Draw
 
             //layout is different from real drawing area
             var displaced = LastDrawnAt.Location - DrawingRect.Location;
-            thisOffset.Offset(displaced);
+            //thisOffset.Offset(displaced);
 
             return thisOffset;
         }
@@ -4391,7 +4401,8 @@ namespace DrawnUi.Draw
                 RenderingScale = scale;
 
                 var request = CreateMeasureRequest(widthConstraint, heightConstraint, scale);
-                if (!NeedMeasure && request.IsSame)
+
+                if (AvoidRemeasuring(request))
                 {
                     return MeasuredSize;
                 }
@@ -4404,6 +4415,15 @@ namespace DrawnUi.Draw
             {
                 IsMeasuring = false;
             }
+        }
+
+        public virtual bool AvoidRemeasuring(MeasureRequest request)
+        {
+            if (!NeedMeasure && request.IsSame)
+            {
+                return true;
+            }
+            return false;
         }
 
         public virtual void InitializeDefaultContent(bool force = false)
@@ -4798,7 +4818,7 @@ namespace DrawnUi.Draw
             get { return NeedAutoHeight || NeedAutoWidth; }
         }
 
-        public bool NeedAutoHeight
+        public virtual bool NeedAutoHeight
         {
             get
             {
@@ -4806,7 +4826,7 @@ namespace DrawnUi.Draw
             }
         }
 
-        public bool NeedAutoWidth
+        public virtual bool NeedAutoWidth
         {
             get
             {
@@ -4814,8 +4834,23 @@ namespace DrawnUi.Draw
             }
         }
 
-        private bool _isDisposed;
+        public virtual bool NeedFillX
+        {
+            get
+            {
+                return HorizontalOptions.Alignment == LayoutAlignment.Fill && SizeRequest.Width < 0;
+            }
+        }
 
+        public virtual bool NeedFillY
+        {
+            get
+            {
+                return VerticalOptions.Alignment == LayoutAlignment.Fill && SizeRequest.Height < 0;
+            }
+        }
+
+        private bool _isDisposed;
         public bool IsDisposed
         {
             get { return _isDisposed; }
@@ -5975,8 +6010,10 @@ namespace DrawnUi.Draw
 
                         tree.Add(new SkiaControlWithRect(child,
                             context.Destination,
-                            child.LastDrawnAt,
-                            count));
+                            child.DrawingRect,
+                            count,
+                            -1, // Default freeze index
+                            child.BindingContext)); // Capture current binding context
 
                         count++;
                     }
@@ -7354,7 +7391,7 @@ namespace DrawnUi.Draw
         private Thickness _margins;
         private double _lastArrangedForScale;
         private bool _needUpdateFrontCache;
-        private SKRect drawingRect;
+        private SKRect _drawingRect;
 
         public static Color GetRandomColor()
         {

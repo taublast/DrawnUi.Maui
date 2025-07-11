@@ -556,9 +556,12 @@ public class SkiaSlider : SkiaLayout
                 bool onTrail = true;
                 if (Trail != null)
                 {
-                    var trailOffset = Trail.TranslateInputCoords(thisOffset);
-                    onTrail = Trail.HitIsInside(args.Event.Location.X + trailOffset.X,
-                        args.Event.Location.Y + trailOffset.Y);
+                    var touchLocationWIthOffset = new SKPoint(apply.MappedLocation.X + thisOffset.X,
+                        apply.MappedLocation.Y + thisOffset.Y);
+
+                    onTrail = IsGestureForChild(Trail, touchLocationWIthOffset);
+
+                    //Debug.WriteLine($"Checking TRAIL [{onTrail}]: {Trail.HitBoxAuto} vs {args.Event.Location}, {touchLocationWIthOffset}");
                 }
 
                 if (onTrail || touchArea == RangeZone.Start || touchArea == RangeZone.End)

@@ -72,16 +72,14 @@ namespace DrawnUi.Draw
                 var area = cell.Area;
                 if (child != null)
                 {
-                    if (Type == LayoutType.Column && child.VerticalOptions != LayoutOptions.Start &&
-                        child.VerticalOptions != LayoutOptions.Fill)
+                    if (Type == LayoutType.Column && child.VerticalOptions != LayoutOptions.Start && !child.NeedFillY)
                     {
                         area = new(area.Left,
                             rectForChildrenPixels.Top,
                             area.Right,
                             rectForChildrenPixels.Bottom);
                     }
-                    else if (Type == LayoutType.Row && child.HorizontalOptions != LayoutOptions.Start &&
-                             child.HorizontalOptions != LayoutOptions.Fill)
+                    else if (Type == LayoutType.Row && child.HorizontalOptions != LayoutOptions.Start && !child.NeedFillX)
                     {
                         area = new(rectForChildrenPixels.Left,
                             area.Top,
@@ -727,13 +725,13 @@ else
 
                     //second layout pass in some cases
                     var autoRight = rectForChildrenPixels.Right;
-                    if (this.HorizontalOptions != LayoutOptions.Fill)
+                    if (!this.NeedFillX)
                     {
                         autoRight = rectForChildrenPixels.Left + stackWidth;
                     }
 
                     var autoBottom = rectForChildrenPixels.Bottom;
-                    if (this.VerticalOptions != LayoutOptions.Fill)
+                    if (!this.NeedFillY)
                     {
                         autoBottom = rectForChildrenPixels.Top + stackHeight;
                     }
@@ -863,11 +861,11 @@ else
                 return MeasureStackNonTemplatedFast(rectForChildrenPixels, scale, layoutStructure, nonTemplated);
             }
 
-            //todo fix gestures for ImageComposite without this and then remove
-            if (UsingCacheType == SkiaCacheType.ImageComposite)
-            {
-                return MeasureStackLegacy(rectForChildrenPixels, scale);
-            }
+            ////todo fix gestures for ImageComposite without this and then remove
+            //if (UsingCacheType == SkiaCacheType.ImageComposite)
+            //{
+            //    return MeasureStackLegacy(rectForChildrenPixels, scale);
+            //}
 
             return MeasureStackCore(rectForChildrenPixels, scale, layoutStructure, false, null, nonTemplated);
         }
@@ -1082,7 +1080,11 @@ else
 
                         if (child?.CanDraw != true)
                         {
-                            if (child != null) cell.Measured = ScaledSize.Default;
+                            if (child != null)
+                            {
+                                cell.Measured = ScaledSize.Default;
+                                cell.WasMeasured = true;
+                            }
                             continue;
                         }
 
@@ -1165,6 +1167,7 @@ else
             }
         }
 
+ 
         /// <summary>
         /// Core measurement logic shared between templated and non-templated scenarios
         /// </summary>
@@ -1279,12 +1282,12 @@ else
                         if (!measured.IsEmpty)
                         {
                             // Inline UpdateRowDimensions
-                            if (isTemplated || child.HorizontalOptions != LayoutOptions.Fill || !isColumn)
+                            if (isTemplated || !child.NeedFillX || !isColumn)
                             {
                                 maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
                             }
 
-                            if (isTemplated || child.VerticalOptions != LayoutOptions.Fill || isColumn)
+                            if (isTemplated || !child.NeedFillY || isColumn)
                             {
                                 if (measured.Pixels.Height > maxHeight)
                                     maxHeight = measured.Pixels.Height;
@@ -1549,12 +1552,12 @@ else
         private void UpdateRowDimensions(ref float maxWidth, ref float maxHeight, ScaledSize measured,
             SkiaControl child, int column, float scale, bool isTemplated)
         {
-            if (isTemplated || child.HorizontalOptions != LayoutOptions.Fill || Type != LayoutType.Column)
+            if (isTemplated || !child.NeedFillX || Type != LayoutType.Column)
             {
                 maxWidth += measured.Pixels.Width + GetSpacingForIndex(column, scale);
             }
 
-            if (isTemplated || child.VerticalOptions != LayoutOptions.Fill || Type != LayoutType.Row)
+            if (isTemplated || !child.NeedFillY || Type != LayoutType.Row)
             {
                 if (measured.Pixels.Height > maxHeight)
                     maxHeight = measured.Pixels.Height;
@@ -1597,11 +1600,11 @@ else
 
         private void ProcessSecondPass(SKRect rectForChildrenPixels, float stackWidth, float stackHeight)
         {
-            var autoRight = HorizontalOptions != LayoutOptions.Fill
+            var autoRight = !NeedFillX
                 ? rectForChildrenPixels.Left + stackWidth
                 : rectForChildrenPixels.Right;
 
-            var autoBottom = VerticalOptions != LayoutOptions.Fill
+            var autoBottom = !NeedFillY
                 ? rectForChildrenPixels.Top + stackHeight
                 : rectForChildrenPixels.Bottom;
 
@@ -1658,7 +1661,8 @@ else
             result = ScaledSize.Default;
 
             // Cache type safety
-            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered || UsingCacheType == SkiaCacheType.ImageComposite)
+            if (UsingCacheType == SkiaCacheType.ImageDoubleBuffered
+                || UsingCacheType == SkiaCacheType.ImageComposite)
             {
                 return false;
             }
@@ -2014,7 +2018,6 @@ else
         {
         }
 
-
         /// <summary>
         /// Renders stack/wrap layout.
         /// Returns number of drawn children.
@@ -2133,7 +2136,8 @@ else
                     {
                         ChildrenFactory.MarkViewAsHidden(cell.ControlIndex);
                     }
-                    else if (Virtualisation != VirtualisationType.Disabled &&
+                    else
+                    if (Virtualisation != VirtualisationType.Disabled &&
                              cell.Destination != SKRect.Empty &&
                              !cell.Measured.Pixels.IsEmpty)
                     {
@@ -2226,6 +2230,7 @@ else
                                     {
                                         LayoutCell(measured, cell, child, cell.Area, ctx.Scale);
                                     }
+           
 
                                     if (oldSize != SKSize.Empty && !CompareSize(oldSize, MeasuredSize.Pixels, 1f))
                                     {
@@ -2282,9 +2287,15 @@ else
 
                                     tree.Add(new SkiaControlWithRect(control,
                                         destinationRect,
-                                        control.LastDrawnAt,
-                                        index));
+                                        control.DrawingRect, 
+                                        index,
+                                        -1, // Default freeze index
+                                        control.BindingContext)); // Capture current binding context
                                 }
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"INVISIBLE {child.ContextIndex}");
                             }
                         }
                     }

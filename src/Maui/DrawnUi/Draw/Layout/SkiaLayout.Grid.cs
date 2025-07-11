@@ -134,7 +134,7 @@ public partial class SkiaLayout
                     DrawChild(context.WithDestination(cellRect), child);
                 }
 
-                tree.Add(new SkiaControlWithRect(child, cellRect, child.LastDrawnAt, drawn));
+                tree.Add(new SkiaControlWithRect(child, cellRect, child.DrawingRect, drawn, -1, child.BindingContext));
 
                 drawn++;
             }

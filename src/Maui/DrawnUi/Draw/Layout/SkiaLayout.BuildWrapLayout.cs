@@ -107,8 +107,7 @@ public partial class SkiaLayout
                 if (!_layout.IsTemplated)
                 {
                     var layoutMaxHeight = float.IsFinite(rectFitChild.Height) ? rectFitChild.Height : maxHeight;
-                    var layoutHeight = _layout.VerticalOptions == LayoutOptions.Fill
-                        ? layoutMaxHeight : maxHeight;
+                    var layoutHeight = _layout.NeedFillY ? layoutMaxHeight : maxHeight;
 
                     foreach (var controlInStack in CollectionsMarshal.AsSpan(cellsToLayoutLater))
                     {

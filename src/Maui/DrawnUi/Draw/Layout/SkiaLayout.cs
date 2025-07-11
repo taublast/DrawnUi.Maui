@@ -41,9 +41,14 @@ namespace DrawnUi.Draw
                 if (child.Control != null && !child.Control.IsDisposing && !child.Control.IsDisposed &&
                     !child.Control.InputTransparent && child.Control.CanDraw)
                 {
-                    var transformed = child.Control.ApplyTransforms(child.Rect); //instead of HitRect
+                    var transformed = child.Control.ApplyTransforms(child.HitRect); //instead of HitRect
                     inside = transformed.ContainsInclusive(point.X,
                         point.Y); // || child.Control == Superview.FocusedChild;
+
+                    if (inside)
+                    {
+                        var stop = 1;
+                    }
                 }
 
                 return inside;

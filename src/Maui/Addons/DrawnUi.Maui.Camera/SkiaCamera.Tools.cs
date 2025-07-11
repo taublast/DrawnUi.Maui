@@ -110,7 +110,7 @@ public partial class SkiaCamera : SkiaControl
         var height = frame.Height;
 
         // Define sampling area based on metering mode - in points, then convert to pixels
-        int sampleSizePoints = meteringMode == MeteringMode.Spot ? 5 : 100;
+        int sampleSizePoints = meteringMode == MeteringMode.Spot ? 60 : 300;
         int sampleSizePixels = (int)(sampleSizePoints * renderingScale);
 
         int centerX = width / 2;

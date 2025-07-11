@@ -868,55 +868,73 @@ namespace DrawnUi.Draw
                 {
                     //Debug.WriteLine($"[PLANE {plane.Id}] HIT! Loop index {i}, ContextIndex {child.Control.ContextIndex}");
 
-                    // Handle child tapped events
-                    if (args.Type == TouchActionResult.Tapped)
+                    // FREEZE FIX: Restore the correct BindingContext from when the plane was captured
+                    var originalBindingContext = child.Control.BindingContext;
+                    if (child.FreezeBindingContext != null)
                     {
-                        Content.OnChildTapped(child.Control, args, apply);
+                        child.Control.BindingContext = child.FreezeBindingContext;
                     }
 
-                    // Get gesture listener for this child
-                    ISkiaGestureListener listener = child.Control.GesturesEffect;
-                    if (listener == null && child.Control is ISkiaGestureListener listen)
+                    try
                     {
-                        listener = listen;
-                    }
-
-                    if (listener != null)
-                    {
-                        var childOffset = TranslateInputCoords(apply.ChildOffsetDirect, false);
-
-                        // Forward gesture to child with proper coordinate transformation
-                        var consumed = listener.OnSkiaGestureEvent(args,
-                            new GestureEventProcessingInfo(
-                                apply.MappedLocation,
-                                thisOffset,
-                                childOffset,
-                                apply.AlreadyConsumed));
-
-                        if (consumed != null)
+                        // Handle child tapped events
+                        if (args.Type == TouchActionResult.Tapped)
                         {
-                            return consumed;
+                            Content.OnChildTapped(child.Control, args, apply);
                         }
 
-                        // Check attached gesture listeners
-                        if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
+                        // Get gesture listener for this child
+                        ISkiaGestureListener listener = child.Control.GesturesEffect;
+                        if (listener == null && child.Control is ISkiaGestureListener listen)
                         {
-                            var attachedConsumed = effect.OnSkiaGestureEvent(args,
+                            listener = listen;
+                        }
+
+                        if (listener != null)
+                        {
+                            var childOffset = TranslateInputCoords(apply.ChildOffsetDirect, false);
+
+                            // Forward gesture to child with proper coordinate transformation
+                            var consumed = listener.OnSkiaGestureEvent(args,
                                 new GestureEventProcessingInfo(
                                     apply.MappedLocation,
                                     thisOffset,
                                     childOffset,
                                     apply.AlreadyConsumed));
 
-                            if (attachedConsumed != null)
+                            if (consumed != null)
                             {
-                                return effect;
+                                return consumed;
+                            }
+
+                            // Check attached gesture listeners
+                            if (AddGestures.AttachedListeners.TryGetValue(child.Control, out var effect))
+                            {
+                                var attachedConsumed = effect.OnSkiaGestureEvent(args,
+                                    new GestureEventProcessingInfo(
+                                        apply.MappedLocation,
+                                        thisOffset,
+                                        childOffset,
+                                        apply.AlreadyConsumed));
+
+                                if (attachedConsumed != null)
+                                {
+                                    return effect;
+                                }
                             }
                         }
+                        
+                        // Return after first hit to prevent multiple hits
+                        return null;
                     }
-                    
-                    // Return after first hit to prevent multiple hits
-                    return null;
+                    finally
+                    {
+                        // FREEZE FIX: Always restore the original BindingContext
+                        if (child.FreezeBindingContext != null)
+                        {
+                            child.Control.BindingContext = originalBindingContext;
+                        }
+                    }
                 }
             }
 

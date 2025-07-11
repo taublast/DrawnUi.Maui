@@ -293,8 +293,10 @@ public class SkiaCarousel : SnappingLayout
                             cell.Drawn.Bottom);
                         tree.Add(new SkiaControlWithRect(view,
                             destinationRect,
-                            view.LastDrawnAt,
-                            cell.ControlIndex));
+                            view.DrawingRect,
+                            cell.ControlIndex,
+                            -1, // Default freeze index
+                            view.BindingContext)); // Capture current binding context
                     }
                 }
             }

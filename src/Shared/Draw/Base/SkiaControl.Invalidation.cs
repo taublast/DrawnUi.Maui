@@ -62,16 +62,16 @@
             if (IsParentIndependent)
                 return;
 
-            if (InvalidatedParent)
-            {
-                if (IsRendering)
-                    _invalidatedParentPostponed = true;
-                else
-                {
-                    Superview?.SetChildAsDirty(this);
-                }
-                return;
-            }
+            //if (InvalidatedParent)
+            //{
+            //    if (IsRendering)
+            //        _invalidatedParentPostponed = true;
+            //    else
+            //    {
+            //        Superview?.SetChildAsDirty(this);
+            //    }
+            //    return;
+            //}
 
             InvalidatedParent = true;
 

@@ -517,8 +517,10 @@ public partial class SkiaLayout
                             //gonna use that for gestures and for item inside viewport detection and for hotreload children tree
                             tree.Add(new SkiaControlWithRect(control,
                                 destinationRect,
-                                control.LastDrawnAt,
-                                currentIndex));
+                                control.DrawingRect,
+                                currentIndex,
+                                -1, // Default freeze index
+                                control.BindingContext)); // Capture current binding context
                         }
                     }
 

@@ -7,6 +7,11 @@ namespace DrawnUi.Controls
     /// </summary>
     public class SkiaWheelScroll : VirtualScroll
     {
+        public override bool AvoidRemeasuring(MeasureRequest request)
+        {
+            return false;
+        }
+
         public string DebugWheel => ItemsWrapper?.DebugString;
 
         protected readonly Sk3dView Helper3dChildren = new();

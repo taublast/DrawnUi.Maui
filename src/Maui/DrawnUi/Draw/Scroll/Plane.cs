@@ -47,8 +47,32 @@
         /// <param name="planeOffsetY">The plane's OffsetY when this tree was captured</param>
         public void CaptureRenderTree(List<SkiaControlWithRect> tree, SKPoint captureOffset, float planeOffsetY)
         {
-            // Create immutable snapshot - old references remain valid during gesture processing
-            RenderTree = tree?.ToList().AsReadOnly();
+            // Create immutable snapshot with frozen binding context and index
+            // This ensures that gesture processing uses the binding context that was active when the render tree was captured
+            if (tree != null)
+            {
+                var frozenTree = new List<SkiaControlWithRect>(tree.Count);
+                for (int i = 0; i < tree.Count; i++)
+                {
+                    var item = tree[i];
+                    // Create a new record with the frozen binding context and index
+                    var frozenItem = new SkiaControlWithRect(
+                        item.Control,
+                        item.Rect,
+                        item.HitRect,
+                        item.Index,
+                        item.Index, // Set FreezeIndex to the current index
+                        item.Control.BindingContext // Capture the current binding context as frozen
+                    );
+                    frozenTree.Add(frozenItem);
+                }
+                RenderTree = frozenTree.AsReadOnly();
+            }
+            else
+            {
+                RenderTree = null;
+            }
+            
             RenderTreeCaptureOffset = captureOffset;
             RenderTreeCapturePlaneOffsetY = planeOffsetY;
         }

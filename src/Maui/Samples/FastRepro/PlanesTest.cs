@@ -234,12 +234,21 @@ namespace Sandbox
                     if (prop == nameof(BindingContext))
                     {
                         //setup cell initially
+                        me.NeedMeasure = true;
                         me.IsVisible = !item.Hide;
+                        if (!me.IsVisible)
+                        {
+                            var stop = 1;
+                        }
                     }
                     else
                     if (prop == nameof(TestDataItem.Hide))
                     {
                         me.IsVisible = !item.Hide;
+                        if (!me.IsVisible)
+                        {
+                            var stop = 1;
+                        }
                         if (lazyParent != null)
                         {
                             lazyParent.TrackChildAsDirty(me);

@@ -22,5 +22,6 @@ namespace DrawnUi.Controls
         {
             return ScaledRect.FromPixels(new(0, 0, Single.PositiveInfinity, Single.PositiveInfinity), context.Scale);
         }
+
     }
 }
