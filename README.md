@@ -41,7 +41,7 @@ NOT a development framework. Prebuilt controls are here for convenience, they ar
 * `SkiaCamera` inside DrawnUi.Maui.Camera: iOS, MacCatalyst, Windows, Android implementations.
 * `SkiaShape` now can contain many `Children` instead of one `Content`. Plus fixes for stroke and other for pixel-perfect rendering.
 * `SkiaImage` rescaling quality fix after for skia v3.
-* `SkiaScroll` added additional mouse wheel support for scrolling on windows.
+* `SkiaScroll` added additional mouse wheel support for scrolling on windows, added FirstVisibleIndex, LastVisibleIndex props
 * Stack and absolute layouts now correctly apply one-directional `Fill` of children, might break some legacy UIs (or might not). `Margins` and `Padding` now work properly everywhere.
 * Can override virtual `OnMeasuring`, while `Measure` is not virtual anymore to assure faster screen creation and avoid re-measurements when initializing for the first time.
 * Important performance optimizations and fixes for layouts and SkiaLabel.
