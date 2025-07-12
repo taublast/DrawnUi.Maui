@@ -197,25 +197,32 @@ public static partial class DrawnExtensions
             {
                 bool appCreated = false;
 
+                void AttachActivity(Android.App.Activity activity)
+                {
+
+                    if (StartupSettings != null)
+                    {
+                        if (StartupSettings.MobileIsFullscreen)
+                        {
+                            Super.SetFullScreen(activity);
+                        }
+                        if (StartupSettings.UseDesktopKeyboard)
+                        {
+                            KeyboardManager.AttachToKeyboard(activity);
+                        }
+                    }
+                }
+
                 android.OnCreate((activity, bundle) =>
                 {
-                    if (!appCreated)
+                    //if (!appCreated)
                     {
                         appCreated = true;
 
                         Super.Init(activity);
 
-                        if (StartupSettings != null)
-                        {
-                            if (StartupSettings.MobileIsFullscreen)
-                            {
-                                Super.SetFullScreen(activity);
-                            }
-                            if (StartupSettings.UseDesktopKeyboard)
-                            {
-                                KeyboardManager.AttachToKeyboard(activity);
-                            }
-                        }
+                        AttachActivity(activity);
+
                         Super.OnMauiAppCreated?.Invoke();
                     }
                 });
@@ -235,6 +242,8 @@ public static partial class DrawnExtensions
                         if ((args.State == ActivityState.Resumed || args.State == ActivityState.Started)
                             && activityState != ActivityState.Resumed && activityState != ActivityState.Started)
                         {
+                            AttachActivity(args.Activity);
+
                             //Console.WriteLine("[APP] OnResumed");
                             Super.OnWentForeground();
                         }

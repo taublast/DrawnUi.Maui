@@ -131,20 +131,21 @@ public partial class Super
         if (_insetsListener == null)
         {
             _insetsListener = new();
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-            {
-                // https://stackoverflow.com/a/33355089/7149454
-                var uiOptions = (int)activity.Window.DecorView.SystemUiVisibility;
-                uiOptions |= (int)SystemUiFlags.LayoutStable;
-                uiOptions |= (int)SystemUiFlags.LayoutFullscreen;
-                activity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)uiOptions;
-                activity.Window.SetStatusBarColor(Android.Graphics.Color.Transparent);
-                var contentView = activity.FindViewById(Android.Resource.Id.Content);
-                if (contentView != null)
-                    contentView.SetOnApplyWindowInsetsListener(_insetsListener);
-            }
         }
+
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+        {
+            // https://stackoverflow.com/a/33355089/7149454
+            var uiOptions = (int)activity.Window.DecorView.SystemUiVisibility;
+            uiOptions |= (int)SystemUiFlags.LayoutStable;
+            uiOptions |= (int)SystemUiFlags.LayoutFullscreen;
+            activity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)uiOptions;
+            activity.Window.SetStatusBarColor(Android.Graphics.Color.Transparent);
+            var contentView = activity.FindViewById(Android.Resource.Id.Content);
+            if (contentView != null)
+                contentView.SetOnApplyWindowInsetsListener(_insetsListener);
+        }
+
     }
 
     static InsetsListener _insetsListener;

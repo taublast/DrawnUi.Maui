@@ -7393,15 +7393,6 @@ namespace DrawnUi.Draw
         private bool _needUpdateFrontCache;
         private SKRect _drawingRect;
 
-        public static Color GetRandomColor()
-        {
-            byte r = (byte)Random.Next(256);
-            byte g = (byte)Random.Next(256);
-            byte b = (byte)Random.Next(256);
-
-            return Color.FromRgb(r, g, b);
-        }
-
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
         //public static bool CompareRects(SKRect a, SKRect b, float precision)
         //{

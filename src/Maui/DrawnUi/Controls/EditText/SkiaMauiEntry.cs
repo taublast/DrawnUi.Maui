@@ -64,6 +64,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
 
             Control = new MauiEntry()
             {
+                ReturnType = ReturnType.Done,
                 IsSpellCheckEnabled = this.IsSpellCheckEnabled,
                 BackgroundColor = this.BackgroundColor,
                 Background = null//Colors.Transparent,
@@ -258,7 +259,7 @@ public class SkiaMauiEntry : SkiaMauiElement, ISkiaGestureListener
     /// Called by DrawnUi when the focus changes
     /// </summary>
     /// <param name="focus"></param>
-    public bool OnFocusChanged(bool focus)
+    public new bool OnFocusChanged(bool focus)
     {
         lock (lockFocus)
         {
