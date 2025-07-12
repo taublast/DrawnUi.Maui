@@ -145,7 +145,7 @@ namespace DrawnUi.Views
         protected override void OnHandlerChanging(HandlerChangingEventArgs args)
         {
 
-            if (args.NewHandler == null)
+            if (args.NewHandler == null || args.OldHandler != null)
             {
                 DestroySkiaView();
 
@@ -757,6 +757,7 @@ namespace DrawnUi.Views
         /// </summary>
         protected void CreateSkiaView()
         {
+
             DestroySkiaView();
 
 #if ONPLATFORM
@@ -779,6 +780,11 @@ namespace DrawnUi.Views
             Content = CanvasView as View;
         }
 
+        protected virtual void OnDestroyingVew()
+        {
+
+        }
+
         protected void DestroySkiaView()
         {
             lock (LockDraw)
@@ -794,6 +800,7 @@ namespace DrawnUi.Views
                 var kill = CanvasView;
                 if (kill != null)
                 {
+                    OnDestroyingVew();
                     CanvasView = null;
                     kill.OnDraw = null;
                     if (kill is View view)

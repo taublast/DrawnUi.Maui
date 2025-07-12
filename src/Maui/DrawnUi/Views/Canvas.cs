@@ -405,17 +405,29 @@ public class Canvas : DrawnView, IGestureListener
 
     #region GESTURES
 
+    protected virtual void DetachGestures()
+    {
+        TouchEffect.SetForceAttach(this, false);
+    }
+
+    protected override void OnDestroyingVew()
+    {
+        base.OnDestroyingVew();
+
+        DetachGestures();
+    }
+
     protected virtual void OnGesturesAttachChanged()
     {
         if (Handler == null)
         {
-            TouchEffect.SetForceAttach(this, false);
+            DetachGestures();
             return;
         }
 
         if (this.Gestures == GesturesMode.Disabled)
         {
-            TouchEffect.SetForceAttach(this, false);
+            DetachGestures();
         }
         else
         {
@@ -425,9 +437,6 @@ public class Canvas : DrawnView, IGestureListener
                 TouchEffect.SetShareTouch(this, TouchHandlingStyle.Default);
             else if (this.Gestures == GesturesMode.Lock)
                 TouchEffect.SetShareTouch(this, TouchHandlingStyle.Lock);
-            //else
-            //if (this.Gestures == GesturesMode.Share)
-            //    TouchEffect.SetShareTouch(this, TouchHandlingStyle.Share);
         }
     }
 
