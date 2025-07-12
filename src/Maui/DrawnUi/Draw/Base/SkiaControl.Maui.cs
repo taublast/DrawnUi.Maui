@@ -174,6 +174,15 @@ namespace DrawnUi.Draw
         public static Color BlackColor = Colors.Black;
         public static Color RedColor = Colors.Red;
 
+        public static Color GetRandomColor()
+        {
+            byte r = (byte)Random.Next(256);
+            byte g = (byte)Random.Next(256);
+            byte b = (byte)Random.Next(256);
+
+            return Color.FromRgb(r, g, b);
+        }
+
         public virtual PrebuiltControlStyle UsingControlStyle
         {
             get
