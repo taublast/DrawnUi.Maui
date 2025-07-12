@@ -307,6 +307,70 @@ public partial class Super
         }
     }
 
+    /// <summary>
+    /// Completely hides the status bar on Android
+    /// </summary>
+    public static void HideStatusBar()
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+            var activity = Platform.CurrentActivity as AndroidX.AppCompat.App.AppCompatActivity;
+            if (activity?.Window != null)
+            {
+                if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.R)
+                {
+                    // Android 11+ (API 30+)
+                    var windowInsetsController = activity.Window.InsetsController;
+                    if (windowInsetsController != null)
+                    {
+                        windowInsetsController.Hide(AndroidX.Core.View.WindowInsetsCompat.Type.StatusBars());
+                        windowInsetsController.SystemBarsBehavior = AndroidX.Core.View.WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
+                    }
+                }
+                else
+                {
+                    // Android 10 and below
+                    var decorView = activity.Window.DecorView;
+                    var uiOptions = (int)decorView.SystemUiVisibility;
+                    uiOptions |= (int)Android.Views.SystemUiFlags.Fullscreen;
+                    uiOptions |= (int)Android.Views.SystemUiFlags.HideNavigation;
+                    decorView.SystemUiVisibility = (Android.Views.StatusBarVisibility)uiOptions;
+                }
+            }
+        });
+    }
+
+    /// <summary>
+    /// Shows the status bar on Android
+    /// </summary>
+    public static void ShowStatusBar()
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+          
+
+            var activity = Platform.CurrentActivity as AndroidX.AppCompat.App.AppCompatActivity;
+            if (activity?.Window != null)
+            {
+                if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.R)
+                {
+                    // Android 11+ (API 30+)
+                    var windowInsetsController = activity.Window.InsetsController;
+                    windowInsetsController?.Show(AndroidX.Core.View.WindowInsetsCompat.Type.StatusBars());
+                }
+                else
+                {
+                    // Android 10 and below
+                    var decorView = activity.Window.DecorView;
+                    var uiOptions = (int)decorView.SystemUiVisibility;
+                    uiOptions &= ~(int)Android.Views.SystemUiFlags.Fullscreen;
+                    uiOptions &= ~(int)Android.Views.SystemUiFlags.HideNavigation;
+                    decorView.SystemUiVisibility = (Android.Views.StatusBarVisibility)uiOptions;
+                }
+            }
+        });
+    }
+
     public static void SetWhiteTextStatusBar()
     {
         if (Build.VERSION.SdkInt > Android.OS.BuildVersionCodes.M)
