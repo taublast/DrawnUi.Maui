@@ -3278,8 +3278,8 @@ namespace DrawnUi.Draw
 
                     if (useVerticalThickness)
                     {
-                        left += marginVerticalDelta;
-                        right += marginVerticalDelta;
+                        top += marginVerticalDelta;
+                        bottom += marginVerticalDelta;
                     }
 
                     break;

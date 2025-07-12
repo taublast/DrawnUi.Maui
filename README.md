@@ -4,7 +4,7 @@
 ![NuGet Downloads](https://img.shields.io/nuget/dt/AppoMobi.Maui.DrawnUi.svg)
 
 
-To replace native controls with a Skia Canvas! 🤩 On **iOS**, **MacCatalyst**, **Android**, **Windows** with hardware acceleration.
+✏️ To replace native controls with a Skia Canvas! 🤩 On **iOS**, **MacCatalyst**, **Android**, **Windows** with hardware acceleration.
 
 Rendering engine with an enhanced layout system, gestures and animations powered by [SkiaSharp](https://github.com/mono/SkiaSharp).   
 
@@ -17,11 +17,12 @@ Rendering engine with an enhanced layout system, gestures and animations powered
 Current development state is _ALPHA for prod_.
 
 >This is a rendering engine you can use to create, layout and render your drawn controls, 
-NOT a development framework. Prebuilt controls are here for convenience, they are optional and you could use your own.
+NOT a development framework with pre-defined elements. Shipped controls are here for a quick start convenience.
 
-## Features
 
-* __Draws using SkiaSharp with hardware acceleration__
+## 🎯 Features
+
+* __Draw with helpers using SkiaSharp with hardware acceleration__
 * __Create your own animated pixel-perfect controls__
 * __Port existing native controls to be drawn__
 * __Design in XAML or code-behind__
@@ -34,7 +35,7 @@ NOT a development framework. Prebuilt controls are here for convenience, they ar
 * __Keyboard support__, track any key
 * __Navigate__ on canvas with familiar MAUI Shell techniques 
 
-## What's new
+## 📢 What's new
 
 * The nuget package `DrawnUi.Maui` replaces the old package Id, you can still use the old one kept for compatibility for some time.
 * Docs, first appearence inside `/docs`! To teach LMs use `/aidocs` subfolder.
@@ -53,7 +54,7 @@ NOT a development framework. Prebuilt controls are here for convenience, they ar
 
 ___Please star ⭐ if you like it!___
  
-## Shipped With
+## 📁 Shipped With
 
 * __Base drawn controls__
 	* __SkiaControl__ Your lego brick to create anything
@@ -117,7 +118,7 @@ ___Please star ⭐ if you like it!___
 * Keyboard support for desktop platforms.
   	* Not just accelerators, but full keyboard support, usage example inside __SpaceShooter__ game below. :)
 
-## Demo Apps
+## 💥 Demo Apps
 
 * This repo includes a Sandbox project for some custom controls, with playground examples, custom controls, maps etc
 * More creating custom controls examples inside the [Engine Demo](https://github.com/taublast/AppoMobi.Maui.DrawnUi.Demo) 🤩 __Updated with latest nuget!__
@@ -139,7 +140,7 @@ V3 preview: subclassed `SkiaShaderEffect`, implementing `ISkiaGestureProcessor`,
 * The `<UseSkiaSharp3>true</UseSkiaSharp3>` inside `Directory.Build.props` file controls where we build for v3 net9 or v2 net8. 
 * Accessibility support is compatible and is on the roadmap.
 
-## Installation
+## 📦 Installation
 
 Install the package __AppoMobi.Maui.DrawnUi__ from NuGet, please install stable versions only.  
 For NET 9 you need versions not lower than 1.3.x. For legacy NET 8 and SkiaSharp v2 versions use 1.2.x. but they are not updated any more, we stick with .NET 9, looking at upcoming .NET 10.
@@ -171,7 +172,7 @@ builder.UseDrawnUi();
 
 ## ___Docs are under construction, already working on!___
 
-## Quick Start
+## ⚡️ Quick Start
 
 You will be mainly using Maui view `Canvas` that will wrap your SkiaControls.
 Anywhere in your existing Maui app you can include a `Canvas` and start drawing your UI.
